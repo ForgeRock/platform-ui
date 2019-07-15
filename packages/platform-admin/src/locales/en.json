@@ -1,0 +1,22 @@
+{
+  "sideMenu": {
+    "signOut": "Sign Out",
+    "toggleSidebar": "Toggle sidebar",
+    "dashboard": "Dashboard"
+  },
+  "dashboard": {
+    "managedAccess": {
+      "title": "Manage Access",
+      "description": "Manage how your users can authenticate and gain access to your systems."
+    },
+    "managedIdentity": {
+      "title": "Manage Identities",
+      "description": "Manage where, when and how your users can change their information."
+    },
+    "welcome": {
+      "title": "Welcome to ForgeRock!",
+      "description": "With the Forgerock platform you can control access, identity management and much more.",
+      "footer": "Get Started"
+    }
+  }
+}
