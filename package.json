@@ -1,0 +1,41 @@
+{
+  "name": "forgerock-platform-ui",
+  "version": "1.0.0",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "storybook:build": "vue-cli-service storybook:build -s ./src/assets,./config/storybook/images -c config/storybook",
+    "storybook:serve": "vue-cli-service storybook:serve -s ./src/assets,./config/storybook/images -p 6006 -c config/storybook"
+  },
+  "devDependencies": {
+    "@storybook/addon-actions": "^4.1.0 || ^5.0.0",
+    "@storybook/addon-knobs": "^4.1.0 || ^5.0.0",
+    "@storybook/addon-links": "^4.1.0 || ^5.0.0",
+    "@storybook/addon-notes": "^4.1.0 || ^5.0.0",
+    "@storybook/vue": "^5.1.8",
+    "@vue/cli-service": "3.8.0",
+    "node-sass": "4.12.0",
+    "sass-loader": "7.1.0",
+    "storybook-addon-vue-info": "^1.2.1",
+    "style-resources-loader": "1.2.1",
+    "vue-cli-plugin-storybook": "^0.6.1",
+    "vue-template-compiler": "2.6.10",
+    "@vue/cli-plugin-babel": "^3.8.0",
+    "@vue/test-utils": "1.0.0-beta.29"
+  },
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 11"
+  ]
+}
