@@ -1,0 +1,25 @@
+// Nav tabs
+.nav-tabs .nav-link {
+  color: $nav-tabs-link-color;
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+}
+.nav-tabs .nav-link.active,
+.nav-tabs .nav-item.show .nav-link {
+  background: transparent;
+  border-color: transparent;
+  border-radius: 0;
+  border-bottom: 3px solid $nav-highlight-color;
+  color: $nav-tabs-link-active-color;
+  border-left: none;
+  border-right: none;
+}
+.nav-tabs .nav-link:hover,
+.nav-tabs .nav-link:focus {
+  border-color: transparent;
+}
+.nav-tabs .nav-link.active:hover,
+.nav-tabs .nav-link.active:focus {
+  border-bottom: 3px solid $nav-highlight-color;
+}
