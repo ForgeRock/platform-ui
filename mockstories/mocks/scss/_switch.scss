@@ -1,0 +1,28 @@
+.custom-switch {
+    min-height: 2.5rem;
+    .custom-control-label {
+        line-height: 2.5rem;
+        // Background-color and (when enabled) gradient
+        &::before {
+            height: $custom-control-indicator-size * 2;
+            border-color: $fr-custom-control-indicator-switch-border-color;
+            background-color: $fr-custom-control-indicator-switch-background-color;
+        }
+        &::after {
+            background-color: $fr-custom-control-indicator-switch-handle-color;
+        }
+    }
+    .custom-control-input:checked ~ .custom-control-label {
+        &::after {
+            transform: translateX($custom-switch-width - ($custom-control-indicator-size *2));
+        }
+    }
+    .custom-control-input:disabled {
+        &~ .custom-control-label::before {
+            border-color: $custom-control-indicator-disabled-bg;
+        }
+        &:checked ~ .custom-control-label::before {
+            border-color: $custom-control-indicator-checked-disabled-bg;
+        }
+    }
+}

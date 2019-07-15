@@ -1,0 +1,16 @@
+.fr-main-navbar {
+    height: 4.5rem;
+    border-bottom: 1px solid $gray-200;
+    background-color: $white;
+
+    .material-icons {
+        position: relative;
+        top: 5px;
+    }
+
+    .navbar-toggler {
+        border-width: 0;
+        position: relative;
+        bottom: 10px;
+    }
+}
