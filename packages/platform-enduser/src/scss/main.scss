@@ -1,0 +1,300 @@
+// General custom form adjustments (radio, checkbox, etc...)
+@import "custom-form";
+
+// Export colors to make them available in JS
+:export {
+  baseColor: $primary;
+}
+
+//Circle and icon
+.fr-resource-circle {
+  width: 75px;
+  height: 75px;
+  text-align: center;
+
+  .fa {
+    line-height: inherit;
+  }
+}
+
+.modal-backdrop {
+  opacity: .5;
+}
+
+// Application adjustments (not related to themes
+// Center spinner
+.v-spinner {
+  .v-bounce1 {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+html, body {
+  height: 100%;
+}
+
+.fr-body-image {
+  @if $fr-background-image == 'none' {
+
+  } @else {
+    background: $fr-background-image;
+  }
+}
+
+h1, h2 {
+  font-weight: normal;
+}
+
+// Base application styles
+
+// Navbar
+#app {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: left;
+  height: 100%;
+
+  .navbar {
+    -webkit-box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.11);
+    box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.11);
+    height: $navbar-height;
+
+    .navbar-brand {
+      letter-spacing: 1px;
+
+      img {
+        max-width: 150px;
+        padding-top: 2px;
+      }
+    }
+  }
+}
+
+// Jumbotron
+.fr-header-jumbotron {
+  background-color: transparent;
+
+  h1 {
+    font-size: 3rem;
+    font-weight: 300;
+  }
+
+  .btn-success {
+    padding: 10px 20px 10px 20px;
+  }
+}
+
+// Input Group Button styles
+.input-group .input-group-append {
+    >.btn {
+        border-color: $input-border-color;
+    }
+}
+
+label {
+    color: $label-color;
+}
+
+// Basic Form
+.b-form-group .input-group .form-control {
+  border-bottom-right-radius: .25rem;
+  border-top-right-radius: .25rem;
+}
+
+// General page transition
+.fade-enter-active, .fade-leave-active {
+  transition-property: opacity;
+  transition-duration: .25s;
+}
+
+.fade-enter-active {
+  transition-delay: .25s;
+}
+
+.fade-enter, .fade-leave-active {
+  opacity: 0
+}
+
+// Base page headers
+.fr-page-header {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+// Back bar
+.fr-backbar {
+  a:hover {
+    text-decoration: none;
+  }
+}
+
+.fr-toggle-primary {
+  &.toggled .v-switch-core {
+    background-color: $fr-switch-toggled-bg;
+  }
+  .v-switch-core {
+    background-color: $fr-switch-bg;
+  }
+}
+
+// Form Break
+.fr-form-break {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  width: 100%;
+  margin: 14px 0;
+  >:first-child, >:last-child {
+    -webkit-flex: 1;
+    -moz-flex: 1;
+    flex: 1;
+    position: relative;
+  }
+  >:first-child:before, >:last-child:before {
+    content: ' ';
+    position: absolute;
+    top: 50%;
+    left: 0px;
+    right: 0px;
+    height: 1px;
+    background-color: $gray-200;
+    -webkit-box-shadow: 0 1px 0 fade(#FFF, 20%);
+    -moz-box-shadow: 0 1px 0 fade(#FFF, 20%);
+    box-shadow: 0 1px 0 fade(#FFF, 20%);
+  }
+  >:first-child {
+    margin-right: 10px;
+  }
+  :last-child {
+    margin-left: 10px;
+  }
+}
+
+/**
+  Grid and Table styles
+ */
+.card > .table th:first-child,
+.card > .table td:first-child {
+  padding-left: 1.875rem;
+}
+
+.card > .table th:last-child,
+.card > .table td:last-child {
+  padding-right: 1.875rem;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+/*
+  Paginator Styles
+ */
+.pagination{
+
+  .page-link {
+    border-radius: $pagination-border-radius;
+    margin-left: 4px;
+  }
+
+  .disabled.page-item {
+    opacity: .5;
+  }
+}
+
+/**
+  None floating label password reveal
+ */
+
+.form-label-password.form-label-group {
+  display: flex;
+
+  .form-control {
+    flex-grow: 1;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+  }
+
+  .input-group-append {
+    flex-grow: 1;
+
+    button {
+      border-bottom-left-radius: 0;
+      border-top-left-radius: 0;
+      background-color: $input-bg;
+      border-color: $input-border-color;
+      color:$input-btn-color;
+    }
+    button:hover {
+      color: $input-btn-active-color;
+    }
+
+  }
+}
+
+.form-label-group {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+/**
+  Table styles
+ */
+
+table td.avatar {
+  > div {
+    display: flex;
+  }
+  @media(min-width: 992px) {
+    width: 70px;
+    padding-right: 0;
+  }
+}
+
+table th.select,
+table td.select {
+  > div {
+    display: flex;
+  }
+  @media(min-width: 992px) {
+    width: 20px;
+    padding-right: 0;
+  }
+}
+
+@media (max-width: 991.99px) {
+  table.b-table.b-table-stacked-lg > tbody > tr > [data-label].avatar {
+    grid-template-columns: auto;
+  }
+}
+
+/**
+  Fade animation for form transitions into error state
+ */
+.is-invalid {
+  transition: border .75s linear;
+}
+
+.fr-validation-requirements {
+  opacity: 1;
+  animation-name: fadeInOpacity;
+  animation-iteration-count: 1;
+  animation-timing-function: ease-in;
+  animation-duration: .75s;
+}
+
+@keyframes fadeInOpacity {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+// Additional component level theme overrides must come after if you want access to bootstrap variables
+// These should also come last so they can override anything in the application
+@import "theme-components";
