@@ -26,6 +26,9 @@
   "workspaces": {
     "packages": [
       "packages/*"
+    ],
+    "nohoist": [
+      "**/oidcsessioncheck"
     ]
   },
   "postcss": {
