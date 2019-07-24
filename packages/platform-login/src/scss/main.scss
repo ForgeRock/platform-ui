@@ -1,0 +1,94 @@
+@import "~bootstrap/scss/bootstrap.scss";
+@import "~bootstrap-vue/dist/bootstrap-vue.css";
+
+// Export colors to make them available in JS
+:export {
+  baseColor: $primary;
+}
+
+//Circle and icon
+.fr-resource-circle {
+  width: 75px;
+  height: 75px;
+  text-align: center;
+
+  .fa {
+    line-height: inherit;
+  }
+}
+
+// Application adjustments (not related to themes
+// Center spinner
+.v-spinner {
+  .v-bounce1 {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+html, body {
+  height: 100%;
+}
+
+.fr-body-image {
+  @if $fr-background-image == 'none' {
+
+  } @else {
+    background: $fr-background-image;
+  }
+}
+
+h1, h2 {
+  font-weight: normal;
+}
+// Basic Form
+.b-form-group .input-group .form-control {
+  border-bottom-right-radius: .25rem;
+  border-top-right-radius: .25rem;
+}
+
+// General page transition
+.fade-enter-active, .fade-leave-active {
+  transition-property: opacity;
+  transition-duration: .25s;
+}
+
+.fade-enter-active {
+  transition-delay: .25s;
+}
+
+.fade-enter, .fade-leave-active {
+  opacity: 0
+}
+/**
+  Fade animation for form transitions into error state
+ */
+.is-invalid {
+  transition: border .75s linear;
+}
+
+.fr-validation-requirements {
+  opacity: 1;
+  animation-name: fadeInOpacity;
+  animation-iteration-count: 1;
+  animation-timing-function: ease-in;
+  animation-duration: .75s;
+}
+
+.fr-toggle-primary {
+  &.toggled .v-switch-core {
+    background-color: $fr-switch-toggled-bg;
+  }
+  .v-switch-core {
+    background-color: $fr-switch-bg;
+  }
+}
+
+@keyframes fadeInOpacity {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
