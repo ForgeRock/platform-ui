@@ -1,0 +1,57 @@
+{
+    "login": {
+        "title" : "Login",
+        "newHere" : "New here?",
+        "createAccount": "Create an account",
+        "signIn": "Sign-in",
+        "forgotUsername":  "Forgot username?",
+        "forgotPassword": "Forgot password?",
+        "next": "Next",
+        "loginFailure": "Login Failure",
+        "tryAgain": "Try Again",
+        "termsAndConditions" : "Terms & Conditions",
+        "agreeToTerms" : "By clicking 'Next' you agree to our ",
+        "kba": {
+            "description": "Select security question(s) below. These questions will help us verify your identity if you forget your password.",
+            "selectQuestion": "Select a security question...",
+            "custom": "Provide your own:",
+            "question": "Question",
+            "answer": "Answer",
+            "notUnique": "Custom questions cannot be duplicates"
+        },
+        "social" : {
+            "or": "or",
+            "continueWith": "Continue with"
+        }
+    },
+    "common" : {
+        "logo" : "Application Logo"
+    },
+    "policyValidationMessages": {
+        "VALID_PHONE_FORMAT": "Must be a valid phone number",
+        "VALID_NAME_FORMAT": "Must have valid name characters",
+        "CANNOT_CONTAIN_CHARACTERS": "Cannot contain characters: %{forbiddenChars}",
+        "IS_NUMBER": "Must be a number greater than or equal to zero.",
+        "IS_NUMBER_GREATER_ZERO": "Must be a number greater than or equal to 1.",
+        "REQUIRED": "Cannot be blank",
+        "VALID_DATE": "Must be a valid date",
+        "VALID_TYPE": "Must be one of the following types: %{validTypes}. Cannot be %{invalidType}",
+        "MATCH_REGEXP": "Has to match pattern: %{regexp}",
+        "PRIVILEGE_AT_LEAST_ONE_ATTRIBUTE_READONLY_FALSE": "Must set at least one attribute permission to Read/Write",
+        "PRIVILEGE_MUST_CONTAIN_CREATE_OR_UPDATE_PERMISSION": "Must have at least Create or Update Permission",
+        "MIN_LENGTH": "Must be %{minLength} characters long",
+        "AT_LEAST_X_CAPITAL_LETTERS": "Must have at least %{numCaps} capital letter(s)",
+        "AT_LEAST_X_NUMBERS": "Must have at least %{numNums} number(s)",
+        "CANNOT_CONTAIN_OTHERS": "Must not share characters with %{disallowedFields}",
+        "VALID_EMAIL_ADDRESS_FORMAT": "Must be a valid email (example@example.com)",
+        "UNIQUE": "Already exists",
+        "test": "succeed",
+        "policyServiceError": {
+            "registration": "Unable to register. Please try again later.",
+            "reset": "Unable to reset your password. Please try again later."
+        },
+        "successMessages": {
+            "password": "Your password is secure!"
+        }
+    }
+}
