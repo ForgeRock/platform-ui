@@ -1,6 +1,8 @@
 # Platform Login
 
 ## Project setup
+If you haven't installed the node packages, you can run it from inside this folder, it will climb up to the top level and install everything appropriately.
+
 ```
 yarn install
 ```
