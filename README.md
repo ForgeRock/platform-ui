@@ -1,17 +1,22 @@
 # Root for Forgerock platform UI
 
-The root is intetended to handle all of the testing, mock and storybook intergration for the Forgerock UI platform.
+The root is intended to handle all of the testing, mock and storybook integration for the Forgerock UI platform.
 
 ## Getting started
 
-First install yarn
+First install yarn:
+
 ```
 brew install yarn
 ```
 
-Next install node modules
+Next install node packages:
+
 ```
 yarn install
+```
+
+From here navigate into ```packages``` folder and choose the appropriate sub repo project. Each repo contains its repo specific readme.md
 
 ### Storybook component build
 
