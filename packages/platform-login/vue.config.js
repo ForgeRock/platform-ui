@@ -17,8 +17,8 @@ function generateTheme() {
 module.exports = {
   runtimeCompiler: true,
   devServer: {
-    host: 'login.example.com',
-    port: 8083,
+    host: '0.0.0.0',
+    port: 8080,
   },
   css: {
     loaderOptions: {
