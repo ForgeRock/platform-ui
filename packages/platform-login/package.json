@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "build": "vue-cli-service build",
-    "test:unit": "vue-cli-service test:unit",
+    "dev": "vue-cli-service serve",
+    "docker:build": "config/scripts/docker:build.sh",
+    "docker:run": "config/scripts/docker:run.sh",
     "lint": "vue-cli-service lint",
-    "dev": "vue-cli-service serve"
+    "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
     "@forgerock/platform-components": "1.0.0",
