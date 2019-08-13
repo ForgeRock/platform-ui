@@ -1,7 +1,6 @@
 /* eslint import/no-extraneous-dependencies: 0 */
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const GitRevisionPlugin = require('git-revision-webpack-plugin');
 
 function generateTheme() {
   let variableLoad = `
@@ -25,8 +24,7 @@ function getPlugins() {
       resourceRegExp: /^\.\/locale$/,
       contextRegExp: /moment$/,
     }),
-    new webpack.BannerPlugin('Copyright 2019 ForgeRock AS. All Rights Reserved \n Use of this code requires a commercial software license with ForgeRock AS. or with one of its affiliates. All use shall be exclusively subject to such license between the licensee and ForgeRock AS.'),
-    new GitRevisionPlugin(),
+    new webpack.BannerPlugin('Copyright 2019 ForgeRock AS. All Rights Reserved \n Use of this code requires a commercial software license with ForgeRock AS. or with one of its affiliates. All use shall be exclusively subject to such license between the licensee and ForgeRock AS.')
   ];
 
   plugins.push(new CopyWebpackPlugin([
@@ -70,8 +68,7 @@ module.exports = {
     },
   },
   devServer: {
-    host: 'localhost',
-    port: 8888,
+    host: '0.0.0.0',
     proxy: {
       '/openidm': {
         target: 'https://default.iam.example.com/openidm',
