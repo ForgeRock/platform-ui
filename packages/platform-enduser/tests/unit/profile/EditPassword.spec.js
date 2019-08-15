@@ -15,7 +15,6 @@ describe.skip('EditPassword.vue', () => {
 
   const applicationStore = {
     state: {
-      workflow: false,
       passwordReset: false,
       usernameRecovery: false,
       registration: false,
