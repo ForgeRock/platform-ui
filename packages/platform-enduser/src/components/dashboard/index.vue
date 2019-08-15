@@ -33,7 +33,6 @@
 
 <script>
 import Welcome from '@/components/dashboard/widgets/WelcomeWidget';
-import Workflow from '@/components/dashboard/widgets/WorkflowControlWidget';
 
 /**
  * @description Controlling component for the dashboard, loads widgets set and configured in the ui-dashboard config file.
@@ -44,7 +43,6 @@ export default {
   name: 'Dashboard',
   components: {
     Welcome,
-    Workflow,
   },
   data() {
     return {
@@ -61,13 +59,6 @@ export default {
       this.getRequestService().get('config/ui/dashboard')
         .then(({ data }) => {
           this.widgets = data.dashboard.widgets;
-
-          if (this.$root.applicationStore.state.workflow) {
-            this.widgets.push({
-              type: 'Workflow',
-              size: 'large',
-            });
-          }
         })
         .catch((error) => {
           this.displayNotification('error', error.response.data.message);

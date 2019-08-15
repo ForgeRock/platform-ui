@@ -2,18 +2,6 @@ import { expect } from 'chai';
 import ApplicationStore from '@/store/Application';
 
 describe('Application Store', () => {
-  it('workflow state management', () => {
-    expect(ApplicationStore.state.workflow).to.equal(false);
-
-    ApplicationStore.setWorkflowAction(true);
-
-    expect(ApplicationStore.state.workflow).to.equal(true);
-
-    ApplicationStore.clearWorkflowAction();
-
-    expect(ApplicationStore.state.workflow).to.equal(false);
-  });
-
   it('authHeaders state management', () => {
     expect(ApplicationStore.state.authHeaders).to.equal(null);
 

@@ -28,7 +28,6 @@ describe('Profile.vue', () => {
 
     const applicationStore = {
       state: {
-        workflow: false,
         passwordReset: false,
         usernameRecovery: false,
         registration: false,

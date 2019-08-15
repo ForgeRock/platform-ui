@@ -81,7 +81,7 @@ src/
 
 │ ├── access/ - Delegated admin components
 
-│ ├── dashboard/ - Dashboard widgets and workflow integration
+│ ├── dashboard/ - Dashboard widgets
 
 │ ├── profile/ - Profile management components (KBA, profile edit, etc.)
 

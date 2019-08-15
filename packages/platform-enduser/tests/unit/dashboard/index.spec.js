@@ -18,9 +18,7 @@ describe('Dashboard.vue', () => {
 
 
     const applicationStore = {
-      state: {
-        workflow: true,
-      },
+      state: {},
     };
 
     const wrapper = shallowMount(Dashboard, {
