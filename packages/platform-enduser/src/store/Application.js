@@ -1,6 +1,5 @@
 /**
  * State - Enduser data store information
- *      @param {boolean} workflow - Flag to allow the UI to know the workflow feature is available
  *      @param {object} authHeaders - Request headers needed for authenticated requests
  *      @param {object} amDataEndpoints - AM endpoints
  *      @param {string} idmBaseURL - Location of IDM
@@ -9,7 +8,6 @@
  */
 export default {
   state: {
-    workflow: false,
     authHeaders: null,
     amDataEndpoints: null,
     loginRedirect: null,
@@ -50,14 +48,6 @@ export default {
     this.state.amDataEndpoints = null;
   },
 
-  setWorkflowAction(available) {
-    this.state.workflow = available;
-  },
-
-  clearWorkflowAction() {
-    this.state.workflow = false;
-  },
-
   setAuthHeadersAction(headers) {
     this.state.authHeaders = headers;
   },
@@ -75,7 +65,6 @@ export default {
   },
 
   clearEnduserSelfservice() {
-    this.state.workflow = false;
     this.state.authHeaders = null;
     this.state.amDataEndpoints = null;
     this.state.loginRedirect = null;
