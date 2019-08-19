@@ -14,7 +14,10 @@
       v-if="!loading"
       slot="center-card-body"
     >
-      <div id="loginPanel" />
+      <div
+        id="loginPanel"
+        ref="loginPanel"
+      />
       <div
         v-if="loginFailure"
         class="h-100 d-flex"
@@ -57,6 +60,7 @@ import CenterCard from '@/components/utils/CenterCard';
 import ChoiceCallback from '@/components/callbacks/ChoiceCallback';
 import FloatingLabelInput from '@/components/utils/FloatingLabelInput';
 import KbaCreateCallback from '@/components/callbacks/KbaCreateCallback';
+import ReCaptchaCallback from '@/components/callbacks/ReCaptchaCallback';
 import SelectIdPCallback from '@/components/callbacks/SelectIdPCallback';
 import styles from '@/scss/main.scss';
 import TermsAndConditionsCallback from '@/components/callbacks/TermsAndConditionsCallback';
@@ -126,9 +130,9 @@ export default {
 
       const login = new ForgeRockEmbeddedLogin({
         authenticateUrl: (vm.$route.name === 'service') ? `${authenticateUrl}?service=${vm.$route.params.tree}&authIndexType=service&authIndexValue=${vm.$route.params.tree}` : authenticateUrl,
-        loginElement: document.getElementById('loginPanel'),
+        loginElement: vm.$refs.loginPanel,
         successHandler() {
-          window.location.href = process.env.VUE_APP_ADMIN_URL;
+          window.location.href = process.env.VUE_APP_ENDUSER_URL;
         },
         failureHandler() {
           // If there is a failureUrl defined redirect to there else clear out the page and display the loginFailure message with a "Try again" button
@@ -202,72 +206,14 @@ export default {
         return Promise.resolve(instance.$el);
       };
 
-      // renderReCaptchaCallback was written in generic js/html for the ForgeRockEmbeddedLogin library.
-      // It will be removed from here when a new version is released
-      login.renderReCaptchaCallback = (option, index) => {
-        const reCaptchaSiteKey = option.output[0].value;
-        const reCaptchaContainer = document.createElement('div');
-        const reCaptchaApiImport = document.createElement('script');
-        const reCaptchaScript = document.createElement('script');
-        const reCaptchaStyle = document.createElement('style');
-        const reCaptchaHTML = document.createElement('div');
-        const reCaptchaInput = document.createElement('input');
-        const reCaptchaScriptSource = `
-          var loginButton = document.querySelectorAll('input[type=submit][name^=callback]')[0],
-              callback_index = ${index},
-              /*
-                  If callback_index is zero and the "name" attribute on loginButton is callback_1 we
-                  know ReCaptcha is by itself on the page. In this case we will hide loginButton
-                  and click it to submit the form automatically when ReCaptcha is complete.
-              */
-              standaloneMode = callback_index === 0 && loginButton && loginButton.name === "callback_1";
+      login.renderReCaptchaCallback = (callback, index, prompt) => {
+        const instance = vm.convertVueComponent(ReCaptchaCallback, {
+          callback,
+          index,
+          prompt,
+        });
 
-          if (standaloneMode) {
-              loginButton.style.display = "none";
-          }
-
-          function handleCaptchaCallback(response) {
-             document.getElementById("reCaptchaInput").value = response;
-
-             if (standaloneMode) {
-                 loginButton.click();
-             }
-          }
-        `;
-
-        const reCaptchaStyleSource = `
-          .g-recaptcha>div {
-              margin: auto;
-          }
-          .g-recaptcha>div>div {
-             display: inline-block;
-          }
-        `;
-
-        // add the api link
-        reCaptchaApiImport.src = 'https://www.google.com/recaptcha/api.js';
-        reCaptchaContainer.appendChild(reCaptchaApiImport);
-        // add the script
-        reCaptchaScript.innerHTML = reCaptchaScriptSource;
-        reCaptchaContainer.appendChild(reCaptchaScript);
-        // add the style
-        reCaptchaStyle.innerHTML = reCaptchaStyleSource;
-        reCaptchaContainer.appendChild(reCaptchaStyle);
-        // define and add the g-recaptcha div
-        reCaptchaHTML.className = 'g-recaptcha';
-        reCaptchaHTML.setAttribute('data-sitekey', reCaptchaSiteKey);
-        reCaptchaHTML.setAttribute('data-callback', 'handleCaptchaCallback');
-        reCaptchaHTML.style = 'margin-bottom: 5px;';
-        reCaptchaContainer.appendChild(reCaptchaHTML);
-        // define the reCaptchaInput
-        reCaptchaInput.type = 'hidden';
-        reCaptchaInput.id = 'reCaptchaInput';
-        reCaptchaInput.name = `callback_${index}`;
-        reCaptchaContainer.appendChild(reCaptchaInput);
-
-        reCaptchaContainer.style = 'display: inline;';
-
-        return Promise.resolve(reCaptchaContainer);
+        return Promise.resolve(instance.$el);
       };
 
       login.renderTermsAndConditionsCallback = (callback, index) => {
