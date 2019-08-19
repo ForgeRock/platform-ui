@@ -24,11 +24,17 @@
 </template>
 
 <script>
+import { isArray } from 'lodash';
+
 export default {
   props: {
     callback: {
-      type: [String, Object],
-      default: '',
+      type: Object,
+      // make sure the callback has an input property that is an Array and has at least one item
+      validator: prop => prop.input
+              && isArray(prop.input)
+              && prop.input.length > 0,
+      required: true,
     },
     index: {
       type: Number,
@@ -41,6 +47,7 @@ export default {
   },
   mounted() {
     this.name = `callback_${this.index}`;
+
     this.value = this.callback.input[0].value;
   },
   data() {
