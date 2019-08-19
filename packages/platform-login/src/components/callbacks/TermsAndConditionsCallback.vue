@@ -32,7 +32,7 @@
 
 <script>
 import { BModal } from 'bootstrap-vue';
-import { find } from 'lodash';
+import { find, isArray } from 'lodash';
 
 export default {
   name: 'TermsAndConditions',
@@ -41,8 +41,12 @@ export default {
   },
   props: {
     callback: {
-      type: [String, Object],
-      default: '',
+      type: Object,
+      // make sure the callback has an output property that is an Array and has at least one item
+      validator: prop => prop.output
+                  && isArray(prop.output)
+                  && prop.output.length > 0,
+      required: true,
     },
     index: {
       type: Number,

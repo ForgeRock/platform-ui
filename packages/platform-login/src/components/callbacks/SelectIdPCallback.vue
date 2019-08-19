@@ -35,7 +35,7 @@
 
 <script>
 import {
-  mapValues, keyBy, each, filter,
+  mapValues, keyBy, each, filter, isArray,
 } from 'lodash';
 import HorizontalRule from '@/components/utils/HorizontalRule';
 
@@ -46,8 +46,12 @@ export default {
   },
   props: {
     callback: {
-      type: [String, Object],
-      default: '',
+      type: Object,
+      // make sure the callback has an output property that is an Array and has at least one item
+      validator: prop => prop.output
+                  && isArray(prop.output)
+                  && prop.output.length > 0,
+      required: true,
     },
     index: {
       type: Number,

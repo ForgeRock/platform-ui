@@ -66,7 +66,7 @@
 
 <script>
 import {
-  mapValues, keyBy, map, find,
+  mapValues, keyBy, map, find, isArray,
 } from 'lodash';
 import { BFormSelect } from 'bootstrap-vue';
 import FloatingLabelInput from '@/components/utils/FloatingLabelInput';
@@ -79,9 +79,12 @@ export default {
   },
   props: {
     callback: {
-      type: [String, Object],
-      required: false,
-      default: '',
+      type: Object,
+      // make sure the callback has an output property that is an Array and has at least one item
+      validator: prop => prop.output
+                  && isArray(prop.output)
+                  && prop.output.length > 0,
+      required: true,
     },
     index: {
       type: Number,
