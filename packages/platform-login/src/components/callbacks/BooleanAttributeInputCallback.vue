@@ -24,16 +24,14 @@
 </template>
 
 <script>
-import { isArray } from 'lodash';
+import CallbackValidation from '@/utils/CallbackValidation';
 
 export default {
   props: {
     callback: {
       type: Object,
       // make sure the callback has an input property that is an Array and has at least one item
-      validator: prop => prop.input
-              && isArray(prop.input)
-              && prop.input.length > 0,
+      validator: CallbackValidation.validateInput,
       required: true,
     },
     index: {

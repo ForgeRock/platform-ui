@@ -35,9 +35,10 @@
 
 <script>
 import {
-  mapValues, keyBy, each, filter, isArray,
+  mapValues, keyBy, each, filter,
 } from 'lodash';
 import HorizontalRule from '@/components/utils/HorizontalRule';
+import CallbackValidation from '@/utils/CallbackValidation';
 
 export default {
   name: 'SelectIdPCallback',
@@ -47,10 +48,7 @@ export default {
   props: {
     callback: {
       type: Object,
-      // make sure the callback has an output property that is an Array and has at least one item
-      validator: prop => prop.output
-                  && isArray(prop.output)
-                  && prop.output.length > 0,
+      validator: CallbackValidation.validateOutput,
       required: true,
     },
     index: {
