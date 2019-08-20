@@ -162,19 +162,21 @@ export default {
     },
     // This function sets the value of the question's hidden input and disbables the question value from other kba question selection options on the dom
     onQuestionSelectionChange() {
+      // get a list of values from other .kbaQuestion's
+      const otherQuestionValues = map(document.querySelectorAll(`.kbaQuestion:not([name=${this.questionName}])`), question => question.value);
+      // get all the option elements from the other .kbaQuestion_selector's
+      const otherQuestionSelectorOptions = document.querySelectorAll(`select.kbaQuestionSelect:not(#${this.questionName}_selector) option`);
+      // if "Provide your own" is selected open the custom question input and reset this.questionValue
       if (this.selected === 'custom') {
         this.showCustom = true;
         this.questionValue = '';
       } else {
-        const otherQuestionSelectorOptions = document.querySelectorAll(`select.kbaQuestionSelect:not(#${this.questionName}_selector) option`);
-
+        // in all other cases hide the custom question input
         this.showCustom = false;
         this.questionValue = this.selected;
-        // disable the ability to select the question just selected from other kba question selections
-
-        // TODO Investigate changing this to be more linter friendly
-        map(otherQuestionSelectorOptions, (option) => { option.disabled = option.disabled || option.value === this.questionValue; }); // eslint-disable-line no-param-reassign
       }
+      // disable the ability to select the same question more than once
+      map(otherQuestionSelectorOptions, (option) => { option.disabled = !!(option.value === this.questionValue || otherQuestionValues.includes(option.value)); }); // eslint-disable-line no-param-reassign
 
       this.validateQuestion();
       this.validateAnswer();
@@ -190,7 +192,7 @@ export default {
 
       this.failedQuestionPolicies = [];
 
-      if (this.questionValue.length === 0) {
+      if (this.questionValue && this.questionValue.length === 0) {
         this.failedQuestionPolicies.push(this.requiredText);
       }
 
