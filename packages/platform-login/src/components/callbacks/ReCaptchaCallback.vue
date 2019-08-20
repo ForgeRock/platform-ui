@@ -29,18 +29,16 @@
  *
  * */
 import {
-  mapValues, keyBy, isArray, isUndefined,
+  mapValues, keyBy, isUndefined,
 } from 'lodash';
+import CallbackValidation from '@/utils/CallbackValidation';
 
 export default {
   name: 'ReCaptchaCallback',
   props: {
     callback: {
       type: Object,
-      // make sure the callback has an output property that is an Array and has at least one item
-      validator: prop => prop.output
-                && isArray(prop.output)
-                && prop.output.length > 0,
+      validator: CallbackValidation.validateOutput,
       required: true,
     },
     index: {

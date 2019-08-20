@@ -66,10 +66,11 @@
 
 <script>
 import {
-  mapValues, keyBy, map, find, isArray,
+  mapValues, keyBy, map, find,
 } from 'lodash';
 import { BFormSelect } from 'bootstrap-vue';
 import FloatingLabelInput from '@/components/utils/FloatingLabelInput';
+import CallbackValidation from '@/utils/CallbackValidation';
 
 export default {
   name: 'KbaCreateCallback',
@@ -80,10 +81,7 @@ export default {
   props: {
     callback: {
       type: Object,
-      // make sure the callback has an output property that is an Array and has at least one item
-      validator: prop => prop.output
-                  && isArray(prop.output)
-                  && prop.output.length > 0,
+      validator: CallbackValidation.validateOutput,
       required: true,
     },
     index: {

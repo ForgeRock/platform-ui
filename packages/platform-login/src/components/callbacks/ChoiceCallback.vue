@@ -12,9 +12,10 @@
 
 <script>
 import {
-  mapValues, keyBy, map, isArray,
+  mapValues, keyBy, map,
 } from 'lodash';
 import { BFormSelect } from 'bootstrap-vue';
+import CallbackValidation from '@/utils/CallbackValidation';
 
 export default {
   components: {
@@ -24,9 +25,7 @@ export default {
     callback: {
       type: Object,
       // make sure the callback has an output property that is an Array and has at least one item
-      validator: prop => prop.output
-                  && isArray(prop.output)
-                  && prop.output.length > 0,
+      validator: CallbackValidation.validateOutput,
       required: true,
     },
     index: {
