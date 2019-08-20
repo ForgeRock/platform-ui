@@ -18,7 +18,7 @@ module.exports = {
   runtimeCompiler: true,
   devServer: {
     host: '0.0.0.0',
-    port: 8080,
+    port: process.env.DEV_PORT || 8080,
   },
   css: {
     loaderOptions: {
