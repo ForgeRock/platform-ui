@@ -1,8 +1,7 @@
 <template>
   <BCard
     no-body
-    class="mb-3"
-  >
+    class="mb-3">
     <slot name="list-group-header">
       <BCardBody class="py-4">
         <h5 :class="[{ 'mb-4': subtitle, 'mb-0': !subtitle}, 'card-title']">
@@ -10,8 +9,7 @@
         </h5>
         <h6
           v-if="subtitle"
-          class="card-subtitle mb-0 text-muted"
-        >
+          class="card-subtitle mb-0 text-muted">
           {{ subtitle }}
         </h6>
       </BCardBody>
@@ -28,20 +26,20 @@
  *
  * */
 export default {
-  name: 'ListGroup',
-  props: {
-    title: {
-      default: '',
-      type: String,
-    },
-    subtitle: {
-      default: '',
-      type: String,
-    },
-  },
-  data() {
-    return {};
-  },
+	name: 'ListGroup',
+	props: {
+		title: {
+			default: '',
+			type: String,
+		},
+		subtitle: {
+			default: '',
+			type: String,
+		},
+	},
+	data() {
+		return {};
+	},
 };
 </script>
 

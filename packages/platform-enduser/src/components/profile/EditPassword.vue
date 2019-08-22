@@ -1,12 +1,10 @@
 <template>
   <FrListItem
     :collapsible="true"
-    :panel-shown="false"
-  >
+    :panel-shown="false">
     <div
       slot="list-item-header"
-      class="d-inline-flex w-100 media"
-    >
+      class="d-inline-flex w-100 media">
       <div class="media-body align-self-center">
         <h6>{{ $t('pages.profile.accountSecurity.password') }}</h6>
       </div>
@@ -14,8 +12,7 @@
         <div
           class="btn btn-sm btn-link float-right btn-cancel"
           @click="clearComponent()"
-          ref="cancel"
-        >
+          ref="cancel">
           {{ $t('common.form.cancel') }}
         </div>
         <div class="btn btn-sm btn-link float-right btn-edit">
@@ -26,8 +23,7 @@
 
     <div
       slot="list-item-collapse-body"
-      class="d-inline-flex w-100"
-    >
+      class="d-inline-flex w-100">
       <BForm class="w-100">
         <BRow>
           <BCol sm="8">
@@ -44,32 +40,27 @@
                   :class="[{'is-invalid': errors.has('currentPassword')}, 'form-control']"
                   :type="inputCurrent"
                   v-model="currentPassword"
-                  v-validate="'required'"
-                />
+                  v-validate="'required'" />
                 <div class="input-group-append">
                   <BBtn
                     @click="revealCurrent"
                     class="btn btn-secondary"
-                    type="button"
-                  >
+                    type="button">
                     <i :class="[{'fa-eye-slash': !showCurrent}, {'fa-eye': showCurrent}, 'fa']" />
                   </BBtn>
                 </div>
               </div>
               <FrValidationError
                 :validator-errors="errors"
-                field-name="currentPassword"
-              />
+                field-name="currentPassword" />
             </BFormGroup>
 
             <FrPasswordPolicyInput
               :policy-api="`${this.$root.userStore.state.managedResource}/${userId}`"
-              v-model="newPassword"
-            >
+              v-model="newPassword">
               <BFormGroup
                 class="mb-3"
-                slot="custom-input"
-              >
+                slot="custom-input">
                 <label for="newPassword">
                   {{ $t('pages.profile.accountSecurity.newPassword') }}
                 </label>
@@ -79,14 +70,12 @@
                     :type="inputNew"
                     v-model="newPassword"
                     name="password"
-                    v-validate.initial="'required|policy'"
-                  />
+                    v-validate.initial="'required|policy'" />
                   <div class="input-group-append">
                     <button
                       @click="revealNew"
                       class="btn btn-secondary"
-                      type="button"
-                    >
+                      type="button">
                       <i :class="[{'fa-eye-slash': !showNew}, {'fa-eye': showNew}, 'fa']" />
                     </button>
                   </div>
@@ -100,13 +89,11 @@
               class="ld-ext-right mb-3"
               :label="$t('pages.profile.accountSecurity.savePassword')"
               :loading="loading"
-              @click="onSavePassword"
-            />
+              @click="onSavePassword" />
 
             <div
               v-if="this.$root.applicationStore.state.passwordReset"
-              class="text-nowrap pb-2"
-            >
+              class="text-nowrap pb-2">
               {{ $t('pages.profile.accountSecurity.rememberPassword') }} <RouterLink to="PasswordReset">
                 {{ $t('pages.profile.accountSecurity.resetPassword') }}
               </RouterLink>
@@ -129,88 +116,88 @@ import ValidationError from '@/components/utils/ValidationError';
  *
  */
 export default {
-  $_veeValidate: {
-    validator: 'new',
-  },
-  name: 'EditPassword',
-  components: {
-    FrListItem: ListItem,
-    FrLoadingButton: LoadingButton,
-    FrPasswordPolicyInput: PolicyPasswordInput,
-    FrValidationError: ValidationError,
-  },
-  data() {
-    return {
-      currentPassword: '',
-      newPassword: '',
-      loading: false,
-      showNew: true,
-      showCurrent: true,
-      inputCurrent: 'password',
-      inputNew: 'password',
-      userId: this.$root.userStore.getUserState().userId,
-    };
-  },
-  methods: {
-    clearComponent() {
-      this.currentPassword = '';
-      this.newPassword = '';
-      this.errors.clear();
-    },
-    resetComponent() {
-      this.loading = false;
-      this.currentPassword = '';
-      this.newPassword = '';
-      this.$refs.cancel.click();
-    },
-    displayError(error) {
-      if (error.response.status === 403) {
-        this.errors.add({
-          field: 'currentPassword',
-          msg: 'Incorrect password provided',
-        });
-      }
-    },
-    onSavePassword() {
-      const headers = {
-        'X-Requested-With': 'XMLHttpRequest',
-        'X-OpenIDM-Reauth-Password': this.encodeRFC5987IfNecessary(this.currentPassword),
-      };
-      const payload = [{ operation: 'add', field: '/password', value: this.newPassword }];
-      const onSuccess = this.resetComponent.bind(this);
-      const onError = this.displayError.bind(this);
+	$_veeValidate: {
+		validator: 'new',
+	},
+	name: 'EditPassword',
+	components: {
+		FrListItem: ListItem,
+		FrLoadingButton: LoadingButton,
+		FrPasswordPolicyInput: PolicyPasswordInput,
+		FrValidationError: ValidationError,
+	},
+	data() {
+		return {
+			currentPassword: '',
+			newPassword: '',
+			loading: false,
+			showNew: true,
+			showCurrent: true,
+			inputCurrent: 'password',
+			inputNew: 'password',
+			userId: this.$root.userStore.getUserState().userId,
+		};
+	},
+	methods: {
+		clearComponent() {
+			this.currentPassword = '';
+			this.newPassword = '';
+			this.errors.clear();
+		},
+		resetComponent() {
+			this.loading = false;
+			this.currentPassword = '';
+			this.newPassword = '';
+			this.$refs.cancel.click();
+		},
+		displayError(error) {
+			if (error.response.status === 403) {
+				this.errors.add({
+					field: 'currentPassword',
+					msg: 'Incorrect password provided',
+				});
+			}
+		},
+		onSavePassword() {
+			const headers = {
+				'X-Requested-With': 'XMLHttpRequest',
+				'X-OpenIDM-Reauth-Password': this.encodeRFC5987IfNecessary(this.currentPassword),
+			};
+			const payload = [{ operation: 'add', field: '/password', value: this.newPassword }];
+			const onSuccess = this.resetComponent.bind(this);
+			const onError = this.displayError.bind(this);
 
-      this.errors.clear();
+			this.errors.clear();
 
-      this.$validator.validateAll().then((valid) => {
-        if (valid) {
-          this.$emit('updateProfile', payload, { headers, onSuccess, onError });
-        } else {
-          this.displayNotification('error', this.$t('pages.profile.accountSecurity.invalidPassword'));
-        }
-      });
-    },
-    validate() {
-      return this.$validator.validateAll();
-    },
-    revealNew() {
-      if (this.inputNew === 'password') {
-        this.inputNew = 'text';
-        this.showNew = false;
-      } else {
-        this.inputNew = 'password';
-        this.showNew = true;
-      }
-    },
-    revealCurrent() {
-      if (this.inputCurrent === 'password') {
-        this.inputCurrent = 'text';
-        this.showCurrent = false;
-      } else {
-        this.inputCurrent = 'password';
-        this.showCurrent = true;
-      }
-    },
-  },
+			this.$validator.validateAll().then((valid) => {
+				if (valid) {
+					this.$emit('updateProfile', payload, { headers, onSuccess, onError });
+				} else {
+					this.displayNotification('error', this.$t('pages.profile.accountSecurity.invalidPassword'));
+				}
+			});
+		},
+		validate() {
+			return this.$validator.validateAll();
+		},
+		revealNew() {
+			if (this.inputNew === 'password') {
+				this.inputNew = 'text';
+				this.showNew = false;
+			} else {
+				this.inputNew = 'password';
+				this.showNew = true;
+			}
+		},
+		revealCurrent() {
+			if (this.inputCurrent === 'password') {
+				this.inputCurrent = 'text';
+				this.showCurrent = false;
+			} else {
+				this.inputCurrent = 'password';
+				this.showCurrent = true;
+			}
+		},
+	},
 };
 </script>

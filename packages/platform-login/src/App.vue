@@ -4,8 +4,7 @@
       <div id="appContentWrapper">
         <Transition
           name="fade"
-          mode="out-in"
-        >
+          mode="out-in">
           <RouterView :key="this.$route.fullPath" />
         </Transition>
       </div>
@@ -18,17 +17,14 @@
       group="IDMMessages"
       position="bottom left"
       width="320"
-      :duration="400000"
-    >
+      :duration="400000">
       <template
         slot="body"
-        slot-scope="props"
-      >
+        slot-scope="props">
         <FrAlert
           class="w-50 m-3"
           :variant="props.item.type"
-          show
-        >
+          show>
           {{ props.item.text }}
         </FrAlert>
       </template>
@@ -40,10 +36,10 @@
 import Alert from '@forgerock/platform-components/src/components/alert/';
 
 export default {
-  name: 'App',
-  components: {
-    FrAlert: Alert,
-  },
+	name: 'App',
+	components: {
+		FrAlert: Alert,
+	},
 };
 </script>
 

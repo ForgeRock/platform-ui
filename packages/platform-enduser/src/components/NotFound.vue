@@ -2,12 +2,10 @@
   <BContainer
     id="notFoundContainer"
     class="h-100 d-flex"
-    fluid
-  >
+    fluid>
     <div
       style="width: 350px;"
-      class="m-auto align-self-center text-center"
-    >
+      class="m-auto align-self-center text-center">
       <div class="fr-speech-bubble">
         <p>
           <strong class="text-muted">
@@ -22,8 +20,7 @@
         width="112"
         height="112"
         alt="img"
-        class="fr-ghost mb-2"
-      />
+        class="fr-ghost mb-2" />
       <p class="text-centered">
         {{ $t("pages.notFound.couldNotFind") }}
       </p>
@@ -32,8 +29,7 @@
         <BButton
           style="width:250px;"
           variant="primary"
-          class="mt-2 mb-2"
-        >
+          class="mt-2 mb-2">
           {{ $t("pages.notFound.returnToDashboard") }}
         </BButton>
       </RouterLink>
@@ -44,8 +40,7 @@
         width="112"
         height="112"
         alt="img"
-        class="fr-shadow"
-      />
+        class="fr-shadow" />
     </div>
   </BContainer>
 </template>
@@ -55,12 +50,12 @@
  * @description The default 404 page when Vue router is unable to locate a route.
  */
 export default {
-  name: 'NotFound',
-  data() {
-    return {
-      ghostMessage: '404',
-    };
-  },
+	name: 'NotFound',
+	data() {
+		return {
+			ghostMessage: '404',
+		};
+	},
 };
 </script>
 

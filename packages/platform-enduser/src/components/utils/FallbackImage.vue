@@ -5,12 +5,10 @@
       :src="src"
       :width="width"
       :height="width"
-      :alt="alt"
-    />
+      :alt="alt" />
     <span
       v-else
-      class="icon-holder p-2 d-flex bg-light border rounded"
-    >
+      class="icon-holder p-2 d-flex bg-light border rounded">
       <i :class="['fa', fallback, 'fa-lg text-dark mt-auto']" />
     </span>
   </div>
@@ -25,44 +23,44 @@ import axios from 'axios';
  *
  * */
 export default {
-  name: 'ImageFallback',
-  props: {
-    src: {
-      type: String,
-      default: () => '',
-    },
-    width: {
-      type: [String, Number],
-      default: () => '',
-    },
-    alt: {
-      type: String,
-      default: () => '',
-    },
-    fallback: {
-      type: String,
-      default: () => '',
-    },
-  },
-  data() {
-    return {
-      imageFound: false,
-    };
-  },
-  mounted() {
-    /* istanbul ignore next */
-    if (!_.isNull(this.src) && !_.isUndefined(this.src) && this.src.length > 0) {
-      axios.get(`${this.src}`).then(({ status }) => {
-        this.imageFound = status === 200;
-      }).catch((error) => {
-        if (error) {
-          this.imageFound = false;
-        }
-      });
-    } else {
-      this.imageFound = false;
-    }
-  },
+	name: 'ImageFallback',
+	props: {
+		src: {
+			type: String,
+			default: () => '',
+		},
+		width: {
+			type: [String, Number],
+			default: () => '',
+		},
+		alt: {
+			type: String,
+			default: () => '',
+		},
+		fallback: {
+			type: String,
+			default: () => '',
+		},
+	},
+	data() {
+		return {
+			imageFound: false,
+		};
+	},
+	mounted() {
+		/* istanbul ignore next */
+		if (!_.isNull(this.src) && !_.isUndefined(this.src) && this.src.length > 0) {
+			axios.get(`${this.src}`).then(({ status }) => {
+				this.imageFound = status === 200;
+			}).catch((error) => {
+				if (error) {
+					this.imageFound = false;
+				}
+			});
+		} else {
+			this.imageFound = false;
+		}
+	},
 };
 </script>
 

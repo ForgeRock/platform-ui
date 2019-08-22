@@ -4,14 +4,12 @@
       <div
         class="btn-toolbar row mb-4"
         role="toolbar"
-        aria-label="Toolbar with button groups"
-      >
+        aria-label="Toolbar with button groups">
         <div class="input-group col-sm-4">
           <div class="input-group-prepend">
             <div
               class="input-group-text"
-              id="btnGroupAddon"
-            >
+              id="btnGroupAddon">
               <i class="fa fa-search" />
             </div>
           </div>
@@ -21,41 +19,34 @@
             aria-label="Search"
             aria-describedby="btnGroupAddon"
             :placeholder="$t('pages.uma.resources.search')"
-            v-model="resourceFilter"
-          >
+            v-model="resourceFilter">
         </div>
         <div class="col">
           <BDropdown
             variant="link"
             right
-            class="float-right text-muted"
-          >
+            class="float-right text-muted">
             <template slot="button-content">
               <span class="text-muted">
                 <i
                   class="fa fa-list"
-                  v-if="!this.viewgrid"
-                />
+                  v-if="!this.viewgrid" />
                 <i
                   class="fa fa-th"
-                  v-if="this.viewgrid"
-                />
+                  v-if="this.viewgrid" />
               </span>
             </template>
             <BDropdownHeader>{{ $t('pages.uma.resources.viewAs') }}</BDropdownHeader>
             <BDropdownItem
               href="#"
-              @click="toggleGrid"
-            >
+              @click="toggleGrid">
               <div class="media">
                 <div
                   class="d-flex align-self-center text-center"
-                  style="min-width:1.5rem;"
-                >
+                  style="min-width:1.5rem;">
                   <i
                     class="fa fa-check text-success"
-                    v-if="!this.viewgrid"
-                  />
+                    v-if="!this.viewgrid" />
                 </div>
                 <div class="media-body">
                   {{ $t('pages.uma.resources.list') }}
@@ -67,17 +58,14 @@
             </BDropdownItem>
             <BDropdownItem
               href="#"
-              @click="toggleGrid"
-            >
+              @click="toggleGrid">
               <div class="media">
                 <div
                   class="d-flex align-self-center text-center"
-                  style="min-width:1.5rem;"
-                >
+                  style="min-width:1.5rem;">
                   <i
                     class="fa fa-check text-success"
-                    v-if="this.viewgrid"
-                  />
+                    v-if="this.viewgrid" />
                 </div>
                 <div class="media-body">
                   {{ $t('pages.uma.resources.grid') }}
@@ -92,17 +80,14 @@
       </div>
       <div
         id="listView"
-        v-if="!this.viewgrid"
-      >
+        v-if="!this.viewgrid">
         <BCard
           no-body
-          class="my-4"
-        >
+          class="my-4">
           <BListGroup flush>
             <BListGroupItem
               v-for="(resource, index) in filteredResources"
-              :key="`listResource-${index}`"
-            >
+              :key="`listResource-${index}`">
               <div class="d-sm-flex">
                 <div class="media-body">
                   <div class="media mb-2 mb-sm-0">
@@ -111,8 +96,7 @@
                         :src="resource.icon_uri"
                         :height="40"
                         :width="40"
-                        fallback="fa-file-alt fa-2x m-auto pt-1 pb-1"
-                      />
+                        fallback="fa-file-alt fa-2x m-auto pt-1 pb-1" />
                     </div>
                     <div class="d-sm-flex media-body align-self-center">
                       <div class="media-body mb-2 mb-sm-0">
@@ -121,20 +105,17 @@
                         </div>
                         <small
                           class="text-muted"
-                          v-if="!resource.policy"
-                        >
+                          v-if="!resource.policy">
                           {{ $t('pages.uma.resources.resourceNotShared') }}
                         </small>
                         <small
                           class="text-muted"
-                          v-else-if="resource.policy.permissions.length > 1"
-                        >
+                          v-else-if="resource.policy.permissions.length > 1">
                           {{ $t('pages.uma.resources.sharedWithPeople', {numberOf: resource.policy.permissions.length}) }}
                         </small>
                         <small
                           class="text-muted"
-                          v-else
-                        >
+                          v-else>
                           {{ $t('pages.uma.resources.sharedWithPerson') }}
                         </small>
                       </div>
@@ -146,15 +127,13 @@
                     <a
                       href="#"
                       class="align-self-center pr-3"
-                      @click="renderShareModal(resource)"
-                    >
+                      @click="renderShareModal(resource)">
                       {{ $t('pages.uma.resources.share') }}
                     </a>
                     <a
                       href="#"
                       class="align-self-center pr-3"
-                      @click="renderUnshareModal(resource.name, resource._id)"
-                    >
+                      @click="renderUnshareModal(resource.name, resource._id)">
                       {{ $t('pages.uma.resources.unshare') }}
                     </a>
                   </div>
@@ -162,16 +141,14 @@
                     <a
                       href="#"
                       class="align-self-center pr-3"
-                      @click="renderShareModal(resource)"
-                    >
+                      @click="renderShareModal(resource)">
                       {{ $t('pages.uma.resources.share') }}
                     </a>
                     <a
                       href="#"
                       v-if="resource.policy && resource.policy.permissions.length > 0"
                       class="align-self-center pr-3"
-                      @click="renderUnshareModal(resource.name, resource._id)"
-                    >
+                      @click="renderUnshareModal(resource.name, resource._id)">
                       {{ $t('pages.uma.resources.unshare') }}
                     </a>
                   </div>
@@ -183,22 +160,19 @@
       </div>
       <div
         id="gridView"
-        v-if="this.viewgrid"
-      >
+        v-if="this.viewgrid">
         <div class="row">
           <div
             v-for="(resource, index) in filteredResources"
             :key="`viewResource-${index}`"
-            class="col-sm-6 col-md-3"
-          >
+            class="col-sm-6 col-md-3">
             <div class="card text-center mb-4">
               <div class="card-header py-0 px-1 border-0">
                 <BDropdown
                   variant="link"
                   class="fr-card-menu-link float-right"
                   right
-                  no-caret
-                >
+                  no-caret>
                   <template slot="button-content">
                     <span class="text-muted">
                       <i class="fa fa-ellipsis-h" />
@@ -206,14 +180,12 @@
                   </template>
                   <BDropdownItem
                     href="#"
-                    @click="renderShareModal(resource)"
-                  >
+                    @click="renderShareModal(resource)">
                     {{ $t('pages.uma.resources.share') }}
                   </BDropdownItem>
                   <BDropdownItem
                     href="#"
-                    @click="renderUnshareModal(resource.name, resource._id)"
-                  >
+                    @click="renderUnshareModal(resource.name, resource._id)">
                     {{ $t('pages.uma.resources.unshare') }}
                   </BDropdownItem>
                 </BDropdown>
@@ -224,28 +196,24 @@
                   :width="86"
                   :height="86"
                   class="pl-5 pr-5 pt-3 mb-3"
-                  fallback="fa-file-alt fa-3x m-auto pt-3 pb-3"
-                />
+                  fallback="fa-file-alt fa-3x m-auto pt-3 pb-3" />
                 <h5 class="card-title text-truncate">
                   {{ resource.name }}
                 </h5>
                 <div class="card-text">
                   <small
                     class="text-muted"
-                    v-if="!resource.policy"
-                  >
+                    v-if="!resource.policy">
                     {{ $t('pages.uma.resources.resourceNotShared') }}
                   </small>
                   <small
                     class="text-muted"
-                    v-else-if="resource.policy.permissions.length > 1"
-                  >
+                    v-else-if="resource.policy.permissions.length > 1">
                     {{ $t('pages.uma.resources.sharedWithPeople', {numberOf: resource.policy.permissions.length}) }}
                   </small>
                   <small
                     class="text-muted"
-                    v-else
-                  >
+                    v-else>
                     {{ $t('pages.uma.resources.sharedWithPerson') }}
                   </small>
                 </div>
@@ -267,40 +235,40 @@ import FallbackImage from '@/components/utils/FallbackImage';
 *
 * */
 export default {
-  name: 'Resources',
-  components: {
-    FrFallbackImage: FallbackImage,
-  },
-  data() {
-    return {
-      viewgrid: false,
-      showModalActions: false,
-      newshare: '',
-      resourceFilter: '',
-    };
-  },
-  props: {
-    resources: {
-      type: Array,
-      default: () => {},
-    },
-  },
-  methods: {
-    renderShareModal(resource) {
-      this.$emit('renderShareModal', resource);
-    },
-    renderUnshareModal(resourceName, resourceId) {
-      this.$emit('renderUnshareModal', resourceName, resourceId);
-    },
-    toggleGrid() {
-      this.viewgrid = !this.viewgrid;
-    },
-  },
-  computed: {
-    filteredResources() {
-      return _.filter(this.resources, resource => resource.name.includes(this.resourceFilter));
-    },
-  },
+	name: 'Resources',
+	components: {
+		FrFallbackImage: FallbackImage,
+	},
+	data() {
+		return {
+			viewgrid: false,
+			showModalActions: false,
+			newshare: '',
+			resourceFilter: '',
+		};
+	},
+	props: {
+		resources: {
+			type: Array,
+			default: () => {},
+		},
+	},
+	methods: {
+		renderShareModal(resource) {
+			this.$emit('renderShareModal', resource);
+		},
+		renderUnshareModal(resourceName, resourceId) {
+			this.$emit('renderUnshareModal', resourceName, resourceId);
+		},
+		toggleGrid() {
+			this.viewgrid = !this.viewgrid;
+		},
+	},
+	computed: {
+		filteredResources() {
+			return _.filter(this.resources, resource => resource.name.includes(this.resourceFilter));
+		},
+	},
 };
 </script>
 

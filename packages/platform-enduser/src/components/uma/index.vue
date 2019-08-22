@@ -4,55 +4,46 @@
       <BTabs
         class="mt-4"
         v-if="resources.length > 0"
-        @click="testForReload"
-      >
+        @click="testForReload">
         <BTab
           title="Resources"
-          active
-        >
+          active>
           <FrResources
             @renderShareModal="renderShareModal"
             @renderUnshareModal="renderUnshareModal"
-            :resources="resources"
-          />
+            :resources="resources" />
         </BTab>
         <BTab
           title="Activity"
           v-if="activity.length > 0"
-          @click="testForReload"
-        >
+          @click="testForReload">
           <FrActivity :uma-history="umaHistory" />
         </BTab>
         <BTab
           title="Requests"
-          v-if="requests.length > 0"
-        >
+          v-if="requests.length > 0">
           <template slot="title">
             {{ $t('pages.uma.notifications.requests') }} <BBadge
               pill
-              variant="danger"
-            >
+              variant="danger">
               {{ requests.length }}
             </BBadge>
           </template>
           <FrRequests
             :requests="requests"
-            @finalizeResourceAccess="finalizeResourceAccess"
-          />
+            @finalizeResourceAccess="finalizeResourceAccess" />
         </BTab>
       </BTabs>
       <div v-else>
         <FrCenterCard
           :show-logo="false"
-          class="mt-5"
-        >
+          class="mt-5">
           <BCardBody slot="center-card-body">
             <img
               :src="require('@/assets/images/empty-box.svg')"
               class="mb-4"
               :alt="$t('common.form.logo')"
-              style="width:150px;"
-            >
+              style="width:150px;">
             <h5 class="h5">
               {{ $t(`pages.uma.resources.noDataState`) }}
             </h5>
@@ -64,13 +55,11 @@
         :resource="resource"
         @shareResource="shareResource"
         @renderUnshareModal="renderUnshareModal"
-        @modifyResource="modifyResource"
-      />
+        @modifyResource="modifyResource" />
       <FrUnshare
         :resource-id="resourceId"
         :resource-name="resourceName"
-        @unshareResource="unshareResource"
-      />
+        @unshareResource="unshareResource" />
     </template>
   </BContainer>
 </template>
@@ -89,254 +78,254 @@ import Unshare from '@/components/uma/Unshare';
  * This UI feature requires full stack (IDM/AM) to be configured and for AM to be properly configured to make use of UMA
  * */
 export default {
-  name: 'Sharing',
-  components: {
-    FrActivity: Activity,
-    FrCenterCard: CenterCard,
-    FrRequests: Requests,
-    FrResources: Resources,
-    FrShare: Share,
-    FrUnshare: Unshare,
-  },
-  data() {
-    return {
-      requestsLoaded: false,
-      resource: null,
-      resourceId: '',
-      resourceName: '',
-      resources: [],
-      activity: [],
-      requests: [],
-      resourcesCount: 0,
-      activityCount: 0,
-      delayedUpdate: false,
-    };
-  },
-  computed: {
-    amDataEndpoints() {
-      let tempAmEndpoints = {};
+	name: 'Sharing',
+	components: {
+		FrActivity: Activity,
+		FrCenterCard: CenterCard,
+		FrRequests: Requests,
+		FrResources: Resources,
+		FrShare: Share,
+		FrUnshare: Unshare,
+	},
+	data() {
+		return {
+			requestsLoaded: false,
+			resource: null,
+			resourceId: '',
+			resourceName: '',
+			resources: [],
+			activity: [],
+			requests: [],
+			resourcesCount: 0,
+			activityCount: 0,
+			delayedUpdate: false,
+		};
+	},
+	computed: {
+		amDataEndpoints() {
+			let tempAmEndpoints = {};
 
-      if (!_.isNull(this.$root.applicationStore.state.amDataEndpoints)) {
-        tempAmEndpoints = this.$root.applicationStore.state.amDataEndpoints;
-      }
+			if (!_.isNull(this.$root.applicationStore.state.amDataEndpoints)) {
+				tempAmEndpoints = this.$root.applicationStore.state.amDataEndpoints;
+			}
 
-      return tempAmEndpoints;
-    },
-    umaHistory() {
-      return _.map(this.activity, (res) => {
-        const resource = _.find(this.resources, { _id: res.resourceSetId });
-        const newRes = _.cloneDeep(res);
+			return tempAmEndpoints;
+		},
+		umaHistory() {
+			return _.map(this.activity, (res) => {
+				const resource = _.find(this.resources, { _id: res.resourceSetId });
+				const newRes = _.cloneDeep(res);
 
-        if (_.has(resource, 'icon_uri')) {
-          newRes.icon_uri = resource.icon_uri;
-        }
+				if (_.has(resource, 'icon_uri')) {
+					newRes.icon_uri = resource.icon_uri;
+				}
 
-        return newRes;
-      });
-    },
-  },
-  beforeMount() {
-    this.loadData();
-  },
-  methods: {
-    loadData() {
-      this.getResources();
-      this.getActivity();
-      this.getRequests();
-    },
-    getResources() {
-      /* istanbul ignore next */
-      const { userId } = this.$root.userStore.state;
-
-
-      const query = '?_queryId=*';
+				return newRes;
+			});
+		},
+	},
+	beforeMount() {
+		this.loadData();
+	},
+	methods: {
+		loadData() {
+			this.getResources();
+			this.getActivity();
+			this.getRequests();
+		},
+		getResources() {
+			/* istanbul ignore next */
+			const { userId } = this.$root.userStore.state;
 
 
-      const selfServiceInstance = this.getRequestService();
+			const query = '?_queryId=*';
 
 
-      const url = this.amDataEndpoints.baseUrl + userId + this.amDataEndpoints.resourceSet + query;
+			const selfServiceInstance = this.getRequestService();
 
-      /* istanbul ignore next */
-      // by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
-      selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
-        this.resources = response.data.result;
-        this.requestsLoaded = true;
-      })
-        .catch((error) => {
-          /* istanbul ignore next */
-          this.resources = [];
-          this.requestsLoaded = true;
 
-          if (error.response) {
-            this.displayNotification('error', error.response.data.message);
-          } else {
-            this.displayNotification('error', error.message);
-          }
-        });
-    },
-    getActivity() {
-      /* istanbul ignore next */
-      const { userId } = this.$root.userStore.state;
-      const query = '?_sortKeys=-eventTime&_queryFilter=true';
-      const selfServiceInstance = this.getRequestService();
-      const url = this.amDataEndpoints.baseUrl + userId + this.amDataEndpoints.auditHistory + query;
+			const url = this.amDataEndpoints.baseUrl + userId + this.amDataEndpoints.resourceSet + query;
 
-      /* istanbul ignore next */
-      // by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
-      selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
-        this.activity = response.data.result;
-      })
-        .catch((error) => {
-          this.activity = [];
-          /* istanbul ignore next */
-          if (error.response) {
-            this.displayNotification('error', error.response.data.message);
-          } else {
-            this.displayNotification('error', error.message);
-          }
-        });
-    },
-    getRequests() {
-      /* istanbul ignore next */
-      const { userId } = this.$root.userStore.state;
-      const query = '?_sortKeys=user&_queryFilter=true';
-      const selfServiceInstance = this.getRequestService();
-      const url = `${this.amDataEndpoints.baseUrl + userId}/uma/pendingrequests${query}`;
+			/* istanbul ignore next */
+			// by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
+			selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
+				this.resources = response.data.result;
+				this.requestsLoaded = true;
+			})
+				.catch((error) => {
+					/* istanbul ignore next */
+					this.resources = [];
+					this.requestsLoaded = true;
 
-      /* istanbul ignore next */
-      // by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
-      selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
-        this.requests = _.map(response.data.result, (request) => {
-          const resource = _.find(this.resources, { name: request.resource });
-          const requestCopy = _.cloneDeep(request);
+					if (error.response) {
+						this.displayNotification('error', error.response.data.message);
+					} else {
+						this.displayNotification('error', error.message);
+					}
+				});
+		},
+		getActivity() {
+			/* istanbul ignore next */
+			const { userId } = this.$root.userStore.state;
+			const query = '?_sortKeys=-eventTime&_queryFilter=true';
+			const selfServiceInstance = this.getRequestService();
+			const url = this.amDataEndpoints.baseUrl + userId + this.amDataEndpoints.auditHistory + query;
 
-          if (_.has(resource, 'icon_uri')) {
-            requestCopy.icon_uri = resource.icon_uri;
-          }
+			/* istanbul ignore next */
+			// by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
+			selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
+				this.activity = response.data.result;
+			})
+				.catch((error) => {
+					this.activity = [];
+					/* istanbul ignore next */
+					if (error.response) {
+						this.displayNotification('error', error.response.data.message);
+					} else {
+						this.displayNotification('error', error.message);
+					}
+				});
+		},
+		getRequests() {
+			/* istanbul ignore next */
+			const { userId } = this.$root.userStore.state;
+			const query = '?_sortKeys=user&_queryFilter=true';
+			const selfServiceInstance = this.getRequestService();
+			const url = `${this.amDataEndpoints.baseUrl + userId}/uma/pendingrequests${query}`;
 
-          if (_.has(resource, 'scopes')) {
-            requestCopy.scopes = resource.scopes;
-          }
+			/* istanbul ignore next */
+			// by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
+			selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
+				this.requests = _.map(response.data.result, (request) => {
+					const resource = _.find(this.resources, { name: request.resource });
+					const requestCopy = _.cloneDeep(request);
 
-          requestCopy.allowed = false;
-          requestCopy.decision = false;
+					if (_.has(resource, 'icon_uri')) {
+						requestCopy.icon_uri = resource.icon_uri;
+					}
 
-          return requestCopy;
-        });
-      })
-        .catch((error) => {
-          /* istanbul ignore next */
-          this.requests = {};
+					if (_.has(resource, 'scopes')) {
+						requestCopy.scopes = resource.scopes;
+					}
 
-          if (error.response) {
-            this.displayNotification('error', error.response.data.message);
-          } else {
-            this.displayNotification('error', error.message);
-          }
-        });
-    },
-    renderShareModal(resource) {
-      this.resource = resource;
-      this.$nextTick(() => {
-        this.$root.$emit('bv::show::modal', 'shareModal');
-      });
-    },
-    renderUnshareModal(resourceName, resourceId) {
-      this.resourceName = resourceName;
-      this.resourceId = resourceId;
-      this.$nextTick(() => {
-        this.$root.$emit('bv::show::modal', 'unshareModal');
-      });
-    },
-    shareResource(payload, config = {}) {
-      /* istanbul ignore next */
-      const { userId } = this.$root.userStore.state;
-      const successMsg = this.$t('common.user.sharing.shareSuccess');
-      const selfServiceInstance = this.getRequestService();
-      const url = `${this.amDataEndpoints.baseUrl + userId}/uma/policies/${payload.policyId}`;
+					requestCopy.allowed = false;
+					requestCopy.decision = false;
 
-      /* istanbul ignore next */
-      selfServiceInstance.put(url, payload, { withCredentials: true }).then(() => {
-        if (config.onSuccess) {
-          config.onSuccess();
-        }
-        this.displayNotification('success', successMsg);
-        this.loadData();
-      })
-        .catch((error) => {
-          /* istanbul ignore next */
-          this.displayNotification('error', error.response.data.message);
-        });
-    },
-    unshareResource(resourceId) {
-      /* istanbul ignore next */
-      const { userId } = this.$root.userStore.state;
-      const successMsg = this.$t('common.user.sharing.unshareSuccess');
-      const selfServiceInstance = this.getRequestService();
-      const url = `${this.amDataEndpoints.baseUrl + userId}/uma/policies/${resourceId}`;
+					return requestCopy;
+				});
+			})
+				.catch((error) => {
+					/* istanbul ignore next */
+					this.requests = {};
 
-      /* istanbul ignore next */
-      selfServiceInstance.delete(url, { withCredentials: true }).then(() => {
-        this.displayNotification('success', successMsg);
-        this.loadData();
-      })
-        .catch((error) => {
-          /* istanbul ignore next */
-          this.displayNotification('error', error.response.data.message);
-        });
-    },
-    modifyResource(resourceId, payload, config = {}) {
-      const successMsg = config.unshare ? this.$t('common.user.sharing.unshareSuccess') : this.$t('common.user.sharing.modifySuccess');
-      const { userId } = this.$root.userStore.state;
-      const url = `${this.amDataEndpoints.baseUrl + userId}/uma/policies/${resourceId}`;
-      const selfServiceInstance = this.getRequestService();
-      const headers = { 'Accept-API-Version': 'protocol=1.0,resource=1.0' };
+					if (error.response) {
+						this.displayNotification('error', error.response.data.message);
+					} else {
+						this.displayNotification('error', error.message);
+					}
+				});
+		},
+		renderShareModal(resource) {
+			this.resource = resource;
+			this.$nextTick(() => {
+				this.$root.$emit('bv::show::modal', 'shareModal');
+			});
+		},
+		renderUnshareModal(resourceName, resourceId) {
+			this.resourceName = resourceName;
+			this.resourceId = resourceId;
+			this.$nextTick(() => {
+				this.$root.$emit('bv::show::modal', 'unshareModal');
+			});
+		},
+		shareResource(payload, config = {}) {
+			/* istanbul ignore next */
+			const { userId } = this.$root.userStore.state;
+			const successMsg = this.$t('common.user.sharing.shareSuccess');
+			const selfServiceInstance = this.getRequestService();
+			const url = `${this.amDataEndpoints.baseUrl + userId}/uma/policies/${payload.policyId}`;
 
-      selfServiceInstance.put(url, payload, { withCredentials: true, headers })
-        .then(() => {
-          if (config.onSuccess) {
-            config.onSuccess();
-          }
+			/* istanbul ignore next */
+			selfServiceInstance.put(url, payload, { withCredentials: true }).then(() => {
+				if (config.onSuccess) {
+					config.onSuccess();
+				}
+				this.displayNotification('success', successMsg);
+				this.loadData();
+			})
+				.catch((error) => {
+					/* istanbul ignore next */
+					this.displayNotification('error', error.response.data.message);
+				});
+		},
+		unshareResource(resourceId) {
+			/* istanbul ignore next */
+			const { userId } = this.$root.userStore.state;
+			const successMsg = this.$t('common.user.sharing.unshareSuccess');
+			const selfServiceInstance = this.getRequestService();
+			const url = `${this.amDataEndpoints.baseUrl + userId}/uma/policies/${resourceId}`;
 
-          this.displayNotification('success', successMsg);
-          this.loadData();
-        })
-        .catch((error) => {
-          /* istanbul ignore next */
-          this.displayNotification('error', error.response.data.message);
-        });
-    },
-    finalizeResourceAccess(id, action, config = {}) {
-      /* istanbul ignore next */
-      const { userId } = this.$root.userStore.state;
-      const successMsg = action === 'approve' ? this.$t('common.user.sharing.requestAllowedSuccess') : this.$t('common.user.sharing.requestDeniedSuccess');
-      const selfServiceInstance = this.getRequestService();
-      const payload = { scopes: config.scopes || {} };
-      const url = `${this.amDataEndpoints.baseUrl}${userId}/uma/pendingrequests/${id}?_action=${action}`;
+			/* istanbul ignore next */
+			selfServiceInstance.delete(url, { withCredentials: true }).then(() => {
+				this.displayNotification('success', successMsg);
+				this.loadData();
+			})
+				.catch((error) => {
+					/* istanbul ignore next */
+					this.displayNotification('error', error.response.data.message);
+				});
+		},
+		modifyResource(resourceId, payload, config = {}) {
+			const successMsg = config.unshare ? this.$t('common.user.sharing.unshareSuccess') : this.$t('common.user.sharing.modifySuccess');
+			const { userId } = this.$root.userStore.state;
+			const url = `${this.amDataEndpoints.baseUrl + userId}/uma/policies/${resourceId}`;
+			const selfServiceInstance = this.getRequestService();
+			const headers = { 'Accept-API-Version': 'protocol=1.0,resource=1.0' };
 
-      /* istanbul ignore next */
-      selfServiceInstance.post(url, payload, { withCredentials: true }).then(() => {
-        if (config.onSuccess) {
-          config.onSuccess();
-        }
+			selfServiceInstance.put(url, payload, { withCredentials: true, headers })
+				.then(() => {
+					if (config.onSuccess) {
+						config.onSuccess();
+					}
 
-        this.delayedUpdate = true;
-        this.displayNotification('success', successMsg);
-      })
-        .catch((error) => {
-          /* istanbul ignore next */
-          this.displayNotification('error', error.response.data.message);
-        });
-    },
-    testForReload() {
-      if (this.delayedUpdate === true) {
-        this.delayedUpdate = false;
+					this.displayNotification('success', successMsg);
+					this.loadData();
+				})
+				.catch((error) => {
+					/* istanbul ignore next */
+					this.displayNotification('error', error.response.data.message);
+				});
+		},
+		finalizeResourceAccess(id, action, config = {}) {
+			/* istanbul ignore next */
+			const { userId } = this.$root.userStore.state;
+			const successMsg = action === 'approve' ? this.$t('common.user.sharing.requestAllowedSuccess') : this.$t('common.user.sharing.requestDeniedSuccess');
+			const selfServiceInstance = this.getRequestService();
+			const payload = { scopes: config.scopes || {} };
+			const url = `${this.amDataEndpoints.baseUrl}${userId}/uma/pendingrequests/${id}?_action=${action}`;
 
-        this.loadData();
-      }
-    },
-  },
+			/* istanbul ignore next */
+			selfServiceInstance.post(url, payload, { withCredentials: true }).then(() => {
+				if (config.onSuccess) {
+					config.onSuccess();
+				}
+
+				this.delayedUpdate = true;
+				this.displayNotification('success', successMsg);
+			})
+				.catch((error) => {
+					/* istanbul ignore next */
+					this.displayNotification('error', error.response.data.message);
+				});
+		},
+		testForReload() {
+			if (this.delayedUpdate === true) {
+				this.delayedUpdate = false;
+
+				this.loadData();
+			}
+		},
+	},
 };
 </script>
 

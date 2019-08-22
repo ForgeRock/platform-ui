@@ -2,15 +2,13 @@
 <template>
   <BContainer
     fluid
-    class="px-0 h-100 d-flex"
-  >
+    class="px-0 h-100 d-flex">
     <div class="fr-m-auto fr-center-card align-self-center">
       <BCard
         no-body
         class="border-xs-0 border-sm d-flex fr-stretch-card"
         header-tag="header"
-        footer-tag="footer"
-      >
+        footer-tag="footer">
         <BCardHeader class="d-flex align-items-center flex-fill">
           <!--For dark theme use vertical-logo-white.svg version of logo-->
 
@@ -20,8 +18,7 @@
               class="fr-logo mb-3 mt-2"
               :src="require('@/assets/images/vertical-logo.svg')"
               fluid
-              :alt="$t('common.form.logo')"
-            />
+              :alt="$t('common.form.logo')" />
             <slot name="center-card-header" />
           </div>
         </BCardHeader>
@@ -38,13 +35,13 @@
  *
  * */
 export default {
-  name: 'CenterCard',
-  props: {
-    showLogo: {
-      type: Boolean,
-      default: false,
-    },
-  },
+	name: 'CenterCard',
+	props: {
+		showLogo: {
+			type: Boolean,
+			default: false,
+		},
+	},
 };
 </script>
 

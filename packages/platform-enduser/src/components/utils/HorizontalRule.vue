@@ -5,8 +5,7 @@
     </div>
     <div
       class="col-auto pt-1"
-      v-html="insert"
-    >
+      v-html="insert">
       {{ insert }}
     </div>
     <div class="col pl-0">
@@ -21,13 +20,13 @@
  *
  * */
 export default {
-  name: 'HorizontalRule',
-  props: {
-    insert: {
-      type: String,
-      default: () => '',
-    },
-  },
+	name: 'HorizontalRule',
+	props: {
+		insert: {
+			type: String,
+			default: () => '',
+		},
+	},
 };
 </script>
 

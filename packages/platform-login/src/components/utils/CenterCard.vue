@@ -2,15 +2,13 @@
 <template>
   <BContainer
     fluid
-    class="px-0 h-100 d-flex"
-  >
+    class="px-0 h-100 d-flex">
     <div class="fr-m-auto fr-center-card align-self-center">
       <BCard
         no-body
         class="border-xs-0 border-sm d-flex fr-stretch-card"
         header-tag="header"
-        footer-tag="footer"
-      >
+        footer-tag="footer">
         <BCardHeader class="d-flex align-items-center flex-fill">
           <!--For dark theme use vertical-logo-white.svg version of logo-->
           <div class="d-flex flex-fill flex-column justify-content-center">
@@ -19,8 +17,7 @@
               class="fr-logo mb-3 mt-2"
               :src="`${publicPath}images/vertical-logo.svg`"
               fluid
-              :alt="$t('common.logo')"
-            />
+              :alt="$t('common.logo')" />
             <slot name="center-card-header" />
           </div>
         </BCardHeader>
@@ -32,7 +29,10 @@
 </template>
 <script>
 import {
-  BImg, BCardHeader, BContainer, BCard,
+	BImg,
+	BCardHeader,
+	BContainer,
+	BCard,
 } from 'bootstrap-vue';
 // TODO Add to components
 /**
@@ -40,22 +40,22 @@ import {
  *
  * */
 export default {
-  name: 'CenterCard',
-  components: {
-    BImg,
-    BCard,
-    BCardHeader,
-    BContainer,
-  },
-  data: () => ({
-    publicPath: process.env.BASE_URL,
-  }),
-  props: {
-    showLogo: {
-      type: Boolean,
-      default: false,
-    },
-  },
+	name: 'CenterCard',
+	components: {
+		BImg,
+		BCard,
+		BCardHeader,
+		BContainer,
+	},
+	data: () => ({
+		publicPath: process.env.BASE_URL,
+	}),
+	props: {
+		showLogo: {
+			type: Boolean,
+			default: false,
+		},
+	},
 };
 </script>
 

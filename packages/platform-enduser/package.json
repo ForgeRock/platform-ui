@@ -73,7 +73,11 @@
           "js": "never"
         }
       ],
-      "max-len": 0
+      "no-param-reassign": ["error", { "props": false }],
+      "indent": [2, "tab"],
+      "no-tabs": 0,
+      "max-len": 0,
+      "vue/html-closing-bracket-newline": 0
     },
     "parserOptions": {
       "parser": "babel-eslint"

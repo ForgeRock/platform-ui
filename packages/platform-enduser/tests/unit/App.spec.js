@@ -6,61 +6,61 @@ import i18n from '@/i18n';
 import App from '@/App';
 
 describe('Base App', () => {
-  Vue.use(BootstrapVue);
+	Vue.use(BootstrapVue);
 
-  const $route = {
-    path: '/test',
-    meta: {},
-  };
+	const $route = {
+		path: '/test',
+		meta: {},
+	};
 
 
-  const userStore = {
-    state: {
-      userId: null,
-    },
-  };
+	const userStore = {
+		state: {
+			userId: null,
+		},
+	};
 
-  it('Base App page loaded', () => {
-    const wrapper = shallowMount(App, {
-      i18n,
-      stubs: ['router-link', 'router-view', 'notifications'],
-      mocks: {
-        $route,
-        userStore,
-      },
-    });
+	it('Base App page loaded', () => {
+		const wrapper = shallowMount(App, {
+			i18n,
+			stubs: ['router-link', 'router-view', 'notifications'],
+			mocks: {
+				$route,
+				userStore,
+			},
+		});
 
-    expect(wrapper.name()).to.equal('App');
-  });
+		expect(wrapper.name()).to.equal('App');
+	});
 
-  it('Side nav toggle', () => {
-    const wrapper = shallowMount(App, {
-      i18n,
-      stubs: ['router-link', 'router-view', 'notifications'],
-      mocks: {
-        $route,
-        userStore,
-      },
-    });
+	it('Side nav toggle', () => {
+		const wrapper = shallowMount(App, {
+			i18n,
+			stubs: ['router-link', 'router-view', 'notifications'],
+			mocks: {
+				$route,
+				userStore,
+			},
+		});
 
-    expect(wrapper.vm.toggled).to.equal(false);
+		expect(wrapper.vm.toggled).to.equal(false);
 
-    wrapper.vm.onToggle();
+		wrapper.vm.onToggle();
 
-    expect(wrapper.vm.toggled).to.equal(true);
-  });
+		expect(wrapper.vm.toggled).to.equal(true);
+	});
 
-  it('Access generated icons', () => {
-    const wrapper = shallowMount(App, {
-      i18n,
-      stubs: ['router-link', 'router-view', 'notifications'],
-      mocks: {
-        $route,
-        userStore,
-      },
-    });
+	it('Access generated icons', () => {
+		const wrapper = shallowMount(App, {
+			i18n,
+			stubs: ['router-link', 'router-view', 'notifications'],
+			mocks: {
+				$route,
+				userStore,
+			},
+		});
 
-    expect(wrapper.vm.accessIcon('')).to.equal('fa fa-fw mr-3 fa-cube');
-    expect(wrapper.vm.accessIcon('fa-test')).to.equal('fa fa-fw mr-3 fa-test');
-  });
+		expect(wrapper.vm.accessIcon('')).to.equal('fa fa-fw mr-3 fa-cube');
+		expect(wrapper.vm.accessIcon('fa-test')).to.equal('fa fa-fw mr-3 fa-test');
+	});
 });

@@ -2,8 +2,7 @@
   <div class="mb-3">
     <div
       :class="[{'form-label-password': reveal}, 'form-label-group', 'mb-0']"
-      ref="floatingLabelGroup"
-    >
+      ref="floatingLabelGroup">
       <input
         :type="inputType"
         :id="id"
@@ -14,18 +13,15 @@
         :data-vv-as="label"
         @keyup="validator"
         ref="input"
-        :name="fieldName"
-      >
+        :name="fieldName">
       <div
         v-if="reveal"
-        class="input-group-append"
-      >
+        class="input-group-append">
         <button
           @click="revealText"
           class="btn btn-secondary"
           type="button"
-          @keyup.enter="$emit('enter')"
-        >
+          @keyup.enter="$emit('enter')">
           <i class="material-icons material-icons-outlined">
             <template v-if="show">
               visibility
@@ -39,22 +35,24 @@
 
       <label
         :hidden="hideLabel"
-        :for="id"
-      >
+        :for="id">
         {{ label }}
       </label>
     </div>
     <slot name="validationError">
       <FrValidationError
         :validator-errors="failedPolicies"
-        :field-name="fieldName"
-      />
+        :field-name="fieldName" />
     </slot>
   </div>
 </template>
 
 <script>
-import { delay, bind, noop } from 'lodash';
+import {
+	delay,
+	bind,
+	noop,
+} from 'lodash';
 import ValidationError from '@/components/utils/ValidationError';
 // TODO Add to components
 /**
@@ -62,101 +60,101 @@ import ValidationError from '@/components/utils/ValidationError';
  *
  * */
 export default {
-  name: 'FloatingLabelInput',
-  components: {
-    FrValidationError: ValidationError,
-  },
-  props: {
-    label: {
-      type: String,
-      default: '',
-    },
-    type: {
-      type: String,
-      default: '',
-    },
-    autofocus: {
-      type: String,
-      default: '',
-    },
-    fieldName: {
-      type: String,
-      default: '',
-    },
-    validator: {
-      type: Function,
-      default: () => noop,
-    },
-    reveal: {
-      type: Boolean,
-      default: false,
-    },
-    defaultValue: {
-      type: String,
-      default: '',
-    },
-    failedPolicies: {
-      type: Array,
-      default: () => [],
-    },
-  },
-  data() {
-    return {
-      inputValue: '',
-      id: null,
-      floatLabels: false,
-      hideLabel: true,
-      inputType: this.type,
-      show: true,
-    };
-  },
-  beforeMount() {
-    const generatedId = this._uid; // eslint-disable-line no-underscore-dangle
+	name: 'FloatingLabelInput',
+	components: {
+		FrValidationError: ValidationError,
+	},
+	props: {
+		label: {
+			type: String,
+			default: '',
+		},
+		type: {
+			type: String,
+			default: '',
+		},
+		autofocus: {
+			type: String,
+			default: '',
+		},
+		fieldName: {
+			type: String,
+			default: '',
+		},
+		validator: {
+			type: Function,
+			default: () => noop,
+		},
+		reveal: {
+			type: Boolean,
+			default: false,
+		},
+		defaultValue: {
+			type: String,
+			default: '',
+		},
+		failedPolicies: {
+			type: Array,
+			default: () => [],
+		},
+	},
+	data() {
+		return {
+			inputValue: '',
+			id: null,
+			floatLabels: false,
+			hideLabel: true,
+			inputType: this.type,
+			show: true,
+		};
+	},
+	beforeMount() {
+		const generatedId = this._uid; // eslint-disable-line no-underscore-dangle
 
-    this.id = `floatingLabelInput${generatedId}`;
-  },
-  mounted() {
-    /* istanbul ignore next */
-    delay(bind(() => {
-      if (navigator.userAgent.indexOf('Edge') >= 0) {
-        if (document.getElementById(`${this.id}`).value.length) {
-          this.floatLabels = true;
-          this.inputValue = document.getElementById(`${this.id}`).value;
-        }
-      } else if (navigator.userAgent.indexOf('Chrome') >= 0) {
-        if (document.querySelectorAll(`#${this.id}:-webkit-autofill`).length > 0) {
-          this.floatLabels = true;
-        }
-      }
-      this.hideLabel = false;
-    }, this), 400);
+		this.id = `floatingLabelInput${generatedId}`;
+	},
+	mounted() {
+		/* istanbul ignore next */
+		delay(bind(() => {
+			if (navigator.userAgent.indexOf('Edge') >= 0) {
+				if (document.getElementById(`${this.id}`).value.length) {
+					this.floatLabels = true;
+					this.inputValue = document.getElementById(`${this.id}`).value;
+				}
+			} else if (navigator.userAgent.indexOf('Chrome') >= 0) {
+				if (document.querySelectorAll(`#${this.id}:-webkit-autofill`).length > 0) {
+					this.floatLabels = true;
+				}
+			}
+			this.hideLabel = false;
+		}, this), 400);
 
-    if (this.defaultValue) {
-      this.inputValue = this.defaultValue;
-    }
+		if (this.defaultValue) {
+			this.inputValue = this.defaultValue;
+		}
 
-    // Browser consistent focus fix
-    if (this.autofocus === 'true') {
-      this.$refs.input.focus();
-    }
-  },
-  methods: {
-    revealText() {
-      if (this.inputType === 'password') {
-        this.inputType = 'text';
-        this.show = false;
-      } else {
-        this.inputType = 'password';
-        this.show = true;
-      }
-    },
-  },
-  watch: {
-    inputValue(newVal) {
-      this.floatLabels = newVal.length > 0;
-      this.$emit('input', newVal);
-    },
-  },
+		// Browser consistent focus fix
+		if (this.autofocus === 'true') {
+			this.$refs.input.focus();
+		}
+	},
+	methods: {
+		revealText() {
+			if (this.inputType === 'password') {
+				this.inputType = 'text';
+				this.show = false;
+			} else {
+				this.inputType = 'password';
+				this.show = true;
+			}
+		},
+	},
+	watch: {
+		inputValue(newVal) {
+			this.floatLabels = newVal.length > 0;
+			this.$emit('input', newVal);
+		},
+	},
 };
 </script>
 
