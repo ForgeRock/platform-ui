@@ -1,13 +1,11 @@
 <template>
   <div
     v-show="validatorErrors.length"
-    class="fr-validation-requirements text-left"
-  >
+    class="fr-validation-requirements text-left">
     <p
       v-for="(error) in validatorErrors"
       :key="error"
-      class="text-danger mb-0"
-    >
+      class="text-danger mb-0">
       {{ error }}
     </p>
   </div>
@@ -20,17 +18,17 @@
  *
  * */
 export default {
-  name: 'ValidationError',
-  props: {
-    validatorErrors: {
-      type: Array,
-      default: () => [],
-    },
-    fieldName: {
-      type: String,
-      default: '',
-    },
-  },
+	name: 'ValidationError',
+	props: {
+		validatorErrors: {
+			type: Array,
+			default: () => [],
+		},
+		fieldName: {
+			type: String,
+			default: '',
+		},
+	},
 };
 </script>
 

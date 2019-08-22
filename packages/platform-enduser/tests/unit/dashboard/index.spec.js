@@ -7,29 +7,29 @@ import i18n from '@/i18n';
 import Dashboard from '@/components/dashboard';
 
 describe('Dashboard.vue', () => {
-  Vue.use(BootstrapVue);
+	Vue.use(BootstrapVue);
 
-  it('Dashboard page loaded', () => {
-    const userStore = {
-      getUserState() {
-        return {};
-      },
-    };
+	it('Dashboard page loaded', () => {
+		const userStore = {
+			getUserState() {
+				return {};
+			},
+		};
 
 
-    const applicationStore = {
-      state: {},
-    };
+		const applicationStore = {
+			state: {},
+		};
 
-    const wrapper = shallowMount(Dashboard, {
-      i18n,
-      methods: { loadData: sinon.stub() },
-      mocks: {
-        userStore,
-        applicationStore,
-      },
-    });
+		const wrapper = shallowMount(Dashboard, {
+			i18n,
+			methods: { loadData: sinon.stub() },
+			mocks: {
+				userStore,
+				applicationStore,
+			},
+		});
 
-    expect(wrapper.name()).to.equal('Dashboard');
-  });
+		expect(wrapper.name()).to.equal('Dashboard');
+	});
 });

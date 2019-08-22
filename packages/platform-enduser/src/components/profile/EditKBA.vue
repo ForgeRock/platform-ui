@@ -1,12 +1,10 @@
 <template>
   <FrListItem
     :collapsible="true"
-    :panel-shown="false"
-  >
+    :panel-shown="false">
     <div
       slot="list-item-header"
-      class="d-inline-flex w-100 media"
-    >
+      class="d-inline-flex w-100 media">
       <div class="media-body align-self-center">
         <h6 class="my-0">
           {{ $t('pages.profile.accountSecurity.securityQuestions') }}
@@ -16,8 +14,7 @@
         <div
           class="btn btn-link btn-sm float-right btn-cancel"
           @click="clearComponent()"
-          ref="cancel"
-        >
+          ref="cancel">
           {{ $t('common.form.cancel') }}
         </div>
         <div class="btn btn-link btn-sm float-right btn-edit">
@@ -29,27 +26,23 @@
     <div
       v-if="selected.length"
       slot="list-item-collapse-body"
-      class="d-inline-flex w-100"
-    >
+      class="d-inline-flex w-100">
       <BForm class="w-100">
         <BRow>
           <BCol sm="8">
             <fieldset
               v-for="(select, id) in selected"
               :key="id"
-              class="pb-3"
-            >
+              class="pb-3">
               <label>{{ $t('common.user.kba.question') }} {{ select.index }}</label>
               <BFormSelect
                 class="mb-3"
                 v-model="select.selected"
-                :options="selectOptions"
-              />
+                :options="selectOptions" />
 
               <div
                 v-if="select && select.selected === customIndex"
-                class="pb-3"
-              >
+                class="pb-3">
                 <label>{{ $t('pages.profile.accountSecurity.custom') }}</label>
                 <BFormInput
                   type="text"
@@ -57,13 +50,11 @@
                   v-validate="'required'"
                   data-vv-validate-on="submit"
                   :name="$t('pages.profile.accountSecurity.custom') + select.index"
-                  :class="[{'is-invalid': errors.has($t('pages.profile.accountSecurity.custom') + select.index)}, 'form-control']"
-                />
+                  :class="[{'is-invalid': errors.has($t('pages.profile.accountSecurity.custom') + select.index)}, 'form-control']" />
 
                 <FrValidationError
                   :validator-errors="errors"
-                  :field-name="$t('pages.profile.accountSecurity.custom') + select.index"
-                />
+                  :field-name="$t('pages.profile.accountSecurity.custom') + select.index" />
               </div>
 
               <div class="form-group mb-0">
@@ -76,19 +67,16 @@
                   data-vv-validate-on="submit"
                   :data-vv-as="$t('common.user.kba.answer')"
                   :name="$t('common.user.kba.answer') + select.index"
-                  :class="[{'is-invalid': errors.has($t('common.user.kba.answer') + select.index)}, 'form-control']"
-                />
+                  :class="[{'is-invalid': errors.has($t('common.user.kba.answer') + select.index)}, 'form-control']" />
 
                 <FrValidationError
                   :validator-errors="errors"
-                  :field-name="$t('common.user.kba.answer') + select.index"
-                />
+                  :field-name="$t('common.user.kba.answer') + select.index" />
               </div>
 
               <hr
                 v-if="id !== selected.length - 1"
-                class="mb-3 mt-4"
-              >
+                class="mb-3 mt-4">
             </fieldset>
 
             <FrLoadingButton
@@ -97,8 +85,7 @@
               class="ld-ext-right mb-3"
               :label="$t('common.user.kba.saveQuestions')"
               :loading="loading"
-              @click="onSaveKBA"
-            />
+              @click="onSaveKBA" />
           </BCol>
         </BRow>
       </BForm>
@@ -117,130 +104,130 @@ import ValidationError from '@/components/utils/ValidationError';
  *
  */
 export default {
-  name: 'EditKBA',
-  components: {
-    FrListItem: ListItem,
-    FrLoadingButton: LoadingButton,
-    FrValidationError: ValidationError,
-  },
-  $_veeValidate: {
-    validator: 'new',
-  },
-  props: {
-    kbaData: {
-      type: Object,
-      default: () => {},
-    },
-  },
-  data() {
-    return {
-      questions: {},
-      selectOptions: [],
-      selected: [],
-      customIndex: null,
-      loading: false,
-    };
-  },
-  mounted() {
-    this.questions = this.kbaData.questions;
-    this.initializeForm(this.kbaData.minimumAnswersToDefine);
-  },
-  methods: {
-    initializeForm(minimumRequired) {
-      const { locale, fallbackLocale } = this.$i18n;
+	name: 'EditKBA',
+	components: {
+		FrListItem: ListItem,
+		FrLoadingButton: LoadingButton,
+		FrValidationError: ValidationError,
+	},
+	$_veeValidate: {
+		validator: 'new',
+	},
+	props: {
+		kbaData: {
+			type: Object,
+			default: () => {},
+		},
+	},
+	data() {
+		return {
+			questions: {},
+			selectOptions: [],
+			selected: [],
+			customIndex: null,
+			loading: false,
+		};
+	},
+	mounted() {
+		this.questions = this.kbaData.questions;
+		this.initializeForm(this.kbaData.minimumAnswersToDefine);
+	},
+	methods: {
+		initializeForm(minimumRequired) {
+			const { locale, fallbackLocale } = this.$i18n;
 
-      // set form state based on stored user questions
-      _.times(minimumRequired, (index) => {
-        this.selected.push({
-          selected: null, index: index + 1, answer: '', custom: '',
-        });
-      });
+			// set form state based on stored user questions
+			_.times(minimumRequired, (index) => {
+				this.selected.push({
+					selected: null, index: index + 1, answer: '', custom: '',
+				});
+			});
 
-      // create select options
-      this.selectOptions = _.map(this.questions, (question, key) => ({ value: key, text: question[locale] || question[fallbackLocale], disabled: true }));
+			// create select options
+			this.selectOptions = _.map(this.questions, (question, key) => ({ value: key, text: question[locale] || question[fallbackLocale], disabled: true }));
 
-      this.customIndex = this.selectOptions.length + 1;
-      this.selectOptions.unshift({ value: null, text: this.$t('common.user.kba.selectQuestion'), disabled: true });
-      this.selectOptions.push({ value: this.customIndex, text: this.$t('common.user.kba.custom'), disabled: false });
-    },
+			this.customIndex = this.selectOptions.length + 1;
+			this.selectOptions.unshift({ value: null, text: this.$t('common.user.kba.selectQuestion'), disabled: true });
+			this.selectOptions.push({ value: this.customIndex, text: this.$t('common.user.kba.custom'), disabled: false });
+		},
 
-    generatePatch() {
-      const values = _.map(this.selected, (field) => {
-        if (field.custom) {
-          return {
-            answer: field.answer,
-            customQuestion: field.custom,
-          };
-        }
-        return {
-          answer: field.answer,
-          questionId: field.selected,
-        };
-      });
+		generatePatch() {
+			const values = _.map(this.selected, (field) => {
+				if (field.custom) {
+					return {
+						answer: field.answer,
+						customQuestion: field.custom,
+					};
+				}
+				return {
+					answer: field.answer,
+					questionId: field.selected,
+				};
+			});
 
-      return [{
-        operation: 'replace',
-        field: '/kbaInfo',
-        value: values,
-      }];
-    },
+			return [{
+				operation: 'replace',
+				field: '/kbaInfo',
+				value: values,
+			}];
+		},
 
-    clearComponent() {
-      this.loading = false;
-      this.questions = {};
-      this.selectOptions = [];
-      this.selected = [];
-      this.customIndex = null;
+		clearComponent() {
+			this.loading = false;
+			this.questions = {};
+			this.selectOptions = [];
+			this.selected = [];
+			this.customIndex = null;
 
-      this.questions = this.kbaData.questions;
-      this.initializeForm(this.kbaData.minimumAnswersToDefine);
+			this.questions = this.kbaData.questions;
+			this.initializeForm(this.kbaData.minimumAnswersToDefine);
 
-      this.errors.clear();
-    },
+			this.errors.clear();
+		},
 
-    onSaveKBA() {
-      this.isValid().then((valid) => {
-        if (valid) {
-          this.loading = true;
+		onSaveKBA() {
+			this.isValid().then((valid) => {
+				if (valid) {
+					this.loading = true;
 
-          this.$emit('updateKBA', this.generatePatch(), {
-            onSuccess: () => {
-              this.$refs.cancel.click();
-            },
-          });
-        }
-      });
-    },
+					this.$emit('updateKBA', this.generatePatch(), {
+						onSuccess: () => {
+							this.$refs.cancel.click();
+						},
+					});
+				}
+			});
+		},
 
-    isValid() {
-      /* istanbul ignore next */
-      return this.$validator.validateAll();
-    },
-  },
-  watch: {
-    selected: {
-      handler() {
-        // create array of selected options that aren't custom
-        const toDisable = _.map(this.selected, (s) => {
-          if (s.selected !== null && s.selected !== this.customIndex) {
-            return s.selected;
-          }
-          return null;
-        });
+		isValid() {
+			/* istanbul ignore next */
+			return this.$validator.validateAll();
+		},
+	},
+	watch: {
+		selected: {
+			handler() {
+				// create array of selected options that aren't custom
+				const toDisable = _.map(this.selected, (s) => {
+					if (s.selected !== null && s.selected !== this.customIndex) {
+						return s.selected;
+					}
+					return null;
+				});
 
-        // set any [toDisable] option to disabled
-        _.each(this.selectOptions, (o) => {
-          if (_.includes(toDisable, o.value) || o.value === null) {
-            /* eslint no-param-reassign: ["error", { "ignorePropertyModificationsFor": ["0"] }] */
-            o.disabled = true;
-          } else {
-            o.disabled = false;
-          }
-        });
-      },
-      deep: true,
-    },
-    kbaData: { deep: true, handler: _.noop },
-  },
+				// set any [toDisable] option to disabled
+				_.each(this.selectOptions, (o) => {
+					if (_.includes(toDisable, o.value) || o.value === null) {
+						/* eslint no-param-reassign: ["error", { "ignorePropertyModificationsFor": ["0"] }] */
+						o.disabled = true;
+					} else {
+						o.disabled = false;
+					}
+				});
+			},
+			deep: true,
+		},
+		kbaData: { deep: true, handler: _.noop },
+	},
 };
 </script>

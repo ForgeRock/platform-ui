@@ -4,13 +4,11 @@
       <div id="listView">
         <BCard
           no-body
-          class="mt-4"
-        >
+          class="mt-4">
           <BListGroup flush>
             <BListGroupItem
               v-for="(request, index) in requests"
-              :key="index"
-            >
+              :key="index">
               <div class="d-sm-flex">
                 <div class="media-body align-self-center mb-2 mb-sm-0">
                   <div class="mb-2">
@@ -23,8 +21,7 @@
                         :src="request.icon_uri"
                         height="30"
                         width="30"
-                        fallback="fa-file-alt"
-                      />
+                        fallback="fa-file-alt" />
                     </div>
                     <div class="media-body align-self-center">
                       <div class="media-body align-self-center">
@@ -38,37 +35,31 @@
                 </div>
                 <div
                   class="d-flex justify-content-start ml-sm-3 align-self-center"
-                  v-if="!request.decision"
-                >
+                  v-if="!request.decision">
                   <a
                     href="#"
                     class="pr-3"
-                    @click="finalizeAccess(request, index, 'approve')"
-                  >
+                    @click="finalizeAccess(request, index, 'approve')">
                     {{ $t('pages.uma.requests.allow') }}
                   </a>
                   <a
                     href="#"
                     class="px-2"
-                    @click="finalizeAccess(request, index, 'deny')"
-                  >
+                    @click="finalizeAccess(request, index, 'deny')">
                     {{ $t('pages.uma.requests.deny') }}
                   </a>
                 </div>
                 <div
                   class="d-flex justify-content-start ml-sm-3 align-self-center"
-                  v-if="request.decision"
-                >
+                  v-if="request.decision">
                   <div
                     class="allow text-success"
-                    v-if="request.allowed"
-                  >
+                    v-if="request.allowed">
                     <i class="fa fa-check fa-fw" /> {{ $t('pages.uma.requests.allowed') }}
                   </div>
                   <div
                     class="deny text-danger"
-                    v-if="!request.allowed"
-                  >
+                    v-if="!request.allowed">
                     <i class="fa fa-ban fa-fw" /> {{ $t('pages.uma.requests.denied') }}
                   </div>
                 </div>
@@ -90,41 +81,41 @@ import FallbackImage from '@/components/utils/FallbackImage';
  *
  * */
 export default {
-  name: 'Requests',
-  components: {
-    FrFallbackImage: FallbackImage,
-  },
-  props: {
-    requests: {
-      type: Array,
-      default: () => [],
-    },
-  },
-  filters: {
-    formatTime(dateString) {
-      const eventDate = moment(dateString);
+	name: 'Requests',
+	components: {
+		FrFallbackImage: FallbackImage,
+	},
+	props: {
+		requests: {
+			type: Array,
+			default: () => [],
+		},
+	},
+	filters: {
+		formatTime(dateString) {
+			const eventDate = moment(dateString);
 
-      if (eventDate.isSame(moment(), 'day')) {
-        return eventDate.fromNow();
-      }
-      return eventDate.format('LT');
-    },
-  },
-  methods: {
-    finalizeAccess(request, index, action) {
-      this.requests[index].decision = true;
+			if (eventDate.isSame(moment(), 'day')) {
+				return eventDate.fromNow();
+			}
+			return eventDate.format('LT');
+		},
+	},
+	methods: {
+		finalizeAccess(request, index, action) {
+			this.requests[index].decision = true;
 
-      // eslint-disable-next-line no-underscore-dangle
-      this.$emit('finalizeResourceAccess', request._id, action, {
-        scopes: request.permissions,
-        onSuccess: () => {
-          if (action === 'approve') {
-            this.requests[index].allowed = true;
-          }
-        },
-      });
-    },
-  },
+			// eslint-disable-next-line no-underscore-dangle
+			this.$emit('finalizeResourceAccess', request._id, action, {
+				scopes: request.permissions,
+				onSuccess: () => {
+					if (action === 'approve') {
+						this.requests[index].allowed = true;
+					}
+				},
+			});
+		},
+	},
 };
 </script>
 
