@@ -1,13 +1,11 @@
 <template>
   <div
     v-if="collapsible"
-    class="collapsible"
-  >
+    class="collapsible">
     <BListGroupItem
       href="#"
       :class="[{'list-item-cursor': collapsible===false}]"
-      v-b-toggle="toggleId"
-    >
+      v-b-toggle="toggleId">
       <div class="media">
         <slot name="list-item-header" />
       </div>
@@ -19,8 +17,7 @@
       @hide="$emit('hide')"
       @show="$emit('show')"
       @hidden="$emit('hidden')"
-      @shown="$emit('shown')"
-    >
+      @shown="$emit('shown')">
       <BCardBody class="pt-3">
         <slot name="list-item-collapse-body" />
       </BCardBody>
@@ -30,8 +27,7 @@
   <div
     v-else
     @click="$emit('row-click')"
-    :class="[{'fr-hover-item': hoverItem}]"
-  >
+    :class="[{'fr-hover-item': hoverItem}]">
     <BListGroupItem class="noncollapse">
       <div class="media">
         <slot name="list-item-header" />
@@ -40,8 +36,7 @@
 
     <BCardBody
       v-if="panelShown"
-      class="pt-3"
-    >
+      class="pt-3">
       <slot name="list-item-collapse-body" />
     </BCardBody>
   </div>
@@ -53,38 +48,38 @@
  *
  * */
 export default {
-  name: 'ListItem',
-  props: {
-    collapsible: {
-      type: Boolean,
-      default: false,
-    },
-    panelShown: {
-      type: Boolean,
-      default: false,
-    },
-    hoverItem: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  data() {
-    return {
-      id: null,
-    };
-  },
-  beforeMount() {
-    // eslint-disable-next-line no-underscore-dangle
-    this.id = `listItem${this._uid}`;
-  },
-  computed: {
-    toggleId() {
-      if (this.collapsible) {
-        return this.id;
-      }
-      return null;
-    },
-  },
+	name: 'ListItem',
+	props: {
+		collapsible: {
+			type: Boolean,
+			default: false,
+		},
+		panelShown: {
+			type: Boolean,
+			default: false,
+		},
+		hoverItem: {
+			type: Boolean,
+			default: false,
+		},
+	},
+	data() {
+		return {
+			id: null,
+		};
+	},
+	beforeMount() {
+		// eslint-disable-next-line no-underscore-dangle
+		this.id = `listItem${this._uid}`;
+	},
+	computed: {
+		toggleId() {
+			if (this.collapsible) {
+				return this.id;
+			}
+			return null;
+		},
+	},
 };
 </script>
 <style lang="scss" scoped>

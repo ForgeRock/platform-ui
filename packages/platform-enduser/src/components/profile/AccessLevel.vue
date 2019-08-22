@@ -8,8 +8,7 @@
         <li
           class="py-1"
           v-for="field in props.fields"
-          :key="field.name"
-        >
+          :key="field.name">
           <i class="fa fa-check fa-fw text-success mr-2" />{{ field.title }}
         </li>
       </ul>

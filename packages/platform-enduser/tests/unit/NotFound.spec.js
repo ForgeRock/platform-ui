@@ -6,16 +6,16 @@ import i18n from '@/i18n';
 import NotFound from '@/components/NotFound';
 
 describe('NotFound.vue', () => {
-  Vue.use(BootstrapVue);
+	Vue.use(BootstrapVue);
 
-  it('Not found page loaded', () => {
-    const wrapper = shallowMount(NotFound, {
-      i18n,
-      stubs: {
-        'router-link': true,
-      },
-    });
+	it('Not found page loaded', () => {
+		const wrapper = shallowMount(NotFound, {
+			i18n,
+			stubs: {
+				'router-link': true,
+			},
+		});
 
-    expect(wrapper.name()).to.equal('NotFound');
-  });
+		expect(wrapper.name()).to.equal('NotFound');
+	});
 });

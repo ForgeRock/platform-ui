@@ -2,8 +2,7 @@
   <button
     :class="['btn btn-primary d-flex align-items-center', {'disabled': loading}]"
     type="button"
-    @click="$emit('click')"
-  >
+    @click="$emit('click')">
     <span :class="[{'align-self-start': !large, 'm-auto': large}]">
       {{ label }}
     </span>
@@ -13,8 +12,7 @@
           v-if="loading"
           :color="'white'"
           :size="'1rem'"
-          class="position-relative fr-clip-loader ml-3"
-        />
+          class="position-relative fr-clip-loader ml-3" />
       </Transition>
     </span>
   </button>
@@ -26,22 +24,22 @@ import { ClipLoader } from 'vue-spinner/dist/vue-spinner.min';
  *
  * */
 export default {
-  name: 'LoadingButton',
-  components: { ClipLoader },
-  props: {
-    label: {
-      type: String,
-      default: () => '',
-    },
-    loading: {
-      type: Boolean,
-      default: false,
-    },
-    large: {
-      type: Boolean,
-      default: false,
-    },
-  },
+	name: 'LoadingButton',
+	components: { ClipLoader },
+	props: {
+		label: {
+			type: String,
+			default: () => '',
+		},
+		loading: {
+			type: Boolean,
+			default: false,
+		},
+		large: {
+			type: Boolean,
+			default: false,
+		},
+	},
 };
 </script>
 <style lang="scss" scoped>

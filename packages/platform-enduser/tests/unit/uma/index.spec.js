@@ -7,67 +7,67 @@ import i18n from '@/i18n';
 import Sharing from '@/components/uma';
 
 describe('Sharing.vue', () => {
-  Vue.use(BootstrapVue);
+	Vue.use(BootstrapVue);
 
-  let sandbox = null;
+	let sandbox = null;
 
-  beforeEach(() => {
-    sandbox = Sinon.createSandbox();
+	beforeEach(() => {
+		sandbox = Sinon.createSandbox();
 
-    sandbox.stub(Sharing.methods, 'getResources').callsFake(() => {
-      this.resources = [];
-    });
+		sandbox.stub(Sharing.methods, 'getResources').callsFake(() => {
+			this.resources = [];
+		});
 
-    sandbox.stub(Sharing.methods, 'getActivity').callsFake(() => {
-      this.activity = [];
-    });
+		sandbox.stub(Sharing.methods, 'getActivity').callsFake(() => {
+			this.activity = [];
+		});
 
-    sandbox.stub(Sharing.methods, 'getRequests').callsFake(() => {
-      this.requests = [];
-    });
-  });
+		sandbox.stub(Sharing.methods, 'getRequests').callsFake(() => {
+			this.requests = [];
+		});
+	});
 
-  afterEach(() => {
-    sandbox.restore();
-  });
+	afterEach(() => {
+		sandbox.restore();
+	});
 
-  it.skip('Sharing page loaded', () => {
-    const wrapper = shallowMount(Sharing, {
-      i18n,
-    });
+	it.skip('Sharing page loaded', () => {
+		const wrapper = shallowMount(Sharing, {
+			i18n,
+		});
 
-    expect(wrapper.name()).to.equal('Sharing');
-  });
+		expect(wrapper.name()).to.equal('Sharing');
+	});
 
-  it.skip('Emits "renderShareModal" event', () => {
-    const wrapper = mount(Sharing, {
-      i18n,
-    });
+	it.skip('Emits "renderShareModal" event', () => {
+		const wrapper = mount(Sharing, {
+			i18n,
+		});
 
-    wrapper.vm.$emit('renderShareModal');
+		wrapper.vm.$emit('renderShareModal');
 
-    expect(wrapper.emitted().renderShareModal.length).to.equal(1);
+		expect(wrapper.emitted().renderShareModal.length).to.equal(1);
 
-    wrapper.vm.renderShareModal();
+		wrapper.vm.renderShareModal();
 
-    Vue.nextTick(() => {
-      expect(wrapper.emitted('bv::show::modal').length).to.equal(1);
-    });
-  });
+		Vue.nextTick(() => {
+			expect(wrapper.emitted('bv::show::modal').length).to.equal(1);
+		});
+	});
 
-  it.skip('Emits "renderUnshareModal" event', () => {
-    const wrapper = mount(Sharing, {
-      i18n,
-    });
+	it.skip('Emits "renderUnshareModal" event', () => {
+		const wrapper = mount(Sharing, {
+			i18n,
+		});
 
-    wrapper.vm.$emit('renderUnshareModal');
+		wrapper.vm.$emit('renderUnshareModal');
 
-    expect(wrapper.emitted().renderUnshareModal.length).to.equal(1);
+		expect(wrapper.emitted().renderUnshareModal.length).to.equal(1);
 
-    wrapper.vm.renderUnshareModal();
+		wrapper.vm.renderUnshareModal();
 
-    Vue.nextTick(() => {
-      expect(wrapper.emitted('bv::show::modal').length).to.equal(1);
-    });
-  });
+		Vue.nextTick(() => {
+			expect(wrapper.emitted('bv::show::modal').length).to.equal(1);
+		});
+	});
 });
