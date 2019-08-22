@@ -2,38 +2,32 @@
   <div id="app">
     <div
       id="wrapper"
-      :class="[{'toggled': toggled && !this.$route.meta.hideToolbar}]"
-    >
+      :class="[{'toggled': toggled && !this.$route.meta.hideToolbar}]">
       <div
         id="appSidebarWrapper"
-        v-if="!this.$route.meta.hideToolbar && this.$root.userStore.state.userId !== null"
-      >
+        v-if="!this.$route.meta.hideToolbar && this.$root.userStore.state.userId !== null">
         <ul class="sidebar-nav">
           <li class="sidebar-brand">
             <RouterLink
               class="d-flex"
               active-class=""
-              :to="{ name: 'Dashboard'}"
-            >
+              :to="{ name: 'Dashboard'}">
               <img
                 :src="require('@/assets/images/horizontal-logo-white.svg')"
                 :alt="$t('common.form.logo')"
                 style="width:131px;"
-                class="align-self-center sidebar-brand-logo"
-              >
+                class="align-self-center sidebar-brand-logo">
               <img
                 :src="require('@/assets/images/vertical-logo-white.svg')"
                 :alt="$t('common.form.logo')"
                 style="height:28px;"
-                class="align-self-center sidebar-brand-mark"
-              >
+                class="align-self-center sidebar-brand-mark">
             </RouterLink>
           </li>
           <li>
             <RouterLink :to="{ name: 'Dashboard'}">
               <i class="fa fa-fw mr-3 fa-tachometer-alt" /><span
-                class="sidebar-item-text"
-              >
+                class="sidebar-item-text">
                 {{ $t('pages.app.dashboard') }}
               </span>
             </RouterLink>
@@ -41,8 +35,7 @@
           <li>
             <RouterLink :to="{ name: 'Profile'}">
               <i class="fa fa-fw mr-3 fa-street-view" /><span
-                class="sidebar-item-text"
-              >
+                class="sidebar-item-text">
                 {{ $t('pages.app.profile') }}
               </span>
             </RouterLink>
@@ -50,8 +43,7 @@
           <li v-if="$root.applicationStore.state.amDataEndpoints && this.$root.userStore.state.internalUser === false">
             <RouterLink :to="{ name: 'Sharing'}">
               <i class="fa fa-fw mr-3 fa-share" /><span
-                class="sidebar-item-text"
-              >
+                class="sidebar-item-text">
                 {{ $t('pages.app.sharing') }}
               </span>
             </RouterLink>
@@ -59,8 +51,7 @@
           <template v-for="(access, index) in this.$root.userStore.state.access">
             <li :key="'accessResource' +index">
               <RouterLink
-                :to="{ name: 'ListResource', meta: { title: 'User'}, params: { resourceType: access.privilegePath.split('/')[0], resourceName: access.privilegePath.split('/')[1]}}"
-              >
+                :to="{ name: 'ListResource', meta: { title: 'User'}, params: { resourceType: access.privilegePath.split('/')[0], resourceName: access.privilegePath.split('/')[1]}}">
                 <i :class="accessIcon(access.icon)" /><span class="sidebar-item-text">
                   {{ access.title }}
                 </span>
@@ -71,29 +62,25 @@
       </div>
       <div
         id="appContentWrapper"
-        :class="[{'fr-no-toolbar': this.$route.meta.hideToolbar}]"
-      >
+        :class="[{'fr-no-toolbar': this.$route.meta.hideToolbar}]">
         <!--
             Navigation Bar using Vue Route + Bootstrap Toolbar
             -->
         <BNavbar
           v-if="!this.$route.meta.hideToolbar && this.$root.userStore.state.userId !== null"
-          class="fr-main-navbar"
-        >
+          class="fr-main-navbar">
           <BNavForm>
             <BButton
               variant="link"
               class="my-2 my-sm-0 p-0 fr-main-nav-toggle"
               type="button"
-              @click="onToggle"
-            >
+              @click="onToggle">
               <i class="fa fa-bars fa-lg m-0" />
             </BButton>
           </BNavForm>
           <BNavbarBrand
             class="ml-4"
-            v-if="this.$route.params.resourceName"
-          >
+            v-if="this.$route.params.resourceName">
             {{ this.$route.params.resourceName | capitalize }}
           </BNavbarBrand>
           <!-- Right aligned nav items -->
@@ -101,8 +88,7 @@
             <FrNotification />
             <BNavItemDropdown
               class="fr-main-dropdown"
-              right
-            >
+              right>
               <template slot="button-content">
                 {{ $t('pages.app.user') }}
                 <BImg
@@ -111,20 +97,17 @@
                   width="24"
                   height="24"
                   alt="img"
-                  class="m-1"
-                />
+                  class="m-1" />
               </template>
               <BDropdownItem
                 active-class="fr-no-active"
                 exact-active-class="fr-no-active"
-                :to="{ name: 'Profile'}"
-              >
+                :to="{ name: 'Profile'}">
                 {{ $t('pages.app.profile') }}
               </BDropdownItem>
               <BDropdownItem
                 v-if="this.$root.userStore.state.adminUser && this.$root.applicationStore.state.adminURL"
-                :href="this.$root.applicationStore.state.adminURL"
-              >
+                :href="this.$root.applicationStore.state.adminURL">
                 {{ $t('pages.app.admin') }}
               </BDropdownItem>
               <BDropdownDivider class="m-0" />
@@ -136,8 +119,7 @@
         </BNavbar>
         <Transition
           name="fade"
-          mode="out-in"
-        >
+          mode="out-in">
           <RouterView :key="this.$route.fullPath" />
         </Transition>
       </div>
@@ -150,33 +132,26 @@
       group="IDMMessages"
       position="bottom left"
       width="320"
-      :duration="4000"
-    >
+      :duration="4000">
       <template
         slot="body"
-        slot-scope="props"
-      >
+        slot-scope="props">
         <div
           :class="[{ 'alert-success': (props.item.type == 'success'), 'alert-warning': (props.item.type == 'warning'), 'alert-danger': (props.item.type == 'error'), 'alert-info': (props.item.type == 'info')}, 'alert', 'alert-dismissible', 'd-flex', 'p-3', 'pr-5', 'position-relative']"
-          role="alert"
-        >
+          role="alert">
           <div
-            :class="[{ 'text-success': (props.item.type == 'success'), 'text-warning': (props.item.type == 'warning'), 'text-danger': (props.item.type == 'error'), 'text-info': (props.item.type == 'info')}, 'alert-icon', 'mr-3', 'align-self-top']"
-          >
+            :class="[{ 'text-success': (props.item.type == 'success'), 'text-warning': (props.item.type == 'warning'), 'text-danger': (props.item.type == 'error'), 'text-info': (props.item.type == 'info')}, 'alert-icon', 'mr-3', 'align-self-top']">
             <i
-              :class="[{ 'fa-check-circle': (props.item.type == 'success'), 'fa-exclamation-triangle': (props.item.type == 'warning'), 'fa-times-circle': (props.item.type == 'error'), 'fa-info-circle': (props.item.type == 'info')}, 'fa', 'fa-lg']"
-            />
+              :class="[{ 'fa-check-circle': (props.item.type == 'success'), 'fa-exclamation-triangle': (props.item.type == 'warning'), 'fa-times-circle': (props.item.type == 'error'), 'fa-info-circle': (props.item.type == 'info')}, 'fa', 'fa-lg']" />
           </div>
           <div class="fr-alert-content align-self-center">
             <p
               class="mb-0 text-left"
-              v-html="props.item.text"
-            />
+              v-html="props.item.text" />
           </div>
           <a
             class="close"
-            @click="props.close"
-          >
+            @click="props.close">
             <i class="fa fa-times" />
           </a>
         </div>
@@ -190,36 +165,36 @@ import _ from 'lodash';
 import ToolbarNotification from '@/components/utils/ToolbarNotification';
 
 export default {
-  name: 'App',
-  components: {
-    FrNotification: ToolbarNotification,
-  },
-  data() {
-    return {
-      toggled: false,
-    };
-  },
-  methods: {
-    onToggle() {
-      this.toggled = !this.toggled;
-    },
-    accessIcon(icon) {
-      let iconClass = 'fa fa-fw mr-3 ';
+	name: 'App',
+	components: {
+		FrNotification: ToolbarNotification,
+	},
+	data() {
+		return {
+			toggled: false,
+		};
+	},
+	methods: {
+		onToggle() {
+			this.toggled = !this.toggled;
+		},
+		accessIcon(icon) {
+			let iconClass = 'fa fa-fw mr-3 ';
 
-      if (icon.length) {
-        iconClass += icon;
-      } else {
-        iconClass = `${iconClass}fa-cube`;
-      }
+			if (icon.length) {
+				iconClass += icon;
+			} else {
+				iconClass = `${iconClass}fa-cube`;
+			}
 
-      return iconClass;
-    },
-  },
-  filters: {
-    capitalize(value) {
-      return _.capitalize(value);
-    },
-  },
+			return iconClass;
+		},
+	},
+	filters: {
+		capitalize(value) {
+			return _.capitalize(value);
+		},
+	},
 };
 </script>
 

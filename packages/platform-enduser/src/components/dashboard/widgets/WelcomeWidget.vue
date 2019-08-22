@@ -7,8 +7,7 @@
         width="112"
         height="112"
         alt="img"
-        class="m-1 mb-3"
-      />
+        class="m-1 mb-3" />
       <div>{{ $t('pages.dashboard.widgets.welcome.greeting') }}, {{ fullName }}</div>
     </template>
     <template slot="lead">
@@ -18,8 +17,7 @@
       <BButton
         @click="openProfile()"
         variant="primary"
-        class="mt-2"
-      >
+        class="mt-2">
         {{ $t('pages.dashboard.widgets.welcome.editProfile') }}
       </BButton>
     </template>
@@ -34,39 +32,39 @@ import _ from 'lodash';
  *
  * */
 export default {
-  name: 'WelcomeWidget',
-  props: {
-    userDetails: {
-      type: Object,
-      default: () => {},
-    },
-    widgetDetails: {
-      type: Object,
-      default: () => {},
-    },
-  },
-  data() {
-    return {};
-  },
-  mounted() {},
-  methods: {
-    openProfile() {
-      this.$router.push({ name: 'Profile', params: { openProfile: !this.$root.userStore.state.internalUser } });
-    },
-  },
-  computed: {
-    fullName() {
-      let fullName = '';
+	name: 'WelcomeWidget',
+	props: {
+		userDetails: {
+			type: Object,
+			default: () => {},
+		},
+		widgetDetails: {
+			type: Object,
+			default: () => {},
+		},
+	},
+	data() {
+		return {};
+	},
+	mounted() {},
+	methods: {
+		openProfile() {
+			this.$router.push({ name: 'Profile', params: { openProfile: !this.$root.userStore.state.internalUser } });
+		},
+	},
+	computed: {
+		fullName() {
+			let fullName = '';
 
-      if (this.userDetails.givenName.length > 0 || this.userDetails.sn.length > 0) {
-        fullName = _.startCase(`${this.userDetails.givenName} ${this.userDetails.sn}`);
-      } else {
-        fullName = this.userDetails.userId;
-      }
+			if (this.userDetails.givenName.length > 0 || this.userDetails.sn.length > 0) {
+				fullName = _.startCase(`${this.userDetails.givenName} ${this.userDetails.sn}`);
+			} else {
+				fullName = this.userDetails.userId;
+			}
 
-      return fullName;
-    },
-  },
+			return fullName;
+		},
+	},
 };
 </script>
 
