@@ -29,27 +29,27 @@ function getPlugins() {
 
   plugins.push(new CopyWebpackPlugin([
     {
-      from: 'node_modules/appauthhelper/appAuthHelperRedirect.html',
+      from: '../../node_modules/appauthhelper/appAuthHelperRedirect.html',
       to: 'appAuthHelperRedirect.html',
       toType: 'file',
     },
     {
-      from: 'node_modules/appauthhelper/appAuthServiceWorker.js',
+      from: '../../node_modules/appauthhelper/appAuthServiceWorker.js',
       to: 'appAuthServiceWorker.js',
       toType: 'file',
     },
     {
-      from: 'node_modules/appauthhelper/appAuthHelperFetchTokensBundle.js',
+      from: '../../node_modules/appauthhelper/appAuthHelperFetchTokensBundle.js',
       to: 'appAuthHelperFetchTokensBundle.js',
       toType: 'file',
     },
     {
-      from: 'node_modules/oidcsessioncheck/sessionCheck.html',
+      from: '../../node_modules/oidcsessioncheck/sessionCheck.html',
       to: 'sessionCheck.html',
       toType: 'file',
     },
     {
-      from: 'node_modules/oidcsessioncheck/sessionCheckFrame.js',
+      from: '../../node_modules/oidcsessioncheck/sessionCheckFrame.js',
       to: 'sessionCheckFrame.js',
       toType: 'file',
     },
@@ -69,6 +69,7 @@ module.exports = {
   },
   devServer: {
     host: '0.0.0.0',
+    port: process.env.DEV_PORT || 8080,
     proxy: {
       '/openidm': {
         target: 'https://default.iam.example.com/openidm',
