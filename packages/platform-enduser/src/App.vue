@@ -122,8 +122,8 @@
                 {{ $t('pages.app.profile') }}
               </BDropdownItem>
               <BDropdownItem
-                v-if="this.$root.userStore.state.adminUser"
-                href="/admin/"
+                v-if="this.$root.userStore.state.adminUser && this.$root.applicationStore.state.adminURL"
+                :href="this.$root.applicationStore.state.adminURL"
               >
                 {{ $t('pages.app.admin') }}
               </BDropdownItem>
