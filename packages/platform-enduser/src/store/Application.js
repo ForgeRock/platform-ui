@@ -38,6 +38,10 @@ export default {
     if (env.VUE_APP_LOGIN_URL) {
       this.state.loginURL = env.VUE_APP_LOGIN_URL;
     }
+
+    if (env.VUE_APP_ADMIN_URL) {
+      this.state.adminURL = env.VUE_APP_ADMIN_URL;
+    }
   },
 
   setAmDataEndpointsAction(amDataEndpoints) {

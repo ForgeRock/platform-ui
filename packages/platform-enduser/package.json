@@ -20,7 +20,7 @@
     "es6-promise": "4.2.4",
     "lodash": "4.17.11",
     "moment": "2.22.2",
-    "oidcsessioncheck": "^0.0.4",
+    "oidcsessioncheck": "0.0.4",
     "vee-validate": "2.0.8",
     "vue": "2.6.10",
     "vue-i18n": "8.0.0",
