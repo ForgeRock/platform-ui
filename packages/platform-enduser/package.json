@@ -18,7 +18,7 @@
     "bootstrap-vue": "2.0.0-rc.22",
     "core-js": "3.1.4",
     "es6-promise": "4.2.4",
-    "lodash": "4.17.11",
+    "lodash": "4.17.15",
     "moment": "2.22.2",
     "oidcsessioncheck": "0.0.4",
     "vee-validate": "2.0.8",
