@@ -32,6 +32,7 @@
 
 <script>
 import _ from 'lodash';
+import { mapState } from 'vuex';
 import ListGroup from '@/components/utils/ListGroup';
 import ListItem from '@/components/utils/ListItem';
 
@@ -53,13 +54,19 @@ export default {
 	mounted() {
 		this.loadData();
 	},
+	computed: {
+		...mapState({
+			currentPreferences: state => state.UserStore.preferences,
+			properties: state => state.UserStore.schema.properties.preferences.properties,
+		}),
+	},
 	methods: {
 		loadData() {
-			const keys = _.keys(this.$root.userStore.state.profile.preferences);
-			const preferences = _.cloneDeep(this.$root.userStore.state.schema.properties.preferences.properties);
+			const keys = _.keys(this.currentPreferences);
+			const preferences = _.cloneDeep(this.properties);
 
 			_.each(keys, (key) => {
-				preferences[key].value = this.$root.userStore.state.profile.preferences[key];
+				preferences[key].value = this.currentPreferences[key];
 				delete preferences[key].type;
 			});
 
