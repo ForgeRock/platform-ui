@@ -1,26 +1,26 @@
 import { expect } from 'chai';
-import ApplicationStore from '@/store/Application';
+import Store from '@/store/store';
 
 describe('Application Store', () => {
 	it('authHeaders state management', () => {
-		expect(ApplicationStore.state.authHeaders).to.equal(null);
+		expect(Store.state.ApplicationStore.authHeaders).to.equal(null);
 
-		ApplicationStore.setAuthHeadersAction({ 'test-header': 'test' });
+		Store.commit('ApplicationStore/setAuthHeadersAction', { 'test-header': 'test' });
 
-		expect(JSON.stringify(ApplicationStore.state.authHeaders)).to.equal(JSON.stringify({ 'test-header': 'test' }));
+		expect(JSON.stringify(Store.state.ApplicationStore.authHeaders)).to.equal(JSON.stringify({ 'test-header': 'test' }));
 
-		ApplicationStore.clearAuthHeadersAction();
+		Store.commit('ApplicationStore/clearAuthHeadersAction');
 
-		expect(ApplicationStore.state.authHeaders).to.equal(null);
+		expect(Store.state.ApplicationStore.authHeaders).to.equal(null);
 	});
 
 	it('loginRedirect state management', () => {
-		expect(ApplicationStore.state.loginRedirect).to.equal(null);
+		expect(Store.state.ApplicationStore.loginRedirect).to.equal(null);
 
-		ApplicationStore.setLoginRedirect('testUrl');
+		Store.commit('ApplicationStore/setLoginRedirect', 'testUrl');
 
-		expect(ApplicationStore.state.loginRedirect).to.equal('testUrl');
+		expect(Store.state.ApplicationStore.loginRedirect).to.equal('testUrl');
 
-		ApplicationStore.clearLoginRedirect();
+		Store.commit('ApplicationStore/clearLoginRedirect');
 	});
 });

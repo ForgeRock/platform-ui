@@ -1,6 +1,6 @@
 import Router from 'vue-router';
 import Vue from 'vue';
-import ApplicationStore from './store/Application';
+import store from './store/store';
 
 Vue.use(Router);
 
@@ -29,7 +29,7 @@ export default new Router({
 			name: 'Login',
 			alias: ['/_=_'], // Need alias for catching Facebook odd oAuth return
 			beforeEnter: () => {
-				window.location = ApplicationStore.state.loginURL;
+				window.location = store.state.ApplicationStore.loginURL;
 			},
 		},
 		{

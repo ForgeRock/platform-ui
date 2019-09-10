@@ -43,7 +43,7 @@ export default {
 	data() {
 		return {
 			widgets: [],
-			userDetails: this.$root.userStore.getUserState(),
+			userDetails: this.$store.getters['UserStore/getUserState'],
 		};
 	},
 	mounted() {

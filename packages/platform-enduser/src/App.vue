@@ -5,7 +5,7 @@
       :class="[{'toggled': toggled && !this.$route.meta.hideToolbar}]">
       <div
         id="appSidebarWrapper"
-        v-if="!this.$route.meta.hideToolbar && this.$root.userStore.state.userId !== null">
+        v-if="!this.$route.meta.hideToolbar && userId !== null">
         <ul class="sidebar-nav">
           <li class="sidebar-brand">
             <RouterLink
@@ -40,7 +40,7 @@
               </span>
             </RouterLink>
           </li>
-          <li v-if="$root.applicationStore.state.amDataEndpoints && this.$root.userStore.state.internalUser === false">
+          <li v-if="amDataEndpoints && internalUser === false">
             <RouterLink :to="{ name: 'Sharing'}">
               <i class="fa fa-fw mr-3 fa-share" /><span
                 class="sidebar-item-text">
@@ -48,7 +48,7 @@
               </span>
             </RouterLink>
           </li>
-          <template v-for="(access, index) in this.$root.userStore.state.access">
+          <template v-for="(access, index) in accessObj">
             <li :key="'accessResource' +index">
               <RouterLink
                 :to="{ name: 'ListResource', meta: { title: 'User'}, params: { resourceType: access.privilegePath.split('/')[0], resourceName: access.privilegePath.split('/')[1]}}">
@@ -67,7 +67,7 @@
             Navigation Bar using Vue Route + Bootstrap Toolbar
             -->
         <BNavbar
-          v-if="!this.$route.meta.hideToolbar && this.$root.userStore.state.userId !== null"
+          v-if="!this.$route.meta.hideToolbar && this.userId !== null"
           class="fr-main-navbar">
           <BNavForm>
             <BButton
@@ -106,8 +106,8 @@
                 {{ $t('pages.app.profile') }}
               </BDropdownItem>
               <BDropdownItem
-                v-if="this.$root.userStore.state.adminUser && this.$root.applicationStore.state.adminURL"
-                :href="this.$root.applicationStore.state.adminURL">
+                v-if="this.adminUser && this.adminURL"
+                :href="this.adminURL">
                 {{ $t('pages.app.admin') }}
               </BDropdownItem>
               <BDropdownDivider class="m-0" />
@@ -162,6 +162,7 @@
 
 <script>
 import _ from 'lodash';
+import { mapState } from 'vuex';
 import ToolbarNotification from '@/components/utils/ToolbarNotification';
 
 export default {
@@ -173,6 +174,16 @@ export default {
 		return {
 			toggled: false,
 		};
+	},
+	computed: {
+		...mapState({
+			internalUser: state => state.UserStore.internalUser,
+			userId: state => state.UserStore.userId,
+			adminUser: state => state.UserStore.adminUser,
+			accessObj: state => state.UserStore.access,
+			adminUrl: state => state.ApplicationStore.adminUrl,
+			amDataEndpoints: state => state.ApplicationStore.amDataEndpoints,
+		}),
 	},
 	methods: {
 		onToggle() {

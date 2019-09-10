@@ -153,6 +153,14 @@ export default {
 			confirmDelete: false,
 		};
 	},
+	computed: {
+		userId() {
+			return this.$store.state.UserStore.userId;
+		},
+		managedResource() {
+			return this.$store.state.UserStore.managedResource;
+		},
+	},
 	mounted() {},
 	methods: {
 		deleteAccount() {
@@ -160,7 +168,7 @@ export default {
 			const selfServiceInstance = this.getRequestService();
 
 			/* istanbul ignore next */
-			selfServiceInstance.delete(`/${this.$root.userStore.state.managedResource}/${this.$root.userStore.state.userId}`).then(() => {
+			selfServiceInstance.delete(`/${this.managedResource}/${this.userId}`).then(() => {
 				this.$refs.deleteModal.hide();
 				this.displayNotification('success', this.$t('pages.profile.accountControls.deleteAccountSuccessful'));
 				this.logoutUser();
@@ -171,7 +179,7 @@ export default {
 
 			/* istanbul ignore next */
 			// eslint-disable-next-line consistent-return
-			selfServiceInstance.get(`/${this.$root.userStore.state.managedResource}/${this.$root.userStore.state.userId}?_fields=*,idps/*,_meta/createDate,_meta/lastChanged,_meta/termsAccepted,_meta/loginCount`, []).then((result) => {
+			selfServiceInstance.get(`/${this.managedResource}/${this.userId}?_fields=*,idps/*,_meta/createDate,_meta/lastChanged,_meta/termsAccepted,_meta/loginCount`, []).then((result) => {
 				const downloadName = '';
 
 				/* eslint no-underscore-dangle: ["error", { "allow": ["_meta", "_rev"] }] */

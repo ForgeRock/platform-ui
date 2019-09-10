@@ -80,6 +80,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import FallbackImage from '@/components/utils/FallbackImage';
 import ListGroup from '@/components/utils/ListGroup';
 import ListItem from '@/components/utils/ListItem';
@@ -105,6 +106,12 @@ export default {
 			},
 		};
 	},
+	computed: {
+		...mapState({
+			userId: state => state.UserStore.userId,
+			amDataEndpoints: state => state.ApplicationStore.amDataEndpoints,
+		}),
+	},
 	mounted() {
 		/* istanbul ignore next */
 		this.loadData();
@@ -112,10 +119,9 @@ export default {
 	methods: {
 		loadData() {
 			/* istanbul ignore next */
-			const { userId } = this.$root.userStore.state;
 			const query = '?_queryId=*';
 			const selfServiceInstance = this.getRequestService();
-			const url = this.$root.applicationStore.state.amDataEndpoints.baseUrl + userId + this.$root.applicationStore.state.amDataEndpoints.trustedDevices + query;
+			const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.trustedDevices + query;
 
 			/* istanbul ignore next */
 			// by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
@@ -134,9 +140,8 @@ export default {
 		},
 		removeDevice(deviceId) {
 			/* istanbul ignore next */
-			const { userId } = this.$root.userStore.state;
 			const selfServiceInstance = this.getRequestService();
-			const url = this.$root.applicationStore.state.amDataEndpoints.baseUrl + userId + this.$root.applicationStore.state.amDataEndpoints.trustedDevices + deviceId;
+			const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.trustedDevices + deviceId;
 
 			/* istanbul ignore next */
 			// by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it

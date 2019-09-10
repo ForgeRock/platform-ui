@@ -66,6 +66,7 @@
 
 <script>
 import _ from 'lodash';
+import { mapState } from 'vuex';
 import CenterCard from '@/components/utils/CenterCard';
 import Activity from '@/components/uma/Activity';
 import Requests from '@/components/uma/Requests';
@@ -102,15 +103,10 @@ export default {
 		};
 	},
 	computed: {
-		amDataEndpoints() {
-			let tempAmEndpoints = {};
-
-			if (!_.isNull(this.$root.applicationStore.state.amDataEndpoints)) {
-				tempAmEndpoints = this.$root.applicationStore.state.amDataEndpoints;
-			}
-
-			return tempAmEndpoints;
-		},
+		...mapState({
+			userId: state => state.UserStore.userId,
+			amDataEndpoints: state => state.ApplicationStore.amDataEndpoints,
+		}),
 		umaHistory() {
 			return _.map(this.activity, (res) => {
 				const resource = _.find(this.resources, { _id: res.resourceSetId });
@@ -134,17 +130,9 @@ export default {
 			this.getRequests();
 		},
 		getResources() {
-			/* istanbul ignore next */
-			const { userId } = this.$root.userStore.state;
-
-
 			const query = '?_queryId=*';
-
-
 			const selfServiceInstance = this.getRequestService();
-
-
-			const url = this.amDataEndpoints.baseUrl + userId + this.amDataEndpoints.resourceSet + query;
+			const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.resourceSet + query;
 
 			/* istanbul ignore next */
 			// by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
@@ -166,10 +154,9 @@ export default {
 		},
 		getActivity() {
 			/* istanbul ignore next */
-			const { userId } = this.$root.userStore.state;
 			const query = '?_sortKeys=-eventTime&_queryFilter=true';
 			const selfServiceInstance = this.getRequestService();
-			const url = this.amDataEndpoints.baseUrl + userId + this.amDataEndpoints.auditHistory + query;
+			const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.auditHistory + query;
 
 			/* istanbul ignore next */
 			// by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
@@ -188,10 +175,9 @@ export default {
 		},
 		getRequests() {
 			/* istanbul ignore next */
-			const { userId } = this.$root.userStore.state;
 			const query = '?_sortKeys=user&_queryFilter=true';
 			const selfServiceInstance = this.getRequestService();
-			const url = `${this.amDataEndpoints.baseUrl + userId}/uma/pendingrequests${query}`;
+			const url = `${this.amDataEndpoints.baseUrl + this.userId}/uma/pendingrequests${query}`;
 
 			/* istanbul ignore next */
 			// by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
@@ -240,10 +226,9 @@ export default {
 		},
 		shareResource(payload, config = {}) {
 			/* istanbul ignore next */
-			const { userId } = this.$root.userStore.state;
 			const successMsg = this.$t('common.user.sharing.shareSuccess');
 			const selfServiceInstance = this.getRequestService();
-			const url = `${this.amDataEndpoints.baseUrl + userId}/uma/policies/${payload.policyId}`;
+			const url = `${this.amDataEndpoints.baseUrl + this.userId}/uma/policies/${payload.policyId}`;
 
 			/* istanbul ignore next */
 			selfServiceInstance.put(url, payload, { withCredentials: true }).then(() => {
@@ -260,10 +245,9 @@ export default {
 		},
 		unshareResource(resourceId) {
 			/* istanbul ignore next */
-			const { userId } = this.$root.userStore.state;
 			const successMsg = this.$t('common.user.sharing.unshareSuccess');
 			const selfServiceInstance = this.getRequestService();
-			const url = `${this.amDataEndpoints.baseUrl + userId}/uma/policies/${resourceId}`;
+			const url = `${this.amDataEndpoints.baseUrl + this.userId}/uma/policies/${resourceId}`;
 
 			/* istanbul ignore next */
 			selfServiceInstance.delete(url, { withCredentials: true }).then(() => {
@@ -277,8 +261,7 @@ export default {
 		},
 		modifyResource(resourceId, payload, config = {}) {
 			const successMsg = config.unshare ? this.$t('common.user.sharing.unshareSuccess') : this.$t('common.user.sharing.modifySuccess');
-			const { userId } = this.$root.userStore.state;
-			const url = `${this.amDataEndpoints.baseUrl + userId}/uma/policies/${resourceId}`;
+			const url = `${this.amDataEndpoints.baseUrl + this.userId}/uma/policies/${resourceId}`;
 			const selfServiceInstance = this.getRequestService();
 			const headers = { 'Accept-API-Version': 'protocol=1.0,resource=1.0' };
 
@@ -298,11 +281,10 @@ export default {
 		},
 		finalizeResourceAccess(id, action, config = {}) {
 			/* istanbul ignore next */
-			const { userId } = this.$root.userStore.state;
 			const successMsg = action === 'approve' ? this.$t('common.user.sharing.requestAllowedSuccess') : this.$t('common.user.sharing.requestDeniedSuccess');
 			const selfServiceInstance = this.getRequestService();
 			const payload = { scopes: config.scopes || {} };
-			const url = `${this.amDataEndpoints.baseUrl}${userId}/uma/pendingrequests/${id}?_action=${action}`;
+			const url = `${this.amDataEndpoints.baseUrl}${this.userId}/uma/pendingrequests/${id}?_action=${action}`;
 
 			/* istanbul ignore next */
 			selfServiceInstance.post(url, payload, { withCredentials: true }).then(() => {

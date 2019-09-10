@@ -3,16 +3,16 @@
     :title="$t('pages.profile.accountSecurity.title')"
     :subtitle="$t('pages.profile.accountSecurity.subtitle')">
     <FrEditKba
-      v-if="isOnKBA && $root.userStore.state.internalUser === false"
+      v-if="isOnKBA && internalUser === false"
       :kba-data="kbaData"
       @updateKBA="sendUpdateKBA" />
   </FrListGroup>
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import EditKBA from '@/components/profile/EditKBA';
 import ListGroup from '@/components/utils/ListGroup';
-
 /**
  * @description Handles displaying account security controls (KBA change and password change)
  *
@@ -24,6 +24,11 @@ export default {
 			isOnKBA: false,
 			kbaData: {},
 		};
+	},
+	computed: {
+		...mapState({
+			internalUser: state => state.UserStore.internalUser,
+		}),
 	},
 	components: {
 		FrListGroup: ListGroup,

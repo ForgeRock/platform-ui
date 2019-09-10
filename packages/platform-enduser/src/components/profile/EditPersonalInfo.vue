@@ -104,7 +104,6 @@
         </BCol>
       </BRow>
     </BContainer>
-
     <div
       slot="modal-footer"
       class="w-100">
@@ -117,7 +116,7 @@
         <BBtn
           type="button"
           variant="primary"
-          :disabled="$root.userStore.state.internalUser"
+          :disabled="internalUser"
           @click="saveForm">
           {{ $t('common.form.saveChanges') }}
         </BBtn>
@@ -128,6 +127,7 @@
 
 <script>
 import _ from 'lodash';
+import { mapState } from 'vuex';
 import ValidationError from '@/components/utils/ValidationError';
 import ResourceMixin from '@/components/utils/mixins/ResourceMixin';
 
@@ -144,6 +144,13 @@ export default {
 	],
 	components: {
 		FrValidationError: ValidationError,
+	},
+	computed: {
+		...mapState({
+			userId: state => state.UserStore.userId,
+			managedResource: state => state.UserStore.managedResource,
+			internalUser: state => state.UserStore.internalUser,
+		}),
 	},
 	$_veeValidate: {
 		validator: 'new',
@@ -205,7 +212,7 @@ export default {
 						}
 					});
 
-					idmInstance.post(`policy/${this.$root.userStore.state.managedResource}/${this.$root.userStore.state.userId}?_action=validateObject`, policyFields).then((policyResult) => {
+					idmInstance.post(`policy/${this.managedResource}/${this.userId}?_action=validateObject`, policyFields).then((policyResult) => {
 						if (policyResult.data.failedPolicyRequirements.length === 0) {
 							this.$emit('updateProfile', this.generateUpdatePatch(this.originalFormFields, this.formFields));
 							this.errors.clear();

@@ -1,111 +1,111 @@
 import _ from 'lodash';
 import { expect } from 'chai';
-import UserStore from '@/store/User';
+import Store from '@/store/store';
 
 describe('User Store', () => {
 	it('userId state management', () => {
-		expect(UserStore.state.userId).to.equal(null);
+		expect(Store.state.UserStore.userId).to.equal(null);
 
-		UserStore.setUserIdAction('test');
+		Store.commit('UserStore/setUserIdAction', 'test');
 
-		expect(UserStore.state.userId).to.equal('test');
+		expect(Store.state.UserStore.userId).to.equal('test');
 
-		UserStore.clearUserIdAction();
+		Store.commit('UserStore/clearUserIdAction');
 
-		expect(UserStore.state.userId).to.equal(null);
+		expect(Store.state.UserStore.userId).to.equal(null);
 	});
 
 	it('access state management', () => {
-		expect(UserStore.state.access.length).to.equal(0);
+		expect(Store.state.UserStore.access.length).to.equal(0);
 
-		UserStore.setAccess(['test']);
+		Store.commit('UserStore/setAccess', ['test']);
 
-		expect(UserStore.state.access.length).to.equal(1);
+		expect(Store.state.UserStore.access.length).to.equal(1);
 
-		UserStore.clearAccess();
+		Store.commit('UserStore/clearAccess');
 
-		expect(UserStore.state.access.length).to.equal(0);
+		expect(Store.state.UserStore.access.length).to.equal(0);
 	});
 
 	it('managedResource state management', () => {
-		expect(UserStore.state.managedResource).to.equal(null);
+		expect(Store.state.UserStore.managedResource).to.equal(null);
 
-		UserStore.setManagedResourceAction('test');
+		Store.commit('UserStore/setManagedResourceAction', 'test');
 
-		expect(UserStore.state.managedResource).to.equal('test');
+		expect(Store.state.UserStore.managedResource).to.equal('test');
 
-		UserStore.clearManagedResourceAction();
+		Store.commit('UserStore/clearManagedResourceAction');
 
-		expect(UserStore.state.managedResource).to.equal(null);
+		expect(Store.state.UserStore.managedResource).to.equal(null);
 	});
 
 	it('roles state management', () => {
-		expect(UserStore.state.roles).to.equal(null);
+		expect(Store.state.UserStore.roles).to.equal(null);
 
-		UserStore.setRolesAction('test');
+		Store.commit('UserStore/setRolesAction', 'test');
 
-		expect(UserStore.state.roles).to.equal('test');
+		expect(Store.state.UserStore.roles).to.equal('test');
 
-		UserStore.clearRolesAction();
+		Store.commit('UserStore/clearRolesAction');
 
-		expect(UserStore.state.roles).to.equal(null);
+		expect(Store.state.UserStore.roles).to.equal(null);
 	});
 
 	it('Clear all state management', () => {
-		UserStore.setRolesAction('test');
-		UserStore.setManagedResourceAction('test');
-		UserStore.setUserIdAction('test');
+		Store.commit('UserStore/setRolesAction', 'test');
+		Store.commit('UserStore/setManagedResourceAction', 'test');
+		Store.commit('UserStore/setUserIdAction', 'test');
 
-		expect(UserStore.state.roles).to.equal('test');
-		expect(UserStore.state.managedResource).to.equal('test');
-		expect(UserStore.state.userId).to.equal('test');
+		expect(Store.state.UserStore.roles).to.equal('test');
+		expect(Store.state.UserStore.managedResource).to.equal('test');
+		expect(Store.state.UserStore.userId).to.equal('test');
 
-		UserStore.clearStoreAction();
+		Store.commit('UserStore/clearStoreAction');
 
-		expect(UserStore.state.roles).to.equal(null);
-		expect(UserStore.state.managedResource).to.equal(null);
-		expect(UserStore.state.userId).to.equal(null);
+		expect(Store.state.UserStore.roles).to.equal(null);
+		expect(Store.state.UserStore.managedResource).to.equal(null);
+		expect(Store.state.UserStore.userId).to.equal(null);
 	});
 
 	it('profile state management', () => {
-		UserStore.setProfileAction({
+		Store.commit('UserStore/setProfileAction', {
 			givenName: 'test',
 			sn: 'test',
 			mail: 'test',
 			userName: 'test',
 		});
 
-		expect(UserStore.state.givenName).to.equal('test');
-		expect(UserStore.state.sn).to.equal('test');
-		expect(UserStore.state.email).to.equal('test');
-		expect(UserStore.state.userName).to.equal('test');
+		expect(Store.state.UserStore.givenName).to.equal('test');
+		expect(Store.state.UserStore.sn).to.equal('test');
+		expect(Store.state.UserStore.email).to.equal('test');
+		expect(Store.state.UserStore.userName).to.equal('test');
 
-		UserStore.clearProfileAction();
+		Store.commit('UserStore/clearProfileAction');
 
-		expect(_.isNull(UserStore.state.profile)).to.equal(true);
-		expect(UserStore.state.givenName).to.equal('');
-		expect(UserStore.state.sn).to.equal('');
-		expect(UserStore.state.email).to.equal('');
-		expect(UserStore.state.userName).to.equal('');
+		expect(_.isNull(Store.state.UserStore.profile)).to.equal(true);
+		expect(Store.state.UserStore.givenName).to.equal('');
+		expect(Store.state.UserStore.sn).to.equal('');
+		expect(Store.state.UserStore.email).to.equal('');
+		expect(Store.state.UserStore.userName).to.equal('');
 
-		UserStore.setProfileAction({});
+		Store.commit('UserStore/setProfileAction', {});
 
-		expect(_.isObject(UserStore.state.profile)).to.equal(true);
-		expect(UserStore.state.givenName).to.equal('');
-		expect(UserStore.state.sn).to.equal('');
-		expect(UserStore.state.email).to.equal('');
-		expect(UserStore.state.userName).to.equal('');
+		expect(_.isObject(Store.state.UserStore.profile)).to.equal(true);
+		expect(Store.state.UserStore.givenName).to.equal('');
+		expect(Store.state.UserStore.sn).to.equal('');
+		expect(Store.state.UserStore.email).to.equal('');
+		expect(Store.state.UserStore.userName).to.equal('');
 	});
 
 	it('schema state management', () => {
-		UserStore.setSchemaAction({
+		Store.commit('UserStore/setSchemaAction', {
 			name: 'test',
 		});
 
-		expect(UserStore.state.schema.name).to.equal('test');
+		expect(Store.state.UserStore.schema.name).to.equal('test');
 
-		UserStore.clearSchemaAction();
+		Store.commit('UserStore/clearSchemaAction');
 
-		expect(_.isNull(UserStore.state.schema)).to.equal(true);
+		expect(_.isNull(Store.state.UserStore.schema)).to.equal(true);
 	});
 });

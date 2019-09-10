@@ -8,12 +8,11 @@ import VeeValidate from 'vee-validate';
 import Vue from 'vue';
 import AppAuthHelper from 'appauthhelper/appAuthHelperCompat';
 import SessionCheck from 'oidcsessioncheck';
-import UserStore from './store/User';
 import router from './router';
 import i18n from './i18n';
-import ApplicationStore from './store/Application';
 import App from './App';
 import 'core-js/stable';
+import store from './store/store';
 
 // Turn off production warning messages
 Vue.config.productionTip = false;
@@ -33,25 +32,24 @@ router.beforeEach((to, from, next) => {
 	}
 
 	if (_.has(to, 'meta.authenticate')) {
-		if (_.isNull(UserStore.state.userId)) {
+		if (_.isNull(store.state.UserStore.userId)) {
 			const authInstance = axios.create({
 				baseURL: idmContext,
 				timeout: 5000,
-				headers: ApplicationStore.state.authHeaders,
+				headers: store.state.ApplicationStore.authHeaders,
 			});
 
 			authInstance.post('/authentication?_action=login').then((userDetails) => {
-				UserStore.setUserIdAction(userDetails.data.authorization.id);
-				UserStore.setManagedResourceAction(userDetails.data.authorization.component);
-				UserStore.setRolesAction(userDetails.data.authorization.roles);
-
+				store.commit('UserStore/setUserIdAction', userDetails.data.authorization.id);
+				store.commit('UserStore/setManagedResourceAction', userDetails.data.authorization.component);
+				store.commit('UserStore/setRolesAction', userDetails.data.authorization.roles);
 				axios.all([
 					authInstance.get(`${userDetails.data.authorization.component}/${userDetails.data.authorization.id}`),
 					authInstance.post('privilege?_action=listPrivileges'),
 					authInstance.get(`schema/${userDetails.data.authorization.component}`)]).then(axios.spread((profile, privilege, schema) => {
-					UserStore.setProfileAction(profile.data);
-					UserStore.setSchemaAction(schema.data);
-					UserStore.setAccess(privilege.data);
+					store.commit('UserStore/setProfileAction', profile.data);
+					store.commit('UserStore/setSchemaAction', schema.data);
+					store.commit('UserStore/setAccess', privilege.data);
 
 					next();
 				}));
@@ -139,8 +137,7 @@ Vue.mixin({
 				}
 			}
 
-			headers = _.extend(headers, this.$root.applicationStore.state.authHeaders || {});
-
+			headers = _.extend(headers, store.state.ApplicationStore.authHeaders || {});
 			const instance = axios.create({
 				baseURL,
 				timeout,
@@ -163,8 +160,7 @@ Vue.mixin({
 		},
 		// Headers used for oauth requests and selfservice
 		getAnonymousHeaders() {
-			const headers = this.$root.applicationStore.state.authHeaders || { };
-
+			const headers = store.state.ApplicationStore.authHeaders || { };
 			return headers;
 		},
 		// Display a application notification
@@ -182,9 +178,9 @@ Vue.mixin({
 		},
 		// One location for checking and redirecting a completed login for s user
 		completeLogin() {
-			if (!_.isNull(this.$root.applicationStore.state.loginRedirect)) {
-				this.$router.push(this.$root.applicationStore.state.loginRedirect);
-				this.$root.applicationStore.clearLoginRedirect();
+			if (!_.isNull(store.state.ApplicationStore.loginRedirect)) {
+				this.$router.push(store.state.ApplicationStore.loginRedirect);
+				store.dispatch('ApplicationStore/clearLoginRedirect');
 			} else {
 				this.$router.push('/');
 			}
@@ -197,13 +193,10 @@ const loadApp = () => {
 	new Vue({
 		el: '#app',
 		router,
+		store,
 		i18n,
 		template: '<App/>',
 		components: { App },
-		data: {
-			userStore: UserStore,
-			applicationStore: ApplicationStore,
-		},
 	});
 };
 /*
@@ -224,10 +217,10 @@ const startApp = () => {
 		}
 
 		if (uiConfig.data.configuration.amDataEndpoints) {
-			ApplicationStore.setAmDataEndpointsAction(uiConfig.data.configuration.amDataEndpoints);
+			this.$store.commit('ApplicationStore/setAmDataEndpointsAction', uiConfig.data.configuration.amDataEndpoints);
 		}
 
-		ApplicationStore.setEnduserSelfservice(availability.data.result);
+		this.$store.commit('ApplicationStore/setEnduserSelfservice', availability.data.result);
 
 		return loadApp();
 	}))
@@ -235,13 +228,13 @@ const startApp = () => {
 };
 
 const addAppAuth = () => {
-	const AM_URL = ApplicationStore.state.amBaseURL;
+	const AM_URL = store.state.ApplicationStore.amBaseURL;
 	const commonSettings = {
-		clientId: ApplicationStore.state.idmClientID,
+		clientId: store.state.ApplicationStore.idmClientID,
 		authorizationEndpoint: `${AM_URL}/oauth2/authorize`,
 	};
 	const redirectToLogin = () => {
-		window.location.href = ApplicationStore.state.loginURL;
+		window.location.href = store.state.ApplicationStore.loginURL;
 	};
 
 	AppAuthHelper.init({
@@ -251,10 +244,10 @@ const addAppAuth = () => {
 		revocationEndpoint: `${AM_URL}/oauth2/token/revoke`,
 		endSessionEndpoint: `${AM_URL}/oauth2/connect/endSession`,
 		resourceServers: {
-			[ApplicationStore.state.idmBaseURL]: 'openid fr:idm:profile fr:idm:profile_update fr:idm:consent_read fr:idm:notifications',
+			[store.state.ApplicationStore.idmBaseURL]: 'openid fr:idm:profile fr:idm:profile_update fr:idm:consent_read fr:idm:notifications',
 			'http://localhost:8888/openidm': 'openid fr:idm:profile fr:idm:profile_update fr:idm:consent_read fr:idm:notifications',
 		},
-		interactionRequiredHandler: ApplicationStore.state.loginURL ? () => {
+		interactionRequiredHandler: store.state.ApplicationStore.loginURL ? () => {
 			redirectToLogin();
 		} : undefined,
 		tokensAvailableHandler(claims) {
@@ -267,7 +260,7 @@ const addAppAuth = () => {
 				invalidSessionHandler() {
 					AppAuthHelper.logout().then(() => {
 						// eslint-disable-next-line no-unused-expressions
-						ApplicationStore.state.loginURL ? redirectToLogin() : AppAuthHelper.getTokens();
+						this.$store.state.ApplicationStore.loginURL ? redirectToLogin() : AppAuthHelper.getTokens();
 					});
 				},
 				cooldownPeriod: 5,
@@ -298,10 +291,10 @@ const addAppAuth = () => {
 	window.logout = () => {
 		AppAuthHelper.logout().then(() => {
 			// eslint-disable-next-line no-unused-expressions
-			ApplicationStore.state.loginURL ? redirectToLogin() : AppAuthHelper.getTokens();
+			store.state.ApplicationStore.loginURL ? redirectToLogin() : AppAuthHelper.getTokens();
 		});
 	};
 };
 
-ApplicationStore.setEnvironment(process.env);
+store.commit('ApplicationStore/setEnvironment', process.env);
 addAppAuth();
