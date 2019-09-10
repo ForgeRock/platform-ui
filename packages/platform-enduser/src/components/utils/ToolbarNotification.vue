@@ -71,6 +71,7 @@
 <script>
 import _ from 'lodash';
 import moment from 'moment';
+import { mapState } from 'vuex';
 
 /**
  * @description Display for system notifications for the logged in user
@@ -102,6 +103,13 @@ export default {
 			return `${moment.utc(value).format('LLL')} UTC`;
 		},
 	},
+	computed: {
+		...mapState({
+			userId: state => state.UserStore.userId,
+			internalUser: state => state.UserStore.internalUser,
+			managedResource: state => state.UserStore.managedResource,
+		}),
+	},
 	methods: {
 		resetPolling() {
 			/* istanbul ignore next */
@@ -121,8 +129,7 @@ export default {
 		clearAll() {
 			this.notifications = [];
 
-			const { internalUser } = this.$root.userStore.state;
-			const target = internalUser ? 'internal/user/openidm-admin' : `${this.$root.userStore.state.managedResource}/${this.$root.userStore.state.userId}`;
+			const target = this.internalUser ? 'internal/user/openidm-admin' : `${this.managedResource}/${this.userId}`;
 
 			/* istanbul ignore next */
 			this.resetPolling();
@@ -164,9 +171,9 @@ export default {
 		},
 		loadData() {
 			/* istanbul ignore next */
-			if (!_.isNull(this.$root.userStore.state.userId)) {
+			if (!_.isNull(this.userId)) {
 				this.getRequestService()
-					.get(`/${this.$root.userStore.state.managedResource}/${this.$root.userStore.state.userId}?_fields=_notifications/*`)
+					.get(`/${this.managedResource}/${this.userId}?_fields=_notifications/*`)
 					.then(({ data }) => {
 						/* eslint no-underscore-dangle: 0 */
 						if (data._notifications) {

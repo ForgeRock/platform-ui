@@ -103,6 +103,7 @@
 <script>
 import _ from 'lodash';
 import moment from 'moment';
+import { mapState } from 'vuex';
 import AccessLevel from './AccessLevel';
 import FallbackImage from '@/components/utils/FallbackImage';
 import ListGroup from '@/components/utils/ListGroup';
@@ -135,6 +136,9 @@ export default {
 		};
 	},
 	computed: {
+		...mapState({
+			managedResource: state => state.UserStore.managedResource,
+		}),
 		mappings() {
 			return this.consentableMappings.map((mapping) => {
 				const consentedMapping = _.find(this.consentedMappings, { mapping: mapping.name });
@@ -163,7 +167,7 @@ export default {
 	created() {
 		/* istanbul ignore next */
 		this.getRequestService()
-			.get(`consent?_queryFilter=/source eq "${this.$root.userStore.state.managedResource}"`)
+			.get(`consent?_queryFilter=/source eq "${this.managedResource}"`)
 			.then(({ data }) => {
 				this.consentableMappings = data.result;
 			});

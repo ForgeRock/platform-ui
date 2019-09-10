@@ -56,7 +56,7 @@
             </BFormGroup>
 
             <FrPasswordPolicyInput
-              :policy-api="`${this.$root.userStore.state.managedResource}/${userId}`"
+              :policy-api="`${this.managedResource}/${this.userId}`"
               v-model="newPassword">
               <BFormGroup
                 class="mb-3"
@@ -92,7 +92,7 @@
               @click="onSavePassword" />
 
             <div
-              v-if="this.$root.applicationStore.state.passwordReset"
+              v-if="this.passwordReset"
               class="text-nowrap pb-2">
               {{ $t('pages.profile.accountSecurity.rememberPassword') }} <RouterLink to="PasswordReset">
                 {{ $t('pages.profile.accountSecurity.resetPassword') }}
@@ -105,6 +105,7 @@
   </FrListItem>
 </template>
 <script>
+import { mapState } from 'vuex';
 import ListItem from '@/components/utils/ListItem';
 import LoadingButton from '@/components/utils/LoadingButton';
 import PolicyPasswordInput from '@/components/utils/PolicyPasswordInput';
@@ -126,6 +127,13 @@ export default {
 		FrPasswordPolicyInput: PolicyPasswordInput,
 		FrValidationError: ValidationError,
 	},
+	computed: {
+		...mapState({
+			userId: state => state.UserStore.userId,
+			managedResource: state => state.UserStore.managedResource,
+			passwordReset: state => state.ApplicationStore.passwordReset,
+		}),
+	},
 	data() {
 		return {
 			currentPassword: '',
@@ -135,7 +143,6 @@ export default {
 			showCurrent: true,
 			inputCurrent: 'password',
 			inputNew: 'password',
-			userId: this.$root.userStore.getUserState().userId,
 		};
 	},
 	methods: {

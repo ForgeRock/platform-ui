@@ -17,7 +17,7 @@
             {{ email }}
           </span>
           <BButton
-            v-if="$root.userStore.state.internalUser === false"
+            v-if="internalUser === false"
             ref="editProfileButton"
             variant="primary"
             block
@@ -41,13 +41,13 @@
             <FrAccountSecurity
               @updateProfile="updateProfile"
               @updateKBA="updateKBA" />
-            <FrAuthorizedApplications v-if="$root.applicationStore.state.amDataEndpoints && $root.userStore.state.internalUser === false" />
-            <FrTrustedDevices v-if="$root.applicationStore.state.amDataEndpoints && $root.userStore.state.internalUser === false" />
+            <FrAuthorizedApplications v-if="amDataEndpoints && internalUser === false" />
+            <FrTrustedDevices v-if="amDataEndpoints && internalUser === false" />
             <FrPreferences
-              v-if="$root.userStore.state.internalUser === false"
+              v-if="internalUser === false"
               @updateProfile="updateProfile" />
             <FrConsent
-              v-if="$root.userStore.state.internalUser === false"
+              v-if="internalUser === false"
               :consented-mappings="profile.consentedMappings"
               @updateProfile="updateProfile" />
             <FrAccountControls />
@@ -60,6 +60,7 @@
 
 <script>
 import _ from 'lodash';
+import { mapState } from 'vuex';
 /**
  * @description Controlling component for profile management
  *
@@ -92,30 +93,33 @@ export default {
 		FrConsent: () => import('@/components/profile/Consent'),
 	},
 	computed: {
+		...mapState({
+			userId: state => state.UserStore.userId,
+			email: state => state.UserStore.email,
+			profile: state => state.UserStore.profile,
+			schema: state => state.UserStore.schema,
+			sirName: state => state.UserStore.sn,
+			givenName: state => state.UserStore.givenName,
+			managedResource: state => state.UserStore.managedResource,
+			internalUser: state => state.UserStore.internalUser,
+			passwordReset: state => state.ApplicationStore.passwordReset,
+			amDataEndpoints: state => state.ApplicationStore.amDataEndpoints,
+		}),
 		fullName() {
 			let fullName = '';
 
-			if (this.$root.userStore.state.givenName.length > 0 || this.$root.userStore.state.sn.length > 0) {
-				fullName = _.startCase(`${this.$root.userStore.state.givenName} ${this.$root.userStore.state.sn}`);
+			if (this.givenName.length > 0 || this.sirName.length > 0) {
+				fullName = _.startCase(`${this.givenName} ${this.sirName}`);
 			} else {
-				fullName = this.$root.userStore.state.userId;
+				fullName = this.userId;
 			}
 
 			return fullName;
 		},
-		email() {
-			return this.$root.userStore.state.email;
-		},
-		profile() {
-			return this.$root.userStore.state.profile;
-		},
-		schema() {
-			return this.$root.userStore.state.schema;
-		},
 	},
 	methods: {
 		updateProfile(payload, config = {}) {
-			this.makeUpdateRequest(this.$root.userStore.state.managedResource, payload, config);
+			this.makeUpdateRequest(this.managedResource, payload, config);
 		},
 		updateKBA(payload, config) {
 			this.makeUpdateRequest('selfservice/user', payload, config);
@@ -129,8 +133,8 @@ export default {
 			});
 
 			/* istanbul ignore next */
-			selfServiceInstance.patch(`${endpoint}/${userId}`, payload).then((response) => {
-				this.$root.userStore.setProfileAction(response.data);
+			selfServiceInstance.patch(`${endpoint}/${this.userId}`, payload).then((response) => {
+				this.$store.dispatch('UserStore/setProfileAction', response.data);
 				this.displayNotification('success', successMsg);
 
 				if (config.onSuccess) {
