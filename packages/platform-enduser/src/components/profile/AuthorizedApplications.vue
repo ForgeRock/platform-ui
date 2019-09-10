@@ -80,6 +80,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import ListGroup from '@/components/utils/ListGroup';
 import ListItem from '@/components/utils/ListItem';
 
@@ -103,6 +104,12 @@ export default {
 			},
 		};
 	},
+	computed: {
+		...mapState({
+			userId: state => state.UserStore.userId,
+			amDataEndpoints: state => state.ApplicationStore.amDataEndpoints.baseUrl,
+		}),
+	},
 	mounted() {
 		/* istanbul ignore next */
 		this.loadData();
@@ -110,10 +117,9 @@ export default {
 	methods: {
 		loadData() {
 			/* istanbul ignore next */
-			const { userId } = this.$root.userStore.state;
 			const query = '?_queryId=*';
 			const selfServiceInstance = this.getRequestService();
-			const url = this.$root.applicationStore.state.amDataEndpoints.baseUrl + userId + this.$root.applicationStore.state.amDataEndpoints.oauthApplications + query;
+			const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.oauthApplications + query;
 
 			/* istanbul ignore next */
 			// by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
@@ -132,9 +138,8 @@ export default {
 		},
 		removeApplication(applicationId) {
 			/* istanbul ignore next */
-			const { userId } = this.$root.userStore.state;
 			const selfServiceInstance = this.getRequestService();
-			const url = this.$root.applicationStore.state.amDataEndpoints.baseUrl + userId + this.$root.applicationStore.state.amDataEndpoints.oauthApplications + applicationId;
+			const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.oauthApplications + applicationId;
 
 			/* istanbul ignore next */
 			// by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
