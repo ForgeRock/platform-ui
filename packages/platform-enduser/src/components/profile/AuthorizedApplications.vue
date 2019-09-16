@@ -81,8 +81,8 @@
 
 <script>
 import { mapState } from 'vuex';
-import ListGroup from '@/components/utils/ListGroup';
-import ListItem from '@/components/utils/ListItem';
+import ListGroup from '@forgerock/platform-components/src/components/listGroup/';
+import ListItem from '@forgerock/platform-components/src/components/listItem/';
 
 /**
 * @description If fullstack (AM/IDM) is configured will work with authorized applications endpoiint (AM) and display a list of currently tied applications.

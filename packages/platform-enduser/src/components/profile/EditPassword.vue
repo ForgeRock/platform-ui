@@ -106,7 +106,7 @@
 </template>
 <script>
 import { mapState } from 'vuex';
-import ListItem from '@/components/utils/ListItem';
+import ListItem from '@forgerock/platform-components/src/components/listItem/';
 import LoadingButton from '@/components/utils/LoadingButton';
 import PolicyPasswordInput from '@/components/utils/PolicyPasswordInput';
 import ValidationError from '@/components/utils/ValidationError';

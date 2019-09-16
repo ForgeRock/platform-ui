@@ -33,8 +33,8 @@
 <script>
 import _ from 'lodash';
 import { mapState } from 'vuex';
-import ListGroup from '@/components/utils/ListGroup';
-import ListItem from '@/components/utils/ListItem';
+import ListGroup from '@forgerock/platform-components/src/components/listGroup/';
+import ListItem from '@forgerock/platform-components/src/components/listItem/';
 
 /**
  * @description Displays available user preferences, these are typically true/false values associated with a managed resource (e.g. Do you want to recieve marketing emails?).
