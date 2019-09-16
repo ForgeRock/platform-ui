@@ -131,8 +131,8 @@
 
 <script>
 import _ from 'lodash';
-import ListGroup from '@/components/utils/ListGroup';
-import ListItem from '@/components/utils/ListItem';
+import ListGroup from '@forgerock/platform-components/src/components/listGroup/';
+import ListItem from '@forgerock/platform-components/src/components/listItem/';
 
 /**
  * @description Handles displaying basic account controls (delete and download).

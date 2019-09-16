@@ -95,7 +95,7 @@
 
 <script>
 import _ from 'lodash';
-import ListItem from '@/components/utils/ListItem';
+import ListItem from '@forgerock/platform-components/src/components/listItem/';
 import LoadingButton from '@/components/utils/LoadingButton';
 import ValidationError from '@/components/utils/ValidationError';
 

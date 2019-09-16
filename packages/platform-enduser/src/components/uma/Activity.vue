@@ -47,9 +47,9 @@
 <script>
 import _ from 'lodash';
 import moment from 'moment';
+import ListGroup from '@forgerock/platform-components/src/components/listGroup/';
+import ListItem from '@forgerock/platform-components/src/components/listItem/';
 import FallbackImage from '@/components/utils/FallbackImage';
-import ListGroup from '@/components/utils/ListGroup';
-import ListItem from '@/components/utils/ListItem';
 
 /**
 * @description Main component for UMA (AM/IDM) displays a list of resource activities
