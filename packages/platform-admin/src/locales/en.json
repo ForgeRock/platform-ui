@@ -1,4 +1,13 @@
 {
+  "common": {
+      "name": "Name",
+      "description": "Description",
+      "delete": "Delete",
+      "save": "Save",
+      "confirmDelete": "Confirm Delete",
+      "cancel": "Cancel",
+      "required": "Required"
+  },
   "sideMenu": {
     "signOut": "Sign Out",
     "toggleSidebar": "Toggle sidebar",
@@ -8,6 +17,23 @@
     "errors": {
       "failedLogout": "Failed to logout of platform session"
     }
+  },
+  "authentication": {
+    "title": "Authentication",
+    "description": "Sign in users to your applicaiton using any of the out-of-the-box authentication services or customize them to suit your specific requirements.",
+    "newAuthService": "New Authentication Service",
+    "service": "Service",
+    "duplicate": "Duplicate",
+    "preview": "Preview",
+    "confirmDeleteAuthService": "Are you sure you want to delete the \"{treeId}\" authentication service?",
+    "authServiceDeleteSuccess": "\"{treeid}\" authentication service successfully deleted.",
+    "noAuthServices": "No Authentication Services",
+    "noAuthSercicesMessage": "Sign in users to your application by creating authentication services",
+    "mustBeUnique": "Name must be a unique.",
+    "errorRetrievingAuthServices": "Error retrieving authentication services",
+    "errorCreatingAuthService": "Error creating authentication service",
+    "errorDeletingAuthService": "Error deleting authentication service",
+    "errorRetrievingAuthServiceTemplate": "Error retrieving authentication service template"
   },
   "dashboard": {
     "managedAccess": {
