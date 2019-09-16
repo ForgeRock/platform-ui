@@ -181,7 +181,7 @@ export default {
 			userId: state => state.UserStore.userId,
 			adminUser: state => state.UserStore.adminUser,
 			accessObj: state => state.UserStore.access,
-			adminUrl: state => state.ApplicationStore.adminUrl,
+			adminURL: state => state.ApplicationStore.adminURL,
 			amDataEndpoints: state => state.ApplicationStore.amDataEndpoints,
 		}),
 	},
