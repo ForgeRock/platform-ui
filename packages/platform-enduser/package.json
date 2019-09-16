@@ -4,12 +4,12 @@
   "private": true,
   "scripts": {
     "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint",
     "dev": "vue-cli-service serve",
     "docker:build": "config/scripts/docker:build.sh",
     "docker:run": "config/scripts/docker:run.sh",
-    "lint": "vue-cli-service lint",
-    "test:unit:watch": "vue-cli-service test:unit --watch",
-    "test:unit": "vue-cli-service test:unit"
+    "unit": "jest --no-cache",
+    "coverage": "jest --verbose --coverage --noStackTrace --no-cache"
   },
   "dependencies": {
     "appauthhelper": "0.2.0",
@@ -35,16 +35,20 @@
     "@fortawesome/fontawesome-free": "5.9.0",
     "@vue/cli-plugin-babel": "3.8.0",
     "@vue/cli-plugin-eslint": "3.8.0",
-    "@vue/cli-plugin-unit-mocha": "3.8.0",
+    "@vue/cli-plugin-unit-jest": "3.11.0",
     "@vue/cli-service": "3.8.0",
     "@vue/eslint-config-standard": "4.0.0",
     "@vue/test-utils": "1.0.0-beta.29",
+    "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.0.1",
+    "babel-jest": "24.9.0",
     "chai": "4.1.2",
     "cross-env": "5.0.1",
     "eslint": "5.16.0",
     "eslint-plugin-vue": "5.0.0",
     "git-revision-webpack-plugin": "3.0.3",
+    "jest": "24.9.0",
+    "jest-serializer-vue": "2.0.2",
     "moxios": "0.4.0 ",
     "mutationobserver-shim": "0.3.3",
     "node-sass": "4.12.0",
@@ -54,12 +58,14 @@
     "sinon": "7.3.2",
     "style-resources-loader": "1.2.1",
     "vue-cli-plugin-i18n": "0.6.0",
+    "vue-jest": "3.0.5",
     "vue-template-compiler": "2.6.10"
   },
   "eslintConfig": {
     "root": true,
     "env": {
-      "node": true
+      "node": true,
+      "jest": true
     },
     "extends": [
       "plugin:vue/strongly-recommended",
@@ -74,15 +80,33 @@
           "js": "never"
         }
       ],
-      "no-param-reassign": ["error", { "props": false }],
-      "indent": [2, "tab"],
+      "no-param-reassign": [
+        "error",
+        {
+          "props": false
+        }
+      ],
+      "indent": [
+        2,
+        "tab"
+      ],
       "no-tabs": 0,
       "max-len": 0,
       "vue/html-closing-bracket-newline": 0
     },
     "parserOptions": {
       "parser": "babel-eslint"
-    }
+    },
+    "overrides": [
+      {
+        "files": [
+          "**/__tests__/*.{j,t}s?(x)"
+        ],
+        "env": {
+          "jest": true
+        }
+      }
+    ]
   },
   "postcss": {
     "plugins": {
