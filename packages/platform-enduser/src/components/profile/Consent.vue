@@ -106,8 +106,9 @@ import moment from 'moment';
 import { mapState } from 'vuex';
 import AccessLevel from './AccessLevel';
 import FallbackImage from '@/components/utils/FallbackImage';
-import ListGroup from '@/components/utils/ListGroup';
-import ListItem from '@/components/utils/ListItem';
+import ListGroup from '@forgerock/platform-components/src/components/listGroup/';
+import ListItem from '@forgerock/platform-components/src/components/listItem/';
+
 
 /**
  * @description Controls the display of a users currently consented mappings (where their data is sent).

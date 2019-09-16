@@ -12,7 +12,7 @@
 <script>
 import { mapState } from 'vuex';
 import EditKBA from '@/components/profile/EditKBA';
-import ListGroup from '@/components/utils/ListGroup';
+import ListGroup from '@forgerock/platform-components/src/components/listGroup/';
 /**
  * @description Handles displaying account security controls (KBA change and password change)
  *
