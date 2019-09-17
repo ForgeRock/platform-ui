@@ -4,6 +4,11 @@
     "toggleSidebar": "Toggle sidebar",
     "dashboard": "Dashboard"
   },
+  "application": {
+    "errors": {
+      "failedLogout": "Failed to logout of platform session"
+    }
+  },
   "dashboard": {
     "managedAccess": {
       "title": "Manage Access",
@@ -17,6 +22,11 @@
       "title": "Welcome to ForgeRock!",
       "description": "With the Forgerock platform you can control access, identity management and much more.",
       "footer": "Get Started"
+    }
+  },
+  "trees": {
+    "nodeTypeList": {
+      "failedNodeTypeList": "Failed to get available node types"
     }
   }
 }
