@@ -1,7 +1,7 @@
 ###############################################################################
 # Dependencies Build Stage
 ###############################################################################
-FROM node:10.16.0-alpine AS dependencies
+FROM node:lts-slim AS dependencies
 
 # Copy dependencies (supports yarn install)
 COPY packages/platform-admin /home/app/packages/platform-admin/
@@ -22,7 +22,7 @@ COPY . /home/app/
 ###############################################################################
 # Development Build Stage
 ###############################################################################
-FROM node:10.16.0-alpine AS development
+FROM node:lts-slim AS development
 
 # Copy result of `dependencies` build stage
 COPY --from=dependencies /home/app/ /home/app
@@ -36,7 +36,7 @@ ENTRYPOINT ["yarn", "run", "dev"]
 ###############################################################################
 # Build Build Stage
 ###############################################################################
-FROM node:10.16.0-alpine AS build
+FROM node:lts-slim AS build
 
 # Copy result of `dependencies` build stage
 COPY --from=dependencies /home/app/ /home/app
@@ -48,7 +48,7 @@ RUN yarn run build
 ###############################################################################
 # Production Build Stage
 ###############################################################################
-FROM nginx:1.16.0-alpine as production
+FROM nginx:1.17 as production
 
 # Copy result of `build` build stage
 COPY --from=build /home/app/packages/platform-login/dist/ /usr/share/nginx/html
