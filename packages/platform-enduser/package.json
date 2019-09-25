@@ -10,6 +10,7 @@
     "docker:run": "config/scripts/docker:run.sh",
     "unit": "jest --no-cache --silent",
     "unit:debug": "node --inspect-brk node_modules/.bin/vue-cli-service test:unit --no-cache --watch --runInBand",
+    "snapshot": "jest --updateSnapshot",
     "coverage": "jest --verbose --coverage --noStackTrace --no-cache --silent"
   },
   "dependencies": {
