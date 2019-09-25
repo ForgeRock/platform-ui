@@ -104,10 +104,10 @@
 import _ from 'lodash';
 import moment from 'moment';
 import { mapState } from 'vuex';
-import AccessLevel from './AccessLevel';
-import FallbackImage from '@/components/utils/FallbackImage';
 import ListGroup from '@forgerock/platform-components/src/components/listGroup/';
 import ListItem from '@forgerock/platform-components/src/components/listItem/';
+import AccessLevel from './AccessLevel';
+import FallbackImage from '@/components/utils/FallbackImage';
 
 
 /**

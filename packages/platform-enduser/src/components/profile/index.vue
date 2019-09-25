@@ -127,7 +127,6 @@ export default {
 		makeUpdateRequest(endpoint, payload, config = {}) {
 			/* istanbul ignore next */
 			const successMsg = config.successMsg || this.$t('common.user.profile.updateSuccess');
-			const { userId } = this.$root.userStore.state;
 			const selfServiceInstance = this.getRequestService({
 				headers: config.headers,
 			});
