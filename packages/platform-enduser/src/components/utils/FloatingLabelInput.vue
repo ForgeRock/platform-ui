@@ -49,99 +49,99 @@ import ValidationError from '@/components/utils/ValidationError';
  *
  * */
 export default {
-	name: 'FloatingLabelInput',
-	components: {
-		FrValidationError: ValidationError,
-	},
-	props: {
-		label: {
-			type: String,
-			default: () => '',
-		},
-		type: {
-			type: String,
-			default: () => '',
-		},
-		autofocus: {
-			type: String,
-			default: () => '',
-		},
-		fieldName: {
-			type: String,
-			default: () => '',
-		},
-		validateRules: {
-			type: String,
-			default: () => '',
-		},
-		reveal: Boolean,
-		showErrorState: {
-			type: Boolean,
-			default: () => true,
-		},
-		defaultValue: {
-			type: String,
-			default: () => '',
-			required: false,
-		},
-	},
-	inject: ['$validator'],
-	data() {
-		return {
-			inputValue: '',
-			id: null,
-			floatLabels: false,
-			hideLabel: true,
-			inputType: this.type,
-			show: true,
-		};
-	},
-	beforeMount() {
-		// eslint-disable-next-line no-underscore-dangle
-		this.id = `floatingLabelInput${this._uid}`;
-	},
-	mounted() {
-		/* istanbul ignore next */
-		_.delay(_.bind(() => {
-			if (navigator.userAgent.indexOf('Edge') >= 0) {
-				if (document.getElementById(`${this.id}`).value.length) {
-					this.floatLabels = true;
-					this.inputValue = document.getElementById(`${this.id}`).value;
-				}
-			} else if (navigator.userAgent.indexOf('Chrome') >= 0) {
-				if (document.querySelectorAll(`#${this.id}:-webkit-autofill`).length > 0) {
-					this.floatLabels = true;
-				}
-			}
-			this.hideLabel = false;
-		}, this), 400);
+  name: 'FloatingLabelInput',
+  components: {
+    FrValidationError: ValidationError,
+  },
+  props: {
+    label: {
+      type: String,
+      default: () => '',
+    },
+    type: {
+      type: String,
+      default: () => '',
+    },
+    autofocus: {
+      type: String,
+      default: () => '',
+    },
+    fieldName: {
+      type: String,
+      default: () => '',
+    },
+    validateRules: {
+      type: String,
+      default: () => '',
+    },
+    reveal: Boolean,
+    showErrorState: {
+      type: Boolean,
+      default: () => true,
+    },
+    defaultValue: {
+      type: String,
+      default: () => '',
+      required: false,
+    },
+  },
+  inject: ['$validator'],
+  data() {
+    return {
+      inputValue: '',
+      id: null,
+      floatLabels: false,
+      hideLabel: true,
+      inputType: this.type,
+      show: true,
+    };
+  },
+  beforeMount() {
+    // eslint-disable-next-line no-underscore-dangle
+    this.id = `floatingLabelInput${this._uid}`;
+  },
+  mounted() {
+    /* istanbul ignore next */
+    _.delay(_.bind(() => {
+      if (navigator.userAgent.indexOf('Edge') >= 0) {
+        if (document.getElementById(`${this.id}`).value.length) {
+          this.floatLabels = true;
+          this.inputValue = document.getElementById(`${this.id}`).value;
+        }
+      } else if (navigator.userAgent.indexOf('Chrome') >= 0) {
+        if (document.querySelectorAll(`#${this.id}:-webkit-autofill`).length > 0) {
+          this.floatLabels = true;
+        }
+      }
+      this.hideLabel = false;
+    }, this), 400);
 
-		if (this.defaultValue) {
-			this.inputValue = this.defaultValue;
-		}
+    if (this.defaultValue) {
+      this.inputValue = this.defaultValue;
+    }
 
-		// Browser consistent focus fix
-		if (this.autofocus === 'true') {
-			this.$refs.input.focus();
-		}
-	},
-	methods: {
-		revealText() {
-			if (this.inputType === 'password') {
-				this.inputType = 'text';
-				this.show = false;
-			} else {
-				this.inputType = 'password';
-				this.show = true;
-			}
-		},
-	},
-	watch: {
-		inputValue(newVal) {
-			this.floatLabels = newVal.length > 0;
-			this.$emit('input', newVal);
-		},
-	},
+    // Browser consistent focus fix
+    if (this.autofocus === 'true') {
+      this.$refs.input.focus();
+    }
+  },
+  methods: {
+    revealText() {
+      if (this.inputType === 'password') {
+        this.inputType = 'text';
+        this.show = false;
+      } else {
+        this.inputType = 'password';
+        this.show = true;
+      }
+    },
+  },
+  watch: {
+    inputValue(newVal) {
+      this.floatLabels = newVal.length > 0;
+      this.$emit('input', newVal);
+    },
+  },
 };
 </script>
 
