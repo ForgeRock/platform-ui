@@ -52,7 +52,11 @@
   },
   "trees": {
     "nodeTypeList": {
-      "failedNodeTypeList": "Failed to get available node types"
+      "failedNodeTypeList": "Failed to get available node types",
+      "title": "Nodes"
     }
+  },
+  "components": {
+    "noData": "No group data provided"
   }
 }
