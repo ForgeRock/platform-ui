@@ -29,10 +29,10 @@
 </template>
 <script>
 import {
-	BImg,
-	BCardHeader,
-	BContainer,
-	BCard,
+  BImg,
+  BCardHeader,
+  BContainer,
+  BCard,
 } from 'bootstrap-vue';
 // TODO Add to components
 /**
@@ -40,22 +40,22 @@ import {
  *
  * */
 export default {
-	name: 'CenterCard',
-	components: {
-		BImg,
-		BCard,
-		BCardHeader,
-		BContainer,
-	},
-	data: () => ({
-		publicPath: process.env.BASE_URL,
-	}),
-	props: {
-		showLogo: {
-			type: Boolean,
-			default: false,
-		},
-	},
+  name: 'CenterCard',
+  components: {
+    BImg,
+    BCard,
+    BCardHeader,
+    BContainer,
+  },
+  data: () => ({
+    publicPath: process.env.BASE_URL,
+  }),
+  props: {
+    showLogo: {
+      type: Boolean,
+      default: false,
+    },
+  },
 };
 </script>
 
