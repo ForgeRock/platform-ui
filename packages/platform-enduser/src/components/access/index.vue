@@ -280,7 +280,7 @@ export default {
       let filterUrl = '';
 
       if (filter.length > 0) {
-        filterUrl = encodeURIComponent(filter);
+        const encodedFilter = encodeURIComponent(filter);
         _.each(displayFields, (field, index) => {
           let type = 'string';
 
@@ -289,25 +289,25 @@ export default {
             type = schemaProps[field].type;
           }
 
-          if (type === 'number' && !_.isNaN(_.toNumber(filter))) {
+          if (type === 'number' && !_.isNaN(_.toNumber(encodedFilter))) {
             // Search based on number and proper number value
             if ((index + 1) < displayFields.length) {
-              filterUrl = `${filterUrl}${field}+eq+ ${filter}+OR+`;
+              filterUrl += `${field}+eq+ ${encodedFilter}+OR+`;
             } else {
-              filterUrl = `${filterUrl}${field}+eq+ ${filter}`;
+              filterUrl += `${field}+eq+ ${encodedFilter}`;
             }
-          } else if (type === 'boolean' && (filter === 'true' || filter === 'false')) {
+          } else if (type === 'boolean' && (encodedFilter === 'true' || encodedFilter === 'false')) {
             // Search based on boolean and proper boolean true/false
             if ((index + 1) < displayFields.length) {
-              filterUrl = `${filterUrl}${field}+eq+ ${filter}+OR+`;
+              filterUrl += `${field}+eq+ ${encodedFilter}+OR+`;
             } else {
-              filterUrl = `${filterUrl}${field}+eq+ ${filter}`;
+              filterUrl += `${field}+eq+ ${encodedFilter}`;
             }
           } else if ((index + 1) < displayFields.length) {
             // Fallback to general string search if all other criteria fails
-            filterUrl = `${filterUrl}${field}+sw+"${filter}"+OR+`;
+            filterUrl += `${field}+sw+"${encodedFilter}"+OR+`;
           } else {
-            filterUrl = `${filterUrl}${field}+sw+"${filter}"`;
+            filterUrl += `${field}+sw+"${encodedFilter}"`;
           }
         });
       } else {

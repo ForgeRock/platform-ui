@@ -170,7 +170,7 @@ export default {
           .then(({ data }) => {
             /* eslint no-underscore-dangle: 0 */
             if (data._notifications) {
-              this.notifications = data._notifications;
+              this.notifications = this.sortByDate(data._notifications);
             } else {
               this.notifications = [];
             }
@@ -179,6 +179,13 @@ export default {
           })
           .catch(() => {});
       }
+    },
+    /**
+     * Sorts input data by creation date, with newest at the top. Currently separated
+     * into own method to allow for testing
+     */
+    sortByDate(data) {
+      return _.sortBy(data, 'createDate').reverse();
     },
   },
 };
