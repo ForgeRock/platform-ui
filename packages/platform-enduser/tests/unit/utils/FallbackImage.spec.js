@@ -8,23 +8,23 @@ import FallbackImage from '@/components/utils/FallbackImage';
 sinon.stub(FallbackImage, 'mounted');
 
 describe('utils/FallbackImage.vue', () => {
-	Vue.use(BootstrapVue);
+  Vue.use(BootstrapVue);
 
-	it('should display an image when "imageFound"', () => {
-		const wrapper = mount(FallbackImage);
+  it('should display an image when "imageFound"', () => {
+    const wrapper = mount(FallbackImage);
 
-		wrapper.setData({ imageFound: true });
+    wrapper.setData({ imageFound: true });
 
-		expect(wrapper.find('img').isVisible()).to.equal(true);
-		expect(wrapper.find('i').exists()).to.equal(false);
-	});
+    expect(wrapper.find('img').isVisible()).to.equal(true);
+    expect(wrapper.find('i').exists()).to.equal(false);
+  });
 
-	it('should display an icon when not "imageFound"', () => {
-		const wrapper = mount(FallbackImage);
+  it('should display an icon when not "imageFound"', () => {
+    const wrapper = mount(FallbackImage);
 
-		wrapper.setData({ imageFound: false });
+    wrapper.setData({ imageFound: false });
 
-		expect(wrapper.find('i').isVisible()).to.equal(true);
-		expect(wrapper.find('img').exists()).to.equal(false);
-	});
+    expect(wrapper.find('i').isVisible()).to.equal(true);
+    expect(wrapper.find('img').exists()).to.equal(false);
+  });
 });

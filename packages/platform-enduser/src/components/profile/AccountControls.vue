@@ -143,88 +143,88 @@ import ListItem from '@forgerock/platform-components/src/components/listItem/';
  *
  */
 export default {
-	name: 'AccountControls',
-	components: {
-		FrListGroup: ListGroup,
-		FrListItem: ListItem,
-	},
-	data() {
-		return {
-			confirmDelete: false,
-		};
-	},
-	computed: {
-		userId() {
-			return this.$store.state.UserStore.userId;
-		},
-		managedResource() {
-			return this.$store.state.UserStore.managedResource;
-		},
-	},
-	mounted() {},
-	methods: {
-		deleteAccount() {
-			/* istanbul ignore next */
-			const selfServiceInstance = this.getRequestService();
+  name: 'AccountControls',
+  components: {
+    FrListGroup: ListGroup,
+    FrListItem: ListItem,
+  },
+  data() {
+    return {
+      confirmDelete: false,
+    };
+  },
+  computed: {
+    userId() {
+      return this.$store.state.UserStore.userId;
+    },
+    managedResource() {
+      return this.$store.state.UserStore.managedResource;
+    },
+  },
+  mounted() {},
+  methods: {
+    deleteAccount() {
+      /* istanbul ignore next */
+      const selfServiceInstance = this.getRequestService();
 
-			/* istanbul ignore next */
-			selfServiceInstance.delete(`/${this.managedResource}/${this.userId}`).then(() => {
-				this.$refs.deleteModal.hide();
-				this.displayNotification('success', this.$t('pages.profile.accountControls.deleteAccountSuccessful'));
-				this.logoutUser();
-			});
-		},
-		downloadAccount() {
-			const selfServiceInstance = this.getRequestService();
+      /* istanbul ignore next */
+      selfServiceInstance.delete(`/${this.managedResource}/${this.userId}`).then(() => {
+        this.$refs.deleteModal.hide();
+        this.displayNotification('success', this.$t('pages.profile.accountControls.deleteAccountSuccessful'));
+        this.logoutUser();
+      });
+    },
+    downloadAccount() {
+      const selfServiceInstance = this.getRequestService();
 
-			/* istanbul ignore next */
-			// eslint-disable-next-line consistent-return
-			selfServiceInstance.get(`/${this.managedResource}/${this.userId}?_fields=*,idps/*,_meta/createDate,_meta/lastChanged,_meta/termsAccepted,_meta/loginCount`, []).then((result) => {
-				const downloadName = '';
+      /* istanbul ignore next */
+      // eslint-disable-next-line consistent-return
+      selfServiceInstance.get(`/${this.managedResource}/${this.userId}?_fields=*,idps/*,_meta/createDate,_meta/lastChanged,_meta/termsAccepted,_meta/loginCount`, []).then((result) => {
+        const downloadName = '';
 
-				/* eslint no-underscore-dangle: ["error", { "allow": ["_meta", "_rev"] }] */
-				/* eslint no-param-reassign: ["error", { "ignorePropertyModificationsFor": ["result", "idp"] }] */
-				if (result.data._meta) {
-					_.each(result._meta, (value, key) => {
-						if (key.match('_')) {
-							delete result._meta[key];
-						}
-					});
-				}
+        /* eslint no-underscore-dangle: ["error", { "allow": ["_meta", "_rev"] }] */
+        /* eslint no-param-reassign: ["error", { "ignorePropertyModificationsFor": ["result", "idp"] }] */
+        if (result.data._meta) {
+          _.each(result._meta, (value, key) => {
+            if (key.match('_')) {
+              delete result._meta[key];
+            }
+          });
+        }
 
-				if (result.data.idps) {
-					_.each(result.idps, (idp) => {
-						_.each(idp, (value, key) => {
-							if (key.match('_') && _.isNull(key.match('_meta'))) {
-								delete idp[key];
-							}
-						});
-					});
-				}
+        if (result.data.idps) {
+          _.each(result.idps, (idp) => {
+            _.each(idp, (value, key) => {
+              if (key.match('_') && _.isNull(key.match('_meta'))) {
+                delete idp[key];
+              }
+            });
+          });
+        }
 
-				delete result.data._rev;
-				delete result.data.kbaInfo;
+        delete result.data._rev;
+        delete result.data.kbaInfo;
 
-				const data = JSON.stringify(result.data, null, 4);
+        const data = JSON.stringify(result.data, null, 4);
 
-				if (navigator.msSaveBlob) {
-					return navigator.msSaveBlob(new Blob([data], { type: 'data:application/json' }), downloadName);
-				}
-				const blob = new Blob([data], { type: 'data:application/json' });
-				const e = document.createEvent('MouseEvents');
-				const a = document.createElement('a');
+        if (navigator.msSaveBlob) {
+          return navigator.msSaveBlob(new Blob([data], { type: 'data:application/json' }), downloadName);
+        }
+        const blob = new Blob([data], { type: 'data:application/json' });
+        const e = document.createEvent('MouseEvents');
+        const a = document.createElement('a');
 
-				a.download = 'userProfile.json';
-				a.href = window.URL.createObjectURL(blob);
-				a.dataset.downloadurl = ['data:application/json', a.download, a.href].join(':');
-				e.initEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-				a.dispatchEvent(e);
-			});
-		},
-		hideModal() {
-			this.$refs.deleteModal.hide();
-		},
-	},
+        a.download = 'userProfile.json';
+        a.href = window.URL.createObjectURL(blob);
+        a.dataset.downloadurl = ['data:application/json', a.download, a.href].join(':');
+        e.initEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+        a.dispatchEvent(e);
+      });
+    },
+    hideModal() {
+      this.$refs.deleteModal.hide();
+    },
+  },
 };
 </script>
 

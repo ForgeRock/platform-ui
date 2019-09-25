@@ -6,19 +6,19 @@ import { shallowMount } from '@vue/test-utils';
 import ValidationError from '@/components/utils/ValidationError';
 
 describe('ValidationError.vue', () => {
-	Vue.use(BootstrapVue);
+  Vue.use(BootstrapVue);
 
-	it('Validation Error component loaded', () => {
-		const wrapper = shallowMount(ValidationError, {
-			propsData: {
-				validatorErrors: {
-					has: _.noop,
-					first: _.noop,
-				},
-				fieldName: 'test',
-			},
-		});
+  it('Validation Error component loaded', () => {
+    const wrapper = shallowMount(ValidationError, {
+      propsData: {
+        validatorErrors: {
+          has: _.noop,
+          first: _.noop,
+        },
+        fieldName: 'test',
+      },
+    });
 
-		expect(wrapper.name()).to.equal('ValidationError');
-	});
+    expect(wrapper.name()).to.equal('ValidationError');
+  });
 });
