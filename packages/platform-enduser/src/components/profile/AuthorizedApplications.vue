@@ -90,70 +90,70 @@ import ListItem from '@forgerock/platform-components/src/components/listItem/';
 *
 */
 export default {
-	name: 'AuthorizedApplications',
-	components: {
-		FrListGroup: ListGroup,
-		FrListItem: ListItem,
-	},
-	data() {
-		return {
-			oauthApplications: {},
-			confirmApplication: {
-				name: '',
-				id: null,
-			},
-		};
-	},
-	computed: {
-		...mapState({
-			userId: state => state.UserStore.userId,
-			amDataEndpoints: state => state.ApplicationStore.amDataEndpoints.baseUrl,
-		}),
-	},
-	mounted() {
-		/* istanbul ignore next */
-		this.loadData();
-	},
-	methods: {
-		loadData() {
-			/* istanbul ignore next */
-			const query = '?_queryId=*';
-			const selfServiceInstance = this.getRequestService();
-			const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.oauthApplications + query;
+  name: 'AuthorizedApplications',
+  components: {
+    FrListGroup: ListGroup,
+    FrListItem: ListItem,
+  },
+  data() {
+    return {
+      oauthApplications: {},
+      confirmApplication: {
+        name: '',
+        id: null,
+      },
+    };
+  },
+  computed: {
+    ...mapState({
+      userId: state => state.UserStore.userId,
+      amDataEndpoints: state => state.ApplicationStore.amDataEndpoints.baseUrl,
+    }),
+  },
+  mounted() {
+    /* istanbul ignore next */
+    this.loadData();
+  },
+  methods: {
+    loadData() {
+      /* istanbul ignore next */
+      const query = '?_queryId=*';
+      const selfServiceInstance = this.getRequestService();
+      const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.oauthApplications + query;
 
-			/* istanbul ignore next */
-			// by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
-			selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
-				this.oauthApplications = response.data.result;
-			})
-				.catch((error) => {
-					/* istanbul ignore next */
-					this.displayNotification('error', error.response.data.message);
-				});
-		},
-		showConfirmationModal(application) {
-			// eslint-disable-next-line no-underscore-dangle
-			this.confirmApplication.id = application._id;
-			this.$refs.fsModal.show();
-		},
-		removeApplication(applicationId) {
-			/* istanbul ignore next */
-			const selfServiceInstance = this.getRequestService();
-			const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.oauthApplications + applicationId;
+      /* istanbul ignore next */
+      // by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
+      selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
+        this.oauthApplications = response.data.result;
+      })
+        .catch((error) => {
+          /* istanbul ignore next */
+          this.displayNotification('error', error.response.data.message);
+        });
+    },
+    showConfirmationModal(application) {
+      // eslint-disable-next-line no-underscore-dangle
+      this.confirmApplication.id = application._id;
+      this.$refs.fsModal.show();
+    },
+    removeApplication(applicationId) {
+      /* istanbul ignore next */
+      const selfServiceInstance = this.getRequestService();
+      const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.oauthApplications + applicationId;
 
-			/* istanbul ignore next */
-			// by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
-			selfServiceInstance.delete(url, { withCredentials: true }).then(() => {
-				this.displayNotification('success', this.$t('pages.profile.oauthApplications.removeSuccess', { applicationName: this.confirmApplication.id }));
-				this.loadData();
-				this.$refs.fsModal.hide();
-			})
-				.catch((error) => {
-					/* istanbul ignore next */
-					this.displayNotification('error', error.response.data.message);
-				});
-		},
-	},
+      /* istanbul ignore next */
+      // by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
+      selfServiceInstance.delete(url, { withCredentials: true }).then(() => {
+        this.displayNotification('success', this.$t('pages.profile.oauthApplications.removeSuccess', { applicationName: this.confirmApplication.id }));
+        this.loadData();
+        this.$refs.fsModal.hide();
+      })
+        .catch((error) => {
+          /* istanbul ignore next */
+          this.displayNotification('error', error.response.data.message);
+        });
+    },
+  },
 };
 </script>
 

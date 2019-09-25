@@ -6,44 +6,44 @@ import i18n from '@/i18n';
 import Unshare from '@/components/uma/Unshare';
 
 describe('Unshare.vue', () => {
-	Vue.use(BootstrapVue);
+  Vue.use(BootstrapVue);
 
-	const propsData = {
-		resource: {
-			_id: '12345',
-			name: 'test resource',
-			resourceOwnerId: 'alice',
-			scopes: ['view', 'comment', 'download'],
-			policy: {
-				permissions: [{
-					subject: 'bob',
-					scopes: ['download'],
-				}],
-			},
-		},
-		newScopes: {},
-		newShare: false,
-	};
+  const propsData = {
+    resource: {
+      _id: '12345',
+      name: 'test resource',
+      resourceOwnerId: 'alice',
+      scopes: ['view', 'comment', 'download'],
+      policy: {
+        permissions: [{
+          subject: 'bob',
+          scopes: ['download'],
+        }],
+      },
+    },
+    newScopes: {},
+    newShare: false,
+  };
 
-	it('Resources page loaded', () => {
-		const wrapper = mount(Unshare, {
-			i18n,
-			propsData,
-		});
+  it('Resources page loaded', () => {
+    const wrapper = mount(Unshare, {
+      i18n,
+      propsData,
+    });
 
-		expect(wrapper.name()).to.equal('Unshare');
-	});
+    expect(wrapper.name()).to.equal('Unshare');
+  });
 
-	it('Emits "unshareResource" event', () => {
-		const wrapper = mount(Unshare, {
-			i18n,
-			propsData,
-		});
+  it('Emits "unshareResource" event', () => {
+    const wrapper = mount(Unshare, {
+      i18n,
+      propsData,
+    });
 
-		wrapper.vm.unshare('12345');
+    wrapper.vm.unshare('12345');
 
-		Vue.nextTick(() => {
-			expect(wrapper.emitted('unshareResource').length).to.equal(1);
-		});
-	});
+    Vue.nextTick(() => {
+      expect(wrapper.emitted('unshareResource').length).to.equal(1);
+    });
+  });
 });
