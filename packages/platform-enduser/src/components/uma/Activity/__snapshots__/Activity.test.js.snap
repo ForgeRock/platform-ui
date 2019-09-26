@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Uma Activity Component activityGroups Activity page loaded 1`] = `
+<div>
+  <frlistgroup-stub title="" subtitle="">
+    <div class="card-body m-0 py-4">
+      <h6 class="card-title mb-0">
+        Wednesday, June 06, 2018
+      </h6>
+    </div>
+    <frlistitem-stub><template class="d-inline-flex w-100"></template></frlistitem-stub>
+  </frlistgroup-stub>
+  <frlistgroup-stub title="" subtitle="">
+    <div class="card-body m-0 py-4">
+      <h6 class="card-title mb-0">
+        Friday, June 01, 2018
+      </h6>
+    </div>
+    <frlistitem-stub><template class="d-inline-flex w-100"></template></frlistitem-stub>
+    <frlistitem-stub><template class="d-inline-flex w-100"></template></frlistitem-stub>
+  </frlistgroup-stub>
+</div>
+`;

@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ToolbarNotification.vue Toolbar Notification component loaded 1`] = `
+<bnavitemdropdown-stub text="" right="true" offset="0" role="menu" extramenuclasses="" extratoggleclasses="" class="fr-notification-icon align-self-center mr-4"><template></template>
+  <bdropdownheader-stub tag="header" class="border-bottom py-3">
+    <div class="fr-notification-header"><span>Notifications (1)</span> <a href="#" class="float-right">
+        Clear All
+      </a></div>
+  </bdropdownheader-stub>
+  <div name="notification-list" class="scrollbox">
+    <div class="-notification dropdown-item py-3 fr-notification-item">
+      <div class="media">
+        <div class="media-body">
+          <h6 class="my-0">
+            Your profile has been updated
+          </h6> <small class="text-muted">
+            June 4, 2018 4:20 PM UTC
+          </small>
+        </div>
+        <bbutton-stub target="_self" event="click" routertag="a" variant="sm" type="button" tag="button" class="btn btn-link my-auto"><i class="fa fa-trash text-muted"></i></bbutton-stub>
+      </div>
+    </div>
+  </div>
+</bnavitemdropdown-stub>
+`;

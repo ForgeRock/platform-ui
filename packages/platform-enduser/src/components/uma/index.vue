@@ -134,14 +134,12 @@ export default {
 			const selfServiceInstance = this.getRequestService();
 			const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.resourceSet + query;
 
-			/* istanbul ignore next */
 			// by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
 			selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
 				this.resources = response.data.result;
 				this.requestsLoaded = true;
 			})
 				.catch((error) => {
-					/* istanbul ignore next */
 					this.resources = [];
 					this.requestsLoaded = true;
 
@@ -153,19 +151,16 @@ export default {
 				});
 		},
 		getActivity() {
-			/* istanbul ignore next */
 			const query = '?_sortKeys=-eventTime&_queryFilter=true';
 			const selfServiceInstance = this.getRequestService();
 			const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.auditHistory + query;
 
-			/* istanbul ignore next */
 			// by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
 			selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
 				this.activity = response.data.result;
 			})
 				.catch((error) => {
 					this.activity = [];
-					/* istanbul ignore next */
 					if (error.response) {
 						this.displayNotification('error', error.response.data.message);
 					} else {
@@ -174,12 +169,10 @@ export default {
 				});
 		},
 		getRequests() {
-			/* istanbul ignore next */
 			const query = '?_sortKeys=user&_queryFilter=true';
 			const selfServiceInstance = this.getRequestService();
 			const url = `${this.amDataEndpoints.baseUrl + this.userId}/uma/pendingrequests${query}`;
 
-			/* istanbul ignore next */
 			// by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
 			selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
 				this.requests = _.map(response.data.result, (request) => {
@@ -201,7 +194,6 @@ export default {
 				});
 			})
 				.catch((error) => {
-					/* istanbul ignore next */
 					this.requests = {};
 
 					if (error.response) {
@@ -225,12 +217,10 @@ export default {
 			});
 		},
 		shareResource(payload, config = {}) {
-			/* istanbul ignore next */
 			const successMsg = this.$t('common.user.sharing.shareSuccess');
 			const selfServiceInstance = this.getRequestService();
 			const url = `${this.amDataEndpoints.baseUrl + this.userId}/uma/policies/${payload.policyId}`;
 
-			/* istanbul ignore next */
 			selfServiceInstance.put(url, payload, { withCredentials: true }).then(() => {
 				if (config.onSuccess) {
 					config.onSuccess();
@@ -239,23 +229,19 @@ export default {
 				this.loadData();
 			})
 				.catch((error) => {
-					/* istanbul ignore next */
 					this.displayNotification('error', error.response.data.message);
 				});
 		},
 		unshareResource(resourceId) {
-			/* istanbul ignore next */
 			const successMsg = this.$t('common.user.sharing.unshareSuccess');
 			const selfServiceInstance = this.getRequestService();
 			const url = `${this.amDataEndpoints.baseUrl + this.userId}/uma/policies/${resourceId}`;
 
-			/* istanbul ignore next */
 			selfServiceInstance.delete(url, { withCredentials: true }).then(() => {
 				this.displayNotification('success', successMsg);
 				this.loadData();
 			})
 				.catch((error) => {
-					/* istanbul ignore next */
 					this.displayNotification('error', error.response.data.message);
 				});
 		},
@@ -275,18 +261,15 @@ export default {
 					this.loadData();
 				})
 				.catch((error) => {
-					/* istanbul ignore next */
 					this.displayNotification('error', error.response.data.message);
 				});
 		},
 		finalizeResourceAccess(id, action, config = {}) {
-			/* istanbul ignore next */
 			const successMsg = action === 'approve' ? this.$t('common.user.sharing.requestAllowedSuccess') : this.$t('common.user.sharing.requestDeniedSuccess');
 			const selfServiceInstance = this.getRequestService();
 			const payload = { scopes: config.scopes || {} };
 			const url = `${this.amDataEndpoints.baseUrl}${this.userId}/uma/pendingrequests/${id}?_action=${action}`;
 
-			/* istanbul ignore next */
 			selfServiceInstance.post(url, payload, { withCredentials: true }).then(() => {
 				if (config.onSuccess) {
 					config.onSuccess();
@@ -296,7 +279,6 @@ export default {
 				this.displayNotification('success', successMsg);
 			})
 				.catch((error) => {
-					/* istanbul ignore next */
 					this.displayNotification('error', error.response.data.message);
 				});
 		},
