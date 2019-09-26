@@ -4,4 +4,9 @@ module.exports = {
 			useBuiltIns: 'entry',
 		}],
 	],
+	env: {
+		test: {
+			plugins: ['require-context-hook'],
+		},
+	},
 };

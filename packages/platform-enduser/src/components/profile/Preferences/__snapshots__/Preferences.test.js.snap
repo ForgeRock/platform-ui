@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Preferences.vue Preferences page loaded 1`] = `
+<frlistgroup-stub title="Preferences" subtitle="Set your communications preferences.">
+  <frlistitem-stub>
+    <div class="d-inline-flex w-100">
+      <h6 class="mt-3">
+        Send me news and updates
+      </h6>
+      <div class="ml-auto">
+        <togglebutton-stub id="updates" height="28" width="56" sync="true" css-colors="true" class="mt-2 p-0 fr-toggle-primary"></togglebutton-stub>
+      </div>
+    </div>
+  </frlistitem-stub>
+  <frlistitem-stub>
+    <div class="d-inline-flex w-100">
+      <h6 class="mt-3">
+        Send me special offers and services
+      </h6>
+      <div class="ml-auto">
+        <togglebutton-stub id="marketing" height="28" width="56" sync="true" css-colors="true" class="mt-2 p-0 fr-toggle-primary"></togglebutton-stub>
+      </div>
+    </div>
+  </frlistitem-stub>
+</frlistgroup-stub>
+`;

@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EditResource.vue EditResource page loaded 1`] = `
+<bcontainer-stub tag="div">
+  <brow-stub tag="div">
+    <bcol-stub tag="div">
+      <div class="d-sm-flex my-4">
+        <div class="media">
+          <div class="rounded-circle fr-resource-circle text-light bg-primary mr-4"><i class="fa fa-3x fa-cube"></i></div>
+          <div class="media-body">
+            <h1>test</h1>
+            <h6 class="text-muted">
+              test - test
+            </h6>
+          </div>
+        </div>
+        <!---->
+      </div>
+    </bcol-stub>
+  </brow-stub>
+  <btabs-stub tag="div" contentclass="mt-4" flex-column="" flex-sm-row="">
+    <btab-stub active="true" tag="div" buttonid="" title="Details" href="#">
+      <bcard-stub bodytag="div" title="" titletag="h4" subtitle="" subtitletag="h6" subtitletextvariant="muted" headertag="div" footertag="div" tag="div"><span>
+          No available properties for editing
+        </span></bcard-stub>
+    </btab-stub>
+  </btabs-stub>
+  <!---->
+  <!---->
+</bcontainer-stub>
+`;

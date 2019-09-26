@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Profile.vue Profile page loaded 1`] = `
+<div class="container">
+  <div class="row my-5">
+    <div class="profileCol mb-4 col-lg-4">
+      <div class="card text-center mb-4">
+        <!---->
+        <!---->
+        <div class="card-body">
+          <!---->
+          <!----><img src="" alt="img" width="112" height="112" class="m-1 mb-3 rounded-circle">
+          <h4></h4> <span class="text-muted">
+
+        </span> <button type="button" class="btn mt-4 btn-primary btn-block">
+            Edit personal info
+          </button>
+        </div>
+        <!---->
+        <!---->
+      </div>
+      <!---->
+    </div>
+    <div class="col-lg-8">
+      <div class="tabs">
+        <!---->
+        <div class="">
+          <ul role="tablist" class="nav nav-tabs"></ul>
+        </div>
+        <div class="tab-content mt-4">
+          <div role="tabpanel" tabindex="-1" aria-hidden="false" class="tab-pane active">
+            <!---->
+            <!---->
+            <!---->
+            <!---->
+            <!---->
+            <!---->
+          </div>
+          <div class="tab-pane active"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
