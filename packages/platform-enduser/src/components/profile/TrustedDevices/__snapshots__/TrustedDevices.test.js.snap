@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TrustedDevices.vue Trusted Devices loads 1`] = `
+<frlistgroup-stub title="Trusted Devices" subtitle="Devices you have signed in with.">
+  <blistgroupitem-stub class="noncollapse text-center">
+    No Trusted Devices
+  </blistgroupitem-stub>
+  <bmodal-stub id="trustedDevicesConfirmationModal" cancel-variant="outline-secondary">
+    <div class="d-flex w-100 h-100">
+      <h6 class="my-0">
+        Confirm
+      </h6> <button type="button" aria-label="Close" class="close"><i class="fa fa-times"></i></button>
+    </div>
+    Are you sure you want to remove "" from your list of trusted devices?
+    <div>
+      <div class="float-right">
+        <bbtn-stub variant="outline-secondary mr-2">
+          Cancel
+        </bbtn-stub>
+        <bbtn-stub type="button" variant="danger">
+          Remove
+        </bbtn-stub>
+      </div>
+    </div>
+  </bmodal-stub>
+</frlistgroup-stub>
+`;

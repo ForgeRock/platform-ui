@@ -150,7 +150,6 @@ export default {
 		loadData() {
 			const idmInstance = this.getRequestService();
 
-			/* istanbul ignore next */
 			axios.all([
 				idmInstance.get(`schema/${this.resource}/${this.name}`),
 				idmInstance.get(`privilege/${this.resource}/${this.name}`)]).then(axios.spread((schema, privilege) => {
@@ -161,8 +160,8 @@ export default {
 
 						if (
 							this.columns.length <= 3
-                                    && _.isUndefined(propSchema.encryption)
-                                    && _.includes(['string', 'boolean', 'number'], propSchema.type)
+              && _.isUndefined(propSchema.encryption)
+              && _.includes(['string', 'boolean', 'number'], propSchema.type)
 						) {
 							this.columns.push({
 								key: readProp,
@@ -210,7 +209,6 @@ export default {
 		loadGrid(filter, fields, sortField, page) {
 			const idmInstance = this.getRequestService();
 
-			/* istanbul ignore next */
 			idmInstance.get(this.buildGridUrl(filter, fields, sortField, page)).then((resourceData) => {
 				// this.totalRows = resourceData.data.totalPagedResults;
 				if (resourceData.data.pagedResultsCookie) {
@@ -267,7 +265,6 @@ export default {
 			this.loadGrid(this.generateSearch(this.filter, this.displayFields, this.schemaProperties), this.displayFields, this.calculateSort(sort.sortDesc, sort.sortBy), 1);
 		},
 		paginationChange(page) {
-			/* istanbul ignore next */
 			this.currentPage = page;
 			this.loadGrid(this.generateSearch(this.filter, this.displayFields, this.schemaProperties), this.displayFields, this.calculateSort(this.sortDesc, this.sortBy), page);
 		},
@@ -283,7 +280,7 @@ export default {
 			let filterUrl = '';
 
 			if (filter.length > 0) {
-				filter = encodeURIComponent(filter);
+				filterUrl = encodeURIComponent(filter);
 				_.each(displayFields, (field, index) => {
 					let type = 'string';
 
@@ -347,48 +344,48 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-    /deep/ {
-        .fr-resource-paginator {
-            a[role="menuitemradio"] {
-                display: none !important;
-            }
-        }
+/deep/ {
+  .fr-resource-paginator {
+    a[role="menuitemradio"] {
+      display: none !important;
+    }
+  }
+}
+
+.input-group {
+  & > .input-group-prepend {
+    .input-group-text.inset,
+    .btn.inset {
+      border-right-color: transparent;
+    }
+  }
+
+  & > .input-group-append {
+    .input-group-text.inset,
+    .btn.inset {
+      border-left-color: transparent;
+    }
+  }
+
+  & > .form-control {
+    &.inset-left:not(:first-child) {
+      border-left-color: transparent;
     }
 
-    .input-group {
-        & > .input-group-prepend {
-            .input-group-text.inset,
-            .btn.inset {
-                border-right-color: transparent;
-            }
-        }
-
-        & > .input-group-append {
-            .input-group-text.inset,
-            .btn.inset {
-                border-left-color: transparent;
-            }
-        }
-
-        & > .form-control {
-            &.inset-left:not(:first-child) {
-                border-left-color: transparent;
-            }
-
-            &.inset-right:not(:first-child) {
-                border-right-color: transparent;
-            }
-        }
-
-        .btn.clear {
-            opacity: 1;
-            color: $gray-500;
-            background-color: $input-bg;
-
-            &.disabled > i {
-                color: transparent;
-                border-width: 0;
-            }
-        }
+    &.inset-right:not(:first-child) {
+      border-right-color: transparent;
     }
+  }
+
+  .btn.clear {
+    opacity: 1;
+    color: $gray-500;
+    background-color: $input-bg;
+
+    &.disabled > i {
+      color: transparent;
+      border-width: 0;
+    }
+  }
+}
 </style>
