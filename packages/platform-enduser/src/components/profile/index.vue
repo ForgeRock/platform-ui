@@ -125,13 +125,11 @@ export default {
 			this.makeUpdateRequest('selfservice/user', payload, config);
 		},
 		makeUpdateRequest(endpoint, payload, config = {}) {
-			/* istanbul ignore next */
 			const successMsg = config.successMsg || this.$t('common.user.profile.updateSuccess');
 			const selfServiceInstance = this.getRequestService({
 				headers: config.headers,
 			});
 
-			/* istanbul ignore next */
 			selfServiceInstance.patch(`${endpoint}/${this.userId}`, payload).then((response) => {
 				this.$store.dispatch('UserStore/setProfileAction', response.data);
 				this.displayNotification('success', successMsg);
@@ -141,7 +139,6 @@ export default {
 				}
 			})
 				.catch((error) => {
-					/* istanbul ignore next */
 					const errorMsg = config.errorMsg || error.response.data.message;
 					this.displayNotification('error', errorMsg);
 
@@ -154,7 +151,7 @@ export default {
 };
 </script>
 <style type="scss" scoped>
-    /deep/ .nav-tabs {
-        border-bottom: 1px solid rgba(0, 0, 0, 0.125);
-    }
+/deep/ .nav-tabs {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
 </style>

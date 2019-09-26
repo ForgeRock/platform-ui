@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AuthorizedApplications.vue Authorized Applications loads 1`] = `
+<frlistgroup-stub title="Authorized Applications" subtitle="These apps can access your account.">
+  <blistgroupitem-stub class="noncollapse text-center">
+    No Authorized Applications
+  </blistgroupitem-stub>
+  <bmodal-stub id="authAppConfirmationModal" cancel-variant="outline-secondary">
+    <div class="d-flex w-100 h-100">
+      <h6 class="my-0">
+        Confirm
+      </h6> <button type="button" aria-label="Close" class="close"><i class="fa fa-times"></i></button>
+    </div>
+    Are you sure you want to remove "" from your list of authorized applications?
+    <div>
+      <div class="float-right">
+        <bbtn-stub variant="outline-secondary mr-2">
+          Cancel
+        </bbtn-stub>
+        <bbtn-stub type="button" variant="danger">
+          Remove
+        </bbtn-stub>
+      </div>
+    </div>
+  </bmodal-stub>
+</frlistgroup-stub>
+`;

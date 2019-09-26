@@ -159,12 +159,11 @@ Vue.mixin({
 		},
 		// Headers used for oauth requests and selfservice
 		getAnonymousHeaders() {
-			const headers = store.state.ApplicationStore.authHeaders || { };
+			const headers = store.state.ApplicationStore.authHeaders || {};
 			return headers;
 		},
 		// Display a application notification
 		displayNotification(notificationType, message) {
-			/* istanbul ignore next */
 			this.$notify({
 				group: 'IDMMessages',
 				type: notificationType,

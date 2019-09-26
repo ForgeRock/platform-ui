@@ -11,6 +11,7 @@ module.exports = {
 	},
 	transformIgnorePatterns: [
 		'/node_modules/.*',
+		'/node_modules/(?!@babel)',
 		'node_modules/(?!(babel-jest|jest-vue-preprocessor)/)',
 	],
 	moduleNameMapper: {

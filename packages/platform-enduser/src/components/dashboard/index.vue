@@ -51,7 +51,6 @@ export default {
 	},
 	methods: {
 		loadData() {
-			/* istanbul ignore next */
 			this.getRequestService().get('config/ui/dashboard')
 				.then(({ data }) => {
 					this.widgets = data.dashboard.widgets;

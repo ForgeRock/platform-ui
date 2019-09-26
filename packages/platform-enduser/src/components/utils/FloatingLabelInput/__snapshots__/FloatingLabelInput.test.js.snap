@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FloatingLabelInput.vue Floating Label Input component loaded 1`] = `
+<div class="mb-3">
+  <div class="form-label-group mb-0"><input id="floatingLabelInput5" autofocus="autofocus" placeholder="" data-vv-as="" data-vv-validate-on="submit" name="test" type="" class="form-control" data-vv-id="1" aria-required="false" aria-invalid="false">
+    <!----> <label hidden="hidden" for="floatingLabelInput5">
+
+    </label></div>
+  <frvalidationerror-stub validatorerrors="[object Object]" fieldname="test"></frvalidationerror-stub>
+</div>
+`;
