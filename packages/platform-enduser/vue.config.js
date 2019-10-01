@@ -73,13 +73,6 @@ module.exports = {
 			'0.0.0.0',
 		],
 		port: process.env.DEV_PORT || 8080,
-		proxy: {
-			'/openidm': {
-				target: 'https://default.iam.example.com/openidm',
-				pathRewrite: { '^/openidm': '' },
-				changeOrigin: true,
-			},
-		},
 	},
 	configureWebpack: {
 		plugins: getPlugins(),
