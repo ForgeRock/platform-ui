@@ -1,9 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`ValidationError.vue Validation Error component loaded 1`] = `
-<div class="fr-validation-requirements text-left" style="display: none;" localvue="function VueComponent (options) {
-      this._init(options);
-    }"><span class="text-danger">
-
-  </span></div>
-`;

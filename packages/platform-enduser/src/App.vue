@@ -206,7 +206,7 @@ export default {
     },
     accessIcon(icon) {
       let matIcon = 'check_box_outline_blank';
-      if (icon.length && icon.substring(0, 3) !== 'fa-') {
+      if (icon && icon.length && icon.substring(0, 3) !== 'fa-') {
         matIcon = icon;
       }
 

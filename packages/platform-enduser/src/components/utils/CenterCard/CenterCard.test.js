@@ -1,14 +1,14 @@
 import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
+import CenterCard from './index';
 import i18n from '@/i18n';
-import FloatingLabelInput from '@/components/utils/CenterCard';
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue);
 
 describe('CenterCard.vue', () => {
   it('Center Card component loaded without header images', () => {
-    const wrapper = shallowMount(FloatingLabelInput, {
+    const wrapper = shallowMount(CenterCard, {
       localVue,
       i18n,
     });
@@ -19,7 +19,7 @@ describe('CenterCard.vue', () => {
   });
 
   it('Center Card component loaded with header images', () => {
-    const wrapper = shallowMount(FloatingLabelInput, {
+    const wrapper = shallowMount(CenterCard, {
       localVue,
       i18n,
       propsData: {

@@ -125,9 +125,9 @@
 <script>
 import { mapState } from 'vuex';
 import ListItem from '@forgerock/platform-components/src/components/listItem/';
+import PolicyPasswordInput from '@forgerock/platform-components/src/components/PolicyPasswordInput';
+import ValidationError from '@forgerock/platform-components/src/components/ValidationError';
 import LoadingButton from '@/components/utils/LoadingButton';
-import PolicyPasswordInput from '@/components/utils/PolicyPasswordInput';
-import ValidationError from '@/components/utils/ValidationError';
 
 /**
  * @description Allows a user to change their password, makes use of policy password component, similar to registration it will only allow a user to change password

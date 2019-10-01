@@ -67,11 +67,11 @@ import {
 } from 'bootstrap-vue';
 import { FRAuth, Config } from '@forgerock/javascript-sdk';
 import Vue from 'vue';
+import FloatingLabelInput from '@forgerock/platform-components/src/components/FloatingLabelInput';
 import BooleanAttributeInputCallback from '@/components/callbacks/BooleanAttributeInputCallback';
 import CenterCard from '@/components/utils/CenterCard';
 import ChoiceCallback from '@/components/callbacks/ChoiceCallback';
 import ConfirmationCallback from '@/components/callbacks/ConfirmationCallback';
-import FloatingLabelInput from '@/components/utils/FloatingLabelInput';
 import KbaCreateCallback from '@/components/callbacks/KbaCreateCallback';
 import HiddenValueCallback from '@/components/callbacks/HiddenValueCallback';
 import ReCaptchaCallback from '@/components/callbacks/ReCaptchaCallback';

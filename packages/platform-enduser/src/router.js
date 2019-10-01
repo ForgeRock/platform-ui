@@ -48,7 +48,7 @@ export default new Router({
     {
       path: '/edit/:resourceType/:resourceName/:resourceId',
       name: 'EditResource',
-      component: () => import('@/components/access/EditResource'),
+      component: () => import('@/components/access/EditResourceView'),
       meta: { authenticate: true },
     },
     {

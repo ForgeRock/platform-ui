@@ -1,12 +1,14 @@
 {
   "common": {
-      "name": "Name",
-      "description": "Description",
-      "delete": "Delete",
-      "save": "Save",
-      "confirmDelete": "Confirm Delete",
-      "cancel": "Cancel",
-      "required": "Required"
+    "name": "Name",
+    "description": "Description",
+    "delete": "Delete",
+    "save": "Save",
+    "confirmDelete": "Confirm Delete",
+    "cancel": "Cancel",
+    "required": "Required",
+    "typeSearch": "Type to Search",
+    "new": "New"
   },
   "sideMenu": {
     "signOut": "Sign Out",
@@ -33,7 +35,9 @@
     "errorRetrievingAuthServices": "Error retrieving authentication services",
     "errorCreatingAuthService": "Error creating authentication service",
     "errorDeletingAuthService": "Error deleting authentication service",
-    "errorRetrievingAuthServiceTemplate": "Error retrieving authentication service template"
+    "errorRetrievingAuthServiceTemplate": "Error retrieving authentication service template",
+    "errorRetrievingGridData": "Error retrieving grid data",
+    "unableToEditResource": "Unable to edit {resource}"
   },
   "dashboard": {
     "managedAccess": {

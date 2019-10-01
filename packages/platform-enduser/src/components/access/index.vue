@@ -128,7 +128,7 @@ import {
   toNumber,
 } from 'lodash';
 import axios from 'axios';
-import CreateResource from '@/components/access/CreateResource';
+import CreateResource from '@forgerock/platform-components/src/components/resource/CreateResource';
 
 /**
  * @description Controlling component for delegated admin, allows for listing available resources and connects to the create, delete and edit features.

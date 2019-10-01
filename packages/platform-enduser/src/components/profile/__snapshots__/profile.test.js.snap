@@ -10,9 +10,12 @@ exports[`Profile.vue Profile page loaded 1`] = `
         <div class="card-body">
           <!---->
           <!----><img src="" alt="img" width="112" height="112" class="m-1 mb-3 rounded-circle">
-          <h4></h4> <span class="text-muted">
+          <h4 class="text-truncate">
 
-        </span> <button type="button" class="btn mt-4 btn-primary btn-block">
+          </h4>
+          <div class="text-muted text-truncate">
+
+          </div> <button type="button" class="btn mt-4 btn-primary btn-block">
             Edit personal info
           </button>
         </div>

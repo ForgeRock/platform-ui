@@ -64,7 +64,7 @@ import {
   find,
 } from 'lodash';
 import { BFormSelect } from 'bootstrap-vue';
-import FloatingLabelInput from '@/components/utils/FloatingLabelInput';
+import FloatingLabelInput from '@forgerock/platform-components/src/components/FloatingLabelInput';
 
 export default {
   name: 'KbaCreateCallback',

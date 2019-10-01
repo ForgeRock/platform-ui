@@ -136,8 +136,9 @@ import {
   map,
 } from 'lodash';
 import { mapState } from 'vuex';
-import ValidationError from '@/components/utils/ValidationError';
-import ResourceMixin from '@/components/utils/mixins/ResourceMixin';
+import ValidationError from '@forgerock/platform-components/src/components/ValidationError';
+// eslint-disable-next-line import/no-unresolved
+import ResourceMixin from '@forgerock/platform-components/src/components/mixins/ResourceMixin';
 
 /**
  * @description Displays a users profile, auto generates fields based off of resource schema. Currently only displays strings, numbers and booleans. In the case of a policy
