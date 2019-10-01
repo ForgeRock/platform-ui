@@ -26,7 +26,7 @@
     "duplicate": "Duplicate",
     "preview": "Preview",
     "confirmDeleteAuthService": "Are you sure you want to delete the \"{treeId}\" authentication service?",
-    "authServiceDeleteSuccess": "\"{treeid}\" authentication service successfully deleted.",
+    "authServiceDeleteSuccess": "\"{treeId}\" authentication service successfully deleted.",
     "noAuthServices": "No Authentication Services",
     "noAuthSercicesMessage": "Sign in users to your application by creating authentication services",
     "mustBeUnique": "Name must be a unique.",
