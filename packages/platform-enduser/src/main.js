@@ -21,7 +21,7 @@ PromisePoly.polyfill();
 
 // Ready translated locale messages
 // IDM Context default
-const idmContext = window.context || '/openidm';
+const idmContext = process.env.VUE_APP_IDM_URL;
 
 // Router guard to check authenticated routes
 router.beforeEach((to, from, next) => {
@@ -116,7 +116,6 @@ Vue.mixin({
 			let timeout = 5000;
 			let headers = {
 				'content-type': 'application/json',
-				'cache-control': 'no-cache',
 				'x-requested-with': 'XMLHttpRequest',
 			};
 
@@ -244,8 +243,7 @@ const addAppAuth = () => {
 		revocationEndpoint: `${AM_URL}/oauth2/token/revoke`,
 		endSessionEndpoint: `${AM_URL}/oauth2/connect/endSession`,
 		resourceServers: {
-			[store.state.ApplicationStore.idmBaseURL]: 'openid fr:idm:profile fr:idm:profile_update fr:idm:consent_read fr:idm:notifications',
-			'http://localhost:8888/openidm': 'openid fr:idm:profile fr:idm:profile_update fr:idm:consent_read fr:idm:notifications',
+			[store.state.ApplicationStore.idmBaseURL]: 'openid',
 		},
 		interactionRequiredHandler: store.state.ApplicationStore.loginURL ? () => {
 			redirectToLogin();
