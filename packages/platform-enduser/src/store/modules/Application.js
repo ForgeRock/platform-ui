@@ -65,8 +65,8 @@ const mutations = {
       state.theme = env.THEME;
     }
 
-    if (env.VUE_APP_IDM_CLIENTID) {
-      state.idmClientID = env.VUE_APP_IDM_CLIENTID;
+    if (env.VUE_APP_ENDUSER_CLIENT_ID) {
+      state.idmClientID = env.VUE_APP_ENDUSER_CLIENT_ID;
     }
 
     if (env.VUE_APP_LOGIN_URL) {
