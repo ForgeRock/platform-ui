@@ -252,18 +252,22 @@ The default project includes three themes:
 
 Currently environment variables are:
 
-1) VUE_APP_AM_URL - URL to be used by default for authentication
-2) VUE_APP_IDM_URL - URL of AM instance that will be used for administration
-3) THEME - Will load a corresponding theme.scss file (example dark-theme.scss).
-4) VUE_APP_IDM_CLIENTID - defaults to 'endUserUIClient'
+1. VUE_APP_AM_URL - URL to be used by default for authentication
+1. VUE_APP_IDM_URL - URL of AM instance that will be used for administration
+1. VUE_APP_LOGIN_URL - URL for the location of the login UI
+1. VUE_APP_ADMIN_URL - URL for the location of the admin UI
+1. THEME - Will load a corresponding theme.scss file (example dark-theme.scss).
+1. VUE_APP_ENDUSER_CLIENT_ID - defaults to 'endUserUIClient'
 
-These are made available in the .env file.
+These are made available in the .env file, and overridden by system environment variables in the .env.production file for dockerization.
 
 Access in Vue files:
 
 ```
 process.env.VUE_APP_AM_URL
 process.env.VUE_APP_IDM_URL
+process.VUE_APP_LOGIN_URL
+process.VUE_APP_ADMIN_URL
+process.env.VUE_APP_ENDUSER_CLIENT_ID
 process.env.THEME
-process.env.VUE_APP_IDM_CLIENTID
 ```

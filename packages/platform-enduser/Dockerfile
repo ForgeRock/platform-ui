@@ -51,4 +51,8 @@ RUN yarn run build
 FROM nginx:1.17 as production
 
 # Copy result of `build` build stage
-COPY --from=build /home/app/packages/platform-enduser/dist/ /usr/share/nginx/html
+COPY --from=build --chown=nginx /home/app/packages/platform-enduser/dist/ /usr/share/nginx/html
+
+COPY --chown=nginx entrypoint.sh /entrypoint.sh
+
+CMD ["/entrypoint.sh"]
