@@ -166,46 +166,46 @@ import { mapState } from 'vuex';
 import ToolbarNotification from '@/components/utils/ToolbarNotification';
 
 export default {
-  name: 'App',
-  components: {
-    FrNotification: ToolbarNotification,
-  },
-  data() {
-    return {
-      toggled: false,
-    };
-  },
-  computed: {
-    ...mapState({
-      internalUser: state => state.UserStore.internalUser,
-      userId: state => state.UserStore.userId,
-      adminUser: state => state.UserStore.adminUser,
-      accessObj: state => state.UserStore.access,
-      adminURL: state => state.ApplicationStore.adminURL,
-      amDataEndpoints: state => state.ApplicationStore.amDataEndpoints,
-    }),
-  },
-  methods: {
-    onToggle() {
-      this.toggled = !this.toggled;
-    },
-    accessIcon(icon) {
-      let iconClass = 'fa fa-fw mr-3 ';
+	name: 'App',
+	components: {
+		FrNotification: ToolbarNotification,
+	},
+	data() {
+		return {
+			toggled: false,
+		};
+	},
+	computed: {
+		...mapState({
+			internalUser: state => state.UserStore.internalUser,
+			userId: state => state.UserStore.userId,
+			adminUser: state => state.UserStore.adminUser,
+			accessObj: state => state.UserStore.access,
+			adminURL: state => state.ApplicationStore.adminURL,
+			amDataEndpoints: state => state.ApplicationStore.amDataEndpoints,
+		}),
+	},
+	methods: {
+		onToggle() {
+			this.toggled = !this.toggled;
+		},
+		accessIcon(icon) {
+			let iconClass = 'fa fa-fw mr-3 ';
 
-      if (icon.length) {
-        iconClass += icon;
-      } else {
-        iconClass = `${iconClass}fa-cube`;
-      }
+			if (icon.length) {
+				iconClass += icon;
+			} else {
+				iconClass = `${iconClass}fa-cube`;
+			}
 
-      return iconClass;
-    },
-  },
-  filters: {
-    capitalize(value) {
-      return _.capitalize(value);
-    },
-  },
+			return iconClass;
+		},
+	},
+	filters: {
+		capitalize(value) {
+			return _.capitalize(value);
+		},
+	},
 };
 </script>
 

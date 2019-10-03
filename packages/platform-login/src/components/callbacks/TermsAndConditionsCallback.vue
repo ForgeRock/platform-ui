@@ -33,42 +33,42 @@ import { find } from 'lodash';
 import CallbackValidation from '@/utils/CallbackValidation';
 
 export default {
-  name: 'TermsAndConditions',
-  components: {
-    BModal,
-  },
-  props: {
-    callback: {
-      type: Object,
-      validator: CallbackValidation.validateOutput,
-      required: true,
-    },
-    index: {
-      type: Number,
-      default: 0,
-    },
-    prompt: {
-      type: String,
-      default: '',
-    },
-    termsAndConditionsText: {
-      type: String,
-      default: '',
-    },
-    agreeToTermsText: {
-      type: String,
-      default: '',
-    },
-  },
-  mounted() {
-    this.name = `callback_${this.index}`;
-    this.terms = find(this.callback.output, { name: 'terms' }).value;
-  },
-  data() {
-    return {
-      name: '',
-      terms: '',
-    };
-  },
+	name: 'TermsAndConditions',
+	components: {
+		BModal,
+	},
+	props: {
+		callback: {
+			type: Object,
+			validator: CallbackValidation.validateOutput,
+			required: true,
+		},
+		index: {
+			type: Number,
+			default: 0,
+		},
+		prompt: {
+			type: String,
+			default: '',
+		},
+		termsAndConditionsText: {
+			type: String,
+			default: '',
+		},
+		agreeToTermsText: {
+			type: String,
+			default: '',
+		},
+	},
+	mounted() {
+		this.name = `callback_${this.index}`;
+		this.terms = find(this.callback.output, { name: 'terms' }).value;
+	},
+	data() {
+		return {
+			name: '',
+			terms: '',
+		};
+	},
 };
 </script>

@@ -15,61 +15,61 @@ Profile.components['fr-account-controls'] = Sinon.stub();
 Profile.components['fr-account-security'] = Sinon.stub();
 
 describe('Profile.vue', () => {
-  Vue.use(BootstrapVue);
+	Vue.use(BootstrapVue);
 
-  it('Profile page loaded', () => {
-    const store = new Vuex.Store({
-      state: {
-        UserStore: {
-          userId: null,
-          managedResource: null,
-          roles: null,
-          internalUser: false,
-          adminUser: false,
-          profile: {},
-          schema: {
-            order: [],
-            properties: {
-              preferences: {
-                properties: {
-                  updates: {
-                    description: 'Send me news and updates',
-                    value: false,
-                  },
-                  marketing: {
-                    description: 'Send me special offers and services',
-                    value: true,
-                  },
-                },
-              },
-            },
-            required: [],
-          },
-          access: [],
-          givenName: '',
-          sn: '',
-          email: '',
-          userName: '',
-        },
-        ApplicationStore: {
-          authHeaders: null,
-          amDataEndpoints: null,
-          loginRedirect: null,
-          amBaseURL: 'https://default.iam.example.com/am',
-          idmBaseURL: 'https://default.iam.example.com/openidm',
-          loginURL: 'http://localhost:8083/#/service/login',
-          theme: 'default',
-          idmClientID: 'endUserUIClient',
-          adminURL: 'http://localhost:8082',
-        },
-      },
-    });
+	it('Profile page loaded', () => {
+		const store = new Vuex.Store({
+			state: {
+				UserStore: {
+					userId: null,
+					managedResource: null,
+					roles: null,
+					internalUser: false,
+					adminUser: false,
+					profile: {},
+					schema: {
+						order: [],
+						properties: {
+							preferences: {
+								properties: {
+									updates: {
+										description: 'Send me news and updates',
+										value: false,
+									},
+									marketing: {
+										description: 'Send me special offers and services',
+										value: true,
+									},
+								},
+							},
+						},
+						required: [],
+					},
+					access: [],
+					givenName: '',
+					sn: '',
+					email: '',
+					userName: '',
+				},
+				ApplicationStore: {
+					authHeaders: null,
+					amDataEndpoints: null,
+					loginRedirect: null,
+					amBaseURL: 'https://default.iam.example.com/am',
+					idmBaseURL: 'https://default.iam.example.com/openidm',
+					loginURL: 'http://localhost:8083/#/service/login',
+					theme: 'default',
+					idmClientID: 'endUserUIClient',
+					adminURL: 'http://localhost:8082',
+				},
+			},
+		});
 
-    const wrapper = mount(Profile, {
-      i18n,
-      store,
-    });
+		const wrapper = mount(Profile, {
+			i18n,
+			store,
+		});
 
-    expect(wrapper.name()).to.equal('Profile');
-  });
+		expect(wrapper.name()).to.equal('Profile');
+	});
 });

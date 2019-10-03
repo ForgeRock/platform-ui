@@ -7,78 +7,78 @@ import i18n from '@/i18n';
 import AccountSecurity from '@/components/profile/AccountSecurity';
 
 describe('AccountSecurity.vue', () => {
-  let sandbox = null;
+	let sandbox = null;
 
-  Vue.use(BootstrapVue);
+	Vue.use(BootstrapVue);
 
-  beforeEach(() => {
-    sandbox = Sinon.createSandbox();
+	beforeEach(() => {
+		sandbox = Sinon.createSandbox();
 
-    sandbox.stub(AccountSecurity, 'mounted').callsFake(() => {
-      this.isOnKBA = true;
-      this.kbaData = {};
-    });
-  });
+		sandbox.stub(AccountSecurity, 'mounted').callsFake(() => {
+			this.isOnKBA = true;
+			this.kbaData = {};
+		});
+	});
 
-  afterEach(() => {
-    sandbox.restore();
-  });
+	afterEach(() => {
+		sandbox.restore();
+	});
 
-  it.skip('AccountSecurity page loaded', () => {
-    const userStore = {
-      state: {
-        internalUser: true,
-      },
-    };
+	it.skip('AccountSecurity page loaded', () => {
+		const userStore = {
+			state: {
+				internalUser: true,
+			},
+		};
 
-    const applicationStore = {
-      state: {
-        platformMode: false,
-      },
-    };
+		const applicationStore = {
+			state: {
+				platformMode: false,
+			},
+		};
 
-    const wrapper = shallowMount(AccountSecurity, {
-      i18n,
-      mocks: {
-        userStore,
-        applicationStore,
-      },
-    });
+		const wrapper = shallowMount(AccountSecurity, {
+			i18n,
+			mocks: {
+				userStore,
+				applicationStore,
+			},
+		});
 
-    expect(wrapper.name()).to.equal('AccountSecurity');
-  });
+		expect(wrapper.name()).to.equal('AccountSecurity');
+	});
 
-  describe('#sendUpdateProfile', () => {
-    it.skip('should emit an "updateProfile" event with the payload and config', () => {
-      const userStore = {
-        state: {
-          internalUser: true,
-        },
-      };
-
-
-      const applicationStore = {
-        state: {
-          platformMode: false,
-        },
-      };
+	describe('#sendUpdateProfile', () => {
+		it.skip('should emit an "updateProfile" event with the payload and config', () => {
+			const userStore = {
+				state: {
+					internalUser: true,
+				},
+			};
 
 
-      const wrapper = shallowMount(AccountSecurity, {
-        i18n,
-        mocks: {
-          userStore,
-          applicationStore,
-        },
-      });
+			const applicationStore = {
+				state: {
+					platformMode: false,
+				},
+			};
 
-      wrapper.vm.sendUpdateProfile('test payload', 'test config');
-      expect(wrapper.emitted().updateProfile.length).to.equal(1);
 
-      const [payload, config] = wrapper.emitted().updateProfile[0];
+			const wrapper = shallowMount(AccountSecurity, {
+				i18n,
+				mocks: {
+					userStore,
+					applicationStore,
+				},
+			});
 
-      expect(payload).to.equal('test payload');
-      expect(config).to.equal('test config');
-    });
-  });
+			wrapper.vm.sendUpdateProfile('test payload', 'test config');
+			expect(wrapper.emitted().updateProfile.length).to.equal(1);
+
+			const [payload, config] = wrapper.emitted().updateProfile[0];
+
+			expect(payload).to.equal('test payload');
+			expect(config).to.equal('test config');
+		});
+	});
 });

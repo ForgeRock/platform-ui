@@ -24,22 +24,22 @@ import { ClipLoader } from 'vue-spinner/dist/vue-spinner.min';
  *
  * */
 export default {
-  name: 'LoadingButton',
-  components: { ClipLoader },
-  props: {
-    label: {
-      type: String,
-      default: () => '',
-    },
-    loading: {
-      type: Boolean,
-      default: false,
-    },
-    large: {
-      type: Boolean,
-      default: false,
-    },
-  },
+	name: 'LoadingButton',
+	components: { ClipLoader },
+	props: {
+		label: {
+			type: String,
+			default: () => '',
+		},
+		loading: {
+			type: Boolean,
+			default: false,
+		},
+		large: {
+			type: Boolean,
+			default: false,
+		},
+	},
 };
 </script>
 <style lang="scss" scoped>

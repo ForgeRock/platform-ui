@@ -18,46 +18,46 @@ import EditKBA from '@/components/profile/EditKBA';
  *
  */
 export default {
-  name: 'AccountSecurity',
-  data() {
-    return {
-      isOnKBA: false,
-      kbaData: {},
-    };
-  },
-  computed: {
-    ...mapState({
-      internalUser: state => state.UserStore.internalUser,
-    }),
-  },
-  components: {
-    FrListGroup: ListGroup,
-    FrEditKba: EditKBA,
-  },
-  methods: {
-    sendUpdateKBA(payload, config) {
-      this.$emit('updateKBA', payload, config);
-    },
-    sendUpdateProfile(payload, config) {
-      this.$emit('updateProfile', payload, config);
-    },
-  },
-  mounted() {
-    /* istanbul ignore next */
-    const selfServiceInstance = this.getRequestService({
-      headers: this.getAnonymousHeaders(),
-    });
+	name: 'AccountSecurity',
+	data() {
+		return {
+			isOnKBA: false,
+			kbaData: {},
+		};
+	},
+	computed: {
+		...mapState({
+			internalUser: state => state.UserStore.internalUser,
+		}),
+	},
+	components: {
+		FrListGroup: ListGroup,
+		FrEditKba: EditKBA,
+	},
+	methods: {
+		sendUpdateKBA(payload, config) {
+			this.$emit('updateKBA', payload, config);
+		},
+		sendUpdateProfile(payload, config) {
+			this.$emit('updateProfile', payload, config);
+		},
+	},
+	mounted() {
+		/* istanbul ignore next */
+		const selfServiceInstance = this.getRequestService({
+			headers: this.getAnonymousHeaders(),
+		});
 
-    // TODO - replace this with call to 'Liveness Service'
-    /* istanbul ignore next */
-    selfServiceInstance.get('selfservice/kba').then((response) => {
-      this.isOnKBA = true;
-      this.kbaData = response.data;
-    })
-    /* istanbul ignore next */
-      .catch(() => {
-        this.isOnKBA = false;
-      });
-  },
+		// TODO - replace this with call to 'Liveness Service'
+		/* istanbul ignore next */
+		selfServiceInstance.get('selfservice/kba').then((response) => {
+			this.isOnKBA = true;
+			this.kbaData = response.data;
+		})
+		/* istanbul ignore next */
+			.catch(() => {
+				this.isOnKBA = false;
+			});
+	},
 };
 </script>

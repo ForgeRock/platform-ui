@@ -87,11 +87,8 @@
         }
       ],
       "indent": [
-        "error",
         2,
-        {
-          "SwitchCase": 1
-        }
+        "tab"
       ],
       "no-tabs": 0,
       "max-len": 0,

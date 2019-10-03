@@ -25,20 +25,20 @@ Vue.use(ToggleButton);
 
 // Global mixin for making openIDM REST calls
 Vue.mixin({
-  methods: {
-    displayNotification(notificationType, message) {
-      /* istanbul ignore next */
-      this.$notify({
-        group: 'IDMMessages',
-        type: notificationType,
-        text: message,
-      });
-    },
-  },
+	methods: {
+		displayNotification(notificationType, message) {
+			/* istanbul ignore next */
+			this.$notify({
+				group: 'IDMMessages',
+				type: notificationType,
+				text: message,
+			});
+		},
+	},
 });
 
 new Vue({
-  router,
-  i18n,
-  render: h => h(App),
+	router,
+	i18n,
+	render: h => h(App),
 }).$mount('#app');

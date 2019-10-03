@@ -50,12 +50,12 @@
  * @description The default 404 page when Vue router is unable to locate a route.
  */
 export default {
-  name: 'NotFound',
-  data() {
-    return {
-      ghostMessage: '404',
-    };
-  },
+	name: 'NotFound',
+	data() {
+		return {
+			ghostMessage: '404',
+		};
+	},
 };
 </script>
 

@@ -48,38 +48,38 @@
  *
  * */
 export default {
-  name: 'ListItem',
-  props: {
-    collapsible: {
-      type: Boolean,
-      default: false,
-    },
-    panelShown: {
-      type: Boolean,
-      default: false,
-    },
-    hoverItem: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  data() {
-    return {
-      id: null,
-    };
-  },
-  beforeMount() {
-    // eslint-disable-next-line no-underscore-dangle
-    this.id = `listItem${this._uid}`;
-  },
-  computed: {
-    toggleId() {
-      if (this.collapsible) {
-        return this.id;
-      }
-      return null;
-    },
-  },
+	name: 'ListItem',
+	props: {
+		collapsible: {
+			type: Boolean,
+			default: false,
+		},
+		panelShown: {
+			type: Boolean,
+			default: false,
+		},
+		hoverItem: {
+			type: Boolean,
+			default: false,
+		},
+	},
+	data() {
+		return {
+			id: null,
+		};
+	},
+	beforeMount() {
+		// eslint-disable-next-line no-underscore-dangle
+		this.id = `listItem${this._uid}`;
+	},
+	computed: {
+		toggleId() {
+			if (this.collapsible) {
+				return this.id;
+			}
+			return null;
+		},
+	},
 };
 </script>
 <style lang="scss" scoped>

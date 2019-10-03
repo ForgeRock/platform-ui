@@ -33,42 +33,42 @@ import { mapState } from 'vuex';
  *
  * */
 export default {
-  name: 'WelcomeWidget',
-  props: {
-    userDetails: {
-      type: Object,
-      default: () => {},
-    },
-    widgetDetails: {
-      type: Object,
-      default: () => {},
-    },
-  },
-  data() {
-    return {};
-  },
-  mounted() {},
-  methods: {
-    openProfile() {
-      this.$router.push({ name: 'Profile', params: { openProfile: !this.internalUser } });
-    },
-  },
-  computed: {
-    ...mapState({
-      internalUser: state => state.UserStore.internalUser,
-    }),
-    fullName() {
-      let fullName = '';
+	name: 'WelcomeWidget',
+	props: {
+		userDetails: {
+			type: Object,
+			default: () => {},
+		},
+		widgetDetails: {
+			type: Object,
+			default: () => {},
+		},
+	},
+	data() {
+		return {};
+	},
+	mounted() {},
+	methods: {
+		openProfile() {
+			this.$router.push({ name: 'Profile', params: { openProfile: !this.internalUser } });
+		},
+	},
+	computed: {
+		...mapState({
+			internalUser: state => state.UserStore.internalUser,
+		}),
+		fullName() {
+			let fullName = '';
 
-      if (this.userDetails.givenName.length > 0 || this.userDetails.sn.length > 0) {
-        fullName = startCase(`${this.userDetails.givenName} ${this.userDetails.sn}`);
-      } else {
-        fullName = this.userDetails.userId;
-      }
+			if (this.userDetails.givenName.length > 0 || this.userDetails.sn.length > 0) {
+				fullName = startCase(`${this.userDetails.givenName} ${this.userDetails.sn}`);
+			} else {
+				fullName = this.userDetails.userId;
+			}
 
-      return fullName;
-    },
-  },
+			return fullName;
+		},
+	},
 };
 </script>
 

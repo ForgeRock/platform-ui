@@ -56,43 +56,43 @@ import FallbackImage from '@/components/utils/FallbackImage';
 *
 * */
 export default {
-  name: 'UmaActivity',
-  components: {
-    FrListGroup: ListGroup,
-    FrListItem: ListItem,
-    FrFallbackImage: FallbackImage,
-  },
-  props: {
-    umaHistory: {
-      required: true,
-      type: Array,
-    },
-  },
-  data() {
-    return {};
-  },
-  computed: {
-    activityGroups() {
-      const tempUmaHistory = _.clone(this.umaHistory);
-      const sortedHistory = tempUmaHistory.sort((a, b) => a.eventTime - b.eventTime).reverse();
-      const groups = _.groupBy(sortedHistory, event => moment(event.eventTime).format('YYYY-MM-DD'));
-      const activityGroups = _.keys(groups).map(day => ({ day, activities: groups[day] }));
+	name: 'UmaActivity',
+	components: {
+		FrListGroup: ListGroup,
+		FrListItem: ListItem,
+		FrFallbackImage: FallbackImage,
+	},
+	props: {
+		umaHistory: {
+			required: true,
+			type: Array,
+		},
+	},
+	data() {
+		return {};
+	},
+	computed: {
+		activityGroups() {
+			const tempUmaHistory = _.clone(this.umaHistory);
+			const sortedHistory = tempUmaHistory.sort((a, b) => a.eventTime - b.eventTime).reverse();
+			const groups = _.groupBy(sortedHistory, event => moment(event.eventTime).format('YYYY-MM-DD'));
+			const activityGroups = _.keys(groups).map(day => ({ day, activities: groups[day] }));
 
-      return _.sortBy(activityGroups, ({ day }) => moment(day)).reverse();
-    },
-  },
-  methods: {
-    formatDateTitle(dateString) {
-      return moment(dateString).format('dddd, MMMM DD, YYYY');
-    },
-    formatTime(dateString) {
-      const eventDate = moment(dateString);
+			return _.sortBy(activityGroups, ({ day }) => moment(day)).reverse();
+		},
+	},
+	methods: {
+		formatDateTitle(dateString) {
+			return moment(dateString).format('dddd, MMMM DD, YYYY');
+		},
+		formatTime(dateString) {
+			const eventDate = moment(dateString);
 
-      if (eventDate.isSame(moment(), 'day')) {
-        return eventDate.fromNow();
-      }
-      return eventDate.format('LT');
-    },
-  },
+			if (eventDate.isSame(moment(), 'day')) {
+				return eventDate.fromNow();
+			}
+			return eventDate.format('LT');
+		},
+	},
 };
 </script>

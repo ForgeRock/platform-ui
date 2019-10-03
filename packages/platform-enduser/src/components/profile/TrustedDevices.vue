@@ -91,71 +91,71 @@ import FallbackImage from '@/components/utils/FallbackImage';
  *
  */
 export default {
-  name: 'TrustedDevices',
-  components: {
-    FrListGroup: ListGroup,
-    FrListItem: ListItem,
-    FrFallbackImage: FallbackImage,
-  },
-  data() {
-    return {
-      devices: {},
-      confirmDevice: {
-        name: '',
-        id: null,
-      },
-    };
-  },
-  computed: {
-    ...mapState({
-      userId: state => state.UserStore.userId,
-      amDataEndpoints: state => state.ApplicationStore.amDataEndpoints,
-    }),
-  },
-  mounted() {
-    /* istanbul ignore next */
-    this.loadData();
-  },
-  methods: {
-    loadData() {
-      /* istanbul ignore next */
-      const query = '?_queryId=*';
-      const selfServiceInstance = this.getRequestService();
-      const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.trustedDevices + query;
+	name: 'TrustedDevices',
+	components: {
+		FrListGroup: ListGroup,
+		FrListItem: ListItem,
+		FrFallbackImage: FallbackImage,
+	},
+	data() {
+		return {
+			devices: {},
+			confirmDevice: {
+				name: '',
+				id: null,
+			},
+		};
+	},
+	computed: {
+		...mapState({
+			userId: state => state.UserStore.userId,
+			amDataEndpoints: state => state.ApplicationStore.amDataEndpoints,
+		}),
+	},
+	mounted() {
+		/* istanbul ignore next */
+		this.loadData();
+	},
+	methods: {
+		loadData() {
+			/* istanbul ignore next */
+			const query = '?_queryId=*';
+			const selfServiceInstance = this.getRequestService();
+			const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.trustedDevices + query;
 
-      /* istanbul ignore next */
-      // by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
-      selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
-        this.devices = response.data.result;
-      })
-        .catch((error) => {
-          /* istanbul ignore next */
-          this.displayNotification('error', error.response.data.message);
-        });
-    },
-    showConfirmationModal(device) {
-      this.confirmDevice.id = device.uuid;
-      this.confirmDevice.name = device.name;
-      this.$refs.fsModal.show();
-    },
-    removeDevice(deviceId) {
-      /* istanbul ignore next */
-      const selfServiceInstance = this.getRequestService();
-      const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.trustedDevices + deviceId;
+			/* istanbul ignore next */
+			// by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
+			selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
+				this.devices = response.data.result;
+			})
+				.catch((error) => {
+					/* istanbul ignore next */
+					this.displayNotification('error', error.response.data.message);
+				});
+		},
+		showConfirmationModal(device) {
+			this.confirmDevice.id = device.uuid;
+			this.confirmDevice.name = device.name;
+			this.$refs.fsModal.show();
+		},
+		removeDevice(deviceId) {
+			/* istanbul ignore next */
+			const selfServiceInstance = this.getRequestService();
+			const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.trustedDevices + deviceId;
 
-      /* istanbul ignore next */
-      // by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
-      selfServiceInstance.delete(url, { withCredentials: true }).then(() => {
-        this.displayNotification('success', this.$t('pages.profile.trustedDevices.removeSuccess', { deviceName: this.confirmDevice.name }));
-        this.loadData();
-        this.$refs.fsModal.hide();
-      })
-        .catch((error) => {
-          /* istanbul ignore next */
-          this.displayNotification('error', error.response.data.message);
-        });
-    },
-  },
+			/* istanbul ignore next */
+			// by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
+			selfServiceInstance.delete(url, { withCredentials: true }).then(() => {
+				this.displayNotification('success', this.$t('pages.profile.trustedDevices.removeSuccess', { deviceName: this.confirmDevice.name }));
+				this.loadData();
+				this.$refs.fsModal.hide();
+			})
+				.catch((error) => {
+					/* istanbul ignore next */
+					this.displayNotification('error', error.response.data.message);
+				});
+		},
+	},
 };
 </script>
 

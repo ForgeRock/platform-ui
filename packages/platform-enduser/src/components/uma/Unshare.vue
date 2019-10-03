@@ -44,30 +44,30 @@
  *
  * */
 export default {
-  name: 'Unshare',
-  components: {},
-  data() {
-    return {};
-  },
-  props: {
-    resourceId: {
-      type: String,
-      default: () => '',
-    },
-    resourceName: {
-      type: String,
-      default: () => '',
-    },
-  },
-  methods: {
-    hideModal() {
-      this.$refs.fsModal.hide();
-    },
-    unshare() {
-      this.$emit('unshareResource', this.resourceId);
-      this.hideModal();
-    },
-  },
+	name: 'Unshare',
+	components: {},
+	data() {
+		return {};
+	},
+	props: {
+		resourceId: {
+			type: String,
+			default: () => '',
+		},
+		resourceName: {
+			type: String,
+			default: () => '',
+		},
+	},
+	methods: {
+		hideModal() {
+			this.$refs.fsModal.hide();
+		},
+		unshare() {
+			this.$emit('unshareResource', this.resourceId);
+			this.hideModal();
+		},
+	},
 };
 </script>
 

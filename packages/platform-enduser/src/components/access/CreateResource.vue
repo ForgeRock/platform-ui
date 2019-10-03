@@ -175,142 +175,142 @@ import ValidationError from '@/components/utils/ValidationError';
  * @fires POST type/name?_action=create (e.g. managed/user?_action=create) - Creates a record for the specified managed resource
  */
 export default {
-  name: 'CreateResource',
-  components: {
-    FrValidationError: ValidationError,
-    FrPasswordPolicyInput: PolicyPasswordInput,
-  },
-  mixins: [
-    ResourceMixin,
-  ],
-  props: {
-    createProperties: {
-      type: Array,
-      required: true,
-      default: () => [],
-    },
-    resourceName: {
-      type: String,
-      required: true,
-    },
-    resourceType: {
-      type: String,
-      required: true,
-    },
-  },
-  $_veeValidate: {
-    validator: 'new',
-  },
-  data() {
-    const tempFormFields = {};
+	name: 'CreateResource',
+	components: {
+		FrValidationError: ValidationError,
+		FrPasswordPolicyInput: PolicyPasswordInput,
+	},
+	mixins: [
+		ResourceMixin,
+	],
+	props: {
+		createProperties: {
+			type: Array,
+			required: true,
+			default: () => [],
+		},
+		resourceName: {
+			type: String,
+			required: true,
+		},
+		resourceType: {
+			type: String,
+			required: true,
+		},
+	},
+	$_veeValidate: {
+		validator: 'new',
+	},
+	data() {
+		const tempFormFields = {};
 
-    let tempPasswordCheck = false;
+		let tempPasswordCheck = false;
 
-    _.each(this.createProperties, (prop) => {
-      if (prop.type === 'string' || prop.type === 'number') {
-        tempFormFields[prop.key] = '';
-      } else {
-        tempFormFields[prop.key] = false;
-      }
+		_.each(this.createProperties, (prop) => {
+			if (prop.type === 'string' || prop.type === 'number') {
+				tempFormFields[prop.key] = '';
+			} else {
+				tempFormFields[prop.key] = false;
+			}
 
-      // Special logic for password
-      if (prop.key === 'password') {
-        tempPasswordCheck = true;
-      }
-    });
+			// Special logic for password
+			if (prop.key === 'password') {
+				tempPasswordCheck = true;
+			}
+		});
 
-    return {
-      formFields: tempFormFields,
-      passwordCheck: tempPasswordCheck,
-      passwordInputType: 'password',
-      showPassword: true,
-    };
-  },
-  methods: {
-    saveForm() {
-      /* istanbul ignore next */
-      const idmInstance = this.getRequestService();
+		return {
+			formFields: tempFormFields,
+			passwordCheck: tempPasswordCheck,
+			passwordInputType: 'password',
+			showPassword: true,
+		};
+	},
+	methods: {
+		saveForm() {
+			/* istanbul ignore next */
+			const idmInstance = this.getRequestService();
 
-      /* istanbul ignore next */
-      this.$validator.validateAll().then((valid) => {
-        if (valid) {
-          const saveData = this.cleanData(_.clone(this.formFields));
+			/* istanbul ignore next */
+			this.$validator.validateAll().then((valid) => {
+				if (valid) {
+					const saveData = this.cleanData(_.clone(this.formFields));
 
-          idmInstance.post(`${this.resourceType}/${this.resourceName}?_action=create`, saveData).then(() => {
-            this.$emit('refreshGrid');
-            this.errors.clear();
-            this.hideModal();
+					idmInstance.post(`${this.resourceType}/${this.resourceName}?_action=create`, saveData).then(() => {
+						this.$emit('refreshGrid');
+						this.errors.clear();
+						this.hideModal();
 
-            this.displayNotification('success', this.$t('pages.access.successCreate', { resource: _.capitalize(this.resourceName) }));
-          },
-          (error) => {
-            const generatedErrors = this.findPolicyError(error.response, this.createProperties);
+						this.displayNotification('success', this.$t('pages.access.successCreate', { resource: _.capitalize(this.resourceName) }));
+					},
+					(error) => {
+						const generatedErrors = this.findPolicyError(error.response, this.createProperties);
 
-            this.errors.clear();
+						this.errors.clear();
 
-            if (generatedErrors.length > 0) {
-              _.each(generatedErrors, (generatedError) => {
-                if (generatedError.exists) {
-                  this.errors.add(generatedError);
-                }
-              });
-            } else {
-              this.displayNotification('error', this.$t('pages.access.invalidCreate'));
-            }
-          });
-        } else {
-          this.displayNotification('error', this.$t('pages.access.invalidCreate'));
-        }
-      });
-    },
+						if (generatedErrors.length > 0) {
+							_.each(generatedErrors, (generatedError) => {
+								if (generatedError.exists) {
+									this.errors.add(generatedError);
+								}
+							});
+						} else {
+							this.displayNotification('error', this.$t('pages.access.invalidCreate'));
+						}
+					});
+				} else {
+					this.displayNotification('error', this.$t('pages.access.invalidCreate'));
+				}
+			});
+		},
 
-    hideModal() {
-      this.resetDialog();
+		hideModal() {
+			this.resetDialog();
 
-      this.$refs.createModal.hide();
-    },
-    // Clean dialog after closing/saving
-    resetDialog() {
-      this.errors.clear();
+			this.$refs.createModal.hide();
+		},
+		// Clean dialog after closing/saving
+		resetDialog() {
+			this.errors.clear();
 
-      this.passwordInputType = 'password';
-      this.showPassword = true;
+			this.passwordInputType = 'password';
+			this.showPassword = true;
 
-      _.each(this.formFields, (value, key) => {
-        if (_.isString(value) || _.isNumber(value)) {
-          this.formFields[key] = '';
-        } else {
-          this.formFields[key] = false;
-        }
-      });
-    },
-    // Hide/show for special password field
-    revealNew() {
-      if (this.passwordInputType === 'password') {
-        this.passwordInputType = 'text';
-        this.showPassword = false;
-      } else {
-        this.passwordInputType = 'password';
-        this.showPassword = true;
-      }
-    },
-    // Remove optional fields to not save with empty string
-    cleanData(data) {
-      _.each(data, (value, key) => {
-        if (_.isString(value) && value.length === 0) {
-          // eslint-disable-next-line no-param-reassign
-          delete data[key];
-        }
-      });
+			_.each(this.formFields, (value, key) => {
+				if (_.isString(value) || _.isNumber(value)) {
+					this.formFields[key] = '';
+				} else {
+					this.formFields[key] = false;
+				}
+			});
+		},
+		// Hide/show for special password field
+		revealNew() {
+			if (this.passwordInputType === 'password') {
+				this.passwordInputType = 'text';
+				this.showPassword = false;
+			} else {
+				this.passwordInputType = 'password';
+				this.showPassword = true;
+			}
+		},
+		// Remove optional fields to not save with empty string
+		cleanData(data) {
+			_.each(data, (value, key) => {
+				if (_.isString(value) && value.length === 0) {
+					// eslint-disable-next-line no-param-reassign
+					delete data[key];
+				}
+			});
 
-      return data;
-    },
-    focusField() {
-      /* istanbul ignore next */
-      if (_.isArray(this.$refs.focusInput)) {
-        this.$refs.focusInput[0].focus();
-      }
-    },
-  },
+			return data;
+		},
+		focusField() {
+			/* istanbul ignore next */
+			if (_.isArray(this.$refs.focusInput)) {
+				this.$refs.focusInput[0].focus();
+			}
+		},
+	},
 };
 </script>

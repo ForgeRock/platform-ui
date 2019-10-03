@@ -20,13 +20,13 @@
  *
  * */
 export default {
-  name: 'HorizontalRule',
-  props: {
-    insert: {
-      type: String,
-      default: () => '',
-    },
-  },
+	name: 'HorizontalRule',
+	props: {
+		insert: {
+			type: String,
+			default: () => '',
+		},
+	},
 };
 </script>
 
