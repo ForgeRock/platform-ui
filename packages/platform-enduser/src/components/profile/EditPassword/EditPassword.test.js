@@ -16,86 +16,86 @@ localVue.use(Vuex);
 
 
 describe('EditPassword.vue', () => {
-	const v = new VeeValidate.Validator();
-	let wrapper;
+  const v = new VeeValidate.Validator();
+  let wrapper;
 
-	beforeEach(() => {
-		wrapper = shallowMount(EditPassword, {
-			localVue,
-			sync: false,
-			provide: () => ({
-				$validator: v,
-			}),
-			computed: {
-				userId: '1234',
-				managedResource: 'test',
-				passwordReset: false,
-			},
-			i18n,
-		});
+  beforeEach(() => {
+    wrapper = shallowMount(EditPassword, {
+      localVue,
+      sync: false,
+      provide: () => ({
+        $validator: v,
+      }),
+      computed: {
+        userId: '1234',
+        managedResource: 'test',
+        passwordReset: false,
+      },
+      i18n,
+    });
 
-		jest.spyOn(EditPassword, 'data')
-			.mockImplementation(() => ({
-				currentPassword: '',
-				newPassword: '',
-				loading: false,
-				showNew: true,
-				showCurrent: true,
-				inputCurrent: 'password',
-				inputNew: 'password',
-			}));
-
-
-		jest.spyOn(EditPassword.methods, 'validate')
-			.mockImplementation(() => Promise.resolve(true));
-	});
-
-	it('PasswordReset page loaded', () => {
-		expect(wrapper.name()).toBe('EditPassword');
-		expect(wrapper).toMatchSnapshot();
-	});
-
-	it('Incorrect password error', () => {
-		wrapper.vm.displayError({
-			response: {
-				status: 403,
-			},
-		});
-
-		expect(wrapper.vm.errors.all().length).toBe(2);
-	});
-
-	it('revealNew method changes input state', () => {
-		wrapper.vm.revealNew();
-
-		expect(wrapper.vm.inputNew).toBe('text');
-		expect(wrapper.vm.showNew).toBe(false);
-
-		wrapper.vm.revealNew();
-
-		expect(wrapper.vm.inputNew).toBe('password');
-		expect(wrapper.vm.showNew).toBe(true);
-	});
-
-	it('revealCurrent method changes input state', () => {
-		wrapper.vm.revealCurrent();
-
-		expect(wrapper.vm.inputCurrent).toBe('text');
-		expect(wrapper.vm.showCurrent).toBe(false);
-
-		wrapper.vm.revealCurrent();
-
-		expect(wrapper.vm.inputCurrent).toBe('password');
-		expect(wrapper.vm.showCurrent).toBe(true);
-	});
+    jest.spyOn(EditPassword, 'data')
+      .mockImplementation(() => ({
+        currentPassword: '',
+        newPassword: '',
+        loading: false,
+        showNew: true,
+        showCurrent: true,
+        inputCurrent: 'password',
+        inputNew: 'password',
+      }));
 
 
-	it('should reset data and visual elements', () => {
-		wrapper.vm.$refs = { cancel: { click: jest.fn() } };
-		wrapper.vm.resetComponent();
+    jest.spyOn(EditPassword.methods, 'validate')
+      .mockImplementation(() => Promise.resolve(true));
+  });
 
-		expect(wrapper.vm.loading).toBe(false);
-		expect(wrapper.vm.currentPassword).toBe('');
-		expect(wrapper.vm.newPassword).toBe('');
-	});
+  it('PasswordReset page loaded', () => {
+    expect(wrapper.name()).toBe('EditPassword');
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  it('Incorrect password error', () => {
+    wrapper.vm.displayError({
+      response: {
+        status: 403,
+      },
+    });
+
+    expect(wrapper.vm.errors.all().length).toBe(2);
+  });
+
+  it('revealNew method changes input state', () => {
+    wrapper.vm.revealNew();
+
+    expect(wrapper.vm.inputNew).toBe('text');
+    expect(wrapper.vm.showNew).toBe(false);
+
+    wrapper.vm.revealNew();
+
+    expect(wrapper.vm.inputNew).toBe('password');
+    expect(wrapper.vm.showNew).toBe(true);
+  });
+
+  it('revealCurrent method changes input state', () => {
+    wrapper.vm.revealCurrent();
+
+    expect(wrapper.vm.inputCurrent).toBe('text');
+    expect(wrapper.vm.showCurrent).toBe(false);
+
+    wrapper.vm.revealCurrent();
+
+    expect(wrapper.vm.inputCurrent).toBe('password');
+    expect(wrapper.vm.showCurrent).toBe(true);
+  });
+
+
+  it('should reset data and visual elements', () => {
+    wrapper.vm.$refs = { cancel: { click: jest.fn() } };
+    wrapper.vm.resetComponent();
+
+    expect(wrapper.vm.loading).toBe(false);
+    expect(wrapper.vm.currentPassword).toBe('');
+    expect(wrapper.vm.newPassword).toBe('');
+  });
 });

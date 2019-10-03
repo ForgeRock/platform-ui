@@ -14,17 +14,17 @@
  *
  * */
 export default {
-	name: 'ValidationError',
-	props: {
-		validatorErrors: {
-			type: Object,
-			default: () => ({}),
-		},
-		fieldName: {
-			type: String,
-			default: () => '',
-		},
-	},
+  name: 'ValidationError',
+  props: {
+    validatorErrors: {
+      type: Object,
+      default: () => ({}),
+    },
+    fieldName: {
+      type: String,
+      default: () => '',
+    },
+  },
 };
 </script>
 

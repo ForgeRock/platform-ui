@@ -9,50 +9,50 @@ localVue.use(Vuex);
 localVue.use(BootstrapVue);
 
 describe('App.vue', () => {
-	const store = new Vuex.Store({});
+  const store = new Vuex.Store({});
 
-	let wrapper;
-	let $route;
+  let wrapper;
+  let $route;
 
-	beforeEach(() => {
-		$route = {
-			meta: { hideToolbar: true },
-		};
+  beforeEach(() => {
+    $route = {
+      meta: { hideToolbar: true },
+    };
 
-		wrapper = shallowMount(App, {
-			localVue,
-			store,
-			i18n,
-			mocks: {
-				$route,
-			},
-			stubs: {
-				RouterLink: true,
-				RouterView: true,
-				Notifications: true,
-			},
-		});
-	});
+    wrapper = shallowMount(App, {
+      localVue,
+      store,
+      i18n,
+      mocks: {
+        $route,
+      },
+      stubs: {
+        RouterLink: true,
+        RouterView: true,
+        Notifications: true,
+      },
+    });
+  });
 
-	afterEach(() => {
-		wrapper = null;
-	});
+  afterEach(() => {
+    wrapper = null;
+  });
 
-	it('App loaded', () => {
-		expect(wrapper.name()).toBe('App');
-		expect(wrapper).toMatchSnapshot();
-	});
+  it('App loaded', () => {
+    expect(wrapper.name()).toBe('App');
+    expect(wrapper).toMatchSnapshot();
+  });
 
-	it('Side nav toggle', () => {
-		expect(wrapper.vm.toggled).toEqual(false);
+  it('Side nav toggle', () => {
+    expect(wrapper.vm.toggled).toEqual(false);
 
-		wrapper.vm.onToggle();
+    wrapper.vm.onToggle();
 
-		expect(wrapper.vm.toggled).toEqual(true);
-	});
+    expect(wrapper.vm.toggled).toEqual(true);
+  });
 
-	it('Access generated icons', () => {
-		expect(wrapper.vm.accessIcon('')).toEqual('fa fa-fw mr-3 fa-cube');
-		expect(wrapper.vm.accessIcon('fa-test')).toEqual('fa fa-fw mr-3 fa-test');
-	});
+  it('Access generated icons', () => {
+    expect(wrapper.vm.accessIcon('')).toEqual('fa fa-fw mr-3 fa-cube');
+    expect(wrapper.vm.accessIcon('fa-test')).toEqual('fa fa-fw mr-3 fa-test');
+  });
 });

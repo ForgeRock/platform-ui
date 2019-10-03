@@ -88,99 +88,99 @@ import { mapState } from 'vuex';
  *
  * */
 export default {
-	name: 'ToolbarNotification',
-	data() {
-		return {
-			notifications: [],
-			timeoutId: null,
-		};
-	},
-	mounted() {
-		this.loadData();
-	},
-	filters: {
-		cleanDate(value) {
-			return `${moment.utc(value).format('LLL')} UTC`;
-		},
-	},
-	computed: {
-		...mapState({
-			userId: state => state.UserStore.userId,
-			internalUser: state => state.UserStore.internalUser,
-			managedResource: state => state.UserStore.managedResource,
-		}),
-	},
-	methods: {
-		resetPolling() {
-			if (!_.isNull(this.timeoutId)) {
-				clearTimeout(this.timeoutId);
-				this.timeoutId = null;
-			}
-		},
-		startPolling() {
-			const pollingDelay = 3000;
+  name: 'ToolbarNotification',
+  data() {
+    return {
+      notifications: [],
+      timeoutId: null,
+    };
+  },
+  mounted() {
+    this.loadData();
+  },
+  filters: {
+    cleanDate(value) {
+      return `${moment.utc(value).format('LLL')} UTC`;
+    },
+  },
+  computed: {
+    ...mapState({
+      userId: state => state.UserStore.userId,
+      internalUser: state => state.UserStore.internalUser,
+      managedResource: state => state.UserStore.managedResource,
+    }),
+  },
+  methods: {
+    resetPolling() {
+      if (!_.isNull(this.timeoutId)) {
+        clearTimeout(this.timeoutId);
+        this.timeoutId = null;
+      }
+    },
+    startPolling() {
+      const pollingDelay = 3000;
 
-			this.timeoutId = _.delay(() => {
-				this.loadData();
-			}, pollingDelay);
-		},
-		clearAll() {
-			this.notifications = [];
+      this.timeoutId = _.delay(() => {
+        this.loadData();
+      }, pollingDelay);
+    },
+    clearAll() {
+      this.notifications = [];
 
-			const target = this.internalUser ? 'internal/user/openidm-admin' : `${this.managedResource}/${this.userId}`;
+      const target = this.internalUser ? 'internal/user/openidm-admin' : `${this.managedResource}/${this.userId}`;
 
-			this.resetPolling();
+      this.resetPolling();
 
-			this.getRequestService()
-				.post(`/notification?_action=deleteNotificationsForTarget&target=${target}`)
-				.then(() => {
-					this.displayNotification('success', this.$t('pages.app.notifications.removedAll'));
+      this.getRequestService()
+        .post(`/notification?_action=deleteNotificationsForTarget&target=${target}`)
+        .then(() => {
+          this.displayNotification('success', this.$t('pages.app.notifications.removedAll'));
 
-					if (_.isNull(this.timeoutId)) {
-						this.startPolling();
-					}
-				})
-				.catch(() => {
-					this.displayNotification('error', this.$t('pages.app.notifications.failedToClear'));
-				});
-		},
-		clearOne(index) {
-			const notificationId = this.notifications[index]._id;
+          if (_.isNull(this.timeoutId)) {
+            this.startPolling();
+          }
+        })
+        .catch(() => {
+          this.displayNotification('error', this.$t('pages.app.notifications.failedToClear'));
+        });
+    },
+    clearOne(index) {
+      const notificationId = this.notifications[index]._id;
 
-			this.resetPolling();
+      this.resetPolling();
 
-			this.notifications.splice(index, 1);
-			this.getRequestService()
-				.delete(`/internal/notification/${notificationId}`)
-				.then(() => {
-					this.displayNotification('success', this.$t('pages.app.notifications.removed'));
+      this.notifications.splice(index, 1);
+      this.getRequestService()
+        .delete(`/internal/notification/${notificationId}`)
+        .then(() => {
+          this.displayNotification('success', this.$t('pages.app.notifications.removed'));
 
-					if (_.isNull(this.timeoutId)) {
-						this.startPolling();
-					}
-				})
-				.catch(() => {
-					this.displayNotification('error', this.$t('pages.app.notifications.failedToRemove'));
-				});
-		},
-		loadData() {
-			if (!_.isNull(this.userId)) {
-				this.getRequestService()
-					.get(`/${this.managedResource}/${this.userId}?_fields=_notifications/*`)
-					.then(({ data }) => {
-						/* eslint no-underscore-dangle: 0 */
-						if (data._notifications) {
-							this.notifications = data._notifications;
-						} else {
-							this.notifications = [];
-						}
+          if (_.isNull(this.timeoutId)) {
+            this.startPolling();
+          }
+        })
+        .catch(() => {
+          this.displayNotification('error', this.$t('pages.app.notifications.failedToRemove'));
+        });
+    },
+    loadData() {
+      if (!_.isNull(this.userId)) {
+        this.getRequestService()
+          .get(`/${this.managedResource}/${this.userId}?_fields=_notifications/*`)
+          .then(({ data }) => {
+            /* eslint no-underscore-dangle: 0 */
+            if (data._notifications) {
+              this.notifications = data._notifications;
+            } else {
+              this.notifications = [];
+            }
 
-						this.startPolling();
-					})
-					.catch(() => {});
-			}
-		},
-	},
+            this.startPolling();
+          })
+          .catch(() => {});
+      }
+    },
+  },
 };
 </script>
 

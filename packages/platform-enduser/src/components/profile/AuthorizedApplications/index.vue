@@ -90,63 +90,63 @@ import ListItem from '@forgerock/platform-components/src/components/listItem/';
 *
 */
 export default {
-	name: 'AuthorizedApplications',
-	components: {
-		FrListGroup: ListGroup,
-		FrListItem: ListItem,
-	},
-	data() {
-		return {
-			oauthApplications: {},
-			confirmApplication: {
-				name: '',
-				id: null,
-			},
-		};
-	},
-	computed: {
-		...mapState({
-			userId: state => state.UserStore.userId,
-			amDataEndpoints: state => state.ApplicationStore.amDataEndpoints.baseUrl,
-		}),
-	},
-	mounted() {
-		this.loadData();
-	},
-	methods: {
-		loadData() {
-			const query = '?_queryId=*';
-			const selfServiceInstance = this.getRequestService();
-			const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.oauthApplications + query;
+  name: 'AuthorizedApplications',
+  components: {
+    FrListGroup: ListGroup,
+    FrListItem: ListItem,
+  },
+  data() {
+    return {
+      oauthApplications: {},
+      confirmApplication: {
+        name: '',
+        id: null,
+      },
+    };
+  },
+  computed: {
+    ...mapState({
+      userId: state => state.UserStore.userId,
+      amDataEndpoints: state => state.ApplicationStore.amDataEndpoints.baseUrl,
+    }),
+  },
+  mounted() {
+    this.loadData();
+  },
+  methods: {
+    loadData() {
+      const query = '?_queryId=*';
+      const selfServiceInstance = this.getRequestService();
+      const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.oauthApplications + query;
 
-			// by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
-			selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
-				this.oauthApplications = response.data.result;
-			})
-				.catch((error) => {
-					this.displayNotification('error', error.response.data.message);
-				});
-		},
-		showConfirmationModal(application) {
-			// eslint-disable-next-line no-underscore-dangle
-			this.confirmApplication.id = application._id;
-			this.$refs.fsModal.show();
-		},
-		removeApplication(applicationId) {
-			const selfServiceInstance = this.getRequestService();
-			const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.oauthApplications + applicationId;
+      // by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
+      selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
+        this.oauthApplications = response.data.result;
+      })
+        .catch((error) => {
+          this.displayNotification('error', error.response.data.message);
+        });
+    },
+    showConfirmationModal(application) {
+      // eslint-disable-next-line no-underscore-dangle
+      this.confirmApplication.id = application._id;
+      this.$refs.fsModal.show();
+    },
+    removeApplication(applicationId) {
+      const selfServiceInstance = this.getRequestService();
+      const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.oauthApplications + applicationId;
 
-			// by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
-			selfServiceInstance.delete(url, { withCredentials: true }).then(() => {
-				this.displayNotification('success', this.$t('pages.profile.oauthApplications.removeSuccess', { applicationName: this.confirmApplication.id }));
-				this.loadData();
-				this.$refs.fsModal.hide();
-			})
-				.catch((error) => {
-					this.displayNotification('error', error.response.data.message);
-				});
-		},
-	},
+      // by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
+      selfServiceInstance.delete(url, { withCredentials: true }).then(() => {
+        this.displayNotification('success', this.$t('pages.profile.oauthApplications.removeSuccess', { applicationName: this.confirmApplication.id }));
+        this.loadData();
+        this.$refs.fsModal.hide();
+      })
+        .catch((error) => {
+          this.displayNotification('error', error.response.data.message);
+        });
+    },
+  },
 };
 </script>
 

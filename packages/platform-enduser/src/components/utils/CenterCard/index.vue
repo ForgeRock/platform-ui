@@ -35,13 +35,13 @@
  *
  * */
 export default {
-	name: 'CenterCard',
-	props: {
-		showLogo: {
-			type: Boolean,
-			default: false,
-		},
-	},
+  name: 'CenterCard',
+  props: {
+    showLogo: {
+      type: Boolean,
+      default: false,
+    },
+  },
 };
 </script>
 

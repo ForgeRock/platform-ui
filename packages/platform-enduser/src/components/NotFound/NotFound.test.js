@@ -7,16 +7,16 @@ const localVue = createLocalVue();
 localVue.use(BootstrapVue);
 
 describe('NotFound.vue', () => {
-	it('Not found page loaded', () => {
-		const wrapper = shallowMount(NotFound, {
-			localVue,
-			i18n,
-			stubs: {
-				RouterLink: RouterLinkStub,
-			},
-		});
+  it('Not found page loaded', () => {
+    const wrapper = shallowMount(NotFound, {
+      localVue,
+      i18n,
+      stubs: {
+        RouterLink: RouterLinkStub,
+      },
+    });
 
-		expect(wrapper.name()).toBe('NotFound');
-		expect(wrapper).toMatchSnapshot();
-	});
+    expect(wrapper.name()).toBe('NotFound');
+    expect(wrapper).toMatchSnapshot();
+  });
 });

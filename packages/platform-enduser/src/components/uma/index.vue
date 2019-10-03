@@ -79,217 +79,217 @@ import Unshare from '@/components/uma/Unshare';
  * This UI feature requires full stack (IDM/AM) to be configured and for AM to be properly configured to make use of UMA
  * */
 export default {
-	name: 'Sharing',
-	components: {
-		FrActivity: Activity,
-		FrCenterCard: CenterCard,
-		FrRequests: Requests,
-		FrResources: Resources,
-		FrShare: Share,
-		FrUnshare: Unshare,
-	},
-	data() {
-		return {
-			requestsLoaded: false,
-			resource: null,
-			resourceId: '',
-			resourceName: '',
-			resources: [],
-			activity: [],
-			requests: [],
-			resourcesCount: 0,
-			activityCount: 0,
-			delayedUpdate: false,
-		};
-	},
-	computed: {
-		...mapState({
-			userId: state => state.UserStore.userId,
-			amDataEndpoints: state => state.ApplicationStore.amDataEndpoints,
-		}),
-		umaHistory() {
-			return _.map(this.activity, (res) => {
-				const resource = _.find(this.resources, { _id: res.resourceSetId });
-				const newRes = _.cloneDeep(res);
+  name: 'Sharing',
+  components: {
+    FrActivity: Activity,
+    FrCenterCard: CenterCard,
+    FrRequests: Requests,
+    FrResources: Resources,
+    FrShare: Share,
+    FrUnshare: Unshare,
+  },
+  data() {
+    return {
+      requestsLoaded: false,
+      resource: null,
+      resourceId: '',
+      resourceName: '',
+      resources: [],
+      activity: [],
+      requests: [],
+      resourcesCount: 0,
+      activityCount: 0,
+      delayedUpdate: false,
+    };
+  },
+  computed: {
+    ...mapState({
+      userId: state => state.UserStore.userId,
+      amDataEndpoints: state => state.ApplicationStore.amDataEndpoints,
+    }),
+    umaHistory() {
+      return _.map(this.activity, (res) => {
+        const resource = _.find(this.resources, { _id: res.resourceSetId });
+        const newRes = _.cloneDeep(res);
 
-				if (_.has(resource, 'icon_uri')) {
-					newRes.icon_uri = resource.icon_uri;
-				}
+        if (_.has(resource, 'icon_uri')) {
+          newRes.icon_uri = resource.icon_uri;
+        }
 
-				return newRes;
-			});
-		},
-	},
-	beforeMount() {
-		this.loadData();
-	},
-	methods: {
-		loadData() {
-			this.getResources();
-			this.getActivity();
-			this.getRequests();
-		},
-		getResources() {
-			const query = '?_queryId=*';
-			const selfServiceInstance = this.getRequestService();
-			const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.resourceSet + query;
+        return newRes;
+      });
+    },
+  },
+  beforeMount() {
+    this.loadData();
+  },
+  methods: {
+    loadData() {
+      this.getResources();
+      this.getActivity();
+      this.getRequests();
+    },
+    getResources() {
+      const query = '?_queryId=*';
+      const selfServiceInstance = this.getRequestService();
+      const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.resourceSet + query;
 
-			// by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
-			selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
-				this.resources = response.data.result;
-				this.requestsLoaded = true;
-			})
-				.catch((error) => {
-					this.resources = [];
-					this.requestsLoaded = true;
+      // by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
+      selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
+        this.resources = response.data.result;
+        this.requestsLoaded = true;
+      })
+        .catch((error) => {
+          this.resources = [];
+          this.requestsLoaded = true;
 
-					if (error.response) {
-						this.displayNotification('error', error.response.data.message);
-					} else {
-						this.displayNotification('error', error.message);
-					}
-				});
-		},
-		getActivity() {
-			const query = '?_sortKeys=-eventTime&_queryFilter=true';
-			const selfServiceInstance = this.getRequestService();
-			const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.auditHistory + query;
+          if (error.response) {
+            this.displayNotification('error', error.response.data.message);
+          } else {
+            this.displayNotification('error', error.message);
+          }
+        });
+    },
+    getActivity() {
+      const query = '?_sortKeys=-eventTime&_queryFilter=true';
+      const selfServiceInstance = this.getRequestService();
+      const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.auditHistory + query;
 
-			// by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
-			selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
-				this.activity = response.data.result;
-			})
-				.catch((error) => {
-					this.activity = [];
-					if (error.response) {
-						this.displayNotification('error', error.response.data.message);
-					} else {
-						this.displayNotification('error', error.message);
-					}
-				});
-		},
-		getRequests() {
-			const query = '?_sortKeys=user&_queryFilter=true';
-			const selfServiceInstance = this.getRequestService();
-			const url = `${this.amDataEndpoints.baseUrl + this.userId}/uma/pendingrequests${query}`;
+      // by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
+      selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
+        this.activity = response.data.result;
+      })
+        .catch((error) => {
+          this.activity = [];
+          if (error.response) {
+            this.displayNotification('error', error.response.data.message);
+          } else {
+            this.displayNotification('error', error.message);
+          }
+        });
+    },
+    getRequests() {
+      const query = '?_sortKeys=user&_queryFilter=true';
+      const selfServiceInstance = this.getRequestService();
+      const url = `${this.amDataEndpoints.baseUrl + this.userId}/uma/pendingrequests${query}`;
 
-			// by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
-			selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
-				this.requests = _.map(response.data.result, (request) => {
-					const resource = _.find(this.resources, { name: request.resource });
-					const requestCopy = _.cloneDeep(request);
+      // by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
+      selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
+        this.requests = _.map(response.data.result, (request) => {
+          const resource = _.find(this.resources, { name: request.resource });
+          const requestCopy = _.cloneDeep(request);
 
-					if (_.has(resource, 'icon_uri')) {
-						requestCopy.icon_uri = resource.icon_uri;
-					}
+          if (_.has(resource, 'icon_uri')) {
+            requestCopy.icon_uri = resource.icon_uri;
+          }
 
-					if (_.has(resource, 'scopes')) {
-						requestCopy.scopes = resource.scopes;
-					}
+          if (_.has(resource, 'scopes')) {
+            requestCopy.scopes = resource.scopes;
+          }
 
-					requestCopy.allowed = false;
-					requestCopy.decision = false;
+          requestCopy.allowed = false;
+          requestCopy.decision = false;
 
-					return requestCopy;
-				});
-			})
-				.catch((error) => {
-					this.requests = {};
+          return requestCopy;
+        });
+      })
+        .catch((error) => {
+          this.requests = {};
 
-					if (error.response) {
-						this.displayNotification('error', error.response.data.message);
-					} else {
-						this.displayNotification('error', error.message);
-					}
-				});
-		},
-		renderShareModal(resource) {
-			this.resource = resource;
-			this.$nextTick(() => {
-				this.$root.$emit('bv::show::modal', 'shareModal');
-			});
-		},
-		renderUnshareModal(resourceName, resourceId) {
-			this.resourceName = resourceName;
-			this.resourceId = resourceId;
-			this.$nextTick(() => {
-				this.$root.$emit('bv::show::modal', 'unshareModal');
-			});
-		},
-		shareResource(payload, config = {}) {
-			const successMsg = this.$t('common.user.sharing.shareSuccess');
-			const selfServiceInstance = this.getRequestService();
-			const url = `${this.amDataEndpoints.baseUrl + this.userId}/uma/policies/${payload.policyId}`;
+          if (error.response) {
+            this.displayNotification('error', error.response.data.message);
+          } else {
+            this.displayNotification('error', error.message);
+          }
+        });
+    },
+    renderShareModal(resource) {
+      this.resource = resource;
+      this.$nextTick(() => {
+        this.$root.$emit('bv::show::modal', 'shareModal');
+      });
+    },
+    renderUnshareModal(resourceName, resourceId) {
+      this.resourceName = resourceName;
+      this.resourceId = resourceId;
+      this.$nextTick(() => {
+        this.$root.$emit('bv::show::modal', 'unshareModal');
+      });
+    },
+    shareResource(payload, config = {}) {
+      const successMsg = this.$t('common.user.sharing.shareSuccess');
+      const selfServiceInstance = this.getRequestService();
+      const url = `${this.amDataEndpoints.baseUrl + this.userId}/uma/policies/${payload.policyId}`;
 
-			selfServiceInstance.put(url, payload, { withCredentials: true }).then(() => {
-				if (config.onSuccess) {
-					config.onSuccess();
-				}
-				this.displayNotification('success', successMsg);
-				this.loadData();
-			})
-				.catch((error) => {
-					this.displayNotification('error', error.response.data.message);
-				});
-		},
-		unshareResource(resourceId) {
-			const successMsg = this.$t('common.user.sharing.unshareSuccess');
-			const selfServiceInstance = this.getRequestService();
-			const url = `${this.amDataEndpoints.baseUrl + this.userId}/uma/policies/${resourceId}`;
+      selfServiceInstance.put(url, payload, { withCredentials: true }).then(() => {
+        if (config.onSuccess) {
+          config.onSuccess();
+        }
+        this.displayNotification('success', successMsg);
+        this.loadData();
+      })
+        .catch((error) => {
+          this.displayNotification('error', error.response.data.message);
+        });
+    },
+    unshareResource(resourceId) {
+      const successMsg = this.$t('common.user.sharing.unshareSuccess');
+      const selfServiceInstance = this.getRequestService();
+      const url = `${this.amDataEndpoints.baseUrl + this.userId}/uma/policies/${resourceId}`;
 
-			selfServiceInstance.delete(url, { withCredentials: true }).then(() => {
-				this.displayNotification('success', successMsg);
-				this.loadData();
-			})
-				.catch((error) => {
-					this.displayNotification('error', error.response.data.message);
-				});
-		},
-		modifyResource(resourceId, payload, config = {}) {
-			const successMsg = config.unshare ? this.$t('common.user.sharing.unshareSuccess') : this.$t('common.user.sharing.modifySuccess');
-			const url = `${this.amDataEndpoints.baseUrl + this.userId}/uma/policies/${resourceId}`;
-			const selfServiceInstance = this.getRequestService();
-			const headers = { 'Accept-API-Version': 'protocol=1.0,resource=1.0' };
+      selfServiceInstance.delete(url, { withCredentials: true }).then(() => {
+        this.displayNotification('success', successMsg);
+        this.loadData();
+      })
+        .catch((error) => {
+          this.displayNotification('error', error.response.data.message);
+        });
+    },
+    modifyResource(resourceId, payload, config = {}) {
+      const successMsg = config.unshare ? this.$t('common.user.sharing.unshareSuccess') : this.$t('common.user.sharing.modifySuccess');
+      const url = `${this.amDataEndpoints.baseUrl + this.userId}/uma/policies/${resourceId}`;
+      const selfServiceInstance = this.getRequestService();
+      const headers = { 'Accept-API-Version': 'protocol=1.0,resource=1.0' };
 
-			selfServiceInstance.put(url, payload, { withCredentials: true, headers })
-				.then(() => {
-					if (config.onSuccess) {
-						config.onSuccess();
-					}
+      selfServiceInstance.put(url, payload, { withCredentials: true, headers })
+        .then(() => {
+          if (config.onSuccess) {
+            config.onSuccess();
+          }
 
-					this.displayNotification('success', successMsg);
-					this.loadData();
-				})
-				.catch((error) => {
-					this.displayNotification('error', error.response.data.message);
-				});
-		},
-		finalizeResourceAccess(id, action, config = {}) {
-			const successMsg = action === 'approve' ? this.$t('common.user.sharing.requestAllowedSuccess') : this.$t('common.user.sharing.requestDeniedSuccess');
-			const selfServiceInstance = this.getRequestService();
-			const payload = { scopes: config.scopes || {} };
-			const url = `${this.amDataEndpoints.baseUrl}${this.userId}/uma/pendingrequests/${id}?_action=${action}`;
+          this.displayNotification('success', successMsg);
+          this.loadData();
+        })
+        .catch((error) => {
+          this.displayNotification('error', error.response.data.message);
+        });
+    },
+    finalizeResourceAccess(id, action, config = {}) {
+      const successMsg = action === 'approve' ? this.$t('common.user.sharing.requestAllowedSuccess') : this.$t('common.user.sharing.requestDeniedSuccess');
+      const selfServiceInstance = this.getRequestService();
+      const payload = { scopes: config.scopes || {} };
+      const url = `${this.amDataEndpoints.baseUrl}${this.userId}/uma/pendingrequests/${id}?_action=${action}`;
 
-			selfServiceInstance.post(url, payload, { withCredentials: true }).then(() => {
-				if (config.onSuccess) {
-					config.onSuccess();
-				}
+      selfServiceInstance.post(url, payload, { withCredentials: true }).then(() => {
+        if (config.onSuccess) {
+          config.onSuccess();
+        }
 
-				this.delayedUpdate = true;
-				this.displayNotification('success', successMsg);
-			})
-				.catch((error) => {
-					this.displayNotification('error', error.response.data.message);
-				});
-		},
-		testForReload() {
-			if (this.delayedUpdate === true) {
-				this.delayedUpdate = false;
+        this.delayedUpdate = true;
+        this.displayNotification('success', successMsg);
+      })
+        .catch((error) => {
+          this.displayNotification('error', error.response.data.message);
+        });
+    },
+    testForReload() {
+      if (this.delayedUpdate === true) {
+        this.delayedUpdate = false;
 
-				this.loadData();
-			}
-		},
-	},
+        this.loadData();
+      }
+    },
+  },
 };
 </script>
 

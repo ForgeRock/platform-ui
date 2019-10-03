@@ -81,41 +81,41 @@ import FallbackImage from '@/components/utils/FallbackImage';
  *
  * */
 export default {
-	name: 'Requests',
-	components: {
-		FrFallbackImage: FallbackImage,
-	},
-	props: {
-		requests: {
-			type: Array,
-			default: () => [],
-		},
-	},
-	filters: {
-		formatTime(dateString) {
-			const eventDate = moment(dateString);
+  name: 'Requests',
+  components: {
+    FrFallbackImage: FallbackImage,
+  },
+  props: {
+    requests: {
+      type: Array,
+      default: () => [],
+    },
+  },
+  filters: {
+    formatTime(dateString) {
+      const eventDate = moment(dateString);
 
-			if (eventDate.isSame(moment(), 'day')) {
-				return eventDate.fromNow();
-			}
-			return eventDate.format('LT');
-		},
-	},
-	methods: {
-		finalizeAccess(request, index, action) {
-			this.requests[index].decision = true;
+      if (eventDate.isSame(moment(), 'day')) {
+        return eventDate.fromNow();
+      }
+      return eventDate.format('LT');
+    },
+  },
+  methods: {
+    finalizeAccess(request, index, action) {
+      this.requests[index].decision = true;
 
-			// eslint-disable-next-line no-underscore-dangle
-			this.$emit('finalizeResourceAccess', request._id, action, {
-				scopes: request.permissions,
-				onSuccess: () => {
-					if (action === 'approve') {
-						this.requests[index].allowed = true;
-					}
-				},
-			});
-		},
-	},
+      // eslint-disable-next-line no-underscore-dangle
+      this.$emit('finalizeResourceAccess', request._id, action, {
+        scopes: request.permissions,
+        onSuccess: () => {
+          if (action === 'approve') {
+            this.requests[index].allowed = true;
+          }
+        },
+      });
+    },
+  },
 };
 </script>
 

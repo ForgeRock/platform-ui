@@ -6,26 +6,26 @@ const localVue = createLocalVue();
 localVue.use(BootstrapVue);
 
 describe('HorizontalRule.vue', () => {
-	it('Horizontal Rule component loaded', () => {
-		const wrapper = shallowMount(HorizontalRule, {
-			localVue,
-			propsData: {
-				insert: 'test',
-			},
-		});
+  it('Horizontal Rule component loaded', () => {
+    const wrapper = shallowMount(HorizontalRule, {
+      localVue,
+      propsData: {
+        insert: 'test',
+      },
+    });
 
-		expect(wrapper.name()).toBe('HorizontalRule');
-		expect(wrapper).toMatchSnapshot();
-	});
+    expect(wrapper.name()).toBe('HorizontalRule');
+    expect(wrapper).toMatchSnapshot();
+  });
 
-	it('Renders insert prop', () => {
-		const wrapper = shallowMount(HorizontalRule, {
-			localVue,
-			propsData: {
-				insert: 'test',
-			},
-		});
+  it('Renders insert prop', () => {
+    const wrapper = shallowMount(HorizontalRule, {
+      localVue,
+      propsData: {
+        insert: 'test',
+      },
+    });
 
-		expect(wrapper.find('.col-auto').text()).toBe('test');
-	});
+    expect(wrapper.find('.col-auto').text()).toBe('test');
+  });
 });

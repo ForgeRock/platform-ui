@@ -72,7 +72,10 @@
         }
       ],
       "no-param-reassign": ["error", { "props": false }],
-      "indent": [2, "tab"],
+      "indent": [
+        "error",
+        2
+      ],
       "no-tabs": 0,
       "max-len": 0,
       "vue/html-closing-bracket-newline": 0

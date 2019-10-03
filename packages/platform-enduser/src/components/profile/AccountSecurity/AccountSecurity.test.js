@@ -7,69 +7,69 @@ const localVue = createLocalVue();
 localVue.use(BootstrapVue);
 
 describe('AccountSecurity.vue', () => {
-	beforeEach(() => {
-		jest.spyOn(AccountSecurity, 'mounted')
-			.mockImplementation(() => { });
-	});
+  beforeEach(() => {
+    jest.spyOn(AccountSecurity, 'mounted')
+      .mockImplementation(() => { });
+  });
 
-	it('AccountSecurity page loaded', () => {
-		const userStore = {
-			state: {
-				internalUser: true,
-			},
-		};
+  it('AccountSecurity page loaded', () => {
+    const userStore = {
+      state: {
+        internalUser: true,
+      },
+    };
 
-		const applicationStore = {
-			state: {
-				platformMode: false,
-			},
-		};
+    const applicationStore = {
+      state: {
+        platformMode: false,
+      },
+    };
 
-		const wrapper = shallowMount(AccountSecurity, {
-			localVue,
-			i18n,
-			mocks: {
-				userStore,
-				applicationStore,
-			},
-		});
+    const wrapper = shallowMount(AccountSecurity, {
+      localVue,
+      i18n,
+      mocks: {
+        userStore,
+        applicationStore,
+      },
+    });
 
-		expect(wrapper.name()).toBe('AccountSecurity');
-		expect(wrapper).toMatchSnapshot();
-	});
+    expect(wrapper.name()).toBe('AccountSecurity');
+    expect(wrapper).toMatchSnapshot();
+  });
 
-	describe('#sendUpdateProfile', () => {
-		it('should emit an "updateProfile" event with the payload and config', () => {
-			const userStore = {
-				state: {
-					internalUser: true,
-				},
-			};
-
-
-			const applicationStore = {
-				state: {
-					platformMode: false,
-				},
-			};
+  describe('#sendUpdateProfile', () => {
+    it('should emit an "updateProfile" event with the payload and config', () => {
+      const userStore = {
+        state: {
+          internalUser: true,
+        },
+      };
 
 
-			const wrapper = shallowMount(AccountSecurity, {
-				localVue,
-				i18n,
-				mocks: {
-					userStore,
-					applicationStore,
-				},
-			});
+      const applicationStore = {
+        state: {
+          platformMode: false,
+        },
+      };
 
-			wrapper.vm.sendUpdateProfile('test payload', 'test config');
-			expect(wrapper.emitted().updateProfile.length).toBe(1);
 
-			const [payload, config] = wrapper.emitted().updateProfile[0];
+      const wrapper = shallowMount(AccountSecurity, {
+        localVue,
+        i18n,
+        mocks: {
+          userStore,
+          applicationStore,
+        },
+      });
 
-			expect(payload).toBe('test payload');
-			expect(config).toBe('test config');
-		});
-	});
+      wrapper.vm.sendUpdateProfile('test payload', 'test config');
+      expect(wrapper.emitted().updateProfile.length).toBe(1);
+
+      const [payload, config] = wrapper.emitted().updateProfile[0];
+
+      expect(payload).toBe('test payload');
+      expect(config).toBe('test config');
+    });
+  });
 });
