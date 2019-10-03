@@ -1,22 +1,18 @@
 <template>
   <div>
-    <label>{{ prompt }}</label>
+    <label>{{ callback.getPrompt() }}</label>
     <BFormSelect
       :options="options"
       :name="name"
       v-model="selected"
-      class="mb-2" />
+      class="mb-2"
+      @change="callback.setInputValue" />
   </div>
 </template>
 
 <script>
-import {
-  mapValues,
-  keyBy,
-  map,
-} from 'lodash';
+import { map } from 'lodash';
 import { BFormSelect } from 'bootstrap-vue';
-import CallbackValidation from '@/utils/CallbackValidation';
 
 export default {
   components: {
@@ -25,27 +21,17 @@ export default {
   props: {
     callback: {
       type: Object,
-      // make sure the callback has an output property that is an Array and has at least one item
-      validator: CallbackValidation.validateOutput,
       required: true,
     },
     index: {
       type: Number,
       default: 0,
     },
-    prompt: {
-      type: String,
-      default: '',
-    },
-    choices: {
-      type: Array,
-      default: () => [],
-    },
   },
   mounted() {
-    const callbackOutput = mapValues(keyBy(this.callback.output, 'name'), v => v.value);
+    this.selected = this.callback.getDefaultChoice();
 
-    this.selected = callbackOutput.defaultChoice;
+    this.name = `callback_${this.index}`;
 
     this.loadOptions();
   },
@@ -54,14 +40,15 @@ export default {
       options: [],
       name: '',
       selected: null,
+      choices: this.callback.getChoices(),
     };
   },
   methods: {
     loadOptions() {
       this.name = `callback_${this.index}`;
-      this.options = map(this.choices, item => ({
-        text: item.value,
-        value: item.key,
+      this.options = map(this.choices, (item, itemIndex) => ({
+        text: item,
+        value: itemIndex,
       }));
     },
   },
