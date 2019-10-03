@@ -7,19 +7,19 @@ const localVue = createLocalVue();
 localVue.use(BootstrapVue);
 
 describe('Dashboard.vue', () => {
-	it('Welcome widget loaded', () => {
-		const wrapper = shallowMount(WelcomeWidget, {
-			localVue,
-			i18n,
-			propsData: {
-				userDetails: {
-					givenName: 'test',
-					sn: 'test',
-				},
-			},
-		});
+  it('Welcome widget loaded', () => {
+    const wrapper = shallowMount(WelcomeWidget, {
+      localVue,
+      i18n,
+      propsData: {
+        userDetails: {
+          givenName: 'test',
+          sn: 'test',
+        },
+      },
+    });
 
-		expect(wrapper.name()).toBe('WelcomeWidget');
-		expect(wrapper).toMatchSnapshot();
-	});
+    expect(wrapper.name()).toBe('WelcomeWidget');
+    expect(wrapper).toMatchSnapshot();
+  });
 });

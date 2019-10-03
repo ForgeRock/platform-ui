@@ -91,64 +91,64 @@ import FallbackImage from '@/components/utils/FallbackImage';
  *
  */
 export default {
-	name: 'TrustedDevices',
-	components: {
-		FrListGroup: ListGroup,
-		FrListItem: ListItem,
-		FrFallbackImage: FallbackImage,
-	},
-	data() {
-		return {
-			devices: {},
-			confirmDevice: {
-				name: '',
-				id: null,
-			},
-		};
-	},
-	computed: {
-		...mapState({
-			userId: state => state.UserStore.userId,
-			amDataEndpoints: state => state.ApplicationStore.amDataEndpoints,
-		}),
-	},
-	mounted() {
-		this.loadData();
-	},
-	methods: {
-		loadData() {
-			const query = '?_queryId=*';
-			const selfServiceInstance = this.getRequestService();
-			const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.trustedDevices + query;
+  name: 'TrustedDevices',
+  components: {
+    FrListGroup: ListGroup,
+    FrListItem: ListItem,
+    FrFallbackImage: FallbackImage,
+  },
+  data() {
+    return {
+      devices: {},
+      confirmDevice: {
+        name: '',
+        id: null,
+      },
+    };
+  },
+  computed: {
+    ...mapState({
+      userId: state => state.UserStore.userId,
+      amDataEndpoints: state => state.ApplicationStore.amDataEndpoints,
+    }),
+  },
+  mounted() {
+    this.loadData();
+  },
+  methods: {
+    loadData() {
+      const query = '?_queryId=*';
+      const selfServiceInstance = this.getRequestService();
+      const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.trustedDevices + query;
 
-			// by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
-			selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
-				this.devices = response.data.result;
-			})
-				.catch((error) => {
-					this.displayNotification('error', error.response.data.message);
-				});
-		},
-		showConfirmationModal(device) {
-			this.confirmDevice.id = device.uuid;
-			this.confirmDevice.name = device.name;
-			this.$refs.fsModal.show();
-		},
-		removeDevice(deviceId) {
-			const selfServiceInstance = this.getRequestService();
-			const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.trustedDevices + deviceId;
+      // by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
+      selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
+        this.devices = response.data.result;
+      })
+        .catch((error) => {
+          this.displayNotification('error', error.response.data.message);
+        });
+    },
+    showConfirmationModal(device) {
+      this.confirmDevice.id = device.uuid;
+      this.confirmDevice.name = device.name;
+      this.$refs.fsModal.show();
+    },
+    removeDevice(deviceId) {
+      const selfServiceInstance = this.getRequestService();
+      const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.trustedDevices + deviceId;
 
-			// by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
-			selfServiceInstance.delete(url, { withCredentials: true }).then(() => {
-				this.displayNotification('success', this.$t('pages.profile.trustedDevices.removeSuccess', { deviceName: this.confirmDevice.name }));
-				this.loadData();
-				this.$refs.fsModal.hide();
-			})
-				.catch((error) => {
-					this.displayNotification('error', error.response.data.message);
-				});
-		},
-	},
+      // by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
+      selfServiceInstance.delete(url, { withCredentials: true }).then(() => {
+        this.displayNotification('success', this.$t('pages.profile.trustedDevices.removeSuccess', { deviceName: this.confirmDevice.name }));
+        this.loadData();
+        this.$refs.fsModal.hide();
+      })
+        .catch((error) => {
+          this.displayNotification('error', error.response.data.message);
+        });
+    },
+  },
 };
 </script>
 
