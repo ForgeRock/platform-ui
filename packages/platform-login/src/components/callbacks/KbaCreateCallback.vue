@@ -60,11 +60,11 @@
 
 <script>
 import {
-  mapValues, keyBy, map, find,
+  map,
+  find,
 } from 'lodash';
 import { BFormSelect } from 'bootstrap-vue';
 import FloatingLabelInput from '@/components/utils/FloatingLabelInput';
-import CallbackValidation from '@/utils/CallbackValidation';
 
 export default {
   name: 'KbaCreateCallback',
@@ -75,7 +75,6 @@ export default {
   props: {
     callback: {
       type: Object,
-      validator: CallbackValidation.validateOutput,
       required: true,
     },
     index: {
@@ -113,11 +112,14 @@ export default {
       required: false,
       default: false,
     },
+    callbackSubmitButton: {
+      type: HTMLButtonElement,
+      required: true,
+    },
   },
   data() {
     return {
       options: [],
-      prompt: '',
       questionName: '',
       questionValue: '',
       answerName: '',
@@ -129,10 +131,7 @@ export default {
     };
   },
   mounted() {
-    const callbackOutput = mapValues(keyBy(this.callback.output, 'name'), v => v.value);
-
-    this.prompt = callbackOutput.prompt;
-    this.predefinedQuestions = callbackOutput.predefinedQuestions;
+    this.predefinedQuestions = this.callback.getPredefinedQuestions();
     this.questionName = `callback_${this.index}`;
     this.answerName = `callback_${this.index}00`;
 
@@ -140,7 +139,7 @@ export default {
   },
   methods: {
     loadOptions() {
-      const placeholder = { value: null, text: this.prompt, disabled: true };
+      const placeholder = { value: null, text: this.callback.getPrompt(), disabled: true };
       const customQuestionOption = { value: 'custom', text: this.customQuestonOptionText, disabled: false };
       // Add the placeholder to the first element in the question options
       this.options = [placeholder];
@@ -192,6 +191,8 @@ export default {
         this.failedQuestionPolicies.push(this.uniqueText);
       }
 
+      this.callback.setQuestion(this.questionValue);
+
       this.setSubmitButton();
     },
     // This function looks at the question's answer to make sure it is not empty
@@ -202,21 +203,21 @@ export default {
         this.failedAnswerPolicies.push(this.requiredText);
       }
 
+      this.callback.setAnswer(this.answerValue);
+
       this.setSubmitButton();
     },
     // This function disables/enables the callback form's submit button
     setSubmitButton() {
       // A brief delay needs to happen here so the .is-invalid class can be added to the floating label inputs in the case of invalid data
       setTimeout(() => {
-        // Find the callback form's submit button
-        const formSubmitButton = document.querySelectorAll('input[type=submit][name^=callback]');
         // Look for any empty custom questions
         const hasEmptyQuestions = find(document.querySelectorAll('input.kbaQuestion'), { value: '' });
         // Find out if the form is valid by first looking to this instance of KbaCreateCallback for empty questions, or failedPolicies locally
         // If nothing is invalid locally look at the rest of the dom to see if any of the other KbaCreateCallbacks are in an error state
         const formIsInvalid = hasEmptyQuestions || this.failedAnswerPolicies.length || this.failedQuestionPolicies.length || document.querySelectorAll('.kbaQuestionAnswerContainer .is-invalid').length;
 
-        formSubmitButton[0].disabled = formIsInvalid;
+        this.callbackSubmitButton.disabled = formIsInvalid;
       }, 10);
     },
   },

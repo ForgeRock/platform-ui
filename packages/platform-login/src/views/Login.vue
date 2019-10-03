@@ -1,6 +1,8 @@
 <template>
   <FrCenterCard :show-logo="true">
-    <div slot="center-card-header">
+    <div
+      v-if="!loading"
+      slot="center-card-header">
       <h2 class="h2">
         {{ header }}
       </h2>
@@ -10,13 +12,22 @@
     </div>
 
     <BCardBody
-      v-if="!loading"
+      v-show="!loading"
       slot="center-card-body"
     >
       <div
-        id="loginPanel"
-        ref="loginPanel"
-      />
+        id="callbacksPanel"
+        ref="callbacksPanel"
+        @keyup.enter="nextStep" />
+      <BButton
+        v-show="showNextButton"
+        class="btn btn btn-block btn-lg btn-primary mt-3"
+        type="submit"
+        variant="primary"
+        ref="callbackSubmitButton"
+        @click="nextStep">
+        {{ $t('login.next') }}
+      </BButton>
       <div
         v-if="loginFailure"
         class="h-100 d-flex">
@@ -32,7 +43,7 @@
     </BCardBody>
 
     <BCardBody
-      v-else
+      v-show="loading"
       slot="center-card-body">
       <div class="h-100 d-flex">
         <div class="m-auto fr-center-card">
@@ -45,14 +56,15 @@
 
 <script>
 import {
-  find,
-  has,
-  noop,
   map,
+  noop,
 } from 'lodash';
 import { BounceLoader } from 'vue-spinner/dist/vue-spinner.min';
-import { BCardBody } from 'bootstrap-vue';
-import ForgeRockEmbeddedLogin from 'forgerockembeddedlogin';
+import {
+  BCardBody,
+  BButton,
+} from 'bootstrap-vue';
+import { FRAuth, Config } from '@forgerock/javascript-sdk';
 import Vue from 'vue';
 import BooleanAttributeInputCallback from '@/components/callbacks/BooleanAttributeInputCallback';
 import CenterCard from '@/components/utils/CenterCard';
@@ -68,23 +80,32 @@ export default {
   name: 'Login',
   components: {
     FrCenterCard: CenterCard,
+    BButton,
     BCardBody,
     BounceLoader,
   },
   data() {
     return {
-      loading: false,
+      loading: true,
       loadingColor: styles.baseColor,
       header: '',
       description: '',
       loginFailure: false,
+      step: undefined,
+      kbaCallbackCount: 0,
+      showNextButton: false,
     };
   },
   mounted() {
-    this.setupEmbeddedLogin();
+    Config.set({
+      serverConfig: { baseUrl: `${process.env.VUE_APP_AM_URL}/` },
+      tree: this.$route.params.tree || undefined,
+    });
+
+    this.nextStep();
   },
   methods: {
-    convertVueComponent(component, propsData) {
+    addComponent(component, propsData) {
       const ComponentClass = Vue.extend(component);
       const instance = new ComponentClass({
         propsData,
@@ -92,26 +113,32 @@ export default {
 
       instance.$mount();
 
-      return instance;
+      this.$refs.callbacksPanel.appendChild(instance.$el);
     },
-    getFloatingLabelInput(type, callback, index, prompt) {
-      const failedPolicies = find(callback.output, { name: 'failedPolicies' });
+    addFloatingLabelInput(type, callback, index) {
+      const failedPolicies = (callback.getFailedPolicyKeys) ? callback.getFailedPolicyKeys() : [];
+      let prompt = '';
 
       let translatedPolicyMessages = [];
 
-      if (failedPolicies && has(failedPolicies, 'value') && failedPolicies.value.length) {
-        translatedPolicyMessages = this.translatePolicyFailures(failedPolicies.value);
+      if (failedPolicies.length) {
+        translatedPolicyMessages = this.translatePolicyFailures(failedPolicies);
       }
 
-      return this.convertVueComponent(FloatingLabelInput, {
+      if (callback.getPrompt) {
+        prompt = callback.getPrompt();
+      }
+
+      return this.addComponent(FloatingLabelInput, {
         label: prompt,
         type,
         autofocus: (index === 0) ? 'true' : 'false',
         reveal: type === 'password',
         fieldName: `callback_${index}`,
-        defaultValue: callback.input[0].value,
+        defaultValue: callback.getInputValue(),
         validator: noop,
         failedPolicies: translatedPolicyMessages,
+        callback,
       });
     },
     translatePolicyFailures(failedPolicies) {
@@ -121,188 +148,101 @@ export default {
         return this.$t(`policyValidationMessages.${tempPolicy.policyRequirement}`, tempPolicy.params);
       });
     },
-    setupEmbeddedLogin() {
-      const vm = this;
-      const authenticateUrl = `${process.env.VUE_APP_AM_URL}/json/realms/root/authenticate`;
+    nextStep() {
+      this.clearCallbacks();
+      FRAuth.next(this.step).then((step) => {
+        this.loading = false;
+        this.header = step.getHeader();
+        this.description = step.getDescription();
+        this.step = step;
 
-      let kbaCallbackCount = 0;
-
-      const login = new ForgeRockEmbeddedLogin({
-        authenticateUrl: (vm.$route.name === 'service') ? `${authenticateUrl}?service=${vm.$route.params.tree}&authIndexType=service&authIndexValue=${vm.$route.params.tree}` : authenticateUrl,
-        loginElement: vm.$refs.loginPanel,
-        successHandler() {
+        if (step.getSessionToken()) {
+          // if there is a tokenId then redirect to enduser ui
           window.location.href = process.env.VUE_APP_ENDUSER_URL;
-        },
-        failureHandler() {
-          // If there is a failureUrl defined redirect to there else clear out the page and display the loginFailure message with a "Try again" button
-          if (has(this.currentCallbacks, 'detail.failureUrl') && this.currentCallbacks.detail.failureUrl.length) {
-            window.location.href = this.currentCallbacks.detail.failureUrl;
-          } else {
-            vm.header = '';
-            vm.description = '';
-            this.loginElement.innerHTML = '';
-            vm.loginFailure = true;
-          }
-        },
-        postRenderHandler() {
-          const firstInput = vm.$el.querySelector('input');
+        } else if (step.getError()) {
+          this.loginFailure = true;
+        } else {
+          this.buildTreeForm();
+        }
+      });
+    },
+    clearCallbacks() {
+      this.header = '';
+      this.description = '';
+      this.$refs.callbacksPanel.innerHTML = '';
+      this.showNextButton = false;
+      this.loading = true;
+    },
+    buildTreeForm() {
+      const firstInput = this.$el.querySelector('input');
+      this.$refs.callbacksPanel.innerHTML = '';
+      this.showNextButton = true;
 
-          vm.header = this.currentCallbacks.header;
-          vm.description = this.currentCallbacks.description;
-          kbaCallbackCount = 0;
+      map(this.step.callbacks, (callback, index) => {
+        const type = callback.getType();
 
-          if (firstInput) {
-            // focus on the first input after render
-            firstInput.focus();
-          }
-        },
+        switch (type) {
+        case 'BooleanAttributeInputCallback':
+          this.addComponent(BooleanAttributeInputCallback, {
+            callback,
+            index,
+          });
+          break;
+        case 'ChoiceCallback':
+          this.addComponent(ChoiceCallback, {
+            callback,
+            index,
+          });
+          break;
+        case 'ReCaptchaCallback':
+          this.addComponent(ReCaptchaCallback, {
+            callback,
+            index,
+          });
+          break;
+        case 'TermsAndConditionsCallback':
+          this.addComponent(TermsAndConditionsCallback, {
+            callback,
+            index,
+            termsAndConditionsText: this.$t('login.termsAndConditions'),
+            agreeToTermsText: this.$t('login.agreeToTerms'),
+          });
+          break;
+        case 'ValidatedCreatePasswordCallback':
+          this.addFloatingLabelInput('password', callback, index);
+          break;
+        case 'KbaCreateCallback':
+          this.addComponent(KbaCreateCallback, {
+            callback,
+            index,
+            descriptionText: this.$t('login.kba.description'),
+            customQuestonOptionText: this.$t('login.kba.custom'),
+            requiredText: this.$t('policyValidationMessages.REQUIRED'),
+            uniqueText: this.$t('policyValidationMessages.UNIQUE'),
+            showHeader: this.kbaCallbackCount === 0,
+            callbackSubmitButton: this.$refs.callbackSubmitButton,
+          });
+
+          this.kbaCallbackCount += 1;
+          break;
+        case 'SelectIdPCallback':
+          this.addComponent(SelectIdPCallback, {
+            callback,
+            index,
+            continueWithText: this.$t('login.social.continueWith'),
+            orText: this.$t('login.social.or'),
+            callbackSubmitButton: this.$refs.callbackSubmitButton,
+          });
+          break;
+        default:
+          this.addFloatingLabelInput('text', callback, index);
+        }
       });
 
-      login.getLoginButtonText = () => vm.$t('login.next');
-
-      login.renderNameCallback = (callback, index, prompt) => {
-        const instance = vm.getFloatingLabelInput('text', callback, index, prompt);
-
-        return Promise.resolve(instance.$el);
-      };
-
-      login.renderPasswordCallback = (callback, index, prompt) => {
-        const instance = vm.getFloatingLabelInput('password', callback, index, prompt);
-
-        return Promise.resolve(instance.$el);
-      };
-
-      login.renderNumberAttributeInputCallback = (callback, index, prompt) => {
-        const instance = vm.getFloatingLabelInput('number', callback, index, prompt);
-
-        return Promise.resolve(instance.$el);
-      };
-      // renderConfirmationCallbackOption renders the form's submit button
-      login.renderConfirmationCallbackOption = (option, index, key) => {
-        const el = document.createElement('div');
-        el.innerHTML = `<input name="callback_${index}" type="submit" class="btn btn btn-block btn-lg btn-primary mt-3" index="${key}" value="${option}">`;
-        return Promise.resolve(el.firstElementChild);
-      };
-
-      login.renderBooleanAttributeInputCallback = (callback, index, prompt) => {
-        const instance = vm.convertVueComponent(BooleanAttributeInputCallback, {
-          callback,
-          index,
-          prompt,
-        });
-
-        return Promise.resolve(instance.$el);
-      };
-
-      login.renderChoiceCallback = (callback, index, prompt, choices) => {
-        const instance = vm.convertVueComponent(ChoiceCallback, {
-          callback,
-          index,
-          prompt,
-          choices,
-        });
-
-        return Promise.resolve(instance.$el);
-      };
-
-      login.renderReCaptchaCallback = (callback, index, prompt) => {
-        const instance = vm.convertVueComponent(ReCaptchaCallback, {
-          callback,
-          index,
-          prompt,
-        });
-
-        return Promise.resolve(instance.$el);
-      };
-
-      login.renderTermsAndConditionsCallback = (callback, index) => {
-        const instance = vm.convertVueComponent(TermsAndConditionsCallback, {
-          callback,
-          index,
-          termsAndConditionsText: vm.$t('login.termsAndConditions'),
-          agreeToTermsText: vm.$t('login.agreeToTerms'),
-        });
-
-        return Promise.resolve(instance.$el);
-      };
-
-      login.renderKbaCreateCallback = (callback, index) => {
-        const instance = vm.convertVueComponent(KbaCreateCallback, {
-          callback,
-          index,
-          descriptionText: vm.$t('login.kba.description'),
-          customQuestonOptionText: vm.$t('login.kba.custom'),
-          requiredText: vm.$t('policyValidationMessages.REQUIRED'),
-          uniqueText: vm.$t('policyValidationMessages.UNIQUE'),
-          showHeader: kbaCallbackCount === 0,
-        });
-
-        kbaCallbackCount += 1;
-
-        return Promise.resolve(instance.$el);
-      };
-
-      login.renderSelectIdPCallback = (callback, index) => {
-        const instance = vm.convertVueComponent(SelectIdPCallback, {
-          callback,
-          index,
-          continueWithText: vm.$t('login.social.continueWith'),
-          orText: vm.$t('login.social.or'),
-        });
-
-        return Promise.resolve(instance.$el);
-      };
-
-      // Overriding this function to handle callback types that don't currently exist in the forgerockembeddedlogin library
-      login.renderUnknownCallback = (callback, index, prompt) => {
-        switch (callback.type) {
-        case 'BooleanAttributeInputCallback': return login.renderBooleanAttributeInputCallback(callback, index, prompt);
-        case 'NumberAttributeInputCallback': return login.renderNumberAttributeInputCallback(callback, index, prompt);
-        case 'ReCaptchaCallback': return login.renderReCaptchaCallback(callback, index, prompt);
-        case 'TermsAndConditionsCallback': return login.renderTermsAndConditionsCallback(callback, index, prompt);
-        case 'ValidatedCreatePasswordCallback': return login.renderPasswordCallback(callback, index, prompt);
-        case 'KbaCreateCallback': return login.renderKbaCreateCallback(callback, index, prompt);
-        case 'SelectIdPCallback': return login.renderSelectIdPCallback(callback, index, prompt);
-        default: return login.renderNameCallback(callback, index, prompt);
-        }
-      };
-
-      // Overriding this function to handle callback types that don't currently exist in the forgerockembeddedlogin library
-      login.handleLoginSubmit = (event) => {
-        event.preventDefault();
-
-        // TODO investigate in the future rewriting this to be more vue centric for retreieveing the data from the form
-        for (const entry of (new FormData(event.currentTarget))) { // eslint-disable-line no-restricted-syntax
-          const callbackEntry = entry[0].match(/^callback_(\d+)$/);
-
-          if (callbackEntry) {
-            const thisCallback = login.currentCallbacks.callbacks[parseInt(callbackEntry[1], 10)];
-            const kbaAnswerCallback = login.currentCallbacks.callbacks[parseInt(callbackEntry[1], 10) / 100];
-
-            if (thisCallback && (thisCallback.type === 'BooleanAttributeInputCallback' || thisCallback.type === 'TermsAndConditionsCallback')) {
-              const entryBoolean = entry[1];
-
-              thisCallback.input[0].value = (entryBoolean === true || entryBoolean === 'true');
-            } else if (thisCallback && thisCallback.type === 'NumberAttributeInputCallback') {
-              const entryNumber = Number(entry[1]);
-
-              thisCallback.input[0].value = entryNumber;
-            } else if (thisCallback && !(thisCallback.type === 'KbaCreateCallback' && callbackEntry[1] === '000')) {
-              const entryKBA = entry[1];
-
-              thisCallback.input[0].value = entryKBA;
-            } else if (kbaAnswerCallback) {
-              const entryKBA = entry[1];
-
-              kbaAnswerCallback.input[1].value = entryKBA;
-            }
-          }
-        }
-
-        return login.submitCallbacks();
-      };
-
-      login.startLogin();
+      if (firstInput) {
+        // focus on the first input after render
+        firstInput.focus();
+      }
     },
     reloadTree(event) {
       event.preventDefault();
@@ -313,7 +253,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-    #loginPanel /deep/ {
+    #callbacksPanel /deep/ {
       br {
         display: none;
       }
