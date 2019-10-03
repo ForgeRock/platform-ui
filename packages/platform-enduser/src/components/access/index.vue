@@ -119,230 +119,230 @@ import CreateResource from '@/components/access/CreateResource';
  * List resource items, limited to 10 returned items and makes use of a query filter search if provided (defaults to queryFilter = true if none provided by the user).
  */
 export default {
-  name: 'Access',
-  components: {
-    FrCreateResource: CreateResource,
-  },
-  data() {
-    return {
-      name: this.$route.params.resourceName,
-      resource: this.$route.params.resourceType,
-      schemaProperties: {},
-      isRowSelected: false,
-      tableHover: true,
-      gridData: [],
-      columns: [],
-      displayFields: [],
-      currentPage: 1,
-      lastPage: false,
-      sortBy: null,
-      sortDesc: false,
-      sortDirection: 'asc',
-      filter: '',
-      createProperties: [],
-      userCanUpdate: false,
-    };
-  },
-  mounted() {
-    this.loadData();
-  },
-  methods: {
-    loadData() {
-      const idmInstance = this.getRequestService();
+	name: 'Access',
+	components: {
+		FrCreateResource: CreateResource,
+	},
+	data() {
+		return {
+			name: this.$route.params.resourceName,
+			resource: this.$route.params.resourceType,
+			schemaProperties: {},
+			isRowSelected: false,
+			tableHover: true,
+			gridData: [],
+			columns: [],
+			displayFields: [],
+			currentPage: 1,
+			lastPage: false,
+			sortBy: null,
+			sortDesc: false,
+			sortDirection: 'asc',
+			filter: '',
+			createProperties: [],
+			userCanUpdate: false,
+		};
+	},
+	mounted() {
+		this.loadData();
+	},
+	methods: {
+		loadData() {
+			const idmInstance = this.getRequestService();
 
-      /* istanbul ignore next */
-      axios.all([
-        idmInstance.get(`schema/${this.resource}/${this.name}`),
-        idmInstance.get(`privilege/${this.resource}/${this.name}`)]).then(axios.spread((schema, privilege) => {
-        if (privilege.data.VIEW.allowed) {
-          // Generate columns for display and filtering for read/query
-          _.each(privilege.data.VIEW.properties, (readProp) => {
-            const propSchema = schema.data.properties[readProp];
+			/* istanbul ignore next */
+			axios.all([
+				idmInstance.get(`schema/${this.resource}/${this.name}`),
+				idmInstance.get(`privilege/${this.resource}/${this.name}`)]).then(axios.spread((schema, privilege) => {
+				if (privilege.data.VIEW.allowed) {
+					// Generate columns for display and filtering for read/query
+					_.each(privilege.data.VIEW.properties, (readProp) => {
+						const propSchema = schema.data.properties[readProp];
 
-            if (
-              this.columns.length <= 3
+						if (
+							this.columns.length <= 3
                                     && _.isUndefined(propSchema.encryption)
                                     && _.includes(['string', 'boolean', 'number'], propSchema.type)
-            ) {
-              this.columns.push({
-                key: readProp,
-                label: propSchema.title,
-                sortable: true,
-                sortDirection: 'desc',
-              });
+						) {
+							this.columns.push({
+								key: readProp,
+								label: propSchema.title,
+								sortable: true,
+								sortDirection: 'desc',
+							});
 
-              this.displayFields.push(readProp);
-            }
-          });
-        }
+							this.displayFields.push(readProp);
+						}
+					});
+				}
 
-        if (privilege.data.UPDATE) {
-          this.userCanUpdate = true;
-        }
+				if (privilege.data.UPDATE) {
+					this.userCanUpdate = true;
+				}
 
-        this.schemaProperties = schema.data.properties;
+				this.schemaProperties = schema.data.properties;
 
-        if (privilege.data.CREATE.allowed) {
-          // Generate create list for create resource dialog
-          _.each(privilege.data.CREATE.properties, (createProp) => {
-            if (schema.data.properties[createProp].type === 'string' || schema.data.properties[createProp].type === 'number' || schema.data.properties[createProp].type === 'boolean') {
-              // eslint-disable-next-line no-param-reassign
-              schema.data.properties[createProp].key = createProp;
+				if (privilege.data.CREATE.allowed) {
+					// Generate create list for create resource dialog
+					_.each(privilege.data.CREATE.properties, (createProp) => {
+						if (schema.data.properties[createProp].type === 'string' || schema.data.properties[createProp].type === 'number' || schema.data.properties[createProp].type === 'boolean') {
+							// eslint-disable-next-line no-param-reassign
+							schema.data.properties[createProp].key = createProp;
 
-              _.each(schema.data.required, (requiredKey) => {
-                if (requiredKey === schema.data.properties[createProp].key) {
-                  // eslint-disable-next-line no-param-reassign
-                  schema.data.properties[createProp].required = true;
-                }
-              });
+							_.each(schema.data.required, (requiredKey) => {
+								if (requiredKey === schema.data.properties[createProp].key) {
+									// eslint-disable-next-line no-param-reassign
+									schema.data.properties[createProp].required = true;
+								}
+							});
 
-              this.createProperties.push(schema.data.properties[createProp]);
-            }
-          });
-        }
+							this.createProperties.push(schema.data.properties[createProp]);
+						}
+					});
+				}
 
-        this.loadGrid('true', this.displayFields, this.displayFields[0], 1);
-      }))
-        .catch((error) => {
-          this.displayNotification('error', error.response.data.message);
-        });
-    },
-    loadGrid(filter, fields, sortField, page) {
-      const idmInstance = this.getRequestService();
+				this.loadGrid('true', this.displayFields, this.displayFields[0], 1);
+			}))
+				.catch((error) => {
+					this.displayNotification('error', error.response.data.message);
+				});
+		},
+		loadGrid(filter, fields, sortField, page) {
+			const idmInstance = this.getRequestService();
 
-      /* istanbul ignore next */
-      idmInstance.get(this.buildGridUrl(filter, fields, sortField, page)).then((resourceData) => {
-        // this.totalRows = resourceData.data.totalPagedResults;
-        if (resourceData.data.pagedResultsCookie) {
-          this.lastPage = false;
-        } else {
-          this.lastPage = true;
-        }
+			/* istanbul ignore next */
+			idmInstance.get(this.buildGridUrl(filter, fields, sortField, page)).then((resourceData) => {
+				// this.totalRows = resourceData.data.totalPagedResults;
+				if (resourceData.data.pagedResultsCookie) {
+					this.lastPage = false;
+				} else {
+					this.lastPage = true;
+				}
 
-        this.gridData = resourceData.data.result;
-      });
-    },
-    /* eslint prefer-destructuring: ["error", {AssignmentExpression: {array: false}}] */
-    buildGridUrl(filter, fields, sortField, page) {
-      let resourceUrl = `${this.resource}/${this.name}?_queryFilter=${filter}&_pageSize=10&_totalPagedResultsPolicy=EXACT`;
+				this.gridData = resourceData.data.result;
+			});
+		},
+		/* eslint prefer-destructuring: ["error", {AssignmentExpression: {array: false}}] */
+		buildGridUrl(filter, fields, sortField, page) {
+			let resourceUrl = `${this.resource}/${this.name}?_queryFilter=${filter}&_pageSize=10&_totalPagedResultsPolicy=EXACT`;
 
-      if (_.isNull(sortField)) {
-        // If there is no sortField default to sorting on the first column.
-        // eslint-disable-next-line no-param-reassign
-        sortField = fields[0];
-      }
+			if (_.isNull(sortField)) {
+				// If there is no sortField default to sorting on the first column.
+				// eslint-disable-next-line no-param-reassign
+				sortField = fields[0];
+			}
 
-      resourceUrl = `${resourceUrl}&_sortKeys=${sortField}`;
+			resourceUrl = `${resourceUrl}&_sortKeys=${sortField}`;
 
-      if (fields.length) {
-        resourceUrl = `${resourceUrl}&_fields=${fields.join(',')}`;
-      }
+			if (fields.length) {
+				resourceUrl = `${resourceUrl}&_fields=${fields.join(',')}`;
+			}
 
-      if (page > 1) {
-        // Pagination starts at 1 and we need to go back an additional one to get the previous page
-        const offsetCalc = (page - 1) * 10;
+			if (page > 1) {
+				// Pagination starts at 1 and we need to go back an additional one to get the previous page
+				const offsetCalc = (page - 1) * 10;
 
-        resourceUrl = `${resourceUrl}&_pagedResultsOffset=${offsetCalc}`;
-      }
+				resourceUrl = `${resourceUrl}&_pagedResultsOffset=${offsetCalc}`;
+			}
 
-      return resourceUrl;
-    },
-    calculateSort(sortDesc, sortBy) {
-      let sortUrl = null;
+			return resourceUrl;
+		},
+		calculateSort(sortDesc, sortBy) {
+			let sortUrl = null;
 
-      if (!_.isNull(sortBy)) {
-        if (sortDesc) {
-          sortUrl = `${sortBy}`;
-        } else {
-          sortUrl = `-${sortBy}`;
-        }
-      }
+			if (!_.isNull(sortBy)) {
+				if (sortDesc) {
+					sortUrl = `${sortBy}`;
+				} else {
+					sortUrl = `-${sortBy}`;
+				}
+			}
 
-      return sortUrl;
-    },
-    sortingChanged(sort) {
-      this.currentPage = 1;
-      this.lastPage = false;
+			return sortUrl;
+		},
+		sortingChanged(sort) {
+			this.currentPage = 1;
+			this.lastPage = false;
 
-      this.loadGrid(this.generateSearch(this.filter, this.displayFields, this.schemaProperties), this.displayFields, this.calculateSort(sort.sortDesc, sort.sortBy), 1);
-    },
-    paginationChange(page) {
-      /* istanbul ignore next */
-      this.currentPage = page;
-      this.loadGrid(this.generateSearch(this.filter, this.displayFields, this.schemaProperties), this.displayFields, this.calculateSort(this.sortDesc, this.sortBy), page);
-    },
-    search() {
-      this.sortBy = null;
-      this.sortDesc = false;
-      this.currentPage = 1;
-      this.lastPage = false;
+			this.loadGrid(this.generateSearch(this.filter, this.displayFields, this.schemaProperties), this.displayFields, this.calculateSort(sort.sortDesc, sort.sortBy), 1);
+		},
+		paginationChange(page) {
+			/* istanbul ignore next */
+			this.currentPage = page;
+			this.loadGrid(this.generateSearch(this.filter, this.displayFields, this.schemaProperties), this.displayFields, this.calculateSort(this.sortDesc, this.sortBy), page);
+		},
+		search() {
+			this.sortBy = null;
+			this.sortDesc = false;
+			this.currentPage = 1;
+			this.lastPage = false;
 
-      this.loadGrid(this.generateSearch(this.filter, this.displayFields, this.schemaProperties), this.displayFields, null, 1);
-    },
-    generateSearch(filter, displayFields, schemaProps) {
-      let filterUrl = '';
+			this.loadGrid(this.generateSearch(this.filter, this.displayFields, this.schemaProperties), this.displayFields, null, 1);
+		},
+		generateSearch(filter, displayFields, schemaProps) {
+			let filterUrl = '';
 
-      if (filter.length > 0) {
+			if (filter.length > 0) {
 				filter = encodeURIComponent(filter);
-        _.each(displayFields, (field, index) => {
-          let type = 'string';
+				_.each(displayFields, (field, index) => {
+					let type = 'string';
 
-          if (!_.isUndefined(schemaProps)) {
-            // eslint-disable-next-line prefer-destructuring
-            type = schemaProps[field].type;
-          }
+					if (!_.isUndefined(schemaProps)) {
+						// eslint-disable-next-line prefer-destructuring
+						type = schemaProps[field].type;
+					}
 
-          if (type === 'number' && !_.isNaN(_.toNumber(filter))) {
-            // Search based on number and proper number value
-            if ((index + 1) < displayFields.length) {
-              filterUrl = `${filterUrl}${field}+eq+ ${filter}+OR+`;
-            } else {
-              filterUrl = `${filterUrl}${field}+eq+ ${filter}`;
-            }
-          } else if (type === 'boolean' && (filter === 'true' || filter === 'false')) {
-            // Search based on boolean and proper boolean true/false
-            if ((index + 1) < displayFields.length) {
-              filterUrl = `${filterUrl}${field}+eq+ ${filter}+OR+`;
-            } else {
-              filterUrl = `${filterUrl}${field}+eq+ ${filter}`;
-            }
-          } else if ((index + 1) < displayFields.length) {
-            // Fallback to general string search if all other criteria fails
-            filterUrl = `${filterUrl}${field}+sw+"${filter}"+OR+`;
-          } else {
-            filterUrl = `${filterUrl}${field}+sw+"${filter}"`;
-          }
-        });
-      } else {
-        filterUrl = 'true';
-      }
+					if (type === 'number' && !_.isNaN(_.toNumber(filter))) {
+						// Search based on number and proper number value
+						if ((index + 1) < displayFields.length) {
+							filterUrl = `${filterUrl}${field}+eq+ ${filter}+OR+`;
+						} else {
+							filterUrl = `${filterUrl}${field}+eq+ ${filter}`;
+						}
+					} else if (type === 'boolean' && (filter === 'true' || filter === 'false')) {
+						// Search based on boolean and proper boolean true/false
+						if ((index + 1) < displayFields.length) {
+							filterUrl = `${filterUrl}${field}+eq+ ${filter}+OR+`;
+						} else {
+							filterUrl = `${filterUrl}${field}+eq+ ${filter}`;
+						}
+					} else if ((index + 1) < displayFields.length) {
+						// Fallback to general string search if all other criteria fails
+						filterUrl = `${filterUrl}${field}+sw+"${filter}"+OR+`;
+					} else {
+						filterUrl = `${filterUrl}${field}+sw+"${filter}"`;
+					}
+				});
+			} else {
+				filterUrl = 'true';
+			}
 
-      return filterUrl;
-    },
-    clear() {
-      this.filter = '';
-      this.sortBy = null;
-      this.sortDesc = false;
-      this.currentPage = 1;
+			return filterUrl;
+		},
+		clear() {
+			this.filter = '';
+			this.sortBy = null;
+			this.sortDesc = false;
+			this.currentPage = 1;
 
-      this.loadGrid('true', this.displayFields, null, 1);
-    },
-    resourceClicked(item) {
-      if (this.userCanUpdate) {
-        this.$router.push({
-          name: 'EditResource',
-          params: {
-            resourceType: this.resource,
-            resourceName: this.name,
-            // eslint-disable-next-line no-underscore-dangle
-            resourceId: item._id,
-          },
-        });
-      } else {
-        this.displayNotification('error', this.$t('pages.access.unableToEditResource', { resource: this.name }));
-      }
-    },
-  },
+			this.loadGrid('true', this.displayFields, null, 1);
+		},
+		resourceClicked(item) {
+			if (this.userCanUpdate) {
+				this.$router.push({
+					name: 'EditResource',
+					params: {
+						resourceType: this.resource,
+						resourceName: this.name,
+						// eslint-disable-next-line no-underscore-dangle
+						resourceId: item._id,
+					},
+				});
+			} else {
+				this.displayNotification('error', this.$t('pages.access.unableToEditResource', { resource: this.name }));
+			}
+		},
+	},
 };
 </script>
 

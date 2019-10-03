@@ -36,10 +36,10 @@
 import Alert from '@forgerock/platform-components/src/components/alert/';
 
 export default {
-  name: 'App',
-  components: {
-    FrAlert: Alert,
-  },
+	name: 'App',
+	components: {
+		FrAlert: Alert,
+	},
 };
 </script>
 

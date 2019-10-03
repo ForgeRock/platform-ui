@@ -6,53 +6,53 @@ import i18n from '@/i18n';
 import Resources from '@/components/uma/Resources';
 
 describe('Sharing.vue', () => {
-  Vue.use(BootstrapVue);
+	Vue.use(BootstrapVue);
 
-  it('Resources page loaded', () => {
-    const wrapper = shallowMount(Resources, {
-      i18n,
-    });
+	it('Resources page loaded', () => {
+		const wrapper = shallowMount(Resources, {
+			i18n,
+		});
 
-    expect(wrapper.name()).to.equal('Resources');
-  });
+		expect(wrapper.name()).to.equal('Resources');
+	});
 
-  it('Emits "renderShareModal" event', () => {
-    const wrapper = shallowMount(Resources, {
-      i18n,
-    });
+	it('Emits "renderShareModal" event', () => {
+		const wrapper = shallowMount(Resources, {
+			i18n,
+		});
 
-    wrapper.vm.renderShareModal();
+		wrapper.vm.renderShareModal();
 
-    Vue.nextTick(() => {
-      expect(wrapper.emitted('renderShareModal').length).to.equal(1);
-    });
-  });
+		Vue.nextTick(() => {
+			expect(wrapper.emitted('renderShareModal').length).to.equal(1);
+		});
+	});
 
-  it('Emits "renderUnshareModal" event', () => {
-    const wrapper = shallowMount(Resources, {
-      i18n,
-    });
+	it('Emits "renderUnshareModal" event', () => {
+		const wrapper = shallowMount(Resources, {
+			i18n,
+		});
 
-    wrapper.vm.renderUnshareModal();
+		wrapper.vm.renderUnshareModal();
 
-    Vue.nextTick(() => {
-      expect(wrapper.emitted('renderUnshareModal').length).to.equal(1);
-    });
-  });
+		Vue.nextTick(() => {
+			expect(wrapper.emitted('renderUnshareModal').length).to.equal(1);
+		});
+	});
 
-  it('Toggles grid view', () => {
-    const wrapper = shallowMount(Resources, {
-      i18n,
-      propsData: {
-        viewgrid: false,
-      },
-    });
-    expect(wrapper.vm.viewgrid).to.equal(false);
+	it('Toggles grid view', () => {
+		const wrapper = shallowMount(Resources, {
+			i18n,
+			propsData: {
+				viewgrid: false,
+			},
+		});
+		expect(wrapper.vm.viewgrid).to.equal(false);
 
-    wrapper.vm.toggleGrid();
+		wrapper.vm.toggleGrid();
 
-    Vue.nextTick(() => {
-      expect(wrapper.vm.viewgrid).to.equal(true);
-    });
-  });
+		Vue.nextTick(() => {
+			expect(wrapper.vm.viewgrid).to.equal(true);
+		});
+	});
 });
