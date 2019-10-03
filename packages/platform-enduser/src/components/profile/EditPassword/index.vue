@@ -117,94 +117,94 @@ import ValidationError from '@/components/utils/ValidationError';
  *
  */
 export default {
-	$_veeValidate: {
-		validator: 'new',
-	},
-	name: 'EditPassword',
-	components: {
-		FrListItem: ListItem,
-		FrLoadingButton: LoadingButton,
-		FrPasswordPolicyInput: PolicyPasswordInput,
-		FrValidationError: ValidationError,
-	},
-	computed: {
-		...mapState({
-			userId: state => state.UserStore.userId,
-			managedResource: state => state.UserStore.managedResource,
-			passwordReset: state => state.ApplicationStore.passwordReset,
-		}),
-	},
-	data() {
-		return {
-			currentPassword: '',
-			newPassword: '',
-			loading: false,
-			showNew: true,
-			showCurrent: true,
-			inputCurrent: 'password',
-			inputNew: 'password',
-		};
-	},
-	methods: {
-		clearComponent() {
-			this.currentPassword = '';
-			this.newPassword = '';
-			this.errors.clear();
-		},
-		resetComponent() {
-			this.loading = false;
-			this.currentPassword = '';
-			this.newPassword = '';
-			this.$refs.cancel.click();
-		},
-		displayError(error) {
-			if (error.response.status === 403) {
-				this.errors.add({
-					field: 'currentPassword',
-					msg: 'Incorrect password provided',
-				});
-			}
-		},
-		onSavePassword() {
-			const headers = {
-				'X-Requested-With': 'XMLHttpRequest',
-				'X-OpenIDM-Reauth-Password': this.encodeRFC5987IfNecessary(this.currentPassword),
-			};
-			const payload = [{ operation: 'add', field: '/password', value: this.newPassword }];
-			const onSuccess = this.resetComponent.bind(this);
-			const onError = this.displayError.bind(this);
+  $_veeValidate: {
+    validator: 'new',
+  },
+  name: 'EditPassword',
+  components: {
+    FrListItem: ListItem,
+    FrLoadingButton: LoadingButton,
+    FrPasswordPolicyInput: PolicyPasswordInput,
+    FrValidationError: ValidationError,
+  },
+  computed: {
+    ...mapState({
+      userId: state => state.UserStore.userId,
+      managedResource: state => state.UserStore.managedResource,
+      passwordReset: state => state.ApplicationStore.passwordReset,
+    }),
+  },
+  data() {
+    return {
+      currentPassword: '',
+      newPassword: '',
+      loading: false,
+      showNew: true,
+      showCurrent: true,
+      inputCurrent: 'password',
+      inputNew: 'password',
+    };
+  },
+  methods: {
+    clearComponent() {
+      this.currentPassword = '';
+      this.newPassword = '';
+      this.errors.clear();
+    },
+    resetComponent() {
+      this.loading = false;
+      this.currentPassword = '';
+      this.newPassword = '';
+      this.$refs.cancel.click();
+    },
+    displayError(error) {
+      if (error.response.status === 403) {
+        this.errors.add({
+          field: 'currentPassword',
+          msg: 'Incorrect password provided',
+        });
+      }
+    },
+    onSavePassword() {
+      const headers = {
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-OpenIDM-Reauth-Password': this.encodeRFC5987IfNecessary(this.currentPassword),
+      };
+      const payload = [{ operation: 'add', field: '/password', value: this.newPassword }];
+      const onSuccess = this.resetComponent.bind(this);
+      const onError = this.displayError.bind(this);
 
-			this.errors.clear();
+      this.errors.clear();
 
-			this.$validator.validateAll().then((valid) => {
-				if (valid) {
-					this.$emit('updateProfile', payload, { headers, onSuccess, onError });
-				} else {
-					this.displayNotification('error', this.$t('pages.profile.accountSecurity.invalidPassword'));
-				}
-			});
-		},
-		validate() {
-			return this.$validator.validateAll();
-		},
-		revealNew() {
-			if (this.inputNew === 'password') {
-				this.inputNew = 'text';
-				this.showNew = false;
-			} else {
-				this.inputNew = 'password';
-				this.showNew = true;
-			}
-		},
-		revealCurrent() {
-			if (this.inputCurrent === 'password') {
-				this.inputCurrent = 'text';
-				this.showCurrent = false;
-			} else {
-				this.inputCurrent = 'password';
-				this.showCurrent = true;
-			}
-		},
-	},
+      this.$validator.validateAll().then((valid) => {
+        if (valid) {
+          this.$emit('updateProfile', payload, { headers, onSuccess, onError });
+        } else {
+          this.displayNotification('error', this.$t('pages.profile.accountSecurity.invalidPassword'));
+        }
+      });
+    },
+    validate() {
+      return this.$validator.validateAll();
+    },
+    revealNew() {
+      if (this.inputNew === 'password') {
+        this.inputNew = 'text';
+        this.showNew = false;
+      } else {
+        this.inputNew = 'password';
+        this.showNew = true;
+      }
+    },
+    revealCurrent() {
+      if (this.inputCurrent === 'password') {
+        this.inputCurrent = 'text';
+        this.showCurrent = false;
+      } else {
+        this.inputCurrent = 'password';
+        this.showCurrent = true;
+      }
+    },
+  },
 };
 </script>

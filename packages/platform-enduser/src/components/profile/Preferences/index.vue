@@ -41,44 +41,44 @@ import ListItem from '@forgerock/platform-components/src/components/listItem/';
  *
  */
 export default {
-	name: 'Preferences',
-	components: {
-		FrListGroup: ListGroup,
-		FrListItem: ListItem,
-	},
-	data() {
-		return {
-			preferences: {},
-		};
-	},
-	mounted() {
-		this.loadData();
-	},
-	computed: {
-		...mapState({
-			currentPreferences: state => state.UserStore.preferences,
-			properties: state => state.UserStore.schema.properties.preferences.properties,
-		}),
-	},
-	methods: {
-		loadData() {
-			const keys = _.keys(this.currentPreferences);
-			const preferences = _.cloneDeep(this.properties);
+  name: 'Preferences',
+  components: {
+    FrListGroup: ListGroup,
+    FrListItem: ListItem,
+  },
+  data() {
+    return {
+      preferences: {},
+    };
+  },
+  mounted() {
+    this.loadData();
+  },
+  computed: {
+    ...mapState({
+      currentPreferences: state => state.UserStore.preferences,
+      properties: state => state.UserStore.schema.properties.preferences.properties,
+    }),
+  },
+  methods: {
+    loadData() {
+      const keys = _.keys(this.currentPreferences);
+      const preferences = _.cloneDeep(this.properties);
 
-			_.each(keys, (key) => {
-				preferences[key].value = this.currentPreferences[key];
-				delete preferences[key].type;
-			});
+      _.each(keys, (key) => {
+        preferences[key].value = this.currentPreferences[key];
+        delete preferences[key].type;
+      });
 
-			this.preferences = preferences;
-		},
-		generatePatch(preference, value) {
-			return [{ operation: 'replace', field: `/preferences/${preference}`, value }];
-		},
-		savePreferences(preference, value) {
-			this.$emit('updateProfile', this.generatePatch(preference, value));
-		},
-	},
+      this.preferences = preferences;
+    },
+    generatePatch(preference, value) {
+      return [{ operation: 'replace', field: `/preferences/${preference}`, value }];
+    },
+    savePreferences(preference, value) {
+      this.$emit('updateProfile', this.generatePatch(preference, value));
+    },
+  },
 };
 </script>
 

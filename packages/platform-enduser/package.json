@@ -90,8 +90,8 @@
         }
       ],
       "indent": [
-        2,
-        "tab"
+        "error",
+        2
       ],
       "no-tabs": 0,
       "max-len": 0,

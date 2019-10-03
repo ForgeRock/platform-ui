@@ -187,7 +187,7 @@
 
 <script>
 import {
-	cloneDeep, filter, findIndex, each, keys, map, pickBy,
+  cloneDeep, filter, findIndex, each, keys, map, pickBy,
 } from 'lodash';
 import FallbackImage from '@/components/utils/FallbackImage';
 
@@ -196,136 +196,136 @@ import FallbackImage from '@/components/utils/FallbackImage';
  *
  * */
 export default {
-	name: 'Share',
-	components: {
-		FrFallbackImage: FallbackImage,
-	},
-	props: {
-		resource: {
-			type: Object,
-			default: () => {},
-		},
-	},
-	data() {
-		return {
-			newShare: false,
-			text: `Can ${this.resource.scopes[0]}`,
-			newScopes: {},
-		};
-	},
-	created() {
-		this.setNewScopes();
-	},
-	watch: {
-		resource() {
-			this.setNewScopes();
-		},
-	},
-	methods: {
-		setNewScopes() {
-			each(this.resource.scopes, (scope) => {
-				this.newScopes[scope] = true;
-			});
-		},
-		hideModal() {
-			this.$refs.fsModal.hide();
-			this.resetModal();
-		},
-		resetModal() {
-			this.newShare = '';
-			this.setNewScopes();
-		},
-		unshareOne(subject) {
-			const onSuccess = this.resetModal.bind(this);
+  name: 'Share',
+  components: {
+    FrFallbackImage: FallbackImage,
+  },
+  props: {
+    resource: {
+      type: Object,
+      default: () => {},
+    },
+  },
+  data() {
+    return {
+      newShare: false,
+      text: `Can ${this.resource.scopes[0]}`,
+      newScopes: {},
+    };
+  },
+  created() {
+    this.setNewScopes();
+  },
+  watch: {
+    resource() {
+      this.setNewScopes();
+    },
+  },
+  methods: {
+    setNewScopes() {
+      each(this.resource.scopes, (scope) => {
+        this.newScopes[scope] = true;
+      });
+    },
+    hideModal() {
+      this.$refs.fsModal.hide();
+      this.resetModal();
+    },
+    resetModal() {
+      this.newShare = '';
+      this.setNewScopes();
+    },
+    unshareOne(subject) {
+      const onSuccess = this.resetModal.bind(this);
 
-			// filter subject out of current permissions array
-			const permissions = this.resource.policy.permissions.filter(obj => obj.subject !== subject);
-
-
-			const payload = {
-				/* eslint no-underscore-dangle: ["error", { "allow": ["_id"] }] */
-				policyId: this.resource._id,
-				permissions,
-			};
-
-			this.$emit('modifyResource', this.resource._id, payload, { onSuccess, unshare: true });
-			this.hideModal();
-		},
-		unshareAll() {
-			this.$emit('renderUnshareModal', this.resource.name, this.resource._id);
-			this.hideModal();
-		},
-		validateResource() {
-			// resource has already been shared
-			if (this.resource.policy && this.resource.policy.permissions) {
-				const index = findIndex(this.resource.policy.permissions, perm => perm.subject === this.newShare);
-
-				if (index === -1) {
-					if (this.newShare) {
-						this.shareResource();
-					} else {
-						this.displayNotification('error', this.$t('pages.uma.resources.noRequestingParty'));
-					}
-					// attempting to share with user who already has access to resource
-				} else {
-					this.displayNotification('error', this.$t('pages.uma.resources.sameShareError', { requestingParty: this.newShare }));
-					this.resetModal();
-				}
-				// shared for first time
-			} else if (!this.resource.policy && this.newShare) {
-				this.shareResource();
-			}
-		},
-		shareResource() {
-			const onSuccess = this.resetModal.bind(this);
-			const subject = this.newShare;
-			const newScopes = keys(pickBy(this.newScopes));
-			const newPermissions = { subject, scopes: newScopes };
-			const payload = {
-				policyId: this.resource._id,
-				permissions: [],
-			};
-
-			// resource has previously been shared
-			if (this.resource.policy) {
-				payload.permissions = this.resource.policy.permissions.filter(obj => obj.subject !== subject);
-				payload.permissions.push(newPermissions);
-
-				this.$emit('modifyResource', this.resource._id, payload, { onSuccess });
-			} else {
-				payload.permissions.push(newPermissions);
-
-				this.$emit('shareResource', payload, { onSuccess });
-			}
-
-			this.hideModal();
-		},
-		modifyResource(subject, changedScope) {
-			const newPermissions = map(this.resource.policy.permissions,
-				(permission) => {
-					const processedPermission = cloneDeep(permission);
-					if (permission.subject === subject) {
-						const scopesLength = permission.scopes.length;
-
-						processedPermission.scopes = filter(processedPermission.scopes, scope => scope !== changedScope);
-
-						if (scopesLength === processedPermission.scopes.length) {
-							processedPermission.scopes.push(changedScope);
-						}
-					}
-
-					return processedPermission;
-				});
+      // filter subject out of current permissions array
+      const permissions = this.resource.policy.permissions.filter(obj => obj.subject !== subject);
 
 
-			const payload = {
-				policyId: this.resource._id,
-				permissions: newPermissions,
-			};
+      const payload = {
+        /* eslint no-underscore-dangle: ["error", { "allow": ["_id"] }] */
+        policyId: this.resource._id,
+        permissions,
+      };
 
-			this.$emit('modifyResource', this.resource._id, payload);
-		},
-	},
+      this.$emit('modifyResource', this.resource._id, payload, { onSuccess, unshare: true });
+      this.hideModal();
+    },
+    unshareAll() {
+      this.$emit('renderUnshareModal', this.resource.name, this.resource._id);
+      this.hideModal();
+    },
+    validateResource() {
+      // resource has already been shared
+      if (this.resource.policy && this.resource.policy.permissions) {
+        const index = findIndex(this.resource.policy.permissions, perm => perm.subject === this.newShare);
+
+        if (index === -1) {
+          if (this.newShare) {
+            this.shareResource();
+          } else {
+            this.displayNotification('error', this.$t('pages.uma.resources.noRequestingParty'));
+          }
+          // attempting to share with user who already has access to resource
+        } else {
+          this.displayNotification('error', this.$t('pages.uma.resources.sameShareError', { requestingParty: this.newShare }));
+          this.resetModal();
+        }
+        // shared for first time
+      } else if (!this.resource.policy && this.newShare) {
+        this.shareResource();
+      }
+    },
+    shareResource() {
+      const onSuccess = this.resetModal.bind(this);
+      const subject = this.newShare;
+      const newScopes = keys(pickBy(this.newScopes));
+      const newPermissions = { subject, scopes: newScopes };
+      const payload = {
+        policyId: this.resource._id,
+        permissions: [],
+      };
+
+      // resource has previously been shared
+      if (this.resource.policy) {
+        payload.permissions = this.resource.policy.permissions.filter(obj => obj.subject !== subject);
+        payload.permissions.push(newPermissions);
+
+        this.$emit('modifyResource', this.resource._id, payload, { onSuccess });
+      } else {
+        payload.permissions.push(newPermissions);
+
+        this.$emit('shareResource', payload, { onSuccess });
+      }
+
+      this.hideModal();
+    },
+    modifyResource(subject, changedScope) {
+      const newPermissions = map(this.resource.policy.permissions,
+        (permission) => {
+          const processedPermission = cloneDeep(permission);
+          if (permission.subject === subject) {
+            const scopesLength = permission.scopes.length;
+
+            processedPermission.scopes = filter(processedPermission.scopes, scope => scope !== changedScope);
+
+            if (scopesLength === processedPermission.scopes.length) {
+              processedPermission.scopes.push(changedScope);
+            }
+          }
+
+          return processedPermission;
+        });
+
+
+      const payload = {
+        policyId: this.resource._id,
+        permissions: newPermissions,
+      };
+
+      this.$emit('modifyResource', this.resource._id, payload);
+    },
+  },
 };
 </script>
 

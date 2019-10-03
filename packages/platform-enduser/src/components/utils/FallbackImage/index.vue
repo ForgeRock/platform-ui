@@ -23,43 +23,43 @@ import axios from 'axios';
  *
  * */
 export default {
-	name: 'ImageFallback',
-	props: {
-		src: {
-			type: String,
-			default: () => '',
-		},
-		width: {
-			type: [String, Number],
-			default: () => '',
-		},
-		alt: {
-			type: String,
-			default: () => '',
-		},
-		fallback: {
-			type: String,
-			default: () => '',
-		},
-	},
-	data() {
-		return {
-			imageFound: false,
-		};
-	},
-	mounted() {
-		if (!isNull(this.src) && !isUndefined(this.src) && this.src.length > 0) {
-			axios.get(`${this.src}`).then(({ status }) => {
-				this.imageFound = status === 200;
-			}).catch((error) => {
-				if (error) {
-					this.imageFound = false;
-				}
-			});
-		} else {
-			this.imageFound = false;
-		}
-	},
+  name: 'ImageFallback',
+  props: {
+    src: {
+      type: String,
+      default: () => '',
+    },
+    width: {
+      type: [String, Number],
+      default: () => '',
+    },
+    alt: {
+      type: String,
+      default: () => '',
+    },
+    fallback: {
+      type: String,
+      default: () => '',
+    },
+  },
+  data() {
+    return {
+      imageFound: false,
+    };
+  },
+  mounted() {
+    if (!isNull(this.src) && !isUndefined(this.src) && this.src.length > 0) {
+      axios.get(`${this.src}`).then(({ status }) => {
+        this.imageFound = status === 200;
+      }).catch((error) => {
+        if (error) {
+          this.imageFound = false;
+        }
+      });
+    } else {
+      this.imageFound = false;
+    }
+  },
 };
 </script>
 

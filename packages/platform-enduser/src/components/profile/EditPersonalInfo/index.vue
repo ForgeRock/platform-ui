@@ -138,113 +138,113 @@ import ResourceMixin from '@/components/utils/mixins/ResourceMixin';
  *
  */
 export default {
-	name: 'EditPersonalInfo',
-	mixins: [
-		ResourceMixin,
-	],
-	components: {
-		FrValidationError: ValidationError,
-	},
-	computed: {
-		...mapState({
-			userId: state => state.UserStore.userId,
-			managedResource: state => state.UserStore.managedResource,
-			internalUser: state => state.UserStore.internalUser,
-		}),
-	},
-	$_veeValidate: {
-		validator: 'new',
-	},
-	props: {
-		schema: { type: Object, required: true },
-		profile: { type: Object, required: true },
-		autoOpen: { type: Boolean, required: false, default: false },
-	},
-	data() {
-		return {
-			formFields: [],
-			originalFormFields: [],
-			title: this.$t('pages.profile.editProfile.userDetailsTitle'),
-		};
-	},
-	mounted() {
-		if (this.autoOpen) {
-			this.$root.$emit('bv::show::modal', 'userDetailsModal');
-		}
-	},
-	methods: {
-		generateFormFields() {
-			const { order, properties, required } = this.schema;
-			const filteredOrder = _.filter(order, propName => properties[propName].viewable
+  name: 'EditPersonalInfo',
+  mixins: [
+    ResourceMixin,
+  ],
+  components: {
+    FrValidationError: ValidationError,
+  },
+  computed: {
+    ...mapState({
+      userId: state => state.UserStore.userId,
+      managedResource: state => state.UserStore.managedResource,
+      internalUser: state => state.UserStore.internalUser,
+    }),
+  },
+  $_veeValidate: {
+    validator: 'new',
+  },
+  props: {
+    schema: { type: Object, required: true },
+    profile: { type: Object, required: true },
+    autoOpen: { type: Boolean, required: false, default: false },
+  },
+  data() {
+    return {
+      formFields: [],
+      originalFormFields: [],
+      title: this.$t('pages.profile.editProfile.userDetailsTitle'),
+    };
+  },
+  mounted() {
+    if (this.autoOpen) {
+      this.$root.$emit('bv::show::modal', 'userDetailsModal');
+    }
+  },
+  methods: {
+    generateFormFields() {
+      const { order, properties, required } = this.schema;
+      const filteredOrder = _.filter(order, propName => properties[propName].viewable
                             && properties[propName].userEditable
                             && properties[propName].type !== 'array'
                             && properties[propName].type !== 'object');
-			const formFields = _.map(filteredOrder, name => ({
-				name,
-				key: name,
-				title: properties[name].title,
-				value: this.profile[name] || null,
-				type: properties[name].type,
-				required: _.includes(required, name),
-			}));
+      const formFields = _.map(filteredOrder, name => ({
+        name,
+        key: name,
+        title: properties[name].title,
+        value: this.profile[name] || null,
+        type: properties[name].type,
+        required: _.includes(required, name),
+      }));
 
-			return formFields;
-		},
-		hideModal() {
-			this.$refs.fsModal.hide();
-		},
-		setModal() {
-			const formFields = this.generateFormFields();
+      return formFields;
+    },
+    hideModal() {
+      this.$refs.fsModal.hide();
+    },
+    setModal() {
+      const formFields = this.generateFormFields();
 
-			this.formFields = formFields;
-			this.originalFormFields = _.cloneDeep(formFields);
-		},
-		saveForm() {
-			this.isValid().then((valid) => {
-				if (valid) {
-					const idmInstance = this.getRequestService();
-					const policyFields = {};
+      this.formFields = formFields;
+      this.originalFormFields = _.cloneDeep(formFields);
+    },
+    saveForm() {
+      this.isValid().then((valid) => {
+        if (valid) {
+          const idmInstance = this.getRequestService();
+          const policyFields = {};
 
-					_.each(this.formFields, (field) => {
-						if (field.value !== null) {
-							policyFields[field.name] = field.value;
-						}
-					});
+          _.each(this.formFields, (field) => {
+            if (field.value !== null) {
+              policyFields[field.name] = field.value;
+            }
+          });
 
-					idmInstance.post(`policy/${this.managedResource}/${this.userId}?_action=validateObject`, policyFields).then((policyResult) => {
-						if (policyResult.data.failedPolicyRequirements.length === 0) {
-							this.$emit('updateProfile', this.generateUpdatePatch(this.originalFormFields, this.formFields));
-							this.errors.clear();
-							this.hideModal();
-						} else {
-							const generatedErrors = this.findPolicyError({
-								data: {
-									detail: {
-										failedPolicyRequirements: policyResult.data.failedPolicyRequirements,
-									},
-								},
-							}, this.formFields);
+          idmInstance.post(`policy/${this.managedResource}/${this.userId}?_action=validateObject`, policyFields).then((policyResult) => {
+            if (policyResult.data.failedPolicyRequirements.length === 0) {
+              this.$emit('updateProfile', this.generateUpdatePatch(this.originalFormFields, this.formFields));
+              this.errors.clear();
+              this.hideModal();
+            } else {
+              const generatedErrors = this.findPolicyError({
+                data: {
+                  detail: {
+                    failedPolicyRequirements: policyResult.data.failedPolicyRequirements,
+                  },
+                },
+              }, this.formFields);
 
-							this.errors.clear();
+              this.errors.clear();
 
-							if (generatedErrors.length > 0) {
-								_.each(generatedErrors, (generatedError) => {
-									if (generatedError.exists) {
-										this.errors.add(generatedError);
-									}
-								});
-							} else {
-								this.displayNotification('error', this.$t('pages.profile.editProfile.failedProfileSave'));
-							}
-						}
-					});
-				}
-			});
-		},
-		isValid() {
-			return this.$validator.validateAll();
-		},
-	},
+              if (generatedErrors.length > 0) {
+                _.each(generatedErrors, (generatedError) => {
+                  if (generatedError.exists) {
+                    this.errors.add(generatedError);
+                  }
+                });
+              } else {
+                this.displayNotification('error', this.$t('pages.profile.editProfile.failedProfileSave'));
+              }
+            }
+          });
+        }
+      });
+    },
+    isValid() {
+      return this.$validator.validateAll();
+    },
+  },
 };
 </script>
 

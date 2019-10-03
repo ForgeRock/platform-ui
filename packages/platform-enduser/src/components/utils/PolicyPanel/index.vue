@@ -36,41 +36,41 @@ import _ from 'lodash';
  *
  * */
 export default {
-	name: 'PolicyPanel',
-	props: {
-		policies: {
-			type: Array,
-			default: () => [],
-		},
-		policyFailures: {
-			type: [String, Array],
-			default: () => '',
-		},
-	},
-	data() {
-		return {};
-	},
-	computed: {
-		isValid() {
-			return _.isArray(this.policyFailures) && _.isEmpty(this.policyFailures);
-		},
-		isLoading() {
-			return this.policyFailures === 'loading' || this.policyFailures === false;
-		},
-	},
-	methods: {
-		translate(policy) {
-			const path = `common.policyValidationMessages.${policy.name}`;
+  name: 'PolicyPanel',
+  props: {
+    policies: {
+      type: Array,
+      default: () => [],
+    },
+    policyFailures: {
+      type: [String, Array],
+      default: () => '',
+    },
+  },
+  data() {
+    return {};
+  },
+  computed: {
+    isValid() {
+      return _.isArray(this.policyFailures) && _.isEmpty(this.policyFailures);
+    },
+    isLoading() {
+      return this.policyFailures === 'loading' || this.policyFailures === false;
+    },
+  },
+  methods: {
+    translate(policy) {
+      const path = `common.policyValidationMessages.${policy.name}`;
 
-			return this.$t(path, policy.params);
-		},
-		includes: _.includes,
-	},
-	watch: {
-		policyFailures(value) {
-			this.policyFailures = value;
-		},
-	},
+      return this.$t(path, policy.params);
+    },
+    includes: _.includes,
+  },
+  watch: {
+    policyFailures(value) {
+      this.policyFailures = value;
+    },
+  },
 };
 </script>
 <style lang="scss" scoped>
