@@ -28,26 +28,18 @@
  * @description Selfservice stage for multiple selfservice flows, displays a google captcha
  *
  * */
-import {
-  mapValues, keyBy, isUndefined,
-} from 'lodash';
-import CallbackValidation from '@/utils/CallbackValidation';
+import { isUndefined } from 'lodash';
 
 export default {
   name: 'ReCaptchaCallback',
   props: {
     callback: {
       type: Object,
-      validator: CallbackValidation.validateOutput,
       required: true,
     },
     index: {
       type: Number,
       default: 0,
-    },
-    prompt: {
-      type: String,
-      default: '',
     },
   },
   data() {
@@ -64,11 +56,9 @@ export default {
     document.head.appendChild(recaptchaScript);
   },
   mounted() {
-    const callbackOutput = mapValues(keyBy(this.callback.output, 'name'), v => v.value);
-
     this.name = `callback_${this.index}`;
 
-    this.recaptchaSiteKey = callbackOutput.recaptchaSiteKey;
+    this.recaptchaSiteKey = this.callback.getSiteKey();
 
     this.loadRecaptcha();
   },
@@ -92,6 +82,8 @@ export default {
     },
     handleCaptchaCallback(response) {
       this.value = response;
+
+      this.callback.setInputValue(this.value);
     },
   },
 };

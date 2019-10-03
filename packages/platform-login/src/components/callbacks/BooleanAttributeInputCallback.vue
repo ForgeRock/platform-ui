@@ -15,35 +15,28 @@
     <label
       class="ml-2"
       :for="'boolean_callback_' + index">
-      {{ prompt }}
+      {{ callback.getPrompt() }}
     </label>
   </div>
 </template>
 
 <script>
-import CallbackValidation from '@/utils/CallbackValidation';
 
 export default {
   props: {
     callback: {
       type: Object,
-      // make sure the callback has an input property that is an Array and has at least one item
-      validator: CallbackValidation.validateInput,
       required: true,
     },
     index: {
       type: Number,
       default: 0,
     },
-    prompt: {
-      type: String,
-      default: '',
-    },
   },
   mounted() {
     this.name = `callback_${this.index}`;
 
-    this.value = this.callback.input[0].value;
+    this.value = this.callback.getInputValue();
   },
   data() {
     return {
@@ -54,6 +47,8 @@ export default {
   methods: {
     onToggle() {
       this.value = !this.value;
+
+      this.callback.setInputValue(this.value);
     },
   },
 };

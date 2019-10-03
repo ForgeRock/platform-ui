@@ -29,8 +29,6 @@
 
 <script>
 import { BModal } from 'bootstrap-vue';
-import { find } from 'lodash';
-import CallbackValidation from '@/utils/CallbackValidation';
 
 export default {
   name: 'TermsAndConditions',
@@ -40,7 +38,6 @@ export default {
   props: {
     callback: {
       type: Object,
-      validator: CallbackValidation.validateOutput,
       required: true,
     },
     index: {
@@ -62,7 +59,8 @@ export default {
   },
   mounted() {
     this.name = `callback_${this.index}`;
-    this.terms = find(this.callback.output, { name: 'terms' }).value;
+    this.terms = this.callback.getTerms();
+    this.callback.setInputValue(true);
   },
   data() {
     return {
