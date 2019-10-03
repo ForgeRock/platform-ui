@@ -22,35 +22,35 @@ import styles from '@/scss/main.scss';
  * @fires POST authentication?_action=login - Uses data store token to establish a new user session
  */
 export default {
-  name: 'OAuthReturn',
-  components: {
-    BounceLoader,
-  },
-  data() {
-    return {
-      loadingColor: styles.baseColor,
-    };
-  },
-  created() {
-    const queryParams = {};
+	name: 'OAuthReturn',
+	components: {
+		BounceLoader,
+	},
+	data() {
+		return {
+			loadingColor: styles.baseColor,
+		};
+	},
+	created() {
+		const queryParams = {};
 
-    _.each(this.$route.params.amData.replace('?', '').split('&'), (param) => {
-      if (param.length > 0) {
-        const parts = param.split('=');
-        // eslint-disable-next-line prefer-destructuring
-        queryParams[parts[0]] = parts[1];
-      }
-    });
+		_.each(this.$route.params.amData.replace('?', '').split('&'), (param) => {
+			if (param.length > 0) {
+				const parts = param.split('=');
+				// eslint-disable-next-line prefer-destructuring
+				queryParams[parts[0]] = parts[1];
+			}
+		});
 
-    window.history.pushState('', '', window.location.pathname);
+		window.history.pushState('', '', window.location.pathname);
 
-    this.$router.push({
-      name: 'AccountClaiming',
-      params: {
-        clientToken: queryParams.clientToken,
-        returnParams: queryParams.returnParams,
-      },
-    });
-  },
+		this.$router.push({
+			name: 'AccountClaiming',
+			params: {
+				clientToken: queryParams.clientToken,
+				returnParams: queryParams.returnParams,
+			},
+		});
+	},
 };
 </script>

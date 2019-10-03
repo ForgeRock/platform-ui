@@ -67,90 +67,90 @@ import { mapState } from 'vuex';
  * @fires PATCH type/name/id (e.g. managed/user/_id) - Submits a patch object of changes for the provided resource record
  */
 export default {
-  name: 'Profile',
-  props: {
-    clientToken: {
-      type: String,
-      default: '',
-    },
-    linkedProvider: {
-      type: String,
-      default: '',
-    },
-    openProfile: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-  },
-  components: {
-    FrAccountControls: () => import('@/components/profile/AccountControls'),
-    FrAccountSecurity: () => import('@/components/profile/AccountSecurity'),
-    FrEditPersonalInfo: () => import('@/components/profile/EditPersonalInfo'),
-    FrPreferences: () => import('@/components/profile/Preferences'),
-    FrTrustedDevices: () => import('@/components/profile/TrustedDevices'),
-    FrAuthorizedApplications: () => import('@/components/profile/AuthorizedApplications'),
-    FrConsent: () => import('@/components/profile/Consent'),
-  },
-  computed: {
-    ...mapState({
-      userId: state => state.UserStore.userId,
-      email: state => state.UserStore.email,
-      profile: state => state.UserStore.profile,
-      schema: state => state.UserStore.schema,
-      sirName: state => state.UserStore.sn,
-      givenName: state => state.UserStore.givenName,
-      managedResource: state => state.UserStore.managedResource,
-      internalUser: state => state.UserStore.internalUser,
-      passwordReset: state => state.ApplicationStore.passwordReset,
-      amDataEndpoints: state => state.ApplicationStore.amDataEndpoints,
-    }),
-    fullName() {
-      let fullName = '';
+	name: 'Profile',
+	props: {
+		clientToken: {
+			type: String,
+			default: '',
+		},
+		linkedProvider: {
+			type: String,
+			default: '',
+		},
+		openProfile: {
+			type: Boolean,
+			required: false,
+			default: false,
+		},
+	},
+	components: {
+		FrAccountControls: () => import('@/components/profile/AccountControls'),
+		FrAccountSecurity: () => import('@/components/profile/AccountSecurity'),
+		FrEditPersonalInfo: () => import('@/components/profile/EditPersonalInfo'),
+		FrPreferences: () => import('@/components/profile/Preferences'),
+		FrTrustedDevices: () => import('@/components/profile/TrustedDevices'),
+		FrAuthorizedApplications: () => import('@/components/profile/AuthorizedApplications'),
+		FrConsent: () => import('@/components/profile/Consent'),
+	},
+	computed: {
+		...mapState({
+			userId: state => state.UserStore.userId,
+			email: state => state.UserStore.email,
+			profile: state => state.UserStore.profile,
+			schema: state => state.UserStore.schema,
+			sirName: state => state.UserStore.sn,
+			givenName: state => state.UserStore.givenName,
+			managedResource: state => state.UserStore.managedResource,
+			internalUser: state => state.UserStore.internalUser,
+			passwordReset: state => state.ApplicationStore.passwordReset,
+			amDataEndpoints: state => state.ApplicationStore.amDataEndpoints,
+		}),
+		fullName() {
+			let fullName = '';
 
-      if (this.givenName.length > 0 || this.sirName.length > 0) {
-        fullName = _.startCase(`${this.givenName} ${this.sirName}`);
-      } else {
-        fullName = this.userId;
-      }
+			if (this.givenName.length > 0 || this.sirName.length > 0) {
+				fullName = _.startCase(`${this.givenName} ${this.sirName}`);
+			} else {
+				fullName = this.userId;
+			}
 
-      return fullName;
-    },
-  },
-  methods: {
-    updateProfile(payload, config = {}) {
-      this.makeUpdateRequest(this.managedResource, payload, config);
-    },
-    updateKBA(payload, config) {
-      this.makeUpdateRequest('selfservice/user', payload, config);
-    },
-    makeUpdateRequest(endpoint, payload, config = {}) {
-      /* istanbul ignore next */
-      const successMsg = config.successMsg || this.$t('common.user.profile.updateSuccess');
-      const selfServiceInstance = this.getRequestService({
-        headers: config.headers,
-      });
+			return fullName;
+		},
+	},
+	methods: {
+		updateProfile(payload, config = {}) {
+			this.makeUpdateRequest(this.managedResource, payload, config);
+		},
+		updateKBA(payload, config) {
+			this.makeUpdateRequest('selfservice/user', payload, config);
+		},
+		makeUpdateRequest(endpoint, payload, config = {}) {
+			/* istanbul ignore next */
+			const successMsg = config.successMsg || this.$t('common.user.profile.updateSuccess');
+			const selfServiceInstance = this.getRequestService({
+				headers: config.headers,
+			});
 
-      /* istanbul ignore next */
-      selfServiceInstance.patch(`${endpoint}/${this.userId}`, payload).then((response) => {
-        this.$store.dispatch('UserStore/setProfileAction', response.data);
-        this.displayNotification('success', successMsg);
+			/* istanbul ignore next */
+			selfServiceInstance.patch(`${endpoint}/${this.userId}`, payload).then((response) => {
+				this.$store.dispatch('UserStore/setProfileAction', response.data);
+				this.displayNotification('success', successMsg);
 
-        if (config.onSuccess) {
-          config.onSuccess();
-        }
-      })
-        .catch((error) => {
-          /* istanbul ignore next */
-          const errorMsg = config.errorMsg || error.response.data.message;
-          this.displayNotification('error', errorMsg);
+				if (config.onSuccess) {
+					config.onSuccess();
+				}
+			})
+				.catch((error) => {
+					/* istanbul ignore next */
+					const errorMsg = config.errorMsg || error.response.data.message;
+					this.displayNotification('error', errorMsg);
 
-          if (config.onError) {
-            config.onError(error);
-          }
-        });
-    },
-  },
+					if (config.onError) {
+						config.onError(error);
+					}
+				});
+		},
+	},
 };
 </script>
 <style type="scss" scoped>
