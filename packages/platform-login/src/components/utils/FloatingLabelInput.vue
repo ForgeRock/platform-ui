@@ -97,6 +97,11 @@ export default {
       type: Array,
       default: () => [],
     },
+    callback: {
+      type: Object,
+      default: () => {},
+      required: false,
+    },
   },
   data() {
     return {
@@ -153,6 +158,10 @@ export default {
     inputValue(newVal) {
       this.floatLabels = newVal.length > 0;
       this.$emit('input', newVal);
+
+      if (this.callback.setInputValue) {
+        this.callback.setInputValue(newVal);
+      }
     },
   },
 };

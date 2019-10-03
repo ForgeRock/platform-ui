@@ -31,13 +31,10 @@
 
 <script>
 import {
-  mapValues,
-  keyBy,
   each,
   filter,
 } from 'lodash';
 import HorizontalRule from '@/components/utils/HorizontalRule';
-import CallbackValidation from '@/utils/CallbackValidation';
 
 export default {
   name: 'SelectIdPCallback',
@@ -47,7 +44,6 @@ export default {
   props: {
     callback: {
       type: Object,
-      validator: CallbackValidation.validateOutput,
       required: true,
     },
     index: {
@@ -62,12 +58,14 @@ export default {
       type: String,
       default: '',
     },
+    callbackSubmitButton: {
+      type: HTMLButtonElement,
+      required: true,
+    },
 
   },
   mounted() {
-    const callbackOutput = mapValues(keyBy(this.callback.output, 'name'), v => v.value);
-
-    this.providers = callbackOutput.providers;
+    this.providers = this.callback.getOutputByName('providers');
 
     // pausing briefly here so the login button is on the dom
     setTimeout(this.loadIDPs, 10);
@@ -83,28 +81,26 @@ export default {
       value: 'localAuthentication',
       providers: [],
       socialButtonStyles: [],
-      loginButton: {},
       standaloneMode: false,
     };
   },
   methods: {
     loadIDPs() {
       this.name = `callback_${this.index}`;
-      [this.loginButton] = document.querySelectorAll('#loginPanel input[type=submit][name^=callback]');
 
       each(this.filteredProviders, (provider, index) => {
         this.$set(this.socialButtonStyles, index, provider.uiConfig.buttonCustomStyle);
       });
 
       /*
-          If callback_index is zero and the "name" attribute on loginButton is callback_1 we
-          know SelectIdPCallback is by itself on the page. In this case we will hide loginButton
+          If callback_index is zero and the "name" attribute on callbackSubmitButton is callback_1 we
+          know SelectIdPCallback is by itself on the page. In this case we will hide callbackSubmitButton
           and click it to submit the form automatically when one of the social buttons is pressed.
       */
-      this.standaloneMode = this.index === 0 && this.loginButton && this.loginButton.name === 'callback_1';
+      this.standaloneMode = this.index === 0 && this.callbackSubmitButton && this.callbackSubmitButton.name === 'callback_1';
 
       if (this.standaloneMode) {
-        this.loginButton.style.display = 'none';
+        this.callbackSubmitButton.style.display = 'none';
       }
     },
     hover(index, style) {
@@ -112,11 +108,12 @@ export default {
     },
     setValue(provider) {
       this.value = provider;
+      this.callback.setInputValue(this.value);
       // brief pause here to wait for this.value to propagate to this callback's
       // hidden input element before submitting the login form
       setTimeout(() => {
-        this.loginButton.disabled = false;
-        this.loginButton.click();
+        this.callbackSubmitButton.disabled = false;
+        this.callbackSubmitButton.click();
       }, 10);
     },
   },
