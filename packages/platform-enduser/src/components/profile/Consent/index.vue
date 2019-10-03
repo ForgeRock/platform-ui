@@ -118,94 +118,94 @@ import FallbackImage from '@/components/utils/FallbackImage';
  *
  */
 export default {
-	name: 'Consent',
-	components: {
-		FrListGroup: ListGroup,
-		FrListItem: ListItem,
-		FrAccessLevel: AccessLevel,
-		FrFallbackImage: FallbackImage,
-	},
-	props: {
-		consentedMappings: {
-			type: Array,
-			default: () => [],
-		},
-	},
-	data() {
-		return {
-			consentableMappings: [],
-		};
-	},
-	computed: {
-		...mapState({
-			managedResource: state => state.UserStore.managedResource,
-		}),
-		mappings() {
-			return this.consentableMappings.map((mapping) => {
-				const consentedMapping = _.find(this.consentedMappings, { mapping: mapping.name });
-				const mappingCopy = _.cloneDeep(mapping);
+  name: 'Consent',
+  components: {
+    FrListGroup: ListGroup,
+    FrListItem: ListItem,
+    FrAccessLevel: AccessLevel,
+    FrFallbackImage: FallbackImage,
+  },
+  props: {
+    consentedMappings: {
+      type: Array,
+      default: () => [],
+    },
+  },
+  data() {
+    return {
+      consentableMappings: [],
+    };
+  },
+  computed: {
+    ...mapState({
+      managedResource: state => state.UserStore.managedResource,
+    }),
+    mappings() {
+      return this.consentableMappings.map((mapping) => {
+        const consentedMapping = _.find(this.consentedMappings, { mapping: mapping.name });
+        const mappingCopy = _.cloneDeep(mapping);
 
-				let modalHeaderPath = 'pages.profile.consent.';
+        let modalHeaderPath = 'pages.profile.consent.';
 
-				mappingCopy.showDetails = false;
+        mappingCopy.showDetails = false;
 
-				if (!_.isUndefined(consentedMapping)) {
-					mappingCopy.consented = true;
-					mappingCopy.consentDate = consentedMapping.consentDate;
-					modalHeaderPath += 'denyConsentHeader';
-					mappingCopy.subTitle = `${this.$t('pages.profile.consent.authorized')} ${moment(mapping.consentDate).format('MMMM Do YYYY')}`;
-				} else {
-					mappingCopy.consented = false;
-					modalHeaderPath += 'allowConsentHeader';
-					mappingCopy.subTitle = this.$t('pages.profile.consent.notAuthorized');
-				}
+        if (!_.isUndefined(consentedMapping)) {
+          mappingCopy.consented = true;
+          mappingCopy.consentDate = consentedMapping.consentDate;
+          modalHeaderPath += 'denyConsentHeader';
+          mappingCopy.subTitle = `${this.$t('pages.profile.consent.authorized')} ${moment(mapping.consentDate).format('MMMM Do YYYY')}`;
+        } else {
+          mappingCopy.consented = false;
+          modalHeaderPath += 'allowConsentHeader';
+          mappingCopy.subTitle = this.$t('pages.profile.consent.notAuthorized');
+        }
 
-				mappingCopy.modalHeader = this.$t(modalHeaderPath);
-				return mappingCopy;
-			});
-		},
-	},
-	created() {
-		this.getRequestService()
-			.get(`consent?_queryFilter=/source eq "${this.managedResource}"`)
-			.then(({ data }) => {
-				this.consentableMappings = data.result;
-			});
-	},
-	methods: {
-		showModal(name) {
-			_.first(this.$refs[name]).show();
-		},
-		toggleConsentAndHideModal(mapping) {
-			this.toggleConsent(mapping);
-			this.hideModal(mapping.name);
-		},
-		hideModal(name) {
-			_.first(this.$refs[name]).hide();
-		},
-		generatePatch(mapping) {
-			const { consentDate, name } = mapping;
-			const value = {
-				consentDate,
-				mapping: name,
-			};
+        mappingCopy.modalHeader = this.$t(modalHeaderPath);
+        return mappingCopy;
+      });
+    },
+  },
+  created() {
+    this.getRequestService()
+      .get(`consent?_queryFilter=/source eq "${this.managedResource}"`)
+      .then(({ data }) => {
+        this.consentableMappings = data.result;
+      });
+  },
+  methods: {
+    showModal(name) {
+      _.first(this.$refs[name]).show();
+    },
+    toggleConsentAndHideModal(mapping) {
+      this.toggleConsent(mapping);
+      this.hideModal(mapping.name);
+    },
+    hideModal(name) {
+      _.first(this.$refs[name]).hide();
+    },
+    generatePatch(mapping) {
+      const { consentDate, name } = mapping;
+      const value = {
+        consentDate,
+        mapping: name,
+      };
 
-			let field = '/consentedMappings';
-			let operation;
+      let field = '/consentedMappings';
+      let operation;
 
-			if (!mapping.consented) {
-				value.consentDate = new Date().toISOString();
-				field += '/-';
-				operation = 'add';
-			} else {
-				operation = 'remove';
-			}
+      if (!mapping.consented) {
+        value.consentDate = new Date().toISOString();
+        field += '/-';
+        operation = 'add';
+      } else {
+        operation = 'remove';
+      }
 
-			return [{ field, operation, value }];
-		},
-		toggleConsent(mapping) {
-			this.$emit('updateProfile', this.generatePatch(mapping));
-		},
-	},
+      return [{ field, operation, value }];
+    },
+    toggleConsent(mapping) {
+      this.$emit('updateProfile', this.generatePatch(mapping));
+    },
+  },
 };
 </script>

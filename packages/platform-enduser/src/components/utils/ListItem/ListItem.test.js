@@ -6,10 +6,10 @@ const localVue = createLocalVue();
 localVue.use(BootstrapVue);
 
 describe('ListItem.vue', () => {
-	it('List Group component loaded', () => {
-		const wrapper = shallowMount(ListItem, { localVue });
+  it('List Group component loaded', () => {
+    const wrapper = shallowMount(ListItem, { localVue });
 
-		expect(wrapper.name()).toBe('ListItem');
-		expect(wrapper).toMatchSnapshot();
-	});
+    expect(wrapper.name()).toBe('ListItem');
+    expect(wrapper).toMatchSnapshot();
+  });
 });

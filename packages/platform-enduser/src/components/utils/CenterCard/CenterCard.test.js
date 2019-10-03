@@ -7,26 +7,26 @@ const localVue = createLocalVue();
 localVue.use(BootstrapVue);
 
 describe('CenterCard.vue', () => {
-	it('Center Card component loaded without header images', () => {
-		const wrapper = shallowMount(FloatingLabelInput, {
-			localVue,
-			i18n,
-		});
+  it('Center Card component loaded without header images', () => {
+    const wrapper = shallowMount(FloatingLabelInput, {
+      localVue,
+      i18n,
+    });
 
-		expect(wrapper.name()).toBe('CenterCard');
-		expect(wrapper.contains('.fr-logo')).toBe(false);
-		expect(wrapper).toMatchSnapshot();
-	});
+    expect(wrapper.name()).toBe('CenterCard');
+    expect(wrapper.contains('.fr-logo')).toBe(false);
+    expect(wrapper).toMatchSnapshot();
+  });
 
-	it('Center Card component loaded with header images', () => {
-		const wrapper = shallowMount(FloatingLabelInput, {
-			localVue,
-			i18n,
-			propsData: {
-				showLogo: true,
-			},
-		});
+  it('Center Card component loaded with header images', () => {
+    const wrapper = shallowMount(FloatingLabelInput, {
+      localVue,
+      i18n,
+      propsData: {
+        showLogo: true,
+      },
+    });
 
-		expect(wrapper.contains('.fr-logo')).toBe(true);
-	});
+    expect(wrapper.contains('.fr-logo')).toBe(true);
+  });
 });

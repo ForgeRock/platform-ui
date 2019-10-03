@@ -26,20 +26,20 @@
  *
  * */
 export default {
-	name: 'ListGroup',
-	props: {
-		title: {
-			default: '',
-			type: String,
-		},
-		subtitle: {
-			default: '',
-			type: String,
-		},
-	},
-	data() {
-		return {};
-	},
+  name: 'ListGroup',
+  props: {
+    title: {
+      default: '',
+      type: String,
+    },
+    subtitle: {
+      default: '',
+      type: String,
+    },
+  },
+  data() {
+    return {};
+  },
 };
 </script>
 

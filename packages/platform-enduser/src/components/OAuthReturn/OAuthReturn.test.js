@@ -5,21 +5,21 @@ import OAuthReturn from '@/components/OAuthReturn';
 const localVue = createLocalVue();
 
 describe('OAuthReturn.vue', () => {
-	beforeEach(() => {
-		jest.spyOn(OAuthReturn, 'created')
-			.mockImplementation(() => { });
-	});
+  beforeEach(() => {
+    jest.spyOn(OAuthReturn, 'created')
+      .mockImplementation(() => { });
+  });
 
-	it('OAuth Return loaded', () => {
-		const wrapper = shallowMount(OAuthReturn, {
-			localVue,
-			i18n,
-			stubs: {
-				BContainer: true,
-			},
-		});
+  it('OAuth Return loaded', () => {
+    const wrapper = shallowMount(OAuthReturn, {
+      localVue,
+      i18n,
+      stubs: {
+        BContainer: true,
+      },
+    });
 
-		expect(wrapper.name()).toBe('OAuthReturn');
-		expect(wrapper).toMatchSnapshot();
-	});
+    expect(wrapper.name()).toBe('OAuthReturn');
+    expect(wrapper).toMatchSnapshot();
+  });
 });
