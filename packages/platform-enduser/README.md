@@ -6,11 +6,11 @@
 </div>
 
 - [Project setup](#project-setup)
-  - [Compiles and hot-reloads for development](#compiles-and-hot-reloads-for-development)
-  - [Compiles and minifies for production](#compiles-and-minifies-for-production)
-  - [Run your tests](#run-your-tests)
-  - [Lints and fixes files](#lints-and-fixes-files)
-  - [Run your unit tests](#run-your-unit-tests)
+	- [Compiles and hot-reloads for development](#compiles-and-hot-reloads-for-development)
+	- [Compiles and minifies for production](#compiles-and-minifies-for-production)
+	- [Run your tests](#run-your-tests)
+	- [Lints and fixes files](#lints-and-fixes-files)
+	- [Run your unit tests](#run-your-unit-tests)
 - [Application structure](#application-structure)
 - [Application tools](#application-tools)
 - [Translations and Text](#translations-and-text)
@@ -195,9 +195,9 @@ For example:
 
 ``` JSON
 {
-  dashboard: {
-    welcomeMessage:  'Welcome!'
-  }
+	dashboard: {
+		welcomeMessage:  'Welcome!'
+	}
 }
 ```
   

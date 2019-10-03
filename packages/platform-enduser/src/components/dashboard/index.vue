@@ -36,30 +36,30 @@ import Welcome from '@/components/dashboard/widgets/WelcomeWidget';
  * @fires GET config/ui/dashboard - Read of the config file ui-dashboard.json
  */
 export default {
-  name: 'Dashboard',
-  components: {
-    Welcome,
-  },
-  data() {
-    return {
-      widgets: [],
-      userDetails: this.$store.getters['UserStore/getUserState'],
-    };
-  },
-  mounted() {
-    this.loadData();
-  },
-  methods: {
-    loadData() {
-      /* istanbul ignore next */
-      this.getRequestService().get('config/ui/dashboard')
-        .then(({ data }) => {
-          this.widgets = data.dashboard.widgets;
-        })
-        .catch((error) => {
-          this.displayNotification('error', error.response.data.message);
-        });
-    },
-  },
+	name: 'Dashboard',
+	components: {
+		Welcome,
+	},
+	data() {
+		return {
+			widgets: [],
+			userDetails: this.$store.getters['UserStore/getUserState'],
+		};
+	},
+	mounted() {
+		this.loadData();
+	},
+	methods: {
+		loadData() {
+			/* istanbul ignore next */
+			this.getRequestService().get('config/ui/dashboard')
+				.then(({ data }) => {
+					this.widgets = data.dashboard.widgets;
+				})
+				.catch((error) => {
+					this.displayNotification('error', error.response.data.message);
+				});
+		},
+	},
 };
 </script>

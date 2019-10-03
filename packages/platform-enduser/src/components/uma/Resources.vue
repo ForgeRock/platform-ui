@@ -235,40 +235,40 @@ import FallbackImage from '@/components/utils/FallbackImage';
 *
 * */
 export default {
-  name: 'Resources',
-  components: {
-    FrFallbackImage: FallbackImage,
-  },
-  data() {
-    return {
-      viewgrid: false,
-      showModalActions: false,
-      newshare: '',
-      resourceFilter: '',
-    };
-  },
-  props: {
-    resources: {
-      type: Array,
-      default: () => {},
-    },
-  },
-  methods: {
-    renderShareModal(resource) {
-      this.$emit('renderShareModal', resource);
-    },
-    renderUnshareModal(resourceName, resourceId) {
-      this.$emit('renderUnshareModal', resourceName, resourceId);
-    },
-    toggleGrid() {
-      this.viewgrid = !this.viewgrid;
-    },
-  },
-  computed: {
-    filteredResources() {
-      return _.filter(this.resources, resource => resource.name.includes(this.resourceFilter));
-    },
-  },
+	name: 'Resources',
+	components: {
+		FrFallbackImage: FallbackImage,
+	},
+	data() {
+		return {
+			viewgrid: false,
+			showModalActions: false,
+			newshare: '',
+			resourceFilter: '',
+		};
+	},
+	props: {
+		resources: {
+			type: Array,
+			default: () => {},
+		},
+	},
+	methods: {
+		renderShareModal(resource) {
+			this.$emit('renderShareModal', resource);
+		},
+		renderUnshareModal(resourceName, resourceId) {
+			this.$emit('renderUnshareModal', resourceName, resourceId);
+		},
+		toggleGrid() {
+			this.viewgrid = !this.viewgrid;
+		},
+	},
+	computed: {
+		filteredResources() {
+			return _.filter(this.resources, resource => resource.name.includes(this.resourceFilter));
+		},
+	},
 };
 </script>
 
