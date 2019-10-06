@@ -27,6 +27,11 @@ export default new Router({
       component: () => import('@/views/Login'),
     },
     {
+      path: '/service/:tree/:gotoUrl',
+      name: 'serviceWithGotoUrl',
+      component: () => import('@/views/Login'),
+    },
+    {
       path: '*',
       component: () => import('@forgerock/platform-shared/src/views/NotFound'),
     },
