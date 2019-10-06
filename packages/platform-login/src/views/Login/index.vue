@@ -87,6 +87,8 @@ import TextOutputCallback from '@/components/callbacks/TextOutputCallback';
 import SuspendedTextOutputCallback from '@/components/callbacks/SuspendedTextOutputCallback';
 import styles from '@/scss/main.scss';
 import TermsAndConditionsCallback from '@/components/callbacks/TermsAndConditionsCallback';
+import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
+import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import i18n from '@/i18n';
 
 export default {
@@ -97,6 +99,10 @@ export default {
     BCardBody,
     BounceLoader,
   },
+  mixins: [
+    RestMixin,
+    LoginMixin,
+  ],
   data() {
     return {
       loading: true,
@@ -232,8 +238,8 @@ export default {
 
         switch (step.type) {
         case 'LoginSuccess':
-          // redirect to successUrl
-          window.location.href = step.getSuccessUrl();
+          // check for gotoURL
+          this.verifyGotoUrlAndRedirect(step.getSuccessUrl());
           break;
         case 'LoginFailure':
           this.errorMessage = this.$t('login.loginFailure');

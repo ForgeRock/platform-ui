@@ -159,7 +159,7 @@ const addAppAuth = () => {
     authorizationEndpoint: `${AM_URL}/oauth2/authorize`,
   };
   const redirectToLogin = () => {
-    window.location.href = store.state.ApplicationStore.loginURL;
+    window.location.href = `${store.state.ApplicationStore.loginURL}/${encodeURIComponent(window.location.href)}`;
   };
 
   AppAuthHelper.init({
