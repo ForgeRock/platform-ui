@@ -5,7 +5,9 @@ exports[`EditPersonalInfo.vue EditPersonalInfo modal loaded 1`] = `
   <div class="d-flex w-100 h-100">
     <h5 class="modal-title align-self-center text-center">
       Edit your personal info
-    </h5> <button type="button" aria-label="Close" class="close"><i class="fa fa-times"></i></button>
+    </h5> <button type="button" aria-label="Close" class="close"><i class="material-icons-outlined font-weight-bolder md-24">
+        close
+      </i></button>
   </div>
   <bcontainer-stub tag="div">
     <brow-stub tag="div">

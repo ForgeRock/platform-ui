@@ -1,7 +1,6 @@
 <template>
   <BModal
     id="unshareModal"
-    class=""
     ref="fsModal"
     cancel-variant="outline-secondary"
     @keydown.enter.native.prevent="unshare">
@@ -16,7 +15,9 @@
         aria-label="Close"
         class="close"
         @click="hideModal">
-        <i class="fa fa-times" />
+        <i class="material-icons-outlined font-weight-bolder md-24 mb-1">
+          close
+        </i>
       </button>
     </div>
     {{ $t('pages.uma.resources.warningMessage') }}

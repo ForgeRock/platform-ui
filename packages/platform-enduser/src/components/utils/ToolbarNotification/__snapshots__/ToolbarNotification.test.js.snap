@@ -17,7 +17,9 @@ exports[`ToolbarNotification.vue Toolbar Notification component loaded 1`] = `
             June 4, 2018 4:20 PM UTC
           </small>
         </div>
-        <bbutton-stub target="_self" event="click" routertag="a" variant="sm" type="button" tag="button" class="btn btn-link my-auto"><i class="fa fa-trash text-muted"></i></bbutton-stub>
+        <bbutton-stub target="_self" event="click" routertag="a" variant="sm" type="button" tag="button" class="btn btn-link my-auto"><i class="material-icons-outlined text-muted md-24">
+            delete
+          </i></bbutton-stub>
       </div>
     </div>
     <div class="-notification dropdown-item py-3 fr-notification-item">
@@ -29,7 +31,9 @@ exports[`ToolbarNotification.vue Toolbar Notification component loaded 1`] = `
             June 4, 2018 4:21 PM UTC
           </small>
         </div>
-        <bbutton-stub target="_self" event="click" routertag="a" variant="sm" type="button" tag="button" class="btn btn-link my-auto"><i class="fa fa-trash text-muted"></i></bbutton-stub>
+        <bbutton-stub target="_self" event="click" routertag="a" variant="sm" type="button" tag="button" class="btn btn-link my-auto"><i class="material-icons-outlined text-muted md-24">
+            delete
+          </i></bbutton-stub>
       </div>
     </div>
   </div>
