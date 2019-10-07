@@ -22,7 +22,16 @@
           @click="revealText"
           class="btn btn-secondary"
           type="button">
-          <i :class="[{'fa-eye-slash': !show}, {'fa-eye': show}, 'fa']" />
+          <i
+            v-if="showPassword"
+            class="material-icons-outlined">
+            visibility
+          </i>
+          <i
+            v-else
+            class="material-icons-outlined">
+            visibility_off
+          </i>
         </button>
       </div>
 
@@ -93,7 +102,7 @@ export default {
       floatLabels: false,
       hideLabel: true,
       inputType: this.type,
-      show: true,
+      showPassword: true,
     };
   },
   beforeMount() {
@@ -128,10 +137,10 @@ export default {
     revealText() {
       if (this.inputType === 'password') {
         this.inputType = 'text';
-        this.show = false;
+        this.showPassword = false;
       } else {
         this.inputType = 'password';
-        this.show = true;
+        this.showPassword = true;
       }
     },
   },

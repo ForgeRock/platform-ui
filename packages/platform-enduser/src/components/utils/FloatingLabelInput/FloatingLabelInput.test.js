@@ -67,16 +67,16 @@ describe('FloatingLabelInput.vue', () => {
       },
     });
 
-    wrapper.setData({ show: true });
+    wrapper.setData({ showPassword: true });
 
-    expect(wrapper.findAll('.fa-eye').length).toBe(1);
-
-    wrapper.vm.revealText();
-
-    expect(wrapper.findAll('.fa-eye-slash').length).toBe(1);
+    expect(wrapper.vm.showPassword).toBe(true);
 
     wrapper.vm.revealText();
 
-    expect(wrapper.findAll('.fa-eye').length).toBe(1);
+    expect(wrapper.vm.showPassword).toBe(false);
+
+    wrapper.vm.revealText();
+
+    expect(wrapper.vm.showPassword).toBe(true);
   });
 });

@@ -14,9 +14,7 @@
         <div class="d-flex mr-3 align-self-center">
           <FrFallbackImage
             :src="resource.icon_uri"
-            :height="40"
-            :width="40"
-            fallback="fa-file-alt" />
+            fallback="description" />
         </div>
         <div class="media-body align-self-center">
           <h6 class="my-0">
@@ -44,7 +42,9 @@
         aria-label="Close"
         class="close"
         @click="hideModal">
-        <i class="fa fa-times" />
+        <i class="material-icons-outlined font-weight-bolder md-24 mb-1">
+          close
+        </i>
       </button>
     </div>
 

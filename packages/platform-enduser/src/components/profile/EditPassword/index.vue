@@ -46,7 +46,16 @@
                     @click="revealCurrent"
                     class="btn btn-secondary"
                     type="button">
-                    <i :class="[{'fa-eye-slash': !showCurrent}, {'fa-eye': showCurrent}, 'fa']" />
+                    <i
+                      v-if="showCurrent"
+                      class="material-icons-outlined">
+                      visibility
+                    </i>
+                    <i
+                      v-else
+                      class="material-icons-outlined">
+                      visibility_off
+                    </i>
                   </BBtn>
                 </div>
               </div>
@@ -55,7 +64,7 @@
                 field-name="currentPassword" />
             </BFormGroup>
 
-            <FrPasswordPolicyInput
+            <FrPolicyPasswordInput
               :policy-api="`${this.managedResource}/${this.userId}`"
               v-model="newPassword">
               <BFormGroup
@@ -76,12 +85,21 @@
                       @click="revealNew"
                       class="btn btn-secondary"
                       type="button">
-                      <i :class="[{'fa-eye-slash': !showNew}, {'fa-eye': showNew}, 'fa']" />
+                      <i
+                        v-if="showNew"
+                        class="material-icons-outlined">
+                        visibility
+                      </i>
+                      <i
+                        v-else
+                        class="material-icons-outlined">
+                        visibility_off
+                      </i>
                     </button>
                   </div>
                 </div>
               </BFormGroup>
-            </FrPasswordPolicyInput>
+            </FrPolicyPasswordInput>
 
             <FrLoadingButton
               type="button"
@@ -124,7 +142,7 @@ export default {
   components: {
     FrListItem: ListItem,
     FrLoadingButton: LoadingButton,
-    FrPasswordPolicyInput: PolicyPasswordInput,
+    FrPolicyPasswordInput: PolicyPasswordInput,
     FrValidationError: ValidationError,
   },
   computed: {

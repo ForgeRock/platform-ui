@@ -52,7 +52,7 @@ describe('App.vue', () => {
   });
 
   it('Access generated icons', () => {
-    expect(wrapper.vm.accessIcon('')).toEqual('fa fa-fw mr-3 fa-cube');
-    expect(wrapper.vm.accessIcon('fa-test')).toEqual('fa fa-fw mr-3 fa-test');
+    expect(wrapper.vm.accessIcon('')).toEqual('check_box_outline_blank');
+    expect(wrapper.vm.accessIcon('test')).toEqual('test');
   });
 });

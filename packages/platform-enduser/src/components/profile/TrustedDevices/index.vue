@@ -15,7 +15,8 @@
           <div class="d-flex mr-3 align-self-top">
             <FrFallbackImage
               :src="device.logo_uri"
-              fallback="fa-tv m-auto pt-1 pb-1" />
+              fallback="close"
+              input-class="m-auto pt-1 pb-1 font-weight-bolder md-36" />
           </div>
           <div class="flex-grow-1">
             <div>
@@ -56,7 +57,9 @@
           aria-label="Close"
           class="close"
           @click="$refs.fsModal.hide()">
-          <i class="fa fa-times" />
+          <i class="material-icons-outlined font-weight-bolder md-24 mb-1">
+            close
+          </i>
         </button>
       </div>
       {{ $t('pages.profile.trustedDevices.removeConfirmation', {deviceName: confirmDevice.name }) }}

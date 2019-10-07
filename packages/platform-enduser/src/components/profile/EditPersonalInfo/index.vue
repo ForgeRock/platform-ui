@@ -17,7 +17,9 @@
         aria-label="Close"
         class="close"
         @click="hideModal">
-        <i class="fa fa-times" />
+        <i class="material-icons-outlined font-weight-bolder md-24">
+          close
+        </i>
       </button>
     </div>
 

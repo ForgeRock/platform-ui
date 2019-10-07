@@ -9,7 +9,10 @@
           class="py-1"
           v-for="field in props.fields"
           :key="field.name">
-          <i class="fa fa-check fa-fw text-success mr-2" />{{ field.title }}
+          <i class="material-icons-outlined md-16 text-success font-weight-bolder mr-2">
+            check
+          </i>
+          {{ field.title }}
         </li>
       </ul>
     </dd>

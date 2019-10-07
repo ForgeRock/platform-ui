@@ -9,7 +9,9 @@
     <span
       v-else
       class="icon-holder p-2 d-flex bg-light border rounded">
-      <i :class="['fa', fallback, 'fa-lg text-dark mt-auto']" />
+      <i :class="['material-icons-outlined md-24 text-dark mt-auto', inputClass]">
+        {{ fallback }}
+      </i>
     </span>
   </div>
 </template>

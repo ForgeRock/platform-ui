@@ -3,10 +3,12 @@
 exports[`Dashboard.vue Dashboard page loaded 1`] = `
 <bcontainer-stub tag="div" fluid="true">
   <bjumbotron-stub headertag="h1" headerlevel="3" leadtag="p" tag="div" class="mt-4 text-center">
-    <div class="d-flex justify-content-center mt-3"><i class="fa fa-binoculars align-self-center flex-fow-1 mr-4 mb-3" style="font-size: 52px;"></i>
+    <div class="d-flex justify-content-center mt-3"><i class="material-icons-outlined mr-4 md-64">
+        donut_large
+      </i>
       <div class="flex-fow-1">
         <h2>No Widgets Available</h2>
-        <p>Don"t worry, you still have a <a href="#/profile">profile</a>.</p>
+        <p>Don't worry, you still have a <a href="#/profile">profile</a>.</p>
       </div>
     </div>
   </bjumbotron-stub>

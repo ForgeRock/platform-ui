@@ -13,7 +13,10 @@
               type="button"
               variant="primary"
               v-b-modal.createResourceModal>
-              <i class="fa fa-plus mr-3" />{{ $t("common.form.new") }} {{ this.name }}
+              <i class="material-icons-outlined font-weight-bolder pb-1">
+                add
+              </i>
+              {{ $t("common.form.new") }} {{ this.name }}
             </BBtn>
           </BCol>
           <BCol
@@ -23,7 +26,9 @@
               <BInputGroup>
                 <BInputGroupPrepend>
                   <div class="input-group-text inset">
-                    <i class="fa fa-search" />
+                    <i class="material-icons-outlined pt-1">
+                      search
+                    </i>
                   </div>
                 </BInputGroupPrepend>
                 <BFormInput
@@ -37,7 +42,9 @@
                     :disabled="!filter"
                     @click="clear"
                     class="inset clear">
-                    <i class="fa fa-times-circle" />
+                    <i class="material-icons-outlined rotate-45">
+                      add_circle
+                    </i>
                   </BBtn>
                 </BInputGroupAppend>
               </BInputGroup>
@@ -69,7 +76,9 @@
               <a
                 class="page-link"
                 href="#">
-                <i class="fa fa-angle-double-left" />
+                <i class="material-icons-outlined font-weight-bolder">
+                  first_page
+                </i>
               </a>
             </li>
             <li
@@ -78,7 +87,9 @@
               <a
                 class="page-link"
                 href="#">
-                <i class="fa fa-angle-left" />
+                <i class="material-icons-outlined font-weight-bolder">
+                  keyboard_arrow_left
+                </i>
               </a>
             </li>
 
@@ -88,7 +99,9 @@
               <a
                 class="page-link"
                 href="#">
-                <i class="fa fa-angle-right" />
+                <i class="material-icons-outlined font-weight-bolder">
+                  keyboard_arrow_right
+                </i>
               </a>
             </li>
           </ul>

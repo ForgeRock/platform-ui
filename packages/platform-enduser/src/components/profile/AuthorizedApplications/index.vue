@@ -56,7 +56,9 @@
           aria-label="Close"
           class="close"
           @click="$refs.fsModal.hide()">
-          <i class="fa fa-times" />
+          <i class="material-icons-outlined font-weight-bolder md-24 mb-1">
+            close
+          </i>
         </button>
       </div>
       {{ $t('pages.profile.oauthApplications.removeConfirmation', {applicationName: confirmApplication.name }) }}

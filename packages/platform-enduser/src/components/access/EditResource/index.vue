@@ -4,8 +4,10 @@
       <BCol>
         <div class="d-sm-flex my-4">
           <div class="media">
-            <div class="rounded-circle fr-resource-circle text-light bg-primary mr-4">
-              <i :class="setIcon" />
+            <div class="rounded-circle d-flex align-items-center fr-resource-circle text-light bg-primary mr-4">
+              <i class="material-icons-outlined md-48 w-100">
+                {{ setIcon }}
+              </i>
             </div>
             <div class="media-body">
               <h1>{{ displayName }}</h1>
@@ -197,7 +199,7 @@
       id="resetModal"
       ref="resetModal"
       :title="this.$t('pages.access.resetPassword')">
-      <FrPasswordPolicyInput
+      <FrPolicyPasswordInput
         :policy-api="`${resource}/${name}/policyTest`"
         v-model="formFields['password']">
         <BFormGroup
@@ -219,12 +221,21 @@
                 @click="revealNew"
                 class="btn btn-secondary"
                 type="button">
-                <i :class="[{'fa-eye-slash': !showPassword}, {'fa-eye': showPassword}, 'fa']" />
+                <i
+                  v-if="showPassword"
+                  class="material-icons-outlined">
+                  visibility
+                </i>
+                <i
+                  v-else
+                  class="material-icons-outlined">
+                  visibility_off
+                </i>
               </button>
             </div>
           </div>
         </BFormGroup>
-      </FrPasswordPolicyInput>
+      </FrPolicyPasswordInput>
 
       <div
         slot="modal-footer"
@@ -263,7 +274,7 @@ export default {
   name: 'EditResource',
   components: {
     FrValidationError: ValidationError,
-    FrPasswordPolicyInput: PolicyPasswordInput,
+    FrPolicyPasswordInput: PolicyPasswordInput,
   },
   mixins: [
     ResourceMixin,
@@ -312,10 +323,10 @@ export default {
         this.canDelete = true;
       }
 
-      if (schema.icon) {
+      if (schema.icon && schema.icon.substring(0, 3) !== 'fa-') {
         this.icon = schema.icon;
       } else {
-        this.icon = '';
+        this.icon = 'check_box_outline_blank';
       }
 
       // Add reactive form for changes
@@ -502,13 +513,13 @@ export default {
       return tempDisplayName;
     },
     setIcon() {
-      let tempIcon = 'fa-cube';
+      let tempIcon = 'check_box_outline_blank';
 
-      if (this.icon.length > 0) {
+      if (this.icon.length > 0 && this.icon.substring(0, 3) !== 'fa-') {
         tempIcon = this.icon;
       }
 
-      return `fa fa-3x ${tempIcon}`;
+      return `${tempIcon}`;
     },
   },
 };

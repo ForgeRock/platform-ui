@@ -10,7 +10,9 @@
             <div
               class="input-group-text"
               id="btnGroupAddon">
-              <i class="fa fa-search" />
+              <i class="material-icons-outlined md-24">
+                search
+              </i>
             </div>
           </div>
           <input
@@ -29,11 +31,15 @@
             <template slot="button-content">
               <span class="text-muted">
                 <i
-                  class="fa fa-list"
-                  v-if="!this.viewgrid" />
+                  v-if="!this.viewgrid"
+                  class="material-icons-outlined md-24 mb-1">
+                  format_list_bulleted
+                </i>
                 <i
-                  class="fa fa-th"
-                  v-if="this.viewgrid" />
+                  v-if="this.viewgrid"
+                  class="material-icons-outlined md-24 mb-1">
+                  apps
+                </i>
               </span>
             </template>
             <BDropdownHeader>{{ $t('pages.uma.resources.viewAs') }}</BDropdownHeader>
@@ -45,14 +51,18 @@
                   class="d-flex align-self-center text-center"
                   style="min-width:1.5rem;">
                   <i
-                    class="fa fa-check text-success"
-                    v-if="!this.viewgrid" />
+                    class="material-icons-outlined md-16 font-weight-bolder text-success"
+                    v-if="!this.viewgrid">
+                    check
+                  </i>
                 </div>
                 <div class="media-body">
                   {{ $t('pages.uma.resources.list') }}
                 </div>
                 <div class="d-flex ml-3 align-self-center text-muted">
-                  <i class="fa fa-list" />
+                  <i class="material-icons-outlined md-24">
+                    format_list_bulleted
+                  </i>
                 </div>
               </div>
             </BDropdownItem>
@@ -64,14 +74,18 @@
                   class="d-flex align-self-center text-center"
                   style="min-width:1.5rem;">
                   <i
-                    class="fa fa-check text-success"
-                    v-if="this.viewgrid" />
+                    class="material-icons-outlined md-16 font-weight-bolder text-success"
+                    v-if="this.viewgrid">
+                    check
+                  </i>
                 </div>
                 <div class="media-body">
                   {{ $t('pages.uma.resources.grid') }}
                 </div>
                 <div class="d-flex ml-3 align-self-center text-muted">
-                  <i class="fa fa-th" />
+                  <i class="material-icons-outlined md-24">
+                    apps
+                  </i>
                 </div>
               </div>
             </BDropdownItem>
@@ -94,9 +108,8 @@
                     <div class="d-flex mr-3 align-self-top">
                       <FrFallbackImage
                         :src="resource.icon_uri"
-                        :height="40"
-                        :width="40"
-                        fallback="fa-file-alt fa-2x m-auto pt-1 pb-1" />
+                        fallback="description"
+                        input-class="md-36 m-auto pt-1 pb-1" />
                     </div>
                     <div class="d-sm-flex media-body align-self-center">
                       <div class="media-body mb-2 mb-sm-0">
@@ -175,7 +188,9 @@
                   no-caret>
                   <template slot="button-content">
                     <span class="text-muted">
-                      <i class="fa fa-ellipsis-h" />
+                      <i class="material-icons-outlined md-24">
+                        more_horiz
+                      </i>
                     </span>
                   </template>
                   <BDropdownItem
@@ -196,7 +211,8 @@
                   :width="86"
                   :height="86"
                   class="pl-5 pr-5 pt-3 mb-3"
-                  fallback="fa-file-alt fa-3x m-auto pt-3 pb-3" />
+                  fallback="description"
+                  input-class="md-48 m-auto pt-3 pb-3" />
                 <h5 class="card-title text-truncate">
                   {{ resource.name }}
                 </h5>
@@ -273,4 +289,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .form-control {
+    height: initial;
+  }
 </style>

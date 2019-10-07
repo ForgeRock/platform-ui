@@ -3,7 +3,9 @@
     class="fr-notification-icon align-self-center mr-4"
     right>
     <template slot="button-content">
-      <i class="fa fa-bell mr-2" />
+      <i class="material-icons-outlined mr-2 md-24">
+        notifications
+      </i>
       <span
         v-if="notifications.length > 0"
         class="badge badge-pill badge-danger">
@@ -48,7 +50,9 @@
               variant="sm"
               type="button"
               class="btn btn-link my-auto">
-              <i class="fa fa-trash text-muted" />
+              <i class="material-icons-outlined text-muted md-24">
+                delete
+              </i>
             </BButton>
           </div>
         </div>

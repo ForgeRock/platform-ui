@@ -15,9 +15,9 @@
       v-else
       class="mt-4 text-center">
       <div class="d-flex justify-content-center mt-3">
-        <i
-          class="fa fa-binoculars align-self-center flex-fow-1 mr-4 mb-3"
-          style="font-size:52px;" />
+        <i class="material-icons-outlined mr-4 md-64">
+          donut_large
+        </i>
         <div class="flex-fow-1">
           <h2>{{ $t('pages.dashboard.noWidget') }}</h2>
           <p v-html="$t('pages.dashboard.noWidgetSubText')" />

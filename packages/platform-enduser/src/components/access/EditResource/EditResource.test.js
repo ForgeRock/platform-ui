@@ -100,7 +100,7 @@ describe('EditResource.vue', () => {
 
     wrapper.vm.generateDisplay(schema, privilege, resourceDetails);
 
-    expect(wrapper.vm.icon).toBe('fa-test');
+    expect(wrapper.vm.icon).toBe('check_box_outline_blank');
     expect(wrapper.vm.formFields.contractor).toBe(false);
     // make sure the view and update properties are merged together and in the correct order
     expect(wrapper.vm.displayProperties.length).toBe(5);

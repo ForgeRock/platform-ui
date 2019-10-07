@@ -34,7 +34,9 @@ exports[`Preferences.vue Account Controls page loaded 1`] = `
     <div class="d-flex w-100 h-100">
       <h5 class="modal-title align-self-center text-center">
         Delete your account
-      </h5> <button type="button" aria-label="Close" class="close"><i class="fa fa-times"></i></button>
+      </h5> <button type="button" aria-label="Close" class="close"><i class="material-icons-outlined font-weight-bolder md-24">
+          close
+        </i></button>
     </div>
     <bcontainer-stub tag="div">
       <h1 class="mb-4">
