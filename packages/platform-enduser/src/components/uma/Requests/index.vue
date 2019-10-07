@@ -19,9 +19,7 @@
                       <FrFallbackImage
                         v-if="request.icon_uri"
                         :src="request.icon_uri"
-                        height="30"
-                        width="30"
-                        fallback="fa-file-alt" />
+                        fallback="description" />
                     </div>
                     <div class="media-body align-self-center">
                       <div class="media-body align-self-center">
@@ -55,12 +53,18 @@
                   <div
                     class="allow text-success"
                     v-if="request.allowed">
-                    <i class="fa fa-check fa-fw" /> {{ $t('pages.uma.requests.allowed') }}
+                    <i class="material-icons-outlined font-weight-bolder md-16 mb-1">
+                      check
+                    </i>
+                    {{ $t('pages.uma.requests.allowed') }}
                   </div>
                   <div
                     class="deny text-danger"
                     v-if="!request.allowed">
-                    <i class="fa fa-ban fa-fw" /> {{ $t('pages.uma.requests.denied') }}
+                    <i class="material-icons-outlined font-weight-bolder md-16 mb-1">
+                      block
+                    </i>
+                    {{ $t('pages.uma.requests.denied') }}
                   </div>
                 </div>
               </div>

@@ -34,9 +34,7 @@
             </div>
             <FrFallbackImage
               :src="activity.icon_uri"
-              height="30"
-              width="30"
-              fallback="fa-file-alt" />
+              fallback="description" />
           </template>
         </FrListItem>
       </FrListGroup>

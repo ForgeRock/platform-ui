@@ -21,7 +21,10 @@
           v-else
           class="alert alert-success mt-1"
           role="alert">
-          <i class="fa fa-check-circle" /> {{ $t('common.policyValidationMessages.successMessages.password') }}
+          <i class="material-icons-outlined text-success">
+            check_circle
+          </i>
+          {{ $t('common.policyValidationMessages.successMessages.password') }}
         </div>
       </template>
     </Transition>

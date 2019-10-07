@@ -26,7 +26,10 @@
           </li>
           <li>
             <RouterLink :to="{ name: 'Dashboard'}">
-              <i class="fa fa-fw mr-3 fa-tachometer-alt" /><span
+              <i class="material-icons-outlined md-16 mb-1 mr-3">
+                dashboard
+              </i>
+              <span
                 class="sidebar-item-text">
                 {{ $t('pages.app.dashboard') }}
               </span>
@@ -34,7 +37,10 @@
           </li>
           <li>
             <RouterLink :to="{ name: 'Profile'}">
-              <i class="fa fa-fw mr-3 fa-street-view" /><span
+              <i class="material-icons-outlined md-16 mb-1 mr-3">
+                perm_contact_calendar
+              </i>
+              <span
                 class="sidebar-item-text">
                 {{ $t('pages.app.profile') }}
               </span>
@@ -42,7 +48,10 @@
           </li>
           <li v-if="amDataEndpoints && internalUser === false">
             <RouterLink :to="{ name: 'Sharing'}">
-              <i class="fa fa-fw mr-3 fa-share" /><span
+              <i class="material-icons-outlined md-16 mb-1 mr-3">
+                share
+              </i>
+              <span
                 class="sidebar-item-text">
                 {{ $t('pages.app.sharing') }}
               </span>
@@ -52,7 +61,10 @@
             <li :key="'accessResource' +index">
               <RouterLink
                 :to="{ name: 'ListResource', meta: { title: 'User'}, params: { resourceType: access.privilegePath.split('/')[0], resourceName: access.privilegePath.split('/')[1]}}">
-                <i :class="accessIcon(access.icon)" /><span class="sidebar-item-text">
+                <i class="material-icons-outlined md-16 mb-1 mr-3">
+                  {{ accessIcon(access.icon) }}
+                </i>
+                <span class="sidebar-item-text">
                   {{ access.title }}
                 </span>
               </RouterLink>
@@ -63,9 +75,7 @@
       <div
         id="appContentWrapper"
         :class="[{'fr-no-toolbar': this.$route.meta.hideToolbar}]">
-        <!--
-            Navigation Bar using Vue Route + Bootstrap Toolbar
-            -->
+        <!-- Navigation Bar using Vue Route + Bootstrap Toolbar -->
         <BNavbar
           v-if="!this.$route.meta.hideToolbar && this.userId !== null"
           class="fr-main-navbar">
@@ -75,7 +85,9 @@
               class="my-2 my-sm-0 p-0 fr-main-nav-toggle"
               type="button"
               @click="onToggle">
-              <i class="fa fa-bars fa-lg m-0" />
+              <i class="material-icons-outlined md-24 m-0">
+                menu
+              </i>
             </BButton>
           </BNavForm>
           <BNavbarBrand
@@ -124,9 +136,7 @@
         </Transition>
       </div>
     </div>
-    <!--
-      Application View
-    -->
+    <!-- Application View -->
     <!-- eslint-disable-next-line vue/component-name-in-template-casing -->
     <notifications
       group="IDMMessages"
@@ -141,8 +151,9 @@
           role="alert">
           <div
             :class="[{ 'text-success': (props.item.type == 'success'), 'text-warning': (props.item.type == 'warning'), 'text-danger': (props.item.type == 'error'), 'text-info': (props.item.type == 'info')}, 'alert-icon', 'mr-3', 'align-self-top']">
-            <i
-              :class="[{ 'fa-check-circle': (props.item.type == 'success'), 'fa-exclamation-triangle': (props.item.type == 'warning'), 'fa-times-circle': (props.item.type == 'error'), 'fa-info-circle': (props.item.type == 'info')}, 'fa', 'fa-lg']" />
+            <i class="material-icons-outlined md-24 m-0">
+              {{ getMaterialIcon(props.item.type) }}
+            </i>
           </div>
           <div class="fr-alert-content align-self-center">
             <p
@@ -152,7 +163,9 @@
           <a
             class="close"
             @click="props.close">
-            <i class="fa fa-times" />
+            <i class="material-icons-outlined md-16 m-0 font-weight-bolder cursor-pointer">
+              close
+            </i>
           </a>
         </div>
       </template>
@@ -190,15 +203,21 @@ export default {
       this.toggled = !this.toggled;
     },
     accessIcon(icon) {
-      let iconClass = 'fa fa-fw mr-3 ';
-
-      if (icon.length) {
-        iconClass += icon;
-      } else {
-        iconClass = `${iconClass}fa-cube`;
+      let matIcon = 'check_box_outline_blank';
+      if (icon.length && icon.substring(0, 3) !== 'fa-') {
+        matIcon = icon;
       }
 
-      return iconClass;
+      return matIcon;
+    },
+    getMaterialIcon(notificationType) {
+      const typeMap = {
+        success: 'check_circle',
+        warning: 'warning',
+        error: 'error',
+        info: 'info',
+      };
+      return typeMap[notificationType];
     },
   },
   filters: {

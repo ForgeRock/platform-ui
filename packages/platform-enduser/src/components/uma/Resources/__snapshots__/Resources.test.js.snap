@@ -5,7 +5,9 @@ exports[`Sharing.vue Resources page loaded 1`] = `
   <div role="toolbar" aria-label="Toolbar with button groups" class="btn-toolbar row mb-4">
     <div class="input-group col-sm-4">
       <div class="input-group-prepend">
-        <div id="btnGroupAddon" class="input-group-text"><i class="fa fa-search"></i></div>
+        <div id="btnGroupAddon" class="input-group-text"><i class="material-icons-outlined md-24">
+            search
+          </i></div>
       </div> <input type="text" aria-label="Search" aria-describedby="btnGroupAddon" placeholder="Search..." class="form-control">
     </div>
     <div class="col">
@@ -13,11 +15,15 @@ exports[`Sharing.vue Resources page loaded 1`] = `
         <bdropdownheader-stub tag="header">View as</bdropdownheader-stub>
         <bdropdownitem-stub href="#" target="_self" event="click" routertag="a">
           <div class="media">
-            <div class="d-flex align-self-center text-center" style="min-width: 1.5rem;"><i class="fa fa-check text-success"></i></div>
+            <div class="d-flex align-self-center text-center" style="min-width: 1.5rem;"><i class="material-icons-outlined md-16 font-weight-bolder text-success">
+                check
+              </i></div>
             <div class="media-body">
               List
             </div>
-            <div class="d-flex ml-3 align-self-center text-muted"><i class="fa fa-list"></i></div>
+            <div class="d-flex ml-3 align-self-center text-muted"><i class="material-icons-outlined md-24">
+                format_list_bulleted
+              </i></div>
           </div>
         </bdropdownitem-stub>
         <bdropdownitem-stub href="#" target="_self" event="click" routertag="a">
@@ -28,7 +34,9 @@ exports[`Sharing.vue Resources page loaded 1`] = `
             <div class="media-body">
               Grid
             </div>
-            <div class="d-flex ml-3 align-self-center text-muted"><i class="fa fa-th"></i></div>
+            <div class="d-flex ml-3 align-self-center text-muted"><i class="material-icons-outlined md-24">
+                apps
+              </i></div>
           </div>
         </bdropdownitem-stub>
       </bdropdown-stub>
