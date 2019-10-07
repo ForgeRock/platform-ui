@@ -165,7 +165,7 @@ export default {
     },
     loadData() {
       if (!_.isNull(this.userId)) {
-        this.getRequestService()
+        this.getRequestService({ headers: { 'Cache-Control': 'no-store' } })
           .get(`/${this.managedResource}/${this.userId}?_fields=_notifications/*`)
           .then(({ data }) => {
             /* eslint no-underscore-dangle: 0 */
@@ -174,7 +174,6 @@ export default {
             } else {
               this.notifications = [];
             }
-
             this.startPolling();
           })
           .catch(() => {});
