@@ -17,7 +17,7 @@
           width="24"
           height="24"
           :alt="mapping.name"
-          fallback="fa-cog" />
+          fallback="settings_applications" />
         <div
           class="media-body"
           style="width: 100%">
@@ -39,10 +39,14 @@
             {{ $t(`pages.profile.consent.${mapping.consented ? 'deny' : 'allow'}`) }}
           </BButton>
           <div
-            class="caret ml-2 my-auto"
+            class="caret ml-2 my-auto list-group-item-action"
             v-if="mapping.consented">
-            <i class="fa fa-angle-down fa-lg pr-0 caret-down align-self-center" />
-            <i class="fa fa-angle-up fa-lg pr-0 pt-1 caret-up align-self-center" />
+            <i class="material-icons-outlined font-weight-bolder md-24 mb-1 pr-0 caret-down align-self-center">
+              keyboard_arrow_down
+            </i>
+            <i class="material-icons-outlined font-weight-bolder md-24 mb-1 pr-0 caret-up align-self-center">
+              keyboard_arrow_up
+            </i>
           </div>
         </div>
 
@@ -62,7 +66,9 @@
               aria-label="Close"
               class="close"
               @click.stop.prevent="hideModal(mapping.name)">
-              <i class="fa fa-times" />
+              <i class="material-icons-outlined font-weight-bolder md-24 mb-1">
+                close
+              </i>
             </button>
           </div>
 

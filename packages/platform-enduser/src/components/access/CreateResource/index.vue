@@ -16,7 +16,9 @@
         aria-label="Close"
         class="close"
         @click="hideModal">
-        <i class="fa fa-times" />
+        <i class="material-icons-outlined font-weight-bolder">
+          clear
+        </i>
       </button>
     </div>
     <BRow>
@@ -97,7 +99,7 @@
           </template>
 
           <!-- Special logic for password -->
-          <FrPasswordPolicyInput
+          <FrPolicyPasswordInput
             v-if="passwordCheck"
             :policy-api="`${resourceType}/${resourceName}/policyTest`"
             v-model="formFields['password']">
@@ -120,12 +122,21 @@
                     @click="revealNew"
                     class="btn btn-secondary"
                     type="button">
-                    <i :class="[{'fa-eye-slash': !showPassword}, {'fa-eye': showPassword}, 'fa']" />
+                    <i
+                      v-if="showPassword"
+                      class="material-icons-outlined">
+                      visibility
+                    </i>
+                    <i
+                      v-else
+                      class="material-icons-outlined">
+                      visibility_off
+                    </i>
                   </button>
                 </div>
               </div>
             </BFormGroup>
-          </FrPasswordPolicyInput>
+          </FrPolicyPasswordInput>
         </BForm>
         <template v-else>
           <h3 class="text-center">
@@ -178,7 +189,7 @@ export default {
   name: 'CreateResource',
   components: {
     FrValidationError: ValidationError,
-    FrPasswordPolicyInput: PolicyPasswordInput,
+    FrPolicyPasswordInput: PolicyPasswordInput,
   },
   mixins: [
     ResourceMixin,

@@ -6,7 +6,9 @@ exports[`EditResource.vue EditResource page loaded 1`] = `
     <bcol-stub tag="div">
       <div class="d-sm-flex my-4">
         <div class="media">
-          <div class="rounded-circle fr-resource-circle text-light bg-primary mr-4"><i class="fa fa-3x fa-cube"></i></div>
+          <div class="rounded-circle d-flex align-items-center fr-resource-circle text-light bg-primary mr-4"><i class="material-icons-outlined md-48 w-100">
+              check_box_outline_blank
+            </i></div>
           <div class="media-body">
             <h1>test</h1>
             <h6 class="text-muted">
