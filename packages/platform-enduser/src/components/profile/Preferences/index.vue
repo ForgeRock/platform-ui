@@ -31,7 +31,10 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import {
+  cloneDeep,
+  keys,
+} from 'lodash';
 import { mapState } from 'vuex';
 import ListGroup from '@forgerock/platform-components/src/components/listGroup/';
 import ListItem from '@forgerock/platform-components/src/components/listItem/';
@@ -62,10 +65,10 @@ export default {
   },
   methods: {
     loadData() {
-      const keys = _.keys(this.currentPreferences);
-      const preferences = _.cloneDeep(this.properties);
+      const newKeys = keys(this.currentPreferences);
+      const preferences = cloneDeep(this.properties);
 
-      _.each(keys, (key) => {
+      newKeys.forEach((key) => {
         preferences[key].value = this.currentPreferences[key];
         delete preferences[key].type;
       });

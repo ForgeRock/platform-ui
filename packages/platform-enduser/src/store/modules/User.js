@@ -27,6 +27,7 @@ const defaultState = {
   sn: '',
   email: '',
   userName: '',
+  preferences: [],
 };
 
 const getters = {
@@ -95,6 +96,7 @@ const mutations = {
     state.userName = profile.userName || '';
     state.consentedMappings = profile.consentedMappings || null;
     state.name = profile.name || '';
+    state.preferences = profile.preferences || [];
     state.profile = profile;
   },
 
@@ -104,6 +106,7 @@ const mutations = {
     state.email = '';
     state.userName = '';
     state.consentedMappings = [];
+    state.preferences = [];
     state.name = '';
     state.profile = null;
   },
@@ -169,8 +172,8 @@ const mutations = {
     state.adminUser = false;
     state.access = [];
     state.consentedMappings = [];
+    state.preferences = [];
     state.name = '';
-    state.preferences = null;
   },
 };
 

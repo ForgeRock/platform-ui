@@ -94,7 +94,12 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import {
+  includes,
+  map,
+  noop,
+  times,
+} from 'lodash';
 import ListItem from '@forgerock/platform-components/src/components/listItem/';
 import LoadingButton from '@/components/utils/LoadingButton';
 import ValidationError from '@/components/utils/ValidationError';
@@ -137,14 +142,14 @@ export default {
       const { locale, fallbackLocale } = this.$i18n;
 
       // set form state based on stored user questions
-      _.times(minimumRequired, (index) => {
+      times(minimumRequired, (index) => {
         this.selected.push({
           selected: null, index: index + 1, answer: '', custom: '',
         });
       });
 
       // create select options
-      this.selectOptions = _.map(this.questions, (question, key) => ({ value: key, text: question[locale] || question[fallbackLocale], disabled: true }));
+      this.selectOptions = map(this.questions, (question, key) => ({ value: key, text: question[locale] || question[fallbackLocale], disabled: true }));
 
       this.customIndex = this.selectOptions.length + 1;
       this.selectOptions.unshift({ value: null, text: this.$t('common.user.kba.selectQuestion'), disabled: true });
@@ -152,7 +157,7 @@ export default {
     },
 
     generatePatch() {
-      const values = _.map(this.selected, (field) => {
+      const values = map(this.selected, (field) => {
         if (field.custom) {
           return {
             answer: field.answer,
@@ -207,7 +212,7 @@ export default {
     selected: {
       handler() {
         // create array of selected options that aren't custom
-        const toDisable = _.map(this.selected, (s) => {
+        const toDisable = map(this.selected, (s) => {
           if (s.selected !== null && s.selected !== this.customIndex) {
             return s.selected;
           }
@@ -215,8 +220,8 @@ export default {
         });
 
         // set any [toDisable] option to disabled
-        _.each(this.selectOptions, (o) => {
-          if (_.includes(toDisable, o.value) || o.value === null) {
+        this.selectOptions.forEach((o) => {
+          if (includes(toDisable, o.value) || o.value === null) {
             /* eslint no-param-reassign: ["error", { "ignorePropertyModificationsFor": ["0"] }] */
             o.disabled = true;
           } else {
@@ -226,7 +231,7 @@ export default {
       },
       deep: true,
     },
-    kbaData: { deep: true, handler: _.noop },
+    kbaData: { deep: true, handler: noop },
   },
 };
 </script>
