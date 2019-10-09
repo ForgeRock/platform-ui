@@ -168,7 +168,14 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import {
+  capitalize,
+  clone,
+  each,
+  isArray,
+  isNumber,
+  isString,
+} from 'lodash';
 import PolicyPasswordInput from '@/components/utils/PolicyPasswordInput';
 import ResourceMixin from '@/components/utils/mixins/ResourceMixin';
 import ValidationError from '@/components/utils/ValidationError';
@@ -217,7 +224,7 @@ export default {
 
     let tempPasswordCheck = false;
 
-    _.each(this.createProperties, (prop) => {
+    each(this.createProperties, (prop) => {
       if (prop.type === 'string' || prop.type === 'number') {
         tempFormFields[prop.key] = '';
       } else {
@@ -243,14 +250,14 @@ export default {
 
       this.$validator.validateAll().then((valid) => {
         if (valid) {
-          const saveData = this.cleanData(_.clone(this.formFields));
+          const saveData = this.cleanData(clone(this.formFields));
 
           idmInstance.post(`${this.resourceType}/${this.resourceName}?_action=create`, saveData).then(() => {
             this.$emit('refreshGrid');
             this.errors.clear();
             this.hideModal();
 
-            this.displayNotification('success', this.$t('pages.access.successCreate', { resource: _.capitalize(this.resourceName) }));
+            this.displayNotification('success', this.$t('pages.access.successCreate', { resource: capitalize(this.resourceName) }));
           },
           (error) => {
             const generatedErrors = this.findPolicyError(error.response, this.createProperties);
@@ -258,7 +265,7 @@ export default {
             this.errors.clear();
 
             if (generatedErrors.length > 0) {
-              _.each(generatedErrors, (generatedError) => {
+              each(generatedErrors, (generatedError) => {
                 if (generatedError.exists) {
                   this.errors.add(generatedError);
                 }
@@ -285,8 +292,8 @@ export default {
       this.passwordInputType = 'password';
       this.showPassword = true;
 
-      _.each(this.formFields, (value, key) => {
-        if (_.isString(value) || _.isNumber(value)) {
+      each(this.formFields, (value, key) => {
+        if (isString(value) || isNumber(value)) {
           this.formFields[key] = '';
         } else {
           this.formFields[key] = false;
@@ -305,8 +312,8 @@ export default {
     },
     // Remove optional fields to not save with empty string
     cleanData(data) {
-      _.each(data, (value, key) => {
-        if (_.isString(value) && value.length === 0) {
+      each(data, (value, key) => {
+        if (isString(value) && value.length === 0) {
           // eslint-disable-next-line no-param-reassign
           delete data[key];
         }
@@ -315,7 +322,7 @@ export default {
       return data;
     },
     focusField() {
-      if (_.isArray(this.$refs.focusInput)) {
+      if (isArray(this.$refs.focusInput)) {
         this.$refs.focusInput[0].focus();
       }
     },

@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import { each } from 'lodash';
 import { BounceLoader } from 'vue-spinner/dist/vue-spinner.min';
 import styles from '@/scss/main.scss';
 
@@ -34,7 +34,7 @@ export default {
   created() {
     const queryParams = {};
 
-    _.each(this.$route.params.amData.replace('?', '').split('&'), (param) => {
+    each(this.$route.params.amData.replace('?', '').split('&'), (param) => {
       if (param.length > 0) {
         const parts = param.split('=');
         // eslint-disable-next-line prefer-destructuring
