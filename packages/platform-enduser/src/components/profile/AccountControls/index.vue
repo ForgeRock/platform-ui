@@ -132,7 +132,10 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import {
+  each,
+  isNull,
+} from 'lodash';
 import ListGroup from '@forgerock/platform-components/src/components/listGroup/';
 import ListItem from '@forgerock/platform-components/src/components/listItem/';
 
@@ -184,7 +187,7 @@ export default {
         /* eslint no-underscore-dangle: ["error", { "allow": ["_meta", "_rev"] }] */
         /* eslint no-param-reassign: ["error", { "ignorePropertyModificationsFor": ["result", "idp"] }] */
         if (result.data._meta) {
-          _.each(result._meta, (value, key) => {
+          each(result._meta, (value, key) => {
             if (key.match('_')) {
               delete result._meta[key];
             }
@@ -192,9 +195,9 @@ export default {
         }
 
         if (result.data.idps) {
-          _.each(result.idps, (idp) => {
-            _.each(idp, (value, key) => {
-              if (key.match('_') && _.isNull(key.match('_meta'))) {
+          each(result.idps, (idp) => {
+            each(idp, (value, key) => {
+              if (key.match('_') && isNull(key.match('_meta'))) {
                 delete idp[key];
               }
             });

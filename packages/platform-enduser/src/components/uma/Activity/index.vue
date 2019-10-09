@@ -43,7 +43,12 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import {
+  clone,
+  groupBy,
+  keys,
+  sortBy,
+} from 'lodash';
 import moment from 'moment';
 import ListGroup from '@forgerock/platform-components/src/components/listGroup/';
 import ListItem from '@forgerock/platform-components/src/components/listItem/';
@@ -71,12 +76,12 @@ export default {
   },
   computed: {
     activityGroups() {
-      const tempUmaHistory = _.clone(this.umaHistory);
+      const tempUmaHistory = clone(this.umaHistory);
       const sortedHistory = tempUmaHistory.sort((a, b) => a.eventTime - b.eventTime).reverse();
-      const groups = _.groupBy(sortedHistory, event => moment(event.eventTime).format('YYYY-MM-DD'));
-      const activityGroups = _.keys(groups).map(day => ({ day, activities: groups[day] }));
+      const groups = groupBy(sortedHistory, event => moment(event.eventTime).format('YYYY-MM-DD'));
+      const activityGroups = keys(groups).map(day => ({ day, activities: groups[day] }));
 
-      return _.sortBy(activityGroups, ({ day }) => moment(day)).reverse();
+      return sortBy(activityGroups, ({ day }) => moment(day)).reverse();
     },
   },
   methods: {

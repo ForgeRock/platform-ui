@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import { startCase } from 'lodash';
 import { mapState } from 'vuex';
 /**
  * @description Controlling component for profile management
@@ -109,7 +109,7 @@ export default {
       let fullName = '';
 
       if (this.givenName.length > 0 || this.sirName.length > 0) {
-        fullName = _.startCase(`${this.givenName} ${this.sirName}`);
+        fullName = startCase(`${this.givenName} ${this.sirName}`);
       } else {
         fullName = this.userId;
       }

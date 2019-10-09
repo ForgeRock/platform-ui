@@ -65,7 +65,12 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import {
+  cloneDeep,
+  find,
+  has,
+  map,
+} from 'lodash';
 import { mapState } from 'vuex';
 import CenterCard from '@/components/utils/CenterCard';
 import Activity from '@/components/uma/Activity';
@@ -108,11 +113,11 @@ export default {
       amDataEndpoints: state => state.ApplicationStore.amDataEndpoints,
     }),
     umaHistory() {
-      return _.map(this.activity, (res) => {
-        const resource = _.find(this.resources, { _id: res.resourceSetId });
-        const newRes = _.cloneDeep(res);
+      return map(this.activity, (res) => {
+        const resource = find(this.resources, { _id: res.resourceSetId });
+        const newRes = cloneDeep(res);
 
-        if (_.has(resource, 'icon_uri')) {
+        if (has(resource, 'icon_uri')) {
           newRes.icon_uri = resource.icon_uri;
         }
 
@@ -175,15 +180,15 @@ export default {
 
       // by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
       selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
-        this.requests = _.map(response.data.result, (request) => {
-          const resource = _.find(this.resources, { name: request.resource });
-          const requestCopy = _.cloneDeep(request);
+        this.requests = map(response.data.result, (request) => {
+          const resource = find(this.resources, { name: request.resource });
+          const requestCopy = cloneDeep(request);
 
-          if (_.has(resource, 'icon_uri')) {
+          if (has(resource, 'icon_uri')) {
             requestCopy.icon_uri = resource.icon_uri;
           }
 
-          if (_.has(resource, 'scopes')) {
+          if (has(resource, 'scopes')) {
             requestCopy.scopes = resource.scopes;
           }
 

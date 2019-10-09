@@ -1,4 +1,7 @@
-import _ from 'lodash';
+import {
+  clone,
+  includes,
+} from 'lodash';
 
 /**
  * State - Enduser data store information
@@ -120,7 +123,7 @@ const mutations = {
   },
 
   setUserIdAction(state, userId) {
-    state.userId = _.clone(userId);
+    state.userId = clone(userId);
   },
 
   clearUserIdAction(state) {
@@ -128,7 +131,7 @@ const mutations = {
   },
 
   setManagedResourceAction(state, managedResource) {
-    state.managedResource = _.clone(managedResource);
+    state.managedResource = clone(managedResource);
 
     if (managedResource === 'internal/user') {
       state.internalUser = true;
@@ -140,9 +143,9 @@ const mutations = {
   },
 
   setRolesAction(state, roles) {
-    state.roles = _.clone(roles);
+    state.roles = clone(roles);
 
-    if (_.includes(state.roles, 'internal/role/openidm-admin')) {
+    if (includes(state.roles, 'internal/role/openidm-admin')) {
       state.adminUser = true;
     }
   },
@@ -152,7 +155,7 @@ const mutations = {
   },
 
   setAccess(state, access) {
-    state.access = _.clone(access);
+    state.access = clone(access);
   },
 
   clearAccess(state) {

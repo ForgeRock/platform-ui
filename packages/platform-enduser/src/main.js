@@ -1,4 +1,10 @@
-import _ from 'lodash';
+import {
+  extend,
+  has,
+  isEmpty,
+  isNull,
+  isUndefined,
+} from 'lodash';
 import axios from 'axios';
 import BootstrapVue from 'bootstrap-vue/dist/bootstrap-vue.esm.min';
 import Notifications from 'vue-notification';
@@ -27,12 +33,12 @@ const idmContext = process.env.VUE_APP_IDM_URL;
 router.beforeEach((to, from, next) => {
   document.body.className = '';
 
-  if (_.has(to, 'meta.bodyClass')) {
+  if (has(to, 'meta.bodyClass')) {
     document.body.className = (document.body.className + to.meta.bodyClass).trim();
   }
 
-  if (_.has(to, 'meta.authenticate')) {
-    if (_.isNull(store.state.UserStore.userId)) {
+  if (has(to, 'meta.authenticate')) {
+    if (isNull(store.state.UserStore.userId)) {
       const authInstance = axios.create({
         baseURL: idmContext,
         timeout: 5000,
@@ -58,7 +64,7 @@ router.beforeEach((to, from, next) => {
         // Recheck class in case of double login load using from location
         document.body.className = '';
 
-        if (_.has(from, 'meta.bodyClass')) {
+        if (has(from, 'meta.bodyClass')) {
           document.body.className = (document.body.className + from.meta.bodyClass).trim();
         }
 
@@ -130,13 +136,13 @@ Vue.mixin({
           timeout = config.timeout;
         }
 
-        if (config.headers && !_.isEmpty(config.headers)) {
+        if (config.headers && !isEmpty(config.headers)) {
           // eslint-disable-next-line prefer-destructuring
           headers = config.headers;
         }
       }
 
-      headers = _.extend(headers, store.state.ApplicationStore.authHeaders || {});
+      headers = extend(headers, store.state.ApplicationStore.authHeaders || {});
       const instance = axios.create({
         baseURL,
         timeout,
@@ -148,7 +154,7 @@ Vue.mixin({
           this.$router.push({ name: 'Login' });
 
           return Promise.reject(error);
-        } if (_.isUndefined(error.response)) {
+        } if (isUndefined(error.response)) {
           // In the case of critical error
           return Promise.reject(new Error(error.message));
         }
@@ -176,7 +182,7 @@ Vue.mixin({
     },
     // One location for checking and redirecting a completed login for s user
     completeLogin() {
-      if (!_.isNull(store.state.ApplicationStore.loginRedirect)) {
+      if (!isNull(store.state.ApplicationStore.loginRedirect)) {
         this.$router.push(store.state.ApplicationStore.loginRedirect);
         store.dispatch('ApplicationStore/clearLoginRedirect');
       } else {

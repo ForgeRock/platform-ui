@@ -19,11 +19,7 @@ describe('AccountSecurity.vue', () => {
       },
     };
 
-    const applicationStore = {
-      state: {
-        platformMode: false,
-      },
-    };
+    const applicationStore = {};
 
     const wrapper = shallowMount(AccountSecurity, {
       localVue,
@@ -48,9 +44,7 @@ describe('AccountSecurity.vue', () => {
 
 
       const applicationStore = {
-        state: {
-          platformMode: false,
-        },
+        state: {},
       };
 
 

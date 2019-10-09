@@ -30,7 +30,20 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import {
+  at,
+  curry,
+  first,
+  flatten,
+  head,
+  includes,
+  isEmpty,
+  isNull,
+  isObject,
+  isString,
+  isUndefined,
+  reject,
+} from 'lodash';
 import FloatingLabelInput from '@/components/utils/FloatingLabelInput';
 import PolicyPanel from '@/components/utils/PolicyPanel';
 
@@ -75,7 +88,7 @@ export default {
             {
               name: 'REQUIRED',
               predicate(policyRequirements) {
-                return _.includes(policyRequirements, 'REQUIRED') && _.includes(policyRequirements, 'MIN_LENGTH');
+                return includes(policyRequirements, 'REQUIRED') && includes(policyRequirements, 'MIN_LENGTH');
               },
             },
             {
@@ -102,14 +115,14 @@ export default {
     policyFailures() {
       const failures = this.errors.firstByRule('password', 'policy');
 
-      if (_.isUndefined(this.fields.password)) {
+      if (isUndefined(this.fields.password)) {
         return 'loading';
-      } if (_.isNull(failures) && this.fields.password.valid) {
+      } if (isNull(failures) && this.fields.password.valid) {
         return [];
       }
       return failures;
     },
-    customInput() { return !_.isUndefined(this.$slots['custom-input']); },
+    customInput() { return !isUndefined(this.$slots['custom-input']); },
 
   },
   methods: {
@@ -120,7 +133,7 @@ export default {
              * @param {Object} policyRequirementItem - object to predicate on
              * @return {Boolean}
              */
-    isPasswordPolicyItem: _.curry((propName, policyRequirementItem) => !_.isEmpty(policyRequirementItem[propName].match('password'))),
+    isPasswordPolicyItem: curry((propName, policyRequirementItem) => !isEmpty(policyRequirementItem[propName].match('password'))),
     /**
              * convert policy definition into a simple structure to work with
              * @param {Object} policyDefinition
@@ -132,9 +145,9 @@ export default {
       const { policyRequirements, params } = policyDefinition;
 
 
-      const name = _.first(policyRequirements);
+      const name = first(policyRequirements);
 
-      if (!_.isUndefined(name)) {
+      if (!isUndefined(name)) {
         return { name, params };
       }
       return {};
@@ -151,9 +164,9 @@ export default {
 
       const policyNames = failedPolicyRequirements
         .filter(this.isPasswordPolicyItem('property'))
-        .map(failedPolicyDefinition => _.at(failedPolicyDefinition, ['policyRequirements[0].policyRequirement']));
+        .map(failedPolicyDefinition => at(failedPolicyDefinition, ['policyRequirements[0].policyRequirement']));
 
-      return _.flatten(policyNames);
+      return flatten(policyNames);
     },
     /**
              * Remove from the policy service return set of policies those that are defined in the `exclude` prop
@@ -178,15 +191,15 @@ export default {
         policies = [];
       }
 
-      const rejectPolicy = requirement => _.reject(policies, policy => _.first(policy.policyRequirements) === requirement);
+      const rejectPolicy = requirement => reject(policies, policy => first(policy.policyRequirements) === requirement);
 
       this.exclude.forEach((exclusion) => {
-        if (_.isObject(exclusion)) {
+        if (isObject(exclusion)) {
           if (exclusion.predicate(policyRequirements)) {
             policies = rejectPolicy(exclusion.name);
           }
-        } else if (_.isString(exclusion)) {
-          if (_.includes(policyRequirements, exclusion)) {
+        } else if (isString(exclusion)) {
+          if (includes(policyRequirements, exclusion)) {
             policies = rejectPolicy(exclusion);
           }
         }
@@ -231,7 +244,7 @@ export default {
       validate(value) {
         // Make policy service call.
         return requestPolicyValidation(value).then(policyFailures => ({
-          valid: _.isEmpty(policyFailures),
+          valid: isEmpty(policyFailures),
           data: policyFailures,
         }));
       },
@@ -242,12 +255,12 @@ export default {
 
     // Get the initial policy list from the policy service.
     policyService.get(`/policy/${this.policyApi}`)
-      .then(({ data }) => _.head(data.properties.filter(this.isPasswordPolicyItem('name'))))
+      .then(({ data }) => head(data.properties.filter(this.isPasswordPolicyItem('name'))))
       .then(policyRequirementSet => this.makeExclusions(policyRequirementSet))
       .then(({ policies }) => {
         this.policies = policies
           .map(this.toSimplePolicyObject)
-          .filter(p => !_.isEmpty(p));
+          .filter(p => !isEmpty(p));
       })
       .catch(() => {
         this.displayNotification('error', this.$t(`common.policyValidationMessages.policyServiceError.${this.policyApi}`));

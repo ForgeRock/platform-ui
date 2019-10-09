@@ -119,7 +119,14 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import {
+  each,
+  includes,
+  isNaN,
+  isNull,
+  isUndefined,
+  toNumber,
+} from 'lodash';
 import axios from 'axios';
 import CreateResource from '@/components/access/CreateResource';
 
@@ -168,13 +175,13 @@ export default {
         idmInstance.get(`privilege/${this.resource}/${this.name}`)]).then(axios.spread((schema, privilege) => {
         if (privilege.data.VIEW.allowed) {
           // Generate columns for display and filtering for read/query
-          _.each(privilege.data.VIEW.properties, (readProp) => {
+          each(privilege.data.VIEW.properties, (readProp) => {
             const propSchema = schema.data.properties[readProp];
 
             if (
               this.columns.length <= 3
-              && _.isUndefined(propSchema.encryption)
-              && _.includes(['string', 'boolean', 'number'], propSchema.type)
+              && isUndefined(propSchema.encryption)
+              && includes(['string', 'boolean', 'number'], propSchema.type)
             ) {
               this.columns.push({
                 key: readProp,
@@ -196,12 +203,12 @@ export default {
 
         if (privilege.data.CREATE.allowed) {
           // Generate create list for create resource dialog
-          _.each(privilege.data.CREATE.properties, (createProp) => {
+          each(privilege.data.CREATE.properties, (createProp) => {
             if (schema.data.properties[createProp].type === 'string' || schema.data.properties[createProp].type === 'number' || schema.data.properties[createProp].type === 'boolean') {
               // eslint-disable-next-line no-param-reassign
               schema.data.properties[createProp].key = createProp;
 
-              _.each(schema.data.required, (requiredKey) => {
+              each(schema.data.required, (requiredKey) => {
                 if (requiredKey === schema.data.properties[createProp].key) {
                   // eslint-disable-next-line no-param-reassign
                   schema.data.properties[createProp].required = true;
@@ -237,7 +244,7 @@ export default {
     buildGridUrl(filter, fields, sortField, page) {
       let resourceUrl = `${this.resource}/${this.name}?_queryFilter=${filter}&_pageSize=10&_totalPagedResultsPolicy=EXACT`;
 
-      if (_.isNull(sortField)) {
+      if (isNull(sortField)) {
         // If there is no sortField default to sorting on the first column.
         // eslint-disable-next-line no-param-reassign
         sortField = fields[0];
@@ -261,7 +268,7 @@ export default {
     calculateSort(sortDesc, sortBy) {
       let sortUrl = null;
 
-      if (!_.isNull(sortBy)) {
+      if (!isNull(sortBy)) {
         if (sortDesc) {
           sortUrl = `${sortBy}`;
         } else {
@@ -294,15 +301,15 @@ export default {
 
       if (filter.length > 0) {
         const encodedFilter = encodeURIComponent(filter);
-        _.each(displayFields, (field, index) => {
+        each(displayFields, (field, index) => {
           let type = 'string';
 
-          if (!_.isUndefined(schemaProps)) {
+          if (!isUndefined(schemaProps)) {
             // eslint-disable-next-line prefer-destructuring
             type = schemaProps[field].type;
           }
 
-          if (type === 'number' && !_.isNaN(_.toNumber(encodedFilter))) {
+          if (type === 'number' && !isNaN(toNumber(encodedFilter))) {
             // Search based on number and proper number value
             if ((index + 1) < displayFields.length) {
               filterUrl += `${field}+eq+ ${encodedFilter}+OR+`;

@@ -32,7 +32,11 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import {
+  includes,
+  isArray,
+  isEmpty,
+} from 'lodash';
 
 /**
  * @description Part of the password policy component to display the list of policy items required
@@ -55,7 +59,7 @@ export default {
   },
   computed: {
     isValid() {
-      return _.isArray(this.policyFailures) && _.isEmpty(this.policyFailures);
+      return isArray(this.policyFailures) && isEmpty(this.policyFailures);
     },
     isLoading() {
       return this.policyFailures === 'loading' || this.policyFailures === false;
@@ -67,7 +71,7 @@ export default {
 
       return this.$t(path, policy.params);
     },
-    includes: _.includes,
+    includes,
   },
   watch: {
     policyFailures(value) {

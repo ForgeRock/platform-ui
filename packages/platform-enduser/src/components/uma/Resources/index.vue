@@ -243,7 +243,7 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import { filter } from 'lodash';
 import FallbackImage from '@/components/utils/FallbackImage';
 
 /**
@@ -282,7 +282,7 @@ export default {
   },
   computed: {
     filteredResources() {
-      return _.filter(this.resources, resource => resource.name.includes(this.resourceFilter));
+      return filter(this.resources, resource => resource.name.includes(this.resourceFilter));
     },
   },
 };

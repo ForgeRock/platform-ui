@@ -50,7 +50,10 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import {
+  bind,
+  delay,
+} from 'lodash';
 import ValidationError from '@/components/utils/ValidationError';
 
 /**
@@ -110,7 +113,7 @@ export default {
     this.id = `floatingLabelInput${this._uid}`;
   },
   mounted() {
-    _.delay(_.bind(() => {
+    delay(bind(() => {
       if (navigator.userAgent.indexOf('Edge') >= 0) {
         if (document.getElementById(`${this.id}`).value.length) {
           this.floatLabels = true;
