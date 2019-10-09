@@ -128,7 +128,13 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import {
+  cloneDeep,
+  each,
+  filter,
+  includes,
+  map,
+} from 'lodash';
 import { mapState } from 'vuex';
 import ValidationError from '@/components/utils/ValidationError';
 import ResourceMixin from '@/components/utils/mixins/ResourceMixin';
@@ -177,17 +183,17 @@ export default {
   methods: {
     generateFormFields() {
       const { order, properties, required } = this.schema;
-      const filteredOrder = _.filter(order, propName => properties[propName].viewable
+      const filteredOrder = filter(order, propName => properties[propName].viewable
                             && properties[propName].userEditable
                             && properties[propName].type !== 'array'
                             && properties[propName].type !== 'object');
-      const formFields = _.map(filteredOrder, name => ({
+      const formFields = map(filteredOrder, name => ({
         name,
         key: name,
         title: properties[name].title,
         value: this.profile[name] || null,
         type: properties[name].type,
-        required: _.includes(required, name),
+        required: includes(required, name),
       }));
 
       return formFields;
@@ -199,7 +205,7 @@ export default {
       const formFields = this.generateFormFields();
 
       this.formFields = formFields;
-      this.originalFormFields = _.cloneDeep(formFields);
+      this.originalFormFields = cloneDeep(formFields);
     },
     saveForm() {
       this.isValid().then((valid) => {
@@ -207,7 +213,7 @@ export default {
           const idmInstance = this.getRequestService();
           const policyFields = {};
 
-          _.each(this.formFields, (field) => {
+          each(this.formFields, (field) => {
             if (field.value !== null) {
               policyFields[field.name] = field.value;
             }
@@ -230,7 +236,7 @@ export default {
               this.errors.clear();
 
               if (generatedErrors.length > 0) {
-                _.each(generatedErrors, (generatedError) => {
+                each(generatedErrors, (generatedError) => {
                   if (generatedError.exists) {
                     this.errors.add(generatedError);
                   }
