@@ -254,7 +254,14 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import {
+  capitalize,
+  clone,
+  each,
+  indexOf,
+  isUndefined,
+  pick,
+} from 'lodash';
 import axios from 'axios';
 import PolicyPasswordInput from '@/components/utils/PolicyPasswordInput';
 import ResourceMixin from '@/components/utils/mixins/ResourceMixin';
@@ -317,7 +324,7 @@ export default {
         });
     },
     generateDisplay(schema, privilege, resourceDetails) {
-      this.oldFormFields = _.pick(resourceDetails, privilege.VIEW.properties);
+      this.oldFormFields = pick(resourceDetails, privilege.VIEW.properties);
 
       if (privilege.DELETE.allowed) {
         this.canDelete = true;
@@ -330,7 +337,7 @@ export default {
       }
 
       // Add reactive form for changes
-      _.each(this.oldFormFields, (value, key) => {
+      each(this.oldFormFields, (value, key) => {
         this.$set(this.formFields, key, value);
       });
 
@@ -339,10 +346,10 @@ export default {
         if (privilege.UPDATE.properties.length === 0) {
           this.disableSaveButton = true;
         }
-        _.each(this.mergePrivilegeProperties(privilege, schema), (createPriv) => {
+        each(this.mergePrivilegeProperties(privilege, schema), (createPriv) => {
           const tempProp = schema.properties[createPriv.attribute];
 
-          if (_.indexOf(schema.required, createPriv.attribute) !== -1) {
+          if (indexOf(schema.required, createPriv.attribute) !== -1) {
             tempProp.required = true;
           }
 
@@ -353,20 +360,20 @@ export default {
           tempProp.key = createPriv.attribute;
 
           // Try and do some primary detection for a display name
-          if ((_.toLower(createPriv.attribute) === 'username' || _.toLower(createPriv.attribute) === 'name') && this.displayNameField.length === 0) {
+          if (((createPriv.attribute).toLowerCase() === 'username' || (createPriv.attribute).toLowerCase() === 'name') && this.displayNameField.length === 0) {
             this.displayNameField = createPriv.attribute;
           }
 
           // Try and do some primary detection for a secondary title
-          if ((_.toLower(createPriv.attribute) === 'title'
-                                || _.toLower(createPriv.attribute) === 'email'
-                                || _.toLower(createPriv.attribute) === 'type'
-                                || _.toLower(createPriv.attribute) === 'mail') && this.displaySecondaryTitleField.length === 0) {
+          if (((createPriv.attribute).toLowerCase() === 'title'
+                                || (createPriv.attribute).toLowerCase() === 'email'
+                                || (createPriv.attribute).toLowerCase() === 'type'
+                                || (createPriv.attribute).toLowerCase() === 'mail') && this.displaySecondaryTitleField.length === 0) {
             this.displaySecondaryTitleField = createPriv.attribute;
           }
 
           // Add fields that may not be set yet from reading the resource
-          if (_.isUndefined(this.formFields[createPriv.attribute])) {
+          if (isUndefined(this.formFields[createPriv.attribute])) {
             if (tempProp.type === 'boolean') {
               this.$set(this.formFields, createPriv.attribute, false);
               this.oldFormFields[createPriv.attribute] = false;
@@ -421,10 +428,10 @@ export default {
 
       this.$validator.validate('mainEdit.*').then((valid) => {
         if (valid) {
-          const saveData = this.generateUpdatePatch(_.clone(this.oldFormFields), _.clone(this.formFields));
+          const saveData = this.generateUpdatePatch(clone(this.oldFormFields), clone(this.formFields));
 
           idmInstance.patch(`${this.resource}/${this.name}/${this.id}`, saveData).then(() => {
-            this.displayNotification('success', this.$t('pages.access.successEdited', { resource: _.capitalize(this.name) }));
+            this.displayNotification('success', this.$t('pages.access.successEdited', { resource: capitalize(this.name) }));
           },
           (error) => {
             const generatedErrors = this.findPolicyError(error.response, this.displayProperties);
@@ -432,7 +439,7 @@ export default {
             this.errors.clear();
 
             if (generatedErrors.length > 0) {
-              _.each(generatedErrors, (generatedError) => {
+              each(generatedErrors, (generatedError) => {
                 if (generatedError.exists) {
                   const newError = generatedError;
 
@@ -473,11 +480,11 @@ export default {
     mergePrivilegeProperties(privilege, schema) {
       const properties = [];
 
-      _.each(schema.order, (schemaPropName) => {
-        const canView = _.indexOf(privilege.VIEW.properties, schemaPropName) > -1;
+      each(schema.order, (schemaPropName) => {
+        const canView = indexOf(privilege.VIEW.properties, schemaPropName) > -1;
 
 
-        const canUpdate = _.indexOf(privilege.UPDATE.properties, schemaPropName) > -1;
+        const canUpdate = indexOf(privilege.UPDATE.properties, schemaPropName) > -1;
 
 
         const property = { attribute: schemaPropName };

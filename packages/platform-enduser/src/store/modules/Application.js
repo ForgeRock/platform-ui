@@ -4,7 +4,7 @@
  *      @param {object} amDataEndpoints - AM endpoints
  *      @param {string} idmBaseURL - Location of IDM
  *      @param {string} theme - Current theme set for the application
- *      @param {string} idmClientID - IDM client ID used for platform calls
+ *      @param {string} idmClientID - IDM client ID used for calls
  */
 
 const defaultState = {
