@@ -107,7 +107,12 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import {
+  cloneDeep,
+  find,
+  first,
+  isUndefined,
+} from 'lodash';
 import moment from 'moment';
 import { mapState } from 'vuex';
 import ListGroup from '@forgerock/platform-components/src/components/listGroup/';
@@ -148,14 +153,14 @@ export default {
     }),
     mappings() {
       return this.consentableMappings.map((mapping) => {
-        const consentedMapping = _.find(this.consentedMappings, { mapping: mapping.name });
-        const mappingCopy = _.cloneDeep(mapping);
+        const consentedMapping = find(this.consentedMappings, { mapping: mapping.name });
+        const mappingCopy = cloneDeep(mapping);
 
         let modalHeaderPath = 'pages.profile.consent.';
 
         mappingCopy.showDetails = false;
 
-        if (!_.isUndefined(consentedMapping)) {
+        if (!isUndefined(consentedMapping)) {
           mappingCopy.consented = true;
           mappingCopy.consentDate = consentedMapping.consentDate;
           modalHeaderPath += 'denyConsentHeader';
@@ -180,14 +185,14 @@ export default {
   },
   methods: {
     showModal(name) {
-      _.first(this.$refs[name]).show();
+      first(this.$refs[name]).show();
     },
     toggleConsentAndHideModal(mapping) {
       this.toggleConsent(mapping);
       this.hideModal(mapping.name);
     },
     hideModal(name) {
-      _.first(this.$refs[name]).hide();
+      first(this.$refs[name]).hide();
     },
     generatePatch(mapping) {
       const { consentDate, name } = mapping;

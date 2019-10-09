@@ -73,7 +73,11 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import {
+  delay,
+  isNull,
+  sortBy,
+} from 'lodash';
 import moment from 'moment';
 import { mapState } from 'vuex';
 
@@ -116,7 +120,7 @@ export default {
   },
   methods: {
     resetPolling() {
-      if (!_.isNull(this.timeoutId)) {
+      if (!isNull(this.timeoutId)) {
         clearTimeout(this.timeoutId);
         this.timeoutId = null;
       }
@@ -124,7 +128,7 @@ export default {
     startPolling() {
       const pollingDelay = 3000;
 
-      this.timeoutId = _.delay(() => {
+      this.timeoutId = delay(() => {
         this.loadData();
       }, pollingDelay);
     },
@@ -140,7 +144,7 @@ export default {
         .then(() => {
           this.displayNotification('success', this.$t('pages.app.notifications.removedAll'));
 
-          if (_.isNull(this.timeoutId)) {
+          if (isNull(this.timeoutId)) {
             this.startPolling();
           }
         })
@@ -159,7 +163,7 @@ export default {
         .then(() => {
           this.displayNotification('success', this.$t('pages.app.notifications.removed'));
 
-          if (_.isNull(this.timeoutId)) {
+          if (isNull(this.timeoutId)) {
             this.startPolling();
           }
         })
@@ -168,7 +172,7 @@ export default {
         });
     },
     loadData() {
-      if (!_.isNull(this.userId)) {
+      if (!isNull(this.userId)) {
         this.getRequestService({ headers: { 'Cache-Control': 'no-store' } })
           .get(`/${this.managedResource}/${this.userId}?_fields=_notifications/*`)
           .then(({ data }) => {
@@ -188,7 +192,7 @@ export default {
      * into own method to allow for testing
      */
     sortByDate(data) {
-      return _.sortBy(data, 'createDate').reverse();
+      return sortBy(data, 'createDate').reverse();
     },
   },
 };

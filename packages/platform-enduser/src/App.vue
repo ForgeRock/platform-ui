@@ -174,7 +174,9 @@
 </template>
 
 <script>
-import _ from 'lodash';
+import {
+  capitalize,
+} from 'lodash';
 import { mapState } from 'vuex';
 import ToolbarNotification from '@/components/utils/ToolbarNotification';
 
@@ -222,7 +224,7 @@ export default {
   },
   filters: {
     capitalize(value) {
-      return _.capitalize(value);
+      return capitalize(value);
     },
   },
 };
