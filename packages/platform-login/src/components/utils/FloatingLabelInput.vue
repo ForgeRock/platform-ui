@@ -159,7 +159,7 @@ export default {
       this.floatLabels = newVal.length > 0;
       this.$emit('input', newVal);
 
-      if (this.callback.setInputValue) {
+      if (this.callback && this.callback.setInputValue) {
         this.callback.setInputValue(newVal);
       }
     },
