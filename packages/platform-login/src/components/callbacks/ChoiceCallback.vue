@@ -6,7 +6,7 @@
       :name="name"
       v-model="selected"
       class="mb-2"
-      @change="callback.setInputValue" />
+      @change="setValue" />
   </div>
 </template>
 
@@ -50,6 +50,9 @@ export default {
         text: item,
         value: itemIndex,
       }));
+    },
+    setValue() {
+        this.callback.setInputValue(this.selected);
     },
   },
 };
