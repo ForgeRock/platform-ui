@@ -912,10 +912,10 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.4.tgz#622a72bebd1e3f48d921563b4b60a762295a81fc"
   integrity sha512-6PYY5DVdAY1ifaQW6XYTnOMihmBVT27elqSjEoodchsGjzYlEsTQMcEhSud99kVawatyTZRTiVkJ/c6lwbQ7nA==
 
-"@forgerock/javascript-sdk@0.6.1-beta":
-  version "0.6.1-beta"
-  resolved "https://registry.yarnpkg.com/@forgerock/javascript-sdk/-/javascript-sdk-0.6.1-beta.tgz#b850b674159720e7f646c48077bcf9a64666ad09"
-  integrity sha512-aPoSRMdDdYlHXbc1d+dEQGNOnAMRv0ET9CLpu+NAYD40rt97ys4c4Q7reFVRC4FWbO07xeDp2reD/RZapdllcw==
+"@forgerock/javascript-sdk@0.7.0-beta":
+  version "0.7.0-beta"
+  resolved "https://registry.yarnpkg.com/@forgerock/javascript-sdk/-/javascript-sdk-0.7.0-beta.tgz#9e5e13012d63d5df684129e784d4a6a235c48d07"
+  integrity sha512-87DBt8/9CKe7a/G56cXQ86jt6ic69Tl4i+D67QFGZFhWxT0iVuyOpd0DYGCq6XOYuz5AT2yi8eLJYl+dYtoxCA==
 
 "@fortawesome/fontawesome-free@5.9.0":
   version "5.9.0"

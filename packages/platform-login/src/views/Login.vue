@@ -56,6 +56,7 @@
 
 <script>
 import {
+  has,
   map,
   noop,
 } from 'lodash';
@@ -69,10 +70,13 @@ import Vue from 'vue';
 import BooleanAttributeInputCallback from '@/components/callbacks/BooleanAttributeInputCallback';
 import CenterCard from '@/components/utils/CenterCard';
 import ChoiceCallback from '@/components/callbacks/ChoiceCallback';
+import ConfirmationCallback from '@/components/callbacks/ConfirmationCallback';
 import FloatingLabelInput from '@/components/utils/FloatingLabelInput';
 import KbaCreateCallback from '@/components/callbacks/KbaCreateCallback';
+import HiddenValueCallback from '@/components/callbacks/HiddenValueCallback';
 import ReCaptchaCallback from '@/components/callbacks/ReCaptchaCallback';
 import SelectIdPCallback from '@/components/callbacks/SelectIdPCallback';
+import TextOutputCallback from '@/components/callbacks/TextOutputCallback';
 import styles from '@/scss/main.scss';
 import TermsAndConditionsCallback from '@/components/callbacks/TermsAndConditionsCallback';
 
@@ -127,6 +131,12 @@ export default {
 
       if (callback.getPrompt) {
         prompt = callback.getPrompt();
+      } else if (callback.getOutputByName) {
+        try {
+          prompt = callback.getOutputByName('prompt').value;
+        } catch (e) {
+          noop();
+        }
       }
 
       return this.addComponent(FloatingLabelInput, {
@@ -152,17 +162,24 @@ export default {
       this.clearCallbacks();
       FRAuth.next(this.step).then((step) => {
         this.loading = false;
-        this.header = step.getHeader();
-        this.description = step.getDescription();
         this.step = step;
 
-        if (step.getSessionToken()) {
-          // if there is a tokenId then redirect to enduser ui
-          window.location.href = process.env.VUE_APP_ENDUSER_URL;
-        } else if (step.getError()) {
+        switch (step.type) {
+        case 'LoginSuccess':
+            // redirect to successUrl
+            window.location.href = step.getSuccessUrl() || process.env.VUE_APP_ENDUSER_URL;
+          break;
+        case 'LoginFailure':
+          if (has(step, 'payload.detail.failureUrl') && step.payload.detail.failureUrl.length) {
+            window.location.href = step.payload.detail.failureUrl;
+          }
           this.loginFailure = true;
-        } else {
+          break;
+        default:
+          this.header = step.getHeader();
+          this.description = step.getDescription();
           this.buildTreeForm();
+          break;
         }
       });
     },
@@ -194,22 +211,18 @@ export default {
             index,
           });
           break;
-        case 'ReCaptchaCallback':
-          this.addComponent(ReCaptchaCallback, {
+        case 'ConfirmationCallback':
+          this.showNextButton = false;
+          this.addComponent(ConfirmationCallback, {
+            callback,
+            nextStep: this.nextStep,
+          });
+          break;
+        case 'HiddenValueCallback':
+          this.addComponent(HiddenValueCallback, {
             callback,
             index,
           });
-          break;
-        case 'TermsAndConditionsCallback':
-          this.addComponent(TermsAndConditionsCallback, {
-            callback,
-            index,
-            termsAndConditionsText: this.$t('login.termsAndConditions'),
-            agreeToTermsText: this.$t('login.agreeToTerms'),
-          });
-          break;
-        case 'ValidatedCreatePasswordCallback':
-          this.addFloatingLabelInput('password', callback, index);
           break;
         case 'KbaCreateCallback':
           this.addComponent(KbaCreateCallback, {
@@ -224,6 +237,39 @@ export default {
           });
 
           this.kbaCallbackCount += 1;
+          break;
+        case 'MetadataCallback':
+          // Do nothing here. If someone is using MetadataCallback the would need to inject their logic here to utilize result
+          // const metadata = callback.getData();
+          break;
+        case 'PasswordCallback':
+          this.addFloatingLabelInput('password', callback, index);
+          break;
+        case 'PollingWaitCallback':
+          this.loading = true;
+          setTimeout(() => {
+            this.nextStep();
+          }, callback.getWaitTime());
+          break;
+        case 'ReCaptchaCallback':
+          this.addComponent(ReCaptchaCallback, {
+            callback,
+            index,
+          });
+          break;
+        case 'TermsAndConditionsCallback':
+          this.addComponent(TermsAndConditionsCallback, {
+            callback,
+            index,
+            termsAndConditionsText: this.$t('login.termsAndConditions'),
+            agreeToTermsText: this.$t('login.agreeToTerms'),
+          });
+          break;
+        case 'TextOutputCallback':
+          this.addComponent(TextOutputCallback, { callback });
+          break;
+        case 'ValidatedCreatePasswordCallback':
+          this.addFloatingLabelInput('password', callback, index);
           break;
         case 'SelectIdPCallback':
           this.addComponent(SelectIdPCallback, {
