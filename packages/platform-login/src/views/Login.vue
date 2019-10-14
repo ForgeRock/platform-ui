@@ -101,6 +101,7 @@ export default {
     };
   },
   mounted() {
+    // configure FRAuth
     Config.set({
       serverConfig: { baseUrl: `${process.env.VUE_APP_AM_URL}/` },
       tree: this.$route.params.tree || undefined,
@@ -109,6 +110,11 @@ export default {
     this.nextStep();
   },
   methods: {
+  /**
+    * @description Injects an instance of a specified component into the callbacksPanel
+    * @param {Object} the component object to by added
+    * @param {Object} properties used for rendering the component object
+    */
     addComponent(component, propsData) {
       const ComponentClass = Vue.extend(component);
       const instance = new ComponentClass({
@@ -158,6 +164,11 @@ export default {
         return this.$t(`policyValidationMessages.${tempPolicy.policyRequirement}`, tempPolicy.params);
       });
     },
+    /**
+      * @description Gets callbacks needed for authentication when this.step is undefined, and submits callback values when
+      * this.step is defined. Then determines based on step.type what action to take.
+      *
+      */
     nextStep() {
       this.clearCallbacks();
       FRAuth.next(this.step).then((step) => {
@@ -166,16 +177,19 @@ export default {
 
         switch (step.type) {
         case 'LoginSuccess':
-            // redirect to successUrl
-            window.location.href = step.getSuccessUrl() || process.env.VUE_APP_ENDUSER_URL;
+          // redirect to successUrl
+          window.location.href = step.getSuccessUrl();
           break;
         case 'LoginFailure':
+          // redirect to failureUrl when it exists
           if (has(step, 'payload.detail.failureUrl') && step.payload.detail.failureUrl.length) {
             window.location.href = step.payload.detail.failureUrl;
           }
+          // otherwise display login failure message
           this.loginFailure = true;
           break;
         default:
+          // setup the form based on callback info/values obtained from this.step
           this.header = step.getHeader();
           this.description = step.getDescription();
           this.buildTreeForm();
