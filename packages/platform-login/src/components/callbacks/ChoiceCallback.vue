@@ -52,7 +52,7 @@ export default {
       }));
     },
     setValue() {
-        this.callback.setInputValue(this.selected);
+      this.callback.setInputValue(this.selected);
     },
   },
 };
