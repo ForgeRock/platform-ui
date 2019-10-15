@@ -23,7 +23,6 @@ const defaultState = {
   roles: null,
   internalUser: false,
   adminUser: false,
-  profile: null,
   schema: null,
   access: [],
   givenName: '',
@@ -98,9 +97,7 @@ const mutations = {
     state.email = profile.mail || '';
     state.userName = profile.userName || '';
     state.consentedMappings = profile.consentedMappings || null;
-    state.name = profile.name || '';
     state.preferences = profile.preferences || [];
-    state.profile = profile;
   },
 
   clearProfileAction(state) {
@@ -110,8 +107,6 @@ const mutations = {
     state.userName = '';
     state.consentedMappings = [];
     state.preferences = [];
-    state.name = '';
-    state.profile = null;
   },
 
   setSchemaAction(state, schema) {
@@ -176,7 +171,6 @@ const mutations = {
     state.access = [];
     state.consentedMappings = [];
     state.preferences = [];
-    state.name = '';
   },
 };
 

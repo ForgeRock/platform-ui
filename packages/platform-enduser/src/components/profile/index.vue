@@ -50,7 +50,7 @@
               @updateProfile="updateProfile" />
             <FrConsent
               v-if="internalUser === false"
-              :consented-mappings="profile.consentedMappings"
+              :consented-mappings="consentedMappings"
               @updateProfile="updateProfile" />
             <FrAccountControls />
           </BTab>
@@ -85,6 +85,11 @@ export default {
       default: false,
     },
   },
+  data() {
+    return {
+      profile: {},
+    };
+  },
   components: {
     FrAccountControls: () => import('@/components/profile/AccountControls'),
     FrAccountSecurity: () => import('@/components/profile/AccountSecurity'),
@@ -98,7 +103,6 @@ export default {
     ...mapState({
       userId: state => state.UserStore.userId,
       email: state => state.UserStore.email,
-      profile: state => state.UserStore.profile,
       schema: state => state.UserStore.schema,
       sirName: state => state.UserStore.sn,
       givenName: state => state.UserStore.givenName,
@@ -106,6 +110,7 @@ export default {
       internalUser: state => state.UserStore.internalUser,
       passwordReset: state => state.ApplicationStore.passwordReset,
       amDataEndpoints: state => state.ApplicationStore.amDataEndpoints,
+      consentedMappings: state => state.UserStore.consentedMappings,
     }),
     fullName() {
       let fullName = '';
@@ -119,7 +124,19 @@ export default {
       return fullName;
     },
   },
+  mounted() {
+    this.getUserProfile();
+  },
   methods: {
+    getUserProfile() {
+      this.getRequestService().get(`managed/user/${this.userId}`)
+        .then((results) => {
+          this.profile = results.data;
+        })
+        .catch((error) => {
+          this.displayNotification('error', error.response.data.message);
+        });
+    },
     updateProfile(payload, config = {}) {
       this.makeUpdateRequest(this.managedResource, payload, config);
     },
@@ -139,15 +156,14 @@ export default {
         if (config.onSuccess) {
           config.onSuccess();
         }
-      })
-        .catch((error) => {
-          const errorMsg = config.errorMsg || error.response.data.message;
-          this.displayNotification('error', errorMsg);
+      }).catch((error) => {
+        const errorMsg = config.errorMsg || error.response.data.message;
+        this.displayNotification('error', errorMsg);
 
-          if (config.onError) {
-            config.onError(error);
-          }
-        });
+        if (config.onError) {
+          config.onError(error);
+        }
+      });
     },
   },
 };
