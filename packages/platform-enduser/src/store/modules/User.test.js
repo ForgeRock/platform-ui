@@ -81,7 +81,6 @@ describe('User Store', () => {
 
     Store.commit('UserStore/clearProfileAction');
 
-    expect(_.isNull(Store.state.UserStore.profile)).toBe(true);
     expect(Store.state.UserStore.givenName).toBe('');
     expect(Store.state.UserStore.sn).toBe('');
     expect(Store.state.UserStore.email).toBe('');
@@ -89,7 +88,6 @@ describe('User Store', () => {
 
     Store.commit('UserStore/setProfileAction', {});
 
-    expect(_.isObject(Store.state.UserStore.profile)).toBe(true);
     expect(Store.state.UserStore.givenName).toBe('');
     expect(Store.state.UserStore.sn).toBe('');
     expect(Store.state.UserStore.email).toBe('');
