@@ -12,7 +12,10 @@ exports[`Profile.vue Profile page loaded 1`] = `
           <!----><img src="" alt="img" width="112" height="112" class="m-1 mb-3 rounded-circle">
           <h4 class="text-truncate">
 
-        </span>
+          </h4>
+          <div class="text-muted text-truncate">
+
+          </div>
           <!---->
         </div>
         <!---->

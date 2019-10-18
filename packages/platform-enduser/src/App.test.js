@@ -9,7 +9,16 @@ localVue.use(Vuex);
 localVue.use(BootstrapVue);
 
 describe('App.vue', () => {
-  const store = new Vuex.Store({});
+  const store = new Vuex.Store({
+    state: {
+      UserStore: {},
+      ApplicationStore: {},
+    },
+    getters: {
+      UserStore: state => state.UserStore,
+      ApplicationStore: state => state.ApplicationStore,
+    },
+  });
 
   let wrapper;
   let $route;
@@ -34,7 +43,7 @@ describe('App.vue', () => {
     });
   });
 
-  afterEach(() => {
+  afterAll(() => {
     wrapper = null;
   });
 
@@ -44,11 +53,11 @@ describe('App.vue', () => {
   });
 
   it('Side nav toggle', () => {
-    expect(wrapper.vm.toggled).toEqual(false);
+    expect(wrapper.vm.toolbarToggled).toEqual(false);
 
     wrapper.vm.onToggle();
 
-    expect(wrapper.vm.toggled).toEqual(true);
+    expect(wrapper.vm.toolbarToggled).toEqual(true);
   });
 
   it('Access generated icons', () => {

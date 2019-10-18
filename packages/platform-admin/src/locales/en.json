@@ -62,5 +62,13 @@
   },
   "components": {
     "noData": "No group data provided"
+  },
+  "pages": {
+    "app": {
+      "notifications": {
+        "noNotifications": "No notifications available",
+        "title": "Notifications"
+      }
+    }
   }
 }

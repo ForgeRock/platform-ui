@@ -1,11 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`App.vue App loaded 1`] = `
-<div id="app">
+<div id="app" class="">
   <div id="wrapper" class="">
-    <!---->
-    <div id="appContentWrapper" class="fr-no-toolbar">
-      <!---->
+    <frsidemenu-stub dropdownitems="" menuitems="[object Object],[object Object]" enduserlink="/" userdetails="[object Object]" style="display: none;"></frsidemenu-stub>
+    <div id="appContent" class="fr-no-toolbar">
+      <frnavbar-stub returnroute="" returnroutetext="Back" shownotifications="true" class="fr-main-navbar" style="display: none;"></frnavbar-stub>
       <routerview-stub></routerview-stub>
     </div>
   </div>
