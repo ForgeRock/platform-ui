@@ -75,6 +75,11 @@
       }
     }
   },
+  "sideMenu": {
+    "signOut": "Sign Out",
+    "toggleSidebar": "Toggle sidebar",
+    "dashboard": "Dashboard"
+  },
   "pages": {
     "app": {
       "profile": "Profile",
