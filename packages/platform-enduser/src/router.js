@@ -79,5 +79,11 @@ export default new Router({
       component: () => import('@/components/NotFound'),
       meta: { hideToolbar: true, bodyClass: 'fr-body-image' },
     },
+    {
+      path: '/list/:resourceType/:resourceName',
+      name: 'ListResource',
+      component: () => import(/* webpackChunkName: "listResource" */ '@/components/access'),
+      meta: { columns: true },
+    },
   ],
 });

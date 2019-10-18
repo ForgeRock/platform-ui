@@ -1,134 +1,27 @@
 <template>
-  <div id="app">
+  <div
+    id="app"
+    :class="{ 'fr-menu-locked': toolbarToggled, 'fr-menu-unlocked': !hideNav && !toolbarToggled }">
     <div
       id="wrapper"
-      :class="[{'toggled': toggled && !this.$route.meta.hideToolbar}]">
+      :class="[{'toggled': toolbarToggled && !this.$route.meta.hideToolbar}]">
+      <FrSideMenu
+        @locked="lockMenu"
+        @logout="logoutUser"
+        :open-menu="toolbarToggled"
+        :user-details="userDetails"
+        :enduser-link="$store.state.enduserURL"
+        :menu-items="menuItems"
+        v-show="!hideNav" />
       <div
-        id="appSidebarWrapper"
-        v-if="!this.$route.meta.hideToolbar && userId !== null">
-        <ul class="sidebar-nav">
-          <li class="sidebar-brand">
-            <RouterLink
-              class="d-flex"
-              active-class=""
-              :to="{ name: 'Dashboard'}">
-              <img
-                :src="require('@/assets/images/horizontal-logo-white.svg')"
-                :alt="$t('common.form.logo')"
-                style="width:131px;"
-                class="align-self-center sidebar-brand-logo">
-              <img
-                :src="require('@/assets/images/vertical-logo-white.svg')"
-                :alt="$t('common.form.logo')"
-                style="height:28px;"
-                class="align-self-center sidebar-brand-mark">
-            </RouterLink>
-          </li>
-          <li>
-            <RouterLink :to="{ name: 'Dashboard'}">
-              <i class="material-icons-outlined md-16 mb-1 mr-3">
-                dashboard
-              </i>
-              <span
-                class="sidebar-item-text">
-                {{ $t('pages.app.dashboard') }}
-              </span>
-            </RouterLink>
-          </li>
-          <li>
-            <RouterLink :to="{ name: 'Profile'}">
-              <i class="material-icons-outlined md-16 mb-1 mr-3">
-                perm_contact_calendar
-              </i>
-              <span
-                class="sidebar-item-text">
-                {{ $t('pages.app.profile') }}
-              </span>
-            </RouterLink>
-          </li>
-          <li v-if="amDataEndpoints && internalUser === false">
-            <RouterLink :to="{ name: 'Sharing'}">
-              <i class="material-icons-outlined md-16 mb-1 mr-3">
-                share
-              </i>
-              <span
-                class="sidebar-item-text">
-                {{ $t('pages.app.sharing') }}
-              </span>
-            </RouterLink>
-          </li>
-          <template v-for="(access, index) in accessObj">
-            <li :key="'accessResource' +index">
-              <RouterLink
-                :to="{ name: 'ListResource', meta: { title: 'User'}, params: { resourceType: access.privilegePath.split('/')[0], resourceName: access.privilegePath.split('/')[1]}}">
-                <i class="material-icons-outlined md-16 mb-1 mr-3">
-                  {{ accessIcon(access.icon) }}
-                </i>
-                <span class="sidebar-item-text">
-                  {{ access.title }}
-                </span>
-              </RouterLink>
-            </li>
-          </template>
-        </ul>
-      </div>
-      <div
-        id="appContentWrapper"
+        id="appContent"
         :class="[{'fr-no-toolbar': this.$route.meta.hideToolbar}]">
         <!-- Navigation Bar using Vue Route + Bootstrap Toolbar -->
-        <BNavbar
-          v-if="!this.$route.meta.hideToolbar && this.userId !== null"
-          class="fr-main-navbar">
-          <BNavForm>
-            <BButton
-              variant="link"
-              class="my-2 my-sm-0 p-0 fr-main-nav-toggle"
-              type="button"
-              @click="onToggle">
-              <i class="material-icons-outlined md-24 m-0">
-                menu
-              </i>
-            </BButton>
-          </BNavForm>
-          <BNavbarBrand
-            class="ml-4"
-            v-if="this.$route.params.resourceName">
-            {{ this.$route.params.resourceName | capitalize }}
-          </BNavbarBrand>
-          <!-- Right aligned nav items -->
-          <BNavbarNav class="ml-auto flex-row">
-            <FrNotification />
-            <BNavItemDropdown
-              class="fr-main-dropdown"
-              right>
-              <template slot="button-content">
-                {{ $t('pages.app.user') }}
-                <BImg
-                  :src="require('@/assets/images/profile-default.png')"
-                  rounded="circle"
-                  width="24"
-                  height="24"
-                  alt="img"
-                  class="m-1" />
-              </template>
-              <BDropdownItem
-                active-class="fr-no-active"
-                exact-active-class="fr-no-active"
-                :to="{ name: 'Profile'}">
-                {{ $t('pages.app.profile') }}
-              </BDropdownItem>
-              <BDropdownItem
-                v-if="this.adminUser && this.adminURL"
-                :href="this.adminURL">
-                {{ $t('pages.app.admin') }}
-              </BDropdownItem>
-              <BDropdownDivider class="m-0" />
-              <BDropdownItem @click.prevent="logoutUser()">
-                {{ $t('pages.app.signOut') }}
-              </BDropdownItem>
-            </BNavItemDropdown>
-          </BNavbarNav>
-        </BNavbar>
+        <FrNavBar
+          class="fr-main-navbar"
+          @toggle="onToggle"
+          :show-notifications="true"
+          v-show="!hideNav" />
         <Transition
           name="fade"
           mode="out-in">
@@ -178,19 +71,37 @@ import {
   capitalize,
 } from 'lodash';
 import { mapState } from 'vuex';
-import ToolbarNotification from '@/components/utils/ToolbarNotification';
+import SideMenu from '@forgerock/platform-components/src/components/sidemenu/';
+import NavBar from '@forgerock/platform-components/src/components/navbar/';
 
 export default {
   name: 'App',
   components: {
-    FrNotification: ToolbarNotification,
+    FrSideMenu: SideMenu,
+    FrNavBar: NavBar,
   },
   data() {
     return {
-      toggled: false,
+      toolbarToggled: false,
+      locked: false,
+      hideNav: true,
+      menuItems: [{
+        routeName: 'Dashboard',
+        displayName: this.$t('sideMenu.dashboard'),
+        icon: 'dashboard',
+      }, {
+        routeName: 'Profile',
+        displayName: 'Profile',
+        icon: 'account_circle',
+      }],
     };
   },
+  mounted() {
+  },
   computed: {
+    /**
+     * Sets initial variable values from userstore-saved information
+     */
     ...mapState({
       internalUser: state => state.UserStore.internalUser,
       userId: state => state.UserStore.userId,
@@ -198,12 +109,79 @@ export default {
       accessObj: state => state.UserStore.access,
       adminURL: state => state.ApplicationStore.adminURL,
       amDataEndpoints: state => state.ApplicationStore.amDataEndpoints,
+      userDetails: (state) => {
+        let userFullName;
+        const {
+          givenName,
+          sn,
+          userName,
+          company,
+          email,
+          adminUser,
+          userId,
+        } = state.UserStore;
+        if (givenName || sn) {
+          userFullName = `${givenName} ${sn}`;
+        } else {
+          userFullName = userName || userId;
+        }
+        return {
+          name: userFullName,
+          company: company || 'ForgeRock',
+          email,
+          adminUser,
+          adminURL: state.ApplicationStore.adminURL,
+        };
+      },
     }),
+  },
+  watch: {
+    $route(to) {
+      this.hideNav = to.meta.hideNav;
+    },
+    amDataEndpoints(value) {
+      if (value && this.internalUser === false) {
+        this.menuItems.push({
+          displayName: 'Sharing',
+          icon: 'share',
+          routeName: 'Sharing',
+        });
+      }
+    },
+    /**
+     * when we receive user-saved data of managed resources,
+     * add them to iterated selectable menu items
+     */
+    accessObj() {
+      this.accessObj.forEach((obj) => {
+        const splitObj = obj.privilegePath.split('/');
+        this.menuItems.push({
+          displayName: capitalize(obj.title),
+          icon: this.accessIcon(obj.icon),
+          routeName: 'ListResource',
+          resourceName: splitObj[1],
+          resourceType: splitObj[0],
+        });
+      });
+    },
   },
   methods: {
     onToggle() {
-      this.toggled = !this.toggled;
+      this.toolbarToggled = !this.toolbarToggled;
     },
+    /**
+     * Sets locked variables when sidemenu is changed to allow
+     * css hooks to change widths
+     * @param {Boolean} locked Required state that we are setting locked state to
+     */
+    lockMenu(locked) {
+      this.locked = locked;
+      this.toolbarToggled = locked;
+    },
+    /**
+     * Determines if icon string is a font awesome or material icon
+     * @param {String} icon Required name of icon
+     */
     accessIcon(icon) {
       let matIcon = 'check_box_outline_blank';
       if (icon && icon.length && icon.substring(0, 3) !== 'fa-') {
@@ -212,6 +190,10 @@ export default {
 
       return matIcon;
     },
+    /**
+     * Retrieves material icon for notification modal based on type
+     * @param {String} notificationType Required severity type of notification
+     */
     getMaterialIcon(notificationType) {
       const typeMap = {
         success: 'check_circle',
@@ -313,7 +295,7 @@ export default {
       }
     }
 
-    #appContentWrapper {
+    #appContent {
       height: 100%;
       -webkit-transition: all 0.2s ease;
       -moz-transition: all 0.2s ease;
@@ -351,7 +333,7 @@ export default {
       }
     }
 
-    &.toggled {
+    &.toolbarToggled {
       #appSidebarWrapper {
         width: $fr-sidebar-nav-width;
         margin-left: 0;
@@ -379,7 +361,7 @@ export default {
         }
       }
 
-      #appContentWrapper {
+      #appContent {
         z-index: 1;
         padding-left: $fr-sidebar-nav-width;
         margin-right: -$fr-sidebar-nav-width;
@@ -460,6 +442,15 @@ export default {
       #appSidebarWrapper {
         z-index: 0;
       }
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .fr-menu-locked {
+    #appContent {
+      margin-left: 170px;
+      margin-right: 0;
     }
   }
 }
