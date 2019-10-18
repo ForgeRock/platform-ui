@@ -12,10 +12,12 @@
             height="112"
             alt="img"
             class="m-1 mb-3" />
-          <h4>{{ fullName }}</h4>
-          <span class="text-muted">
+          <h4 class="text-truncate">
+            {{ fullName }}
+          </h4>
+          <div class="text-muted text-truncate">
             {{ email }}
-          </span>
+          </div>
           <BButton
             v-if="internalUser === false"
             ref="editProfileButton"
