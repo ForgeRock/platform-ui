@@ -15,8 +15,8 @@ describe('App.vue', () => {
       ApplicationStore: {},
     },
     getters: {
-      UserStore: state => state.UserStore,
-      ApplicationStore: state => state.ApplicationStore,
+      UserStore: (state) => state.UserStore,
+      ApplicationStore: (state) => state.ApplicationStore,
     },
   });
 

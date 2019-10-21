@@ -72,7 +72,7 @@ export default {
   },
   computed: {
     filteredProviders() {
-      return filter(this.providers, provider => provider.uiConfig);
+      return filter(this.providers, (provider) => provider.uiConfig);
     },
   },
   data() {
@@ -93,10 +93,10 @@ export default {
       });
 
       /*
-          If callback_index is zero and the "name" attribute on callbackSubmitButton is callback_1 we
-          know SelectIdPCallback is by itself on the page. In this case we will hide callbackSubmitButton
-          and click it to submit the form automatically when one of the social buttons is pressed.
-      */
+						If callback_index is zero and the "name" attribute on callbackSubmitButton is callback_1 we
+						know SelectIdPCallback is by itself on the page. In this case we will hide callbackSubmitButton
+						and click it to submit the form automatically when one of the social buttons is pressed.
+				*/
       this.standaloneMode = this.index === 0 && this.callbackSubmitButton && this.callbackSubmitButton.name === 'callback_1';
 
       if (this.standaloneMode) {
@@ -121,8 +121,8 @@ export default {
 </script>
 
 <style type="scss" scoped>
-    .fr-btn-social img{
-        max-width: 21px;
-        margin-right: 5px;
-    }
+  .fr-btn-social img{
+    max-width: 21px;
+    margin-right: 5px;
+  }
 </style>

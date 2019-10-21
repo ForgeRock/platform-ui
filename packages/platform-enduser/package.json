@@ -92,6 +92,7 @@
         "error",
         2
       ],
+      "arrow-parens": [2, "always"],
       "no-tabs": 0,
       "max-len": 0,
       "vue/html-closing-bracket-newline": 0

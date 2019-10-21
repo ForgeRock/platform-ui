@@ -109,8 +109,8 @@ export default {
   },
   computed: {
     ...mapState({
-      userId: state => state.UserStore.userId,
-      amDataEndpoints: state => state.ApplicationStore.amDataEndpoints,
+      userId: (state) => state.UserStore.userId,
+      amDataEndpoints: (state) => state.ApplicationStore.amDataEndpoints,
     }),
     umaHistory() {
       return map(this.activity, (res) => {

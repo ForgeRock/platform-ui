@@ -78,8 +78,8 @@ export default {
     activityGroups() {
       const tempUmaHistory = clone(this.umaHistory);
       const sortedHistory = tempUmaHistory.sort((a, b) => a.eventTime - b.eventTime).reverse();
-      const groups = groupBy(sortedHistory, event => moment(event.eventTime).format('YYYY-MM-DD'));
-      const activityGroups = keys(groups).map(day => ({ day, activities: groups[day] }));
+      const groups = groupBy(sortedHistory, (event) => moment(event.eventTime).format('YYYY-MM-DD'));
+      const activityGroups = keys(groups).map((day) => ({ day, activities: groups[day] }));
 
       return sortBy(activityGroups, ({ day }) => moment(day)).reverse();
     },

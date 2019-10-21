@@ -25,9 +25,9 @@
 
 <script>
 /**
- * @description Selfservice stage for multiple selfservice flows, displays a google captcha
- *
- * */
+	 * @description Selfservice stage for multiple selfservice flows, displays a google captcha
+	 *
+	 * */
 import { isUndefined } from 'lodash';
 
 export default {
@@ -89,10 +89,10 @@ export default {
 };
 </script>
 <style>
-    #captchaBody #recaptchaContainer>div {
-        margin: auto;
-    }
-    #captchaBody #recaptchaContainer>div>div {
-        display: inline-block;
-    }
+  #captchaBody #recaptchaContainer>div {
+    margin: auto;
+  }
+  #captchaBody #recaptchaContainer>div>div {
+    display: inline-block;
+  }
 </style>

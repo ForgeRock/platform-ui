@@ -149,7 +149,7 @@ export default {
   },
   computed: {
     ...mapState({
-      managedResource: state => state.UserStore.managedResource,
+      managedResource: (state) => state.UserStore.managedResource,
     }),
     mappings() {
       return this.consentableMappings.map((mapping) => {

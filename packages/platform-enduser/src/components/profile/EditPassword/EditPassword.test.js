@@ -2,7 +2,6 @@ import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
 import Vuex from 'vuex';
 import VeeValidate from 'vee-validate';
-import ValidationError from '@forgerock/platform-components/src/components//ValidationError';
 import PolicyPasswordInput from '@forgerock/platform-components/src/components/PolicyPasswordInput';
 import EditPassword from '@/components/profile/EditPassword';
 import i18n from '@/i18n';
@@ -11,7 +10,6 @@ const localVue = createLocalVue();
 localVue.use(BootstrapVue);
 localVue.use(VeeValidate);
 localVue.use(PolicyPasswordInput);
-localVue.use(ValidationError);
 localVue.use(Vuex);
 
 

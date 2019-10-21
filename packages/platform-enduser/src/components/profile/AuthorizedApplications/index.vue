@@ -108,8 +108,8 @@ export default {
   },
   computed: {
     ...mapState({
-      userId: state => state.UserStore.userId,
-      amDataEndpoints: state => state.ApplicationStore.amDataEndpoints.baseUrl,
+      userId: (state) => state.UserStore.userId,
+      amDataEndpoints: (state) => state.ApplicationStore.amDataEndpoints.baseUrl,
     }),
   },
   mounted() {

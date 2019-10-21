@@ -149,7 +149,7 @@ Vue.mixin({
         headers,
       });
 
-      instance.interceptors.response.use(response => response, (error) => {
+      instance.interceptors.response.use((response) => response, (error) => {
         if (error.response && error.response.data && error.response.data.code === 401) {
           this.$router.push({ name: 'Login' });
 

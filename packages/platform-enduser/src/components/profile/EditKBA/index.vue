@@ -101,7 +101,7 @@ import {
   times,
 } from 'lodash';
 import ListItem from '@forgerock/platform-components/src/components/listItem/';
-import ValidationError from '@forgerock/platform-components/src/components/ValidationError';
+import ValidationErrorList from '@forgerock/platform-components/src/components/ValidationErrorList/';
 import LoadingButton from '@/components/utils/LoadingButton';
 
 /**
@@ -113,7 +113,7 @@ export default {
   components: {
     FrListItem: ListItem,
     FrLoadingButton: LoadingButton,
-    FrValidationError: ValidationError,
+    FrValidationError: ValidationErrorList,
   },
   $_veeValidate: {
     validator: 'new',

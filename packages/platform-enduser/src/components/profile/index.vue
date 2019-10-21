@@ -101,16 +101,16 @@ export default {
   },
   computed: {
     ...mapState({
-      userId: state => state.UserStore.userId,
-      email: state => state.UserStore.email,
-      schema: state => state.UserStore.schema,
-      sirName: state => state.UserStore.sn,
-      givenName: state => state.UserStore.givenName,
-      managedResource: state => state.UserStore.managedResource,
-      internalUser: state => state.UserStore.internalUser,
-      passwordReset: state => state.ApplicationStore.passwordReset,
-      amDataEndpoints: state => state.ApplicationStore.amDataEndpoints,
-      consentedMappings: state => state.UserStore.consentedMappings,
+      userId: (state) => state.UserStore.userId,
+      email: (state) => state.UserStore.email,
+      profile: (state) => state.UserStore.profile,
+      schema: (state) => state.UserStore.schema,
+      sirName: (state) => state.UserStore.sn,
+      givenName: (state) => state.UserStore.givenName,
+      managedResource: (state) => state.UserStore.managedResource,
+      internalUser: (state) => state.UserStore.internalUser,
+      passwordReset: (state) => state.ApplicationStore.passwordReset,
+      amDataEndpoints: (state) => state.ApplicationStore.amDataEndpoints,
     }),
     fullName() {
       let fullName = '';
