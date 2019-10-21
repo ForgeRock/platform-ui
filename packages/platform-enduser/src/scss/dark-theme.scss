@@ -136,14 +136,22 @@ $fr-application-text-color:            $gray-100;
 $fr-toolbar-color:                     $gray-100;
 $fr-toolbar-dropdown-color:            $gray-100;
 
-// Side toolbar
-$fr-sidebar-nav-background-color:             $gray-900;
-$fr-sidebar-nav-brand-color:                  $gray-900;
-$fr-sidebar-nav-link-border-color:            transparent;
-$fr-sidebar-nav-link-color:                   $gray-400;
-$fr-sidebar-nav-link-active-border-color:     $yellow;
-$fr-sidebar-nav-link-active-color:            rgba(0, 0, 0, 0.3);
-$fr-sidebar-nav-link-hover-color:             $gray-100;
+// Sidemenu
+$fr-sidemenu-background-color: $gray-900;
+$fr-sidemenu-toggler-border-color: transparent;
+$fr-sidemenu-font-color: $gray-400;
+$fr-sidemenu-color: $gray-400;
+$fr-sidemenu-active-border-color: $yellow;
+$fr-sidemenu-height: 4.5rem;
+$fr-sidemenu-hover:  rgba(0, 0, 0, 0.3);
+$fr-sidemenu-shadow: 1px 0px 9px rgba(0, 0, 0, 0.45);
+$fr-sidemenu-border: $gray-200;
+$fr-sidemenu-width-lg: 14.25em;
+$fr-sidemenu-width-sm: 3.75em;
+$fr-sidemenu-fontsize: 0.875rem;
+$fr-sidemenu-icon-fontsize: 1.125rem;
+$fr-sidemenu-bottom-color: $gray-200;
+$fr-sidemenu-bottom-background-color: $gray-900;
 
 // Alert
 $alert-padding-y:                   1.25rem;

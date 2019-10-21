@@ -282,7 +282,7 @@ export default {
   },
   computed: {
     filteredResources() {
-      return filter(this.resources, resource => resource.name.includes(this.resourceFilter));
+      return filter(this.resources, (resource) => resource.name.includes(this.resourceFilter));
     },
   },
 };
