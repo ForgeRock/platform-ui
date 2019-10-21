@@ -55,7 +55,7 @@ export default {
   },
   computed: {
     ...mapState({
-      internalUser: state => state.UserStore.internalUser,
+      internalUser: (state) => state.UserStore.internalUser,
     }),
     fullName() {
       let fullName = '';

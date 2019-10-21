@@ -8,7 +8,8 @@
     "cancel": "Cancel",
     "required": "Required",
     "typeSearch": "Type to Search",
-    "new": "New"
+    "new": "New",
+    "add": "Add"
   },
   "sideMenu": {
     "signOut": "Sign Out",
@@ -55,6 +56,15 @@
     }
   },
   "trees": {
+    "failedToGetNodeType": "Failed to gather node type details",
+    "failedToUpdateNodeOutcomes": "Failed to update node type outcomes",
+    "configurationRequired": "Requires Configuration",
+    "editpanel": {
+      "name": "Name",
+      "key": "Key",
+      "value": "Value",
+      "none": "none"
+    },
     "nodeTypeList": {
       "failedNodeTypeList": "Failed to get available node types",
       "title": "Nodes"

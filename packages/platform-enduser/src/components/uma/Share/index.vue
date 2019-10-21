@@ -239,7 +239,7 @@ export default {
       const onSuccess = this.resetModal.bind(this);
 
       // filter subject out of current permissions array
-      const permissions = this.resource.policy.permissions.filter(obj => obj.subject !== subject);
+      const permissions = this.resource.policy.permissions.filter((obj) => obj.subject !== subject);
 
 
       const payload = {
@@ -258,7 +258,7 @@ export default {
     validateResource() {
       // resource has already been shared
       if (this.resource.policy && this.resource.policy.permissions) {
-        const index = findIndex(this.resource.policy.permissions, perm => perm.subject === this.newShare);
+        const index = findIndex(this.resource.policy.permissions, (perm) => perm.subject === this.newShare);
 
         if (index === -1) {
           if (this.newShare) {
@@ -288,7 +288,7 @@ export default {
 
       // resource has previously been shared
       if (this.resource.policy) {
-        payload.permissions = this.resource.policy.permissions.filter(obj => obj.subject !== subject);
+        payload.permissions = this.resource.policy.permissions.filter((obj) => obj.subject !== subject);
         payload.permissions.push(newPermissions);
 
         this.$emit('modifyResource', this.resource._id, payload, { onSuccess });
@@ -307,7 +307,7 @@ export default {
           if (permission.subject === subject) {
             const scopesLength = permission.scopes.length;
 
-            processedPermission.scopes = filter(processedPermission.scopes, scope => scope !== changedScope);
+            processedPermission.scopes = filter(processedPermission.scopes, (scope) => scope !== changedScope);
 
             if (scopesLength === processedPermission.scopes.length) {
               processedPermission.scopes.push(changedScope);
