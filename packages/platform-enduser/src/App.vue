@@ -103,12 +103,12 @@ export default {
      * Sets initial variable values from userstore-saved information
      */
     ...mapState({
-      internalUser: state => state.UserStore.internalUser,
-      userId: state => state.UserStore.userId,
-      adminUser: state => state.UserStore.adminUser,
-      accessObj: state => state.UserStore.access,
-      adminURL: state => state.ApplicationStore.adminURL,
-      amDataEndpoints: state => state.ApplicationStore.amDataEndpoints,
+      internalUser: (state) => state.UserStore.internalUser,
+      userId: (state) => state.UserStore.userId,
+      adminUser: (state) => state.UserStore.adminUser,
+      accessObj: (state) => state.UserStore.access,
+      adminURL: (state) => state.ApplicationStore.adminURL,
+      amDataEndpoints: (state) => state.ApplicationStore.amDataEndpoints,
       userDetails: (state) => {
         let userFullName;
         const {

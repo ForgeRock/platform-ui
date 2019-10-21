@@ -126,7 +126,7 @@
 import { mapState } from 'vuex';
 import ListItem from '@forgerock/platform-components/src/components/listItem/';
 import PolicyPasswordInput from '@forgerock/platform-components/src/components/PolicyPasswordInput';
-import ValidationError from '@forgerock/platform-components/src/components/ValidationError';
+import ValidationErrorList from '@forgerock/platform-components/src/components/ValidationErrorList';
 import LoadingButton from '@/components/utils/LoadingButton';
 
 /**
@@ -143,13 +143,13 @@ export default {
     FrListItem: ListItem,
     FrLoadingButton: LoadingButton,
     FrPolicyPasswordInput: PolicyPasswordInput,
-    FrValidationError: ValidationError,
+    FrValidationError: ValidationErrorList,
   },
   computed: {
     ...mapState({
-      userId: state => state.UserStore.userId,
-      managedResource: state => state.UserStore.managedResource,
-      passwordReset: state => state.ApplicationStore.passwordReset,
+      userId: (state) => state.UserStore.userId,
+      managedResource: (state) => state.UserStore.managedResource,
+      passwordReset: (state) => state.ApplicationStore.passwordReset,
     }),
   },
   data() {

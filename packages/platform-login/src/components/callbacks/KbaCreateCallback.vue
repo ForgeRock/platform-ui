@@ -154,7 +154,7 @@ export default {
     // This function sets the value of the question's hidden input and disbables the question value from other kba question selection options on the dom
     onQuestionSelectionChange() {
       // get a list of values from other .kbaQuestion's
-      const otherQuestionValues = map(document.querySelectorAll(`.kbaQuestion:not([name=${this.questionName}])`), question => question.value);
+      const otherQuestionValues = map(document.querySelectorAll(`.kbaQuestion:not([name=${this.questionName}])`), (question) => question.value);
       // get all the option elements from the other .kbaQuestion_selector's
       const otherQuestionSelectorOptions = document.querySelectorAll(`select.kbaQuestionSelect:not(#${this.questionName}_selector) option`);
       // if "Provide your own" is selected open the custom question input and reset this.questionValue
@@ -176,10 +176,10 @@ export default {
     validateQuestion() {
       // Find all the other questions on the dom
       const otherQuestionInputs = document.querySelectorAll(`input.kbaQuestion:not([name=${this.questionName}])`);
-      const otherQuestions = map(otherQuestionInputs, question => question.value);
+      const otherQuestions = map(otherQuestionInputs, (question) => question.value);
 
       // Look for questions with the same value as the local question
-      const matchesQuestion = otherQuestions.find(q => q === this.questionValue);
+      const matchesQuestion = otherQuestions.find((q) => q === this.questionValue);
 
       this.failedQuestionPolicies = [];
 

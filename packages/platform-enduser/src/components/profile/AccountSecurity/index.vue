@@ -27,7 +27,7 @@ export default {
   },
   computed: {
     ...mapState({
-      internalUser: state => state.UserStore.internalUser,
+      internalUser: (state) => state.UserStore.internalUser,
     }),
   },
   components: {

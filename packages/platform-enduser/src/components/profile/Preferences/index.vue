@@ -59,8 +59,8 @@ export default {
   },
   computed: {
     ...mapState({
-      currentPreferences: state => state.UserStore.preferences,
-      properties: state => state.UserStore.schema.properties.preferences.properties,
+      currentPreferences: (state) => state.UserStore.preferences,
+      properties: (state) => state.UserStore.schema.properties.preferences.properties,
     }),
   },
   methods: {
