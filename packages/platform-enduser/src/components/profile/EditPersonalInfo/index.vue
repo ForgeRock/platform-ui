@@ -136,7 +136,7 @@ import {
   map,
 } from 'lodash';
 import { mapState } from 'vuex';
-import ValidationError from '@forgerock/platform-components/src/components/ValidationError';
+import ValidationErrorList from '@forgerock/platform-components/src/components/ValidationErrorList/';
 // eslint-disable-next-line import/no-unresolved
 import ResourceMixin from '@forgerock/platform-components/src/components/mixins/ResourceMixin';
 
@@ -152,13 +152,13 @@ export default {
     ResourceMixin,
   ],
   components: {
-    FrValidationError: ValidationError,
+    FrValidationError: ValidationErrorList,
   },
   computed: {
     ...mapState({
-      userId: state => state.UserStore.userId,
-      managedResource: state => state.UserStore.managedResource,
-      internalUser: state => state.UserStore.internalUser,
+      userId: (state) => state.UserStore.userId,
+      managedResource: (state) => state.UserStore.managedResource,
+      internalUser: (state) => state.UserStore.internalUser,
     }),
   },
   $_veeValidate: {
@@ -184,11 +184,11 @@ export default {
   methods: {
     generateFormFields() {
       const { order, properties, required } = this.schema;
-      const filteredOrder = filter(order, propName => properties[propName].viewable
+      const filteredOrder = filter(order, (propName) => properties[propName].viewable
                             && properties[propName].userEditable
                             && properties[propName].type !== 'array'
                             && properties[propName].type !== 'object');
-      const formFields = map(filteredOrder, name => ({
+      const formFields = map(filteredOrder, (name) => ({
         name,
         key: name,
         title: properties[name].title,
