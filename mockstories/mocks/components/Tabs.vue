@@ -1,27 +1,27 @@
 <template>
     <div>
         <div class="sg_masthead">
-            <b-container>
+            <BContainer>
                 <h1 class="display-4">Tabs</h1>
                 <p class="mb-4 lead">Use tabs to keep related content in a single container that is shown and hidden through navigation.</p>
-            </b-container>
+            </BContainer>
         </div>
-        <b-container>
+        <BContainer>
             <template>
                 <section class="sg_pattern">
                     <h2 class="mb-5">Tabs</h2>
                     <div class="card">
                         <div class="card-body">
-                            <b-tabs content-class="mt-3">
-                                <b-tab title="First" active><p>I'm the first tab</p></b-tab>
-                                <b-tab title="Second"><p>I'm the second tab</p></b-tab>
-                                <b-tab title="Third"><p>I'm the third tab</p></b-tab>
-                            </b-tabs>
+                            <BTabs content-class="mt-3">
+                                <BTab title="First" active><p>I'm the first tab</p></BTab>
+                                <BTab title="Second"><p>I'm the second tab</p></BTab>
+                                <BTab title="Third"><p>I'm the third tab</p></BTab>
+                            </BTabs>
                         </div>
                     </div>
                 </section>
             </template>
-        </b-container>
+        </BContainer>
     </div>
 </template>
 

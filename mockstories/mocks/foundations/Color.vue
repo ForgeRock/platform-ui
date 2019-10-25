@@ -1,12 +1,12 @@
 <template>
     <div>
         <div class="sg_masthead">
-            <b-container>
+            <BContainer>
                 <h1 class="display-4">Color</h1>
                 <p class="mb-4 lead">Colors used in this system map to Bootstrap variables.</p>
-            </b-container>
+            </BContainer>
         </div>
-        <b-container>
+        <BContainer>
             <template>
                 <section class="sg_pattern">
                     <h2 class="mb-4">Brand Colors</h2>
@@ -67,7 +67,7 @@
                     </div>
                 </section>
             </template>
-        </b-container>
+        </BContainer>
     </div>
 </template>
 
