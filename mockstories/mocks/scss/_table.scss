@@ -1,4 +1,9 @@
 .table {
+  th{
+    vertical-align: middle;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
+  }
   thead th {
     border-top: none;
     border-bottom: $fr-table-head-border solid $table-border-color;
@@ -7,6 +12,12 @@
   &.table-hover {
     tbody tr {
       cursor: pointer;
+    }
+  }
+  &.data-table {
+    th, td{
+      vertical-align: middle;
+      white-space: nowrap;
     }
   }
 }

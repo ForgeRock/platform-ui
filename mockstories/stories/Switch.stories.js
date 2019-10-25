@@ -1,8 +1,8 @@
 import { storiesOf } from '@storybook/vue';
-import Switch from '../mocks/components/Switch.vue';
+import FrSwitch from '../mocks/components/Switch.vue';
 
 storiesOf('Components-Mock|Switch', module)
-    .add('Switch', () => ({
-        components: { 'fr-switch': Switch },
+    .add('FrSwitch', () => ({
+        components: { 'fr-switch': FrSwitch },
         template: '<fr-switch></fr-switch>'
     }));

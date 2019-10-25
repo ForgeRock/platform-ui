@@ -1,12 +1,12 @@
 <template>
     <div>
         <div class="sg_masthead">
-            <b-container>
+            <BContainer>
                 <h1 class="display-4">Typography</h1>
                 <p class="mb-4 lead">All text is set in Roboto.</p>
-            </b-container>
+            </BContainer>
         </div>
-        <b-container>
+        <BContainer>
             <template>
                 <section class="sg_pattern">
                     <h2 class="mb-5">Roboto</h2>
@@ -83,7 +83,7 @@
                     </div>
                 </section>
             </template>
-        </b-container>
+        </BContainer>
     </div>
 </template>
 

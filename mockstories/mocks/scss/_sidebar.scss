@@ -1,0 +1,283 @@
+/**
+    Sidebar base styles
+ */
+.fr-sidebar-wrapper {
+    position: fixed;
+    top: 0;
+    width:$fr-sidemenu-width-lg;
+    height: 100%;
+    margin-left: -$fr-sidemenu-width-lg;
+    overflow: visible;
+    background: $fr-sidemenu-background-color;
+    z-index: 500;
+    -webkit-transition: margin-left .15s ease-out;
+    transition: margin-left .15s ease-out;
+
+    .material-icons {
+        position: relative;
+    }
+
+    .sidemenu-divider {
+      @include nav-divider($dropdown-divider-bg, $dropdown-divider-margin-y);
+    }
+    .submenu {
+        display: none;
+    }
+
+    /**
+        Menu will shift close when screen size small and hover open when greater then 768px in width
+    */
+    @media (min-width: 768px) {
+        width: $fr-sidemenu-width-sm;
+        margin-left: 0;
+        -webkit-box-shadow: 1px 0 9px rgba(0, 0, 0, 0.13);
+        -moz-box-shadow: 1px 0 9px rgba(0, 0, 0, 0.13);
+        box-shadow: 1px 0 9px rgba(0, 0, 0, 0.13);
+
+        .sidebar-item-text {
+            display: none;
+        }
+
+        &:hover {
+            margin-left: 0;
+            width: $fr-sidemenu-width-lg;
+
+            .fr-sidebar-nav {
+                width: $fr-sidemenu-width-lg;
+
+                .sidebar-brand {
+                    .dropdown-toggle::after {
+                        display: inline-block;
+                    }
+                }
+                & > li > a.submenu-toggle {
+                    &:after {
+                        display: block;
+                    }
+                }
+
+                .sidebar-item-text {
+                    display: inline;
+                }
+                .sidebar-header {
+                    display: block;
+                    opacity: 1;
+                }
+
+                > li > ul {
+                    display: block;
+                }
+
+                > li > .submenu {
+                    display: block;
+                }
+                > li > .submenu > ul {
+                    > li > a {
+                        &.router-link-active,
+                        &.router-link-exact-active {
+                            color: $fr-sidemenu-active-color;
+                            background: $fr-sidemenu-hover;
+                            border-left-color: $primary;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .fr-sidebar-nav {
+        position: absolute;
+        top: 0;
+        width: $fr-sidemenu-width-lg;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        color: $fr-sidemenu-color;
+
+
+        .fr-drowndown-button {
+            margin-left: 12px;
+        }
+
+        .fr-sidebar-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            border-top: 1px solid $fr-sidemenu-toggler-border-color;
+            background-color: $fr-sidemenu-toggler-background-color;
+        }
+
+        /**
+            Need deep to control sub component menu styles correctly
+        */
+
+        .b-dropdown {
+            width: 100%;
+
+            .dropdown-menu {
+                padding: 0;
+                font-size: .875rem;
+
+                h5 {
+                    font-size: inherit;
+                    color: $fr-sidemenu-dropdown-heading-color;
+                }
+            }
+        }
+
+        .sidebar-header {
+            display: block;
+            padding: .5rem .8125rem;
+            margin-bottom: 0;
+            font-size: .75rem;
+            color: #6c757d;
+            white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: none;
+            opacity: 0;
+        }
+
+        .sidebar-brand {
+            height: 72px;
+
+            &:hover {
+                background-color: $fr-sidemenu-hover;
+            }
+
+            .dropdown-toggle {
+                padding-left: 12px;
+                color: $gray-700;
+                font-size: .875rem;
+
+                h5 {
+                    font-size: inherit;
+                    color: $fr-sidemenu-dropdown-heading-color;
+                }
+                &:after {
+                  display: none;
+                  border: none;
+                  content: "expand_more";
+                  font-family: 'Material Icons Outlined';
+                  font-size: 1rem;
+                  margin: 0;
+                  position: absolute;
+                  right: 0.6875rem;
+                  top: 50%;
+                  transform: translateY(-50%);
+                }
+            }
+        }
+        & > li a {
+            font-size: .875rem;
+        }
+        & > li > a {
+            color: $fr-sidemenu-color;
+            display: block;
+            position: relative;
+            border-left: 3px solid transparent;
+            text-decoration: none;
+            padding: 15px 20px 15px 16px;
+
+            &:hover {
+                background: $fr-sidemenu-hover;
+            }
+            &.router-link-active {
+                color: $fr-sidemenu-active-color;
+                background: $fr-sidemenu-hover;
+                border-left-color: $primary;
+            }
+            &.submenu-toggle {
+                &:after {
+                    border: none;
+                    content: "expand_more";
+                    font-family: "Material Icons Outlined";
+                    font-size: 1rem;
+                    line-height: 1;
+                    position: absolute;
+                    right: 0.6875rem;
+                    top: 17px;
+                    vertical-align: middle;
+                    display: none;
+                }
+                &[aria-expanded="true"]:after {
+                    content: "expand_less";
+                }
+            }
+        }
+        > li > .submenu > ul {
+            > li > a {
+                color: $fr-sidemenu-color;
+                display: block;
+                position: relative;
+                border-left: 3px solid transparent;
+                text-decoration: none;
+                padding: 10px 20px 10px 50px;
+                &:hover {
+                    color: inherit;
+                    background: #e4f4fd;
+                }
+            }
+            &.collapsing {
+                -webkit-transition: height .15s ease;
+                -o-transition: height .15s ease;
+                transition: height .15s ease;
+            }
+        }
+
+        /**
+            Make sure menu items fit in small menu
+         */
+        @media (min-width: 768px) {
+            width: $fr-sidemenu-width-sm;
+        }
+    }
+}
+
+/*
+    Menu Toggled Open
+ */
+.fr-sidebar-toggled {
+    .fr-sidebar-wrapper {
+        margin-left: 0;
+        width: $fr-sidemenu-width-lg;
+
+        .fr-sidebar-nav {
+            width: $fr-sidemenu-width-lg;
+
+            .dropdown-toggle::after {
+                display: inline-block;
+            }
+            & > li > a.submenu-toggle {
+                &:after {
+                    display: block;
+                }
+            }
+            .sidebar-item-text {
+                display: inline;
+            }
+            .sidebar-header {
+                display: block;
+                opacity: 1;
+            }
+
+            > li > ul {
+                display: block;
+            }
+            > li > .submenu {
+                display: block;
+            }
+            > li > .submenu > ul {
+                > li > a {
+                    &.router-link-active,
+                    &.router-link-exact-active {
+                        color: $fr-sidemenu-active-color;
+                        background: $fr-sidemenu-hover;
+                        border-left-color: $primary;
+                    }
+                }
+            }
+        }
+    }
+}

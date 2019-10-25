@@ -1,12 +1,12 @@
 <template>
     <div>
         <div class="sg_masthead">
-            <b-container>
+            <BContainer>
                 <h1 class="display-4">Select</h1>
                 <p class="mb-4 lead">Select element presents a menu of options.</p>
-            </b-container>
+            </BContainer>
         </div>
-        <b-container>
+        <BContainer>
             <template>
                 <section class="sg_pattern">
                     <h2>Basic Select</h2>
@@ -68,7 +68,7 @@
                     </div>
                 </section>
             </template>
-        </b-container>
+        </BContainer>
     </div>
 </template>
 

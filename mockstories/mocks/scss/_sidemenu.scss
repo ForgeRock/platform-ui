@@ -1,0 +1,228 @@
+@media (min-width: 768px) {
+  .fr-menu-locked {
+    #appContent {
+      padding-left: 272px;
+      margin-right: 0;
+    }
+  }
+}
+/**
+  Badge Styles
+*/
+.fr-rounded-circle {
+  height: 34px;
+  width: 34px;
+  background-color: $gray-400;
+  color: $white;
+  border-radius: 50%;
+  text-align: center;
+
+  &.material-icons {
+    position: relative;
+    padding-top: 5px;
+  }
+}
+
+/**
+  Overlay shim
+*/
+.fr-sidebar-shim {
+  display: none;
+  background-color: $black;
+  opacity: .2;
+}
+
+@media (max-width: 768px) {
+  .fr-sidebar-toggled {
+    .fr-sidebar-shim {
+      display: block;
+    }
+  }
+}
+
+/**
+  Sidebar base styles
+*/
+.fr-sidebar-wrapper {
+  position: fixed;
+  top: 0;
+  width:$fr-sidemenu-width-lg;
+  height: 100%;
+  margin-left: -$fr-sidemenu-width-lg;
+  overflow: visible;
+  background: $fr-sidemenu-background-color;
+  z-index: 1040;
+  -webkit-transition: margin-left .15s ease-out;
+  transition: margin-left .15s ease-out;
+  transition: width .1s ease-out;
+
+  .material-icons {
+    position: relative;
+  }
+
+  /**
+    Menu will shift close when screen size small and hover open when greater then 768px in width
+  */
+  @media (min-width: 768px) {
+    width: $fr-sidemenu-width-sm;
+    margin-left: 0;
+    -webkit-box-shadow: 1px 0 9px rgba(0, 0, 0, 0.13);
+    -moz-box-shadow: 1px 0 9px rgba(0, 0, 0, 0.13);
+    box-shadow: 1px 0 9px rgba(0, 0, 0, 0.13);
+
+    .sidebar-item-text {
+      display: none;
+    }
+
+    &:hover {
+      margin-left: 0;
+      width: $fr-sidemenu-width-lg;
+
+      .fr-sidebar-nav {
+        width: $fr-sidemenu-width-lg;
+        .sidebar-brand {
+          /deep/ .dropdown-toggle::after {
+            display: inline-block;
+          }
+        }
+
+        .sidebar-item-text {
+          display: inline;
+        }
+
+        > li > ul {
+          display: block;
+        }
+      }
+    }
+  }
+
+  .fr-sidebar-nav {
+    position: absolute;
+    top: 0;
+    width: $fr-sidemenu-width-lg;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: $gray-700;
+
+    > li {
+      font-size: .875rem;
+
+      &:hover {
+        background: $fr-sidemenu-hover;
+      }
+    }
+
+    .fr-drowndown-button {
+      margin-left: 12px;
+    }
+
+    .fr-sidebar-bottom {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      border-top: 1px solid $fr-sidemenu-bottom-color;
+      background-color: $fr-sidemenu-bottom-background-color;
+    }
+
+    /**
+      Need deep to control sub component menu styles correctly
+    */
+    /deep/ {
+      .b-dropdown {
+        width: 100%;
+
+        .dropdown-menu {
+          padding: 0;
+          font-size: .875rem;
+
+          h5 {
+            font-size: inherit;
+          }
+        }
+      }
+
+      .sidebar-brand {
+        height: 72px;
+
+        &:hover {
+          background-color: $fr-sidemenu-hover;
+        }
+
+        .dropdown-toggle {
+          padding-left: 12px;
+          color: $gray-700;
+          font-size: .875rem;
+
+          h5 {
+            font-size: inherit;
+          }
+          &:after {
+            display: none;
+            border: none;
+            content: "expand_more";
+            font-family: 'Material Icons Outlined';
+            font-size: 1rem;
+            margin: 0;
+            position: absolute;
+            right: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+          }
+        }
+      }
+
+      & > li > a,
+      .expand-sidebar  {
+        color: $fr-sidemenu-font-color;
+        display: block;
+        position: relative;
+        border-left: 3px solid transparent;
+        text-decoration: none;
+        padding: 10px 20px 10px 16px;
+        cursor: pointer;
+
+        &.router-link-active {
+          color: $fr-sidemenu-active-border-color;
+          background-color: $fr-sidemenu-hover;
+          border-left-color: $primary;
+        }
+      }
+    }
+
+    /**
+      Make sure menu items fit in small menu
+    */
+    @media (min-width: 768px) {
+      width: $fr-sidemenu-width-sm;
+    }
+  }
+}
+
+/*
+  Menu Toggled Open
+*/
+.fr-sidebar-toggled {
+  .fr-sidebar-wrapper {
+    margin-left: 0;
+    width: $fr-sidemenu-width-lg;
+
+    .fr-sidebar-nav {
+      width: $fr-sidemenu-width-lg;
+
+      /deep/ .dropdown-toggle::after {
+        display: inline-block;
+      }
+
+      .sidebar-item-text {
+        display: inline;
+      }
+
+      > li > ul {
+        display: block;
+      }
+    }
+  }
+}
