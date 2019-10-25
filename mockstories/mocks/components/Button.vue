@@ -1,12 +1,12 @@
 <template>
     <div>
         <div class="sg_masthead">
-            <b-container>
+            <BContainer>
                 <h1 class="display-4">Button</h1>
                 <p class="mb-4 lead">Buttons are clickable items used to perform an action.</p>
-            </b-container>
+            </BContainer>
         </div>
-        <b-container>
+        <BContainer>
             <template>
                 <section class="sg_pattern">
                     <h2>Usage</h2>
@@ -123,8 +123,27 @@
                         </div>
                     </div>
                 </section>
+                <section class="sg_pattern">
+                    <h2>Checkbox Button</h2>
+                    <p class="mb-5">Use checkbox buttons to bring emphasis to selection items.</p>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="btn-group-toggle d-inline-block" data-toggle="buttons">
+                              <label class="btn btn-outline-secondary">
+                                <input type="checkbox" autocomplete="off">Not Checked
+                              </label>
+                            </div>
+                            <div class="btn-group-toggle d-inline-block" data-toggle="buttons">
+                              <label class="btn btn-outline-secondary active">
+                                <input type="checkbox" checked autocomplete="off">Checked
+                              </label>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
             </template>
-        </b-container>
+        </BContainer>
     </div>
 </template>
 

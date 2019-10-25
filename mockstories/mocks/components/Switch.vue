@@ -1,42 +1,42 @@
 <template>
     <div>
         <div class="sg_masthead">
-            <b-container>
+            <BContainer>
                 <h1 class="display-4">Switch</h1>
                 <p class="mb-4 lead">Switches toggle the state of a single setting on or off.</p>
-            </b-container>
+            </BContainer>
         </div>
-        <b-container>
+        <BContainer>
             <template>
                 <section class="sg_pattern">
                     <h2 class="mb-5">Switch</h2>
                     <div class="card">
                         <div class="card-body">
                             <div class="form-group">
-                                <b-form-checkbox name="check-button" switch>
+                                <BFormCheckbox name="check-button" switch>
                                     Toggle this switch element
-                                </b-form-checkbox>
+                                </BFormCheckbox>
                             </div>
                             <div class="form-group">
-                                <b-form-checkbox v-model="checked" name="check-button" switch>
+                                <BFormCheckbox v-model="checked" name="check-button" switch>
                                     Toggle this switch element
-                                </b-form-checkbox>
+                                </BFormCheckbox>
                             </div>
                             <div class="form-group">
-                                <b-form-checkbox name="check-button" switch disabled>
+                                <BFormCheckbox name="check-button" switch disabled>
                                     Disabled switch
-                                </b-form-checkbox>
+                                </BFormCheckbox>
                             </div>
                             <div class="form-group">
-                                <b-form-checkbox v-model="checked2" name="check-button" switch disabled>
+                                <BFormCheckbox v-model="checked2" name="check-button" switch disabled>
                                     Disabled and selected switch
-                                </b-form-checkbox>
+                                </BFormCheckbox>
                             </div>
                         </div>
                     </div>
                 </section>
             </template>
-        </b-container>
+        </BContainer>
     </div>
 </template>
 
@@ -44,7 +44,7 @@
 import { BContainer, BFormCheckbox } from 'bootstrap-vue';
 
 export default {
-    name: 'Switch',
+    name: 'FrSwitch',
     data: function () {
         return {
             checked: true,
