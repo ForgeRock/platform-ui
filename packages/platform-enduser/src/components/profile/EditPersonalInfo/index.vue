@@ -137,8 +137,9 @@ import {
 } from 'lodash';
 import { mapState } from 'vuex';
 import ValidationErrorList from '@forgerock/platform-components/src/components/ValidationErrorList/';
-// eslint-disable-next-line import/no-unresolved
-import ResourceMixin from '@forgerock/platform-components/src/components/mixins/ResourceMixin';
+import ResourceMixin from '@forgerock/platform-components/src/mixins/ResourceMixin';
+import RestMixin from '@forgerock/platform-components/src/mixins/RestMixin';
+import NotificationMixin from '@forgerock/platform-components/src/mixins/NotificationMixin';
 
 /**
  * @description Displays a users profile, auto generates fields based off of resource schema. Currently only displays strings, numbers and booleans. In the case of a policy
@@ -150,6 +151,8 @@ export default {
   name: 'EditPersonalInfo',
   mixins: [
     ResourceMixin,
+    RestMixin,
+    NotificationMixin,
   ],
   components: {
     FrValidationError: ValidationErrorList,
@@ -243,7 +246,7 @@ export default {
                   }
                 });
               } else {
-                this.displayNotification('error', this.$t('pages.profile.editProfile.failedProfileSave'));
+                this.displayNotification('IDMMessages', 'error', this.$t('pages.profile.editProfile.failedProfileSave'));
               }
             }
           });

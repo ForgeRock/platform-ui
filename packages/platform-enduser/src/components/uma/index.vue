@@ -72,6 +72,8 @@ import {
   map,
 } from 'lodash';
 import { mapState } from 'vuex';
+import RestMixin from '@forgerock/platform-components/src/mixins/RestMixin';
+import NotificationMixin from '@forgerock/platform-components/src/mixins/NotificationMixin';
 import CenterCard from '@/components/utils/CenterCard';
 import Activity from '@/components/uma/Activity';
 import Requests from '@/components/uma/Requests';
@@ -85,6 +87,10 @@ import Unshare from '@/components/uma/Unshare';
  * */
 export default {
   name: 'Sharing',
+  mixins: [
+    RestMixin,
+    NotificationMixin,
+  ],
   components: {
     FrActivity: Activity,
     FrCenterCard: CenterCard,
@@ -149,9 +155,9 @@ export default {
           this.requestsLoaded = true;
 
           if (error.response) {
-            this.displayNotification('error', error.response.data.message);
+            this.displayNotification('IDMMessages', 'error', error.response.data.message);
           } else {
-            this.displayNotification('error', error.message);
+            this.displayNotification('IDMMessages', 'error', error.message);
           }
         });
     },
@@ -167,9 +173,9 @@ export default {
         .catch((error) => {
           this.activity = [];
           if (error.response) {
-            this.displayNotification('error', error.response.data.message);
+            this.displayNotification('IDMMessages', 'error', error.response.data.message);
           } else {
-            this.displayNotification('error', error.message);
+            this.displayNotification('IDMMessages', 'error', error.message);
           }
         });
     },
@@ -202,9 +208,9 @@ export default {
           this.requests = {};
 
           if (error.response) {
-            this.displayNotification('error', error.response.data.message);
+            this.displayNotification('IDMMessages', 'error', error.response.data.message);
           } else {
-            this.displayNotification('error', error.message);
+            this.displayNotification('IDMMessages', 'error', error.message);
           }
         });
     },
@@ -230,11 +236,11 @@ export default {
         if (config.onSuccess) {
           config.onSuccess();
         }
-        this.displayNotification('success', successMsg);
+        this.displayNotification('IDMMessages', 'success', successMsg);
         this.loadData();
       })
         .catch((error) => {
-          this.displayNotification('error', error.response.data.message);
+          this.displayNotification('IDMMessages', 'error', error.response.data.message);
         });
     },
     unshareResource(resourceId) {
@@ -243,11 +249,11 @@ export default {
       const url = `${this.amDataEndpoints.baseUrl + this.userId}/uma/policies/${resourceId}`;
 
       selfServiceInstance.delete(url, { withCredentials: true }).then(() => {
-        this.displayNotification('success', successMsg);
+        this.displayNotification('IDMMessages', 'success', successMsg);
         this.loadData();
       })
         .catch((error) => {
-          this.displayNotification('error', error.response.data.message);
+          this.displayNotification('IDMMessages', 'error', error.response.data.message);
         });
     },
     modifyResource(resourceId, payload, config = {}) {
@@ -262,11 +268,11 @@ export default {
             config.onSuccess();
           }
 
-          this.displayNotification('success', successMsg);
+          this.displayNotification('IDMMessages', 'success', successMsg);
           this.loadData();
         })
         .catch((error) => {
-          this.displayNotification('error', error.response.data.message);
+          this.displayNotification('IDMMessages', 'error', error.response.data.message);
         });
     },
     finalizeResourceAccess(id, action, config = {}) {
@@ -281,10 +287,10 @@ export default {
         }
 
         this.delayedUpdate = true;
-        this.displayNotification('success', successMsg);
+        this.displayNotification('IDMMessages', 'success', successMsg);
       })
         .catch((error) => {
-          this.displayNotification('error', error.response.data.message);
+          this.displayNotification('IDMMessages', 'error', error.response.data.message);
         });
     },
     testForReload() {

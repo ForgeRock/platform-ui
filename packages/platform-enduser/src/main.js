@@ -1,9 +1,6 @@
 import {
-  extend,
   has,
-  isEmpty,
   isNull,
-  isUndefined,
 } from 'lodash';
 import axios from 'axios';
 import BootstrapVue from 'bootstrap-vue/dist/bootstrap-vue.esm.min';
@@ -14,11 +11,11 @@ import VeeValidate from 'vee-validate';
 import Vue from 'vue';
 import AppAuthHelper from 'appauthhelper/appAuthHelperCompat';
 import SessionCheck from 'oidcsessioncheck';
+import store from '@forgerock/platform-components/src/store';
 import router from './router';
 import i18n from './i18n';
 import App from './App';
 import 'core-js/stable';
-import store from './store/store';
 
 // Turn off production warning messages
 Vue.config.productionTip = false;
@@ -112,85 +109,6 @@ const RouterLink = Vue.component('router-link');
 
 Vue.component('RouterView', RouterView);
 Vue.component('RouterLink', RouterLink);
-
-// Global mixin for making openIDM REST calls
-Vue.mixin({
-  methods: {
-    // Generated an axios ajax request service for consistent use of calls to IDM
-    getRequestService(config) {
-      let baseURL = idmContext;
-      let timeout = 5000;
-      let headers = {
-        'content-type': 'application/json',
-        'x-requested-with': 'XMLHttpRequest',
-      };
-
-      if (config) {
-        if (config.baseURL) {
-          // eslint-disable-next-line prefer-destructuring
-          baseURL = config.baseURL;
-        }
-
-        if (config.timeout) {
-          // eslint-disable-next-line prefer-destructuring
-          timeout = config.timeout;
-        }
-
-        if (config.headers && !isEmpty(config.headers)) {
-          // eslint-disable-next-line prefer-destructuring
-          headers = config.headers;
-        }
-      }
-
-      headers = extend(headers, store.state.ApplicationStore.authHeaders || {});
-      const instance = axios.create({
-        baseURL,
-        timeout,
-        headers,
-      });
-
-      instance.interceptors.response.use((response) => response, (error) => {
-        if (error.response && error.response.data && error.response.data.code === 401) {
-          this.$router.push({ name: 'Login' });
-
-          return Promise.reject(error);
-        } if (isUndefined(error.response)) {
-          // In the case of critical error
-          return Promise.reject(new Error(error.message));
-        }
-        return Promise.reject(error);
-      });
-
-      return instance;
-    },
-    // Headers used for oauth requests and selfservice
-    getAnonymousHeaders() {
-      const headers = store.state.ApplicationStore.authHeaders || {};
-      return headers;
-    },
-    // Display a application notification
-    displayNotification(notificationType, message) {
-      this.$notify({
-        group: 'IDMMessages',
-        type: notificationType,
-        text: message,
-      });
-    },
-    // Log a user out of their existing session
-    logoutUser() {
-      window.logout();
-    },
-    // One location for checking and redirecting a completed login for s user
-    completeLogin() {
-      if (!isNull(store.state.ApplicationStore.loginRedirect)) {
-        this.$router.push(store.state.ApplicationStore.loginRedirect);
-        store.dispatch('ApplicationStore/clearLoginRedirect');
-      } else {
-        this.$router.push('/');
-      }
-    },
-  },
-});
 
 const loadApp = () => {
   /* eslint-disable no-new */

@@ -28,6 +28,8 @@
 </template>
 
 <script>
+import RestMixin from '@forgerock/platform-components/src/mixins/RestMixin';
+import NotificationMixin from '@forgerock/platform-components/src/mixins/NotificationMixin';
 import Welcome from '@/components/dashboard/widgets/WelcomeWidget';
 
 /**
@@ -37,6 +39,10 @@ import Welcome from '@/components/dashboard/widgets/WelcomeWidget';
  */
 export default {
   name: 'Dashboard',
+  mixins: [
+    RestMixin,
+    NotificationMixin,
+  ],
   components: {
     Welcome,
   },
@@ -56,7 +62,7 @@ export default {
           this.widgets = data.dashboard.widgets;
         })
         .catch((error) => {
-          this.displayNotification('error', error.response.data.message);
+          this.displayNotification('IDMMessages', 'error', error.response.data.message);
         });
     },
   },

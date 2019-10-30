@@ -29,9 +29,13 @@
 	 *
 	 * */
 import { isUndefined } from 'lodash';
+import NotificationMixin from '@forgerock/platform-components/src/mixins/NotificationMixin';
 
 export default {
   name: 'ReCaptchaCallback',
+  mixins: [
+    NotificationMixin,
+  ],
   props: {
     callback: {
       type: Object,
@@ -66,7 +70,7 @@ export default {
     loadRecaptcha() {
       /* istanbul ignore next */
       if (isUndefined(this.recaptchaSiteKey) || this.recaptchaSiteKey.length === 0) {
-        this.displayNotification('error', this.$t('pages.selfservice.captchaError'));
+        this.displayNotification('IDMMessages', 'error', this.$t('pages.selfservice.captchaError'));
       } else {
         setTimeout(() => {
           if (typeof window.grecaptcha === 'undefined') {

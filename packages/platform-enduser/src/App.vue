@@ -73,9 +73,13 @@ import {
 import { mapState } from 'vuex';
 import SideMenu from '@forgerock/platform-components/src/components/sidemenu/';
 import NavBar from '@forgerock/platform-components/src/components/navbar/';
+import LoginMixin from '@forgerock/platform-components/src/mixins/LoginMixin';
 
 export default {
   name: 'App',
+  mixins: [
+    LoginMixin,
+  ],
   components: {
     FrSideMenu: SideMenu,
     FrNavBar: NavBar,

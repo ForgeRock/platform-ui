@@ -11,31 +11,8 @@ import 'regenerator-runtime/runtime';
 Vue.config.productionTip = false;
 Vue.use(VeeValidate, { inject: false, fastExit: false });
 
-/*
-    Basic Notification Example:
-    this.$notify({
-        group: 'IDMMessages', // Currently the only group
-        type: 'success', // Available types success, failure, info, warning
-        title: this.$t('common.messages.saveSuccess'), //Translated string
-        text: this.$t('pages.resources.mappingSave') // Translated string (can also be html)
-    });
- */
 Vue.use(Notifications);
 Vue.use(ToggleButton);
-
-// Global mixin for making openIDM REST calls
-Vue.mixin({
-  methods: {
-    displayNotification(notificationType, message) {
-      /* istanbul ignore next */
-      this.$notify({
-        group: 'IDMMessages',
-        type: notificationType,
-        text: message,
-      });
-    },
-  },
-});
 
 new Vue({
   router,

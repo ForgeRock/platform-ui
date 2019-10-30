@@ -189,6 +189,7 @@
 import {
   cloneDeep, filter, findIndex, each, keys, map, pickBy,
 } from 'lodash';
+import NotificationMixin from '@forgerock/platform-components/src/mixins/NotificationMixin';
 import FallbackImage from '@/components/utils/FallbackImage';
 
 /**
@@ -197,6 +198,9 @@ import FallbackImage from '@/components/utils/FallbackImage';
  * */
 export default {
   name: 'Share',
+  mixins: [
+    NotificationMixin,
+  ],
   components: {
     FrFallbackImage: FallbackImage,
   },
@@ -264,11 +268,11 @@ export default {
           if (this.newShare) {
             this.shareResource();
           } else {
-            this.displayNotification('error', this.$t('pages.uma.resources.noRequestingParty'));
+            this.displayNotification('IDMMessages', 'error', this.$t('pages.uma.resources.noRequestingParty'));
           }
           // attempting to share with user who already has access to resource
         } else {
-          this.displayNotification('error', this.$t('pages.uma.resources.sameShareError', { requestingParty: this.newShare }));
+          this.displayNotification('IDMMessages', 'error', this.$t('pages.uma.resources.sameShareError', { requestingParty: this.newShare }));
           this.resetModal();
         }
         // shared for first time
