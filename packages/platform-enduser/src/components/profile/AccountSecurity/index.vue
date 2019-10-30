@@ -12,6 +12,7 @@
 <script>
 import { mapState } from 'vuex';
 import ListGroup from '@forgerock/platform-components/src/components/listGroup/';
+import RestMixin from '@forgerock/platform-components/src/mixins/RestMixin';
 import EditKBA from '@/components/profile/EditKBA';
 /**
  * @description Handles displaying account security controls (KBA change and password change)
@@ -19,6 +20,9 @@ import EditKBA from '@/components/profile/EditKBA';
  */
 export default {
   name: 'AccountSecurity',
+  mixins: [
+    RestMixin,
+  ],
   data() {
     return {
       isOnKBA: false,

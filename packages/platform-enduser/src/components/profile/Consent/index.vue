@@ -117,9 +117,9 @@ import moment from 'moment';
 import { mapState } from 'vuex';
 import ListGroup from '@forgerock/platform-components/src/components/listGroup/';
 import ListItem from '@forgerock/platform-components/src/components/listItem/';
+import RestMixin from '@forgerock/platform-components/src/mixins/RestMixin';
 import AccessLevel from '@/components/profile/AccessLevel';
 import FallbackImage from '@/components/utils/FallbackImage';
-
 
 /**
  * @description Controls the display of a users currently consented mappings (where their data is sent).
@@ -130,6 +130,9 @@ import FallbackImage from '@/components/utils/FallbackImage';
  */
 export default {
   name: 'Consent',
+  mixins: [
+    RestMixin,
+  ],
   components: {
     FrListGroup: ListGroup,
     FrListItem: ListItem,
