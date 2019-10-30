@@ -86,6 +86,8 @@
 import { mapState } from 'vuex';
 import ListGroup from '@forgerock/platform-components/src/components/listGroup/';
 import ListItem from '@forgerock/platform-components/src/components/listItem/';
+import RestMixin from '@forgerock/platform-components/src/mixins/RestMixin';
+import NotificationMixin from '@forgerock/platform-components/src/mixins/NotificationMixin';
 import FallbackImage from '@/components/utils/FallbackImage';
 
 /**
@@ -95,6 +97,10 @@ import FallbackImage from '@/components/utils/FallbackImage';
  */
 export default {
   name: 'TrustedDevices',
+  mixins: [
+    RestMixin,
+    NotificationMixin,
+  ],
   components: {
     FrListGroup: ListGroup,
     FrListItem: ListItem,
@@ -129,7 +135,7 @@ export default {
         this.devices = response.data.result;
       })
         .catch((error) => {
-          this.displayNotification('error', error.response.data.message);
+          this.displayNotification('IDMMessages', 'error', error.response.data.message);
         });
     },
     showConfirmationModal(device) {
@@ -143,12 +149,12 @@ export default {
 
       // by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
       selfServiceInstance.delete(url, { withCredentials: true }).then(() => {
-        this.displayNotification('success', this.$t('pages.profile.trustedDevices.removeSuccess', { deviceName: this.confirmDevice.name }));
+        this.displayNotification('IDMMessages', 'success', this.$t('pages.profile.trustedDevices.removeSuccess', { deviceName: this.confirmDevice.name }));
         this.loadData();
         this.$refs.fsModal.hide();
       })
         .catch((error) => {
-          this.displayNotification('error', error.response.data.message);
+          this.displayNotification('IDMMessages', 'error', error.response.data.message);
         });
     },
   },

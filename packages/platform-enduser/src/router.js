@@ -1,6 +1,6 @@
 import Router from 'vue-router';
 import Vue from 'vue';
-import store from './store/store';
+import store from '@forgerock/platform-components/src/store';
 
 Vue.use(Router);
 

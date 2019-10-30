@@ -129,6 +129,8 @@ import {
 } from 'lodash';
 import axios from 'axios';
 import CreateResource from '@forgerock/platform-components/src/components/resource/CreateResource';
+import RestMixin from '@forgerock/platform-components/src/mixins/RestMixin';
+import NotificationMixin from '@forgerock/platform-components/src/mixins/NotificationMixin';
 
 /**
  * @description Controlling component for delegated admin, allows for listing available resources and connects to the create, delete and edit features.
@@ -140,6 +142,10 @@ import CreateResource from '@forgerock/platform-components/src/components/resour
  */
 export default {
   name: 'Access',
+  mixins: [
+    RestMixin,
+    NotificationMixin,
+  ],
   components: {
     FrCreateResource: CreateResource,
   },
@@ -223,7 +229,7 @@ export default {
         this.loadGrid('true', this.displayFields, this.displayFields[0], 1);
       }))
         .catch((error) => {
-          this.displayNotification('error', error.response.data.message);
+          this.displayNotification('IDMMessages', 'error', error.response.data.message);
         });
     },
     loadGrid(filter, fields, sortField, page) {
@@ -356,7 +362,7 @@ export default {
           },
         });
       } else {
-        this.displayNotification('error', this.$t('pages.access.unableToEditResource', { resource: this.name }));
+        this.displayNotification('IDMMessages', 'error', this.$t('pages.access.unableToEditResource', { resource: this.name }));
       }
     },
   },
