@@ -127,6 +127,7 @@ import { mapState } from 'vuex';
 import ListItem from '@forgerock/platform-components/src/components/listItem/';
 import PolicyPasswordInput from '@forgerock/platform-components/src/components/PolicyPasswordInput';
 import ValidationErrorList from '@forgerock/platform-components/src/components/ValidationErrorList';
+import NotificationMixin from '@forgerock/platform-components/src/mixins/NotificationMixin';
 import LoadingButton from '@/components/utils/LoadingButton';
 
 /**
@@ -135,10 +136,13 @@ import LoadingButton from '@/components/utils/LoadingButton';
  *
  */
 export default {
+  name: 'EditPassword',
+  mixins: [
+    NotificationMixin,
+  ],
   $_veeValidate: {
     validator: 'new',
   },
-  name: 'EditPassword',
   components: {
     FrListItem: ListItem,
     FrLoadingButton: LoadingButton,
@@ -198,7 +202,7 @@ export default {
         if (valid) {
           this.$emit('updateProfile', payload, { headers, onSuccess, onError });
         } else {
-          this.displayNotification('error', this.$t('pages.profile.accountSecurity.invalidPassword'));
+          this.displayNotification('IDMMessages', 'error', this.$t('pages.profile.accountSecurity.invalidPassword'));
         }
       });
     },

@@ -30,6 +30,7 @@
         </BCard>
 
         <FrEditPersonalInfo
+          v-if="profile._id"
           :auto-open="openProfile"
           @updateProfile="updateProfile"
           :schema="schema"
@@ -63,6 +64,8 @@
 <script>
 import { startCase } from 'lodash';
 import { mapState } from 'vuex';
+import RestMixin from '@forgerock/platform-components/src/mixins/RestMixin';
+import NotificationMixin from '@forgerock/platform-components/src/mixins/NotificationMixin';
 /**
  * @description Controlling component for profile management
  *
@@ -70,6 +73,10 @@ import { mapState } from 'vuex';
  */
 export default {
   name: 'Profile',
+  mixins: [
+    RestMixin,
+    NotificationMixin,
+  ],
   props: {
     clientToken: {
       type: String,
@@ -134,7 +141,7 @@ export default {
           this.profile = results.data;
         })
         .catch((error) => {
-          this.displayNotification('error', error.response.data.message);
+          this.displayNotification('IDMMessages', 'error', error.response.data.message);
         });
     },
     updateProfile(payload, config = {}) {
@@ -151,14 +158,14 @@ export default {
 
       selfServiceInstance.patch(`${endpoint}/${this.userId}`, payload).then((response) => {
         this.$store.dispatch('UserStore/setProfileAction', response.data);
-        this.displayNotification('success', successMsg);
+        this.displayNotification('IDMMessages', 'success', successMsg);
 
         if (config.onSuccess) {
           config.onSuccess();
         }
       }).catch((error) => {
         const errorMsg = config.errorMsg || error.response.data.message;
-        this.displayNotification('error', errorMsg);
+        this.displayNotification('IDMMessages', 'error', errorMsg);
 
         if (config.onError) {
           config.onError(error);

@@ -138,6 +138,9 @@ import {
 } from 'lodash';
 import ListGroup from '@forgerock/platform-components/src/components/listGroup/';
 import ListItem from '@forgerock/platform-components/src/components/listItem/';
+import RestMixin from '@forgerock/platform-components/src/mixins/RestMixin';
+import NotificationMixin from '@forgerock/platform-components/src/mixins/NotificationMixin';
+import LoginMixin from '@forgerock/platform-components/src/mixins/LoginMixin';
 
 /**
  * @description Handles displaying basic account controls (delete and download).
@@ -149,6 +152,11 @@ import ListItem from '@forgerock/platform-components/src/components/listItem/';
  */
 export default {
   name: 'AccountControls',
+  mixins: [
+    RestMixin,
+    NotificationMixin,
+    LoginMixin,
+  ],
   components: {
     FrListGroup: ListGroup,
     FrListItem: ListItem,
@@ -173,7 +181,7 @@ export default {
 
       selfServiceInstance.delete(`/${this.managedResource}/${this.userId}`).then(() => {
         this.$refs.deleteModal.hide();
-        this.displayNotification('success', this.$t('pages.profile.accountControls.deleteAccountSuccessful'));
+        this.displayNotification('IDMMessages', 'success', this.$t('pages.profile.accountControls.deleteAccountSuccessful'));
         this.logoutUser();
       });
     },
