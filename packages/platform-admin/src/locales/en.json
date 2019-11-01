@@ -4,6 +4,8 @@
     "description": "Description",
     "delete": "Delete",
     "save": "Save",
+    "saving": "Saving",
+    "loading": "Loading",
     "confirmDelete": "Confirm Delete",
     "cancel": "Cancel",
     "required": "Required",
@@ -56,6 +58,7 @@
     }
   },
   "trees": {
+    "treeSaveSuccessful": "All Changes Saved",
     "failedToGetNodeType": "Failed to gather node type details",
     "failedToUpdateNodeOutcomes": "Failed to update node type outcomes",
     "configurationRequired": "Requires Configuration",
