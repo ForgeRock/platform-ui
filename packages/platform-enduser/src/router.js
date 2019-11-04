@@ -42,8 +42,8 @@ export default new Router({
     {
       path: '/list/:resourceType/:resourceName',
       name: 'ListResource',
-      component: () => import('@/components/access'),
-      meta: { authenticate: true },
+      component: () => import(/* webpackChunkName: "listResource" */ '@/components/access'),
+      meta: { columns: true, authenticate: true },
     },
     {
       path: '/edit/:resourceType/:resourceName/:resourceId',
@@ -78,12 +78,6 @@ export default new Router({
       path: '*',
       component: () => import('@/components/NotFound'),
       meta: { hideToolbar: true, bodyClass: 'fr-body-image' },
-    },
-    {
-      path: '/list/:resourceType/:resourceName',
-      name: 'ListResource',
-      component: () => import(/* webpackChunkName: "listResource" */ '@/components/access'),
-      meta: { columns: true },
     },
   ],
 });
