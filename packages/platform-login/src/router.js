@@ -8,17 +8,17 @@ export default new Router({
     {
       path: '/',
       name: 'default',
-      component: () => import('@/views/Login.vue'),
+      component: () => import('@/views/Login'),
     },
     {
       path: '/login',
       name: 'login',
-      component: () => import('@/views/Login.vue'),
+      component: () => import('@/views/Login'),
     },
     {
       path: '/service/:tree',
       name: 'service',
-      component: () => import('@/views/Login.vue'),
+      component: () => import('@/views/Login'),
     },
   ],
 });
