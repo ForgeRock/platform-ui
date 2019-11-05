@@ -53,5 +53,10 @@
         "successMessages": {
             "password": "Your password is secure!"
         }
+    },
+    "pages": {
+      "selfservice": {
+        "captchaError": ""
+      }
     }
 }
