@@ -14,6 +14,7 @@ function loadLocaleMessages() {
       messages[locale] = locales(key);
     }
   });
+
   return messages;
 }
 
