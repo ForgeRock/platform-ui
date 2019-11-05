@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "storybook:build": "vue-cli-service storybook:build -s ./src/assets,./config/storybook/images -c config/storybook",
-    "storybook:serve": "vue-cli-service storybook:serve -s ./src/assets,./config/storybook/images -p 6006 -c config/storybook"
+    "storybook:serve": "vue-cli-service storybook:serve -s ./src/assets,./config/storybook/images -p 6006 -c config/storybook",
+    "unit": "yarn workspaces run unit"
   },
   "devDependencies": {
     "@storybook/addon-actions": "^4.1.0 || ^5.0.0",
