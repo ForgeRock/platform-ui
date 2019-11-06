@@ -73,6 +73,10 @@
       "title": "Nodes",
       "toggleNodeList": "Toggle Node List",
       "deleteSelectedNode": "Delete Selected Node"
+    },
+    "toolbar": {
+      "autoLayout": "Auto Layout",
+      "fullscreen": "Toggle Fullscreen"
     }
   },
   "components": {
