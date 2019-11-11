@@ -68,7 +68,7 @@ exports[`Profile.vue Profile page loaded 1`] = `
                   Please read this carefully.
                 </h1>
                 <p>
-                  You"re trying to delete your account, which provides access to various services. You"ll
+                  You're trying to delete your account, which provides access to various services. You'll
                   no longer be able to use any of those services, and your account and data will be lost.
                 </p>
                 <hr>
