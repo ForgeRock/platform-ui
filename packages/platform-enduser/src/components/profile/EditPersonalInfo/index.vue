@@ -90,7 +90,7 @@
                       :width="56"
                       :sync="true"
                       :css-colors="true"
-                      :labels="{checked: $t('common.form.yes'), unchecked: $t('common.form.no')}"
+                      :labels="{checked: $t('common.yes'), unchecked: $t('common.no')}"
                       :value="formFields[index].value"
                       @change="formFields[index].value = !formFields[index].value" />
                   </div>
@@ -113,14 +113,14 @@
         <BBtn
           variant="outline-secondary mr-2"
           @click="hideModal">
-          {{ $t('common.form.cancel') }}
+          {{ $t('common.cancel') }}
         </BBtn>
         <BBtn
           type="button"
           variant="primary"
           :disabled="internalUser"
           @click="saveForm">
-          {{ $t('common.form.saveChanges') }}
+          {{ $t('common.saveChanges') }}
         </BBtn>
       </div>
     </div>
