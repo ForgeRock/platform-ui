@@ -42,7 +42,7 @@
             <img
               :src="require('@/assets/images/empty-box.svg')"
               class="mb-4"
-              :alt="$t('common.form.logo')"
+              :alt="$t('common.logo')"
               style="width:150px;">
             <h5 class="h5">
               {{ $t(`pages.uma.resources.noDataState`) }}

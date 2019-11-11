@@ -1,24 +1,22 @@
 {
   "common": {
-    "form": {
-      "submit": "Submit",
-      "agree": "I Agree",
-      "logo": "logo",
-      "signUp": "Sign Up",
-      "cancel": "Cancel",
-      "saveChanges": "Save changes",
-      "edit": "Edit",
-      "save": "Save",
-      "remove": "Remove",
-      "confirm": "Confirm",
-      "close": "Close",
-      "okay": "Okay",
-      "new": "New",
-      "yes": "Yes",
-      "no": "No",
-      "delete": "Delete",
-      "reset": "Reset"
-    },
+    "submit": "Submit",
+    "agree": "I Agree",
+    "logo": "logo",
+    "signUp": "Sign Up",
+    "cancel": "Cancel",
+    "saveChanges": "Save changes",
+    "edit": "Edit",
+    "save": "Save",
+    "remove": "Remove",
+    "confirm": "Confirm",
+    "close": "Close",
+    "okay": "Okay",
+    "new": "New",
+    "yes": "Yes",
+    "no": "No",
+    "delete": "Delete",
+    "reset": "Reset",
     "placeholders": {
       "password": "Password",
       "retypePassword": "Retype Password",
@@ -99,7 +97,7 @@
       }
     },
     "notFound": {
-      "couldNotFind": "We couldn\"t find the page you were looking for.",
+      "couldNotFind": "We couldn't find the page you were looking for.",
       "returnToDashboard": "Return to dashboard"
     },
     "dashboard": {
@@ -125,7 +123,7 @@
         "deleteAccount": "Delete Account",
         "deleteModalTitle": "Delete your account",
         "deleteModalHeader": "Please read this carefully.",
-        "deleteModalDetails": "You\"re trying to delete your account, which provides access to various services. You\"ll\n no longer be able to use any of those services, and your account and data will be lost.",
+        "deleteModalDetails": "You're trying to delete your account, which provides access to various services. You'll\n no longer be able to use any of those services, and your account and data will be lost.",
         "deleteModalDownload1": "You can",
         "deleteModalDownload2": "download your data",
         "deleteModalDownload3": "before deleting your account.",
@@ -145,16 +143,16 @@
       "oauthApplications": {
         "title": "Authorized Applications",
         "subtitle": "These apps can access your account.",
-        "removeConfirmation": "Are you sure you want to remove \"{applicationName}\" from your list of authorized applications?",
-        "removeSuccess": "\"{applicationName}\" successfully removed.",
+        "removeConfirmation": "Are you sure you want to remove '{applicationName}' from your list of authorized applications?",
+        "removeSuccess": "'{applicationName}' successfully removed.",
         "expires": "Expires: ",
         "noApplications": "No Authorized Applications"
       },
       "trustedDevices": {
         "title": "Trusted Devices",
         "subtitle": "Devices you have signed in with.",
-        "removeConfirmation": "Are you sure you want to remove \"{deviceName}\" from your list of trusted devices?",
-        "removeSuccess": "\"{deviceName}\" successfully removed.",
+        "removeConfirmation": "Are you sure you want to remove '{deviceName}' from your list of trusted devices?",
+        "removeSuccess": "'{deviceName}' successfully removed.",
         "noDevices": "No Trusted Devices"
       },
       "editProfile": {
@@ -169,7 +167,7 @@
         "subtitle": "Update your username, password or security questions to secure your account.",
         "password": "Password",
         "securityQuestions": "Security Questions",
-        "rememberPassword": "Can\"t remember your current password?",
+        "rememberPassword": "Can't remember your current password?",
         "resetPassword": "Reset your password",
         "savePassword": "Save password",
         "custom": "Custom",
@@ -200,7 +198,7 @@
         "Policy_Updated": "You updated sharing setting for"
       },
       "resources": {
-        "noDataState": "You haven\"t shared anything yet.",
+        "noDataState": "You haven't shared anything yet.",
         "search": "Search...",
         "viewAs": "View as",
         "list": "List",
@@ -213,8 +211,8 @@
         "resourceNotShared": "Resource not shared",
         "sharedWithPeople": "Shared with {numberOf} people",
         "sharedWithPerson": "Shared with 1 person",
-        "warningMessage": "Sharing disabled. You\"ll still keep a copy.",
-        "unshareResource": "Unshare \"{resourceName}\" ?",
+        "warningMessage": "Sharing disabled. You'll still keep a copy.",
+        "unshareResource": "Unshare '{resourceName}' ?",
         "sameShareError": "Cannot reshare resource with {requestingParty}.  Unshare with requesting party before changing permissions",
         "noRequestingParty": "No requesting party defined."
       },
