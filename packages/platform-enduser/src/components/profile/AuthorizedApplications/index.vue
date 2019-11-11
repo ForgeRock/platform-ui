@@ -29,7 +29,7 @@
             class="align-self-center flex-grow-2 text-right"
             @click.prevent="showConfirmationModal(application)"
             href="#">
-            {{ $t('common.form.remove') }}
+            {{ $t('common.remove') }}
           </a>
         </div>
       </FrListItem>
@@ -49,7 +49,7 @@
         slot="modal-header"
         class="d-flex w-100 h-100">
         <h6 class="my-0">
-          {{ $t('common.form.confirm') }}
+          {{ $t('common.confirm') }}
         </h6>
         <button
           type="button"
@@ -67,13 +67,13 @@
           <BBtn
             variant="outline-secondary mr-2"
             @click="$refs.fsModal.hide()">
-            {{ $t('common.form.cancel') }}
+            {{ $t('common.cancel') }}
           </BBtn>
           <BBtn
             type="button"
             variant="danger"
             @click="removeApplication(confirmApplication.id)">
-            {{ $t('common.form.remove') }}
+            {{ $t('common.remove') }}
           </BBtn>
         </div>
       </div>

@@ -13,7 +13,7 @@ exports[`AuthorizedApplications.vue Authorized Applications loads 1`] = `
           close
         </i></button>
     </div>
-    Are you sure you want to remove "" from your list of authorized applications?
+    Are you sure you want to remove '' from your list of authorized applications?
     <div>
       <div class="float-right">
         <bbtn-stub variant="outline-secondary mr-2">

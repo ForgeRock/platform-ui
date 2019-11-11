@@ -16,7 +16,7 @@
               <i class="material-icons-outlined font-weight-bolder pb-1">
                 add
               </i>
-              {{ $t("common.form.new") }} {{ this.name }}
+              {{ $t("common.new") }} {{ this.name }}
             </BBtn>
           </BCol>
           <BCol

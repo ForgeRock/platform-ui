@@ -86,7 +86,7 @@
               <BBtn
                 variant="outline-secondary mr-2"
                 @click.stop.prevent="hideModal(mapping.name)">
-                {{ $t('common.form.cancel') }}
+                {{ $t('common.cancel') }}
               </BBtn>
               <BBtn
                 type="button"
