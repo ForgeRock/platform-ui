@@ -13,10 +13,10 @@
           class="btn btn-sm btn-link float-right btn-cancel"
           @click="clearComponent()"
           ref="cancel">
-          {{ $t('common.form.cancel') }}
+          {{ $t('common.cancel') }}
         </div>
         <div class="btn btn-sm btn-link float-right btn-edit">
-          {{ $t('common.form.reset') }}
+          {{ $t('common.reset') }}
         </div>
       </div>
     </div>

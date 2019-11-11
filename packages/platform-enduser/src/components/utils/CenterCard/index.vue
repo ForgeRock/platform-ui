@@ -18,7 +18,7 @@
               class="fr-logo mb-3 mt-2"
               :src="require('@/assets/images/vertical-logo.svg')"
               fluid
-              :alt="$t('common.form.logo')" />
+              :alt="$t('common.logo')" />
             <slot name="center-card-header" />
           </div>
         </BCardHeader>

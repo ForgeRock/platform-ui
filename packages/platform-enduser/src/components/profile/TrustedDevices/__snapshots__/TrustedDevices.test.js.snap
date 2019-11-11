@@ -13,7 +13,7 @@ exports[`TrustedDevices.vue Trusted Devices loads 1`] = `
           close
         </i></button>
     </div>
-    Are you sure you want to remove "" from your list of trusted devices?
+    Are you sure you want to remove '' from your list of trusted devices?
     <div>
       <div class="float-right">
         <bbtn-stub variant="outline-secondary mr-2">
