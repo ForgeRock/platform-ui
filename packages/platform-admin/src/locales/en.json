@@ -70,7 +70,9 @@
     },
     "nodeTypeList": {
       "failedNodeTypeList": "Failed to get available node types",
-      "title": "Nodes"
+      "title": "Nodes",
+      "toggleNodeList": "Toggle Node List",
+      "deleteSelectedNode": "Delete Selected Node"
     }
   },
   "components": {

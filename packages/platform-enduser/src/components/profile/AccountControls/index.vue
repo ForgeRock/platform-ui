@@ -116,7 +116,7 @@
           <BBtn
             variant="outline-secondary mr-2"
             @click="hideModal">
-            {{ $t('common.form.cancel') }}
+            {{ $t('common.cancel') }}
           </BBtn>
           <BBtn
             :disabled="!confirmDelete"
