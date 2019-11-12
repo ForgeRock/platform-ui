@@ -7,21 +7,17 @@ const localVue = createLocalVue();
 localVue.use(BootstrapVue);
 
 describe('AccountSecurity.vue', () => {
+  let wrapper;
   beforeEach(() => {
-    jest.spyOn(AccountSecurity, 'mounted')
-      .mockImplementation(() => { });
-  });
-
-  it('AccountSecurity page loaded', () => {
     const userStore = {
       state: {
         internalUser: true,
       },
     };
-
-    const applicationStore = {};
-
-    const wrapper = shallowMount(AccountSecurity, {
+    const applicationStore = {
+      state: {},
+    };
+    wrapper = shallowMount(AccountSecurity, {
       localVue,
       i18n,
       mocks: {
@@ -30,33 +26,17 @@ describe('AccountSecurity.vue', () => {
       },
     });
 
+    jest.spyOn(AccountSecurity, 'mounted')
+      .mockImplementation(() => { });
+  });
+
+  it('AccountSecurity page loaded', () => {
     expect(wrapper.name()).toBe('AccountSecurity');
     expect(wrapper).toMatchSnapshot();
   });
 
   describe('#sendUpdateProfile', () => {
     it('should emit an "updateProfile" event with the payload and config', () => {
-      const userStore = {
-        state: {
-          internalUser: true,
-        },
-      };
-
-
-      const applicationStore = {
-        state: {},
-      };
-
-
-      const wrapper = shallowMount(AccountSecurity, {
-        localVue,
-        i18n,
-        mocks: {
-          userStore,
-          applicationStore,
-        },
-      });
-
       wrapper.vm.sendUpdateProfile('test payload', 'test config');
       expect(wrapper.emitted().updateProfile.length).toBe(1);
 
