@@ -31,6 +31,9 @@ module.exports = {
     ],
     port: process.env.DEV_PORT || 8080,
   },
+  configureWebpack: {
+    devtool: 'source-map',
+  },
   css: {
     loaderOptions: {
       sass: {

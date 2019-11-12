@@ -83,6 +83,7 @@ module.exports = {
   },
   configureWebpack: {
     plugins: getPlugins(),
+    devtool: 'source-map',
   },
   css: {
     loaderOptions: {

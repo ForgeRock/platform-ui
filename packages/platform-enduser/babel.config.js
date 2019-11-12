@@ -6,12 +6,16 @@
  * to such license between the licensee and ForgeRock AS.
  */
 module.exports = {
-  presets: [
-    ['@vue/app', { useBuiltIns: 'entry' }],
-  ],
   env: {
+    development: {
+      sourceMaps: true,
+      retainLines: true, 
+    },
     test: {
       plugins: ['require-context-hook'],
     },
   },
+  presets: [
+    ['@vue/app', { useBuiltIns: 'entry' }],
+  ],
 };
