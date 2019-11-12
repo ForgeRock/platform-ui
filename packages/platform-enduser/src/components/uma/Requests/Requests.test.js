@@ -52,21 +52,33 @@ describe('UMA Requests Component', () => {
 
   it('Requests page loaded', () => {
     expect(wrapper.name()).toBe('Requests');
-//    expect(wrapper).toMatchSnapshot();
+    wrapper = shallowMount(Requests, {
+      localVue,
+      i18n,
+      filters: {
+        formatTime() {
+          return '7:45';
+        }
+      },
+      propsData: {
+        requests,
+      },
+    });
+    expect(wrapper).toMatchSnapshot();
   });
 
   it('should format as relative time difference for events that occured today', () => {
     const eventToday = new Date();
     const offset = eventToday.getHours() - 1;
 
-//    expect(wrapper.vm.$options.filters.formatTime(eventToday.setHours(offset))).toBe('an hour ago');
+    expect(wrapper.vm.$options.filters.formatTime(eventToday.setHours(offset))).toBe('an hour ago');
   });
 
   it('should use actual time for events on previous days', () => {
-    const eventDifferentDay = new Date('2018-06-06');
+    const eventDifferentDay = new Date();
+    eventDifferentDay.setDate(eventDifferentDay.getDate() - 2);
     const formattedTime = wrapper.vm.$options.filters.formatTime(eventDifferentDay);
 
-    // eslint-disable-next-line
     expect(formattedTime.match(/\d{1,2}:\d{1,2} [AP]M/)).toBeTruthy();
   });
 

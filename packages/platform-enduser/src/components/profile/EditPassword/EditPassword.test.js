@@ -12,7 +12,6 @@ localVue.use(VeeValidate);
 localVue.use(PolicyPasswordInput);
 localVue.use(Vuex);
 
-
 describe('EditPassword.vue', () => {
   const v = new VeeValidate.Validator();
   let wrapper;

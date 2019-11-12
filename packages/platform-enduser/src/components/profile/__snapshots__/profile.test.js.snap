@@ -1,47 +1,106 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Profile.vue Profile page loaded 1`] = `
-<div class="container">
-  <div class="row my-5">
-    <div class="profileCol mb-4 col-lg-4">
-      <div class="card text-center mb-4">
-        <!---->
-        <!---->
-        <div class="card-body">
-          <!---->
-          <!----><img src="" alt="img" width="112" height="112" class="m-1 mb-3 rounded-circle">
-          <h4 class="text-truncate">
+<bcontainer-stub tag="div">
+  <brow-stub tag="div" class="my-5">
+    <bcol-stub lg="4" tag="div" class="profileCol mb-4">
+      <bcard-stub bodytag="div" title="" titletag="h4" subtitle="" subtitletag="h6" subtitletextvariant="muted" headertag="div" footertag="div" tag="div" class="text-center mb-4">
+        <bimg-stub src="" alt="img" width="112" height="112" rounded="circle" blankcolor="transparent" class="m-1 mb-3"></bimg-stub>
+        <h4 class="text-truncate">
 
-          </h4>
-          <div class="text-muted text-truncate">
+        </h4>
+        <div class="text-muted text-truncate">
 
-          </div>
-          <!---->
         </div>
         <!---->
-        <!---->
-      </div>
+      </bcard-stub>
       <!---->
-    </div>
-    <div class="col-lg-8">
-      <div class="tabs">
-        <!---->
-        <div class="">
-          <ul role="tablist" class="nav nav-tabs"></ul>
-        </div>
-        <div class="tab-content mt-4">
-          <div role="tabpanel" tabindex="-1" aria-hidden="false" class="tab-pane active">
+    </bcol-stub>
+    <bcol-stub lg="8" tag="div">
+      <btabs-stub tag="div" contentclass="mt-4">
+        <btab-stub active="true" tag="div" buttonid="" title="Settings" href="#">
+          <frlistgroup-stub title="Account Security" subtitle="Update your username, password or security questions to secure your account.">
             <!---->
-            <!---->
-            <!---->
-            <!---->
-            <!---->
-            <!---->
+          </frlistgroup-stub>
+          <!---->
+          <!---->
+          <!---->
+          <!---->
+          <div>
+            <frlistgroup-stub title="Account Controls" subtitle="Download your account data or delete your account.">
+              <frlistitem-stub hoveritem="true">
+                <div class="d-inline-flex w-100">
+                  <div class="flex-grow-1">
+                    <div>
+                      Download your data
+                    </div> <small class="text-muted subtext">
+                      Download your account data.
+                    </small>
+                  </div> <a href="#" class="align-self-center flex-grow-2 text-right">
+                    Download
+                  </a>
+                </div>
+              </frlistitem-stub>
+              <frlistitem-stub hoveritem="true" role="button">
+                <div class="d-inline-flex w-100">
+                  <div class="flex-grow-1">
+                    <div>
+                      Delete your account
+                    </div> <small class="text-muted subtext">
+                      Permanently delete your account.
+                    </small>
+                  </div> <a href="#" class="align-self-center flex-grow-2 text-right">
+                    Delete Account
+                  </a>
+                </div>
+              </frlistitem-stub>
+            </frlistgroup-stub>
+            <bmodal-stub id="deleteAccountModal" title="" titletag="h5" size="md" buttonsize="" modalclass="fr-full-screen" headercloselabel="Close" canceltitle="Cancel" oktitle="OK" cancelvariant="outline-secondary" okvariant="primary">
+              <div class="d-flex w-100 h-100">
+                <h5 class="modal-title align-self-center text-center">
+                  Delete your account
+                </h5> <button type="button" aria-label="Close" class="close"><i class="material-icons-outlined font-weight-bolder md-24">
+                    close
+                  </i></button>
+              </div>
+              <bcontainer-stub tag="div">
+                <h1 class="mb-4">
+                  Please read this carefully.
+                </h1>
+                <p>
+                  You"re trying to delete your account, which provides access to various services. You"ll
+                  no longer be able to use any of those services, and your account and data will be lost.
+                </p>
+                <hr>
+                <p>
+                  You can <a href="#">
+                    download your data
+                  </a> before deleting your account.
+                </p>
+                <hr>
+                <h5>The following content will be deleted.</h5>
+                <ul>
+                  <li>Access to your profile</li>
+                </ul>
+                <div class="custom-control custom-checkbox"><input type="checkbox" id="confirmDeleteCheck" class="custom-control-input"> <label for="confirmDeleteCheck" class="custom-control-label">
+                    Yes, I want to permanently delete my account
+                  </label></div>
+              </bcontainer-stub>
+              <div class="w-100">
+                <div class="float-right">
+                  <bbtn-stub target="_self" event="click" routertag="a" variant="outline-secondary mr-2" type="button" tag="button">
+                    Cancel
+                  </bbtn-stub>
+                  <bbtn-stub target="_self" disabled="true" event="click" routertag="a" variant="danger" type="button" tag="button">
+                    Delete Account
+                  </bbtn-stub>
+                </div>
+              </div>
+            </bmodal-stub>
           </div>
-          <div class="tab-pane active"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+        </btab-stub>
+      </btabs-stub>
+    </bcol-stub>
+  </brow-stub>
+</bcontainer-stub>
 `;

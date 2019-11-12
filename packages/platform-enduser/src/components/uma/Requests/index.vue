@@ -82,7 +82,6 @@ import FallbackImage from '@/components/utils/FallbackImage';
 
 /**
  * @description Allows user to request access to a resource
- *
  * */
 export default {
   name: 'Requests',

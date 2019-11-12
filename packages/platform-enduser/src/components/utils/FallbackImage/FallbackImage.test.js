@@ -8,22 +8,26 @@ localVue.use(BootstrapVue);
 jest.spyOn(FallbackImage, 'mounted');
 
 describe('utils/FallbackImage.vue', () => {
-  it('FallbackImage component loaded', () => {
-    const wrapper = shallowMount(FallbackImage, {
+  let wrapper;
+
+  beforeEach(() => {
+    wrapper = shallowMount(FallbackImage, {
       stubs: { BImg: true },
     });
-
     wrapper.setData({ imageFound: true });
+  });
 
+  afterEach(() => {
+    wrapper = undefined;
+  });
+
+  it('FallbackImage component loaded', () => {
+    wrapper.setData({ imageFound: true });
     expect(wrapper.name()).toBe('ImageFallback');
     expect(wrapper).toMatchSnapshot();
   });
 
   it('should display an image when "imageFound"', () => {
-    const wrapper = shallowMount(FallbackImage, {
-      stubs: { BImg: true },
-    });
-
     wrapper.setData({ imageFound: true });
 
     localVue.nextTick(() => {
@@ -33,8 +37,6 @@ describe('utils/FallbackImage.vue', () => {
   });
 
   it('should display an icon when not "imageFound"', () => {
-    const wrapper = shallowMount(FallbackImage);
-
     wrapper.setData({ imageFound: false });
 
     localVue.nextTick(() => {
