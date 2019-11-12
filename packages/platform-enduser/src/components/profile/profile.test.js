@@ -1,5 +1,5 @@
 import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, mount } from '@vue/test-utils';
+import { createLocalVue, shallowMount } from '@vue/test-utils';
 import Vuex from 'vuex';
 import i18n from '@/i18n';
 import Profile from '@/components/profile';
@@ -14,9 +14,9 @@ Profile.components['fr-account-controls'] = jest.fn();
 Profile.components['fr-account-security'] = jest.fn();
 
 describe('Profile.vue', () => {
-  it('Profile page loaded', () => {
+  let wrapper;
+  beforeEach(() => {
     const getUserProfile = jest.fn();
-
     const store = new Vuex.Store({
       state: {
         UserStore: {},
@@ -24,7 +24,7 @@ describe('Profile.vue', () => {
       },
     });
 
-    const wrapper = mount(Profile, {
+    wrapper = shallowMount(Profile, {
       localVue,
       i18n,
       store,
@@ -40,7 +40,9 @@ describe('Profile.vue', () => {
         getUserProfile,
       },
     });
+  });
 
+  it('Profile page loaded', () => {
     expect(wrapper.name()).toBe('Profile');
     expect(wrapper).toMatchSnapshot();
   });
