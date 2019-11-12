@@ -1,6 +1,9 @@
 import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
-import _ from 'lodash';
+import {
+  find,
+  first,
+} from 'lodash';
 import Consent from '@/components/profile/Consent';
 import i18n from '@/i18n';
 
@@ -43,8 +46,8 @@ describe('Profile Consent Component', () => {
       wrapper.setData({ consentableMappings });
 
       const { mappings } = wrapper.vm;
-      const test = _.find(mappings, { name: 'test' });
-      const test2 = _.find(mappings, { name: 'test2' });
+      const test = find(mappings, { name: 'test' });
+      const test2 = find(mappings, { name: 'test2' });
 
       expect(Array.isArray(mappings)).toBe(true);
       expect(mappings.length).toBe(2);
@@ -79,7 +82,7 @@ describe('Profile Consent Component', () => {
       };
 
       const patch = wrapper.vm.generatePatch(mapping);
-      const addOp = _.first(patch);
+      const addOp = first(patch);
 
       expect(typeof patch).toBe('object');
       expect(typeof addOp).toBe('object');
@@ -100,11 +103,8 @@ describe('Profile Consent Component', () => {
         consentDate: new Date().toISOString(),
       };
 
-
       const patch = wrapper.vm.generatePatch(mapping);
-
-
-      const addOp = _.first(patch);
+      const addOp = first(patch);
 
       expect(typeof patch).toBe('object');
       expect(typeof addOp).toBe('object');

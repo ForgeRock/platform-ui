@@ -34,6 +34,7 @@ describe('Sharing.vue', () => {
       localVue,
       i18n,
       propsData,
+      stubs: { BFormInput: true },
     });
 
     wrapper.vm.$refs.fsModal.hide = jest.fn();
@@ -91,24 +92,6 @@ describe('Sharing.vue', () => {
   });
 
   it('Validates resource without policy', () => {
-    propsData = {
-      resource: {
-        _id: '12345',
-        name: 'test resource',
-        resourceOwnerId: 'alice',
-        scopes: ['view', 'comment', 'download'],
-      },
-      newScopes: { value: '' },
-      newShare: false,
-      value: 'test',
-    };
-
-    wrapper = shallowMount(Share, {
-      localVue,
-      i18n,
-      propsData,
-    });
-
     wrapper.vm.$refs.fsModal.hide = jest.fn();
     wrapper.vm.validateResource();
 
@@ -124,7 +107,6 @@ describe('Sharing.vue', () => {
     wrapper.setData({ newShare: true });
     wrapper.vm.validateResource();
 
-    // eslint-disable-next-line
     expect(spy).toBeCalled();
   });
 
@@ -134,36 +116,16 @@ describe('Sharing.vue', () => {
     wrapper.setData({ newShare: true });
     wrapper.vm.validateResource();
 
-    // eslint-disable-next-line
     expect(spy).toBeCalled();
   });
 
   it('Calls "shareResource" if resouce is shared for the first time', () => {
-    propsData = {
-      resource: {
-        _id: '12345',
-        name: 'test resource',
-        resourceOwnerId: 'alice',
-        scopes: ['view', 'comment', 'download'],
-        icon_uri: '',
-      },
-      newScopes: {},
-      newShare: false,
-    };
-
-    wrapper = shallowMount(Share, {
-      localVue,
-      i18n,
-      propsData,
-    });
-
     const spy = jest.spyOn(wrapper.vm, 'shareResource');
 
     wrapper.setData({ newShare: true });
     wrapper.vm.$refs.fsModal.hide = jest.fn();
     wrapper.vm.validateResource();
 
-    // eslint-disable-next-line
     expect(spy).toBeCalled();
   });
 });

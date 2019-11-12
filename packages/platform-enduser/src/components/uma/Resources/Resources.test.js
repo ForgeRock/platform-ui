@@ -7,22 +7,28 @@ const localVue = createLocalVue();
 localVue.use(BootstrapVue);
 
 describe('Sharing.vue', () => {
-  it('Resources page loaded', () => {
-    const wrapper = shallowMount(Resources, {
+  let wrapper;
+
+  beforeEach(() => {
+    wrapper = shallowMount(Resources, {
       localVue,
       i18n,
+      propsData: {
+        viewgrid: false,
+      },
     });
+  });
 
+  afterEach(() => {
+    wrapper = undefined;
+  });
+
+  it('Resources page loaded', () => {
     expect(wrapper.name()).toBe('Resources');
     expect(wrapper).toMatchSnapshot();
   });
 
   it('Emits "renderShareModal" event', () => {
-    const wrapper = shallowMount(Resources, {
-      localVue,
-      i18n,
-    });
-
     wrapper.vm.renderShareModal();
 
     localVue.nextTick(() => {
@@ -31,11 +37,6 @@ describe('Sharing.vue', () => {
   });
 
   it('Emits "renderUnshareModal" event', () => {
-    const wrapper = shallowMount(Resources, {
-      localVue,
-      i18n,
-    });
-
     wrapper.vm.renderUnshareModal();
 
     localVue.nextTick(() => {
@@ -44,13 +45,6 @@ describe('Sharing.vue', () => {
   });
 
   it('Toggles grid view', () => {
-    const wrapper = shallowMount(Resources, {
-      localVue,
-      i18n,
-      propsData: {
-        viewgrid: false,
-      },
-    });
     expect(wrapper.vm.viewgrid).toBe(false);
 
     wrapper.vm.toggleGrid();

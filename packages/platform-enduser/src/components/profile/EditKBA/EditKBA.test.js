@@ -10,33 +10,40 @@ localVue.use(BootstrapVue);
 localVue.use(VeeValidate);
 
 describe('EditKBA.vue', () => {
+  let wrapper;
+  const errors = { has: jest.fn() };
   beforeEach(() => {
     jest.spyOn(EditKBA, 'mounted')
       .mockImplementation(() => { });
   });
 
+  afterEach(() => {
+    wrapper = null;
+  });
 
   it('AccountSecurity page loaded', () => {
-    const wrapper = shallowMount(EditKBA, {
+    wrapper = shallowMount(EditKBA, {
       localVue,
       i18n,
+      mocks: {
+        errors,
+      },
     });
-    wrapper.vm.errors = { has: jest.fn() };
 
     expect(wrapper.name()).toBe('EditKBA');
     expect(wrapper).toMatchSnapshot();
   });
 
   describe('#generatePatch', () => {
-    let wrapper;
 
     beforeEach(() => {
       wrapper = shallowMount(EditKBA, {
         localVue,
         i18n,
+        mocks: {
+          errors,
+        },
       });
-
-      wrapper.vm.errors = { has: jest.fn() };
     });
 
     it('should correctly generate patches for custom questions', () => {

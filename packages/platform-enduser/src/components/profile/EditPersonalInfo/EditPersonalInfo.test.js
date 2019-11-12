@@ -13,7 +13,6 @@ localVue.use(VeeValidate);
 
 describe('EditPersonalInfo.vue', () => {
   const v = new VeeValidate.Validator();
-
   const store = new Vuex.Store({});
 
   let wrapper;
