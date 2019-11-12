@@ -20,7 +20,7 @@ exports[`Sharing.vue Resources page loaded 1`] = `
   </div>
   <div class="form-group">
     <binputgroup-stub tag="div">
-      <bforminput-stub placeholder="Share with..." type="text"></bforminput-stub>
+      <bforminput-stub placeholder="Share with..."></bforminput-stub>
       <bdropdown-stub text="Can view" offset="0" toggletext="Toggle Dropdown" size="sm" variant="outline-secondary" toggletag="button" role="menu" boundary="scrollParent" slot="append">
         <form class="px-4 py-2">
           <div class="form-check mb-1"><input type="checkbox" id="viewCheck" class="form-check-input mr-1"> <label for="viewCheck" class="form-check-label">
