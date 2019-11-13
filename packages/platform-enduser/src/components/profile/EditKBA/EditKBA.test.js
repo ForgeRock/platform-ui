@@ -35,7 +35,6 @@ describe('EditKBA.vue', () => {
   });
 
   describe('#generatePatch', () => {
-
     beforeEach(() => {
       wrapper = shallowMount(EditKBA, {
         localVue,
