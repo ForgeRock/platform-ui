@@ -1,3 +1,8 @@
+<!-- Copyright 2019 ForgeRock AS. All Rights Reserved
+
+Use of this code requires a commercial software license with ForgeRock AS.
+or with one of its affiliates. All use shall be exclusively subject
+to such license between the licensee and ForgeRock AS. -->
 <div align="center">
   <img width="120" src="logo.png">
   <h1>ForgeRock Platform EndUser</h1>
