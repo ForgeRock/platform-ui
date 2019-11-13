@@ -58,7 +58,7 @@ describe('UMA Requests Component', () => {
       filters: {
         formatTime() {
           return '7:45';
-        }
+        },
       },
       propsData: {
         requests,
