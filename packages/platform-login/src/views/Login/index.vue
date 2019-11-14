@@ -96,7 +96,7 @@ export default {
   data() {
     return {
       loading: true,
-      loadingColor: styles.baseColor,
+      loadingColor: styles.basecolor,
       header: '',
       description: '',
       loginFailure: false,
