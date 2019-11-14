@@ -33,7 +33,7 @@ export default {
   },
   data() {
     return {
-      loadingColor: styles.baseColor,
+      loadingColor: styles.basecolor,
     };
   },
   created() {

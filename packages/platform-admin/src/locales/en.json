@@ -68,6 +68,9 @@
       "value": "Value",
       "none": "none"
     },
+    "pageNode": {
+      "dragHere": "Drag nodes here"
+    },
     "nodeTypeList": {
       "failedNodeTypeList": "Failed to get available node types",
       "title": "Nodes",
