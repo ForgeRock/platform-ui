@@ -117,7 +117,6 @@ export default {
       adminUser: (state) => state.UserStore.adminUser,
       accessObj: (state) => state.UserStore.access,
       adminURL: (state) => state.ApplicationStore.adminURL,
-      amDataEndpoints: (state) => state.ApplicationStore.amDataEndpoints,
       userDetails: (state) => {
         let userFullName;
         const {
@@ -147,15 +146,6 @@ export default {
   watch: {
     $route(to) {
       this.hideNav = to.meta.hideNav;
-    },
-    amDataEndpoints(value) {
-      if (value && this.internalUser === false) {
-        this.menuItems.push({
-          displayName: 'Sharing',
-          icon: 'share',
-          routeName: 'Sharing',
-        });
-      }
     },
     /**
      * when we receive user-saved data of managed resources,
@@ -233,7 +223,6 @@ export default {
 @import "~bootstrap/scss/bootstrap.scss";
 @import "scss/main.scss";
 @import "~bootstrap-vue/dist/bootstrap-vue.css";
-@import "~@fortawesome/fontawesome-free/css/all.css";
 
 #app {
   -webkit-transition: all 0.2s ease;
