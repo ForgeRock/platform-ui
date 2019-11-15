@@ -266,8 +266,6 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../../../scss/full-screen-modal";
-
 _:-ms-fullscreen,
 :root {
   #userDetailsModal {

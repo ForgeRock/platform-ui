@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`EditPersonalInfo.vue EditPersonalInfo modal loaded 1`] = `
-<bmodal-stub id="userDetailsModal" title="" titletag="h5" size="md" buttonsize="" modalclass="fr-full-screen" headercloselabel="Close" canceltitle="Cancel" oktitle="OK" cancelvariant="outline-secondary" okvariant="primary">
+<bmodal-stub id="userDetailsModal" size="md" buttonsize="" title="" titletag="h5" modalclass="fr-full-screen" headercloselabel="Close" canceltitle="Cancel" oktitle="OK" cancelvariant="outline-secondary" okvariant="primary">
   <div class="d-flex w-100 h-100">
     <h5 class="modal-title align-self-center text-center">
       Edit your personal info
