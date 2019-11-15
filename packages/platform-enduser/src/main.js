@@ -145,10 +145,6 @@ const startApp = () => {
       i18n.locale = uiConfig.data.configuration.lang;
     }
 
-    if (uiConfig.data.configuration.amDataEndpoints) {
-      this.$store.commit('ApplicationStore/setAmDataEndpointsAction', uiConfig.data.configuration.amDataEndpoints);
-    }
-
     this.$store.commit('ApplicationStore/setEnduserSelfservice', availability.data.result);
 
     return loadApp();
