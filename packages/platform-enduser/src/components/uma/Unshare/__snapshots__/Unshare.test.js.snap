@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Unshare.vue Resources page loaded 1`] = `
-<bmodal-stub id="unshareModal" title="" titletag="h5" size="md" buttonsize="" headercloselabel="Close" canceltitle="Cancel" oktitle="OK" cancelvariant="outline-secondary" okvariant="primary" resource="[object Object]" newscopes="[object Object]">
+<bmodal-stub id="unshareModal" size="md" buttonsize="" title="" titletag="h5" headercloselabel="Close" canceltitle="Cancel" oktitle="OK" cancelvariant="outline-secondary" okvariant="primary" resource="[object Object]" newscopes="[object Object]">
   <div class="d-flex w-100 h-100">
     <h6 class="my-0">
       Unshare '' ?
