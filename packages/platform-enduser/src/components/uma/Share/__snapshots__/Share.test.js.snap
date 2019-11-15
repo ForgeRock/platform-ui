@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Sharing.vue Resources page loaded 1`] = `
-<bmodal-stub id="shareModal" title="" titletag="h5" size="md" buttonsize="" headercloselabel="Close" canceltitle="Cancel" oktitle="OK" cancelvariant="outline-secondary" okvariant="primary" newscopes="[object Object]" value="test">
+<bmodal-stub id="shareModal" size="md" buttonsize="" title="" titletag="h5" headercloselabel="Close" canceltitle="Cancel" oktitle="OK" cancelvariant="outline-secondary" okvariant="primary" newscopes="[object Object]" value="test">
   <div class="d-flex w-100 h-100">
     <div class="media">
       <div class="d-flex mr-3 align-self-center">
@@ -21,7 +21,7 @@ exports[`Sharing.vue Resources page loaded 1`] = `
   <div class="form-group">
     <binputgroup-stub tag="div">
       <bforminput-stub placeholder="Share with..."></bforminput-stub>
-      <bdropdown-stub text="Can view" offset="0" toggletext="Toggle Dropdown" size="sm" variant="outline-secondary" toggletag="button" role="menu" boundary="scrollParent" slot="append">
+      <bdropdown-stub text="Can view" offset="0" toggletext="Toggle Dropdown" size="sm" variant="outline-secondary" toggletag="button" splitbuttontype="button" role="menu" boundary="scrollParent" slot="append">
         <form class="px-4 py-2">
           <div class="form-check mb-1"><input type="checkbox" id="viewCheck" class="form-check-input mr-1"> <label for="viewCheck" class="form-check-label">
               view
@@ -46,7 +46,7 @@ exports[`Sharing.vue Resources page loaded 1`] = `
           </h6>
         </div>
         <div class="d-flex ml-3 align-self-center">
-          <bdropdown-stub id="ddown1" text="Can view" right="true" offset="0" toggletext="Toggle Dropdown" size="sm" variant="link" toggletag="button" toggleclass="dropdown-toggle" role="menu" boundary="scrollParent"><template class="dropdown-toggle"></template>
+          <bdropdown-stub id="ddown1" text="Can view" right="true" offset="0" toggletext="Toggle Dropdown" size="sm" variant="link" toggletag="button" toggleclass="dropdown-toggle" splitbuttontype="button" role="menu" boundary="scrollParent"><template class="dropdown-toggle"></template>
             <form class="px-4 py-2">
               <div class="form-check mb-1"><input type="checkbox" id="viewCheck" class="form-check-input mr-1"> <label for="viewCheck" class="form-check-label">
                   view

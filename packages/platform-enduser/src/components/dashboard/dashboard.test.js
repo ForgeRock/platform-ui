@@ -35,7 +35,6 @@ describe('Dashboard.vue', () => {
         },
         ApplicationStore: {
           authHeaders: null,
-          amDataEndpoints: null,
           loginRedirect: null,
           amBaseURL: 'https://default.iam.example.com/am',
           idmBaseURL: 'https://default.iam.example.com/openidm',

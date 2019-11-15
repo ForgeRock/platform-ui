@@ -121,7 +121,6 @@ export default {
   computed: {
     ...mapState({
       userId: (state) => state.UserStore.userId,
-      amDataEndpoints: (state) => state.ApplicationStore.amDataEndpoints,
     }),
     umaHistory() {
       return map(this.activity, (res) => {
@@ -148,7 +147,8 @@ export default {
     getResources() {
       const query = '?_queryId=*';
       const selfServiceInstance = this.getRequestService();
-      const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.resourceSet + query;
+      // TODO Will break until updated
+      const url = `${query}`; // this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.resourceSet + query;
 
       // by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
       selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
@@ -169,8 +169,8 @@ export default {
     getActivity() {
       const query = '?_sortKeys=-eventTime&_queryFilter=true';
       const selfServiceInstance = this.getRequestService();
-      const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.auditHistory + query;
-
+      // TODO Will break until updated
+      const url = `${query}`; // this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.resourceSet + query;
       // by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
       selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
         this.activity = response.data.result;
@@ -187,8 +187,8 @@ export default {
     getRequests() {
       const query = '?_sortKeys=user&_queryFilter=true';
       const selfServiceInstance = this.getRequestService();
-      const url = `${this.amDataEndpoints.baseUrl + this.userId}/uma/pendingrequests${query}`;
-
+      // TODO Will break until updated
+      const url = `${query}`; // this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.resourceSet + query;
       // by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
       selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
         this.requests = map(response.data.result, (request) => {
@@ -235,7 +235,8 @@ export default {
     shareResource(payload, config = {}) {
       const successMsg = this.$t('common.user.sharing.shareSuccess');
       const selfServiceInstance = this.getRequestService();
-      const url = `${this.amDataEndpoints.baseUrl + this.userId}/uma/policies/${payload.policyId}`;
+      // TODO Will break until updated
+      const url = ''; // this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.resourceSet + query;
 
       selfServiceInstance.put(url, payload, { withCredentials: true }).then(() => {
         if (config.onSuccess) {
@@ -251,7 +252,8 @@ export default {
     unshareResource(resourceId) {
       const successMsg = this.$t('common.user.sharing.unshareSuccess');
       const selfServiceInstance = this.getRequestService();
-      const url = `${this.amDataEndpoints.baseUrl + this.userId}/uma/policies/${resourceId}`;
+      // TODO Will break until updated
+      const url = `${resourceId}`; // this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.resourceSet + query;
 
       selfServiceInstance.delete(url, { withCredentials: true }).then(() => {
         this.displayNotification('IDMMessages', 'success', successMsg);
@@ -263,7 +265,8 @@ export default {
     },
     modifyResource(resourceId, payload, config = {}) {
       const successMsg = config.unshare ? this.$t('common.user.sharing.unshareSuccess') : this.$t('common.user.sharing.modifySuccess');
-      const url = `${this.amDataEndpoints.baseUrl + this.userId}/uma/policies/${resourceId}`;
+      // TODO Will break until updated
+      const url = `${resourceId}`; // this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.resourceSet + query;
       const selfServiceInstance = this.getRequestService();
       const headers = { 'Accept-API-Version': 'protocol=1.0,resource=1.0' };
 
@@ -284,7 +287,8 @@ export default {
       const successMsg = action === 'approve' ? this.$t('common.user.sharing.requestAllowedSuccess') : this.$t('common.user.sharing.requestDeniedSuccess');
       const selfServiceInstance = this.getRequestService();
       const payload = { scopes: config.scopes || {} };
-      const url = `${this.amDataEndpoints.baseUrl}${this.userId}/uma/pendingrequests/${id}?_action=${action}`;
+      // TODO Will break until updated
+      const url = `${id}`; // this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.resourceSet + query;
 
       selfServiceInstance.post(url, payload, { withCredentials: true }).then(() => {
         if (config.onSuccess) {

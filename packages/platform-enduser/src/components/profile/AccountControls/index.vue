@@ -243,6 +243,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-    @import '../../../scss/full-screen-modal';
-</style>
+<style lang="scss" scoped></style>

@@ -16,7 +16,7 @@ exports[`ListResource.vue Access page loaded 1`] = `
                     search
                   </i></div>
               </binputgroupprepend-stub>
-              <bforminput-stub value="" placeholder="Type to Search" type="text" class="inset-left inset-right"></bforminput-stub>
+              <bforminput-stub value="" placeholder="Type to Search" debounce="0" type="text" class="inset-left inset-right"></bforminput-stub>
               <binputgroupappend-stub tag="div">
                 <bbtn-stub target="_self" disabled="true" event="click" routertag="a" variant="outline-default" type="button" tag="button" class="inset clear"><i class="material-icons-outlined rotate-45">
                     add_circle
@@ -27,7 +27,7 @@ exports[`ListResource.vue Access page loaded 1`] = `
         </bcol-stub>
       </brow-stub>
     </div>
-    <btable-stub items="" fields="" sortdirection="asc" labelsortasc="Click to sort Ascending" labelsortdesc="Click to sort Descending" labelsortclear="Click to clear sorting" nolocalsorting="true" perpage="0" currentpage="1" showempty="true" emptytext="There are no records to show" emptyfilteredtext="There are no records matching your request" selectmode="multi" selectedvariant="primary" apiurl="" hover="true" stacked="lg" value="" table-responsive="" class="mb-0"></btable-stub>
+    <btable-stub items="" fields="" value="" hover="true" stacked="lg" filterdebounce="0" sortdirection="asc" sortcompareoptions="[object Object]" labelsortasc="Click to sort Ascending" labelsortdesc="Click to sort Descending" labelsortclear="Click to clear sorting" nolocalsorting="true" perpage="0" currentpage="1" selectmode="multi" selectedvariant="active" showempty="true" emptytext="There are no records to show" emptyfilteredtext="There are no records matching your request" apiurl="" table-responsive="" class="mb-0"></btable-stub>
     <div class="card-footer py-2">
       <nav aria-label="Page navigation example">
         <ul class="pagination justify-content-center mb-0">

@@ -120,7 +120,6 @@ export default {
   computed: {
     ...mapState({
       userId: (state) => state.UserStore.userId,
-      amDataEndpoints: (state) => state.ApplicationStore.amDataEndpoints.baseUrl,
     }),
   },
   mounted() {
@@ -128,9 +127,9 @@ export default {
   },
   methods: {
     loadData() {
-      const query = '?_queryId=*';
       const selfServiceInstance = this.getRequestService();
-      const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.oauthApplications + query;
+      // TODO This will fail until updated with reliable endpoint
+      const url = '';// this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.oauthApplications + query;
 
       // by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
       selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
@@ -147,7 +146,8 @@ export default {
     },
     removeApplication(applicationId) {
       const selfServiceInstance = this.getRequestService();
-      const url = this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.oauthApplications + applicationId;
+      // TODO This will fail until updated
+      const url = `${applicationId}`; // this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.oauthApplications + applicationId;
 
       // by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
       selfServiceInstance.delete(url, { withCredentials: true }).then(() => {

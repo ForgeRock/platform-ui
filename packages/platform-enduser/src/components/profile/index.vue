@@ -47,16 +47,18 @@ to such license between the licensee and ForgeRock AS. -->
             :title="$t('pages.profile.settings')"
             active>
             <FrAccountSecurity
+              v-if="internalUser === false"
               @updateProfile="updateProfile"
               @updateKBA="updateKBA" />
-            <FrAuthorizedApplications v-if="amDataEndpoints && internalUser === false" />
-            <FrTrustedDevices v-if="amDataEndpoints && internalUser === false" />
+            <!-- TODO we need to update these to not rely on the old way of getting AM data endpoints -->
+            <!-- <FrAuthorizedApplications v-if="amDataEndpoints && internalUser === false" /> -->
+            <!-- <FrTrustedDevices v-if="amDataEndpoints && internalUser === false" /> -->
             <FrPreferences
               v-if="internalUser === false"
               @updateProfile="updateProfile" />
             <FrConsent
               v-if="internalUser === false"
-              :consented-mappings="consentedMappings"
+              :consented-mappings="profile.consentedMappings"
               @updateProfile="updateProfile" />
             <FrAccountControls />
           </BTab>
@@ -107,22 +109,20 @@ export default {
     FrAccountSecurity: () => import('@/components/profile/AccountSecurity'),
     FrEditPersonalInfo: () => import('@/components/profile/EditPersonalInfo'),
     FrPreferences: () => import('@/components/profile/Preferences'),
-    FrTrustedDevices: () => import('@/components/profile/TrustedDevices'),
-    FrAuthorizedApplications: () => import('@/components/profile/AuthorizedApplications'),
+    // FrTrustedDevices: () => import('@/components/profile/TrustedDevices'),
+    // FrAuthorizedApplications: () => import('@/components/profile/AuthorizedApplications'),
     FrConsent: () => import('@/components/profile/Consent'),
   },
   computed: {
     ...mapState({
       userId: (state) => state.UserStore.userId,
       email: (state) => state.UserStore.email,
-      profile: (state) => state.UserStore.profile,
       schema: (state) => state.UserStore.schema,
       sirName: (state) => state.UserStore.sn,
       givenName: (state) => state.UserStore.givenName,
       managedResource: (state) => state.UserStore.managedResource,
       internalUser: (state) => state.UserStore.internalUser,
       passwordReset: (state) => state.ApplicationStore.passwordReset,
-      amDataEndpoints: (state) => state.ApplicationStore.amDataEndpoints,
     }),
     fullName() {
       let fullName = '';
@@ -141,7 +141,7 @@ export default {
   },
   methods: {
     getUserProfile() {
-      this.getRequestService().get(`managed/user/${this.userId}`)
+      this.getRequestService().get(`${this.managedResource}/${this.userId}`)
         .then((results) => {
           this.profile = results.data;
         })
