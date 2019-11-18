@@ -25,7 +25,7 @@ to such license between the licensee and ForgeRock AS. -->
           fallback="settings_applications" />
         <div
           class="media-body"
-          style="width: 100%">
+          style="width: 100%;">
           <div class="d-block">
             <h6 class="my-0">
               {{ mapping.displayName }}

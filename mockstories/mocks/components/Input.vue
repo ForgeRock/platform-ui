@@ -35,48 +35,48 @@ to such license between the licensee and ForgeRock AS. -->
                     </div>
                 </section>
                 <section class="sg_pattern">
-                    <h2 class="mb-5">Disabled</h2>
-                    <div class="card">
-                        <div class="card-body">
-                          <div class="form-group">
-                            <div class="form-label-group mb-0">
-                                <input
-                                  type="text"
-                                  id="basicInputDisabled"
-                                  class="form-control"
-                                  autofocus="autofocus"
-                                  placeholder="label"
-                                  value="Disabled field"
-                                  disabled
-                                />
-                                <label for="basicInputDisabled">Label</label>
-                              </div>
-                              <small id="basicInputDisabledHelp" class="form-text text-muted">Help text for this field.</small>
+                  <h2 class="mb-5">Disabled</h2>
+                  <div class="card">
+                    <div class="card-body">
+                      <div class="form-group">
+                        <div class="form-label-group mb-0">
+                            <input
+                              type="text"
+                              id="basicInputDisabled"
+                              class="form-control"
+                              autofocus="autofocus"
+                              placeholder="label"
+                              value="Disabled field"
+                              disabled
+                            />
+                            <label for="basicInputDisabled">Label</label>
                           </div>
-                        </div>
+                          <small id="basicInputDisabledHelp" class="form-text text-muted">Help text for this field.</small>
+                      </div>
                     </div>
+                  </div>
                 </section>
                 <section class="sg_pattern">
-                    <h2 class="mb-5">Readonly</h2>
-                    <div class="card">
-                        <div class="card-body">
-                          <div class="form-group">
-                            <div class="form-label-group mb-0">
-                                <input
-                                  type="text"
-                                  id="basicInputDisabled"
-                                  class="form-control"
-                                  autofocus="autofocus"
-                                  placeholder="label"
-                                  value="Readonly field"
-                                  readonly
-                                />
-                                <label for="basicInputDisabled">Label</label>
-                              </div>
-                              <small id="basicInputDisabledHelp" class="form-text text-muted">Help text for this field.</small>
-                          </div>
+                  <h2 class="mb-5">Readonly</h2>
+                  <div class="card">
+                    <div class="card-body">
+                      <div class="form-group">
+                        <div class="form-label-group mb-0">
+                          <input
+                            type="text"
+                            id="basicInputDisabled"
+                            class="form-control"
+                            autofocus="autofocus"
+                            placeholder="label"
+                            value="Readonly field"
+                            readonly
+                          />
+                          <label for="basicInputDisabled">Label</label>
                         </div>
+                        <small id="basicInputDisabledHelp" class="form-text text-muted">Help text for this field.</small>
+                      </div>
                     </div>
+                  </div>
                 </section>
                 <section class="sg_pattern">
                     <h2>Invalid</h2>
@@ -430,4 +430,3 @@ export default {
     methods: {}
 };
 </script>
-<style lang="scss"></style>

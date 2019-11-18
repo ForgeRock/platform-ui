@@ -264,31 +264,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-_:-ms-fullscreen,
-:root {
-  #userDetailsModal {
-    .row {
-      min-width: 900px;
-    }
-    .fr-edit-personal-form {
-      min-width: 900px;
-    }
-  }
-}
-
-@media only screen and (max-width: 700px) {
-  _:-ms-fullscreen,
-  :root {
-    #userDetailsModal {
-      .row {
-        min-width: 200px;
-      }
-      .fr-edit-personal-form {
-        min-width: 200px;
-      }
-    }
-  }
-}
-</style>

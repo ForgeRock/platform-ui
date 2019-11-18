@@ -5,23 +5,35 @@
  * or with one of its affiliates. All use shall be exclusively subject
  * to such license between the licensee and ForgeRock AS.
  */
- 
+
 // General custom form adjustments (radio, checkbox, etc...)
-@import "custom-form";
-@import "full-screen-modal";
+@import 'custom-form';
+@import 'full-screen-modal';
 
 // Export colors to make them available in JS
 :export {
-  baseColor: $primary;
+  /* stylelint-disable */
+  basecolor: $primary;
+  /* stylelint-enable */
 }
 
-.material-icons.md-18, .material-icons-outlined.md-18 { font-size: 18px; }
-.material-icons.md-24, .material-icons-outlined.md-24 { font-size: 24px; }
-.material-icons.md-36, .material-icons-outlined.md-36 { font-size: 36px; }
-.material-icons.md-48, .material-icons-outlined.md-48 { font-size: 48px; }
-.material-icons.md-64, .material-icons-outlined.md-64 { font-size: 64px; }
+.material-icons.md-18,
+.material-icons-outlined.md-18 { font-size: 18px; }
 
-.material-icons, .material-icons-outlined {
+.material-icons.md-24,
+.material-icons-outlined.md-24 { font-size: 24px; }
+
+.material-icons.md-36,
+.material-icons-outlined.md-36 { font-size: 36px; }
+
+.material-icons.md-48,
+.material-icons-outlined.md-48 { font-size: 48px; }
+
+.material-icons.md-64,
+.material-icons-outlined.md-64 { font-size: 64px; }
+
+.material-icons,
+.material-icons-outlined {
   font-size: 1.125rem;
   vertical-align: middle;
 }
@@ -38,7 +50,7 @@
 }
 
 .modal-backdrop {
-  opacity: .5;
+  opacity: 0.5;
 }
 
 // Application adjustments (not related to themes
@@ -50,20 +62,20 @@
   }
 }
 
-html, body {
+html,
+body {
   height: 100%;
 }
 
 .fr-body-image {
-  @if $fr-background-image == 'none' {
-
-  } @else {
+  @if $fr-background-image != 'none' {
     background: $fr-background-image;
   }
 }
 
-h1, h2 {
-  font-weight: normal;
+h1,
+h2 {
+  font-weight: 400;
 }
 
 // Base application styles
@@ -84,8 +96,7 @@ h1, h2 {
   height: 100%;
 
   .navbar {
-    -webkit-box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.11);
-    box-shadow: 0px 2px 10px 0px rgba(0, 0, 0, 0.11);
+    box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.11);
     height: $navbar-height;
 
     .navbar-brand {
@@ -115,33 +126,35 @@ h1, h2 {
 
 // Input Group Button styles
 .input-group .input-group-append {
-    >.btn {
-        border-color: $input-border-color;
-    }
+  > .btn {
+    border-color: $input-border-color;
+  }
 }
 
 label {
-    color: $label-color;
+  color: $label-color;
 }
 
 // Basic Form
 .b-form-group .input-group .form-control {
-  border-bottom-right-radius: .25rem;
-  border-top-right-radius: .25rem;
+  border-bottom-right-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
 }
 
 // General page transition
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition-property: opacity;
-  transition-duration: .25s;
+  transition-duration: 0.25s;
 }
 
 .fade-enter-active {
-  transition-delay: .25s;
+  transition-delay: 0.25s;
 }
 
-.fade-enter, .fade-leave-active {
-  opacity: 0
+.fade-enter,
+.fade-leave-active {
+  opacity: 0;
 }
 
 // Base page headers
@@ -158,47 +171,50 @@ label {
 }
 
 .fr-toggle-primary {
-  &.toggled .v-switch-core {
-    background-color: $fr-switch-toggled-bg;
-  }
   .v-switch-core {
     background-color: $fr-switch-bg;
+  }
+
+  &.toggled .v-switch-core {
+    background-color: $fr-switch-toggled-bg;
   }
 }
 
 // Form Break
 .fr-form-break {
-  display: -webkit-box;
-  display: -moz-box;
-  display: -ms-flexbox;
-  display: -webkit-flex;
   display: flex;
   width: 100%;
   margin: 14px 0;
-  >:first-child, >:last-child {
-    -webkit-flex: 1;
-    -moz-flex: 1;
+
+  > :first-child,
+  > :last-child {
     flex: 1;
     position: relative;
   }
-  >:first-child:before, >:last-child:before {
+
+  > :first-child::before,
+  > :last-child::before {
     content: ' ';
     position: absolute;
     top: 50%;
-    left: 0px;
-    right: 0px;
+    left: 0;
+    right: 0;
     height: 1px;
     background-color: $gray-200;
-    -webkit-box-shadow: 0 1px 0 fade(#FFF, 20%);
-    -moz-box-shadow: 0 1px 0 fade(#FFF, 20%);
-    box-shadow: 0 1px 0 fade(#FFF, 20%);
+    box-shadow: 0 1px 0 fade(white, 20%);
   }
-  >:first-child {
+
+  > :first-child {
     margin-right: 10px;
   }
+
   :last-child {
     margin-left: 10px;
   }
+}
+
+.table td {
+  vertical-align: middle;
 }
 
 /**
@@ -214,22 +230,17 @@ label {
   padding-right: 1.875rem;
 }
 
-.table td {
-  vertical-align: middle;
-}
-
 /*
   Paginator Styles
  */
-.pagination{
-
+.pagination {
   .page-link {
     border-radius: $pagination-border-radius;
     margin-left: 4px;
   }
 
   .disabled.page-item {
-    opacity: .5;
+    opacity: 0.5;
   }
 }
 
@@ -254,12 +265,12 @@ label {
       border-top-left-radius: 0;
       background-color: $input-bg;
       border-color: $input-border-color;
-      color:$input-btn-color;
+      color: $input-btn-color;
     }
+
     button:hover {
       color: $input-btn-active-color;
     }
-
   }
 }
 
@@ -276,7 +287,8 @@ table td.avatar {
   > div {
     display: flex;
   }
-  @media(min-width: 992px) {
+
+  @media (min-width: 992px) {
     width: 70px;
     padding-right: 0;
   }
@@ -287,7 +299,8 @@ table td.select {
   > div {
     display: flex;
   }
-  @media(min-width: 992px) {
+
+  @media (min-width: 992px) {
     width: 20px;
     padding-right: 0;
   }
@@ -303,7 +316,7 @@ table td.select {
   Fade animation for form transitions into error state
  */
 .is-invalid {
-  transition: border .75s linear;
+  transition: border 0.75s linear;
 }
 
 .fr-validation-requirements {
@@ -311,13 +324,14 @@ table td.select {
   animation-name: fadeInOpacity;
   animation-iteration-count: 1;
   animation-timing-function: ease-in;
-  animation-duration: .75s;
+  animation-duration: 0.75s;
 }
 
 @keyframes fadeInOpacity {
   0% {
     opacity: 0;
   }
+
   100% {
     opacity: 1;
   }
@@ -325,4 +339,4 @@ table td.select {
 
 // Additional component level theme overrides must come after if you want access to bootstrap variables
 // These should also come last so they can override anything in the application
-@import "theme-components";
+@import 'theme-components';

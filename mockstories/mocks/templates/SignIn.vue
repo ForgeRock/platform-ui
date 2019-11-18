@@ -19,7 +19,7 @@ to such license between the licensee and ForgeRock AS. -->
                     <form class="form-signin mb-3">
                         <div class="mb-3">
                             <div class="form-label-group mb-0">
-                                <input aria-invalid="false" aria-required="false" autofocus="autofocus" class="polyfillPlaceholder form-control" data-vv-as="Username" data-vv-id="1" data-vv-validate-on="submit" id="floatingLabelInput13" name="username" placeholder="Username" type="text"> <!----> <label for="floatingLabelInput13">Username</label>
+                                <input aria-invalid="false" aria-required="false" autofocus="autofocus" class="polyfill-placeholder form-control" data-vv-as="Username" data-vv-id="1" data-vv-validate-on="submit" id="floatingLabelInput13" name="username" placeholder="Username" type="text"> <!----> <label for="floatingLabelInput13">Username</label>
                             </div>
                             <div class="fr-validation-requirements text-left" style="display: none;">
                                 <span class="text-danger"></span>
@@ -65,4 +65,3 @@ export default {
     methods: {}
 };
 </script>
-<style lang="scss"></style>

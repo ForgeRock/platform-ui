@@ -48,7 +48,7 @@ to such license between the licensee and ForgeRock AS. -->
               :src="require('@/assets/images/empty-box.svg')"
               class="mb-4"
               :alt="$t('common.logo')"
-              style="width:150px;">
+              style="width: 150px;">
             <h5 class="h5">
               {{ $t(`pages.uma.resources.noDataState`) }}
             </h5>
@@ -312,6 +312,3 @@ export default {
   },
 };
 </script>
-
-<style lang='scss' scoped>
-</style>

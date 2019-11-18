@@ -5,7 +5,7 @@
  * or with one of its affiliates. All use shall be exclusively subject
  * to such license between the licensee and ForgeRock AS.
  */
- 
+
 // Custom control indicators
 //
 // Build the custom controls out of psuedo-elements.
@@ -26,9 +26,10 @@
     width: $custom-control-indicator-size;
     height: $custom-control-indicator-size;
     pointer-events: none;
-    content: "";
+    content: '';
     user-select: none;
     background-color: $custom-control-indicator-bg;
+
     @include box-shadow($custom-control-indicator-box-shadow);
   }
 
@@ -40,7 +41,7 @@
     display: block;
     width: $custom-control-indicator-size;
     height: $custom-control-indicator-size;
-    content: "";
+    content: '';
     background-repeat: no-repeat;
     background-position: center center;
     background-size: $custom-control-indicator-bg-size;
@@ -55,6 +56,7 @@
 
   .custom-control-label::before {
     @include border-radius($custom-checkbox-indicator-border-radius);
+
     border: 1px solid $custom-checkbox-indicator-border-color;
     left: -30px;
   }
@@ -66,14 +68,13 @@
   .custom-control-input:checked ~ .custom-control-label {
     &::before {
       @include gradient-bg($custom-control-indicator-checked-bg);
+
+      border-color: $custom-control-indicator-checked-bg;
     }
+
     &::after {
       background-image: $custom-checkbox-indicator-icon-checked;
     }
-  }
-
-  .custom-control-input:checked ~ .custom-control-label::before {
-    border-color: $custom-control-indicator-checked-bg;
   }
 
   .custom-control-input:indeterminate ~ .custom-control-label {
@@ -81,6 +82,7 @@
       @include gradient-bg($custom-checkbox-indicator-indeterminate-bg);
       @include box-shadow($custom-checkbox-indicator-indeterminate-box-shadow);
     }
+
     &::after {
       background-image: $custom-checkbox-indicator-icon-indeterminate;
     }
@@ -90,6 +92,7 @@
     &:checked ~ .custom-control-label::before {
       background-color: $custom-control-indicator-checked-disabled-bg;
     }
+
     &:indeterminate ~ .custom-control-label::before {
       background-color: $custom-control-indicator-checked-disabled-bg;
     }
@@ -109,6 +112,7 @@
     &::before {
       @include gradient-bg($custom-control-indicator-checked-bg);
     }
+
     &::after {
       background-image: $custom-radio-indicator-icon-checked;
     }
@@ -136,11 +140,15 @@ select.custom-select {
   background: $custom-select-bg $custom-select-indicator no-repeat right $custom-select-padding-x center;
   background-size: $custom-select-bg-size;
   border: $custom-select-border-width solid $custom-select-border-color;
+
   @if $enable-rounded {
     border-radius: $custom-select-border-radius;
-  } @else {
+  }
+
+  @else {
     border-radius: 0;
   }
+
   appearance: none;
 
   &:focus {
@@ -159,20 +167,22 @@ select.custom-select {
     }
   }
 
-  &:not([size]):not([multiple]) {
-    height: calc(#{$custom-select-height} + #{$input-height-border});
-  }
-
-  &[multiple],
-  &[size]:not([size="1"]) {
-    height: auto;
-    padding-right: $custom-select-padding-x;
-    background-image: none;
-  }
-
   &:disabled {
     color: $custom-select-disabled-color;
     background-color: $custom-select-disabled-bg;
+  }
+
+  /* stylelint-disable */
+  &:not([size]):not([multiple]) {
+    height: calc(#{$custom-select-height} + #{$input-height-border});
+  }
+  /* stylelint-enable */
+
+  &[multiple],
+  &[size]:not([size='1']) {
+    height: auto;
+    padding-right: $custom-select-padding-x;
+    background-image: none;
   }
 
   // Hides the default caret in IE11
@@ -216,10 +226,12 @@ select.custom-select {
   border-left: none;
   border-right: none;
 }
+
 .nav-tabs .nav-link:hover,
 .nav-tabs .nav-link:focus {
   border-color: transparent;
 }
+
 .nav-tabs .nav-link.active:hover,
 .nav-tabs .nav-link.active:focus {
   border-bottom: 3px solid $nav-highlight-color;

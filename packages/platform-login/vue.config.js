@@ -45,5 +45,6 @@ module.exports = {
       localeDir: 'locales',
       enableInSFC: false,
     },
+    lintStyleOnBuild: true,
   },
 };

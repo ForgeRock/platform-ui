@@ -318,13 +318,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-    #callbacksPanel /deep/ {
-      br {
-        display: none;
-      }
-
-      div.INFORMATION {
-        margin-bottom: 10px;
-      }
+  #callbacksPanel /deep/ {
+    br {
+      display: none;
     }
+  }
 </style>

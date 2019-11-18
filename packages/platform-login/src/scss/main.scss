@@ -5,13 +5,15 @@
  * or with one of its affiliates. All use shall be exclusively subject
  * to such license between the licensee and ForgeRock AS.
  */
-@import "~bootstrap/scss/bootstrap.scss";
-@import "~bootstrap-vue/dist/bootstrap-vue.css";
-@import "~@forgerock/platform-components/src/scss/main.scss";
+@import '~bootstrap/scss/bootstrap.scss';
+@import '~bootstrap-vue/dist/bootstrap-vue.css';
+@import '~@forgerock/platform-components/src/scss/main.scss';
 
 // Export colors to make them available in JS
 :export {
-  baseColor: $primary;
+  /* stylelint-disable */
+  basecolor: $primary;
+  /* stylelint-enable */
 }
 
 //Circle and icon
@@ -35,9 +37,7 @@
 }
 
 .fr-body-image {
-  @if $fr-background-image == 'none' {
-
-  } @else {
+  @if $fr-background-image != 'none' {
     background: $fr-background-image;
   }
 }
@@ -46,7 +46,7 @@
   Fade animation for form transitions into error state
  */
 .is-invalid {
-  transition: border .75s linear;
+  transition: border 0.75s linear;
 }
 
 .fr-validation-requirements {
@@ -54,13 +54,14 @@
   animation-name: fadeInOpacity;
   animation-iteration-count: 1;
   animation-timing-function: ease-in;
-  animation-duration: .75s;
+  animation-duration: 0.75s;
 }
 
 .fr-toggle-primary {
   &.toggled .v-switch-core {
     background-color: $fr-switch-toggled-bg;
   }
+
   .v-switch-core {
     background-color: $fr-switch-bg;
   }
@@ -70,6 +71,7 @@
   0% {
     opacity: 0;
   }
+
   100% {
     opacity: 1;
   }

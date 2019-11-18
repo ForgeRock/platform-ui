@@ -23,7 +23,7 @@ to such license between the licensee and ForgeRock AS. -->
                                     <img :src="require('@/assets/images/logos/fr-ds.svg')"
                                          alt="Generic OAuth2"
                                          class="mb-4"
-                                         style="width:48px;" />
+                                         style="width: 48px;" />
                                     <h5 class="mb-3">Card Title</h5>
                                     <div class="text-muted">
                                         <small>Meta (optional)</small>
@@ -36,20 +36,17 @@ to such license between the licensee and ForgeRock AS. -->
                         </div>
                     </div>
                 </section>
-
-
-
                 <section class="sg_pattern">
                     <h2>Linked Cards</h2>
                     <p class="mb-5">Linked cards have a hover treatment.</p>
                     <div class="row">
                         <div class="col-6 col-lg-4">
-                            <a href="#" class="card" style="max-width:20rem;">
+                            <a href="#" class="card" style="max-width: 20rem;">
                                 <div class="card-body text-center">
                                   <img :src="require('@/assets/images/vertical-logo.svg')"
                                        alt="ForgeRock"
                                        class="my-4"
-                                       style="width:50px;" />
+                                       style="width: 50px;" />
                                   <h5 class="card-title">Card title</h5>
                                 </div>
                             </a>
@@ -59,7 +56,7 @@ to such license between the licensee and ForgeRock AS. -->
                                 <div class="card-header">
                                     <h5 class="m-0">Username &amp; Password</h5>
                                 </div>
-                                <div class="overflow-hidden bg-gray-200 p-3 d-flex align-items-center" style="height:170px;">
+                                <div class="overflow-hidden bg-gray-200 p-3 d-flex align-items-center" style="height: 170px;">
                                     <img :src="require('@/assets/images/th-tree.svg')" alt="Thumbnail" class="w-100" />
                                 </div>
                                 <div class="card-body">
@@ -81,7 +78,7 @@ to such license between the licensee and ForgeRock AS. -->
                                         <img :src="require('@/assets/images/vertical-logo.svg')"
                                              alt="ForgeRock"
                                              class="my-4"
-                                             style="width:50px;" />
+                                             style="width: 50px;" />
                                         <h5 class="card-title">Option 1</h5>
                                     </div>
                                 </div>
@@ -95,7 +92,7 @@ to such license between the licensee and ForgeRock AS. -->
                                       <img :src="require('@/assets/images/vertical-logo.svg')"
                                            alt="ForgeRock"
                                            class="my-4"
-                                           style="width:50px;" />
+                                           style="width: 50px;" />
                                       <h5 class="card-title">Option 2</h5>
                                     </div>
                                 </div>
@@ -112,17 +109,16 @@ to such license between the licensee and ForgeRock AS. -->
 import { BContainer } from 'bootstrap-vue';
 
 export default {
-    name: 'Card',
-    data: function () {
-        return {
-            radioChecked: 'option1'
-        };
-    },
-    components: {
-        BContainer
-    },
-    mounted () {},
-    methods: {}
+  name: 'Card',
+  data: function () {
+    return {
+      radioChecked: 'option1'
+    };
+  },
+  components: {
+    BContainer
+  },
+  mounted () {},
+  methods: {}
 };
 </script>
-<style lang="scss"></style>

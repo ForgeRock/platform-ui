@@ -64,6 +64,7 @@ export default {
 
   .card {
     border: none;
+
     @include media-breakpoint-between(sm, xl) {
       margin: 0;
       border-radius: $border-radius;
@@ -77,6 +78,7 @@ export default {
 
     .justify-content-center {
       flex-direction: column;
+
       .fr-logo {
         align-self: center;
       }
@@ -85,6 +87,7 @@ export default {
 
   .card-body {
     padding: 20px 40px 40px;
+
     @include media-breakpoint-between(sm, xl) {
       padding: 20px 40px 40px;
     }

@@ -52,6 +52,7 @@ export default {
   width: 0;
   transition: all 0.25s ease;
 }
+
 .fr-grow-in {
   width: 3rem;
 }
@@ -59,16 +60,20 @@ export default {
 .fr-fade-enter-active {
   transition: all 0.125s ease;
 }
+
 .fr-fade-leave {
   transition: all 0.125s ease;
 }
+
 .fr-fade-enter,
 .fr-fade-leave-to {
   opacity: 0;
 }
+
 .fr-fade-enter-to {
   opacity: 1;
 }
+
 .fr-clip-loader {
   top: 0.15rem;
 }

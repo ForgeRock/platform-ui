@@ -220,14 +220,11 @@ export default {
 // For theming please see https://getbootstrap.com/docs/4.0/getting-started/theming/
 // Variable must come before bootstrap (to override them)
 // Currently variable and theming loaded through node
-@import "~bootstrap/scss/bootstrap.scss";
-@import "scss/main.scss";
-@import "~bootstrap-vue/dist/bootstrap-vue.css";
+@import '~bootstrap/scss/bootstrap.scss';
+@import 'scss/main.scss';
+@import '~bootstrap-vue/dist/bootstrap-vue.css';
 
 #app {
-  -webkit-transition: all 0.2s ease;
-  -moz-transition: all 0.2s ease;
-  -o-transition: all 0.2s ease;
   transition: all 0.2s ease;
 
   .container,
@@ -257,10 +254,6 @@ export default {
       margin-left: -$fr-sidebar-nav-width;
       overflow: hidden;
       background: $fr-sidebar-nav-background-color;
-
-      -webkit-transition: all 0.2s ease;
-      -moz-transition: all 0.2s ease;
-      -o-transition: all 0.2s ease;
       transition: all 0.2s ease;
 
       a {
@@ -295,9 +288,6 @@ export default {
 
     #appContent {
       height: 100%;
-      -webkit-transition: all 0.2s ease;
-      -moz-transition: all 0.2s ease;
-      -o-transition: all 0.2s ease;
       transition: all 0.2s ease;
       padding-left: 0;
 
@@ -318,117 +308,16 @@ export default {
       .navbar-nav {
         .dropdown-menu {
           position: absolute;
-          float: left;
         }
 
         .nav-link {
           color: $fr-toolbar-color;
         }
       }
+
       > .container {
         padding-top: $grid-gutter-width;
         padding-bottom: $grid-gutter-width * 2;
-      }
-    }
-
-    &.toolbarToggled {
-      #appSidebarWrapper {
-        width: $fr-sidebar-nav-width;
-        margin-left: 0;
-
-        .sidebar-brand-logo {
-          display: block;
-        }
-
-        .sidebar-brand-mark {
-          display: none;
-        }
-
-        @media (min-width: 768px) {
-          .sidebar-brand-logo {
-            display: block;
-          }
-
-          .sidebar-brand-mark {
-            display: none;
-          }
-
-          .sidebar-item-text {
-            display: inline;
-          }
-        }
-      }
-
-      #appContent {
-        z-index: 1;
-        padding-left: $fr-sidebar-nav-width;
-        margin-right: -$fr-sidebar-nav-width;
-
-        @media (min-width: 768px) {
-          position: relative;
-          padding-left: $fr-sidebar-nav-width;
-          margin-right: 0;
-        }
-      }
-    }
-  }
-
-  /* Sidebar Styles */
-  .sidebar-nav {
-    position: absolute;
-    top: 0;
-    width: $fr-sidebar-nav-width;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-
-    li {
-      a {
-        color: $fr-sidebar-nav-link-color;
-        display: block;
-        border-left: 3px solid $fr-sidebar-nav-link-border-color;
-        text-decoration: none;
-        padding: 10px 20px 10px 17px;
-        -webkit-transition: all 0.2s ease;
-        -moz-transition: all 0.2s ease;
-        -o-transition: all 0.2s ease;
-        transition: all 0.2s ease;
-
-        &.router-link-active {
-          color: $fr-sidebar-nav-link-hover-color;
-          background: $fr-sidebar-nav-link-active-color;
-          border-left-color: $fr-sidebar-nav-link-active-border-color;
-        }
-
-        &:hover {
-          color: $fr-sidebar-nav-link-hover-color;
-          background: darken($fr-sidebar-nav-link-active-color, 3%);
-        }
-      }
-    }
-
-    > .sidebar-brand {
-      height: $navbar-height;
-      font-size: 18px;
-      line-height: 72px;
-      background-color: $fr-sidebar-nav-brand-color;
-      width: 100%;
-      top: 0;
-      -webkit-transition: all 0.2s ease;
-      -moz-transition: all 0.2s ease;
-      -o-transition: all 0.2s ease;
-      transition: all 0.2s ease;
-
-      a {
-        color: $fr-sidebar-nav-link-color;
-        width: 100%;
-        height: 100%;
-        padding: 0 20px 0 17px;
-
-        &:hover {
-          color: $fr-sidebar-nav-link-hover-color;
-          background: $fr-sidebar-nav-background-color;
-        }
       }
     }
   }
