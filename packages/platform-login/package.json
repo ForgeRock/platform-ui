@@ -3,11 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "prebuild": "yarn lint:js",
     "build": "vue-cli-service build",
     "dev": "vue-cli-service serve",
     "docker:build": "config/scripts/docker:build.sh",
     "docker:run": "config/scripts/docker:run.sh",
-    "lint": "vue-cli-service lint",
+    "lint": "yarn lint:js && yarn lint:style",
+    "lint:js": "vue-cli-service lint",
+    "lint:style": "vue-cli-service lint:style '**/*.vue' '**/*.scss'",
     "unit": "jest --no-cache",
     "coverage": "jest --verbose --coverage --noStackTrace --no-cache"
   },
@@ -29,6 +32,7 @@
     "vue-spinner": "1.0.3"
   },
   "devDependencies": {
+    "@ascendancyy/vue-cli-plugin-stylelint": "1.1.2",
     "@vue/cli-plugin-babel": "3.8.0",
     "@vue/cli-plugin-eslint": "3.8.0",
     "@vue/cli-plugin-unit-jest": "3.11.0",
@@ -48,6 +52,8 @@
     "node-sass": "4.12.0",
     "sass-loader": "7.1.0",
     "style-resources-loader": "1.2.1",
+    "stylelint": "11.1.1",
+    "stylelint-config-standard": "19.0.0",
     "vue-cli-plugin-i18n": "0.6.0",
     "vue-jest": "3.0.5",
     "vue-template-compiler": "2.6.10"
@@ -90,6 +96,105 @@
     },
     "parserOptions": {
       "parser": "babel-eslint"
+    }
+  },
+  "stylelint": {
+    "plugins": [
+      "stylelint-order"
+    ],
+    "extends": "stylelint-config-standard",
+    "rules": {
+      "at-rule-no-vendor-prefix": true,
+      "at-rule-whitelist": [
+        "import",
+        "media",
+        "keyframes",
+        "include",
+        "if",
+        "else"
+      ],
+      "at-rule-no-unknown": null,
+      "color-named": "always-where-possible",
+      "custom-media-pattern": "^([a-z]+-?)*([a-z]+)$",
+      "custom-property-pattern": "^([a-z]+-?)*([a-z]+)$",
+      "declaration-block-no-duplicate-properties": true,
+      "font-family-name-quotes": "always-where-recommended",
+      "font-weight-notation": "numeric",
+      "function-url-quotes": "always",
+      "function-whitelist": [
+        "color",
+        "counter",
+        "hsla",
+        "rgba",
+        "rotate",
+        "translate",
+        "translateY",
+        "calc",
+        "darken",
+        "lighten",
+        "map-merge",
+        "theme-color",
+        "url",
+        "str-replace",
+        "fade"
+      ],
+      "media-feature-name-no-vendor-prefix": true,
+      "no-descending-specificity": null,
+      "no-duplicate-selectors": true,
+      "property-blacklist": [
+        "float"
+      ],
+      "property-no-unknown": [
+        true,
+        {
+          "ignoreProperties": [
+            "composes"
+          ]
+        }
+      ],
+      "property-no-vendor-prefix": true,
+      "selector-class-pattern": "^([a-z]+((-{1,2}[a-z0-9]+)|(_{2}[a-z0-9]+))*)$",
+      "selector-max-attribute": 1,
+      "selector-max-id": [ 1, { "severity": "warning" }],
+      "selector-max-specificity": "3,5,0",
+      "selector-max-type": 3,
+      "selector-max-universal": 1,
+      "selector-no-vendor-prefix": true,
+      "selector-pseudo-class-whitelist": [
+        "hover",
+        "focus",
+        "global",
+        "not",
+        "after",
+        "first-child",
+        "last-child",
+        "last-of-type",
+        "active",
+        "export",
+        "checked",
+        "indeterminate",
+        "disabled"
+      ],
+      "selector-pseudo-class-no-unknown": [
+        true,
+        {
+          "ignorePseudoClasses": [
+            "global",
+            "export"
+          ]
+        }
+      ],
+      "string-quotes": "single",
+      "unit-whitelist": [
+        "%",
+        "px",
+        "em",
+        "vh",
+        "rem",
+        "s",
+        "deg"
+      ],
+      "value-no-vendor-prefix": true
     }
   },
   "postcss": {
