@@ -50,17 +50,15 @@ export default {
 
 <style lang="scss">
 @import 'scss/main';
-@import "~bootstrap/scss/bootstrap.scss";
+@import '~bootstrap/scss/bootstrap.scss';
 
 #app {
-  -webkit-transition: all 0.2s ease;
-  -moz-transition: all 0.2s ease;
-  -o-transition: all 0.2s ease;
   transition: all 0.2s ease;
   height: 100%;
 
-  .container, .container-fluid {
-    @media(min-width:768px) {
+  .container,
+  .container-fluid {
+    @media (min-width: 768px) {
       padding-left: $grid-gutter-width;
       padding-right: $grid-gutter-width;
     }
@@ -71,9 +69,6 @@ export default {
 
     #appContentWrapper {
       height: 100%;
-      -webkit-transition: all 0.2s ease;
-      -moz-transition: all 0.2s ease;
-      -o-transition: all 0.2s ease;
       transition: all 0.2s ease;
       padding-left: 0;
     }

@@ -126,7 +126,7 @@ export default {
 </script>
 
 <style type="scss" scoped>
-  .fr-btn-social img{
+  .fr-btn-social img {
     max-width: 21px;
     margin-right: 5px;
   }
