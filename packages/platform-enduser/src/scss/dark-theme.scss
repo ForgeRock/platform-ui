@@ -5,29 +5,29 @@
  * or with one of its affiliates. All use shall be exclusively subject
  * to such license between the licensee and ForgeRock AS.
  */
- 
+
 // $white:    !default;
 $gray-100: #f7f8fc;
 $gray-200: #eaeaed;
-$gray-300: #DADADF;
+$gray-300: #dadadf;
 $gray-400: #c2c3cc;
 $gray-500: #7e8089;
 $gray-600: #555767;
-$gray-700: #3B3D4F;
-$gray-800: #292C3D;
-$gray-900: #1B1E2F;
+$gray-700: #3b3d4f;
+$gray-800: #292c3d;
+$gray-900: #1b1e2f;
 // $black:    !default;
 
-$blue:    #4784F1;
-$indigo:  #5E37F8;
-$purple:  #6760FA;
-$pink:    #C65DA9;
+$blue:    #4784f1;
+$indigo:  #5e37f8;
+$purple:  #6760fa;
+$pink:    #c65da9;
 $red:     #de4c4b;
-$orange:  #E78C65;
-$yellow:  #F1BD59;
-$green:   #8AFAA3;
-$teal:    #84E4D9;
-$cyan:    #72BEC8;
+$orange:  #e78c65;
+$yellow:  #f1bd59;
+$green:   #8afaa3;
+$teal:    #84e4d9;
+$cyan:    #72bec8;
 
 $primary:       $purple;
 $secondary:     $gray-500;
@@ -40,14 +40,14 @@ $dark:          $gray-900;
 
 //Base
 $theme-colors: (
-        "primary": $primary,
-        "secondary": $secondary,
-        "success": $success,
-        "info": $info,
-        "warning": $warning,
-        "danger": $danger,
-        "light": $light,
-        "dark": $dark
+  'primary': $primary,
+  'secondary': $secondary,
+  'success': $success,
+  'info': $info,
+  'warning': $warning,
+  'danger': $danger,
+  'light': $light,
+  'dark': $dark
 );
 
 // Global Variables
@@ -59,14 +59,13 @@ $body-bg:                              $gray-800;
 $body-color:                           $gray-200;
 $headings-color:                       $gray-200;
 $text-muted:                           $gray-400;
-$fr-typeface:                          "Roboto", sans-serif ;
+$fr-typeface:                          'Roboto', sans-serif;
 $link-color:                           lighten($primary, 17%);
 $link-hover-color:                     lighten($link-color, 9%);
 $input-btn-focus-color:                 $gray-900;
 
 $component-active-color:                $gray-900;
-$component-active-bg:                   theme-color("primary");
-
+$component-active-bg:                   theme-color('primary');
 
 // Inputs
 $input-bg:                              $gray-800;
@@ -74,7 +73,7 @@ $input-disabled-bg:                     transparent;
 $input-color:                           $gray-200;
 $input-border-color:                    $gray-800;
 $input-placeholder-color:               $gray-400;
-$input-focus-bg:                        darken($input-bg,4%);
+$input-focus-bg:                        darken($input-bg, 4%);
 $input-focus-box-shadow:                none;
 $input-focus-border-color:              $gray-800;
 $input-focus-color:                     $gray-200;
@@ -95,7 +94,7 @@ $custom-select-bg:                           $input-bg;
 $custom-select-border-color:                 $input-border-color;
 $custom-select-color:                        $input-color;
 $custom-select-indicator-color:              $gray-400;
-$custom-select-indicator:                    str-replace(url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='#{$custom-select-indicator-color}' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E"), "#", "%23");
+$custom-select-indicator:                    str-replace(url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='#{$custom-select-indicator-color}' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E"), '#', '%23');
 
 //List group
 $fr-hover-list-color:                  $gray-600;
@@ -137,7 +136,6 @@ $dropdown-header-color:                $gray-200;
 $dropdown-link-active-color:           $component-active-color;
 $dropdown-link-active-bg:              $component-active-bg;
 
-
 // Toolbar
 $fr-toolbar-background:                $gray-700;
 $fr-application-text-color:            $gray-100;
@@ -152,7 +150,7 @@ $fr-sidemenu-color: $gray-400;
 $fr-sidemenu-active-border-color: $yellow;
 $fr-sidemenu-height: 4.5rem;
 $fr-sidemenu-hover:  rgba(0, 0, 0, 0.3);
-$fr-sidemenu-shadow: 1px 0px 9px rgba(0, 0, 0, 0.45);
+$fr-sidemenu-shadow: 1px 0 9px rgba(0, 0, 0, 0.45);
 $fr-sidemenu-border: $gray-200;
 $fr-sidemenu-width-lg: 14.25em;
 $fr-sidemenu-width-sm: 3.75em;
@@ -173,7 +171,7 @@ $fr-alert-warning-bg-color:         $gray-900;
 $fr-alert-danger-bg-color:          $gray-900;
 $fr-alert-light-bg-color:           $gray-900;
 $fr-alert-dark-bg-color:            $gray-900;
-$fr-alert-box-shadow:               0px 0px 14px 0px rgba(0,0,0,0.75);
+$fr-alert-box-shadow:               0 0 14px 0 rgba(0, 0, 0, 0.75);
 
 // Paginator
 $pagination-color:                  $link-color;

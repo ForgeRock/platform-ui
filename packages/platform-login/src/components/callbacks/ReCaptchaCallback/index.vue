@@ -98,10 +98,11 @@ export default {
 };
 </script>
 <style>
-  #captchaBody #recaptchaContainer>div {
+  #captchaBody #recaptchaContainer > div {
     margin: auto;
   }
-  #captchaBody #recaptchaContainer>div>div {
+
+  #captchaBody #recaptchaContainer > div > div {
     display: inline-block;
   }
 </style>

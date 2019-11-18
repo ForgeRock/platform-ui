@@ -19,7 +19,7 @@ to such license between the licensee and ForgeRock AS. -->
                     <div class="card">
                         <div class="card-body">
                             <div class="progress-indicator position-relative mx-5">
-                                <ol class="list-unstyled d-flex justify-content-between" style="z-index:1;">
+                                <ol class="list-unstyled d-flex justify-content-between" style="z-index: 1;">
                                     <li class="list-inline-item complete">
                                         <button class="btn-progress-marker" title="Step 1 - Completed">
                                             <i class="progress-icon material-icons md-14">check_circle</i>
@@ -77,4 +77,3 @@ export default {
     methods: {}
 };
 </script>
-<style lang="scss"></style>

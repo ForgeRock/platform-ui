@@ -54,7 +54,7 @@ to such license between the licensee and ForgeRock AS. -->
               <div class="media">
                 <div
                   class="d-flex align-self-center text-center"
-                  style="min-width:1.5rem;">
+                  style="min-width: 1.5rem;">
                   <i
                     class="material-icons-outlined md-16 font-weight-bolder text-success"
                     v-if="!this.viewgrid">
@@ -77,7 +77,7 @@ to such license between the licensee and ForgeRock AS. -->
               <div class="media">
                 <div
                   class="d-flex align-self-center text-center"
-                  style="min-width:1.5rem;">
+                  style="min-width: 1.5rem;">
                   <i
                     class="material-icons-outlined md-16 font-weight-bolder text-success"
                     v-if="this.viewgrid">
