@@ -375,14 +375,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/deep/ {
-  .fr-resource-paginator {
-    a[role="menuitemradio"] {
-      display: none !important;
-    }
-  }
-}
-
 .input-group {
   & > .input-group-prepend {
     .input-group-text.inset,

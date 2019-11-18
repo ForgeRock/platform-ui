@@ -32,7 +32,7 @@ to such license between the licensee and ForgeRock AS. -->
 
       <RouterLink to="/">
         <BButton
-          style="width:250px;"
+          style="width: 250px;"
           variant="primary"
           class="mt-2 mb-2">
           {{ $t("pages.notFound.returnToDashboard") }}
@@ -99,11 +99,9 @@ export default {
     animation: nudge 5s linear infinite alternate;
     font-size: 20px;
     font-weight: 300;
-    background: #fff;
+    background: white;
     border: 1px solid #a7a7a7;
-    -webkit-border-radius: 4px;
     border-radius: 4px;
-    -webkit-box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
     box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
     line-height: 1.3;
     margin: 0 auto 15px;
@@ -129,18 +127,18 @@ export default {
 
       &::before {
         border-left: 23px solid transparent;
-        border-top: 23px solid #fff;
+        border-top: 23px solid white;
         bottom: 2px;
-        content: "";
+        content: '';
         position: absolute;
         right: 5px;
       }
 
       &::after {
         border-left: 21px solid transparent;
-        border-top: 21px solid #fff;
+        border-top: 21px solid white;
         bottom: 4px;
-        content: "";
+        content: '';
         position: absolute;
         right: 6px;
       }
