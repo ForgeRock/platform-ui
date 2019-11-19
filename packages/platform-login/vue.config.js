@@ -22,6 +22,7 @@ function generateTheme() {
 }
 
 module.exports = {
+  publicPath: './',
   runtimeCompiler: true,
   devServer: {
     allowedHosts: [
