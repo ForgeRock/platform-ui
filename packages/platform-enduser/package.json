@@ -12,7 +12,8 @@
     "unit": "jest --no-cache --silent",
     "unit:debug": "node --inspect-brk node_modules/.bin/vue-cli-service test:unit --no-cache --watch --runInBand",
     "snapshot": "jest --updateSnapshot",
-    "coverage": "jest --verbose --coverage --noStackTrace --no-cache --silent"
+    "coverage": "jest --verbose --coverage --noStackTrace --no-cache --silent",
+    "test:e2e": "vue-cli-service test:e2e --mode e2e"
   },
   "dependencies": {
     "@forgerock/platform-components": "1.0.0",
@@ -38,6 +39,7 @@
   "devDependencies": {
     "@ascendancyy/vue-cli-plugin-stylelint": "1.1.2",
     "@vue/cli-plugin-babel": "3.8.0",
+    "@vue/cli-plugin-e2e-cypress": "4.0.5",
     "@vue/cli-plugin-eslint": "3.8.0",
     "@vue/cli-plugin-unit-jest": "3.11.0",
     "@vue/cli-service": "3.8.0",

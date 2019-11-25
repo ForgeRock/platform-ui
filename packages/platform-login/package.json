@@ -11,6 +11,7 @@
     "lint": "yarn lint:js && yarn lint:style",
     "lint:js": "vue-cli-service lint",
     "lint:style": "vue-cli-service lint:style '**/*.vue' '**/*.scss'",
+    "test:e2e": "vue-cli-service test:e2e --mode e2e",
     "unit": "jest --no-cache",
     "coverage": "jest --verbose --coverage --noStackTrace --no-cache"
   },
@@ -34,6 +35,7 @@
   "devDependencies": {
     "@ascendancyy/vue-cli-plugin-stylelint": "1.1.2",
     "@vue/cli-plugin-babel": "3.8.0",
+    "@vue/cli-plugin-e2e-cypress": "4.0.5",
     "@vue/cli-plugin-eslint": "3.8.0",
     "@vue/cli-plugin-unit-jest": "3.11.0",
     "@vue/cli-service": "3.8.0",
@@ -155,7 +157,12 @@
       "property-no-vendor-prefix": true,
       "selector-class-pattern": "^([a-z]+((-{1,2}[a-z0-9]+)|(_{2}[a-z0-9]+))*)$",
       "selector-max-attribute": 1,
-      "selector-max-id": [ 1, { "severity": "warning" }],
+      "selector-max-id": [
+        1,
+        {
+          "severity": "warning"
+        }
+      ],
       "selector-max-specificity": "3,5,0",
       "selector-max-type": 3,
       "selector-max-universal": 1,

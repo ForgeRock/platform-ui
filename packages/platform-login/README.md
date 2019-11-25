@@ -31,44 +31,46 @@ yarn install
 ### Compiles and hot-reloads for development
 
 ```sh
-yarn run dev
+yarn dev
 ```
 
 ### Compiles and minifies for production
 
 ```sh
-yarn run build
-```
-
-### Run your tests
-
-```sh
-yarn run test
-```
-
-### Lints and fixes files
-
-```sh
-yarn run lint
+yarn build
 ```
 
 ### Run your unit tests
 
 ```sh
-yarn run test:unit
+yarn unit
+```
+
+### Run your e2e tests
+
+```sh
+yarn test:e2e
+```
+
+Ensure localhost 8083 is not currently reserved under a separate terminal
+
+### Lints and fixes files
+
+```sh
+yarn lint
 ```
 
 ### Build (Development) Docker Image
 
 ```sh
-yarn run docker:build
+yarn docker:build
 # Image is tagged `platform-login:development`
 ```
 
 ### Run (Development) Docker Container
 
 ```sh
-yarn run docker:run
+yarn docker:run
 ```
 
 ## Environment variables
