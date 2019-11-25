@@ -33,29 +33,32 @@ yarn install
 
 ### Compiles and hot-reloads for development
 ```
-yarn run dev
+yarn dev
 ```
 
 ### Compiles and minifies for production
 ```
-yarn run build
-```
-
-### Run your tests
-```
-yarn run test:unit
-```
-
-### Lints and fixes files
-```
-yarn run lint
+yarn build
 ```
 
 ### Run your unit tests
 ```
-yarn run test:unit
+yarn unit
 ```
 
+### Run your e2e tests
+
+```sh
+yarn test:e2e
+```
+
+Ensure platform-login is currently running under 8083 in a separate terminal
+Ensure localhost 8888 is not currently reserved under a separate terminal
+
+### Lints and fixes files
+```
+yarn lint
+```
 
 <a  name="application-structure"></a>
 
