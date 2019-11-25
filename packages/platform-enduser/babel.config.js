@@ -9,7 +9,7 @@ module.exports = {
   env: {
     development: {
       sourceMaps: true,
-      retainLines: true, 
+      retainLines: true,
     },
     test: {
       plugins: ['require-context-hook'],

@@ -25,7 +25,7 @@
   },
   "authentication": {
     "title": "Authentication",
-    "description": "Sign in users to your applicaiton using any of the out-of-the-box authentication services or customize them to suit your specific requirements.",
+    "description": "Sign in users to your application using any of the out-of-the-box authentication services or customize them to suit your specific requirements.",
     "newAuthService": "New Authentication Service",
     "service": "Service",
     "duplicate": "Duplicate",
