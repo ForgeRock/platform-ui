@@ -14,7 +14,8 @@ import BootstrapVue from 'bootstrap-vue/dist/bootstrap-vue.esm.min';
 import Notifications from 'vue-notification';
 import PromisePoly from 'es6-promise';
 import ToggleButton from 'vue-js-toggle-button';
-import VeeValidate from 'vee-validate';
+import { extend, setInteractionMode } from 'vee-validate';
+import { required } from 'vee-validate/dist/rules';
 import Vue from 'vue';
 import AppAuthHelper from 'appauthhelper/appAuthHelperCompat';
 import SessionCheck from 'oidcsessioncheck';
@@ -84,20 +85,14 @@ router.beforeEach((to, from, next) => {
 
 // Globally load bootstrap vue components for use
 Vue.use(BootstrapVue);
-/*
-    Basic Validation Example:
-    <p :class="{ 'control': true }">
-        <input v-validate="'required|email'" :class="{'input': true, 'is-danger': errors.has('email') }" name="email" type="text" placeholder="Email">
-        <span v-show="errors.has('email')" class="help is-danger">{{ errors.first('email') }}</span>
-    </p>
 
-    To use VeeValidate in a component include:
+// Add the required rule
+extend('required', {
+  ...required,
+  message: '{_field_} is required',
+});
 
-    $_veeValidate: {
-        validator: 'new'
-    }
- */
-Vue.use(VeeValidate, { inject: false, fastExit: false });
+setInteractionMode('passive');
 /*
     Basic Notification Example:
     this.$notify({

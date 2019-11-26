@@ -35,62 +35,68 @@ to such license between the licensee and ForgeRock AS. -->
       <BForm class="w-100">
         <BRow>
           <BCol sm="8">
-            <fieldset
-              v-for="(select, id) in selected"
-              :key="id"
-              class="pb-3">
-              <label>{{ $t('common.user.kba.question') }} {{ select.index }}</label>
-              <BFormSelect
-                class="mb-3"
-                v-model="select.selected"
-                :options="selectOptions" />
-
-              <div
-                v-if="select && select.selected === customIndex"
+            <ValidationObserver ref="observer">
+              <fieldset
+                v-for="(select, id) in selected"
+                :key="id"
                 class="pb-3">
-                <label>{{ $t('pages.profile.accountSecurity.custom') }}</label>
-                <BFormInput
-                  type="text"
-                  v-model.trim="select.custom"
-                  v-validate="'required'"
-                  data-vv-validate-on="submit"
-                  :name="$t('pages.profile.accountSecurity.custom') + select.index"
-                  :class="[{'is-invalid': errors.has($t('pages.profile.accountSecurity.custom') + select.index)}, 'form-control']" />
+                <label>
+                  {{ $t('common.user.kba.question') }} {{ select.index }}
+                </label>
+                <BFormSelect
+                  class="mb-3"
+                  v-model="select.selected"
+                  :options="selectOptions" />
 
-                <FrValidationError
-                  :validator-errors="errors"
-                  :field-name="$t('pages.profile.accountSecurity.custom') + select.index" />
-              </div>
+                <div
+                  v-if="select && select.selected === customIndex"
+                  class="pb-3">
+                  <label>{{ $t('pages.profile.accountSecurity.custom') }}</label>
+                  <ValidationProvider
+                    :name="$t('pages.profile.accountSecurity.custom') + ' ' + select.index"
+                    rules="required"
+                    v-slot="{ errors }">
+                    <BFormInput
+                      type="text"
+                      v-model.trim="select.custom"
+                      :name="$t('pages.profile.accountSecurity.custom') + ' ' + select.index"
+                      :class="[{'is-invalid': errors.length > 0}, 'form-control']" />
+                    <FrValidationError
+                      :validator-errors="errors"
+                      :field-name="$t('pages.profile.accountSecurity.custom') + ' ' + select.index" />
+                  </ValidationProvider>
+                </div>
 
-              <div class="form-group mb-0">
-                <label>{{ $t('common.user.kba.answer') }}</label>
-                <BFormInput
-                  type="text"
-                  class="form-control"
-                  v-model.trim="select.answer"
-                  v-validate="'required'"
-                  data-vv-validate-on="submit"
-                  :data-vv-as="$t('common.user.kba.answer')"
-                  :name="$t('common.user.kba.answer') + select.index"
-                  :class="[{'is-invalid': errors.has($t('common.user.kba.answer') + select.index)}, 'form-control']" />
+                <div class="form-group mb-0">
+                  <label>{{ $t('common.user.kba.answer') }}</label>
+                  <ValidationProvider
+                    :name="$t('common.user.kba.answer') + ' ' + select.index"
+                    rules="required"
+                    v-slot="{ errors }">
+                    <BFormInput
+                      type="text"
+                      v-model.trim="select.answer"
+                      :name="$t('common.user.kba.answer') + ' ' + select.index"
+                      :class="[{'is-invalid': errors.length > 0}, 'form-control']" />
+                    <FrValidationError
+                      :validator-errors="errors"
+                      :field-name="$t('common.user.kba.answer') + ' ' + select.index" />
+                  </ValidationProvider>
+                </div>
 
-                <FrValidationError
-                  :validator-errors="errors"
-                  :field-name="$t('common.user.kba.answer') + select.index" />
-              </div>
+                <hr
+                  v-if="id !== selected.length - 1"
+                  class="mb-3 mt-4">
+              </fieldset>
 
-              <hr
-                v-if="id !== selected.length - 1"
-                class="mb-3 mt-4">
-            </fieldset>
-
-            <FrLoadingButton
-              type="button"
-              variant="primary"
-              class="ld-ext-right mb-3"
-              :label="$t('common.user.kba.saveQuestions')"
-              :loading="loading"
-              @click="onSaveKBA" />
+              <FrLoadingButton
+                type="button"
+                variant="primary"
+                class="ld-ext-right mb-3"
+                :label="$t('common.user.kba.saveQuestions')"
+                :loading="loading"
+                @click="onSaveKBA" />
+            </ValidationObserver>
           </BCol>
         </BRow>
       </BForm>
@@ -105,6 +111,10 @@ import {
   noop,
   times,
 } from 'lodash';
+import {
+  ValidationObserver,
+  ValidationProvider,
+} from 'vee-validate';
 import ListItem from '@forgerock/platform-components/src/components/listItem/';
 import ValidationErrorList from '@forgerock/platform-components/src/components/ValidationErrorList/';
 import LoadingButton from '@/components/utils/LoadingButton';
@@ -119,9 +129,8 @@ export default {
     FrListItem: ListItem,
     FrLoadingButton: LoadingButton,
     FrValidationError: ValidationErrorList,
-  },
-  $_veeValidate: {
-    validator: 'new',
+    ValidationObserver,
+    ValidationProvider,
   },
   props: {
     kbaData: {
@@ -191,26 +200,21 @@ export default {
 
       this.questions = this.kbaData.questions;
       this.initializeForm(this.kbaData.minimumAnswersToDefine);
-
-      this.errors.clear();
     },
 
-    onSaveKBA() {
-      this.isValid().then((valid) => {
-        if (valid) {
-          this.loading = true;
-
-          this.$emit('updateKBA', this.generatePatch(), {
-            onSuccess: () => {
-              this.$refs.cancel.click();
-            },
-          });
-        }
-      });
-    },
-
-    isValid() {
-      return this.$validator.validateAll();
+    async onSaveKBA() {
+      const isValid = await this.$refs.observer.validate();
+      if (isValid) {
+        this.loading = true;
+        this.$emit('updateKBA', this.generatePatch(), {
+          onSuccess: () => {
+            this.$refs.cancel.click();
+          },
+          onError: () => {
+            this.loading = false;
+          },
+        });
+      }
     },
   },
   watch: {

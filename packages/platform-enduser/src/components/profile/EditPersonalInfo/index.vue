@@ -39,69 +39,71 @@ to such license between the licensee and ForgeRock AS. -->
             v-if="formFields.length > 0"
             class="mb-3 fr-edit-personal-form"
             name="edit-personal-form">
-            <template v-for="(field, index) in formFields">
-              <BFormGroup
-                style="min-width: 200px;"
-                :key="index"
-                v-if="field.type === 'string' || field.type === 'number'">
-                <label :for="field.title">
-                  {{ field.title }}
-                </label>
-                <small
-                  v-if="!field.required"
-                  class="text-muted ml-1">
-                  {{ $t('pages.profile.editProfile.optional') }}
-                </small>
-
-                <input
-                  v-if="field.type === 'string'"
-                  v-validate="field.required ? 'required' : ''"
-                  data-vv-validate-on="submit"
-                  :name="field.name"
-                  :type="field.type"
-                  :class="[{'is-invalid': errors.has(field.name)}, 'form-control']"
-                  :data-vv-as="field.title"
-                  v-model.trim="formFields[index].value">
-
-                <input
-                  v-else
-                  v-validate="field.required ? 'required' : ''"
-                  data-vv-validate-on="submit"
-                  :name="field.name"
-                  :type="field.type"
-                  :class="[{'is-invalid': errors.has(field.name)}, 'form-control']"
-                  :data-vv-as="field.title"
-                  v-model.number="formFields[index].value">
-                <FrValidationError
-                  :validator-errors="errors"
-                  :field-name="field.name" />
-              </BFormGroup>
-
-              <!-- for boolean values -->
-              <BFormGroup
-                :key="index"
-                v-if="field.type === 'boolean'">
-                <div class="d-flex flex-column">
-                  <label
-                    class="mr-auto"
-                    :for="field.title">
+            <ValidationObserver
+              ref="observer"
+              v-slot:default="slotProps">
+              <template v-for="(field, index) in formFields">
+                <BFormGroup
+                  style="min-width: 200px;"
+                  :key="index"
+                  v-if="field.type === 'string' || field.type === 'number'">
+                  <label :for="field.title">
                     {{ field.title }}
                   </label>
+                  <small
+                    v-if="!field.required"
+                    class="text-muted ml-1">
+                    {{ $t('pages.profile.editProfile.optional') }}
+                  </small>
 
-                  <div class="mr-auto">
-                    <ToggleButton
-                      class="mt-2 p-0 fr-toggle-primary"
-                      :height="28"
-                      :width="56"
-                      :sync="true"
-                      :css-colors="true"
-                      :labels="{checked: $t('common.yes'), unchecked: $t('common.no')}"
-                      :value="formFields[index].value"
-                      @change="formFields[index].value = !formFields[index].value" />
+                  <ValidationProvider
+                    :name="field.title"
+                    :rules="field.required ? 'required' : ''"
+                    v-slot="{ errors }">
+                    <input
+                      v-if="field.type === 'string'"
+                      :name="field.name"
+                      :type="field.type"
+                      :class="[{'is-invalid': errors.length > 0}, 'form-control']"
+                      v-model.trim="field.value">
+                    <input
+                      v-else
+                      :name="field.name"
+                      :type="field.type"
+                      :class="[{'is-invalid': errors.length > 0}, 'form-control']"
+                      v-model.number="field.value">
+                    <FrValidationError
+                      :validator-errors="errors"
+                      :field-name="field.name" />
+                  </ValidationProvider>
+                </BFormGroup>
+
+                <!-- for boolean values -->
+                <BFormGroup
+                  :key="index"
+                  v-if="field.type === 'boolean'">
+                  <div class="d-flex flex-column">
+                    <label
+                      class="mr-auto"
+                      :for="field.title">
+                      {{ field.title }}
+                    </label>
+
+                    <div class="mr-auto">
+                      <ToggleButton
+                        class="mt-2 p-0 fr-toggle-primary"
+                        :height="28"
+                        :width="56"
+                        :sync="true"
+                        :css-colors="true"
+                        :labels="{checked: $t('common.yes'), unchecked: $t('common.no')}"
+                        :value="formFields[index].value"
+                        @change="formFields[index].value = !formFields[index].value" />
+                    </div>
                   </div>
-                </div>
-              </BFormGroup>
-            </template>
+                </BFormGroup>
+              </template>
+            </ValidationObserver>
           </BForm>
           <template v-else>
             <h3 class="text-center">
@@ -141,10 +143,11 @@ import {
   map,
 } from 'lodash';
 import { mapState } from 'vuex';
-import ValidationErrorList from '@forgerock/platform-components/src/components/ValidationErrorList/';
+import { ValidationObserver, ValidationProvider } from 'vee-validate';
 import ResourceMixin from '@forgerock/platform-components/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-components/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-components/src/mixins/NotificationMixin';
+import ValidationErrorList from '@forgerock/platform-components/src/components/ValidationErrorList/';
 
 /**
  * @description Displays a users profile, auto generates fields based off of resource schema. Currently only displays strings, numbers and booleans. In the case of a policy
@@ -161,6 +164,8 @@ export default {
   ],
   components: {
     FrValidationError: ValidationErrorList,
+    ValidationObserver,
+    ValidationProvider,
   },
   computed: {
     ...mapState({
@@ -168,9 +173,6 @@ export default {
       managedResource: (state) => state.UserStore.managedResource,
       internalUser: (state) => state.UserStore.internalUser,
     }),
-  },
-  $_veeValidate: {
-    validator: 'new',
   },
   props: {
     schema: { type: Object, required: true },
@@ -216,50 +218,47 @@ export default {
       this.formFields = formFields;
       this.originalFormFields = cloneDeep(formFields);
     },
-    saveForm() {
-      this.isValid().then((valid) => {
-        if (valid) {
-          const idmInstance = this.getRequestService();
-          const policyFields = {};
+    async saveForm() {
+      const isValid = await this.$refs.observer.validate();
+      if (isValid) {
+        const idmInstance = this.getRequestService();
+        const policyFields = {};
 
-          each(this.formFields, (field) => {
-            if (field.value !== null) {
-              policyFields[field.name] = field.value;
-            }
-          });
+        each(this.formFields, (field) => {
+          if (field.value !== null) {
+            policyFields[field.name] = field.value;
+          }
+        });
 
-          idmInstance.post(`policy/${this.managedResource}/${this.userId}?_action=validateObject`, policyFields).then((policyResult) => {
-            if (policyResult.data.failedPolicyRequirements.length === 0) {
-              this.$emit('updateProfile', this.generateUpdatePatch(this.originalFormFields, this.formFields));
-              this.errors.clear();
-              this.hideModal();
-            } else {
-              const generatedErrors = this.findPolicyError({
-                data: {
-                  detail: {
-                    failedPolicyRequirements: policyResult.data.failedPolicyRequirements,
-                  },
+        idmInstance.post(`policy/${this.managedResource}/${this.userId}?_action=validateObject`, policyFields).then((policyResult) => {
+          if (policyResult.data.failedPolicyRequirements.length === 0) {
+            this.$emit('updateProfile', this.generateUpdatePatch(this.originalFormFields, this.formFields));
+            this.$refs.observer.reset();
+            this.hideModal();
+          } else {
+            const generatedErrors = this.findPolicyError({
+              data: {
+                detail: {
+                  failedPolicyRequirements: policyResult.data.failedPolicyRequirements,
                 },
-              }, this.formFields);
+              },
+            }, this.formFields);
 
-              this.errors.clear();
-
-              if (generatedErrors.length > 0) {
-                each(generatedErrors, (generatedError) => {
-                  if (generatedError.exists) {
-                    this.errors.add(generatedError);
-                  }
-                });
-              } else {
-                this.displayNotification('IDMMessages', 'error', this.$t('pages.profile.editProfile.failedProfileSave'));
-              }
+            this.$refs.observer.reset();
+            if (generatedErrors.length > 0) {
+              each(generatedErrors, (generatedError) => {
+                if (generatedError.exists) {
+                  this.$refs.observer.setErrors({
+                    [generatedError.field]: [generatedError.msg],
+                  });
+                }
+              });
+            } else {
+              this.displayNotification('IDMMessages', 'error', this.$t('pages.profile.editProfile.failedProfileSave'));
             }
-          });
-        }
-      });
-    },
-    isValid() {
-      return this.$validator.validateAll();
+          }
+        });
+      }
     },
   },
 };
