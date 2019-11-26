@@ -8,17 +8,14 @@
 import { first } from 'lodash';
 import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
-import VeeValidate from 'vee-validate';
 import EditKBA from '@/components/profile/EditKBA';
 import i18n from '@/i18n';
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue);
-localVue.use(VeeValidate);
 
 describe('EditKBA.vue', () => {
   let wrapper;
-  const errors = { has: jest.fn() };
   beforeEach(() => {
     jest.spyOn(EditKBA, 'mounted')
       .mockImplementation(() => { });
@@ -32,9 +29,6 @@ describe('EditKBA.vue', () => {
     wrapper = shallowMount(EditKBA, {
       localVue,
       i18n,
-      mocks: {
-        errors,
-      },
     });
 
     expect(wrapper.name()).toBe('EditKBA');
@@ -46,9 +40,6 @@ describe('EditKBA.vue', () => {
       wrapper = shallowMount(EditKBA, {
         localVue,
         i18n,
-        mocks: {
-          errors,
-        },
       });
     });
 
