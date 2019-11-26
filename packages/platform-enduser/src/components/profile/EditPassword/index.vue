@@ -30,43 +30,48 @@ to such license between the licensee and ForgeRock AS. -->
       slot="list-item-collapse-body"
       class="d-inline-flex w-100">
       <BForm class="w-100">
+        <ValidationObserver ref="observer">
         <BRow>
           <BCol sm="8">
             <BFormGroup>
               <label for="currentPassword">
                 {{ $t('pages.profile.accountSecurity.currentPassword') }}
               </label>
-              <div class="form-label-password form-label-group mb-0">
-                <BFormInput
-                  id="currentPassword"
-                  name="currentPassword"
-                  data-vv-validate-on="submit"
-                  :data-vv-as="$t('pages.profile.accountSecurity.currentPassword')"
-                  :class="[{'is-invalid': errors.has('currentPassword')}, 'form-control']"
-                  :type="inputCurrent"
-                  v-model="currentPassword"
-                  v-validate="'required'" />
-                <div class="input-group-append">
-                  <BBtn
-                    @click="revealCurrent"
-                    class="btn btn-secondary"
-                    type="button">
-                    <i
-                      v-if="showCurrent"
-                      class="material-icons-outlined">
-                      visibility
-                    </i>
-                    <i
-                      v-else
-                      class="material-icons-outlined">
-                      visibility_off
-                    </i>
-                  </BBtn>
-                </div>
-              </div>
-              <FrValidationError
-                :validator-errors="errors"
-                field-name="currentPassword" />
+                <ValidationProvider
+                  ref="provider" 
+                  :name="$t('pages.profile.accountSecurity.currentPassword')"
+                  rules="required"
+                  v-slot="{ errors }">
+                  <div class="form-label-password form-label-group mb-0">
+                    <BFormInput
+                      id="currentPassword"
+                      :name="$t('pages.profile.accountSecurity.currentPassword')"
+                      :class="[{'is-invalid': errors.length > 0}, 'form-control']"
+                      :type="inputCurrent"
+                      v-model="currentPassword"
+                    />
+                    <div class="input-group-append">
+                      <BBtn
+                        @click="revealCurrent"
+                        class="btn btn-secondary"
+                        type="button">
+                        <i
+                          v-if="showCurrent"
+                          class="material-icons-outlined">
+                          visibility
+                        </i>
+                        <i
+                          v-else
+                          class="material-icons-outlined">
+                          visibility_off
+                        </i>
+                      </BBtn>
+                    </div>
+                  </div>
+                  <FrValidationError
+                    :validator-errors="errors"
+                    field-name="currentPassword" />
+                </ValidationProvider>
             </BFormGroup>
 
             <FrPolicyPasswordInput
@@ -78,31 +83,33 @@ to such license between the licensee and ForgeRock AS. -->
                 <label for="newPassword">
                   {{ $t('pages.profile.accountSecurity.newPassword') }}
                 </label>
-                <div class="form-label-password form-label-group mb-0">
-                  <BFormInput
-                    id="newPassword"
-                    :type="inputNew"
-                    v-model="newPassword"
-                    name="password"
-                    v-validate.initial="'required|policy'" />
-                  <div class="input-group-append">
-                    <button
-                      @click="revealNew"
-                      class="btn btn-secondary"
-                      type="button">
-                      <i
-                        v-if="showNew"
-                        class="material-icons-outlined">
-                        visibility
-                      </i>
-                      <i
-                        v-else
-                        class="material-icons-outlined">
-                        visibility_off
-                      </i>
-                    </button>
+                <ValidationProvider name="password" rules="required|policy">
+                  <div class="form-label-password form-label-group mb-0">
+                    <BFormInput
+                      id="newPassword"
+                      :type="inputNew"
+                      v-model="newPassword"
+                      name="password"
+                    />
+                    <div class="input-group-append">
+                      <button
+                        @click="revealNew"
+                        class="btn btn-secondary"
+                        type="button">
+                        <i
+                          v-if="showNew"
+                          class="material-icons-outlined">
+                          visibility
+                        </i>
+                        <i
+                          v-else
+                          class="material-icons-outlined">
+                          visibility_off
+                        </i>
+                      </button>
+                    </div>
                   </div>
-                </div>
+                </ValidationProvider>
               </BFormGroup>
             </FrPolicyPasswordInput>
 
@@ -123,12 +130,14 @@ to such license between the licensee and ForgeRock AS. -->
             </div>
           </BCol>
         </BRow>
+        </ValidationObserver>
       </BForm>
     </div>
   </FrListItem>
 </template>
 <script>
 import { mapState } from 'vuex';
+import { ValidationProvider, ValidationObserver } from 'vee-validate';
 import ListItem from '@forgerock/platform-components/src/components/listItem/';
 import PolicyPasswordInput from '@forgerock/platform-components/src/components/PolicyPasswordInput';
 import ValidationErrorList from '@forgerock/platform-components/src/components/ValidationErrorList';
@@ -145,14 +154,13 @@ export default {
   mixins: [
     NotificationMixin,
   ],
-  $_veeValidate: {
-    validator: 'new',
-  },
   components: {
     FrListItem: ListItem,
     FrLoadingButton: LoadingButton,
     FrPolicyPasswordInput: PolicyPasswordInput,
     FrValidationError: ValidationErrorList,
+    ValidationProvider,
+    ValidationObserver,
   },
   computed: {
     ...mapState({
@@ -170,13 +178,14 @@ export default {
       showCurrent: true,
       inputCurrent: 'password',
       inputNew: 'password',
+      test: false,
     };
   },
   methods: {
     clearComponent() {
       this.currentPassword = '';
       this.newPassword = '';
-      this.errors.clear();
+      this.$refs.observer.reset();
     },
     resetComponent() {
       this.loading = false;
@@ -186,13 +195,11 @@ export default {
     },
     displayError(error) {
       if (error.response.status === 403) {
-        this.errors.add({
-          field: 'currentPassword',
-          msg: 'Incorrect password provided',
-        });
+        this.$refs.provider.setErrors(['Incorrect password provided']);
+        this.test = this.$refs.provider.errors;
       }
     },
-    onSavePassword() {
+    async onSavePassword() {
       const headers = {
         'X-Requested-With': 'XMLHttpRequest',
         'X-OpenIDM-Reauth-Password': this.encodeRFC5987IfNecessary(this.currentPassword),
@@ -201,18 +208,14 @@ export default {
       const onSuccess = this.resetComponent.bind(this);
       const onError = this.displayError.bind(this);
 
-      this.errors.clear();
+      this.$refs.observer.reset();
 
-      this.$validator.validateAll().then((valid) => {
-        if (valid) {
-          this.$emit('updateProfile', payload, { headers, onSuccess, onError });
-        } else {
-          this.displayNotification('IDMMessages', 'error', this.$t('pages.profile.accountSecurity.invalidPassword'));
-        }
-      });
-    },
-    validate() {
-      return this.$validator.validateAll();
+      const isValid = await this.$refs.observer.validate();
+      if (isValid) {
+        this.$emit('updateProfile', payload, { headers, onSuccess, onError });
+      } else {
+        this.displayNotification('IDMMessages', 'error', this.$t('pages.profile.accountSecurity.invalidPassword'));
+      }
     },
     revealNew() {
       if (this.inputNew === 'password') {

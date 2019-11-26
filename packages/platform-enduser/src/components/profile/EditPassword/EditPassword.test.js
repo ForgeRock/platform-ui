@@ -8,34 +8,33 @@
 import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
 import Vuex from 'vuex';
-import VeeValidate from 'vee-validate';
+import { ValidationProvider, ValidationObserver } from 'vee-validate';
 import PolicyPasswordInput from '@forgerock/platform-components/src/components/PolicyPasswordInput';
 import EditPassword from '@/components/profile/EditPassword';
 import i18n from '@/i18n';
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue);
-localVue.use(VeeValidate);
 localVue.use(PolicyPasswordInput);
 localVue.use(Vuex);
 
 describe('EditPassword.vue', () => {
-  const v = new VeeValidate.Validator();
   let wrapper;
-
+  const stubs = {
+    ValidationProvider,
+    ValidationObserver,
+  };
   beforeEach(() => {
     wrapper = shallowMount(EditPassword, {
       localVue,
       sync: false,
-      provide: () => ({
-        $validator: v,
-      }),
       computed: {
         userId: '1234',
         managedResource: 'test',
         passwordReset: false,
       },
       i18n,
+      stubs,
     });
 
     jest.spyOn(EditPassword, 'data')
@@ -48,10 +47,6 @@ describe('EditPassword.vue', () => {
         inputCurrent: 'password',
         inputNew: 'password',
       }));
-
-
-    jest.spyOn(EditPassword.methods, 'validate')
-      .mockImplementation(() => Promise.resolve(true));
   });
 
   it('PasswordReset page loaded', () => {
@@ -59,14 +54,13 @@ describe('EditPassword.vue', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Incorrect password error', () => {
+  it('Incorrect password error', async () => {
     wrapper.vm.displayError({
       response: {
         status: 403,
       },
     });
-
-    expect(wrapper.vm.errors.all().length).toBe(2);
+    expect(wrapper.vm.$refs.provider.errors).toEqual(['Incorrect password provided']);
   });
 
   it('revealNew method changes input state', () => {
