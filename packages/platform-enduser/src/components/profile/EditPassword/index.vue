@@ -138,7 +138,7 @@ to such license between the licensee and ForgeRock AS. -->
 <script>
 import { mapState } from 'vuex';
 import { ValidationProvider, ValidationObserver } from 'vee-validate';
-import ListItem from '@forgerock/platform-components/src/components/listItem/';
+import ListItem from '@forgerock/platform-components/src/components/ListItem/';
 import PolicyPasswordInput from '@forgerock/platform-components/src/components/PolicyPasswordInput';
 import ValidationErrorList from '@forgerock/platform-components/src/components/ValidationErrorList';
 import NotificationMixin from '@forgerock/platform-components/src/mixins/NotificationMixin';
