@@ -41,8 +41,8 @@ import {
   keys,
 } from 'lodash';
 import { mapState } from 'vuex';
-import ListGroup from '@forgerock/platform-components/src/components/listGroup/';
-import ListItem from '@forgerock/platform-components/src/components/listItem/';
+import ListGroup from '@forgerock/platform-components/src/components/ListGroup/';
+import ListItem from '@forgerock/platform-components/src/components/ListItem/';
 
 /**
  * @description Displays available user preferences, these are typically true/false values associated with a managed resource (e.g. Do you want to recieve marketing emails?).

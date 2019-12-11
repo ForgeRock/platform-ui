@@ -141,8 +141,8 @@ import {
   each,
   isNull,
 } from 'lodash';
-import ListGroup from '@forgerock/platform-components/src/components/listGroup/';
-import ListItem from '@forgerock/platform-components/src/components/listItem/';
+import ListGroup from '@forgerock/platform-components/src/components/ListGroup/';
+import ListItem from '@forgerock/platform-components/src/components/ListItem/';
 import RestMixin from '@forgerock/platform-components/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-components/src/mixins/NotificationMixin';
 import LoginMixin from '@forgerock/platform-components/src/mixins/LoginMixin';
