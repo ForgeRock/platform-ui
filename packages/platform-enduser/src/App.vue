@@ -76,8 +76,8 @@ import {
   capitalize,
 } from 'lodash';
 import { mapState } from 'vuex';
-import SideMenu from '@forgerock/platform-components/src/components/sidemenu/';
-import NavBar from '@forgerock/platform-components/src/components/navbar/';
+import SideMenu from '@forgerock/platform-components/src/components/SideMenu/';
+import NavBar from '@forgerock/platform-components/src/components/Navbar/';
 import LoginMixin from '@forgerock/platform-components/src/mixins/LoginMixin';
 
 export default {

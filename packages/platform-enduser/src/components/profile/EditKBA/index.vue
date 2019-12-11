@@ -115,7 +115,7 @@ import {
   ValidationObserver,
   ValidationProvider,
 } from 'vee-validate';
-import ListItem from '@forgerock/platform-components/src/components/listItem/';
+import ListItem from '@forgerock/platform-components/src/components/ListItem/';
 import ValidationErrorList from '@forgerock/platform-components/src/components/ValidationErrorList/';
 import LoadingButton from '@/components/utils/LoadingButton';
 
