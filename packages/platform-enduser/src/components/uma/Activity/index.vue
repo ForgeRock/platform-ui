@@ -55,8 +55,8 @@ import {
   sortBy,
 } from 'lodash';
 import moment from 'moment';
-import ListGroup from '@forgerock/platform-components/src/components/listGroup/';
-import ListItem from '@forgerock/platform-components/src/components/listItem/';
+import ListGroup from '@forgerock/platform-components/src/components/ListGroup/';
+import ListItem from '@forgerock/platform-components/src/components/ListItem/';
 import FallbackImage from '@/components/utils/FallbackImage';
 
 /**

@@ -16,7 +16,7 @@ to such license between the licensee and ForgeRock AS. -->
 
 <script>
 import { mapState } from 'vuex';
-import ListGroup from '@forgerock/platform-components/src/components/listGroup/';
+import ListGroup from '@forgerock/platform-components/src/components/ListGroup/';
 import RestMixin from '@forgerock/platform-components/src/mixins/RestMixin';
 import EditKBA from '@/components/profile/EditKBA';
 /**
