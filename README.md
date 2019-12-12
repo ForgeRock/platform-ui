@@ -61,5 +61,6 @@ yarn run storybook:serve
 ## Code style 
 - [Vue Specific Eslint Rules](https://vuejs.github.io/eslint-plugin-vue/rules/#priority-b-strongly-recommended-improving-readability) - Linter rules specific to Vue
 - [General Javascript Styles](https://github.com/airbnb/javascript) - Javascript base eslint rules 
+- [CSS Lint Rules](https://github.com/stylelint/stylelint-config-standard) - CSS base lint rules using amalgamation of airbnb's, Googles, Idiomatic's, and @mdo's style config
 
 Please see package.json for any modifications to these rules 

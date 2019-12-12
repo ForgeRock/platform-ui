@@ -70,11 +70,12 @@
     "failedToGetNodeType": "Failed to gather node type details",
     "failedToUpdateNodeOutcomes": "Failed to update node type outcomes",
     "configurationRequired": "Requires Configuration",
-    "editpanel": {
+    "editPanel": {
       "name": "Name",
       "key": "Key",
       "value": "Value",
-      "none": "none"
+      "none": "none",
+      "minimumRequired": "At Least {minItems} Value(s) Required"
     },
     "pageNode": {
       "dragHere": "Drag nodes here"
