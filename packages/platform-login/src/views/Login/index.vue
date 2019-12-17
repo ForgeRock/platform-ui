@@ -82,6 +82,7 @@ import HiddenValueCallback from '@/components/callbacks/HiddenValueCallback';
 import ReCaptchaCallback from '@/components/callbacks/ReCaptchaCallback';
 import SelectIdPCallback from '@/components/callbacks/SelectIdPCallback';
 import TextOutputCallback from '@/components/callbacks/TextOutputCallback';
+import SuspendedTextOutputCallback from '@/components/callbacks/SuspendedTextOutputCallback';
 import styles from '@/scss/main.scss';
 import TermsAndConditionsCallback from '@/components/callbacks/TermsAndConditionsCallback';
 
@@ -286,6 +287,10 @@ export default {
           break;
         case 'TextOutputCallback':
           this.addComponent(TextOutputCallback, { callback });
+          break;
+        case 'SuspendedTextOutputCallback':
+          this.showNextButton = false;
+          this.addComponent(SuspendedTextOutputCallback, { callback });
           break;
         case 'ValidatedCreatePasswordCallback':
           this.addFloatingLabelInput('password', callback, index);
