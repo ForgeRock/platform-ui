@@ -38,13 +38,13 @@
       "VALID_EMAIL_ADDRESS_FORMAT": "Invalid email format (example@example.com)",
       "UNIQUE": "%{property} must be unique",
       "IS_NEW": "Must not be the same as the previous %{historyLength} passwords"
-    }
+    },
+    "status": "Status"
   },
   "connectors": {
     "title": "Connectors",
     "subtitle": "Connect external identities to allow syncing of data across resources.",
-    "noConnectors": "No Configured Connectors",
-    "status": "Status"
+    "noConnectors": "No Configured Connectors"
   },
   "sideMenu": {
     "signOut": "Sign Out",
@@ -52,12 +52,12 @@
     "toggleSidebar": "Toggle sidebar",
     "dashboard": "Dashboard",
     "selectIcon": "Please select icon in admin (Managed Object) settings",
-    "userFlows": "User Flows",
     "authorizationRole": "Authorization Role",
     "provisioningRole": "Provisioning Role",
     "identities": "Identities",
     "managed": "Managed",
-    "bulkUserImport": "Bulk User Import"
+    "bulkUserImport": "Bulk Import",
+    "settings": "Settings"
   },
   "application": {
     "errors": {
@@ -73,7 +73,7 @@
     }
   },
   "userflow": {
-    "title": "User Flows",
+    "title": "Journeys",
     "usage": "Usage",
     "description": "Sign in users to your application using any of the out-of-the-box user flows or customize them to suit your specific requirements.",
     "newUserFlow": "New User Flow",
@@ -98,15 +98,14 @@
     "unableToDeleteResource": "Unable to delete {resource}"
   },
   "bulkUserImport": {
-    "title": "Bulk User Import",
-    "description": "Import user identity data from CSV files.",
+    "title": "Bulk Import",
+    "description": "Import identity data from CSV files.",
     "import": "Import",
     "imported": "Imported",
     "importing": "Importing",
     "users": "Users",
     "file": "File",
     "date": "Date",
-    "status": "Status",
     "formatCsv": "Format your CSV file (max %{maxImportSize}MB) according to the following: ",
     "csvTemplate": "CSV Template",
     "csvFile": "CSV File",
@@ -131,49 +130,10 @@
     "cancelled": "Cancelled",
     "importCancelledDuringUpload": "Import cancelled during upload"
   },
-  "remoteConnector": {
-    "title": "Remote Connectors",
-    "remoteServer": "Remote Server",
-    "connectorName": "Connector Name",
-    "type": "Type",
-    "version": "Version",
-    "remoteConnectorServers": "Remote Connector Servers",
-    "installedConnectors": "Installed Connectors",
-    "connectorSettings": "Connector Settings",
-    "deleteServer": "Delete Server",
-    "deleteWarning": "Warning! This cannot be undone!",
-    "nameDescription": "Visible name of Connector Server",
-    "keyDescription": "Security key of Connector Server",
-    "confirmDeleteRemoteConnectorServer": "Are you sure you want to delete the \"{name}\" remote connector server?",
-    "serverDescription": "If enabled, remote server initiates the connector, which is necessary in cloud deployments",
-    "hostDescription": "URL where this server is hosted",
-    "portDescription": "",
-    "invalidData": "Please correct errors above",
-    "serverMode": "Server Mode",
-    "showAdvanced": "Show advanced settings",
-    "hideAdvanced": "Hide advanced settings",
-    "status": "Status",
-    "connect": "Connect",
-    "connected": "Connected",
-    "waitingToConnect": "Waiting to connect...",
-    "disconnect": "Disconnect",
-    "disconnected": "Disconnected",
-    "description": "Enable data sync from remote on-prem servers. Cluster remote servers together to enable scaling and fallback.",
-    "successSave": "Successfully saved remote connector server.",
-    "successDelete": "Successfully deleted remote connector server.",
-    "errorSaving": "Error saving remote connector server.",
-    "errorRetrievingList": "Error retrieving remote connector server list.",
-    "errorRetrievingConnectors": "Error retrieving remote connectors.",
-    "errorRetrievingSpecificServer": "Error retrieving specified remote connector server."
-  },
   "dashboard": {
     "managedAccess": {
       "title": "Manage Access",
       "description": "Manage how your users can authenticate and gain access to your systems."
-    },
-    "managedIdentity": {
-      "title": "Manage Identities",
-      "description": "Manage where, when, and how your users can change their information."
     },
     "welcome": {
       "title": "Welcome to ForgeRock!",
@@ -189,6 +149,45 @@
       "body": "Are you sure you want to delete this {resource}?",
       "primaryButton": "Delete {resource}"
     }
+  },
+  "remoteServers": {
+    "confirmDeleteRemoteConnectorServer": "Are you sure you want to delete the \"{name}\" remote connector server?",
+    "connect": "Connect",
+    "connected": "Connected",
+    "connectorName": "Connector Name",
+    "connectorSettings": "Connector Settings",
+    "deleteServer": "Delete Server",
+    "deleteWarning": "Warning! This cannot be undone!",
+    "description": "Enable data sync from remote on-prem servers. Cluster remote servers together to enable scaling and fallback.",
+    "disconnect": "Disconnect",
+    "disconnected": "Disconnected",
+    "errorRetrievingConnectors": "Error retrieving remote connectors.",
+    "errorRetrievingList": "Error retrieving remote connector server list.",
+    "errorRetrievingSpecificServer": "Error retrieving specified remote connector server.",
+    "errorSaving": "Error saving remote connector server.",
+    "hideAdvanced": "Hide advanced settings",
+    "hostDescription": "URL where this server is hosted",
+    "installedConnectors": "Installed Connectors",
+    "invalidData": "Please correct errors above",
+    "keyDescription": "Security key of Connector Server",
+    "nameDescription": "Visible name of Connector Server",
+    "newRemoteServer": "New Remote Server",
+    "noremoteServers": "No Configured Remote Servers",
+    "portDescription": "",
+    "remoteConnectorServers": "Remote Connector Servers",
+    "remoteServer": "Remote Server",
+    "server": "Server",
+    "serverClusters": "Server Clusters",
+    "serverDescription": "If enabled, remote server initiates the connector, which is necessary in cloud deployments",
+    "serverMode": "Server Mode",
+    "showAdvanced": "Show advanced settings",
+    "subtitle": "Enable data sync from remote on-prem servers. Cluster remote servers together to enable scaling and fallback.",
+    "successDelete": "Successfully deleted remote connector server.",
+    "successSave": "Successfully saved remote connector server.",
+    "title": "Remote Servers",
+    "type": "Type",
+    "version": "Version",
+    "waitingToConnect": "Waiting to connect..."
   },
   "trees": {
     "treeSaveSuccessful": "All Changes Saved",
