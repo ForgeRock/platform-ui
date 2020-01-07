@@ -11,7 +11,10 @@
     "required": "Required",
     "typeSearch": "Type to Search",
     "new": "New",
-    "add": "Add"
+    "add": "Add",
+    "hide": "Hide",
+    "show": "Show",
+    "advancedOptions": "advanced options"
   },
   "sideMenu": {
     "signOut": "Sign Out",
@@ -19,11 +22,19 @@
     "dashboard": "Dashboard",
     "selectIcon": "Please select icon in admin (Managed Object) settings",
     "userFlows": "User Flows",
-    "authorizationRoles": "Authorization Role"
+    "authorizationRoles": "Authorization Role",
+    "bulkUserImport": "Bulk User Import"
   },
   "application": {
     "errors": {
-      "failedLogout": "Failed to logout of platform session"
+      "failedLogout": "Failed to logout of platform session",
+      "downloadCsvImportFailureError": "There was an error downloading CSV import failures.",
+      "reconDetailError": "There was an error getting recon details.",
+      "importDetailError": "There was an error getting import details",
+      "configDetailError": "There was an error getting configuration details",
+      "fileUploadError": "There was an error uploading the file",
+      "getImportsError": "There was an error getting the list of imports",
+      "configUploadCsvError": "There was an error saving upload-csv config"
     }
   },
   "userflow": {
@@ -49,6 +60,41 @@
     "errorRetrievingUserFlowsTemplate": "Error retrieving user flow template",
     "errorRetrievingGridData": "Error retrieving grid data",
     "unableToEditResource": "Unable to edit {resource}"
+  },
+  "bulkUserImport": {
+      "title": "Bulk User Import",
+      "description": "Import user identity data from CSV files.",
+      "import": "Import",
+      "imported": "Imported",
+      "importing": "Importing",
+      "users": "Users",
+      "file": "File",
+      "date": "Date",
+      "status": "Status",
+      "formatCsv": "Format your CSV file (max %{maxImportSize}MB) according to the following: ",
+      "csvTemplate": "CSV Template",
+      "csvFile": "CSV File",
+      "matchUsing": "Match Using",
+      "matchUsingHelp": "Property in managed object used to match users.",
+      "viewDetails": "View Details",
+      "complete": "Complete",
+      "error": "Error",
+      "inProgress": "In progress",
+      "entries": "entries",
+      "inMinutes": "in %{timeElapsed} minutes",
+      "inSeconds": "in %{timeElapsed} seconds",
+      "inMilliseconds": "in %{timeElapsed} milliseconds",
+      "complete": "Complete",
+      "failed": "Failed",
+      "updated": "Updated",
+      "unchanged": "Unchanged",
+      "downloadCsv": "Download CSV",
+      "done": "Done",
+      "continue": "Continue",
+      "cancelImportDescription": "Are you sure you want to cancel your import? If you cancel, pending records will not be processed.",
+      "uploadingFile": "Uploading File",
+      "cancelled": "Cancelled",
+      "importCancelledDuringUpload": "Import cancelled during upload"
   },
   "dashboard": {
     "managedAccess": {
