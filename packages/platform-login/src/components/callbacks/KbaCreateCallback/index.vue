@@ -12,10 +12,11 @@ to such license between the licensee and ForgeRock AS. -->
       <div class="col pr-0">
         <hr>
       </div>
-      <div class="col-auto pt-1" />
-      <i class="material-icons material-icons-outlined">
-        lock
-      </i>
+      <div class="col-auto pt-1">
+        <i class="material-icons material-icons-outlined">
+          lock
+        </i>
+      </div>
       <div class="col pl-0">
         <hr>
       </div>
