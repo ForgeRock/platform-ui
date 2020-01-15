@@ -16,7 +16,7 @@
     "coverage": "jest --verbose --coverage --noStackTrace --no-cache"
   },
   "dependencies": {
-    "@forgerock/javascript-sdk": "0.7.0-beta",
+    "@forgerock/javascript-sdk": "1.0.5",
     "@forgerock/platform-shared": "1.0.0",
     "babel-plugin-require-context-hook": "1.0.0",
     "bootstrap": "4.3.1",

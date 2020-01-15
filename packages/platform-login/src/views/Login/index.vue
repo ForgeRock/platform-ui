@@ -104,13 +104,17 @@ export default {
       kbaCallbackCount: 0,
       showNextButton: false,
       errorMessage: '',
+      authIndexValue: undefined,
+      suspendedId: undefined,
     };
   },
   mounted() {
+    this.evaluateUrlParams();
+
     // configure FRAuth
     Config.set({
       serverConfig: { baseUrl: `${process.env.VUE_APP_AM_URL}/` },
-      tree: this.$route.params.tree || undefined,
+      tree: this.authIndexValue || this.$route.params.tree || undefined,
     });
 
     this.nextStep();
@@ -175,8 +179,16 @@ export default {
       * this.step is defined. Then determines based on step.type what action to take.
       */
     nextStep() {
+      const stepParams = {};
+
+      if (this.suspendedId) {
+        stepParams.query = {
+          suspendedId: this.suspendedId,
+        };
+      }
+
       this.clearCallbacks();
-      FRAuth.next(this.step).then((step) => {
+      FRAuth.next(this.step, stepParams).then((step) => {
         this.loading = false;
         this.step = step;
 
@@ -327,6 +339,21 @@ export default {
     reloadTree(event) {
       event.preventDefault();
       window.location.reload();
+    },
+    evaluateUrlParams() {
+      // Look at the url and see if we are returning to a tree from an Email Suspend Node.
+      // Must be the default route and url must contain the strings "suspendedId=" and "authIndexValue="
+      if (this.$route.name === 'default' && window.location.search.includes('suspendedId=') && window.location.search.includes('authIndexValue=')) {
+        const urlParams = new URLSearchParams(window.location.search.substring(1));
+        // set the authIndexValue and suspendedId to be used by FRAuth
+        this.authIndexValue = urlParams.get('authIndexValue');
+        this.suspendedId = urlParams.get('suspendedId');
+
+        // remove query params from the url
+        window.history.replaceState(null, null, window.location.pathname);
+        // reset the hash to the propert tree
+        window.location.hash = `service/${this.authIndexValue}`;
+      }
     },
   },
 };

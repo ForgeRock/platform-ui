@@ -1131,10 +1131,10 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.5.tgz#8eed982e2ee6f7f4e44c253e12962980791efd46"
   integrity sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==
 
-"@forgerock/javascript-sdk@0.7.0-beta":
-  version "0.7.0-beta"
-  resolved "https://registry.yarnpkg.com/@forgerock/javascript-sdk/-/javascript-sdk-0.7.0-beta.tgz#9e5e13012d63d5df684129e784d4a6a235c48d07"
-  integrity sha512-87DBt8/9CKe7a/G56cXQ86jt6ic69Tl4i+D67QFGZFhWxT0iVuyOpd0DYGCq6XOYuz5AT2yi8eLJYl+dYtoxCA==
+"@forgerock/javascript-sdk@1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@forgerock/javascript-sdk/-/javascript-sdk-1.0.5.tgz#66f9770c704ce7b4d4d2e3da6a78b8ab7abd72d9"
+  integrity sha512-iLnuYy7G6cS0soR52ZbcATEz3pTkLGwMOOx/FUWHmTWtrYzwH8qJYaMPUHfMHyW8fSeffEEQ6r3JZJhwvXRyjg==
 
 "@hapi/address@2.x.x":
   version "2.1.4"
