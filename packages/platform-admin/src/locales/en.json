@@ -16,7 +16,8 @@
   "sideMenu": {
     "signOut": "Sign Out",
     "toggleSidebar": "Toggle sidebar",
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "selectIcon": "Please select icon in admin (Managed Object) settings"
   },
   "application": {
     "errors": {
@@ -25,18 +26,23 @@
   },
   "authentication": {
     "title": "Authentication",
+    "usage": "Usage",
     "description": "Sign in users to your application using any of the out-of-the-box authentication services or customize them to suit your specific requirements.",
     "newAuthService": "New Authentication Service",
+    "duplicateAuthService": "Duplicate Authentication Service",
+    "edit": "Edit",
     "service": "Service",
     "duplicate": "Duplicate",
+    "copyOf": "Copy of ",
     "preview": "Preview",
     "confirmDeleteAuthService": "Are you sure you want to delete the \"{treeId}\" authentication service?",
     "authServiceDeleteSuccess": "\"{treeId}\" authentication service successfully deleted.",
     "noAuthServices": "No Authentication Services",
     "noAuthSercicesMessage": "Sign in users to your application by creating authentication services",
-    "mustBeUnique": "Name must be a unique.",
+    "mustBeUnique": "Name must be unique",
     "errorRetrievingAuthServices": "Error retrieving authentication services",
     "errorCreatingAuthService": "Error creating authentication service",
+    "errorDuplicatingAuthService": "Error duplicating authentication service",
     "errorDeletingAuthService": "Error deleting authentication service",
     "errorRetrievingAuthServiceTemplate": "Error retrieving authentication service template",
     "errorRetrievingGridData": "Error retrieving grid data",
