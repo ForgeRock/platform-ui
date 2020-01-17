@@ -76,7 +76,8 @@
   "sideMenu": {
     "signOut": "Sign Out",
     "toggleSidebar": "Toggle sidebar",
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "selectIcon": "Please select icon in admin (Managed Object) settings"
   },
   "pages": {
     "app": {
