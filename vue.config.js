@@ -6,7 +6,6 @@
  * to such license between the licensee and ForgeRock AS.
  */
 const path = require('path');
-
 module.exports = {
   runtimeCompiler: true,
   css: {
