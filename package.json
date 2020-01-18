@@ -26,7 +26,8 @@
     "storybook-vue-router": "1.0.7",
     "style-resources-loader": "1.2.1",
     "vue": "2.6.11",
-    "vue-cli-plugin-storybook": "1.2.0"
+    "vue-cli-plugin-storybook": "1.2.0",
+    "vue-template-compiler": "2.6.11"
   },
   "workspaces": {
     "packages": [
