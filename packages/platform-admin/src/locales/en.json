@@ -17,34 +17,36 @@
     "signOut": "Sign Out",
     "toggleSidebar": "Toggle sidebar",
     "dashboard": "Dashboard",
-    "selectIcon": "Please select icon in admin (Managed Object) settings"
+    "selectIcon": "Please select icon in admin (Managed Object) settings",
+    "userFlows": "User Flows",
+    "authorizationRoles": "Authorization Role"
   },
   "application": {
     "errors": {
       "failedLogout": "Failed to logout of platform session"
     }
   },
-  "authentication": {
-    "title": "Authentication",
+  "userflow": {
+    "title": "User Flows",
     "usage": "Usage",
-    "description": "Sign in users to your application using any of the out-of-the-box authentication services or customize them to suit your specific requirements.",
-    "newAuthService": "New Authentication Service",
-    "duplicateAuthService": "Duplicate Authentication Service",
+    "description": "Sign in users to your application using any of the out-of-the-box user flows or customize them to suit your specific requirements.",
+    "newUserFlow": "New User Flow",
+    "duplicateUserFlow": "Duplicate User Flow",
     "edit": "Edit",
     "service": "Service",
     "duplicate": "Duplicate",
     "copyOf": "Copy of ",
     "preview": "Preview",
-    "confirmDeleteAuthService": "Are you sure you want to delete the \"{treeId}\" authentication service?",
-    "authServiceDeleteSuccess": "\"{treeId}\" authentication service successfully deleted.",
-    "noAuthServices": "No Authentication Services",
-    "noAuthSercicesMessage": "Sign in users to your application by creating authentication services",
+    "confirmDeleteUserFlow": "Are you sure you want to delete the \"{treeId}\" user flow?",
+    "userFlowDeleteSuccess": "\"{treeId}\" user flow successfully deleted.",
+    "noUserFlow": "No User Flows",
+    "noAuthSercicesMessage": "Sign in users to your application by creating user flows",
     "mustBeUnique": "Name must be unique",
-    "errorRetrievingAuthServices": "Error retrieving authentication services",
-    "errorCreatingAuthService": "Error creating authentication service",
-    "errorDuplicatingAuthService": "Error duplicating authentication service",
-    "errorDeletingAuthService": "Error deleting authentication service",
-    "errorRetrievingAuthServiceTemplate": "Error retrieving authentication service template",
+    "errorRetrievingUserFlows": "Error retrieving user flows",
+    "errorCreatingUserFlows": "Error creating user flow",
+    "errorDuplicatingUserFlows": "Error duplicating user flow",
+    "errorDeletingUserFlows": "Error deleting user flow",
+    "errorRetrievingUserFlowsTemplate": "Error retrieving user flow template",
     "errorRetrievingGridData": "Error retrieving grid data",
     "unableToEditResource": "Unable to edit {resource}"
   },
