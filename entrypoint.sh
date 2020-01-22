@@ -13,6 +13,8 @@ echo ""
 echo "Setting AM URL as $AM_URL"
 echo "Setting IDM REST URL as $IDM_REST_URL"
 echo "Setting IDM ADMIN URL as $IDM_ADMIN_URL"
+echo "Setting IDM UPLOAD URL as $IDM_UPLOAD_URL"
+echo "Setting IDM EXPORT URL as $IDM_EXPORT_URL"
 echo "Setting LOGIN URL as $LOGIN_UI_URL"
 echo "Setting ENDUSER URL as $ENDUSER_UI_URL"
 echo "Setting ENDUSER CLIENT ID as $ENDUSER_CLIENT_ID"
@@ -28,9 +30,8 @@ do
     cp "$file" "/tmp/$(basename $file).tmpl"
   fi
 
-  envsubst '$AM_URL $IDM_REST_URL $IDM_ADMIN_URL $LOGIN_UI_URL $ENDUSER_UI_URL $ENDUSER_CLIENT_ID $ADMIN_CLIENT_ID' < "/tmp/$(basename $file).tmpl" > "$file"
+  envsubst '$AM_URL $IDM_REST_URL $IDM_ADMIN_URL $IDM_UPLOAD_URL $IDM_EXPORT_URL $LOGIN_UI_URL $ENDUSER_UI_URL $ENDUSER_CLIENT_ID $ADMIN_CLIENT_ID' < "/tmp/$(basename $file).tmpl" > "$file"
 done
 
 echo "Starting Nginx"
 nginx -g 'daemon off;'
-
