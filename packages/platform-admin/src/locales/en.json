@@ -14,7 +14,17 @@
     "add": "Add",
     "hide": "Hide",
     "show": "Show",
+    "error": "Error",
+    "disabled": "Disabled",
+    "connected": "Connected",
+    "edit": "Edit",
     "advancedOptions": "advanced options"
+  },
+  "connectors": {
+    "title": "Connectors",
+    "subtitle": "Connect external identities to allow syncing of data across resources.",
+    "noConnectors": "No Configured Connectors",
+    "status": "Status"
   },
   "sideMenu": {
     "signOut": "Sign Out",
