@@ -42,7 +42,7 @@
     "@vue/cli-plugin-e2e-cypress": "4.0.5",
     "@vue/cli-plugin-eslint": "3.8.0",
     "@vue/cli-plugin-unit-jest": "3.11.0",
-    "@vue/cli-service": "3.8.0",
+    "@vue/cli-service": "4.1.2",
     "@vue/eslint-config-airbnb": "4.0.1",
     "@vue/test-utils": "1.0.0-beta.29",
     "babel-core": "7.0.0-bridge.0",
@@ -94,7 +94,10 @@
         "error",
         2
       ],
-      "arrow-parens": [2, "always"],
+      "arrow-parens": [
+        2,
+        "always"
+      ],
       "no-tabs": 0,
       "max-len": 0,
       "vue/html-closing-bracket-newline": 0
@@ -170,7 +173,12 @@
       "property-no-vendor-prefix": true,
       "selector-class-pattern": "^([a-z]+((-{1,2}[a-z0-9]+)|(_{2}[a-z0-9]+))*)$",
       "selector-max-attribute": 1,
-      "selector-max-id": [ 1, { "severity": "warning" }],
+      "selector-max-id": [
+        1,
+        {
+          "severity": "warning"
+        }
+      ],
       "selector-max-specificity": "3,5,0",
       "selector-max-type": 3,
       "selector-max-universal": 1,

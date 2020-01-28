@@ -9,6 +9,8 @@ import { shallowMount } from '@vue/test-utils';
 import KbaCreateCallback from '@/components/callbacks/KbaCreateCallback';
 import i18n from '@/i18n';
 
+KbaCreateCallback.mounted = jest.fn();
+
 describe('KbaCreateCallback.vue', () => {
   let wrapper;
   beforeEach(() => {
@@ -24,7 +26,7 @@ describe('KbaCreateCallback.vue', () => {
           getPrompt: () => {},
         },
         // Does not currently work
-        callbackSubmitButton: HTMLButtonElement.prototype,
+        callbackSubmitButton: document.createElement('button'),
       },
     });
   });
