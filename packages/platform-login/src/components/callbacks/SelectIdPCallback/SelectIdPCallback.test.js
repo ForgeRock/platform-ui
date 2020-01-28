@@ -9,6 +9,8 @@ import { shallowMount } from '@vue/test-utils';
 import SelectIdPCallback from '@/components/callbacks/SelectIdPCallback';
 import i18n from '@/i18n';
 
+SelectIdPCallback.mounted = jest.fn();
+
 describe('SelectIdPCallback.vue', () => {
   let wrapper;
 
@@ -23,7 +25,7 @@ describe('SelectIdPCallback.vue', () => {
           getOutputByName: () => {},
         },
         // Does not currently work
-        callbackSubmitButton: HTMLButtonElement.prototype,
+        callbackSubmitButton: document.createElement('button'),
       },
     });
   });
