@@ -12,6 +12,7 @@ import ListResource from '@/components/access';
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue);
+ListResource.mounted = jest.fn();
 
 describe('ListResource.vue', () => {
   let wrapper;
@@ -37,9 +38,6 @@ describe('ListResource.vue', () => {
       },
     });
     wrapper.setMethods({ loadGrid: () => { } });
-
-    jest.spyOn(ListResource, 'mounted')
-      .mockImplementation(() => { });
   });
 
   it('Access page loaded', () => {
