@@ -76,10 +76,15 @@ to such license between the licensee and ForgeRock AS. -->
       </ValidationProvider>
     </span>
     <ToggleButton
-      v-else-if="field.type === 'boolean'"
+      v-else-if="field.type === 'toggle'"
       :css-colors="true"
       v-model="field.value"
       class="pr-2" />
+    <BFormCheckbox
+      v-else-if="field.type === 'checkbox'"
+      v-model="field.value"
+      class="mr-0"
+      inline />
     <BFormTags
       v-else-if="field.type === 'array'"
       v-model="formTagInput"
@@ -116,7 +121,7 @@ to such license between the licensee and ForgeRock AS. -->
       :class="{'fr-error': errors.length}" />
     <label
       v-if="titlePosition === 'after'"
-      class="text-secondary mb-1">
+      class="text-secondary mb-1 align-top">
       <span
         :id="`helppopover-${field.key}`"
         class="fr-label-text">
@@ -149,6 +154,7 @@ import {
 import {
   BPopover,
   BFormTags,
+  BFormCheckbox,
 } from 'bootstrap-vue';
 import { ValidationProvider } from 'vee-validate';
 import ValidationErrorList from '@forgerock/platform-shared/src/components/ValidationErrorList';
@@ -163,6 +169,7 @@ export default {
     BPopover,
     BFormTags,
     Draggable,
+    BFormCheckbox,
     FrFloatingLabelInput: FloatingLabelInput,
     FrValidationError: ValidationErrorList,
     FrKeyValueList: KeyValueList,
