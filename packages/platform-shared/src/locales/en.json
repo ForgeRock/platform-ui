@@ -57,6 +57,7 @@
         "VALID_EMAIL_ADDRESS_FORMAT": "Invalid email format (example@example.com)",
         "UNIQUE": "Must be unique",
         "IS_NEW": "Must not be the same as the previous %{historyLength} passwords",
+        "ALPHA_DASH": "Must only contain letters, numbers, spaces, hyphens and underscores",
         "test": "succeed",
         "policyServiceError": {
             "registration": "Unable to register. Please try again later.",

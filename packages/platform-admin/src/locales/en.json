@@ -2,13 +2,14 @@
   "connectors": {
     "title": "Connectors",
     "subtitle": "Connect external identities to allow syncing of data across resources.",
-    "noConnectors": "No Configured Connectors"
+    "noConnectors": "No Configured Connectors",
+    "advancedOptions": "advanced options",
+    "next": "Next"
   },
   "sideMenu": {
     "authorizationRole": "Authorization Role",
     "accessManagement": "Access Management",
     "bulkImport": "Bulk Import",
-    "bulkUserImport": "Bulk User Import",
     "connector": "Connectors",
     "dashboard": "Dashboard",
     "selectIcon": "Please select icon in admin (Managed Object) settings",
@@ -19,7 +20,9 @@
     "nativeConsoles": "Native Consoles",
     "settings": "Settings",
     "signOut": "Sign Out",
-    "toggleSidebar": "Toggle sidebar"
+    "toggleSidebar": "Toggle sidebar",
+    "bulkUserImport": "Bulk Import",
+    "authentication": "Authentication"
   },
   "application": {
     "errors": {
@@ -67,6 +70,7 @@
     "users": "Users",
     "file": "File",
     "date": "Date",
+    "status": "Status",
     "formatCsv": "Format your CSV file (max %{maxImportSize}MB) according to the following: ",
     "csvTemplate": "CSV Template",
     "csvFile": "CSV File",
@@ -132,7 +136,7 @@
     "connect": "Connect",
     "connected": "Connected",
     "connectorName": "Connector Name",
-    "connectorSettings": "Connector Settings",
+    "connectionSettings": "Connection Settings",
     "deleteServer": "Delete Server",
     "deleteWarning": "Warning! This cannot be undone!",
     "disconnect": "Disconnect",
@@ -140,6 +144,8 @@
     "errorRetrievingList": "Error retrieving remote server list.",
     "errorRetrievingSpecificServer": "Error retrieving specified remote server.",
     "errorSaving": "Error saving remote server.",
+    "errorServerExists": "Server name is already in use, please specify a different name",
+    "errorNameRequired": "Server name is required",
     "hideAdvanced": "Hide advanced settings",
     "hostDescription": "URL where this server is hosted",
     "installedConnectors": "Installed Connectors",
@@ -148,11 +154,11 @@
     "newRemoteServer": "New Remote Server",
     "noremoteServers": "No Configured Remote Servers",
     "portDescription": "",
-    "remoteServers": "Remote Servers",
+    "remoteServer": "Remote Server",
     "serverClusters": "Server Clusters",
     "serverDescription": "If enabled, remote server initiates the connector, which is necessary in cloud deployments",
     "key": "Key",
-    "displayName": "Name",
+    "displayName": "Display Name",
     "useSsl": "Use SSL",
     "serverMode": "Server Mode",
     "host": "Host",
@@ -164,7 +170,7 @@
     "proxyUser": "Proxy User",
     "houseKeepingInterval": "House Keeping Interval",
     "pingPongInterval": "Ping Pong Interval",
-    "connectionGroupCheckInterval": "Connector Group Check Interval",
+    "connectionGroupCheckInterval": "Connection Group Check Interval",
     "webSocketConnections": "Web Socket Connections",
     "showAdvanced": "Show advanced settings",
     "subtitle": "Enable data sync from remote on-prem servers. Cluster remote servers together to enable scaling and fallback.",
@@ -173,7 +179,17 @@
     "title": "Remote Servers",
     "type": "Type",
     "version": "Version",
-    "waitingToConnect": "Waiting to connect..."
+    "waitingToConnect": "Waiting to connect...",
+    "newServerModal": {
+      "titleStart": "New Remote Server",
+      "titleNext": "Connection Details",
+      "instructions": "Connecting a remote server involves deploying and running a piece of software on your side. Download and complete the installation process before proceeding.",
+      "dotNetServer": ".NET Server",
+      "javaServer": "Java Server",
+      "download": "Download",
+      "previous": "Previous",
+      "connect": "Connect"
+    }
   },
   "trees": {
     "treeSaveSuccessful": "All Changes Saved",
