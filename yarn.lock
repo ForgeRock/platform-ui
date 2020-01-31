@@ -16855,10 +16855,10 @@ vee-validate@3.0.11:
   resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-3.0.11.tgz#5ffe3d501893801529186642d20241cf632f1341"
   integrity sha512-2KRLdtM/y+bU2o9KC7cZBGPRUsBxQaoFb3IlBOUkj6l24Gx5XWXxNkhaAXK97BRLOdM4CH/gJYFi9DOm0N7dTQ==
 
-vee-validate@3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-3.1.1.tgz#6128cc1a92e5f2c03ec45ae56132086eff1f36b1"
-  integrity sha512-gdPx7MI8YrLw4hbY3VamajyVA+nhjswP3JQv5EP4WgjV+DmFTHtVQV96sYv77y3hDOkpRkvmvck/tC8UHdL8DA==
+vee-validate@3.2.2:
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-3.2.2.tgz#ec5132bca84f0549a5030a9a20e49569765eb350"
+  integrity sha512-6XogX8Y8HHBQ+be+u1tj3Je6pcIWv2j2JX/BqRpymyObtx1C4ERxY3O3z2ExRBlQ3oM0dN/Y0RsSaBsRyTNIRw==
 
 vendors@^1.0.0:
   version "1.0.3"
