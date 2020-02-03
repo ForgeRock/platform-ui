@@ -5,7 +5,7 @@ or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. */
 
 code {
-    background: #f6f8fa;
+    background: $gray-100;
     border-radius: 3px;
     display: inline-block;
     padding: 0px 5px;
@@ -36,7 +36,7 @@ code {
 .hljs-strong,
 .hljs-string,
 .hljs-deletion {
-  color: #e83e8c;
+  color: $pink;
 }
 
 .hljs-strong {
