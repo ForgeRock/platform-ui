@@ -28,7 +28,7 @@ to such license between the licensee and ForgeRock AS. */
                 position: relative;
                 border-radius: 50%;
                 background: #dddbda;
-                border: 4px solid #fff;
+                border: 4px solid $white;
                 vertical-align: middle;
                 padding: 0;
             }
@@ -41,7 +41,7 @@ to such license between the licensee and ForgeRock AS. */
             }
             &.active {
                 > .btn-progress-marker {
-                    box-shadow: 0 0 0 4px #fff;
+                    box-shadow: 0 0 0 4px $white;
                 }
 
             }

@@ -32,7 +32,10 @@
     "dashboard": "Dashboard",
     "selectIcon": "Please select icon in admin (Managed Object) settings",
     "userFlows": "User Flows",
-    "authorizationRoles": "Authorization Role",
+    "authorizationRole": "Authorization Role",
+    "provisioningRole": "Provisioning Role",
+    "identities": "Identities",
+    "managed": "Managed",
     "bulkUserImport": "Bulk User Import"
   },
   "application": {
@@ -68,7 +71,7 @@
     "errorDuplicatingUserFlows": "Error duplicating user flow",
     "errorDeletingUserFlows": "Error deleting user flow",
     "errorRetrievingUserFlowsTemplate": "Error retrieving user flow template",
-    "errorRetrievingGridData": "Error retrieving grid data",
+    "errorRetrievingTableData": "Error retrieving table data",
     "unableToEditResource": "Unable to edit {resource}"
   },
   "bulkUserImport": {
@@ -147,13 +150,17 @@
     },
     "managedIdentity": {
       "title": "Manage Identities",
-      "description": "Manage where, when and how your users can change their information."
+      "description": "Manage where, when, and how your users can change their information."
     },
     "welcome": {
       "title": "Welcome to ForgeRock!",
-      "description": "With the Forgerock platform you can control access, identity management and much more.",
+      "description": "With the Forgerock platform you can control access, identity management, and much more.",
       "footer": "Get Started"
     }
+  },
+  "managed": {
+    "managedIdentities": "Managed Identities",
+    "subTitle": "Create and manage ForgeRock-hosted identity resources."
   },
   "trees": {
     "treeSaveSuccessful": "All Changes Saved",
