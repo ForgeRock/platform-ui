@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 ForgeRock AS. All Rights Reserved
+ * Copyright 2019-2020 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS.
  * or with one of its affiliates. All use shall be exclusively subject
@@ -20,9 +20,9 @@ localVue.use(BootstrapVue);
 Consent.created = jest.fn();
 
 describe('Profile Consent Component', () => {
-  const date = new Date().toISOString();
+  const date = new Date(2019, 11, 17, 1, 24, 0).toISOString();
   const consentableMappings = [
-    { name: 'test' },
+    { name: 'test', consentDate: date },
     { name: 'test2' },
   ];
 
@@ -33,7 +33,9 @@ describe('Profile Consent Component', () => {
       localVue,
       i18n,
       propsData: {
-        consentedMappings: [{ mapping: 'test', consentDate: date }],
+        consentedMappings: [
+          { mapping: 'test', consentDate: date },
+        ],
       },
     });
   });
@@ -58,6 +60,7 @@ describe('Profile Consent Component', () => {
 
       expect(Array.isArray(mappings)).toBe(true);
       expect(mappings.length).toBe(2);
+      expect(mappings[0].subTitle).toBe('Authorized December 17th 2019');
       expect(test).toHaveProperty('consented');
       expect(test.consented).toBe(true);
       expect(test).toHaveProperty('consentDate');
