@@ -1,4 +1,4 @@
-<!-- Copyright 2019 ForgeRock AS. All Rights Reserved
+<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
 
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
@@ -82,8 +82,12 @@ to such license between the licensee and ForgeRock AS. -->
 </template>
 
 <script>
-import moment from 'moment';
+import dayjs from 'dayjs';
+import LocalizedFormat from 'dayjs/plugin/localizedFormat';
+import DateMixin from '@forgerock/platform-components/src/mixins/DateMixin/';
 import FallbackImage from '@/components/utils/FallbackImage';
+
+dayjs.extend(LocalizedFormat);
 
 /**
  * @description Allows user to request access to a resource
@@ -93,6 +97,9 @@ export default {
   components: {
     FrFallbackImage: FallbackImage,
   },
+  mixins: [
+    DateMixin,
+  ],
   props: {
     requests: {
       type: Array,
@@ -101,10 +108,10 @@ export default {
   },
   filters: {
     formatTime(dateString) {
-      const eventDate = moment(dateString);
+      const eventDate = dayjs(dateString);
 
-      if (eventDate.isSame(moment(), 'day')) {
-        return eventDate.fromNow();
+      if (eventDate.isSame(dayjs(), 'day')) {
+        return this.timeAgo(eventDate);
       }
       return eventDate.format('LT');
     },
