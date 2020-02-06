@@ -1,4 +1,4 @@
-<!-- Copyright 2019 ForgeRock AS. All Rights Reserved
+<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
 
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
@@ -54,10 +54,14 @@ import {
   keys,
   sortBy,
 } from 'lodash';
-import moment from 'moment';
+import dayjs from 'dayjs';
+import LocalizedFormat from 'dayjs/plugin/localizedFormat';
+import DateMixin from '@forgerock/platform-components/src/mixins/DateMixin/';
 import ListGroup from '@forgerock/platform-components/src/components/ListGroup/';
 import ListItem from '@forgerock/platform-components/src/components/ListItem/';
 import FallbackImage from '@/components/utils/FallbackImage';
+
+dayjs.extend(LocalizedFormat);
 
 /**
 * @description Main component for UMA (AM/IDM) displays a list of resource activities
@@ -70,6 +74,9 @@ export default {
     FrListItem: ListItem,
     FrFallbackImage: FallbackImage,
   },
+  mixins: [
+    DateMixin,
+  ],
   props: {
     umaHistory: {
       required: true,
@@ -83,21 +90,21 @@ export default {
     activityGroups() {
       const tempUmaHistory = clone(this.umaHistory);
       const sortedHistory = tempUmaHistory.sort((a, b) => a.eventTime - b.eventTime).reverse();
-      const groups = groupBy(sortedHistory, (event) => moment(event.eventTime).format('YYYY-MM-DD'));
+      const groups = groupBy(sortedHistory, (event) => dayjs(event.eventTime).format('YYYY-MM-DD'));
       const activityGroups = keys(groups).map((day) => ({ day, activities: groups[day] }));
 
-      return sortBy(activityGroups, ({ day }) => moment(day)).reverse();
+      return sortBy(activityGroups, ({ day }) => dayjs(day)).reverse();
     },
   },
   methods: {
     formatDateTitle(dateString) {
-      return moment(dateString).format('dddd, MMMM DD, YYYY');
+      return dayjs(dateString).format('dddd, MMMM DD, YYYY');
     },
     formatTime(dateString) {
-      const eventDate = moment(dateString);
+      const eventDate = dayjs(dateString);
 
-      if (eventDate.isSame(moment(), 'day')) {
-        return eventDate.fromNow();
+      if (eventDate.isSame(dayjs(), 'day')) {
+        return this.timeAgo(eventDate);
       }
       return eventDate.format('LT');
     },

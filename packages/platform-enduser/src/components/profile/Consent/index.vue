@@ -1,4 +1,4 @@
-<!-- Copyright 2019 ForgeRock AS. All Rights Reserved
+<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
 
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
@@ -118,13 +118,16 @@ import {
   first,
   isUndefined,
 } from 'lodash';
-import moment from 'moment';
+import dayjs from 'dayjs';
+import advancedFormat from 'dayjs/plugin/advancedFormat';
 import { mapState } from 'vuex';
 import ListGroup from '@forgerock/platform-components/src/components/ListGroup/';
 import ListItem from '@forgerock/platform-components/src/components/ListItem/';
 import RestMixin from '@forgerock/platform-components/src/mixins/RestMixin';
 import AccessLevel from '@/components/profile/AccessLevel';
 import FallbackImage from '@/components/utils/FallbackImage';
+
+dayjs.extend(advancedFormat);
 
 /**
  * @description Controls the display of a users currently consented mappings (where their data is sent).
@@ -172,7 +175,7 @@ export default {
           mappingCopy.consented = true;
           mappingCopy.consentDate = consentedMapping.consentDate;
           modalHeaderPath += 'denyConsentHeader';
-          mappingCopy.subTitle = `${this.$t('pages.profile.consent.authorized')} ${moment(mapping.consentDate).format('MMMM Do YYYY')}`;
+          mappingCopy.subTitle = `${this.$t('pages.profile.consent.authorized')} ${dayjs(mapping.consentDate).format('MMMM Do YYYY')}`;
         } else {
           mappingCopy.consented = false;
           modalHeaderPath += 'allowConsentHeader';
