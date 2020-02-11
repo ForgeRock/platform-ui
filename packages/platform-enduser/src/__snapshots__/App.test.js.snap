@@ -5,7 +5,7 @@ exports[`App.vue App loaded 1`] = `
   <div id="wrapper" class="">
     <frsidemenu-stub dropdownitems="" menuitems="[object Object],[object Object]" showenduserlink="true" enduserlink="/" userdetails="[object Object]" style="display: none;"></frsidemenu-stub>
     <div id="appContent" class="fr-no-toolbar">
-      <frnavbar-stub returnroute="" returnroutetext="Back" shownotifications="true" showhelplink="true" helpurl="#" showdocslink="true" docslink="#" class="fr-main-navbar" style="display: none;"></frnavbar-stub>
+      <frnavbar-stub shownotifications="true" showhelplink="true" helpurl="#" showdocslink="true" docslink="#" class="fr-main-navbar" style="display: none;"></frnavbar-stub>
       <routerview-stub></routerview-stub>
     </div>
   </div>
