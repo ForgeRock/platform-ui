@@ -18,8 +18,7 @@ to such license between the licensee and ForgeRock AS. -->
 
     <BCardBody
       v-show="!loading"
-      slot="center-card-body"
-    >
+      slot="center-card-body">
       <div
         id="callbacksPanel"
         ref="callbacksPanel"
@@ -37,7 +36,7 @@ to such license between the licensee and ForgeRock AS. -->
         v-if="loginFailure"
         class="h-100 d-flex">
         <div class="m-auto fr-center-card">
-          <p>{{ $t('login.loginFailure') }}</p>
+          <p>{{ errorMessage }}</p>
           <a
             @click="reloadTree"
             href="#/">
@@ -104,6 +103,7 @@ export default {
       step: undefined,
       kbaCallbackCount: 0,
       showNextButton: false,
+      errorMessage: '',
     };
   },
   mounted() {
@@ -173,7 +173,6 @@ export default {
     /**
       * @description Gets callbacks needed for authentication when this.step is undefined, and submits callback values when
       * this.step is defined. Then determines based on step.type what action to take.
-      *
       */
     nextStep() {
       this.clearCallbacks();
@@ -187,12 +186,8 @@ export default {
           window.location.href = step.getSuccessUrl();
           break;
         case 'LoginFailure':
-          // redirect to failureUrl when it exists
-          if (has(step, 'payload.detail.failureUrl') && step.payload.detail.failureUrl.length) {
-            window.location.href = step.payload.detail.failureUrl;
-          }
-          // otherwise display login failure message
-          this.loginFailure = true;
+          this.errorMessage = this.$t('login.loginFailure');
+          this.redirectToFailure(step);
           break;
         default:
           // setup the form based on callback info/values obtained from this.step
@@ -201,6 +196,10 @@ export default {
           this.buildTreeForm();
           break;
         }
+      }, () => {
+        this.errorMessage = this.$t('login.issueConnecting');
+        this.redirectToFailure(this.step);
+        this.loading = false;
       });
     },
     clearCallbacks() {
@@ -313,6 +312,17 @@ export default {
         // focus on the first input after render
         firstInput.focus();
       }
+    },
+    /**
+     * Redirect to failureUrl when it exists, and displays login failure message if not
+     *
+     * @param {Object} step - callback metadata containing url of failure
+     */
+    redirectToFailure(step) {
+      if (has(step, 'payload.detail.failureUrl') && step.payload.detail.failureUrl.length) {
+        window.location.href = step.payload.detail.failureUrl;
+      }
+      this.loginFailure = true;
     },
     reloadTree(event) {
       event.preventDefault();
