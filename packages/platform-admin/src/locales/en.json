@@ -17,7 +17,10 @@
     "error": "Error",
     "disabled": "Disabled",
     "connected": "Connected",
+    "search": "Search",
     "edit": "Edit",
+    "next": "Next",
+    "previous": "Previous",
     "advancedOptions": "advanced options",
     "policyValidationMessages": {
       "VALID_PHONE_FORMAT": "Must be a valid phone number",
@@ -56,7 +59,7 @@
     "provisioningRole": "Provisioning Role",
     "identities": "Identities",
     "managed": "Managed",
-    "bulkUserImport": "Bulk Import",
+    "bulkImport": "Bulk Import",
     "settings": "Settings"
   },
   "application": {
@@ -97,7 +100,7 @@
     "unableToEditResource": "Unable to edit {resource}",
     "unableToDeleteResource": "Unable to delete {resource}"
   },
-  "bulkUserImport": {
+  "bulkImport": {
     "title": "Bulk Import",
     "description": "Import identity data from CSV files.",
     "import": "Import",
@@ -110,7 +113,7 @@
     "csvTemplate": "CSV Template",
     "csvFile": "CSV File",
     "matchUsing": "Match Using",
-    "matchUsingHelp": "Property in managed object used to match users.",
+    "matchUsingHelp": "Property in managed object used to match records.",
     "viewDetails": "View Details",
     "complete": "Complete",
     "error": "Error",
@@ -126,9 +129,13 @@
     "done": "Done",
     "continue": "Continue",
     "cancelImportDescription": "Are you sure you want to cancel your import? If you cancel, pending records will not be processed.",
-    "uploadingFile": "Uploading File",
+    "uploaded": "Uploaded",
     "cancelled": "Cancelled",
-    "importCancelledDuringUpload": "Import cancelled during upload"
+    "importCancelledDuringUpload": "Import cancelled during upload",
+    "uploadCSV": "Upload CSV",
+    "selectIdentity": "Select the managed identity object into which you want to import your CSV identities.",
+    "importTo": "Import to",
+    "deleteImportConfirmation": "If you delete this import the entries imported will remain, but import record will be deleted from the list."
   },
   "dashboard": {
     "managedAccess": {
