@@ -1,4 +1,4 @@
-<!-- Copyright 2019 ForgeRock AS. All Rights Reserved
+<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
 
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
@@ -6,23 +6,16 @@ to such license between the licensee and ForgeRock AS. -->
 <template>
   <div
     id="captchaBody"
-    class="mb-4 d-inline"
-  >
+    class="mb-4 d-inline">
     <input
       type="hidden"
       :name="name"
       :ref="name"
-      :value="value"
-    >
-    <div
-      class="recaptcha-wrapper "
-    >
+      :value="value">
+    <div class="recaptcha-wrapper">
       <div
-        class="recaptcha-bound"
-      >
-        <div
-          id="recaptchaContainer"
-        />
+        class="recaptcha-bound">
+        <div id="recaptchaContainer" />
       </div>
     </div>
   </div>
@@ -30,9 +23,9 @@ to such license between the licensee and ForgeRock AS. -->
 
 <script>
 /**
-	 * @description Selfservice stage for multiple selfservice flows, displays a google captcha
-	 *
-	 * */
+ * @description Selfservice stage for multiple selfservice flows, displays a google captcha
+ *
+ * */
 import { isUndefined } from 'lodash';
 import NotificationMixin from '@forgerock/platform-components/src/mixins/NotificationMixin';
 
@@ -73,7 +66,6 @@ export default {
   },
   methods: {
     loadRecaptcha() {
-      /* istanbul ignore next */
       if (isUndefined(this.recaptchaSiteKey) || this.recaptchaSiteKey.length === 0) {
         this.displayNotification('IDMMessages', 'error', this.$t('pages.selfservice.captchaError'));
       } else {
@@ -98,11 +90,11 @@ export default {
 };
 </script>
 <style>
-  #captchaBody #recaptchaContainer > div {
+  #recaptchaContainer > div {
     margin: auto;
   }
 
-  #captchaBody #recaptchaContainer > div > div {
+  #recaptchaContainer > div > div {
     display: inline-block;
   }
 </style>
