@@ -1,0 +1,28 @@
+/**
+ * Copyright 2020 ForgeRock AS. All Rights Reserved
+ *
+ * Use of this code requires a commercial software license with ForgeRock AS.
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
+ */
+.card-tabs-vertical {
+  .nav-pills .nav-link.active,
+  .nav-pills .show > .nav-link {
+    color: $gray-800;
+    background: $light-blue;
+    border-left-color: $blue;
+    border-radius: 0;
+  }
+
+  .nav-pills .nav-link {
+    color: $gray-700;
+    border-left: 3px solid transparent;
+    font-size: 0.875rem;
+    padding: 0.875rem 1.5rem;
+    min-width: 180px;
+  }
+}
+
+.tab-content.col {
+  padding: 0;
+}
