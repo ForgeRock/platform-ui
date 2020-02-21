@@ -7,39 +7,36 @@ context('Profile View', () => {
     cy.visit('#/profile');
     cy.get('.text-center').then(($text) => {
       if ($text.hasClass('mb-0')) {
-        cy.get('#floatingLabelInput14').type('amadmin');
-        cy.get('#floatingLabelInput14').should('have.value', 'amadmin');
-        cy.get('#floatingLabelInput16').type('password', {force: true});
-        cy.get('#floatingLabelInput16').should('have.value', 'password');
+        cy.get('[placeholder="Username"]').type('amadmin');
+        cy.get('[placeholder="Username"]').should('have.value', 'amadmin');
+        cy.get('[placeholder="Password"]').type('password', { force: true });
+        cy.get('[placeholder="Password"]').should('have.value', 'password');
         cy.get('.btn-primary').click();
       }
     });
-  })
+  });
 
   it('location should be at profile', () => {
     // http://localhost:8888/#/profile
     cy.location().should((location) => {
-      expect(location.host).to.eq('localhost:8888');
       expect(location.hostname).to.eq('localhost');
-      expect(location.origin).to.eq('http://localhost:8888');
       expect(location.pathname).to.eq('/');
-      expect(location.port).to.eq('8888');
       expect(location.protocol).to.eq('http:');
       expect(location.search).to.be.empty;
-    })
-  })
+    });
+  });
 
   it('should have sidebar and navbar', () => {
     cy.get('.fr-sidebar-wrapper').should('exist');
     cy.get('.fr-main-navbar').should('exist');
-  })
+  });
 
   it('should have profile selected', () => {
     cy.get('[href="#/profile"]')
       .should('exist')
       .should('have.css', 'background-color', 'rgb(228, 244, 253)')
       .should('have.css', 'border-left-color', 'rgb(16, 156, 241)');
-  })
+  });
 
   it('should show user image and name', () => {
     const profileColumn = cy.get('div.profileCol');
@@ -49,7 +46,7 @@ context('Profile View', () => {
     profileColumn
       .get('.text-muted')
       .should('contain', userName);
-  })
+  });
 
   it('should have account controls in center tabs', () => {
     cy.get('div.tabs').within(($tabs) => {
@@ -71,13 +68,13 @@ context('Profile View', () => {
       cy.get('div.media a').each(($a) => {
         const href = $a.prop("href");
         expect($a).to.have.attr('href', '#');
-  
+
         // make a programatic request to it
         // which will fail if not 2xx response code
         cy.request(href);
       });
     });
-  })
+  });
 
   it('should open delete account modal when clicked', () => {
     cy.get('div.tabs').within(($tabs) => {
@@ -86,7 +83,7 @@ context('Profile View', () => {
     cy.get('h5.modal-title').should('contain', 'Delete your account');
     cy.get('button.close').click();
     cy.get('h5.modal-title').should('not.exist');
-  })
+  });
 
   it('should be able to delete account', () => {
     cy.get('div.tabs').within(($tabs) => {
@@ -109,5 +106,5 @@ context('Profile View', () => {
       // We don't actually want to delete the account
     });
     cy.get('button.close').click();
-  })
-})
+  });
+});
