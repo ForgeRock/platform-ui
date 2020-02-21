@@ -72,26 +72,28 @@ to such license between the licensee and ForgeRock AS. -->
         @keyup="validator"
         ref="input"
         :name="fieldName">
-      <div
-        v-if="reveal"
-        class="input-group-append">
-        <button
-          @click="revealText"
-          class="btn btn-secondary"
-          type="button"
-          name="revealButton"
-          @keyup.enter="$emit('enter')">
-          <i class="material-icons material-icons-outlined">
-            <template v-if="showPassword">
-              visibility_off
-            </template>
-            <template v-else>
-              visibility
-            </template>
-          </i>
-        </button>
-      </div>
-
+      <!-- @slot allows buttons to be appended -->
+      <slot name="append">
+        <div
+          v-if="reveal"
+          class="input-group-append">
+          <button
+            @click="revealText"
+            class="btn btn-secondary"
+            type="button"
+            name="revealButton"
+            @keyup.enter="$emit('enter')">
+            <i class="material-icons material-icons-outlined">
+              <template v-if="showPassword">
+                visibility_off
+              </template>
+              <template v-else>
+                visibility
+              </template>
+            </i>
+          </button>
+        </div>
+      </slot>
       <label
         v-if="label"
         :hidden="hideLabel"

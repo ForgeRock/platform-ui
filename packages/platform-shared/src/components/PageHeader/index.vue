@@ -8,7 +8,7 @@ to such license between the licensee and ForgeRock AS. -->
     <h1>
       {{ title }}
     </h1>
-    <p class="font-weight-light text-muted mb-4">
+    <p class="text-muted mb-4">
       {{ subtitle }}
     </p>
   </div>

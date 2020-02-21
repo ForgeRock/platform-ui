@@ -1,0 +1,23 @@
+/**
+ * Copyright 2020 ForgeRock AS. All Rights Reserved
+ *
+ * Use of this code requires a commercial software license with ForgeRock AS.
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
+ */
+// inline form controls
+.form-control-inline,
+.form-control-inline-sm {
+  display: inline-block;
+  width: 5rem;
+}
+
+.form-control-inline-md {
+  display: inline-block;
+  width: 10rem;
+}
+
+.form-control-inline-lg {
+  display: inline-block;
+  width: 15rem;
+}
