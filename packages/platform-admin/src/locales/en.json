@@ -211,5 +211,42 @@
         "title": "Notifications"
       }
     }
+  },
+  "passwordPolicy": {
+    "title": "Password Policy",
+    "subtitle": "Define password rules for identities.",
+    "recommended": "Recommended Settings based on NIST guidelines",
+    "minLength": "Password length must be minimum",
+    "maxLength": "and maximum 64 characters",
+    "restrictRepetitive": "Restrict sequential and repetitive characters (e.g. 12345 or aaaaaa)",
+    "restrictCommon": "Restrict commonly used passwords (e.g. p@ssw0rd, etc.) and dictionary words",
+    "restrictCommonPlaceholder": "Dictionary Text File",
+    "restrictCommonHelp": "To add restricted passwords to the dictionary file download the file, make changes, and reupload modified file.",
+    "restrictAttributes": "Password cannot include part of {resourceName} attributes",
+    "restrictAttributesPlaceholder": "Select attributes",
+    "showAdvanced": "Show advanced settings",
+    "hideAdvanced": "Hide advanced settings",
+    "mustContain": "Must contain",
+    "reqUpper": "Upper case letter",
+    "reqLower": "Lower case letter",
+    "reqNumber": "Number (0-9)",
+    "reqSymbol": "Symbol (e.g., !@#$%^&*)",
+    "cannotUse": "Cannot use",
+    "restrictForbidden": "Cannot use a password containing forbidden characters",
+    "restrictForbiddenPlaceholder": "Forbidden characters",
+    "cannotReuse": "Cannot reuse",
+    "last": "Last",
+    "passwords": "passwords",
+    "forcePasswordChange": "Force Password Change",
+    "forcePasswordChangeAfter": "Force password change after",
+    "forcePasswordChangePlaceholder": "Select option",
+    "accountLockout": "Account Lockout",
+    "lockAfter": "Lock out after",
+    "failedAttempts": "failed sign-in attempts within",
+    "unlockAfter" : "Unlock account after",
+    "minutes": "minutes",
+    "days": "days",
+    "months": "months",
+    "years": "years"
   }
 }
