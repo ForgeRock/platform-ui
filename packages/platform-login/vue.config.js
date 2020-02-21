@@ -37,7 +37,7 @@ module.exports = {
   css: {
     loaderOptions: {
       sass: {
-        data: generateTheme(),
+        prependData: generateTheme(),
       },
     },
   },

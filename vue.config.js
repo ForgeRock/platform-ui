@@ -11,7 +11,7 @@ module.exports = {
   css: {
     loaderOptions: {
       sass: {
-        data: `
+        prependData: `
           @import "~bootstrap/scss/_functions.scss";
           @import "~bootstrap/scss/_mixins.scss";
           @import "~@forgerock/platform-components/src/scss/theme-variables.scss";

@@ -1,4 +1,4 @@
-<!-- Copyright 2019 ForgeRock AS. All Rights Reserved
+<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
 
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
@@ -44,7 +44,7 @@ to such license between the licensee and ForgeRock AS. -->
                         </dl>
                     </div>
                 </div>
-                <div class="card" v-if="!readonly">
+                <div class="card" v-else>
                     <div class="card-body">
                         <div class="form-group">
                           <div class="form-label-group mb-0">
