@@ -1,4 +1,4 @@
-<!-- Copyright 2019 ForgeRock AS. All Rights Reserved
+<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
 
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
@@ -7,9 +7,7 @@ to such license between the licensee and ForgeRock AS. -->
   <div
     id="app"
     :class="{ 'fr-menu-locked': toolbarToggled, 'fr-menu-unlocked': !hideNav && !toolbarToggled }">
-    <div
-      id="wrapper"
-      :class="[{'toggled': toolbarToggled && !this.$route.meta.hideToolbar}]">
+    <div :class="[{'toggled': toolbarToggled && !this.$route.meta.hideToolbar}, 'h-100']">
       <FrSideMenu
         @locked="lockMenu"
         @logout="logoutUser"
@@ -20,7 +18,7 @@ to such license between the licensee and ForgeRock AS. -->
         v-show="!hideNav" />
       <div
         id="appContent"
-        :class="[{'fr-no-toolbar': this.$route.meta.hideToolbar}]">
+        :class="[{'fr-no-toolbar': this.$route.meta.hideToolbar}, 'h-100']">
         <!-- Navigation Bar using Vue Route + Bootstrap Toolbar -->
         <FrNavBar
           class="fr-main-navbar"
@@ -234,102 +232,32 @@ export default {
       padding-right: $grid-gutter-width;
     }
   }
-
-  .fr-main-dropdown {
-    .dropdown-menu {
-      padding-top: 0;
-      padding-bottom: 0;
-    }
-  }
-
-  #wrapper {
-    height: 100%;
-
-    #appSidebarWrapper {
-      position: fixed;
-      top: 0;
-      width: 0;
-      height: 100%;
-      z-index: 2;
-      margin-left: -$fr-sidebar-nav-width;
-      overflow: hidden;
-      background: $fr-sidebar-nav-background-color;
-      transition: all 0.2s ease;
-
-      a {
-        text-align: left;
-      }
-
-      .sidebar-brand-logo {
-        display: block;
-      }
-
-      .sidebar-brand-mark {
-        display: none;
-      }
-
-      @media (min-width: 768px) {
-        width: $fr-sidebar-nav-minimized-width;
-        margin-left: 0;
-
-        .sidebar-brand-logo {
-          display: none;
-        }
-
-        .sidebar-brand-mark {
-          display: block;
-        }
-
-        .sidebar-item-text {
-          display: none;
-        }
-      }
-    }
-
-    #appContent {
-      height: 100%;
-      transition: all 0.2s ease;
-      padding-left: 0;
-
-      @media (min-width: 768px) {
-        padding-left: $fr-sidebar-nav-minimized-width;
-      }
-
-      &.fr-no-toolbar {
-        @media (min-width: 768px) {
-          padding-left: 0;
-        }
-      }
-
-      .fr-main-nav-toggle {
-        color: $fr-toolbar-color;
-      }
-
-      .navbar-nav {
-        .dropdown-menu {
-          position: absolute;
-        }
-
-        .nav-link {
-          color: $fr-toolbar-color;
-        }
-      }
-
-      > .container {
-        padding-top: $grid-gutter-width;
-        padding-bottom: $grid-gutter-width * 2;
-      }
-    }
-  }
 }
 
-.modal-open {
-  #app {
-    #wrapper {
-      #appSidebarWrapper {
-        z-index: 0;
-      }
+#appContent {
+  @media (min-width: 768px) {
+    padding-left: $fr-sidebar-nav-minimized-width;
+  }
+
+  &.fr-no-toolbar {
+    @media (min-width: 768px) {
+      padding-left: 0;
     }
+  }
+
+  .navbar-nav {
+    .dropdown-menu {
+      position: absolute;
+    }
+
+    .nav-link {
+      color: $fr-toolbar-color;
+    }
+  }
+
+  > .container {
+    padding-top: $grid-gutter-width;
+    padding-bottom: $grid-gutter-width * 2;
   }
 }
 
