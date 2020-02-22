@@ -144,10 +144,10 @@ import {
 } from 'lodash';
 import { mapState } from 'vuex';
 import { ValidationObserver, ValidationProvider } from 'vee-validate';
-import ResourceMixin from '@forgerock/platform-components/src/mixins/ResourceMixin';
-import RestMixin from '@forgerock/platform-components/src/mixins/RestMixin';
-import NotificationMixin from '@forgerock/platform-components/src/mixins/NotificationMixin';
-import ValidationErrorList from '@forgerock/platform-components/src/components/ValidationErrorList/';
+import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
+import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+import ValidationErrorList from '@forgerock/platform-shared/src/components/ValidationErrorList/';
 
 /**
  * @description Displays a users profile, auto generates fields based off of resource schema. Currently only displays strings, numbers and booleans. In the case of a policy

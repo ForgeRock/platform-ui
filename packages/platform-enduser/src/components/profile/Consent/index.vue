@@ -121,9 +121,9 @@ import {
 import dayjs from 'dayjs';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import { mapState } from 'vuex';
-import ListGroup from '@forgerock/platform-components/src/components/ListGroup/';
-import ListItem from '@forgerock/platform-components/src/components/ListItem/';
-import RestMixin from '@forgerock/platform-components/src/mixins/RestMixin';
+import ListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
+import ListItem from '@forgerock/platform-shared/src/components/ListItem/';
+import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import AccessLevel from '@/components/profile/AccessLevel';
 import FallbackImage from '@/components/utils/FallbackImage';
 

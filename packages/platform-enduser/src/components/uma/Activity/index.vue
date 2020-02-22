@@ -56,9 +56,9 @@ import {
 } from 'lodash';
 import dayjs from 'dayjs';
 import LocalizedFormat from 'dayjs/plugin/localizedFormat';
-import DateMixin from '@forgerock/platform-components/src/mixins/DateMixin/';
-import ListGroup from '@forgerock/platform-components/src/components/ListGroup/';
-import ListItem from '@forgerock/platform-components/src/components/ListItem/';
+import DateMixin from '@forgerock/platform-shared/src/mixins/DateMixin/';
+import ListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
+import ListItem from '@forgerock/platform-shared/src/components/ListItem/';
 import FallbackImage from '@/components/utils/FallbackImage';
 
 dayjs.extend(LocalizedFormat);

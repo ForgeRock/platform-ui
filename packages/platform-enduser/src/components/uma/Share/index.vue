@@ -194,7 +194,7 @@ to such license between the licensee and ForgeRock AS. -->
 import {
   cloneDeep, filter, findIndex, each, keys, map, pickBy,
 } from 'lodash';
-import NotificationMixin from '@forgerock/platform-components/src/mixins/NotificationMixin';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FallbackImage from '@/components/utils/FallbackImage';
 
 /**

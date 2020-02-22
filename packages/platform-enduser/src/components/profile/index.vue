@@ -71,8 +71,8 @@ to such license between the licensee and ForgeRock AS. -->
 <script>
 import { startCase } from 'lodash';
 import { mapState } from 'vuex';
-import RestMixin from '@forgerock/platform-components/src/mixins/RestMixin';
-import NotificationMixin from '@forgerock/platform-components/src/mixins/NotificationMixin';
+import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 /**
  * @description Controlling component for profile management
  *
@@ -156,7 +156,7 @@ export default {
       this.makeUpdateRequest('selfservice/user', payload, config);
     },
     makeUpdateRequest(endpoint, payload, config = {}) {
-      const successMsg = config.successMsg || this.$t('common.user.profile.updateSuccess');
+      const successMsg = config.successMsg || this.$t('user.profile.updateSuccess');
       const selfServiceInstance = this.getRequestService({
         headers: config.headers,
       });

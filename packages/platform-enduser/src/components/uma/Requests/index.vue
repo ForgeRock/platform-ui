@@ -84,7 +84,7 @@ to such license between the licensee and ForgeRock AS. -->
 <script>
 import dayjs from 'dayjs';
 import LocalizedFormat from 'dayjs/plugin/localizedFormat';
-import DateMixin from '@forgerock/platform-components/src/mixins/DateMixin/';
+import DateMixin from '@forgerock/platform-shared/src/mixins/DateMixin/';
 import FallbackImage from '@/components/utils/FallbackImage';
 
 dayjs.extend(LocalizedFormat);

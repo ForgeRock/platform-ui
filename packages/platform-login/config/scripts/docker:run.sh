@@ -16,5 +16,5 @@ docker run \
   --publish-all \
   --tty \
   --volume $ROOT_PATH/packages/platform-login/src/:/home/app/packages/platform-login/src \
-  --volume $ROOT_PATH/packages/platform-components/src/:/home/app/packages/platform-components/src \
+  --volume $ROOT_PATH/packages/platform-shared/src/:/home/app/packages/platform-shared/src \
   platform-login:development

@@ -36,7 +36,7 @@ to such license between the licensee and ForgeRock AS. -->
 </template>
 
 <script>
-import Alert from '@forgerock/platform-components/src/components/Alert/';
+import Alert from '@forgerock/platform-shared/src/components/Alert/';
 
 export default {
   name: 'App',

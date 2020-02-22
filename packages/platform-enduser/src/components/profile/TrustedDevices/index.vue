@@ -89,10 +89,10 @@ to such license between the licensee and ForgeRock AS. -->
 
 <script>
 import { mapState } from 'vuex';
-import ListGroup from '@forgerock/platform-components/src/components/ListGroup/';
-import ListItem from '@forgerock/platform-components/src/components/ListItem/';
-import RestMixin from '@forgerock/platform-components/src/mixins/RestMixin';
-import NotificationMixin from '@forgerock/platform-components/src/mixins/NotificationMixin';
+import ListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
+import ListItem from '@forgerock/platform-shared/src/components/ListItem/';
+import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FallbackImage from '@/components/utils/FallbackImage';
 
 /**

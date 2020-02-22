@@ -14,7 +14,7 @@ module.exports = {
         prependData: `
           @import "~bootstrap/scss/_functions.scss";
           @import "~bootstrap/scss/_mixins.scss";
-          @import "~@forgerock/platform-components/src/scss/theme-variables.scss";
+          @import "~@forgerock/platform-shared/src/scss/theme-variables.scss";
           @import "~bootstrap/scss/_variables.scss";
         `
       },
@@ -26,7 +26,7 @@ module.exports = {
         {
           test: /\.stories\.(js|mdx)?$/,
           loader: require.resolve('@storybook/source-loader'),
-          include: [path.resolve(__dirname, 'packages/platform-components/src/components/')],
+          include: [path.resolve(__dirname, 'packages/platform-shared/src/components/')],
           enforce: 'pre',
         }
       ]

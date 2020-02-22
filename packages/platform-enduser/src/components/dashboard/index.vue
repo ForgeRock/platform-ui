@@ -33,8 +33,8 @@ to such license between the licensee and ForgeRock AS. -->
 </template>
 
 <script>
-import RestMixin from '@forgerock/platform-components/src/mixins/RestMixin';
-import NotificationMixin from '@forgerock/platform-components/src/mixins/NotificationMixin';
+import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import Welcome from '@/components/dashboard/widgets/WelcomeWidget';
 
 /**

@@ -1,0 +1,44 @@
+/**
+ * Copyright 2019 ForgeRock AS. All Rights Reserved
+ *
+ * Use of this code requires a commercial software license with ForgeRock AS.
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
+ */
+import { shallowMount } from '@vue/test-utils';
+import SideMenu from './index';
+
+describe('SideMenu Component', () => {
+  let wrapper;
+  beforeEach(() => {
+    wrapper = shallowMount(SideMenu, {
+      mocks: {
+        $t: () => {},
+      },
+      stubs: {
+        'router-link': true,
+        RouterLink: true,
+      },
+      propsData: {
+        menuItems: [
+          {
+            displayName: 'test',
+            icon: 'testIcon',
+            routeName: 'ListResource',
+            resourceType: 'testType',
+            columns: 'testColumns',
+            order: 'testOrder',
+          },
+        ],
+      },
+    });
+  });
+
+  it('Component successfully loaded', () => {
+    expect(wrapper.name()).toEqual('SideMenu');
+  });
+
+  it('Component takes in menu items', () => {
+    expect(wrapper.vm.menuItems[0].displayName).toEqual('test');
+  });
+});

@@ -9,7 +9,7 @@ import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
 import Vuex from 'vuex';
 import { ValidationProvider, ValidationObserver } from 'vee-validate';
-import PolicyPasswordInput from '@forgerock/platform-components/src/components/PolicyPasswordInput';
+import PolicyPasswordInput from '@forgerock/platform-shared/src/components/PolicyPasswordInput';
 import EditPassword from '@/components/profile/EditPassword';
 import i18n from '@/i18n';
 

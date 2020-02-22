@@ -1,0 +1,181 @@
+/**
+ * Copyright 2019-2020 ForgeRock AS. All Rights Reserved
+ *
+ * Use of this code requires a commercial software license with ForgeRock AS.
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
+ */
+@import '~bootstrap/scss/bootstrap';
+@import '~bootstrap-vue/dist/bootstrap-vue.css';
+@import './card.scss';
+
+// General application styles
+html,
+body {
+  height: 100%;
+  font-family: $fr-typeface;
+
+  // Missing material design size utilities (not included with outline versions for some reason)
+  .material-icons.md-18,
+  .material-icons-outlined.md-18 {
+    font-size: 18px;
+  }
+
+  .material-icons.md-24,
+  .material-icons-outlined.md-24 {
+    font-size: 24px;
+  }
+
+  .material-icons.md-36,
+  .material-icons-outlined.md-36 {
+    font-size: 36px;
+  }
+
+  .material-icons.md-48,
+  .material-icons-outlined.md-48 {
+    font-size: 48px;
+  }
+
+  .material-icons.md-64,
+  .material-icons-outlined.md-64 {
+    font-size: 64px;
+  }
+
+  .material-icons,
+  .material-icons-outlined {
+    font-size: 1.125rem;
+    vertical-align: middle;
+  }
+
+  .icon-flipped {
+    transform: scaleX(-1);
+  }
+
+  .popover {
+    pointer-events: none;
+  }
+
+  .dropdown-toggle::after {
+    border: none;
+    content: 'expand_more';
+    font-family: 'Material Icons Outlined', sans-serif;
+    font-size: 1rem;
+    margin: 0;
+    position: absolute;
+    right: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+h1 {
+  font-weight: $h1-font-weight;
+}
+
+h2 {
+  font-weight: $h2-font-weight;
+}
+
+h3 {
+  font-weight: $h3-font-weight;
+}
+
+h4 {
+  font-weight: $h4-font-weight;
+}
+
+h5 {
+  font-weight: $h5-font-weight;
+}
+
+h6 {
+  font-weight: $h6-font-weight;
+}
+
+hr {
+  color: $gray-300;
+
+  &.fr-accent {
+    width: 170px;
+  }
+}
+
+#app,
+#appContent {
+  height: 100%;
+  color: $gray-900;
+}
+
+#appContent {
+  .container,
+  .container-fluid {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+// Page transition
+.fade-enter-active,
+.fade-leave-active {
+  transition-property: opacity;
+  transition-duration: 0.25s;
+}
+
+.fade-enter-active {
+  transition-delay: 0.25s;
+}
+
+.fade-enter,
+.fade-leave-active {
+  opacity: 0;
+}
+
+.badge-success,
+.badge-warning {
+  color: $white;
+}
+
+// General card styles
+.card {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.13);
+  border: $fr-card-border;
+}
+
+a.card {
+  color: $gray-600;
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.rotate-45 {
+  transform: rotate(45deg);
+}
+
+.fr-alert {
+  padding-left: 10px;
+
+  .material-icons {
+    width: 32px;
+  }
+}
+
+.opacity-30 {
+  opacity: 0.3;
+}
+
+.table {
+  thead th {
+    border: none;
+    font-weight: $fr-table-head-weight;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+}
+
+// General toolbar styles
+.btn-toolbar {
+  border-bottom: $fr-table-head-border solid $table-border-color;
+  padding: 12px;
+}

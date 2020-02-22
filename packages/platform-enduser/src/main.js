@@ -19,7 +19,7 @@ import { required } from 'vee-validate/dist/rules';
 import Vue from 'vue';
 import AppAuthHelper from 'appauthhelper/appAuthHelperCompat';
 import SessionCheck from 'oidcsessioncheck';
-import store from '@forgerock/platform-components/src/store';
+import store from '@forgerock/platform-shared/src/store';
 import router from './router';
 import i18n from './i18n';
 import App from './App';
