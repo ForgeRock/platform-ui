@@ -15,8 +15,7 @@ to such license between the licensee and ForgeRock AS. -->
         v-bind="$attrs"
         :per-page="perPage"
         :current-page="currentPage"
-        v-on="$listeners"
-      >
+        v-on="$listeners">
         <template
           v-for="(key, slotName) in $scopedSlots"
           v-slot:[slotName]="slotData">

@@ -161,8 +161,8 @@ to such license between the licensee and ForgeRock AS. -->
       class="w-100">
       <div class="float-right">
         <BButton
-          variant="outline-secondary mr-2"
-          @click="hideModal">
+          @click.prevent="hideModal"
+          variant="link">
           {{ $t('common.cancel') }}
         </BButton>
         <BButton

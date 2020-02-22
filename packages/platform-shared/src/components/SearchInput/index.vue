@@ -105,7 +105,7 @@ export default {
 
   .material-icons-outlined {
     position: absolute;
-    z-index: 50000;
+    z-index: 1000;
     margin-top: 16px;
 
     &.fr-icon-input-left {
