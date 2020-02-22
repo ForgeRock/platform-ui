@@ -13,7 +13,7 @@ function generateTheme() {
   let variableLoad = `
     @import "~bootstrap/scss/_functions.scss";
     @import "~bootstrap/scss/_mixins.scss";
-    @import "~@forgerock/platform-components/src/scss/theme-variables.scss";
+    @import "~@forgerock/platform-shared/src/scss/theme-variables.scss";
   `;
 
   if (process.env.THEME && process.env.THEME !== 'default') {

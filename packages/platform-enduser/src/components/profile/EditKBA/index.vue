@@ -41,7 +41,7 @@ to such license between the licensee and ForgeRock AS. -->
                 :key="id"
                 class="pb-3">
                 <label>
-                  {{ $t('common.user.kba.question') }} {{ select.index }}
+                  {{ $t('user.kba.question') }} {{ select.index }}
                 </label>
                 <BFormSelect
                   class="mb-3"
@@ -68,19 +68,19 @@ to such license between the licensee and ForgeRock AS. -->
                 </div>
 
                 <div class="form-group mb-0">
-                  <label>{{ $t('common.user.kba.answer') }}</label>
+                  <label>{{ $t('user.kba.answer') }}</label>
                   <ValidationProvider
-                    :name="$t('common.user.kba.answer') + ' ' + select.index"
+                    :name="$t('user.kba.answer') + ' ' + select.index"
                     rules="required"
                     v-slot="{ errors }">
                     <BFormInput
                       type="text"
                       v-model.trim="select.answer"
-                      :name="$t('common.user.kba.answer') + ' ' + select.index"
+                      :name="$t('user.kba.answer') + ' ' + select.index"
                       :class="[{'is-invalid': errors.length > 0}, 'form-control']" />
                     <FrValidationError
                       :validator-errors="errors"
-                      :field-name="$t('common.user.kba.answer') + ' ' + select.index" />
+                      :field-name="$t('user.kba.answer') + ' ' + select.index" />
                   </ValidationProvider>
                 </div>
 
@@ -93,7 +93,7 @@ to such license between the licensee and ForgeRock AS. -->
                 type="button"
                 variant="primary"
                 class="ld-ext-right mb-3"
-                :label="$t('common.user.kba.saveQuestions')"
+                :label="$t('user.kba.saveQuestions')"
                 :loading="loading"
                 @click="onSaveKBA" />
             </ValidationObserver>
@@ -115,8 +115,8 @@ import {
   ValidationObserver,
   ValidationProvider,
 } from 'vee-validate';
-import ListItem from '@forgerock/platform-components/src/components/ListItem/';
-import ValidationErrorList from '@forgerock/platform-components/src/components/ValidationErrorList/';
+import ListItem from '@forgerock/platform-shared/src/components/ListItem/';
+import ValidationErrorList from '@forgerock/platform-shared/src/components/ValidationErrorList/';
 import LoadingButton from '@/components/utils/LoadingButton';
 
 /**
@@ -166,8 +166,8 @@ export default {
       this.selectOptions = map(this.questions, (question, key) => ({ value: key, text: question[locale] || question[fallbackLocale], disabled: true }));
 
       this.customIndex = this.selectOptions.length + 1;
-      this.selectOptions.unshift({ value: null, text: this.$t('common.user.kba.selectQuestion'), disabled: true });
-      this.selectOptions.push({ value: this.customIndex, text: this.$t('common.user.kba.custom'), disabled: false });
+      this.selectOptions.unshift({ value: null, text: this.$t('user.kba.selectQuestion'), disabled: true });
+      this.selectOptions.push({ value: this.customIndex, text: this.$t('user.kba.custom'), disabled: false });
     },
 
     generatePatch() {

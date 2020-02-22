@@ -1,0 +1,49 @@
+{
+  "sideMenu": {
+    "signOut": "Sign Out",
+    "toggleSidebar": "Toggle sidebar",
+    "dashboard": "Dashboard",
+    "selectIcon": "Please select icon in admin (Managed Object) settings"
+  },
+  "dashboard": {
+    "managedAccess": {
+      "title": "Manage Access",
+      "description": "Manage how your users can authenticate and gain access to your systems."
+    },
+    "managedIdentity": {
+      "title": "Manage Identities",
+      "description": "Manage where, when and how your users can change their information."
+    },
+    "welcome": {
+      "title": "Welcome to ForgeRock!",
+      "description": "With the Forgerock platform you can control access, identity management and much more.",
+      "footer": "Get Started"
+    }
+  },
+  "date": {
+    "yearsAgo": "years ago",
+    "yearAgo": "a year ago",
+    "monthsAgo": "months ago",
+    "monthAgo": "a month ago",
+    "daysAgo": "days ago",
+    "dayAgo": "a day ago",
+    "hoursAgo": "hours ago",
+    "hourAgo": "an hour ago",
+    "minutesAgo": "minutes ago",
+    "minuteAgo": "a minute ago",
+    "secondsAgo": "a few seconds ago"
+  },
+  "pages": {
+    "app": {
+      "notifications": {
+        "noNotifications": "No notifications available",
+        "title": "Notifications",
+        "clearAll": "Clear All",
+        "removedAll": "Removed all notifications",
+        "removed": "Removed notification",
+        "failedToRemove": "Failed to remove notification",
+        "failedToClear": "Failed to clear all notifications"
+      }
+    }
+  }
+}

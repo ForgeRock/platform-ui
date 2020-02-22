@@ -78,7 +78,7 @@ cd ~/<path-to-dir>/platform-ui
 yarn install
 
 # Create a separate terminal window for each package
-# (Except for `platform-components`)
+# (Except for `platform-shared`)
 cd ~/<path-to-dir>/platform-ui/packages/<package>
 
 # Run the following script in each terminal
