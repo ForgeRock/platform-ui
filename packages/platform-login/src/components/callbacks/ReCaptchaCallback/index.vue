@@ -27,7 +27,7 @@ to such license between the licensee and ForgeRock AS. -->
  *
  * */
 import { isUndefined } from 'lodash';
-import NotificationMixin from '@forgerock/platform-components/src/mixins/NotificationMixin';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 
 export default {
   name: 'ReCaptchaCallback',

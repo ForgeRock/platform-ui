@@ -71,7 +71,7 @@ import {
 } from 'bootstrap-vue';
 import { FRAuth, Config } from '@forgerock/javascript-sdk';
 import Vue from 'vue';
-import FloatingLabelInput from '@forgerock/platform-components/src/components/FloatingLabelInput';
+import FloatingLabelInput from '@forgerock/platform-shared/src/components/FloatingLabelInput';
 import BooleanAttributeInputCallback from '@/components/callbacks/BooleanAttributeInputCallback';
 import CenterCard from '@/components/utils/CenterCard';
 import ChoiceCallback from '@/components/callbacks/ChoiceCallback';
@@ -167,7 +167,7 @@ export default {
       return map(failedPolicies, (policy) => {
         const tempPolicy = JSON.parse(policy);
 
-        return this.$t(`policyValidationMessages.${tempPolicy.policyRequirement}`, tempPolicy.params);
+        return this.$t(`common.policyValidationMessages.${tempPolicy.policyRequirement}`, tempPolicy.params);
       });
     },
     /**
@@ -249,8 +249,8 @@ export default {
             index,
             descriptionText: this.$t('login.kba.description'),
             customQuestonOptionText: this.$t('login.kba.custom'),
-            requiredText: this.$t('policyValidationMessages.REQUIRED'),
-            uniqueText: this.$t('policyValidationMessages.UNIQUE'),
+            requiredText: this.$t('common.policyValidationMessages.REQUIRED'),
+            uniqueText: this.$t('common.policyValidationMessages.UNIQUE'),
             showHeader: this.kbaCallbackCount === 0,
             callbackSubmitButton: this.$refs.callbackSubmitButton,
           });

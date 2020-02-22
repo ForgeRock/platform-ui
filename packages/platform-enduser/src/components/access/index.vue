@@ -133,9 +133,9 @@ import {
   toNumber,
 } from 'lodash';
 import axios from 'axios';
-import CreateResource from '@forgerock/platform-components/src/components/resource/CreateResource';
-import RestMixin from '@forgerock/platform-components/src/mixins/RestMixin';
-import NotificationMixin from '@forgerock/platform-components/src/mixins/NotificationMixin';
+import CreateResource from '@forgerock/platform-shared/src/components/resource/CreateResource';
+import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 
 /**
  * @description Controlling component for delegated admin, allows for listing available resources and connects to the create, delete and edit features.

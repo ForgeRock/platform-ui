@@ -16,7 +16,7 @@
     "test:e2e": "vue-cli-service test:e2e --mode e2e"
   },
   "dependencies": {
-    "@forgerock/platform-components": "1.0.0",
+    "@forgerock/platform-shared": "1.0.0",
     "appauthhelper": "0.2.0",
     "axios": "0.19.0",
     "babel-plugin-require-context-hook": "1.0.0",

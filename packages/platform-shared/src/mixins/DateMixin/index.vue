@@ -1,0 +1,46 @@
+<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+
+Use of this code requires a commercial software license with ForgeRock AS.
+or with one of its affiliates. All use shall be exclusively subject
+to such license between the licensee and ForgeRock AS. -->
+<script>
+import dayjs from 'dayjs';
+import advancedFormat from 'dayjs/plugin/advancedFormat';
+
+dayjs.extend(advancedFormat);
+
+/**
+ * @description Date mixin used for converting date objects
+ *
+ */
+export default {
+  name: 'DateMixin',
+  methods: {
+    // Subtracts input time from current time and converts into comparison string
+    timeAgo(date) {
+      const second = 1000;
+      const minute = second * 60;
+      const hour = minute * 60;
+      const day = hour * 24;
+
+      const thresholds = [
+        { threshold: 540 * day, modifier: 365 * day, render: (elapsed) => `${elapsed} ${this.$t('date.yearsAgo')}` },
+        { threshold: 320 * day, render: () => this.$t('date.yearAgo') },
+        { threshold: 45 * day, modifier: 30 * day, render: (elapsed) => `${elapsed} ${this.$t('date.monthsAgo')}` },
+        { threshold: 26 * day, render: () => this.$t('date.monthAgo') },
+        { threshold: 36 * hour, modifier: 24 * hour, render: (elapsed) => `${elapsed} ${this.$t('date.daysAgo')}` },
+        { threshold: 22 * hour, render: () => this.$t('date.dayAgo') },
+        { threshold: 90 * minute, modifier: 60 * minute, render: (elapsed) => `${elapsed} ${this.$t('date.hoursAgo')}` },
+        { threshold: 45 * minute, render: () => this.$t('date.hourAgo') },
+        { threshold: 90 * second, modifier: 60 * second, render: (elapsed) => `${elapsed} ${this.$t('date.minutesAgo')}` },
+        { threshold: 46 * second, render: () => this.$t('date.minuteAgo') },
+        { threshold: 0 * second, render: () => this.$t('date.secondsAgo') },
+      ];
+
+      const elapsed = Math.round(new Date() - date);
+      const { render, modifier } = thresholds.find(({ threshold }) => elapsed >= threshold);
+      return render(Math.round(elapsed / modifier));
+    },
+  },
+};
+</script>
