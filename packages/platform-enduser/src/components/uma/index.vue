@@ -77,8 +77,8 @@ import {
   map,
 } from 'lodash';
 import { mapState } from 'vuex';
-import RestMixin from '@forgerock/platform-components/src/mixins/RestMixin';
-import NotificationMixin from '@forgerock/platform-components/src/mixins/NotificationMixin';
+import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import CenterCard from '@/components/utils/CenterCard';
 import Activity from '@/components/uma/Activity';
 import Requests from '@/components/uma/Requests';
@@ -233,7 +233,7 @@ export default {
       });
     },
     shareResource(payload, config = {}) {
-      const successMsg = this.$t('common.user.sharing.shareSuccess');
+      const successMsg = this.$t('user.sharing.shareSuccess');
       const selfServiceInstance = this.getRequestService();
       // TODO Will break until updated
       const url = ''; // this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.resourceSet + query;
@@ -250,7 +250,7 @@ export default {
         });
     },
     unshareResource(resourceId) {
-      const successMsg = this.$t('common.user.sharing.unshareSuccess');
+      const successMsg = this.$t('user.sharing.unshareSuccess');
       const selfServiceInstance = this.getRequestService();
       // TODO Will break until updated
       const url = `${resourceId}`; // this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.resourceSet + query;
@@ -264,7 +264,7 @@ export default {
         });
     },
     modifyResource(resourceId, payload, config = {}) {
-      const successMsg = config.unshare ? this.$t('common.user.sharing.unshareSuccess') : this.$t('common.user.sharing.modifySuccess');
+      const successMsg = config.unshare ? this.$t('user.sharing.unshareSuccess') : this.$t('user.sharing.modifySuccess');
       // TODO Will break until updated
       const url = `${resourceId}`; // this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.resourceSet + query;
       const selfServiceInstance = this.getRequestService();
@@ -284,7 +284,7 @@ export default {
         });
     },
     finalizeResourceAccess(id, action, config = {}) {
-      const successMsg = action === 'approve' ? this.$t('common.user.sharing.requestAllowedSuccess') : this.$t('common.user.sharing.requestDeniedSuccess');
+      const successMsg = action === 'approve' ? this.$t('user.sharing.requestAllowedSuccess') : this.$t('user.sharing.requestDeniedSuccess');
       const selfServiceInstance = this.getRequestService();
       const payload = { scopes: config.scopes || {} };
       // TODO Will break until updated

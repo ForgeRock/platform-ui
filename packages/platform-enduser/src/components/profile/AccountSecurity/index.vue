@@ -16,8 +16,8 @@ to such license between the licensee and ForgeRock AS. -->
 
 <script>
 import { mapState } from 'vuex';
-import ListGroup from '@forgerock/platform-components/src/components/ListGroup/';
-import RestMixin from '@forgerock/platform-components/src/mixins/RestMixin';
+import ListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
+import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import EditKBA from '@/components/profile/EditKBA';
 /**
  * @description Handles displaying account security controls (KBA change and password change)
