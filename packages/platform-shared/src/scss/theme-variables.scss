@@ -1,0 +1,355 @@
+/**
+ * Copyright 2019 ForgeRock AS. All Rights Reserved
+ *
+ * Use of this code requires a commercial software license with ForgeRock AS.
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
+ */
+
+// Application wide variables can be overridden here
+// Forgerock based styles start with fr
+$white: white;
+$gray-100: #f6f8fa;
+$gray-200: #e7eef4;
+$gray-300: #d3d8e0;
+$gray-400: #c0c9d5;
+$gray-500: #77869e;
+$gray-600: #5e6d82;
+$gray-700: #455469;
+$gray-800: #324054;
+$gray-900: #23282e;
+$black: black;
+
+$blue: #109cf1;
+$indigo: #6610f2;
+$purple: #6f42c1;
+$pink: #e83e8c;
+$red: #f7685b;
+$orange: #fd7e14;
+$yellow: #ffb946;
+$green: #2ed47a;
+$teal: #20c997;
+$cyan: #17a2b8;
+$light-blue: #e4f4fd;
+
+$primary: $blue;
+$secondary: $gray-500;
+$success: $green;
+$info: $blue;
+$warning: $yellow;
+$danger: $red;
+$light: $gray-100;
+$dark: $gray-800;
+
+//Base
+$theme-colors: (
+  'primary': $primary,
+  'secondary': $secondary,
+  'success': $success,
+  'info': $info,
+  'warning': $warning,
+  'danger': $danger,
+  'light': $light,
+  'dark': $dark,
+);
+
+// Spacing
+//
+// Control the default styling of most Bootstrap elements by modifying these
+// variables. Mostly focused on spacing.
+// You can add more entries to the $spacers map, should you need more variation.
+$spacer: 1rem;
+$spacers: ();
+$spacers: map-merge(
+  (
+    0: 0,
+    1: (
+      $spacer * 0.25,
+    ),
+    2: (
+      $spacer * 0.5,
+    ),
+    3: $spacer,
+    4: (
+      $spacer * 1.5,
+    ),
+    5: (
+      $spacer * 3,
+    ),
+  ),
+  $spacers
+);
+
+// Global Variables
+$enable-shadows: false;
+$enable-rounded: true;
+$border-width: 1px;
+$border-color: $gray-300;
+
+//General
+$body-bg: $gray-100;
+$body-color: $gray-600;
+$headings-color: $gray-900;
+$font-size-base: 1rem !default;
+$font-weight-bold: 500;
+$font-weight-light: 300;
+$small-font-size: 0.875rem;
+$transition-collapse: height 0.25s ease-in;
+$border-radius: 4px;
+$border-color: $gray-300;
+$box-shadow-sm: 0 1px 2px rgba($black, 0.13);
+$box-shadow: 0 1px 3px rgba($black, 0.13);
+$box-shadow-lg: 0 2px 11px rgba($black, 0.13);
+$fr-typeface: 'Roboto', sans-serif;
+$fr-background-image: none;
+
+// Custom form controls
+$custom-control-gutter: 1rem;
+$custom-control-indicator-bg: $white;
+$custom-select-height: 3rem;
+
+// Custom form controls// Custom form controls
+$component-active-color: $white;
+$component-active-bg: $primary;
+$custom-control-indicator-size: 1rem;
+$custom-control-indicator-border-width: 1px;
+$custom-control-indicator-border-color: $gray-400;
+$custom-control-indicator-checked-color: $component-active-color;
+$custom-control-indicator-checked-bg: $primary;
+$custom-checkbox-indicator-border-color: $gray-400;
+$custom-checkbox-indicator-border-radius: $border-radius;
+$custom-checkbox-indicator-indeterminate-box-shadow: none;
+$custom-select-focus-border-color: $gray-500;
+
+$custom-switch-width: ($custom-control-indicator-size * 2) * 1.75;
+$custom-switch-indicator-border-radius: $custom-control-indicator-size;
+$custom-control-indicator-checked-disabled-bg: rgba(theme-color('primary'), 0.5) !default;
+/* stylelint-disable */
+$custom-switch-indicator-size: calc(
+  #{$custom-control-indicator-size * 2} - #{$custom-control-indicator-border-width * 4}
+) !default;
+/* stylelint-enable */
+$fr-custom-control-indicator-switch-handle-color: $white;
+$fr-custom-control-indicator-switch-border-color: $gray-400;
+$fr-custom-control-indicator-switch-background-color: $gray-400;
+$fr-custom-control-indicator-switch-checked-disabled-border-color: $custom-control-indicator-checked-disabled-bg;
+
+// Input
+$input-padding-y: 0.75rem;
+$input-placeholder-color: $gray-500;
+$input-btn-padding-x: 0.75rem;
+$input-btn-padding-y: 0.75rem;
+$input-btn-padding-x-lg: 1.375rem;
+$input-btn-padding-y-lg: 0.8125rem;
+$input-bg: $white;
+$input-disabled-bg: $gray-100;
+$input-border-color: $gray-400;
+$input-color: $gray-900;
+$label-color: inherit;
+$input-btn-color: $gray-800;
+$input-btn-active-color: $gray-900;
+$input-group-addon-bg: $input-bg;
+$input-btn-focus-width: 0.0625rem;
+$input-focus-border-color: $component-active-bg;
+$input-btn-focus-color: $component-active-bg;
+
+// Headers styles and sizes
+$headings-margin-bottom: ($spacer / 2);
+$headings-font-family: inherit;
+$headings-font-weight: $font-weight-bold;
+$headings-line-height: 1.2;
+
+$h1-font-size: $font-size-base * 3;
+$h2-font-size: $font-size-base * 2;
+$h3-font-size: $font-size-base * 1.5;
+$h4-font-size: $font-size-base * 1.25;
+$h5-font-size: $font-size-base;
+$h6-font-size: $font-size-base * 0.875;
+
+$h1-font-weight: 300;
+$h2-font-weight: 300;
+$h3-font-weight: $headings-font-weight;
+$h4-font-weight: $headings-font-weight;
+$h5-font-weight: $headings-font-weight;
+$h6-font-weight: $headings-font-weight;
+
+$display1-size: 5rem;
+$display2-size: 4rem;
+$display3-size: 3.5rem;
+$display4-size: 3rem;
+$display1-weight: 300;
+$display2-weight: 300;
+$display3-weight: 300;
+$display4-weight: 300;
+
+$lead-font-weight: 400;
+
+// Alert
+$alert-padding-y: 1.25rem;
+$alert-padding-x: 1.25rem;
+$alert-border-width: 0;
+
+// Forgerock specific alert variables
+$fr-alert-text-color: $gray-700;
+$fr-alert-dark-text-color: $gray-100;
+$fr-alert-primary-bg-color: lighten($primary, 40%);
+$fr-alert-info-bg-color: lighten($info, 40%);
+$fr-alert-secondary-bg-color: lighten($secondary, 40%);
+$fr-alert-success-bg-color: lighten($success, 40%);
+$fr-alert-warning-bg-color: lighten($warning, 26%);
+$fr-alert-danger-bg-color: lighten($danger, 26%);
+$fr-alert-light-bg-color: $white;
+$fr-alert-dark-bg-color: darken($dark, 8%);
+$fr-alert-box-shadow: transparent;
+
+//Button
+$btn-padding-x: 1.25rem;
+$btn-padding-y: $input-btn-padding-y;
+$btn-padding-y-lg: $input-btn-padding-y-lg;
+$btn-padding-x-lg: $input-btn-padding-x-lg;
+$btn-box-shadow: none;
+$btn-focus-box-shadow: none;
+$btn-active-box-shadow: none;
+
+// Cards
+$card-spacer-y: 1.5rem;
+$card-spacer-x: 1.5rem;
+$card-cap-bg: transparent;
+$card-cap-color: null;
+$card-color: null;
+$card-bg: $white;
+$card-img-overlay-padding: 1.25rem;
+$fr-card-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.13);
+$fr-card-border: $primary;
+
+// Close
+$close-font-size: $font-size-base * 2.25;
+$close-font-weight: $font-weight-light;
+$close-color: $black;
+$close-text-shadow: none;
+
+//Dropdown
+$dropdown-border-color: $gray-300;
+$dropdown-link-active-color: $gray-900;
+$dropdown-link-active-bg: lighten($primary, 44%);
+$dropdown-link-hover-bg: $dropdown-link-active-bg;
+$dropdown-header-color: $gray-900;
+$dropdown-padding-y: 0.25rem;
+$dropdown-item-padding-y: 0.675rem;
+$dropdown-link-color: $gray-700;
+
+// Forms
+$form-group-margin-bottom: 1.25rem;
+$enable-validation-icons: false;
+
+//Jumbotron
+$jumbotron-bg: transparent;
+
+// List group
+$list-group-item-padding-y: 1.25rem;
+$list-group-item-padding-x: 1.5rem;
+$list-group-hover-bg: $white;
+$list-group-active-bg: $white;
+$fr-hover-list-color: $list-group-active-bg;
+
+// Modal
+$modal-transition: transform 0.3s ease-out;
+$modal-content-bg: $white;
+$modal-header-border-color: $border-color;
+$modal-inner-padding: 1.5rem;
+$modal-header-padding-y: 1rem;
+$modal-header-padding-x: 1.5rem;
+$modal-header-padding: $modal-header-padding-y $modal-header-padding-x;
+$fr-modal-title-font-size: 1.25rem;
+
+// Forgerock specific modal variables
+$fr-modal-header-bg: $modal-content-bg;
+$fr-modal-footer-bg: $fr-modal-header-bg;
+$fr-modal-footer-border-color: $border-color;
+$fr-modal-footer-padding-y: 1rem;
+$fr-modal-footer-padding-x: 1.5rem;
+
+// Navbar
+$navbar-padding-y: 1.125rem;
+$navbar-padding-x: 1.5rem;
+$nav-highlight-color: $primary;
+$navbar-height: 4.5rem;
+$navbar-toggler-padding-x: 0;
+$navbar-dark-toggler-icon-bg: url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>');
+$navbar-dark-toggler-border-color: transparent;
+
+// Nav tabs
+$nav-tabs-border-color: $gray-300;
+$nav-tabs-link-color: inherit;
+$nav-tabs-link-active-color: $primary;
+$nav-highlight-color: inherit !default;
+
+//Pagination
+$pagination-border-color: transparent;
+$pagination-disabled-border-color: transparent;
+$pagination-border-radius: $border-radius;
+$pagination-hover-bg: $gray-100;
+$pagination-hover-border-color: transparent;
+$pagination-active-border-color: transparent;
+$pagination-disabled-border-color: transparent;
+
+//Table
+$table-bg: transparent;
+$table-accent-bg: $gray-100;
+$table-hover-bg: $gray-100;
+$table-cell-padding: 1.25rem 1.5rem;
+$table-cell-padding-sm: 0.5rem;
+$table-color: $gray-900;
+$table-border-color: $gray-300;
+
+// Forgerock specific table variables
+$fr-table-head-weight: 500;
+$fr-table-head-border: 1px;
+
+// Forgerock specific Toolbar / Navbar
+$fr-toolbar-background: $white;
+$fr-application-text-color: $gray-900;
+$fr-toolbar-color: $gray-900;
+$fr-toolbar-dropdown-color: rgba(0, 0, 0, 0.5);
+
+// Custom ForgeRock UI Components
+
+// Navbar Sidebar
+$fr-navbar-sidebar-fontsize: 0.875rem;
+$fr-navbar-sidebar-icon-fontsize: 1.125rem;
+$fr-navbar-sidebar-nav-link-padding: 0.938rem 1rem;
+$fr-sidebar-nav-width: 220px !default;
+$fr-sidebar-nav-minimized-width: 60px !default;
+$fr-sidebar-nav-background-color: $gray-800 !default;
+$fr-sidebar-nav-brand-color: $gray-800 !default;
+$fr-sidebar-nav-link-color: $gray-500 !default;
+$fr-sidebar-nav-link-hover-color: $white !default;
+$fr-sidebar-nav-link-border-color: transparent;
+$fr-sidebar-nav-link-active-border-color: transparent;
+$fr-sidebar-nav-link-active-color: rgba(0, 0, 0, 0.1);
+
+// Sidemenu
+$fr-sidemenu-toggler-border-color: transparent;
+$fr-sidemenu-background-color: $white;
+$fr-sidemenu-active-border-color: $gray-800;
+$fr-sidemenu-font-color: $gray-700;
+$fr-sidemenu-height: 4.5rem;
+$fr-sidemenu-hover:  $light-blue;
+$fr-sidemenu-shadow: transparent;
+$fr-sidemenu-border: $gray-200;
+$fr-sidemenu-width-lg: 14.25em;
+$fr-sidemenu-width-sm: 3.75em;
+$fr-sidemenu-fontsize: 0.875rem;
+$fr-sidemenu-icon-fontsize: 1.125rem;
+$fr-sidemenu-bottom-color: $gray-200;
+$fr-sidemenu-bottom-background-color: $white;
+
+// Sign up form
+$fr-signup-header-wrapper-height: 5.25rem;
+
+// Switches
+$fr-switch-bg: $gray-400;
+$fr-switch-toggled-bg: $primary;
+
+// Tree
+$fr-tree-accent: lighten($primary, 25%);

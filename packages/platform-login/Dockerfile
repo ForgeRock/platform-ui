@@ -10,7 +10,7 @@ FROM node:lts-slim AS dependencies
 
 # Copy dependencies (supports yarn install)
 COPY packages/platform-admin /home/app/packages/platform-admin/
-COPY packages/platform-components /home/app/packages/platform-components/
+COPY packages/platform-shared /home/app/packages/platform-shared/
 COPY packages/platform-enduser /home/app/packages/platform-enduser/
 
 # Copy dependency descriptors (only invalidates if dependencies change)
