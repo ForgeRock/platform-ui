@@ -29,6 +29,16 @@ describe('SideMenu Component', () => {
             columns: 'testColumns',
             order: 'testOrder',
           },
+          {
+            routeName: 'Local Route',
+            displayName: 'Local Route Item',
+            icon: '',
+          },
+          {
+            url: 'http://example.com',
+            displayName: 'External URL Item',
+            icon: '',
+          },
         ],
       },
     });
@@ -40,5 +50,15 @@ describe('SideMenu Component', () => {
 
   it('Component takes in menu items', () => {
     expect(wrapper.vm.menuItems[0].displayName).toEqual('test');
+  });
+
+  it('Menu item accepts Vue Router "routeName"', () => {
+    const sidebarNavRouter = wrapper.find('.fr-sidebar-menuitems > li:nth-child(2) > routerlink-stub');
+    expect(sidebarNavRouter.exists()).toEqual(true);
+  });
+
+  it('Menu item accepts external URL', () => {
+    const sidebarNavUrl = wrapper.find('.fr-sidebar-menuitems > li:nth-child(3) > a');
+    expect(sidebarNavUrl.exists()).toEqual(true);
   });
 });

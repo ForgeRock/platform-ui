@@ -111,23 +111,10 @@ to such license between the licensee and ForgeRock AS. -->
             <li
               v-else-if="!item.menuGroup"
               :key="`sidebarNav_${index}`">
-              <RouterLink :to="{ name: item.routeName, params: { resourceType: item.resourceType, resourceName: item.resourceName} }">
-                <span v-if="isFontAwesome(item.icon)">
-                  <i
-                    :id="`warning-${index}`"
-                    class="material-icons material-icons-outlined mr-2 mb-1">
-                    warning
-                  </i>
-                  <BPopover
-                    :target="`warning-${index}`"
-                    boundary="window"
-                    triggers="hover"
-                    placement="right"
-                    :no-fade="true"
-                    :content="$t('sideMenu.selectIcon')" />
-                </span>
+              <RouterLink
+                v-if="item.routeName"
+                :to="{ name: item.routeName, params: { resourceType: item.resourceType, resourceName: item.resourceName} }">
                 <i
-                  v-else
                   class="material-icons material-icons-outlined mr-2 mb-1">
                   {{ item.icon }}
                 </i>
@@ -135,6 +122,18 @@ to such license between the licensee and ForgeRock AS. -->
                   {{ item.displayName }}
                 </span>
               </RouterLink>
+              <a
+                v-else-if="item.url"
+                :href="item.url"
+                target="_blank">
+                <i
+                  class="material-icons material-icons-outlined mr-2 mb-1">
+                  {{ item.icon }}
+                </i>
+                <span class="sidebar-item-text">
+                  {{ item.displayName }}
+                </span>
+              </a>
             </li>
             <div
               v-else
@@ -143,22 +142,7 @@ to such license between the licensee and ForgeRock AS. -->
               <li
                 v-b-toggle="`collapse-`+index"
                 class="dropdown-toggle">
-                <span v-if="isFontAwesome(item.icon)">
-                  <i
-                    :id="`warning-${index}`"
-                    class="material-icons material-icons-outlined mr-2 mb-1">
-                    warning
-                  </i>
-                  <BPopover
-                    :target="`warning-${index}`"
-                    boundary="window"
-                    triggers="hover"
-                    placement="right"
-                    :no-fade="true"
-                    :content="$t('sideMenu.selectIcon')" />
-                </span>
                 <i
-                  v-else
                   class="material-icons material-icons-outlined mr-2 mb-1">
                   {{ item.icon }}
                 </i>
@@ -173,11 +157,18 @@ to such license between the licensee and ForgeRock AS. -->
                 <template v-for="(subItem, subIndex) in item.menus">
                   <li :key="`sidebarNav_${index}_${subIndex}`">
                     <RouterLink
+                      v-if="subItem.routeName"
                       :to="{ name: subItem.routeName, params: { resourceType: item.resourceType, resourceName: item.resourceName} }">
                       <span class="sidebar-item-text">
                         {{ subItem.displayName }}
                       </span>
                     </RouterLink>
+                    <a
+                      v-else-if="subItem.url"
+                      :href="subItem.url"
+                      target="_blank">
+                      {{ subItem.displayName }}
+                    </a>
                   </li>
                 </template>
               </BCollapse>
@@ -209,7 +200,6 @@ import {
   BDropdownItem,
   BDropdownDivider,
   BDropdownHeader,
-  BPopover,
   VBToggle,
 } from 'bootstrap-vue';
 import Vue from 'vue';
@@ -229,7 +219,6 @@ export default {
     BDropdownDivider,
     BDropdownHeader,
     BDropdownItem,
-    BPopover,
   },
   props: {
     /**
@@ -251,7 +240,7 @@ export default {
      */
     openMenu: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     /**
      * Show link to Enduser in dropdown menu
@@ -295,18 +284,6 @@ export default {
       this.menuStaticOpen = !this.menuStaticOpen;
 
       this.$emit('locked', this.menuStaticOpen);
-    },
-    /**
-     * Returns boolean indicating whether icon name is a font awesome
-     * or a material icon
-     * @param {string} iconName - required name of icon to verify
-     * @returns boolean
-     */
-    isFontAwesome(iconName) {
-      if (iconName.substring(0, 3) === 'fa-') {
-        return true;
-      }
-      return false;
     },
   },
   watch: {

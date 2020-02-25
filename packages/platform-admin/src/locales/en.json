@@ -5,17 +5,21 @@
     "noConnectors": "No Configured Connectors"
   },
   "sideMenu": {
-    "signOut": "Sign Out",
+    "authorizationRole": "Authorization Role",
+    "accessManagement": "Access Management",
+    "bulkImport": "Bulk Import",
+    "bulkUserImport": "Bulk User Import",
     "connector": "Connectors",
-    "toggleSidebar": "Toggle sidebar",
     "dashboard": "Dashboard",
     "selectIcon": "Please select icon in admin (Managed Object) settings",
-    "authorizationRole": "Authorization Role",
     "provisioningRole": "Provisioning Role",
     "identities": "Identities",
+    "identityManagement": "Identity Management",
     "managed": "Managed",
-    "bulkImport": "Bulk Import",
-    "settings": "Settings"
+    "nativeConsoles": "Native Consoles",
+    "settings": "Settings",
+    "signOut": "Sign Out",
+    "toggleSidebar": "Toggle sidebar"
   },
   "application": {
     "errors": {
@@ -93,13 +97,25 @@
     "deleteImportConfirmation": "If you delete this import the entries imported will remain, but import record will be deleted from the list."
   },
   "dashboard": {
+    "createApplication": { 
+      "title": "Add a New Application",
+      "description": "Add your application to the platform, and integrate the app with ForgeRock authentication."
+    },
+    "connectIdentities": { 
+      "title": "Connect Identities",
+      "description": "Create and manage identity profiles across applications and IT infrastructure."
+    },
     "managedAccess": {
       "title": "Manage Access",
       "description": "Manage how your users can authenticate and gain access to your systems."
     },
+    "managedIdentities": {
+      "title": "Manage Identities",
+      "description": "Control where, when, and how your users can change their information."
+    },
     "welcome": {
-      "title": "Welcome to ForgeRock!",
-      "description": "With the Forgerock platform you can control access, identity management, and much more.",
+      "title": "ForgeRock Identity Platform",
+      "description": "Helps your customers, workforce, and IoT identities access the connected world – safely and simply.",
       "footer": "Get Started"
     }
   },
