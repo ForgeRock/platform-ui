@@ -109,7 +109,8 @@
         "keyframes",
         "include",
         "if",
-        "else"
+        "else",
+        "mixin"
       ],
       "at-rule-no-unknown": null,
       "color-named": "always-where-possible",
