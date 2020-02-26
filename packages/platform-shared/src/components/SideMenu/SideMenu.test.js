@@ -22,22 +22,22 @@ describe('SideMenu Component', () => {
       propsData: {
         menuItems: [
           {
+            columns: 'testColumns',
             displayName: 'test',
             icon: 'testIcon',
+            order: 'testOrder',
             routeName: 'ListResource',
             resourceType: 'testType',
-            columns: 'testColumns',
-            order: 'testOrder',
           },
           {
-            routeName: 'Local Route',
             displayName: 'Local Route Item',
             icon: '',
+            routeName: 'Local Route',
           },
           {
-            url: 'http://example.com',
             displayName: 'External URL Item',
             icon: '',
+            url: 'http://example.com',
           },
         ],
       },
@@ -58,7 +58,8 @@ describe('SideMenu Component', () => {
   });
 
   it('Menu item accepts external URL', () => {
-    const sidebarNavUrl = wrapper.find('.fr-sidebar-menuitems > li:nth-child(3) > a');
+    // const sidebarNavUrl = wrapper.find('.fr-sidebar-menuitems > li:nth-child(3) > a');
+    const sidebarNavUrl = wrapper.find('.fr-sidebar-menuitems > li:nth-child(3)');
     expect(sidebarNavUrl.exists()).toEqual(true);
   });
 });
