@@ -28,6 +28,9 @@ module.exports = {
   snapshotSerializers: [
     'jest-serializer-vue',
   ],
+  modulePathIgnorePatterns: [
+    "packages/platform-express/"
+  ],
   testMatch: [
     '**/*.test.js',
   ],

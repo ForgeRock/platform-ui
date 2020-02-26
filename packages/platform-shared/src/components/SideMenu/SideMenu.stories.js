@@ -20,11 +20,7 @@ const stories = storiesOf('Components|SideMenu', module).addParameters({ compone
 stories.addDecorator(withKnobs);
 
 const template = `
-  <div>
-    <div class="sg_masthead" style="margin-top: 25px;"align="center">
-      <h5 class="display-4">SideMenu</h5>
-    </div>
-
+  <div class="appConent">
     <FrSideMenu 
       :dropdownItems="dropdownItems"
       :menuItems="menuItems"
