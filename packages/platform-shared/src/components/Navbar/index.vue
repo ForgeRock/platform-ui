@@ -6,7 +6,7 @@ to such license between the licensee and ForgeRock AS. -->
 <template>
   <BNavbar
     :toggleable="true"
-    class="fr-main-navbar">
+    class="fr-main-navbar fixed-top">
     <button
       v-show="!hideToggle"
       @click="collapse"
@@ -125,9 +125,9 @@ export default {
     collapse() {
       /**
        * Emitted when clicking the toggle button to expand/collapse sidenav.
-       * @event toggle
+       * @event toggle-mobile
        */
-      this.$emit('toggle', true);
+      this.$emit('toggle-mobile', true);
     },
   },
 };
@@ -135,9 +135,9 @@ export default {
 
 <style lang="scss" scoped>
 .fr-main-navbar {
-  height: 4.5rem;
-  border-bottom: 1px solid $gray-200;
   background-color: $white;
+  border-bottom: 1px solid $gray-200;
+  height: 4.5rem;
 
   .fr-back-link {
     display: inline-block;
@@ -154,6 +154,10 @@ export default {
     }
   }
 
+  .navbar-nav .nav-link {
+    padding: 0.5rem;
+  }
+
   .navbar-toggler {
     padding: 0;
     border-width: 0;
@@ -165,9 +169,19 @@ export default {
     }
   }
 
-  @media (min-width: 768px) {
-    .navbar-toggler {
-      display: none;
+  @media (any-hover: hover) {
+    @include media-breakpoint-up(md) {
+      .navbar-toggler {
+        display: none;
+      }
+    }
+  }
+
+  @media (any-hover: none) {
+    @include media-breakpoint-up(lg) {
+      .navbar-toggler {
+        display: none;
+      }
     }
   }
 }

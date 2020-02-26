@@ -4,17 +4,17 @@ Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
-  <div :class="[{ 'fr-sidebar-toggled': menuStaticOpen }]">
+  <div>
     <div class="fr-sidebar-wrapper">
-      <ul class="fr-sidebar-nav h-100 d-flex flex-column">
-        <li class="fr-sidebar-brand">
+      <div class="fr-sidebar-nav h-100 d-flex flex-column">
+        <div class="fr-sidebar-brand">
           <BDropdown
             class="h-100"
-            id="dropdown-left"
+            offset="0"
             variant="link"
             toggle-class="text-decoration-none p-0">
             <BDropdownHeader
-              class="py-2"
+              class="py-3"
               v-if="userDetails.company || userDetails.subscription">
               <div class="mt-1">
                 <h5 class="my-0">
@@ -28,21 +28,24 @@ to such license between the licensee and ForgeRock AS. -->
             <BDropdownItem
               v-if="userDetails.adminUser && userDetails.adminURL"
               :href="userDetails.adminURL">
-              <i class="material-icons material-icons-outlined mr-2">
+              <i class="material-icons material-icons-outlined mr-3">
                 build
               </i>
               {{ $t('pages.app.admin') }}
             </BDropdownItem>
-            <template v-slot:button-content>
-              <div class="media fr-dropdown-button text-left">
-                <img
-                  :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"
-                  alt="Avatar"
-                  class="mr-3"
-                  width="34"
-                  height="34">
+            <template slot="button-content">
+              <BMedia
+                vertical-align="center"
+                class="fr-dropdown-button text-left align-items-center">
+                <template v-slot:aside>
+                  <img
+                    :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"
+                    alt="Avatar"
+                    width="34"
+                    height="34">
+                </template>
                 <div
-                  class="media-body sidebar-item-text"
+                  class="sidebar-item-text"
                   :class="{'mt-1': !userDetails.company}">
                   <h5 class="my-0">
                     {{ userDetails.company }}
@@ -51,15 +54,15 @@ to such license between the licensee and ForgeRock AS. -->
                     {{ userDetails.name }}
                   </span>
                 </div>
-              </div>
+              </BMedia>
             </template>
             <BDropdownDivider />
             <template v-for="(item, index) in dropdownItems">
               <BDropdownItem
                 class="my-2"
                 :key="`sideDropdownItems_${index}`"
-                :to="{ name: item.routeName}">
-                <i class="material-icons mr-2">
+                :to="{name: item.routeName}">
+                <i class="material-icons mr-3">
                   {{ item.icon }}
                 </i>
                 <span>
@@ -72,38 +75,42 @@ to such license between the licensee and ForgeRock AS. -->
               :href="enduserLink"
               rel="noopener"
               target="_blank">
-              <div class="media">
-                <img
-                  :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"
-                  alt="Avatar"
-                  class="mr-3"
-                  width="34"
-                  height="34">
-                <div class="media-body">
-                  <h5 class="my-0">
-                    {{ userDetails.name }}
-                  </h5>
-                  <span class="text-muted">
-                    <template v-if="userDetails.email.length === 0">
-                      n/a
-                    </template>
-                    <template v-else>
-                      {{ userDetails.email }}
-                    </template>
+              <BMedia class="fr-dropdown-button text-left">
+                <template v-slot:aside>
+                  <img
+                    :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"
+                    alt="Avatar"
+                    class="mr-3"
+                    width="34"
+                    height="34">
+                  <span>
+                    <h5 class="my-0">
+                      {{ userDetails.name }}
+                    </h5>
+                    <span class="text-muted">
+                      <template v-if="userDetails.email.length === 0">
+                        n/a
+                      </template>
+                      <template v-else>
+                        {{ userDetails.email }}
+                      </template>
+                    </span>
                   </span>
-                </div>
-              </div>
+                </template>
+              </BMedia>
             </BDropdownItem>
             <BDropdownDivider />
-            <BDropdownItem @click="$emit('logout')">
+            <BDropdownItem
+              class="mb-2"
+              @click="$emit('logout')">
               <i class="material-icons material-icons-outlined mr-2">
                 exit_to_app
               </i>
               {{ $t('sideMenu.signOut') }}
             </BDropdownItem>
           </BDropdown>
-        </li>
-        <div class="fr-sidebar-menuitems flex-grow-1">
+        </div>
+        <ul class="fr-sidebar-menuitems flex-grow-1">
           <template v-for="(item, index) in menuItems">
             <BDropdownDivider
               :key="`sidebarNavBreak_${index}`"
@@ -112,10 +119,11 @@ to such license between the licensee and ForgeRock AS. -->
               v-else-if="!item.menuGroup"
               :key="`sidebarNav_${index}`">
               <RouterLink
+                class="d-flex align-items-center"
                 v-if="item.routeName"
                 :to="{ name: item.routeName, params: { resourceType: item.resourceType, resourceName: item.resourceName} }">
                 <i
-                  class="material-icons material-icons-outlined mr-2 mb-1">
+                  class="material-icons material-icons-outlined mr-3">
                   {{ item.icon }}
                 </i>
                 <span class="sidebar-item-text">
@@ -126,69 +134,76 @@ to such license between the licensee and ForgeRock AS. -->
                 v-else-if="item.url"
                 :href="item.url"
                 target="_blank">
-                <i
-                  class="material-icons material-icons-outlined mr-2 mb-1">
-                  {{ item.icon }}
-                </i>
-                <span class="sidebar-item-text">
-                  {{ item.displayName }}
-                </span>
+                {{ item.displayName }}
               </a>
             </li>
-            <div
+            <li
               v-else
               :class="[{'expanded': expandedMenus[index]}, 'fr-sidebar-menugroup']"
               :key="`sidebarNav_${index}`">
-              <li
-                v-b-toggle="`collapse-`+index"
-                class="dropdown-toggle">
-                <i
-                  class="material-icons material-icons-outlined mr-2 mb-1">
-                  {{ item.icon }}
+              <ul class="fr-sidebar-submenuitems">
+                <li
+                  v-b-toggle="`collapse-`+index"
+                  class="dropdown-toggle d-flex align-items-center">
+                  <i
+                    class="material-icons material-icons-outlined mr-3">
+                    {{ item.icon }}
+                  </i>
+                  <span class="sidebar-item-text">
+                    {{ item.displayName }}
+                  </span>
+                </li>
+                <BCollapse
+                  :id="`collapse-${index}`"
+                  class="fr-sidebar-subitem"
+                  tag="li"
+                  v-model="expandedMenus[index]">
+                  <ul>
+                    <template v-for="(subItem, subIndex) in item.menus">
+                      <li :key="`sidebarNav_${index}_${subIndex}`">
+                        <RouterLink
+                          class="d-flex align-items-center"
+                          v-if="subItem.routeName"
+                          :to="{ name: subItem.routeName, params: { resourceType: item.resourceType, resourceName: item.resourceName} }">
+                          <span class="sidebar-item-text">
+                            {{ subItem.displayName }}
+                          </span>
+                        </RouterLink>
+                        <a
+                          v-else-if="subItem.url"
+                          :href="subItem.url"
+                          target="_blank">
+                          {{ subItem.displayName }}
+                        </a>
+                      </li>
+                    </template>
+                  </ul>
+                </BCollapse>
+              </ul>
+            </li>
+          </template>
+        </ul>
+
+        <div class="fr-sidebar-bottom">
+          <ul class="fr-sidebar-menuitems flex-grow-1">
+            <li>
+              <a
+                class="d-flex align-items-center"
+                @click="toggleMenu()">
+                <i class="material-icons material-icons-outlined icon-flipped mr-3">
+                  chrome_reader_mode
                 </i>
                 <span class="sidebar-item-text">
-                  {{ item.displayName }}
+                  {{ $t('sideMenu.toggleSidebar') }}
                 </span>
-              </li>
-              <BCollapse
-                class="fr-sidebar-subitem"
-                :id="`collapse-${index}`"
-                v-model="expandedMenus[index]">
-                <template v-for="(subItem, subIndex) in item.menus">
-                  <li :key="`sidebarNav_${index}_${subIndex}`">
-                    <RouterLink
-                      v-if="subItem.routeName"
-                      :to="{ name: subItem.routeName, params: { resourceType: item.resourceType, resourceName: item.resourceName} }">
-                      <span class="sidebar-item-text">
-                        {{ subItem.displayName }}
-                      </span>
-                    </RouterLink>
-                    <a
-                      v-else-if="subItem.url"
-                      :href="subItem.url"
-                      target="_blank">
-                      {{ subItem.displayName }}
-                    </a>
-                  </li>
-                </template>
-              </BCollapse>
-            </div>
-          </template>
+              </a>
+            </li>
+          </ul>
         </div>
-        <div
-          class="fr-sidebar-bottom d-none d-md-block"
-          @click="toggleMenu()">
-          <i class="material-icons material-icons-outlined icon-flipped mr-2">
-            chrome_reader_mode
-          </i>
-          <span class="sidebar-item-text">
-            {{ $t('sideMenu.toggleSidebar') }}
-          </span>
-        </div>
-      </ul>
+      </div>
     </div>
     <div
-      @click="toggleMenu()"
+      @click="toggleMenuMobile()"
       class="w-100 h-100 fixed-top fr-sidebar-shim" />
   </div>
 </template>
@@ -200,6 +215,7 @@ import {
   BDropdownItem,
   BDropdownDivider,
   BDropdownHeader,
+  BMedia,
   VBToggle,
 } from 'bootstrap-vue';
 import Vue from 'vue';
@@ -219,6 +235,7 @@ export default {
     BDropdownDivider,
     BDropdownHeader,
     BDropdownItem,
+    BMedia,
   },
   props: {
     /**
@@ -234,13 +251,6 @@ export default {
     menuItems: {
       type: Array,
       default: () => [],
-    },
-    /**
-     * Force menu to remain open even when not hovering.
-     */
-    openMenu: {
-      type: Boolean,
-      default: true,
     },
     /**
      * Show link to Enduser in dropdown menu
@@ -272,24 +282,21 @@ export default {
   },
   data() {
     return {
-      menuStaticOpen: this.openMenu,
       expandedMenus: [],
     };
   },
   methods: {
+    toggleMenuMobile() {
+      this.$emit('toggle-menu-mobile');
+    },
     /**
      * Toggles the menu to stay open or only open on hover
      */
     toggleMenu() {
-      this.menuStaticOpen = !this.menuStaticOpen;
-
-      this.$emit('locked', this.menuStaticOpen);
+      this.$emit('toggle-menu');
     },
   },
   watch: {
-    openMenu() {
-      this.menuStaticOpen = this.openMenu;
-    },
     '$route.path': function expandMenu(path) {
       const regex = /\/(.*)\//;
       const match = regex.exec(path);

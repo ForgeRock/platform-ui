@@ -5,14 +5,6 @@
  * or with one of its affiliates. All use shall be exclusively subject
  * to such license between the licensee and ForgeRock AS.
  */
-@media (min-width: map-get($grid-breakpoints, 'md')) {
-  .fr-menu-locked {
-    #appContent {
-      padding-left: 272px;
-      margin-right: 0;
-    }
-  }
-}
 
 /**
   Badge Styles
@@ -32,17 +24,65 @@
 }
 
 /**
-  Overlay shim
+  Menu State Mixins
 */
-.fr-sidebar-shim {
-  display: none;
-  background-color: $black;
-  opacity: 0.2;
-  z-index: 1;
+@mixin fr-menu-expanded {
+  width: $fr-sidemenu-width-lg;
+  margin-left: 0;
 }
 
-@media (max-width: map-get($grid-breakpoints, 'md')) {
-  .fr-sidebar-toggled {
+@mixin fr-menu-collapsed {
+  width: $fr-sidemenu-width-sm;
+
+  /deep/ {
+    .dropdown-toggle::after {
+      opacity: 0;
+    }
+  }
+
+  .sidebar-item-text,
+  .fr-sidebar-subitem {
+    display: none;
+  }
+
+  &:hover {
+    width: $fr-sidemenu-width-lg;
+
+    .fr-sidebar-nav {
+      /deep/ {
+        .dropdown-toggle::after {
+          opacity: 1;
+        }
+      }
+
+      > li > ul,
+      .fr-sidebar-subitem {
+        display: block;
+      }
+    }
+
+    .sidebar-item-text {
+      display: block;
+    }
+  }
+}
+
+@mixin fr-menu-hidden {
+  margin-left: -$fr-sidemenu-width-lg;
+  width: $fr-sidemenu-width-lg;
+}
+
+/**
+  Overlay shim
+*/
+#app {
+  .fr-sidebar-shim {
+    display: none;
+    background-color: $black;
+    opacity: 0.2;
+  }
+
+  &.fr-menu-mobile {
     .fr-sidebar-shim {
       display: block;
     }
@@ -50,82 +90,94 @@
 }
 
 /**
-  Sidebar base styles
+  Touch device specific styles
+
+  Desktop
 */
-.fr-sidebar-wrapper {
-  position: fixed;
-  width: $fr-sidemenu-width-lg;
-  height: 100%;
-  margin-left: -$fr-sidemenu-width-lg;
-  background: $fr-sidemenu-background-color;
-  z-index: 2;
-  transition: margin-left 0.15s ease-out, width 0.1s ease-out;
-  color: $fr-sidemenu-font-color;
+@media (any-hover: hover) {
+  @include media-breakpoint-up(md) {
+    #app.fr-menu-collapsed {
+      .fr-sidebar-wrapper {
+        @include fr-menu-collapsed;
+      }
+    }
 
-  &:hover {
-    overflow: hidden;
+    #app.fr-menu-expanded {
+      .fr-sidebar-wrapper {
+        @include fr-menu-expanded;
+      }
+    }
   }
 
-  .material-icons {
-    position: relative;
+  @include media-breakpoint-between(sm, md) {
+    #app:not(.fr-menu-mobile):not(.fr-menu-collapsed):not(.fr-menu-expanded) .fr-sidebar-wrapper {
+      @include fr-menu-collapsed;
+    }
   }
 
-  /**
-    Menu will shift close when screen size small and hover open when greater then 768px in width
-  */
-  @media (min-width: map-get($grid-breakpoints, 'md')) {
-    width: $fr-sidemenu-width-sm;
-    margin-left: 0;
-    box-shadow: 1px 0 9px rgba(0, 0, 0, 0.13);
+  @include media-breakpoint-down(sm) {
+    .fr-sidebar-wrapper {
+      @include fr-menu-hidden;
+    }
 
-    .sidebar-item-text,
-    .fr-sidebar-subitem {
+    #app.fr-menu-mobile {
+      .fr-sidebar-wrapper {
+        @include fr-menu-expanded;
+
+        .fr-sidebar-bottom {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+/**
+  Mobile
+*/
+@media (any-hover: none) {
+  .fr-sidebar-wrapper {
+    @include media-breakpoint-down(md) {
+      @include fr-menu-hidden;
+    }
+
+    .fr-sidebar-bottom {
       display: none;
     }
-
-    &:hover {
-      margin-left: 0;
-      width: $fr-sidemenu-width-lg;
-
-      .fr-sidebar-nav {
-        width: $fr-sidemenu-width-lg;
-
-        .fr-sidebar-menuitems {
-          .fr-sidebar-menugroup > .dropdown-toggle::after {
-            display: inline-block;
-          }
-        }
-
-        > li > ul,
-        .fr-sidebar-subitem {
-          display: block;
-        }
-      }
-
-      .fr-sidebar-brand {
-        /deep/ .dropdown-toggle::after {
-          display: inline-block;
-        }
-      }
-
-      .sidebar-item-text {
-        display: inline;
-      }
-
-      .fr-sidebar-bottom {
-        width: $fr-sidemenu-width-lg;
-        display: block;
-      }
-    }
   }
+}
+
+/**
+  Default Menu Styles
+*/
+.fr-sidebar-wrapper {
+  background: $fr-sidemenu-background-color;
+  box-shadow: 1px 0 9px rgba(0, 0, 0, 0.13);
+  color: $fr-sidemenu-font-color;
+  height: 100%;
+  position: fixed;
+  width: $fr-sidemenu-width-lg;
+  transition: margin-left 0.2s ease-out, width 0.2s ease-out;
+  z-index: $zindex-popover;
 
   .fr-sidebar-nav {
-    position: absolute;
-    top: 0;
-    width: $fr-sidemenu-width-lg;
-    margin: 0;
-    padding: 0;
-    list-style: none;
+    .material-icons {
+      height: 18px;
+      width: 18px;
+    }
+
+    .sidebar-item-text {
+      white-space: nowrap;
+      font-size: 0.875rem;
+      line-height: 1;
+    }
+
+    ul,
+    li {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
 
     .fr-sidebar-brand {
       height: 72px;
@@ -134,35 +186,40 @@
         background-color: $fr-sidemenu-hover;
       }
 
-      .dropdown-divider {
-        margin: 0;
-      }
-
-      .fr-dropdown-button {
-        margin-left: 12px;
-        height: 34px;
-      }
-
-      /**
-        Need deep to control sub component menu styles correctly
-      */
       /deep/ {
         .b-dropdown {
           width: 100%;
 
+          > button {
+            overflow: hidden;
+          }
+
           .dropdown-menu {
-            padding: 0;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
             font-size: 0.875rem;
+            margin: -15px 0 0 -5px;
+            min-width: 243px;
+            padding: 0;
 
             h5 {
               font-size: inherit;
+            }
+
+            .dropdown-item {
+              align-items: center;
+              display: flex;
             }
           }
         }
 
         .dropdown-toggle {
+          border: 0;
           color: $gray-700;
           font-size: 0.875rem;
+
+          .fr-dropdown-button {
+            margin-left: 12px;
+          }
 
           h5 {
             font-size: inherit;
@@ -171,115 +228,43 @@
       }
     }
 
-    .fr-sidebar-menuitems {
+    ul.fr-sidebar-menuitems,
+    ul.fr-sidebar-submenuitems {
+      font-size: 0.875rem;
       overflow: hidden;
 
-      &:hover {
-        overflow-y: auto;
-      }
-
-      li {
+      > li > a,
+      > li.dropdown-toggle,
+      > li.dropdown-toggle > a,
+      > .fr-sidebar-subitem a {
+        border-left: 3px solid transparent;
+        cursor: pointer;
+        color: $fr-sidemenu-font-color;
+        display: block;
         font-size: 0.875rem;
+        padding: 15px 20px 15px 16px;
+        position: relative;
+        text-decoration: none;
+
+        &.router-link-active {
+          background-color: $fr-sidemenu-hover;
+          border-left-color: $primary;
+        }
 
         &:hover {
           background: $fr-sidemenu-hover;
         }
       }
 
-      li > a,
-      > .fr-sidebar-menugroup > li {
-        color: $fr-sidemenu-font-color;
-        display: block;
-        position: relative;
-        border-left: 3px solid transparent;
-        text-decoration: none;
-        cursor: pointer;
-        padding: 15px 20px 15px 16px;
-
-        &.router-link-active {
-          background-color: $fr-sidemenu-hover;
-          border-left-color: $primary;
+      > .fr-sidebar-menugroup {
+        .fr-sidebar-subitem a {
+          padding: 16px 24px 15px 50px;
         }
       }
-
-      .fr-sidebar-menugroup {
-        .fr-sidebar-subitem > li > a {
-          padding: 16px 24px 15px 46px;
-        }
-      }
-    }
-
-    /**
-      Make sure menu items fit in small menu
-    */
-    @media (min-width: map-get($grid-breakpoints, 'md')) {
-      width: $fr-sidemenu-width-sm;
     }
   }
 
   .fr-sidebar-bottom {
     border-top: 1px solid $fr-sidemenu-bottom-color;
-    padding: 15px 20px 15px 19px;
-    cursor: pointer;
-
-    &:hover {
-      background: $fr-sidemenu-hover;
-    }
-
-    .sidebar-item-text {
-      font-size: 0.875rem;
-    }
-  }
-}
-
-/*
-  Dropdown chevrons
-*/
-/deep/ {
-  .fr-sidebar-menugroup > .dropdown-toggle::after,
-  .dropdown-toggle::after {
-    display: none;
-    content: 'keyboard_arrow_down';
-    font-family: 'Material Icons Outlined', sans-serif;
-    border-top: 0;
-    font-size: 1rem;
-    position: absolute;
-    right: 1.25rem;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-
-  .fr-sidebar-menugroup.expanded > .dropdown-toggle::after {
-    content: 'keyboard_arrow_up';
-  }
-}
-
-/*
-  Menu Toggled Open
-*/
-.fr-sidebar-toggled {
-  .fr-sidebar-wrapper {
-    margin-left: 0;
-    width: $fr-sidemenu-width-lg;
-
-    .sidebar-item-text {
-      display: inline;
-    }
-
-    .fr-sidebar-nav {
-      width: $fr-sidemenu-width-lg;
-
-      /deep/ .dropdown-toggle::after {
-        display: inline-block;
-      }
-
-      .fr-sidebar-subitem {
-        display: block;
-      }
-    }
-
-    .fr-sidebar-bottom {
-      width: $fr-sidemenu-width-lg;
-    }
   }
 }

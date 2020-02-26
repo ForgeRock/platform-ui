@@ -279,6 +279,7 @@ $navbar-height: 4.5rem;
 $navbar-toggler-padding-x: 0;
 $navbar-dark-toggler-icon-bg: url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>');
 $navbar-dark-toggler-border-color: transparent;
+$navbar-light-color: $gray-800;
 
 // Nav tabs
 $nav-tabs-border-color: $gray-300;
@@ -320,15 +321,13 @@ $fr-toolbar-dropdown-color: rgba(0, 0, 0, 0.5);
 $fr-navbar-sidebar-fontsize: 0.875rem;
 $fr-navbar-sidebar-icon-fontsize: 1.125rem;
 $fr-navbar-sidebar-nav-link-padding: 0.938rem 1rem;
-$fr-sidebar-nav-width: 220px !default;
-$fr-sidebar-nav-minimized-width: 60px !default;
 $fr-sidebar-nav-background-color: $gray-800 !default;
 $fr-sidebar-nav-brand-color: $gray-800 !default;
 $fr-sidebar-nav-link-color: $gray-500 !default;
 $fr-sidebar-nav-link-hover-color: $white !default;
 $fr-sidebar-nav-link-border-color: transparent;
 $fr-sidebar-nav-link-active-border-color: transparent;
-$fr-sidebar-nav-link-active-color: rgba(0, 0, 0, 0.1);
+$fr-sidebar-nav-link-active-color: $gray-800;
 
 // Sidemenu
 $fr-sidemenu-toggler-border-color: transparent;
@@ -341,6 +340,7 @@ $fr-sidemenu-shadow: transparent;
 $fr-sidemenu-border: $gray-200;
 $fr-sidemenu-width-lg: 14.25em;
 $fr-sidemenu-width-sm: 3.75em;
+$fr-sidebar-nav-minimized-width: $fr-sidemenu-width-sm;
 $fr-sidemenu-fontsize: 0.875rem;
 $fr-sidemenu-icon-fontsize: 1.125rem;
 $fr-sidemenu-bottom-color: $gray-200;
