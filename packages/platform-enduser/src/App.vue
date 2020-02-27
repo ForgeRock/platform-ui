@@ -201,11 +201,6 @@ export default {
       return typeMap[notificationType];
     },
   },
-  filters: {
-    capitalize(value) {
-      return capitalize(value);
-    },
-  },
 };
 </script>
 
