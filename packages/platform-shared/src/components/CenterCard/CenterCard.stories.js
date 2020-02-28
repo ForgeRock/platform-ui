@@ -36,9 +36,11 @@ const template = `
         <div class="row">
           <div class="col">
             <FrCenterCard :hideLogo="false">
-              <h1 slot="center-card-header">Header</h1>
-              <div slot="center-card-body">Body</div>
-              <div slot="center-card-footer">Footer</div>
+              <template v-slot:center-card-header>
+                <h1>Header</h1>
+              </template>
+              <template v-slot:center-card-body>Body</template>
+              <template v-slot:center-card-footer>Footer</template>
             </FrCenterCard>
           </div>
         </div>
@@ -51,9 +53,11 @@ const template = `
         <div class="row">
           <div class="col">
             <FrCenterCard :hideLogo="false" :logoPath="logoPath">
-              <h1 slot="center-card-header">Header</h1>
-              <div slot="center-card-body">Body</div>
-              <div slot="center-card-footer">Footer</div>
+              <template v-slot:center-card-header>
+                <h1>Header</h1>
+              </template>
+              <template v-slot:center-card-body>Body</template>
+              <template v-slot:center-card-footer>Footer</template>
             </FrCenterCard>
           </div>
         </div>
@@ -66,9 +70,11 @@ const template = `
         <div class="row">
           <div class="col">
             <FrCenterCard :hideLogo="true">
-              <h1 slot="center-card-header">Header</h1>
-              <div slot="center-card-body">Body</div>
-              <div slot="center-card-footer">Footer</div>
+              <template v-slot:center-card-header>
+                <h1>Header</h1>
+              </template>
+              <template v-slot:center-card-body>Body</template>
+              <template v-slot:center-card-footer>Footer</template>
             </FrCenterCard>
           </div>
         </div>
@@ -81,9 +87,11 @@ const template = `
         <div class="row">
           <div class="col">
             <FrCenterCard :hideLogo="true" hideHeader="true" hideFooter="true">
-              <h1 slot="center-card-header">Header</h1>
-              <div slot="center-card-body">This is a card with header and footer set to hide.</div>
-              <div slot="center-card-footer">Footer</div>
+              <template v-slot:center-card-header>
+                <h1>Header</h1>
+              </template>
+              <template v-slot:center-card-body>This is a card with header and footer set to hide.</template>
+              <template v-slot:center-card-footer>Footer</template>
             </FrCenterCard>
           </div>
         </div>

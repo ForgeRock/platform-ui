@@ -27,37 +27,27 @@ to such license between the licensee and ForgeRock AS. -->
         <div v-html="field.description" />
       </BPopover>
     </label>
-    <Multiselect
-      v-if="field.enum"
-      :show-labels="false"
-      v-model="field.value"
-      :options="field.enum"
-      :class="{'fr-error': errors.length}">
-      <template
-        slot="option"
-        slot-scope="props">
-        {{ props.option|capitalize }}
-      </template>
-      <template
-        slot="singleLabel"
-        slot-scope="props">
-        {{ props.option|capitalize }}
-      </template>
-    </Multiselect>
-    <span v-else-if="field.type === 'password' || field.type === 'string' || field.type === 'textarea' || field.type === 'integer'">
+    <span v-if="checkIfFloatingLabel(field)">
       <ValidationProvider
         mode="aggressive"
         :immediate="field.validationImmediate"
         :rules="field.validation"
         v-slot="{ errors }">
         <FrFloatingLabelInput
-          v-if="field.type === 'password'"
+          v-if="field.enum"
+          type="select"
+          :field-name="field.key"
+          v-model="field.value"
+          :help-text="getDescription()"
+          :select-options="field.options"
+          :label="getLabel()" />
+        <FrFloatingLabelInput
+          v-else-if="field.type === 'password'"
           class="floating-label-input"
           :class="{'fr-error': errors.length}"
           type="password"
           v-model="field.value"
           :field-name="field.key"
-          :default-value="field.value"
           :reveal="true"
           :help-text="getDescription()"
           :label="getLabel()" />
@@ -66,11 +56,9 @@ to such license between the licensee and ForgeRock AS. -->
           class="floating-label-input"
           :class="{'fr-error': errors.length}"
           type="number"
-          v-model="field.value"
+          v-model.number="field.value"
           :field-name="field.key"
-          :default-value="field.value.toString()"
           :help-text="getDescription()"
-          @input="convertNaN"
           :label="getLabel()" />
         <FrFloatingLabelInput
           v-else
@@ -79,7 +67,6 @@ to such license between the licensee and ForgeRock AS. -->
           :type="field.type"
           v-model="field.value"
           :field-name="field.key"
-          :default-value="field.value"
           :help-text="getDescription()"
           :label="getLabel()" />
         <FrValidationError
@@ -115,17 +102,19 @@ to such license between the licensee and ForgeRock AS. -->
       </span>
     </label>
     <small
-      v-if="checkIfBottomDescription(field)"
+      v-if="!displayPopover && !checkIfFloatingLabel(field)"
       class="text-muted mb-1 d-block">
       {{ field.description }}
     </small>
 
-    <div
-      v-for="(error, key) in errors"
-      :key="key"
-      class="invalid-feedback d-block">
-      {{ error }}
-    </div>
+    <span v-if="!checkIfFloatingLabel(field)">
+      <div
+        v-for="(error, key) in errors"
+        :key="key"
+        class="invalid-feedback d-block">
+        {{ error }}
+      </div>
+    </span>
   </span>
 </template>
 
@@ -141,7 +130,6 @@ import {
 import { ValidationProvider } from 'vee-validate';
 import ValidationErrorList from '@forgerock/platform-shared/src/components/ValidationErrorList';
 import { ToggleButton } from 'vue-js-toggle-button';
-import Multiselect from 'vue-multiselect';
 import FloatingLabelInput from '@forgerock/platform-shared/src/components/FloatingLabelInput';
 import VueTagsInput from '@johmun/vue-tags-input';
 import KeyValueList from '@forgerock/platform-shared/src/components/KeyValueList';
@@ -150,13 +138,12 @@ export default {
   name: 'FrField',
   components: {
     BPopover,
-    FrKeyValueList: KeyValueList,
-    Multiselect,
-    ToggleButton,
-    VueTagsInput,
     FrFloatingLabelInput: FloatingLabelInput,
     FrValidationError: ValidationErrorList,
+    FrKeyValueList: KeyValueList,
+    ToggleButton,
     ValidationProvider,
+    VueTagsInput,
   },
   data() {
     return {
@@ -185,18 +172,21 @@ export default {
     },
   },
   methods: {
-    /**
-     * Only show description below field if popover flag is not set and it is not a type
-     * that will use the FrFloatingLabelInput
-     */
-    checkIfBottomDescription(field) {
+    getOptions(field) {
+      const options = [];
+      field.enum.forEach((enumString, index) => {
+        options.push({ text: field.enumNames[index], value: enumString });
+      });
+      field.options = options;
+    },
+    checkIfFloatingLabel(field) {
       const typeMap = {
         integer: true,
         string: true,
         textarea: true,
         password: true,
       };
-      return !this.displayPopover && !{}.hasOwnProperty.call(typeMap, field.type);
+      return typeMap[field.type];
     },
     /**
      * Validates whether input field is required and filled in
@@ -228,12 +218,11 @@ export default {
           if (!Object.keys(field.value).length) {
             this.errors.push(this.$t('trees.editPanel.minimumRequired', { minItems: 1 }));
           }
+        } else if (field.type === 'string') {
+          if (!field.value) {
+            this.errors.push(this.$t('common.required'));
+          }
         }
-      }
-    },
-    convertNaN(value) {
-      if (Number.isNaN(value)) {
-        this.field.value = '';
       }
     },
     /**
@@ -296,7 +285,9 @@ export default {
     if (!this.field.validation) {
       this.field.validation = '';
     }
-    if (this.field.format === 'password') {
+    if (this.field.enum) {
+      this.getOptions(this.field);
+    } else if (this.field.format === 'password') {
       this.field.type = 'password';
     } else if (!this.field.type) {
       this.field.type = 'string';
@@ -317,10 +308,7 @@ export default {
         if (this.currentValue !== newField.value) {
           this.currentValue = cloneDeep(newField.value);
           this.checkRequiredInput(newField);
-          this.$emit('valueChange', {
-            key: this.field.key,
-            value: this.field.value,
-          });
+          this.$emit('valueChange', this.field);
         }
       },
       deep: true,

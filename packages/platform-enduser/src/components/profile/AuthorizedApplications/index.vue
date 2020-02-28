@@ -14,29 +14,29 @@ to such license between the licensee and ForgeRock AS. -->
         :key="id"
         :collapsible="false"
         :panel-shown="false">
-        <div
-          slot="list-item-header"
-          class="d-inline-flex w-100">
-          <div class="d-flex mr-3 align-self-top">
-            <img
-              :src="application.logo_uri || require('@/assets/images/authorized-app.svg')"
-              width="25">
-          </div>
-          <div class="flex-grow-1">
-            <div>
-              {{ application._id }}
+        <template v-slot:list-item-header>
+          <div class="d-inline-flex w-100">
+            <div class="d-flex mr-3 align-self-top">
+              <img
+                :src="application.logo_uri || require('@/assets/images/authorized-app.svg')"
+                width="25">
             </div>
-            <small class="text-muted subtext">
-              {{ $t('pages.profile.oauthApplications.expires') }} {{ new Date(application.expiryDateTime).toUTCString() }}
-            </small>
+            <div class="flex-grow-1">
+              <div>
+                {{ application._id }}
+              </div>
+              <small class="text-muted subtext">
+                {{ $t('pages.profile.oauthApplications.expires') }} {{ new Date(application.expiryDateTime).toUTCString() }}
+              </small>
+            </div>
+            <a
+              class="align-self-center flex-grow-2 text-right"
+              @click.prevent="showConfirmationModal(application)"
+              href="#">
+              {{ $t('common.remove') }}
+            </a>
           </div>
-          <a
-            class="align-self-center flex-grow-2 text-right"
-            @click.prevent="showConfirmationModal(application)"
-            href="#">
-            {{ $t('common.remove') }}
-          </a>
-        </div>
+        </template>
       </FrListItem>
     </template>
     <template v-else>
@@ -50,24 +50,24 @@ to such license between the licensee and ForgeRock AS. -->
       class=""
       ref="fsModal"
       cancel-variant="outline-secondary">
-      <div
-        slot="modal-header"
-        class="d-flex w-100 h-100">
-        <h6 class="my-0">
-          {{ $t('common.confirm') }}
-        </h6>
-        <button
-          type="button"
-          aria-label="Close"
-          class="close"
-          @click="$refs.fsModal.hide()">
-          <i class="material-icons-outlined font-weight-bolder md-24 mb-1">
-            close
-          </i>
-        </button>
-      </div>
+      <template v-slot:modal-header>
+        <div class="d-flex w-100 h-100">
+          <h6 class="my-0">
+            {{ $t('common.confirm') }}
+          </h6>
+          <button
+            type="button"
+            aria-label="Close"
+            class="close"
+            @click="$refs.fsModal.hide()">
+            <i class="material-icons-outlined font-weight-bolder md-24 mb-1">
+              close
+            </i>
+          </button>
+        </div>
+      </template>
       {{ $t('pages.profile.oauthApplications.removeConfirmation', {applicationName: confirmApplication.name }) }}
-      <div slot="modal-footer">
+      <template v-slot:modal-footer>
         <div class="float-right">
           <BBtn
             variant="outline-secondary mr-2"
@@ -81,7 +81,7 @@ to such license between the licensee and ForgeRock AS. -->
             {{ $t('common.remove') }}
           </BBtn>
         </div>
-      </div>
+      </template>
     </BModal>
   </FrListGroup>
 </template>

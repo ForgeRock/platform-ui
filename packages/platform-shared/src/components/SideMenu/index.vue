@@ -33,7 +33,7 @@ to such license between the licensee and ForgeRock AS. -->
               </i>
               {{ $t('pages.app.admin') }}
             </BDropdownItem>
-            <template slot="button-content">
+            <template v-slot:button-content>
               <div class="media fr-dropdown-button text-left">
                 <img
                   :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"

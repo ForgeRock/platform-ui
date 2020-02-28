@@ -39,9 +39,7 @@ to such license between the licensee and ForgeRock AS. -->
       position="bottom left"
       width="320"
       :duration="4000">
-      <template
-        slot="body"
-        slot-scope="props">
+      <template v-slot:body="props">
         <div
           :class="[{ 'alert-success': (props.item.type == 'success'), 'alert-warning': (props.item.type == 'warning'), 'alert-danger': (props.item.type == 'error'), 'alert-info': (props.item.type == 'info')}, 'alert', 'alert-dismissible', 'd-flex', 'p-3', 'pr-5', 'position-relative']"
           role="alert">

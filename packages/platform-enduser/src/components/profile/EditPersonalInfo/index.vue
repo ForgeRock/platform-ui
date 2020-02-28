@@ -11,22 +11,22 @@ to such license between the licensee and ForgeRock AS. -->
     cancel-variant="outline-secondary"
     @show="setModal"
     @keydown.enter.native.prevent="saveForm">
-    <div
-      slot="modal-header"
-      class="d-flex w-100 h-100">
-      <h5 class="modal-title align-self-center text-center">
-        {{ title }}
-      </h5>
-      <button
-        type="button"
-        aria-label="Close"
-        class="close"
-        @click="hideModal">
-        <i class="material-icons-outlined font-weight-bolder md-24">
-          close
-        </i>
-      </button>
-    </div>
+    <template v-slot:modal-header>
+      <div class="d-flex w-100 h-100">
+        <h5 class="modal-title align-self-center text-center">
+          {{ title }}
+        </h5>
+        <button
+          type="button"
+          aria-label="Close"
+          class="close"
+          @click="hideModal">
+          <i class="material-icons-outlined font-weight-bolder md-24">
+            close
+          </i>
+        </button>
+      </div>
+    </template>
 
     <!-- Editing profile currently only supports String, Number and Boolean-->
     <BContainer>
@@ -41,7 +41,7 @@ to such license between the licensee and ForgeRock AS. -->
             name="edit-personal-form">
             <ValidationObserver
               ref="observer"
-              v-slot:default="slotProps">
+              v-slot:default>
               <template v-for="(field, index) in formFields">
                 <BFormGroup
                   style="min-width: 200px;"
@@ -113,24 +113,24 @@ to such license between the licensee and ForgeRock AS. -->
         </BCol>
       </BRow>
     </BContainer>
-    <div
-      slot="modal-footer"
-      class="w-100">
-      <div class="float-right">
-        <BBtn
-          variant="outline-secondary mr-2"
-          @click="hideModal">
-          {{ $t('common.cancel') }}
-        </BBtn>
-        <BBtn
-          type="button"
-          variant="primary"
-          :disabled="internalUser"
-          @click="saveForm">
-          {{ $t('common.saveChanges') }}
-        </BBtn>
+    <template v-slot:modal-footer>
+      <div class="w-100">
+        <div class="float-right">
+          <BBtn
+            variant="outline-secondary mr-2"
+            @click="hideModal">
+            {{ $t('common.cancel') }}
+          </BBtn>
+          <BBtn
+            type="button"
+            variant="primary"
+            :disabled="internalUser"
+            @click="saveForm">
+            {{ $t('common.saveChanges') }}
+          </BBtn>
+        </div>
       </div>
-    </div>
+    </template>
   </BModal>
 </template>
 
