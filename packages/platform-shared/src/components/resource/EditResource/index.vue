@@ -184,18 +184,18 @@ to such license between the licensee and ForgeRock AS. -->
         {{ $t('pages.access.deleteConfirm') }} {{ this.name }}?
       </div>
 
-      <div
-        slot="modal-footer"
-        class="w-100">
-        <div class="float-right">
-          <BButton
-            type="button"
-            variant="danger"
-            @click="deleteResource">
-            {{ $t('common.delete') }}
-          </BButton>
+      <template v-slot:modal-footer>
+        <div class="w-100">
+          <div class="float-right">
+            <BButton
+              type="button"
+              variant="danger"
+              @click="deleteResource">
+              {{ $t('common.delete') }}
+            </BButton>
+          </div>
         </div>
-      </div>
+      </template>
     </BModal>
 
     <BModal
@@ -206,63 +206,63 @@ to such license between the licensee and ForgeRock AS. -->
       <FrPolicyPasswordInput
         :policy-api="`${resource}/${name}/policyTest`"
         v-model="formFields['password']">
-        <BFormGroup
-          class="mb-3"
-          slot="custom-input">
-          <label for="updatePassword">
-            {{ $t('pages.access.password') }}
-          </label>
-          <div class="form-label-password form-label-group mb-0">
-            <ValidationObserver
-              ref="passwordObserver"
-              vid="passwordObserver">
-              <ValidationProvider
-                mode="aggressive"
-                name="password"
-                rules="required|policy"
-                v-slot="{ errors }">
-                <BFormInput
-                  id="updatePassword"
-                  autocomplete="password"
-                  :type="passwordInputType"
-                  :class="[{'is-invalid': errors.length > 0}]"
-                  v-model="formFields['password']"
-                  name="password" />
-              </ValidationProvider>
-            </ValidationObserver>
-            <div class="input-group-append">
-              <button
-                @click="revealNew"
-                class="btn btn-secondary"
-                type="button">
-                <i
-                  v-if="showPassword"
-                  class="material-icons-outlined">
-                  visibility
-                </i>
-                <i
-                  v-else
-                  class="material-icons-outlined">
-                  visibility_off
-                </i>
-              </button>
+        <template v-slot:custom-input>
+          <BFormGroup class="mb-3">
+            <label for="updatePassword">
+              {{ $t('pages.access.password') }}
+            </label>
+            <div class="form-label-password form-label-group mb-0">
+              <ValidationObserver
+                ref="passwordObserver"
+                vid="passwordObserver">
+                <ValidationProvider
+                  mode="aggressive"
+                  name="password"
+                  rules="required|policy"
+                  v-slot="{ errors }">
+                  <BFormInput
+                    id="updatePassword"
+                    autocomplete="password"
+                    :type="passwordInputType"
+                    :class="[{'is-invalid': errors.length > 0}]"
+                    v-model="formFields['password']"
+                    name="password" />
+                </ValidationProvider>
+              </ValidationObserver>
+              <div class="input-group-append">
+                <button
+                  @click="revealNew"
+                  class="btn btn-secondary"
+                  type="button">
+                  <i
+                    v-if="showPassword"
+                    class="material-icons-outlined">
+                    visibility
+                  </i>
+                  <i
+                    v-else
+                    class="material-icons-outlined">
+                    visibility_off
+                  </i>
+                </button>
+              </div>
             </div>
-          </div>
-        </BFormGroup>
+          </BFormGroup>
+        </template>
       </FrPolicyPasswordInput>
 
-      <div
-        slot="modal-footer"
-        class="w-100">
-        <div class="float-right">
-          <BButton
-            type="button"
-            variant="primary"
-            @click="savePassword">
-            {{ $t('common.save') }}
-          </BButton>
+      <template v-slot:modal-footer>
+        <div class="w-100">
+          <div class="float-right">
+            <BButton
+              type="button"
+              variant="primary"
+              @click="savePassword">
+              {{ $t('common.save') }}
+            </BButton>
+          </div>
         </div>
-      </div>
+      </template>
     </BModal>
   </BContainer>
 </template>

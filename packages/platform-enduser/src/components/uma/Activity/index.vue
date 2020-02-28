@@ -7,39 +7,39 @@ to such license between the licensee and ForgeRock AS. -->
   <div>
     <template v-for="(activityGroup, index) in activityGroups">
       <FrListGroup :key="`activityGroup-${index}`">
-        <div
-          class="card-body m-0 py-4"
-          slot="list-group-header">
-          <h6 class="card-title mb-0">
-            {{ formatDateTitle(activityGroup.day) }}
-          </h6>
-        </div>
+        <template v-slot:list-group-header>
+          <div class="card-body m-0 py-4">
+            <h6 class="card-title mb-0">
+              {{ formatDateTitle(activityGroup.day) }}
+            </h6>
+          </div>
+        </template>
         <FrListItem
           v-for="activity in activityGroup.activities"
           :key="activity._id"
           :collapsible="false"
           :panel-shown="false"
           :hover-item="false">
-          <template
-            slot="list-item-header"
-            class="d-inline-flex w-100">
-            <div class="flex-grow-1 media-body">
-              <span class="activity-type">
-                {{ $t(`pages.uma.activity.${activity.type}`, {requestingParty: activity.requestingPartyName}) }}
-              </span>
-              <button
-                class="m-0 p-0 btn btn-link text-capitalize"
-                type="button"
-                @click="$emit('resourceSetClick', activity._id)">
-                {{ activity.resourceSetName }}
-              </button>
-              <small class="d-block text-muted subtext">
-                {{ formatTime(activity.eventTime) }}
-              </small>
-            </div>
-            <FrFallbackImage
-              :src="activity.icon_uri"
-              fallback="description" />
+          <template v-slot:list-item-header>
+            <span class="d-inline-flex w-100">
+              <div class="flex-grow-1 media-body">
+                <span class="activity-type">
+                  {{ $t(`pages.uma.activity.${activity.type}`, {requestingParty: activity.requestingPartyName}) }}
+                </span>
+                <button
+                  class="m-0 p-0 btn btn-link text-capitalize"
+                  type="button"
+                  @click="$emit('resourceSetClick', activity._id)">
+                  {{ activity.resourceSetName }}
+                </button>
+                <small class="d-block text-muted subtext">
+                  {{ formatTime(activity.eventTime) }}
+                </small>
+              </div>
+              <FrFallbackImage
+                :src="activity.icon_uri"
+                fallback="description" />
+            </span>
           </template>
         </FrListItem>
       </FrListGroup>

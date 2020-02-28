@@ -11,7 +11,7 @@ exports[`Sharing.vue Resources page loaded 1`] = `
       </div> <input type="text" aria-label="Search" aria-describedby="btnGroupAddon" placeholder="Search..." class="form-control">
     </div>
     <div class="col">
-      <bdropdown-stub text="" right="true" offset="0" toggletext="Toggle Dropdown" variant="link" toggletag="button" splitbuttontype="button" role="menu" boundary="scrollParent" class="float-right text-muted"><template></template>
+      <bdropdown-stub text="" right="true" offset="0" toggletext="Toggle Dropdown" variant="link" toggletag="button" splitbuttontype="button" role="menu" boundary="scrollParent" class="float-right text-muted">
         <bdropdownheader-stub tag="header">View as</bdropdownheader-stub>
         <bdropdownitem-stub href="#" target="_self" event="click" routertag="a">
           <div class="media">

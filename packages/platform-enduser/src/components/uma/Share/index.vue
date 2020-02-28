@@ -12,80 +12,81 @@ to such license between the licensee and ForgeRock AS. -->
     cancel-variant="outline-secondary"
     @keydown.enter.native.prevent="validateResource"
     @hide="resetModal">
-    <div
-      slot="modal-header"
-      class="d-flex w-100 h-100">
-      <div class="media">
-        <div class="d-flex mr-3 align-self-center">
-          <FrFallbackImage
-            :src="resource.icon_uri"
-            fallback="description" />
+    <template v-slot:modal-header>
+      <div class="d-flex w-100 h-100">
+        <div class="media">
+          <div class="d-flex mr-3 align-self-center">
+            <FrFallbackImage
+              :src="resource.icon_uri"
+              fallback="description" />
+          </div>
+          <div class="media-body align-self-center">
+            <h6 class="my-0">
+              {{ resource.name }}
+            </h6>
+            <small
+              class="text-muted"
+              v-if="!resource.policy">
+              {{ $t('pages.uma.resources.resourceNotShared') }}
+            </small>
+            <small
+              class="text-muted"
+              v-else-if="resource.policy.permissions.length > 1">
+              {{ $t('pages.uma.resources.sharedWithPeople', {numberOf: resource.policy.permissions.length}) }}
+            </small>
+            <small
+              class="text-muted"
+              v-else>
+              {{ $t('pages.uma.resources.sharedWithPerson') }}
+            </small>
+          </div>
         </div>
-        <div class="media-body align-self-center">
-          <h6 class="my-0">
-            {{ resource.name }}
-          </h6>
-          <small
-            class="text-muted"
-            v-if="!resource.policy">
-            {{ $t('pages.uma.resources.resourceNotShared') }}
-          </small>
-          <small
-            class="text-muted"
-            v-else-if="resource.policy.permissions.length > 1">
-            {{ $t('pages.uma.resources.sharedWithPeople', {numberOf: resource.policy.permissions.length}) }}
-          </small>
-          <small
-            class="text-muted"
-            v-else>
-            {{ $t('pages.uma.resources.sharedWithPerson') }}
-          </small>
-        </div>
+        <button
+          type="button"
+          aria-label="Close"
+          class="close"
+          @click="hideModal">
+          <i class="material-icons-outlined font-weight-bolder md-24 mb-1">
+            close
+          </i>
+        </button>
       </div>
-      <button
-        type="button"
-        aria-label="Close"
-        class="close"
-        @click="hideModal">
-        <i class="material-icons-outlined font-weight-bolder md-24 mb-1">
-          close
-        </i>
-      </button>
-    </div>
+    </template>
 
     <div class="form-group">
       <BInputGroup>
         <BFormInput
           :placeholder="$t('pages.uma.resources.shareWith')"
           v-model="newShare" />
-        <BDropdown
-          :text="text"
-          variant="outline-secondary"
-          size="sm"
-          slot="append">
-          <form
-            class="px-4 py-2"
-            @click.stop>
-            <template v-if="resource.scopes">
-              <div
-                class="form-check mb-1"
-                v-for="(scope, index) in resource.scopes"
-                :key="index">
-                <input
-                  type="checkbox"
-                  class="form-check-input mr-1"
-                  id="viewCheck"
-                  :checked="newScopes[scope]"
-                  @click="newScopes[scope] = !newScopes[scope]">
-                <label
-                  class="form-check-label"
-                  for="viewCheck">
-                  {{ scope }}
-                </label>
-              </div>
-            </template>
-          </form>
-        </BDropdown>
+        <template v-slot:append>
+          <BDropdown
+            :text="text"
+            variant="outline-secondary"
+            size="sm">
+            <form
+              class="px-4 py-2"
+              @click.stop>
+              <template v-if="resource.scopes">
+                <div
+                  class="form-check mb-1"
+                  v-for="(scope, index) in resource.scopes"
+                  :key="index">
+                  <input
+                    type="checkbox"
+                    class="form-check-input mr-1"
+                    id="viewCheck"
+                    :checked="newScopes[scope]"
+                    @click="newScopes[scope] = !newScopes[scope]">
+                  <label
+                    class="form-check-label"
+                    for="viewCheck">
+                    {{ scope }}
+                  </label>
+                </div>
+              </template>
+            </form>
+          </BDropdown>
+        </template>
       </BInputGroup>
     </div>
 
@@ -117,11 +118,11 @@ to such license between the licensee and ForgeRock AS. -->
               size="sm"
               right
               toggle-class="dropdown-toggle">
-              <template
-                slot="button-content"
-                class="dropdown-toggle">
-                <span class="d-none d-sm-inline">
-                  Can {{ permission.scopes.join(", ") }}
+              <template v-slot:button-content>
+                <span class="dropdown-toggle">
+                  <span class="d-none d-sm-inline">
+                    Can {{ permission.scopes.join(", ") }}
+                  </span>
                 </span>
               </template>
               <form
@@ -159,34 +160,34 @@ to such license between the licensee and ForgeRock AS. -->
       </ul>
     </div>
 
-    <div
-      slot="modal-footer"
-      class="w-100">
-      <div>
-        <BButton
-          type="button"
-          variant="link"
-          @click="unshareAll">
-          {{ $t('pages.uma.resources.unshareAll') }}
-        </BButton>
-        <div
-          class="float-right"
-          v-if="newShare">
+    <template v-slot:modal-footer>
+      <div class="w-100">
+        <div>
           <BButton
             type="button"
-            variant="outline-secondary mr-2"
-            @click="hideModal">
-            {{ $t('pages.uma.resources.cancel') }}
+            variant="link"
+            @click="unshareAll">
+            {{ $t('pages.uma.resources.unshareAll') }}
           </BButton>
-          <BButton
-            type="button"
-            variant="primary"
-            @click="validateResource">
-            {{ $t('pages.uma.resources.share') }}
-          </BButton>
+          <div
+            class="float-right"
+            v-if="newShare">
+            <BButton
+              type="button"
+              variant="outline-secondary mr-2"
+              @click="hideModal">
+              {{ $t('pages.uma.resources.cancel') }}
+            </BButton>
+            <BButton
+              type="button"
+              variant="primary"
+              @click="validateResource">
+              {{ $t('pages.uma.resources.share') }}
+            </BButton>
+          </div>
         </div>
       </div>
-    </div>
+    </template>
   </BModal>
 </template>
 

@@ -12,25 +12,25 @@ to such license between the licensee and ForgeRock AS. -->
       :key="preference"
       :collapsible="false"
       :panel-shown="false">
-      <div
-        slot="list-item-header"
-        class="d-inline-flex w-100">
-        <h6 class="mt-3">
-          {{ obj.description }}
-        </h6>
+      <template v-slot:list-item-header>
+        <div class="d-inline-flex w-100">
+          <h6 class="mt-3">
+            {{ obj.description }}
+          </h6>
 
-        <div class="ml-auto">
-          <ToggleButton
-            class="mt-2 p-0 fr-toggle-primary"
-            :id="preference"
-            :height="28"
-            :width="56"
-            :sync="true"
-            :css-colors="true"
-            :value="obj.value"
-            @change="savePreferences(preference, $event.value)" />
+          <div class="ml-auto">
+            <ToggleButton
+              class="mt-2 p-0 fr-toggle-primary"
+              :id="preference"
+              :height="28"
+              :width="56"
+              :sync="true"
+              :css-colors="true"
+              :value="obj.value"
+              @change="savePreferences(preference, $event.value)" />
+          </div>
         </div>
-      </div>
+      </template>
     </FrListItem>
   </FrListGroup>
 </template>
