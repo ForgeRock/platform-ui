@@ -2,13 +2,6 @@
 
 exports[`EditPersonalInfo.vue EditPersonalInfo modal loaded 1`] = `
 <bmodal-stub id="userDetailsModal" size="md" buttonsize="" title="" titletag="h5" modalclass="fr-full-screen" headercloselabel="Close" canceltitle="Cancel" oktitle="OK" cancelvariant="outline-secondary" okvariant="primary">
-  <div class="d-flex w-100 h-100">
-    <h5 class="modal-title align-self-center text-center">
-      Edit your personal info
-    </h5> <button type="button" aria-label="Close" class="close"><i class="material-icons-outlined font-weight-bolder md-24">
-        close
-      </i></button>
-  </div>
   <bcontainer-stub tag="div">
     <brow-stub tag="div">
       <bcol-stub sm="8" offsetsm="2" tag="div">
@@ -18,15 +11,5 @@ exports[`EditPersonalInfo.vue EditPersonalInfo modal loaded 1`] = `
       </bcol-stub>
     </brow-stub>
   </bcontainer-stub>
-  <div class="w-100">
-    <div class="float-right">
-      <bbtn-stub target="_self" event="click" routertag="a" variant="outline-secondary mr-2" type="button" tag="button">
-        Cancel
-      </bbtn-stub>
-      <bbtn-stub target="_self" event="click" routertag="a" variant="primary" type="button" tag="button">
-        Save changes
-      </bbtn-stub>
-    </div>
-  </div>
 </bmodal-stub>
 `;

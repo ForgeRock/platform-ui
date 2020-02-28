@@ -25,13 +25,13 @@ const template = `
       :panelShown="panelShown"
       :hoverItem="hoverItem">
 
-      <div slot="list-item-header">
+      <template v-slot:list-item-header>
         Header. Click Me!
-      </div>
+      </template>
 
-      <div slot="list-item-collapse-body">
+      <template v-slot:list-item-collapse-body>
         Body
-      </div>
+      </template>
     </FrListItem>
 
     <div class="sg_masthead">
@@ -43,26 +43,26 @@ const template = `
       :panelShown="panelShown"
       :hoverItem="hoverItem">
 
-      <div slot="list-item-header">
+      <template v-slot:list-item-header>
         Header. Click Me!
-      </div>
+      </template>
 
-      <div slot="list-item-collapse-body">
+      <template v-slot:list-item-collapse-body>
         Body
         <div>
           <FrListItem
             :collapsible="collapsible"
             :panelShown="panelShown"
             :hoverItem="hoverItem">
-            <div slot="list-item-header">
+            <template v-slot:list-item-header>
               Nested ListItem
-            </div>
-            <div slot="list-item-collapse-body">
+            </template>
+            <template v-slot:list-item-collapse-body>
               Body
-            </div>
+            </template>
           </FrListItem>
         </div>
-      </div>
+      </template>
     </FrListItem>
   </div>
 `;

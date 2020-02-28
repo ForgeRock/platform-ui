@@ -27,7 +27,7 @@ to such license between the licensee and ForgeRock AS. -->
         <BTab
           title="Requests"
           v-if="requests.length > 0">
-          <template slot="title">
+          <template v-slot:title>
             {{ $t('pages.uma.notifications.requests') }} <BBadge
               pill
               variant="danger">
@@ -43,16 +43,18 @@ to such license between the licensee and ForgeRock AS. -->
         <FrCenterCard
           :show-logo="false"
           class="mt-5">
-          <BCardBody slot="center-card-body">
-            <img
-              :src="require('@/assets/images/empty-box.svg')"
-              class="mb-4"
-              :alt="$t('common.logo')"
-              style="width: 150px;">
-            <h5 class="h5">
-              {{ $t(`pages.uma.resources.noDataState`) }}
-            </h5>
-          </BCardBody>
+          <template v-slot:center-card-body>
+            <BCardBody>
+              <img
+                :src="require('@/assets/images/empty-box.svg')"
+                class="mb-4"
+                :alt="$t('common.logo')"
+                style="width: 150px;">
+              <h5 class="h5">
+                {{ $t(`pages.uma.resources.noDataState`) }}
+              </h5>
+            </BCardBody>
+          </template>
         </FrCenterCard>
       </div>
       <FrShare

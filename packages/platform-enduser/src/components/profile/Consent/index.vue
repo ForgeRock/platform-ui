@@ -14,7 +14,7 @@ to such license between the licensee and ForgeRock AS. -->
       :collapsible="mapping.consented"
       :panel-shown="false">
       <template
-        slot="list-item-header"
+        v-slot:list-item-header
         class="overflow:hidden;">
         <FrFallbackImage
           :src="mapping.icon"
@@ -60,22 +60,22 @@ to such license between the licensee and ForgeRock AS. -->
           :ref="mapping.name"
           size="md"
           cancel-variant="outline-secondary">
-          <div
-            slot="modal-header"
-            class="d-flex w-100 h-100">
-            <h5 class="modal-title align-self-center text-center">
-              {{ mapping.modalHeader }}
-            </h5>
-            <button
-              type="button"
-              aria-label="Close"
-              class="close"
-              @click.stop.prevent="hideModal(mapping.name)">
-              <i class="material-icons-outlined font-weight-bolder md-24 mb-1">
-                close
-              </i>
-            </button>
-          </div>
+          <template v-slot:modal-header>
+            <div class="d-flex w-100 h-100">
+              <h5 class="modal-title align-self-center text-center">
+                {{ mapping.modalHeader }}
+              </h5>
+              <button
+                type="button"
+                aria-label="Close"
+                class="close"
+                @click.stop.prevent="hideModal(mapping.name)">
+                <i class="material-icons-outlined font-weight-bolder md-24 mb-1">
+                  close
+                </i>
+              </button>
+            </div>
+          </template>
 
           <BContainer>
             <p
@@ -86,7 +86,7 @@ to such license between the licensee and ForgeRock AS. -->
               :fields="mapping.fields" />
           </BContainer>
 
-          <div slot="modal-footer">
+          <template v-slot:modal-footer>
             <div class="float-right">
               <BBtn
                 variant="outline-secondary mr-2"
@@ -100,13 +100,13 @@ to such license between the licensee and ForgeRock AS. -->
                 {{ $t(`pages.profile.consent.${mapping.consented ? 'deny' : 'allow'}`) }}
               </BBtn>
             </div>
-          </div>
+          </template>
         </BModal>
       </template>
 
-      <div slot="list-item-collapse-body">
+      <template v-slot:list-item-collapse-body>
         <FrAccessLevel :fields="mapping.fields" />
-      </div>
+      </template>
     </FrListItem>
   </FrListGroup>
 </template>

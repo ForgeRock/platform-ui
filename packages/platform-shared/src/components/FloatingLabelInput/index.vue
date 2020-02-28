@@ -24,37 +24,41 @@ to such license between the licensee and ForgeRock AS. -->
         :name="fieldName" />
       <MultiSelect
         v-else-if="inputType === 'multiselect'"
-        v-model="multiselectInputValue"
+        v-model="inputValue"
         :name="fieldName"
         label="text"
         track-by="value"
         :disabled="disabled"
-        :options="multiselectInputOptions"
+        :options="multiselectOptions"
         :show-labels="false"
         :hide-selected="true"
         :multiple="true"
-        :taggable="false"
         :close-on-select="false"
-        :searchable="multiselectInputOptions.length > 9"
-        @open="setEmptyMultiSelect(false)"
-        @close="setEmptyMultiSelect(multiselectInputValue.length === 0)"
+        :searchable="multiselectOptions.length > 9"
+        @open="floatLabels = true"
+        @close="floatLabels = value && value.length"
         :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control p-0', {'h-25': floatLabels || !this.label }, {'no-multiselect-label': !this.label }]"
-        placeholder="Type to search" />
+        placeholder="Type to search">
+        <slot name="noResult">
+          {{ $t('common.noResult') }}
+        </slot>
+      </MultiSelect>
       <MultiSelect
         v-else-if="inputType === 'select'"
-        v-model="multiselectInputValue"
+        v-model="inputValue"
         :name="fieldName"
         label="text"
         track-by="value"
         :disabled="disabled"
-        :options="multiselectInputOptions"
+        :options="multiselectOptions"
         :show-labels="false"
-        :taggable="false"
         :allow-empty="false"
-        @open="setEmptyMultiSelect(false)"
-        @close="setEmptyMultiSelect(multiselectInputValue.length === 0)"
         :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control p-0', {'h-25': floatLabels || !this.label }, {'no-multiselect-label': !this.label }]"
-        placeholder="Type to search" />
+        placeholder="Type to search">
+        <slot name="noResult">
+          {{ $t('common.noResult') }}
+        </slot>
+      </MultiSelect>
       <input
         v-else
         :type="showPassword ? 'text' : inputType"
@@ -120,7 +124,6 @@ import {
   map,
   find,
   isArray,
-  isEmpty,
 } from 'lodash';
 import ValidationErrorList from '@forgerock/platform-shared/src/components/ValidationErrorList/';
 import MultiSelect from 'vue-multiselect';
@@ -178,13 +181,6 @@ export default {
       default: false,
     },
     /**
-     * Value field will start with.
-     */
-    defaultValue: {
-      type: [String, Object, Number],
-      default: '',
-    },
-    /**
      * List of errors related to input value.
      */
     failedPolicies: {
@@ -235,11 +231,17 @@ export default {
       type: Boolean,
       default: false,
     },
+    /**
+     * Binding to v-model
+     */
+    value: {
+      type: [Object, String, Array, Number],
+      default: '',
+    },
   },
   data() {
     return {
       inputValue: '',
-      multiselectInputValue: null,
       id: null,
       floatLabels: false,
       hideLabel: true,
@@ -249,7 +251,7 @@ export default {
     };
   },
   computed: {
-    multiselectInputOptions() {
+    multiselectOptions() {
       if (this.selectOptions.length && has(this.selectOptions[0], 'value')) {
         return this.selectOptions;
       }
@@ -284,14 +286,7 @@ export default {
       this.hideLabel = false;
     }, this), 400);
 
-    if (this.inputType === 'select' && this.defaultValue) {
-      this.multiselectInputValue = find(this.multiselectInputOptions, { value: this.defaultValue });
-    } else if (this.inputType === 'multiselect' && this.defaultValue) {
-      const valuesArray = this.defaultValue.split(',');
-      this.multiselectInputValue = map(valuesArray, (val) => find(this.multiselectInputOptions, { value: val }));
-    } else if (this.defaultValue) {
-      this.inputValue = this.defaultValue;
-    }
+    this.setInputValue(this.value);
 
     if (this.failedPolicies) {
       this.errorMessages = this.failedPolicies;
@@ -301,53 +296,49 @@ export default {
     if (this.autofocus === 'true') {
       this.$refs.input.focus();
     }
-
-    if (isEmpty(this.defaultValue) && (this.inputType === 'multiselect' || this.inputType === 'select')) {
-      this.setEmptyMultiSelect(true);
-    }
   },
   methods: {
     revealText() {
       this.showPassword = !this.showPassword;
     },
-    setEmptyMultiSelect(multiselectIsEmpty) {
-      console.log(multiselectIsEmpty);
-      if (multiselectIsEmpty) {
-        this.$el.querySelector('.multiselect__tags').style.display = 'none';
-      } else {
-        this.$el.querySelector('.multiselect__tags').style.display = '';
+    setInputValue(newVal) {
+      if (newVal !== undefined && newVal !== null) {
+        if (this.inputType === 'select') {
+          this.inputValue = find(this.multiselectOptions, { value: newVal.toString() });
+        } else if (this.inputType === 'multiselect') {
+          this.inputValue = map(newVal, (val) => find(this.multiselectOptions, { value: val.toString() }));
+        } else {
+          this.inputValue = newVal.toString();
+        }
       }
     },
   },
   watch: {
     inputValue(newVal) {
-      this.floatLabels = newVal.length > 0 && this.label;
-      if (this.inputType === 'number') {
-        this.$emit('input', parseInt(newVal, 10));
-      } else {
-        this.$emit('input', newVal);
-      }
-      if (this.callback && this.callback.setInputValue) {
-        this.callback.setInputValue(newVal);
-      }
-    },
-    multiselectInputValue(newVal) {
-      this.setEmptyMultiSelect(isEmpty(newVal));
-
-      if (isArray(newVal)) {
+      if (newVal !== undefined) {
         this.floatLabels = newVal.length > 0 && this.label;
-        this.$emit('input', map(newVal, 'value'));
-      } else if (newVal === null) {
-        this.floatLabels = false;
-        this.$emit('input', '');
-      } else {
-        this.floatLabels = newVal.value.length > 0 && this.label;
-        this.$emit('input', newVal.value);
+        if (isArray(newVal)) {
+          this.floatLabels = newVal.length > 0 && this.label;
+          this.$emit('input', map(newVal, 'value'));
+        } else if (newVal === null) {
+          this.floatLabels = false;
+          this.$emit('input', '');
+        } else if (this.inputType === 'select') {
+          this.floatLabels = newVal.value.length > 0 && this.label;
+          this.$emit('input', newVal.value);
+        } else if (this.inputType === 'number') {
+          this.$emit('input', parseInt(newVal, 10));
+        } else {
+          this.$emit('input', newVal);
+        }
+        if (this.callback && this.callback.setInputValue) {
+          this.callback.setInputValue(newVal);
+        }
       }
     },
-    defaultValue(newVal) {
-      if (newVal) {
-        this.inputValue = newVal;
+    value(newVal) {
+      if (!this.inputValue) {
+        this.setInputValue(newVal);
       }
     },
     failedPolicies(newVal) {
@@ -477,10 +468,15 @@ select.custom-select ~ label {
     line-height: 1;
   }
 
+  .multiselect__content-wrapper {
+    border: 1px solid #e8e8e8;
+  }
+
   .multiselect__tags {
-    min-height: 55px;
+    height: 100%;
     padding: 1.5rem 50px 0 0.75rem;
     font-size: 0.875rem;
+    border: none;
 
     .multiselect__placeholder {
       font-size: 1rem;
@@ -510,10 +506,6 @@ select.custom-select ~ label {
   // disabled stylings
   .multiselect--disabled {
     opacity: 1;
-
-    .multiselect__tags {
-      border-color: #c0c9d5;
-    }
 
     .multiselect__single,
     .multiselect__select,

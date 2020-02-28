@@ -33,7 +33,7 @@ to such license between the licensee and ForgeRock AS. -->
             variant="link"
             right
             class="float-right text-muted">
-            <template slot="button-content">
+            <template v-slot:button-content>
               <span class="text-muted">
                 <i
                   v-if="!this.viewgrid"
@@ -191,7 +191,7 @@ to such license between the licensee and ForgeRock AS. -->
                   class="fr-card-menu-link float-right"
                   right
                   no-caret>
-                  <template slot="button-content">
+                  <template v-slot:button-content>
                     <span class="text-muted">
                       <i class="material-icons-outlined md-24">
                         more_horiz

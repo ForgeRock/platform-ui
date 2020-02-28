@@ -5,8 +5,8 @@
  * or with one of its affiliates. All use shall be exclusively subject
  * to such license between the licensee and ForgeRock AS.
  */
-import { shallowMount } from '@vue/test-utils';
-import Login from '@/views/Login';
+import { mount } from '@vue/test-utils';
+import Login from './index';
 import i18n from '@/i18n';
 
 describe('Login.vue', () => {
@@ -18,13 +18,14 @@ describe('Login.vue', () => {
   };
 
   beforeEach(() => {
-    wrapper = shallowMount(Login, {
+    wrapper = mount(Login, {
       i18n,
       stubs: {
         'router-link': true,
       },
       mocks: {
         $route,
+        $t: () => {},
       },
     });
   });

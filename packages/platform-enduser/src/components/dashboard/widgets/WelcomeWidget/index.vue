@@ -5,7 +5,7 @@ or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
   <BJumbotron class="text-center">
-    <template slot="header">
+    <template v-slot:header>
       <BImg
         :src="require('@/assets/images/profile-default.png')"
         rounded="circle"
@@ -15,7 +15,7 @@ to such license between the licensee and ForgeRock AS. -->
         class="m-1 mb-3" />
       <div>{{ $t('pages.dashboard.widgets.welcome.greeting') }}, {{ fullName }}</div>
     </template>
-    <template slot="lead">
+    <template v-slot:lead>
       <div>
         {{ $t('pages.dashboard.widgets.welcome.welcomeMessage') }}
       </div>

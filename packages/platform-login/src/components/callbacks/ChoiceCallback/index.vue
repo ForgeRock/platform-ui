@@ -1,27 +1,24 @@
-<!-- Copyright 2019 ForgeRock AS. All Rights Reserved
-
+<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
   <div>
-    <label>{{ callback.getPrompt() }}</label>
-    <BFormSelect
-      :options="options"
-      :name="name"
+    <FrFloatingLabelInput
+      type="select"
+      :field-name="name"
+      :label="callback.getPrompt()"
       v-model="selected"
-      class="mb-2"
-      @change="setValue" />
+      :select-options="options" />
   </div>
 </template>
-
 <script>
 import { map } from 'lodash';
-import { BFormSelect } from 'bootstrap-vue';
+import FloatingLabelInput from '@forgerock/platform-shared/src/components/FloatingLabelInput';
 
 export default {
   components: {
-    BFormSelect,
+    FrFloatingLabelInput: FloatingLabelInput,
   },
   props: {
     callback: {
@@ -34,11 +31,9 @@ export default {
     },
   },
   mounted() {
-    this.selected = this.callback.getDefaultChoice();
-
     this.name = `callback_${this.index}`;
-
     this.loadOptions();
+    this.selected = this.callback.getDefaultChoice();
   },
   data() {
     return {
@@ -48,16 +43,17 @@ export default {
       choices: this.callback.getChoices(),
     };
   },
+  watch: {
+    selected(newVal) {
+      this.callback.setInputValue(newVal);
+    },
+  },
   methods: {
     loadOptions() {
-      this.name = `callback_${this.index}`;
       this.options = map(this.choices, (item, itemIndex) => ({
         text: item,
-        value: itemIndex,
+        value: itemIndex.toString(),
       }));
-    },
-    setValue() {
-      this.callback.setInputValue(this.selected);
     },
   },
 };

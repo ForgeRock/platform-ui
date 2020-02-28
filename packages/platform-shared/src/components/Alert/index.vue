@@ -7,7 +7,7 @@ to such license between the licensee and ForgeRock AS. -->
   <BAlert
     class="fr-alert"
     v-bind="$props">
-    <template slot="dismiss">
+    <template v-slot:dismiss>
       <i class="fr-alert-dismiss material-icons">
         close
       </i>
@@ -74,6 +74,7 @@ export default {
         icon = 'info';
         break;
       case 'danger':
+      case 'error':
         icon = 'error_outline';
         break;
       case 'warning':
@@ -123,7 +124,8 @@ export default {
       color: $fr-alert-text-color;
     }
 
-    &.alert-danger {
+    &.alert-danger,
+    &.alert-error {
       border-left: 5px solid $danger;
       background-color: $fr-alert-danger-bg-color;
       color: $fr-alert-text-color;

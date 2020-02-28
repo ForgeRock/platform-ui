@@ -14,48 +14,48 @@ to such license between the licensee and ForgeRock AS. -->
         :panel-shown="false"
         :hover-item="true"
         @row-click="downloadAccount">
-        <div
-          slot="list-item-header"
-          class="d-inline-flex w-100">
-          <div class="flex-grow-1">
-            <div>
-              {{ $t('pages.profile.accountControls.downloadTitle') }}
+        <template v-slot:list-item-header>
+          <div class="d-inline-flex w-100">
+            <div class="flex-grow-1">
+              <div>
+                {{ $t('pages.profile.accountControls.downloadTitle') }}
+              </div>
+              <small class="text-muted subtext">
+                {{ $t('pages.profile.accountControls.downloadSubtitle') }}
+              </small>
             </div>
-            <small class="text-muted subtext">
-              {{ $t('pages.profile.accountControls.downloadSubtitle') }}
-            </small>
+            <a
+              class="align-self-center flex-grow-2 text-right"
+              @click.prevent
+              href="#">
+              {{ $t('pages.profile.accountControls.downloadLink') }}
+            </a>
           </div>
-          <a
-            class="align-self-center flex-grow-2 text-right"
-            @click.prevent
-            href="#">
-            {{ $t('pages.profile.accountControls.downloadLink') }}
-          </a>
-        </div>
+        </template>
       </FrListItem>
       <FrListItem
         :collapsible="false"
         :panel-shown="false"
         :hover-item="true"
         v-b-modal.deleteAccountModal>
-        <div
-          slot="list-item-header"
-          class="d-inline-flex w-100">
-          <div class="flex-grow-1">
-            <div>
-              {{ $t('pages.profile.accountControls.deleteTitle') }}
+        <template v-slot:list-item-header>
+          <div class="d-inline-flex w-100">
+            <div class="flex-grow-1">
+              <div>
+                {{ $t('pages.profile.accountControls.deleteTitle') }}
+              </div>
+              <small class="text-muted subtext">
+                {{ $t('pages.profile.accountControls.deleteSubtitle') }}
+              </small>
             </div>
-            <small class="text-muted subtext">
-              {{ $t('pages.profile.accountControls.deleteSubtitle') }}
-            </small>
+            <a
+              class="align-self-center flex-grow-2 text-right"
+              @click.prevent
+              href="#">
+              {{ $t('pages.profile.accountControls.deleteAccount') }}
+            </a>
           </div>
-          <a
-            class="align-self-center flex-grow-2 text-right"
-            @click.prevent
-            href="#">
-            {{ $t('pages.profile.accountControls.deleteAccount') }}
-          </a>
-        </div>
+        </template>
       </FrListItem>
     </FrListGroup>
     <BModal
@@ -63,22 +63,22 @@ to such license between the licensee and ForgeRock AS. -->
       modal-class="fr-full-screen"
       ref="deleteModal"
       cancel-variant="outline-secondary">
-      <div
-        slot="modal-header"
-        class="d-flex w-100 h-100">
-        <h5 class="modal-title align-self-center text-center">
-          {{ $t('pages.profile.accountControls.deleteModalTitle') }}
-        </h5>
-        <button
-          type="button"
-          aria-label="Close"
-          class="close"
-          @click="hideModal">
-          <i class="material-icons-outlined font-weight-bolder md-24">
-            close
-          </i>
-        </button>
-      </div>
+      <template v-slot:modal-header>
+        <div class="d-flex w-100 h-100">
+          <h5 class="modal-title align-self-center text-center">
+            {{ $t('pages.profile.accountControls.deleteModalTitle') }}
+          </h5>
+          <button
+            type="button"
+            aria-label="Close"
+            class="close"
+            @click="hideModal">
+            <i class="material-icons-outlined font-weight-bolder md-24">
+              close
+            </i>
+          </button>
+        </div>
+      </template>
 
       <BContainer>
         <h1 class="mb-4">
@@ -114,24 +114,24 @@ to such license between the licensee and ForgeRock AS. -->
         </div>
       </BContainer>
 
-      <div
-        slot="modal-footer"
-        class="w-100">
-        <div class="float-right">
-          <BBtn
-            variant="outline-secondary mr-2"
-            @click="hideModal">
-            {{ $t('common.cancel') }}
-          </BBtn>
-          <BBtn
-            :disabled="!confirmDelete"
-            type="button"
-            variant="danger"
-            @click="deleteAccount">
-            {{ $t('pages.profile.accountControls.deleteModalButton') }}
-          </BBtn>
+      <template v-slot:modal-footer>
+        <div class="w-100">
+          <div class="float-right">
+            <BBtn
+              variant="outline-secondary mr-2"
+              @click="hideModal">
+              {{ $t('common.cancel') }}
+            </BBtn>
+            <BBtn
+              :disabled="!confirmDelete"
+              type="button"
+              variant="danger"
+              @click="deleteAccount">
+              {{ $t('pages.profile.accountControls.deleteModalButton') }}
+            </BBtn>
+          </div>
         </div>
-      </div>
+      </template>
     </BModal>
   </div>
 </template>

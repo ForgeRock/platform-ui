@@ -23,10 +23,11 @@ to such license between the licensee and ForgeRock AS. -->
             :reveal="true"
             :show-error-state="false"
             @input="$emit('input', $event)">
-            <FrPolicyPanel
-              slot="validationError"
-              :policies="policies"
-              :policy-failures="defaultPolicyFailures || policyFailures" />
+            <template v-slot:validationError>
+              <FrPolicyPanel
+                :policies="policies"
+                :policy-failures="defaultPolicyFailures || policyFailures" />
+            </template>
           </FrFloatingLabelInput>
         </ValidationProvider>
       </slot>

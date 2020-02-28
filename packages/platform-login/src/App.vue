@@ -21,9 +21,7 @@ to such license between the licensee and ForgeRock AS. -->
       position="bottom left"
       width="320"
       :duration="400000">
-      <template
-        slot="body"
-        slot-scope="props">
+      <template v-slot:body="props">
         <FrAlert
           class="w-50 m-3"
           :variant="props.item.type"

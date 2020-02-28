@@ -7,99 +7,55 @@ to such license between the licensee and ForgeRock AS. -->
   <FrListItem
     :collapsible="true"
     :panel-shown="false">
-    <div
-      slot="list-item-header"
-      class="d-inline-flex w-100 media">
-      <div class="media-body align-self-center">
-        <h6>{{ $t('pages.profile.accountSecurity.password') }}</h6>
-      </div>
-      <div class="d-flex ml-3 align-self-center">
-        <div
-          class="btn btn-sm btn-link float-right btn-cancel"
-          @click="clearComponent()"
-          ref="cancel">
-          {{ $t('common.cancel') }}
+    <template v-slot:list-item-header>
+      <div class="d-inline-flex w-100 media">
+        <div class="media-body align-self-center">
+          <h6>{{ $t('pages.profile.accountSecurity.password') }}</h6>
         </div>
-        <div class="btn btn-sm btn-link float-right btn-edit">
-          {{ $t('common.reset') }}
+        <div class="d-flex ml-3 align-self-center">
+          <div
+            class="btn btn-sm btn-link float-right btn-cancel"
+            @click="clearComponent()"
+            ref="cancel">
+            {{ $t('common.cancel') }}
+          </div>
+          <div class="btn btn-sm btn-link float-right btn-edit">
+            {{ $t('common.reset') }}
+          </div>
         </div>
       </div>
-    </div>
+    </template>
 
-    <div
-      slot="list-item-collapse-body"
-      class="d-inline-flex w-100">
-      <BForm class="w-100">
-        <ValidationObserver ref="observer">
-          <BRow>
-            <BCol sm="8">
-              <BFormGroup>
-                <label for="currentPassword">
-                  {{ $t('pages.profile.accountSecurity.currentPassword') }}
-                </label>
-                <ValidationProvider
-                  ref="provider"
-                  :name="$t('pages.profile.accountSecurity.currentPassword')"
-                  rules="required"
-                  v-slot="{ errors }">
-                  <div class="form-label-password form-label-group mb-0">
-                    <BFormInput
-                      id="currentPassword"
-                      :name="$t('pages.profile.accountSecurity.currentPassword')"
-                      :class="[{'is-invalid': errors.length > 0}, 'form-control']"
-                      :type="inputCurrent"
-                      v-model="currentPassword"
-                    />
-                    <div class="input-group-append">
-                      <BBtn
-                        @click="revealCurrent"
-                        class="btn btn-secondary"
-                        type="button">
-                        <i
-                          v-if="showCurrent"
-                          class="material-icons-outlined">
-                          visibility
-                        </i>
-                        <i
-                          v-else
-                          class="material-icons-outlined">
-                          visibility_off
-                        </i>
-                      </BBtn>
-                    </div>
-                  </div>
-                  <FrValidationError
-                    :validator-errors="errors"
-                    field-name="currentPassword" />
-                </ValidationProvider>
-              </BFormGroup>
-
-              <FrPolicyPasswordInput
-                :policy-api="`${this.managedResource}/${this.userId}`"
-                v-model="newPassword">
-                <BFormGroup
-                  class="mb-3"
-                  slot="custom-input">
-                  <label for="newPassword">
-                    {{ $t('pages.profile.accountSecurity.newPassword') }}
+    <template v-slot:list-item-collapse-body>
+      <div class="d-inline-flex w-100">
+        <BForm class="w-100">
+          <ValidationObserver ref="observer">
+            <BRow>
+              <BCol sm="8">
+                <BFormGroup>
+                  <label for="currentPassword">
+                    {{ $t('pages.profile.accountSecurity.currentPassword') }}
                   </label>
                   <ValidationProvider
-                    name="password"
-                    rules="required|policy">
+                    ref="provider"
+                    :name="$t('pages.profile.accountSecurity.currentPassword')"
+                    rules="required"
+                    v-slot="{ errors }">
                     <div class="form-label-password form-label-group mb-0">
                       <BFormInput
-                        id="newPassword"
-                        :type="inputNew"
-                        v-model="newPassword"
-                        name="password"
+                        id="currentPassword"
+                        :name="$t('pages.profile.accountSecurity.currentPassword')"
+                        :class="[{'is-invalid': errors.length > 0}, 'form-control']"
+                        :type="inputCurrent"
+                        v-model="currentPassword"
                       />
                       <div class="input-group-append">
-                        <button
-                          @click="revealNew"
+                        <BBtn
+                          @click="revealCurrent"
                           class="btn btn-secondary"
                           type="button">
                           <i
-                            v-if="showNew"
+                            v-if="showCurrent"
                             class="material-icons-outlined">
                             visibility
                           </i>
@@ -108,33 +64,77 @@ to such license between the licensee and ForgeRock AS. -->
                             class="material-icons-outlined">
                             visibility_off
                           </i>
-                        </button>
+                        </BBtn>
                       </div>
                     </div>
+                    <FrValidationError
+                      :validator-errors="errors"
+                      field-name="currentPassword" />
                   </ValidationProvider>
                 </BFormGroup>
-              </FrPolicyPasswordInput>
 
-              <FrLoadingButton
-                type="button"
-                variant="primary"
-                class="ld-ext-right mb-3"
-                :label="$t('pages.profile.accountSecurity.savePassword')"
-                :loading="loading"
-                @click="onSavePassword" />
+                <FrPolicyPasswordInput
+                  :policy-api="`${this.managedResource}/${this.userId}`"
+                  v-model="newPassword">
+                  <template v-slot:custom-input>
+                    <BFormGroup class="mb-3">
+                      <label for="newPassword">
+                        {{ $t('pages.profile.accountSecurity.newPassword') }}
+                      </label>
+                      <ValidationProvider
+                        name="password"
+                        rules="required|policy">
+                        <div class="form-label-password form-label-group mb-0">
+                          <BFormInput
+                            id="newPassword"
+                            :type="inputNew"
+                            v-model="newPassword"
+                            name="password"
+                          />
+                          <div class="input-group-append">
+                            <button
+                              @click="revealNew"
+                              class="btn btn-secondary"
+                              type="button">
+                              <i
+                                v-if="showNew"
+                                class="material-icons-outlined">
+                                visibility
+                              </i>
+                              <i
+                                v-else
+                                class="material-icons-outlined">
+                                visibility_off
+                              </i>
+                            </button>
+                          </div>
+                        </div>
+                      </ValidationProvider>
+                    </BFormGroup>
+                  </template>
+                </FrPolicyPasswordInput>
 
-              <div
-                v-if="this.passwordReset"
-                class="text-nowrap pb-2">
-                {{ $t('pages.profile.accountSecurity.rememberPassword') }} <RouterLink to="PasswordReset">
-                  {{ $t('pages.profile.accountSecurity.resetPassword') }}
-                </RouterLink>
-              </div>
-            </BCol>
-          </BRow>
-        </ValidationObserver>
-      </BForm>
-    </div>
+                <FrLoadingButton
+                  type="button"
+                  variant="primary"
+                  class="ld-ext-right mb-3"
+                  :label="$t('pages.profile.accountSecurity.savePassword')"
+                  :loading="loading"
+                  @click="onSavePassword" />
+
+                <div
+                  v-if="this.passwordReset"
+                  class="text-nowrap pb-2">
+                  {{ $t('pages.profile.accountSecurity.rememberPassword') }} <RouterLink to="PasswordReset">
+                    {{ $t('pages.profile.accountSecurity.resetPassword') }}
+                  </RouterLink>
+                </div>
+              </BCol>
+            </BRow>
+          </ValidationObserver>
+        </BForm>
+      </div>
+    </template>
   </FrListItem>
 </template>
 <script>
@@ -180,7 +180,6 @@ export default {
       showCurrent: true,
       inputCurrent: 'password',
       inputNew: 'password',
-      test: false,
     };
   },
   methods: {
@@ -197,8 +196,7 @@ export default {
     },
     displayError(error) {
       if (error.response.status === 403) {
-        this.$refs.provider.setErrors(['Incorrect password provided']);
-        this.test = this.$refs.provider.errors;
+        this.$refs.provider.setErrors([this.$t('common.policyValidationMessages.INCORRECT_CREDENTIALS')]);
       }
     },
     async onSavePassword() {

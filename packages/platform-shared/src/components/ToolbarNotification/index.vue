@@ -7,7 +7,7 @@ to such license between the licensee and ForgeRock AS. -->
   <BNavItemDropdown
     class="fr-notification-icon align-self-center mr-4"
     right>
-    <template slot="button-content">
+    <template v-slot:button-content>
       <i class="material-icons-outlined mr-2 md-24">
         notifications
       </i>

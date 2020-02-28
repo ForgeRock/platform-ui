@@ -24,41 +24,10 @@ exports[`Profile.vue Profile page loaded 1`] = `
           <!---->
           <div>
             <frlistgroup-stub title="Account Controls" subtitle="Download your account data or delete your account.">
-              <frlistitem-stub hoveritem="true">
-                <div class="d-inline-flex w-100">
-                  <div class="flex-grow-1">
-                    <div>
-                      Download your data
-                    </div> <small class="text-muted subtext">
-                      Download your account data.
-                    </small>
-                  </div> <a href="#" class="align-self-center flex-grow-2 text-right">
-                    Download
-                  </a>
-                </div>
-              </frlistitem-stub>
-              <frlistitem-stub hoveritem="true" role="button" tabindex="0">
-                <div class="d-inline-flex w-100">
-                  <div class="flex-grow-1">
-                    <div>
-                      Delete your account
-                    </div> <small class="text-muted subtext">
-                      Permanently delete your account.
-                    </small>
-                  </div> <a href="#" class="align-self-center flex-grow-2 text-right">
-                    Delete Account
-                  </a>
-                </div>
-              </frlistitem-stub>
+              <frlistitem-stub hoveritem="true"></frlistitem-stub>
+              <frlistitem-stub hoveritem="true" role="button" tabindex="0"></frlistitem-stub>
             </frlistgroup-stub>
             <bmodal-stub id="deleteAccountModal" size="md" buttonsize="" title="" titletag="h5" modalclass="fr-full-screen" headercloselabel="Close" canceltitle="Cancel" oktitle="OK" cancelvariant="outline-secondary" okvariant="primary">
-              <div class="d-flex w-100 h-100">
-                <h5 class="modal-title align-self-center text-center">
-                  Delete your account
-                </h5> <button type="button" aria-label="Close" class="close"><i class="material-icons-outlined font-weight-bolder md-24">
-                    close
-                  </i></button>
-              </div>
               <bcontainer-stub tag="div">
                 <h1 class="mb-4">
                   Please read this carefully.
@@ -82,16 +51,6 @@ exports[`Profile.vue Profile page loaded 1`] = `
                     Yes, I want to permanently delete my account
                   </label></div>
               </bcontainer-stub>
-              <div class="w-100">
-                <div class="float-right">
-                  <bbtn-stub target="_self" event="click" routertag="a" variant="outline-secondary mr-2" type="button" tag="button">
-                    Cancel
-                  </bbtn-stub>
-                  <bbtn-stub target="_self" disabled="true" event="click" routertag="a" variant="danger" type="button" tag="button">
-                    Delete Account
-                  </bbtn-stub>
-                </div>
-              </div>
             </bmodal-stub>
           </div>
         </btab-stub>

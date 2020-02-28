@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ToolbarNotification Toolbar Notification component loaded 1`] = `
-<bnavitemdropdown-stub text="" right="true" offset="0" role="menu" class="fr-notification-icon align-self-center mr-4"><template></template>
+<bnavitemdropdown-stub text="" right="true" offset="0" role="menu" class="fr-notification-icon align-self-center mr-4">
   <bdropdownheader-stub tag="header" class="border-bottom py-3">
     <div class="fr-notification-header"><span> (2)</span> <a href="#" class="float-right">
 
