@@ -7,100 +7,101 @@ to such license between the licensee and ForgeRock AS. -->
   <FrListItem
     :collapsible="true"
     :panel-shown="false">
-    <div
-      slot="list-item-header"
-      class="d-inline-flex w-100 media">
-      <div class="media-body align-self-center">
-        <h6 class="my-0">
-          {{ $t('pages.profile.accountSecurity.securityQuestions') }}
-        </h6>
-      </div>
-      <div class="d-flex ml-3 align-self-center">
-        <div
-          class="btn btn-link btn-sm float-right btn-cancel"
-          @click="clearComponent()"
-          ref="cancel">
-          {{ $t('common.cancel') }}
+    <template v-slot:list-item-header>
+      <div class="d-inline-flex w-100 media">
+        <div class="media-body align-self-center">
+          <h6 class="my-0">
+            {{ $t('pages.profile.accountSecurity.securityQuestions') }}
+          </h6>
         </div>
-        <div class="btn btn-link btn-sm float-right btn-edit">
-          {{ $t('common.reset') }}
+        <div class="d-flex ml-3 align-self-center">
+          <div
+            class="btn btn-link btn-sm float-right btn-cancel"
+            @click="clearComponent()"
+            ref="cancel">
+            {{ $t('common.cancel') }}
+          </div>
+          <div class="btn btn-link btn-sm float-right btn-edit">
+            {{ $t('common.reset') }}
+          </div>
         </div>
       </div>
-    </div>
+    </template>
 
-    <div
-      v-if="selected.length"
-      slot="list-item-collapse-body"
-      class="d-inline-flex w-100">
-      <BForm class="w-100">
-        <BRow>
-          <BCol sm="8">
-            <ValidationObserver ref="observer">
-              <fieldset
-                v-for="(select, id) in selected"
-                :key="id"
-                class="pb-3">
-                <label>
-                  {{ $t('user.kba.question') }} {{ select.index }}
-                </label>
-                <BFormSelect
-                  class="mb-3"
-                  v-model="select.selected"
-                  :options="selectOptions" />
-
-                <div
-                  v-if="select && select.selected === customIndex"
+    <template v-slot:list-item-collapse-body>
+      <div
+        v-if="selected.length"
+        class="d-inline-flex w-100">
+        <BForm class="w-100">
+          <BRow>
+            <BCol sm="8">
+              <ValidationObserver ref="observer">
+                <fieldset
+                  v-for="(select, id) in selected"
+                  :key="id"
                   class="pb-3">
-                  <label>{{ $t('pages.profile.accountSecurity.custom') }}</label>
-                  <ValidationProvider
-                    :name="$t('pages.profile.accountSecurity.custom') + ' ' + select.index"
-                    rules="required"
-                    v-slot="{ errors }">
-                    <BFormInput
-                      type="text"
-                      v-model.trim="select.custom"
+                  <label>
+                    {{ $t('user.kba.question') }} {{ select.index }}
+                  </label>
+                  <BFormSelect
+                    class="mb-3"
+                    v-model="select.selected"
+                    :options="selectOptions" />
+
+                  <div
+                    v-if="select && select.selected === customIndex"
+                    class="pb-3">
+                    <label>{{ $t('pages.profile.accountSecurity.custom') }}</label>
+                    <ValidationProvider
                       :name="$t('pages.profile.accountSecurity.custom') + ' ' + select.index"
-                      :class="[{'is-invalid': errors.length > 0}, 'form-control']" />
-                    <FrValidationError
-                      :validator-errors="errors"
-                      :field-name="$t('pages.profile.accountSecurity.custom') + ' ' + select.index" />
-                  </ValidationProvider>
-                </div>
+                      rules="required"
+                      v-slot="{ errors }">
+                      <BFormInput
+                        type="text"
+                        v-model.trim="select.custom"
+                        :name="$t('pages.profile.accountSecurity.custom') + ' ' + select.index"
+                        :class="[{'is-invalid': errors.length > 0}, 'form-control']" />
+                      <FrValidationError
+                        :validator-errors="errors"
+                        :field-name="$t('pages.profile.accountSecurity.custom') + ' ' + select.index" />
+                    </ValidationProvider>
+                  </div>
 
-                <div class="form-group mb-0">
-                  <label>{{ $t('user.kba.answer') }}</label>
-                  <ValidationProvider
-                    :name="$t('user.kba.answer') + ' ' + select.index"
-                    rules="required"
-                    v-slot="{ errors }">
-                    <BFormInput
-                      type="text"
-                      v-model.trim="select.answer"
+                  <div class="form-group mb-0">
+                    <label>{{ $t('user.kba.answer') }}</label>
+                    <ValidationProvider
                       :name="$t('user.kba.answer') + ' ' + select.index"
-                      :class="[{'is-invalid': errors.length > 0}, 'form-control']" />
-                    <FrValidationError
-                      :validator-errors="errors"
-                      :field-name="$t('user.kba.answer') + ' ' + select.index" />
-                  </ValidationProvider>
-                </div>
+                      rules="required"
+                      v-slot="{ errors }">
+                      <BFormInput
+                        type="text"
+                        v-model.trim="select.answer"
+                        :name="$t('user.kba.answer') + ' ' + select.index"
+                        :class="[{'is-invalid': errors.length > 0}, 'form-control']" />
+                      <FrValidationError
+                        :validator-errors="errors"
+                        :field-name="$t('user.kba.answer') + ' ' + select.index" />
+                    </ValidationProvider>
+                  </div>
 
-                <hr
-                  v-if="id !== selected.length - 1"
-                  class="mb-3 mt-4">
-              </fieldset>
+                  <hr
+                    v-if="id !== selected.length - 1"
+                    class="mb-3 mt-4">
+                </fieldset>
 
-              <FrLoadingButton
-                type="button"
-                variant="primary"
-                class="ld-ext-right mb-3"
-                :label="$t('user.kba.saveQuestions')"
-                :loading="loading"
-                @click="onSaveKBA" />
-            </ValidationObserver>
-          </BCol>
-        </BRow>
-      </BForm>
-    </div>
+                <FrLoadingButton
+                  type="button"
+                  variant="primary"
+                  class="ld-ext-right mb-3"
+                  :label="$t('user.kba.saveQuestions')"
+                  :loading="loading"
+                  @click="onSaveKBA" />
+              </ValidationObserver>
+            </BCol>
+          </BRow>
+        </BForm>
+      </div>
+    </template>
   </FrListItem>
 </template>
 

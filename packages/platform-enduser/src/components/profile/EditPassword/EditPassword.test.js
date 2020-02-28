@@ -24,10 +24,19 @@ describe('EditPassword.vue', () => {
     ValidationProvider,
     ValidationObserver,
   };
+  const incorrectPassword = 'Incorrect password provided';
   beforeEach(() => {
     wrapper = shallowMount(EditPassword, {
       localVue,
       sync: false,
+      mocks: {
+        $t: (searchValue) => {
+          const mapValues = {
+            'common.policyValidationMessages.INCORRECT_CREDENTIALS': incorrectPassword,
+          };
+          return mapValues[searchValue];
+        },
+      },
       computed: {
         userId: '1234',
         managedResource: 'test',
@@ -36,6 +45,14 @@ describe('EditPassword.vue', () => {
       i18n,
       stubs,
     });
+
+    wrapper.vm.$refs = {
+      provider: {
+        setErrors: (array) => {
+          wrapper.vm.$refs.provider.errors = array;
+        },
+      },
+    };
 
     jest.spyOn(EditPassword, 'data')
       .mockImplementation(() => ({
@@ -60,7 +77,7 @@ describe('EditPassword.vue', () => {
         status: 403,
       },
     });
-    expect(wrapper.vm.$refs.provider.errors).toEqual(['Incorrect password provided']);
+    expect(wrapper.vm.$refs.provider.errors).toEqual([incorrectPassword]);
   });
 
   it('revealNew method changes input state', () => {

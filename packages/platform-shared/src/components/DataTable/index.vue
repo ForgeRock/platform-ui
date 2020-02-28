@@ -90,26 +90,26 @@ to such license between the licensee and ForgeRock AS. -->
             :total-rows="totalRows"
             :per-page="perPage"
             aria-controls="my-table">
-            <i
-              slot="first-text"
-              class="material-icons material-icons-outlined md-24">
-              first_page
-            </i>
-            <i
-              slot="prev-text"
-              class="material-icons material-icons-outlined md-24">
-              chevron_left
-            </i>
-            <i
-              slot="next-text"
-              class="material-icons material-icons-outlined md-24">
-              chevron_right
-            </i>
-            <i
-              slot="last-text"
-              class="material-icons material-icons-outlined md-24">
-              last_page
-            </i>
+            <template v-slot:first-text>
+              <i class="material-icons material-icons-outlined md-24">
+                first_page
+              </i>
+            </template>
+            <template v-slot:prev-text>
+              <i class="material-icons material-icons-outlined md-24">
+                chevron_left
+              </i>
+            </template>
+            <template v-slot:next-text>
+              <i class="material-icons material-icons-outlined md-24">
+                chevron_right
+              </i>
+            </template>
+            <template v-slot:last-text>
+              <i class="material-icons material-icons-outlined md-24">
+                last_page
+              </i>
+            </template>
           </BPagination>
         </div>
       </div>

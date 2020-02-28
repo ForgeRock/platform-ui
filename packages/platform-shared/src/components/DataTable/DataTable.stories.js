@@ -40,24 +40,26 @@ const toolbarDropdownTemplate = `
     :initial-page="initialPage"
     @row-clicked="clicked"
     >
-    <div slot="toolbar" class="btn-toolbar justify-content-between">
-      <BButton
-      type="button"
-      variant="primary"
-      class="float-left">
-        <i class="material-icons-outlined">
-          add
-        </i> New User
-      </BButton>
-      <BButton
-      type="button"
-      variant="outline-primary"
-      class="float-left">
-        <i class="material-icons-outlined">
-          add
-        </i> New Option
-      </BButton>
-    </div>
+    <template v-slot:toolbar>
+      <div class="btn-toolbar justify-content-between">
+        <BButton
+        type="button"
+        variant="primary"
+        class="float-left">
+          <i class="material-icons-outlined">
+            add
+          </i> New User
+        </BButton>
+        <BButton
+        type="button"
+        variant="outline-primary"
+        class="float-left">
+          <i class="material-icons-outlined">
+            add
+          </i> New Option
+        </BButton>
+      </div>
+    </template>
   </FrTable>
 </div>`;
 
@@ -75,37 +77,38 @@ const toolbarCheckboxTemplate = `
     :initial-per-page="initialPerPage"
     :responsive="true"
     :initial-page="initialPage"
-    @update-selected="updateSelected"
-    >
-    <div slot="toolbar" class="btn-toolbar justify-content-between">
-      <div>
+    @update-selected="updateSelected">
+    <template v-slot:toolbar>
+      <div class="btn-toolbar justify-content-between">
+        <div>
+          <BButton
+          type="button"
+          variant="primary"
+          class="float-left mr-1">
+            <i class="material-icons-outlined">
+              add
+            </i> New User
+          </BButton>
+          <BButton
+          v-if="deleteVisible"
+          type="button"
+          variant="outline-primary"
+          class="float-left">
+            <i class="material-icons-outlined">
+              delete
+            </i> Delete
+          </BButton>
+        </div>
         <BButton
-        type="button"
-        variant="primary"
-        class="float-left mr-1">
-          <i class="material-icons-outlined">
-            add
-          </i> New User
-        </BButton>
-        <BButton
-        v-if="deleteVisible"
         type="button"
         variant="outline-primary"
         class="float-left">
           <i class="material-icons-outlined">
-            delete
-          </i> Delete
+            add
+          </i> New Option
         </BButton>
       </div>
-      <BButton
-      type="button"
-      variant="outline-primary"
-      class="float-left">
-        <i class="material-icons-outlined">
-          add
-        </i> New Option
-      </BButton>
-    </div>
+    </template>
   </FrTable>
 </div>`;
 
@@ -121,8 +124,7 @@ const slotExampleTemplate = `
     :fields="fields"
     :pagination="pagination"
     :initial-per-page="initialPerPage"
-    :initial-page="initialPage"
-    >
+    :initial-page="initialPage">
     <template v-slot:cell(avatar)=data > 
       <div class="media">
         <img src="img/avatar.f75f91dd.png" alt="Carl Smith" width="44" height="44" class="mr-4 align-self-center rounded-circle">

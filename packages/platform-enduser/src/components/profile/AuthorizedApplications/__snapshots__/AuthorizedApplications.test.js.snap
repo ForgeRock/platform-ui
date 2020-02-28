@@ -6,24 +6,7 @@ exports[`AuthorizedApplications.vue Authorized Applications loads 1`] = `
     No Authorized Applications
   </blistgroupitem-stub>
   <bmodal-stub id="authAppConfirmationModal" cancel-variant="outline-secondary">
-    <div class="d-flex w-100 h-100">
-      <h6 class="my-0">
-        Confirm
-      </h6> <button type="button" aria-label="Close" class="close"><i class="material-icons-outlined font-weight-bolder md-24 mb-1">
-          close
-        </i></button>
-    </div>
     Are you sure you want to remove '' from your list of authorized applications?
-    <div>
-      <div class="float-right">
-        <bbtn-stub variant="outline-secondary mr-2">
-          Cancel
-        </bbtn-stub>
-        <bbtn-stub type="button" variant="danger">
-          Remove
-        </bbtn-stub>
-      </div>
-    </div>
   </bmodal-stub>
 </frlistgroup-stub>
 `;

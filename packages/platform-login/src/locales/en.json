@@ -27,7 +27,7 @@
   },
   "pages": {
     "selfservice": {
-      "captchaError": ""
+      "captchaError": "Error loading reCaptcha"
     }
   }
 }

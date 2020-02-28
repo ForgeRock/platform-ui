@@ -2,38 +2,9 @@
 
 exports[`Sharing.vue Resources page loaded 1`] = `
 <bmodal-stub id="shareModal" size="md" buttonsize="" title="" titletag="h5" headercloselabel="Close" canceltitle="Cancel" oktitle="OK" cancelvariant="outline-secondary" okvariant="primary" newscopes="[object Object]" value="test">
-  <div class="d-flex w-100 h-100">
-    <div class="media">
-      <div class="d-flex mr-3 align-self-center">
-        <frfallbackimage-stub src="" width="" alt="" fallback="description"></frfallbackimage-stub>
-      </div>
-      <div class="media-body align-self-center">
-        <h6 class="my-0">
-          test resource
-        </h6> <small class="text-muted">
-          Shared with 1 person
-        </small>
-      </div>
-    </div> <button type="button" aria-label="Close" class="close"><i class="material-icons-outlined font-weight-bolder md-24 mb-1">
-        close
-      </i></button>
-  </div>
   <div class="form-group">
     <binputgroup-stub tag="div">
       <bforminput-stub placeholder="Share with..."></bforminput-stub>
-      <bdropdown-stub text="Can view" offset="0" toggletext="Toggle Dropdown" size="sm" variant="outline-secondary" toggletag="button" splitbuttontype="button" role="menu" boundary="scrollParent" slot="append">
-        <form class="px-4 py-2">
-          <div class="form-check mb-1"><input type="checkbox" id="viewCheck" class="form-check-input mr-1"> <label for="viewCheck" class="form-check-label">
-              view
-            </label></div>
-          <div class="form-check mb-1"><input type="checkbox" id="viewCheck" class="form-check-input mr-1"> <label for="viewCheck" class="form-check-label">
-              comment
-            </label></div>
-          <div class="form-check mb-1"><input type="checkbox" id="viewCheck" class="form-check-input mr-1"> <label for="viewCheck" class="form-check-label">
-              download
-            </label></div>
-        </form>
-      </bdropdown-stub>
     </binputgroup-stub>
   </div>
   <div class="">
@@ -46,7 +17,7 @@ exports[`Sharing.vue Resources page loaded 1`] = `
           </h6>
         </div>
         <div class="d-flex ml-3 align-self-center">
-          <bdropdown-stub id="ddown1" text="Can view" right="true" offset="0" toggletext="Toggle Dropdown" size="sm" variant="link" toggletag="button" toggleclass="dropdown-toggle" splitbuttontype="button" role="menu" boundary="scrollParent"><template class="dropdown-toggle"></template>
+          <bdropdown-stub id="ddown1" text="Can view" right="true" offset="0" toggletext="Toggle Dropdown" size="sm" variant="link" toggletag="button" toggleclass="dropdown-toggle" splitbuttontype="button" role="menu" boundary="scrollParent">
             <form class="px-4 py-2">
               <div class="form-check mb-1"><input type="checkbox" id="viewCheck" class="form-check-input mr-1"> <label for="viewCheck" class="form-check-label">
                   view
@@ -66,14 +37,6 @@ exports[`Sharing.vue Resources page loaded 1`] = `
         </div>
       </li>
     </ul>
-  </div>
-  <div class="w-100">
-    <div>
-      <bbutton-stub target="_self" event="click" routertag="a" variant="link" type="button" tag="button">
-        Unshare all
-      </bbutton-stub>
-      <!---->
-    </div>
   </div>
 </bmodal-stub>
 `;
