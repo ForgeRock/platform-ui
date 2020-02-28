@@ -30,11 +30,13 @@ const template = `
     <FrListGroup
       :title="title"
       :subtitle="subtitle">
-      <div slot="list-group-header" class="pl-3">
-        <img src="images/id-card.svg" />
-        <h4 style="display: inline" class="pl-2">{{title}}</h4>
-        - {{subtitle}}
-      </div>
+      <template v-slot:list-group-header>
+        <div class="pl-3">
+          <img src="images/id-card.svg" />
+          <h4 style="display: inline" class="pl-2">{{title}}</h4>
+          - {{subtitle}}
+        </div>
+      </template>
     </FrListGroup>
     
     <div class="sg_masthead">
@@ -47,23 +49,23 @@ const template = `
         :collapsible="true"
         :panelShown="true"
         :hoverItem="false">
-        <div slot="list-item-header">
+        <template v-slot:list-item-header>
           Item 1
-        </div>
-        <div slot="list-item-collapse-body">
+        </template>
+        <template v-slot:list-item-collapse-body>
             Additional info
-        </div>
+        </template>
       </FrListItem>
       <FrListItem
         :collapsible="true"
         :panelShown="false"
         :hoverItem="false">
-        <div slot="list-item-header">
+        <template v-slot:list-item-header>
           Item 2
-        </div>
-        <div slot="list-item-collapse-body">
+        </template>
+        <template v-slot:list-item-collapse-body>
             Additional info
-        </div>
+        </template>
       </FrListItem>
     </FrListGroup>
   </div>

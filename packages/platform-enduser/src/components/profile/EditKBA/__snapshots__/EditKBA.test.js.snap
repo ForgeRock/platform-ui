@@ -1,22 +1,3 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`EditKBA.vue AccountSecurity page loaded 1`] = `
-<frlistitem-stub collapsible="true">
-  <div class="d-inline-flex w-100 media">
-    <div class="media-body align-self-center">
-      <h6 class="my-0">
-        Security Questions
-      </h6>
-    </div>
-    <div class="d-flex ml-3 align-self-center">
-      <div class="btn btn-link btn-sm float-right btn-cancel">
-        Cancel
-      </div>
-      <div class="btn btn-link btn-sm float-right btn-edit">
-        Reset
-      </div>
-    </div>
-  </div>
-  <!---->
-</frlistitem-stub>
-`;
+exports[`EditKBA.vue AccountSecurity page loaded 1`] = `<frlistitem-stub collapsible="true"></frlistitem-stub>`;

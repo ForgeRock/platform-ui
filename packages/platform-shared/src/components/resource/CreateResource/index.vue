@@ -8,22 +8,22 @@ to such license between the licensee and ForgeRock AS. -->
     id="createResourceModal"
     @shown="focusField"
     cancel-variant="outline-secondary">
-    <div
-      slot="modal-header"
-      class="d-flex w-100 h-100">
-      <h5 class="modal-title align-self-center text-center">
-        {{ $t('common.new') }} {{ resourceName }}
-      </h5>
-      <button
-        type="button"
-        aria-label="Close"
-        class="close"
-        @click="hideModal">
-        <i class="material-icons-outlined font-weight-bolder">
-          clear
-        </i>
-      </button>
-    </div>
+    <template v-slot:modal-header>
+      <div class="d-flex w-100 h-100">
+        <h5 class="modal-title align-self-center text-center">
+          {{ $t('common.new') }} {{ resourceName }}
+        </h5>
+        <button
+          type="button"
+          aria-label="Close"
+          class="close"
+          @click="hideModal">
+          <i class="material-icons-outlined font-weight-bolder">
+            clear
+          </i>
+        </button>
+      </div>
+    </template>
     <BRow>
       <BCol>
         <!-- Creating resource currently only supports String, Number and Boolean -->
@@ -108,43 +108,43 @@ to such license between the licensee and ForgeRock AS. -->
               v-if="passwordCheck"
               :policy-api="`${resourceType}/${resourceName}/policyTest`"
               v-model="formFields['password']">
-              <BFormGroup
-                class="mb-3"
-                slot="custom-input">
-                <label for="createPassword">
-                  {{ $t('pages.access.password') }}
-                </label>
-                <div class="form-label-password form-label-group mb-0">
-                  <ValidationProvider
-                    mode="aggressive"
-                    name="password"
-                    rules="required|policy">
-                    <BFormInput
-                      id="createPassword"
-                      autocomplete="password"
-                      :type="passwordInputType"
-                      v-model="formFields['password']"
-                      name="password" />
-                  </ValidationProvider>
-                  <div class="input-group-append">
-                    <button
-                      @click="revealNew"
-                      class="btn btn-secondary"
-                      type="button">
-                      <i
-                        v-if="showPassword"
-                        class="material-icons-outlined">
-                        visibility
-                      </i>
-                      <i
-                        v-else
-                        class="material-icons-outlined">
-                        visibility_off
-                      </i>
-                    </button>
+              <template v-slot:custom-input>
+                <BFormGroup class="mb-3">
+                  <label for="createPassword">
+                    {{ $t('pages.access.password') }}
+                  </label>
+                  <div class="form-label-password form-label-group mb-0">
+                    <ValidationProvider
+                      mode="aggressive"
+                      name="password"
+                      rules="required|policy">
+                      <BFormInput
+                        id="createPassword"
+                        autocomplete="password"
+                        :type="passwordInputType"
+                        v-model="formFields['password']"
+                        name="password" />
+                    </ValidationProvider>
+                    <div class="input-group-append">
+                      <button
+                        @click="revealNew"
+                        class="btn btn-secondary"
+                        type="button">
+                        <i
+                          v-if="showPassword"
+                          class="material-icons-outlined">
+                          visibility
+                        </i>
+                        <i
+                          v-else
+                          class="material-icons-outlined">
+                          visibility_off
+                        </i>
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </BFormGroup>
+                </BFormGroup>
+              </template>
             </FrPolicyPasswordInput>
           </ValidationObserver>
         </BForm>
@@ -156,24 +156,24 @@ to such license between the licensee and ForgeRock AS. -->
       </BCol>
     </BRow>
 
-    <div
-      slot="modal-footer"
-      class="w-100">
-      <div class="float-right">
-        <BButton
-          @click.prevent="hideModal"
-          variant="link">
-          {{ $t('common.cancel') }}
-        </BButton>
-        <BButton
-          type="button"
-          variant="primary"
-          @click="saveForm"
-          :disabled="formFields.length === 0">
-          {{ $t('common.save') }}
-        </BButton>
+    <template v-slot:modal-footer>
+      <div class="w-100">
+        <div class="float-right">
+          <BButton
+            @click.prevent="hideModal"
+            variant="link">
+            {{ $t('common.cancel') }}
+          </BButton>
+          <BButton
+            type="button"
+            variant="primary"
+            @click="saveForm"
+            :disabled="formFields.length === 0">
+            {{ $t('common.save') }}
+          </BButton>
+        </div>
       </div>
-    </div>
+    </template>
   </BModal>
 </template>
 

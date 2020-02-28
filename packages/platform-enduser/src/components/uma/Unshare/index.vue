@@ -9,24 +9,24 @@ to such license between the licensee and ForgeRock AS. -->
     ref="fsModal"
     cancel-variant="outline-secondary"
     @keydown.enter.native.prevent="unshare">
-    <div
-      slot="modal-header"
-      class="d-flex w-100 h-100">
-      <h6 class="my-0">
-        {{ $t('pages.uma.resources.unshareResource', {resourceName: resourceName}) }}
-      </h6>
-      <button
-        type="button"
-        aria-label="Close"
-        class="close"
-        @click="hideModal">
-        <i class="material-icons-outlined font-weight-bolder md-24 mb-1">
-          close
-        </i>
-      </button>
-    </div>
+    <template v-slot:modal-header>
+      <div class="d-flex w-100 h-100">
+        <h6 class="my-0">
+          {{ $t('pages.uma.resources.unshareResource', {resourceName: resourceName}) }}
+        </h6>
+        <button
+          type="button"
+          aria-label="Close"
+          class="close"
+          @click="hideModal">
+          <i class="material-icons-outlined font-weight-bolder md-24 mb-1">
+            close
+          </i>
+        </button>
+      </div>
+    </template>
     {{ $t('pages.uma.resources.warningMessage') }}
-    <div slot="modal-footer">
+    <template v-slot:modal-footer>
       <div class="float-right">
         <BBtn
           variant="outline-secondary mr-2"
@@ -40,7 +40,7 @@ to such license between the licensee and ForgeRock AS. -->
           {{ $t('pages.uma.resources.unshare') }}
         </BBtn>
       </div>
-    </div>
+    </template>
   </BModal>
 </template>
 

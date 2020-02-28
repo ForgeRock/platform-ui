@@ -198,6 +198,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    lastPage: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
@@ -213,11 +217,6 @@ export default {
       filter: '',
       resourceToDeleteId: '',
     };
-  },
-  computed: {
-    lastPage() {
-      return this.tableData.length <= 10;
-    },
   },
   mounted() {
     this.resourceName = this.getResourceName(this.routerParameters.resourceName);

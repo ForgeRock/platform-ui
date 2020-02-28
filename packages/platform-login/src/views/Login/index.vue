@@ -5,56 +5,53 @@ or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
   <FrCenterCard :show-logo="true">
-    <div
-      v-if="!loading"
-      slot="center-card-header">
-      <h2 class="h2">
-        {{ header }}
-      </h2>
-      <p
-        class="text-center mb-0"
-        v-html="description" />
-    </div>
-
-    <BCardBody
-      v-show="!loading"
-      slot="center-card-body">
-      <div
-        id="callbacksPanel"
-        ref="callbacksPanel"
-        @keyup.enter="nextStep" />
-      <BButton
-        v-show="showNextButton"
-        class="btn btn btn-block btn-lg btn-primary mt-3"
-        type="submit"
-        variant="primary"
-        ref="callbackSubmitButton"
-        @click="nextStep">
-        {{ $t('login.next') }}
-      </BButton>
-      <div
-        v-if="loginFailure"
-        class="h-100 d-flex">
-        <div class="m-auto fr-center-card">
-          <p>{{ errorMessage }}</p>
-          <a
-            @click="reloadTree"
-            href="#/">
-            {{ $t('login.tryAgain') }}
-          </a>
-        </div>
+    <template v-slot:center-card-header>
+      <div v-if="!loading">
+        <h2 class="h2">
+          {{ header }}
+        </h2>
+        <p
+          class="text-center mb-0"
+          v-html="description" />
       </div>
-    </BCardBody>
+    </template>
 
-    <BCardBody
-      v-show="loading"
-      slot="center-card-body">
-      <div class="h-100 d-flex">
-        <div class="m-auto fr-center-card">
-          <BounceLoader :color="loadingColor" />
+    <template v-slot:center-card-body>
+      <BCardBody v-show="!loading">
+        <div
+          id="callbacksPanel"
+          ref="callbacksPanel"
+          @keyup.enter="nextStep" />
+        <BButton
+          v-show="showNextButton"
+          class="btn btn btn-block btn-lg btn-primary mt-3"
+          type="submit"
+          variant="primary"
+          ref="callbackSubmitButton"
+          @click="nextStep">
+          {{ $t('login.next') }}
+        </BButton>
+        <div
+          v-if="loginFailure"
+          class="h-100 d-flex">
+          <div class="m-auto fr-center-card">
+            <p>{{ errorMessage }}</p>
+            <a
+              @click="reloadTree"
+              href="#/">
+              {{ $t('login.tryAgain') }}
+            </a>
+          </div>
         </div>
-      </div>
-    </BCardBody>
+      </BCardBody>
+      <BCardBody v-show="loading">
+        <div class="h-100 d-flex">
+          <div class="m-auto fr-center-card">
+            <BounceLoader :color="loadingColor" />
+          </div>
+        </div>
+      </BCardBody>
+    </template>
   </FrCenterCard>
 </template>
 
@@ -84,6 +81,7 @@ import TextOutputCallback from '@/components/callbacks/TextOutputCallback';
 import SuspendedTextOutputCallback from '@/components/callbacks/SuspendedTextOutputCallback';
 import styles from '@/scss/main.scss';
 import TermsAndConditionsCallback from '@/components/callbacks/TermsAndConditionsCallback';
+import i18n from '@/i18n';
 
 export default {
   name: 'Login',
@@ -129,6 +127,7 @@ export default {
       const ComponentClass = Vue.extend(component);
       const instance = new ComponentClass({
         propsData,
+        i18n,
       });
 
       instance.$mount();

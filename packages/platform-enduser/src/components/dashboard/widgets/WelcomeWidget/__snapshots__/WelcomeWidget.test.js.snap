@@ -1,3 +1,3 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Dashboard.vue Welcome widget loaded 1`] = `<bjumbotron-stub headertag="h1" headerlevel="3" leadtag="p" tag="div" class="text-center"><template></template> <template></template></bjumbotron-stub>`;
+exports[`Dashboard.vue Welcome widget loaded 1`] = `<bjumbotron-stub headertag="h1" headerlevel="3" leadtag="p" tag="div" class="text-center"></bjumbotron-stub>`;

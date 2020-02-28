@@ -14,7 +14,7 @@ Vue.use(VueI18n);
 function loadLocaleMessages() {
   const locales = require.context('./locales', true, /[A-Za-z0-9-_,\s]+\.json$/i);
   // Can't use workspace symlink due to jest issues
-  const sharedLocals = require.context('../../platform-shared/src/locales', true, /[A-Za-z0-9-_,\s]+\.json$/i);
+  const sharedLocales = require.context('../../platform-shared/src/locales', true, /[A-Za-z0-9-_,\s]+\.json$/i);
   const messages = {};
 
   locales.keys().forEach((key) => {
@@ -24,8 +24,8 @@ function loadLocaleMessages() {
       const generatedTranslation = locales(key);
 
       // Check for shared local and merge in if it exists
-      if (sharedLocals(key)) {
-        merge(generatedTranslation, sharedLocals(key));
+      if (sharedLocales(key)) {
+        merge(generatedTranslation, sharedLocales(key));
       }
 
       messages[locale] = generatedTranslation;
