@@ -68,7 +68,7 @@
     "csvTemplate": "CSV Template",
     "csvFile": "CSV File",
     "matchUsing": "Match Using",
-    "matchUsingHelp": "Select one or more properties in the managed object used to match users.",
+    "matchUsingHelp": "Select one or more properties for unique record match.",
     "viewDetails": "View Details",
     "complete": "Complete",
     "error": "Error",
