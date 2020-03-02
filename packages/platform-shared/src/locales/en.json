@@ -37,6 +37,7 @@
             "emailAddress": "Email address"
         },
         "previous": "Previous",
+        "typeToSearch" : "Type to search",
         "advancedOptions": "advanced options",
         "policyValidationMessages": {
             "VALID_PHONE_FORMAT": "Must be a valid phone number",
