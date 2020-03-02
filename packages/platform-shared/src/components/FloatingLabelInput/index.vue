@@ -22,22 +22,39 @@ to such license between the licensee and ForgeRock AS. -->
         @keyup="validator"
         ref="input"
         :name="fieldName" />
-
-      <select
-        v-else-if="inputType === 'select'"
-        ref="input"
-        :id="id"
-        :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control custom-select']"
-        v-model="inputValue"
+      <MultiSelect
+        v-else-if="inputType === 'multiselect'"
+        v-model="multiselectInputValue"
         :name="fieldName"
-        :disabled="disabled">
-        <option
-          v-for="option in selectOptions"
-          :key="option.value"
-          :value="option.value">
-          {{ option.text }}
-        </option>
-      </select>
+        label="text"
+        track-by="value"
+        :disabled="disabled"
+        :options="multiselectInputOptions"
+        :show-labels="false"
+        :hide-selected="true"
+        :multiple="true"
+        :taggable="false"
+        :close-on-select="false"
+        :searchable="multiselectInputOptions.length > 9"
+        @open="setEmptyMultiSelect(false)"
+        @close="setEmptyMultiSelect(multiselectInputValue.length === 0)"
+        :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control p-0', {'h-25': floatLabels || !this.label }, {'no-multiselect-label': !this.label }]"
+        placeholder="Type to search" />
+      <MultiSelect
+        v-else-if="inputType === 'select'"
+        v-model="multiselectInputValue"
+        :name="fieldName"
+        label="text"
+        track-by="value"
+        :disabled="disabled"
+        :options="multiselectInputOptions"
+        :show-labels="false"
+        :taggable="false"
+        :allow-empty="false"
+        @open="setEmptyMultiSelect(false)"
+        @close="setEmptyMultiSelect(multiselectInputValue.length === 0)"
+        :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control p-0', {'h-25': floatLabels || !this.label }, {'no-multiselect-label': !this.label }]"
+        placeholder="Type to search" />
       <input
         v-else
         :type="showPassword ? 'text' : inputType"
@@ -72,8 +89,10 @@ to such license between the licensee and ForgeRock AS. -->
       </div>
 
       <label
+        v-if="label"
         :hidden="hideLabel"
-        :for="id">
+        :for="id"
+        class="no-pointer-events">
         {{ label }}
       </label>
     </div>
@@ -97,8 +116,14 @@ import {
   delay,
   bind,
   noop,
+  has,
+  map,
+  find,
+  isArray,
+  isEmpty,
 } from 'lodash';
 import ValidationErrorList from '@forgerock/platform-shared/src/components/ValidationErrorList/';
+import MultiSelect from 'vue-multiselect';
 /**
  * Input with a floating label in the center, this will move when a user types into the input (example can be found on the default login page).
  * Adds in error display functionality below field in the form of the ValidationErrorList component.
@@ -107,6 +132,7 @@ export default {
   name: 'FloatingLabelInput',
   components: {
     FrValidationError: ValidationErrorList,
+    MultiSelect,
   },
   props: {
     /**
@@ -155,7 +181,7 @@ export default {
      * Value field will start with.
      */
     defaultValue: {
-      type: String,
+      type: [String, Object, Number],
       default: '',
     },
     /**
@@ -192,7 +218,7 @@ export default {
      */
     selectOptions: {
       type: [Array, Object],
-      default: () => {},
+      default: () => [],
       required: false,
     },
     /**
@@ -213,6 +239,7 @@ export default {
   data() {
     return {
       inputValue: '',
+      multiselectInputValue: null,
       id: null,
       floatLabels: false,
       hideLabel: true,
@@ -220,6 +247,22 @@ export default {
       showPassword: false,
       errorMessages: [],
     };
+  },
+  computed: {
+    multiselectInputOptions() {
+      if (this.selectOptions.length && has(this.selectOptions[0], 'value')) {
+        return this.selectOptions;
+      }
+
+      return map(this.selectOptions, (option) => {
+        const retVal = {
+          text: option,
+          value: option,
+        };
+
+        return retVal;
+      });
+    },
   },
   beforeMount() {
     // eslint-disable-next-line no-underscore-dangle
@@ -241,7 +284,12 @@ export default {
       this.hideLabel = false;
     }, this), 400);
 
-    if (this.defaultValue) {
+    if (this.inputType === 'select' && this.defaultValue) {
+      this.multiselectInputValue = find(this.multiselectInputOptions, { value: this.defaultValue });
+    } else if (this.inputType === 'multiselect' && this.defaultValue) {
+      const valuesArray = this.defaultValue.split(',');
+      this.multiselectInputValue = map(valuesArray, (val) => find(this.multiselectInputOptions, { value: val }));
+    } else if (this.defaultValue) {
       this.inputValue = this.defaultValue;
     }
 
@@ -253,10 +301,22 @@ export default {
     if (this.autofocus === 'true') {
       this.$refs.input.focus();
     }
+
+    if (isEmpty(this.defaultValue) && (this.inputType === 'multiselect' || this.inputType === 'select')) {
+      this.setEmptyMultiSelect(true);
+    }
   },
   methods: {
     revealText() {
       this.showPassword = !this.showPassword;
+    },
+    setEmptyMultiSelect(multiselectIsEmpty) {
+      console.log(multiselectIsEmpty);
+      if (multiselectIsEmpty) {
+        this.$el.querySelector('.multiselect__tags').style.display = 'none';
+      } else {
+        this.$el.querySelector('.multiselect__tags').style.display = '';
+      }
     },
   },
   watch: {
@@ -269,6 +329,20 @@ export default {
       }
       if (this.callback && this.callback.setInputValue) {
         this.callback.setInputValue(newVal);
+      }
+    },
+    multiselectInputValue(newVal) {
+      this.setEmptyMultiSelect(isEmpty(newVal));
+
+      if (isArray(newVal)) {
+        this.floatLabels = newVal.length > 0 && this.label;
+        this.$emit('input', map(newVal, 'value'));
+      } else if (newVal === null) {
+        this.floatLabels = false;
+        this.$emit('input', '');
+      } else {
+        this.floatLabels = newVal.value.length > 0 && this.label;
+        this.$emit('input', newVal.value);
       }
     },
     defaultValue(newVal) {
@@ -389,5 +463,120 @@ select.custom-select ~ label {
   padding-bottom: $input-btn-padding-y / 3;
   font-size: 12px;
   color: $label-color;
+}
+
+/deep/ {
+  .no-pointer-events {
+    pointer-events: none;
+  }
+
+  .multiselect__tag,
+  .multiselect__option--highlight {
+    background-color: $light-blue;
+    color: #35495e;
+    line-height: 1;
+  }
+
+  .multiselect__tags {
+    min-height: 55px;
+    padding: 1.5rem 50px 0 0.75rem;
+    font-size: 0.875rem;
+
+    .multiselect__placeholder {
+      font-size: 1rem;
+      color: $gray-600;
+      padding-top: 0;
+    }
+
+    .multiselect__tag-icon::after {
+      color: $gray-700;
+    }
+
+    .multiselect__tag-icon:hover {
+      background-color: $light-blue;
+    }
+  }
+
+  .no-multiselect-label .multiselect__tags {
+    padding-top: 1rem !important;
+  }
+
+  .multiselect__select {
+    width: 50px;
+    height: 48px;
+    right: 1px;
+    padding: 4px 8px;
+  }
+  // disabled stylings
+  .multiselect--disabled {
+    opacity: 1;
+
+    .multiselect__tags {
+      border-color: #c0c9d5;
+    }
+
+    .multiselect__single,
+    .multiselect__select,
+    .multiselect__tags {
+      background-color: #f6f8fa;
+    }
+  }
+
+  .multiselect ~ label {
+    width: calc(100% - 40px) !important;
+  }
+
+  .multiselect__tag {
+    margin-top: 0.25rem;
+  }
+
+  .multiselect.multiselect--active ~ label {
+    z-index: 51;
+  }
+
+  span.multiselect__single {
+    margin-left: -5px;
+  }
+  /* stylelint-disable */
+  .multiselect__option--selected {
+    background: $light-blue;
+    color: inherit;
+    font-weight: inherit;
+  }
+
+  .multiselect__option--selected::after,
+  .multiselect__option.multiselect__option--selected.multiselect__option--highlight::after {
+    content: 'done';
+    font-family: 'Material Icons Outlined';
+    font-weight: normal;
+    font-style: normal;
+    line-height: 44px;
+    font-size: 16px;
+    height: 44px;
+    color: $success;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .multiselect__option.multiselect__option--selected.multiselect__option--highlight,
+  .multiselect__option.multiselect__option--selected.multiselect__option--highlight::after {
+    background: $light-blue;
+    color: inherit;
+  }
+
+  .multiselect__option.multiselect__option--selected.multiselect__option--highlight::after {
+    color: $success;
+  }
+
+  .multiselect__option.multiselect__option--selected.multiselect__option--highlight::after {
+    height: 16px;
+  }
+  /* stylelint-enable */
 }
 </style>
