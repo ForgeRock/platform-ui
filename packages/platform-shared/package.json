@@ -178,7 +178,8 @@
         "indeterminate",
         "last-child",
         "last-of-type",
-        "not"
+        "not",
+        "nth-last-child"
       ],
       "selector-pseudo-class-no-unknown": [
         true,
