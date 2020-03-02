@@ -12,7 +12,7 @@ to such license between the licensee and ForgeRock AS. -->
         close
       </i>
     </template>
-    <i class="material-icons-outlined mr-2 pt-1">
+    <i class="material-icons-outlined mr-2">
       {{ alertIcon }}
     </i>
     <!-- @slot Text that the alert will contain. -->
@@ -105,6 +105,7 @@ export default {
 <style lang="scss" scoped>
   .fr-alert {
     display: flex;
+    line-height: 1.25;
 
     &.alert-primary {
       border-left: 5px solid $primary;

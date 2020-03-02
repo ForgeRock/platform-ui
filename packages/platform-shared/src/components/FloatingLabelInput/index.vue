@@ -4,17 +4,18 @@ Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
-  <div class="mb-3">
+  <div class="mb-3 w-100">
     <div
       :class="[{'form-label-password': reveal}, 'form-label-group', 'mb-0']"
       ref="floatingLabelGroup">
+      <!-- @slot allows buttons to be prepended -->
+      <slot name="prepend" />
       <textarea
         v-if="inputType === 'textarea'"
         :id="id"
         :rows="rows"
         :cols="cols"
         :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control']"
-        :autofocus="autofocus"
         v-model="inputValue"
         :placeholder="label"
         :data-vv-as="label"
@@ -64,7 +65,6 @@ to such license between the licensee and ForgeRock AS. -->
         :type="showPassword ? 'text' : inputType"
         :id="id"
         :class="[{'polyfill-placeholder': floatLabels, 'is-invalid': errorMessages && errorMessages.length }, 'form-control']"
-        :autofocus="autofocus"
         v-model="inputValue"
         :placeholder="label"
         :data-vv-as="label"
@@ -73,27 +73,26 @@ to such license between the licensee and ForgeRock AS. -->
         ref="input"
         :name="fieldName">
       <!-- @slot allows buttons to be appended -->
-      <slot name="append">
-        <div
-          v-if="reveal"
-          class="input-group-append">
-          <button
-            @click="revealText"
-            class="btn btn-secondary"
-            type="button"
-            name="revealButton"
-            @keyup.enter="$emit('enter')">
-            <i class="material-icons material-icons-outlined">
-              <template v-if="showPassword">
-                visibility_off
-              </template>
-              <template v-else>
-                visibility
-              </template>
-            </i>
-          </button>
-        </div>
-      </slot>
+      <slot name="append" />
+      <div
+        v-if="reveal"
+        class="input-group-append">
+        <button
+          @click="revealText"
+          class="btn btn-secondary"
+          type="button"
+          name="revealButton"
+          @keyup.enter="$emit('enter')">
+          <i class="material-icons material-icons-outlined">
+            <template v-if="showPassword">
+              visibility_off
+            </template>
+            <template v-else>
+              visibility
+            </template>
+          </i>
+        </button>
+      </div>
       <label
         v-if="label"
         :hidden="hideLabel"
@@ -354,14 +353,6 @@ export default {
 
 <style lang="scss" scoped>
 .form-label-password.form-label-group {
-  display: flex;
-
-  .form-control {
-    flex-grow: 1;
-    border-bottom-right-radius: 0;
-    border-top-right-radius: 0;
-  }
-
   .input-group-append {
     flex-grow: 1;
 
@@ -385,8 +376,35 @@ export default {
 }
 
 .form-label-group {
+  display: flex;
   position: relative;
   margin-bottom: 1rem;
+
+  .form-control {
+    flex-grow: 1;
+  }
+
+  .input-group-prepend:not(:first-child) .input-group-text,
+  .form-control:not(:first-child),
+  .input-group-append .input-group-text,
+  .input-group-append button {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  // 2nd to last since <label> is the last child
+  .input-group-prepend .input-group-text,
+  .form-control:not(:nth-last-child(2)),
+  .input-group-append:not(:nth-last-child(2)) .input-group-text,
+  .input-group-append:not(:nth-last-child(2)) button {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .input-group-text {
+    padding-left: $btn-padding-x;
+    padding-right: $btn-padding-x;
+  }
 }
 
 //-->
@@ -420,7 +438,8 @@ export default {
   color: transparent;
 }
 
-.form-label-group .polyfill-placeholder {
+.form-label-group .polyfill-placeholder,
+.form-label-group .custom-select {
   padding-top: $input-btn-padding-y + $input-btn-padding-y * (2 / 3);
   padding-bottom: $input-btn-padding-y / 3;
   color: $input-color;
