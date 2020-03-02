@@ -3,9 +3,9 @@
 exports[`FloatingLabelInput.vue Floating Label Input component loaded 1`] = `
 <div class="mb-3">
   <div class="form-label-group mb-0"><input id="floatingLabelInput3" autofocus="autofocus" placeholder="" data-vv-as="" name="test" type="" class="form-control">
-    <!----> <label hidden="hidden" for="floatingLabelInput3">
-
-    </label></div>
+    <!---->
+    <!---->
+  </div>
   <frvalidationerror-stub validatorerrors="" fieldname="test"></frvalidationerror-stub>
   <!---->
 </div>
