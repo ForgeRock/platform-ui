@@ -20,7 +20,7 @@ to such license between the licensee and ForgeRock AS. -->
             <FrSearchInput
               @search="search"
               @clear="clear"
-              :placeholder="$t('common.typeSearch')"
+              :placeholder="$t('common.search')"
               v-model="filter"
             />
           </BCol>
