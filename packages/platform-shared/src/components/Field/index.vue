@@ -100,7 +100,7 @@ to such license between the licensee and ForgeRock AS. -->
       :allow-edit-tags="true"
       :tags.sync="field.value"
       :class="{'fr-error': errors.length}" />
-    <KeyValueList
+    <FrKeyValueList
       v-else-if="field.type === 'object'"
       v-model="field.value"
       @input="checkRequiredInput(field)"
@@ -150,7 +150,7 @@ export default {
   name: 'FrField',
   components: {
     BPopover,
-    KeyValueList,
+    FrKeyValueList: KeyValueList,
     Multiselect,
     ToggleButton,
     VueTagsInput,
@@ -341,7 +341,7 @@ export default {
 
   /deep/ button {
     border: 1px solid $danger !important;
-    border-left-color: #c0c9d5 !important;
+    border-left-color: $gray-400 !important;
   }
 }
 

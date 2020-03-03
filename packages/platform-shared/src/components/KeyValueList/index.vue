@@ -6,10 +6,10 @@ to such license between the licensee and ForgeRock AS. -->
 <template>
   <div class="mt-3">
     <div
-      v-if="!isEmpty(keyValue)"
+      v-if="!isEmpty(keyValues)"
       class="fr-key-value-list">
       <div
-        v-for="(text, key) in keyValue"
+        v-for="(text, key) in keyValues"
         :key="`${id}_keyvalue-${key}`"
         class="fr-key-value-list-item">
         <div class="fr-key-value-list-header mt-3">
@@ -18,97 +18,59 @@ to such license between the licensee and ForgeRock AS. -->
           </h5>
           <i
             @click="deleteItem(key)"
-            class="material-icons material-icons-outlined fr-key-value-delete noselect">
+            class="material-icons-outlined fr-key-value-icon noselect">
             delete
           </i>
         </div>
-        <p>
-          {{ text }}
+        <p class="d-flex">
+          <span class="flex-fill">
+            {{ text }}
+          </span>
+          <i
+            @click="editItem(key)"
+            class="material-icons-outlined fr-key-value-icon noselect d-none">
+            edit
+          </i>
         </p>
+        <FrKeyValuePanel
+          v-if="currentKey === key"
+          :validation-rules="validationRules"
+          v-model="keyValueObject"
+          @cancel="currentKey = null"
+          @saveKeyValue="saveKeyValue" />
       </div>
     </div>
     <div
-      v-if="isEmpty(keyValue) && showAdd === false"
+      v-if="isEmpty(keyValues) && !currentKey"
       class="fr-key-value-panel text-center py-3">
       <span class="text-secondary">
         ({{ $t('trees.editPanel.none') }})
       </span>
     </div>
+    <FrKeyValuePanel
+      v-if="currentKey === ''"
+      :validation-rules="validationRules"
+      v-model="keyValueObject"
+      @cancel="currentKey = null"
+      @saveKeyValue="saveKeyValue" />
     <div
-      v-if="showAdd === false"
+      v-else
       class="mt-3">
-      <a
-        class="fr-key-value-add-link"
-        @click.prevent="showAdd = true;"
-        href="#">
-        <i class="material-icons material-icons-outlined mr-1">
+      <span
+        class="fr-key-link"
+        @click="showAdd()">
+        <i class="material-icons-outlined mr-1 mb-1">
           add
         </i>
         {{ $t('common.add') }}
-      </a>
-    </div>
-    <div
-      v-else
-      class="fr-key-value-add-panel fr-key-value-panel p-3">
-      <label class="text-secondary mb-1">
-        {{ $t('trees.editPanel.key') }}
-      </label>
-
-      <ValidationObserver
-        ref="observer"
-        v-slot="{ invalid }">
-        <ValidationProvider
-          mode="aggressive"
-          rules="required"
-          v-slot="{ errors }">
-          <BFormInput
-            v-model.trim="keyText"
-            :state="errors.length > 0 ? false : null"
-            name="keyInput" />
-        </ValidationProvider>
-
-        <label class="text-secondary mb-1 mt-3">
-          {{ $t('trees.editPanel.value') }}
-        </label>
-
-        <ValidationProvider
-          mode="aggressive"
-          rules="required"
-          v-slot="{ errors }">
-          <BFormTextarea
-            class="mb-3"
-            v-model.trim="valueText"
-            :state="errors.length > 0 ? false : null"
-            name="valueInput" />
-        </ValidationProvider>
-
-        <div class="fr-key-value-add-panel-footer">
-          <div class="pt-3 mr-3">
-            <a
-              class="fr-key-value-add-link"
-              @click.prevent="clearAdd();"
-              href="#">
-              {{ $t('common.cancel') }}
-            </a>
-          </div>
-          <BButton
-            @click="saveKeyValue"
-            :disabled="invalid"
-            variant="outline-primary">
-            Save
-          </BButton>
-        </div>
-      </ValidationObserver>
+      </span>
     </div>
   </div>
 </template>
 
 <script>
 import { isEmpty, cloneDeep } from 'lodash';
-import {
-  BButton, BFormInput, BFormTextarea,
-} from 'bootstrap-vue';
-import { ValidationObserver, ValidationProvider } from 'vee-validate';
+import KeyValuePanel from './KeyValuePanel';
 
 /**
  * Key value pair component
@@ -116,11 +78,7 @@ import { ValidationObserver, ValidationProvider } from 'vee-validate';
 export default {
   name: 'KeyValueList',
   components: {
-    BButton,
-    BFormInput,
-    BFormTextarea,
-    ValidationObserver,
-    ValidationProvider,
+    FrKeyValuePanel: KeyValuePanel,
   },
   props: {
     value: {
@@ -131,20 +89,20 @@ export default {
     },
   },
   data() {
-    let tempKeyValue;
+    let keyValues;
 
     if (this.value === null) {
-      tempKeyValue = {};
+      keyValues = {};
     } else {
-      tempKeyValue = cloneDeep(this.value);
+      keyValues = cloneDeep(this.value);
     }
 
     return {
       id: null,
-      showAdd: false,
-      keyText: '',
-      valueText: '',
-      keyValue: tempKeyValue,
+      currentKey: null,
+      keyValues,
+      validationRules: {},
+      keyValueObject: { key: '', value: '' },
     };
   },
   mounted() {
@@ -158,32 +116,56 @@ export default {
       * @param {String} key key for the object property to be deleted
       */
     deleteItem(key) {
-      this.$delete(this.keyValue, key);
-      this.$emit('input', this.keyValue);
+      this.$delete(this.keyValues, key);
+      this.$emit('input', this.keyValues);
+    },
+    /**
+     * Shows edit fields for key and value
+     *
+     * @param {String} key key for the object property to be edited
+     */
+    editItem(key) {
+      const paredDownKeyValues = cloneDeep(this.keyValues);
+      this.$delete(paredDownKeyValues, key);
+      this.setValidationRules(paredDownKeyValues);
+      this.keyValueObject.value = this.keyValues[key];
+      this.keyValueObject.key = key;
+      this.currentKey = key;
     },
     /**
       * Check if an object is empty
       *
       * @param {Object} objectToCheck
       */
-    isEmpty(objectToCheck) {
-      return isEmpty(objectToCheck);
+    isEmpty,
+    /**
+      * Emits an input change to notify v-model that the component has updated
+      *
+      * @param {Object} keyValueObject the key and value values to be added/edited in the save
+      */
+    saveKeyValue(keyValueObject) {
+      if (keyValueObject.key !== this.currentKey && this.currentKey !== '') {
+        this.$delete(this.keyValues, this.currentKey);
+      }
+      this.keyValues[keyValueObject.key] = keyValueObject.value;
+      this.$emit('input', this.keyValues);
+      this.currentKey = null;
     },
     /**
-      * Emitts an input change to notify v-model that the component has updated
-      */
-    saveKeyValue() {
-      this.keyValue[this.keyText] = this.valueText;
-      this.$emit('input', this.keyValue);
-      this.clearAdd();
+     * Sets which values should be considered in unique check
+     */
+    setValidationRules(keyValues) {
+      const rulesObject = { unique: Object.keys(keyValues) };
+      this.validationRules = { ...rulesObject, required: true };
     },
     /**
-      * Clears and hides the add form
-      */
-    clearAdd() {
-      this.valueText = '';
-      this.keyText = '';
-      this.showAdd = false;
+     * Displays blank key and value fields to add a new key-value object
+     */
+    showAdd() {
+      this.keyValueObject.value = '';
+      this.keyValueObject.key = '';
+      this.currentKey = '';
+      this.setValidationRules(this.keyValues);
     },
   },
 };
@@ -193,16 +175,12 @@ export default {
   background-color: $gray-100;
 }
 
-.fr-key-value-add-panel {
-  .fr-key-value-add-panel-footer {
-    display: flex;
-    justify-content: flex-end;
-  }
-}
+.fr-key-link {
+  color: $blue;
 
-.fr-key-value-add-link {
   &:hover {
-    text-decoration: none;
+    cursor: pointer;
+    color: $hover-blue;
   }
 }
 
@@ -210,17 +188,21 @@ export default {
   .fr-key-value-list-item {
     border-bottom: 1px solid $gray-200;
 
+    &:hover .d-none {
+      display: block !important;
+    }
+
     .fr-key-value-list-header {
       display: flex;
       justify-content: space-between;
+    }
 
-      .fr-key-value-delete {
-        cursor: pointer;
-        color: $gray-500;
+    .fr-key-value-icon {
+      cursor: pointer;
+      color: $gray-500;
 
-        &:hover {
-          color: $gray-900;
-        }
+      &:hover {
+        color: $gray-900;
       }
     }
   }

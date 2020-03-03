@@ -49,7 +49,6 @@
     "userFlowDeleteSuccess": "\"{treeId}\" user flow successfully deleted.",
     "noUserFlow": "No User Flows",
     "noAuthSercicesMessage": "Sign in users to your application by creating user flows",
-    "mustBeUnique": "Name must be unique",
     "errorRetrievingUserFlows": "Error retrieving user flows",
     "errorCreatingUserFlow": "Error creating user flow",
     "errorDuplicatingUserFlow": "Error duplicating user flow",
