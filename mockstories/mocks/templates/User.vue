@@ -4,7 +4,7 @@ Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
-    <BContainer class="my-5">
+    <BContainer class="mock my-5">
         <template>
             <div class="mb-4 media">
                 <img :src="require('@/assets/images/avatar.png')" alt="Barbara Jensen" class="mr-4 rounded-circle" height="104" width="104" />
