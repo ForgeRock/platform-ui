@@ -4,33 +4,36 @@ Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. */
 
-// Import base
-@import 'animation';
-@import 'body';
-@import 'code';
-@import 'color';
-@import 'icons';
-@import 'typography';
-
-// Import components
-@import 'alert';
-@import 'button';
-@import 'card';
-@import 'color';
-// @import 'flags';
-@import 'input';
-@import 'list';
-@import 'modal';
-@import 'progress';
-//@import 'media';
-@import 'navbar';
-@import 'floatingLabelInput';
-@import 'policyPasswordInput';
-@import 'policyPanel';
-@import 'toolbarNotification';
-@import 'select';
-@import 'sidemenu';
-@import 'switch';
-@import 'table';
-@import 'tabs';
-@import 'toolbar';
+// scoping mock styles so other storybook components don't rely on these
+.mock {
+    // Import base
+    @import 'animation';
+    @import 'body';
+    @import 'code';
+    @import 'color';
+    @import 'icons';
+    @import 'typography';
+    
+    // Import components
+    @import 'alert';
+    @import 'button';
+    @import 'card';
+    @import 'color';
+    // @import 'flags';
+    @import 'input';
+    @import 'list';
+    @import 'modal';
+    @import 'progress';
+    //@import 'media';
+    @import 'navbar';
+    @import 'floatingLabelInput';
+    @import 'policyPasswordInput';
+    @import 'policyPanel';
+    @import 'toolbarNotification';
+    @import 'select';
+    @import 'sidemenu';
+    @import 'switch';
+    @import 'table';
+    @import 'tabs';
+    @import 'toolbar';
+}

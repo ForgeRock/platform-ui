@@ -4,7 +4,7 @@ Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
-    <BContainer fluid class="px-0 h-100 d-flex">
+    <BContainer fluid class="mock px-0 h-100 d-flex">
         <div class="fr-m-auto fr-center-card align-self-center">
             <div class="card border-xs-0 border-sm d-flex fr-stretch-card">
                 <div class="card-header d-flex align-items-center flex-fill">
