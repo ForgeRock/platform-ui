@@ -156,6 +156,7 @@
   color: $fr-sidemenu-font-color;
   height: 100%;
   position: fixed;
+  top: 0;
   width: $fr-sidemenu-width-lg;
   transition: margin-left 0.2s ease-out, width 0.2s ease-out;
   z-index: $zindex-popover;
