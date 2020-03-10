@@ -100,7 +100,8 @@ export default {
   position: relative;
 
   .fr-icon-input {
-    padding: 0 50px 0 50px;
+    padding-left: 3.75rem;
+    padding-right: 3.75rem;
   }
 
   .material-icons-outlined {
@@ -109,7 +110,7 @@ export default {
     margin-top: 16px;
 
     &.fr-icon-input-left {
-      margin-left: 18px;
+      margin-left: 20px;
     }
 
     &.fr-icon-input-right {

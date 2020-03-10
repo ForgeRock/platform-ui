@@ -6,70 +6,61 @@ to such license between the licensee and ForgeRock AS. -->
 <template>
   <div>
     <div class="card">
-      <div class="card-header py-2">
-        <BRow>
-          <BCol
-            md="7"
-            class="my-1">
-            <slot
-              name="listToolbar" />
-          </BCol>
-          <BCol
-            md="5"
-            class="my-1">
-            <FrSearchInput
-              @search="search"
-              @clear="clear"
-              :placeholder="$t('common.search')"
-              v-model="filter"
-            />
-          </BCol>
-        </BRow>
+      <div class="p-3 d-flex justify-content-between flex-column flex-lg-row card-header">
+        <div class="btn-group mb-3 mb-lg-0 mr-lg-1">
+          <slot name="listToolbar" />
+        </div>
+        <FrSearchInput
+          v-model="filter"
+          :placeholder="$t('common.search')"
+          @clear="clear"
+          @search="search"
+        />
       </div>
-      <BTable
-        show-empty
-        table-responsive
-        stacked="lg"
-        :items="tableData"
-        :fields="columns"
-        :per-page="0"
-        :hover="tableHover"
-        :sort-by.sync="sortBy"
-        :sort-desc.sync="sortDesc"
-        :no-local-sorting="true"
-        class="mb-0"
-        :sort-direction="sortDirection"
-        @row-clicked="$emit('rowClicked', $event)"
-        @sort-changed="sortingChanged">
-        <template v-slot:cell(actions)="data">
-          <slot
-            name="actions"
-            :item="data">
-            <BDropdown
-              variant="link"
-              no-caret
-              right
-              toggle-class="text-decoration-none p-0">
-              <template v-slot:button-content>
-                <i class="material-icons-outlined text-muted md-24">
-                  more_horiz
-                </i>
-              </template>
-              <BDropdownItem @click="editResource(data.item)">
-                <i class="material-icons-outlined mr-3">
-                  edit
-                </i> {{ $t('common.edit') }}
-              </BDropdownItem>
-              <BDropdownItem
-                @click="confirmDeleteResource(data.item._id)">
-                <i class="material-icons-outlined mr-3">
-                  delete
-                </i> {{ $t('common.delete') }}
-              </BDropdownItem>
-            </BDropdown>
-          </slot>
-        </template>
-      </BTable>
+      <div class="overflow-auto">
+        <BTable
+          class="mb-0"
+          show-empty
+          :fields="columns"
+          :hover="tableHover"
+          :items="tableData"
+          :no-local-sorting="true"
+          :per-page="0"
+          :sort-by.sync="sortBy"
+          :sort-desc.sync="sortDesc"
+          :sort-direction="sortDirection"
+          @row-clicked="$emit('rowClicked', $event)"
+          @sort-changed="sortingChanged">
+          <template v-slot:cell(actions)="data">
+            <slot
+              name="actions"
+              :item="data">
+              <BDropdown
+                variant="link"
+                no-caret
+                right
+                toggle-class="text-decoration-none p-0">
+                <template v-slot:button-content>
+                  <i class="material-icons-outlined text-muted md-24">
+                    more_horiz
+                  </i>
+                </template>
+                <BDropdownItem @click="editResource(data.item)">
+                  <i class="material-icons-outlined mr-3">
+                    edit
+                  </i> {{ $t('common.edit') }}
+                </BDropdownItem>
+                <BDropdownItem
+                  @click="confirmDeleteResource(data.item._id)">
+                  <i class="material-icons-outlined mr-3">
+                    delete
+                  </i> {{ $t('common.delete') }}
+                </BDropdownItem>
+              </BDropdown>
+            </slot>
+          </template>
+        </BTable>
+      </div>
       <div class="card-footer py-2">
         <nav aria-label="Page navigation">
           <ul class="pagination justify-content-center mb-0">
@@ -135,10 +126,8 @@ import {
   toNumber,
 } from 'lodash';
 import {
-  BCol,
   BDropdown,
   BDropdownItem,
-  BRow,
   BTable,
   VBModal,
 } from 'bootstrap-vue';
@@ -160,10 +149,8 @@ export default {
     NotificationMixin,
   ],
   components: {
-    BCol,
     BDropdown,
     BDropdownItem,
-    BRow,
     BTable,
     FrDeleteResource: DeleteResource,
     FrSearchInput: SearchInput,

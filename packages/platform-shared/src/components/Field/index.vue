@@ -4,7 +4,7 @@ Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
-  <span v-if="!loading">
+  <div v-if="!loading">
     <label
       v-if="titlePosition === 'before'"
       class="text-secondary mb-1">
@@ -142,7 +142,7 @@ to such license between the licensee and ForgeRock AS. -->
         {{ error }}
       </div>
     </span>
-  </span>
+  </div>
 </template>
 
 <script>
@@ -359,8 +359,13 @@ export default {
   margin-bottom: 0 !important;
   border: none !important;
 
-  /deep/ input {
+  /deep/ input,
+  /deep/ textarea {
     border: 1px solid $danger;
+
+    &:focus {
+      box-shadow: 0 0 0 0.0625rem $danger;
+    }
   }
 
   /deep/ button {
