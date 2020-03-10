@@ -1,0 +1,22 @@
+/**
+ * Copyright 2020 ForgeRock AS. All Rights Reserved
+ *
+ * Use of this code requires a commercial software license with ForgeRock AS.
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
+ */
+.fr-modal {
+  .modal-header {
+    border-bottom: solid $gray-200 1px;
+
+    h5 {
+      line-height: 2.25rem;
+      font-size: 1.25rem;
+      margin: 0 0;
+    }
+  }
+
+  .modal-footer {
+    border-top: solid $gray-200 1px;
+  }
+}
