@@ -6,8 +6,8 @@
  * to such license between the licensee and ForgeRock AS.
  */
 import { mount } from '@vue/test-utils';
-import Login from './index';
 import i18n from '@/i18n';
+import Login from './index';
 
 describe('Login.vue', () => {
   let wrapper;

@@ -41,14 +41,13 @@
     "title": "Journeys",
     "usage": "Usage",
     "description": "Sign in users to your application using any of the out-of-the-box user flows or customize them to suit your specific requirements.",
-    "newUserFlow": "New User Flow",
-    "duplicateUserFlow": "Duplicate User Flow",
+    "newJourney": "New Journey",
+    "duplicateJourney": "Duplicate Journey",
     "edit": "Edit",
     "service": "Service",
     "duplicate": "Duplicate",
-    "copyOf": "Copy of ",
+    "copyOf": "Copy of",
     "preview": "Preview",
-    "confirmDeleteUserFlow": "Are you sure you want to delete the \"{treeId}\" user flow?",
     "userFlowDeleteSuccess": "\"{treeId}\" user flow successfully deleted.",
     "noUserFlow": "No User Flows",
     "noAuthSercicesMessage": "Sign in users to your application by creating user flows",
@@ -59,7 +58,13 @@
     "errorRetrievingUserFlowTemplate": "Error retrieving user flow template",
     "errorRetrievingTableData": "Error retrieving table data",
     "unableToEditResource": "Unable to edit {resource}",
-    "unableToDeleteResource": "Unable to delete {resource}"
+    "unableToDeleteResource": "Unable to delete {resource}",
+    "filterNodes": "Filter nodes",
+    "deleteModal": {
+      "title": "Delete Journey?",
+      "content": "Are you sure you want to delete this journey?",
+      "deleteJourney": "Delete journey"
+    }
   },
   "bulkImport": {
     "title": "Bulk Import",
