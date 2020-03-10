@@ -9,8 +9,8 @@
 import { storiesOf } from '@storybook/vue';
 import { withKnobs, boolean } from '@storybook/addon-knobs';
 import { BCardBody, BCardFooter, BContainer } from 'bootstrap-vue';
-import CenterCard from './index';
 import shieldLogo from '@/assets/images/shield.svg';
+import CenterCard from './index';
 
 const stories = storiesOf('Components|CenterCard', module).addParameters({ component: CenterCard });
 stories.addDecorator(withKnobs);

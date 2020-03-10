@@ -7,8 +7,8 @@
  */
 import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
-import CenterCard from './index';
 import i18n from '@/i18n';
+import CenterCard from './index';
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue);

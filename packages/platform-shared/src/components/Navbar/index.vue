@@ -6,7 +6,7 @@ to such license between the licensee and ForgeRock AS. -->
 <template>
   <BNavbar
     :toggleable="true"
-    class="fr-main-navbar fixed-top">
+    class="fr-main-navbar">
     <button
       v-show="!hideToggle"
       @click="collapse"
@@ -17,37 +17,44 @@ to such license between the licensee and ForgeRock AS. -->
         menu
       </i>
     </button>
-    <RouterLink
-      class="fr-back-link mt-2 overflow-hidden"
-      v-show="getBreadcrumbRoute().length > 0"
-      :to="getBreadcrumbRoute()">
-      <h4 class="text-truncate">
-        <i class="material-icons material-icons-outlined mr-2 mb-1">
-          arrow_back
-        </i><span>{{ getBreadcrumbRouteText() }}</span>
-      </h4>
-    </RouterLink>
-    <BNavbarNav class="ml-auto flex-row">
-      <FrNotification v-if="showNotifications" />
-      <li
-        v-if="showHelpLink"
-        class="mr-4 nav-item">
-        <a
-          class="nav-link"
-          href="#">
-          Help & Support
-        </a>
-      </li>
-      <li
-        v-if="showDocsLink"
-        class="nav-item">
-        <a
-          class="nav-link"
-          :href="docsLink"
-          target="_blank">
-          Docs
-        </a>
-      </li>
+    <BNavbarNav class="flex-row align-items-center justify-content-between flex-grow-1">
+      <div>
+        <RouterLink
+          class="fr-back-link overflow-hidden nav-link"
+          v-show="getBreadcrumbRoute().length > 0"
+          :to="getBreadcrumbRoute()">
+          <h4 class="text-truncate">
+            <i class="material-icons material-icons-outlined md-24 mr-3">
+              arrow_back
+            </i><span>{{ getBreadcrumbRouteText() }}</span>
+          </h4>
+        </RouterLink>
+      </div>
+      <div>
+        <slot name="center-content" />
+      </div>
+      <div class="flex-row d-none d-sm-flex">
+        <FrNotification v-if="showNotifications" />
+        <li
+          v-if="showHelpLink"
+          class="mr-4 nav-item">
+          <a
+            class="nav-link text-dark"
+            href="#">
+            Help & Support
+          </a>
+        </li>
+        <li
+          v-if="showDocsLink"
+          class="nav-item">
+          <a
+            class="nav-link text-dark"
+            :href="docsLink"
+            target="_blank">
+            Docs
+          </a>
+        </li>
+      </div>
     </BNavbarNav>
   </BNavbar>
 </template>
@@ -76,25 +83,11 @@ export default {
   },
   props: {
     /**
-     * Hide button that emits toggle event to toggle the sidebar. Only visible on mobile.
+     * route of docs
      */
-    hideToggle: {
-      type: Boolean,
-      default: false,
-    },
-    /**
-     * Show notifications icon.
-     */
-    showNotifications: {
-      type: Boolean,
-      default: false,
-    },
-    /**
-     * Show link to Help & Support
-     */
-    showHelpLink: {
-      type: Boolean,
-      default: true,
+    docsLink: {
+      type: String,
+      default: '#',
     },
     /**
      * URL of help
@@ -104,6 +97,13 @@ export default {
       default: '#',
     },
     /**
+     * Hide button that emits toggle event to toggle the sidebar. Only visible on mobile.
+     */
+    hideToggle: {
+      type: Boolean,
+      default: false,
+    },
+    /**
      * Show link to Docs
      */
     showDocsLink: {
@@ -111,11 +111,18 @@ export default {
       default: true,
     },
     /**
-     * route of docs
+     * Show link to Help & Support
      */
-    docsLink: {
-      type: String,
-      default: '#',
+    showHelpLink: {
+      type: Boolean,
+      default: true,
+    },
+    /**
+     * Show notifications icon.
+     */
+    showNotifications: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
