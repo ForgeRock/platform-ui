@@ -80,13 +80,35 @@ to such license between the licensee and ForgeRock AS. -->
       :css-colors="true"
       v-model="field.value"
       class="pr-2" />
-    <VueTagsInput
+    <BFormTags
       v-else-if="field.type === 'array'"
-      v-model="field.tempValue"
-      :placeholder="$t('common.add') + ` ${field.title}`"
-      :allow-edit-tags="true"
-      :tags.sync="field.value"
-      :class="{'fr-error': errors.length}" />
+      v-model="formTagInput"
+      :class="[{'fr-error': errors.length}, 'fr-tags']">
+      <template v-slot="{ tags, inputAttrs, inputHandlers, addTag, removeTag }">
+        <Draggable
+          v-model="formTagInput"
+          class="d-flex flex-wrap"
+          ghost-class="ghost-tag">
+          <div
+            class="mt-1 mr-1 fr-tag"
+            v-for="tag in tags"
+            :key="tag"
+            body-class="py-1 pr-2 text-nowrap">
+            <span>{{ tag }}</span>
+            <span @click="removeTag(tag)">
+              <i class="material-icons-outlined">
+                close
+              </i>
+            </span>
+          </div>
+        </Draggable>
+        <input
+          v-bind="inputAttrs"
+          v-on="inputHandlers"
+          :placeholder="`${$t('common.add')} ${field.title}`"
+          :class="[{'show': !tags.length}, 'fr-input']">
+      </template>
+    </BFormTags>
     <FrKeyValueList
       v-else-if="field.type === 'object'"
       v-model="field.value"
@@ -126,30 +148,33 @@ import {
 } from 'lodash';
 import {
   BPopover,
+  BFormTags,
 } from 'bootstrap-vue';
 import { ValidationProvider } from 'vee-validate';
 import ValidationErrorList from '@forgerock/platform-shared/src/components/ValidationErrorList';
 import { ToggleButton } from 'vue-js-toggle-button';
 import FloatingLabelInput from '@forgerock/platform-shared/src/components/FloatingLabelInput';
-import VueTagsInput from '@johmun/vue-tags-input';
 import KeyValueList from '@forgerock/platform-shared/src/components/KeyValueList';
+import Draggable from 'vuedraggable';
 
 export default {
   name: 'FrField',
   components: {
     BPopover,
+    BFormTags,
+    Draggable,
     FrFloatingLabelInput: FloatingLabelInput,
     FrValidationError: ValidationErrorList,
     FrKeyValueList: KeyValueList,
     ToggleButton,
     ValidationProvider,
-    VueTagsInput,
   },
   data() {
     return {
       currentValue: '',
       errors: [],
       loading: true,
+      formTagInput: [],
     };
   },
   props: {
@@ -227,7 +252,7 @@ export default {
     },
     /**
      * Takes the tree array formatted items and converts them into
-     * a format that can be used by VueTagsInput
+     * a format that can be used by tag input
      *
      * @param {Object} fieldValue Current object with edit panel save values
      */
@@ -281,6 +306,7 @@ export default {
   mounted() {
     this.currentValue = cloneDeep(this.field.value);
     this.checkRequiredInput(this.field);
+    this.formTagInput = cloneDeep(this.field.value);
     this.field.value = this.convertVueTag(this.field.value);
     if (!this.field.validation) {
       this.field.validation = '';
@@ -312,6 +338,9 @@ export default {
         }
       },
       deep: true,
+    },
+    formTagInput(value) {
+      this.field.value = this.convertVueTag(value);
     },
   },
 };
@@ -358,31 +387,47 @@ export default {
     }
   }
 
-  .vue-tags-input {
-    line-height: 1.5;
-    background-color: $white;
-    background-clip: padding-box;
-    border: 1px solid $gray-400;
-    border-radius: 4px;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
+  .fr-tags {
+    display: flex;
+    flex-wrap: wrap;
+    line-height: 1em;
+    padding: 10px;
+    min-height: 54px;
 
-    .ti-input {
-      padding: 10px;
-      border: none;
+    .fr-tag {
+      border-radius: 2px;
+      display: flex;
+      padding: 3px 5px;
+      margin: 2px;
+      font-size: 0.85em;
+      background-color: #e4f4fd;
+      color: #23282e;
+      cursor: move;
+
+      .material-icons-outlined {
+        cursor: pointer;
+      }
     }
 
-    .ti-tag {
-      background-color: $light-blue;
-      color: $input-color;
+    .ghost-tag {
+      opacity: 0.3;
+    }
 
-      .ti-content {
-        max-width: 185px;
-        overflow: hidden;
-      }
+    .fr-input {
+      opacity: 0;
+      padding: 0;
+      height: 0;
+      transition: all 0.15s;
+      outline: 0;
+      width: 100%;
+      border: 0;
+    }
 
-      &.ti-deletion-mark {
-        background-color: $danger;
-      }
+    &:hover > .fr-input,
+    .fr-input:focus,
+    .show {
+      opacity: 1;
+      height: 2rem;
     }
   }
 }
