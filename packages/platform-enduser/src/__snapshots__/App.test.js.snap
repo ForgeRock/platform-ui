@@ -9,6 +9,6 @@ exports[`App.vue App loaded 1`] = `
       <routerview-stub></routerview-stub>
     </div>
   </div>
-  <notifications-stub group="IDMMessages" position="bottom left" width="320" duration="4000"></notifications-stub>
+  <notifications-stub position="bottom left" width="320" duration="4000"></notifications-stub>
 </div>
 `;

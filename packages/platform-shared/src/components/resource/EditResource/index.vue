@@ -1,164 +1,155 @@
-<!-- Copyright 2019 ForgeRock AS. All Rights Reserved
+<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
 
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
-  <BContainer>
+  <BContainer class="pb-5">
     <BRow>
       <BCol>
         <div class="d-sm-flex my-4">
           <div class="media">
-            <div class="rounded-circle d-flex align-items-center fr-resource-circle text-light bg-primary mr-4">
+            <div
+              v-if="name === 'user'"
+              class="mr-4">
+              <BImg
+                width="100"
+                :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"
+                fluid
+                :alt="$t('common.avatar')" />
+            </div>
+            <div
+              v-else
+              class="rounded-circle d-flex align-items-center fr-resource-circle text-light bg-primary mr-4 mt-2">
               <i class="material-icons-outlined md-48 w-100">
                 {{ setIcon }}
               </i>
             </div>
             <div class="media-body">
+              <h5 class="text-muted mb-0">
+                {{ resourceTitle }}
+              </h5>
               <h1>{{ displayName }}</h1>
-              <h6 class="text-muted">
+              <code>
                 {{ secondaryTitle }}
-              </h6>
+              </code>
             </div>
-          </div>
-          <div
-            v-if="canChangePassword || canDelete"
-            class="ml-auto my-4 my-sm-0 align-self-center align-self-end">
-            <BDropdown
-              id="resourceActions"
-              text="Actions"
-              right
-              variant="primary"
-              class="m-md-2">
-              <BDropdownItem
-                v-if="canChangePassword"
-                v-b-modal.resetModal>
-                {{ $t('pages.access.resetPassword') }}
-              </BDropdownItem>
-              <BDropdownItem
-                v-if="canDelete"
-                v-b-modal.deleteModal>
-                {{ $t("common.delete") }} {{ this.name }}
-              </BDropdownItem>
-            </BDropdown>
           </div>
         </div>
       </BCol>
     </BRow>
-
-    <BTabs
-      content-class="mt-4"
-      flex-column
-      flex-sm-row>
-      <BTab
-        :title="this.$t('pages.access.details')"
-        active>
-        <BCard>
+    <!-- Uncomment this to use the reset modal
+    <BButton
+      v-if="canChangePassword"
+      class="mb-4"
+      type="button"
+      variant="outline-secondary"
+      v-b-modal.resetModal>
+      <i class="material-icons-outlined mr-md-2 text-nowrap">cached</i>
+      {{ $t('common.reset') }} {{ $t('common.placeholders.password') }}
+    </BButton> -->
+    <BCard class="card-tabs-vertical mb-5">
+      <BTabs
+        flex-column
+        flex-sm-row
+        vertical
+        pills>
+        <BTab
+          :title="this.$t('pages.access.details')"
+          active>
           <template v-if="displayProperties.length > 0">
-            <ValidationObserver ref="observer">
-              <template v-for="(field, index) in displayProperties">
-                <template v-if="!field.isReadOnly">
-                  <BFormGroup
-                    :label="field.title"
-                    label-for="field.key"
-                    horizontal
-                    :key="'editResource' +index"
-                    v-if="(field.type === 'string' || field.type === 'number') && field.encryption === undefined">
-                    <ValidationProvider
-                      :name="field.title"
-                      :rules="field.required ? 'required' : ''"
-                      v-slot="{ errors }">
-                      <BFormInput
-                        :ref="index === 0 ? 'focusInput' : ''"
-                        v-if="field.type === 'string'"
+            <div class="card-body m-4">
+              <ValidationObserver ref="observer">
+                <template v-for="(field, index) in displayProperties">
+                  <template v-if="!field.isReadOnly">
+                    <div
+                      class="mb-4"
+                      v-if="(field.type === 'string' || field.type === 'number') && field.encryption === undefined"
+                      :key="'editResource' +index">
+                      <ValidationProvider
                         :name="field.key"
-                        type="text"
-                        :class="[{'is-invalid': errors.length > 0}]"
-                        :autocomplete="field.key"
-                        v-model.trim="formFields[field.key]" />
-
-                      <BFormInput
-                        horizontal
-                        :ref="index === 0 ? 'focusInput' : ''"
-                        v-else
-                        :name="field.key"
-                        type="number"
-                        :class="[{'is-invalid': errors.length > 0}]"
-                        :autocomplete="field.key"
-                        v-model.number="formFields[field.key]" />
-                      <FrValidationError
-                        :validator-errors="errors"
-                        :field-name="field.key" />
-                    </ValidationProvider>
-                  </BFormGroup>
-
-                  <!-- for boolean values -->
-                  <BFormGroup
-                    :key="'createResource' +index"
-                    v-if="field.type === 'boolean'">
-                    <div class="form-row">
-                      <label
-                        class="col-form-label col-sm-3"
-                        :for="field.title">
-                        {{ field.title }}
-                      </label>
-
-                      <div class="mr-auto">
-                        <ToggleButton
-                          class="mt-2 p-0 fr-toggle-primary"
-                          :height="28"
-                          :width="56"
-                          :sync="true"
-                          :css-colors="true"
-                          :labels="{checked: $t('common.yes'), unchecked: $t('common.no')}"
-                          v-model="formFields[field.key]" />
-                      </div>
+                        :rules="field.required ? 'required' : ''"
+                        v-slot="{ errors }">
+                        <FrFloatingLabelInput
+                          class="floating-label-input"
+                          :class="{'fr-error': errors.length}"
+                          :type="field.type"
+                          v-model="formFields[field.key]"
+                          :field-name="field.key"
+                          :label="field.title" />
+                        <FrValidationError
+                          class="error-message mt-0"
+                          :validator-errors="errors"
+                          :field-name="field.key" />
+                      </ValidationProvider>
                     </div>
-                  </BFormGroup>
-                </template>
-                <template v-else>
-                  <BFormGroup
-                    :label="field.title"
-                    label-for="field.key"
-                    horizontal
-                    :key="'readResource' +index"
-                    v-if="(field.type === 'string' || field.type === 'number') && field.encryption === undefined">
-                    <BFormInput
-                      horizontal
-                      type="text"
-                      plaintext
-                      v-model="formFields[field.key]" />
-                  </BFormGroup>
 
-                  <!-- for boolean values -->
-                  <BFormGroup
-                    :key="'readResource' +index"
-                    v-if="field.type === 'boolean'">
-                    <div class="form-row">
-                      <label
-                        class="col-form-label col-sm-3"
-                        :for="field.title">
-                        {{ field.title }}
-                      </label>
+                    <!-- for boolean values -->
+                    <BFormGroup
+                      :key="'createResource' +index"
+                      v-if="field.type === 'boolean'">
+                      <div class="form-row">
+                        <div class="col-1">
+                          <ToggleButton
+                            class="mt-2 p-0 fr-toggle-primary"
+                            :height="28"
+                            :width="56"
+                            :sync="true"
+                            :css-colors="true"
+                            :labels="{checked: $t('common.yes'), unchecked: $t('common.no')}"
+                            v-model="formFields[field.key]" />
+                        </div>
 
-                      <div class="mr-auto">
-                        <ToggleButton
-                          class="mt-2 p-0 fr-toggle-primary"
-                          :height="28"
-                          :width="56"
-                          :disabled="true"
-                          :sync="true"
-                          :css-colors="true"
-                          :labels="{checked: $t('common.yes'), unchecked: $t('common.no')}"
-                          v-model="formFields[field.key]" />
+                        <label
+                          class="col-form-label col-10"
+                          :for="field.title">
+                          {{ field.title }}
+                        </label>
                       </div>
-                    </div>
-                  </BFormGroup>
+                    </BFormGroup>
+                  </template>
+                  <template v-else>
+                    <FrFloatingLabelInput
+                      v-if="(field.type === 'string' || field.type === 'number') && field.encryption === undefined"
+                      :key="'readResource' +index"
+                      class="floating-label-input"
+                      :type="field.type"
+                      v-model="formFields[field.key]"
+                      :disabled="true"
+                      :field-name="field.key"
+                      :label="field.title" />
+
+                    <!-- for boolean values -->
+                    <BFormGroup
+                      :key="'readResource' +index"
+                      v-if="field.type === 'boolean'">
+                      <div class="form-row">
+                        <div class="col-1">
+                          <ToggleButton
+                            class="mt-2 p-0 fr-toggle-primary"
+                            :height="28"
+                            :width="56"
+                            :disabled="true"
+                            :sync="true"
+                            :css-colors="true"
+                            :labels="{checked: $t('common.yes'), unchecked: $t('common.no')}"
+                            v-model="formFields[field.key]" />
+                        </div>
+                        <label
+                          class="col-form-label col-10"
+                          :for="field.title">
+                          {{ field.title }}
+                        </label>
+                      </div>
+                    </BFormGroup>
+                  </template>
                 </template>
-              </template>
-              <div
-                v-if="!disableSaveButton"
-                class="float-right mt-4">
+              </ValidationObserver>
+            </div>
+            <div
+              v-if="!disableSaveButton"
+              class="card-footer">
+              <div class="float-right mb-4">
                 <BButton
                   type="button"
                   @click="saveResource"
@@ -166,14 +157,31 @@ to such license between the licensee and ForgeRock AS. -->
                   {{ $t('common.save') }}
                 </BButton>
               </div>
-            </ValidationObserver>
+            </div>
           </template>
           <span v-else>
             {{ $t('pages.access.noAvailableProperties') }}
           </span>
-        </BCard>
-      </BTab>
-    </BTabs>
+        </BTab>
+      </BTabs>
+    </BCard>
+
+    <BCard
+      class="mb-5"
+      v-if="canDelete">
+      <h5 class="card-title">
+        {{ $t('common.delete') }} {{ resourceTitle }}
+      </h5>
+      <p class="text-danger">
+        {{ $t('common.cannotBeUndone') }}
+      </p>
+      <BButton
+        type="button"
+        variant="danger"
+        v-b-modal.deleteModal>
+        {{ $t('common.delete') }} {{ resourceTitle }}
+      </BButton>
+    </BCard>
 
     <BModal
       v-if="canDelete"
@@ -275,28 +283,32 @@ import {
   indexOf,
   isUndefined,
   pick,
+  keys,
 } from 'lodash';
 import {
   BButton,
   BCard,
   BCol,
   BContainer,
-  BDropdown,
-  BDropdownItem,
   BFormGroup,
+  BImg,
   BFormInput,
   BModal,
   BRow,
   BTab,
   BTabs,
+  VBModal,
 } from 'bootstrap-vue';
 import axios from 'axios';
 import { ValidationProvider, ValidationObserver } from 'vee-validate';
+import FloatingLabelInput from '@forgerock/platform-shared/src/components/FloatingLabelInput';
 import ValidationErrorList from '@forgerock/platform-shared/src/components/ValidationErrorList/';
 import PolicyPasswordInput from '@forgerock/platform-shared/src/components/PolicyPasswordInput/';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import { ToggleButton } from 'vue-js-toggle-button';
 
 /**
  * @description Full page that provides view/edit of a specific resource for delegated admin. Auto generates fields based on backend return.
@@ -313,28 +325,34 @@ export default {
   components: {
     FrPolicyPasswordInput: PolicyPasswordInput,
     FrValidationError: ValidationErrorList,
+    FrFloatingLabelInput: FloatingLabelInput,
     ValidationObserver,
     ValidationProvider,
     BButton,
     BFormInput,
     BFormGroup,
+    BImg,
     BRow,
     BCol,
     BContainer,
-    BDropdown,
-    BDropdownItem,
     BTabs,
     BTab,
     BCard,
     BModal,
+    ToggleButton,
   },
   mixins: [
+    BreadcrumbMixin,
     ResourceMixin,
     RestMixin,
     NotificationMixin,
   ],
+  directives: {
+    'b-modal': VBModal,
+  },
   data() {
     return {
+      resourceTitle: '',
       name: this.$route.params.resourceName,
       resource: this.$route.params.resourceType,
       id: this.$route.params.resourceId,
@@ -349,6 +367,7 @@ export default {
       displaySecondaryTitleField: '',
       formFields: {},
       oldFormFields: {},
+      isOpenidmAdmin: this.$store.state.userId === 'openidm-admin',
     };
   },
   mounted() {
@@ -361,6 +380,8 @@ export default {
         idmInstance.get(`schema/${this.resource}/${this.name}`),
         idmInstance.get(`privilege/${this.resource}/${this.name}/${this.id}`),
         idmInstance.get(`${this.resource}/${this.name}/${this.id}`)]).then(axios.spread((schema, privilege, resourceDetails) => {
+        this.resourceTitle = schema.data.title;
+        this.setBreadcrumb(`/${this.$route.meta.listRoute}/${this.resource}/${this.name}`, `${this.resourceTitle} List`);
         this.generateDisplay(schema.data, privilege.data, resourceDetails.data);
       }))
         .catch((error) => {
@@ -368,14 +389,28 @@ export default {
         });
     },
     generateDisplay(schema, privilege, resourceDetails) {
-      this.oldFormFields = pick(resourceDetails, privilege.VIEW.properties);
+      if (this.isOpenidmAdmin) {
+        const filteredFields = [];
 
-      if (privilege.DELETE.allowed) {
+        keys(resourceDetails).forEach((key) => {
+          const prop = schema.properties[key];
+
+          if (prop && prop.viewable && !['object', 'array'].includes(prop.type)) {
+            filteredFields.push(key);
+          }
+        });
+
+        this.oldFormFields = pick(resourceDetails, filteredFields);
+      } else {
+        this.oldFormFields = pick(resourceDetails, privilege.VIEW.properties);
+      }
+
+      if (privilege.DELETE.allowed || this.isOpenidmAdmin) {
         this.canDelete = true;
       }
 
-      if (schema.icon && schema.icon.substring(0, 3) !== 'fa-') {
-        this.icon = schema.icon;
+      if (schema['mat-icon'] && schema['mat-icon'].length > 0) {
+        this.icon = schema['mat-icon'];
       } else {
         this.icon = 'check_box_outline_blank';
       }
@@ -385,9 +420,9 @@ export default {
         this.$set(this.formFields, key, value);
       });
 
-      if (privilege.VIEW.allowed) {
+      if (privilege.VIEW.allowed || this.isOpenidmAdmin) {
         // if there are no update properties disable the save button
-        if (privilege.UPDATE.properties.length === 0) {
+        if (privilege.UPDATE.properties.length === 0 && !this.isOpenidmAdmin) {
           this.disableSaveButton = true;
         }
         each(this.mergePrivilegeProperties(privilege, schema), (createPriv) => {
@@ -431,7 +466,9 @@ export default {
             tempProp.isReadOnly = true;
           }
 
-          this.displayProperties.push(tempProp);
+          if (createPriv.attribute !== 'password') {
+            this.displayProperties.push(tempProp);
+          }
         });
       }
     },
@@ -441,7 +478,7 @@ export default {
       this.$refs.deleteModal.hide();
 
       idmInstance.delete(`${this.resource}/${this.name}/${this.id}`).then(() => {
-        this.displayNotification('IDMMessages', 'success', this.$t('pages.access.deleteResource'));
+        this.displayNotification('IDMMessages', 'success', this.$t('pages.access.deleteResource', { resource: this.name }));
 
         this.$router.push({
           name: 'ListResource',
@@ -485,14 +522,14 @@ export default {
           if (generatedErrors.length > 0) {
             each(generatedErrors, (generatedError) => {
               if (generatedError.exists) {
-                const newError = generatedError;
-                newError.scope = 'mainEdit';
-                this.errors.add(newError);
+                const newError = {};
+                newError[generatedError.field] = [generatedError.msg];
+                this.$refs.observer.setErrors(newError);
               }
             });
-          } else {
-            this.displayNotification('IDMMessages', 'error', this.$t('pages.access.invalidEdit'));
           }
+
+          this.displayNotification('IDMMessages', 'error', this.$t('pages.access.invalidEdit'));
         });
       } else {
         this.displayNotification('IDMMessages', 'error', this.$t('pages.access.invalidEdit'));
@@ -522,13 +559,13 @@ export default {
       const properties = [];
 
       each(schema.order, (schemaPropName) => {
-        const canView = indexOf(privilege.VIEW.properties, schemaPropName) > -1;
-        const canUpdate = indexOf(privilege.UPDATE.properties, schemaPropName) > -1;
+        const canView = this.isOpenidmAdmin || indexOf(privilege.VIEW.properties, schemaPropName) > -1;
+        const canUpdate = this.isOpenidmAdmin || indexOf(privilege.UPDATE.properties, schemaPropName) > -1;
         const property = { attribute: schemaPropName };
 
-        if (canUpdate) {
+        if (canUpdate && schemaPropName !== '_id') {
           properties.push(property);
-        } else if (canView) {
+        } else if (canView && schemaPropName !== '_id') {
           property.readOnly = true;
           properties.push(property);
         }
@@ -552,6 +589,8 @@ export default {
 
       if (this.displayNameField.length > 0) {
         tempDisplayName = this.formFields[this.displayNameField];
+      } else {
+        tempDisplayName = this.formFields[keys(this.formFields)[0]];
       }
 
       return tempDisplayName;
@@ -559,7 +598,7 @@ export default {
     setIcon() {
       let tempIcon = 'check_box_outline_blank';
 
-      if (this.icon.length > 0 && this.icon.substring(0, 3) !== 'fa-') {
+      if (this.icon.length > 0) {
         tempIcon = this.icon;
       }
 
@@ -568,3 +607,28 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+/deep/ {
+  .fr-error.floating-label-input {
+    margin-bottom: 0 !important;
+    border: none !important;
+
+    /deep/ input {
+      border: 1px solid $danger;
+    }
+
+    /deep/ button {
+      border: 1px solid $danger !important;
+      border-left-color: $gray-400 !important;
+    }
+  }
+
+  .card-tabs-vertical {
+    .card-body {
+      padding: 0;
+    }
+  }
+}
+
+</style>
