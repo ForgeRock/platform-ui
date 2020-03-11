@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 ForgeRock AS. All Rights Reserved
+ * Copyright 2019-2020 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS.
  * or with one of its affiliates. All use shall be exclusively subject
@@ -55,8 +55,8 @@ export default new Router({
     {
       path: '/edit/:resourceType/:resourceName/:resourceId',
       name: 'EditResource',
-      component: () => import('@/components/access/EditResourceView'),
-      meta: { authenticate: true },
+      component: () => import('@forgerock/platform-shared/src/components/resource/EditResource'),
+      meta: { authenticate: true, listRoute: 'list' },
     },
     {
       path: '/dashboard',

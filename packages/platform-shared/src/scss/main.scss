@@ -193,3 +193,20 @@ a.card {
   border-bottom: $fr-table-head-border solid $table-border-color;
   padding: 12px;
 }
+
+//Circle and icon
+.fr-resource-circle {
+  width: 75px;
+  height: 75px;
+  text-align: center;
+}
+
+.fr-toggle-primary {
+  .v-switch-core {
+    background-color: $fr-switch-bg;
+  }
+
+  &.toggled .v-switch-core {
+    background-color: $fr-switch-toggled-bg;
+  }
+}

@@ -19,9 +19,14 @@ export default {
   methods: {
     // Display an application notification
     displayNotification(notificationGroup, notificationType, message) {
+      let type = notificationType;
+
+      if (type === 'error') {
+        type = 'danger';
+      }
+
       this.$notify({
-        group: notificationGroup,
-        type: notificationType,
+        type,
         text: message,
       });
     },

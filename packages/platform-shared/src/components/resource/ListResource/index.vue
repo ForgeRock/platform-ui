@@ -38,7 +38,7 @@ to such license between the licensee and ForgeRock AS. -->
         :sort-desc.sync="sortDesc"
         :no-local-sorting="true"
         class="mb-0"
-        sort-direction="asc"
+        :sort-direction="sortDirection"
         @row-clicked="$emit('rowClicked', $event)"
         @sort-changed="sortingChanged">
         <template v-slot:cell(actions)="data">
@@ -114,7 +114,7 @@ to such license between the licensee and ForgeRock AS. -->
     <slot name="deleteResourceModal">
       <FrDeleteResource
         modal-id="deleteResource"
-        @resource-deleted="loadData('true', displayFields, null, 1)"
+        @resource-deleted="loadData('true', displayFields, defaultSort, 1)"
         @cancel-resource-deletion="clearSelection()"
         :resource-name="resourceName"
         :resource-type="resourceType"
@@ -216,12 +216,18 @@ export default {
       sortDesc: false,
       filter: '',
       resourceToDeleteId: '',
+      sortDirection: 'asc',
     };
+  },
+  computed: {
+    defaultSort() {
+      return '';
+    },
   },
   mounted() {
     this.resourceName = this.getResourceName(this.routerParameters.resourceName);
     this.loadTableDefs();
-    this.loadData('true', this.displayFields, '', 1);
+    this.loadData('true', this.displayFields, this.defaultSort, 1);
   },
   methods: {
     getResourceName(resourceName) {
@@ -257,7 +263,7 @@ export default {
       this.sortDesc = false;
       this.currentPage = 1;
 
-      this.loadData('true', this.displayFields, null, 1);
+      this.loadData('true', this.displayFields, this.defaultSort, 1);
     },
     /**
      * Builds API URL using value in search box
@@ -328,7 +334,7 @@ export default {
               this.columns.push({
                 key: columnName,
                 label: column.title,
-                sortable: column.sortable,
+                sortable: true,
                 sortDirection: 'desc',
               });
             }
@@ -392,7 +398,7 @@ export default {
       this.sortDesc = false;
       this.currentPage = 1;
 
-      this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, null, 1);
+      this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.defaultSort, 1);
     },
     /**
      * Repulls data based on new sort, and returns table to first page
