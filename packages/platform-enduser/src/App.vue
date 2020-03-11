@@ -35,7 +35,6 @@ to such license between the licensee and ForgeRock AS. -->
     <!-- Application View -->
     <!-- eslint-disable-next-line vue/component-name-in-template-casing -->
     <notifications
-      group="IDMMessages"
       position="bottom left"
       width="320"
       :duration="4000">
