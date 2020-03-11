@@ -1,27 +1,31 @@
-<!-- Copyright 2019 ForgeRock AS. All Rights Reserved
+<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
 
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
-  <div class="row text-left ml-1 mb-2">
-    <input
-      type="hidden"
-      :name="name"
-      :ref="name"
-      :value="value">
-    <input
-      class="ml-1 mt-1"
-      type="checkbox"
-      :id="'boolean_callback_' + index"
-      :value="value"
-      :checked="value"
-      @change="onToggle()">
-    <label
-      class="ml-2"
-      :for="'boolean_callback_' + index">
-      {{ callback.getPrompt() }}
-    </label>
+  <div class="row text-left mb-2">
+    <div class="col-1">
+      <input
+        type="hidden"
+        :name="name"
+        :ref="name"
+        :value="value">
+      <input
+        class="ml-1 mt-1"
+        type="checkbox"
+        :id="'boolean_callback_' + index"
+        :value="value"
+        :checked="value"
+        @change="onToggle()">
+    </div>
+    <div class="col-10">
+      <label
+        class="ml-2"
+        :for="'boolean_callback_' + index">
+        {{ callback.getPrompt() }}
+      </label>
+    </div>
   </div>
 </template>
 

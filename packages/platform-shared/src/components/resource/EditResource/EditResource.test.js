@@ -40,12 +40,17 @@ describe('EditResource.vue', () => {
       mocks: {
         $route,
         $t: () => {},
+        $store: {
+          state: {
+            userId: 'foo',
+          },
+        },
       },
     });
   });
 
   afterEach(() => {
-    wrapper.destroy();
+    wrapper = null;
   });
 
   it('EditResource page loaded', () => {
