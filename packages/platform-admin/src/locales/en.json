@@ -134,7 +134,6 @@
   "remoteServers": {
     "confirmDeleteRemoteServer": "Are you sure you want to delete the \"{name}\" remote server?",
     "connect": "Connect",
-    "connected": "Connected",
     "connectorName": "Connector Name",
     "connectionSettings": "Connection Settings",
     "deleteServer": "Delete Server",
@@ -186,9 +185,7 @@
       "instructions": "Connecting a remote server involves deploying and running a piece of software on your side. Download and complete the installation process before proceeding.",
       "dotNetServer": ".NET Server",
       "javaServer": "Java Server",
-      "download": "Download",
-      "previous": "Previous",
-      "connect": "Connect"
+      "download": "Download"
     }
   },
   "trees": {
