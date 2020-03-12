@@ -1,4 +1,4 @@
-<!-- Copyright 2019 ForgeRock AS. All Rights Reserved
+<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
 
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
@@ -135,7 +135,7 @@ export default {
       this.$refs.callbacksPanel.appendChild(instance.$el);
     },
     addFloatingLabelInput(type, callback, index) {
-      const failedPolicies = (callback.getFailedPolicyKeys) ? callback.getFailedPolicyKeys() : [];
+      const failedPolicies = (callback.getFailedPolicies) ? callback.getFailedPolicies() : [];
       let prompt = '';
 
       let translatedPolicyMessages = [];
@@ -160,7 +160,7 @@ export default {
         autofocus: (index === 0) ? 'true' : 'false',
         reveal: type === 'password',
         fieldName: `callback_${index}`,
-        defaultValue: callback.getInputValue(),
+        value: callback.getInputValue(),
         validator: noop,
         failedPolicies: translatedPolicyMessages,
         callback,
