@@ -58,17 +58,4 @@ describe('App.vue', () => {
     expect(wrapper.name()).toBe('App');
     expect(wrapper).toMatchSnapshot();
   });
-
-  it('Side nav toggle', () => {
-    expect(wrapper.vm.toolbarToggled).toEqual(false);
-
-    wrapper.vm.onToggle();
-
-    expect(wrapper.vm.toolbarToggled).toEqual(true);
-  });
-
-  it('Access generated icons', () => {
-    expect(wrapper.vm.accessIcon('')).toEqual('check_box_outline_blank');
-    expect(wrapper.vm.accessIcon('test')).toEqual('test');
-  });
 });
