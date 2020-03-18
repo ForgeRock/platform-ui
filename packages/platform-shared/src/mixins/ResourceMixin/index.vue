@@ -5,7 +5,14 @@ or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <script>
 import {
-  cloneDeep, each, filter, find, has, isArray, map,
+  cloneDeep,
+  each,
+  filter,
+  find,
+  has,
+  isArray,
+  map,
+  isEqual,
 } from 'lodash';
 
 /**
@@ -31,7 +38,7 @@ export default {
         changes = [];
 
         each(clonedNew, (value, key) => {
-          if (clonedOriginal[key] !== clonedNew[key]) {
+          if (!isEqual(clonedOriginal[key], clonedNew[key])) {
             changes.push({
               value: clonedNew[key],
               name: key,
