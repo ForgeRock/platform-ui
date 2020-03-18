@@ -26,3 +26,14 @@
 .tab-content.col {
   padding: 0;
 }
+
+.tabs {
+  &.row {
+    margin: 0;
+  }
+
+  .col-auto {
+    border-right: 1px solid $gray-200;
+    padding: 0;
+  }
+}
