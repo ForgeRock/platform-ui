@@ -267,7 +267,7 @@ export default {
       default: '/',
     },
     /**
-     * Details about the current user. Dislplayed at top of SideNav and in dropdown menu
+     * Details about the current user. Displayed at top of SideNav and in dropdown menu
      */
     userDetails: {
       type: Object,
