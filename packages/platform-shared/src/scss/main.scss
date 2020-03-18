@@ -188,6 +188,10 @@ a.card {
   td {
     vertical-align: middle;
   }
+
+  tr.b-table-row-selected.table-transparent {
+    background-color: $light-blue !important;
+  }
 }
 
 // General toolbar styles

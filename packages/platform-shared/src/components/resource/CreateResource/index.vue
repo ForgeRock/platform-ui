@@ -1,4 +1,4 @@
-<!-- Copyright 2019 ForgeRock AS. All Rights Reserved
+<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
 
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
@@ -26,7 +26,7 @@ to such license between the licensee and ForgeRock AS. -->
     </template>
     <BRow>
       <BCol>
-        <!-- Creating resource currently only supports String, Number and Boolean -->
+        <!-- Creating resource currently only supports String, Number, Boolean, and singleton relationships -->
         <BForm
           v-if="createProperties.length > 0"
           class="mb-3"
@@ -101,6 +101,16 @@ to such license between the licensee and ForgeRock AS. -->
                   </div>
                 </div>
               </BFormGroup>
+
+              <!-- for singletonRelationhip values -->
+              <FrRelationshipEdit
+                v-if="field.type === 'relationship'"
+                :parent-resource="`${resourceType}/${resourceName}`"
+                :relationship-property="field"
+                :index="index"
+                :key="'createResource' +index"
+                @setValue="setSingletonRelationshipValue"
+                :new-resource="true" />
             </template>
 
             <!-- Special logic for password -->
@@ -198,6 +208,7 @@ import {
 import { ValidationProvider, ValidationObserver } from 'vee-validate';
 import PolicyPasswordInput from '@forgerock/platform-shared/src/components/PolicyPasswordInput/';
 import ValidationErrorList from '@forgerock/platform-shared/src/components/ValidationErrorList/';
+import RelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
@@ -219,6 +230,7 @@ export default {
   components: {
     FrValidationError: ValidationErrorList,
     FrPolicyPasswordInput: PolicyPasswordInput,
+    FrRelationshipEdit: RelationshipEdit,
     BButton,
     BFormInput,
     BFormGroup,
@@ -257,6 +269,8 @@ export default {
     each(this.createProperties, (prop) => {
       if (prop.type === 'string' || prop.type === 'number') {
         tempFormFields[prop.key] = '';
+      } else if (prop.type === 'relationship') {
+        tempFormFields[prop.key] = {};
       } else {
         tempFormFields[prop.key] = false;
       }
@@ -358,6 +372,9 @@ export default {
       if (isArray(this.$refs.focusInput)) {
         this.$refs.focusInput[0].focus();
       }
+    },
+    setSingletonRelationshipValue(data) {
+      this.formFields[data.property] = data.value;
     },
   },
 };

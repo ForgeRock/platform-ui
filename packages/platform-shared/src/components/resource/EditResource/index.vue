@@ -7,7 +7,7 @@ to such license between the licensee and ForgeRock AS. -->
   <BContainer class="pb-5">
     <BRow>
       <BCol>
-        <div class="d-sm-flex my-4">
+        <div class="d-sm-flex mt-5 mb-4">
           <div class="media">
             <div
               v-if="name === 'user'"
@@ -48,7 +48,9 @@ to such license between the licensee and ForgeRock AS. -->
       <i class="material-icons-outlined mr-md-2 text-nowrap">cached</i>
       {{ $t('common.reset') }} {{ $t('common.placeholders.password') }}
     </BButton> -->
-    <BCard class="card-tabs-vertical mb-5">
+    <BCard
+      v-if="!isLoading"
+      class="card-tabs-vertical mb-5">
       <BTabs
         flex-column
         flex-sm-row
@@ -61,7 +63,7 @@ to such license between the licensee and ForgeRock AS. -->
             <div class="card-body m-4">
               <ValidationObserver ref="observer">
                 <template v-for="(field, index) in displayProperties">
-                  <template v-if="!field.isReadOnly">
+                  <template v-if="!field.isReadOnly || isOpenidmAdmin">
                     <div
                       class="mb-4"
                       v-if="(field.type === 'string' || field.type === 'number') && field.encryption === undefined"
@@ -83,10 +85,17 @@ to such license between the licensee and ForgeRock AS. -->
                           :field-name="field.key" />
                       </ValidationProvider>
                     </div>
-
+                    <FrRelationshipEdit
+                      v-else-if="field.type === 'relationship' && formFields[field.key] !== ''"
+                      :parent-resource="`${resource}/${name}`"
+                      :relationship-property="field"
+                      :key="'editResource' +index"
+                      :index="index"
+                      :value="formFields[field.key]"
+                      @setValue="setSingletonRelationshipValue" />
                     <!-- for boolean values -->
                     <BFormGroup
-                      :key="'createResource' +index"
+                      :key="'editResource' +index"
                       v-if="field.type === 'boolean'">
                       <div class="form-row">
                         <div class="col-1">
@@ -118,6 +127,33 @@ to such license between the licensee and ForgeRock AS. -->
                       :disabled="true"
                       :field-name="field.key"
                       :label="field.title" />
+
+                    <!-- for singletonRelationhip values -->
+                    <BFormGroup
+                      :key="'readResource' +index"
+                      v-if="field.type === 'relationship' && formFields[field.key]">
+                      <label
+                        class="col-form-label col-sm-3"
+                        :for="field.title">
+                        {{ field.title }}
+                      </label>
+                      <div class="media-body">
+                        <!-- Using the first display field here "[0]"-->
+                        <div class="text-bold pl-1">
+                          {{ formFields[field.key][getRelationshipDisplayFields(field, formFields[field.key])[0]] }}
+                        </div>
+                        <div>
+                          <!-- Loop over the rest of the display fields and print each in a span -->
+                          <span
+                            v-for="(displayField, displayFieldIndex) in getRelationshipDisplayFields(field, formFields[field.key])"
+                            :key="`displayField_${displayField}_${displayFieldIndex}`"
+                            v-show="displayFieldIndex !== 0"
+                            class="pl-1 pr-1 text-muted">
+                            {{ formFields[field.key][displayField] }}
+                          </span>
+                        </div>
+                      </div>
+                    </BFormGroup>
 
                     <!-- for boolean values -->
                     <BFormGroup
@@ -163,6 +199,18 @@ to such license between the licensee and ForgeRock AS. -->
             {{ $t('pages.access.noAvailableProperties') }}
           </span>
         </BTab>
+        <!-- Add a tab for each viewable/editable relationship array property -->
+        <template v-for="(relationshipProperty) in relationshipProperties">
+          <BTab
+            v-if="relationshipProperty.type === 'array'"
+            :title="relationshipProperty.title"
+            :key="`${relationshipProperty.propName}_tab`">
+            <FrRelationshipArray
+              :parent-resource="`${resource}/${name}`"
+              :parent-id="id"
+              :relationship-array-property="relationshipProperty" />
+          </BTab>
+        </template>
       </BTabs>
     </BCard>
 
@@ -280,9 +328,13 @@ import {
   capitalize,
   clone,
   each,
+  filter,
+  find,
   indexOf,
   isUndefined,
+  map,
   pick,
+  pickBy,
   keys,
 } from 'lodash';
 import {
@@ -304,6 +356,8 @@ import { ValidationProvider, ValidationObserver } from 'vee-validate';
 import FloatingLabelInput from '@forgerock/platform-shared/src/components/FloatingLabelInput';
 import ValidationErrorList from '@forgerock/platform-shared/src/components/ValidationErrorList/';
 import PolicyPasswordInput from '@forgerock/platform-shared/src/components/PolicyPasswordInput/';
+import RelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
+import RelationshipArray from '@forgerock/platform-shared/src/components/resource/RelationshipArray';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
@@ -326,6 +380,8 @@ export default {
     FrPolicyPasswordInput: PolicyPasswordInput,
     FrValidationError: ValidationErrorList,
     FrFloatingLabelInput: FloatingLabelInput,
+    FrRelationshipEdit: RelationshipEdit,
+    FrRelationshipArray: RelationshipArray,
     ValidationObserver,
     ValidationProvider,
     BButton,
@@ -368,6 +424,8 @@ export default {
       formFields: {},
       oldFormFields: {},
       isOpenidmAdmin: this.$store.state.userId === 'openidm-admin',
+      relationshipProperties: [],
+      isLoading: true,
     };
   },
   mounted() {
@@ -378,15 +436,54 @@ export default {
       const idmInstance = this.getRequestService();
       axios.all([
         idmInstance.get(`schema/${this.resource}/${this.name}`),
-        idmInstance.get(`privilege/${this.resource}/${this.name}/${this.id}`),
-        idmInstance.get(`${this.resource}/${this.name}/${this.id}`)]).then(axios.spread((schema, privilege, resourceDetails) => {
+        idmInstance.get(`privilege/${this.resource}/${this.name}/${this.id}`)]).then(axios.spread((schema, privilege) => {
         this.resourceTitle = schema.data.title;
-        this.setBreadcrumb(`/${this.$route.meta.listRoute}/${this.resource}/${this.name}`, `${this.resourceTitle} List`);
-        this.generateDisplay(schema.data, privilege.data, resourceDetails.data);
+
+        this.setBreadcrumb(`/${this.$route.meta.listRoute}/${this.resource}/${this.name}`, `${this.resourceTitle} ${this.$t('pages.access.list')}`);
+
+        this.relationshipProperties = this.getRelationshipProperties(schema.data, privilege.data);
+
+        idmInstance.get(this.buildResourceUrl()).then((resourceDetails) => {
+          this.generateDisplay(schema.data, privilege.data, resourceDetails.data);
+        }).catch((error) => {
+          this.displayNotification('IDMMessages', 'error', error.response.data.message);
+        });
       }))
         .catch((error) => {
           this.displayNotification('IDMMessages', 'error', error.response.data.message);
         });
+    },
+    buildResourceUrl() {
+      let url = `${this.resource}/${this.name}/${this.id}?_fields=*`;
+      const singletons = filter(this.relationshipProperties, { type: 'relationship' });
+
+      if (singletons.length) {
+        url += `,${map(singletons, (prop) => `${prop.propName}/*`).join(',')}`;
+      }
+
+      return url;
+    },
+    getRelationshipProperties(schema, privilege) {
+      return pickBy(schema.properties, (property, key) => {
+        const isInPropertyOrder = schema.order.includes(key);
+        const hasPermission = privilege.VIEW.properties.includes(key) || privilege.UPDATE.properties.includes(key) || this.isOpenidmAdmin;
+        const isRelationship = property.type === 'relationship' || (property.type === 'array' && property.items.type === 'relationship');
+
+        property.propName = key;
+
+        if (isRelationship) {
+          property.isReadOnly = privilege.UPDATE.properties.indexOf(key) === -1;
+        }
+
+        return isInPropertyOrder && isRelationship && hasPermission;
+      });
+    },
+    setSingletonRelationshipValue(data) {
+      this.formFields[data.property] = data.value;
+    },
+    getRelationshipDisplayFields(property, value) {
+      // eslint-disable-next-line no-underscore-dangle
+      return find(property.resourceCollection, { path: value._refResourceCollection }).query.fields;
     },
     generateDisplay(schema, privilege, resourceDetails) {
       if (this.isOpenidmAdmin) {
@@ -439,7 +536,7 @@ export default {
           tempProp.key = createPriv.attribute;
 
           // Try and do some primary detection for a display name
-          if (((createPriv.attribute).toLowerCase() === 'username' || (createPriv.attribute).toLowerCase() === 'name') && this.displayNameField.length === 0) {
+          if (createPriv.attrubute !== '_id' && this.displayNameField.length === 0) {
             this.displayNameField = createPriv.attribute;
           }
 
@@ -471,6 +568,8 @@ export default {
           }
         });
       }
+
+      this.isLoading = false;
     },
     deleteResource() {
       const idmInstance = this.getRequestService();
@@ -481,11 +580,7 @@ export default {
         this.displayNotification('IDMMessages', 'success', this.$t('pages.access.deleteResource', { resource: this.name }));
 
         this.$router.push({
-          name: 'ListResource',
-          params: {
-            resourceType: this.resource,
-            resourceName: this.name,
-          },
+          path: `/${this.$route.meta.listRoute}/${this.resource}/${this.name}`,
         });
       })
         .catch((error) => {
@@ -626,6 +721,10 @@ export default {
 
   .card-tabs-vertical {
     .card-body {
+      padding: 0;
+    }
+
+    .tab-content.col {
       padding: 0;
     }
   }

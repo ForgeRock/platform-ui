@@ -84,11 +84,17 @@
       "noAvailableProperties": "No available properties for editing",
       "unableToEditResource": "Unable to edit {resource}",
       "invalidEdit": "Invalid edit form",
+      "successCreate": "{resource} successfully created",
       "successEdited": "{resource} successfully edited",
+      "successAdded": "{resource} successfully added",
+      "successRemoved": "{resource} successfully removed",
       "details": "Details",
       "resetPassword": "Reset password",
       "failedSavePassword": "Failed to save password",
-      "successSavePassword": "Successfully saved password"
+      "successSavePassword": "Successfully saved password",
+      "removeConfirm": "Are you sure you want to remove the selected",
+      "removeModalTitle": "Confirm Removal",
+      "list": "List"
     }
   }
 }

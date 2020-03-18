@@ -61,7 +61,7 @@ describe('EditResource.vue', () => {
   it('Format display data', () => {
     const schema = {
       icon: 'fa-test',
-      order: ['country', 'userName', 'sn', 'email', 'contractor'],
+      order: ['country', 'userName', 'sn', 'email', 'contractor', 'manager'],
       required: ['userName'],
       properties: {
         userName: {
@@ -84,13 +84,17 @@ describe('EditResource.vue', () => {
           type: 'string',
           title: 'Country',
         },
+        manager: {
+          type: 'relationship',
+          title: 'Manager',
+        },
       },
     };
 
     const privilege = {
       UPDATE: {
         allowed: true,
-        properties: ['userName', 'contractor', 'sn', 'email'],
+        properties: ['userName', 'contractor', 'sn', 'email', 'manager'],
       },
       DELETE: {
         allowed: true,
@@ -111,8 +115,20 @@ describe('EditResource.vue', () => {
     expect(wrapper.vm.icon).toBe('check_box_outline_blank');
     expect(wrapper.vm.formFields.contractor).toBe(false);
     // make sure the view and update properties are merged together and in the correct order
-    expect(wrapper.vm.displayProperties.length).toBe(5);
+    expect(wrapper.vm.displayProperties.length).toBe(6);
     expect(wrapper.vm.displayProperties[0].key).toBe('country');
+    // set relationshipProperties
+    wrapper.vm.relationshipProperties = wrapper.vm.getRelationshipProperties(schema, privilege);
+    expect(wrapper.vm.relationshipProperties).toEqual({
+      manager: {
+        type: 'relationship',
+        title: 'Manager',
+        key: 'manager',
+        propName: 'manager',
+        isReadOnly: false,
+      },
+    });
+    expect(wrapper.vm.buildResourceUrl()).toEqual('test/test/test?_fields=*,manager/*');
   });
 
   it('Password reveal correctly', () => {
