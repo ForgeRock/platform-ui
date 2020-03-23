@@ -5,7 +5,7 @@ or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
   <div>
-    <div class="card">
+    <div>
       <div class="p-3 d-flex justify-content-between flex-column flex-lg-row card-header">
         <div class="btn-group mb-3 mb-lg-0 mr-lg-1">
           <slot name="listToolbar" />
