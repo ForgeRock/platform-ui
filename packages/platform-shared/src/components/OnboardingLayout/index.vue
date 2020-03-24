@@ -50,13 +50,13 @@ export default {
 }
 
 .signup-step-layout {
-  min-height: 101vh;
+  min-height: 100vh;
   background-size: cover;
   background-position-y: bottom;
 }
 
 .background-image {
-  background-image: url('~@/assets/images/bg-clouds.png');
+  background-image: url('~@forgerock/platform-shared/src/assets/images/bg-clouds.png');
 }
 
 .signup-demonstration-component {
