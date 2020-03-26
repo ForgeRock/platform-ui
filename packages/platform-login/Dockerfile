@@ -53,7 +53,7 @@ RUN yarn run build
 ###############################################################################
 # Production Build Stage
 ###############################################################################
-FROM nginx:1.17 as production
+FROM nginxinc/nginx-unprivileged:1.17 as production
 
 # Copy result of `build` build stage
 COPY --from=build --chown=nginx /home/app/packages/platform-login/dist/ /usr/share/nginx/html
