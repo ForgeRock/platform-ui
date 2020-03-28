@@ -21,7 +21,7 @@ to such license between the licensee and ForgeRock AS. -->
       :menu-items="menuItems"
       :enduser-link="$store.state.enduserURL"
       v-show="!hideNav" />
-    <div class="content">
+    <div class="content h-100">
       <FrNavBar
         @toggle-mobile="toggleMenuMobile"
         :show-notifications="false"
