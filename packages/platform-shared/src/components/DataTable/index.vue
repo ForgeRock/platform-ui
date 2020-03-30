@@ -5,7 +5,7 @@ or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
   <div class="fr-datatable">
-    <BCard no-body>
+    <div>
       <!-- @slot Toolbar above the datatable for buttons, search, etc. -->
       <slot name="toolbar" />
       <BTable
@@ -113,13 +113,12 @@ to such license between the licensee and ForgeRock AS. -->
           </BPagination>
         </div>
       </div>
-    </BCard>
+    </div>
   </div>
 </template>
 
 <script>
 import {
-  BCard,
   BDropdown,
   BDropdownItem,
   BFormCheckbox,
@@ -133,7 +132,6 @@ import {
 export default {
   name: 'DataTable',
   components: {
-    BCard,
     BDropdown,
     BDropdownItem,
     BFormCheckbox,
