@@ -53,6 +53,7 @@ to such license between the licensee and ForgeRock AS. -->
       :rules="field.validation"
       v-slot="{ errors }">
       <FrMultiselect
+        @input="$emit('valueChange', field.value)"
         v-if="field.type === 'multiselect'"
         class="floating-label-input"
         :field-name="field.key"
@@ -63,6 +64,7 @@ to such license between the licensee and ForgeRock AS. -->
         :select-options="field.options"
         :label="getLabel()" />
       <FrSelect
+        @input="$emit('valueChange', field.value)"
         v-if="field.type === 'select'"
         class="floating-label-input"
         :field-name="field.key"
@@ -91,6 +93,7 @@ to such license between the licensee and ForgeRock AS. -->
       </FrBasicInput>
       <FrBasicInput
         v-else-if="field.type === 'integer'"
+        @input="$emit('valueChange', field.value)"
         :class="[{'fr-error': errors.length || failedPolicies.length}, 'floating-label-input']"
         v-model.number="field.value"
         v-bind="attrs"
@@ -111,6 +114,7 @@ to such license between the licensee and ForgeRock AS. -->
         :disabled="field.disabled"
         :class="{'fr-error': errors.length || failedPolicies.length}" />
       <FrTag
+        @input="$emit('valueChange', field.value)"
         v-else-if="field.type === 'tag'"
         v-model="field.value"
         :field-title="field.title"
