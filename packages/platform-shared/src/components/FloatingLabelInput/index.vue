@@ -35,9 +35,11 @@ to such license between the licensee and ForgeRock AS. -->
         :hide-selected="true"
         :multiple="true"
         :close-on-select="false"
+        :taggable="true"
         :searchable="multiselectOptions.length > 9"
         @open="floatLabels = true"
         @close="floatLabels = value && value.length"
+        @tag="addTag"
         :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control p-0', {'h-25': floatLabels || !this.label }, {'no-multiselect-label': !this.label }]"
         placeholder="Type to search">
         <slot name="noResult">
@@ -94,7 +96,15 @@ to such license between the licensee and ForgeRock AS. -->
         </button>
       </div>
       <label
-        v-if="label"
+        v-if="label && isHtml"
+        v-html="label"
+        :hidden="hideLabel"
+        :for="id"
+        class="no-pointer-events">
+        {{ label }}
+      </label>
+      <label
+        v-else-if="label"
         :hidden="hideLabel"
         :for="id"
         class="no-pointer-events">
@@ -108,7 +118,14 @@ to such license between the licensee and ForgeRock AS. -->
         :field-name="fieldName" />
     </slot>
     <small
-      v-if="helpText"
+      v-if="helpText && isHtml"
+      v-html="helpText"
+      :id="`${id}_helpText`"
+      class="form-text text-muted">
+      {{ helpText }}
+    </small>
+    <small
+      v-else-if="helpText"
       :id="`${id}_helpText`"
       class="form-text text-muted">
       {{ helpText }}
@@ -233,6 +250,17 @@ export default {
       default: false,
     },
     /**
+     * add tagging functionality to multiple selects
+     */
+    taggable: {
+      type: Boolean,
+      default: false,
+    },
+    isHtml: {
+      type: Boolean,
+      default: false,
+    },
+    /**
      * Binding to v-model
      */
     value: {
@@ -312,6 +340,14 @@ export default {
           this.inputValue = newVal.toString();
         }
       }
+    },
+    addTag(newTag) {
+      const tag = {
+        text: newTag,
+        value: newTag,
+      };
+      this.selectOptions.push(tag);
+      this.inputValue.push(tag);
     },
   },
   watch: {
