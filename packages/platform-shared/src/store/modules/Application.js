@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 ForgeRock AS. All Rights Reserved
+ * Copyright 2019-2020 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS.
  * or with one of its affiliates. All use shall be exclusively subject
@@ -13,6 +13,10 @@
  *      @param {string} idmClientID - IDM client ID used for calls
  */
 
+import {
+  set,
+} from 'lodash';
+
 const defaultState = {
   authHeaders: null,
   loginRedirect: null,
@@ -21,6 +25,7 @@ const defaultState = {
   loginURL: null,
   theme: 'default',
   idmClientID: null,
+  oauthSaveObj: null,
 };
 
 const getters = {
@@ -46,6 +51,18 @@ const actions = {
 
   clearLoginRedirect(context) {
     context.commmit('clearLoginRedirect');
+  },
+
+  setOauthSaveObj(context, obj) {
+    context.commit('setOauthSaveObj', obj);
+  },
+
+  clearOauthSaveObj(context) {
+    context.commit('clearOauthSaveObj');
+  },
+
+  setOauthSaveObjPropertyValue(context, obj) {
+    context.commit('setOauthSaveObjPropertyValue', obj);
   },
 };
 
@@ -95,6 +112,18 @@ const mutations = {
   clearEnduserSelfservice(state) {
     state.authHeaders = null;
     state.loginRedirect = null;
+  },
+
+  setOauthSaveObj(state, obj) {
+    state.oauthSaveObj = obj;
+  },
+
+  setOauthSaveObjPropertyValue(state, obj) {
+    set(state.oauthSaveObj, `${obj.model}.value`, obj.value);
+  },
+
+  clearOauthSaveObj(state) {
+    state.oauthSaveObj = null;
   },
 };
 
