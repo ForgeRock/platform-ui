@@ -1,15 +1,15 @@
 <template>
   <FrField
-    @valueChange="updateValue"
     :field="field"
     :disabled="uiSchema.disabled"
     class="mb-4 px-1" />
 </template>
+
 <script>
 import FrField from '@forgerock/platform-shared/src/components/Field';
 
 export default {
-  name: 'NumberDisplay',
+  name: 'PasswordDisplay',
   components: {
     FrField,
   },
@@ -26,22 +26,21 @@ export default {
     },
   },
   computed: {
-    field() {
-      return {
-        type: 'integer',
-        value: this.uiSchema.value,
-        title: this.uiSchema.label,
-        description: this.uiSchema.helpText,
-        validation: 'numeric',
-      };
-    },
-  },
-  methods: {
-    updateValue(newValue) {
-      this.$emit('update:model', {
-        model: this.saveModel,
-        value: newValue,
-      });
+    field: {
+      get() {
+        return {
+          type: 'password',
+          value: this.uiSchema.value || '',
+          title: this.uiSchema.label,
+          description: this.uiSchema.helpText,
+        };
+      },
+      set(newValue) {
+        this.$emit('update:model', {
+          model: this.saveModel,
+          value: newValue,
+        });
+      },
     },
   },
 };
