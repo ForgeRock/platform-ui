@@ -1,24 +1,29 @@
 <template>
-  <FloatingLabelInput
-    type="multiselect"
-    v-model="value"
-    :disabled="uiSchema.disabled"
-    :select-options="uiSchema.options"
-    :label="uiSchema.label"
-    :help-text="uiSchema.helpText"
-    :is-html="uiSchema.isHtml"
-    :taggable="true"
-    :multiple="true"
-    class="mb-4 pr-1"
-  />
+  <div>
+    <FrField
+      @valueChange="updateValue"
+      :field="field"
+    />
+    <small
+      v-if="uiSchema.isHtml"
+      v-html="uiSchema.helpText"
+      class="form-text text-muted pb-4">
+      {{ uiSchema.helpText }}
+    </small>
+    <small
+      v-else
+      class="form-text text-muted pb-4">
+      {{ uiSchema.helpText }}
+    </small>
+  </div>
 </template>
 <script>
-import FloatingLabelInput from '@forgerock/platform-shared/src/components/Field/FloatingLabelInput';
+import FrField from '@forgerock/platform-shared/src/components/Field';
 
 export default {
   name: 'ArrayDisplay',
   components: {
-    FloatingLabelInput,
+    FrField,
   },
   props: {
     uiSchema: {
@@ -33,16 +38,32 @@ export default {
     },
   },
   computed: {
-    value: {
-      get() {
-        return this.uiSchema.value;
-      },
-      set(newValue) {
-        this.$emit('update:model', {
-          model: this.saveModel,
-          value: newValue,
-        });
-      },
+    field() {
+      let arrayType;
+      if (this.uiSchema.arrayType === 'addMany') {
+        arrayType = 'tag';
+      } else if (this.uiSchema.arrayType === 'selectOne') {
+        arrayType = 'select';
+      } else {
+        arrayType = 'multiselect';
+      }
+
+      return {
+        type: arrayType,
+        value: this.uiSchema.value,
+        enum: this.uiSchema.enum,
+        enumNames: this.uiSchema.enumNames,
+        options: this.uiSchema.options,
+        title: this.uiSchema.label,
+      };
+    },
+  },
+  methods: {
+    updateValue(newValue) {
+      this.$emit('update:model', {
+        model: this.saveModel,
+        value: newValue,
+      });
     },
   },
 };

@@ -4,7 +4,7 @@
     <BFormRadioGroup
       v-model="value"
       :options="uiSchema.options"
-      text-field="name"
+      text-field="text"
       stacked />
     <small
       v-if="uiSchema.isHtml"

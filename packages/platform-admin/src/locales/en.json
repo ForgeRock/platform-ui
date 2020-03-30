@@ -289,6 +289,7 @@
       "name": "Name"
     },
     "addAppModal": {
+      "appName": "Application Name",
       "chooseAppType": "Choose an application type",
       "enterprise": "Enterprise",
       "enterpriseHelpText": "Set up SSO to an application like Google, Salesforce, or Office365",
@@ -309,6 +310,131 @@
       "appTypeModalTitle": "New %{appType} App",
       "consumerAppModalTitle": "%{appType} Application Name",
       "errorCreatingApp": "Could not create application"
+    }
+  },
+  "oauth": {
+    "editApp": {
+      "schemaFail": "Unable to get application properties",
+      "updateSuccess": "Application updated",
+      "updateFail": "Application update failed",
+      "deleteFail": "Unable to delete application"
+    },
+    "listApps": {
+      "getAppDataFail": "Unable to retrieve applications data",
+      "deleteAppFail": "Unable to delete application"
+    },
+    "nativeApp": {
+      "super": "Native / SPA",
+      "newApp": "New App"
+    },
+    "webApp": {
+      "super": "Web Application"
+    },
+    "serviceApp": {
+      "super": "Service Application"
+    },
+    "accessTab": {
+      "defaultScopesLabel": "Default Scopes",
+      "defaultScopesHelp": "Scopes autmatically given to tokens.",
+      "responseTypesLabel": "Response Types",
+      "responseTypesHelp": "Response types this client will support and use.",
+      "claimsLabel": "Claims",
+      "claimsHelp": "List of claim name translations, which will override those specified for the authorization server. Claims are values that are presented to the user to inform them what data is being made available to the Client.",
+      "loopbackInterfaceRedirectionLabel": "Allow wildcard ports in redirect URLs",
+      "loopbackInterfaceRedirectionHelp": "This flag indicates whether wildcards can be used for port numbers in redirect URIs. For example - <code>https://127.0.0.1:{port}/{path}</code> for IPv4 and <code>https://[::1]:{port}/{path}</code> for IPv6."
+    },
+    "authenticationTab": {
+      "tokenEndpointAuthMethodLabel": "Token Endpoint Authentication Method",
+      "tokenEndpointAuthMethodHelp": "The authentication method with which a client authenticates to the authorization server at the token endpoint. The authentication method applies to OIDC requests with the openid scope.",
+      "clientTypeLabel": "Client Type",
+      "clientTypeHelp": "Type of OAuth 2.0 client. Confidential clients can keep their password secret, and are typically web apps or other server-based clients. Public clients run the risk of exposing their password to a host or user agent, such as rich browser applications or desktop clients.",
+      "isConsentImpliedLabel": "Implied Consent",
+      "isConsentImpliedHelp": "When active, the resource owner will not be asked for consent during authorization flows. The OAuth2 Provider must be configured to allow clients to skip consent.",
+      "mixUpMitigationLabel": "OAuth 2.0 Mix-Up Mitigation active",
+      "mixUpMitigationHelp": "Enables OAuth 2.0 mix-up mitigation on the authorization server side. Enable this setting only if this OAuth 2.0 client supports the OAuth 2.0 Mix-Up Mitigation draft, otherwise AM will fail to validate access token requests received from this client.",
+      "defaultAcrValuesLabel": "Default ACR values",
+      "defaultAcrValuesHelp": "Default requested Authentication Context Class Reference values.",
+      "requestUrisLabel": "Request URIs",
+      "requestUrisHelp": "Array of request_uri values that are pre-registered by the RP for use at the OP.",
+      "clientJwtPublicKeyLabel": "Client JWT Bearer Public Key",
+      "subjectTypeLabel": "Subject Type",
+      "subjectTypeHelp": "The subject type added to responses for this client.",
+      "defaultMaxAgeEnabledLabel": "Default Max Age",
+      "defaultMaxAgeEnabledHelp": "Whether or not the default max age is enforced.",
+      "defaultMaxAgeLabel": "Default Max Age",
+      "mTLSCertificateBoundAccessTokensLabel": "Use Certificate-Bound Access Tokens",
+      "mTLSTrustedCertLabel": "mTLS Self-Signed Certificate",
+      "mTLSTrustedCertHelp": "Self-signed PEM-encoded X.509 certificate for mTLS client certificate authentication.",
+      "mTLSSubjectDNLabel": "mTLS Subject DN",
+      "mTLSSubjectDNHelp": "Expected Subject DN of certificate used for mTLS client certificate authentication. Defaults to CN=client_id. Only applicable when using CA-signed certificates."
+    },
+    "clientManagementTab": {
+      "updateAccessTokenLabel": "Access Token",
+      "updateAccessTokenHelp": "The access token used to update the client."
+    },
+    "consentScreenTab": {
+      "nameLabel": "Display Name",
+      "nameHelp": "A client name that may be relevant to the resource owner when considering approval.",
+      "descriptionsLabel": "Display Description",
+      "descriptionsHelp": "A description of the client or other information that may be relevant to the resource owner when considering approval.",
+      "policyUriLabel": "Privacy Policy URI",
+      "policyUriHelp": "The URI for the client's privacy policy, for use in user-facing consent pages."
+    },
+    "endpointResponseFormatsTab": {
+      "userinfoResponseFormatLabel": "User info response format",
+      "userinfoResponseFormatHelp": "The user info endpoint offers different output format. See <a href='http://openid.net/specs/openid-connect-core-1_0.html#UserInfoResponse'>http://openid.net/specs/openid-connect-core-1_0.html#UserInfoResponse</a>",
+      "tokenIntrospectionResponseFormatLabel": "Token Introspection Response Format",
+      "tokenIntrospectionResponseFormatHelp": "The token introspection endpoint offers different output format. see <a href='https://tools.ietf.org/html/draft-ietf-oauth-jwt-introspection-response-03'>https://tools.ietf.org/html/draft-ietf-oauth-jwt-introspection-response-03</a>"
+    },
+    "sessionManagementTab": {
+      "clientSessionUriLabel": "Client Session URI",
+      "clientSessionUriHelp": "This is the URI that will be used to check messages sent to the session management endpoints. This URI must match the origin of the message."
+    },
+    "signingAndEncryptionTab": {
+      "publicKeyLocationLabel": "Public key selector",
+      "publicKeyLocationHelp": "Select the public key for this client to come from either the jwks_uri, manual jwks or X509 field.",
+      "jwksUriLabel": "Json Web Key URI",
+      "jwksUriHelp": "The uri that contains the client's public keys in Json Web Key format.",
+      "jwkSetLabel": "Json Web Key",
+      "jwkSetHelp": "Raw JSON Web Key value containing the client's public keys.",
+      "idTokenPublicEncryptionKeyLabel": "Client ID Token Public Encryption Key",
+      "idTokenPublicEncryptionKeyHelp": "A Base64 encoded public key for encrypting ID Tokens.",
+      "idTokenEncryptionEnabledLabel": "Enable ID Token Encryption"
+    },
+    "tokenLifetimesTab": {
+      "authorizationCodeLifetimeLabel": "Authorization code lifetime (seconds)",
+      "accessTokenLifetimeLabel": "Access token lifetime (seconds)",
+      "refreshTokenLifetimeLabel": "Refresh token lifetime (seconds)",
+      "jwtTokenLifetimeLabel": "JWT token lifetime (seconds)"
+    },
+    "clientCredentials": {
+      "cardTitle": "Client Credentials",
+      "discoveryURILabel": "Discovery URI",
+      "clientIDLabel": "Client ID",
+      "userpasswordLabel": "Client Secret",
+      "copySuccess": "Copied to your clipboard",
+      "copyFail": "Failed to copy"
+    },
+    "generalSettings": {
+      "showAdvanced": "{stateText} advanced settings",
+      "footerButtonText": "Try it out",
+      "cardTitle": "General Settings",
+      "clientNameLabel": "Name",
+      "descriptionsLabel": "Description",
+      "redirectionUrisLabel": "Sign-in URLs",
+      "redirectionUrisHelp": "Whitelist for sign-in redirect URLs. eg. http://www.example.com/signin",
+      "postLogoutRedirectUriLabel": "Sign-out URLs",
+      "postLogoutRedirectUriHelp": "Whitelist for sign-out redirect URLs. eg. http://www.example.com/signout",
+      "grantTypesLabel": "Grant Types",
+      "grantTypesHelp": "Authorization Code is required for SPA/Native apps.",
+      "scopesLabel": "Scopes",
+      "scopesHelp": "Scopes are strings that are presented to the user for approval and included in tokens so that the protected resource may make decisions about what to give access to.",
+      "logoUriLabel": "App Logo",
+      "logoUriHelp": "Application logo for use in user-facing UIs such as consent pages and application pages."
+    },
+    "deleteAppPanel": {
+      "deleteApp": "Delete Application",
+      "modalText": "Are you sure you want to delete {appName}?"
     }
   }
 }
