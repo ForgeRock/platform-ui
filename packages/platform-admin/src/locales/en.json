@@ -1,4 +1,8 @@
 {
+  "common": {
+    "delete": "Delete",
+    "edit": "Edit"
+  },
   "connectors": {
     "title": "Connectors",
     "subtitle": "Connect external identities to allow syncing of data across resources.",
@@ -43,7 +47,6 @@
     "description": "Sign in users to your application using any of the out-of-the-box user flows or customize them to suit your specific requirements.",
     "newJourney": "New Journey",
     "duplicateJourney": "Duplicate Journey",
-    "edit": "Edit",
     "service": "Service",
     "duplicate": "Duplicate",
     "copyOf": "Copy of",
@@ -105,11 +108,11 @@
     "deleteImportConfirmation": "If you delete this import the entries imported will remain, but import record will be deleted from the list."
   },
   "dashboard": {
-    "createApplication": { 
+    "createApplication": {
       "title": "Add a New Application",
       "description": "Add your application to the platform, and integrate the app with ForgeRock authentication."
     },
-    "connectIdentities": { 
+    "connectIdentities": {
       "title": "Connect Identities",
       "description": "Create and manage identity profiles across applications and IT infrastructure."
     },
@@ -261,10 +264,22 @@
     "accountLockout": "Account Lockout",
     "lockAfter": "Lock out after",
     "failedAttempts": "failed sign-in attempts within",
-    "unlockAfter" : "Unlock account after",
+    "unlockAfter": "Unlock account after",
     "minutes": "minutes",
     "days": "days",
     "months": "months",
     "years": "years"
+  },
+  "applications": {
+    "listView": {
+      "newApp": "New Application",
+      "tableEmpty": "No available applications",
+      "app": "Application",
+      "title": "Applications",
+      "subTitle": "Set up your applications to use ForgeRock authentication.",
+      "active": "Active",
+      "inactive": "Inactive",
+      "name": "Name"
+    }
   }
 }
