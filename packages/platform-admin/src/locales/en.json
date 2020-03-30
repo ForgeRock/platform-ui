@@ -1,8 +1,4 @@
 {
-  "common": {
-    "delete": "Delete",
-    "edit": "Edit"
-  },
   "connectors": {
     "title": "Connectors",
     "subtitle": "Connect external identities to allow syncing of data across resources.",
@@ -78,7 +74,6 @@
     "users": "Users",
     "file": "File",
     "date": "Date",
-    "status": "Status",
     "formatCsv": "Format your CSV file (max %{maxImportSize}MB) according to the following: ",
     "csvTemplate": "CSV Template",
     "csvFile": "CSV File",
@@ -281,6 +276,28 @@
       "active": "Active",
       "inactive": "Inactive",
       "name": "Name"
+    },
+    "addAppModal": {
+      "chooseAppType": "Choose an application type",
+      "enterprise": "Enterprise",
+      "enterpriseHelpText": "Set up SSO to an application like Google, Salesforce, or Office365",
+      "consumer": "Consumer",
+      "consumerHelpText": "Integrate authentication with your web, native, or service app",
+      "consumerAppType": "Choose a consumer application type",
+      "nativeTitle": "Native / SPA",
+      "nativeExample": "iOS, Android, React",
+      "webTitle": "Web",
+      "webExample": "Node.js, Java",
+      "serviceTitle": "Service",
+      "serviceExample": "Machine-to-machine",
+      "createName": "Create a name for your application. You can change it later in the application settings.",
+      "alphaNumericOnly": "Can only contain alphanumeric characters",
+      "noSpace": "Cannot start or end with the space character",
+      "createApp": "Create Application",
+      "defaultModalTitle": "New Application",
+      "appTypeModalTitle": "New %{appType} App",
+      "consumerAppModalTitle": "%{appType} Application Name",
+      "errorCreatingApp": "Could not create application"
     }
   }
 }
