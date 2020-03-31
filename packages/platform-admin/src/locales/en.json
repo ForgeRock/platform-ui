@@ -85,6 +85,7 @@
     "matchUsing": "Match Using",
     "matchUsingHelp": "Select one or more properties for unique record match.",
     "viewDetails": "View Details",
+    "uploadingFile": "Uploading file",
     "complete": "Complete",
     "error": "Error",
     "inProgress": "In progress",
