@@ -80,6 +80,7 @@
     display: none;
     background-color: $black;
     opacity: 0.2;
+    z-index: $zindex-sticky;
   }
 
   &.fr-menu-mobile {
@@ -90,9 +91,7 @@
 }
 
 /**
-  Touch device specific styles
-
-  Desktop
+  Touch device specific styles - Desktop
 */
 @media (any-hover: hover) {
   @include media-breakpoint-up(md) {
@@ -133,7 +132,7 @@
 }
 
 /**
-  Mobile
+  Touch device specific styles - Mobile
 */
 @media (any-hover: none) {
   .fr-sidebar-wrapper {
@@ -215,8 +214,7 @@
 
         .dropdown-toggle {
           border: 0;
-          color: $gray-700;
-          font-size: 0.875rem;
+          color: $fr-sidemenu-font-color;
 
           .fr-dropdown-button {
             margin-left: 12px;
@@ -232,7 +230,9 @@
     ul.fr-sidebar-menuitems,
     ul.fr-sidebar-submenuitems {
       font-size: 0.875rem;
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
+      white-space: nowrap;
 
       > li > a,
       > li.dropdown-toggle,
@@ -242,7 +242,6 @@
         cursor: pointer;
         color: $fr-sidemenu-font-color;
         display: block;
-        font-size: 0.875rem;
         padding: 15px 20px 15px 16px;
         position: relative;
         text-decoration: none;
