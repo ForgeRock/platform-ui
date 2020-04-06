@@ -68,6 +68,7 @@ import {
 } from 'bootstrap-vue';
 import { FRAuth, Config } from '@forgerock/javascript-sdk';
 import Vue from 'vue';
+import WithCallback from '@forgerock/platform-shared/src/hoc/CallbackHoc';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import BooleanAttributeInputCallback from '@/components/callbacks/BooleanAttributeInputCallback';
 import CenterCard from '@/components/utils/CenterCard';
@@ -160,9 +161,9 @@ export default {
         value: callback.getInputValue(),
       };
 
-      return this.addComponent(FrField, {
+      return this.addComponent(WithCallback(FrField), {
         field,
-        autofocus: (index === 0) ? 'true' : 'false',
+        autofocus: index === 0,
         validator: noop,
         failedPolicies: translatedPolicyMessages,
         callback,
