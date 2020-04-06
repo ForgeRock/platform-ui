@@ -1,0 +1,129 @@
+
+select,
+select.custom-select {
+  padding-top: $input-btn-padding-y + $input-btn-padding-y * (2 / 3);
+  padding-bottom: $input-btn-padding-y / 3;
+  color: $input-color;
+}
+
+select,
+select.custom-select ~ label {
+  padding-top: $input-btn-padding-y / 3;
+  padding-bottom: $input-btn-padding-y / 3;
+  font-size: 12px;
+  color: $label-color;
+}
+
+/deep/ {
+  .no-pointer-events {
+    pointer-events: none;
+  }
+
+  .multiselect__tag,
+  .multiselect__option--highlight {
+    background-color: $light-blue;
+    color: #35495e;
+    line-height: 1;
+  }
+
+  .multiselect__content-wrapper {
+    border: 1px solid #e8e8e8;
+  }
+
+  .multiselect__tags {
+    height: 100%;
+    padding: 1.5rem 50px 0 0.75rem;
+    font-size: 0.875rem;
+    border: none;
+
+    .multiselect__placeholder {
+      font-size: 1rem;
+      color: $gray-600;
+      padding-top: 0;
+      white-space: nowrap;
+    }
+
+    .multiselect__tag-icon::after {
+      color: $gray-700;
+    }
+
+    .multiselect__tag-icon:hover {
+      background-color: $light-blue;
+    }
+  }
+
+  .no-multiselect-label .multiselect__tags {
+    padding-top: 1rem !important;
+  }
+
+  .multiselect__select {
+    width: 50px;
+    height: 48px;
+    right: 1px;
+    padding: 4px 8px;
+  }
+  // disabled stylings
+  .multiselect--disabled {
+    opacity: 1;
+
+    .multiselect__single,
+    .multiselect__select,
+    .multiselect__tags {
+      background-color: $gray-100;
+    }
+  }
+
+  .multiselect ~ label {
+    width: calc(100% - 40px) !important;
+  }
+
+  .multiselect__tag {
+    margin-top: 0.25rem;
+  }
+
+  .multiselect.multiselect--active ~ label {
+    z-index: 51;
+  }
+
+  span.multiselect__single {
+    margin-left: -5px;
+  }
+  /* stylelint-disable */
+  .multiselect__option--selected {
+    background: $light-blue;
+    color: inherit;
+    font-weight: inherit;
+  }
+
+  .multiselect__option--selected::after,
+  .multiselect__option.multiselect__option--selected.multiselect__option--highlight::after {
+    content: 'done';
+    font-family: 'Material Icons Outlined';
+    font-weight: 400;
+    font-style: normal;
+    line-height: 44px;
+    font-size: 16px;
+    height: 44px;
+    color: $success;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .multiselect__option.multiselect__option--selected.multiselect__option--highlight,
+  .multiselect__option.multiselect__option--selected.multiselect__option--highlight::after {
+    background: $light-blue;
+    color: inherit;
+  }
+
+  .multiselect__option.multiselect__option--selected.multiselect__option--highlight::after {
+    color: $success;
+    height: 16px;
+  }
+  /* stylelint-enable */
+}
