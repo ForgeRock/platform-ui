@@ -68,7 +68,7 @@ import {
 } from 'bootstrap-vue';
 import { FRAuth, Config } from '@forgerock/javascript-sdk';
 import Vue from 'vue';
-import FloatingLabelInput from '@forgerock/platform-shared/src/components/FloatingLabelInput';
+import FrField from '@forgerock/platform-shared/src/components/Field';
 import BooleanAttributeInputCallback from '@/components/callbacks/BooleanAttributeInputCallback';
 import CenterCard from '@/components/utils/CenterCard';
 import ChoiceCallback from '@/components/callbacks/ChoiceCallback';
@@ -134,7 +134,7 @@ export default {
 
       this.$refs.callbacksPanel.appendChild(instance.$el);
     },
-    addFloatingLabelInput(type, callback, index) {
+    addField(type, callback, index) {
       const failedPolicies = (callback.getFailedPolicies) ? callback.getFailedPolicies() : [];
       let prompt = '';
 
@@ -153,14 +153,16 @@ export default {
           noop();
         }
       }
-
-      return this.addComponent(FloatingLabelInput, {
-        label: prompt,
+      const field = {
+        title: prompt,
         type,
-        autofocus: (index === 0) ? 'true' : 'false',
-        reveal: type === 'password',
-        fieldName: `callback_${index}`,
+        key: `callback_${index}`,
         value: callback.getInputValue(),
+      };
+
+      return this.addComponent(FrField, {
+        field,
+        autofocus: (index === 0) ? 'true' : 'false',
         validator: noop,
         failedPolicies: translatedPolicyMessages,
         callback,
@@ -269,11 +271,11 @@ export default {
           this.kbaCallbackCount += 1;
           break;
         case 'MetadataCallback':
-          // Do nothing here. If someone is using MetadataCallback the would need to inject their logic here to utilize result
+          // Do nothing here. If someone is using MetadataCallback they would need to inject their logic here to utilize result
           // const metadata = callback.getData();
           break;
         case 'PasswordCallback':
-          this.addFloatingLabelInput('password', callback, index);
+          this.addField('password', callback, index);
           break;
         case 'PollingWaitCallback':
           this.loading = true;
@@ -303,7 +305,7 @@ export default {
           this.addComponent(SuspendedTextOutputCallback, { callback });
           break;
         case 'ValidatedCreatePasswordCallback':
-          this.addFloatingLabelInput('password', callback, index);
+          this.addField('password', callback, index);
           break;
         case 'SelectIdPCallback':
           this.addComponent(SelectIdPCallback, {
@@ -315,7 +317,7 @@ export default {
           });
           break;
         default:
-          this.addFloatingLabelInput('text', callback, index);
+          this.addField('text', callback, index);
         }
       });
 
@@ -362,6 +364,10 @@ export default {
   #callbacksPanel /deep/ {
     br {
       display: none;
+    }
+
+    > div {
+      margin-bottom: 1rem;
     }
   }
 </style>
