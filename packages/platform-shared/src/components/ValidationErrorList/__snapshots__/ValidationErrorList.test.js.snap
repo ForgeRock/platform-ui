@@ -3,7 +3,9 @@
 exports[`ValidationError.vue Validation Error component loaded 1`] = `
 <div class="fr-validation-requirements text-left" localvue="function VueComponent (options) {
       this._init(options);
-    }"><span class="text-danger">
+    }">
+  <p class="text-danger error-message">
 
-  </span></div>
+  </p>
+</div>
 `;

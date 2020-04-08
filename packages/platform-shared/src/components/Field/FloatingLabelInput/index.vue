@@ -4,7 +4,7 @@ Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
-  <div class="mb-3 w-100">
+  <div class="w-100">
     <div
       :class="[{'form-label-password': reveal}, 'form-label-group', 'mb-0']"
       ref="floatingLabelGroup">
@@ -41,7 +41,7 @@ to such license between the licensee and ForgeRock AS. -->
         @close="floatLabels = value && value.length"
         @tag="addTag"
         :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control p-0', {'h-25': floatLabels || !this.label }, {'no-multiselect-label': !this.label }]"
-        placeholder="Type to search">
+        :placeholder="$t('common.typeToSearch')">
         <slot name="noResult">
           {{ $t('common.noResult') }}
         </slot>
@@ -57,7 +57,7 @@ to such license between the licensee and ForgeRock AS. -->
         :show-labels="false"
         :allow-empty="false"
         :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control p-0', {'h-25': floatLabels || !this.label }, {'no-multiselect-label': !this.label }]"
-        placeholder="Type to search">
+        :placeholder="$t('common.typeToSearch')">
         <slot name="noResult">
           {{ $t('common.noResult') }}
         </slot>
@@ -81,7 +81,7 @@ to such license between the licensee and ForgeRock AS. -->
         class="input-group-append">
         <button
           @click="revealText"
-          class="btn btn-secondary"
+          :class="[{'disabled': disabled}, 'btn btn-secondary']"
           type="button"
           name="revealButton"
           @keyup.enter="$emit('enter')">
@@ -328,14 +328,16 @@ export default {
   },
   methods: {
     revealText() {
-      this.showPassword = !this.showPassword;
+      if (!this.disabled) {
+        this.showPassword = !this.showPassword;
+      }
     },
     setInputValue(newVal) {
       if (newVal !== undefined && newVal !== null) {
         if (this.inputType === 'select') {
-          this.inputValue = find(this.multiselectOptions, { value: newVal.toString() });
+          this.inputValue = find(this.multiselectOptions, { value: newVal });
         } else if (this.inputType === 'multiselect') {
-          this.inputValue = map(newVal, (val) => find(this.multiselectOptions, { value: val.toString() }));
+          this.inputValue = map(newVal, (val) => find(this.multiselectOptions, { value: val }));
         } else {
           this.inputValue = newVal.toString();
         }
@@ -353,7 +355,6 @@ export default {
   watch: {
     inputValue(newVal) {
       if (newVal !== undefined) {
-        this.floatLabels = newVal.length > 0 && this.label;
         if (isArray(newVal)) {
           this.floatLabels = newVal.length > 0 && this.label;
           this.$emit('input', map(newVal, 'value'));
@@ -361,11 +362,18 @@ export default {
           this.floatLabels = false;
           this.$emit('input', '');
         } else if (this.inputType === 'select') {
-          this.floatLabels = newVal.value.length > 0 && this.label;
+          this.floatLabels = (newVal.value || newVal.value === 0) && this.label;
           this.$emit('input', newVal.value);
         } else if (this.inputType === 'number') {
-          this.$emit('input', parseInt(newVal, 10));
+          this.floatLabels = newVal.length > 0 && this.label;
+          const emitValue = parseInt(newVal, 10);
+          if (Number.isNaN(emitValue)) {
+            this.$emit('input', '');
+          } else {
+            this.$emit('input', emitValue);
+          }
         } else {
+          this.floatLabels = newVal.length > 0 && this.label;
           this.$emit('input', newVal);
         }
         if (this.callback && this.callback.setInputValue) {
@@ -420,6 +428,11 @@ export default {
     flex-grow: 1;
   }
 
+  .white-label-background ~ label {
+    width: calc(100% - 20px);
+    margin: 1px;
+  }
+
   .input-group-prepend:not(:first-child) .input-group-text,
   .form-control:not(:first-child),
   .input-group-append .input-group-text,
@@ -441,59 +454,57 @@ export default {
     padding-left: $btn-padding-x;
     padding-right: $btn-padding-x;
   }
+
+  > input,
+  > .input-group > input {
+    padding: $input-btn-padding-y;
+    text-align: left;
+  }
+
+  > label,
+  > .input-group > label {
+    padding: $input-btn-padding-y;
+    text-align: left;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 100%;
+    margin-bottom: 0; /* Override default `<label>` margin */
+    line-height: 1.5;
+    color: $label-color;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+    transition: all 0.1s ease-in-out;
+  }
+
+  input::placeholder {
+    color: transparent;
+  }
+
+  .polyfill-placeholder,
+  .custom-select {
+    padding-top: $input-btn-padding-y + $input-btn-padding-y * (2 / 3);
+    padding-bottom: $input-btn-padding-y / 3;
+    color: $input-color;
+
+    ~ label {
+      padding-top: $input-btn-padding-y / 3;
+      padding-bottom: 0;
+      font-size: 12px;
+      color: $label-color;
+    }
+  }
+
+  .white-label-background:not(.multiselect--disabled) ~ label {
+    background-color: $fr-toolbar-background;
+  }
 }
 
 //-->
 // Bootstrap Floating Labels
 // https://getbootstrap.com/docs/4.0/examples/floating-labels/
 //-->
-.form-label-group > input,
-.form-label-group > .input-group > input {
-  padding: $input-btn-padding-y;
-  text-align: left;
-}
-
-.form-label-group > label,
-.form-label-group > .input-group > label {
-  padding: $input-btn-padding-y;
-  text-align: left;
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: block;
-  width: 100%;
-  margin-bottom: 0; /* Override default `<label>` margin */
-  line-height: 1.5;
-  color: $label-color;
-  border: 1px solid transparent;
-  border-radius: 0.25rem;
-  transition: all 0.1s ease-in-out;
-}
-
-.form-label-group input::placeholder {
-  color: transparent;
-}
-
-.form-label-group .polyfill-placeholder,
-.form-label-group .custom-select {
-  padding-top: $input-btn-padding-y + $input-btn-padding-y * (2 / 3);
-  padding-bottom: $input-btn-padding-y / 3;
-  color: $input-color;
-
-  ~ label {
-    padding-top: $input-btn-padding-y / 3;
-    padding-bottom: 0;
-    font-size: 12px;
-    color: $label-color;
-  }
-}
-
-.form-label-group .white-label-background ~ label {
-  background-color: $fr-toolbar-background;
-  width: calc(100% - 20px);
-  margin: 1px;
-}
-
 .form-control.is-invalid {
   background-image: none;
 }
@@ -531,7 +542,7 @@ select.custom-select ~ label {
 
   .multiselect__tags {
     height: 100%;
-    padding: 1.5rem 50px 0 0.75rem;
+    padding: 0.75rem 50px 0.75rem 0.75rem;
     font-size: 0.875rem;
     border: none;
 
@@ -539,6 +550,7 @@ select.custom-select ~ label {
       font-size: 1rem;
       color: $gray-600;
       padding-top: 0;
+      white-space: nowrap;
     }
 
     .multiselect__tag-icon::after {
@@ -548,10 +560,25 @@ select.custom-select ~ label {
     .multiselect__tag-icon:hover {
       background-color: $light-blue;
     }
+
+    .multiselect__input,
+    .multiselect__placeholder,
+    .multiselect__single {
+      margin: 0 0 0 -5px;
+      line-height: 24px;
+    }
   }
 
-  .no-multiselect-label .multiselect__tags {
-    padding-top: 1rem !important;
+  .polyfill-placeholder {
+    .multiselect__tags {
+      padding: 1.5rem 50px 0.25rem 0.75rem;
+
+      .multiselect__input,
+      .multiselect__placeholder,
+      .multiselect__single {
+        margin-bottom: 8px;
+      }
+    }
   }
 
   .multiselect__select {
@@ -560,6 +587,7 @@ select.custom-select ~ label {
     right: 1px;
     padding: 4px 8px;
   }
+
   // disabled stylings
   .multiselect--disabled {
     opacity: 1;
@@ -567,8 +595,17 @@ select.custom-select ~ label {
     .multiselect__single,
     .multiselect__select,
     .multiselect__tags {
-      background-color: #f6f8fa;
+      background-color: $gray-100;
     }
+
+    & ~ label {
+      background-color: $gray-100;
+    }
+  }
+
+  .btn.disabled {
+    background-color: $gray-100 !important;
+    cursor: default;
   }
 
   .multiselect ~ label {
@@ -586,6 +623,7 @@ select.custom-select ~ label {
   span.multiselect__single {
     margin-left: -5px;
   }
+
   /* stylelint-disable */
   .multiselect__option--selected {
     background: $light-blue;
@@ -597,7 +635,7 @@ select.custom-select ~ label {
   .multiselect__option.multiselect__option--selected.multiselect__option--highlight::after {
     content: 'done';
     font-family: 'Material Icons Outlined';
-    font-weight: normal;
+    font-weight: 400;
     font-style: normal;
     line-height: 44px;
     font-size: 16px;
@@ -613,18 +651,17 @@ select.custom-select ~ label {
     -webkit-font-smoothing: antialiased;
   }
 
-  .multiselect__option.multiselect__option--selected.multiselect__option--highlight,
-  .multiselect__option.multiselect__option--selected.multiselect__option--highlight::after {
-    background: $light-blue;
-    color: inherit;
-  }
+  .multiselect__option {
+    .multiselect__option--selected.multiselect__option--highlight,
+    .multiselect__option--selected.multiselect__option--highlight::after {
+      background: $light-blue;
+      color: inherit;
+    }
 
-  .multiselect__option.multiselect__option--selected.multiselect__option--highlight::after {
-    color: $success;
-  }
-
-  .multiselect__option.multiselect__option--selected.multiselect__option--highlight::after {
-    height: 16px;
+    .multiselect__option--selected.multiselect__option--highlight::after {
+      color: $success;
+      height: 16px;
+    }
   }
   /* stylelint-enable */
 }

@@ -125,21 +125,10 @@ describe('EditResource.vue', () => {
         title: 'Manager',
         key: 'manager',
         propName: 'manager',
-        isReadOnly: false,
+        disabled: false,
+        value: '',
       },
     });
     expect(wrapper.vm.buildResourceUrl()).toEqual('test/test/test?_fields=*,manager/*');
-  });
-
-  it('Password reveal correctly', () => {
-    expect(wrapper.vm.passwordInputType).toBe('password');
-
-    wrapper.vm.revealNew();
-
-    expect(wrapper.vm.passwordInputType).toBe('text');
-
-    wrapper.vm.revealNew();
-
-    expect(wrapper.vm.passwordInputType).toBe('password');
   });
 });
