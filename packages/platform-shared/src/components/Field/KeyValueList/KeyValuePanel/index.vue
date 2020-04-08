@@ -5,35 +5,14 @@ or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
   <div class="fr-key-value-panel p-3">
-    <label class="text-secondary mb-1">
-      {{ $t('trees.editPanel.key') }}
-    </label>
     <ValidationObserver v-slot="{ invalid }">
-      <ValidationProvider
-        mode="aggressive"
-        :rules="validationRules"
-        v-slot="{ errors }">
-        <BFormInput
-          v-model.trim="keyText"
-          :state="errors.length > 0 ? false : null" />
-        <FrValidationError
-          class="error-message"
-          :validator-errors="errors" />
-      </ValidationProvider>
-      <label class="text-secondary mb-1 mt-3">
-        {{ $t('trees.editPanel.value') }}
-      </label>
-      <ValidationProvider
-        mode="aggressive"
-        rules="required"
-        v-slot="{ errors }">
-        <BFormTextarea
-          v-model.trim="valueText"
-          :state="errors.length > 0 ? false : null" />
-        <FrValidationError
-          class="error-message"
-          :validator-errors="errors" />
-      </ValidationProvider>
+      <FrField
+        :field="keyModel"
+        :prepend-title="true"
+        class="mb-3" />
+      <FrField
+        :field="valueModel"
+        :prepend-title="true" />
       <div class="fr-key-value-add-panel-footer mt-3">
         <div class="pt-3 mr-3">
           <span
@@ -46,7 +25,7 @@ to such license between the licensee and ForgeRock AS. -->
           @click="saveKeyValue"
           :disabled="invalid"
           variant="outline-primary">
-          Save
+          {{ $t('common.save') }}
         </BButton>
       </div>
     </ValidationObserver>
@@ -55,10 +34,9 @@ to such license between the licensee and ForgeRock AS. -->
 
 <script>
 import {
-  BButton, BFormInput, BFormTextarea,
+  BButton,
 } from 'bootstrap-vue';
-import { ValidationObserver, ValidationProvider } from 'vee-validate';
-import ValidationErrorList from '@forgerock/platform-shared/src/components/ValidationErrorList';
+import { ValidationObserver } from 'vee-validate';
 
 /**
  * New/Edit Key value pair component
@@ -67,11 +45,8 @@ export default {
   name: 'KeyValuePanel',
   components: {
     BButton,
-    BFormInput,
-    BFormTextarea,
-    FrValidationError: ValidationErrorList,
+    FrField: () => import ('@forgerock/platform-shared/src/components/Field'),
     ValidationObserver,
-    ValidationProvider,
   },
   props: {
     value: {
@@ -89,20 +64,29 @@ export default {
   },
   data() {
     return {
-      keyText: '',
-      valueText: '',
+      keyModel: {
+        title: this.$t('trees.editPanel.key'),
+        value: '',
+        validation: this.validationRules,
+      },
+      valueModel: {
+        title: this.$t('trees.editPanel.value'),
+        type: 'textarea',
+        value: '',
+        validation: 'required',
+      },
     };
   },
   mounted() {
-    this.keyText = this.value.key;
-    this.valueText = this.value.value;
+    this.keyModel.value = this.value.key;
+    this.valueModel.value = this.value.value;
   },
   methods: {
     /**
       * Emits an input change to notify v-model that the component has updated
       */
     saveKeyValue() {
-      this.$emit('saveKeyValue', { key: this.keyText, value: this.valueText });
+      this.$emit('saveKeyValue', { key: this.keyModel.value, value: this.valueModel.value });
     },
   },
 };

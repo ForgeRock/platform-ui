@@ -92,18 +92,6 @@ describe('CreateResource.vue', () => {
     expect(wrapper.vm.formFields.boolTest).toBe(false);
   });
 
-  it('Password reveal correctly', () => {
-    expect(wrapper.vm.passwordInputType).toBe('password');
-
-    wrapper.vm.revealNew();
-
-    expect(wrapper.vm.passwordInputType).toBe('text');
-
-    wrapper.vm.revealNew();
-
-    expect(wrapper.vm.passwordInputType).toBe('password');
-  });
-
   it('Clean save data', () => {
     const cleanData = wrapper.vm.cleanData({
       test: '',

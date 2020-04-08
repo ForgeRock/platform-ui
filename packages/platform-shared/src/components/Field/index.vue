@@ -4,17 +4,20 @@ Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
-  <div v-if="!loading">
+  <div
+    :id="field.key"
+    class="fr-field"
+    v-if="!loading">
     <label
-      v-if="titlePosition === 'before'"
-      class="text-secondary mb-1">
+      v-if="prependTitle"
+      class="text-secondary mb-1 w-100">
       <span
         :id="`helppopover-${field.key}`"
         class="fr-label-text">
-        {{ field.title }}
+        {{ field.title || field.description }}
         <i
           v-if="displayPopover"
-          class="material-icons material-icons-outlined">
+          class="material-icons-outlined">
           help_outline
         </i>
       </span>
@@ -27,121 +30,101 @@ to such license between the licensee and ForgeRock AS. -->
         <div v-html="field.description" />
       </BPopover>
     </label>
-    <span v-if="checkIfFloatingLabel(field)">
-      <ValidationProvider
-        mode="aggressive"
-        :immediate="field.validationImmediate"
-        :rules="field.validation"
-        v-slot="{ errors }">
-        <FrFloatingLabelInput
-          v-if="field.enum"
-          type="select"
-          :field-name="field.key"
-          v-model="field.value"
-          :help-text="getDescription()"
-          :select-options="field.options"
-          :label="getLabel()" />
-        <FrFloatingLabelInput
-          v-else-if="field.type === 'password'"
-          class="floating-label-input"
-          :class="{'fr-error': errors.length}"
-          type="password"
-          v-model="field.value"
-          :field-name="field.key"
-          :reveal="true"
-          :help-text="getDescription()"
-          :label="getLabel()" />
-        <FrFloatingLabelInput
-          v-else-if="field.type === 'integer'"
-          class="floating-label-input"
-          :class="{'fr-error': errors.length}"
-          type="number"
-          v-model.number="field.value"
-          :field-name="field.key"
-          :help-text="getDescription()"
-          :label="getLabel()" />
-        <FrFloatingLabelInput
-          v-else
-          class="floating-label-input"
-          :class="{'fr-error': errors.length}"
-          :type="field.type"
-          v-model="field.value"
-          :field-name="field.key"
-          :help-text="getDescription()"
-          :label="getLabel()" />
-        <FrValidationError
-          class="error-message"
-          :validator-errors="errors"
-          :field-name="field.key" />
-      </ValidationProvider>
-    </span>
     <ToggleButton
-      v-else-if="field.type === 'toggle'"
+      v-if="field.type === 'boolean'"
       :css-colors="true"
       v-model="field.value"
+      :disabled="field.disabled"
       class="pr-2" />
     <BFormCheckbox
       v-else-if="field.type === 'checkbox'"
       v-model="field.value"
+      :disabled="field.disabled"
       class="mr-0"
       inline />
-    <BFormTags
-      v-else-if="field.type === 'array'"
-      v-model="formTagInput"
-      :class="[{'fr-error': errors.length}, 'fr-tags']">
-      <template v-slot="{ tags, inputAttrs, inputHandlers, addTag, removeTag }">
-        <Draggable
-          v-model="formTagInput"
-          class="d-flex flex-wrap"
-          ghost-class="ghost-tag">
-          <div
-            class="mt-1 mr-1 fr-tag"
-            v-for="tag in tags"
-            :key="tag"
-            body-class="py-1 pr-2 text-nowrap">
-            <span>{{ tag }}</span>
-            <span @click="removeTag(tag)">
-              <i class="material-icons-outlined">
-                close
-              </i>
-            </span>
-          </div>
-        </Draggable>
-        <input
-          v-bind="inputAttrs"
-          v-on="inputHandlers"
-          :placeholder="`${$t('common.add')} ${field.title}`"
-          :class="[{'show': !tags.length}, 'fr-input']">
-      </template>
-    </BFormTags>
-    <FrKeyValueList
-      v-else-if="field.type === 'object'"
-      v-model="field.value"
-      @input="checkRequiredInput(field)"
-      :class="{'fr-error': errors.length}" />
+    <ValidationProvider
+      v-else
+      mode="aggressive"
+      :ref="field.key"
+      :vid="field.key"
+      :name="field.title"
+      :immediate="field.validationImmediate"
+      :bails="false"
+      :rules="field.validation"
+      v-slot="{ errors }">
+      <FrFloatingLabelInput
+        v-if="field.type === 'select' || field.type === 'multiselect'"
+        :type="field.type"
+        class="floating-label-input"
+        :field-name="field.key"
+        v-model="field.value"
+        v-bind="$props"
+        :disabled="field.disabled"
+        :help-text="getDescription()"
+        :select-options="field.options"
+        :label="getLabel()" />
+      <FrFloatingLabelInput
+        v-else-if="field.type === 'password'"
+        type="password"
+        :class="[{'fr-error': errors.length}, 'floating-label-input']"
+        v-model="field.value"
+        v-bind="$props"
+        :disabled="field.disabled"
+        :field-name="field.key"
+        :reveal="true"
+        :help-text="getDescription()"
+        :label="getLabel()" />
+      <FrFloatingLabelInput
+        v-else-if="field.type === 'integer'"
+        type="number"
+        :class="[{'fr-error': errors.length}, 'floating-label-input']"
+        v-model.number="field.value"
+        v-bind="$props"
+        :disabled="field.disabled"
+        :field-name="field.key"
+        :help-text="getDescription()"
+        :label="getLabel()" />
+      <FrKeyValueList
+        v-else-if="field.type === 'object'"
+        v-model="field.value"
+        :disabled="field.disabled"
+        :class="{'fr-error': errors.length}" />
+      <FrTag
+        v-else-if="field.type === 'tag'"
+        v-model="field.value"
+        :field-title="field.title"
+        :disabled="field.disabled"
+        :class="{'fr-error': errors.length}" />
+      <FrFloatingLabelInput
+        v-else
+        :type="field.type"
+        :class="[{'fr-error': errors.length}, 'floating-label-input']"
+        v-model="field.value"
+        v-bind="$props"
+        :disabled="field.disabled"
+        :field-name="field.key"
+        :help-text="getDescription()"
+        :label="getLabel()">
+        <!-- @slot allows buttons to be appended -->
+        <template slot="append">
+          <slot name="append" />
+        </template>
+      </FrFloatingLabelInput>
+      <!-- @slot allows different error displays -->
+      <slot name="validationError">
+        <FrValidationError
+          class="error-messages"
+          :validator-errors="errors"
+          :field-name="field.key" />
+      </slot>
+    </ValidationProvider>
     <label
-      v-if="titlePosition === 'after'"
+      v-if="!this.prependTitle && (this.field.type === 'boolean' || this.field.type === 'checkbox')"
       class="text-secondary mb-1 align-top">
-      <span
-        :id="`helppopover-${field.key}`"
-        class="fr-label-text">
+      <span :id="`helppopover-${field.key}`">
         {{ field.title }}
       </span>
     </label>
-    <small
-      v-if="!displayPopover && !checkIfFloatingLabel(field)"
-      class="text-muted mb-1 d-block">
-      {{ field.description }}
-    </small>
-
-    <span v-if="!checkIfFloatingLabel(field)">
-      <div
-        v-for="(error, key) in errors"
-        :key="key"
-        class="invalid-feedback d-block">
-        {{ error }}
-      </div>
-    </span>
   </div>
 </template>
 
@@ -149,42 +132,103 @@ to such license between the licensee and ForgeRock AS. -->
 import {
   capitalize,
   cloneDeep,
-  isArray,
 } from 'lodash';
 import {
   BPopover,
-  BFormTags,
   BFormCheckbox,
 } from 'bootstrap-vue';
 import { ValidationProvider } from 'vee-validate';
 import ValidationErrorList from '@forgerock/platform-shared/src/components/ValidationErrorList';
+import FrTag from '@forgerock/platform-shared/src/components/Field/Tag';
 import { ToggleButton } from 'vue-js-toggle-button';
-import FloatingLabelInput from '@forgerock/platform-shared/src/components/FloatingLabelInput';
-import KeyValueList from '@forgerock/platform-shared/src/components/KeyValueList';
-import Draggable from 'vuedraggable';
+import FloatingLabelInput from './FloatingLabelInput';
+import KeyValueList from './KeyValueList';
 
 export default {
   name: 'FrField',
   components: {
     BPopover,
-    BFormTags,
-    Draggable,
     BFormCheckbox,
     FrFloatingLabelInput: FloatingLabelInput,
     FrValidationError: ValidationErrorList,
     FrKeyValueList: KeyValueList,
+    FrTag,
     ToggleButton,
     ValidationProvider,
   },
   data() {
     return {
-      currentValue: '',
-      errors: [],
+      oldValue: '',
       loading: true,
-      formTagInput: [],
     };
   },
   props: {
+    /**
+     * Function called after input value is changed (used in callback components)
+     */
+    callback: {
+      type: Object,
+      default: () => {},
+      required: false,
+    },
+    /**
+     * Secondary way of disabling this field
+     */
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * Determines whether description should be shown
+     */
+    displayDescription: {
+      type: Boolean,
+      default: true,
+    },
+    /**
+     * Determines whether description should be shown as a popover
+     */
+    displayPopover: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * List of errors related to input value (used in callback components)
+     */
+    failedPolicies: {
+      type: [Array, Object],
+      default: () => {},
+    },
+    /**
+     * Contains metadata for current field
+     * {
+     *   key: string - unique name of field for backend management
+     *   title: string - optional label visible to users
+     *   type: string - available types: string/text, textarea,
+     *     password, number, select, multiselect, tag/array, boolean,
+     *     checkbox, object. Defaults to string
+     *   description: string - optional descriptive sentence or paragraph
+     *   value: [string, array, object, number, boolean] - value of field
+     *   options: array - optional array of selectable options for select/multiselect
+     *   validation: string - optional vee-validate validation types to check against
+     *   validationImmediate: boolean - optional decision of whether error validation should happen
+     *     the moment that this component renders
+     *   disabled: boolean - optional whether field is currently disabled - defaults to false
+     *   enum: array - values of options (optional alternative for building options array)
+     *   enumNames: array - visible labels of options (optional alternative for building options array)
+     * }
+     * e.g.:
+     * {
+     *   key: 'example',
+     *   title: 'Example Field',
+     *   type: 'select',
+     *   description: 'This field allows you to seleect the value you want'
+     *   value: 'Selected value',
+     *   options: ['Selected value', 'Another value'],
+     *   validation: 'required|unique',
+     *   disabled: false,
+     * }
+     */
     field: {
       type: Object,
       default() {
@@ -194,97 +238,32 @@ export default {
         };
       },
     },
-    titlePosition: {
-      type: String,
-      default: 'before',
-    },
-    displayPopover: {
+    /**
+     * Places title of field above actual field
+     */
+    prependTitle: {
       type: Boolean,
       default: false,
     },
+    /**
+     * Function used to validate data (used in callback components)
+     */
+    validator: {
+      type: Function,
+      default: () => undefined,
+    },
   },
   methods: {
-    getOptions(field) {
-      const options = [];
-      field.enum.forEach((enumString, index) => {
-        options.push({ text: field.enumNames[index], value: enumString });
-      });
-      field.options = options;
-    },
-    checkIfFloatingLabel(field) {
-      const typeMap = {
-        integer: true,
-        string: true,
-        textarea: true,
-        password: true,
-      };
-      return typeMap[field.type];
-    },
-    /**
-     * Validates whether input field is required and filled in
-     *
-     * @param {{
-     *  validation: String|Object,
-     *  type: String,
-     *  key: String
-     *  propertyOrder: Number
-     * }} field The field that we are checking for input error
-     *
-     * @returns {Array<String>} The array 'errors' containing all currently found error strings
-     */
-    checkRequiredInput(field) {
-      if (field.validation && (field.validation.required || field.validation.includes('required'))) {
-        this.errors = [];
-        if (field.type === 'array') {
-          if (!field.value) {
-            field.value = [];
-          }
-          let { minItems } = field;
-          if (!minItems) {
-            minItems = 0;
-          }
-          if (field.value.length < minItems) {
-            this.errors.push(this.$t('trees.editPanel.minimumRequired', { minItems }));
-          }
-        } else if (field.type === 'object') {
-          if (!Object.keys(field.value).length) {
-            this.errors.push(this.$t('trees.editPanel.minimumRequired', { minItems: 1 }));
-          }
-        } else if (field.type === 'string') {
-          if (!field.value) {
-            this.errors.push(this.$t('common.required'));
-          }
-        }
-      }
-    },
-    /**
-     * Takes the tree array formatted items and converts them into
-     * a format that can be used by tag input
-     *
-     * @param {Object} fieldValue Current object with edit panel save values
-     */
-    convertVueTag(fieldValue) {
-      let tempValue = cloneDeep(fieldValue);
-      if (isArray(tempValue)) {
-        tempValue = tempValue.map((string) => {
-          if (string.text) {
-            return string;
-          }
-          return { text: string };
-        });
-      }
-      return tempValue;
-    },
     /**
      * Returns description to display below field if not shown in popup
      *
      * @returns {String} The description text to display below the field
      */
     getDescription() {
-      if (!this.displayPopover) {
-        return this.field.description;
+      if (this.displayPopover || !this.displayDescription) {
+        return '';
       }
-      return '';
+      return this.field.description;
     },
     /**
      * Returns the field label if we want to see it as a floating label
@@ -292,29 +271,48 @@ export default {
      * @returns {String} The text to display as a floating label
      */
     getLabel() {
-      if (this.titlePosition === 'inner') {
-        return this.field.title;
+      if (this.prependTitle) {
+        return '';
       }
-      return '';
+      return this.field.title;
     },
     /**
-     * Changes password field type to allow value to be seen/hidden
+     * Builds array of options if field metadata contains enum property
+     *
+     * @param {String} field current field object
      */
-    revealText(field) {
-      if (field.type === 'text') {
-        field.type = 'password';
-        field.show = false;
-      } else {
-        field.type = 'text';
-        field.show = true;
+    getOptions(field) {
+      const options = [];
+      field.enum.forEach((enumString, index) => {
+        options.push({ text: field.enumNames[index], value: enumString });
+      });
+      field.options = options;
+    },
+    /**
+     * Maps type aliases to known values
+     *
+     * @property {Object} field current field object
+     *
+     * @returns {String} Final field type
+     */
+    mapType(field) {
+      if (!field.type) {
+        return 'string';
       }
+      const typeMap = {
+        text: 'string',
+        number: 'integer',
+        array: 'tag',
+      };
+      if (typeMap[field.type]) {
+        return typeMap[field.type];
+      }
+      return field.type;
     },
   },
   mounted() {
-    this.currentValue = cloneDeep(this.field.value);
-    this.checkRequiredInput(this.field);
-    this.formTagInput = cloneDeep(this.field.value);
-    this.field.value = this.convertVueTag(this.field.value);
+    this.oldValue = cloneDeep(this.field.value);
+    this.field.type = this.mapType(this.field);
     if (!this.field.validation) {
       this.field.validation = '';
     }
@@ -322,8 +320,24 @@ export default {
       this.getOptions(this.field);
     } else if (this.field.format === 'password') {
       this.field.type = 'password';
-    } else if (!this.field.type) {
-      this.field.type = 'string';
+    }
+    if ((this.field.type === 'object') && (this.field.validation.required || this.field.validation.includes('required'))) {
+      this.field.validation = {
+        minimumRequired: this.field.minItems !== undefined ? this.field.minItems : 1,
+        required: true,
+      };
+    } else if ((this.field.type === 'tag') && (this.field.validation.required || this.field.validation.includes('required'))) {
+      if (this.field.minItems !== undefined) {
+        this.field.validation = {
+          minimumRequired: this.field.minItems,
+          required: true,
+        };
+      } else {
+        this.field.validation = '';
+      }
+    }
+    if (this.field.title === this.field.description) {
+      delete this.field.description;
     }
     this.loading = false;
   },
@@ -336,46 +350,55 @@ export default {
     capitalize,
   },
   watch: {
+    /**
+     * Sets field disabled based on disabled property
+     */
+    disabled: {
+      handler(value) {
+        this.field.disabled = value;
+      },
+      immediate: true,
+    },
+    /**
+     * Runs required check on few remaining field types that have not converted
+     * to vee-validate. Also emits out changed value.
+     */
     field: {
       handler(newField) {
-        if (this.currentValue !== newField.value) {
-          this.currentValue = cloneDeep(newField.value);
-          this.checkRequiredInput(newField);
+        if (this.oldValue !== newField.value) {
+          this.oldValue = cloneDeep(newField.value);
           this.$emit('valueChange', this.field);
         }
       },
       deep: true,
     },
-    formTagInput(value) {
-      this.field.value = this.convertVueTag(value);
-    },
   },
 };
 </script>
 <style lang="scss" scoped>
-@import '~vue-multiselect/dist/vue-multiselect.min.css';
-
 .fr-error.floating-label-input {
   margin-bottom: 0 !important;
   border: none !important;
 
-  /deep/ input,
-  /deep/ textarea {
-    border: 1px solid $danger;
+  /deep/ {
+    input,
+    textarea {
+      border: 1px solid $danger;
 
-    &:focus {
-      box-shadow: 0 0 0 0.0625rem $danger;
+      &:focus {
+        box-shadow: 0 0 0 0.0625rem $danger;
+      }
     }
-  }
 
-  /deep/ button {
-    border: 1px solid $danger !important;
-    border-left-color: $gray-400 !important;
+    button {
+      border: 1px solid $danger !important;
+      border-left-color: $gray-400 !important;
+    }
   }
 }
 
 .fr-label-text {
-  .material-icons {
+  .material-icons-outlined {
     font-size: 1rem;
     margin-bottom: 3px;
   }
@@ -397,131 +420,6 @@ export default {
         background-color: $primary;
       }
     }
-  }
-
-  .fr-tags {
-    display: flex;
-    flex-wrap: wrap;
-    line-height: 1em;
-    padding: 10px;
-    min-height: 54px;
-
-    .fr-tag {
-      border-radius: 2px;
-      display: flex;
-      padding: 3px 5px;
-      margin: 2px;
-      font-size: 0.85em;
-      background-color: #e4f4fd;
-      color: #23282e;
-      cursor: move;
-
-      .material-icons-outlined {
-        cursor: pointer;
-      }
-    }
-
-    .ghost-tag {
-      opacity: 0.3;
-    }
-
-    .fr-input {
-      opacity: 0;
-      padding: 0;
-      height: 0;
-      transition: all 0.15s;
-      outline: 0;
-      width: 100%;
-      border: 0;
-    }
-
-    &:hover > .fr-input,
-    .fr-input:focus,
-    .show {
-      opacity: 1;
-      height: 2rem;
-    }
-  }
-}
-
-.input-group {
-  & > .input-group-prepend {
-    .input-group-text.inset,
-    .btn.inset {
-      border-right-color: transparent;
-    }
-  }
-
-  & > .input-group-append {
-    .btn {
-      border-color: $gray-400;
-    }
-
-    .input-group-text.inset,
-    .btn.inset {
-      border-left-color: transparent;
-    }
-  }
-
-  & > .form-control {
-    &.inset-left:not(:first-child) {
-      border-left-color: transparent;
-    }
-
-    &.inset-right:not(:first-child) {
-      border-right-color: transparent;
-    }
-  }
-
-  .btn.clear {
-    opacity: 1;
-    color: $gray-500;
-    background-color: $input-bg;
-
-    &.disabled > i {
-      color: transparent;
-      border-width: 0;
-    }
-  }
-}
-
-.multiselect {
-  color: $input-color;
-
-  .multiselect__placeholder {
-    position: relative;
-    top: 5px;
-    padding-top: 0;
-  }
-
-  .multiselect__tags {
-    padding-top: 10px;
-    padding-bottom: 10px;
-  }
-
-  .multiselect__select {
-    top: 6px;
-  }
-
-  .multiselect__option--selected.multiselect__option--highlight {
-    background-color: $primary;
-  }
-
-  .multiselect__option.multiselect__option--highlight {
-    background-color: $light-blue;
-    color: $input-color;
-  }
-
-  .multiselect__single {
-    position: relative;
-    top: 4px;
-    text-overflow: ellipsis;
-    overflow: hidden;
-  }
-
-  .multiselect__input {
-    position: relative;
-    top: 3px;
   }
 }
 </style>
