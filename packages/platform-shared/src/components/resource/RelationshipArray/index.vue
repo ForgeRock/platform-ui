@@ -258,7 +258,6 @@ export default {
     loadGrid(page) {
       const idmInstance = this.getRequestService();
 
-      /* istanbul ignore next */
       idmInstance.get(this.buildGridUrl(page)).then((resourceData) => {
         if (resourceData.data.pagedResultsCookie) {
           this.lastPage = false;
@@ -308,7 +307,6 @@ export default {
       return resourceUrl;
     },
     paginationChange(page) {
-      /* istanbul ignore next */
       this.currentPage = page;
       this.loadGrid(page);
     },
@@ -388,7 +386,6 @@ export default {
         this.$refs[modal].hide();
       };
 
-      /* istanbul ignore next */
       idmInstance.patch(`${this.parentResource}/${this.parentId}`, patchArray).then(() => {
         loadAndCloseModal();
         this.displayNotification('IDMMessages', 'success', this.$t(translation, { resource: this.relationshipArrayProperty.title }));
@@ -403,25 +400,25 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-    /deep/ {
-      .fr-resource-paginator {
-        a[role='menuitemradio'] {
-          display: none !important;
-        }
-      }
-
-      .checkbox-column {
-        width: 1px;
-        padding-right: 0;
-        vertical-align: middle;
-      }
-
-      .cursor-pointer {
-        cursor: pointer;
-      }
-
-      .modal-body {
-        overflow: visible;
+  /deep/ {
+    .fr-resource-paginator {
+      a[role='menuitemradio'] {
+        display: none !important;
       }
     }
+
+    .checkbox-column {
+      width: 1px;
+      padding-right: 0;
+      vertical-align: middle;
+    }
+
+    .cursor-pointer {
+      cursor: pointer;
+    }
+
+    .modal-body {
+      overflow: visible;
+    }
+  }
 </style>

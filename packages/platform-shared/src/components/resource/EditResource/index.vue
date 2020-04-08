@@ -10,7 +10,7 @@ to such license between the licensee and ForgeRock AS. -->
         <div class="d-sm-flex mt-5 mb-4">
           <div class="media">
             <div
-              v-if="name === 'user'"
+              v-if="resourceName === 'user'"
               class="mr-4">
               <BImg
                 width="100"
@@ -45,7 +45,9 @@ to such license between the licensee and ForgeRock AS. -->
       type="button"
       variant="outline-secondary"
       v-b-modal.resetModal>
-      <i class="material-icons-outlined mr-md-2 text-nowrap">cached</i>
+      <i class="material-icons-outlined mr-md-2 text-nowrap">
+        cached
+      </i>
       {{ $t('common.reset') }} {{ $t('common.placeholders.password') }}
     </BButton> -->
     <BCard
@@ -63,75 +65,17 @@ to such license between the licensee and ForgeRock AS. -->
             <div class="card-body m-4">
               <ValidationObserver ref="observer">
                 <template v-for="(field, index) in displayProperties">
-                  <template v-if="!field.isReadOnly || isOpenidmAdmin">
-                    <div
-                      class="mb-4"
-                      v-if="(field.type === 'string' || field.type === 'number') && field.encryption === undefined"
-                      :key="'editResource' +index">
-                      <ValidationProvider
-                        :name="field.key"
-                        :rules="field.required ? 'required' : ''"
-                        v-slot="{ errors }">
-                        <FrFloatingLabelInput
-                          class="floating-label-input"
-                          :class="{'fr-error': errors.length}"
-                          :type="field.type"
-                          v-model="formFields[field.key]"
-                          :field-name="field.key"
-                          :label="field.title" />
-                        <FrValidationError
-                          class="error-message mt-0"
-                          :validator-errors="errors"
-                          :field-name="field.key" />
-                      </ValidationProvider>
-                    </div>
-                    <FrRelationshipEdit
-                      v-else-if="field.type === 'relationship' && formFields[field.key] !== ''"
-                      :parent-resource="`${resource}/${name}`"
-                      :relationship-property="field"
-                      :key="'editResource' +index"
-                      :index="index"
-                      :value="formFields[field.key]"
-                      @setValue="setSingletonRelationshipValue" />
-                    <!-- for boolean values -->
+                  <div
+                    class="mb-4"
+                    v-if="(field.type === 'string' || field.type === 'number' || field.type === 'boolean') && field.encryption === undefined"
+                    :key="'editResource' + index">
+                    <FrField :field="field" />
+                  </div>
+                  <!-- for singletonRelationhip values -->
+                  <template v-if="field.type === 'relationship' && formFields[field.key] !== ''">
                     <BFormGroup
-                      :key="'editResource' +index"
-                      v-if="field.type === 'boolean'">
-                      <div class="form-row">
-                        <div class="col-1">
-                          <ToggleButton
-                            class="mt-2 p-0 fr-toggle-primary"
-                            :height="28"
-                            :width="56"
-                            :sync="true"
-                            :css-colors="true"
-                            :labels="{checked: $t('common.yes'), unchecked: $t('common.no')}"
-                            v-model="formFields[field.key]" />
-                        </div>
-
-                        <label
-                          class="col-form-label col-10"
-                          :for="field.title">
-                          {{ field.title }}
-                        </label>
-                      </div>
-                    </BFormGroup>
-                  </template>
-                  <template v-else>
-                    <FrFloatingLabelInput
-                      v-if="(field.type === 'string' || field.type === 'number') && field.encryption === undefined"
-                      :key="'readResource' +index"
-                      class="floating-label-input"
-                      :type="field.type"
-                      v-model="formFields[field.key]"
-                      :disabled="true"
-                      :field-name="field.key"
-                      :label="field.title" />
-
-                    <!-- for singletonRelationhip values -->
-                    <BFormGroup
-                      :key="'readResource' +index"
-                      v-if="field.type === 'relationship' && formFields[field.key]">
+                      :key="'readResource' + index"
+                      v-if="field.disabled">
                       <label
                         class="col-form-label col-sm-3"
                         :for="field.title">
@@ -154,30 +98,14 @@ to such license between the licensee and ForgeRock AS. -->
                         </div>
                       </div>
                     </BFormGroup>
-
-                    <!-- for boolean values -->
-                    <BFormGroup
-                      :key="'readResource' +index"
-                      v-if="field.type === 'boolean'">
-                      <div class="form-row">
-                        <div class="col-1">
-                          <ToggleButton
-                            class="mt-2 p-0 fr-toggle-primary"
-                            :height="28"
-                            :width="56"
-                            :disabled="true"
-                            :sync="true"
-                            :css-colors="true"
-                            :labels="{checked: $t('common.yes'), unchecked: $t('common.no')}"
-                            v-model="formFields[field.key]" />
-                        </div>
-                        <label
-                          class="col-form-label col-10"
-                          :for="field.title">
-                          {{ field.title }}
-                        </label>
-                      </div>
-                    </BFormGroup>
+                    <FrRelationshipEdit
+                      v-else
+                      :parent-resource="`${resourceType}/${resourceName}`"
+                      :relationship-property="field"
+                      :key="'editResource' + index"
+                      :index="index"
+                      :value="field.value"
+                      @setValue="setSingletonRelationshipValue($event, field)" />
                   </template>
                 </template>
               </ValidationObserver>
@@ -206,7 +134,7 @@ to such license between the licensee and ForgeRock AS. -->
             :title="relationshipProperty.title"
             :key="`${relationshipProperty.propName}_tab`">
             <FrRelationshipArray
-              :parent-resource="`${resource}/${name}`"
+              :parent-resource="`${resourceType}/${resourceName}`"
               :parent-id="id"
               :relationship-array-property="relationshipProperty" />
           </BTab>
@@ -237,7 +165,7 @@ to such license between the licensee and ForgeRock AS. -->
       ref="deleteModal"
       :title="this.$t('pages.access.deleteModalTitle')">
       <div>
-        {{ $t('pages.access.deleteConfirm') }} {{ this.name }}?
+        {{ $t('pages.access.deleteConfirm') }} {{ this.resourceName }}?
       </div>
 
       <template v-slot:modal-footer>
@@ -260,52 +188,8 @@ to such license between the licensee and ForgeRock AS. -->
       ref="resetModal"
       :title="this.$t('pages.access.resetPassword')">
       <FrPolicyPasswordInput
-        :policy-api="`${resource}/${name}/policyTest`"
-        v-model="formFields['password']">
-        <template v-slot:custom-input>
-          <BFormGroup class="mb-3">
-            <label for="updatePassword">
-              {{ $t('pages.access.password') }}
-            </label>
-            <div class="form-label-password form-label-group mb-0">
-              <ValidationObserver
-                ref="passwordObserver"
-                vid="passwordObserver">
-                <ValidationProvider
-                  mode="aggressive"
-                  name="password"
-                  rules="required|policy"
-                  v-slot="{ errors }">
-                  <BFormInput
-                    id="updatePassword"
-                    autocomplete="password"
-                    :type="passwordInputType"
-                    :class="[{'is-invalid': errors.length > 0}]"
-                    v-model="formFields['password']"
-                    name="password" />
-                </ValidationProvider>
-              </ValidationObserver>
-              <div class="input-group-append">
-                <button
-                  @click="revealNew"
-                  class="btn btn-secondary"
-                  type="button">
-                  <i
-                    v-if="showPassword"
-                    class="material-icons-outlined">
-                    visibility
-                  </i>
-                  <i
-                    v-else
-                    class="material-icons-outlined">
-                    visibility_off
-                  </i>
-                </button>
-              </div>
-            </div>
-          </BFormGroup>
-        </template>
-      </FrPolicyPasswordInput>
+        :policy-api="`${resourceType}/${resourceName}/policyTest`"
+        v-model="passwordField.value" />
 
       <template v-slot:modal-footer>
         <div class="w-100">
@@ -344,7 +228,6 @@ import {
   BContainer,
   BFormGroup,
   BImg,
-  BFormInput,
   BModal,
   BRow,
   BTab,
@@ -352,9 +235,8 @@ import {
   VBModal,
 } from 'bootstrap-vue';
 import axios from 'axios';
-import { ValidationProvider, ValidationObserver } from 'vee-validate';
-import FloatingLabelInput from '@forgerock/platform-shared/src/components/FloatingLabelInput';
-import ValidationErrorList from '@forgerock/platform-shared/src/components/ValidationErrorList/';
+import { ValidationObserver } from 'vee-validate'; // ValidationProvider,
+import FrField from '@forgerock/platform-shared/src/components/Field';
 import PolicyPasswordInput from '@forgerock/platform-shared/src/components/PolicyPasswordInput/';
 import RelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
 import RelationshipArray from '@forgerock/platform-shared/src/components/resource/RelationshipArray';
@@ -362,30 +244,26 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
-import { ToggleButton } from 'vue-js-toggle-button';
 
 /**
  * @description Full page that provides view/edit of a specific resource for delegated admin. Auto generates fields based on backend return.
  * Currently generates string, number, boolean and password (not based on type, but on field name being passsword).
  *
- * @fires GET schema/type/name/ (e.g. schema/managed/user) - Schema for a resource
- * @fires GET privilege/type/name/id (e.g. privilege/managed/user/_id) - Privileges for a specific record of a resource
- * @fires GET type/name/id (e.g. managed/user/_id) - Resource details, in this context privileges will restrict the data return
- * @fires DELETE type/name/id (e.g. managed/user/_id) - Deletes resource record
- * @fires PATCH type/name/id (e.g. managed/user/_id) - Submits a patch object of changes for the provided resource record
+ * @fires GET schema/resourceType/resourceName/ (e.g. schema/managed/user) - Schema for a resource
+ * @fires GET privilege/resourceType/resourceName/id (e.g. privilege/managed/user/_id) - Privileges for a specific record of a resource
+ * @fires GET resourceType/resourceName/id (e.g. managed/user/_id) - Resource details, in this context privileges will restrict the data return
+ * @fires DELETE resourceType/resourceName/id (e.g. managed/user/_id) - Deletes resource record
+ * @fires PATCH resourceType/resourceName/id (e.g. managed/user/_id) - Submits a patch object of changes for the provided resource record
  */
 export default {
   name: 'EditResource',
   components: {
     FrPolicyPasswordInput: PolicyPasswordInput,
-    FrValidationError: ValidationErrorList,
-    FrFloatingLabelInput: FloatingLabelInput,
+    FrField,
     FrRelationshipEdit: RelationshipEdit,
     FrRelationshipArray: RelationshipArray,
     ValidationObserver,
-    ValidationProvider,
     BButton,
-    BFormInput,
     BFormGroup,
     BImg,
     BRow,
@@ -395,7 +273,6 @@ export default {
     BTab,
     BCard,
     BModal,
-    ToggleButton,
   },
   mixins: [
     BreadcrumbMixin,
@@ -409,14 +286,13 @@ export default {
   data() {
     return {
       resourceTitle: '',
-      name: this.$route.params.resourceName,
-      resource: this.$route.params.resourceType,
+      resourceName: this.$route.params.resourceName,
+      resourceType: this.$route.params.resourceType,
       id: this.$route.params.resourceId,
       displayProperties: [],
       canDelete: false,
       canChangePassword: false,
-      passwordInputType: 'password',
-      showPassword: true,
+      passwordField: {},
       disableSaveButton: false,
       icon: '',
       displayNameField: '',
@@ -435,11 +311,11 @@ export default {
     loadData() {
       const idmInstance = this.getRequestService();
       axios.all([
-        idmInstance.get(`schema/${this.resource}/${this.name}`),
-        idmInstance.get(`privilege/${this.resource}/${this.name}/${this.id}`)]).then(axios.spread((schema, privilege) => {
+        idmInstance.get(`schema/${this.resourceType}/${this.resourceName}`),
+        idmInstance.get(`privilege/${this.resourceType}/${this.resourceName}/${this.id}`)]).then(axios.spread((schema, privilege) => {
         this.resourceTitle = schema.data.title;
 
-        this.setBreadcrumb(`/${this.$route.meta.listRoute}/${this.resource}/${this.name}`, `${this.resourceTitle} ${this.$t('pages.access.list')}`);
+        this.setBreadcrumb(`/${this.$route.meta.listRoute}/${this.resourceType}/${this.resourceName}`, `${this.resourceTitle} ${this.$t('pages.access.list')}`);
 
         this.relationshipProperties = this.getRelationshipProperties(schema.data, privilege.data);
 
@@ -454,7 +330,7 @@ export default {
         });
     },
     buildResourceUrl() {
-      let url = `${this.resource}/${this.name}/${this.id}?_fields=*`;
+      let url = `${this.resourceType}/${this.resourceName}/${this.id}?_fields=*`;
       const singletons = filter(this.relationshipProperties, { type: 'relationship' });
 
       if (singletons.length) {
@@ -472,14 +348,14 @@ export default {
         property.propName = key;
 
         if (isRelationship) {
-          property.isReadOnly = privilege.UPDATE.properties.indexOf(key) === -1;
+          property.disabled = privilege.UPDATE.properties.indexOf(key) === -1 && !this.isOpenidmAdmin;
         }
 
         return isInPropertyOrder && isRelationship && hasPermission;
       });
     },
-    setSingletonRelationshipValue(data) {
-      this.formFields[data.property] = data.value;
+    setSingletonRelationshipValue(data, field) {
+      field.value = data.value;
     },
     getRelationshipDisplayFields(property, value) {
       // eslint-disable-next-line no-underscore-dangle
@@ -525,15 +401,22 @@ export default {
         each(this.mergePrivilegeProperties(privilege, schema), (createPriv) => {
           const tempProp = schema.properties[createPriv.attribute];
 
-          if (indexOf(schema.required, createPriv.attribute) !== -1) {
-            tempProp.required = true;
-          }
-
           if (createPriv.attribute === 'password' && !createPriv.readOnly) {
             this.canChangePassword = true;
           }
 
           tempProp.key = createPriv.attribute;
+          delete tempProp.description;
+
+          if (indexOf(schema.required, createPriv.attribute) !== -1) {
+            tempProp.validation = 'required';
+          }
+          if (tempProp.policies && tempProp.policies[0] && tempProp.policies[0].policyId === 'valid-email-address-format') {
+            if (tempProp.validation.length) {
+              tempProp.validation += '|';
+            }
+            tempProp.validation += 'email';
+          }
 
           // Try and do some primary detection for a display name
           if (createPriv.attrubute !== '_id' && this.displayNameField.length === 0) {
@@ -541,10 +424,9 @@ export default {
           }
 
           // Try and do some primary detection for a secondary title
-          if (((createPriv.attribute).toLowerCase() === 'title'
-                                || (createPriv.attribute).toLowerCase() === 'email'
-                                || (createPriv.attribute).toLowerCase() === 'type'
-                                || (createPriv.attribute).toLowerCase() === 'mail') && this.displaySecondaryTitleField.length === 0) {
+          const attribute = createPriv.attribute.toLowerCase();
+          if ((attribute === 'title' || attribute === 'email' || attribute === 'type' || attribute === 'mail')
+              && this.displaySecondaryTitleField.length === 0) {
             this.displaySecondaryTitleField = createPriv.attribute;
           }
 
@@ -552,19 +434,25 @@ export default {
           if (isUndefined(this.formFields[createPriv.attribute])) {
             if (tempProp.type === 'boolean') {
               this.$set(this.formFields, createPriv.attribute, false);
-              this.oldFormFields[createPriv.attribute] = false;
             } else {
               this.$set(this.formFields, createPriv.attribute, '');
-              this.oldFormFields[createPriv.attribute] = '';
             }
+            this.oldFormFields[createPriv.attribute] = this.formFields[createPriv.attribute];
           }
+          tempProp.value = this.formFields[createPriv.attribute];
 
-          if (createPriv.readOnly) {
-            tempProp.isReadOnly = true;
+          if (createPriv.readOnly && !this.isOpenidmAdmin) {
+            tempProp.disabled = true;
+          } else {
+            tempProp.disabled = false;
           }
 
           if (createPriv.attribute !== 'password') {
             this.displayProperties.push(tempProp);
+          } else {
+            tempProp.type = 'password';
+            tempProp.validation = 'required|policy';
+            this.passwordField = tempProp;
           }
         });
       }
@@ -576,26 +464,16 @@ export default {
 
       this.$refs.deleteModal.hide();
 
-      idmInstance.delete(`${this.resource}/${this.name}/${this.id}`).then(() => {
-        this.displayNotification('IDMMessages', 'success', this.$t('pages.access.deleteResource', { resource: this.name }));
+      idmInstance.delete(`${this.resourceType}/${this.resourceName}/${this.id}`).then(() => {
+        this.displayNotification('IDMMessages', 'success', this.$t('pages.access.deleteResource', { resource: this.resourceName }));
 
         this.$router.push({
-          path: `/${this.$route.meta.listRoute}/${this.resource}/${this.name}`,
+          path: `/${this.$route.meta.listRoute}/${this.resourceType}/${this.resourceName}`,
         });
       })
         .catch((error) => {
           this.displayNotification('IDMMessages', 'error', error.response.data.message);
         });
-    },
-    // Hide/show for special password field
-    revealNew() {
-      if (this.passwordInputType === 'password') {
-        this.passwordInputType = 'text';
-        this.showPassword = false;
-      } else {
-        this.passwordInputType = 'password';
-        this.showPassword = true;
-      }
     },
     async saveResource() {
       const idmInstance = this.getRequestService();
@@ -604,22 +482,22 @@ export default {
 
       const isValid = await this.$refs.observer.validate();
       if (isValid) {
+        this.displayProperties.forEach((field) => {
+          this.formFields[field.key] = field.value;
+        });
         const saveData = this.generateUpdatePatch(clone(this.oldFormFields), clone(this.formFields));
 
-        idmInstance.patch(`${this.resource}/${this.name}/${this.id}`, saveData).then(() => {
-          this.displayNotification('IDMMessages', 'success', this.$t('pages.access.successEdited', { resource: capitalize(this.name) }));
+        idmInstance.patch(`${this.resourceType}/${this.resourceName}/${this.id}`, saveData).then(() => {
+          this.displayNotification('IDMMessages', 'success', this.$t('pages.access.successEdited', { resource: capitalize(this.resourceName) }));
         },
         (error) => {
           const generatedErrors = this.findPolicyError(error.response, this.displayProperties);
-
-          this.$refs.observer.reset();
 
           if (generatedErrors.length > 0) {
             each(generatedErrors, (generatedError) => {
               if (generatedError.exists) {
                 const newError = {};
                 newError[generatedError.field] = [generatedError.msg];
-                this.$refs.observer.setErrors(newError);
               }
             });
           }
@@ -640,7 +518,7 @@ export default {
         this.$refs.resetModal.hide();
         this.formFields.password = '';
 
-        idmInstance.patch(`${this.resource}/${this.name}/${this.id}`, saveData).then(() => {
+        idmInstance.patch(`${this.resourceType}/${this.resourceName}/${this.id}`, saveData).then(() => {
           this.displayNotification('IDMMessages', 'success', this.$t('pages.access.successSavePassword'));
         },
         () => {
@@ -671,7 +549,7 @@ export default {
   },
   computed: {
     secondaryTitle() {
-      let tempDisplayName = `${this.resource} - ${this.name}`;
+      let tempDisplayName = `${this.resourceType} - ${this.resourceName}`;
 
       if (this.displaySecondaryTitleField.length > 0) {
         tempDisplayName = this.formFields[this.displaySecondaryTitleField];
@@ -704,29 +582,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/deep/ {
-  .fr-error.floating-label-input {
-    margin-bottom: 0 !important;
-    border: none !important;
-
-    /deep/ input {
-      border: 1px solid $danger;
-    }
-
-    /deep/ button {
-      border: 1px solid $danger !important;
-      border-left-color: $gray-400 !important;
-    }
+/deep/ .card-tabs-vertical {
+  .card-body {
+    padding: 0;
   }
 
-  .card-tabs-vertical {
-    .card-body {
-      padding: 0;
-    }
-
-    .tab-content.col {
-      padding: 0;
-    }
+  .tab-content.col {
+    padding: 0;
   }
 }
 

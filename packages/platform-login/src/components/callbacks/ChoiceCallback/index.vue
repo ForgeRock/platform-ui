@@ -4,21 +4,16 @@ or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
   <div>
-    <FrFloatingLabelInput
-      type="select"
-      :field-name="name"
-      :label="callback.getPrompt()"
-      v-model="selected"
-      :select-options="options" />
+    <FrField :field="selected" />
   </div>
 </template>
 <script>
 import { map } from 'lodash';
-import FloatingLabelInput from '@forgerock/platform-shared/src/components/FloatingLabelInput';
+import FrField from '@forgerock/platform-shared/src/components/Field';
 
 export default {
   components: {
-    FrFloatingLabelInput: FloatingLabelInput,
+    FrField,
   },
   props: {
     callback: {
@@ -31,15 +26,17 @@ export default {
     },
   },
   mounted() {
-    this.name = `callback_${this.index}`;
     this.loadOptions();
-    this.selected = this.callback.getDefaultChoice();
   },
   data() {
     return {
-      options: [],
-      name: '',
-      selected: null,
+      selected: {
+        key: `callback_${this.index}`,
+        title: this.callback.getPrompt(),
+        type: 'select',
+        value: this.callback.getDefaultChoice(),
+        options: [],
+      },
       choices: this.callback.getChoices(),
     };
   },
@@ -50,7 +47,7 @@ export default {
   },
   methods: {
     loadOptions() {
-      this.options = map(this.choices, (item, itemIndex) => ({
+      this.selected.options = map(this.choices, (item, itemIndex) => ({
         text: item,
         value: itemIndex.toString(),
       }));
