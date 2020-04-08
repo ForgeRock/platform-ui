@@ -85,7 +85,7 @@ $spacers: map-merge(
 $enable-shadows: false;
 $enable-rounded: true;
 $border-width: 1px;
-$border-color: $gray-300;
+$border-color: $gray-200;
 
 //General
 $body-bg: $gray-100;
@@ -97,7 +97,6 @@ $font-weight-light: 300;
 $small-font-size: 0.875rem;
 $transition-collapse: height 0.25s ease-in;
 $border-radius: 4px;
-$border-color: $gray-300;
 $box-shadow-sm: 0 1px 2px rgba($black, 0.13);
 $box-shadow: 0 1px 3px rgba($black, 0.13);
 $box-shadow-lg: 0 2px 11px rgba($black, 0.13);
@@ -303,7 +302,7 @@ $table-hover-bg: $gray-100;
 $table-cell-padding: 1.25rem 1.5rem;
 $table-cell-padding-sm: 0.5rem;
 $table-color: $gray-900;
-$table-border-color: $gray-300;
+$table-border-color: $gray-200;
 
 // Forgerock specific table variables
 $fr-table-head-weight: 500;
