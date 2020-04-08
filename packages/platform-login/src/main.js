@@ -6,6 +6,8 @@
  * to such license between the licensee and ForgeRock AS.
  */
 import Vue from 'vue';
+import { extend, setInteractionMode } from 'vee-validate';
+import { required } from 'vee-validate/dist/rules';
 import ToggleButton from 'vue-js-toggle-button';
 import Notifications from 'vue-notification';
 import i18n from './i18n';
@@ -18,6 +20,35 @@ Vue.config.productionTip = false;
 
 Vue.use(Notifications);
 Vue.use(ToggleButton);
+
+// Required rule - errors if no value is supplied
+extend('required', {
+  ...required,
+  message: i18n.t('common.policyValidationMessages.REQUIRED'),
+});
+// Unique rule - errors if input value matches any of provided array of values
+extend('unique', {
+  params: ['otherValues'],
+  validate(value, { otherValues }) {
+    let uniqueValues;
+    if (typeof otherValues === 'string') {
+      uniqueValues = [otherValues];
+    } else {
+      uniqueValues = otherValues;
+    }
+    let returnValue = true;
+    if (uniqueValues) {
+      uniqueValues.forEach((uniqueValue) => {
+        if (uniqueValue.toLowerCase().trim() === value.toLowerCase().trim()) {
+          returnValue = false;
+        }
+      });
+    }
+    return returnValue;
+  },
+  message: i18n.t('common.policyValidationMessages.UNIQUE'),
+});
+setInteractionMode('passive');
 
 new Vue({
   router,

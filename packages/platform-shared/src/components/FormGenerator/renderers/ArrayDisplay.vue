@@ -13,7 +13,7 @@
   />
 </template>
 <script>
-import FloatingLabelInput from '@forgerock/platform-shared/src/components/FloatingLabelInput';
+import FloatingLabelInput from '@forgerock/platform-shared/src/components/Field/FloatingLabelInput';
 
 export default {
   name: 'ArrayDisplay',

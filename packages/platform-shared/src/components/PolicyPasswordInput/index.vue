@@ -8,28 +8,15 @@ to such license between the licensee and ForgeRock AS. -->
     <BFormGroup class="mb-0">
       <!-- @slot input and validation errors -->
       <slot
-        v-if="!customInput"
+        v-if="!customInput && policies"
         name="input-with-validation-panel">
-        <ValidationProvider
-          mode="aggressive"
-          name="password"
-          rules="required|policy">
-          <FrFloatingLabelInput
-            name="password"
-            field-name="password"
-            type="password"
-            v-model="password"
-            :label="label || $t('common.placeholders.password')"
-            :reveal="true"
-            :show-error-state="false"
-            @input="$emit('input', $event)">
-            <template v-slot:validationError>
-              <FrPolicyPanel
-                :policies="policies"
-                :policy-failures="defaultPolicyFailures || policyFailures" />
-            </template>
-          </FrFloatingLabelInput>
-        </ValidationProvider>
+        <FrField :field="passwordModel">
+          <template v-slot:validationError>
+            <FrPolicyPanel
+              :policies="policies"
+              :policy-failures="defaultPolicyFailures || policyFailures" />
+          </template>
+        </FrField>
       </slot>
 
       <template v-else>
@@ -61,9 +48,8 @@ import { BFormGroup } from 'bootstrap-vue';
 import {
   extend,
   ValidationObserver,
-  ValidationProvider,
 } from 'vee-validate';
-import FloatingLabelInput from '@forgerock/platform-shared/src/components/FloatingLabelInput';
+import FrField from '@forgerock/platform-shared/src/components/Field';
 import PolicyPanel from '@forgerock/platform-shared/src/components/PolicyPanel';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
@@ -80,11 +66,10 @@ export default {
     NotificationMixin,
   ],
   components: {
-    FrFloatingLabelInput: FloatingLabelInput,
+    FrField,
     FrPolicyPanel: PolicyPanel,
     BFormGroup,
     ValidationObserver,
-    ValidationProvider,
   },
   props: {
     /**
@@ -100,7 +85,7 @@ export default {
     defaultPolicyFailures: {
       required: false,
       type: Array,
-      default: () => [],
+      default: null,
     },
     /**
      * Initial value input in the field.
@@ -119,63 +104,81 @@ export default {
     /**
      * Items to remove from the policy service.
      */
-    exclude: {
+    excludeOverwrite: {
       required: false,
       type: Array,
-      default: () => {
-        if (this && this.policyApi) {
-          const { policyApi } = this;
-          return [
-            {
-              name: 'REQUIRED',
-              predicate(policyRequirements) {
-                return includes(policyRequirements, 'REQUIRED') && includes(policyRequirements, 'MIN_LENGTH');
-              },
-            },
-            {
-              name: 'IS_NEW',
-              predicate() {
-                return policyApi === 'selfservice/registration';
-              },
-            },
-            'VALID_TYPE',
-            'CANNOT_CONTAIN_OTHERS',
-          ];
-        }
-        return null;
-      },
+      default: null,
     },
   },
   data() {
     return {
       policies: [],
-      password: this.value,
+      passwordModel: {
+        type: 'password',
+        value: this.value,
+        key: 'password',
+        title: this.label || this.$t('common.placeholders.password'),
+        validation: 'required|policy',
+      },
     };
   },
+  watch: {
+    value(value) {
+      this.passwordModel.value = value;
+    },
+  },
   computed: {
-    policyFailures() { return this.$refs.observer.errors.passwordObserver.password; },
+    policyFailures() {
+      if (this.$refs.observer) {
+        return this.$refs.observer.errors.password;
+      }
+      return '';
+    },
     customInput() { return !isUndefined(this.$slots['custom-input']); },
+    exclude() {
+      if (this.excludeOverwrite) {
+        return this.excludeOverwrite;
+      }
+      if (this && this.policyApi) {
+        const { policyApi } = this;
+        return [
+          {
+            name: 'REQUIRED',
+            predicate(policyRequirements) {
+              return includes(policyRequirements, 'REQUIRED') && includes(policyRequirements, 'MIN_LENGTH');
+            },
+          },
+          {
+            name: 'IS_NEW',
+            predicate() {
+              return policyApi === 'selfservice/registration';
+            },
+          },
+          'VALID_TYPE',
+          'CANNOT_CONTAIN_OTHERS',
+        ];
+      }
+      return null;
+    },
   },
   methods: {
     /**
-             * Predicates whether item matches 'password'. Policy Definition and Policy Failure objects
-             * have different shapes, so this function can be used as a predicate for both.
-             * @param {String} propName - The name of the property grab
-             * @param {Object} policyRequirementItem - object to predicate on
-             * @return {Boolean}
-             */
+     * Predicates whether item matches 'password'. Policy Definition and Policy Failure objects
+     * have different shapes, so this function can be used as a predicate for both.
+     * @param {String} propName - The name of the property grab
+     * @param {Object} policyRequirementItem - object to predicate on
+     * @return {Boolean}
+     */
     isPasswordPolicyItem: curry((propName, policyRequirementItem) => !isEmpty(policyRequirementItem[propName].match('password'))),
     /**
-             * convert policy definition into a simple structure to work with
-             * @param {Object} policyDefinition
-             * @param {String[]} policyDefinition.policyRequirements - singleton array with policy name
-             * @param {Object} policyDefinition.params - objet containing params for policy (e.g. `{ params: { numNum: 1 } }
-             * @return {Object} - {name<String>, params<Object>}
-             */
+     * convert policy definition into a simple structure to work with
+     * @param {Object} policyDefinition
+     * @param {String[]} policyDefinition.policyRequirements - singleton array with policy name
+     * @param {Object} policyDefinition.params - objet containing params for policy (e.g. `{ params: { numNum: 1 } }
+     * @return {Object} - {name<String>, params<Object>}
+     */
     toSimplePolicyObject(policyDefinition) {
       const { policyRequirements, params } = policyDefinition;
-
-
       const name = first(policyRequirements);
 
       if (!isUndefined(name)) {
@@ -184,15 +187,13 @@ export default {
       return {};
     },
     /**
-             * Change an array of Failed Policy objects to an array of policy names
-             * @param {Object} failedPolicySet - policy service response object
-             * @param {Object[]} failedPolicySet.failedPolicyRequirements - the list to map
-             * @return {String[]}
-             */
+     * Change an array of Failed Policy objects to an array of policy names
+     * @param {Object} failedPolicySet - policy service response object
+     * @param {Object[]} failedPolicySet.failedPolicyRequirements - the list to map
+     * @return {String[]}
+     */
     toPolicyNames(failedPolicySet) {
       const failedPolicyRequirements = failedPolicySet.failedPolicyRequirements || [];
-
-
       const policyNames = failedPolicyRequirements
         .filter(this.isPasswordPolicyItem('property'))
         .map((failedPolicyDefinition) => at(failedPolicyDefinition, ['policyRequirements[0].policyRequirement']));
@@ -200,10 +201,10 @@ export default {
       return flatten(policyNames);
     },
     /**
-             * Remove from the policy service return set of policies those that are defined in the `exclude` prop
-             * @param {Object} policyRequirementSet - policy service response object
-             * @return {Object} - edited version of the policyRequirementSet
-             */
+     * Remove from the policy service return set of policies those that are defined in the `exclude` prop
+     * @param {Object} policyRequirementSet - policy service response object
+     * @return {Object} - edited version of the policyRequirementSet
+     */
     makeExclusions(policyRequirementSet) {
       let policyRequirements;
       let policies;
@@ -255,18 +256,17 @@ export default {
     const formatPayload = this.formatPayload.bind(this);
 
     // Create validation service call and bind to component scope.
-
     const requestPolicyValidation = (password) => {
-      const data = formatPayload(password);
+      const payload = formatPayload(password);
 
       // remove existing defaultPolicyFailures
       this.defaultPolicyFailures = null;
 
       return policyService
-        .post(`/policy/${this.policyApi}/?_action=${this.getAction()}`, data)
-        .then(({ data2 }) => this.toPolicyNames(data2))
+        .post(`/policy/${this.policyApi}/?_action=${this.getAction()}`, payload)
+        .then(({ data }) => this.toPolicyNames(data))
         .catch(() => {
-          this.displayNotification('IDMMessages', 'error', this.$t('common.policyValidationMessages.policyServiceError'));
+          this.displayNotification('IDMMessages', 'error', this.$t('common.policyValidationMessages.policyServiceError.policyApi', { policyApi: this.policyApi }));
         });
     };
 
@@ -292,7 +292,7 @@ export default {
           .filter((p) => !isEmpty(p));
       })
       .catch(() => {
-        this.displayNotification('IDMMessages', 'error', this.$t(`common.policyValidationMessages.policyServiceError.${this.policyApi}`));
+        this.displayNotification('IDMMessages', 'error', this.$t('common.policyValidationMessages.policyServiceError.policyApi', { policyApi: this.policyApi }));
         this.$router.push('/login');
       });
   },

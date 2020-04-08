@@ -17,6 +17,7 @@ to such license between the licensee and ForgeRock AS. -->
             {{ key }}
           </h5>
           <i
+            v-if="!disabled"
             @click="deleteItem(key)"
             class="material-icons-outlined fr-key-value-icon noselect">
             delete
@@ -27,6 +28,7 @@ to such license between the licensee and ForgeRock AS. -->
             {{ text }}
           </span>
           <i
+            v-if="!disabled"
             @click="editItem(key)"
             class="material-icons-outlined fr-key-value-icon noselect d-none">
             edit
@@ -54,7 +56,7 @@ to such license between the licensee and ForgeRock AS. -->
       @cancel="currentKey = null"
       @saveKeyValue="saveKeyValue" />
     <div
-      v-else
+      v-else-if="!disabled"
       class="mt-3">
       <span
         class="fr-key-link"
@@ -86,6 +88,10 @@ export default {
       default() {
         return {};
       },
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

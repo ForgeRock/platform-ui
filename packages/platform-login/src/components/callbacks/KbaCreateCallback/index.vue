@@ -1,4 +1,4 @@
-<!-- Copyright 2019 ForgeRock AS. All Rights Reserved
+<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
 
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
@@ -8,12 +8,12 @@ to such license between the licensee and ForgeRock AS. -->
     <div
       v-if="showHeader"
       class="row kbaHeaderText">
-      <!-- TODO Covert to use HR component -->
+      <!-- TODO Convert to use HR component -->
       <div class="col pr-0">
         <hr>
       </div>
       <div class="col-auto pt-1">
-        <i class="material-icons material-icons-outlined">
+        <i class="material-icons-outlined">
           lock
         </i>
       </div>
@@ -28,38 +28,25 @@ to such license between the licensee and ForgeRock AS. -->
       {{ descriptionText }}
     </p>
 
-    <input
-      type="hidden"
-      class="kbaQuestion"
-      :name="questionName"
-      :ref="questionName"
-      :value="questionValue">
-    <BFormSelect
-      :options="options"
-      v-model="selected"
-      :id="questionName + '_selector'"
-      class="mb-2 kbaQuestionSelect"
-      @change="onQuestionSelectionChange()" />
-
-    <FrFloatingLabelInput
-      class="mb-3"
-      type="text"
-      :field-name="questionName + '_floatingLabelInput'"
-      v-if="showCustom"
-      v-model.trim="questionValue"
-      label="Question"
-      :validator="validateQuestion"
-      :failed-policies="failedQuestionPolicies" />
-
-    <FrFloatingLabelInput
-      class="mb-3"
-      type="password"
-      :reveal="true"
-      :field-name="answerName"
-      v-model.trim="answerValue"
-      label="Answer"
-      :validator="validateAnswer"
-      :failed-policies="failedAnswerPolicies" />
+    <ValidationObserver ref="observer">
+      <BFormSelect
+        :options="options"
+        v-model="selected"
+        :id="questionModel.key + '_selector'"
+        class="mb-2 kbaQuestionSelect"
+        @change="onQuestionSelectionChange()" />
+      <FrField
+        v-if="showCustom"
+        class="mb-3"
+        :field="questionModel"
+        :validator="validateQuestion"
+        :validation-immediate="true" />
+      <FrField
+        class="mb-3"
+        :field="answerModel"
+        :disabled="selected === null"
+        :validator="validateAnswer" />
+    </ValidationObserver>
     <hr>
   </div>
 </template>
@@ -67,16 +54,17 @@ to such license between the licensee and ForgeRock AS. -->
 <script>
 import {
   map,
-  find,
 } from 'lodash';
 import { BFormSelect } from 'bootstrap-vue';
-import FloatingLabelInput from '@forgerock/platform-shared/src/components/FloatingLabelInput';
+import { ValidationObserver } from 'vee-validate';
+import FrField from '@forgerock/platform-shared/src/components/Field';
 
 export default {
   name: 'KbaCreateCallback',
   components: {
     BFormSelect,
-    FrFloatingLabelInput: FloatingLabelInput,
+    ValidationObserver,
+    FrField,
   },
   props: {
     callback: {
@@ -126,20 +114,25 @@ export default {
   data() {
     return {
       options: [],
-      questionName: '',
-      questionValue: '',
-      answerName: '',
-      answerValue: '',
+      questionModel: {
+        key: `callback_${this.index}_floatingLabelInput`,
+        title: 'Question',
+        value: '',
+        validation: { required: true },
+      },
+      answerModel: {
+        key: `callback_${this.index}00_floatingLabelInput`,
+        type: 'password',
+        title: 'Answer',
+        value: '',
+        validation: { required: true },
+      },
       selected: null,
       showCustom: false,
-      failedQuestionPolicies: [],
-      failedAnswerPolicies: [],
     };
   },
   mounted() {
     this.predefinedQuestions = this.callback.getPredefinedQuestions();
-    this.questionName = `callback_${this.index}`;
-    this.answerName = `callback_${this.index}00`;
 
     this.loadOptions();
   },
@@ -155,76 +148,59 @@ export default {
       });
       // Add the custom question option to the list of questions
       this.options.push(customQuestionOption);
-      this.setSubmitButton();
+      this.callbackSubmitButton.disabled = true;
     },
     // This function sets the value of the question's hidden input and disbables the question value from other kba question selection options on the dom
     onQuestionSelectionChange() {
-      // get a list of values from other .kbaQuestion's
-      const otherQuestionValues = map(document.querySelectorAll(`.kbaQuestion:not([name=${this.questionName}])`), (question) => question.value);
-      // get all the option elements from the other .kbaQuestion_selector's
-      const otherQuestionSelectorOptions = document.querySelectorAll(`select.kbaQuestionSelect:not(#${this.questionName}_selector) option`);
-      // if "Provide your own" is selected open the custom question input and reset this.questionValue
+      // get a list of values from other .kbaQuestionSelect's
+      const questionValues = map(document.querySelectorAll('select.kbaQuestionSelect'), (question) => question.value);
+
+      // disable the ability to select the same question more than once from the other .kbaQuestionSelect's
+      document.querySelectorAll(`select.kbaQuestionSelect:not(#${this.questionModel.key}_selector)`).forEach((selector) => {
+        selector.forEach((option, index) => {
+          if (index > 0 && option.value !== 'custom') {
+            option.disabled = !!(questionValues.includes(option.value) && option.value !== selector.value);
+          }
+        });
+      });
+
+      // if "Provide your own" is selected, show the custom question input
       if (this.selected === 'custom') {
         this.showCustom = true;
-        this.questionValue = '';
       } else {
-        // in all other cases hide the custom question input
         this.showCustom = false;
-        this.questionValue = this.selected;
       }
-      // disable the ability to select the same question more than once
-      map(otherQuestionSelectorOptions, (option) => { option.disabled = !!(option.value === this.questionValue || otherQuestionValues.includes(option.value)); }); // eslint-disable-line no-param-reassign
 
       this.validateQuestion();
-      this.validateAnswer();
     },
     // This function looks to make sure the question is both non-empty and unique
     validateQuestion() {
-      // Find all the other questions on the dom
-      const otherQuestionInputs = document.querySelectorAll(`input.kbaQuestion:not([name=${this.questionName}])`);
+      // Find all the other questions on the dom to ensure uniqueness
+      const otherQuestionInputs = document.querySelectorAll(`input[placeholder=${this.questionModel.title}]:not([name=${this.questionModel.key}])`);
       const otherQuestions = map(otherQuestionInputs, (question) => question.value);
 
-      // Look for questions with the same value as the local question
-      const matchesQuestion = otherQuestions.find((q) => q === this.questionValue);
-
-      this.failedQuestionPolicies = [];
-
-      if (this.questionValue && this.questionValue.length === 0) {
-        this.failedQuestionPolicies.push(this.requiredText);
-      }
-
-      if (matchesQuestion) {
-        this.failedQuestionPolicies.push(this.uniqueText);
-      }
-
-      this.callback.setQuestion(this.questionValue);
+      this.questionModel.validation = { required: true, unique: otherQuestions };
+      this.callback.setQuestion(this.selected);
 
       this.setSubmitButton();
     },
     // This function looks at the question's answer to make sure it is not empty
     validateAnswer() {
-      this.failedAnswerPolicies = [];
-
-      if (this.answerValue.length === 0) {
-        this.failedAnswerPolicies.push(this.requiredText);
-      }
-
-      this.callback.setAnswer(this.answerValue);
+      this.callback.setAnswer(this.answerModel.value);
 
       this.setSubmitButton();
     },
     // This function disables/enables the callback form's submit button
     setSubmitButton() {
-      // A brief delay needs to happen here so the .is-invalid class can be added to the floating label inputs in the case of invalid data
+      // A delay is needed here so the .error-message class can be added to the field component in the case of invalid data
       setTimeout(() => {
-        // Look for any empty custom questions
-        const hasEmptyQuestions = find(document.querySelectorAll('input.kbaQuestion'), { value: '' });
-        // Find out if the form is valid by first looking to this instance of KbaCreateCallback for empty questions, or failedPolicies locally
-        // If nothing is invalid locally look at the rest of the dom to see if any of the other KbaCreateCallbacks are in an error state
-        const formIsInvalid = hasEmptyQuestions || this.failedAnswerPolicies.length || this.failedQuestionPolicies.length || document.querySelectorAll('.kbaQuestionAnswerContainer .is-invalid').length;
-
-        this.callbackSubmitButton.disabled = formIsInvalid;
-      }, 10);
+        // Let vee-validate determine if the form is valid for each field
+        this.$refs.observer.validate();
+        const questionInputs = map(document.querySelectorAll(`input[placeholder=${this.questionModel.title}]`), (question) => question.value);
+        const answerInputs = map(document.querySelectorAll(`input[placeholder=${this.answerModel.title}]`), (answer) => answer.value);
+        // Disable if there is an error shown locally or in the other KbaCreateCallbacks
+        this.callbackSubmitButton.disabled = document.querySelectorAll('.error-messages .error-message').length || questionInputs.includes('') || answerInputs.includes('');
+      }, 1);
     },
   },
 };

@@ -53,6 +53,7 @@
         "PRIVILEGE_AT_LEAST_ONE_ATTRIBUTE_READONLY_FALSE": "Must set at least one attribute permission to Read/Write",
         "PRIVILEGE_MUST_CONTAIN_CREATE_OR_UPDATE_PERMISSION": "Must have at least Create or Update Permission",
         "MIN_LENGTH": "Must be %{minLength} characters long",
+        "MIN_ITEMS": "Must have at least %{minItems} value(s)",
         "AT_LEAST_X_CAPITAL_LETTERS": "Must have at least %{numCaps} capital letter(s)",
         "AT_LEAST_X_NUMBERS": "Must have at least %{numNums} number(s)",
         "CANNOT_CONTAIN_OTHERS": "Must not share characters with %{disallowedFields}",
@@ -62,6 +63,7 @@
         "ALPHA_DASH": "Must only contain letters, numbers, spaces, hyphens and underscores",
         "test": "succeed",
         "policyServiceError": {
+            "policyApi": "Unable to retrieve %{policyApi}, Please try again later.",
             "registration": "Unable to register. Please try again later.",
             "reset": "Unable to reset your password. Please try again later."
         },
@@ -75,7 +77,6 @@
     "access": {
       "password": "Password",
       "noFields": "No Fields Available",
-      "successCreate": "{resource} successfully created",
       "typeSearch": "Type to Search",
       "invalidCreate": "Invalid create form",
       "deleteResource": "Successfully deleted {resource}",

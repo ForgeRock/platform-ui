@@ -116,10 +116,10 @@ describe('EditPersonalInfo.vue', () => {
       expect(formFields.length).toBe(1);
       expect(typeof firstFormField).toBe('object');
       expect(firstFormField).toMatchObject({ name: 'test' });
-      expect(firstFormField).toMatchObject({ title: 'test title' });
+      expect(firstFormField).toMatchObject({ title: 'test title (optional)' });
       expect(firstFormField).toMatchObject({ value: 'test' });
       expect(firstFormField).toMatchObject({ type: 'string' });
-      expect(firstFormField).toMatchObject({ required: false });
+      expect(firstFormField).toMatchObject({ validation: '' });
     });
   });
 });

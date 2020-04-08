@@ -7,19 +7,19 @@ to such license between the licensee and ForgeRock AS. -->
   <div
     class="fr-validation-requirements text-left"
     v-if="validatorErrors">
-    <span v-if="validatorErrors.length || validatorErrors.length === 0">
+    <template v-if="validatorErrors.length || validatorErrors.length === 0">
       <p
         v-for="(error) in validatorErrors"
         :key="error"
-        class="text-danger mb-0">
+        class="text-danger mb-0 error-message">
         {{ error }}
       </p>
-    </span>
-    <span
+    </template>
+    <p
       v-else
-      class="text-danger">
+      class="text-danger error-message">
       {{ validatorErrors.first(fieldName) }}
-    </span>
+    </p>
   </div>
 </template>
 

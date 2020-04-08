@@ -9,7 +9,7 @@ to such license between the licensee and ForgeRock AS. -->
       v-if="showResourceType"
       :label-cols="isRelationshipArray || newResource ? 11 : 0"
       :label="relationshipProperty.title + ' Type'"
-      :label-for="'editResourceType' +index"
+      :label-for="'editResourceType' + index"
       horizontal>
       <Multiselect
         :value="resourceCollection"
@@ -41,8 +41,6 @@ to such license between the licensee and ForgeRock AS. -->
         :placeholder="'Type to search for ' + this.resourceCollection.label"
         open-direction="bottom"
         :show-labels="false"
-        :searchable="true"
-        :loading="isLoading"
         :internal-search="false"
         :clear-on-select="false"
         :multiple="isRelationshipArray"
@@ -171,7 +169,6 @@ export default {
       resourceCollection: {},
       rescourceCollectionPath: '',
       rescourceCollectionTypes: [],
-      isLoading: false,
       resourceCollections: [],
       isRelationshipArray: false,
     };
@@ -210,7 +207,6 @@ export default {
 
       this.showResourceType = this.allResourceCollections.length > 1;
 
-      /* istanbul ignore next */
       return idmInstance.get(`schema/${this.resourceCollection.path}`).then((schema) => {
         this.resourceCollection.schema = schema.data;
         this.setOptions();

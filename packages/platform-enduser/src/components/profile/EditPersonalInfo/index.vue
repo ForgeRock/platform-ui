@@ -1,4 +1,4 @@
-<!-- Copyright 2019 ForgeRock AS. All Rights Reserved
+<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
 
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
@@ -46,61 +46,10 @@ to such license between the licensee and ForgeRock AS. -->
                 <BFormGroup
                   style="min-width: 200px;"
                   :key="index"
-                  v-if="field.type === 'string' || field.type === 'number'">
-                  <label :for="field.title">
-                    {{ field.title }}
-                  </label>
-                  <small
-                    v-if="!field.required"
-                    class="text-muted ml-1">
-                    {{ $t('pages.profile.editProfile.optional') }}
-                  </small>
-
-                  <ValidationProvider
-                    :name="field.title"
-                    :rules="field.required ? 'required' : ''"
-                    v-slot="{ errors }">
-                    <input
-                      v-if="field.type === 'string'"
-                      :name="field.name"
-                      :type="field.type"
-                      :class="[{'is-invalid': errors.length > 0}, 'form-control']"
-                      v-model.trim="field.value">
-                    <input
-                      v-else
-                      :name="field.name"
-                      :type="field.type"
-                      :class="[{'is-invalid': errors.length > 0}, 'form-control']"
-                      v-model.number="field.value">
-                    <FrValidationError
-                      :validator-errors="errors"
-                      :field-name="field.name" />
-                  </ValidationProvider>
-                </BFormGroup>
-
-                <!-- for boolean values -->
-                <BFormGroup
-                  :key="index"
-                  v-if="field.type === 'boolean'">
-                  <div class="d-flex flex-column">
-                    <label
-                      class="mr-auto"
-                      :for="field.title">
-                      {{ field.title }}
-                    </label>
-
-                    <div class="mr-auto">
-                      <ToggleButton
-                        class="mt-2 p-0 fr-toggle-primary"
-                        :height="28"
-                        :width="56"
-                        :sync="true"
-                        :css-colors="true"
-                        :labels="{checked: $t('common.yes'), unchecked: $t('common.no')}"
-                        :value="formFields[index].value"
-                        @change="formFields[index].value = !formFields[index].value" />
-                    </div>
-                  </div>
+                  v-if="field.type === 'string' || field.type === 'number' || field.type === 'boolean'">
+                  <FrField
+                    :field="field"
+                    :prepend-title="true" />
                 </BFormGroup>
               </template>
             </ValidationObserver>
@@ -139,21 +88,19 @@ import {
   cloneDeep,
   each,
   filter,
-  includes,
   map,
 } from 'lodash';
 import { mapState } from 'vuex';
-import { ValidationObserver, ValidationProvider } from 'vee-validate';
+import { ValidationObserver } from 'vee-validate';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import ValidationErrorList from '@forgerock/platform-shared/src/components/ValidationErrorList/';
+import FrField from '@forgerock/platform-shared/src/components/Field';
 
 /**
  * @description Displays a users profile, auto generates fields based off of resource schema. Currently only displays strings, numbers and booleans. In the case of a policy
  * save error it will highlight the appropriate field and display a policy error. For custom profile changes (e.g. adding a dropdown) this would be the primary file to add these
  * adjustments.
- *
  */
 export default {
   name: 'EditPersonalInfo',
@@ -163,9 +110,8 @@ export default {
     NotificationMixin,
   ],
   components: {
-    FrValidationError: ValidationErrorList,
+    FrField,
     ValidationObserver,
-    ValidationProvider,
   },
   computed: {
     ...mapState({
@@ -201,10 +147,10 @@ export default {
       const formFields = map(filteredOrder, (name) => ({
         name,
         key: name,
-        title: properties[name].title,
+        title: `${properties[name].title} ${required.includes(name) ? '' : this.$t('pages.profile.editProfile.optional')}`,
         value: this.profile[name] || null,
         type: properties[name].type,
-        required: includes(required, name),
+        validation: required.includes(name) ? 'required' : '',
       }));
 
       return formFields;

@@ -1,4 +1,4 @@
-<!-- Copyright 2019 ForgeRock AS. All Rights Reserved
+<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
 
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
@@ -14,20 +14,15 @@ to such license between the licensee and ForgeRock AS. -->
       :panel-shown="false">
       <template v-slot:list-item-header>
         <div class="d-inline-flex w-100">
-          <h6 class="mt-3">
+          <h6 class="align-self-center m-0">
             {{ obj.description }}
           </h6>
 
           <div class="ml-auto">
-            <ToggleButton
-              class="mt-2 p-0 fr-toggle-primary"
-              :id="preference"
-              :height="28"
-              :width="56"
-              :sync="true"
-              :css-colors="true"
-              :value="obj.value"
-              @change="savePreferences(preference, $event.value)" />
+            <FrField
+              :field="obj"
+              :display-description="false"
+              @valueChange="savePreferences(preference, $event.value)" />
           </div>
         </div>
       </template>
@@ -43,6 +38,7 @@ import {
 import { mapState } from 'vuex';
 import ListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
 import ListItem from '@forgerock/platform-shared/src/components/ListItem/';
+import FrField from '@forgerock/platform-shared/src/components/Field';
 
 /**
  * @description Displays available user preferences, these are typically true/false values associated with a managed resource (e.g. Do you want to recieve marketing emails?).
@@ -53,6 +49,7 @@ export default {
   components: {
     FrListGroup: ListGroup,
     FrListItem: ListItem,
+    FrField,
   },
   data() {
     return {
@@ -75,7 +72,6 @@ export default {
 
       newKeys.forEach((key) => {
         preferences[key].value = this.currentPreferences[key];
-        delete preferences[key].type;
       });
 
       this.preferences = preferences;

@@ -35,76 +35,31 @@ to such license between the licensee and ForgeRock AS. -->
           <ValidationObserver ref="observer">
             <template v-for="(field, index) in createProperties">
               <BFormGroup
-                :key="'createResource' +index"
-                v-if="(field.type === 'string' || field.type === 'number') && field.encryption === undefined">
-                <label
-                  v-if="field.title"
-                  class="float-left"
-                  :for="field.title">
-                  {{ field.title }}
-                </label>
-                <label
+                :key="'createResource' + index"
+                v-if="(field.type === 'string' || field.type === 'number' || field.type === 'boolean' || field.type === 'password') && field.encryption === undefined">
+                <FrField
+                  v-if="field.type !== 'password'"
+                  :field="field"
+                  :prepend-title="true" />
+
+                <!-- Special logic for password -->
+                <FrPolicyPasswordInput
                   v-else
-                  class="float-left"
-                  :for="field.key">
-                  {{ field.key }}
-                </label>
-                <ValidationProvider
-                  :name="field.key"
-                  :rules="field.required ? 'required' : ''"
-                  v-slot="{ errors }">
-                  <input
-                    v-if="field.type === 'string'"
-                    :ref="index === 0 ? 'focusInput' : ''"
-                    @keypress.enter="saveForm"
-                    :name="field.key"
-                    type="text"
-                    :class="[{'is-invalid': errors.length > 0}, 'form-control']"
-                    :autocomplete="field.key"
-                    v-model.trim="formFields[field.key]">
-
-                  <input
-                    v-else
-                    :ref="index === 0 ? 'focusInput' : ''"
-                    :name="field.key"
-                    type="number"
-                    @keypress.enter="saveForm"
-                    :class="[{'is-invalid': errors.length > 0}, 'form-control']"
-                    :autocomplete="field.key"
-                    v-model.number="formFields[field.key]">
-                  <FrValidationError
-                    :validator-errors="errors"
-                    :field-name="field.key" />
-                </ValidationProvider>
-              </BFormGroup>
-
-              <!-- for boolean values -->
-              <BFormGroup
-                :key="'createResource' +index"
-                v-if="field.type === 'boolean'">
-                <div class="d-flex flex-column">
-                  <label
-                    class="mr-auto"
-                    :for="field.title">
-                    {{ field.title }}
-                  </label>
-
-                  <div class="mr-auto">
-                    <ToggleButton
-                      class="mt-2 p-0 fr-toggle-primary"
-                      :height="28"
-                      :width="56"
-                      :sync="true"
-                      :css-colors="true"
-                      :labels="{checked: $t('common.yes'), unchecked: $t('common.no')}"
-                      v-model="formFields[field.key]" />
-                  </div>
-                </div>
+                  :policy-api="`${resourceType}/${resourceName}/policyTest`"
+                  v-model="field.value">
+                  <template v-slot:custom-input>
+                    <BFormGroup class="mb-3">
+                      <FrField
+                        :field="field"
+                        :prepend-title="true" />
+                    </BFormGroup>
+                  </template>
+                </FrPolicyPasswordInput>
               </BFormGroup>
 
               <!-- for singletonRelationhip values -->
               <FrRelationshipEdit
-                v-if="field.type === 'relationship'"
+                v-else-if="field.type === 'relationship'"
                 :parent-resource="`${resourceType}/${resourceName}`"
                 :relationship-property="field"
                 :index="index"
@@ -112,50 +67,6 @@ to such license between the licensee and ForgeRock AS. -->
                 @setValue="setSingletonRelationshipValue"
                 :new-resource="true" />
             </template>
-
-            <!-- Special logic for password -->
-            <FrPolicyPasswordInput
-              v-if="passwordCheck"
-              :policy-api="`${resourceType}/${resourceName}/policyTest`"
-              v-model="formFields['password']">
-              <template v-slot:custom-input>
-                <BFormGroup class="mb-3">
-                  <label for="createPassword">
-                    {{ $t('pages.access.password') }}
-                  </label>
-                  <div class="form-label-password form-label-group mb-0">
-                    <ValidationProvider
-                      mode="aggressive"
-                      name="password"
-                      rules="required|policy">
-                      <BFormInput
-                        id="createPassword"
-                        autocomplete="password"
-                        :type="passwordInputType"
-                        v-model="formFields['password']"
-                        name="password" />
-                    </ValidationProvider>
-                    <div class="input-group-append">
-                      <button
-                        @click="revealNew"
-                        class="btn btn-secondary"
-                        type="button">
-                        <i
-                          v-if="showPassword"
-                          class="material-icons-outlined">
-                          visibility
-                        </i>
-                        <i
-                          v-else
-                          class="material-icons-outlined">
-                          visibility_off
-                        </i>
-                      </button>
-                    </div>
-                  </div>
-                </BFormGroup>
-              </template>
-            </FrPolicyPasswordInput>
           </ValidationObserver>
         </BForm>
         <template v-else>
@@ -175,7 +86,6 @@ to such license between the licensee and ForgeRock AS. -->
             {{ $t('common.cancel') }}
           </BButton>
           <BButton
-            type="button"
             variant="primary"
             @click="saveForm"
             :disabled="formFields.length === 0">
@@ -193,21 +103,19 @@ import {
   clone,
   each,
   isArray,
-  isNumber,
   isString,
 } from 'lodash';
 import {
   BButton,
-  BFormInput,
   BFormGroup,
   BForm,
   BRow,
   BCol,
   BModal,
 } from 'bootstrap-vue';
-import { ValidationProvider, ValidationObserver } from 'vee-validate';
+import { ValidationObserver } from 'vee-validate';
 import PolicyPasswordInput from '@forgerock/platform-shared/src/components/PolicyPasswordInput/';
-import ValidationErrorList from '@forgerock/platform-shared/src/components/ValidationErrorList/';
+import FrField from '@forgerock/platform-shared/src/components/Field';
 import RelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
@@ -228,17 +136,15 @@ import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 export default {
   name: 'CreateResource',
   components: {
-    FrValidationError: ValidationErrorList,
+    FrField,
     FrPolicyPasswordInput: PolicyPasswordInput,
     FrRelationshipEdit: RelationshipEdit,
     BButton,
-    BFormInput,
     BFormGroup,
     BForm,
     BRow,
     BCol,
     BModal,
-    ValidationProvider,
     ValidationObserver,
   },
   mixins: [
@@ -264,8 +170,6 @@ export default {
   data() {
     const tempFormFields = {};
 
-    let tempPasswordCheck = false;
-
     each(this.createProperties, (prop) => {
       if (prop.type === 'string' || prop.type === 'number') {
         tempFormFields[prop.key] = '';
@@ -274,18 +178,21 @@ export default {
       } else {
         tempFormFields[prop.key] = false;
       }
+      if (prop.policies && prop.policies[0].policyId.includes('email')) {
+        prop.validation = 'required|email';
+      } else {
+        prop.validation = 'required';
+      }
 
       // Special logic for password
       if (prop.key === 'password') {
-        tempPasswordCheck = true;
+        prop.validation = 'required|policy';
+        prop.type = 'password';
       }
     });
 
     return {
       formFields: tempFormFields,
-      passwordCheck: tempPasswordCheck,
-      passwordInputType: 'password',
-      showPassword: true,
     };
   },
   methods: {
@@ -295,6 +202,9 @@ export default {
 
       validateSave.then((isValid) => {
         if (isValid) {
+          this.createProperties.forEach((field) => {
+            this.formFields[field.key] = field.value;
+          });
           const saveData = this.cleanData(clone(this.formFields));
 
           idmInstance.post(`${this.resourceType}/${this.resourceName}?_action=create`, saveData).then(() => {
@@ -337,32 +247,20 @@ export default {
       if (this.$refs.observer) {
         this.$refs.observer.reset();
       }
-      this.passwordInputType = 'password';
-      this.showPassword = true;
 
-      each(this.formFields, (value, key) => {
-        if (isString(value) || isNumber(value)) {
-          this.formFields[key] = '';
+      this.createProperties.forEach((field) => {
+        if (field.type === 'string' || field.type === 'number' || field.type === 'password') {
+          field.value = '';
         } else {
-          this.formFields[key] = false;
+          field.value = false;
         }
+        this.formFields[field.key] = field.value;
       });
-    },
-    // Hide/show for special password field
-    revealNew() {
-      if (this.passwordInputType === 'password') {
-        this.passwordInputType = 'text';
-        this.showPassword = false;
-      } else {
-        this.passwordInputType = 'password';
-        this.showPassword = true;
-      }
     },
     // Remove optional fields to not save with empty string
     cleanData(data) {
       each(data, (value, key) => {
         if (isString(value) && value.length === 0) {
-          // eslint-disable-next-line no-param-reassign
           delete data[key];
         }
       });

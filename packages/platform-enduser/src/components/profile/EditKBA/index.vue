@@ -1,4 +1,4 @@
-<!-- Copyright 2019 ForgeRock AS. All Rights Reserved
+<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
 
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
@@ -21,7 +21,9 @@ to such license between the licensee and ForgeRock AS. -->
             ref="cancel">
             {{ $t('common.cancel') }}
           </div>
-          <div class="btn btn-link btn-sm float-right btn-edit">
+          <div
+            class="btn btn-link btn-sm float-right btn-edit"
+            @click="initializeForm(kbaData.minimumAnswersToDefine)">
             {{ $t('common.reset') }}
           </div>
         </div>
@@ -30,62 +32,31 @@ to such license between the licensee and ForgeRock AS. -->
 
     <template v-slot:list-item-collapse-body>
       <div
-        v-if="selected.length"
+        v-if="kbaChoices.length"
         class="d-inline-flex w-100">
         <BForm class="w-100">
           <BRow>
             <BCol sm="8">
               <ValidationObserver ref="observer">
                 <fieldset
-                  v-for="(select, id) in selected"
+                  v-for="(kbaChoice, id) in kbaChoices"
                   :key="id"
                   class="pb-3">
-                  <label>
-                    {{ $t('user.kba.question') }} {{ select.index }}
-                  </label>
-                  <BFormSelect
-                    class="mb-3"
-                    v-model="select.selected"
-                    :options="selectOptions" />
-
-                  <div
-                    v-if="select && select.selected === customIndex"
-                    class="pb-3">
-                    <label>{{ $t('pages.profile.accountSecurity.custom') }}</label>
-                    <ValidationProvider
-                      :name="$t('pages.profile.accountSecurity.custom') + ' ' + select.index"
-                      rules="required"
-                      v-slot="{ errors }">
-                      <BFormInput
-                        type="text"
-                        v-model.trim="select.custom"
-                        :name="$t('pages.profile.accountSecurity.custom') + ' ' + select.index"
-                        :class="[{'is-invalid': errors.length > 0}, 'form-control']" />
-                      <FrValidationError
-                        :validator-errors="errors"
-                        :field-name="$t('pages.profile.accountSecurity.custom') + ' ' + select.index" />
-                    </ValidationProvider>
-                  </div>
-
-                  <div class="form-group mb-0">
-                    <label>{{ $t('user.kba.answer') }}</label>
-                    <ValidationProvider
-                      :name="$t('user.kba.answer') + ' ' + select.index"
-                      rules="required"
-                      v-slot="{ errors }">
-                      <BFormInput
-                        type="text"
-                        v-model.trim="select.answer"
-                        :name="$t('user.kba.answer') + ' ' + select.index"
-                        :class="[{'is-invalid': errors.length > 0}, 'form-control']" />
-                      <FrValidationError
-                        :validator-errors="errors"
-                        :field-name="$t('user.kba.answer') + ' ' + select.index" />
-                    </ValidationProvider>
-                  </div>
-
+                  <FrField
+                    :field="kbaChoice.selected"
+                    :prepend-title="true"
+                    class="mb-3" />
+                  <FrField
+                    v-if="kbaChoice.selected.value === customIndex"
+                    :field="kbaChoice.customQuestion"
+                    :prepend-title="true"
+                    class="pb-3" />
+                  <FrField
+                    :field="kbaChoice.answer"
+                    :prepend-title="true"
+                    class="form-group mb-0" />
                   <hr
-                    v-if="id !== selected.length - 1"
+                    v-if="id !== kbaChoices.length - 1"
                     class="mb-3 mt-4">
                 </fieldset>
 
@@ -112,12 +83,9 @@ import {
   noop,
   times,
 } from 'lodash';
-import {
-  ValidationObserver,
-  ValidationProvider,
-} from 'vee-validate';
+import { ValidationObserver } from 'vee-validate';
 import ListItem from '@forgerock/platform-shared/src/components/ListItem/';
-import ValidationErrorList from '@forgerock/platform-shared/src/components/ValidationErrorList/';
+import FrField from '@forgerock/platform-shared/src/components/Field';
 import LoadingButton from '@/components/utils/LoadingButton';
 
 /**
@@ -129,9 +97,8 @@ export default {
   components: {
     FrListItem: ListItem,
     FrLoadingButton: LoadingButton,
-    FrValidationError: ValidationErrorList,
+    FrField,
     ValidationObserver,
-    ValidationProvider,
   },
   props: {
     kbaData: {
@@ -143,45 +110,60 @@ export default {
     return {
       questions: {},
       selectOptions: [],
-      selected: [],
-      customIndex: null,
+      kbaChoices: [],
+      customIndex: 0,
       loading: false,
     };
   },
   mounted() {
     this.questions = this.kbaData.questions;
-    this.initializeForm(this.kbaData.minimumAnswersToDefine);
   },
   methods: {
     initializeForm(minimumRequired) {
       const { locale, fallbackLocale } = this.$i18n;
 
+      // create select options
+      this.selectOptions = map(this.questions, (question, index) => ({ value: index, text: question[locale] || question[fallbackLocale], $isDisabled: false }));
+      this.selectOptions.unshift({ value: 0, text: this.$t('user.kba.selectQuestion'), $isDisabled: true });
+      this.customIndex = this.selectOptions.length;
+      this.selectOptions.push({ value: this.customIndex, text: this.$t('user.kba.custom'), $isDisabled: false });
+
       // set form state based on stored user questions
       times(minimumRequired, (index) => {
-        this.selected.push({
-          selected: null, index: index + 1, answer: '', custom: '',
+        this.kbaChoices.push({
+          selected: {
+            type: 'select',
+            title: `${this.$t('user.kba.question')} ${index + 1}`,
+            value: 0,
+            options: this.selectOptions,
+          },
+          answer: {
+            key: `${this.$t('user.kba.answer')} ${index + 1}`,
+            title: this.$t('user.kba.answer'),
+            value: '',
+            validation: 'required',
+          },
+          customQuestion: {
+            key: `${this.$t('pages.profile.accountSecurity.custom')} ${index + 1}`,
+            title: this.$t('pages.profile.accountSecurity.custom'),
+            value: '',
+            validation: 'required',
+          },
         });
       });
-
-      // create select options
-      this.selectOptions = map(this.questions, (question, key) => ({ value: key, text: question[locale] || question[fallbackLocale], disabled: true }));
-
-      this.customIndex = this.selectOptions.length + 1;
-      this.selectOptions.unshift({ value: null, text: this.$t('user.kba.selectQuestion'), disabled: true });
-      this.selectOptions.push({ value: this.customIndex, text: this.$t('user.kba.custom'), disabled: false });
     },
 
     generatePatch() {
-      const values = map(this.selected, (field) => {
-        if (field.custom) {
+      const values = map(this.kbaChoices, (field) => {
+        if (field.customQuestion.value) {
           return {
-            answer: field.answer,
-            customQuestion: field.custom,
+            answer: field.answer.value,
+            customQuestion: field.customQuestion.value,
           };
         }
         return {
-          answer: field.answer,
-          questionId: field.selected,
+          answer: field.answer.value,
+          questionId: field.selected.value,
         };
       });
 
@@ -194,13 +176,10 @@ export default {
 
     clearComponent() {
       this.loading = false;
-      this.questions = {};
       this.selectOptions = [];
-      this.selected = [];
+      this.kbaChoices = [];
       this.customIndex = null;
-
       this.questions = this.kbaData.questions;
-      this.initializeForm(this.kbaData.minimumAnswersToDefine);
     },
 
     async onSaveKBA() {
@@ -219,23 +198,22 @@ export default {
     },
   },
   watch: {
-    selected: {
+    kbaChoices: {
       handler() {
         // create array of selected options that aren't custom
-        const toDisable = map(this.selected, (s) => {
-          if (s.selected !== null && s.selected !== this.customIndex) {
-            return s.selected;
+        const toDisable = map(this.kbaChoices, (kbaChoice) => {
+          if (kbaChoice.selected.value !== null && kbaChoice.selected.value !== this.customIndex) {
+            return kbaChoice.selected.value;
           }
           return null;
         });
 
         // set any [toDisable] option to disabled
-        this.selectOptions.forEach((o) => {
-          if (includes(toDisable, o.value) || o.value === null) {
-            /* eslint no-param-reassign: ["error", { "ignorePropertyModificationsFor": ["0"] }] */
-            o.disabled = true;
+        this.selectOptions.forEach((option) => {
+          if (includes(toDisable, option.value) || option.value === 0) {
+            option.$isDisabled = true;
           } else {
-            o.disabled = false;
+            option.$isDisabled = false;
           }
         });
       },
