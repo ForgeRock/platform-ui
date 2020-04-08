@@ -1,0 +1,27 @@
+/**
+ * Copyright 2020 ForgeRock AS. All Rights Reserved
+ *
+ * Use of this code requires a commercial software license with ForgeRock AS.
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
+ */
+
+.fr-tabs {
+  .nav-link {
+    color: $gray-600;
+
+    &:focus,
+    &:hover {
+      border-color: transparent;
+    }
+  }
+
+  .nav-item.show .nav-link,
+  .nav-link.active {
+    background: transparent;
+    border-color: transparent;
+    border-left: none;
+    border-right: none;
+    border-bottom: 3px solid $blue;
+  }
+}

@@ -158,7 +158,6 @@
     "noremoteServers": "No Configured Remote Servers",
     "portDescription": "",
     "remoteServer": "Remote Server",
-    "serverClusters": "Server Clusters",
     "serverDescription": "If enabled, remote server initiates the connector, which is necessary in cloud deployments",
     "key": "Key",
     "displayName": "Display Name",
@@ -191,6 +190,13 @@
       "javaServer": "Java Server",
       "download": "Download"
     }
+  },
+  "serverClusters": {
+    "title": "Server Clusters",
+    "serverCluster": "Server Cluster",
+    "servers": "Servers",
+    "noServerClusters": "No Configured Server Clusters",
+    "errorRetrievingList": "Error retrieving server clusters list."
   },
   "trees": {
     "treeSaveSuccessful": "All Changes Saved",
