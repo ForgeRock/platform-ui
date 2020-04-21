@@ -24,6 +24,11 @@
     "bulkUserImport": "Bulk Import",
     "authentication": "Authentication"
   },
+  "connect": {
+    "title": "Connect",
+    "connectIdentities": "Connect Identities",
+    "subtitle": "Create and configure connectors to your remote identities."
+  },
   "application": {
     "errors": {
       "failedLogout": "Failed to logout of platform session",
