@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Sharing.vue Resources page loaded 1`] = `
-<bmodal-stub id="shareModal" size="md" buttonsize="" title="" titletag="h5" headercloselabel="Close" canceltitle="Cancel" oktitle="OK" cancelvariant="outline-secondary" okvariant="primary" newscopes="[object Object]" value="test">
+<bmodal-stub id="shareModal" size="md" ignoreenforcefocusselector="" title="" titletag="h5" headerclosecontent="&amp;times;" headercloselabel="Close" canceltitle="Cancel" oktitle="OK" cancelvariant="outline-secondary" okvariant="primary" newscopes="[object Object]" value="test">
   <div class="form-group">
     <binputgroup-stub tag="div">
       <bforminput-stub placeholder="Share with..."></bforminput-stub>
@@ -17,7 +17,7 @@ exports[`Sharing.vue Resources page loaded 1`] = `
           </h6>
         </div>
         <div class="d-flex ml-3 align-self-center">
-          <bdropdown-stub id="ddown1" text="Can view" right="true" offset="0" toggletext="Toggle Dropdown" size="sm" variant="link" toggletag="button" toggleclass="dropdown-toggle" splitbuttontype="button" role="menu" boundary="scrollParent">
+          <bdropdown-stub id="ddown1" right="true" offset="0" boundary="scrollParent" text="Can view" size="sm" variant="link" toggletag="button" toggletext="Toggle Dropdown" toggleclass="dropdown-toggle" splitbuttontype="button" role="menu">
             <form class="px-4 py-2">
               <div class="form-check mb-1"><input type="checkbox" id="viewCheck" class="form-check-input mr-1"> <label for="viewCheck" class="form-check-label">
                   view

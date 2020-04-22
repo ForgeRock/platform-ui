@@ -129,7 +129,8 @@ to such license between the licensee and ForgeRock AS. -->
     <BModal
       :id="createModalId"
       :ref="createModalId"
-      :title="'Add ' + relationshipArrayProperty.title">
+      :title="'Add ' + relationshipArrayProperty.title"
+      size="lg">
       <FrRelationshipEdit
         :parent-resource="parentResource"
         :relationship-property="relationshipArrayProperty"
