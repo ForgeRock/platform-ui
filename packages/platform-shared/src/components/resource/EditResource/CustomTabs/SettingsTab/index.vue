@@ -46,11 +46,7 @@ to such license between the licensee and ForgeRock AS. -->
           <pre class="bg-light p-3">{{ JSON.stringify(conditionOptions, null, 4) }}</pre>
         </div>
         <div v-else>
-          <!-- TODO: INJECT TEMPORAL CONSTRAINTS COMPONENT HERE -->
-          <div class="mt-2">
-            {{ editProperty.title }}
-          </div>
-          <BFormInput v-model="editProperty.value" />
+          <FrTimeConstraint v-model="editProperty.value" />
         </div>
       </div>
 
@@ -84,6 +80,7 @@ import {
   BModal,
   BTab,
 } from 'bootstrap-vue';
+import TimeConstraint from '@forgerock/platform-shared/src/components/TimeConstraint';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 
@@ -98,6 +95,7 @@ export default {
     BFormInput,
     BModal,
     BTab,
+    FrTimeConstraint: TimeConstraint,
   },
   props: {
     properties: {
@@ -143,6 +141,7 @@ export default {
 
       idmInstance.patch(this.resourcePath, patch).then(() => {
         this.displayNotification('IDMMessages', 'success', this.$t('pages.access.successEdited', { resource: capitalize(this.resourceName) }));
+        this.hideModal();
       },
       () => {
         this.displayNotification('IDMMessages', 'error', this.$t('pages.access.invalidEdit'));

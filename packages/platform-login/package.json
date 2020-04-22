@@ -20,7 +20,7 @@
     "@forgerock/platform-shared": "1.0.0",
     "babel-plugin-require-context-hook": "1.0.0",
     "bootstrap": "4.3.1",
-    "bootstrap-vue": "2.2.0",
+    "bootstrap-vue": "2.13.0",
     "core-js": "3.1.4",
     "lodash": "4.17.15",
     "regenerator-runtime": "0.13.3",
