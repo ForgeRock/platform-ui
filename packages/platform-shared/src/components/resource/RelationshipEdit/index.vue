@@ -118,10 +118,17 @@ to such license between the licensee and ForgeRock AS. -->
     <BFormGroup
       v-if="relationshipProperty.relationshipGrantTemporalConstraintsEnforced"
       :label-cols="isRelationshipArray || newResource ? 11 : 0"
-      :label="$t('pages.access.timeConstraint')"
       horizontal>
-      <!-- TODO: INJECT TEMPORAL CONSTRAINTS COMPONENT HERE -->
-      <BFormInput
+      <div class="d-flex-row form-group">
+        <FrField
+          class="d-inline"
+          :field="temporalConstraintEnabled" />
+        <label class="text-muted">
+          {{ $t('common.helpText.timeConstraint') }}
+        </label>
+      </div>
+      <FrTimeConstraint
+        v-if="temporalConstraintEnabled.value"
         v-model="temporalConstraint" />
     </BFormGroup>
   </div>
@@ -131,8 +138,10 @@ to such license between the licensee and ForgeRock AS. -->
 import {
   map, each, find, has,
 } from 'lodash';
-import { BFormGroup, BFormInput } from 'bootstrap-vue';
+import { BFormGroup } from 'bootstrap-vue';
 import Multiselect from 'vue-multiselect';
+import TimeConstraint from '@forgerock/platform-shared/src/components/TimeConstraint';
+import FrField from '@forgerock/platform-shared/src/components/Field';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 
@@ -141,7 +150,8 @@ export default {
   components: {
     Multiselect,
     BFormGroup,
-    BFormInput,
+    FrField,
+    FrTimeConstraint: TimeConstraint,
   },
   mixins: [
     NotificationMixin,
@@ -178,6 +188,10 @@ export default {
       resourceCollections: [],
       isRelationshipArray: false,
       temporalConstraint: '',
+      temporalConstraintEnabled: {
+        value: false,
+        type: 'boolean',
+      },
     };
   },
   mounted() {
@@ -204,6 +218,20 @@ export default {
           this.$emit('setValue', { property: this.relationshipProperty.key, value: { _ref: selection.value, _refProperties: refProperties } });
         });
       }
+    },
+    /**
+     * adds/removes temporal constraint property of relationship based on toggle value
+     */
+    temporalConstraintEnabled: {
+      handler(newVal) {
+        if (this.selected && this.selected.length) {
+          this.selected.forEach((selection) => {
+            const refProperties = newVal.value ? { temporalConstraints: [{ duration: this.temporalConstraint }] } : null;
+            this.$emit('setValue', { property: this.relationshipProperty.key, value: { _ref: selection.value, _refProperties: refProperties } });
+          });
+        }
+      },
+      deep: true,
     },
   },
   methods: {

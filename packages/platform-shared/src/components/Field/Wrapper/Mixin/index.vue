@@ -109,6 +109,9 @@ export default {
       },
       deep: true,
     },
+    value(newVal) {
+      this.setInputValue(newVal);
+    },
   },
   methods: {
     /**
