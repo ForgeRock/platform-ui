@@ -367,7 +367,7 @@ export default {
           },
         });
       } else {
-        this.displayNotification('IDMMessages', 'error', this.$t('userflow.unableToEditResource', { resource: this.resourceName }));
+        this.displayNotification('IDMMessages', 'error', this.$t('journey.unableToEditResource', { resource: this.resourceName }));
       }
     },
     confirmDeleteResource(id) {
