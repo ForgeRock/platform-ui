@@ -35,15 +35,12 @@ to such license between the licensee and ForgeRock AS. -->
       size="lg">
       <div>
         <div v-if="editProperty.isConditional">
-          <!-- TODO: INJECT QUERY FILTER EDITOR COMPONENT HERE -->
-          <div class="mt-2">
-            {{ editProperty.title }}
-          </div>
-          <BFormInput v-model="editProperty.value" />
-          <div class="mt-2">
-            queryFilter dropdown options =>
-          </div>
-          <pre class="bg-light p-3">{{ JSON.stringify(conditionOptions, null, 4) }}</pre>
+          <FrQueryFilterBuilder
+            @change="queryFilterChange"
+            @error="queryFilterError"
+            :query-filter-string="editProperty.value"
+            :resource="resourceName"
+            :properties="conditionOptions" />
         </div>
         <div v-else>
           <FrTimeConstraint v-model="editProperty.value" />
@@ -58,7 +55,8 @@ to such license between the licensee and ForgeRock AS. -->
         </BButton>
         <BButton
           variant="primary"
-          @click="saveSetting">
+          @click="saveSetting"
+          :disabled="disableSave">
           {{ $t('common.save') }}
         </BButton>
       </template>
@@ -72,13 +70,13 @@ import {
 } from 'lodash';
 import {
   BButton,
-  BFormInput,
   BModal,
   BTab,
 } from 'bootstrap-vue';
 import TimeConstraint from '@forgerock/platform-shared/src/components/TimeConstraint';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import QueryFilterBuilder from '@forgerock/platform-shared/src/components/QueryFilterBuilder';
 
 export default {
   name: 'SettingsTab',
@@ -88,10 +86,10 @@ export default {
   ],
   components: {
     BButton,
-    BFormInput,
     BModal,
     BTab,
     FrTimeConstraint: TimeConstraint,
+    FrQueryFilterBuilder: QueryFilterBuilder,
   },
   props: {
     properties: {
@@ -111,9 +109,17 @@ export default {
     return {
       editProperty: {},
       conditionOptions: [],
+      disableSave: false,
     };
   },
   methods: {
+    queryFilterChange(queryFilterString) {
+      this.editProperty.value = queryFilterString;
+      this.disableSave = false;
+    },
+    queryFilterError() {
+      this.disableSave = true;
+    },
     showModal(property) {
       this.editProperty = property;
       if (property.isConditional) {
