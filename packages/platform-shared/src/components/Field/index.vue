@@ -57,7 +57,7 @@ to such license between the licensee and ForgeRock AS. -->
         class="floating-label-input"
         :field-name="field.key"
         v-model="field.value"
-        v-bind="$props"
+        v-bind="attrs"
         :disabled="field.disabled"
         :help-text="getDescription()"
         :select-options="field.options"
@@ -67,7 +67,7 @@ to such license between the licensee and ForgeRock AS. -->
         class="floating-label-input"
         :field-name="field.key"
         v-model="field.value"
-        v-bind="$props"
+        v-bind="attrs"
         :disabled="field.disabled"
         :help-text="getDescription()"
         :select-options="field.options"
@@ -93,7 +93,7 @@ to such license between the licensee and ForgeRock AS. -->
         v-else-if="field.type === 'integer'"
         :class="[{'fr-error': errors.length || failedPolicies.length}, 'floating-label-input']"
         v-model.number="field.value"
-        v-bind="$props"
+        v-bind="attrs"
         :disabled="field.disabled"
         :field-name="field.key"
         :help-text="getDescription()"
@@ -120,7 +120,7 @@ to such license between the licensee and ForgeRock AS. -->
         v-else-if="field.type === 'textarea'"
         :class="[{'fr-error': errors.length || failedPolicies.length}, 'floating-label-input']"
         v-model="field.value"
-        v-bind="$props"
+        v-bind="attrs"
         :disabled="field.disabled"
         :field-name="field.key"
         :help-text="getDescription()"
@@ -187,6 +187,7 @@ export default {
     return {
       oldValue: '',
       loading: true,
+      attrs: {},
     };
   },
   props: {
@@ -264,13 +265,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    /**
-     * Function used to validate data (used in callback components)
-     */
-    validator: {
-      type: Function,
-      default: () => undefined,
-    },
   },
   methods: {
     /**
@@ -330,6 +324,7 @@ export default {
     },
   },
   mounted() {
+    this.attrs = { ...this.$options.propsData, ...this.$attrs };
     this.oldValue = cloneDeep(this.field.value);
     this.field.type = this.mapType(this.field);
     if (!this.field.validation) {

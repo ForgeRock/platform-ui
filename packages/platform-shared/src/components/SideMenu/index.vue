@@ -75,7 +75,7 @@ to such license between the licensee and ForgeRock AS. -->
               :href="enduserLink"
               rel="noopener"
               target="_blank">
-              <BMedia class="fr-dropdown-button text-left">
+              <BMedia class="text-left">
                 <template v-slot:aside>
                   <img
                     :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"
