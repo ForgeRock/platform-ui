@@ -432,11 +432,5 @@ export default {
   .prism-editor-wrapper {
     background-color: $gray-100;
   }
-
-  pre[class*=language-] {
-    padding: 1rem;
-    background-color: $gray-100;
-    font-size: 14px;
-  }
 }
 </style>
