@@ -157,6 +157,16 @@
       "couldNotFind": "We couldn't find the page you were looking for."
     }
   },
+  "queryFilterBuilder" : {
+    "addGroupButton": "Add Group",
+    "addRuleButton": "Add Rule",
+    "advancedEditor": "Advanced Editor",
+    "basicEditor": "Basic Editor",
+    "basicEditorHeadline": "Assign user based on if query evaluates to true:",
+    "groupOperatorText1": "Assign to {resource} if",
+    "groupOperatorText2": "conditions are met",
+    "properties": "properties"
+  },
   "scriptEditor": {
     "title": "Script",
     "type": "Type: ",
