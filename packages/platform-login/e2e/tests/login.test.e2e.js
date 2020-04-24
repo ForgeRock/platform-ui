@@ -1,5 +1,10 @@
-/// <reference types="Cypress" />
-
+/**
+ * Copyright 2019-2020 ForgeRock AS. All Rights Reserved
+ *
+ * Use of this code requires a commercial software license with ForgeRock AS.
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
+ */
 context('Login View', () => {
   beforeEach(() => {
     cy.visit('#/service/Login');
@@ -10,7 +15,6 @@ context('Login View', () => {
   });
 
   it('location should be at login', () => {
-    // http://localhost:8083/#/service/Login
     cy.location().should((location) => {
       expect(location.href).to.eq('http://localhost:8083/#/service/Login');
       expect(location.host).to.eq('localhost:8083');
@@ -19,7 +23,6 @@ context('Login View', () => {
       expect(location.pathname).to.eq('/');
       expect(location.port).to.eq('8083');
       expect(location.protocol).to.eq('http:');
-      expect(location.search).to.be.empty;
     });
   });
 
