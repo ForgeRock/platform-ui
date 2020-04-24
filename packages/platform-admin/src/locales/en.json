@@ -54,7 +54,7 @@
     "preview": "Preview",
     "journeyDeleteSuccess": "\"{treeId}\" journey successfully deleted.",
     "noJourney": "No Journeys",
-    "noAuthSercicesMessage": "Sign in users to your application by creating journeys",
+    "noAuthServicesMessage": "Sign in users to your application by creating journeys",
     "errorRetrievingJourneys": "Error retrieving journeys",
     "errorCreatingJourney": "Error creating journey",
     "errorDuplicatingJourney": "Error duplicating journey",
