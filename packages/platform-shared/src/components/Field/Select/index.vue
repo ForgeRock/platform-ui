@@ -18,11 +18,12 @@ to such license between the licensee and ForgeRock AS. -->
       track-by="value"
       :disabled="disabled"
       :options="options"
-      :searchable="options.length > 5"
+      :searchable="searchable"
       :show-labels="false"
       :allow-empty="false"
       :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control p-0', {'no-multiselect-label': !this.label }]"
-      :placeholder="$t('common.typeToSearch')">
+      :placeholder="placeholder"
+      @search-change="searchChange">
       <slot name="noResult">
         {{ $t('common.noResult') }}
       </slot>
@@ -76,11 +77,18 @@ export default {
       default: () => [],
       required: true,
     },
-  },
-  data() {
-    return {
-      floatLabels: false,
-    };
+    placeholder: {
+      type: String,
+      default() {
+        this.$t('common.typeToSearch');
+      },
+      required: false,
+    },
+    searchable: {
+      type: Boolean,
+      default: true,
+      required: false,
+    },
   },
   computed: {
     options() {
@@ -95,6 +103,9 @@ export default {
     },
   },
   methods: {
+    searchChange(event) {
+      this.floatLabels = event.toString().length > 0 && !!this.label;
+    },
     setInputValue(newVal) {
       if (newVal !== undefined && newVal !== null) {
         this.inputValue = find(this.options, { value: newVal });

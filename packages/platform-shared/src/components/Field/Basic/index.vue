@@ -104,6 +104,9 @@ export default {
   },
   computed: {
     fieldType() {
+      if (this.type === 'number') {
+        return 'number';
+      }
       return this.type === 'password' && !this.showPassword ? 'password' : 'text';
     },
   },
