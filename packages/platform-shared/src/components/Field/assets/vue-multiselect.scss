@@ -42,9 +42,11 @@ select.custom-select ~ label {
 
   .multiselect__tags {
     height: 100%;
-    padding: 1.5rem 50px 0 0.75rem;
+    padding: 1.5rem 10px 0 0.75rem;
     font-size: 0.875rem;
     border: none;
+    overflow: hidden;
+    width: calc(100% - 40px);
 
     .multiselect__placeholder {
       font-size: 1rem;
@@ -134,6 +136,10 @@ select.custom-select ~ label {
   .multiselect__option.multiselect__option--selected.multiselect__option--highlight::after {
     color: $success;
     height: 16px;
+  }
+
+  .form-label-group-input {
+    min-width: 80px;
   }
   /* stylelint-enable */
 }

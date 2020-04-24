@@ -109,7 +109,8 @@ to such license between the licensee and ForgeRock AS. -->
         :disabled="field.disabled"
         :field-name="field.key"
         :help-text="getDescription()"
-        :label="getLabel()">
+        :label="getLabel()"
+        type="number">
         <template slot="prepend">
           <slot name="prepend" />
         </template>
