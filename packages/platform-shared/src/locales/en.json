@@ -96,7 +96,12 @@
       "successSavePassword": "Successfully saved password",
       "removeConfirm": "Are you sure you want to remove the selected",
       "removeModalTitle": "Confirm Removal",
-      "list": "List"
+      "list": "List",
+      "setUp": "Set up",
+      "privilege": "Privilege",
+      "privileges": "Privileges",
+      "settings": "Settings",
+      "timeConstraint": "Time Constraint"
     }
   }
 }
