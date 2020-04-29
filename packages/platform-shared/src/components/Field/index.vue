@@ -77,7 +77,7 @@ to such license between the licensee and ForgeRock AS. -->
         :type="field.type"
         :class="[{'fr-error': errors.length || failedPolicies.length}, 'floating-label-input']"
         v-model="field.value"
-        v-bind="$props"
+        v-bind="attrs"
         :disabled="field.disabled"
         :field-name="field.key"
         :help-text="getDescription()"
