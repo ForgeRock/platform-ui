@@ -155,7 +155,9 @@
         "theme-color",
         "url",
         "str-replace",
-        "fade"
+        "fade",
+        "repeat",
+        "minmax"
       ],
       "media-feature-name-no-vendor-prefix": true,
       "no-descending-specificity": null,
@@ -216,7 +218,8 @@
         "vh",
         "rem",
         "s",
-        "deg"
+        "deg",
+        "fr"
       ],
       "value-no-vendor-prefix": true
     }
