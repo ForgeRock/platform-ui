@@ -15,7 +15,7 @@ const WithCallback = (component) => {
       return createElement(component, {
         props: { ...this.$props },
         on: {
-          valueChange({ value }) {
+          valueChange(value) {
             if (context.callback && context.callback.setInputValue) {
               context.callback.setInputValue(value);
             }
