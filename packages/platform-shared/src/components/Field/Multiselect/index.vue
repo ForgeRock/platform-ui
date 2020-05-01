@@ -46,8 +46,8 @@ to such license between the licensee and ForgeRock AS. -->
 import {
   find,
   has,
-  map,
   isEqual,
+  map,
 } from 'lodash';
 import VueMultiSelect from 'vue-multiselect';
 import InputLayout from '../Wrapper/Layout';
