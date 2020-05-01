@@ -59,10 +59,10 @@ export default {
     },
   },
   methods: {
-    updateValue(newValue) {
+    updateValue(value) {
       this.$emit('update:model', {
         model: this.saveModel,
-        value: newValue,
+        value,
       });
     },
   },
