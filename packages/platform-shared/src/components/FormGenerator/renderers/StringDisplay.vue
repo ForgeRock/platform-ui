@@ -77,10 +77,10 @@ export default {
       this.show = false;
       this.$parent.$emit('copy', value);
     },
-    valueChange() {
+    valueChange(value) {
       this.$emit('update:model', {
         model: this.saveModel,
-        value: this.field.value,
+        value,
       });
     },
   },

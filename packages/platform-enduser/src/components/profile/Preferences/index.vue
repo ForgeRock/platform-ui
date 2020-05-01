@@ -22,7 +22,7 @@ to such license between the licensee and ForgeRock AS. -->
             <FrField
               :field="obj"
               :display-description="false"
-              @valueChange="savePreferences(preference, $event.value)" />
+              @valueChange="savePreferences(preference, $event)" />
           </div>
         </div>
       </template>
