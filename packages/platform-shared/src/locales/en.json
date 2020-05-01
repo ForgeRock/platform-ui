@@ -113,6 +113,16 @@
       "timeConstraint": "Time Constraint"
     }
   },
+  "scriptEditor": {
+    "title": "Script",
+    "type": "Type: ",
+    "uploadFile": "Upload File",
+    "variables": "Variables",
+    "defineCustom": "Define custom variables to pass to your script.",
+    "value": "Value",
+    "json": "JSON",
+    "jsonNotStructured": "JSON is not structured properly"
+  },
   "timezone": {
     "helpText": "Time zone offset based on how many hours a location is from GMT.",
     "linkText": "Time zones chart"

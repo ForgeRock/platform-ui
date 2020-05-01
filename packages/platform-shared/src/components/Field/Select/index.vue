@@ -77,7 +77,9 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+      floatLabels: false,
+    };
   },
   computed: {
     options() {
@@ -94,8 +96,20 @@ export default {
   methods: {
     setInputValue(newVal) {
       if (newVal !== undefined && newVal !== null) {
-        this.inputValue = find(this.options, { value: newVal.toString() });
+        this.inputValue = find(this.options, { value: newVal });
       }
+    },
+    inputValueHandler(newVal) {
+      this.floatLabels = newVal.value && newVal.value.length > 0 && this.label;
+      this.$emit('input', newVal.value);
+    },
+  },
+  watch: {
+    value: {
+      handler(value) {
+        this.setInputValue(value);
+      },
+      deep: true,
     },
   },
 };
