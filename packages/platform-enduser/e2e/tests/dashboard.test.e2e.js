@@ -1,5 +1,10 @@
-/// <reference types="Cypress" />
-
+/**
+ * Copyright 2019-2020 ForgeRock AS. All Rights Reserved
+ *
+ * Use of this code requires a commercial software license with ForgeRock AS.
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
+ */
 context('Dashboard View', () => {
   const userName = 'openidm-admin';
   beforeEach(() => {
@@ -12,16 +17,6 @@ context('Dashboard View', () => {
         cy.get('[placeholder="Password"]').should('have.value', 'password');
         cy.get('.btn-primary').click();
       }
-    });
-  });
-
-  it('location should be at dashboard', () => {
-    // http://localhost:8888/#/dashboard
-    cy.location().should((location) => {
-      expect(location.hostname).to.eq('localhost');
-      expect(location.pathname).to.eq('/');
-      expect(location.protocol).to.eq('http:');
-      expect(location.search).to.be.empty;
     });
   });
 
@@ -67,12 +62,11 @@ context('Dashboard View', () => {
 
   it('dropdown should have user info, and admin button', () => {
     cy.get('.fr-dropdown-button').click();
-    const dropdownMenu = cy.get('.dropdown-menu.show');
-    dropdownMenu
+    cy.get('.dropdown-menu.show')
       .should('exist')
       .get('.dropdown-header h5')
       .should('contain', 'ForgeRock');
-    dropdownMenu
+    cy.get('.dropdown-menu.show')
       .get('a.dropdown-item:first')
       .should('exist')
       .should('contain', 'Admin')
