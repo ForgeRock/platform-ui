@@ -20,6 +20,7 @@ echo "Setting ENDUSER URL as $ENDUSER_UI_URL"
 echo "Setting ENDUSER CLIENT ID as $ENDUSER_CLIENT_ID"
 echo "Setting ADMIN CLIENT ID as $ADMIN_CLIENT_ID"
 echo "Setting PLATFORM UI LOCALE as $PLATFORM_UI_LOCALE"
+echo "Setting PLATFORM ADMIN URL as $PLATFORM_ADMIN_URL"
 
 # Replace env vars in JavaScript files
 for file in /usr/share/nginx/html/js/*.js
@@ -31,7 +32,7 @@ do
     cp "$file" "/tmp/$(basename $file).tmpl"
   fi
 
-  envsubst '$AM_URL $IDM_REST_URL $IDM_ADMIN_URL $IDM_UPLOAD_URL $IDM_EXPORT_URL $LOGIN_UI_URL $ENDUSER_UI_URL $ENDUSER_CLIENT_ID $ADMIN_CLIENT_ID $PLATFORM_UI_LOCALE' < "/tmp/$(basename $file).tmpl" > "$file"
+  envsubst '$AM_URL $IDM_REST_URL $IDM_ADMIN_URL $IDM_UPLOAD_URL $IDM_EXPORT_URL $LOGIN_UI_URL $ENDUSER_UI_URL $ENDUSER_CLIENT_ID $ADMIN_CLIENT_ID $PLATFORM_UI_LOCALE $PLATFORM_ADMIN_URL' < "/tmp/$(basename $file).tmpl" > "$file"
 done
 
 echo "Starting Nginx"
