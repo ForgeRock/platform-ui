@@ -57,76 +57,38 @@ to such license between the licensee and ForgeRock AS. -->
         flex-column
         flex-sm-row
         vertical
-        pills>
+        pills
+        :class="[{ 'fr-hide-nav' : hideNav }]">
         <BTab
           :title="this.$t('pages.access.details')"
           active>
-          <template v-if="displayProperties.length > 0">
-            <div class="card-body m-4">
-              <ValidationObserver ref="observer">
-                <template v-for="(field, index) in displayProperties">
-                  <div
-                    class="mb-4"
-                    v-if="(field.type === 'string' || field.type === 'number' || field.type === 'boolean') && field.encryption === undefined"
-                    :key="'editResource' + index">
-                    <FrField :field="field" />
-                  </div>
-                  <!-- for singletonRelationhip values -->
-                  <template v-if="field.type === 'relationship' && formFields[field.key] !== ''">
-                    <BFormGroup
-                      :key="'readResource' + index"
-                      v-if="field.disabled">
-                      <label
-                        class="col-form-label col-sm-3"
-                        :for="field.title">
-                        {{ field.title }}
-                      </label>
-                      <div class="media-body">
-                        <!-- Using the first display field here "[0]"-->
-                        <div class="text-bold pl-1">
-                          {{ formFields[field.key][getRelationshipDisplayFields(field, formFields[field.key])[0]] }}
-                        </div>
-                        <div>
-                          <!-- Loop over the rest of the display fields and print each in a span -->
-                          <span
-                            v-for="(displayField, displayFieldIndex) in getRelationshipDisplayFields(field, formFields[field.key])"
-                            :key="`displayField_${displayField}_${displayFieldIndex}`"
-                            v-show="displayFieldIndex !== 0"
-                            class="pl-1 pr-1 text-muted">
-                            {{ formFields[field.key][displayField] }}
-                          </span>
-                        </div>
-                      </div>
-                    </BFormGroup>
-                    <FrRelationshipEdit
-                      v-else
-                      :parent-resource="`${resourceType}/${resourceName}`"
-                      :relationship-property="field"
-                      :key="'editResource' + index"
-                      :index="index"
-                      :value="field.value"
-                      @setValue="setSingletonRelationshipValue($event, field)" />
-                  </template>
-                </template>
-              </ValidationObserver>
-            </div>
-            <div
-              v-if="!disableSaveButton"
-              class="card-footer">
-              <div class="float-right mb-4">
-                <BButton
-                  type="button"
-                  @click="saveResource"
-                  variant="primary">
-                  {{ $t('common.save') }}
-                </BButton>
-              </div>
-            </div>
-          </template>
+          <FrObjectTypeEditor
+            v-if="displayProperties.length > 0"
+            :form-fields="formFields"
+            :display-properties="displayProperties"
+            :disable-save-button="disableSaveButton"
+            :resource-path="`${resourceType}/${resourceName}/${id}`"
+            :is-openidm-admin="isOpenidmAdmin" />
           <span v-else>
             {{ $t('pages.access.noAvailableProperties') }}
           </span>
         </BTab>
+        <!-- Add a tab for each viewable/editable object type property -->
+        <template v-for="(objectTypeProperty) in objectTypeProperties">
+          <BTab
+            :title="objectTypeProperty.title"
+            :key="`${objectTypeProperty.propName}_tab`">
+            <FrObjectTypeEditor
+              :form-fields="formFields[objectTypeProperty.propName] || {}"
+              :sub-property-name="objectTypeProperty.propName"
+              :display-properties="getObjectTypeProperyDisplayProperties(objectTypeProperty)"
+              :disable-save-button="disableSaveButton"
+              :resource-path="`${resourceType}/${resourceName}/${id}`"
+              :is-openidm-admin="isOpenidmAdmin" />
+          </BTab>
+        </template>
+        <FrPrivilegesTab
+          v-if="resourceType === 'internal' && resourceName === 'role'" />
         <!-- Add a tab for each viewable/editable relationship array property -->
         <template v-for="(relationshipProperty) in relationshipProperties">
           <BTab
@@ -139,6 +101,11 @@ to such license between the licensee and ForgeRock AS. -->
               :relationship-array-property="relationshipProperty" />
           </BTab>
         </template>
+        <FrSettingsTab
+          v-if="Object.keys(settingsProperties).length > 0"
+          :properties="settingsProperties"
+          :resource-name="resourceName"
+          :resource-path="`${resourceType}/${resourceName}/${id}`" />
       </BTabs>
     </BCard>
 
@@ -209,13 +176,11 @@ to such license between the licensee and ForgeRock AS. -->
 
 <script>
 import {
-  capitalize,
-  clone,
   each,
   filter,
-  find,
   indexOf,
   isUndefined,
+  isArray,
   map,
   pick,
   pickBy,
@@ -226,7 +191,6 @@ import {
   BCard,
   BCol,
   BContainer,
-  BFormGroup,
   BImg,
   BModal,
   BRow,
@@ -235,15 +199,15 @@ import {
   VBModal,
 } from 'bootstrap-vue';
 import axios from 'axios';
-import { ValidationObserver } from 'vee-validate'; // ValidationProvider,
-import FrField from '@forgerock/platform-shared/src/components/Field';
 import PolicyPasswordInput from '@forgerock/platform-shared/src/components/PolicyPasswordInput/';
-import RelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
 import RelationshipArray from '@forgerock/platform-shared/src/components/resource/RelationshipArray';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import ObjectTypeEditor from './ObjectTypeEditor';
+import SettingsTab from './CustomTabs/SettingsTab';
+import PrivilegesTab from './CustomTabs/PrivilegesTab';
 
 /**
  * @description Full page that provides view/edit of a specific resource for delegated admin. Auto generates fields based on backend return.
@@ -258,21 +222,20 @@ import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 export default {
   name: 'EditResource',
   components: {
+    FrObjectTypeEditor: ObjectTypeEditor,
     FrPolicyPasswordInput: PolicyPasswordInput,
-    FrField,
-    FrRelationshipEdit: RelationshipEdit,
     FrRelationshipArray: RelationshipArray,
-    ValidationObserver,
+    FrSettingsTab: SettingsTab,
+    FrPrivilegesTab: PrivilegesTab,
     BButton,
-    BFormGroup,
     BImg,
-    BRow,
     BCol,
     BContainer,
     BTabs,
     BTab,
     BCard,
     BModal,
+    BRow,
   },
   mixins: [
     BreadcrumbMixin,
@@ -298,9 +261,10 @@ export default {
       displayNameField: '',
       displaySecondaryTitleField: '',
       formFields: {},
-      oldFormFields: {},
       isOpenidmAdmin: this.$store.state.userId === 'openidm-admin',
-      relationshipProperties: [],
+      objectTypeProperties: {},
+      relationshipProperties: {},
+      settingsProperties: {},
       isLoading: true,
     };
   },
@@ -317,10 +281,12 @@ export default {
 
         this.setBreadcrumb(`/${this.$route.meta.listRoute}/${this.resourceType}/${this.resourceName}`, `${this.resourceTitle} ${this.$t('pages.access.list')}`);
 
+        this.objectTypeProperties = this.getObjectTypeProperties(schema.data, privilege.data);
         this.relationshipProperties = this.getRelationshipProperties(schema.data, privilege.data);
 
         idmInstance.get(this.buildResourceUrl()).then((resourceDetails) => {
           this.generateDisplay(schema.data, privilege.data, resourceDetails.data);
+          this.settingsProperties = this.getSettingsProperties(schema.data, privilege.data);
         }).catch((error) => {
           this.displayNotification('IDMMessages', 'error', error.response.data.message);
         });
@@ -339,6 +305,25 @@ export default {
 
       return url;
     },
+    getObjectTypeProperties(schema, privilege) {
+      return pickBy(schema.properties, (property, key) => {
+        const hasPermission = privilege.VIEW.properties.includes(key) || privilege.UPDATE.properties.includes(key) || this.isOpenidmAdmin;
+        const isObjectTypeProperty = property.type === 'object' && property.viewable;
+
+        property.propName = key;
+
+        return isObjectTypeProperty && hasPermission;
+      });
+    },
+    getObjectTypeProperyDisplayProperties(obj) {
+      return map(obj.order, (propName) => {
+        obj.properties[propName].key = propName;
+
+        obj.properties[propName].value = this.formFields[obj.propName] ? this.formFields[obj.propName][propName] || null : null;
+
+        return obj.properties[propName];
+      });
+    },
     getRelationshipProperties(schema, privilege) {
       return pickBy(schema.properties, (property, key) => {
         const isInPropertyOrder = schema.order.includes(key);
@@ -354,12 +339,20 @@ export default {
         return isInPropertyOrder && isRelationship && hasPermission;
       });
     },
-    setSingletonRelationshipValue(data, field) {
-      field.value = data.value;
-    },
-    getRelationshipDisplayFields(property, value) {
-      // eslint-disable-next-line no-underscore-dangle
-      return find(property.resourceCollection, { path: value._refResourceCollection }).query.fields;
+    getSettingsProperties(schema, privilege) {
+      return pickBy(schema.properties, (property, key) => {
+        const hasPermission = privilege.VIEW.properties.includes(key) || privilege.UPDATE.properties.includes(key) || this.isOpenidmAdmin;
+        const isSettingsPropery = property.isConditional || property.isTemporalConstraint;
+
+        property.propName = key;
+        if (property.isTemporalConstraint && isArray(this.formFields[key]) && this.formFields[key].length > 0) {
+          property.value = this.formFields[key][0].duration;
+        } else if (this.isConditional) {
+          property.value = this.formFields[key];
+        }
+
+        return isSettingsPropery && hasPermission;
+      });
     },
     generateDisplay(schema, privilege, resourceDetails) {
       if (this.isOpenidmAdmin) {
@@ -368,14 +361,14 @@ export default {
         keys(resourceDetails).forEach((key) => {
           const prop = schema.properties[key];
 
-          if (prop && prop.viewable && !['object', 'array'].includes(prop.type)) {
+          if (prop) {
             filteredFields.push(key);
           }
         });
 
-        this.oldFormFields = pick(resourceDetails, filteredFields);
+        this.formFields = pick(resourceDetails, filteredFields);
       } else {
-        this.oldFormFields = pick(resourceDetails, privilege.VIEW.properties);
+        this.formFields = pick(resourceDetails, privilege.VIEW.properties);
       }
 
       if (privilege.DELETE.allowed || this.isOpenidmAdmin) {
@@ -387,11 +380,6 @@ export default {
       } else {
         this.icon = 'check_box_outline_blank';
       }
-
-      // Add reactive form for changes
-      each(this.oldFormFields, (value, key) => {
-        this.$set(this.formFields, key, value);
-      });
 
       if (privilege.VIEW.allowed || this.isOpenidmAdmin) {
         // if there are no update properties disable the save button
@@ -406,7 +394,10 @@ export default {
           }
 
           tempProp.key = createPriv.attribute;
-          delete tempProp.description;
+
+          if (!tempProp.isConditional && !tempProp.isTemporalConstraint) {
+            delete tempProp.description;
+          }
 
           if (indexOf(schema.required, createPriv.attribute) !== -1) {
             tempProp.validation = 'required';
@@ -437,7 +428,6 @@ export default {
             } else {
               this.$set(this.formFields, createPriv.attribute, '');
             }
-            this.oldFormFields[createPriv.attribute] = this.formFields[createPriv.attribute];
           }
           tempProp.value = this.formFields[createPriv.attribute];
 
@@ -447,7 +437,7 @@ export default {
             tempProp.disabled = false;
           }
 
-          if (createPriv.attribute !== 'password') {
+          if (createPriv.attribute !== 'password' && !tempProp.isVirtual && !tempProp.isConditional) {
             this.displayProperties.push(tempProp);
           } else {
             tempProp.type = 'password';
@@ -474,39 +464,6 @@ export default {
         .catch((error) => {
           this.displayNotification('IDMMessages', 'error', error.response.data.message);
         });
-    },
-    async saveResource() {
-      const idmInstance = this.getRequestService();
-
-      this.$refs.observer.reset();
-
-      const isValid = await this.$refs.observer.validate();
-      if (isValid) {
-        this.displayProperties.forEach((field) => {
-          this.formFields[field.key] = field.value;
-        });
-        const saveData = this.generateUpdatePatch(clone(this.oldFormFields), clone(this.formFields));
-
-        idmInstance.patch(`${this.resourceType}/${this.resourceName}/${this.id}`, saveData).then(() => {
-          this.displayNotification('IDMMessages', 'success', this.$t('pages.access.successEdited', { resource: capitalize(this.resourceName) }));
-        },
-        (error) => {
-          const generatedErrors = this.findPolicyError(error.response, this.displayProperties);
-
-          if (generatedErrors.length > 0) {
-            each(generatedErrors, (generatedError) => {
-              if (generatedError.exists) {
-                const newError = {};
-                newError[generatedError.field] = [generatedError.msg];
-              }
-            });
-          }
-
-          this.displayNotification('IDMMessages', 'error', this.$t('pages.access.invalidEdit'));
-        });
-      } else {
-        this.displayNotification('IDMMessages', 'error', this.$t('pages.access.invalidEdit'));
-      }
     },
     async savePassword() {
       const idmInstance = this.getRequestService();
@@ -577,6 +534,15 @@ export default {
 
       return `${tempIcon}`;
     },
+    hideNav() {
+      const relationshipArrayProps = pickBy(this.relationshipProperties, { type: 'array' });
+
+      if (keys(relationshipArrayProps).length === 0 && keys(this.objectTypeProperties).length === 0) {
+        return true;
+      }
+
+      return false;
+    },
   },
 };
 </script>
@@ -587,8 +553,18 @@ export default {
     padding: 0;
   }
 
-  .tab-content.col {
-    padding: 0;
+  .fr-hide-nav .nav {
+    display: none;
+  }
+
+  .card-tabs-vertical {
+    .card-body {
+      padding: 0;
+    }
+
+    .tab-content.col {
+      padding: 0;
+    }
   }
 }
 

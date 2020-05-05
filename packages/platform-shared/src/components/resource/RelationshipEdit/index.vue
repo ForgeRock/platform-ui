@@ -115,6 +115,15 @@ to such license between the licensee and ForgeRock AS. -->
         </template>
       </Multiselect>
     </BFormGroup>
+    <BFormGroup
+      v-if="relationshipProperty.relationshipGrantTemporalConstraintsEnforced"
+      :label-cols="isRelationshipArray || newResource ? 11 : 0"
+      :label="$t('pages.access.timeConstraint')"
+      horizontal>
+      <!-- TODO: INJECT TEMPORAL CONSTRAINTS COMPONENT HERE -->
+      <BFormInput
+        v-model="temporalConstraint" />
+    </BFormGroup>
   </div>
 </template>
 
@@ -122,7 +131,7 @@ to such license between the licensee and ForgeRock AS. -->
 import {
   map, each, find, has,
 } from 'lodash';
-import { BFormGroup } from 'bootstrap-vue';
+import { BFormGroup, BFormInput } from 'bootstrap-vue';
 import Multiselect from 'vue-multiselect';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
@@ -132,6 +141,7 @@ export default {
   components: {
     Multiselect,
     BFormGroup,
+    BFormInput,
   },
   mixins: [
     NotificationMixin,
@@ -140,10 +150,6 @@ export default {
   props: {
     relationshipProperty: {
       type: Object,
-      required: true,
-    },
-    parentResource: {
-      type: String,
       required: true,
     },
     value: {
@@ -171,6 +177,7 @@ export default {
       rescourceCollectionTypes: [],
       resourceCollections: [],
       isRelationshipArray: false,
+      temporalConstraint: '',
     };
   },
   mounted() {
@@ -188,6 +195,16 @@ export default {
     } else {
       this.setResourceCollectionType();
     }
+  },
+  watch: {
+    temporalConstraint(newVal) {
+      if (this.selected && this.selected.length) {
+        this.selected.forEach((selection) => {
+          const refProperties = { temporalConstraints: [{ duration: newVal }] };
+          this.$emit('setValue', { property: this.relationshipProperty.key, value: { _ref: selection.value, _refProperties: refProperties } });
+        });
+      }
+    },
   },
   methods: {
     setResourceCollectionType(rescourceCollectionType) {
@@ -245,7 +262,11 @@ export default {
       }
     },
     setSelected(selected) {
-      if (selected.value) {
+      if (selected.value && this.relationshipProperty.relationshipGrantTemporalConstraintsEnforced && this.temporalConstraint.length > 0) {
+        const refProperties = { temporalConstraints: [{ duration: this.temporalConstraint }] };
+        this.selected = selected;
+        this.$emit('setValue', { property: this.relationshipProperty.key, value: { _ref: selected.value, _refProperties: refProperties } });
+      } else if (selected.value) {
         this.selected = selected;
         this.$emit('setValue', { property: this.relationshipProperty.key, value: { _ref: selected.value } });
       } else {
