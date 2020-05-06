@@ -1141,10 +1141,10 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.5.tgz#8eed982e2ee6f7f4e44c253e12962980791efd46"
   integrity sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==
 
-"@forgerock/javascript-sdk@1.0.5":
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/@forgerock/javascript-sdk/-/javascript-sdk-1.0.5.tgz#66f9770c704ce7b4d4d2e3da6a78b8ab7abd72d9"
-  integrity sha512-iLnuYy7G6cS0soR52ZbcATEz3pTkLGwMOOx/FUWHmTWtrYzwH8qJYaMPUHfMHyW8fSeffEEQ6r3JZJhwvXRyjg==
+"@forgerock/javascript-sdk@2.0.0-alpha3":
+  version "2.0.0-alpha3"
+  resolved "https://registry.yarnpkg.com/@forgerock/javascript-sdk/-/javascript-sdk-2.0.0-alpha3.tgz#e8a1372dad0458aabf4a778c430fee171a5aabb4"
+  integrity sha512-CvhxqDybv71h8ZY++NbsLsBTq3f48Cqzw63ag/VP6e+otX1xbvsyONLV9bCIGYdzVbvmFksQly90P27Mep/u7w==
 
 "@hapi/address@2.x.x":
   version "2.1.4"
@@ -2175,9 +2175,9 @@
     source-map "^0.6.1"
 
 "@types/webpack@^4.41.8":
-  version "4.41.12"
-  resolved "https://registry.yarnpkg.com/@types/webpack/-/webpack-4.41.12.tgz#0386ee2a2814368e2f2397abb036c0bf173ff6c3"
-  integrity sha512-BpCtM4NnBen6W+KEhrL9jKuZCXVtiH6+0b6cxdvNt2EwU949Al334PjQSl2BeAyvAX9mgoNNG21wvjP3xZJJ5w==
+  version "4.41.13"
+  resolved "https://registry.yarnpkg.com/@types/webpack/-/webpack-4.41.13.tgz#988d114c8913d039b8a0e0502a7fe4f1f84f3d5e"
+  integrity sha512-RYmIHOWSxnTTa765N6jJBVE45pd2SYNblEYshVDduLw6RhocazNmRzE5/ytvBD8IkDMH6DI+bcrqxh8NILimBA==
   dependencies:
     "@types/anymatch" "*"
     "@types/node" "*"
