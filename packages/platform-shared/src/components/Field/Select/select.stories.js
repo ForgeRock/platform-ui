@@ -13,17 +13,18 @@ const template = `
     <p class="mb-4 lead">Select input field</p>
   </div>
   <div class="container">
-  <section class="sg_pattern">
-    <h2>Select</h2>
-    <p class="mb-5">Example using Select</p>
-    <BCard>
-    <FrSelect
-      v-model="inputValue"
-      :select-options="selectOptions"
-      label="Select"
-    />
-    </BCard>
-  </section>
+    <section class="sg_pattern">
+      <h2>Select</h2>
+      <p class="mb-5">Example using Select</p>
+      <BCard>
+      <FrSelect
+        v-model="inputValue"
+        :select-options="selectOptions"
+        label="Select"
+      />
+      </BCard>
+    </section>
+  </div>
 </div>`;
 
 /* eslint import/no-extraneous-dependencies: 0 */
