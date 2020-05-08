@@ -13,14 +13,15 @@ const template = `
     <p class="mb-4 lead">Text area input</p>
   </div>
   <div class="container">
-  <section class="sg_pattern">
-    <h2>TextArea</h2>
-    <BCard>
-      <FrTextArea
-        v-model="inputData"
-      />
-    </BCard>
-  </section>
+    <section class="sg_pattern">
+      <h2>TextArea</h2>
+      <BCard>
+        <FrTextArea
+          v-model="inputData"
+        />
+      </BCard>
+    </section>
+  </div>
 </div>`;
 
 /* eslint import/no-extraneous-dependencies: 0 */
