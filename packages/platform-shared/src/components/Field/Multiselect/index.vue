@@ -47,6 +47,7 @@ import {
   find,
   has,
   map,
+  isEqual,
 } from 'lodash';
 import VueMultiSelect from 'vue-multiselect';
 import InputLayout from '../Wrapper/Layout';
@@ -97,8 +98,9 @@ export default {
   },
   methods: {
     setInputValue(newVal) {
-      if (newVal !== undefined && newVal !== null) {
-        this.inputValue = map(newVal, (val) => find(this.options, { value: val.toString() }));
+      const newInputValue = map(newVal, (val) => find(this.options, { value: val }));
+      if (!isEqual(this.inputValue, newInputValue)) {
+        this.inputValue = newInputValue;
       }
     },
     inputValueHandler(newVal) {
