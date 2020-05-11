@@ -67,20 +67,18 @@ to such license between the licensee and ForgeRock AS. -->
         </div>
       </template>
       {{ $t('pages.profile.oauthApplications.removeConfirmation', {applicationName: confirmApplication.name }) }}
-      <template v-slot:modal-footer>
-        <div class="float-right">
-          <BBtn
-            variant="outline-secondary mr-2"
-            @click="$refs.fsModal.hide()">
-            {{ $t('common.cancel') }}
-          </BBtn>
-          <BBtn
-            type="button"
-            variant="danger"
-            @click="removeApplication(confirmApplication.id)">
-            {{ $t('common.remove') }}
-          </BBtn>
-        </div>
+      <template v-slot:modal-footer="{ cancel }">
+        <BBtn
+          variant="outline-secondary mr-2"
+          @click="cancel()">
+          {{ $t('common.cancel') }}
+        </BBtn>
+        <BBtn
+          type="button"
+          variant="danger"
+          @click="removeApplication(confirmApplication.id)">
+          {{ $t('common.remove') }}
+        </BBtn>
       </template>
     </BModal>
   </FrListGroup>

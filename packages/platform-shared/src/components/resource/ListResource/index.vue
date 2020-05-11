@@ -50,6 +50,7 @@ to such license between the licensee and ForgeRock AS. -->
                     edit
                   </i> {{ $t('common.edit') }}
                 </BDropdownItem>
+                <BDropdownDivider />
                 <BDropdownItem
                   @click="confirmDeleteResource(data.item._id)">
                   <i class="material-icons-outlined mr-3">
@@ -127,6 +128,7 @@ import {
 } from 'lodash';
 import {
   BDropdown,
+  BDropdownDivider,
   BDropdownItem,
   BTable,
   VBModal,
@@ -150,6 +152,7 @@ export default {
   ],
   components: {
     BDropdown,
+    BDropdownDivider,
     BDropdownItem,
     BTable,
     FrDeleteResource: DeleteResource,
