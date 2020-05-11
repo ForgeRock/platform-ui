@@ -70,14 +70,14 @@ export default {
      * if initial value is equal to the value prop, will initialize as the selected input.
      */
     selected: {
-      type: [Number, String],
+      type: [Number, String, Boolean],
       default: '',
     },
     /**
      * Value that selecting the input will provide
      */
     value: {
-      type: [Number, String],
+      type: [Number, String, Boolean],
       default: '',
     },
   },
@@ -90,13 +90,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/* stylelint-disable */
 .card-input-element {
   display: none;
 }
 
 .card.card-input {
-  -webkit-box-shadow: none;
   box-shadow: none;
   border: 1px solid $card-border-color;
 }
@@ -123,7 +121,7 @@ export default {
   &::after {
     content: 'check';
     position: absolute;
-    font-family: 'Material Icons Outlined';
+    font-family: 'Material Icons Outlined', sans-serif;
     right: -7px;
     top: -8px;
     text-align: right;
@@ -154,5 +152,4 @@ export default {
     border-color: $card-border-color;
   }
 }
-/* stylelint-enable */
 </style>

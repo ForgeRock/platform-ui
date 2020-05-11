@@ -155,13 +155,18 @@ to such license between the licensee and ForgeRock AS. -->
           :field-name="field.key" />
       </slot>
     </ValidationProvider>
-    <label
-      v-if="!this.prependTitle && (this.field.type === 'boolean' || this.field.type === 'checkbox')"
-      class="text-secondary mb-1 align-top">
-      <span :id="`helppopover-${field.key}`">
-        {{ field.title }}
-      </span>
-    </label>
+    <template v-if="this.field.type === 'boolean' || this.field.type === 'checkbox'">
+      <label
+        v-if="!this.prependTitle"
+        class="text-secondary mb-1 align-top">
+        <div :id="`helppopover-${field.key}`">
+          {{ field.title }}
+        </div>
+      </label>
+      <div class="text-muted">
+        <small v-html="getDescription()" />
+      </div>
+    </template>
   </div>
 </template>
 

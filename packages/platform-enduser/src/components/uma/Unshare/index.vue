@@ -26,20 +26,18 @@ to such license between the licensee and ForgeRock AS. -->
       </div>
     </template>
     {{ $t('pages.uma.resources.warningMessage') }}
-    <template v-slot:modal-footer>
-      <div class="float-right">
-        <BBtn
-          variant="outline-secondary mr-2"
-          @click="hideModal">
-          {{ $t('pages.uma.resources.cancel') }}
-        </BBtn>
-        <BBtn
-          type="button"
-          variant="danger"
-          @click="unshare">
-          {{ $t('pages.uma.resources.unshare') }}
-        </BBtn>
-      </div>
+    <template v-slot:modal-footer="{ cancel }">
+      <BBtn
+        variant="outline-secondary mr-2"
+        @click="cancel()">
+        {{ $t('pages.uma.resources.cancel') }}
+      </BBtn>
+      <BBtn
+        type="button"
+        variant="danger"
+        @click="unshare">
+        {{ $t('pages.uma.resources.unshare') }}
+      </BBtn>
     </template>
   </BModal>
 </template>

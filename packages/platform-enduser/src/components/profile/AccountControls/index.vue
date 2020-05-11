@@ -114,23 +114,19 @@ to such license between the licensee and ForgeRock AS. -->
         </div>
       </BContainer>
 
-      <template v-slot:modal-footer>
-        <div class="w-100">
-          <div class="float-right">
-            <BBtn
-              variant="outline-secondary mr-2"
-              @click="hideModal">
-              {{ $t('common.cancel') }}
-            </BBtn>
-            <BBtn
-              :disabled="!confirmDelete"
-              type="button"
-              variant="danger"
-              @click="deleteAccount">
-              {{ $t('pages.profile.accountControls.deleteModalButton') }}
-            </BBtn>
-          </div>
-        </div>
+      <template v-slot:modal-footer="{ cancel }">
+        <BBtn
+          variant="outline-secondary mr-2"
+          @click="cancel()">
+          {{ $t('common.cancel') }}
+        </BBtn>
+        <BBtn
+          :disabled="!confirmDelete"
+          type="button"
+          variant="danger"
+          @click="deleteAccount">
+          {{ $t('pages.profile.accountControls.deleteModalButton') }}
+        </BBtn>
       </template>
     </BModal>
   </div>

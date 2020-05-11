@@ -35,7 +35,7 @@ to such license between the licensee and ForgeRock AS. -->
 
 <script>
 import ListItem from '@forgerock/platform-shared/src/components/ListItem/';
-import FallbackImage from '@forgerock/platfrom-enduser/src/components/utils/FallbackImage';
+import FallbackImage from '@/components/utils/FallbackImage';
 /**
  * @description Widget that provides a welcome message for the managed resource, also provides a button to directly access editing the resources profile.
  * */

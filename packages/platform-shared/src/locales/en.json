@@ -33,6 +33,7 @@
     "saveChanges": "Save changes",
     "saving": "Saving",
     "search": "Search",
+    "settings": "Settings",
     "show": "Show",
     "signUp": "Sign Up",
     "start": "Start",
@@ -109,7 +110,6 @@
       "setUp": "Set up",
       "privilege": "Privilege",
       "privileges": "Privileges",
-      "settings": "Settings",
       "timeConstraint": "Time Constraint"
     }
   },
