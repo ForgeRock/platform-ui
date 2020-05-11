@@ -62,23 +62,19 @@ to such license between the licensee and ForgeRock AS. -->
         </BCol>
       </BRow>
     </BContainer>
-    <template v-slot:modal-footer>
-      <div class="w-100">
-        <div class="float-right">
-          <BBtn
-            variant="outline-secondary mr-2"
-            @click="hideModal">
-            {{ $t('common.cancel') }}
-          </BBtn>
-          <BBtn
-            type="button"
-            variant="primary"
-            :disabled="internalUser"
-            @click="saveForm">
-            {{ $t('common.saveChanges') }}
-          </BBtn>
-        </div>
-      </div>
+    <template v-slot:modal-footer="{ cancel }">
+      <BBtn
+        variant="outline-secondary mr-2"
+        @click="cancel()">
+        {{ $t('common.cancel') }}
+      </BBtn>
+      <BBtn
+        type="button"
+        variant="primary"
+        :disabled="internalUser"
+        @click="saveForm">
+        {{ $t('common.saveChanges') }}
+      </BBtn>
     </template>
   </BModal>
 </template>

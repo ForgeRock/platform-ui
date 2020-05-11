@@ -5,113 +5,111 @@ or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
   <div class="fr-datatable">
-    <div>
-      <!-- @slot Toolbar above the datatable for buttons, search, etc. -->
-      <slot name="toolbar" />
-      <BTable
-        responsive
-        outline
-        hover
-        v-bind="$attrs"
-        :per-page="perPage"
-        :current-page="currentPage"
-        v-on="$listeners">
-        <template
-          v-for="(key, slotName) in $scopedSlots"
-          v-slot:[slotName]="slotData">
-          <!-- @slot Custom cell slot. -->
-          <slot
-            :name="slotName"
-            v-bind="slotData" />
-        </template>
+    <!-- @slot Toolbar above the datatable for buttons, search, etc. -->
+    <slot name="toolbar" />
+    <BTable
+      responsive
+      outline
+      hover
+      v-bind="$attrs"
+      :per-page="perPage"
+      :current-page="currentPage"
+      v-on="$listeners">
+      <template
+        v-for="(key, slotName) in $scopedSlots"
+        v-slot:[slotName]="slotData">
+        <!-- @slot Custom cell slot. -->
+        <slot
+          :name="slotName"
+          v-bind="slotData" />
+      </template>
 
-        <template #head(checkbox)="data">
-          <span
-            v-if="isCustomLabel('checkbox', data.label)">
-            {{ data.label }}
-          </span>
-          <BFormCheckbox
-            v-else
-            id="checkbox-all"
-            name="checkbox-all"
-            v-model="allSelected"
-            @change="toggleAll"
-          />
-        </template>
+      <template #head(checkbox)="data">
+        <span
+          v-if="isCustomLabel('checkbox', data.label)">
+          {{ data.label }}
+        </span>
+        <BFormCheckbox
+          v-else
+          id="checkbox-all"
+          name="checkbox-all"
+          v-model="allSelected"
+          @change="toggleAll"
+        />
+      </template>
 
-        <template #cell(checkbox)="data">
-          <BFormCheckbox
-            :id="`checkbox-${data.index}`"
-            :name="`checkbox-${data.index}`"
-            v-model="selected"
-            :value="data.index"
-          />
-        </template>
+      <template #cell(checkbox)="data">
+        <BFormCheckbox
+          :id="`checkbox-${data.index}`"
+          :name="`checkbox-${data.index}`"
+          v-model="selected"
+          :value="data.index"
+        />
+      </template>
 
-        <template #head(dropdown)="data">
-          <span
-            v-if="isCustomLabel('dropdown', data.label)">
-            {{ data.label }}
-          </span>
-        </template>
+      <template #head(dropdown)="data">
+        <span
+          v-if="isCustomLabel('dropdown', data.label)">
+          {{ data.label }}
+        </span>
+      </template>
 
-        <template #cell(dropdown)="data">
-          <BDropdown
-            variant="link"
-            no-caret
-            right
-            toggle-class="text-decoration-none">
-            <template #button-content>
-              <i class="material-icons-outlined text-muted">
-                more_horiz
-              </i>
-            </template>
-            <div
-              v-for="(lineItem, index) in data.item.dropdown"
-              :key="index">
-              <BDropdownItem @click="lineItem.action">
-                <i class="material-icons-outlined mr-3">
-                  {{ lineItem.icon }}
-                </i> {{ lineItem.text }}
-              </BDropdownItem>
-              <hr
-                v-if="index !== data.item.dropdown.length - 1"
-                class="m-0">
-            </div>
-          </BDropdown>
-        </template>
-      </BTable>
-      <div
-        v-if="pagination"
-        class="border-top pt-3">
-        <div class="pagination justify-content-center">
-          <BPagination
-            v-model="currentPage"
-            :total-rows="totalRows"
-            :per-page="perPage"
-            aria-controls="my-table">
-            <template v-slot:first-text>
-              <i class="material-icons material-icons-outlined md-24">
-                first_page
-              </i>
-            </template>
-            <template v-slot:prev-text>
-              <i class="material-icons material-icons-outlined md-24">
-                chevron_left
-              </i>
-            </template>
-            <template v-slot:next-text>
-              <i class="material-icons material-icons-outlined md-24">
-                chevron_right
-              </i>
-            </template>
-            <template v-slot:last-text>
-              <i class="material-icons material-icons-outlined md-24">
-                last_page
-              </i>
-            </template>
-          </BPagination>
-        </div>
+      <template #cell(dropdown)="data">
+        <BDropdown
+          variant="link"
+          no-caret
+          right
+          toggle-class="text-decoration-none">
+          <template #button-content>
+            <i class="material-icons-outlined text-muted">
+              more_horiz
+            </i>
+          </template>
+          <div
+            v-for="(lineItem, index) in data.item.dropdown"
+            :key="index">
+            <BDropdownItem @click="lineItem.action">
+              <i class="material-icons-outlined mr-3">
+                {{ lineItem.icon }}
+              </i> {{ lineItem.text }}
+            </BDropdownItem>
+            <hr
+              v-if="index !== data.item.dropdown.length - 1"
+              class="m-0">
+          </div>
+        </BDropdown>
+      </template>
+    </BTable>
+    <div
+      v-if="pagination"
+      class="border-top pt-3">
+      <div class="pagination justify-content-center">
+        <BPagination
+          v-model="currentPage"
+          :total-rows="totalRows"
+          :per-page="perPage"
+          aria-controls="my-table">
+          <template v-slot:first-text>
+            <i class="material-icons material-icons-outlined md-24">
+              first_page
+            </i>
+          </template>
+          <template v-slot:prev-text>
+            <i class="material-icons material-icons-outlined md-24">
+              chevron_left
+            </i>
+          </template>
+          <template v-slot:next-text>
+            <i class="material-icons material-icons-outlined md-24">
+              chevron_right
+            </i>
+          </template>
+          <template v-slot:last-text>
+            <i class="material-icons material-icons-outlined md-24">
+              last_page
+            </i>
+          </template>
+        </BPagination>
       </div>
     </div>
   </div>
