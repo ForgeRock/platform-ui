@@ -41,6 +41,7 @@
     "time": "Time",
     "typeToSearch": "Type to search",
     "yes": "Yes",
+    "waitingToConnect": "Waiting to connect...",
     "helpText": {
       "timeConstraint": "Assign role only during a selected time period."
     },
@@ -126,5 +127,9 @@
   "timezone": {
     "helpText": "Time zone offset based on how many hours a location is from GMT.",
     "linkText": "Time zones chart"
+  },
+  "errors": {
+    "errorSaving": "Error saving list",
+    "errorCreating": "Error creating file"
   }
 }
