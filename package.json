@@ -26,9 +26,12 @@
     "style-resources-loader": "1.2.1",
     "vue": "2.6.11",
     "vue-cli-plugin-storybook": "1.2.0",
-    "vue-docgen-loader": "1.5.0",
     "vue-docgen-api": "4.9.0",
+    "vue-docgen-loader": "1.5.0",
     "vue-template-compiler": "2.6.11"
+  },
+  "resolutions": {
+    "**/**/minimist": "1.2.5"
   },
   "workspaces": {
     "packages": [
