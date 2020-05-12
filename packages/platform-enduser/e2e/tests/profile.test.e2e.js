@@ -1,5 +1,10 @@
-/// <reference types="Cypress" />
-
+/**
+ * Copyright 2019-2020 ForgeRock AS. All Rights Reserved
+ *
+ * Use of this code requires a commercial software license with ForgeRock AS.
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
+ */
 context('Profile View', () => {
   const userName = 'openidm-admin';
   const permanentlyDeleteMessage = 'Yes, I want to permanently delete my account';
@@ -22,7 +27,6 @@ context('Profile View', () => {
       expect(location.hostname).to.eq('localhost');
       expect(location.pathname).to.eq('/');
       expect(location.protocol).to.eq('http:');
-      expect(location.search).to.be.empty;
     });
   });
 
@@ -39,17 +43,16 @@ context('Profile View', () => {
   });
 
   it('should show user image and name', () => {
-    const profileColumn = cy.get('div.profileCol');
-    profileColumn
+    cy.get('div.profileCol')
       .get('img.rounded-circle')
       .should('exist');
-    profileColumn
+    cy.get('div.profileCol')
       .get('.text-muted')
       .should('contain', userName);
   });
 
   it('should have account controls in center tabs', () => {
-    cy.get('div.tabs').within(($tabs) => {
+    cy.get('div.tabs').within(() => {
       cy.get('a.nav-link')
         .should('have.css', 'color', 'rgb(16, 156, 241)');
       cy.get('[href="#"]')
@@ -61,12 +64,12 @@ context('Profile View', () => {
           }
         });
     });
-  })
+  });
 
   it('should be able to download user data when clicked', () => {
-    cy.get('div.tabs').within(($tabs) => {
+    cy.get('div.tabs').within(() => {
       cy.get('div.media a').each(($a) => {
-        const href = $a.prop("href");
+        const href = $a.prop('href');
         expect($a).to.have.attr('href', '#');
 
         // make a programatic request to it
@@ -77,7 +80,7 @@ context('Profile View', () => {
   });
 
   it('should open delete account modal when clicked', () => {
-    cy.get('div.tabs').within(($tabs) => {
+    cy.get('div.tabs').within(() => {
       cy.get('div.media').eq(1).click();
     });
     cy.get('h5.modal-title').should('contain', 'Delete your account');
@@ -86,23 +89,21 @@ context('Profile View', () => {
   });
 
   it('should be able to delete account', () => {
-    cy.get('div.tabs').within(($tabs) => {
+    cy.get('div.tabs').within(() => {
       cy.get('div.media').eq(1).click();
     });
-    cy.get('div.modal-body').within(($modalBody) => {
-      const checkbox = cy.get('input.custom-control-input');
-
+    cy.get('div.modal-body').within(() => {
       cy.get('label.custom-control-label').should('contain', permanentlyDeleteMessage);
-      checkbox.should('not.be.checked');
+      cy.get('input.custom-control-input').should('not.be.checked');
       cy.get('label.custom-control-label').click();
       // TODO: This does not appear to be the actual checkbox, figure out what it is
-      // checkbox.should('be.checked');
+      // cy.get('input.custom-control-input').should('be.checked');
     });
 
-    cy.get('footer.modal-footer').within(($modalFooter) => {
-      const dangerButton = cy.get('button.btn-danger');
-      dangerButton.should('be.enabled');
-      dangerButton.should('contain', 'Delete Account');
+    cy.get('footer.modal-footer').within(() => {
+      cy.get('button.btn-danger')
+        .should('be.enabled')
+        .should('contain', 'Delete Account');
       // We don't actually want to delete the account
     });
     cy.get('button.close').click();

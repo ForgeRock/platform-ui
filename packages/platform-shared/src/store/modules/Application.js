@@ -15,6 +15,8 @@
 
 import {
   set,
+  endsWith,
+  has,
 } from 'lodash';
 
 const defaultState = {
@@ -26,6 +28,7 @@ const defaultState = {
   theme: 'default',
   idmClientID: null,
   oauthSaveObj: null,
+  oauthSchema: null,
 };
 
 const getters = {
@@ -59,6 +62,14 @@ const actions = {
 
   clearOauthSaveObj(context) {
     context.commit('clearOauthSaveObj');
+  },
+
+  setOauthSchema(context, obj) {
+    context.commit('setOauthSchema', obj);
+  },
+
+  clearOauthSchema(context) {
+    context.commit('clearOauthSchema');
   },
 
   setOauthSaveObjPropertyValue(context, obj) {
@@ -118,12 +129,29 @@ const mutations = {
     state.oauthSaveObj = obj;
   },
 
-  setOauthSaveObjPropertyValue(state, obj) {
-    set(state.oauthSaveObj, `${obj.model}.value`, obj.value);
-  },
-
   clearOauthSaveObj(state) {
     state.oauthSaveObj = null;
+  },
+
+  setOauthSchema(state, obj) {
+    state.oauthSchema = obj;
+  },
+
+  clearOauthSchema(state) {
+    state.oauthSchema = null;
+  },
+
+  setOauthSaveObjPropertyValue(state, obj) {
+    const [objName, propName] = obj.model.split('.');
+    const propertyExists = has(state.oauthSaveObj[objName], propName);
+
+    if (endsWith(obj.model, '[0]')) {
+      set(state.oauthSaveObj, `${obj.model.substring(0, obj.model.length - 3)}.value`, [obj.value]);
+    } else if (!propertyExists) {
+      set(state.oauthSaveObj, `${obj.model}`, obj.value);
+    } else {
+      set(state.oauthSaveObj, `${obj.model}.value`, obj.value);
+    }
   },
 };
 

@@ -11,16 +11,20 @@ to such license between the licensee and ForgeRock AS. -->
     <template v-slot="{ tags, inputAttrs, inputHandlers, addTag, removeTag }">
       <Draggable
         v-model="inputValue"
-        class="d-flex flex-wrap"
+        class="d-flex flex-wrap w-100"
         ghost-class="ghost-tag">
         <div
           class="mt-1 mr-1 fr-tag"
           v-for="tag in tags"
           :key="tag"
           body-class="py-1 pr-2 text-nowrap">
-          <span>{{ tag }}</span>
+          <span class="fr-tag-text">
+            {{ tag }}
+          </span>
           <span @click="removeTag(tag)">
-            <i class="material-icons-outlined">
+            <i
+              class="material-icons-outlined pl-2"
+              style="font-size: 10px; font-weight: 900;">
               close
             </i>
           </span>
@@ -99,7 +103,7 @@ export default {
   min-height: 54px;
 
   .fr-tag {
-    border-radius: 2px;
+    border-radius: 4px;
     display: flex;
     padding: 3px 5px;
     margin: 2px;
@@ -107,6 +111,9 @@ export default {
     background-color: $light-blue;
     color: $gray-900;
     cursor: move;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 
     .material-icons-outlined {
       cursor: pointer;
@@ -132,6 +139,12 @@ export default {
   .show {
     opacity: 1;
     height: 2rem;
+  }
+
+  .fr-tag-text {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
 }
 </style>

@@ -1,21 +1,17 @@
 <template>
-  <FloatingLabelInput
-    type="text"
-    v-model.number="value"
+  <FrField
+    @valueChange="updateValue"
+    :field="field"
     :disabled="uiSchema.disabled"
-    :label="uiSchema.label"
-    :help-text="uiSchema.helpText"
-    :is-html="uiSchema.isHtml"
     class="mb-4 px-1" />
 </template>
-
 <script>
-import FloatingLabelInput from '@forgerock/platform-shared/src/components/Field/FloatingLabelInput';
+import FrField from '@forgerock/platform-shared/src/components/Field';
 
 export default {
   name: 'NumberDisplay',
   components: {
-    FloatingLabelInput,
+    FrField,
   },
   props: {
     uiSchema: {
@@ -30,16 +26,22 @@ export default {
     },
   },
   computed: {
-    value: {
-      get() {
-        return this.uiSchema.value;
-      },
-      set(newValue) {
-        this.$emit('update:model', {
-          model: this.saveModel,
-          value: newValue,
-        });
-      },
+    field() {
+      return {
+        type: 'integer',
+        value: this.uiSchema.value,
+        title: this.uiSchema.label,
+        description: this.uiSchema.helpText,
+        validation: 'numeric',
+      };
+    },
+  },
+  methods: {
+    updateValue(newValue) {
+      this.$emit('update:model', {
+        model: this.saveModel,
+        value: newValue,
+      });
     },
   },
 };

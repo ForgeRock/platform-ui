@@ -129,7 +129,8 @@ to such license between the licensee and ForgeRock AS. -->
     <BModal
       :id="createModalId"
       :ref="createModalId"
-      :title="'Add ' + relationshipArrayProperty.title">
+      :title="'Add ' + relationshipArrayProperty.title"
+      size="lg">
       <FrRelationshipEdit
         :parent-resource="parentResource"
         :relationship-property="relationshipArrayProperty"
@@ -188,6 +189,8 @@ to such license between the licensee and ForgeRock AS. -->
 <script>
 import {
   find,
+  findIndex,
+  last,
   toArray,
   pick,
   times,
@@ -201,6 +204,7 @@ import {
   BFormCheckbox,
   BModal,
 } from 'bootstrap-vue';
+import dayjs from 'dayjs';
 import pluralize from 'pluralize';
 import RelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
@@ -278,6 +282,26 @@ export default {
           label: pluralize.singular(this.relationshipArrayProperty.title),
         });
 
+        if (this.relationshipArrayProperty.relationshipGrantTemporalConstraintsEnforced) {
+          this.columns.push({
+            key: '_refProperties.temporalConstraints[0].duration',
+            label: this.$t('pages.access.timeConstraint'),
+            formatter: (value) => {
+              if (value) {
+                const dates = map(value.split('/'), (date) => {
+                  const retVal = dayjs(date).format('MMMM D, YYYY h:mm A');
+
+                  return retVal;
+                });
+
+                return `${dates[0]} to ${dates[1]}`;
+              }
+
+              return value;
+            },
+          });
+        }
+
         this.gridData = [];
         this.setGridData(resourceData.data.result, this.relationshipArrayProperty);
       }).catch((error) => {
@@ -288,8 +312,16 @@ export default {
       relationships.forEach((relationship) => {
         // eslint-disable-next-line no-underscore-dangle
         const resourceCollectionSchema = find(schema.items.resourceCollection, { path: relationship._refResourceCollection });
-        // eslint-disable-next-line no-underscore-dangle
-        relationship._relationshipDetails = toArray(pick(relationship, resourceCollectionSchema.query.fields));
+        // special display logic for internal user
+        if (resourceCollectionSchema.path === 'internal/user') {
+          // _ref looks "internal/user/openidm-admin"
+          // here we are grabbing the last part of the path to display "userName" which is also the internal user's "_id"
+          // eslint-disable-next-line no-underscore-dangle
+          relationship._relationshipDetails = [last(relationship._ref.split('/'))];
+        } else {
+          // eslint-disable-next-line no-underscore-dangle
+          relationship._relationshipDetails = toArray(pick(relationship, resourceCollectionSchema.query.fields));
+        }
 
         this.gridData.push(relationship);
       });
@@ -329,7 +361,14 @@ export default {
     },
     addNewRelationship(data) {
       if (data.value) {
-        this.newRelationships.push(data.value);
+        // eslint-disable-next-line no-underscore-dangle
+        const currentIndex = findIndex(this.newRelationships, { _ref: data.value._ref });
+
+        if (currentIndex > -1) {
+          this.newRelationships[currentIndex] = data.value;
+        } else {
+          this.newRelationships.push(data.value);
+        }
       }
     },
     onRowSelected(items) {
@@ -386,6 +425,7 @@ export default {
         this.$refs[modal].hide();
       };
 
+      /* istanbul ignore next */
       idmInstance.patch(`${this.parentResource}/${this.parentId}`, patchArray).then(() => {
         loadAndCloseModal();
         this.displayNotification('IDMMessages', 'success', this.$t(translation, { resource: this.relationshipArrayProperty.title }));
@@ -400,25 +440,25 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  /deep/ {
-    .fr-resource-paginator {
-      a[role='menuitemradio'] {
-        display: none !important;
+    /deep/ {
+      .fr-resource-paginator {
+        a[role='menuitemradio'] {
+          display: none !important;
+        }
+      }
+
+      .checkbox-column {
+        width: 1px;
+        padding-right: 0;
+        vertical-align: middle;
+      }
+
+      .cursor-pointer {
+        cursor: pointer;
+      }
+
+      .modal-body {
+        overflow: visible;
       }
     }
-
-    .checkbox-column {
-      width: 1px;
-      padding-right: 0;
-      vertical-align: middle;
-    }
-
-    .cursor-pointer {
-      cursor: pointer;
-    }
-
-    .modal-body {
-      overflow: visible;
-    }
-  }
 </style>

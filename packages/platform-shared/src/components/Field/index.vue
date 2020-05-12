@@ -52,67 +52,92 @@ to such license between the licensee and ForgeRock AS. -->
       :bails="false"
       :rules="field.validation"
       v-slot="{ errors }">
-      <FrFloatingLabelInput
-        v-if="field.type === 'select' || field.type === 'multiselect'"
-        :type="field.type"
+      <FrMultiselect
+        @input="$emit('valueChange', field.value)"
+        v-if="field.type === 'multiselect'"
         class="floating-label-input"
         :field-name="field.key"
         v-model="field.value"
-        v-bind="$props"
+        v-bind="attrs"
         :disabled="field.disabled"
         :help-text="getDescription()"
         :select-options="field.options"
         :label="getLabel()" />
-      <FrFloatingLabelInput
-        v-else-if="field.type === 'password'"
-        type="password"
-        :class="[{'fr-error': errors.length}, 'floating-label-input']"
-        v-model="field.value"
-        v-bind="$props"
-        :disabled="field.disabled"
+      <FrSelect
+        @input="$emit('valueChange', field.value)"
+        v-if="field.type === 'select'"
+        class="floating-label-input"
         :field-name="field.key"
-        :reveal="true"
-        :help-text="getDescription()"
-        :label="getLabel()" />
-      <FrFloatingLabelInput
-        v-else-if="field.type === 'integer'"
-        type="number"
-        :class="[{'fr-error': errors.length}, 'floating-label-input']"
-        v-model.number="field.value"
-        v-bind="$props"
-        :disabled="field.disabled"
-        :field-name="field.key"
-        :help-text="getDescription()"
-        :label="getLabel()" />
-      <FrKeyValueList
-        v-else-if="field.type === 'object'"
         v-model="field.value"
+        v-bind="attrs"
         :disabled="field.disabled"
-        :class="{'fr-error': errors.length}" />
-      <FrTag
-        v-else-if="field.type === 'tag'"
-        v-model="field.value"
-        :field-title="field.title"
-        :disabled="field.disabled"
-        :class="{'fr-error': errors.length}" />
-      <FrFloatingLabelInput
-        v-else
+        :help-text="getDescription()"
+        :select-options="field.options"
+        :label="getLabel()" />
+      <FrBasicInput
+        v-else-if="field.type === 'password' || field.type === 'string'"
         :type="field.type"
-        :class="[{'fr-error': errors.length}, 'floating-label-input']"
+        :class="[{'fr-error': errors.length || failedPolicies.length}, 'floating-label-input']"
         v-model="field.value"
-        v-bind="$props"
+        v-bind="attrs"
         :disabled="field.disabled"
         :field-name="field.key"
         :help-text="getDescription()"
         :label="getLabel()">
-        <!-- @slot allows buttons to be appended -->
+        <template slot="prepend">
+          <slot name="prepend" />
+        </template>
         <template slot="append">
           <slot name="append" />
         </template>
-      </FrFloatingLabelInput>
-      <!-- @slot allows different error displays -->
+      </FrBasicInput>
+      <FrBasicInput
+        v-else-if="field.type === 'integer'"
+        @input="$emit('valueChange', field.value)"
+        :class="[{'fr-error': errors.length || failedPolicies.length}, 'floating-label-input']"
+        v-model.number="field.value"
+        v-bind="attrs"
+        :disabled="field.disabled"
+        :field-name="field.key"
+        :help-text="getDescription()"
+        :label="getLabel()">
+        <template slot="prepend">
+          <slot name="prepend" />
+        </template>
+        <template slot="append">
+          <slot name="append" />
+        </template>
+      </FrBasicInput>
+      <FrKeyValueList
+        v-else-if="field.type === 'object'"
+        v-model="field.value"
+        :disabled="field.disabled"
+        :class="{'fr-error': errors.length || failedPolicies.length}" />
+      <FrTag
+        @input="$emit('valueChange', field.value)"
+        v-else-if="field.type === 'tag'"
+        v-model="field.value"
+        :field-title="field.title"
+        :disabled="field.disabled"
+        :class="{'fr-error': errors.length || failedPolicies.length}" />
+      <FrTextArea
+        v-else-if="field.type === 'textarea'"
+        :class="[{'fr-error': errors.length || failedPolicies.length}, 'floating-label-input']"
+        v-model="field.value"
+        v-bind="attrs"
+        :disabled="field.disabled"
+        :field-name="field.key"
+        :help-text="getDescription()"
+        :label="getLabel()" />
       <slot name="validationError">
+        <!-- static error display through props  -->
         <FrValidationError
+          v-if="failedPolicies.length"
+          :validator-errors="failedPolicies"
+          :field-name="field.key" />
+        <!-- dynamic error display through vee-validate  -->
+        <FrValidationError
+          v-else
           class="error-messages"
           :validator-errors="errors"
           :field-name="field.key" />
@@ -139,9 +164,12 @@ import {
 } from 'bootstrap-vue';
 import { ValidationProvider } from 'vee-validate';
 import ValidationErrorList from '@forgerock/platform-shared/src/components/ValidationErrorList';
+import BasicInput from '@forgerock/platform-shared/src/components/Field/Basic';
+import TextArea from '@forgerock/platform-shared/src/components/Field/TextArea';
+import Select from '@forgerock/platform-shared/src/components/Field/Select';
+import Multiselect from '@forgerock/platform-shared/src/components/Field/Multiselect';
 import FrTag from '@forgerock/platform-shared/src/components/Field/Tag';
 import { ToggleButton } from 'vue-js-toggle-button';
-import FloatingLabelInput from './FloatingLabelInput';
 import KeyValueList from './KeyValueList';
 
 export default {
@@ -149,7 +177,10 @@ export default {
   components: {
     BPopover,
     BFormCheckbox,
-    FrFloatingLabelInput: FloatingLabelInput,
+    FrBasicInput: BasicInput,
+    FrTextArea: TextArea,
+    FrSelect: Select,
+    FrMultiselect: Multiselect,
     FrValidationError: ValidationErrorList,
     FrKeyValueList: KeyValueList,
     FrTag,
@@ -160,17 +191,10 @@ export default {
     return {
       oldValue: '',
       loading: true,
+      attrs: {},
     };
   },
   props: {
-    /**
-     * Function called after input value is changed (used in callback components)
-     */
-    callback: {
-      type: Object,
-      default: () => {},
-      required: false,
-    },
     /**
      * Secondary way of disabling this field
      */
@@ -196,8 +220,8 @@ export default {
      * List of errors related to input value (used in callback components)
      */
     failedPolicies: {
-      type: [Array, Object],
-      default: () => {},
+      type: Array,
+      default: () => [],
     },
     /**
      * Contains metadata for current field
@@ -244,13 +268,6 @@ export default {
     prependTitle: {
       type: Boolean,
       default: false,
-    },
-    /**
-     * Function used to validate data (used in callback components)
-     */
-    validator: {
-      type: Function,
-      default: () => undefined,
     },
   },
   methods: {
@@ -311,6 +328,7 @@ export default {
     },
   },
   mounted() {
+    this.attrs = { ...this.$options.propsData, ...this.$attrs };
     this.oldValue = cloneDeep(this.field.value);
     this.field.type = this.mapType(this.field);
     if (!this.field.validation) {
