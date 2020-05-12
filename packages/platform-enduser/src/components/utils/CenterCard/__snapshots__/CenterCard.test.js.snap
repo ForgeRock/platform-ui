@@ -3,7 +3,7 @@
 exports[`CenterCard.vue Center Card component loaded without header images 1`] = `
 <bcontainer-stub tag="div" fluid="true" class="px-0 h-100 d-flex">
   <div class="fr-m-auto fr-center-card align-self-center">
-    <bcard-stub bodytag="div" title="" titletag="h4" subtitle="" subtitletag="h6" subtitletextvariant="muted" headertag="header" footertag="footer" tag="div" nobody="true" class="border-xs-0 border-sm d-flex fr-stretch-card">
+    <bcard-stub bodytag="div" titletag="h4" subtitletag="h6" subtitletextvariant="muted" headertag="header" footertag="footer" tag="div" nobody="true" class="border-xs-0 border-sm d-flex fr-stretch-card">
       <bcardheader-stub headertag="div" class="d-flex align-items-center flex-fill">
         <div class="d-flex flex-fill flex-column justify-content-center">
           <!---->
