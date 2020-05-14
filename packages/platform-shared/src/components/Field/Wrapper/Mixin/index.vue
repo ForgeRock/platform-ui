@@ -59,7 +59,7 @@ export default {
      * v-model value
      */
     value: {
-      type: [Array, Object, Number, String],
+      type: [Array, Object, Number, String, Boolean],
       default: '',
     },
   },

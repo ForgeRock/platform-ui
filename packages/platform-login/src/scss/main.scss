@@ -16,6 +16,19 @@
   /* stylelint-enable */
 }
 
+#app {
+  transition: all 0.2s ease;
+  height: 100%;
+
+  .container,
+  .container-fluid {
+    @media (min-width: 768px) {
+      padding-left: $grid-gutter-width;
+      padding-right: $grid-gutter-width;
+    }
+  }
+}
+
 //Circle and icon
 .fr-resource-circle {
   width: 75px;

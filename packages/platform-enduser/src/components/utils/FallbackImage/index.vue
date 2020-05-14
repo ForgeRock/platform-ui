@@ -22,7 +22,6 @@ to such license between the licensee and ForgeRock AS. -->
 </template>
 
 <script>
-import { isNull, isUndefined } from 'lodash';
 import axios from 'axios';
 
 /**
@@ -32,6 +31,10 @@ import axios from 'axios';
 export default {
   name: 'ImageFallback',
   props: {
+    inputClass: {
+      type: String,
+      default: () => '',
+    },
     src: {
       type: String,
       default: () => '',
@@ -55,7 +58,7 @@ export default {
     };
   },
   mounted() {
-    if (!isNull(this.src) && !isUndefined(this.src) && this.src.length > 0) {
+    if (this.src) {
       axios.get(`${this.src}`).then(({ status }) => {
         this.imageFound = status === 200;
       }).catch((error) => {

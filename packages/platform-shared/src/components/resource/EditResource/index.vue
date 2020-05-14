@@ -135,17 +135,19 @@ to such license between the licensee and ForgeRock AS. -->
         {{ $t('pages.access.deleteConfirm') }} {{ this.resourceName }}?
       </div>
 
-      <template v-slot:modal-footer>
-        <div class="w-100">
-          <div class="float-right">
-            <BButton
-              type="button"
-              variant="danger"
-              @click="deleteResource">
-              {{ $t('common.delete') }}
-            </BButton>
-          </div>
-        </div>
+      <template v-slot:modal-footer="{ cancel }">
+        <BButton
+          variant="link"
+          class="text-danger"
+          @click="cancel()">
+          {{ $t('common.cancel') }}
+        </BButton>
+        <BButton
+          type="button"
+          variant="danger"
+          @click="deleteResource">
+          {{ $t('common.delete') }}
+        </BButton>
       </template>
     </BModal>
 
@@ -158,17 +160,18 @@ to such license between the licensee and ForgeRock AS. -->
         :policy-api="`${resourceType}/${resourceName}/policyTest`"
         v-model="passwordField.value" />
 
-      <template v-slot:modal-footer>
-        <div class="w-100">
-          <div class="float-right">
-            <BButton
-              type="button"
-              variant="primary"
-              @click="savePassword">
-              {{ $t('common.save') }}
-            </BButton>
-          </div>
-        </div>
+      <template v-slot:modal-footer="{ cancel }">
+        <BButton
+          variant="link"
+          @click="cancel()">
+          {{ $t('common.cancel') }}
+        </BButton>
+        <BButton
+          type="button"
+          variant="primary"
+          @click="savePassword">
+          {{ $t('common.save') }}
+        </BButton>
       </template>
     </BModal>
   </BContainer>

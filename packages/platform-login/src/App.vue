@@ -35,6 +35,8 @@ to such license between the licensee and ForgeRock AS. -->
 
 <script>
 import Alert from '@forgerock/platform-shared/src/components/Alert/';
+import './scss/main.scss';
+import 'bootstrap/scss/bootstrap.scss';
 
 export default {
   name: 'App',
@@ -43,21 +45,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-@import 'scss/main';
-@import '~bootstrap/scss/bootstrap.scss';
-
-#app {
-  transition: all 0.2s ease;
-  height: 100%;
-
-  .container,
-  .container-fluid {
-    @media (min-width: 768px) {
-      padding-left: $grid-gutter-width;
-      padding-right: $grid-gutter-width;
-    }
-  }
-}
-</style>

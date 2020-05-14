@@ -66,7 +66,7 @@ import {
   BCardBody,
   BButton,
 } from 'bootstrap-vue';
-import { FRAuth, Config } from '@forgerock/javascript-sdk';
+import { FRAuth, FRWebAuthn, Config } from '@forgerock/javascript-sdk';
 import Vue from 'vue';
 import WithCallback from '@forgerock/platform-shared/src/hoc/CallbackHoc';
 import FrField from '@forgerock/platform-shared/src/components/Field';
@@ -168,6 +168,26 @@ export default {
         failedPolicies: translatedPolicyMessages,
         callback,
       });
+    },
+    /**
+      * @description handles steps with metadata callbacks like webAuthn
+      */
+    metadataCallback(step) {
+      const webAuthnStepType = FRWebAuthn.getWebAuthnStepType(step);
+      if (webAuthnStepType === 0) {
+        // Not a webAuthn step
+        this.nextStep();
+      } else if (webAuthnStepType === 1) {
+        // Authenticate with a registered device
+        FRWebAuthn.authenticate(step).then(() => {
+          this.nextStep();
+        });
+      } else if (webAuthnStepType === 2) {
+        // Register a new device
+        FRWebAuthn.register(step).then(() => {
+          this.nextStep();
+        });
+      }
     },
     translatePolicyFailures(failedPolicies) {
       return map(failedPolicies, (policy) => {
@@ -274,6 +294,7 @@ export default {
         case 'MetadataCallback':
           // Do nothing here. If someone is using MetadataCallback they would need to inject their logic here to utilize result
           // const metadata = callback.getData();
+          this.metadataCallback(this.step);
           break;
         case 'PasswordCallback':
           this.addField('password', callback, index);

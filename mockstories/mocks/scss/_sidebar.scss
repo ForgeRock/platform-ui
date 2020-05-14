@@ -1,4 +1,4 @@
-/* Copyright 2019 ForgeRock AS. All Rights Reserved
+/* Copyright 2019-2020 ForgeRock AS. All Rights Reserved
 
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
@@ -164,7 +164,7 @@ to such license between the licensee and ForgeRock AS. */
                 &:after {
                   display: none;
                   border: none;
-                  content: "expand_more";
+                  content: 'expand_more';
                   font-family: 'Material Icons Outlined';
                   font-size: 1rem;
                   margin: 0;
@@ -197,8 +197,8 @@ to such license between the licensee and ForgeRock AS. */
             &.submenu-toggle {
                 &:after {
                     border: none;
-                    content: "expand_more";
-                    font-family: "Material Icons Outlined";
+                    content: 'expand_more';
+                    font-family: 'Material Icons Outlined';
                     font-size: 1rem;
                     line-height: 1;
                     position: absolute;
@@ -208,7 +208,7 @@ to such license between the licensee and ForgeRock AS. */
                     display: none;
                 }
                 &[aria-expanded="true"]:after {
-                    content: "expand_less";
+                    content: 'expand_less';
                 }
             }
         }

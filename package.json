@@ -17,8 +17,8 @@
     "@storybook/addon-notes": "5.3.5",
     "@storybook/addon-storysource": "5.3.5",
     "@storybook/vue": "5.3.5",
-    "@vue/cli-plugin-babel": "3.8.0",
-    "@vue/cli-service": "3.8.0",
+    "@vue/cli-plugin-babel": "4.3.1",
+    "@vue/cli-service": "4.3.1",
     "@vue/test-utils": "1.0.0-beta.29",
     "node-sass": "4.12.0",
     "sass-loader": "8.0.2",
@@ -29,6 +29,10 @@
     "vue-docgen-loader": "1.5.0",
     "vue-docgen-api": "4.9.0",
     "vue-template-compiler": "2.6.11"
+  },
+  "resolutions": {
+    "**/**/minimist": "1.2.5",
+    "**/**/with/acorn": "4.0.13"
   },
   "workspaces": {
     "packages": [
