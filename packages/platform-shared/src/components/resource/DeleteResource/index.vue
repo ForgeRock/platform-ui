@@ -16,22 +16,19 @@ to such license between the licensee and ForgeRock AS. -->
     </template>
     <p>{{ $t(`managed.deleteResource.body`, { resource: resourceName }) }}</p>
     <template v-slot:modal-footer="{ cancel }">
-      <BRow>
-        <div class="d-flex justify-content-end w-100 pr-3">
-          <BButton
-            variant="none"
-            class="test_cancelButton"
-            @click="cancel()">
-            {{ $t('common.cancel') }}
-          </BButton>
-          <BButton
-            @click="deleteResource()"
-            class="test_deleteButton"
-            variant="danger">
-            {{ $t(`managed.deleteResource.primaryButton`, { resource: resourceName }) }}
-          </BButton>
-        </div>
-      </BRow>
+      <BButton
+        variant="link"
+        class="text-danger"
+        data-test-id="cancelButton"
+        @click="cancel()">
+        {{ $t('common.cancel') }}
+      </BButton>
+      <BButton
+        @click="deleteResource()"
+        data-test-id="deleteButton"
+        variant="danger">
+        {{ $t(`managed.deleteResource.primaryButton`, { resource: resourceName }) }}
+      </BButton>
     </template>
   </BModal>
 </template>
@@ -39,7 +36,6 @@ to such license between the licensee and ForgeRock AS. -->
 <script>
 import {
   BButton,
-  BRow,
   BModal,
 } from 'bootstrap-vue';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
@@ -51,7 +47,6 @@ export default {
   ],
   components: {
     BButton,
-    BRow,
     BModal,
   },
   computed: {

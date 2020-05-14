@@ -265,7 +265,7 @@ Currently environment variables are:
 1. VUE_APP_LOGIN_URL - URL for the location of the login UI
 1. VUE_APP_ADMIN_URL - URL for the location of the admin UI
 1. THEME - Will load a corresponding theme.scss file (example dark-theme.scss).
-1. VUE_APP_ENDUSER_CLIENT_ID - defaults to 'endUserUIClient'
+1. VUE_APP_ENDUSER_CLIENT_ID - defaults to 'end-user-ui'
 
 These are made available in the .env file, and overridden by system environment variables in the .env.production file for dockerization.
 

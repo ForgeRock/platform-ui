@@ -18,5 +18,9 @@
 
   .modal-footer {
     border-top: solid $gray-200 1px;
+
+    > * {
+      margin: 0.25rem;
+    }
   }
 }

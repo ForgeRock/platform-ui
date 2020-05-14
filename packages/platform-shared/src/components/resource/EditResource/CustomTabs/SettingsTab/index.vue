@@ -4,7 +4,7 @@ Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
-  <BTab :title="$t('pages.access.settings')">
+  <BTab :title="$t('common.settings')">
     <table class="table">
       <tbody>
         <tr
@@ -50,21 +50,17 @@ to such license between the licensee and ForgeRock AS. -->
         </div>
       </div>
 
-      <template v-slot:modal-footer>
-        <div class="w-100">
-          <div class="float-right">
-            <BButton
-              variant="link"
-              @click="hideModal">
-              {{ $t('common.cancel') }}
-            </BButton>
-            <BButton
-              variant="primary"
-              @click="saveSetting">
-              {{ $t('common.save') }}
-            </BButton>
-          </div>
-        </div>
+      <template v-slot:modal-footer="{ cancel }">
+        <BButton
+          variant="link"
+          @click="cancel()">
+          {{ $t('common.cancel') }}
+        </BButton>
+        <BButton
+          variant="primary"
+          @click="saveSetting">
+          {{ $t('common.save') }}
+        </BButton>
       </template>
     </BModal>
   </BTab>
