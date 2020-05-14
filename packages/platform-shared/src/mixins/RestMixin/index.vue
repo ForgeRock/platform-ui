@@ -13,6 +13,7 @@ import axios from 'axios';
 import store from '../../store/index';
 
 const idmContext = process.env.VUE_APP_IDM_URL;
+const amContext = process.env.VUE_APP_AM_URL;
 
 /**
  * @description Rest API call mixin for global use
@@ -20,7 +21,7 @@ const idmContext = process.env.VUE_APP_IDM_URL;
 export default {
   name: 'RestMixin',
   methods: {
-    // Generated an axios ajax request service for consistent use of calls to IDM
+    // Generated an axios ajax request service for consistent use of calls to IDM or AM
     getRequestService(config) {
       let baseURL = idmContext;
       let timeout = 5000;
@@ -30,6 +31,32 @@ export default {
       };
 
       if (config) {
+        switch (config.context) {
+        case 'IDM':
+          baseURL = idmContext;
+          break;
+        case 'AM':
+          baseURL = amContext;
+          break;
+        default:
+          config.context = 'IDM';
+          baseURL = idmContext;
+          break;
+        }
+
+        // Use Legacy API
+        if (config.context === 'AM') {
+          const requestDetails = {
+            baseURL: `${amContext}/json/`,
+            timeout: 5000,
+            headers: {
+              'Content-type': 'application/json',
+              'accept-api-version': config.apiVersion || 'protocol=2.1,resource=1.0',
+            },
+          };
+          return axios.create(requestDetails);
+        }
+
         if (config.baseURL) {
           // eslint-disable-next-line prefer-destructuring
           baseURL = config.baseURL;
@@ -69,8 +96,7 @@ export default {
     },
     // Headers used for oauth requests and selfservice
     getAnonymousHeaders() {
-      const headers = store.state.ApplicationStore.authHeaders || {};
-      return headers;
+      return store.state.ApplicationStore.authHeaders || {};
     },
   },
 };

@@ -33,12 +33,17 @@ to such license between the licensee and ForgeRock AS. -->
     <ToggleButton
       v-if="field.type === 'boolean'"
       :css-colors="true"
-      v-model="field.value"
+      v-model="inputValue"
+      v-on="$listeners"
+      :sync="true"
+      :height="field.height || 22"
+      :width="field.width || 50"
       :disabled="field.disabled"
       class="pr-2" />
     <BFormCheckbox
       v-else-if="field.type === 'checkbox'"
-      v-model="field.value"
+      v-model="inputValue"
+      v-on="$listeners"
       :disabled="field.disabled"
       class="mr-0"
       inline />
@@ -57,8 +62,9 @@ to such license between the licensee and ForgeRock AS. -->
         v-if="field.type === 'multiselect'"
         class="floating-label-input"
         :field-name="field.key"
-        v-model="field.value"
+        v-model="inputValue"
         v-bind="attrs"
+        v-on="$listeners"
         :disabled="field.disabled"
         :help-text="getDescription()"
         :select-options="field.options"
@@ -68,8 +74,9 @@ to such license between the licensee and ForgeRock AS. -->
         v-if="field.type === 'select'"
         class="floating-label-input"
         :field-name="field.key"
-        v-model="field.value"
+        v-model="inputValue"
         v-bind="attrs"
+        v-on="$listeners"
         :disabled="field.disabled"
         :help-text="getDescription()"
         :select-options="field.options"
@@ -78,8 +85,9 @@ to such license between the licensee and ForgeRock AS. -->
         v-else-if="field.type === 'password' || field.type === 'string'"
         :type="field.type"
         :class="[{'fr-error': errors.length || failedPolicies.length}, 'floating-label-input']"
-        v-model="field.value"
+        v-model="inputValue"
         v-bind="attrs"
+        v-on="$listeners"
         :disabled="field.disabled"
         :field-name="field.key"
         :help-text="getDescription()"
@@ -95,8 +103,9 @@ to such license between the licensee and ForgeRock AS. -->
         v-else-if="field.type === 'integer'"
         @input="$emit('valueChange', field.value)"
         :class="[{'fr-error': errors.length || failedPolicies.length}, 'floating-label-input']"
-        v-model.number="field.value"
+        v-model.number="inputValue"
         v-bind="attrs"
+        v-on="$listeners"
         :disabled="field.disabled"
         :field-name="field.key"
         :help-text="getDescription()"
@@ -110,21 +119,24 @@ to such license between the licensee and ForgeRock AS. -->
       </FrBasicInput>
       <FrKeyValueList
         v-else-if="field.type === 'object'"
-        v-model="field.value"
+        v-model="inputValue"
+        v-on="$listeners"
         :disabled="field.disabled"
         :class="{'fr-error': errors.length || failedPolicies.length}" />
       <FrTag
         @input="$emit('valueChange', field.value)"
         v-else-if="field.type === 'tag'"
-        v-model="field.value"
+        v-model="inputValue"
+        v-on="$listeners"
         :field-title="field.title"
         :disabled="field.disabled"
         :class="{'fr-error': errors.length || failedPolicies.length}" />
       <FrTextArea
         v-else-if="field.type === 'textarea'"
         :class="[{'fr-error': errors.length || failedPolicies.length}, 'floating-label-input']"
-        v-model="field.value"
+        v-model="inputValue"
         v-bind="attrs"
+        v-on="$listeners"
         :disabled="field.disabled"
         :field-name="field.key"
         :help-text="getDescription()"
@@ -143,13 +155,18 @@ to such license between the licensee and ForgeRock AS. -->
           :field-name="field.key" />
       </slot>
     </ValidationProvider>
-    <label
-      v-if="!this.prependTitle && (this.field.type === 'boolean' || this.field.type === 'checkbox')"
-      class="text-secondary mb-1 align-top">
-      <span :id="`helppopover-${field.key}`">
-        {{ field.title }}
-      </span>
-    </label>
+    <template v-if="this.field.type === 'boolean' || this.field.type === 'checkbox'">
+      <label
+        v-if="!this.prependTitle"
+        class="text-secondary mb-1 align-top">
+        <div :id="`helppopover-${field.key}`">
+          {{ field.title }}
+        </div>
+      </label>
+      <div class="text-muted">
+        <small v-html="getDescription()" />
+      </div>
+    </template>
   </div>
 </template>
 
@@ -157,6 +174,7 @@ to such license between the licensee and ForgeRock AS. -->
 import {
   capitalize,
   cloneDeep,
+  isEqual,
 } from 'lodash';
 import {
   BPopover,
@@ -189,9 +207,10 @@ export default {
   },
   data() {
     return {
-      oldValue: '',
-      loading: true,
+      inputValue: this.field.value,
       attrs: {},
+      loading: true,
+      oldValue: '',
     };
   },
   props: {
@@ -240,6 +259,8 @@ export default {
      *   disabled: boolean - optional whether field is currently disabled - defaults to false
      *   enum: array - values of options (optional alternative for building options array)
      *   enumNames: array - visible labels of options (optional alternative for building options array)
+     *   height: number - optional value that overwrites default height of toggle button
+     *   width: number - optional value that overwrites default width of toggle button
      * }
      * e.g.:
      * {
@@ -383,10 +404,17 @@ export default {
      */
     field: {
       handler(newField) {
-        if (this.oldValue !== newField.value) {
+        if (!isEqual(this.oldValue, newField.value)) {
+          this.inputValue = this.field.value;
           this.oldValue = cloneDeep(newField.value);
-          this.$emit('valueChange', this.field);
         }
+      },
+      deep: true,
+    },
+    inputValue: {
+      handler(event) {
+        this.field.value = event;
+        this.$emit('valueChange', this.field.value);
       },
       deep: true,
     },

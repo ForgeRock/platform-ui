@@ -33,6 +33,7 @@
     "saveChanges": "Save changes",
     "saving": "Saving",
     "search": "Search",
+    "settings": "Settings",
     "show": "Show",
     "signUp": "Sign Up",
     "start": "Start",
@@ -40,6 +41,7 @@
     "time": "Time",
     "typeToSearch": "Type to search",
     "yes": "Yes",
+    "waitingToConnect": "Waiting to connect...",
     "helpText": {
       "timeConstraint": "Assign role only during a selected time period."
     },
@@ -109,12 +111,25 @@
       "setUp": "Set up",
       "privilege": "Privilege",
       "privileges": "Privileges",
-      "settings": "Settings",
       "timeConstraint": "Time Constraint"
     }
+  },
+  "scriptEditor": {
+    "title": "Script",
+    "type": "Type: ",
+    "uploadFile": "Upload File",
+    "variables": "Variables",
+    "defineCustom": "Define custom variables to pass to your script.",
+    "value": "Value",
+    "json": "JSON",
+    "jsonNotStructured": "JSON is not structured properly"
   },
   "timezone": {
     "helpText": "Time zone offset based on how many hours a location is from GMT.",
     "linkText": "Time zones chart"
+  },
+  "errors": {
+    "errorSaving": "Error saving list",
+    "errorCreating": "Error creating file"
   }
 }
