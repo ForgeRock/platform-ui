@@ -39,21 +39,17 @@ to such license between the licensee and ForgeRock AS. -->
       size="lg">
       <!-- TODO: INJECT PRIVILEGE EDITOR HERE -->
 
-      <template v-slot:modal-footer>
-        <div class="w-100">
-          <div class="float-right">
-            <BButton
-              variant="link"
-              @click="hideModal">
-              {{ $t('common.cancel') }}
-            </BButton>
-            <BButton
-              variant="primary"
-              @click="savePrivilege">
-              {{ $t('common.save') }}
-            </BButton>
-          </div>
-        </div>
+      <template v-slot:modal-footer="{ cancel }">
+        <BButton
+          variant="link"
+          @click="cancel()">
+          {{ $t('common.cancel') }}
+        </BButton>
+        <BButton
+          variant="primary"
+          @click="savePrivilege">
+          {{ $t('common.save') }}
+        </BButton>
       </template>
     </BModal>
 
@@ -112,9 +108,6 @@ export default {
   methods: {
     showModal() {
       this.$refs.privilegeModal.show();
-    },
-    hideModal() {
-      this.$refs.privilegeModal.hide();
     },
     removePrivileges() {
       this.$refs.removePrivilege.hide();

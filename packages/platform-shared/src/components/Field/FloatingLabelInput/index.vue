@@ -637,9 +637,9 @@ select.custom-select ~ label {
     font-family: 'Material Icons Outlined';
     font-weight: 400;
     font-style: normal;
-    line-height: 44px;
+    line-height: 40px;
     font-size: 16px;
-    height: 44px;
+    height: 40px;
     color: $success;
     letter-spacing: normal;
     text-transform: none;
