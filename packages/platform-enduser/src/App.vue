@@ -19,6 +19,7 @@ import {
 import { mapState } from 'vuex';
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 import Layout from '@forgerock/platform-shared/src/components/Layout';
+import './scss/main.scss';
 
 export default {
   name: 'App',
@@ -106,7 +107,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-@import 'scss/main.scss';
-</style>

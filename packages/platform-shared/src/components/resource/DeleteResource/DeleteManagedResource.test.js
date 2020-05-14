@@ -30,12 +30,12 @@ describe('Delete Managed Resource', () => {
     },
   });
   it('does not call delete method when cancel is clicked', () => {
-    const cancelButton = wrapper.find('.test_cancelButton');
+    const cancelButton = wrapper.find('[data-test-id="cancelButton"]');
     cancelButton.trigger('click');
     expect(wrapper.emitted()['resource-deleted']).toBe(undefined);
   });
   it('calls appropriate delete method when delete button is clicked', () => {
-    const deleteButton = wrapper.find('.test_deleteButton');
+    const deleteButton = wrapper.find('[data-test-id="deleteButton"]');
     deleteButton.trigger('click');
     expect(wrapper.emitted()['resource-deleted']).toBeTruthy();
   });

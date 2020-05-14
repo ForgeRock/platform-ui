@@ -40,7 +40,7 @@ describe('Dashboard.vue', () => {
           idmBaseURL: 'https://default.iam.example.com/openidm',
           loginURL: 'http://localhost:8083/#/service/Login',
           theme: 'default',
-          idmClientID: 'endUserUIClient',
+          idmClientID: 'end-user-ui',
           adminURL: 'http://localhost:8082',
         },
       },
