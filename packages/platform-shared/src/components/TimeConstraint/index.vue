@@ -12,6 +12,7 @@ to such license between the licensee and ForgeRock AS. -->
         class="form-group">
         <FrDatepicker
           v-model="startDate"
+          :disabled="disabled"
           :placeholder="$t('common.date')" />
       </BCol>
       <BCol
@@ -19,6 +20,7 @@ to such license between the licensee and ForgeRock AS. -->
         class="form-group">
         <FrTimepicker
           v-model="startTime"
+          :disabled="disabled"
           :placeholder="$t('common.time')" />
       </BCol>
     </BRow>
@@ -30,6 +32,7 @@ to such license between the licensee and ForgeRock AS. -->
         class="form-group">
         <FrDatepicker
           v-model="endDate"
+          :disabled="disabled"
           :placeholder="$t('common.date')" />
       </BCol>
       <BCol
@@ -37,6 +40,7 @@ to such license between the licensee and ForgeRock AS. -->
         class="form-group">
         <FrTimepicker
           v-model="endTime"
+          :disabled="disabled"
           :placeholder="$t('common.time')" />
       </BCol>
     </BRow>
@@ -45,6 +49,7 @@ to such license between the licensee and ForgeRock AS. -->
       <BCol lg>
         <FrTimezoneOffset
           v-model="offset"
+          :disabled="disabled"
           :placeholder="$t('common.placeholders.timeZoneOffset')" />
       </BCol>
     </BRow>
@@ -89,6 +94,13 @@ export default {
     value: {
       type: String,
       default: '',
+    },
+    /**
+     * Whether component interaction is available
+     */
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

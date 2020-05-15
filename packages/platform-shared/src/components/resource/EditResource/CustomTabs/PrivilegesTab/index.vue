@@ -5,13 +5,14 @@ or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
   <BTab :title="$t('pages.access.privileges')">
-    <div class="px-4 py-2 card-header">
+    <div
+      v-if="!disabled"
+      class="px-4 py-2 card-header">
       <BRow>
         <BCol
           md="7"
           class="my-1">
           <BButton
-            type="button"
             variant="primary"
             class="mr-1"
             @click="$refs.addPrivilegesModal.show()"
@@ -19,7 +20,7 @@ to such license between the licensee and ForgeRock AS. -->
             <i class="material-icons mr-2">
               add
             </i>
-            {{ $t("common.add") }} {{ $t("pages.access.privileges") }}
+            {{ $t("pages.access.addPrivileges") }}
           </BButton>
         </BCol>
       </BRow>
@@ -64,6 +65,7 @@ to such license between the licensee and ForgeRock AS. -->
             :item="data">
             <div class="text-right">
               <BDropdown
+                v-if="!disabled"
                 variant="link"
                 no-caret
                 right
@@ -92,15 +94,15 @@ to such license between the licensee and ForgeRock AS. -->
     <BModal
       id="editPrivilegeModal"
       ref="editPrivilegeModal"
-      :title="`${$t('common.edit')} ${$t('pages.access.privilege')}`"
+      :title="$t('pages.access.editPrivilege')"
       body-class="p-0"
       size="lg">
       <FrPrivilegeEditor
         v-if="privilegeToEdit"
         :privilege="privilegeToEdit"
         :identity-object-schema="schemaMap[privilegeToEdit.path]"
+        :disabled="privilegesField.disabled"
         @input="updatePrivilege" />
-
       <template v-slot:modal-footer="{ cancel }">
         <BButton
           variant="link"
@@ -109,6 +111,7 @@ to such license between the licensee and ForgeRock AS. -->
         </BButton>
         <BButton
           variant="primary"
+          :disabled="privilegesField.disabled"
           @click="savePrivilege">
           {{ $t('common.save') }}
         </BButton>
@@ -118,7 +121,7 @@ to such license between the licensee and ForgeRock AS. -->
     <BModal
       id="addPrivilegesModal"
       ref="addPrivilegesModal"
-      :title="`${$t('common.add')} ${$t('pages.access.role')} ${$t('pages.access.privileges')}`"
+      :title="$t('pages.access.addPrivileges')"
       body-class="p-0"
       size="lg">
       <FrAddPrivileges
@@ -145,25 +148,21 @@ to such license between the licensee and ForgeRock AS. -->
       ref="removePrivilege"
       :title="$t('pages.access.removeModalTitle')">
       <div>
-        {{ $t('pages.access.removeConfirm') }} {{ $t("pages.access.privilege") }}?
+        {{ $t('pages.access.removeConfirm') }}
       </div>
-      <div
-        slot="modal-footer"
-        class="w-100">
-        <div class="float-right">
-          <BButton
-            variant="btn-link text-danger mr-2"
-            @click="$refs.removePrivilege.hide()">
-            {{ $t('common.cancel') }}
-          </BButton>
-          <BButton
-            type="button"
-            variant="danger"
-            @click="removePrivilege">
-            {{ $t('common.remove') }}
-          </BButton>
-        </div>
-      </div>
+      <template v-slot:modal-footer="{ cancel }">
+        <BButton
+          variant="link"
+          class="text-danger"
+          @click="cancel()">
+          {{ $t('common.cancel') }}
+        </BButton>
+        <BButton
+          variant="danger"
+          @click="removePrivilege">
+          {{ $t('common.remove') }}
+        </BButton>
+      </template>
     </BModal>
   </BTab>
 </template>
@@ -185,8 +184,11 @@ import {
   BTab,
   BTable,
 } from 'bootstrap-vue';
+import axios from 'axios';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import PluralizeFilter from '@forgerock/platform-shared/src/filters/PluralizeFilter';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
@@ -239,6 +241,10 @@ export default {
     NotificationMixin,
   ],
   props: {
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
     privilegesField: {
       type: Object,
       default: () => {},
@@ -261,7 +267,7 @@ export default {
     /**
     * Shows privilege editor modal and sets the current privilegeToEdit and editIndex
     *
-    * @property {object} privlege - new privilege object
+    * @property {object} privilege - new privilege object
     * @property {number} index - privilege array index
     */
     showEditModal(privilege, index) {
@@ -302,7 +308,7 @@ export default {
       this.privilegeToEdit = newVal;
     },
     /**
-    * Saves the current privilegeToEdit to the correct editIndex in the privielges array
+    * Saves the current privilegeToEdit to the correct editIndex in the privileges array
     */
     savePrivilege() {
       if (this.privilegeToEdit.accessFlags.length === 0) {
@@ -342,7 +348,7 @@ export default {
       }
     },
     /**
-    * Saves privielges
+    * Saves privileges
     */
     savePrivileges() {
       const idmInstance = this.getRequestService();
@@ -372,22 +378,45 @@ export default {
     },
   },
   mounted() {
-    const idmInstance = this.getRequestService();
     // get schema for all internal/role and all managed objects that are not managed/assignment
-    idmInstance.get('schema?_queryFilter=resourceCollection eq "internal/role" or resourceCollection sw "managed" and !(resourceCollection eq "managed/assignment")&_fields=*').then((response) => {
-      const schemas = response.data.result;
+    if (this.$store.state.userId === 'openidm-admin') {
+      getSchema('?_queryFilter=resourceCollection eq "internal/role" or (resourceCollection sw "managed" and !(resourceCollection eq "managed/assignment"))&_fields=*').then(
+        (response) => {
+          const schemas = response.data.result;
 
-      schemas.forEach((schema) => {
-        // eslint-disable-next-line no-underscore-dangle
-        this.schemaMap[schema._id] = schema;
-      });
+          schemas.forEach((schema) => {
+            // eslint-disable-next-line no-underscore-dangle
+            this.schemaMap[schema._id] = schema;
+          });
 
-      this.loading = false;
-      this.oldPrivileges = this.privileges;
-    },
-    () => {
-      this.displayNotification('IDMMessages', 'error', this.$t('pages.access.errorGettingSchema'));
-    });
+          this.loading = false;
+        },
+        () => {
+          this.displayNotification('IDMMessages', 'error', this.$t('pages.access.errorGettingSchema'));
+        },
+      );
+    } else {
+      // get privileges, then construct get with the resources they have access to, one at a time
+      const idmInstance = this.getRequestService();
+      idmInstance.post('privilege?_action=listPrivileges').then(
+        (response) => {
+          const axiosCalls = response.data.map((privilege) => getSchema(privilege.privilegePath));
+
+          axios.all(axiosCalls).then(axios.spread((...privilegesArray) => {
+            privilegesArray.forEach((privilegeObj) => {
+              this.schemaMap[privilegeObj.data.resourceCollection] = privilegeObj.data;
+            });
+
+            this.loading = false;
+          }), () => {
+            this.displayNotification('IDMMessages', 'error', this.$t('pages.access.errorGettingSchema'));
+          });
+        },
+        () => {
+          this.displayNotification('IDMMessages', 'error', this.$t('pages.access.errorGettingSchema'));
+        },
+      );
+    }
   },
 };
 </script>

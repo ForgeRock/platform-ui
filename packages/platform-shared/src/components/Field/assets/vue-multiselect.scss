@@ -23,6 +23,7 @@ select.custom-select ~ label {
 .multiselect {
   cursor: pointer;
   box-sizing: border-box;
+  min-height: 48px;
 }
 
 /deep/ {
@@ -43,6 +44,8 @@ select.custom-select ~ label {
 
   .multiselect__tags {
     white-space: nowrap;
+    display: flex;
+    flex-direction: column;
     height: 100%;
     padding: 1.5rem 10px 0 0.75rem;
     font-size: 0.875rem;
@@ -50,10 +53,15 @@ select.custom-select ~ label {
     overflow: hidden;
     width: calc(100% - 40px);
 
+    .multiselect__tags-wrap {
+      white-space: break-spaces;
+    }
+
     .multiselect__placeholder {
       font-size: 1rem;
       color: $gray-600;
       padding-top: 0;
+      margin-bottom: 0;
       white-space: nowrap;
     }
 
@@ -79,12 +87,22 @@ select.custom-select ~ label {
   // disabled stylings
   .multiselect--disabled {
     opacity: 1;
+    background-color: $gray-100;
 
     .multiselect__single,
     .multiselect__select,
     .multiselect__tags {
       background-color: $gray-100;
     }
+
+    .multiselect__select {
+      top: 0;
+      right: 0;
+    }
+  }
+
+  .form-label-group .white-label-background.multiselect--disabled ~ label {
+    background-color: $gray-100;
   }
 
   .multiselect ~ label {

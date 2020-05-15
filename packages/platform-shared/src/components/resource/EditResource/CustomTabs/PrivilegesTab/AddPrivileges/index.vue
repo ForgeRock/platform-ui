@@ -29,7 +29,7 @@ to such license between the licensee and ForgeRock AS. -->
               <i class="material-icons-outlined mr-3">
                 {{ option.icon || 'settings_system_daydream' }}
               </i>
-              {{ option.text | PluralizeFilter }}
+              {{ (option.text ? (option.text) : '') | PluralizeFilter }}
               <small class="text-monospace text-muted ml-1">
                 {{ option.value }}
               </small>
@@ -46,7 +46,6 @@ to such license between the licensee and ForgeRock AS. -->
           </FrField>
         </div>
         <BButton
-          type="button"
           variant="outline-primary"
           class="w-25"
           @click="addNewPrivilege"
@@ -139,6 +138,7 @@ export default {
     */
     removeNewPrivilege(index) {
       this.newPrivileges.splice(index, 1);
+      this.identityObjectField.options = this.getIdentityObjectOptions();
     },
     /**
     * Updates the value of a specific privilege in the newPrivileges array
