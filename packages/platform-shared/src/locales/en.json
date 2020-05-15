@@ -111,7 +111,36 @@
       "setUp": "Set up",
       "privilege": "Privilege",
       "privileges": "Privileges",
-      "timeConstraint": "Time Constraint"
+      "settings": "Settings",
+      "timeConstraint": "Time Constraint",
+      "errorGettingSchema": "Error getting schema"
+    },
+    "assignment": {
+      "title": "Assignment",
+      "attributes": "Attributes",
+      "attribute": "attribute",
+      "addAnAttribute": "Add an attribute",
+      "attributesDescription": "Optionally, define attributes to be mapped to the target system on sync.",
+      "errorGettingMappings": "Error getting mappings",
+      "event": "event",
+      "eventSelectDescription": "Event on which to execute script.",
+      "script": "Script",
+      "scripts": "Scripts",
+      "eventScriptsDescription": "Add scripts to apply additional logic or operations that should be performed when a user receives or loses an entire assignment.",
+      "addAnEventScript": "Add an event script",
+      "target": "Target",
+      "value": "Value",
+      "mapping": "Mapping",
+      "thisAssignmentApplied": "This assignment is applied when",
+      "areSyncedTo": "are synced to",
+      "operation": "Operation",
+      "targetSystemAttribute": "Target system attribute",
+      "onAssignment": "On Assignment",
+      "mergeWithTarget": "Merge with target",
+      "replaceTarget": "Replace target",
+      "removeFromTarget": "Remove from target",
+      "noOperation": "No Operation",
+      "newEventText": "\/\/ Script has access to the following variables:\n\/\/ sourceObject\n\/\/ targetObject\n\/\/ existingTargetObject\n\/\/ linkQualifier \nreturn targetObject;\n\/\/ Role assignment scripts must always return targetObject, otherwise\n\/\/ other scripts and code that occur downstream of your script will\n\/\/ not work as expected. "
     }
   },
   "scriptEditor": {
