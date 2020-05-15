@@ -10,29 +10,33 @@ to such license between the licensee and ForgeRock AS. -->
         <div class="d-sm-flex mt-5 mb-4">
           <div class="media">
             <div
-              v-if="resourceName === 'user'"
-              class="mr-4">
+              class="mb-4 media align-items-center">
               <BImg
+                v-if="resourceName === 'user'"
+                class="mr-4"
                 width="100"
                 :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"
                 fluid
                 :alt="$t('common.avatar')" />
-            </div>
-            <div
-              v-else
-              class="rounded-circle d-flex align-items-center fr-resource-circle text-light bg-primary mr-4 mt-2">
-              <i class="material-icons-outlined md-48 w-100">
+              <i
+                v-else
+                class="material-icons-outlined mr-4 md-48">
                 {{ setIcon }}
               </i>
-            </div>
-            <div class="media-body">
-              <h5 class="text-muted mb-0">
-                {{ resourceTitle }}
-              </h5>
-              <h1>{{ displayName }}</h1>
-              <code>
-                {{ secondaryTitle }}
-              </code>
+              <div class="media-body">
+                <h5 class="text-muted">
+                  {{ resourceTitle }}
+                </h5>
+                <h1>{{ displayName }}</h1>
+                <span
+                  v-if="displaySecondaryTitleField === 'description'"
+                  class="text-muted">
+                  {{ secondaryTitle }}
+                </span>
+                <code v-else>
+                  {{ secondaryTitle }}
+                </code>
+              </div>
             </div>
           </div>
         </div>
@@ -50,8 +54,14 @@ to such license between the licensee and ForgeRock AS. -->
       </i>
       {{ $t('common.reset') }} {{ $t('common.placeholders.password') }}
     </BButton> -->
+    <FrEditAssignment
+      v-if="!isLoading && resourceType === 'managed' && resourceName === 'assignment'"
+      :display-properties="displayProperties"
+      :relationship-properties="relationshipProperties"
+      :parent-id="id"
+      :disable-save-button="disableSaveButton" />
     <BCard
-      v-if="!isLoading"
+      v-else-if="!isLoading"
       class="card-tabs-vertical mb-5">
       <BTabs
         flex-column
@@ -208,6 +218,7 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import EditAssignment from '@forgerock/platform-admin/src/views/ManagedIdentities/Assignment/Edit';
 import ObjectTypeEditor from './ObjectTypeEditor';
 import SettingsTab from './CustomTabs/SettingsTab';
 import PrivilegesTab from './CustomTabs/PrivilegesTab';
@@ -230,6 +241,7 @@ export default {
     FrRelationshipArray: RelationshipArray,
     FrSettingsTab: SettingsTab,
     FrPrivilegesTab: PrivilegesTab,
+    FrEditAssignment: EditAssignment,
     BButton,
     BImg,
     BCol,
@@ -398,7 +410,7 @@ export default {
 
           tempProp.key = createPriv.attribute;
 
-          if (!tempProp.isConditional && !tempProp.isTemporalConstraint) {
+          if (!tempProp.isConditional && !tempProp.isTemporalConstraint && tempProp.type !== 'array') {
             delete tempProp.description;
           }
 
@@ -419,7 +431,7 @@ export default {
 
           // Try and do some primary detection for a secondary title
           const attribute = createPriv.attribute.toLowerCase();
-          if ((attribute === 'title' || attribute === 'email' || attribute === 'type' || attribute === 'mail')
+          if ((attribute === 'title' || attribute === 'email' || attribute === 'type' || attribute === 'username' || attribute === 'mail' || attribute === 'description')
               && this.displaySecondaryTitleField.length === 0) {
             this.displaySecondaryTitleField = createPriv.attribute;
           }
@@ -520,7 +532,9 @@ export default {
     displayName() {
       let tempDisplayName = this.id;
 
-      if (this.displayNameField.length > 0) {
+      if (this.resourceName === 'user' && this.formFields.givenName && this.formFields.sn) {
+        tempDisplayName = `${this.formFields.givenName} ${this.formFields.sn}`;
+      } else if (this.displayNameField.length > 0) {
         tempDisplayName = this.formFields[this.displayNameField];
       } else {
         tempDisplayName = this.formFields[keys(this.formFields)[0]];

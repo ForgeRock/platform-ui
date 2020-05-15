@@ -38,7 +38,7 @@ to such license between the licensee and ForgeRock AS. -->
     </BFormFile>
     <div class="justify-content-between pt-3">
       <BButton
-        v-if="selectedVariables.length === 0"
+        v-if="selectedVariables.length === 0 && !jsonEditToggle.value"
         variant="link"
         @click="addVariable('', '', 0)">
         <i class="material-icons-outlined">
@@ -59,7 +59,7 @@ to such license between the licensee and ForgeRock AS. -->
           <FrField
             v-else
             :field="jsonEditToggle"
-            @valueChange="jsonEditorToggle($event.value)" />
+            @valueChange="jsonEditorToggle($event)" />
         </div>
         <template v-if="jsonEditToggle.value">
           <VuePrismEditor
@@ -239,8 +239,10 @@ export default {
           const globals = JSON.parse(code);
           this.jsonStructured = true;
           this.sendEmit(this.scriptType.value, globals);
+          this.$emit('disableSave', false);
         } catch (e) {
           this.jsonStructured = false;
+          this.$emit('disableSave', true);
         }
       }, 0);
     },
