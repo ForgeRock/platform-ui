@@ -18,6 +18,7 @@ to such license between the licensee and ForgeRock AS. -->
       track-by="value"
       :disabled="disabled"
       :options="options"
+      :searchable="options.length > 5"
       :show-labels="false"
       :allow-empty="false"
       :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control p-0', {'no-multiselect-label': !this.label }]"

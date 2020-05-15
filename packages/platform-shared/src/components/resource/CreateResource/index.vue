@@ -4,7 +4,12 @@ Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
+  <FrCreateAssignmentModal
+    v-if="resourceType === 'managed' && resourceName === 'assignment'"
+    @refreshGrid="$emit('refreshGrid')"
+    :create-properties="createProperties" />
   <BModal
+    v-else
     id="createResourceModal"
     @shown="focusField"
     cancel-variant="outline-secondary">
@@ -116,6 +121,7 @@ import RelationshipEdit from '@forgerock/platform-shared/src/components/resource
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import CreateAssignmentModal from '@forgerock/platform-admin/src/views/ManagedIdentities/Assignment/Create';
 
 /**
  * @description Dialog used for managing the create portion of delegated admin. Auto generates fields based on backend return.
@@ -135,6 +141,7 @@ export default {
     FrField,
     FrPolicyPasswordInput: PolicyPasswordInput,
     FrRelationshipEdit: RelationshipEdit,
+    FrCreateAssignmentModal: CreateAssignmentModal,
     BButton,
     BFormGroup,
     BForm,

@@ -204,6 +204,10 @@ export default {
   margin: 1px;
 }
 
+.form-label-group .white-label-background.multiselect--disabled ~ label {
+  background-color: transparent;
+}
+
 .btn.disabled {
   background-color: $gray-100 !important;
   cursor: default;
