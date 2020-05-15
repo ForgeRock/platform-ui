@@ -1,7 +1,8 @@
 <template>
   <BDropdown
     no-caret
-    variant="outline-secondary">
+    variant="outline-secondary"
+    :disabled="disabled">
     <i
       class="material-icons-outlined"
       slot="button-content">
@@ -31,6 +32,10 @@ export default {
     hideGroup: {
       default: false,
       type: Boolean,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
 };

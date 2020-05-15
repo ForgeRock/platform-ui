@@ -28,7 +28,6 @@ to such license between the licensee and ForgeRock AS. -->
         <BButton
           @click="revealText"
           :class="[{'disabled': disabled}, 'btn btn-secondary']"
-          type="button"
           name="revealButton"
           @keyup.enter="$emit('enter')">
           <i class="material-icons material-icons-outlined">
@@ -60,8 +59,8 @@ import {
   BInputGroupAppend,
 } from 'bootstrap-vue';
 import { delay } from 'lodash';
-import InputLayout from '../Wrapper/Layout';
-import InputMixin from '../Wrapper/Mixin';
+import InputLayout from '../Wrapper/InputLayout';
+import InputMixin from '../Wrapper/InputMixin';
 /**
  * Input with a floating label in the center, this will move when a user types into the input (example can be found on the default login page).
  *

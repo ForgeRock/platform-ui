@@ -51,7 +51,10 @@ export default {
         if (formField.value === '' || formField.value === null) {
           return { operation: 'remove', field: `/${formField.name}` };
         }
-        return { operation: 'add', field: `/${formField.name}`, value: formField.value };
+        if (clonedOriginal[formField.name] === '' || clonedOriginal[formField.name] === null) {
+          return { operation: 'add', field: `/${formField.name}`, value: formField.value };
+        }
+        return { operation: 'replace', field: `/${formField.name}`, value: formField.value };
       });
     },
 

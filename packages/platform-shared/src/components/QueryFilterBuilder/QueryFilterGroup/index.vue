@@ -28,16 +28,19 @@ to such license between the licensee and ForgeRock AS. -->
         <FrRemoveButton
           v-if="hasSiblings"
           class="mr-1"
+          :disabled="disabled"
           @click="removeRule" />
         <FrAddButton
-          :hide-group="isMaxDepth"
           class="mr-1"
+          :disabled="disabled"
+          :hide-group="isMaxDepth"
           @add-rule="addRuleHandler" />
       </template>
     </div>
     <template v-for="(subfilter, i) in rules.subfilters">
       <FrQueryFilterRow
         v-if="isRow(subfilter)"
+        :disabled="disabled"
         :rule="subfilter"
         :resource-name="resourceName"
         :depth="depth"
@@ -52,6 +55,7 @@ to such license between the licensee and ForgeRock AS. -->
         @rule-change="ruleChange" />
       <QueryFilterGroup
         v-else
+        :disabled="disabled"
         :rules="subfilter"
         :resource-name="resourceName"
         :depth="depth + 1"
@@ -112,11 +116,16 @@ export default {
         ),
         type: 'select',
         value: this.rules.operator,
+        disabled: this.disabled,
       },
       filterOperators,
     };
   },
   props: {
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
     hasSiblings: {
       default: false,
       type: Boolean,

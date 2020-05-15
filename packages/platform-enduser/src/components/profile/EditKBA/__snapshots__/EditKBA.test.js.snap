@@ -16,7 +16,7 @@ exports[`EditKBA.vue AccountSecurity page loaded 1`] = `
   </brow-stub>
   <bcollapse-stub id="collapse-1" tag="div" class="mt-4">
     <validationobserver>
-      <frloadingbutton-stub label="Save" type="button" variant="primary"></frloadingbutton-stub>
+      <frloadingbutton-stub label="Save" variant="primary"></frloadingbutton-stub>
     </validationobserver>
   </bcollapse-stub>
 </div>

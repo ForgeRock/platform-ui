@@ -9,28 +9,36 @@ to such license between the licensee and ForgeRock AS. -->
     :field-name="fieldName"
     :help-text="helpText"
     :is-html="isHtml"
-    :label="label"
-  >
+    :label="label">
     <VueMultiSelect
       v-model="inputValue"
-      :name="fieldName"
+      v-bind="$attrs"
       label="text"
       track-by="value"
+      :name="fieldName"
       :disabled="disabled"
       :options="options"
       :show-labels="false"
       :hide-selected="true"
       :multiple="true"
-      v-bind="$attrs"
       :close-on-select="false"
-      :searchable="options.length > 9"
-      @open="floatLabels = true"
-      @close="floatLabels = inputValue && inputValue.length"
+      :searchable="isSearchable"
       :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control p-0', {'no-multiselect-label': !this.label }, {'h-100': floatLabels || !this.label }]"
-      :placeholder="$t('common.typeToSearch')">
+      :placeholder="$t('common.typeToSearch')"
+      @search-change="$emit('search-change', $event)"
+      @open="floatLabels = true"
+      @close="floatLabels = inputValue && inputValue.length">
       <slot name="noResult">
         {{ $t('common.noResult') }}
       </slot>
+      <template
+        v-for="(key, slotName) in $scopedSlots"
+        v-slot:[slotName]="slotData">
+        <!-- @slot passthrough slot -->
+        <slot
+          :name="slotName"
+          v-bind="slotData" />
+      </template>
     </VueMultiSelect>
     <template
       v-for="(key, slotName) in $scopedSlots"
@@ -51,8 +59,8 @@ import {
   map,
 } from 'lodash';
 import VueMultiSelect from 'vue-multiselect';
-import InputLayout from '../Wrapper/Layout';
-import InputMixin from '../Wrapper/Mixin';
+import InputLayout from '../Wrapper/InputLayout';
+import InputMixin from '../Wrapper/InputMixin';
 
 /**
  *  Multi select input. Allows selection of multiple element in a dropdown
@@ -81,9 +89,10 @@ export default {
       type: [Array, Object],
       default: () => [],
     },
-  },
-  data() {
-    return {};
+    searchable: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     options() {
@@ -95,6 +104,9 @@ export default {
         text: option,
         value: option,
       }));
+    },
+    isSearchable() {
+      return this.searchable || this.options.length > 9;
     },
   },
   methods: {

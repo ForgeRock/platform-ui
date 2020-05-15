@@ -19,7 +19,6 @@ to such license between the licensee and ForgeRock AS. -->
           </td>
           <td class="border-top-0 text-right">
             <BButton
-              type="button"
               variant="outline-primary"
               @click="showModal(property)">
               {{ $t('pages.access.setUp') }}
@@ -35,22 +34,22 @@ to such license between the licensee and ForgeRock AS. -->
       @hidden="disableSave = false"
       size="lg">
       <div>
-        <div class="mb-4">
-          <FrField
-            :field="checkboxField"
-            @input="toggleForm" />
-        </div>
+        <FrField
+          class="mb-4"
+          :field="checkboxField"
+          @input="toggleForm" />
         <template v-if="showForm">
-          <div v-if="editProperty.isConditional">
+          <template v-if="editProperty.isConditional">
             <FrQueryFilterBuilder
-              @change="queryFilterChange"
-              @error="queryFilterError"
+              :disabled="properties.condition.disabled"
               :query-filter-string="editProperty.value"
               :resource-name="resourceName"
               :properties="conditionOptions" />
-          </div>
+          </template>
           <div v-else>
-            <FrTimeConstraint v-model="editProperty.value" />
+            <FrTimeConstraint
+              v-model="editProperty.value"
+              :disabled="properties.temporalConstraints.disabled" />
           </div>
         </template>
       </div>
@@ -64,7 +63,7 @@ to such license between the licensee and ForgeRock AS. -->
         <BButton
           variant="primary"
           @click="saveSetting"
-          :disabled="disableSave">
+          :disabled="saveDisabled">
           {{ $t('common.save') }}
         </BButton>
       </template>
@@ -131,7 +130,16 @@ export default {
         type: 'boolean',
         title: this.editProperty.description,
         value: this.showForm,
+        disabled: this.editProperty.disabled,
       };
+    },
+    saveDisabled() {
+      if (this.disableSave
+        || (!this.editProperty.isConditional && this.properties.temporalConstraints.disabled)
+        || (this.editProperty.isConditional && this.properties.condition.disabled)) {
+        return true;
+      }
+      return false;
     },
   },
   methods: {

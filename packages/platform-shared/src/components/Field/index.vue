@@ -38,13 +38,13 @@ to such license between the licensee and ForgeRock AS. -->
       :sync="true"
       :height="field.height || defaultToggleHeight"
       :width="field.width || defaultToggleWidth"
-      :disabled="field.disabled"
+      :disabled="fieldDisabled"
       class="pr-2 mb-0" />
     <BFormCheckbox
       v-else-if="field.type === 'checkbox'"
       v-model="inputValue"
       v-on="$listeners"
-      :disabled="field.disabled"
+      :disabled="fieldDisabled"
       class="mr-0"
       inline />
     <ValidationProvider
@@ -59,25 +59,34 @@ to such license between the licensee and ForgeRock AS. -->
       v-slot="{ errors }">
       <FrMultiselect
         @input="$emit('valueChange', field.value)"
-        v-if="field.type === 'multiselect'"
         class="floating-label-input"
-        :field-name="field.key"
+        v-if="field.type === 'multiselect'"
         v-model="inputValue"
         v-bind="attrs"
         v-on="$listeners"
-        :disabled="field.disabled"
+        :field-name="field.key"
+        :disabled="fieldDisabled"
         :help-text="getDescription()"
         :select-options="field.options"
-        :label="getLabel()" />
+        :label="getLabel()">
+        <template
+          v-for="(key, slotName) in $scopedSlots"
+          v-slot:[slotName]="slotData">
+          <!-- @slot passthrough slot -->
+          <slot
+            :name="slotName"
+            v-bind="slotData" />
+        </template>
+      </FrMultiselect>
       <FrSelect
         @input="$emit('valueChange', field.value)"
         v-if="field.type === 'select'"
         class="floating-label-input"
-        :field-name="field.key"
         v-model="inputValue"
         v-bind="attrs"
         v-on="$listeners"
-        :disabled="field.disabled"
+        :field-name="field.key"
+        :disabled="fieldDisabled"
         :help-text="getDescription()"
         :select-options="field.options"
         :label="getLabel()">
@@ -97,7 +106,7 @@ to such license between the licensee and ForgeRock AS. -->
         v-model="inputValue"
         v-bind="attrs"
         v-on="$listeners"
-        :disabled="field.disabled"
+        :disabled="fieldDisabled"
         :field-name="field.key"
         :help-text="getDescription()"
         :label="getLabel()">
@@ -115,7 +124,7 @@ to such license between the licensee and ForgeRock AS. -->
         v-model.number="inputValue"
         v-bind="attrs"
         v-on="$listeners"
-        :disabled="field.disabled"
+        :disabled="fieldDisabled"
         :field-name="field.key"
         :help-text="getDescription()"
         :label="getLabel()"
@@ -131,7 +140,7 @@ to such license between the licensee and ForgeRock AS. -->
         v-else-if="field.type === 'object'"
         v-model="inputValue"
         v-on="$listeners"
-        :disabled="field.disabled"
+        :disabled="fieldDisabled"
         :class="{'fr-error': errors.length || failedPolicies.length}" />
       <FrTag
         @input="$emit('valueChange', field.value)"
@@ -139,7 +148,7 @@ to such license between the licensee and ForgeRock AS. -->
         v-model="inputValue"
         v-on="$listeners"
         :field-title="field.title"
-        :disabled="field.disabled"
+        :disabled="fieldDisabled"
         :class="{'fr-error': errors.length || failedPolicies.length}" />
       <FrTextArea
         v-else-if="field.type === 'textarea'"
@@ -147,7 +156,7 @@ to such license between the licensee and ForgeRock AS. -->
         v-model="inputValue"
         v-bind="attrs"
         v-on="$listeners"
-        :disabled="field.disabled"
+        :disabled="fieldDisabled"
         :field-name="field.key"
         :help-text="getDescription()"
         :label="getLabel()" />
@@ -218,9 +227,8 @@ export default {
   data() {
     return {
       inputValue: this.field.value,
-      attrs: {},
       loading: true,
-      oldValue: '',
+      oldValue: {},
       defaultToggleHeight: 32,
       defaultToggleWidth: 56,
     };
@@ -310,6 +318,14 @@ export default {
       default: false,
     },
   },
+  computed: {
+    attrs() {
+      return { ...this.$options.propsData, ...this.$attrs };
+    },
+    fieldDisabled() {
+      return this.field.disabled || this.disabled;
+    },
+  },
   methods: {
     /**
      * Returns description to display below field if not shown in popup
@@ -317,7 +333,7 @@ export default {
      * @returns {String} The description text to display below the field
      */
     getDescription() {
-      if (this.displayPopover || !this.displayDescription) {
+      if (this.displayPopover || !this.displayDescription || !this.field.title) {
         return '';
       }
       return this.field.description;
@@ -348,12 +364,12 @@ export default {
     /**
      * Maps type aliases to known values
      *
-     * @property {Object} field current field object
+     * @property {Object} type current field type
      *
      * @returns {String} Final field type
      */
-    mapType(field) {
-      if (!field.type) {
+    mapType(type) {
+      if (!type) {
         return 'string';
       }
       const typeMap = {
@@ -361,16 +377,14 @@ export default {
         number: 'integer',
         array: 'tag',
       };
-      if (typeMap[field.type]) {
-        return typeMap[field.type];
+      if (typeMap[type]) {
+        return typeMap[type];
       }
-      return field.type;
+      return type;
     },
   },
   mounted() {
-    this.attrs = { ...this.$options.propsData, ...this.$attrs };
-    this.oldValue = cloneDeep(this.field.value);
-    this.field.type = this.mapType(this.field);
+    this.field.type = this.mapType(this.field.type);
     if (!this.field.validation) {
       this.field.validation = '';
     }
@@ -397,6 +411,7 @@ export default {
     if (this.field.title === this.field.description) {
       delete this.field.description;
     }
+    this.oldField = cloneDeep(this.field);
     this.loading = false;
   },
   filters: {
@@ -409,23 +424,17 @@ export default {
   },
   watch: {
     /**
-     * Sets field disabled based on disabled property
-     */
-    disabled: {
-      handler(value) {
-        this.field.disabled = value;
-      },
-      immediate: true,
-    },
-    /**
      * Runs required check on few remaining field types that have not converted
      * to vee-validate. Also emits out changed value.
      */
     field: {
       handler(newField) {
-        if (!isEqual(this.oldValue, newField.value)) {
+        if (!isEqual(this.oldField.value, newField.value)) {
           this.inputValue = this.field.value;
-          this.oldValue = cloneDeep(newField.value);
+          this.oldField = cloneDeep(newField);
+        }
+        if (newField.type !== this.oldField.type) {
+          this.field.type = this.mapType(newField.type);
         }
       },
       deep: true,

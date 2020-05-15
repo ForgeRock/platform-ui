@@ -1,4 +1,4 @@
-<!-- Copyright 2019 ForgeRock AS. All Rights Reserved
+<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
 
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
@@ -165,18 +165,17 @@ to such license between the licensee and ForgeRock AS. -->
         {{ $t('pages.profile.trustedDevices.removeModalText') }}
       </template>
       <template v-slot:modal-footer="{ cancel }">
-        <BBtn
+        <BButton
           variant="btn-link mr-2"
           :class="modalType === 'remove' && 'text-danger'"
           @click="cancel()">
           {{ $t('common.cancel') }}
-        </BBtn>
-        <BBtn
-          type="button"
+        </BButton>
+        <BButton
           :variant="modalType === 'remove' ? 'danger' : 'primary'"
           @click="handleModalPrimaryButton(modalType)">
           {{ modalDevice.primaryButtonText }}
-        </BBtn>
+        </BButton>
       </template>
     </BModal>
   </div>

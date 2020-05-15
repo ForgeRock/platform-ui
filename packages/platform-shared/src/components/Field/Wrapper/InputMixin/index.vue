@@ -130,10 +130,14 @@ export default {
     * @param {Array|Object|Number|String} newVal value to be set for internal model
     */
     inputValueHandler(newVal) {
-      // for select when value in a key in an object
-      const value = typeof newVal === 'object' && Object.hasOwnProperty.call(newVal, 'value') ? newVal.value : newVal;
-      this.floatLabels = value.toString().length > 0 && !!this.label;
-      this.$emit('input', value);
+      if (newVal === null) {
+        this.$emit('input', null);
+      } else {
+        // for select when value in a key in an object
+        const value = typeof newVal === 'object' && Object.hasOwnProperty.call(newVal, 'value') ? newVal.value : newVal;
+        this.floatLabels = value.toString().length > 0 && !!this.label;
+        this.$emit('input', value);
+      }
     },
   },
 };

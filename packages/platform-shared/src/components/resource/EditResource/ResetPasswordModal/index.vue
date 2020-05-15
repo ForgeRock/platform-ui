@@ -24,7 +24,6 @@ to such license between the licensee and ForgeRock AS. -->
         {{ $t('common.cancel') }}
       </BButton>
       <BButton
-        type="button"
         variant="primary"
         :disabled="!passwordValid"
         @click="savePassword(ok)">

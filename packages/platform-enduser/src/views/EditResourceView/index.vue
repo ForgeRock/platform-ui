@@ -8,7 +8,7 @@ to such license between the licensee and ForgeRock AS. -->
 </template>
 
 <script>
-import EditResource from '@forgerock/platform-shared/src/components/resource/EditResource';
+import FrEditResource from '@forgerock/platform-shared/src/components/resource/EditResource';
 
 /**
  * @description View for edit resource component
@@ -17,7 +17,7 @@ import EditResource from '@forgerock/platform-shared/src/components/resource/Edi
 export default {
   name: 'EditResourceView',
   components: {
-    FrEditResource: EditResource,
+    FrEditResource,
   },
 };
 </script>

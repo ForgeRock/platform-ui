@@ -107,19 +107,19 @@ to such license between the licensee and ForgeRock AS. -->
           {{ $t('pages.authenticationDevices.unableToDeleteModalText') }}
         </template>
         <template v-slot:modal-footer="{ cancel }">
-          <BBtn
+          <BButton
             v-show="modalInfo.showCancel"
             variant="btn-link mr-2"
             :class="modalType === 'delete' && 'text-danger'"
             @click="cancel()">
             {{ $t('common.cancel') }}
-          </BBtn>
-          <BBtn
+          </BButton>
+          <BButton
             type="button"
             :variant="modalType === 'delete' ? 'danger' : 'primary'"
             @click="handleModalPrimaryButton(modalType)">
             {{ modalInfo.primaryButtonText }}
-          </BBtn>
+          </BButton>
         </template>
       </BModal>
     </div>

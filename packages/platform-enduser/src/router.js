@@ -49,13 +49,13 @@ export default new Router({
     {
       path: '/list/:resourceType/:resourceName',
       name: 'ListResource',
-      component: () => import(/* webpackChunkName: "listResource" */ '@/components/access'),
+      component: () => import(/* webpackChunkName: "listResource" */ '@/views/ListResourceView'),
       meta: { columns: true, authenticate: true },
     },
     {
       path: '/edit/:resourceType/:resourceName/:resourceId',
       name: 'EditResource',
-      component: () => import('@forgerock/platform-shared/src/components/resource/EditResource'),
+      component: () => import('@/views/EditResourceView'),
       meta: { authenticate: true, listRoute: 'list' },
     },
     {

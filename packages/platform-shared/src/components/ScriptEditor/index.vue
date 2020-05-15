@@ -44,7 +44,7 @@ to such license between the licensee and ForgeRock AS. -->
         <i class="material-icons-outlined">
           add
         </i>
-        {{ $t('common.add') }} {{ $t('scriptEditor.variables') }}
+        {{ $t('common.addObject', {object: $t('scriptEditor.variables')}) }}
       </BButton>
       <template v-else>
         <div class="d-flex align-items-center">

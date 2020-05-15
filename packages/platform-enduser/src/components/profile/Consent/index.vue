@@ -38,7 +38,6 @@ to such license between the licensee and ForgeRock AS. -->
 
         <div class="d-flex align-self-right">
           <BButton
-            type="button"
             variant="link"
             @click.stop.prevent="showModal(mapping.name)">
             {{ $t(`pages.profile.consent.${mapping.consented ? 'deny' : 'allow'}`) }}
@@ -88,17 +87,16 @@ to such license between the licensee and ForgeRock AS. -->
 
           <template v-slot:modal-footer>
             <div class="float-right">
-              <BBtn
+              <BButton
                 variant="outline-secondary mr-2"
                 @click.stop.prevent="hideModal(mapping.name)">
                 {{ $t('common.cancel') }}
-              </BBtn>
-              <BBtn
-                type="button"
+              </BButton>
+              <BButton
                 :variant="mapping.consented ? 'danger' : 'primary'"
                 @click.stop.prevent="toggleConsentAndHideModal(mapping)">
                 {{ $t(`pages.profile.consent.${mapping.consented ? 'deny' : 'allow'}`) }}
-              </BBtn>
+              </BButton>
             </div>
           </template>
         </BModal>

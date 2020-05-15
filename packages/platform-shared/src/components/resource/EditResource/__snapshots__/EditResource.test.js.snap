@@ -1,27 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`EditResource.vue EditResource page loaded 1`] = `
-<bcontainer-stub tag="div" class="pb-5">
-  <brow-stub tag="div">
-    <bcol-stub tag="div">
-      <div class="d-sm-flex mt-5 mb-4">
-        <div class="media">
-          <div class="mb-4 media align-items-center"><i class="material-icons-outlined mr-4 md-48">
-              check_box_outline_blank
-            </i>
-            <div class="media-body">
-              <h5 class="text-muted">
+<bcontainer-stub tag="div" class="my-5">
+  <div class="mb-4 media"><i class="material-icons-outlined mr-4 md-48">
+      check_box_outline_blank
+    </i>
+    <div class="media-body align-self-center">
+      <h5 class="text-muted">
 
-              </h5>
-              <h1></h1> <code>
-                test - test
-              </code>
-            </div>
-          </div>
-        </div>
-      </div>
-    </bcol-stub>
-  </brow-stub>
+      </h5>
+      <h1></h1> <code>
+        test - test
+      </code>
+    </div>
+  </div>
   <!---->
   <!---->
   <!---->

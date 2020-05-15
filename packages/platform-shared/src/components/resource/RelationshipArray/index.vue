@@ -6,14 +6,11 @@ to such license between the licensee and ForgeRock AS. -->
 <template>
   <div>
     <div
-      v-show="!relationshipArrayProperty.isReadOnly || isOpenidmAdmin"
+      v-show="!relationshipArrayProperty.readOnly || isOpenidmAdmin"
       class="px-4 py-2 card-header">
       <BRow>
-        <BCol
-          md="7"
-          class="my-1">
+        <BCol class="my-1">
           <BButton
-            type="button"
             variant="primary"
             class="mr-1"
             @click="openCreateModal"
@@ -21,7 +18,7 @@ to such license between the licensee and ForgeRock AS. -->
             <i class="material-icons mr-2">
               add
             </i>
-            {{ $t("common.add") }} {{ relationshipArrayProperty.title }}
+            {{ $t("common.addObject", {object: relationshipArrayProperty.title}) }}
           </BButton>
           <BButton
             v-show="selected.length > 0"
@@ -45,8 +42,9 @@ to such license between the licensee and ForgeRock AS. -->
       :hover="tableHover"
       :no-local-sorting="true"
       class="mb-0"
-      :selectable="!relationshipArrayProperty.isReadOnly || isOpenidmAdmin"
+      :selectable="!relationshipArrayProperty.readOnly || isOpenidmAdmin"
       selected-variant="transparent"
+      @row-clicked="resourceClicked"
       @row-selected="onRowSelected">
       <template v-slot:head(selected)>
         <div
@@ -63,7 +61,7 @@ to such license between the licensee and ForgeRock AS. -->
         <BFormCheckbox
           class="pl-4"
           :id="'rowSelectCheckbox_' + relationshipArrayProperty.key + data.index"
-          disabled
+          @change="onCheckboxClicked(data)"
           v-model="data.rowSelected" />
       </template>
       <template v-slot:cell(_relationshipDetails)="data">
@@ -150,7 +148,6 @@ to such license between the licensee and ForgeRock AS. -->
             {{ $t('common.cancel') }}
           </BButton>
           <BButton
-            type="button"
             variant="primary"
             :id="`save_new_${relationshipArrayProperty.key}`"
             @click="saveNewRelationships"
@@ -178,7 +175,6 @@ to such license between the licensee and ForgeRock AS. -->
             {{ $t('common.cancel') }}
           </BButton>
           <BButton
-            type="button"
             variant="danger"
             @click="removeRelationships">
             {{ $t('common.remove') }}
@@ -192,11 +188,9 @@ to such license between the licensee and ForgeRock AS. -->
 <script>
 import {
   find,
-  findIndex,
   last,
   toArray,
   pick,
-  times,
   map,
 } from 'lodash';
 import {
@@ -272,7 +266,7 @@ export default {
           this.lastPage = true;
         }
 
-        if (!this.relationshipArrayProperty.isReadOnly || this.isOpenidmAdmin) {
+        if (!this.relationshipArrayProperty.readOnly || this.isOpenidmAdmin) {
           this.columns.push({
             key: 'selected',
             label: '',
@@ -345,49 +339,49 @@ export default {
       this.currentPage = page;
       this.loadGrid(page);
     },
-    resourceClicked(item) {
-      this.$router.push({
-        name: 'EditResource',
-        params: {
-          // eslint-disable-next-line no-underscore-dangle
-          resourceType: item._refResourceCollection.split('/')[0],
-          // eslint-disable-next-line no-underscore-dangle
-          resourceName: item._refResourceCollection.split('/')[1],
-          // eslint-disable-next-line no-underscore-dangle
-          resourceId: item._refResourceId,
-        },
-      });
+    resourceClicked(item, index, event) {
+      if (!event || !event.target.classList.value || event.target.classList.value.indexOf('checkbox') === -1) {
+        this.$router.push({
+          name: 'EditResource',
+          params: {
+            // eslint-disable-next-line no-underscore-dangle
+            resourceType: item._refResourceCollection.split('/')[0],
+            // eslint-disable-next-line no-underscore-dangle
+            resourceName: item._refResourceCollection.split('/')[1],
+            // eslint-disable-next-line no-underscore-dangle
+            resourceId: item._refResourceId,
+          },
+        });
+      }
     },
     openCreateModal() {
       this.$refs[this.createModalId].show();
       this.newRelationships = [];
     },
     addNewRelationship(data) {
-      if (data.value) {
-        // eslint-disable-next-line no-underscore-dangle
-        const currentIndex = findIndex(this.newRelationships, { _ref: data.value._ref });
-
-        if (currentIndex > -1) {
-          this.newRelationships[currentIndex] = data.value;
-        } else {
-          this.newRelationships.push(data.value);
-        }
+      if (data) {
+        this.newRelationships = data;
+      }
+    },
+    onCheckboxClicked(row) {
+      if (!row.rowSelected) {
+        this.$refs.relationshipArrayGrid.selectRow(row.index);
+      } else {
+        this.$refs.relationshipArrayGrid.unselectRow(row.index);
       }
     },
     onRowSelected(items) {
       this.selected = items;
 
-      this.allRowsSelected = items.length === this.gridPageSize;
+      this.allRowsSelected = items.length === Math.min(this.gridData.length, this.gridPageSize);
     },
     toggleSelectAll() {
       const grid = this.$refs.relationshipArrayGrid;
 
-      this.allRowsSelected = !this.allRowsSelected;
-
       if (!this.allRowsSelected) {
-        grid.selectedRows = [];
+        grid.selectAllRows();
       } else {
-        grid.selectedRows = times(this.gridPageSize, () => true);
+        grid.clearSelected();
       }
     },
     saveNewRelationships() {

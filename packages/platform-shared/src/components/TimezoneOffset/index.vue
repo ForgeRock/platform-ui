@@ -10,14 +10,16 @@ to such license between the licensee and ForgeRock AS. -->
       menu-class="shadow-lg"
       no-caret
       toggle-class="p-0"
-      variant="none">
+      variant="none"
+      v-bind="$attrs">
       <template #button-content>
         <FrField
           class="timezone-field"
+          v-bind="$attrs"
           :field="timezone">
           <template #prepend>
             <BInputGroupPrepend>
-              <div class="input-group-text inset">
+              <div :class="[{'disabled': $attrs.disabled}, 'input-group-text inset']">
                 <i class="material-icons-outlined">
                   location_on
                 </i>
@@ -151,5 +153,9 @@ export default {
       border-left: none !important;
     }
   }
+}
+
+.input-group-prepend .disabled {
+  background-color: $gray-100;
 }
 </style>

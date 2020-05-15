@@ -23,7 +23,6 @@ to such license between the licensee and ForgeRock AS. -->
                 :options="assigneeOptions"
                 class="mb-3 mr-2" />
               <BButton
-                type="button"
                 variant="primary"
                 class="mb-3 d-flex align-self-end"
                 @click="assignTask">

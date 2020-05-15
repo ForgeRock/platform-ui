@@ -86,19 +86,17 @@ to such license between the licensee and ForgeRock AS. -->
       </BCol>
     </BRow>
     <div class="float-right mt-4">
-      <BBtn
+      <BButton
         class="mr-2"
-        type="button"
         @click="$emit('submit', formValues)"
         variant="primary">
         {{ $t('pages.workflow.save') }}
-      </BBtn>
-      <BBtn
-        type="button"
+      </BButton>
+      <BButton
         @click="$emit('cancel')"
         variant="primary">
         {{ $t('pages.workflow.cancel') }}
-      </BBtn>
+      </BButton>
     </div>
   </BContainer>
 </template>

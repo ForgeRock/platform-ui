@@ -46,7 +46,6 @@ to such license between the licensee and ForgeRock AS. -->
             class="mt-4">
         </div>
         <FrLoadingButton
-          type="button"
           variant="primary"
           :label="$t('common.save')"
           :loading="loading"

@@ -35,6 +35,7 @@ to such license between the licensee and ForgeRock AS. -->
           <div class="fixed-width-checkbox-cell">
             <BFormCheckbox
               v-model="data.item.view"
+              :disabled="disabled"
               @change="togglePermission('view')" />
           </div>
         </slot>
@@ -46,6 +47,7 @@ to such license between the licensee and ForgeRock AS. -->
           <div class="fixed-width-checkbox-cell">
             <BFormCheckbox
               v-model="data.item.create"
+              :disabled="disabled"
               @change="togglePermission('create')" />
           </div>
         </slot>
@@ -57,6 +59,7 @@ to such license between the licensee and ForgeRock AS. -->
           <div class="fixed-width-checkbox-cell">
             <BFormCheckbox
               v-model="data.item.update"
+              :disabled="disabled"
               @change="togglePermission('update')" />
           </div>
         </slot>
@@ -68,6 +71,7 @@ to such license between the licensee and ForgeRock AS. -->
           <div class="fixed-width-checkbox-cell">
             <BFormCheckbox
               v-model="data.item.delete"
+              :disabled="disabled"
               @change="togglePermission('delete')" />
           </div>
         </slot>
@@ -106,17 +110,18 @@ to such license between the licensee and ForgeRock AS. -->
           body-class="p-0"
           class="shadow-none">
           <div class="p-4 border-bottom">
-            <h5>{{ $t('pages.access.attribute' ) }} {{ $t('pages.access.permissions' ) }}</h5>
+            <h5>{{ $t('pages.access.attribute') }} {{ $t('pages.access.permissions') }}</h5>
             <div class="mb-0 text-muted">
-              {{ $t('pages.access.managePermissions' ) }}
+              {{ $t('pages.access.managePermissions') }}
               <span>
                 <BDropdown
                   variant="link"
                   no-caret
-                  toggle-class="text-decoration-none p-0">
+                  toggle-class="text-decoration-none p-0"
+                  :disabled="disabled">
                   <template v-slot:button-content>
                     <span>
-                      {{ $t('pages.access.setAllAttributes' ) }}
+                      {{ $t('pages.access.setAllAttributes') }}
                     </span>
                   </template>
                   <BDropdownItem @click="setAllAccessFlags(true)">
@@ -147,7 +152,8 @@ to such license between the licensee and ForgeRock AS. -->
               <div class="float-right">
                 <BDropdown
                   variant="link"
-                  toggle-class="text-decoration-none p-0">
+                  toggle-class="text-decoration-none p-0"
+                  :disabled="disabled">
                   <template v-slot:button-content>
                     <span class="mr-5">
                       {{ attribute.status }}
@@ -172,12 +178,14 @@ to such license between the licensee and ForgeRock AS. -->
         <BCard class="mt-4 mb-3 py-1 shadow-none">
           <FrField
             :field="queryFilterToggleField"
+            :disabled="disabled"
             @input="toggleFilter" />
           <div
             v-if="queryFilterToggleField.value"
             class="pt-2">
             <FrQueryFilterBuilder
               @change="queryFilterChange"
+              :disabled="disabled"
               :query-filter-string="privilege.filter"
               :resource-name="identityObjectSchema.title.toLowerCase()"
               :properties="queryFilterDropdownOptions" />
@@ -210,6 +218,7 @@ import {
 import PluralizeFilter from '@forgerock/platform-shared/src/filters/PluralizeFilter';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrQueryFilterBuilder from '@forgerock/platform-shared/src/components/QueryFilterBuilder';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 
 export default {
   name: 'PrivilegeEditor',
@@ -226,7 +235,14 @@ export default {
   filters: {
     PluralizeFilter,
   },
+  mixins: [
+    NotificationMixin,
+  ],
   props: {
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
     privilege: {
       type: Object,
       default: () => {},
@@ -254,7 +270,7 @@ export default {
   data() {
     return {
       showAdvanced: false,
-      showReadWrite: this.privilege.permissions.indexOf('CREATE') > -1 || this.privilege.permissions.indexOf('UPDATE') > -1,
+      showReadWrite: this.privilege.permissions.includes('CREATE') || this.privilege.permissions.includes('UPDATE'),
       filterOn: has(this.privilege, 'filter') && this.privilege.filter.length > 0,
       permissionsColumns: [
         {
@@ -372,17 +388,19 @@ export default {
     * @property {string} permission - permission to turn on/off
     */
     togglePermission(permission) {
-      const permissionIndex = this.privilege.permissions.indexOf(permission.toUpperCase());
+      const permissionUpper = permission.toUpperCase();
+      const permissionIndex = this.privilege.permissions.indexOf(permissionUpper);
 
       if (permissionIndex > -1) {
         this.privilege.permissions.splice(permissionIndex, 1);
       } else {
-        this.privilege.permissions.push(permission.toUpperCase());
+        this.privilege.permissions.push(permissionUpper);
       }
 
       // must always have at least "view" permissionss
       if (this.privilege.permissions.length === 0) {
-        this.privilege.permissions.push('VIEW');
+        this.$nextTick(() => this.privilege.permissions.push('VIEW'));
+        this.displayNotification('AdminMessage', 'warning', this.$t('pages.access.onePermissionRequired'));
       }
       this.setDefaultAccessFlags();
     },
@@ -451,7 +469,7 @@ export default {
     setDefaultAccessFlags() {
       const { permissions } = this.privilege;
 
-      if (permissions.indexOf('CREATE') > -1 || permissions.indexOf('UPDATE') > -1) {
+      if (permissions.includes('CREATE') || permissions.includes('UPDATE')) {
         this.privilege.accessFlags.forEach((accessFlag) => {
           accessFlag.readOnly = false;
         });
@@ -459,7 +477,7 @@ export default {
         this.showReadWrite = true;
       }
 
-      if (permissions.indexOf('CREATE') === -1 && permissions.indexOf('UPDATE') === -1) {
+      if (!permissions.includes('CREATE') && !permissions.includes('UPDATE')) {
         this.privilege.accessFlags.forEach((accessFlag) => {
           accessFlag.readOnly = true;
         });

@@ -15,6 +15,7 @@ to such license between the licensee and ForgeRock AS. -->
 <script>
 import {
   capitalize,
+  cloneDeep,
 } from 'lodash';
 import { mapState } from 'vuex';
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
@@ -80,10 +81,20 @@ export default {
   watch: {
     /**
      * when we receive user-saved data of managed resources,
-     * add them to iterated selectable menu items
+     * add them to iterated selectable menu items (Mainly used for Delegated Admin)
      */
     accessObj() {
-      this.accessObj.forEach((obj) => {
+      const accessObj = cloneDeep(this.accessObj);
+      accessObj.sort((a, b) => {
+        if (a.title > b.title) {
+          return 1;
+        }
+        if (a.title < b.title) {
+          return -1;
+        }
+        return 0;
+      });
+      accessObj.forEach((obj) => {
         const splitObj = obj.privilegePath.split('/');
         this.menuItems.push({
           displayName: capitalize(obj.title),
