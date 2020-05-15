@@ -56,17 +56,18 @@ to such license between the licensee and ForgeRock AS. -->
               <!-- for singletonRelationhip values -->
               <FrRelationshipEdit
                 v-else-if="field.type === 'relationship'"
+                v-model="field.value"
                 :parent-resource="`${resourceType}/${resourceName}`"
                 :relationship-property="field"
                 :index="index"
-                :key="'createResource' +index"
-                @setValue="setSingletonRelationshipValue"
-                :new-resource="true" />
+                :key="'createResource' + index"
+                :new-resource="true"
+                @setValue="setSingletonRelationshipValue($event, field.key)" />
             </template>
           </BForm>
           <template v-else>
             <h3 class="text-center">
-              {{ $t('pages.access.noFields') }}
+              {{ $t('pages.access.noRequiredFields') }}
             </h3>
           </template>
         </BCol>
@@ -296,7 +297,7 @@ export default {
 
           idmInstance.post(`${this.resourceType}/${this.resourceName}?_action=create`, saveData).then(() => {
             this.$emit('refreshGrid');
-            this.$refs.observer.reset();
+            this.resetDialog();
             this.hideModal();
 
             this.displayNotification('IDMMessages', 'success', this.$t('pages.access.successCreate', { resource: this.resourceTitle || capitalize(this.resourceName) }));
@@ -336,7 +337,7 @@ export default {
       }
 
       this.createProperties.forEach((field) => {
-        if (field.type === 'string' || field.type === 'number' || field.type === 'password') {
+        if (field.type === 'string' || field.type === 'number' || field.type === 'password' || field.type === 'relationship') {
           field.value = '';
         } else {
           field.value = false;
@@ -358,8 +359,9 @@ export default {
         this.$refs.focusInput[0].focus();
       }
     },
-    setSingletonRelationshipValue(data) {
-      this.formFields[data.property] = data.value;
+    setSingletonRelationshipValue(data, fieldKey) {
+      const property = this.createProperties.find((prop) => prop.key === fieldKey);
+      property.value = data;
     },
     loadNextStep() {
       if (this.stepIndex === -1) {

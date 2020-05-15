@@ -1,6 +1,7 @@
 {
   "common": {
     "add": "Add",
+    "addObject": "Add {object}",
     "advanced": "advanced",
     "advancedOptions": "advanced options",
     "agree": "I Agree",
@@ -27,6 +28,7 @@
     "loading": "Loading",
     "name": "Name",
     "new": "New",
+    "newObject": "New {object}",
     "next": "Next",
     "no": "No",
     "none": "None",
@@ -62,7 +64,9 @@
       "password": "Password",
       "retypePassword": "Retype Password",
       "timeZoneOffset": "Time Zone Offest",
-      "username": "Username"
+      "username": "Username",
+      "relationshipLabel": "{relationshipName} Type",
+      "typeToSearchFor": "Type to search for {item}"
     },
     "policyValidationMessages": {
       "GENERIC_FIELD_REQUIRED": "{_field_} is required",
@@ -113,8 +117,11 @@
   },
   "pages": {
     "access": {
+      "addPrivileges": "Add Privileges",
+      "editPrivilege": "Edit Privilege",
       "password": "Password",
       "noFields": "No Fields Available",
+      "noRequiredFields": "No Required Fields Available",
       "typeSearch": "Type to Search",
       "invalidCreate": "Invalid create form",
       "deleteResource": "Successfully deleted {resource}",
@@ -131,8 +138,9 @@
       "resetPassword": "Reset Password",
       "failedSavePassword": "Failed to save password",
       "successSavePassword": "Successfully saved password",
-      "removeConfirm": "Are you sure you want to remove the selected",
+      "removeConfirm": "Are you sure you want to remove the selected Privilege?",
       "removeModalTitle": "Confirm Removal",
+      "onePermissionRequired": "At least one permission is required",
       "list": "List",
       "setUp": "Set up",
       "privilege": "Privilege",

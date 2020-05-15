@@ -9,17 +9,16 @@ to such license between the licensee and ForgeRock AS. -->
       <div class="mb-4">
         {{ descriptionText }}
       </div>
-      <div>
-        <FrField
-          :field="checkboxField"
-          @input="toggleForm" />
-      </div>
+      <FrField
+        :field="checkboxField"
+        @input="toggleForm" />
     </template>
     <div
       v-if="showForm"
       class="mt-4">
       <div v-if="property.isConditional">
         <FrQueryFilterBuilder
+          v-if="property.isConditional"
           @change="queryFilterChange"
           :query-filter-string="queryFilterField.value"
           resource-name="user"
@@ -39,6 +38,7 @@ to such license between the licensee and ForgeRock AS. -->
 </template>
 
 <script>
+import axios from 'axios';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import FrField from '@forgerock/platform-shared/src/components/Field';
@@ -149,19 +149,44 @@ export default {
       this.showForm = true;
       this.showToggle = false;
       // get schema for all internal/role and all managed objects that are not managed/assignment
-      getSchema('?_queryFilter=resourceCollection eq "internal/role" or resourceCollection sw "managed" and !(resourceCollection eq "managed/assignment")&_fields=*').then((response) => {
-        const schemas = response.data.result;
+      if (this.$store.state.userId === 'openidm-admin') {
+        getSchema('?_queryFilter=resourceCollection eq "internal/role" or (resourceCollection sw "managed" and !(resourceCollection eq "managed/assignment"))&_fields=*').then(
+          (response) => {
+            const schemas = response.data.result;
 
-        schemas.forEach((schema) => {
-          // eslint-disable-next-line no-underscore-dangle
-          this.schemaMap[schema._id] = schema;
-        });
+            schemas.forEach((schema) => {
+              // eslint-disable-next-line no-underscore-dangle
+              this.schemaMap[schema._id] = schema;
+            });
 
-        this.loading = false;
-      },
-      () => {
-        this.displayNotification('IDMMessages', 'error', this.$t('pages.access.errorGettingSchema'));
-      });
+            this.loading = false;
+          },
+          () => {
+            this.displayNotification('IDMMessages', 'error', this.$t('pages.access.errorGettingSchema'));
+          },
+        );
+      } else {
+        // get privileges, then construct get with the resources they have access to, one at a time
+        const idmInstance = this.getRequestService();
+        idmInstance.post('privilege?_action=listPrivileges').then(
+          (response) => {
+            const axiosCalls = response.data.map((privilege) => getSchema(privilege.privilegePath));
+
+            axios.all(axiosCalls).then(axios.spread((...privilegesArray) => {
+              privilegesArray.forEach((privilegeObj) => {
+                this.schemaMap[privilegeObj.data.resourceCollection] = privilegeObj.data;
+              });
+
+              this.loading = false;
+            }), () => {
+              this.displayNotification('IDMMessages', 'error', this.$t('pages.access.errorGettingSchema'));
+            });
+          },
+          () => {
+            this.displayNotification('IDMMessages', 'error', this.$t('pages.access.errorGettingSchema'));
+          },
+        );
+      }
     },
     /**
     * Gets schema for user which is needed to define properties availble in QueryFilterBuilder.
