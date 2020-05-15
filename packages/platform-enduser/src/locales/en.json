@@ -236,6 +236,14 @@
       "notifications": {
         "requests": "Requests"
       }
+    },
+    "identities": {
+      "subTitle": "ForgeRock-hosted identity resources",
+      "deleteResource": {
+        "title": "Delete {resource}?",
+        "body": "Are you sure you want to delete this {resource}?",
+        "primaryButton": "Delete {resource}"
+      }
     }
   }
 }

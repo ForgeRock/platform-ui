@@ -145,15 +145,6 @@
       "footer": "Get Started"
     }
   },
-  "managed": {
-    "managedIdentities": "Managed Identities",
-    "subTitle": "Create and manage ForgeRock-hosted identity resources.",
-    "deleteResource": {
-      "title": "Delete {resource}?",
-      "body": "Are you sure you want to delete this {resource}?",
-      "primaryButton": "Delete {resource}"
-    }
-  },
   "remoteServers": {
     "confirmDeleteRemoteServer": "Are you sure you want to delete the \"{name}\" remote server?",
     "connect": "Connect",
@@ -302,6 +293,15 @@
       "notifications": {
         "noNotifications": "No notifications available",
         "title": "Notifications"
+      }
+    },
+    "identities": {
+      "managedIdentities": "Managed Identities",
+      "subTitle": "Create and configure ForgeRock-hosted identity resources.",
+      "deleteResource": {
+        "title": "Delete {resource}?",
+        "body": "Are you sure you want to delete this {resource}?",
+        "primaryButton": "Delete {resource}"
       }
     }
   },

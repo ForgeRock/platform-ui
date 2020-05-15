@@ -102,12 +102,12 @@ describe('EditPersonalInfo.vue', () => {
     const patches = wrapper.vm.generateUpdatePatch(original, newForm);
 
     expect(patches.length).toBe(3);
-    expect(patches[0].operation).toBe('add');
+    expect(patches[0].operation).toBe('replace');
     expect(patches[0].field).toBe('/description');
     expect(patches[0].value).toBe('new description');
     expect(patches[1].operation).toBe('remove');
     expect(patches[1].field).toBe('/telephoneNumber');
-    expect(patches[2].operation).toBe('add');
+    expect(patches[2].operation).toBe('replace');
     expect(patches[2].field).toBe('/city');
     expect(patches[2].value).toBe('Vancouver');
   });

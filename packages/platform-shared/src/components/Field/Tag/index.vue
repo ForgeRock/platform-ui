@@ -33,7 +33,7 @@ to such license between the licensee and ForgeRock AS. -->
       <input
         v-bind="inputAttrs"
         v-on="inputHandlers"
-        :placeholder="`${$t('common.add')} ${fieldTitle}`"
+        :placeholder="$t('common.addObject', {object: fieldTitle})"
         :class="[{'show': !tags.length}, 'fr-input']">
     </template>
   </BFormTags>

@@ -11,10 +11,10 @@ to such license between the licensee and ForgeRock AS. -->
     <template #modal-title>
       <h5
         class="fr-modal-title mb-0">
-        {{ $t(`managed.deleteResource.title`, { resource: resourceTitle }) }}
+        {{ $t(`pages.identities.deleteResource.title`, { resource: resourceTitle }) }}
       </h5>
     </template>
-    <p>{{ $t(`managed.deleteResource.body`, { resource: resourceName }) }}</p>
+    <p>{{ $t(`pages.identities.deleteResource.body`, { resource: resourceName }) }}</p>
     <template v-slot:modal-footer="{ cancel }">
       <BButton
         variant="link"
@@ -27,7 +27,7 @@ to such license between the licensee and ForgeRock AS. -->
         @click="deleteResource()"
         data-test-id="deleteButton"
         variant="danger">
-        {{ $t(`managed.deleteResource.primaryButton`, { resource: resourceName }) }}
+        {{ $t(`pages.identities.deleteResource.primaryButton`, { resource: resourceName }) }}
       </BButton>
     </template>
   </BModal>

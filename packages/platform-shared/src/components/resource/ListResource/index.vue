@@ -5,37 +5,36 @@ or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
   <div>
-    <div>
-      <div class="p-3 d-flex justify-content-between flex-column flex-lg-row card-header">
-        <div class="btn-group mb-3 mb-lg-0 mr-lg-1">
-          <slot name="listToolbar" />
-        </div>
-        <FrSearchInput
-          v-model="filter"
-          :placeholder="$t('common.search')"
-          @clear="clear"
-          @search="search"
-        />
+    <div class="p-3 d-flex justify-content-between flex-column flex-lg-row card-header">
+      <div class="btn-group mb-3 mb-lg-0 mr-lg-1">
+        <slot name="listToolbar" />
       </div>
-      <div>
-        <BTable
-          class="mb-0"
-          show-empty
-          :fields="columns"
-          :hover="tableHover"
-          :items="tableData"
-          :no-local-sorting="true"
-          :per-page="0"
-          :responsive="true"
-          :sort-by.sync="sortBy"
-          :sort-desc.sync="sortDesc"
-          :sort-direction="sortDirection"
-          @row-clicked="$emit('rowClicked', $event)"
-          @sort-changed="sortingChanged">
-          <template v-slot:cell(actions)="data">
-            <slot
-              name="actions"
-              :item="data">
+      <FrSearchInput
+        v-model="filter"
+        :placeholder="$t('common.search')"
+        @clear="clear"
+        @search="search" />
+    </div>
+    <BTable
+      class="mb-0"
+      show-empty
+      :fields="columns"
+      :hover="tableHover"
+      :items="tableData"
+      :no-local-sorting="true"
+      :per-page="0"
+      :responsive="true"
+      :sort-by.sync="sortBy"
+      :sort-desc.sync="sortDesc"
+      :sort-direction="sortDirection"
+      @row-clicked="$emit('rowClicked', $event)"
+      @sort-changed="sortingChanged">
+      <template v-slot:cell(actions)="data">
+        <slot
+          name="actions"
+          :item="data">
+          <template v-if="editAccess && deleteAccess">
+            <div class="text-right">
               <BDropdown
                 boundary="window"
                 variant="link"
@@ -53,56 +52,73 @@ to such license between the licensee and ForgeRock AS. -->
                   </i> {{ $t('common.edit') }}
                 </BDropdownItem>
                 <BDropdownDivider />
-                <BDropdownItem
-                  @click="confirmDeleteResource(data.item._id)">
+                <BDropdownItem @click="confirmDeleteResource(data.item._id)">
                   <i class="material-icons-outlined mr-3">
                     delete
                   </i> {{ $t('common.delete') }}
                 </BDropdownItem>
               </BDropdown>
-            </slot>
+            </div>
           </template>
-        </BTable>
-      </div>
-      <div class="card-footer py-2">
-        <nav aria-label="Page navigation">
-          <ul class="pagination justify-content-center mb-0">
-            <li
-              @click.prevent="currentPage === 1 ? '' : paginationChange(1)"
-              :class="[{ disabled: currentPage === 1 }, 'page-item']">
-              <a
-                class="page-link"
-                href="#">
-                <i class="material-icons material-icons-outlined mr-2">
-                  first_page
-                </i>
-              </a>
-            </li>
-            <li
-              @click.prevent="currentPage === 1 ? '' : paginationChange(currentPage - 1)"
-              :class="[{ disabled: currentPage === 1 }, 'page-item']">
-              <a
-                class="page-link"
-                href="#">
-                <i class="material-icons material-icons-outlined mr-2">
-                  keyboard_arrow_left
-                </i>
-              </a>
-            </li>
-            <li
-              @click.prevent="lastPage ? '' : paginationChange(currentPage + 1)"
-              :class="[{ disabled: lastPage }, 'page-item']">
-              <a
-                class="page-link"
-                href="#">
-                <i class="material-icons material-icons-outlined mr-2">
-                  keyboard_arrow_right
-                </i>
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </div>
+          <template v-else-if="editAccess">
+            <div
+              class="cursor-pointer text-right"
+              @click="$emit('rowClicked', data.item)">
+              <i class="material-icons-outlined text-muted">
+                edit
+              </i>
+            </div>
+          </template>
+          <template v-else-if="deleteAccess">
+            <div
+              class="cursor-pointer text-right"
+              @click="confirmDeleteResource(data.item._id)">
+              <i class="material-icons-outlined text-muted">
+                delete
+              </i>
+            </div>
+          </template>
+        </slot>
+      </template>
+    </BTable>
+    <div class="card-footer py-2">
+      <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center mb-0">
+          <li
+            @click.prevent="currentPage === 1 ? '' : paginationChange(1)"
+            :class="[{ disabled: currentPage === 1 }, 'page-item']">
+            <a
+              class="page-link"
+              href="#">
+              <i class="material-icons-outlined mr-2">
+                first_page
+              </i>
+            </a>
+          </li>
+          <li
+            @click.prevent="currentPage === 1 ? '' : paginationChange(currentPage - 1)"
+            :class="[{ disabled: currentPage === 1 }, 'page-item']">
+            <a
+              class="page-link"
+              href="#">
+              <i class="material-icons-outlined mr-2">
+                keyboard_arrow_left
+              </i>
+            </a>
+          </li>
+          <li
+            @click.prevent="lastPage ? '' : paginationChange(currentPage + 1)"
+            :class="[{ disabled: lastPage }, 'page-item']">
+            <a
+              class="page-link"
+              href="#">
+              <i class="material-icons-outlined mr-2">
+                keyboard_arrow_right
+              </i>
+            </a>
+          </li>
+        </ul>
+      </nav>
     </div>
 
     <slot name="deleteResourceModal">
@@ -121,7 +137,6 @@ to such license between the licensee and ForgeRock AS. -->
 
 <script>
 import {
-  includes,
   isNull,
   each,
   isUndefined,
@@ -181,6 +196,14 @@ export default {
         };
         return retv;
       },
+    },
+    deleteAccess: {
+      type: Boolean,
+      default: true,
+    },
+    editAccess: {
+      type: Boolean,
+      default: true,
     },
     routerParameters: {
       type: Object,
@@ -320,16 +343,18 @@ export default {
       if (this.routerParameters && this.routerParameters.order) {
         this.routerParameters.order.forEach((columnName) => {
           const column = this.routerParameters.managedProperties[columnName];
-          if (includes(['string', 'boolean', 'number'], column.type)) {
-            if (this.displayFields.length < 4 && column.viewable) {
-              this.displayFields.push(columnName);
-              this.columns.push({
-                key: columnName,
-                label: column.title,
-                sortable: true,
-                sortDirection: 'desc',
-              });
-            }
+          if (column
+            && ['string', 'boolean', 'number'].includes(column.type)
+            && this.displayFields.length < 4
+            && column.viewable
+          ) {
+            this.displayFields.push(columnName);
+            this.columns.push({
+              key: columnName,
+              label: column.title,
+              sortable: true,
+              sortDirection: 'desc',
+            });
           }
         });
 

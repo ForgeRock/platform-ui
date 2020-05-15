@@ -27,8 +27,8 @@ to such license between the licensee and ForgeRock AS. -->
 </template>
 
 <script>
-import InputLayout from '../Wrapper/Layout';
-import InputMixin from '../Wrapper/Mixin';
+import InputLayout from '../Wrapper/InputLayout';
+import InputMixin from '../Wrapper/InputMixin';
 
 /**
  *  Text area input

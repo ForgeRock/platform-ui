@@ -53,7 +53,6 @@ to such license between the licensee and ForgeRock AS. -->
             <BButton
               @click.prevent="clearOne(index)"
               variant="sm"
-              type="button"
               class="btn btn-link my-auto">
               <i class="material-icons-outlined text-muted md-24">
                 delete
