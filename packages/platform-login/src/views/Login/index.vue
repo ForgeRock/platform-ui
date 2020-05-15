@@ -311,6 +311,9 @@ export default {
             index,
           });
           break;
+        case 'RedirectCallback':
+          window.location.href = callback.getOutputByName('redirectUrl');
+          break;
         case 'TermsAndConditionsCallback':
           this.addComponent(TermsAndConditionsCallback, {
             callback,
