@@ -40,8 +40,10 @@ to such license between the licensee and ForgeRock AS. -->
       <FrRemoveButton
         v-if="hasSiblings"
         class="mr-1"
+        :disabled="disabled"
         @click="removeRule" />
       <FrAddButton
+        :disabled="disabled"
         :hide-group="isMaxDepth"
         @add-rule="addRule" />
     </div>
@@ -79,6 +81,7 @@ export default {
         options,
         type: 'select',
         value,
+        disabled: this.disabled,
       };
     },
     isMaxDepth() {
@@ -98,10 +101,15 @@ export default {
           { text: prop.label, value: prop.value })),
         type: 'select',
         value: this.rule.field,
+        disabled: this.disabled,
       },
     };
   },
   props: {
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
     resourceName: {
       required: true,
       type: String,
@@ -162,19 +170,19 @@ export default {
 
       return conditions.length === 0 ? defaultConditions : conditions;
     },
-    parseType(fieldValue, inputValue) {
-      if (!fieldValue) return { type: 'string', value: '' };
+    parseType(fieldValue, value) {
+      if (!fieldValue) return { type: 'string', value: '', disabled: this.disabled };
 
       const type = getTypeFromValue(fieldValue, this.properties);
       switch (type) {
       case 'boolean':
         return {
-          value: inputValue.toLowerCase() === 'false' || inputValue === false ? 'False' : 'True', type: 'select', options: ['True', 'False'],
+          type: 'select', value: value.toLowerCase() === 'false' || value === false ? 'False' : 'True', options: ['True', 'False'], disabled: this.disabled,
         };
       case 'number':
-        return { type: 'integer', value: typeof inputValue === 'number' ? inputValue : '' };
+        return { type: 'integer', value: typeof value === 'number' ? value : '', disabled: this.disabled };
       default:
-        return { type, value: inputValue };
+        return { type, value, disabled: this.disabled };
       }
     },
     ruleChange(value) {

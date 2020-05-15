@@ -8,16 +8,17 @@ to such license between the licensee and ForgeRock AS. -->
     <BFormGroup
       v-if="showResourceType"
       :label-cols="isRelationshipArray || newResource ? 11 : 0"
-      :label="relationshipProperty.title + ' Type'"
+      :label="$t('common.placeholders.relationshipLabel', {relationshipTitle: relationshipProperty.title})"
       :label-for="'editResourceType' + index"
       horizontal>
       <Multiselect
-        :value="resourceCollection"
-        :options="rescourceCollectionTypes"
         open-direction="below"
-        :show-labels="false"
         label="label"
         track-by="label"
+        :disabled="disabled"
+        :value="resourceCollection"
+        :options="rescourceCollectionTypes"
+        :show-labels="false"
         @select="setResourceCollectionType">
         <template
           v-slot:option="{ option }">
@@ -26,95 +27,81 @@ to such license between the licensee and ForgeRock AS. -->
       </Multiselect>
     </BFormGroup>
 
-    <BFormGroup
-      :label-cols-sm="isRelationshipArray || newResource ? 11 : 0"
-      :label-cols-md="isRelationshipArray || newResource ? 11 : 0"
-      :label-cols-lg="isRelationshipArray || newResource ? 11 : 2"
-      :label-class="{'ml-3': !isRelationshipArray && !newResource }"
-      :label="relationshipProperty.title"
-      label-for="relationshipProperty.key"
-      horizontal>
-      <Multiselect
-        v-model="selected"
-        :id="relationshipProperty.key + index"
-        :options="options"
-        :placeholder="'Type to search for ' + this.resourceCollection.label"
-        open-direction="bottom"
-        :show-labels="false"
-        :internal-search="false"
-        :clear-on-select="false"
-        :multiple="isRelationshipArray"
-        :close-on-select="!isRelationshipArray"
-        :preserve-search="isRelationshipArray"
-        :options-limit="10"
-        :limit="10"
-        :max-height="600"
-        :show-no-results="false"
-        :hide-selected="true"
-        @search-change="setOptions"
-        @select="setSelected"
-        @open="setSelected"
-        :show-no-options="false">
-        <template
-          v-slot:singleLabel="{ option }">
-          <div class="media">
-            <div class="media-body">
-              <div class="text-bold">
-                {{ option.resource[option.displayFields[0]] }}
-              </div>
-              <div>
-                <span
-                  v-for="(displayField, idx) in option.displayFields"
-                  :key="`displayField_${displayField}_${idx}`"
-                  v-show="idx !== 0"
-                  class="pr-1 text-muted">
-                  {{ option.resource[displayField] }}
-                </span>
-              </div>
+    <FrField
+      open-direction="bottom"
+      :field="relationshipField"
+      :allow-empty="true"
+      :id="relationshipProperty.key + index"
+      :placeholder="$t('common.placeholders.typeToSearchFor', {item: resourceCollection.label})"
+      :show-labels="false"
+      :internal-search="false"
+      :clear-on-select="false"
+      :preserve-search="isRelationshipArray"
+      :options-limit="10"
+      :limit="10"
+      :max-height="600"
+      :show-no-results="false"
+      :show-no-options="false"
+      :searchable="true"
+      @search-change="setOptions"
+      @input="emitSelected">
+      <template
+        v-slot:singleLabel="{ option }">
+        <div class="media">
+          <div class="media-body">
+            <span
+              v-for="(displayField, idx) in option.displayFields"
+              :key="`displayField_${displayField}_${idx}`"
+              v-show="idx !== 0"
+              class="pr-1">
+              {{ option.resource[displayField] }}
+            </span>
+            <span class="text-bold red-tag">
+              {{ option.resource[option.displayFields[0]] }}
+            </span>
+          </div>
+        </div>
+      </template>
+      <template
+        v-slot:tag="{ option, remove }">
+        <div class="multiselect__tag">
+          <div>
+            <span
+              v-for="(displayField, idx) in option.displayFields"
+              :key="`displayField_${displayField}_${idx}`"
+              v-show="idx !== 0"
+              class="pr-1 font-weight-bold">
+              {{ option.resource[displayField] }}
+            </span>
+            <i class="material-icons-outlined md-14 multiselect__tag-icon" @click="remove(option)">
+              close
+            </i>
+          </div>
+          <div class="text-muted">
+            {{ option.resource[option.displayFields[0]] }}
+          </div>
+        </div>
+      </template>
+      <template
+        v-slot:option="{ option }">
+        <div class="media">
+          <div class="media-body">
+            <div class="text-bold">
+              {{ option.resource[option.displayFields[0]] }}
+            </div>
+            <div>
+              <span
+                v-for="(displayField, idx) in option.displayFields"
+                :key="`displayField_${displayField}_${idx}`"
+                v-show="idx !== 0"
+                class="pr-1 text-muted">
+                {{ option.resource[displayField] }}
+              </span>
             </div>
           </div>
-        </template>
-        <template
-          v-slot:tag="{ option }"
-          class="mb-3">
-          <div class="media">
-            <div class="media-body p-1 border-bottom border-light">
-              <div class="text-bold">
-                {{ option.resource[option.displayFields[0]] }}
-              </div>
-              <div>
-                <span
-                  v-for="(displayField, idx) in option.displayFields"
-                  :key="`displayField_${displayField}_${idx}`"
-                  v-show="idx !== 0"
-                  class="pr-1 text-muted">
-                  {{ option.resource[displayField] }}
-                </span>
-              </div>
-            </div>
-          </div>
-        </template>
-        <template
-          v-slot:option="{ option }">
-          <div class="media">
-            <div class="media-body">
-              <div class="text-bold">
-                {{ option.resource[option.displayFields[0]] }}
-              </div>
-              <div>
-                <span
-                  v-for="(displayField, idx) in option.displayFields"
-                  :key="`displayField_${displayField}_${idx}`"
-                  v-show="idx !== 0"
-                  class="pr-1 text-muted">
-                  {{ option.resource[displayField] }}
-                </span>
-              </div>
-            </div>
-          </div>
-        </template>
-      </Multiselect>
-    </BFormGroup>
+        </div>
+      </template>
+    </FrField>
     <BFormGroup
       v-if="relationshipProperty.relationshipGrantTemporalConstraintsEnforced"
       :label-cols="isRelationshipArray || newResource ? 11 : 0"
@@ -160,13 +147,16 @@ export default {
     RestMixin,
   ],
   props: {
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
     relationshipProperty: {
       type: Object,
       required: true,
     },
     value: {
-      type: Object,
-      required: false,
+      type: [Object, String],
       default: () => {},
     },
     index: {
@@ -188,17 +178,21 @@ export default {
       rescourceCollectionPath: '',
       rescourceCollectionTypes: [],
       resourceCollections: [],
-      isRelationshipArray: false,
+      isRelationshipArray: has(this.relationshipProperty, 'items'),
       temporalConstraint: '',
       temporalConstraintEnabled: {
         value: false,
         type: 'boolean',
       },
+      relationshipField: {
+        ...this.relationshipProperty,
+        type: has(this.relationshipProperty, 'items') ? 'multiselect' : 'select',
+        options: [],
+        disabled: this.disabled,
+      },
     };
   },
   mounted() {
-    this.isRelationshipArray = has(this.relationshipProperty, 'items');
-
     this.allResourceCollections = this.isRelationshipArray ? this.relationshipProperty.items.resourceCollection : this.relationshipProperty.resourceCollection;
 
     this.rescourceCollectionTypes = map(this.allResourceCollections, (prop, index) => ({ value: prop.path, text: prop.label, index }));
@@ -214,8 +208,8 @@ export default {
   },
   watch: {
     temporalConstraint(newVal) {
-      if (this.selected && this.selected.length) {
-        this.selected.forEach((selection) => {
+      if (this.relationshipField.value && this.relationshipField.value.length) {
+        this.relationshipField.value.forEach((selection) => {
           const refProperties = { temporalConstraints: [{ duration: newVal }] };
           this.$emit('setValue', { property: this.relationshipProperty.key, value: { _ref: selection.value, _refProperties: refProperties } });
         });
@@ -226,8 +220,8 @@ export default {
      */
     temporalConstraintEnabled: {
       handler(newVal) {
-        if (this.selected && this.selected.length) {
-          this.selected.forEach((selection) => {
+        if (this.relationshipField.value && this.relationshipField.value.length) {
+          this.relationshipField.value.forEach((selection) => {
             const refProperties = newVal.value ? { temporalConstraints: [{ duration: this.temporalConstraint }] } : null;
             this.$emit('setValue', { property: this.relationshipProperty.key, value: { _ref: selection.value, _refProperties: refProperties } });
           });
@@ -245,7 +239,7 @@ export default {
         index = rescourceCollectionType.index;
       }
 
-      this.selected = null;
+      this.relationshipField.value = null;
 
       // set the default resourceCollection to the first resourceCollection
       this.resourceCollection = this.allResourceCollections[index];
@@ -265,11 +259,11 @@ export default {
       const displayFields = this.resourceCollection.query.fields;
       let queryFilter = true;
 
-      this.options = [];
-
-      if (!query && !this.selected && this.value) {
+      if (!query && (!this.relationshipField.value || this.relationshipField.value.length === 0) && this.value) {
         // eslint-disable-next-line no-underscore-dangle
-        this.selected = { value: this.value._ref, resource: this.value, displayFields };
+        this.relationshipField.options = [{ value: this.value._ref, resource: this.value, displayFields }];
+        // eslint-disable-next-line no-underscore-dangle
+        this.relationshipField.value = this.value._ref;
       }
 
       if (query) {
@@ -279,9 +273,10 @@ export default {
         const idmInstance = this.getRequestService();
 
         idmInstance.get(`${this.resourceCollection.path}${urlQuery}`).then((queryResults) => {
+          this.relationshipField.options = [];
           each(queryResults.data.result, (resource) => {
             // eslint-disable-next-line no-underscore-dangle
-            this.options.push({ value: `${this.resourceCollection.path}/${resource._id}`, resource, displayFields });
+            this.relationshipField.options.push({ value: `${this.resourceCollection.path}/${resource._id}`, resource, displayFields });
           });
         })
           .catch((error) => {
@@ -289,62 +284,37 @@ export default {
           });
       }
     },
-    setSelected(selected) {
-      if (selected.value && this.relationshipProperty.relationshipGrantTemporalConstraintsEnforced && this.temporalConstraint.length > 0) {
-        const refProperties = { temporalConstraints: [{ duration: this.temporalConstraint }] };
-        this.selected = selected;
-        this.$emit('setValue', { property: this.relationshipProperty.key, value: { _ref: selected.value, _refProperties: refProperties } });
-      } else if (selected.value) {
-        this.selected = selected;
-        this.$emit('setValue', { property: this.relationshipProperty.key, value: { _ref: selected.value } });
+    emitSelected(selected) {
+      if (selected && Array.isArray(selected)) {
+        let emitValues;
+        if (this.relationshipProperty.relationshipGrantTemporalConstraintsEnforced && this.temporalConstraint.length > 0) {
+          const refProperties = { temporalConstraints: [{ duration: this.temporalConstraint }] };
+          emitValues = selected.map((currentValue) => ({ _ref: currentValue, _refProperties: refProperties }));
+        } else {
+          emitValues = selected.map((currentValue) => ({ _ref: currentValue, _refProperties: {} }));
+        }
+        this.$emit('setValue', emitValues);
+      } else if (selected) {
+        if (this.relationshipProperty.relationshipGrantTemporalConstraintsEnforced && this.temporalConstraint.length > 0) {
+          const refProperties = { temporalConstraints: [{ duration: this.temporalConstraint }] };
+          this.$emit('setValue', { _ref: selected, _refProperties: refProperties });
+        } else {
+          this.$emit('setValue', { _ref: selected, _refProperties: {} });
+        }
       } else {
-        this.selected = null;
-        this.$emit('setValue', { property: this.relationshipProperty.key, value: null });
+        this.relationshipField.value = null;
+        this.$emit('setValue', null);
       }
     },
   },
 };
 </script>
+
 <style lang="scss" scoped>
-@import '~vue-multiselect/dist/vue-multiselect.min.css';
-
-/deep/ {
-  .multiselect {
-    color: $input-color;
-
-    .multiselect__placeholder {
-      position: relative;
-      top: 5px;
-      padding-top: 0;
-    }
-
-    .multiselect__tags {
-      padding-top: 10px;
-      padding-bottom: 10px;
-    }
-
-    .multiselect__select {
-      top: 6px;
-    }
-
-    .multiselect__option--selected.multiselect__option--highlight {
-      background-color: $primary;
-    }
-
-    .multiselect__option.multiselect__option--highlight {
-      background-color: $light;
-      color: $input-color;
-    }
-
-    .multiselect__single {
-      position: relative;
-      top: 4px;
-    }
-
-    .multiselect__input {
-      position: relative;
-      top: 3px;
-    }
-  }
+.red-tag {
+  color: $magenta;
+  background-color: $gray-100;
+  padding: 0.125rem 0.25rem;
+  border-radius: 5px;
 }
 </style>

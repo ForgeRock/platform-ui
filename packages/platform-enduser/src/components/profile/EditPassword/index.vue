@@ -1,4 +1,4 @@
-<!-- Copyright 2019 ForgeRock AS. All Rights Reserved
+<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
 
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
@@ -47,13 +47,11 @@ to such license between the licensee and ForgeRock AS. -->
                         :name="$t('pages.profile.accountSecurity.currentPassword')"
                         :class="[{'is-invalid': errors.length > 0}, 'form-control']"
                         :type="inputCurrent"
-                        v-model="currentPassword"
-                      />
+                        v-model="currentPassword" />
                       <div class="input-group-append">
-                        <BBtn
+                        <BButton
                           @click="revealCurrent"
-                          class="btn btn-secondary"
-                          type="button">
+                          class="btn btn-secondary">
                           <i
                             v-if="showCurrent"
                             class="material-icons-outlined">
@@ -64,7 +62,7 @@ to such license between the licensee and ForgeRock AS. -->
                             class="material-icons-outlined">
                             visibility_off
                           </i>
-                        </BBtn>
+                        </BButton>
                       </div>
                     </div>
                     <FrValidationError
@@ -89,8 +87,7 @@ to such license between the licensee and ForgeRock AS. -->
                             id="newPassword"
                             :type="inputNew"
                             v-model="newPassword"
-                            name="password"
-                          />
+                            name="password" />
                           <div class="input-group-append">
                             <button
                               @click="revealNew"
@@ -115,7 +112,6 @@ to such license between the licensee and ForgeRock AS. -->
                 </FrPolicyPasswordInput>
 
                 <FrLoadingButton
-                  type="button"
                   variant="primary"
                   class="ld-ext-right mb-3"
                   :label="$t('pages.profile.accountSecurity.savePassword')"
