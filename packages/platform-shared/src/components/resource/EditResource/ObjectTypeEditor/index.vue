@@ -12,7 +12,9 @@ to such license between the licensee and ForgeRock AS. -->
             class="mb-4"
             v-if="(field.type === 'string' || field.type === 'number' || field.type === 'boolean') && field.encryption === undefined"
             :key="'editResource' + index">
-            <FrField :field="field" />
+            <FrField
+              :field="field"
+              :display-description="field.type !== 'boolean'" />
           </div>
           <!-- for singletonRelationhip values -->
           <template v-if="field.type === 'relationship' && formFields[field.key] !== ''">
