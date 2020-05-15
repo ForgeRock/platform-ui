@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ListResource.vue ListResourceView page loaded 1`] = `
+<bcontainer-stub tag="div">
+  <div class="mt-5">
+    <frheader-stub title="Test" subtitle="ForgeRock-hosted identity resources"></frheader-stub>
+    <bcard-stub bodytag="div" titletag="h4" subtitletag="h6" subtitletextvariant="muted" headertag="div" footertag="div" tag="div" nobody="true" class="card-tabs-vertical">
+      <!---->
+      <!---->
+    </bcard-stub>
+  </div>
+</bcontainer-stub>
+`;

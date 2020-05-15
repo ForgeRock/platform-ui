@@ -4,48 +4,39 @@ Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
-  <BContainer class="pb-5">
-    <BRow>
-      <BCol>
-        <div class="d-sm-flex mt-5 mb-4">
-          <div class="media">
-            <div
-              class="mb-4 media align-items-center">
-              <BImg
-                v-if="resourceName === 'user'"
-                class="mr-4"
-                width="100"
-                :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"
-                fluid
-                :alt="$t('common.avatar')" />
-              <i
-                v-else
-                class="material-icons-outlined mr-4 md-48">
-                {{ setIcon }}
-              </i>
-              <div class="media-body">
-                <h5 class="text-muted">
-                  {{ resourceTitle }}
-                </h5>
-                <h1>{{ displayName }}</h1>
-                <span
-                  v-if="displaySecondaryTitleField === 'description'"
-                  class="text-muted">
-                  {{ secondaryTitle }}
-                </span>
-                <code v-else>
-                  {{ secondaryTitle }}
-                </code>
-              </div>
-            </div>
-          </div>
-        </div>
-      </BCol>
-    </BRow>
+  <BContainer class="my-5">
+    <div
+      class="mb-4 media">
+      <BImg
+        v-if="resourceName === 'user'"
+        class="mr-4"
+        width="104"
+        :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"
+        fluid
+        :alt="$t('common.avatar')" />
+      <i
+        v-else
+        class="material-icons-outlined mr-4 md-48">
+        {{ setIcon }}
+      </i>
+      <div class="media-body align-self-center">
+        <h5 class="text-muted">
+          {{ resourceTitle }}
+        </h5>
+        <h1>{{ displayName }}</h1>
+        <span
+          v-if="displaySecondaryTitleField === 'description'"
+          class="text-muted">
+          {{ secondaryTitle }}
+        </span>
+        <code v-else>
+          {{ secondaryTitle }}
+        </code>
+      </div>
+    </div>
     <BButton
       v-if="canChangePassword"
       class="mb-4"
-      type="button"
       variant="outline-secondary"
       v-b-modal.resetModal>
       <i class="material-icons-outlined mr-md-2 text-nowrap">
@@ -91,13 +82,14 @@ to such license between the licensee and ForgeRock AS. -->
               :form-fields="formFields[objectTypeProperty.propName] || {}"
               :sub-property-name="objectTypeProperty.propName"
               :display-properties="getObjectTypeProperyDisplayProperties(objectTypeProperty)"
-              :disable-save-button="disableSaveButton"
+              :disable-save-button="objectTypeProperty.readOnly"
               :resource-path="`${resourceType}/${resourceName}/${id}`"
               :is-openidm-admin="isOpenidmAdmin" />
           </BTab>
         </template>
         <FrPrivilegesTab
           v-if="internalRolePrivilegesField"
+          :disabled="disableSaveButton"
           :privileges-field="internalRolePrivilegesField"
           :resource-path="`${resourceType}/${resourceName}/${id}`"
           :resource-name="resourceName" />
@@ -131,7 +123,6 @@ to such license between the licensee and ForgeRock AS. -->
         {{ $t('common.cannotBeUndone') }}
       </p>
       <BButton
-        type="button"
         variant="danger"
         v-b-modal.deleteModal>
         {{ $t('common.delete') }} {{ resourceTitle }}
@@ -155,7 +146,6 @@ to such license between the licensee and ForgeRock AS. -->
           {{ $t('common.cancel') }}
         </BButton>
         <BButton
-          type="button"
           variant="danger"
           @click="deleteResource">
           {{ $t('common.delete') }}
@@ -187,28 +177,26 @@ import {
 import {
   BButton,
   BCard,
-  BCol,
   BContainer,
   BImg,
   BModal,
-  BRow,
   BTab,
   BTabs,
   VBModal,
 } from 'bootstrap-vue';
 import axios from 'axios';
-import ResetPasswordModal from '@forgerock/platform-shared/src/components/resource/EditResource/ResetPasswordModal';
-import RelationshipArray from '@forgerock/platform-shared/src/components/resource/RelationshipArray';
+import FrResetPasswordModal from '@forgerock/platform-shared/src/components/resource/EditResource/ResetPasswordModal';
+import FrRelationshipArray from '@forgerock/platform-shared/src/components/resource/RelationshipArray';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
-import EditAssignment from '@forgerock/platform-admin/src/views/ManagedIdentities/Assignment/Edit';
+import FrEditAssignment from '@forgerock/platform-admin/src/views/ManagedIdentities/Assignment/Edit';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
-import ObjectTypeEditor from './ObjectTypeEditor';
-import SettingsTab from './CustomTabs/SettingsTab';
-import PrivilegesTab from './CustomTabs/PrivilegesTab';
+import FrObjectTypeEditor from './ObjectTypeEditor';
+import FrSettingsTab from './CustomTabs/SettingsTab';
+import FrPrivilegesTab from './CustomTabs/PrivilegesTab';
 
 /**
  * @description Full page that provides view/edit of a specific resource for delegated admin. Auto generates fields based on backend return.
@@ -223,21 +211,19 @@ import PrivilegesTab from './CustomTabs/PrivilegesTab';
 export default {
   name: 'EditResource',
   components: {
-    FrObjectTypeEditor: ObjectTypeEditor,
-    FrResetPasswordModal: ResetPasswordModal,
-    FrRelationshipArray: RelationshipArray,
-    FrSettingsTab: SettingsTab,
-    FrPrivilegesTab: PrivilegesTab,
-    FrEditAssignment: EditAssignment,
+    FrObjectTypeEditor,
+    FrResetPasswordModal,
+    FrRelationshipArray,
+    FrSettingsTab,
+    FrPrivilegesTab,
+    FrEditAssignment,
     BButton,
     BImg,
-    BCol,
     BContainer,
     BTabs,
     BTab,
     BCard,
     BModal,
-    BRow,
   },
   mixins: [
     BreadcrumbMixin,
@@ -313,15 +299,21 @@ export default {
         const isObjectTypeProperty = property.type === 'object' && property.viewable;
 
         property.propName = key;
+        property.readOnly = !privilege.UPDATE.properties.includes(key) && !this.isOpenidmAdmin;
 
         return isObjectTypeProperty && hasPermission;
       });
     },
     getObjectTypeProperyDisplayProperties(obj) {
       return map(obj.order, (propName) => {
-        obj.properties[propName].key = propName;
-
-        obj.properties[propName].value = this.formFields[obj.propName] ? this.formFields[obj.propName][propName] || null : null;
+        const property = obj.properties[propName];
+        property.key = propName;
+        property.value = this.formFields[obj.propName] ? this.formFields[obj.propName][propName] || null : null;
+        if (obj.readOnly && !this.isOpenidmAdmin) {
+          property.disabled = true;
+        } else {
+          property.disabled = false;
+        }
 
         return obj.properties[propName];
       });
@@ -335,7 +327,7 @@ export default {
         property.propName = key;
 
         if (isRelationship) {
-          property.disabled = privilege.UPDATE.properties.indexOf(key) === -1 && !this.isOpenidmAdmin;
+          property.readOnly = !privilege.UPDATE.properties.includes(key) && !this.isOpenidmAdmin;
         }
 
         return isInPropertyOrder && isRelationship && hasPermission;
@@ -347,9 +339,13 @@ export default {
         const isSettingsPropery = property.isConditional || property.isTemporalConstraint;
 
         property.propName = key;
-        if (property.isTemporalConstraint && isArray(this.formFields[key]) && this.formFields[key].length > 0) {
-          property.value = this.formFields[key][0].duration;
+        if (property.isTemporalConstraint) {
+          property.disabled = !privilege.UPDATE.properties.includes(key) && !this.isOpenidmAdmin;
+          if (isArray(this.formFields[key]) && this.formFields[key].length > 0) {
+            property.value = this.formFields[key][0].duration;
+          }
         } else if (this.isConditional) {
+          property.disabled = !privilege.UPDATE.properties.includes(key) && !this.isOpenidmAdmin;
           property.value = this.formFields[key];
         }
 
@@ -471,8 +467,8 @@ export default {
       const properties = [];
 
       each(schema.order, (schemaPropName) => {
-        const canView = this.isOpenidmAdmin || indexOf(privilege.VIEW.properties, schemaPropName) > -1;
-        const canUpdate = this.isOpenidmAdmin || indexOf(privilege.UPDATE.properties, schemaPropName) > -1;
+        const canView = this.isOpenidmAdmin || privilege.VIEW.properties.includes(schemaPropName);
+        const canUpdate = this.isOpenidmAdmin || privilege.UPDATE.properties.includes(schemaPropName);
         const property = { attribute: schemaPropName };
 
         if (canUpdate && schemaPropName !== '_id') {
@@ -520,8 +516,10 @@ export default {
     },
     hideNav() {
       const relationshipArrayProps = pickBy(this.relationshipProperties, { type: 'array' });
-
-      if (keys(relationshipArrayProps).length === 0 && keys(this.objectTypeProperties).length === 0) {
+      if (keys(relationshipArrayProps).length === 0
+        && keys(this.objectTypeProperties).length === 0
+        && keys(this.settingsProperties).length === 0
+        && !this.internalRolePrivilegesField) {
         return true;
       }
 

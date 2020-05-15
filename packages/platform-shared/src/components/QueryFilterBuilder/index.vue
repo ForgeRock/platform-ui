@@ -8,6 +8,7 @@ to such license between the licensee and ForgeRock AS. -->
     <template v-if="isBasic && allowBasicMode">
       <FrQueryFilterGroup
         path="0"
+        :disabled="disabled"
         :rules="queryFilter"
         :resource-name="resourceName"
         :depth="0"
@@ -27,6 +28,7 @@ to such license between the licensee and ForgeRock AS. -->
     </template>
     <template v-else-if="isBasic === false">
       <FrQueryFilterAdvanced
+        :disabled="disabled"
         v-model="filterString"
         @input="checkFilterString" />
       <BButton
@@ -79,6 +81,10 @@ export default {
     };
   },
   props: {
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
     resourceName: {
       required: true,
       type: String,

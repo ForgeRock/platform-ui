@@ -43,7 +43,6 @@ const toolbarDropdownTemplate = `
     <template v-slot:toolbar>
       <div class="btn-toolbar justify-content-between">
         <BButton
-        type="button"
         variant="primary"
         class="float-left">
           <i class="material-icons-outlined">
@@ -51,7 +50,6 @@ const toolbarDropdownTemplate = `
           </i> New User
         </BButton>
         <BButton
-        type="button"
         variant="outline-primary"
         class="float-left">
           <i class="material-icons-outlined">
@@ -82,7 +80,6 @@ const toolbarCheckboxTemplate = `
       <div class="btn-toolbar justify-content-between">
         <div>
           <BButton
-          type="button"
           variant="primary"
           class="float-left mr-1">
             <i class="material-icons-outlined">
@@ -91,7 +88,6 @@ const toolbarCheckboxTemplate = `
           </BButton>
           <BButton
           v-if="deleteVisible"
-          type="button"
           variant="outline-primary"
           class="float-left">
             <i class="material-icons-outlined">
@@ -100,7 +96,6 @@ const toolbarCheckboxTemplate = `
           </BButton>
         </div>
         <BButton
-        type="button"
         variant="outline-primary"
         class="float-left">
           <i class="material-icons-outlined">

@@ -236,11 +236,10 @@ describe('FrField.vue', () => {
       field: {
         type: 'checkbox',
         key: 'testField',
-        value: 't',
+        value: true,
       },
     });
     await flush();
-    // should convert text into true
     expect(wrapper.vm.field.value).toBe(true);
   });
 
