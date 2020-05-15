@@ -60,7 +60,8 @@ body {
   pointer-events: none;
 }
 
-.dropdown-toggle {
+.dropdown-toggle,
+.accordion .card-header {
   &::after {
     border: none;
     content: 'expand_more';
