@@ -6,6 +6,7 @@
     <VuePrismEditor
       language="javascript"
       v-model="queryFilterString"
+      :readonly="disabled"
       @input="$emit('input', $event.target.innerText)" />
   </div>
 </template>
@@ -24,6 +25,10 @@ export default {
     };
   },
   props: {
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
     value: {
       required: true,
       type: [String, Boolean],

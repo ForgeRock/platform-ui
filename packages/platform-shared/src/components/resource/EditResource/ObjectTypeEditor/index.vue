@@ -17,40 +17,14 @@ to such license between the licensee and ForgeRock AS. -->
               :display-description="field.type !== 'boolean'" />
           </div>
           <!-- for singletonRelationhip values -->
-          <template v-if="field.type === 'relationship' && formFields[field.key] !== ''">
-            <BFormGroup
-              :key="'readResource' + index"
-              v-if="field.disabled">
-              <label
-                class="col-form-label col-sm-3"
-                :for="field.title">
-                {{ field.title }}
-              </label>
-              <div class="media-body">
-                <!-- Using the first display field here "[0]"-->
-                <div class="text-bold pl-1">
-                  {{ formFields[field.key][getRelationshipDisplayFields(field, formFields[field.key])[0]] }}
-                </div>
-                <div>
-                  <!-- Loop over the rest of the display fields and print each in a span -->
-                  <span
-                    v-for="(displayField, displayFieldIndex) in getRelationshipDisplayFields(field, formFields[field.key])"
-                    :key="`displayField_${displayField}_${displayFieldIndex}`"
-                    v-show="displayFieldIndex !== 0"
-                    class="pl-1 pr-1 text-muted">
-                    {{ formFields[field.key][displayField] }}
-                  </span>
-                </div>
-              </div>
-            </BFormGroup>
-            <FrRelationshipEdit
-              v-else
-              :relationship-property="field"
-              :key="'editResource' + index"
-              :index="index"
-              :value="field.value"
-              @setValue="setSingletonRelationshipValue($event, field)" />
-          </template>
+          <FrRelationshipEdit
+            v-if="field.type === 'relationship'"
+            :disabled="field.disabled"
+            :relationship-property="field"
+            :key="'editResource' + index"
+            :index="index"
+            v-model="field.value"
+            @setValue="setSingletonRelationshipValue($event, field)" />
         </template>
       </ValidationObserver>
     </div>
@@ -59,7 +33,6 @@ to such license between the licensee and ForgeRock AS. -->
       class="card-footer">
       <div class="float-right mb-4">
         <BButton
-          type="button"
           @click="saveResource"
           variant="primary">
           {{ $t('common.save') }}
@@ -74,12 +47,8 @@ to such license between the licensee and ForgeRock AS. -->
 import {
   capitalize,
   clone,
-  find,
 } from 'lodash';
-import {
-  BButton,
-  BFormGroup,
-} from 'bootstrap-vue';
+import { BButton } from 'bootstrap-vue';
 import { ValidationObserver } from 'vee-validate'; // ValidationProvider,
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import RelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
@@ -94,7 +63,6 @@ export default {
     FrRelationshipEdit: RelationshipEdit,
     ValidationObserver,
     BButton,
-    BFormGroup,
   },
   props: {
     displayProperties: {
@@ -134,12 +102,8 @@ export default {
     };
   },
   methods: {
-    getRelationshipDisplayFields(property, value) {
-      // eslint-disable-next-line no-underscore-dangle
-      return find(property.resourceCollection, { path: value._refResourceCollection }).query.fields;
-    },
-    setSingletonRelationshipValue(data, field) {
-      field.value = data.value;
+    setSingletonRelationshipValue(value, field) {
+      field.value = value;
     },
     async saveResource() {
       const idmInstance = this.getRequestService();
