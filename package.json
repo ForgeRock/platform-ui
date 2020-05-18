@@ -32,7 +32,8 @@
   },
   "resolutions": {
     "**/**/minimist": "1.2.5",
-    "**/**/with/acorn": "4.0.13"
+    "**/**/with/acorn": "4.0.13",
+    "**/**/copy-webpack-plugin/serialize-javascript": "2.1.2"
   },
   "workspaces": {
     "packages": [
