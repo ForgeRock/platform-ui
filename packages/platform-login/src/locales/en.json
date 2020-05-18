@@ -25,7 +25,7 @@
     },
     "social": {
       "or": "or",
-      "continueWith": "Continue with"
+      "continueWith": "Continue with {buttonDisplayName}"
     }
   },
   "pages": {
