@@ -100,10 +100,6 @@ export default {
         this.inputValue = find(this.options, { value: newVal });
       }
     },
-    inputValueHandler(newVal) {
-      this.floatLabels = newVal.value && newVal.value.length > 0 && this.label;
-      this.$emit('input', newVal.value);
-    },
   },
   watch: {
     value: {
