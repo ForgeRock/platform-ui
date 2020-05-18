@@ -1,4 +1,4 @@
-<!-- Copyright 2019 ForgeRock AS. All Rights Reserved
+<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
 
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
@@ -24,12 +24,13 @@ to such license between the licensee and ForgeRock AS. -->
         :src="provider.uiConfig.buttonImage">
       <!-- TODO No material icons for providers, need alternative or always have image for all icons -->
       <span class="ml-1">
-        {{ continueWithText }} {{ provider.uiConfig.buttonDisplayName }}
+        {{ $t(continueWithText, {buttonDisplayName: provider.uiConfig.buttonDisplayName}) }}
       </span>
     </button>
 
     <FrHorizontalRule
-      v-if="! standaloneMode"
+      v-if="!standaloneMode"
+      class="mt-3"
       :insert="orText" />
   </div>
 </template>
@@ -98,11 +99,11 @@ export default {
       });
 
       /*
-						If callback_index is zero and the "name" attribute on callbackSubmitButton is callback_1 we
-						know SelectIdPCallback is by itself on the page. In this case we will hide callbackSubmitButton
-						and click it to submit the form automatically when one of the social buttons is pressed.
-				*/
-      this.standaloneMode = this.index === 0 && this.callbackSubmitButton && this.callbackSubmitButton.name === 'callback_1';
+        If callback_index is zero and the "name" attribute on callbackSubmitButton is callback_1 we
+        know SelectIdPCallback is by itself on the page. In this case we will hide callbackSubmitButton
+        and click it to submit the form automatically when one of the social buttons is pressed.
+      */
+      this.standaloneMode = this.orText === '' || (this.index === 0 && this.callbackSubmitButton && this.callbackSubmitButton.name === 'callback_1');
 
       if (this.standaloneMode) {
         this.callbackSubmitButton.style.display = 'none';
