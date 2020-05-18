@@ -41,15 +41,18 @@ export default {
     };
   },
   watch: {
-    selected(newVal) {
-      this.callback.setInputValue(newVal);
+    selected: {
+      handler(newVal) {
+        this.callback.setInputValue(newVal.value);
+      },
+      deep: true,
     },
   },
   methods: {
     loadOptions() {
       this.selected.options = map(this.choices, (item, itemIndex) => ({
         text: item,
-        value: itemIndex.toString(),
+        value: itemIndex,
       }));
     },
   },
