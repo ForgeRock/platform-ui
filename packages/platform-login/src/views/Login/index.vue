@@ -275,6 +275,13 @@ export default {
       this.$refs.callbacksPanel.innerHTML = '';
       this.showNextButton = true;
 
+      // Ensure that Social Buttons appear at top of Page Node
+      this.step.callbacks.sort((currentCallback) => {
+        if (currentCallback.payload.type === 'SelectIdPCallback') {
+          return -1;
+        }
+        return 1;
+      });
       map(this.step.callbacks, (callback, index) => {
         const type = callback.getType();
 
@@ -346,6 +353,7 @@ export default {
           });
           break;
         case 'RedirectCallback':
+          this.showNextButton = false;
           if (callback.getOutputByName('trackingCookie')) {
             // save current step information for later resumption of tree.
             sessionStorage.authIndexValue = this.authIndexValue || this.$route.params.tree;
@@ -376,8 +384,8 @@ export default {
           this.addComponent(SelectIdPCallback, {
             callback,
             index,
-            continueWithText: this.$t('login.social.continueWith'),
-            orText: this.$t('login.social.or'),
+            continueWithText: 'login.social.continueWith',
+            orText: this.step.callbacks.length > 1 ? this.$t('login.social.or') : '',
             callbackSubmitButton: this.$refs.callbackSubmitButton,
           });
           break;
