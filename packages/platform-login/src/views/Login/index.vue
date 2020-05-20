@@ -68,7 +68,9 @@ import {
   BCardBody,
   BButton,
 } from 'bootstrap-vue';
-import { FRAuth, FRWebAuthn, Config } from '@forgerock/javascript-sdk';
+import {
+  FRAuth, FRWebAuthn, Config,
+} from '@forgerock/javascript-sdk';
 import Vue from 'vue';
 import WithCallback from '@forgerock/platform-shared/src/hoc/CallbackHoc';
 import FrField from '@forgerock/platform-shared/src/components/Field';
@@ -76,6 +78,7 @@ import BooleanAttributeInputCallback from '@/components/callbacks/BooleanAttribu
 import CenterCard from '@/components/utils/CenterCard';
 import ChoiceCallback from '@/components/callbacks/ChoiceCallback';
 import ConfirmationCallback from '@/components/callbacks/ConfirmationCallback';
+import DeviceProfileCallback from '@/components/callbacks/DeviceProfileCallback';
 import KbaCreateCallback from '@/components/callbacks/KbaCreateCallback';
 import HiddenValueCallback from '@/components/callbacks/HiddenValueCallback';
 import ReCaptchaCallback from '@/components/callbacks/ReCaptchaCallback';
@@ -181,11 +184,13 @@ export default {
         this.nextStep();
       } else if (webAuthnStepType === 1) {
         // Authenticate with a registered device
+        this.showNextButton = false;
         FRWebAuthn.authenticate(step).then(() => {
           this.nextStep();
         });
       } else if (webAuthnStepType === 2) {
         // Register a new device
+        this.showNextButton = false;
         FRWebAuthn.register(step).then(() => {
           this.nextStep();
         });
@@ -278,6 +283,13 @@ export default {
         case 'ConfirmationCallback':
           this.showNextButton = false;
           this.addComponent(ConfirmationCallback, {
+            callback,
+            nextStep: this.nextStep,
+          });
+          break;
+        case 'DeviceProfileCallback':
+          this.showNextButton = false;
+          this.addComponent(DeviceProfileCallback, {
             callback,
             nextStep: this.nextStep,
           });

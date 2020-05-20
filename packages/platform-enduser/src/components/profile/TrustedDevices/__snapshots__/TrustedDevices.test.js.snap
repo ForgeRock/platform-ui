@@ -1,12 +1,3 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`TrustedDevices.vue Trusted Devices loads 1`] = `
-<frlistgroup-stub title="Trusted Devices" subtitle="Devices you have signed in with.">
-  <blistgroupitem-stub class="noncollapse text-center">
-    No Trusted Devices
-  </blistgroupitem-stub>
-  <bmodal-stub id="trustedDevicesConfirmationModal" cancel-variant="outline-secondary">
-    Are you sure you want to remove '' from your list of trusted devices?
-  </bmodal-stub>
-</frlistgroup-stub>
-`;
+exports[`TrustedDevices.vue Trusted Devices loads 1`] = ``;

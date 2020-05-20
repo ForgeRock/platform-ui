@@ -22,6 +22,7 @@ exports[`Profile.vue Profile page loaded 1`] = `
           <!---->
           <!---->
           <!---->
+          <!---->
           <div>
             <frlistgroup-stub title="Account Controls" subtitle="Download your account data or delete your account.">
               <frlistitem-stub hoveritem="true"></frlistitem-stub>
