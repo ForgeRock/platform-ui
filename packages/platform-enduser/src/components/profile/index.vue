@@ -52,7 +52,7 @@ to such license between the licensee and ForgeRock AS. -->
               @updateKBA="updateKBA" />
             <!-- TODO we need to update these to not rely on the old way of getting AM data endpoints -->
             <!-- <FrAuthorizedApplications v-if="amDataEndpoints && internalUser === false" /> -->
-            <!-- <FrTrustedDevices v-if="amDataEndpoints && internalUser === false" /> -->
+            <FrTrustedDevices />
             <FrPreferences
               v-if="internalUser === false"
               @updateProfile="updateProfile" />
@@ -109,7 +109,7 @@ export default {
     FrAccountSecurity: () => import('@/components/profile/AccountSecurity'),
     FrEditPersonalInfo: () => import('@/components/profile/EditPersonalInfo'),
     FrPreferences: () => import('@/components/profile/Preferences'),
-    // FrTrustedDevices: () => import('@/components/profile/TrustedDevices'),
+    FrTrustedDevices: () => import('@/components/profile/TrustedDevices'),
     // FrAuthorizedApplications: () => import('@/components/profile/AuthorizedApplications'),
     FrConsent: () => import('@/components/profile/Consent'),
   },

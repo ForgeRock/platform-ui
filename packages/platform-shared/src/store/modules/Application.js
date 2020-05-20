@@ -20,16 +20,17 @@ import {
 } from 'lodash';
 
 const defaultState = {
-  authHeaders: null,
-  loginRedirect: null,
-  amBaseURL: null,
   amAdminURL: null,
+  amBaseURL: null,
+  authHeaders: null,
+  googleMapsApiKey: '',
   idmBaseURL: '/openidm',
-  loginURL: null,
-  theme: 'default',
   idmClientID: null,
+  loginRedirect: null,
+  loginURL: null,
   oauthSaveObj: null,
   oauthSchema: null,
+  theme: 'default',
 };
 
 const getters = {
@@ -106,6 +107,10 @@ const mutations = {
 
     if (env.VUE_APP_ADMIN_URL) {
       state.adminURL = env.VUE_APP_ADMIN_URL;
+    }
+
+    if (env.VUE_APP_GOOGLE_MAPS_API_KEY) {
+      state.googleMapsApiKey = env.VUE_APP_GOOGLE_MAPS_API_KEY;
     }
   },
 
