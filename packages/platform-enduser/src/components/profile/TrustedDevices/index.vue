@@ -4,114 +4,234 @@ Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
-  <FrListGroup
-    v-show="devices"
-    :title="$t('pages.profile.trustedDevices.title')"
-    :subtitle="$t('pages.profile.trustedDevices.subtitle')">
-    <template v-if="devices.length > 0">
-      <FrListItem
-        v-for="(device, id) in devices"
-        :key="id"
-        :collapsible="false"
-        :panel-shown="false">
-        <template v-slot:list-item-header>
-          <div class="d-inline-flex w-100">
-            <div class="d-flex mr-3 align-self-top">
-              <FrFallbackImage
-                :src="device.logo_uri"
-                fallback="close"
-                input-class="m-auto pt-1 pb-1 font-weight-bolder md-36" />
-            </div>
-            <div class="flex-grow-1">
-              <div>
-                {{ device.name }}
+  <div v-if="devices.length">
+    <FrAccordion
+      class="mb-4"
+      :items="devices"
+      accordion-group="trustedDevices">
+      <template v-slot:accordionHeader>
+        <div class="p-4">
+          <h4>
+            {{ $t('pages.profile.trustedDevices.title') }}
+          </h4>
+          <p class="m-0">
+            {{ $t('pages.profile.trustedDevices.subtitle') }}
+          </p>
+        </div>
+      </template>
+      <template
+        v-slot:header="slotData">
+        <BRow>
+          <BCol
+            cols="10">
+            <BRow class="align-items-center">
+              <BCol
+                md="6">
+                <div class="media align-items-center">
+                  <div
+                    :data-device-type="slotData.deviceType"
+                    class="device device-xs mr-4" />
+                  <div class="media-body">
+                    <h5 class="mb-0">
+                      {{ slotData.alias }}
+                    </h5>
+                    <small
+                      v-if="slotData.open$"
+                      class="text-muted">
+                      <a
+                        href="#"
+                        v-b-modal.trusted-devices-modal
+                        @click.stop.prevent="setModalData('edit', slotData)">
+                        {{ $t('common.edit') }}
+                      </a>
+                    </small>
+                  </div>
+                </div>
+              </BCol>
+              <BCol
+                md="6">
+                <span v-if="slotData.isCurrent">
+                  <i class="material-icons mr-2 text-success">
+                    check_circle
+                  </i>
+                  {{ $t('pages.profile.trustedDevices.currentDevice') }}
+                </span>
+                <span v-else>
+                  {{ slotData.locality }}{{ slotData.locality && ',' }} {{ slotData.lastLogin }}
+                </span>
+              </BCol>
+            </BRow>
+          </BCol>
+        </BRow>
+      </template>
+      <template v-slot:body="slotData">
+        <BRow>
+          <BCol
+            v-if="slotData.map"
+            md="5">
+            <div class="w-100">
+              <div class="mb-2">
+                <small>{{ $t('pages.profile.trustedDevices.recentActivity') }}</small>
               </div>
-              <small class="text-muted subtext">
-                {{ device.lastSelectedDate }}
-              </small>
+              <img
+                class="mb-3 w-100"
+                :src="slotData.map">
+              <div class="media">
+                <i class="material-icons-outlined mr-2 mt-1 text-muted">
+                  place
+                </i>
+                <div class="media-body">
+                  <div class="bold">
+                    {{ slotData.formattedAddress }}
+                  </div>
+                  <p class="text-muted">
+                    {{ slotData.lastLogin }}
+                  </p>
+                </div>
+              </div>
             </div>
-            <a
-              class="align-self-center flex-grow-2 text-right"
-              @click.prevent="showConfirmationModal(device)"
-              href="#">
-              {{ $t('common.remove') }}
-            </a>
-          </div>
-        </template>
-      </FrListItem>
-    </template>
-    <template v-else>
-      <BListGroupItem class="noncollapse text-center">
-        {{ $t('pages.profile.trustedDevices.noDevices') }}
-      </BListGroupItem>
-    </template>
+          </BCol>
+          <BCol>
+            <div>
+              <div
+                v-if="slotData.os"
+                class="mb-3">
+                <small>{{ $t('pages.profile.trustedDevices.os') }}</small>
+                <p class="bold">
+                  {{ slotData.os }}
+                </p>
+              </div>
+              <div
+                v-if="slotData.browser"
+                class="mb-3">
+                <small>{{ $t('pages.profile.trustedDevices.browser') }}</small>
+                <p class="bold">
+                  {{ slotData.browser }}
+                </p>
+              </div>
+              <div v-if="slotData.cpu">
+                <small>{{ $t('pages.profile.trustedDevices.cpu') }}</small>
+                <p class="bold">
+                  {{ slotData.cpu }}
+                </p>
+              </div>
+            </div>
+          </BCol>
+        </BRow>
+        <div
+          class="d-flex justify-content-start"
+          v-if="!slotData.isCurrent">
+          <BButton
+            variant="outline-danger"
+            class="w-100"
+            v-b-modal.trusted-devices-modal
+            @click="setModalData('remove', slotData)">
+            <i class="material-icons-outlined mr-2">
+              block
+            </i> {{ $t('pages.profile.trustedDevices.remove') }}
+          </BButton>
+        </div>
+      </template>
+    </FrAccordion>
 
     <BModal
-      id="trustedDevicesConfirmationModal"
-      class=""
+      id="trusted-devices-modal"
       ref="fsModal"
-      cancel-variant="outline-secondary">
-      <template v-slot:modal-header>
+      cancel-variant="outline-secondary"
+      @close="setModalData('', {})">
+      <template v-slot:modal-header="{ close }">
         <div class="d-flex w-100 h-100">
-          <h6 class="my-0">
-            {{ $t('common.confirm') }}
-          </h6>
+          <h5
+            class="modal-title my-0">
+            {{ modalDevice.title }}
+          </h5>
           <button
             type="button"
             aria-label="Close"
             class="close"
-            @click="$refs.fsModal.hide()">
+            @click="close()">
             <i class="material-icons-outlined font-weight-bolder md-24 mb-1">
               close
             </i>
           </button>
         </div>
       </template>
-      {{ $t('pages.profile.trustedDevices.removeConfirmation', {deviceName: confirmDevice.name }) }}
+      <FrField
+        v-if="modalType === 'edit'"
+        :field="editModal"
+        :autofocus="true" />
+      <template
+        v-if="modalType === 'remove'">
+        {{ $t('pages.profile.trustedDevices.removeModalText') }}
+      </template>
       <template v-slot:modal-footer="{ cancel }">
         <BBtn
-          variant="outline-secondary mr-2"
+          variant="btn-link mr-2"
+          :class="modalType === 'remove' && 'text-danger'"
           @click="cancel()">
           {{ $t('common.cancel') }}
         </BBtn>
         <BBtn
           type="button"
-          variant="danger"
-          @click="removeDevice(confirmDevice.id)">
-          {{ $t('common.remove') }}
+          :variant="modalType === 'remove' ? 'danger' : 'primary'"
+          @click="handleModalPrimaryButton(modalType)">
+          {{ modalDevice.primaryButtonText }}
         </BBtn>
       </template>
     </BModal>
-  </FrListGroup>
+  </div>
 </template>
 
 <script>
+import UAParser from 'ua-parser-js';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import { get } from 'lodash';
+
 import { mapState } from 'vuex';
-import ListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
-import ListItem from '@forgerock/platform-shared/src/components/ListItem/';
+import {
+  BButton, BCol, BModal, BRow,
+} from 'bootstrap-vue';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import FallbackImage from '@/components/utils/FallbackImage';
+import Field from '@forgerock/platform-shared/src/components/Field';
+import Accordion from '@forgerock/platform-shared/src/components/Accordion';
+import MapMixin from '@forgerock/platform-shared/src/mixins/MapMixin';
+
+dayjs.extend(relativeTime);
 
 /**
  * @description If fullstack (AM/IDM) is configured will work with authorized devices endpoiint (AM) and display a list of currently of authorized devices for the current
  * user. This will also allow a user to remove an authorized device, causing the next login session of that device to trigger the appropriate device authorization flow from AM.
  *
  */
+
 export default {
   name: 'TrustedDevices',
   mixins: [
     RestMixin,
     NotificationMixin,
+    MapMixin,
   ],
   components: {
-    FrListGroup: ListGroup,
-    FrListItem: ListItem,
-    FrFallbackImage: FallbackImage,
+    BButton,
+    BCol,
+    BModal,
+    BRow,
+    FrAccordion: Accordion,
+    FrField: Field,
   },
   data() {
     return {
-      devices: {},
+      devices: [],
+      modalType: null,
+      modalDevice: {},
+      editModal: {
+        key: 'name',
+        type: 'text',
+        title: this.$t('pages.profile.trustedDevices.editModalInput'),
+        value: '',
+      },
       confirmDevice: {
         name: '',
         id: null,
@@ -127,36 +247,131 @@ export default {
     this.loadData();
   },
   methods: {
-    loadData() {
-      const query = '?_queryId=*';
-      const selfServiceInstance = this.getRequestService();
-      // TODO This will fail until updated
-      const url = `${query}`; // this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.trustedDevices + query;
+    parseDevice(deviceData) {
+      const ua = get(deviceData, 'metadata.browser.userAgent', '');
+      const { browser, os } = ua ? UAParser(ua) : { browser: {}, os: {} };
+      const profileId = localStorage.getItem('profile-id');
+      return {
+        alias: deviceData.alias,
+        browser: (`${get(browser, 'name', '')} ${get(browser, 'version', '')}`).trim(),
+        cpu: `${get(deviceData, 'metadata.platform.platform', '')}`,
+        deviceId: deviceData.identifier,
+        isCurrent: deviceData.identifier === profileId,
+        lastLogin: dayjs(deviceData.lastSelectedDate).fromNow(),
+        lastSelectedDate: deviceData.lastSelectedDate,
+        os: (`${get(os, 'name', '')} ${get(os, 'version', '')}`).trim(),
+        deviceType: get(os, 'name', '').replace(/ /g, '').toLowerCase(),
+      };
+    },
+    parseLocation({ latitude, longitude }) {
+      return new Promise((resolve) => {
+        if (latitude && longitude) {
+          this.reverseGeocode({ latitude, longitude })
+            .then((results) => {
+              const formattedAddress = results.getFormattedAddress('locality');
+              const locality = results.getAddressComponent('locality');
 
-      // by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
-      selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
-        this.devices = response.data.result;
-      })
+              const urlFormatedAddress = formattedAddress.replace(/ /g, '+');
+              resolve({
+                formattedAddress,
+                locality: locality.long_name,
+                map: this.staticMap({
+                  size: { width: 300, height: 200 },
+                  center: urlFormatedAddress,
+                  markers: urlFormatedAddress,
+                  zoom: 10,
+                }),
+              });
+            });
+        } else {
+          resolve({});
+        }
+      });
+    },
+    sortDevicesByDate(devices) {
+      return devices.sort((cur, next) => next.lastSelectedDate - cur.lastSelectedDate);
+    },
+    setModalData(type, data) {
+      this.modalType = type;
+      this.modalDevice = {
+        id: data.deviceId,
+        index: data.index$,
+      };
+      switch (type) {
+      case 'edit':
+        this.modalDevice.title = this.$t('pages.profile.trustedDevices.editModalTitle');
+        this.modalDevice.primaryButtonText = this.$t('common.save');
+        this.editModal.value = data.alias;
+        break;
+      case 'remove':
+        this.modalDevice.title = this.$t('pages.profile.trustedDevices.removeModalTitle', { deviceAlias: data.alias });
+        this.modalDevice.primaryButtonText = this.$t('pages.profile.trustedDevices.remove');
+        this.editModal.value = undefined;
+        break;
+      default:
+        this.modalDevice.title = '';
+        this.modalDevice.primaryButtonText = '';
+        this.editModal.value = undefined;
+        break;
+      }
+    },
+    handleModalPrimaryButton(type) {
+      const { id, index } = this.modalDevice;
+      const newAlias = this.editModal.value;
+      if (type === 'edit') {
+        this.updateDeviceAlias(id, newAlias, index);
+      } else if (type === 'remove') {
+        this.removeDevice(id);
+      }
+    },
+    loadData() {
+      const query = '?_queryFilter=true';
+      const selfServiceInstance = this.getRequestService({ context: 'AM' });
+      const url = `/users/${this.userId}/devices/profile${query}`;
+
+      selfServiceInstance.get(url, { withCredentials: true })
+        .then((response) => {
+          this.devices = this.sortDevicesByDate(response.data.result)
+            .map((deviceData, index) => {
+              const parsedDevice = this.parseDevice(deviceData);
+              const self = this;
+              this.parseLocation(get(deviceData, 'location', {}))
+                .then((parsedLocation) => {
+                  self.$set(self.devices, index, { ...parsedDevice, ...parsedLocation });
+                });
+              return parsedDevice;
+            });
+        })
         .catch((error) => {
           this.displayNotification('IDMMessages', 'error', error.response.data.message);
         });
     },
-    showConfirmationModal(device) {
-      this.confirmDevice.id = device.uuid;
-      this.confirmDevice.name = device.name;
-      this.$refs.fsModal.show();
-    },
-    removeDevice(deviceId) {
-      const selfServiceInstance = this.getRequestService();
-      // TODO This will fail until fixed
-      const url = `${deviceId}`; // this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.trustedDevices + deviceId;
+    updateDeviceAlias(id, newAlias, index) {
+      const selfServiceInstance = this.getRequestService({ context: 'AM' });
+      const url = `/users/${this.userId}/devices/profile/${id}`;
+      const payload = { alias: newAlias };
 
-      // by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
-      selfServiceInstance.delete(url, { withCredentials: true }).then(() => {
-        this.displayNotification('IDMMessages', 'success', this.$t('pages.profile.trustedDevices.removeSuccess', { deviceName: this.confirmDevice.name }));
-        this.loadData();
-        this.$refs.fsModal.hide();
-      })
+      selfServiceInstance.put(url, payload, { withCredentials: true })
+        .then((response) => {
+          this.displayNotification('IDMMessages', 'success', this.$t('pages.profile.trustedDevices.editSuccess'));
+          this.$set(this.devices, index, { ...this.devices[index], ...this.parseDevice(response.data) });
+          this.$refs.fsModal.hide();
+        })
+        .catch((error) => {
+          this.displayNotification('IDMMessages', 'error', error.response.data.message);
+        });
+    },
+
+    removeDevice(id) {
+      const selfServiceInstance = this.getRequestService({ context: 'AM' });
+      const url = `/users/${this.userId}/devices/profile/${id}`;
+
+      selfServiceInstance.delete(url, { withCredentials: true })
+        .then(() => {
+          this.displayNotification('IDMMessages', 'success', this.$t('pages.profile.trustedDevices.removeSuccess'));
+          this.loadData();
+          this.$refs.fsModal.hide();
+        })
         .catch((error) => {
           this.displayNotification('IDMMessages', 'error', error.response.data.message);
         });
@@ -164,3 +379,8 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+.bold {
+  color: $gray-900;
+}
+</style>

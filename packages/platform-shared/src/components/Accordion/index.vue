@@ -14,7 +14,7 @@ to such license between the licensee and ForgeRock AS. -->
     </BCard>
     <template v-for="(data, key) in items">
       <BCard
-        :class="padding(key, data.open)"
+        :class="padding(key, data.open$)"
         :key="key"
         no-body
         role="tab">
@@ -25,12 +25,12 @@ to such license between the licensee and ForgeRock AS. -->
           <!-- @slot Item array header. -->
           <slot
             name="header"
-            v-bind="data" />
+            v-bind="{...data, index$:key}" />
         </BCardHeader>
         <BCollapse
           :id="`accordion-${accordionGroup}-${key}`"
           :accordion="accordionGroup"
-          v-model="data.open"
+          v-model="data.open$"
           v-on="$listeners"
           @show="emitAccordionState"
           @hide="emitAccordionState"
@@ -40,7 +40,7 @@ to such license between the licensee and ForgeRock AS. -->
             <!-- @slot Item array body. -->
             <slot
               name="body"
-              v-bind="data" />
+              v-bind="{...data, index$:key}" />
           </BCardBody>
         </BCollapse>
       </BCard>
@@ -78,7 +78,7 @@ export default {
       type: Array,
       default() {
         return [{
-          open: false,
+          open$: false,
         }];
       },
       required: true,
@@ -100,7 +100,7 @@ export default {
       return '';
     },
     emitAccordionState() {
-      const isOpen = this.items.reduce((acc, cur) => acc || cur.open, false);
+      const isOpen = this.items.reduce((acc, cur) => acc || cur.open$, false);
       if (this.wasOpen !== isOpen) {
         this.wasOpen = isOpen;
         /**
