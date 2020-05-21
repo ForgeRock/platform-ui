@@ -5,7 +5,6 @@ or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <script>
 import {
-  bind,
   delay,
   noop,
 } from 'lodash';
@@ -78,7 +77,7 @@ export default {
     this.id = `floatingLabelInput${this._uid}`;
   },
   mounted() {
-    delay(bind(() => {
+    delay(() => {
       if (navigator.userAgent.includes('Edge')) {
         const element = document.getElementById(`${this.id}`);
         if (element && element.value.length && this.label) {
@@ -86,19 +85,20 @@ export default {
           this.inputValue = element.value;
         }
       } else if (navigator.userAgent.includes('Chrome')) {
-        if (document.querySelectorAll(`#${this.id}:-webkit-autofill`).length > 0 && this.label) {
-          this.floatLabels = true;
+        const node = this.$refs.input;
+        try {
+          const nativeMatches = node.matches || node.msMatchesSelector;
+          if (nativeMatches.call(node, ':-webkit-autofill') && this.label) {
+            this.floatLabels = true;
+          }
+        } catch (e) {
+          noop();
         }
       }
       this.hideLabel = false;
-    }, this), 400);
+    }, 500, this);
 
     this.setInputValue(this.value);
-
-    // Browser consistent focus fix
-    if (this.autofocus) {
-      delay(() => this.$refs.input.focus(), 100);
-    }
   },
   watch: {
     inputValue: {
