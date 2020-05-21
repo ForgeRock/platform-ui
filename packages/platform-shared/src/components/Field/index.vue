@@ -248,6 +248,13 @@ export default {
       default: false,
     },
     /**
+     * Autofocus field.
+     */
+    autofocus: {
+      type: Boolean,
+      default: false,
+    },
+    /**
      * List of errors related to input value (used in callback components)
      */
     failedPolicies: {
