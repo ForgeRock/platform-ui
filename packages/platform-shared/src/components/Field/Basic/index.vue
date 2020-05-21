@@ -19,6 +19,7 @@ to such license between the licensee and ForgeRock AS. -->
       :data-vv-as="label"
       :disabled="disabled"
       @keyup="validator"
+      @animationstart="floatLabels = true"
       ref="input"
       :name="fieldName">
     <template #revealButton>
@@ -120,4 +121,13 @@ export default {
   .form-control.is-invalid {
     background-image: none;
   }
+
+  /* Styles used to ensure Chrome's password save still triggers label move */
+  /* stylelint-disable */
+  :-webkit-autofill {
+    animation-name: onAutoFillStart;
+  }
+
+  @keyframes onAutoFillStart {}
+  /* stylelint-enable */
 </style>
