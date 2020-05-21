@@ -23,6 +23,7 @@ const defaultState = {
   authHeaders: null,
   loginRedirect: null,
   amBaseURL: null,
+  amAdminURL: null,
   idmBaseURL: '/openidm',
   loginURL: null,
   theme: 'default',
@@ -81,6 +82,10 @@ const mutations = {
   setEnvironment(state, env) {
     if (env.VUE_APP_AM_URL) {
       state.amBaseURL = env.VUE_APP_AM_URL;
+    }
+
+    if (env.VUE_APP_AM_ADMIN_URL) {
+      state.amAdminURL = env.VUE_APP_AM_ADMIN_URL;
     }
 
     if (env.VUE_APP_IDM_URL) {

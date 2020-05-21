@@ -78,6 +78,7 @@ yarn docker:run
 Currently environment variables are:
 
 1) `VUE_APP_AM_URL` - URL of AM instance that will be used for authentication and selfservice processes
+2) `VUE_APP_AM_ADMIN_URL` - URL of AMs admin instance that will be used for authentication and selfservice processes
 3) `THEME` - Will load a corresponding theme.scss file (example dark-theme.scss).
 
 These are made available in the .env file.
@@ -86,4 +87,5 @@ Access in Vue files:
 
 ```sh
 process.env.VUE_APP_AM_URL
+process.env.VUE_APP_AM_ADMIN_URL
 ```

@@ -16,6 +16,7 @@ export default new Vuex.Store({
   state: {
     accessTokenKey: '',
     amBaseURL: null,
+    amAdminURL: null,
     company: '',
     email: '',
     enduserURL: '',
@@ -49,6 +50,10 @@ export default new Vuex.Store({
     setEnvironment(state, env) {
       if (env.VUE_APP_AM_URL) {
         state.amBaseURL = env.VUE_APP_AM_URL;
+      }
+
+      if (env.VUE_APP_AM_ADMIN_URL) {
+        state.amAdminURL = env.VUE_APP_AM_ADMIN_URL;
       }
 
       if (env.VUE_APP_GATEWAY_URL) {
