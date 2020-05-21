@@ -19,7 +19,7 @@ to such license between the licensee and ForgeRock AS. -->
       :data-vv-as="label"
       :disabled="disabled"
       @keyup="validator"
-      @animationstart="floatLabels = true"
+      @animationstart="animationStart"
       ref="input"
       :name="fieldName">
     <template #revealButton>
@@ -59,6 +59,7 @@ import {
   BButton,
   BInputGroupAppend,
 } from 'bootstrap-vue';
+import { delay } from 'lodash';
 import InputLayout from '../Wrapper/Layout';
 import InputMixin from '../Wrapper/Mixin';
 /**
@@ -102,6 +103,12 @@ export default {
       showPassword: false,
     };
   },
+  mounted() {
+    // Browser consistent focus
+    if (this.autofocus) {
+      delay(() => this.$refs.input.focus(), 600);
+    }
+  },
   computed: {
     fieldType() {
       if (this.type === 'number') {
@@ -116,6 +123,13 @@ export default {
         this.showPassword = !this.showPassword;
       }
     },
+    animationStart() {
+      const node = this.$refs.input;
+      const nativeMatches = node.matches || node.msMatchesSelector;
+      if (nativeMatches.call(node, ':-webkit-autofill') && this.label) {
+        this.floatLabels = true;
+      }
+    },
   },
 };
 </script>
@@ -124,13 +138,19 @@ export default {
   .form-control.is-invalid {
     background-image: none;
   }
+</style>
 
+<style scoped>
   /* Styles used to ensure Chrome's password save still triggers label move */
   /* stylelint-disable */
-  :-webkit-autofill {
+  input:-webkit-autofill {
     animation-name: onAutoFillStart;
+    box-shadow: 0 0 0 0 #e8f0fe inset;
   }
 
-  @keyframes onAutoFillStart {}
+  @keyframes onAutoFillStart {
+    from {/**/}
+    to {/**/}
+  }
   /* stylelint-enable */
 </style>
