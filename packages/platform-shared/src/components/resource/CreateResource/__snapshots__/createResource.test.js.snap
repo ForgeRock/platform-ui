@@ -1,3 +1,3 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`CreateResource.vue Create resource dialog loaded 1`] = ``;
+exports[`CreateResource.vue Create resource dialog loaded 1`] = `<span><!----></span>`;

@@ -27,6 +27,14 @@ to such license between the licensee and ForgeRock AS. -->
       <slot name="noResult">
         {{ $t('common.noResult') }}
       </slot>
+      <template
+        v-for="(key, slotName) in $scopedSlots"
+        v-slot:[slotName]="slotData">
+        <!-- @slot passthrough slot -->
+        <slot
+          :name="slotName"
+          v-bind="slotData" />
+      </template>
     </VueMultiSelect>
     <template
       v-for="(key, slotName) in $scopedSlots"
@@ -80,7 +88,7 @@ export default {
     placeholder: {
       type: String,
       default() {
-        this.$t('common.typeToSearch');
+        return this.$t('common.typeToSearch');
       },
       required: false,
     },
@@ -116,6 +124,10 @@ export default {
     value: {
       handler(value) {
         this.setInputValue(value);
+
+        if (value === '') {
+          this.floatLabels = false;
+        }
       },
       deep: true,
     },
