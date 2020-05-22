@@ -97,7 +97,10 @@ to such license between the licensee and ForgeRock AS. -->
           </BTab>
         </template>
         <FrPrivilegesTab
-          v-if="resourceType === 'internal' && resourceName === 'role'" />
+          v-if="internalRolePrivilegesField"
+          :privileges-field="internalRolePrivilegesField"
+          :resource-path="`${resourceType}/${resourceName}/${id}`"
+          :resource-name="resourceName" />
         <!-- Add a tab for each viewable/editable relationship array property -->
         <template v-for="(relationshipProperty) in relationshipProperties">
           <BTab
@@ -172,6 +175,7 @@ to such license between the licensee and ForgeRock AS. -->
 import {
   each,
   filter,
+  find,
   indexOf,
   isUndefined,
   isArray,
@@ -520,6 +524,14 @@ export default {
       }
 
       return false;
+    },
+    internalRolePrivilegesField() {
+      if (this.resourceType === 'internal' && this.resourceName === 'role') {
+        const privs = find(this.displayProperties, { key: 'privileges' });
+        return privs;
+      }
+
+      return null;
     },
   },
 };
