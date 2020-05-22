@@ -1,0 +1,217 @@
+<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+
+Use of this code requires a commercial software license with ForgeRock AS.
+or with one of its affiliates. All use shall be exclusively subject
+to such license between the licensee and ForgeRock AS. -->
+<template>
+  <div :class="['text-muted', { 'p-4' : property.key !== 'privileges' }]">
+    <template v-if="showToggle">
+      <div class="mb-4">
+        {{ descriptionText }}
+      </div>
+      <div>
+      <FrField
+        :field="checkboxField"
+        @input="toggleForm" />
+      </div>
+    </template>
+    <div
+      v-if="showForm"
+      class="mt-4">
+      <div v-if="property.isConditional">
+      <FrQueryFilterBuilder
+            @change="queryFilterChange"
+            :query-filter-string="queryFilterField.value"
+            resource="user"
+            :properties="conditionOptions" />
+      </div>
+      <FrTimeConstraint
+        v-if="property.isTemporalConstraint"
+        v-model="temporalconstraint" />
+      <FrAddPrivileges
+        v-if="property.key === 'privileges' && !loading"
+        :new-privileges="newPrivileges"
+        :privileges-field="property"
+        :schema-map="schemaMap"
+        :loading="loading"/>
+    </div>
+  </div>
+</template>
+
+<script>
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrTimeConstraint from '@forgerock/platform-shared/src/components/TimeConstraint';
+import FrAddPrivileges from '@forgerock/platform-shared/src/components/resource/EditResource/CustomTabs/PrivilegesTab/AddPrivileges';
+import FrQueryFilterBuilder from '@forgerock/platform-shared/src/components/QueryFilterBuilder';
+
+export default {
+  name: 'CustomStep',
+  components: {
+    FrAddPrivileges,
+    FrField,
+    FrTimeConstraint,
+    FrQueryFilterBuilder,
+  },
+  mixins: [
+    RestMixin,
+    NotificationMixin,
+  ],
+  props: {
+    property: {
+      type: Object,
+      default: () => {},
+    },
+  },
+  data() {
+    return {
+      showForm: false,
+      showToggle: true,
+      queryFilterField: {
+        type: 'text',
+        title: 'Query Filter =>',
+        value: '',
+      },
+      temporalconstraint: '',
+      newPrivileges: [],
+      schemaMap: {},
+      loading: true,
+      conditionOptions: [],
+    };
+  },
+  computed: {
+    checkboxField() {
+      return {
+        type: 'boolean',
+        title: this.property.description,
+        value: this.showForm,
+      };
+    },
+    descriptionText() {
+      if (this.property.isConditional) {
+        return this.$t('pages.access.condtionDescription');
+      }
+
+      return this.$t('pages.access.temporalConstraintDescription');
+    },
+  },
+  watch: {
+    temporalconstraint(newVal) {
+      this.emitValue([{
+        duration: newVal,
+      }]);
+    },
+    newPrivileges(newVal) {
+      newVal.forEach((privilege) => {
+        if (privilege.filter === '') {
+          delete privilege.filter;
+        }
+      });
+      this.emitValue(newVal);
+    },
+  },
+  methods: {
+    /**
+    * Handles change to QueryFilterBuilder value
+    *
+    * @property {string} queryFilterString
+    */
+    queryFilterChange(queryFilterString) {
+      this.queryFilterField.value = queryFilterString;
+      this.emitValue(queryFilterString);
+    },
+    /**
+    * Opens/Closes either the QueryFilterBuilder or the TimeConstraint compoent
+    */
+    toggleForm() {
+      this.showForm = !this.showForm;
+      // If the toggle is off set the property value to null
+      if (!this.showForm) {
+        this.queryFilterField.value = '';
+        this.$emit('input', this.property.key, null);
+      }
+    },
+    /**
+    * Emits component's value
+    *
+    * @property {string} val - input value
+    */
+    emitValue(val) {
+      this.$emit('input', this.property.key, val);
+    },
+    /**
+    * Gets schema for objects available for setting privileges on
+    */
+    setPrivilegesStep() {
+      const idmInstance = this.getRequestService();
+      this.showForm = true;
+      this.showToggle = false;
+      // get schema for all internal/role and all managed objects that are not managed/assignment
+      idmInstance.get('schema?_queryFilter=resourceCollection eq "internal/role" or resourceCollection sw "managed" and !(resourceCollection eq "managed/assignment")&_fields=*').then((response) => {
+        const schemas = response.data.result;
+
+        schemas.forEach((schema) => {
+          // eslint-disable-next-line no-underscore-dangle
+          this.schemaMap[schema._id] = schema;
+        });
+
+        this.loading = false;
+      },
+      () => {
+        this.displayNotification('IDMMessages', 'error', this.$t('pages.access.errorGettingSchema'));
+      });
+    },
+    /**
+    * Gets schema for user which is needed to define properties availble in QueryFilterBuilder.
+    */
+    setConditionOptions() {
+      this.conditionOptions = [];
+      const idmInstance = this.getRequestService();
+
+      // TODO: replace hard coded "managed/user" with "conditionObject" schema property value
+      idmInstance.get('schema/managed/user').then((schema) => {
+        const filteredProperties = [];
+
+        schema.data.order.forEach((key) => {
+          const property = schema.data.properties[key];
+          if (key !== '_id' && property.type !== 'array' && property.type !== 'relationship' && property.viewable) {
+            property.propName = key;
+            filteredProperties.push(property);
+          }
+        });
+
+        filteredProperties.forEach((property) => {
+          if (property.type === 'object') {
+            property.order.forEach((subProp) => {
+              this.conditionOptions.push({
+                label: `${property.title}/${subProp}`,
+                value: `${property.propName}/${subProp}`,
+                type: property.properties[subProp].type,
+              });
+            });
+          } else {
+            this.conditionOptions.push({
+              label: property.title,
+              value: property.propName,
+              type: property.type,
+            });
+          }
+        });
+      },
+      () => {
+        this.displayNotification('IDMMessages', 'error', this.$t('pages.access.invalidEdit'));
+      });
+    },
+  },
+  mounted() {
+    if (this.property.key === 'privileges') {
+      this.setPrivilegesStep();
+    }
+
+    if (this.property.isConditional) {
+      this.setConditionOptions();
+    }
+  },
+};
+</script>
