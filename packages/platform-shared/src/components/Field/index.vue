@@ -36,10 +36,10 @@ to such license between the licensee and ForgeRock AS. -->
       v-model="inputValue"
       v-on="$listeners"
       :sync="true"
-      :height="field.height || 22"
-      :width="field.width || 50"
+      :height="field.height || defaultToggleHeight"
+      :width="field.width || defaultToggleWidth"
       :disabled="field.disabled"
-      class="pr-2" />
+      class="pr-2 mb-0" />
     <BFormCheckbox
       v-else-if="field.type === 'checkbox'"
       v-model="inputValue"
@@ -80,7 +80,16 @@ to such license between the licensee and ForgeRock AS. -->
         :disabled="field.disabled"
         :help-text="getDescription()"
         :select-options="field.options"
-        :label="getLabel()" />
+        :label="getLabel()">
+        <template
+          v-for="(key, slotName) in $scopedSlots"
+          v-slot:[slotName]="slotData">
+          <!-- @slot passthrough slot -->
+          <slot
+            :name="slotName"
+            v-bind="slotData" />
+        </template>
+      </FrSelect>
       <FrBasicInput
         v-else-if="field.type === 'password' || field.type === 'string'"
         :type="field.type"
@@ -159,7 +168,7 @@ to such license between the licensee and ForgeRock AS. -->
     <template v-if="this.field.type === 'boolean' || this.field.type === 'checkbox'">
       <label
         v-if="!this.prependTitle"
-        class="text-secondary mb-1 align-top">
+        class="text-secondary mb-0">
         <div :id="`helppopover-${field.key}`">
           {{ field.title }}
         </div>
@@ -212,6 +221,8 @@ export default {
       attrs: {},
       loading: true,
       oldValue: '',
+      defaultToggleHeight: 32,
+      defaultToggleWidth: 56,
     };
   },
   props: {

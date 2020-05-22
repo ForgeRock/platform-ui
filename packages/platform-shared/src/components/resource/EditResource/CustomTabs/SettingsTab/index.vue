@@ -31,20 +31,28 @@ to such license between the licensee and ForgeRock AS. -->
     <BModal
       id="settingsModal"
       ref="settingsModal"
-      :title="editProperty.description"
+      :title="editProperty.title"
+      @hidden="disableSave = false"
       size="lg">
       <div>
-        <div v-if="editProperty.isConditional">
-          <FrQueryFilterBuilder
-            @change="queryFilterChange"
-            @error="queryFilterError"
-            :query-filter-string="editProperty.value"
-            :resource="resourceName"
-            :properties="conditionOptions" />
+        <div class="mb-4">
+          <FrField
+            :field="checkboxField"
+            @input="toggleForm" />
         </div>
-        <div v-else>
-          <FrTimeConstraint v-model="editProperty.value" />
-        </div>
+        <template v-if="showForm">
+          <div v-if="editProperty.isConditional">
+            <FrQueryFilterBuilder
+              @change="queryFilterChange"
+              @error="queryFilterError"
+              :query-filter-string="editProperty.value"
+              :resource="resourceName"
+              :properties="conditionOptions" />
+          </div>
+          <div v-else>
+            <FrTimeConstraint v-model="editProperty.value" />
+          </div>
+        </template>
       </div>
 
       <template v-slot:modal-footer="{ cancel }">
@@ -77,6 +85,7 @@ import TimeConstraint from '@forgerock/platform-shared/src/components/TimeConstr
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import QueryFilterBuilder from '@forgerock/platform-shared/src/components/QueryFilterBuilder';
+import FrField from '@forgerock/platform-shared/src/components/Field';
 
 export default {
   name: 'SettingsTab',
@@ -88,6 +97,7 @@ export default {
     BButton,
     BModal,
     BTab,
+    FrField,
     FrTimeConstraint: TimeConstraint,
     FrQueryFilterBuilder: QueryFilterBuilder,
   },
@@ -110,9 +120,27 @@ export default {
       editProperty: {},
       conditionOptions: [],
       disableSave: false,
+      showForm: false,
     };
   },
+  computed: {
+    checkboxField() {
+      return {
+        type: 'boolean',
+        title: this.editProperty.description,
+        value: this.showForm,
+      };
+    },
+  },
   methods: {
+    toggleForm() {
+      this.showForm = !this.showForm;
+      // If the toggle is off set the property value to null
+      if (!this.showForm) {
+        this.editProperty.value = '';
+        this.disableSave = false;
+      }
+    },
     queryFilterChange(queryFilterString) {
       this.editProperty.value = queryFilterString;
       this.disableSave = false;
@@ -126,6 +154,8 @@ export default {
         this.setConditionOptions();
       }
 
+      this.showForm = this.editProperty.value !== '';
+
       this.$refs.settingsModal.show();
     },
     hideModal() {
@@ -138,7 +168,7 @@ export default {
       let patch = [{ operation: 'add', field: `/${this.editProperty.propName}`, value: propValue }];
 
       if (this.editProperty.value === '' || this.editProperty.value === null) {
-        patch = { operation: 'remove', field: `/${this.editProperty.propName}` };
+        patch = [{ operation: 'remove', field: `/${this.editProperty.propName}` }];
       }
 
       idmInstance.patch(this.resourcePath, patch).then(() => {
@@ -188,6 +218,5 @@ export default {
       });
     },
   },
-  mounted() {},
 };
 </script>
