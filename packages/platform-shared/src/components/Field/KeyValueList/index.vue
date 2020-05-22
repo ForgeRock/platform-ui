@@ -24,7 +24,7 @@ to such license between the licensee and ForgeRock AS. -->
           </i>
         </div>
         <p class="d-flex">
-          <span class="flex-fill">
+          <span class="flex-fill overflow-auto">
             {{ text }}
           </span>
           <i
@@ -84,7 +84,7 @@ export default {
   },
   props: {
     value: {
-      type: Object,
+      type: [Object, String],
       default() {
         return {};
       },
@@ -97,7 +97,7 @@ export default {
   data() {
     let keyValues;
 
-    if (this.value === null) {
+    if (this.value === null || this.value === '') {
       keyValues = {};
     } else {
       keyValues = cloneDeep(this.value);

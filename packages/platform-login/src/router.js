@@ -14,18 +14,21 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'default',
-      component: () => import('@/views/Login'),
+      redirect: '/login',
     },
     {
       path: '/login',
-      name: 'login',
+      name: 'Login',
       component: () => import('@/views/Login'),
     },
     {
       path: '/service/:tree',
       name: 'service',
       component: () => import('@/views/Login'),
+    },
+    {
+      path: '*',
+      component: () => import('@forgerock/platform-shared/src/views/NotFound'),
     },
   ],
 });

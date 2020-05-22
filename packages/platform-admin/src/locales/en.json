@@ -1,16 +1,21 @@
 {
-  "connectors": {
-    "title": "Connectors",
-    "subtitle": "Connect external identities to allow syncing of data across resources.",
-    "noConnectors": "No Configured Connectors",
-    "advancedOptions": "advanced options",
-    "next": "Next"
+  "routeNames": {
+    "BulkImport": "Bulk Import",
+    "Connect": "Connect",
+    "EditApplication": "Edit Application",
+    "EditRemoteServer": "Edit Remote Server",
+    "EditServerCluster": "Edit Server Cluster",
+    "EditServerClusterServers": "Edit Server Cluster Servers",
+    "Journeys": "Journeys",
+    "JourneyTree": "Journey Tree",
+    "ManagedIdentity": "Managed Identity"
   },
   "sideMenu": {
     "authorizationRole": "Authorization Role",
     "accessManagement": "Access Management",
+    "applications": "Applications",
     "bulkImport": "Bulk Import",
-    "connector": "Connectors",
+    "connect": "Connect",
     "dashboard": "Dashboard",
     "selectIcon": "Please select icon in admin (Managed Object) settings",
     "provisioningRole": "Provisioning Role",
@@ -22,12 +27,19 @@
     "signOut": "Sign Out",
     "toggleSidebar": "Toggle sidebar",
     "bulkUserImport": "Bulk Import",
-    "authentication": "Authentication"
+    "authentication": "Authentication",
+    "journeys": "Journeys"
   },
   "connect": {
-    "title": "Connect",
     "connectIdentities": "Connect Identities",
-    "subtitle": "Create and configure connectors to your remote identities."
+    "subtitle": "Create and configure connectors to your remote identities.",
+    "connectors": {
+      "title": "Connectors",
+      "subtitle": "Connect external identities to allow syncing of data across resources.",
+      "noConnectors": "No Configured Connectors",
+      "advancedOptions": "advanced options",
+      "next": "Next"
+    }
   },
   "application": {
     "errors": {

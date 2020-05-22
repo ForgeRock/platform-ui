@@ -37,7 +37,7 @@ export default {
         icon: 'dashboard',
       }, {
         routeName: 'Profile',
-        displayName: 'Profile',
+        displayName: this.$t('sideMenu.profile'),
         icon: 'account_circle',
       }],
     };

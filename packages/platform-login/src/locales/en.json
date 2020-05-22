@@ -1,4 +1,7 @@
 {
+  "routeNames": {
+    "service": "Service"
+  },
   "login": {
     "title": "Login",
     "newHere": "New here?",

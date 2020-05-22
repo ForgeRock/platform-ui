@@ -85,6 +85,12 @@
     },
     "status": "Status"
   },
+  "routeNames": {
+    "Applications": "Applications",
+    "Dashboard": "Dashboard",
+    "EditResource": "Edit Resource",
+    "Login": "Login"
+  },
   "pages": {
     "access": {
       "password": "Password",
@@ -141,6 +147,11 @@
       "removeFromTarget": "Remove from target",
       "noOperation": "No Operation",
       "newEventText": "\/\/ Script has access to the following variables:\n\/\/ sourceObject\n\/\/ targetObject\n\/\/ existingTargetObject\n\/\/ linkQualifier \nreturn targetObject;\n\/\/ Role assignment scripts must always return targetObject, otherwise\n\/\/ other scripts and code that occur downstream of your script will\n\/\/ not work as expected. "
+    },
+    "notFound": {
+      "pageNotFound": "Page Not Found",
+      "returnRoute": "Return to ",
+      "couldNotFind": "We couldn't find the page you were looking for."
     }
   },
   "scriptEditor": {

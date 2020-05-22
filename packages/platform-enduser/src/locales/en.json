@@ -1,4 +1,9 @@
 {
+  "routeNames": {
+    "ListResource": "List Resource",
+    "Profile": "Profile",
+    "Sharing": "Sharing"
+  },
   "user": {
     "profile": {
       "updateSuccess": "Updated your profile."
@@ -25,6 +30,7 @@
     "signOut": "Sign Out",
     "toggleSidebar": "Toggle sidebar",
     "dashboard": "Dashboard",
+    "profile": "Profile",
     "selectIcon": "Please select icon in admin (Managed Object) settings"
   },
   "pages": {
@@ -44,10 +50,6 @@
         "failedToRemove": "Failed to remove notification",
         "failedToClear": "Failed to clear all notifications"
       }
-    },
-    "notFound": {
-      "couldNotFind": "We couldn't find the page you were looking for.",
-      "returnToDashboard": "Return to dashboard"
     },
     "dashboard": {
       "applications": {
