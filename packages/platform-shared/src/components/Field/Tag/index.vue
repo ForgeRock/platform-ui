@@ -53,7 +53,7 @@ export default {
   },
   data() {
     return {
-      inputValue: '',
+      inputValue: this.value,
     };
   },
   props: {
@@ -83,13 +83,10 @@ export default {
     inputValue(newVal) {
       this.$emit('input', newVal);
     },
-    value: {
-      handler(newVal) {
-        if (!this.inputValue) {
-          this.inputValue = newVal;
-        }
-      },
-      immediate: true,
+    value(newVal) {
+      if (!this.inputValue) {
+        this.inputValue = newVal;
+      }
     },
   },
 };
