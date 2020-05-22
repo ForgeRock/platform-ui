@@ -18,19 +18,21 @@ to such license between the licensee and ForgeRock AS. -->
 
     <template v-slot:center-card-body>
       <BCardBody v-show="!loading">
-        <div
-          id="callbacksPanel"
-          ref="callbacksPanel"
-          @keyup.enter="nextStep" />
-        <BButton
-          v-show="showNextButton"
-          class="btn btn btn-block btn-lg btn-primary mt-3"
-          type="submit"
-          variant="primary"
-          ref="callbackSubmitButton"
-          @click="nextStep">
-          {{ $t('login.next') }}
-        </BButton>
+        <form>
+          <div
+            id="callbacksPanel"
+            ref="callbacksPanel"
+            @keyup.enter="nextStep" />
+          <BButton
+            v-show="showNextButton"
+            class="btn btn btn-block btn-lg btn-primary mt-3"
+            type="submit"
+            variant="primary"
+            ref="callbackSubmitButton"
+            @click="nextStep">
+            {{ $t('login.next') }}
+          </BButton>
+        </form>
         <div
           v-if="loginFailure"
           class="h-100 d-flex">
@@ -200,7 +202,10 @@ export default {
       * @description Gets callbacks needed for authentication when this.step is undefined, and submits callback values when
       * this.step is defined. Then determines based on step.type what action to take.
       */
-    nextStep() {
+    nextStep(event) {
+      if (event) {
+        event.preventDefault();
+      }
       const stepParams = {};
 
       if (this.suspendedId) {
