@@ -1,4 +1,4 @@
-<!-- Copyright 2019 ForgeRock AS. All Rights Reserved
+<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
 
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
@@ -9,7 +9,7 @@ to such license between the licensee and ForgeRock AS. -->
     class="h-100 d-flex"
     fluid>
     <div
-      style="width: 350px;"
+      style="width: 550px;"
       class="m-auto align-self-center text-center">
       <div class="fr-speech-bubble">
         <p>
@@ -21,27 +21,25 @@ to such license between the licensee and ForgeRock AS. -->
       </div>
       <BImg
         @click="ghostMessage === '404' ? ghostMessage = 'Boo' : ghostMessage = '...'"
-        :src="require('@/assets/images/ghost.svg')"
+        :src="require('@forgerock/platform-shared/src/assets/images/ghost.svg')"
         width="112"
         height="112"
         alt="img"
         class="fr-ghost mb-2" />
-      <p class="text-centered">
+      <p class="lead text-center font-weight-light text-muted mb-5">
         {{ $t("pages.notFound.couldNotFind") }}
       </p>
-
-      <RouterLink to="/">
-        <BButton
-          style="width: 250px;"
-          variant="primary"
-          class="mt-2 mb-2">
-          {{ $t("pages.notFound.returnToDashboard") }}
-        </BButton>
-      </RouterLink>
-
+      <hr class="fr-accent">
+      <div class="text-center">
+        <RouterLink :to="{ name: previousRoute.name }">
+          <BButton variant="link">
+            {{ $t('pages.notFound.returnRoute') }} {{ $t(`routeNames.${previousRoute.name}`) }}
+          </BButton>
+        </RouterLink>
+      </div>
       <BImg
         @click="ghostMessage = '404'"
-        :src="require('@/assets/images/ghost-shadow.svg')"
+        :src="require('@forgerock/platform-shared/src/assets/images/ghost-shadow.svg')"
         width="112"
         height="112"
         alt="img"
@@ -51,15 +49,44 @@ to such license between the licensee and ForgeRock AS. -->
 </template>
 
 <script>
+import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
+import {
+  BButton,
+  BContainer,
+  BImg,
+} from 'bootstrap-vue';
 /**
  * @description The default 404 page when Vue router is unable to locate a route.
  */
 export default {
   name: 'NotFound',
+  components: {
+    BButton,
+    BContainer,
+    BImg,
+  },
+  mixins: [
+    BreadcrumbMixin,
+  ],
   data() {
     return {
       ghostMessage: '404',
+      previousRoute: {
+        name: this.$t('sideMenu.dashboard'),
+        params: {},
+        path: '/dashboard',
+      },
     };
+  },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      vm.previousRoute = from.name ? from : {
+        name: vm.$t('sideMenu.dashboard'),
+        params: {},
+        path: '/dashboard',
+      };
+      vm.setBreadcrumb(vm.previousRoute.path, vm.previousRoute.name);
+    });
   },
 };
 </script>
