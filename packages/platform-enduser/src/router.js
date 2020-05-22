@@ -83,8 +83,8 @@ export default new Router({
     },
     {
       path: '*',
-      component: () => import('@/components/NotFound'),
-      meta: { hideToolbar: true, bodyClass: 'fr-body-image' },
+      component: () => import('@forgerock/platform-shared/src/views/NotFound'),
+      meta: { hideToolbar: true },
     },
   ],
 });
