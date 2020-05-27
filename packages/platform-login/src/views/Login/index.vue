@@ -212,6 +212,12 @@ export default {
         stepParams.query = {
           suspendedId: this.suspendedId,
         };
+      } else if (this.code && this.state && this.scope) {
+        stepParams.query = {
+          code: this.code,
+          state: this.state,
+          scope: this.scope,
+        };
       }
 
       this.clearCallbacks();
@@ -317,6 +323,11 @@ export default {
           });
           break;
         case 'RedirectCallback':
+          if (callback.getOutputByName('trackingCookie')) {
+            // save current step information for later resumption of tree.
+            sessionStorage.authIndexValue = this.authIndexValue || this.$route.params.tree;
+            sessionStorage.step = JSON.stringify(this.step);
+          }
           window.location.href = callback.getOutputByName('redirectUrl');
           break;
         case 'TermsAndConditionsCallback':
@@ -371,18 +382,49 @@ export default {
       event.preventDefault();
       window.location.reload();
     },
+    /**
+     * @description If session storage has step information, extract it and clear session storage
+     * @returns {Object} two properties needed to resume tree: step and authIndex value
+     */
+    getStepFromStorage() {
+      const step = sessionStorage.getItem('step');
+      const authIndexValue = sessionStorage.getItem('authIndexValue');
+      if (step !== null && authIndexValue !== null) {
+        sessionStorage.clear();
+        return { step: JSON.parse(step), authIndexValue };
+      }
+      return { step: undefined, authIndexValue: undefined };
+    },
+    /**
+     * @description Look at the url and see if we are returning to a tree from an Email Suspend Node or Redirect Callback.
+     * Must be default route and contain the strings "suspendedId=" and "authIndexValue=" for Email Suspend Node.
+     * Must contain the strings "state=" and "code=" and "scope=" for redirect callback.
+     */
     evaluateUrlParams() {
-      // Look at the url and see if we are returning to a tree from an Email Suspend Node.
-      // Must be the default route and url must contain the strings "suspendedId=" and "authIndexValue="
+      let fixUrl = false;
       if (this.$route.name === 'default' && window.location.search.includes('suspendedId=') && window.location.search.includes('authIndexValue=')) {
         const urlParams = new URLSearchParams(window.location.search.substring(1));
-        // set the authIndexValue and suspendedId to be used by FRAuth
         this.authIndexValue = urlParams.get('authIndexValue');
         this.suspendedId = urlParams.get('suspendedId');
 
+        fixUrl = true;
+      } else if (window.location.search.includes('state=') && window.location.search.includes('code=') && window.location.search.includes('scope=')) {
+        const urlParams = new URLSearchParams(window.location.search.substring(1));
+        this.state = urlParams.get('state');
+        this.code = urlParams.get('code');
+        this.scope = urlParams.get('scope');
+
+        // session storage is used to resume a tree after returning from a redirect
+        const stepInfo = this.getStepFromStorage();
+        this.authIndexValue = stepInfo.authIndexValue;
+        this.step = stepInfo.step;
+
+        fixUrl = true;
+      }
+      if (fixUrl) {
         // remove query params from the url
         window.history.replaceState(null, null, window.location.pathname);
-        // reset the hash to the propert tree
+        // reset the hash to the proper tree
         window.location.hash = `service/${this.authIndexValue}`;
       }
     },
