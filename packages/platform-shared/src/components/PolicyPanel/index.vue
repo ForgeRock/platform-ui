@@ -1,95 +1,120 @@
-<!-- Copyright 2019 ForgeRock AS. All Rights Reserved
+<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
 
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
-  <div class="card border-0 mt-3">
-    <Transition
-      name="fade"
-      mode="out-in"
-      :duration="150">
-      <template v-if="!isLoading">
-        <ul
-          class="text-left pl-3"
-          v-if="!isValid">
+  <BRow>
+    <BCol
+      v-for="i in numColumns"
+      :key="`password_policy_${i}`">
+      <small>
+        <ul class="pl-4">
           <li
-            v-for="policy in policies"
+            v-for="(policy) in policyColumns[i-1]"
             :key="policy.policyId"
-            :class="[{'fr-valid': !includes(policyFailures, policy.name)}, 'text-primary fr-policy-list-item']">
-            <small class="text-body">
-              {{ translate(policy) }}
-            </small>
+            :class="[{'fr-valid': !includes(policyFailures, policy.name)}, 'text-muted fr-policy-list-item']">
+            {{ $t(`common.policyValidationMessages.${policy.name}`, policy.params) }}
           </li>
         </ul>
-        <div
-          v-else
-          class="alert alert-success mt-1"
-          role="alert">
-          <i class="material-icons-outlined text-success">
-            check_circle
-          </i>
-          {{ $t('common.policyValidationMessages.successMessages.password') }}
-        </div>
-      </template>
-    </Transition>
-  </div>
+      </small>
+    </BCol>
+  </BRow>
 </template>
 
 <script>
 import {
   includes,
-  isArray,
-  isEmpty,
 } from 'lodash';
+import {
+  BCol,
+  BRow,
+} from 'bootstrap-vue';
 
 /**
- * @description Part of the password policy component to display the list of policy items required
- *
+ * @description Part of the password policy component that displays the list of policy items required.
+ * Shows failed policies in a normal text and passing policies in a light text.
  * */
 export default {
   name: 'PolicyPanel',
+  components: {
+    BCol,
+    BRow,
+  },
   props: {
+    /**
+     * Number of columns to display. Policies are evenly distributed between columns.
+     */
+    numColumns: {
+      type: Number,
+      default: 1,
+    },
+    /**
+     * Array of policy objects [{ name: POLICYNAME, params: { PARAMNAME: VALUE } }, ...]
+     */
     policies: {
       type: Array,
       default: () => [],
     },
+    /**
+     * Array of failing policies. Must match a value for name in policies array. ['FAILED1', 'FAILED2', ...]
+     */
     policyFailures: {
-      type: [String, Array],
-      default: () => '',
+      type: Array,
+      default: () => [],
     },
   },
   data() {
-    return {};
+    return {
+      policyColumns: [],
+    };
   },
   computed: {
-    isValid() {
-      return isArray(this.policyFailures) && isEmpty(this.policyFailures);
-    },
-    isLoading() {
-      return this.policyFailures === 'loading' || this.policyFailures === false;
+    numPolicies() {
+      return this.policies.length;
     },
   },
   methods: {
-    translate(policy) {
-      const path = `common.policyValidationMessages.${policy.name}`;
-
-      return this.$t(path, policy.params);
-    },
     includes,
+    /**
+     * Given an array of policies and a number of columns, distribute policies evenly.
+     * @param {Object[]} policyList policies to be split
+     * @param {Number} numColumns number of columns to split into
+     * @return {Object[][]} Array of arrays indicating the policies in each column
+     */
+    getPolicyColumns(policyList, numColumns) {
+      const policyColumns = [];
+      const numPolicies = policyList.length;
+      const policiesPerColumn = Math.floor(numPolicies / numColumns);
+      const remaining = (numPolicies % numColumns);
+      let curColumnIndex = 0;
+
+      // Split policies between columns
+      policyList.forEach((policy) => {
+        if (typeof policyColumns[curColumnIndex] === 'undefined') {
+          policyColumns.push([]);
+        }
+        policyColumns[curColumnIndex].push({ name: policy.name, params: policy.params });
+        const limit = curColumnIndex < remaining ? (policiesPerColumn + 1) : policiesPerColumn;
+        if (policyColumns[curColumnIndex].length >= limit) {
+          curColumnIndex += 1;
+        }
+      });
+      return policyColumns;
+    },
   },
   watch: {
-    policyFailures(value) {
-      this.policyFailures = value;
+    policies: {
+      handler(value) {
+        this.policyColumns = this.getPolicyColumns(value, this.numColumns);
+      },
+      immediate: true,
     },
   },
 };
 </script>
-<style lang="scss" scoped>
-.fr-policy-list-item {
-  line-height: 1.25;
-}
 
+<style lang="scss" scoped>
 .fr-valid {
   opacity: 0.5;
 }

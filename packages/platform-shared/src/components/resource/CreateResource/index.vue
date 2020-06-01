@@ -13,7 +13,7 @@ to such license between the licensee and ForgeRock AS. -->
     id="createResourceModal"
     @shown="focusField"
     cancel-variant="outline-secondary">
-    <template v-slot:modal-header>
+    <template #modal-header>
       <div class="d-flex w-100 h-100">
         <h5 class="modal-title align-self-center text-center">
           {{ $t('common.new') }} {{ resourceName }}
@@ -52,7 +52,7 @@ to such license between the licensee and ForgeRock AS. -->
                   v-else
                   :policy-api="`${resourceType}/${resourceName}/policyTest`"
                   v-model="field.value">
-                  <template v-slot:custom-input>
+                  <template #input>
                     <BFormGroup class="mb-3">
                       <FrField
                         :field="field"
@@ -82,7 +82,7 @@ to such license between the licensee and ForgeRock AS. -->
       </BCol>
     </BRow>
 
-    <template v-slot:modal-footer="{ cancel }">
+    <template #modal-footer="{ cancel }">
       <BButton
         variant="link"
         @click="cancel()">

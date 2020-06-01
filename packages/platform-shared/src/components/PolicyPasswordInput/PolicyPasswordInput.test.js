@@ -1,20 +1,18 @@
 /**
- * Copyright 2019 ForgeRock AS. All Rights Reserved
+ * Copyright 2019-2020 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS.
  * or with one of its affiliates. All use shall be exclusively subject
  * to such license between the licensee and ForgeRock AS.
  */
 /* eslint-disable import/no-extraneous-dependencies */
-import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
-import _ from 'lodash';
+import { includes } from 'lodash';
 import PolicyPasswordInput from './index';
 
 PolicyPasswordInput.created = jest.fn();
 
 const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 describe('PasswordPolicyInput.vue', () => {
   let wrapper;
@@ -129,21 +127,20 @@ describe('PasswordPolicyInput.vue', () => {
     };
 
     it('should remove policies with strings specified in "exclude" prop', () => {
-      wrapper.setProps({ exclude: ['REQUIRED'] });
-      const unexcludedPolicies = wrapper.vm.makeExclusions(policyRequirementSet).policies;
+      wrapper.setProps({ excludeOverwrite: ['REQUIRED'] });
+      const unexcludedPolicies = wrapper.vm.makeExclusions(policyRequirementSet, wrapper.vm.$props.excludeOverwrite).policies;
 
       expect(unexcludedPolicies).toEqual([{ policyRequirements: ['MIN_LENGTH'] }]);
     });
 
     it('should remove policies specified as {name<String>, predicate<Function>} in "exclude" prop', () => {
       wrapper.setProps({
-        exclude: [{
+        excludeOverwrite: [{
           name: 'REQUIRED',
-          predicate: (n) => _.includes(n, 'MIN_LENGTH'),
+          predicate: (n) => includes(n, 'MIN_LENGTH'),
         }],
       });
-
-      const unexcludedPolicies = wrapper.vm.makeExclusions(policyRequirementSet).policies;
+      const unexcludedPolicies = wrapper.vm.makeExclusions(policyRequirementSet, wrapper.vm.$props.excludeOverwrite).policies;
 
       expect(unexcludedPolicies).toEqual([{ policyRequirements: ['MIN_LENGTH'] }]);
     });

@@ -43,7 +43,8 @@
     "yes": "Yes",
     "waitingToConnect": "Waiting to connect...",
     "helpText": {
-      "timeConstraint": "Assign role only during a selected time period."
+      "timeConstraint": "Assign role only during a selected time period.",
+      "resetPassword": "Reset this user password."
     },
     "placeholders": {
       "emailAddress": "Email address",
@@ -63,7 +64,8 @@
       "MATCH_REGEXP": "Has to match pattern: %{regexp}",
       "PRIVILEGE_AT_LEAST_ONE_ATTRIBUTE_READONLY_FALSE": "Must set at least one attribute permission to Read/Write",
       "PRIVILEGE_MUST_CONTAIN_CREATE_OR_UPDATE_PERMISSION": "Must have at least Create or Update Permission",
-      "MIN_LENGTH": "Must be %{minLength} characters long",
+      "MIN_LENGTH": "Must be at least %{minLength} characters long",
+      "MAX_LENGTH": "Must be less than %{maxLength} characters long",
       "MIN_ITEMS": "Must have at least %{minItems} value(s)",
       "AT_LEAST_X_CAPITAL_LETTERS": "Must have at least %{numCaps} capital letter(s)",
       "AT_LEAST_X_NUMBERS": "Must have at least %{numNums} number(s)",
@@ -108,7 +110,7 @@
       "successAdded": "{resource} successfully added",
       "successRemoved": "{resource} successfully removed",
       "details": "Details",
-      "resetPassword": "Reset password",
+      "resetPassword": "Reset Password",
       "failedSavePassword": "Failed to save password",
       "successSavePassword": "Successfully saved password",
       "removeConfirm": "Are you sure you want to remove the selected",

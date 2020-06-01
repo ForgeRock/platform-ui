@@ -42,7 +42,6 @@ to such license between the licensee and ForgeRock AS. -->
         </div>
       </BCol>
     </BRow>
-    <!-- Uncomment this to use the reset modal
     <BButton
       v-if="canChangePassword"
       class="mb-4"
@@ -52,8 +51,8 @@ to such license between the licensee and ForgeRock AS. -->
       <i class="material-icons-outlined mr-md-2 text-nowrap">
         cached
       </i>
-      {{ $t('common.reset') }} {{ $t('common.placeholders.password') }}
-    </BButton> -->
+      {{ $t('pages.access.resetPassword') }}
+    </BButton>
     <FrEditAssignment
       v-if="!isLoading && resourceType === 'managed' && resourceName === 'assignment'"
       :display-properties="displayProperties"
@@ -160,30 +159,12 @@ to such license between the licensee and ForgeRock AS. -->
         </BButton>
       </template>
     </BModal>
-
-    <BModal
+    <FrResetPasswordModal
       v-if="canChangePassword"
       id="resetModal"
-      ref="resetModal"
-      :title="this.$t('pages.access.resetPassword')">
-      <FrPolicyPasswordInput
-        :policy-api="`${resourceType}/${resourceName}/policyTest`"
-        v-model="passwordField.value" />
-
-      <template v-slot:modal-footer="{ cancel }">
-        <BButton
-          variant="link"
-          @click="cancel()">
-          {{ $t('common.cancel') }}
-        </BButton>
-        <BButton
-          type="button"
-          variant="primary"
-          @click="savePassword">
-          {{ $t('common.save') }}
-        </BButton>
-      </template>
-    </BModal>
+      :resource-type="resourceType"
+      :resource-name="resourceName"
+      :resource-id="id" />
   </BContainer>
 </template>
 
@@ -212,7 +193,7 @@ import {
   VBModal,
 } from 'bootstrap-vue';
 import axios from 'axios';
-import PolicyPasswordInput from '@forgerock/platform-shared/src/components/PolicyPasswordInput/';
+import ResetPasswordModal from '@forgerock/platform-shared/src/components/resource/EditResource/ResetPasswordModal';
 import RelationshipArray from '@forgerock/platform-shared/src/components/resource/RelationshipArray';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
@@ -237,7 +218,7 @@ export default {
   name: 'EditResource',
   components: {
     FrObjectTypeEditor: ObjectTypeEditor,
-    FrPolicyPasswordInput: PolicyPasswordInput,
+    FrResetPasswordModal: ResetPasswordModal,
     FrRelationshipArray: RelationshipArray,
     FrSettingsTab: SettingsTab,
     FrPrivilegesTab: PrivilegesTab,
@@ -270,7 +251,6 @@ export default {
       displayProperties: [],
       canDelete: false,
       canChangePassword: false,
-      passwordField: {},
       disableSaveButton: false,
       icon: '',
       displayNameField: '',
@@ -281,6 +261,7 @@ export default {
       relationshipProperties: {},
       settingsProperties: {},
       isLoading: true,
+      passwordField: {},
     };
   },
   mounted() {
@@ -479,26 +460,6 @@ export default {
         .catch((error) => {
           this.displayNotification('IDMMessages', 'error', error.response.data.message);
         });
-    },
-    async savePassword() {
-      const idmInstance = this.getRequestService();
-
-      const isValid = await this.$refs.passwordObserver.validate();
-      if (isValid) {
-        const saveData = [{ operation: 'add', field: '/password', value: this.formFields.password }];
-
-        this.$refs.resetModal.hide();
-        this.formFields.password = '';
-
-        idmInstance.patch(`${this.resourceType}/${this.resourceName}/${this.id}`, saveData).then(() => {
-          this.displayNotification('IDMMessages', 'success', this.$t('pages.access.successSavePassword'));
-        },
-        () => {
-          this.displayNotification('IDMMessages', 'error', this.$t('pages.access.failedSavePassword'));
-        });
-      } else {
-        this.displayNotification('IDMMessages', 'error', this.$t('pages.access.invalidEdit'));
-      }
     },
     mergePrivilegeProperties(privilege, schema) {
       const properties = [];
