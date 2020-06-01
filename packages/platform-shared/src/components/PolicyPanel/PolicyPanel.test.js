@@ -19,16 +19,15 @@ describe('PolicyPanel.vue', () => {
     wrapper = shallowMount(PolicyPanel, {
       localVue,
       propsData: {
-        policies: [{ name: 'test', params: { args: 'test args' } }],
+        policies: [
+          { name: 'test', params: { args: 'test args' } },
+          { name: 'test2', params: { args: 'test args' } },
+          { name: 'test3', params: { args: 'test args' } },
+        ],
         policyFailures: ['test'],
       },
       mocks: {
-        $t: (path) => {
-          if (path === 'common.policyValidationMessages.MIN_LENGTH') {
-            return 'Must be 1 characters long';
-          }
-          return '';
-        },
+        $t: (path) => path,
       },
     });
   });
@@ -46,26 +45,51 @@ describe('PolicyPanel.vue', () => {
       expect(wrapper.contains('div.alert')).toBe(false);
     });
 
-    it('should show policy ul when "policyFailures" is non empty array', () => {
-      wrapper.setProps({ policyFailures: ['test'] });
-
-      expect(wrapper.contains('ul')).toBe(true);
-      expect(wrapper.contains('div.alert')).toBe(false);
+    it('Will show all policies as passing when failedRules is empty', () => {
+      wrapper.setProps({ policyFailures: [] });
+      wrapper.vm.$nextTick(() => {
+        expect(wrapper.classes('.text-muted')).toBe(false);
+        const passingPoliciesArray = wrapper.findAll('.fr-valid');
+        expect(passingPoliciesArray.length).toBe(3);
+      });
     });
 
-    it('should show success alert when "policyFailures" is an empty array', () => {
-      wrapper.setProps({ policyFailures: [] });
-
-      expect(wrapper.contains('ul')).toBe(true);
-      expect(wrapper.contains('div.alert')).toBe(false);
+    it('Will show all policies as failing when failedRules matches rules', () => {
+      wrapper.setProps({ policyFailures: ['test', 'test2', 'test3'] });
+      wrapper.vm.$nextTick(() => {
+        const passingPoliciesArray = wrapper.findAll('.fr-valid');
+        expect(passingPoliciesArray.length).toBe(0);
+      });
     });
   });
 
-  describe('#translate', () => {
-    it('should return a properly translated string', () => {
-      const expectedString = 'Must be 1 characters long';
+  describe('getPolicyColumns()', () => {
+    const policyList = [
+      { name: 'test1' },
+      { name: 'test2' },
+      { name: 'test3' },
+      { name: 'test4' },
+    ];
 
-      expect(wrapper.vm.translate({ name: 'MIN_LENGTH', params: { minLength: 1 } })).toBe(expectedString);
+    it('Will put all policies in one column', () => {
+      const columns = wrapper.vm.getPolicyColumns(policyList, 1);
+      expect(columns.length).toEqual(1);
+      expect(columns[0].length).toBe(4);
+    });
+
+    it('Will split policies between two columns', () => {
+      const columns = wrapper.vm.getPolicyColumns(policyList, 2);
+      expect(columns.length).toEqual(2);
+      expect(columns[0].length).toBe(2);
+      expect(columns[1].length).toBe(2);
+    });
+
+    it('Will split policies between three columns', () => {
+      const columns = wrapper.vm.getPolicyColumns(policyList, 3);
+      expect(columns.length).toEqual(3);
+      expect(columns[0].length).toBe(2);
+      expect(columns[1].length).toBe(1);
+      expect(columns[2].length).toBe(1);
     });
   });
 });
