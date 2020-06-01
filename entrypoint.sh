@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Copyright 2019 ForgeRock AS. All Rights Reserved
+# Copyright 2019-2020 ForgeRock AS. All Rights Reserved
 #
 # Use of this code requires a commercial software license with ForgeRock AS.
 # or with one of its affiliates. All use shall be exclusively subject
@@ -11,6 +11,7 @@
 echo "Replacing env vars in JS"
 echo ""
 echo "Setting AM URL as $AM_URL"
+echo "Setting AM ADMIN URL as $AM_ADMIN_URL"
 echo "Setting IDM REST URL as $IDM_REST_URL"
 echo "Setting IDM ADMIN URL as $IDM_ADMIN_URL"
 echo "Setting IDM UPLOAD URL as $IDM_UPLOAD_URL"
@@ -32,7 +33,7 @@ do
     cp "$file" "/tmp/$(basename $file).tmpl"
   fi
 
-  envsubst '$AM_URL $IDM_REST_URL $IDM_ADMIN_URL $IDM_UPLOAD_URL $IDM_EXPORT_URL $LOGIN_UI_URL $ENDUSER_UI_URL $ENDUSER_CLIENT_ID $ADMIN_CLIENT_ID $PLATFORM_UI_LOCALE $PLATFORM_ADMIN_URL' < "/tmp/$(basename $file).tmpl" > "$file"
+  envsubst '$AM_URL $AM_ADMIN_URL $IDM_REST_URL $IDM_ADMIN_URL $IDM_UPLOAD_URL $IDM_EXPORT_URL $LOGIN_UI_URL $ENDUSER_UI_URL $ENDUSER_CLIENT_ID $ADMIN_CLIENT_ID $PLATFORM_UI_LOCALE $PLATFORM_ADMIN_URL' < "/tmp/$(basename $file).tmpl" > "$file"
 done
 
 echo "Starting Nginx"
