@@ -1,11 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`PolicyPanel.vue PolicyPanel component loaded 1`] = `
-<div class="card border-0 mt-3">
-  <ul class="text-left pl-3">
-    <li class="text-primary fr-policy-list-item"><small class="text-body">
-
-      </small></li>
-  </ul>
-</div>
+<brow-stub tag="div">
+  <bcol-stub tag="div"><small>
+      <ul class="pl-4">
+        <li class="text-muted fr-policy-list-item">
+          common.policyValidationMessages.test
+        </li>
+        <li class="fr-valid text-muted fr-policy-list-item">
+          common.policyValidationMessages.test2
+        </li>
+        <li class="fr-valid text-muted fr-policy-list-item">
+          common.policyValidationMessages.test3
+        </li>
+      </ul>
+    </small></bcol-stub>
+</brow-stub>
 `;
