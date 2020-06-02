@@ -42,6 +42,18 @@ export function appAuthLogout() {
   */
 export function verifyGotoUrlAndRedirect(url) {
   const isNotDefaultPath = (path) => path !== '/am/console';
+  const redirectUserBasedOnType = () => {
+    // check for user type and redirect to admin or enduser accordingly
+    const userDetails = store.getters['UserStore/getUserState'];
+
+    if (userDetails && userDetails.adminUser) {
+    // admin user
+      window.location.href = store.state.adminURL;
+    } else {
+    // end user
+      window.location.href = url;
+    }
+  };
 
   if (this.$route.params.gotoUrl || this.$route.query.goto) {
     const gotoUrl = JSON.stringify({ goto: decodeURIComponent(this.$route.params.gotoUrl || this.$route.query.goto) });
@@ -56,16 +68,18 @@ export function verifyGotoUrlAndRedirect(url) {
         if (isNotDefaultPath(res.data.successURL)) {
           window.location.href = res.data.successURL;
         } else {
-          window.location.href = url;
+          redirectUserBasedOnType();
         }
       })
       .catch(() => {
         // validation failed - no need to display error - attempt to redirect to url
         window.location.href = url;
       });
-  } else {
+  } else if (isNotDefaultPath(url)) {
     // no goto - redirect to url
     window.location.href = url;
+  } else {
+    redirectUserBasedOnType();
   }
 }
 
