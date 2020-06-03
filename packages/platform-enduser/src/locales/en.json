@@ -51,6 +51,35 @@
         "failedToClear": "Failed to clear all notifications"
       }
     },
+    "workflow": {
+      "assign": "Assign",
+      "assignTo": "Assign to",
+      "assignmentSuccess": "{taskName} successfully assigned to {assignee}",
+      "details": "Details",
+      "myTasks": "My Tasks",
+      "noProcess": "No processes at this time",
+      "noAssignedTasks": "No assigned tasks at this time",
+      "noGroupTasks": "Your group has no tasks at this time",
+      "notAssigned": "Not assigned",
+      "processStartSuccessMessage": "Process started",
+      "me": "Me",
+      "requeue": "Requeue",
+      "start": "Start",
+      "startProcess": "Start a Process",
+      "taskSuccessfullyCompleted": "Task successfully completed",
+      "taskSuccessfullyRequeued": "{taskName} successfully requeued",
+      "taskNoLongerAvailable": "{taskName} task deleted by admin",
+      "unassignedTasks": "Unassigned Tasks",
+      "cancel": "Cancel",
+      "edit": "Edit",
+      "yes": "Yes",
+      "no": "No",
+      "save": "Save"
+    },
+    "notFound": {
+      "couldNotFind": "We couldn't find the page you were looking for.",
+      "returnToDashboard": "Return to dashboard"
+    },
     "dashboard": {
       "applications": {
         "heading": "My Applications",

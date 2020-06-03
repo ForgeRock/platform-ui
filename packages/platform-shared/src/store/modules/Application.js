@@ -31,6 +31,7 @@ const defaultState = {
   oauthSaveObj: null,
   oauthSchema: null,
   theme: 'default',
+  workflow: false,
 };
 
 const getters = {
@@ -74,6 +75,10 @@ const actions = {
     context.commit('clearOauthSchema');
   },
 
+  setWorkflowState(context, enabled) {
+    context.commit('setWorkflowState', enabled);
+  },
+
   setOauthSaveObjPropertyValue(context, obj) {
     context.commit('setOauthSaveObjPropertyValue', obj);
   },
@@ -112,6 +117,9 @@ const mutations = {
     if (env.VUE_APP_GOOGLE_MAPS_API_KEY) {
       state.googleMapsApiKey = env.VUE_APP_GOOGLE_MAPS_API_KEY;
     }
+  },
+  setWorkflowState(state, enabled) {
+    state.workflow = enabled;
   },
 
   setAuthHeadersAction(state, headers) {
