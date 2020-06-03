@@ -6,7 +6,9 @@ to such license between the licensee and ForgeRock AS. -->
 <template>
   <div>
     <BContainer fluid="true">
-      <BRow v-if="widgets.length">
+      <BRow
+        v-if="widgets.length"
+        class="mx-4">
         <div
           v-for="(widget, index) in widgets"
           :class="{'col-sm-4': widget.size === 'small', 'col-sm-6': widget.size === 'medium', 'col-sm-12': widget.size === 'large', 'mt-4': true}"
@@ -37,8 +39,7 @@ to such license between the licensee and ForgeRock AS. -->
           data-test-id="my-applications"
           class="my-applications-wrapper">
           <ListGroup
-            :title="$t('pages.dashboard.applications.heading')"
-          >
+            :title="$t('pages.dashboard.applications.heading')">
             <ul
               class="list-unstyled ml-4 mr-4 mb-4 my-applications-tiles"
               data-test-id="my-applications-list">
@@ -57,9 +58,10 @@ to such license between the licensee and ForgeRock AS. -->
 <script>
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import Welcome from '@/components/dashboard/widgets/WelcomeWidget';
 import FrMyApplicationsListItem from '@/components/dashboard/applications/MyApplicationsListItem';
 import ListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
+import Welcome from './widgets/WelcomeWidget';
+import Workflow from './widgets/WorkflowControlWidget';
 
 /**
  * @description Controlling component for the dashboard
@@ -75,6 +77,7 @@ export default {
     FrMyApplicationsListItem,
     Welcome,
     ListGroup,
+    Workflow,
   },
   data() {
     return {
@@ -113,6 +116,13 @@ export default {
       this.getRequestService().get('config/ui/dashboard')
         .then(({ data }) => {
           this.widgets = data.dashboard.widgets;
+
+          if (this.$store.state.ApplicationStore.workflow) {
+            this.widgets.push({
+              type: 'Workflow',
+              size: 'large',
+            });
+          }
         })
         .catch((error) => {
           this.displayNotification('IDMMessages', 'error', error.response.data.message);
