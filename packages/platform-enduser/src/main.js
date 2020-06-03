@@ -6,6 +6,7 @@
  * to such license between the licensee and ForgeRock AS.
  */
 import {
+  each,
   has,
   isNull,
 } from 'lodash';
@@ -94,13 +95,13 @@ extend('required', {
 
 setInteractionMode('passive');
 /*
-    Basic Notification Example:
-    this.$notify({
-        group: 'IDMMessages', // Currently the only group
-        type: 'success', // Available types success, failure, info, warning
-        title: this.$t('common.messages.saveSuccess'), //Translated string
-        text: this.$t('pages.resources.mappingSave') // Translated string (can also be html)
-    });
+  Basic Notification Example:
+  this.$notify({
+      group: 'IDMMessages', // Currently the only group
+      type: 'success', // Available types success, failure, info, warning
+      title: this.$t('common.messages.saveSuccess'), //Translated string
+      text: this.$t('pages.resources.mappingSave') // Translated string (can also be html)
+  });
  */
 Vue.use(Notifications);
 Vue.use(ToggleButton);
@@ -140,7 +141,11 @@ const startApp = () => {
       i18n.locale = uiConfig.data.configuration.lang;
     }
 
-    this.$store.commit('ApplicationStore/setEnduserSelfservice', availability.data.result);
+    each(availability.data.result, (feature) => {
+      if (feature.name === 'workflow') {
+        store.commit('ApplicationStore/setWorkflowState', feature.enabled);
+      }
+    });
 
     return loadApp();
   }))

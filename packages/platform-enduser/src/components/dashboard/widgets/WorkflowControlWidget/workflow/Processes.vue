@@ -1,0 +1,106 @@
+<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+
+Use of this code requires a commercial software license with ForgeRock AS.
+or with one of its affiliates. All use shall be exclusively subject
+to such license between the licensee and ForgeRock AS. -->
+<template>
+  <div>
+    <FrListGroup :title="this.$t('pages.workflow.startProcess')">
+      <template v-if="!isEmpty(processes)">
+        <FrListItem
+          :collapsible="true"
+          v-for="(process, id) in processes"
+          :key="id"
+          @hide="reset(id)"
+          @show="$emit('loadProcess', process)">
+          <div
+            slot="list-item-header"
+            class="d-inline-flex w-100 media">
+            <div class="media-body align-self-center">
+              <h6>{{ process.name }}</h6>
+            </div>
+            <div class="d-flex ml-3 align-self-center">
+              <div
+                class="btn btn-sm btn-link float-right btn-cancel"
+                :ref="`cancel-${id}`">
+                {{ $t('pages.workflow.cancel') }}
+              </div>
+              <div class="btn btn-sm btn-link float-right btn-edit">
+                {{ $t('pages.workflow.start') }}
+              </div>
+            </div>
+          </div>
+
+          <div
+            slot="list-item-collapse-body"
+            class="d-inline-flex w-100">
+            <FrProcess
+              :process-definition="process.processDefinition"
+              :ref="id"
+              @cancel="cancel"
+              @startProcess="(payload) => $emit('startProcess', payload)" />
+          </div>
+        </FrListItem>
+      </template>
+      <FrListItem v-else>
+        <div
+          slot="list-item-header"
+          class="text-muted text-center w-100">
+          {{ $t('pages.workflow.noProcess') }}
+        </div>
+      </FrListItem>
+    </FrListGroup>
+  </div>
+</template>
+
+<script>
+import {
+  isEmpty, first,
+} from 'lodash';
+import styles from '@forgerock/platform-shared/src/scss/main.scss';
+import FrListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
+import FrListItem from '@forgerock/platform-shared/src/components/ListItem/';
+import Process from './Process';
+
+/**
+* @description Dashboard widget that displays a list of available processes that can be started
+*
+* */
+export default {
+  name: 'Processes',
+  props: {
+    processes: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
+  data() {
+    return {
+      loadingColor: styles.baseColor,
+    };
+  },
+  components: {
+    FrListGroup,
+    FrListItem,
+    FrProcess: Process,
+  },
+  methods: {
+    isEmpty,
+    reset(id) {
+      const process = first(this.$refs[id]);
+
+      if (process) {
+        process.reset();
+      }
+    },
+    cancel(id) {
+      const cancelBtn = first(this.$refs[`cancel-${id}`]);
+
+      if (cancelBtn) {
+        this.reset(id);
+        cancelBtn.click();
+      }
+    },
+  },
+};
+</script>
