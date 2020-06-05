@@ -420,7 +420,8 @@ export default {
      */
     evaluateUrlParams() {
       let fixUrl = false;
-      if (this.$route.name === 'default' && window.location.search.includes('suspendedId=') && window.location.search.includes('authIndexValue=')) {
+
+      if (this.$route.name === 'Login' && window.location.search.includes('suspendedId=') && window.location.search.includes('authIndexValue=')) {
         const urlParams = new URLSearchParams(window.location.search.substring(1));
         this.authIndexValue = urlParams.get('authIndexValue');
         this.suspendedId = urlParams.get('suspendedId');
