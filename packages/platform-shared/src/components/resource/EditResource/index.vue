@@ -204,6 +204,8 @@ import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMix
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import EditAssignment from '@forgerock/platform-admin/src/views/ManagedIdentities/Assignment/Edit';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import ObjectTypeEditor from './ObjectTypeEditor';
 import SettingsTab from './CustomTabs/SettingsTab';
 import PrivilegesTab from './CustomTabs/PrivilegesTab';
@@ -275,7 +277,7 @@ export default {
     loadData() {
       const idmInstance = this.getRequestService();
       axios.all([
-        idmInstance.get(`schema/${this.resourceType}/${this.resourceName}`),
+        getSchema(`${this.resourceType}/${this.resourceName}`),
         idmInstance.get(`privilege/${this.resourceType}/${this.resourceName}/${this.id}`)]).then(axios.spread((schema, privilege) => {
         this.resourceTitle = schema.data.title;
 
