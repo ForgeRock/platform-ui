@@ -101,6 +101,11 @@ export default {
 
   .card-header {
     padding: 40px 50px 0;
+
+    .fr-logo {
+      height: 43px;
+      width: 40px;
+    }
   }
 
   .card-body {
