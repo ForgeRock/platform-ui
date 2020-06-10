@@ -69,7 +69,7 @@ import {
   BButton,
 } from 'bootstrap-vue';
 import {
-  FRAuth, FRWebAuthn, Config,
+  FRAuth, FRStep, FRWebAuthn, Config,
 } from '@forgerock/javascript-sdk';
 import Vue from 'vue';
 import WithCallback from '@forgerock/platform-shared/src/hoc/CallbackHoc';
@@ -85,6 +85,7 @@ import ReCaptchaCallback from '@/components/callbacks/ReCaptchaCallback';
 import SelectIdPCallback from '@/components/callbacks/SelectIdPCallback';
 import TextOutputCallback from '@/components/callbacks/TextOutputCallback';
 import SuspendedTextOutputCallback from '@/components/callbacks/SuspendedTextOutputCallback';
+import ValidatedCreatePasswordCallback from '@/components/callbacks/ValidatedCreatePasswordCallback';
 import styles from '@/scss/main.scss';
 import TermsAndConditionsCallback from '@/components/callbacks/TermsAndConditionsCallback';
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
@@ -269,6 +270,16 @@ export default {
       this.$refs.callbacksPanel.innerHTML = '';
       this.showNextButton = false;
       this.loading = true;
+
+      // need to set validateOnly flag for some callbacks in order to be able to advance the tree
+      if (this.step) {
+        const pwCallbacks = this.step.getCallbacksOfType('ValidatedCreatePasswordCallback');
+        if (pwCallbacks.length) {
+          pwCallbacks.forEach((cb) => {
+            cb.setInputValue(false, 1);
+          });
+        }
+      }
     },
     buildTreeForm() {
       const firstInput = this.$el.querySelector('input');
@@ -377,7 +388,11 @@ export default {
           this.addComponent(SuspendedTextOutputCallback, { callback });
           break;
         case 'ValidatedCreatePasswordCallback':
-          this.addField('password', callback, index);
+          if (!callback.getOutputByName('policies').policies) {
+            this.addField('password', callback, index);
+          } else {
+            this.addComponent(ValidatedCreatePasswordCallback, { callback, step: this.step, auth: FRAuth });
+          }
           break;
         case 'SelectIdPCallback':
           callback.setInputValue('localAuthentication');
@@ -450,7 +465,7 @@ export default {
         // session storage is used to resume a tree after returning from a redirect
         const stepInfo = this.getStepFromStorage();
         this.authIndexValue = stepInfo.authIndexValue;
-        this.step = stepInfo.step;
+        this.step = new FRStep(stepInfo.step.payload);
 
         fixUrl = true;
       }

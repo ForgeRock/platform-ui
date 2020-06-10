@@ -1,7 +1,45 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`AccountSecurity.vue AccountSecurity page loaded 1`] = `
-<frlistgroup-stub title="Account Security" subtitle="Update your username, password or security questions to secure your account.">
-  <!---->
-</frlistgroup-stub>
+<div>
+  <bcard-stub bodytag="div" titletag="h4" subtitletag="h6" subtitletextvariant="muted" headertag="div" footertag="div" tag="div" nobody="true">
+    <bcardheader-stub headertag="div" class="p-4">
+      <h4>Account Security</h4>
+      <p class="m-0">
+        Update your username, password and secondary methods to protect your account.
+      </p>
+    </bcardheader-stub>
+    <bcardbody-stub bodytag="div" titletag="h4" subtitletag="h6" subtitletextvariant="muted" class="border-bottom">
+      <brow-stub tag="div">
+        <bcol-stub md="5" tag="div">
+          <h5>Username</h5>
+        </bcol-stub>
+        <bcol-stub md="5" tag="div">
+          test user
+        </bcol-stub>
+        <bcol-stub md="2" tag="div">
+          <!---->
+        </bcol-stub>
+      </brow-stub>
+    </bcardbody-stub>
+    <bcardbody-stub bodytag="div" titletag="h4" subtitletag="h6" subtitletextvariant="muted" class="border-bottom">
+      <brow-stub tag="div">
+        <bcol-stub md="5" tag="div">
+          <h5>Password</h5>
+        </bcol-stub>
+        <bcol-stub md="5" tag="div">
+
+        </bcol-stub>
+        <bcol-stub md="2" tag="div">
+          <bbutton-stub href="undefined/#/service/UpdatePassword" target="_self" event="click" routertag="a" variant="link" type="button" tag="button" class="py-0">
+            Reset
+          </bbutton-stub>
+        </bcol-stub>
+      </brow-stub>
+    </bcardbody-stub>
+    <bcardbody-stub bodytag="div" titletag="h4" subtitletag="h6" subtitletextvariant="muted">
+      <!---->
+    </bcardbody-stub>
+  </bcard-stub>
+</div>
 `;

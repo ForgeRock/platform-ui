@@ -4,7 +4,6 @@ Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
-
   <ValidationObserver
     ref="observer"
     v-slot="{ invalid }">
@@ -78,7 +77,7 @@ to such license between the licensee and ForgeRock AS. -->
           v-show="stepIndex === index">
           <FrCustomStep
             :property="step"
-            @input="updateStepPropertyValue"/>
+            @input="updateStepPropertyValue" />
         </BCol>
       </BRow>
 

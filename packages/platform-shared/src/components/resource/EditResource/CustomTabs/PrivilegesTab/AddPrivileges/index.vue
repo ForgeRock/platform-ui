@@ -6,7 +6,7 @@ to such license between the licensee and ForgeRock AS. -->
 <template>
   <div>
     <div class="text-muted m-4">
-      {{ $t('pages.access.addPrivilegesDescription')}}
+      {{ $t('pages.access.addPrivilegesDescription') }}
     </div>
     <FrPrivilegeEditor
       v-for="(privilege, index) in newPrivileges"
@@ -51,7 +51,9 @@ to such license between the licensee and ForgeRock AS. -->
           class="w-25"
           @click="addNewPrivilege"
           id="add_new_privilege">
-          <i class="material-icons mr-2">add</i>{{ $t("common.add") }}
+          <i class="material-icons mr-2">
+            add
+          </i>{{ $t("common.add") }}
         </BButton>
       </div>
     </div>

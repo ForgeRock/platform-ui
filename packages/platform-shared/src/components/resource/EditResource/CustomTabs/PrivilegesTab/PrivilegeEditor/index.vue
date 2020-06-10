@@ -20,7 +20,7 @@ to such license between the licensee and ForgeRock AS. -->
           :item="data">
           <div class="py-2 fixed-width-title-cell">
             <i class="material-icons-outlined mr-3">
-              {{ identityObjectSchema['mat-icon'] || 'settings_system_daydream'}}
+              {{ identityObjectSchema['mat-icon'] || 'settings_system_daydream' }}
             </i>
             <span>
               {{ identityObjectSchema.title | PluralizeFilter }}
@@ -93,75 +93,79 @@ to such license between the licensee and ForgeRock AS. -->
                 variant="none"
                 class="p-0"
                 @click="$emit('removePrivilege', index)">
-                <i class="material-icons-outlined text-muted">delete</i>
+                <i class="material-icons-outlined text-muted">
+                  delete
+                </i>
               </BButton>
             </small>
           </div>
         </slot>
       </template>
       <template v-slot:row-details="data">
-        <BCard body-class="p-0" class="shadow-none">
-         <div class="p-4 border-bottom">
-           <h5>{{ $t('pages.access.attribute' )}} {{ $t('pages.access.permissions' )}}</h5>
-           <div class="mb-0 text-muted">
-             {{ $t('pages.access.managePermissions' )}}
-             <span>
-               <BDropdown
-                 variant="link"
-                 no-caret
-                 toggle-class="text-decoration-none p-0">
-                 <template v-slot:button-content>
-                   <span>
-                     {{ $t('pages.access.setAllAttributes' )}}
-                   </span>
-                 </template>
-                 <BDropdownItem @click="setAllAccessFlags(true)">
-                   {{ $t('pages.access.read') }}
-                 </BDropdownItem>
-                 <BDropdownItem
-                  v-if="showReadWrite"
-                  @click="setAllAccessFlags(false)">
-                   {{ $t('pages.access.readWrite') }}
-                 </BDropdownItem>
-                 <BDropdownItem @click="removeAllAccessFlags()">
-                   {{ $t('common.none') }}
-                 </BDropdownItem>
-               </BDropdown>
-             </span>.
-           </div>
-         </div>
-         <div
-          id="attributePermissionsContainer"
-          class="overflow-auto">
+        <BCard
+          body-class="p-0"
+          class="shadow-none">
+          <div class="p-4 border-bottom">
+            <h5>{{ $t('pages.access.attribute' ) }} {{ $t('pages.access.permissions' ) }}</h5>
+            <div class="mb-0 text-muted">
+              {{ $t('pages.access.managePermissions' ) }}
+              <span>
+                <BDropdown
+                  variant="link"
+                  no-caret
+                  toggle-class="text-decoration-none p-0">
+                  <template v-slot:button-content>
+                    <span>
+                      {{ $t('pages.access.setAllAttributes' ) }}
+                    </span>
+                  </template>
+                  <BDropdownItem @click="setAllAccessFlags(true)">
+                    {{ $t('pages.access.read') }}
+                  </BDropdownItem>
+                  <BDropdownItem
+                    v-if="showReadWrite"
+                    @click="setAllAccessFlags(false)">
+                    {{ $t('pages.access.readWrite') }}
+                  </BDropdownItem>
+                  <BDropdownItem @click="removeAllAccessFlags()">
+                    {{ $t('common.none') }}
+                  </BDropdownItem>
+                </BDropdown>
+              </span>.
+            </div>
+          </div>
+          <div
+            id="attributePermissionsContainer"
+            class="overflow-auto">
             <div
               v-for="attribute in availableAttibutes"
               :key="attribute.key"
               class="p-4 border-top">
-                <small class="d-inline-block text-monospace flex-grow-1">
-                  {{ attribute.key }}
-                </small>
-                <div class="float-right">
-                  <BDropdown
-                    variant="link"
-                    toggle-class="text-decoration-none p-0">
-                    <template v-slot:button-content>
-                      <span class="mr-5">
-                        {{ attribute.status }}
-                      </span>
-                    </template>
-                    <BDropdownItem @click="setAccessFlag(attribute.key, true)">
-                      {{ $t('pages.access.read') }}
-                    </BDropdownItem>
-                    <BDropdownItem
-                      v-if="showReadWrite"
-                      @click="setAccessFlag(attribute.key, false)">
-                      {{ $t('pages.access.readWrite') }}
-                    </BDropdownItem>
-                    <BDropdownItem @click="removeAccessFlag(attribute.key)">
-                      {{ $t('common.none') }}
-                    </BDropdownItem>
-                  </BDropdown>
-                </div>
+              <small class="d-inline-block text-monospace flex-grow-1">
+                {{ attribute.key }}
+              </small>
+              <div class="float-right">
+                <BDropdown
+                  variant="link"
+                  toggle-class="text-decoration-none p-0">
+                  <template v-slot:button-content>
+                    <span class="mr-5">
+                      {{ attribute.status }}
+                    </span>
+                  </template>
+                  <BDropdownItem @click="setAccessFlag(attribute.key, true)">
+                    {{ $t('pages.access.read') }}
+                  </BDropdownItem>
+                  <BDropdownItem
+                    v-if="showReadWrite"
+                    @click="setAccessFlag(attribute.key, false)">
+                    {{ $t('pages.access.readWrite') }}
+                  </BDropdownItem>
+                  <BDropdownItem @click="removeAccessFlag(attribute.key)">
+                    {{ $t('common.none') }}
+                  </BDropdownItem>
+                </BDropdown>
+              </div>
             </div>
           </div>
         </BCard>
@@ -173,10 +177,10 @@ to such license between the licensee and ForgeRock AS. -->
             v-if="queryFilterToggleField.value"
             class="pt-2">
             <FrQueryFilterBuilder
-            @change="queryFilterChange"
-            :query-filter-string="privilege.filter"
-            :resource="identityObjectSchema.title.toLowerCase()"
-            :properties="queryFilterDropdownOptions" />
+              @change="queryFilterChange"
+              :query-filter-string="privilege.filter"
+              :resource="identityObjectSchema.title.toLowerCase()"
+              :properties="queryFilterDropdownOptions" />
           </div>
         </BCard>
       </template>

@@ -16,7 +16,9 @@ to such license between the licensee and ForgeRock AS. -->
             class="mr-1"
             @click="$refs.addPrivilegesModal.show()"
             id="add_privilege">
-            <i class="material-icons mr-2">add</i>
+            <i class="material-icons mr-2">
+              add
+            </i>
             {{ $t("common.add") }} {{ $t("pages.access.privileges") }}
           </BButton>
         </BCol>
@@ -47,13 +49,13 @@ to such license between the licensee and ForgeRock AS. -->
             name="permissions"
             :item="data">
             <span
-             v-for="permission in data.item.permissions"
-             :key="permission"
-             class="bagde badge-light mr-1 p-1">
-             <small>
-               {{ capitalizePermission(permission) }}
-             </small>
-           </span>
+              v-for="permission in data.item.permissions"
+              :key="permission"
+              class="bagde badge-light mr-1 p-1">
+              <small>
+                {{ capitalizePermission(permission) }}
+              </small>
+            </span>
           </slot>
         </template>
         <template v-slot:cell(actions)="data">
@@ -123,7 +125,7 @@ to such license between the licensee and ForgeRock AS. -->
         :new-privileges="newPrivileges"
         :privileges-field="privilegesField"
         :schema-map="schemaMap"
-        :loading="loading"/>
+        :loading="loading" />
       <template v-slot:modal-footer="{ cancel }">
         <BButton
           variant="link"

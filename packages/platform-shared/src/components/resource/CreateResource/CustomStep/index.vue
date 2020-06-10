@@ -10,20 +10,20 @@ to such license between the licensee and ForgeRock AS. -->
         {{ descriptionText }}
       </div>
       <div>
-      <FrField
-        :field="checkboxField"
-        @input="toggleForm" />
+        <FrField
+          :field="checkboxField"
+          @input="toggleForm" />
       </div>
     </template>
     <div
       v-if="showForm"
       class="mt-4">
       <div v-if="property.isConditional">
-      <FrQueryFilterBuilder
-            @change="queryFilterChange"
-            :query-filter-string="queryFilterField.value"
-            resource="user"
-            :properties="conditionOptions" />
+        <FrQueryFilterBuilder
+          @change="queryFilterChange"
+          :query-filter-string="queryFilterField.value"
+          resource="user"
+          :properties="conditionOptions" />
       </div>
       <FrTimeConstraint
         v-if="property.isTemporalConstraint"
@@ -33,7 +33,7 @@ to such license between the licensee and ForgeRock AS. -->
         :new-privileges="newPrivileges"
         :privileges-field="property"
         :schema-map="schemaMap"
-        :loading="loading"/>
+        :loading="loading" />
     </div>
   </div>
 </template>
