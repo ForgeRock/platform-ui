@@ -8,13 +8,13 @@ to such license between the licensee and ForgeRock AS. -->
         <div class="sg_masthead">
             <BContainer>
                 <h1 class="display-4">Typography</h1>
-                <p class="mb-4 lead">All text is set in Roboto.</p>
+                <p class="mb-4 lead">All text is set in Open Sans.</p>
             </BContainer>
         </div>
         <BContainer>
             <template>
                 <section class="sg_pattern">
-                    <h2 class="mb-5">Roboto</h2>
+                    <h2 class="mb-5">Open Sans</h2>
                     <div class="card">
                         <div class="card-body">
                             <h1>AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz</h1>
