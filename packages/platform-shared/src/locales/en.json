@@ -57,7 +57,8 @@
       "emailAddress": "Email address",
       "password": "Password",
       "retypePassword": "Retype Password",
-      "timeZoneOffset": "Time Zone Offest"
+      "timeZoneOffset": "Time Zone Offest",
+      "username": "Username"
     },
     "policyValidationMessages": {
       "GENERIC_FIELD_REQUIRED": "{_field_} is required",

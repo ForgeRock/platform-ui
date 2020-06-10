@@ -1,4 +1,4 @@
-<!-- Copyright 2019 ForgeRock AS. All Rights Reserved
+<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
 
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
@@ -26,7 +26,7 @@ to such license between the licensee and ForgeRock AS. -->
           <BButton
             v-if="internalUser === false"
             ref="editProfileButton"
-            variant="primary"
+            variant="outline-primary"
             block
             class="mt-4"
             v-b-modal.userDetailsModal>
@@ -42,27 +42,20 @@ to such license between the licensee and ForgeRock AS. -->
           :profile="profile" />
       </BCol>
       <BCol lg="8">
-        <BTabs content-class="mt-4">
-          <BTab
-            :title="$t('pages.profile.settings')"
-            active>
-            <FrAccountSecurity
-              v-if="internalUser === false"
-              @updateProfile="updateProfile"
-              @updateKBA="updateKBA" />
-            <!-- TODO we need to update these to not rely on the old way of getting AM data endpoints -->
-            <!-- <FrAuthorizedApplications v-if="amDataEndpoints && internalUser === false" /> -->
-            <FrTrustedDevices />
-            <FrPreferences
-              v-if="internalUser === false"
-              @updateProfile="updateProfile" />
-            <FrConsent
-              v-if="internalUser === false"
-              :consented-mappings="profile.consentedMappings"
-              @updateProfile="updateProfile" />
-            <FrAccountControls />
-          </BTab>
-        </BTabs>
+        <FrAccountSecurity
+          v-if="internalUser === false"
+          @updateKBA="updateKBA" />
+        <!-- TODO we need to update these to not rely on the old way of getting AM data endpoints -->
+        <!-- <FrAuthorizedApplications v-if="amDataEndpoints && internalUser === false" /> -->
+        <FrTrustedDevices />
+        <FrPreferences
+          v-if="internalUser === false"
+          @updateProfile="updateProfile" />
+        <FrConsent
+          v-if="internalUser === false"
+          :consented-mappings="profile.consentedMappings"
+          @updateProfile="updateProfile" />
+        <FrAccountControls />
       </BCol>
     </BRow>
   </BContainer>
