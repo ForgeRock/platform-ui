@@ -91,16 +91,17 @@ $border-color: $gray-200;
 $body-bg: $gray-100;
 $body-color: $gray-600;
 $headings-color: $gray-900;
-$font-size-base: 1rem !default;
-$font-weight-bold: 500;
+$font-size-base: 0.9375rem !default;
+$font-weight-bold: 600;
+$font-weight-normal: 400;
 $font-weight-light: 300;
-$small-font-size: 0.875rem;
+$small-font-size: 0.8125rem;
 $transition-collapse: height 0.25s ease-in;
 $border-radius: 4px;
 $box-shadow-sm: 0 1px 2px rgba($black, 0.13);
 $box-shadow: 0 1px 3px rgba($black, 0.13);
 $box-shadow-lg: 0 2px 11px rgba($black, 0.13);
-$fr-typeface: 'Roboto', sans-serif;
+$fr-typeface: 'Open Sans', sans-serif;
 $fr-background-image: none;
 
 // Custom form controls
@@ -173,10 +174,10 @@ $h4-font-weight: $headings-font-weight;
 $h5-font-weight: $headings-font-weight;
 $h6-font-weight: $headings-font-weight;
 
-$display1-size: 5rem;
-$display2-size: 4rem;
-$display3-size: 3.5rem;
-$display4-size: 3rem;
+$display1-size: $font-size-base * 5;
+$display2-size: $font-size-base * 4;
+$display3-size: $font-size-base * 3.5;
+$display4-size: $font-size-base * 3;
 $display1-weight: 300;
 $display2-weight: 300;
 $display3-weight: 300;
@@ -305,7 +306,7 @@ $table-color: $gray-900;
 $table-border-color: $gray-200;
 
 // Forgerock specific table variables
-$fr-table-head-weight: 500;
+$fr-table-head-weight: 600;
 $fr-table-head-border: 1px;
 
 // Forgerock specific Toolbar / Navbar
@@ -317,7 +318,7 @@ $fr-toolbar-dropdown-color: rgba(0, 0, 0, 0.5);
 // Custom ForgeRock UI Components
 
 // Navbar Sidebar
-$fr-navbar-sidebar-fontsize: 0.875rem;
+$fr-navbar-sidebar-fontsize: 0.8125rem;
 $fr-navbar-sidebar-icon-fontsize: 1.125rem;
 $fr-navbar-sidebar-nav-link-padding: 0.938rem 1rem;
 $fr-sidebar-nav-background-color: $gray-800 !default;
