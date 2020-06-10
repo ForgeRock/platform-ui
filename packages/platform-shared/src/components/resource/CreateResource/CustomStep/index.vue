@@ -45,6 +45,8 @@ import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrTimeConstraint from '@forgerock/platform-shared/src/components/TimeConstraint';
 import FrAddPrivileges from '@forgerock/platform-shared/src/components/resource/EditResource/CustomTabs/PrivilegesTab/AddPrivileges';
 import FrQueryFilterBuilder from '@forgerock/platform-shared/src/components/QueryFilterBuilder';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 
 export default {
   name: 'CustomStep',
@@ -144,11 +146,10 @@ export default {
     * Gets schema for objects available for setting privileges on
     */
     setPrivilegesStep() {
-      const idmInstance = this.getRequestService();
       this.showForm = true;
       this.showToggle = false;
       // get schema for all internal/role and all managed objects that are not managed/assignment
-      idmInstance.get('schema?_queryFilter=resourceCollection eq "internal/role" or resourceCollection sw "managed" and !(resourceCollection eq "managed/assignment")&_fields=*').then((response) => {
+      getSchema('?_queryFilter=resourceCollection eq "internal/role" or resourceCollection sw "managed" and !(resourceCollection eq "managed/assignment")&_fields=*').then((response) => {
         const schemas = response.data.result;
 
         schemas.forEach((schema) => {
@@ -167,10 +168,9 @@ export default {
     */
     setConditionOptions() {
       this.conditionOptions = [];
-      const idmInstance = this.getRequestService();
 
       // TODO: replace hard coded "managed/user" with "conditionObject" schema property value
-      idmInstance.get('schema/managed/user').then((schema) => {
+      getSchema('managed/user').then((schema) => {
         const filteredProperties = [];
 
         schema.data.order.forEach((key) => {
