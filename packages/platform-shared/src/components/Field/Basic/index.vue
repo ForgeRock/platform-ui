@@ -149,8 +149,8 @@ export default {
   }
 
   @keyframes onAutoFillStart {
-    from {/**/}
-    to {/**/}
+    from { /*  */ }
+    to { /*  */ }
   }
   /* stylelint-enable */
 </style>

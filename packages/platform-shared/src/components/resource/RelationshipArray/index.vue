@@ -18,7 +18,9 @@ to such license between the licensee and ForgeRock AS. -->
             class="mr-1"
             @click="openCreateModal"
             :id="'add_' + relationshipArrayProperty.key">
-            <i class="material-icons mr-2">add</i>
+            <i class="material-icons mr-2">
+              add
+            </i>
             {{ $t("common.add") }} {{ relationshipArrayProperty.title }}
           </BButton>
           <BButton

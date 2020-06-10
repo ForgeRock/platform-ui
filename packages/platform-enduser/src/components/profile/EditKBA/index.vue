@@ -4,76 +4,56 @@ Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
-  <FrListItem
-    :collapsible="true"
-    :panel-shown="false">
-    <template v-slot:list-item-header>
-      <div class="d-inline-flex w-100 media">
-        <div class="media-body align-self-center">
-          <h6 class="my-0">
-            {{ $t('pages.profile.accountSecurity.securityQuestions') }}
-          </h6>
+  <div>
+    <BRow>
+      <BCol md="10">
+        <h5>
+          {{ $t('pages.profile.accountSecurity.securityQuestions') }}
+        </h5>
+      </BCol>
+      <BCol md="2">
+        <BButton
+          v-b-toggle.collapse-1
+          variant="link"
+          class="py-0"
+          ref="button"
+          @click="initializeForm(kbaData.minimumAnswersToDefine)">
+          {{ showCancel ? $t('common.cancel') : $t('common.reset') }}
+        </BButton>
+      </BCol>
+    </BRow>
+    <BCollapse
+      @hidden="clearComponent"
+      id="collapse-1"
+      class="mt-4">
+      <ValidationObserver ref="observer">
+        <div
+          v-for="(kbaChoice, id) in kbaChoices"
+          :key="id"
+          class="pb-3">
+          <FrField
+            :field="kbaChoice.selected"
+            class="mb-3" />
+          <FrField
+            v-if="kbaChoice.selected.value === customIndex"
+            :field="kbaChoice.customQuestion"
+            class="mb-3" />
+          <FrField
+            :field="kbaChoice.answer"
+            class="mb-3" />
+          <hr
+            v-if="id !== kbaChoices.length - 1"
+            class="mt-4">
         </div>
-        <div class="d-flex ml-3 align-self-center">
-          <div
-            class="btn btn-link btn-sm float-right btn-cancel"
-            @click="clearComponent()"
-            ref="cancel">
-            {{ $t('common.cancel') }}
-          </div>
-          <div
-            class="btn btn-link btn-sm float-right btn-edit"
-            @click="initializeForm(kbaData.minimumAnswersToDefine)">
-            {{ $t('common.reset') }}
-          </div>
-        </div>
-      </div>
-    </template>
-
-    <template v-slot:list-item-collapse-body>
-      <div
-        v-if="kbaChoices.length"
-        class="d-inline-flex w-100">
-        <BForm class="w-100">
-          <BRow>
-            <BCol sm="8">
-              <ValidationObserver ref="observer">
-                <fieldset
-                  v-for="(kbaChoice, id) in kbaChoices"
-                  :key="id"
-                  class="pb-3">
-                  <FrField
-                    :field="kbaChoice.selected"
-                    :prepend-title="true"
-                    class="mb-3" />
-                  <FrField
-                    v-if="kbaChoice.selected.value === customIndex"
-                    :field="kbaChoice.customQuestion"
-                    :prepend-title="true"
-                    class="pb-3" />
-                  <FrField
-                    :field="kbaChoice.answer"
-                    :prepend-title="true"
-                    class="form-group mb-0" />
-                  <hr
-                    v-if="id !== kbaChoices.length - 1"
-                    class="mb-3 mt-4">
-                </fieldset>
-
-                <FrLoadingButton
-                  type="button"
-                  variant="primary"
-                  class="ld-ext-right mb-3"
-                  :label="$t('user.kba.saveQuestions')"
-                  :loading="loading"
-                  @click="onSaveKBA" />
-              </ValidationObserver>
-            </BCol>
-          </BRow>
-        </BForm>
-      </div>
-    </template>
-  </FrListItem>
+        <FrLoadingButton
+          type="button"
+          variant="primary"
+          :label="$t('common.save')"
+          :loading="loading"
+          @click="onSaveKBA" />
+      </ValidationObserver>
+    </BCollapse>
+  </div>
 </template>
 
 <script>
@@ -83,8 +63,12 @@ import {
   noop,
   times,
 } from 'lodash';
+import {
+  BButton,
+  BCol,
+  BRow,
+} from 'bootstrap-vue';
 import { ValidationObserver } from 'vee-validate';
-import ListItem from '@forgerock/platform-shared/src/components/ListItem/';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import LoadingButton from '@/components/utils/LoadingButton';
 
@@ -95,10 +79,12 @@ import LoadingButton from '@/components/utils/LoadingButton';
 export default {
   name: 'EditKBA',
   components: {
-    FrListItem: ListItem,
     FrLoadingButton: LoadingButton,
     FrField,
     ValidationObserver,
+    BButton,
+    BCol,
+    BRow,
   },
   props: {
     kbaData: {
@@ -111,20 +97,28 @@ export default {
       questions: {},
       selectOptions: [],
       kbaChoices: [],
-      customIndex: 0,
+      customIndex: null,
       loading: false,
+      showCancel: false,
     };
   },
   mounted() {
     this.questions = this.kbaData.questions;
   },
   methods: {
+    /**
+     * Initializes select options for each required KBA definition
+     * @param {Number} minimumRequired number of KBA definitions required
+     */
     initializeForm(minimumRequired) {
+      // if cancel form is already showing, don't need to initialize
+      if (this.showCancel) {
+        return;
+      }
       const { locale, fallbackLocale } = this.$i18n;
 
       // create select options
       this.selectOptions = map(this.questions, (question, index) => ({ value: index, text: question[locale] || question[fallbackLocale], $isDisabled: false }));
-      this.selectOptions.unshift({ value: 0, text: this.$t('user.kba.selectQuestion'), $isDisabled: true });
       this.customIndex = this.selectOptions.length;
       this.selectOptions.push({ value: this.customIndex, text: this.$t('user.kba.custom'), $isDisabled: false });
 
@@ -133,8 +127,8 @@ export default {
         this.kbaChoices.push({
           selected: {
             type: 'select',
-            title: `${this.$t('user.kba.question')} ${index + 1}`,
-            value: 0,
+            title: this.$t('user.kba.selectQuestion'),
+            value: '',
             options: this.selectOptions,
           },
           answer: {
@@ -151,8 +145,12 @@ export default {
           },
         });
       });
+      this.showCancel = true;
     },
-
+    /**
+     * Generate patch options for updating KBA
+     * @returns {Object[]} Array containing single object with patch options as key/value pairs
+     */
     generatePatch() {
       const values = map(this.kbaChoices, (field) => {
         if (field.customQuestion.value) {
@@ -173,22 +171,27 @@ export default {
         value: values,
       }];
     },
-
+    /**
+     * Clear the component data
+     */
     clearComponent() {
       this.loading = false;
       this.selectOptions = [];
       this.kbaChoices = [];
       this.customIndex = null;
       this.questions = this.kbaData.questions;
+      this.showCancel = false;
     },
-
+    /**
+     * Sends event to update KBA and collapses component if successful
+     */
     async onSaveKBA() {
       const isValid = await this.$refs.observer.validate();
       if (isValid) {
         this.loading = true;
         this.$emit('updateKBA', this.generatePatch(), {
           onSuccess: () => {
-            this.$refs.cancel.click();
+            this.$refs.button.click();
           },
           onError: () => {
             this.loading = false;
