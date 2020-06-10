@@ -367,6 +367,7 @@ export default {
           this.addField('password', callback, index);
           break;
         case 'SelectIdPCallback':
+          callback.setInputValue('localAuthentication');
           this.addComponent(SelectIdPCallback, {
             callback,
             index,
