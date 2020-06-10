@@ -136,6 +136,8 @@ import axios from 'axios';
 import CreateResource from '@forgerock/platform-shared/src/components/resource/CreateResource';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 
 /**
  * @description Controlling component for delegated admin, allows for listing available resources and connects to the create, delete and edit features.
@@ -182,7 +184,7 @@ export default {
       const idmInstance = this.getRequestService();
 
       axios.all([
-        idmInstance.get(`schema/${this.resource}/${this.name}`),
+        getSchema(`${this.resource}/${this.name}`),
         idmInstance.get(`privilege/${this.resource}/${this.name}`)]).then(axios.spread((schema, privilege) => {
         if (privilege.data.VIEW.allowed) {
           // Generate columns for display and filtering for read/query

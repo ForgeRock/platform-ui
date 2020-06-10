@@ -86,6 +86,8 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import QueryFilterBuilder from '@forgerock/platform-shared/src/components/QueryFilterBuilder';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 
 export default {
   name: 'SettingsTab',
@@ -181,10 +183,9 @@ export default {
     },
     setConditionOptions() {
       this.conditionOptions = [];
-      const idmInstance = this.getRequestService();
 
       // TODO: replace hard coded "managed/user" with "conditionObject" schema property value
-      idmInstance.get('schema/managed/user').then((schema) => {
+      getSchema('managed/user').then((schema) => {
         const filteredProperties = [];
 
         schema.data.order.forEach((key) => {
