@@ -223,12 +223,17 @@ export default {
         stepParams.query = {
           suspendedId: this.suspendedId,
         };
-      } else if (this.code && this.state && this.scope) {
-        stepParams.query = {
-          code: this.code,
-          state: this.state,
-          scope: this.scope,
-        };
+      } else {
+        stepParams.query = {};
+        if (this.code) {
+          stepParams.query.code = this.code;
+        }
+        if (this.state) {
+          stepParams.query.state = this.state;
+        }
+        if (this.scope) {
+          stepParams.query.scope = this.scope;
+        }
       }
 
       this.clearCallbacks();
@@ -428,7 +433,7 @@ export default {
         this.suspendedId = urlParams.get('suspendedId');
 
         fixUrl = true;
-      } else if (window.location.search.includes('state=') && window.location.search.includes('code=') && window.location.search.includes('scope=')) {
+      } else if (window.location.search.includes('state=') || window.location.search.includes('code=') || window.location.search.includes('scope=')) {
         const urlParams = new URLSearchParams(window.location.search.substring(1));
         this.state = urlParams.get('state');
         this.code = urlParams.get('code');
