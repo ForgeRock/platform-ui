@@ -21,6 +21,8 @@ import Vue from 'vue';
 import AppAuthHelper from 'appauthhelper/appAuthHelperCompat';
 import SessionCheck from 'oidcsessioncheck';
 import store from '@forgerock/platform-shared/src/store';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import router from './router';
 import i18n from './i18n';
 import App from './App';
@@ -58,7 +60,7 @@ router.beforeEach((to, from, next) => {
         axios.all([
           authInstance.get(`${userDetails.data.authorization.component}/${userDetails.data.authorization.id}`),
           authInstance.post('privilege?_action=listPrivileges'),
-          authInstance.get(`schema/${userDetails.data.authorization.component}`)]).then(axios.spread((profile, privilege, schema) => {
+          getSchema(userDetails.data.authorization.component, { baseURL: idmContext })]).then(axios.spread((profile, privilege, schema) => {
           store.commit('UserStore/setProfileAction', profile.data);
           store.commit('UserStore/setSchemaAction', schema.data);
           store.commit('UserStore/setAccess', privilege.data);

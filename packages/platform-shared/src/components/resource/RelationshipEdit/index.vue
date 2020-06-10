@@ -144,6 +144,8 @@ import TimeConstraint from '@forgerock/platform-shared/src/components/TimeConstr
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 
 export default {
   name: 'RelationshipEdit',
@@ -236,8 +238,6 @@ export default {
   },
   methods: {
     setResourceCollectionType(rescourceCollectionType) {
-      const idmInstance = this.getRequestService();
-
       let index = 0;
 
       if (rescourceCollectionType) {
@@ -252,7 +252,7 @@ export default {
 
       this.showResourceType = this.allResourceCollections.length > 1;
 
-      return idmInstance.get(`schema/${this.resourceCollection.path}`).then((schema) => {
+      return getSchema(`${this.resourceCollection.path}`).then((schema) => {
         this.resourceCollection.schema = schema.data;
         this.setOptions();
       })
