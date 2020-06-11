@@ -7,8 +7,8 @@ exports[`ListResource Component ListResource page loaded 1`] = `
       <div class="btn-group mb-3 mb-lg-0 mr-lg-1"></div>
       <frsearchinput-stub appendicon="close" placeholder="Search" prependicon="search" value=""></frsearchinput-stub>
     </div>
-    <div class="overflow-auto">
-      <btable-stub items="" fields="" value="" hover="true" filterdebounce="0" sortdirection="asc" sortcompareoptions="[object Object]" labelsortasc="Click to sort Ascending" labelsortdesc="Click to sort Descending" labelsortclear="Click to clear sorting" nolocalsorting="true" perpage="0" currentpage="1" selectmode="multi" selectedvariant="active" showempty="true" emptytext="There are no records to show" emptyfilteredtext="There are no records matching your request" apiurl="" class="mb-0"></btable-stub>
+    <div>
+      <btable-stub items="" fields="" value="" hover="true" responsive="true" filterdebounce="0" sortdirection="asc" sortcompareoptions="[object Object]" labelsortasc="Click to sort Ascending" labelsortdesc="Click to sort Descending" labelsortclear="Click to clear sorting" nolocalsorting="true" perpage="0" currentpage="1" selectmode="multi" selectedvariant="active" showempty="true" emptytext="There are no records to show" emptyfilteredtext="There are no records matching your request" apiurl="" class="mb-0"></btable-stub>
     </div>
     <div class="card-footer py-2">
       <nav aria-label="Page navigation">
