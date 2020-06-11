@@ -17,7 +17,7 @@ to such license between the licensee and ForgeRock AS. -->
           @search="search"
         />
       </div>
-      <div class="overflow-auto">
+      <div>
         <BTable
           class="mb-0"
           show-empty
@@ -26,6 +26,7 @@ to such license between the licensee and ForgeRock AS. -->
           :items="tableData"
           :no-local-sorting="true"
           :per-page="0"
+          :responsive="true"
           :sort-by.sync="sortBy"
           :sort-desc.sync="sortDesc"
           :sort-direction="sortDirection"
@@ -36,6 +37,7 @@ to such license between the licensee and ForgeRock AS. -->
               name="actions"
               :item="data">
               <BDropdown
+                boundary="window"
                 variant="link"
                 no-caret
                 right
@@ -45,7 +47,7 @@ to such license between the licensee and ForgeRock AS. -->
                     more_horiz
                   </i>
                 </template>
-                <BDropdownItem @click="editResource(data.item)">
+                <BDropdownItem @click="$emit('rowClicked', data.item)">
                   <i class="material-icons-outlined mr-3">
                     edit
                   </i> {{ $t('common.edit') }}
@@ -352,26 +354,6 @@ export default {
     },
     clearSelection() {
       this.resourceToDeleteId = '';
-    },
-    /**
-     * Attempts to pull up edit resource page for selected row if user has access
-     *
-     * @param {object} item - Required metaData of row clicked
-     */
-    editResource(item) {
-      if (this.userCanUpdate) {
-        this.$router.push({
-          name: 'EditResource',
-          params: {
-            resourceName: this.resourceName,
-            resourceType: this.resourceType,
-            // eslint-disable-next-line no-underscore-dangle
-            resourceId: item._id,
-          },
-        });
-      } else {
-        this.displayNotification('IDMMessages', 'error', this.$t('journey.unableToEditResource', { resource: this.resourceName }));
-      }
     },
     confirmDeleteResource(id) {
       this.resourceToDeleteId = id;
