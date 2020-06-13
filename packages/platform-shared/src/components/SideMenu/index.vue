@@ -61,17 +61,36 @@ to such license between the licensee and ForgeRock AS. -->
             </template>
             <BDropdownDivider />
             <template v-for="(item, index) in dropdownItems">
-              <BDropdownItem
-                class="my-2"
-                :key="`sideDropdownItems_${index}`"
-                :to="{name: item.routeName}">
-                <i class="material-icons mr-3">
-                  {{ item.icon }}
-                </i>
-                <span>
-                  {{ item.displayName }}
-                </span>
-              </BDropdownItem>
+              <template v-if="!item.hideItem">
+                <BDropdownItem
+                  v-if="item.groupTitle"
+                  :disabled="true"
+                  :key="`sideDropdownItemsGroupTitle_${index}`">
+                  <span>
+                    <h6 class="text-muted">
+                      {{ item.title }}
+                    </h6>
+                    <h5>
+                      {{ item.subTitle }}
+                    </h5>
+                  </span>
+                </BDropdownItem>
+                <BDropdownItem
+                  v-else
+                  class="my-2"
+                  :key="`sideDropdownItems_${index}`"
+                  @click="item.action">
+                  <i class="material-icons mr-3">
+                    {{ item.icon }}
+                  </i>
+                  <span>
+                    {{ item.displayName }}
+                  </span>
+                </BDropdownItem>
+              </template>
+              <BDropdownDivider
+                v-if="item.showDivider"
+                :key="`sideDropdownItemsDivider_${index}`" />
             </template>
             <BDropdownItem
               v-if="showEnduserLink"
