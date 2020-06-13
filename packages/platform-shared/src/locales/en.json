@@ -54,6 +54,9 @@
     "update": "Update",
     "version": "Version {version}",
     "view": "View",
+    "yes": "Yes",
+    "copySuccess": "Copied to your clipboard",
+    "copyFail": "Failed to copy",
     "waitingToConnect": "Waiting to connect...",
     "yes": "Yes",
     "helpText": {
@@ -200,7 +203,7 @@
       "pageNotFound": "Page Not Found",
       "returnRoute": "Return to {returnRoute}",
       "couldNotFind": "We couldn't find the page you were looking for."
-      
+
     },
     "forbidden": {
       "signOut": "Sign out",
