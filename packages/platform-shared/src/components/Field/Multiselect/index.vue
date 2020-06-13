@@ -22,12 +22,13 @@ to such license between the licensee and ForgeRock AS. -->
       :hide-selected="true"
       :multiple="true"
       :close-on-select="false"
-      :searchable="isSearchable"
+      :searchable="defaultSearchable"
       :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control p-0', {'no-multiselect-label': !this.label }, {'h-100': floatLabels || !this.label }]"
-      :placeholder="$t('common.typeToSearch')"
+      :placeholder="defaultPlaceholder"
       @search-change="$emit('search-change', $event)"
       @open="floatLabels = true"
-      @close="floatLabels = inputValue && inputValue.length">
+      @close="floatLabels = inputValue && inputValue.length"
+      v-on="$listeners">
       <slot name="noResult">
         {{ $t('common.noResult') }}
       </slot>
@@ -91,7 +92,13 @@ export default {
     },
     searchable: {
       type: Boolean,
-      default: false,
+      default: true,
+      required: false,
+    },
+    placeholder: {
+      type: String,
+      default: '',
+      required: false,
     },
   },
   computed: {
@@ -105,8 +112,11 @@ export default {
         value: option,
       }));
     },
-    isSearchable() {
+    defaultSearchable() {
       return this.searchable || this.options.length > 9;
+    },
+    defaultPlaceholder() {
+      return this.placeholder || this.$t('common.typeToSearch');
     },
   },
   methods: {

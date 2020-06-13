@@ -19,6 +19,7 @@ to such license between the licensee and ForgeRock AS. -->
       :menu-mobile-is-toggled="toggledMenuMobile"
       :user-details="userDetails"
       :menu-items="menuItems"
+      :dropdown-items="sideMenuDropdownItems"
       :enduser-link="$store.state.enduserURL"
       :show-enduser-link="!userDetails.adminUser"
       v-show="!hideNav" />
@@ -99,6 +100,10 @@ export default {
   },
   props: {
     menuItems: {
+      type: Array,
+      default: () => [],
+    },
+    sideMenuDropdownItems: {
       type: Array,
       default: () => [],
     },
