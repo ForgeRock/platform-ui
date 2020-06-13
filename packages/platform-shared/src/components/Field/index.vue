@@ -177,7 +177,7 @@ to such license between the licensee and ForgeRock AS. -->
     <template v-if="this.field.type === 'boolean' || this.field.type === 'checkbox'">
       <label
         v-if="!this.prependTitle"
-        class="text-secondary mb-0">
+        :class="[{'mb-0': this.field.type === 'boolean'}, {'mb-1': this.field.type === 'checkbox'}, {'align-top': this.field.type === 'checkbox'}, 'text-secondary']">
         <div :id="`helppopover-${field.key}`">
           {{ field.title }}
         </div>

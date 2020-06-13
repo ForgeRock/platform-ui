@@ -40,6 +40,18 @@ to such license between the licensee and ForgeRock AS. -->
           </i>
         </BButton>
       </BInputGroupAppend>
+      <BInputGroupAppend
+        v-if="$attrs.copy">
+        <button
+          :id="`copyButton-${value}`"
+          class="btn btn-outline-secondary"
+          name="copyButton"
+          @click.prevent="copyValueToClipboard(value)">
+          <i class="material-icons material-icons-outlined">
+            copy
+          </i>
+        </button>
+      </BInputGroupAppend>
     </template>
 
     <template
@@ -54,13 +66,19 @@ to such license between the licensee and ForgeRock AS. -->
 </template>
 
 <script>
+import Vue from 'vue';
 import {
   BButton,
   BInputGroupAppend,
 } from 'bootstrap-vue';
 import { delay } from 'lodash';
+/* eslint-disable import/no-extraneous-dependencies */
+import VueClipboard from 'vue-clipboard2';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 import InputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
+
+Vue.use(VueClipboard);
 /**
  * Input with a floating label in the center, this will move when a user types into the input (example can be found on the default login page).
  *
@@ -75,7 +93,10 @@ import InputMixin from '../Wrapper/InputMixin';
  */
 export default {
   name: 'BasicInput',
-  mixins: [InputMixin],
+  mixins: [
+    InputMixin,
+    NotificationMixin,
+  ],
   components: {
     BButton,
     BInputGroupAppend,
@@ -128,6 +149,13 @@ export default {
       if (nativeMatches.call(node, ':-webkit-autofill') && this.label) {
         this.floatLabels = true;
       }
+    },
+    copyValueToClipboard(payload) {
+      this.$copyText(payload).then(() => {
+        this.displayNotification('IDMMessages', 'success', this.$t('oauth.clientCredentials.copySuccess'));
+      }, (error) => {
+        this.showErrorMessage(error, this.$t('oauth.clientCredentials.copyFail'));
+      });
     },
   },
 };
