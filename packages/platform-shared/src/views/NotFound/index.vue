@@ -33,7 +33,7 @@ to such license between the licensee and ForgeRock AS. -->
       <div class="text-center">
         <RouterLink :to="{ name: previousRoute.name }">
           <BButton variant="link">
-            {{ $t('pages.notFound.returnRoute') }} {{ $t(`routeNames.${previousRoute.name}`) }}
+            {{ $t('pages.notFound.returnRoute', {returnRoute: $t(`routeNames.${previousRoute.name}`)}) }}
           </BButton>
         </RouterLink>
       </div>
@@ -72,7 +72,7 @@ export default {
     return {
       ghostMessage: '404',
       previousRoute: {
-        name: this.$t('sideMenu.dashboard'),
+        name: this.$t('routeNames.Dashboard'),
         params: {},
         path: '/dashboard',
       },
@@ -81,7 +81,7 @@ export default {
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       vm.previousRoute = from.name ? from : {
-        name: vm.$t('sideMenu.dashboard'),
+        name: vm.$t('routeNames.Dashboard'),
         params: {},
         path: '/dashboard',
       };
