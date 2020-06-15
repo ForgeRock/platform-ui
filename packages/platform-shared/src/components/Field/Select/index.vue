@@ -9,8 +9,7 @@ to such license between the licensee and ForgeRock AS. -->
     :field-name="fieldName"
     :help-text="helpText"
     :is-html="isHtml"
-    :label="label"
-  >
+    :label="label">
     <VueMultiSelect
       v-model="inputValue"
       :name="fieldName"
