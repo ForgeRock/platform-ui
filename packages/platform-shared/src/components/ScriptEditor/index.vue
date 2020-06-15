@@ -428,9 +428,5 @@ export default {
       background: none;
     }
   }
-
-  .prism-editor-wrapper {
-    background-color: $gray-100;
-  }
 }
 </style>

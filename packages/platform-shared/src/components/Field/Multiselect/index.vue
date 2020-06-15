@@ -21,6 +21,7 @@ to such license between the licensee and ForgeRock AS. -->
       :show-labels="false"
       :hide-selected="true"
       :multiple="true"
+      v-bind="$attrs"
       :close-on-select="false"
       :searchable="options.length > 9"
       @open="floatLabels = true"

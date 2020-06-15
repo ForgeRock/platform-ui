@@ -22,6 +22,7 @@ select.custom-select ~ label {
 
 .multiselect {
   cursor: pointer;
+  box-sizing: border-box;
 }
 
 /deep/ {
@@ -41,6 +42,7 @@ select.custom-select ~ label {
   }
 
   .multiselect__tags {
+    white-space: nowrap;
     height: 100%;
     padding: 1.5rem 10px 0 0.75rem;
     font-size: 0.875rem;

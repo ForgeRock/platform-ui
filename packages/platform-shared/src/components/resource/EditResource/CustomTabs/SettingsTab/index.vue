@@ -46,7 +46,7 @@ to such license between the licensee and ForgeRock AS. -->
               @change="queryFilterChange"
               @error="queryFilterError"
               :query-filter-string="editProperty.value"
-              :resource="resourceName"
+              :resource-name="resourceName"
               :properties="conditionOptions" />
           </div>
           <div v-else>

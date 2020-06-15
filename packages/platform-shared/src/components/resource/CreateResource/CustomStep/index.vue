@@ -22,7 +22,7 @@ to such license between the licensee and ForgeRock AS. -->
         <FrQueryFilterBuilder
           @change="queryFilterChange"
           :query-filter-string="queryFilterField.value"
-          resource="user"
+          resource-name="user"
           :properties="conditionOptions" />
       </div>
       <FrTimeConstraint

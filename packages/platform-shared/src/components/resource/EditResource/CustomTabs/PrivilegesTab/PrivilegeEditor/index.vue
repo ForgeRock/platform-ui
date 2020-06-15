@@ -101,7 +101,7 @@ to such license between the licensee and ForgeRock AS. -->
           </div>
         </slot>
       </template>
-      <template v-slot:row-details="data">
+      <template v-slot:row-details>
         <BCard
           body-class="p-0"
           class="shadow-none">
@@ -179,7 +179,7 @@ to such license between the licensee and ForgeRock AS. -->
             <FrQueryFilterBuilder
               @change="queryFilterChange"
               :query-filter-string="privilege.filter"
-              :resource="identityObjectSchema.title.toLowerCase()"
+              :resource-name="identityObjectSchema.title.toLowerCase()"
               :properties="queryFilterDropdownOptions" />
           </div>
         </BCard>

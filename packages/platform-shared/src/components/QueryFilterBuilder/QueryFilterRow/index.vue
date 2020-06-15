@@ -5,98 +5,75 @@ or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
   <BCard
-    no-body
-    class="card-container-properties card-queryfilter-builder shadow-none my-3"
-    :class="`depth-${depth+1}`">
-    <BCardBody class="p-3">
-      <BForm>
-        <BRow
-          no-gutters
-          class="d-flex flex-sm-wrap flex-md-nowrap">
-          <div class="flex-grow-1 pr-md-3">
-            <BFormRow>
-              <BCol
-                md="5"
-                class="mb-2 mb-md-0">
-                <FrField
-                  name="field"
-                  :placeholder="propertyPlaceholder"
-                  :searchable="true"
-                  :field="selectPropOptions()"
-                  @valueChange="propertyChange"
-                />
-              </BCol>
-              <BCol
-                class="mb-2 mb-md-0"
-                :md="true">
-                <FrField
-                  :searchable="false"
-                  :field="selectConditionOptions"
-                  @valueChange="conditionChange"
-                />
-              </BCol>
-              <BCol
-                class="mb-2 mb-md-0"
-                v-if="!conditionIsPresent()"
-                :md="true">
-                <FrField
-                  :field="inputValue"
-                  @valueChange="valueChange"
-                />
-              </BCol>
-            </BFormRow>
-          </div>
-          <div class="d-flex flex-nowrap">
-            <FrRemoveButton
-              v-if="hasSiblings"
-              class="mr-1"
-              @click="removeRule" />
-            <FrAddButton
-              :hide-group="isMaxDepth(depth)"
-              @add-rule="emitRule"
-              @add-group="emitGroup"
-            />
-          </div>
-        </BRow>
-      </BForm>
-    </BCardBody>
+    :class="[`depth-${depth+1}`, 'card-container-properties card-queryfilter-builder shadow-none mt-3']"
+    body-class="p-3">
+    <div class="d-flex flex-sm-wrap flex-md-nowrap">
+      <div class="flex-grow-1 pr-md-3">
+        <BFormRow>
+          <BCol
+            md="5"
+            class="mb-2 mb-md-0">
+            <FrField
+              name="field"
+              :placeholder="propertyPlaceholder"
+              :field="selectPropOptions"
+              @valueChange="ruleChange({ field: $event })" />
+          </BCol>
+          <BCol
+            class="mb-2 mb-md-0"
+            :md="true">
+            <FrField
+              :searchable="false"
+              :field="selectConditionOptions"
+              @valueChange="ruleChange({ operator: $event })" />
+          </BCol>
+          <BCol
+            class="mb-2 mb-md-0"
+            v-if="!conditionIsPresent"
+            :md="true">
+            <FrField
+              :field="inputValue"
+              @valueChange="ruleChange({ value: $event })" />
+          </BCol>
+        </BFormRow>
+      </div>
+      <FrRemoveButton
+        v-if="hasSiblings"
+        class="mr-1"
+        @click="removeRule" />
+      <FrAddButton
+        :hide-group="isMaxDepth"
+        @add-rule="addRule" />
+    </div>
   </BCard>
 </template>
 
 <script>
 import {
-  BCard, BCardBody, BCol, BForm, BFormRow, BRow,
+  BCard, BCol, BFormRow,
 } from 'bootstrap-vue';
 import { capitalize } from 'lodash';
-import Field from '@forgerock/platform-shared/src/components/Field';
+import FrField from '@forgerock/platform-shared/src/components/Field';
 import AddButton from '../QueryFilterAddButton';
 import RemoveButton from '../QueryFilterRemoveButton';
 import { defaultConditionOptions, getTypeFromValue } from '../QueryFilterDefaults';
 
-
 export default {
   name: 'QueryFilterRow',
   components: {
-    FrAddButton: AddButton,
     BCard,
-    BCardBody,
     BCol,
-    BForm,
     BFormRow,
-    BRow,
-    FrField: Field,
+    FrAddButton: AddButton,
+    FrField,
     FrRemoveButton: RemoveButton,
   },
   computed: {
-    propertyPlaceholder() {
-      const name = this.resource;
-      return `${capitalize(name)} ${this.$t('queryFilterBuilder.properties')}`;
-    },
     selectConditionOptions() {
-      const propType = getTypeFromValue(this.rules.field, this.properties);
+      const propType = getTypeFromValue(this.rule.field, this.properties);
       const options = this.conditionOptionsByType(propType);
-      const value = options.filter((option) => option.value === this.rules.operator).length > 0
-        ? this.rules.operator
+      const value = options.filter((option) => option.value === this.rule.operator).length > 0
+        ? this.rule.operator
         : options.shift().value;
       return {
         options,
@@ -104,23 +81,28 @@ export default {
         value,
       };
     },
+    isMaxDepth() {
+      return this.depth === this.maxDepth - 1;
+    },
+    conditionIsPresent() {
+      return this.rule.operator === defaultConditionOptions.IsPresent.value || this.rule.operator === defaultConditionOptions.IsNotPresent.value;
+    },
   },
   data() {
     return {
+      propertyPlaceholder: this.$t('queryFilterBuilder.properties', { propertyName: capitalize(this.resourceName) }),
       defaultConditionOptions,
-      inputValue: this.parseType(this.rules.field, this.rules.value),
-      selectPropOptions() {
-        return {
-          options: this.properties.map((prop) => (
-            { text: prop.label, value: prop.value })),
-          type: 'select',
-          value: this.rules.field,
-        };
+      inputValue: this.parseType(this.rule.field, this.rule.value),
+      selectPropOptions: {
+        options: this.properties.map((prop) => (
+          { text: prop.label, value: prop.value })),
+        type: 'select',
+        value: this.rule.field,
       },
     };
   },
   props: {
-    resource: {
+    resourceName: {
       required: true,
       type: String,
     },
@@ -129,10 +111,6 @@ export default {
       type: Number,
     },
     index: {
-      required: true,
-      type: Number,
-    },
-    groupIndex: {
       required: true,
       type: Number,
     },
@@ -150,49 +128,28 @@ export default {
     },
     properties: {
       default: () => [],
-      required: true,
       type: Array,
     },
-    rules: {
+    rule: {
       required: true,
       type: Object,
     },
-    showValue: {
-      default: true,
-      required: false,
-      type: Boolean,
-    },
   },
   watch: {
-    rules(rule, prevRule) {
-      if (rule.field === prevRule.field) return;
-
-      const updateValueFromField = this.parseType(rule.field, rule.value);
-      this.$set(this.$data, 'inputValue', {
-        ...updateValueFromField,
-      });
-
-      if (!prevRule.field.length || rule.field === prevRule.field) return;
-
-      const updateValueFromProp = this.parseType(rule.field, '');
-      this.$set(this.$data, 'inputValue', {
-        ...updateValueFromProp,
-      });
+    rule(rule, prevRule) {
+      if (rule.field !== prevRule.field) {
+        const updateValueFromField = this.parseType(rule.field, prevRule.value);
+        this.$set(this.$data, 'inputValue', {
+          ...updateValueFromField,
+        });
+      }
     },
   },
   methods: {
-    emitGroup() {
-      this.$emit('add-group', {
-        depth: this.depth, groupIndex: this.groupIndex, index: this.index, path: this.path,
-      });
-    },
-    emitRule() {
+    addRule(type) {
       this.$emit('add-rule', {
-        depth: this.depth, groupIndex: this.groupIndex, index: this.index, path: this.path,
+        depth: this.depth, index: this.index, path: this.path, type,
       });
-    },
-    conditionIsPresent() {
-      return this.rules.operator === defaultConditionOptions.IsPresent.value || this.rules.operator === defaultConditionOptions.IsNotPresent.value;
     },
     conditionOptionsByType(type) {
       const defaultConditions = Object.values(defaultConditionOptions)
@@ -205,9 +162,6 @@ export default {
 
       return conditions.length === 0 ? defaultConditions : conditions;
     },
-    isMaxDepth(depth) {
-      return depth === this.maxDepth - 1;
-    },
     parseType(fieldValue, inputValue) {
       if (!fieldValue) return { type: 'string', value: '' };
 
@@ -215,7 +169,7 @@ export default {
       switch (type) {
       case 'boolean':
         return {
-          value: inputValue, type: 'select', options: ['True', 'False'],
+          value: inputValue.toLowerCase() === 'false' || inputValue === false ? 'False' : 'True', type: 'select', options: ['True', 'False'],
         };
       case 'number':
         return { type: 'integer', value: typeof inputValue === 'number' ? inputValue : '' };
@@ -223,25 +177,14 @@ export default {
         return { type, value: inputValue };
       }
     },
-    propertyChange(value) {
-      if (!value) return;
+    ruleChange(value) {
       this.$emit('rule-change', {
-        depth: this.depth, groupIndex: this.groupIndex, index: this.index, path: this.path, value: { field: value },
+        depth: this.depth, index: this.index, path: this.path, value,
       });
     },
     removeRule() {
       this.$emit('remove-rule', {
-        depth: this.depth, groupIndex: this.groupIndex, index: this.index, path: this.path,
-      });
-    },
-    conditionChange(value) {
-      this.$emit('rule-change', {
-        depth: this.depth, groupIndex: this.groupIndex, index: this.index, path: this.path, value: { operator: value },
-      });
-    },
-    valueChange(value) {
-      this.$emit('rule-change', {
-        depth: this.depth, groupIndex: this.groupIndex, index: this.index, path: this.path, value: { value },
+        depth: this.depth, index: this.index, path: this.path,
       });
     },
   },
