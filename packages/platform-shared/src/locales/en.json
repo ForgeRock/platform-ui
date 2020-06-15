@@ -183,7 +183,7 @@
     },
     "notFound": {
       "pageNotFound": "Page Not Found",
-      "returnRoute": "Return to ",
+      "returnRoute": "Return to {returnRoute}",
       "couldNotFind": "We couldn't find the page you were looking for."
     }
   },
@@ -193,9 +193,9 @@
     "advancedEditor": "Advanced Editor",
     "basicEditor": "Basic Editor",
     "basicEditorHeadline": "Assign user based on if query evaluates to true:",
-    "groupOperatorText1": "Assign to {resource} if",
+    "groupOperatorText1": "Assign to {resourceName} if",
     "groupOperatorText2": "conditions are met",
-    "properties": "properties"
+    "properties": "{propertyName} properties"
   },
   "scriptEditor": {
     "title": "Script",

@@ -166,6 +166,7 @@ export default {
 
 .form-label-group-input > label {
   padding: $input-btn-padding-y;
+  max-height: calc(100% - 2px);
   text-align: left;
   position: absolute;
   top: 0;

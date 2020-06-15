@@ -1,18 +1,18 @@
 <template>
   <BDropdown
     no-caret
-    class="{context.data.staticClass}"
-    text="Dropdown Button"
     variant="outline-secondary">
     <i
       class="material-icons-outlined"
       slot="button-content">
       add
     </i>
-    <BDropdownItem @click="$emit('add-rule')">
+    <BDropdownItem @click="$emit('add-rule', 'row')">
       {{ $t('queryFilterBuilder.addRuleButton') }}
     </BDropdownItem>
-    <BDropdownItem @click="$emit('add-group')">
+    <BDropdownItem
+      v-if="!hideGroup"
+      @click="$emit('add-rule', 'group')">
       {{ $t('queryFilterBuilder.addGroupButton') }}
     </BDropdownItem>
   </BDropdown>
@@ -30,7 +30,6 @@ export default {
   props: {
     hideGroup: {
       default: false,
-      required: false,
       type: Boolean,
     },
   },
