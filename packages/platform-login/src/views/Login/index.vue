@@ -72,10 +72,10 @@ import {
   FRAuth, FRStep, FRWebAuthn, Config,
 } from '@forgerock/javascript-sdk';
 import Vue from 'vue';
+import FrCenterCard from '@/components/utils/CenterCard';
 import WithCallback from '@forgerock/platform-shared/src/hoc/CallbackHoc';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import BooleanAttributeInputCallback from '@/components/callbacks/BooleanAttributeInputCallback';
-import CenterCard from '@/components/utils/CenterCard';
 import ChoiceCallback from '@/components/callbacks/ChoiceCallback';
 import ConfirmationCallback from '@/components/callbacks/ConfirmationCallback';
 import DeviceProfileCallback from '@/components/callbacks/DeviceProfileCallback';
@@ -95,7 +95,7 @@ import i18n from '@/i18n';
 export default {
   name: 'Login',
   components: {
-    FrCenterCard: CenterCard,
+    FrCenterCard,
     BButton,
     BCardBody,
     BounceLoader,
@@ -131,11 +131,11 @@ export default {
     this.nextStep();
   },
   methods: {
-  /**
-    * @description Injects an instance of a specified component into the callbacksPanel
-    * @param {Object} the component object to by added
-    * @param {Object} properties used for rendering the component object
-    */
+    /**
+     * @description Injects an instance of a specified component into the callbacksPanel
+     * @param {Object} the component object to by added
+     * @param {Object} properties used for rendering the component object
+     */
     addComponent(component, propsData) {
       const ComponentClass = Vue.extend(component);
       const instance = new ComponentClass({
@@ -148,9 +148,11 @@ export default {
       this.$refs.callbacksPanel.appendChild(instance.$el);
     },
     addField(type, callback, index) {
-      const failedPolicies = (callback.getFailedPolicies) ? callback.getFailedPolicies() : [];
-      let prompt = '';
+      const failedPolicies = callback.getFailedPolicies
+        ? callback.getFailedPolicies()
+        : [];
 
+      let prompt = '';
       let translatedPolicyMessages = [];
 
       if (failedPolicies.length) {
@@ -182,8 +184,8 @@ export default {
       });
     },
     /**
-      * @description handles steps with metadata callbacks like webAuthn
-      */
+     * @description handles steps with metadata callbacks like webAuthn
+     */
     metadataCallback(step) {
       const webAuthnStepType = FRWebAuthn.getWebAuthnStepType(step);
       if (webAuthnStepType === 0) {
@@ -211,9 +213,9 @@ export default {
       });
     },
     /**
-      * @description Gets callbacks needed for authentication when this.step is undefined, and submits callback values when
-      * this.step is defined. Then determines based on step.type what action to take.
-      */
+     * @description Gets callbacks needed for authentication when this.step is undefined, and submits callback values when
+     * this.step is defined. Then determines based on step.type what action to take.
+     */
     nextStep(event) {
       if (event) {
         event.preventDefault();
@@ -238,31 +240,54 @@ export default {
       }
 
       this.clearCallbacks();
-      FRAuth.next(this.step, stepParams).then((step) => {
-        this.loading = false;
-        this.step = step;
+      FRAuth.next(this.step, stepParams).then(
+        (step) => {
+          this.loading = false;
+          this.step = step;
 
-        switch (step.type) {
-        case 'LoginSuccess':
-          // check for gotoURL
-          this.verifyGotoUrlAndRedirect(step.getSuccessUrl());
-          break;
-        case 'LoginFailure':
-          this.errorMessage = this.$t('login.loginFailure');
-          this.redirectToFailure(step);
-          break;
-        default:
-          // setup the form based on callback info/values obtained from this.step
-          this.header = step.getHeader();
-          this.description = step.getDescription();
-          this.buildTreeForm();
-          break;
-        }
-      }, () => {
-        this.errorMessage = this.$t('login.issueConnecting');
-        this.redirectToFailure(this.step);
-        this.loading = false;
-      });
+          switch (step.type) {
+          case 'LoginSuccess':
+            // If we have a session token, get user information
+            this.getIdFromSession()
+              .then(this.getUserInfo)
+              .then((userObj) => {
+                let isAdmin = false;
+                const rolesArray = userObj.data.roles;
+
+                if (rolesArray.includes('ui-global-admin' || 'ui-realm-admin')) {
+                  isAdmin = true;
+                }
+                return this.verifyGotoUrlAndRedirect(step.getSuccessUrl(), isAdmin);
+              })
+              .then((res) => {
+                window.location.href = res;
+              })
+              .catch(() => {
+                // attempt to redirect user on failure
+                this.verifyGotoUrlAndRedirect(step.getSuccessUrl(), false)
+                  .then((res) => {
+                    window.location.href = res;
+                  });
+              });
+            break;
+          case 'LoginFailure':
+            this.errorMessage = this.$t('login.loginFailure');
+            this.redirectToFailure(step);
+            break;
+          default:
+            // setup the form based on callback info/values obtained from this.step
+            this.header = step.getHeader();
+            this.description = step.getDescription();
+            this.buildTreeForm();
+            break;
+          }
+        },
+        () => {
+          this.errorMessage = this.$t('login.issueConnecting');
+          this.redirectToFailure(this.step);
+          this.loading = false;
+        },
+      );
     },
     clearCallbacks() {
       this.header = '';
@@ -481,13 +506,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  #callbacksPanel /deep/ {
-    br {
-      display: none;
-    }
-
-    > div {
-      margin-bottom: 1rem;
-    }
+#callbacksPanel /deep/ {
+  br {
+    display: none;
   }
+
+  > div {
+    margin-bottom: 1rem;
+  }
+}
 </style>
