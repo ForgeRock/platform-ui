@@ -31,6 +31,23 @@ export function appAuthLogout() {
     });
   });
 }
+
+export function getIdFromSession() {
+  return this.getRequestService({
+    context: 'AM',
+    apiVersion: 'protocol=1.0,resource=2.0',
+  }).post('/users?_action=idFromSession',
+    {},
+    { withCredentials: true });
+}
+
+export function getUserInfo(session) {
+  return this.getRequestService({
+    context: 'AM',
+    apiVersion: 'protocol=1.0,resource=2.0',
+  }).get(`/users/${session.data.id}`, { withCredentials: true });
+}
+
 /**
   * @param {string} url - current url after successful login
   * If the url contains either a 'goto' query (i.e. ?goto=www.test.com)
@@ -40,47 +57,30 @@ export function appAuthLogout() {
   * If it has been registered in AM, redirect the user to the url
   * Else redirect to the default login url.
   */
-export function verifyGotoUrlAndRedirect(url) {
+export function verifyGotoUrlAndRedirect(url, isAdmin) {
+  const gotoUrl = JSON.stringify({ goto: decodeURIComponent(this.$route.params.gotoUrl || this.$route.query.goto) });
   const isNotDefaultPath = (path) => path !== '/am/console';
   const redirectUserBasedOnType = () => {
-    // check for user type and redirect to admin or enduser accordingly
-    const userDetails = store.getters['UserStore/getUserState'];
-
-    if (userDetails && userDetails.adminUser) {
+    if (isAdmin) {
     // admin user
-      window.location.href = store.state.adminURL;
-    } else {
-    // end user
-      window.location.href = url;
+      return process.env.VUE_APP_ADMIN_URL;
     }
+    // end user
+    return process.env.VUE_APP_ENDUSER_URL;
   };
 
-  if (this.$route.params.gotoUrl || this.$route.query.goto) {
-    const gotoUrl = JSON.stringify({ goto: decodeURIComponent(this.$route.params.gotoUrl || this.$route.query.goto) });
-
-    this.getRequestService({
-      context: 'AM',
-      apiVersion: 'protocol=2.1,resource=3.0',
-    }).post('/users?_action=validateGoto',
-      gotoUrl,
-      { withCredentials: true })
-      .then((res) => {
-        if (isNotDefaultPath(res.data.successURL)) {
-          window.location.href = res.data.successURL;
-        } else {
-          redirectUserBasedOnType();
-        }
-      })
-      .catch(() => {
-        // validation failed - no need to display error - attempt to redirect to url
-        window.location.href = url;
-      });
-  } else if (isNotDefaultPath(url)) {
-    // no goto - redirect to url
-    window.location.href = url;
-  } else {
-    redirectUserBasedOnType();
-  }
+  return this.getRequestService({
+    context: 'AM',
+    apiVersion: 'protocol=2.1,resource=3.0',
+  }).post('/users?_action=validateGoto',
+    gotoUrl,
+    { withCredentials: true })
+    .then((res) => {
+      if (isNotDefaultPath(res.data.successURL) && res.data.successURL !== 'undefined') {
+        return res.data.successURL;
+      }
+      return redirectUserBasedOnType();
+    }).catch(() => redirectUserBasedOnType());
 }
 
 export default {
@@ -101,6 +101,8 @@ export default {
     systemLogout() {
       appAuthLogout();
     },
+    getIdFromSession,
+    getUserInfo,
     verifyGotoUrlAndRedirect,
   },
 };
