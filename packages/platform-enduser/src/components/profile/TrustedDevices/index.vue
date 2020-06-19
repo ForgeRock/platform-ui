@@ -232,10 +232,6 @@ export default {
         title: this.$t('pages.profile.trustedDevices.editModalInput'),
         value: '',
       },
-      confirmDevice: {
-        name: '',
-        id: null,
-      },
     };
   },
   computed: {

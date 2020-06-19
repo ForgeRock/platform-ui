@@ -9,7 +9,7 @@ import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
 import Vuex from 'vuex';
 import i18n from '@/i18n';
-import AccountSecurity from '@/components/profile/AccountSecurity';
+import AccountSecurity from './index';
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue);
@@ -20,12 +20,19 @@ describe('AccountSecurity.vue', () => {
   beforeEach(() => {
     const store = new Vuex.Store({
       state: {
-        UserStore: { userName: 'test user' },
+        UserStore: {
+          userId: null,
+          managedResource: null,
+          roles: null,
+          internalUser: true,
+          adminUser: false,
+          userName: 'user1234',
+        },
         ApplicationStore: {},
-      },
-      getters: {
-        UserStore: (state) => state.UserStore,
-        ApplicationStore: (state) => state.ApplicationStore,
+        getters: {
+          UserStore: (state) => state.UserStore,
+          ApplicationStore: (state) => state.ApplicationStore,
+        },
       },
     });
     wrapper = shallowMount(AccountSecurity, {
