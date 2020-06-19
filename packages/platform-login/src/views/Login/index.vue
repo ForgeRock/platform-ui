@@ -6,7 +6,7 @@ to such license between the licensee and ForgeRock AS. -->
 <template>
   <FrCenterCard :show-logo="true">
     <template v-slot:center-card-header>
-      <div v-if="!loading">
+      <div v-if="!loading && !loginFailure">
         <h2 class="h2">
           {{ header }}
         </h2>
@@ -18,11 +18,30 @@ to such license between the licensee and ForgeRock AS. -->
 
     <template v-slot:center-card-body>
       <BCardBody v-show="!loading">
-        <form>
+        <div
+          v-if="loginFailure"
+          class="h-100 d-flex">
+          <div class="m-auto fr-center-card">
+            <p>{{ errorMessage }}</p>
+            <BButton
+              variant="link"
+              @click="reloadTree"
+              href="#/">
+              {{ $t('login.tryAgain') }}
+            </BButton>
+          </div>
+        </div>
+        <form
+          v-else>
           <div
+            v-show="!showClone"
             id="callbacksPanel"
             ref="callbacksPanel"
             @keyup.enter="nextStep" />
+          <div
+            v-show="showClone"
+            id="callbacksPanelClone"
+            ref="callbacksPanelClone" />
           <BButton
             v-show="showNextButton"
             class="btn btn btn-block btn-lg btn-primary mt-3"
@@ -33,23 +52,14 @@ to such license between the licensee and ForgeRock AS. -->
             {{ $t('login.next') }}
           </BButton>
         </form>
-        <div
-          v-if="loginFailure"
-          class="h-100 d-flex">
-          <div class="m-auto fr-center-card">
-            <p>{{ errorMessage }}</p>
-            <a
-              @click="reloadTree"
-              href="#/">
-              {{ $t('login.tryAgain') }}
-            </a>
-          </div>
-        </div>
       </BCardBody>
       <BCardBody v-show="loading">
         <div class="h-100 d-flex">
           <div class="m-auto fr-center-card">
-            <BounceLoader :color="loadingColor" />
+            <BounceLoader
+              class="mb-4"
+              :color="loadingColor" />
+            {{ loadingMessage }}
           </div>
         </div>
       </BCardBody>
@@ -108,6 +118,7 @@ export default {
     return {
       loading: true,
       loadingColor: styles.basecolor,
+      loadingMessage: '',
       header: '',
       description: '',
       loginFailure: false,
@@ -117,6 +128,8 @@ export default {
       errorMessage: '',
       authIndexValue: undefined,
       suspendedId: undefined,
+      callbacksPanelComponents: [],
+      showClone: false,
     };
   },
   mounted() {
@@ -145,7 +158,7 @@ export default {
 
       instance.$mount();
 
-      this.$refs.callbacksPanel.appendChild(instance.$el);
+      this.callbacksPanelComponents.push(instance.$el);
     },
     addField(type, callback, index) {
       const failedPolicies = callback.getFailedPolicies
@@ -205,6 +218,14 @@ export default {
         });
       }
     },
+    pollingWaitCallback(callback, index) {
+      this.loading = index === 0;
+      this.loadingMessage = callback.getMessage();
+      this.showNextButton = false;
+      setTimeout(() => {
+        this.nextStep(null, true);
+      }, callback.getWaitTime());
+    },
     translatePolicyFailures(failedPolicies) {
       return map(failedPolicies, (policy) => {
         const tempPolicy = JSON.parse(policy);
@@ -216,7 +237,7 @@ export default {
      * @description Gets callbacks needed for authentication when this.step is undefined, and submits callback values when
      * this.step is defined. Then determines based on step.type what action to take.
      */
-    nextStep(event) {
+    nextStep(event, preventClear) {
       if (event) {
         event.preventDefault();
       }
@@ -239,7 +260,9 @@ export default {
         }
       }
 
-      this.clearCallbacks();
+      if (!preventClear) {
+        this.clearCallbacks();
+      }
       FRAuth.next(this.step, stepParams).then(
         (step) => {
           this.loading = false;
@@ -308,8 +331,8 @@ export default {
     },
     buildTreeForm() {
       const firstInput = this.$el.querySelector('input');
-      this.$refs.callbacksPanel.innerHTML = '';
       this.showNextButton = true;
+      this.callbacksPanelComponents = [];
 
       // Ensure that Social Buttons appear at top of Page Node
       this.step.callbacks.sort((currentCallback) => {
@@ -318,6 +341,7 @@ export default {
         }
         return 1;
       });
+
       map(this.step.callbacks, (callback, index) => {
         const type = callback.getType();
 
@@ -377,10 +401,7 @@ export default {
           this.addField('password', callback, index);
           break;
         case 'PollingWaitCallback':
-          this.loading = true;
-          setTimeout(() => {
-            this.nextStep();
-          }, callback.getWaitTime());
+          this.pollingWaitCallback(callback, index);
           break;
         case 'ReCaptchaCallback':
           this.addComponent(ReCaptchaCallback, {
@@ -433,6 +454,19 @@ export default {
           this.addField('text', callback, index);
         }
       });
+
+      // Makes and renders a temporary clone of the callbackPanel using vue
+      // to prevent the flickering of the DOM caused by using non optimized
+      // calls like appendChild
+      // If there's no change in the DOM this prevents flickering
+      this.$refs.callbacksPanelClone.innerHTML = this.$refs.callbacksPanel.innerHTML;
+      this.showClone = true;
+      this.$refs.callbacksPanel.innerHTML = '';
+      this.callbacksPanelComponents.forEach((el) => {
+        this.$refs.callbacksPanel.appendChild(el);
+      });
+      this.showClone = false;
+      this.$refs.callbacksPanelClone.innerHTML = '';
 
       if (firstInput) {
         // focus on the first input after render

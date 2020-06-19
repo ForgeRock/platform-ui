@@ -82,6 +82,14 @@ export default new Router({
       },
     },
     {
+      path: '/auth-devices',
+      component: () => import('@/components/AuthenticationDevices'),
+      meta: {
+        authenticate: true,
+        hideToolbar: true,
+      },
+    },
+    {
       path: '*',
       component: () => import('@forgerock/platform-shared/src/views/NotFound'),
       meta: { hideToolbar: true },

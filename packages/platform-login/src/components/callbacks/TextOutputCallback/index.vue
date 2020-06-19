@@ -5,7 +5,7 @@ or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
   <div
-    class="row ml-1 mb-2"
+    class="row mb-2"
     ref="textOutputPanel">
     <div
       v-if="messageType === 'INFORMATION'"
@@ -26,11 +26,21 @@ to such license between the licensee and ForgeRock AS. -->
       show>
       {{ message }}
     </BAlert>
+    <div
+      v-if="messageType === 'SCRIPT'"
+      class="w-100"
+    >
+      <div
+        v-if="qrCodeHtml"
+        v-html="qrCodeHtml"
+      />
+    </div>
   </div>
 </template>
 
 <script>
 import { BAlert } from 'bootstrap-vue';
+import QRCodeGenerator from 'qrcode-generator';
 
 export default {
   components: {
@@ -43,6 +53,13 @@ export default {
     },
   },
   mounted() {
+    const self = this;
+    window.QRCodeReader = {
+      createCode(options) {
+        self.getCode(options);
+      },
+    };
+
     switch (this.callback.getMessageType()) {
     case '1':
       this.messageType = 'WARNING';
@@ -63,10 +80,22 @@ export default {
       this.$refs.textOutputPanel.appendChild(el);
     }
   },
+  methods: {
+    getCode(options) {
+      const { code = 'M', version = 4, text } = options;
+      const qr = new QRCodeGenerator(version, code);
+      qr.addData(text);
+      qr.make();
+
+      // 3 is the size of the painted squares, 8 is the white border around the edge
+      this.qrCodeHtml = qr.createImgTag(3, 8);
+    },
+  },
   data() {
     return {
       message: this.callback.getMessage(),
       messageType: '',
+      qrCodeHtml: '',
     };
   },
 };

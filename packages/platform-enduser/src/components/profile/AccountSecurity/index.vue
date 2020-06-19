@@ -1,5 +1,4 @@
 <!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
-
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
@@ -12,28 +11,44 @@ to such license between the licensee and ForgeRock AS. -->
           {{ $t('pages.profile.accountSecurity.subtitle') }}
         </p>
       </BCardHeader>
-      <BCardBody
-        v-for="item in items"
-        :key="item.title"
-        class="border-bottom">
-        <BRow>
-          <BCol md="5">
-            <h5>{{ item.title }}</h5>
-          </BCol>
-          <BCol md="5">
-            {{ item.value }}
-          </BCol>
-          <BCol md="2">
-            <BButton
-              class="py-0"
-              variant="link"
-              v-if="item.linkUrl"
-              :href="item.linkUrl">
-              {{ item.linkText }}
-            </BButton>
-          </BCol>
-        </BRow>
-      </BCardBody>
+      <template
+        v-for="item in items">
+        <BCardBody
+          v-show="!item.hide"
+          :key="item.title"
+          class="border-bottom">
+          <BRow>
+            <BCol
+              md="5">
+              <h5>{{ item.title }}</h5>
+            </BCol>
+            <BCol md="5">
+              <i
+                v-if="item.icon"
+                class="material-icons mr-2 text-success">
+                {{ item.icon }}
+              </i>
+              {{ item.text }}
+            </BCol>
+            <BCol
+              md="2">
+              <BButton
+                class="py-0 text-right text-nowrap"
+                variant="link"
+                v-if="item.linkUrl"
+                :href="item.linkUrl">
+                {{ item.linkText }}
+              </BButton>
+              <RouterLink
+                class="py-0 text-right text-nowrap"
+                v-if="item.linkPath"
+                :to="item.linkPath">
+                {{ item.linkText }}
+              </RouterLink>
+            </BCol>
+          </BRow>
+        </BCardBody>
+      </template>
       <BCardBody>
         <FrEditKba
           class="w-100"
@@ -44,7 +59,6 @@ to such license between the licensee and ForgeRock AS. -->
     </BCard>
   </div>
 </template>
-
 <script>
 import {
   BButton,
@@ -74,14 +88,10 @@ export default {
   mixins: [
     RestMixin,
   ],
-  methods: {
-    sendUpdateKBA(payload, config) {
-      this.$emit('updateKBA', payload, config);
-    },
-  },
   computed: {
     ...mapState({
       internalUser: (state) => state.UserStore.internalUser,
+      userId: (state) => state.UserStore.userId,
       userName: (state) => state.UserStore.userName,
     }),
   },
@@ -92,19 +102,27 @@ export default {
       items: [
         {
           title: this.$t('common.placeholders.username'),
-          value: this.userName,
+          text: this.userName,
         },
         {
           title: this.$t('common.placeholders.password'),
-          linkText: 'Reset',
+          linkText: this.$t('common.reset'),
           linkUrl: `${process.env.VUE_APP_LOGIN}/#/service/UpdatePassword`,
+        },
+        {
+          title: this.$t('pages.profile.accountSecurity.twoStepVerification'),
+          hide: true,
+          text: this.$t('common.on'),
+          icon: 'check_circle',
+          linkText: this.$t('common.change'),
+          linkPath: '/auth-devices',
         },
       ],
     };
   },
   mounted() {
     // this forces reactivity for value grabbed from store
-    this.$set(this.items[0], 'value', this.userName);
+    this.$set(this.items[0], 'text', this.userName);
 
     const selfServiceInstance = this.getRequestService({
       headers: this.getAnonymousHeaders(),
@@ -114,6 +132,30 @@ export default {
       this.isOnKBA = true;
       this.kbaData = response.data;
     }).catch(() => { this.isOnKBA = false; });
+
+    this.loadAuthenicationDevices();
+  },
+  methods: {
+    sendUpdateKBA(payload, config) {
+      this.$emit('updateKBA', payload, config);
+    },
+    loadAuthenicationDevices() {
+      const query = '_queryId=*';
+      const selfServiceInstance = this.getRequestService({ context: 'AM' });
+      const authTypes = ['oath', 'push', 'webauthn'];
+
+      const authPromises = authTypes.map((authType) => {
+        const url = `/users/${this.userId}/devices/2fa/${authType}?${query}`;
+        return selfServiceInstance.get(url, { withCredentials: true });
+      });
+      Promise.all(authPromises)
+        .then((responseArray) => {
+          const collapsedResponseArray = responseArray.reduce((acc, response) => acc.concat(response.data.result), []);
+          if (collapsedResponseArray.length) {
+            this.$set(this.items[2], 'hide', false);
+          }
+        });
+    },
   },
 };
 </script>

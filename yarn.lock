@@ -1179,10 +1179,10 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.5.tgz#8eed982e2ee6f7f4e44c253e12962980791efd46"
   integrity sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==
 
-"@forgerock/javascript-sdk@2.0.0-alpha3":
-  version "2.0.0-alpha3"
-  resolved "https://registry.yarnpkg.com/@forgerock/javascript-sdk/-/javascript-sdk-2.0.0-alpha3.tgz#e8a1372dad0458aabf4a778c430fee171a5aabb4"
-  integrity sha512-CvhxqDybv71h8ZY++NbsLsBTq3f48Cqzw63ag/VP6e+otX1xbvsyONLV9bCIGYdzVbvmFksQly90P27Mep/u7w==
+"@forgerock/javascript-sdk@2.0.0-beta1":
+  version "2.0.0-beta1"
+  resolved "https://registry.yarnpkg.com/@forgerock/javascript-sdk/-/javascript-sdk-2.0.0-beta1.tgz#f254abc7b90c9ce1c2622976891777d81e6a9b38"
+  integrity sha512-Xa3qPgQsg/+wgUFziif+fA7mXFTkBgvAWmSI0gjaYAnLQlPk0r3QcS8mHPHx6nckxbi5DRMCAbSijcAmN02Ixg==
 
 "@hapi/address@2.x.x":
   version "2.1.4"
@@ -13313,6 +13313,11 @@ q@^1.1.2:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/q/-/q-1.5.1.tgz#7e32f75b41381291d04611f1bf14109ac00651d7"
   integrity sha1-fjL3W0E4EpHQRhHxvxQQmsAGUdc=
+
+qrcode-generator@1.4.4:
+  version "1.4.4"
+  resolved "https://registry.yarnpkg.com/qrcode-generator/-/qrcode-generator-1.4.4.tgz#63f771224854759329a99048806a53ed278740e7"
+  integrity sha512-HM7yY8O2ilqhmULxGMpcHSF1EhJJ9yBj8gvDEuZ6M+KGJ0YY2hKpnXvRD+hZPLrDVck3ExIGhmPtSdcjC+guuw==
 
 qs@6.7.0:
   version "6.7.0"
