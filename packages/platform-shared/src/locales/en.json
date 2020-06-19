@@ -86,6 +86,8 @@
       "AT_LEAST_X_NUMBERS": "Must have at least %{numNums} number(s)",
       "CANNOT_CONTAIN_OTHERS": "Must not share characters with %{disallowedFields}",
       "VALID_EMAIL_ADDRESS_FORMAT": "Invalid email format (example@example.com)",
+      "VALID_SUPPORT_SET_KEY_FORMAT": "Invalid support set key format (1234-1234-1234-1234)",
+      "VALID_TENANT_NAME_FORMAT": "Invalid tenant name format (my-tenant2)",
       "VALID_QUERY_FILTER": "Invalid queryFilter format",
       "UNIQUE": "Must be unique",
       "IS_NEW": "Must not be the same as the previous %{historyLength} passwords",
