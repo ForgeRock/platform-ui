@@ -44,13 +44,13 @@ export default {
   },
   mounted() {
     switch (this.callback.getMessageType()) {
-    case 1:
+    case '1':
       this.messageType = 'WARNING';
       break;
-    case 2:
+    case '2':
       this.messageType = 'ERROR';
       break;
-    case 4:
+    case '4':
       this.messageType = 'SCRIPT';
       break;
     default:

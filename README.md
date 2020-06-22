@@ -111,10 +111,19 @@ minikube delete
 
 Then, rerun *all* the commands above in section “ForgeOps setup”.
 
-#### Troubleshooting’
+#### Troubleshooting
 1. AM pod can become problematic. The solution is to force kill the pod and let the cluster regenerate: `kubectl delete pod <AMPODNAME> —grace-period=0 —force`
 2. Sometimes when you delete the cluster and bring it back up, the IP of the cluster increments: `minikube ip`, then edit your hosts file again `sudo vi /etc/hosts` with that new IP for `default.iam.example.com`
 3. If you get an error about UUID’s from AM when trying to register a user, you may need to go back and edit the IDM configuration to use `userName` as the authentication ID and not `_id`. Make that change (at the top of this file), and then delete and restart your Minikube setup.
+
+#### Testing out journeys created through UI
+If you are creating journeys through this UI and want to test their functionality, you have two options (You likely want to use incognito mode or a different browser):
+
+```sh
+default.iam.example.com/login/#/service/YOURTREENAME
+localhost:8083/#/service/YOURTREENAME
+```
+
 
 ### Storybook component build
 
