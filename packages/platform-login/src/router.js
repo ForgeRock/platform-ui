@@ -14,21 +14,12 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/login',
-    },
-    {
-      path: '/login',
-      name: 'Login',
+      name: 'login',
       component: () => import('@/views/Login'),
     },
     {
       path: '/service/:tree',
       name: 'service',
-      component: () => import('@/views/Login'),
-    },
-    {
-      path: '/service/:tree/:gotoUrl',
-      name: 'serviceWithGotoUrl',
       component: () => import('@/views/Login'),
     },
     {

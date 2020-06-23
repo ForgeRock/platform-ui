@@ -11,14 +11,17 @@ import AppAuthHelper from 'appauthhelper';
 import store from '../../store/index';
 import i18n from '../../i18n';
 
-export function redirectToLogin() {
-  window.location.href = `${store.state.loginURL}/${encodeURIComponent(window.location.href)}`;
+export function redirectToLogin(loginURL) {
+  const [origin, hash] = loginURL.split('#');
+  const goto = encodeURIComponent(window.location.href);
+
+  window.location.href = `${origin}?goto=${goto}#${hash}`;
 }
 
 export function appAuthLogout() {
   AppAuthHelper.logout().then(() => {
     if (store.state.loginURL) {
-      redirectToLogin();
+      redirectToLogin(store.state.loginURL);
     } else {
       AppAuthHelper.getTokens();
     }
@@ -58,7 +61,8 @@ export function getUserInfo(session) {
   * Else redirect to the default login url.
   */
 export function verifyGotoUrlAndRedirect(url, isAdmin) {
-  const gotoUrl = JSON.stringify({ goto: decodeURIComponent(this.$route.params.gotoUrl || this.$route.query.goto) });
+  const urlParams = new URLSearchParams(window.location.search);
+  const gotoUrl = JSON.stringify({ goto: urlParams.get('goto') });
   const isNotDefaultPath = (path) => path !== '/am/console';
   const redirectUserBasedOnType = () => {
     if (isAdmin) {
@@ -104,6 +108,7 @@ export default {
     getIdFromSession,
     getUserInfo,
     verifyGotoUrlAndRedirect,
+    redirectToLogin,
   },
 };
 </script>
