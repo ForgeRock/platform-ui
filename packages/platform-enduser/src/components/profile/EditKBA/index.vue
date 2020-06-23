@@ -68,7 +68,6 @@ import {
   BCol,
   BRow,
 } from 'bootstrap-vue';
-import { ValidationObserver } from 'vee-validate';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import LoadingButton from '@/components/utils/LoadingButton';
 
@@ -81,7 +80,6 @@ export default {
   components: {
     FrLoadingButton: LoadingButton,
     FrField,
-    ValidationObserver,
     BButton,
     BCol,
     BRow,

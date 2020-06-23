@@ -188,15 +188,18 @@ export default {
     },
   },
   created() {
-    this.getRequestService()
-      .get(`consent?_queryFilter=/source eq "${this.managedResource}"`)
-      .then(({ data }) => {
-        this.consentableMappings = data.result;
-      });
+    this.loadConsent();
   },
   methods: {
     showModal(name) {
       first(this.$refs[name]).show();
+    },
+    loadConsent() {
+      this.getRequestService()
+        .get(`consent?_queryFilter=/source eq "${this.managedResource}"`)
+        .then(({ data }) => {
+          this.consentableMappings = data.result;
+        });
     },
     toggleConsentAndHideModal(mapping) {
       this.toggleConsent(mapping);
@@ -226,7 +229,7 @@ export default {
       return [{ field, operation, value }];
     },
     toggleConsent(mapping) {
-      this.$emit('updateProfile', this.generatePatch(mapping));
+      this.$emit('updateProfile', this.generatePatch(mapping), { onSuccess: this.loadConsent() });
     },
   },
 };

@@ -210,7 +210,7 @@ export default {
     },
     resourceTitle: {
       type: String,
-      required: false,
+      default: '',
     },
   },
   data() {

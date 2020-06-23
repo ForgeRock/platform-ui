@@ -158,6 +158,8 @@ export default {
         this.$store.dispatch('UserStore/setProfileAction', response.data);
         this.displayNotification('IDMMessages', 'success', successMsg);
 
+        this.profile = response.data;
+
         if (config.onSuccess) {
           config.onSuccess();
         }

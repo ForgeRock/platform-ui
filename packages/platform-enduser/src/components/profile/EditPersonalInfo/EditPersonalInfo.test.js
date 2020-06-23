@@ -7,6 +7,7 @@
  */
 import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { ValidationProvider, ValidationObserver } from 'vee-validate';
 import _ from 'lodash';
 import Vuex from 'vuex';
 import i18n from '@/i18n';
@@ -26,6 +27,10 @@ describe('EditPersonalInfo.vue', () => {
       localVue,
       i18n,
       store,
+      stubs: {
+        ValidationProvider,
+        ValidationObserver,
+      },
       propsData: {
         schema: {
           order: ['test'],
