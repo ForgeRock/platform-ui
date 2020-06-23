@@ -21,6 +21,7 @@ import Vue from 'vue';
 import AppAuthHelper from 'appauthhelper/appAuthHelperCompat';
 import SessionCheck from 'oidcsessioncheck';
 import store from '@forgerock/platform-shared/src/store';
+import { redirectToLogin } from '@forgerock/platform-shared/src/mixins/LoginMixin';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import router from './router';
@@ -160,9 +161,7 @@ const addAppAuth = () => {
     clientId: store.state.ApplicationStore.idmClientID,
     authorizationEndpoint: `${AM_URL}/oauth2/authorize`,
   };
-  const redirectToLogin = () => {
-    window.location.href = `${store.state.ApplicationStore.loginURL}/${encodeURIComponent(window.location.href)}`;
-  };
+  const toLogin = redirectToLogin(store.state.ApplicationStore.loginURL);
 
   AppAuthHelper.init({
     clientId: commonSettings.clientId,
@@ -174,7 +173,7 @@ const addAppAuth = () => {
       [store.state.ApplicationStore.idmBaseURL]: 'openid',
     },
     interactionRequiredHandler: store.state.ApplicationStore.loginURL ? () => {
-      redirectToLogin();
+      toLogin();
     } : undefined,
     tokensAvailableHandler(claims) {
       // this function is called every time the tokens are either
