@@ -18,6 +18,7 @@ const localVue = createLocalVue();
 localVue.use(BootstrapVue);
 
 Consent.created = jest.fn();
+Consent.methods.loadConsent = jest.fn();
 
 describe('Profile Consent Component', () => {
   const date = new Date(2019, 11, 17, 1, 24, 0).toISOString();
