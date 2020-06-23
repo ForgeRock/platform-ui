@@ -48,6 +48,7 @@ to such license between the licensee and ForgeRock AS. -->
             type="submit"
             variant="primary"
             ref="callbackSubmitButton"
+            :disabled="disableNextButton"
             @click="nextStep">
             {{ $t('login.next') }}
           </BButton>
@@ -88,6 +89,7 @@ import FrField from '@forgerock/platform-shared/src/components/Field';
 import BooleanAttributeInputCallback from '@/components/callbacks/BooleanAttributeInputCallback';
 import ChoiceCallback from '@/components/callbacks/ChoiceCallback';
 import ConfirmationCallback from '@/components/callbacks/ConfirmationCallback';
+import ConsentContainer from '@/components/callbacks/ConsentMappingCallback';
 import DeviceProfileCallback from '@/components/callbacks/DeviceProfileCallback';
 import KbaCreateCallback from '@/components/callbacks/KbaCreateCallback';
 import HiddenValueCallback from '@/components/callbacks/HiddenValueCallback';
@@ -116,20 +118,21 @@ export default {
   ],
   data() {
     return {
+      authIndexValue: undefined,
+      callbacksPanelComponents: [],
+      description: '',
+      disableNextButton: false,
+      errorMessage: '',
+      header: '',
+      kbaCallbackCount: 0,
       loading: true,
       loadingColor: styles.basecolor,
       loadingMessage: '',
-      header: '',
-      description: '',
       loginFailure: false,
-      step: undefined,
-      kbaCallbackCount: 0,
-      showNextButton: false,
-      errorMessage: '',
-      authIndexValue: undefined,
-      suspendedId: undefined,
-      callbacksPanelComponents: [],
       showClone: false,
+      showNextButton: false,
+      step: undefined,
+      suspendedId: undefined,
     };
   },
   mounted() {
@@ -149,7 +152,7 @@ export default {
      * @param {Object} the component object to by added
      * @param {Object} properties used for rendering the component object
      */
-    addComponent(component, propsData) {
+    addComponent(component, propsData, listeners = []) {
       const ComponentClass = Vue.extend(component);
       const instance = new ComponentClass({
         propsData,
@@ -157,6 +160,10 @@ export default {
       });
 
       instance.$mount();
+
+      listeners.forEach((listener) => {
+        instance.$on(listener.name, listener.callback);
+      });
 
       this.callbacksPanelComponents.push(instance.$el);
     },
@@ -375,6 +382,28 @@ export default {
             callback,
             nextStep: this.nextStep,
           });
+          break;
+        case 'ConsentMappingCallback':
+          if (index === 0) {
+            const isRequired = this.step.callbacks[0].payload.output.find((item) => item.name === 'isRequired').value;
+            this.disableNextButton = isRequired;
+            this.addComponent(ConsentContainer,
+              { callbacks: this.step.callbacks, isRequired },
+              [
+                {
+                  name: 'canProceed',
+                  callback: (checked) => {
+                    this.disableNextButton = !checked;
+                  },
+                },
+                {
+                  name: 'didConsent',
+                  callback: (didConsent) => {
+                    this.step.callbacks.forEach((callbackItem) => { callbackItem.payload.input[0].value = didConsent; });
+                  },
+                },
+              ]);
+          }
           break;
         case 'DeviceProfileCallback':
           this.showNextButton = false;

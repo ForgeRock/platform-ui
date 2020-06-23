@@ -36,7 +36,6 @@ to such license between the licensee and ForgeRock AS. -->
 <script>
 import Alert from '@forgerock/platform-shared/src/components/Alert/';
 import './scss/main.scss';
-import 'bootstrap/scss/bootstrap.scss';
 
 export default {
   name: 'App',
