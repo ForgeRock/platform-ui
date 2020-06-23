@@ -139,7 +139,6 @@ to such license between the licensee and ForgeRock AS. -->
 </template>
 <script>
 import { mapState } from 'vuex';
-import { ValidationProvider, ValidationObserver } from 'vee-validate';
 import ListItem from '@forgerock/platform-shared/src/components/ListItem/';
 import PolicyPasswordInput from '@forgerock/platform-shared/src/components/PolicyPasswordInput';
 import ValidationErrorList from '@forgerock/platform-shared/src/components/ValidationErrorList';
@@ -161,8 +160,6 @@ export default {
     FrLoadingButton: LoadingButton,
     FrPolicyPasswordInput: PolicyPasswordInput,
     FrValidationError: ValidationErrorList,
-    ValidationProvider,
-    ValidationObserver,
   },
   computed: {
     ...mapState({

@@ -87,7 +87,6 @@ import {
   map,
 } from 'lodash';
 import { mapState } from 'vuex';
-import { ValidationObserver } from 'vee-validate';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
@@ -107,7 +106,6 @@ export default {
   ],
   components: {
     FrField,
-    ValidationObserver,
   },
   computed: {
     ...mapState({
