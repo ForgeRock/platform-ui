@@ -15,8 +15,14 @@ import BootstrapVue from 'bootstrap-vue/dist/bootstrap-vue.esm.min';
 import Notifications from 'vue-notification';
 import PromisePoly from 'es6-promise';
 import ToggleButton from 'vue-js-toggle-button';
-import { extend, setInteractionMode } from 'vee-validate';
-import { required } from 'vee-validate/dist/rules';
+import {
+  ValidationObserver,
+  ValidationProvider,
+  extend,
+  localize,
+} from 'vee-validate';
+import en from 'vee-validate/dist/locale/en.json';
+import * as rules from 'vee-validate/dist/rules';
 import Vue from 'vue';
 import AppAuthHelper from 'appauthhelper/appAuthHelperCompat';
 import SessionCheck from 'oidcsessioncheck';
@@ -90,13 +96,25 @@ router.beforeEach((to, from, next) => {
 // Globally load bootstrap vue components for use
 Vue.use(BootstrapVue);
 
-// Add the required rule
-extend('required', {
-  ...required,
-  message: '{_field_} is required',
+// Register validation components for global use
+Vue.component('ValidationProvider', ValidationProvider);
+Vue.component('ValidationObserver', ValidationObserver);
+Object.keys(rules).forEach((rule) => {
+  extend(rule, rules[rule]);
 });
 
-setInteractionMode('passive');
+// How to add an extra validation rule
+// Date rule added for workflow
+extend('date_format', {
+  validate(value) {
+    return value.match(/^\d{2}[.//]\d{2}[.//]\d{4}$/);
+  },
+  message: () => 'Invalid date format',
+});
+
+// For now use vee validate loclization, need to eventually convert to vue i18n
+localize('en', en);
+
 /*
   Basic Notification Example:
   this.$notify({
