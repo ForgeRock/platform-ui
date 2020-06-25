@@ -23,8 +23,9 @@ export default new Router({
       component: () => import('@/views/Login'),
     },
     {
+      // send any bad routes to default login
       path: '*',
-      component: () => import('@forgerock/platform-shared/src/views/NotFound'),
+      redirect: '/',
     },
   ],
 });
