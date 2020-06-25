@@ -335,11 +335,15 @@ export default {
       this.callbacksPanelComponents = [];
 
       // Ensure that Social Buttons appear at top of Page Node
-      this.step.callbacks.sort((currentCallback) => {
-        if (currentCallback.payload.type === 'SelectIdPCallback') {
+      const pullToTop = 'SelectIdPCallback';
+      this.step.callbacks.sort((currentCallback, otherCallback) => {
+        if (currentCallback.payload.type === pullToTop) {
           return -1;
         }
-        return 1;
+        if (otherCallback.payload.type === pullToTop) {
+          return 1;
+        }
+        return 0;
       });
 
       map(this.step.callbacks, (callback, index) => {
