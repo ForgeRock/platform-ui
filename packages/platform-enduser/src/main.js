@@ -179,7 +179,7 @@ const addAppAuth = () => {
     clientId: store.state.ApplicationStore.idmClientID,
     authorizationEndpoint: `${AM_URL}/oauth2/authorize`,
   };
-  const toLogin = redirectToLogin(store.state.ApplicationStore.loginURL);
+  const { loginURL } = store.state.ApplicationStore;
 
   AppAuthHelper.init({
     clientId: commonSettings.clientId,
@@ -191,7 +191,7 @@ const addAppAuth = () => {
       [store.state.ApplicationStore.idmBaseURL]: 'openid',
     },
     interactionRequiredHandler: store.state.ApplicationStore.loginURL ? () => {
-      toLogin();
+      redirectToLogin(loginURL);
     } : undefined,
     tokensAvailableHandler(claims) {
       // this function is called every time the tokens are either
@@ -203,7 +203,7 @@ const addAppAuth = () => {
         invalidSessionHandler() {
           AppAuthHelper.logout().then(() => {
             // eslint-disable-next-line no-unused-expressions
-            this.$store.state.ApplicationStore.loginURL ? redirectToLogin() : AppAuthHelper.getTokens();
+            this.$store.state.ApplicationStore.loginURL ? redirectToLogin(loginURL) : AppAuthHelper.getTokens();
           });
         },
         cooldownPeriod: 5,
@@ -234,7 +234,7 @@ const addAppAuth = () => {
   window.logout = () => {
     AppAuthHelper.logout().then(() => {
       // eslint-disable-next-line no-unused-expressions
-      store.state.ApplicationStore.loginURL ? redirectToLogin() : AppAuthHelper.getTokens();
+      store.state.ApplicationStore.loginURL ? redirectToLogin(loginURL) : AppAuthHelper.getTokens();
     });
   };
 };
