@@ -11,8 +11,8 @@ import AppAuthHelper from 'appauthhelper';
 import store from '../../store/index';
 import i18n from '../../i18n';
 
-export function redirectToLogin(loginURL) {
-  const [origin, hash] = loginURL.split('#');
+export function redirectToLogin(url) {
+  const [origin, hash] = url.split('#');
   const goto = encodeURIComponent(window.location.href);
 
   window.location.href = `${origin}?goto=${goto}#${hash}`;
