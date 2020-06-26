@@ -268,6 +268,13 @@ export default {
           this.loading = false;
           this.step = step;
 
+          // these step params only need to be sent one time
+          if (this.code || this.state || this.scope) {
+            this.code = undefined;
+            this.state = undefined;
+            this.scope = undefined;
+          }
+
           switch (step.type) {
           case 'LoginSuccess':
             // If we have a session token, get user information
