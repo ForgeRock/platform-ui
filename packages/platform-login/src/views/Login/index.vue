@@ -231,6 +231,17 @@ export default {
         return this.$t(`common.policyValidationMessages.${tempPolicy.policyRequirement}`, tempPolicy.params);
       });
     },
+    getStepParams() {
+      const stepParams = { query: {} };
+      if (this.suspendedId) {
+        stepParams.query.suspendedId = this.suspendedId;
+      } else {
+        stepParams.query.code = this.code ? this.code : undefined;
+        stepParams.query.state = this.state ? this.state : undefined;
+        stepParams.query.scope = this.scope ? this.scope : undefined;
+      }
+      return stepParams;
+    },
     /**
      * @description Gets callbacks needed for authentication when this.step is undefined, and submits callback values when
      * this.step is defined. Then determines based on step.type what action to take.
@@ -239,28 +250,11 @@ export default {
       if (event) {
         event.preventDefault();
       }
-      const stepParams = {};
-
-      if (this.suspendedId) {
-        stepParams.query = {
-          suspendedId: this.suspendedId,
-        };
-      } else {
-        stepParams.query = {};
-        if (this.code) {
-          stepParams.query.code = this.code;
-        }
-        if (this.state) {
-          stepParams.query.state = this.state;
-        }
-        if (this.scope) {
-          stepParams.query.scope = this.scope;
-        }
-      }
-
       if (!preventClear) {
         this.clearCallbacks();
       }
+
+      const stepParams = this.getStepParams();
       FRAuth.next(this.step, stepParams).then(
         (step) => {
           this.loading = false;
@@ -536,22 +530,27 @@ export default {
       }
       return { step: undefined, authIndexValue: undefined };
     },
+    removeUrlParams() {
+      // remove query params from the url
+      window.history.replaceState(null, null, window.location.pathname);
+      // reset the hash to the proper tree
+      window.location.hash = `service/${this.authIndexValue}`;
+    },
     /**
      * @description Look at the url and see if we are returning to a tree from an Email Suspend Node or Redirect Callback.
      * Must be default route and contain the strings "suspendedId=" and "authIndexValue=" for Email Suspend Node.
      * Must contain the strings "state=" and "code=" and "scope=" for redirect callback.
      */
     evaluateUrlParams() {
-      let fixUrl = false;
+      const queryParams = window.location.search;
+      const urlParams = new URLSearchParams(queryParams.substring(1));
 
-      if (this.$route.name === 'Login' && window.location.search.includes('suspendedId=') && window.location.search.includes('authIndexValue=')) {
-        const urlParams = new URLSearchParams(window.location.search.substring(1));
+      if (this.$route.name === 'Login' && queryParams.includes('suspendedId=') && queryParams.includes('authIndexValue=')) {
         this.authIndexValue = urlParams.get('authIndexValue');
         this.suspendedId = urlParams.get('suspendedId');
 
-        fixUrl = true;
-      } else if (window.location.search.includes('state=') || window.location.search.includes('code=') || window.location.search.includes('scope=')) {
-        const urlParams = new URLSearchParams(window.location.search.substring(1));
+        this.removeUrlParams();
+      } else if (queryParams.includes('state=') || queryParams.includes('code=') || queryParams.includes('scope=')) {
         this.state = urlParams.get('state');
         this.code = urlParams.get('code');
         this.scope = urlParams.get('scope');
@@ -561,13 +560,7 @@ export default {
         this.authIndexValue = stepInfo.authIndexValue;
         this.step = new FRStep(stepInfo.step.payload);
 
-        fixUrl = true;
-      }
-      if (fixUrl) {
-        // remove query params from the url
-        window.history.replaceState(null, null, window.location.pathname);
-        // reset the hash to the proper tree
-        window.location.hash = `service/${this.authIndexValue}`;
+        this.removeUrlParams();
       }
     },
   },
