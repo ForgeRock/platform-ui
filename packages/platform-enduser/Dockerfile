@@ -25,20 +25,6 @@ RUN yarn install --pure-lockfile
 COPY . /home/app/
 
 ###############################################################################
-# Development Build Stage
-###############################################################################
-FROM node:lts-slim AS development
-
-# Copy result of `dependencies` build stage
-COPY --from=dependencies /home/app/ /home/app
-
-WORKDIR /home/app/packages/platform-enduser
-
-EXPOSE 8080
-
-ENTRYPOINT ["yarn", "run", "dev"]
-
-###############################################################################
 # Build Build Stage
 ###############################################################################
 FROM node:lts-slim AS build

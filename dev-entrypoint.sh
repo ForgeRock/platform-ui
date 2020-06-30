@@ -8,8 +8,10 @@
 
 # Entrypoint script for all ForgeRock Platform UI applications.
 
-export REPLACEMENT_PATH=/usr/share/nginx/html/js/*.js
+export REPLACEMENT_PATH=/home/app/packages/$1/.env
 . /home/app/variable_replacement.sh
 
-echo "Starting Nginx"
-nginx -g 'daemon off;'
+cd /home/app/packages/$1
+sed -i 's!\\!!g' .env
+echo "Starting dev server"
+yarn run dev
