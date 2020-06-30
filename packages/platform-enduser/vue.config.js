@@ -74,10 +74,8 @@ module.exports = {
     },
   },
   devServer: {
-    allowedHosts: [
-      'openidm.example.com',
-      '0.0.0.0',
-    ],
+    disableHostCheck: true,
+    host: process.env.HOST || "0.0.0.0",
     port: process.env.DEV_PORT || 8080,
   },
   configureWebpack: {
