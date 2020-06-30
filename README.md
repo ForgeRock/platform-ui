@@ -11,22 +11,6 @@ The root is intended to handle all of the testing, mock and storybook integratio
 ### ForgeOps setup
 First: ensure you have all the latest versions of the required third-party software seen here: [third-party software](https://ea.forgerock.com/docs/forgeops/devops-guide-minikube/#devops-implementation-env-sw).
 
-#### Authentication configuration
-Before running the setup, there’s a configuration file that needs to be updated for the register to work appropriately. Go to `docker` > `7.0` > `cdk` > `idm` > `conf` > `authentication.json`, and update the commented line below:
-
-```js
-{
-    "rsFilter" : {
-        // …
-        "propertyMapping" : {
-            "authenticationId" : "userName", // changed from “_id”
-            "userRoles" : "authzRoles"
-        }
-        // …
-```
-
-Now, we should be ready to start the setup.
-
 #### Minikube setup and run
 Run each setup scripts from below individually within your local, cloned repo of [forgeops](https://stash.forgerock.org/projects/CLOUD/repos/forgeops/browse):
 
@@ -44,7 +28,7 @@ kubens default
 
 ./bin/config.sh init
 
-skaffold dev
+skaffold run -p no-ui
 ```
 
 #### Localhost setup
@@ -60,10 +44,38 @@ sudo vi /etc/hosts
 <IP copied from above> default.iam.example.com
 ```
 
-You can then visit http://default.iam.example.com/am for AM and http://default.iam.example.com/admin for IDM.
+#### Generate HTTPS certificate and register it with the cluster:
 
-#### Add certificate exception to browser
-Visit default.iam.example.com/am with your chosen browser and accept the unknown certificate.
+Install the [mkcert](https://github.com/FiloSottile/mkcert) program and generate / install a certificate:
+
+```bash
+mkcert "*.iam.example.com"
+kubectl create secret tls sslcert --cert=_wildcard.iam.example.com.pem --key=_wildcard.iam.example.com-key.pem
+```
+
+You can then visit https://default.iam.example.com/am for AM and https://default.iam.example.com/admin for IDM.
+
+### Developing the Platform UI directly in Kubernetes
+First, build the "platform-shared" docker image:
+
+```bash
+docker build -t platform-shared:latest -f packages/platform-shared/Dockerfile .
+```
+
+This core image will be used for the other platform packages. Building it once and sharing it between the other images speeds up the deployment considerably. You will need to redo this whenever you have new package dependencies, however.
+
+Next, start skaffold:
+```bash
+skaffold dev
+```
+
+This builds and runs the webpack dev server directly in Kubernetes. It also watches for any changes you make to the source code in platform-admin, platform-enduser, and platform-login; when a change is detected, it automatically deploys it into the running cluster. This should make it fast to evaluate your changes.
+
+The skaffold process will continue to run, showing you the output from your various UI packages. You can leave this running as long as you'd like to continue development.
+
+You can hit Ctrl^c to kill skaffold. If you want to start it again, you do not need to rebuild the platform-shared docker image. You only need to rebuild that when setting up a new environment or if your dependencies change.
+
+If you want to run the development servers outside of Kubernetes, follow the instructions below.
 
 ### Platform UI setup
 Install `yarn` globally and project dependencies:

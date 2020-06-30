@@ -1,0 +1,16 @@
+###############################################################################
+# Development Build Stage
+###############################################################################
+FROM platform-shared:latest
+
+WORKDIR /home/app/packages/platform-enduser
+
+COPY packages/platform-shared/src /home/app/packages/platform-shared/src
+
+COPY packages/platform-enduser/src src
+COPY packages/platform-enduser/public public
+
+RUN cp .env.production .env
+RUN yarn install --pure-lockfile
+
+CMD ["/dev-entrypoint.sh", "platform-enduser"]
