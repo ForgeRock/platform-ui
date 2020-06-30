@@ -1,0 +1,16 @@
+###############################################################################
+# Development Build Stage
+###############################################################################
+FROM platform-shared:latest
+
+WORKDIR /home/app/packages/platform-login
+
+COPY packages/platform-shared/src /home/app/packages/platform-shared/src
+
+COPY packages/platform-login/src src
+COPY packages/platform-login/public public
+
+RUN cp .env.production .env
+RUN yarn install --pure-lockfile
+
+CMD ["/dev-entrypoint.sh", "platform-login"]
