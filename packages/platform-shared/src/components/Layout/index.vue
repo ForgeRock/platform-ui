@@ -7,23 +7,24 @@ to such license between the licensee and ForgeRock AS. -->
   <div
     id="app"
     :class="{
-      'fr-menu-mobile': toggledMobile,
+      'fr-menu-mobile': toggledMenuMobile,
       'fr-menu-expanded': toggled === true,
       'fr-menu-collapsed': toggled === false,
       'fr-menu-hidden': hideNav,
     }">
     <FrSideMenu
       @toggle-menu="toggleMenu"
-      @toggle-menu-mobile="toggleMenuMobile"
+      @toggle-menu-mobile="toggleMenuMobileHandler"
       @logout="$emit('logout')"
-      :open-menu="toggled"
+      :menu-mobile-is-toggled="toggledMenuMobile"
       :user-details="userDetails"
       :menu-items="menuItems"
       :enduser-link="$store.state.enduserURL"
       v-show="!hideNav" />
     <div class="content h-100">
       <FrNavBar
-        @toggle-mobile="toggleMenuMobile"
+        @toggle-menu-mobile="toggleMenuMobileHandler"
+        :menu-mobile-is-toggled="toggledMenuMobile"
         :show-notifications="false"
         v-show="!hideNav" />
       <div
@@ -56,7 +57,7 @@ to such license between the licensee and ForgeRock AS. -->
 import Alert from '@forgerock/platform-shared/src/components/Alert/';
 import Navbar from '@forgerock/platform-shared/src/components/Navbar/';
 import SideMenu from '@forgerock/platform-shared/src/components/SideMenu/';
-
+import Media from '@forgerock/platform-shared/src/mixins/Media';
 /**
  * @description Layout component for any packages that use the same sidemenu, navbar, and app content UX
  */
@@ -85,8 +86,8 @@ export default {
   },
   data() {
     return {
-      toggled: undefined,
-      toggledMobile: false,
+      toggled: null,
+      toggledMenuMobile: false,
       hideNav: true,
     };
   },
@@ -95,20 +96,31 @@ export default {
       this.hideNav = to.meta.hideNav;
     },
   },
+  mounted() {
+    // fires only once media breakpoint is changed.
+    this.media('md').addListener((e) => {
+      if (e.matches) {
+        this.toggledMenuMobile = false;
+      }
+    });
+  },
   methods: {
     toggleMenu() {
-      if (window.innerWidth < 992 && this.toggled === undefined) {
+      if (this.media('lt-lg').matches && this.toggled === null) {
         this.toggled = true;
-      } else if (window.innerWidth > 992 && this.toggled === undefined) {
+      } else if (this.media('lg').matches && this.toggled === null) {
         this.toggled = false;
       } else {
-        this.toggled = this.toggled === undefined ? false : !this.toggled;
+        this.toggled = this.toggled === null ? false : !this.toggled;
       }
     },
-    toggleMenuMobile() {
-      this.toggledMobile = !this.toggledMobile;
+    toggleMenuMobileHandler() {
+      this.toggledMenuMobile = !this.toggledMenuMobile;
     },
   },
+  mixins: [
+    Media,
+  ],
 };
 </script>
 
