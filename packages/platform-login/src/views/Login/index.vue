@@ -60,7 +60,6 @@ to such license between the licensee and ForgeRock AS. -->
             <BounceLoader
               class="mb-4"
               :color="loadingColor" />
-            {{ loadingMessage }}
           </div>
         </div>
       </BCardBody>
@@ -94,6 +93,7 @@ import DeviceProfileCallback from '@/components/callbacks/DeviceProfileCallback'
 import KbaCreateCallback from '@/components/callbacks/KbaCreateCallback';
 import HiddenValueCallback from '@/components/callbacks/HiddenValueCallback';
 import ReCaptchaCallback from '@/components/callbacks/ReCaptchaCallback';
+import PollingWaitCallback from '@/components/callbacks/PollingWaitCallback';
 import SelectIdPCallback from '@/components/callbacks/SelectIdPCallback';
 import TextOutputCallback from '@/components/callbacks/TextOutputCallback';
 import SuspendedTextOutputCallback from '@/components/callbacks/SuspendedTextOutputCallback';
@@ -127,7 +127,6 @@ export default {
       kbaCallbackCount: 0,
       loading: true,
       loadingColor: styles.basecolor,
-      loadingMessage: '',
       loginFailure: false,
       showClone: false,
       showNextButton: false,
@@ -224,14 +223,6 @@ export default {
           this.nextStep();
         });
       }
-    },
-    pollingWaitCallback(callback, index) {
-      this.loading = index === 0;
-      this.loadingMessage = callback.getMessage();
-      this.showNextButton = false;
-      setTimeout(() => {
-        this.nextStep(null, true);
-      }, callback.getWaitTime());
     },
     translatePolicyFailures(failedPolicies) {
       return map(failedPolicies, (policy) => {
@@ -441,7 +432,11 @@ export default {
           this.addField('password', callback, index);
           break;
         case 'PollingWaitCallback':
-          this.pollingWaitCallback(callback, index);
+          this.showNextButton = false;
+          this.addComponent(PollingWaitCallback, {
+            callback,
+            nextStep: this.nextStep,
+          });
           break;
         case 'ReCaptchaCallback':
           this.addComponent(ReCaptchaCallback, {
