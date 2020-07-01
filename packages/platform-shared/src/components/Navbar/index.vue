@@ -9,13 +9,17 @@ to such license between the licensee and ForgeRock AS. -->
     class="fr-main-navbar">
     <button
       v-show="!hideToggle"
-      @click="collapse"
+      @click="toggleMenuMobile"
       class="navbar-toggler expand-sidebar mt-2"
       type="button"
-      aria-label="Toggle side navigation">
-      <i class="material-icons-outlined md-24 m-0">
+      aria-controls="#fr-sidebar-nav"
+      :aria-expanded="(menuMobileIsToggled).toString()"
+      :aria-label="$t('sideMenu.toggleSidebar')">
+      <span
+        aria-hidden="true"
+        class="material-icons-outlined md-24 m-0">
         menu
-      </i>
+      </span>
     </button>
     <BNavbarNav class="flex-row align-items-center justify-content-between flex-grow-1">
       <div>
@@ -35,6 +39,7 @@ to such license between the licensee and ForgeRock AS. -->
       </div>
       <div class="flex-row d-none d-sm-flex">
         <FrNotification v-if="showNotifications" />
+        <!--TODO: This html list is invalid when rendered - wont fix today-->
         <li
           v-if="showHelpLink"
           class="mr-4 nav-item">
@@ -83,6 +88,13 @@ export default {
   },
   props: {
     /**
+     * State from Layout about if the mobile menu is open (true) or closed (false)
+     */
+    menuMobileIsToggled: {
+      default: () => false,
+      type: Boolean,
+    },
+    /**
      * route of docs
      */
     docsLink: {
@@ -125,16 +137,12 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {};
-  },
   methods: {
-    collapse() {
-      /**
-       * Emitted when clicking the toggle button to expand/collapse sidenav.
-       * @event toggle-mobile
-       */
-      this.$emit('toggle-mobile', true);
+    /**
+     * From the navbar button toggling is possible with keyboard but not mouse or touch.
+     * */
+    toggleMenuMobile() {
+      this.$emit('toggle-menu-mobile');
     },
   },
 };

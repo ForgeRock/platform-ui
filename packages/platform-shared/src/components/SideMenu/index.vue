@@ -5,13 +5,16 @@ or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
   <div>
-    <div class="fr-sidebar-wrapper">
+    <nav
+      id="fr-sidebar-nav"
+      class="fr-sidebar-wrapper">
       <div class="fr-sidebar-nav h-100 d-flex flex-column">
         <div class="fr-sidebar-brand">
           <BDropdown
             class="h-100"
             offset="0"
             variant="link"
+            ref="firstItem"
             toggle-class="text-decoration-none p-0">
             <BDropdownHeader
               class="py-3"
@@ -201,9 +204,9 @@ to such license between the licensee and ForgeRock AS. -->
           </ul>
         </div>
       </div>
-    </div>
+    </nav>
     <div
-      @click="toggleMenuMobile()"
+      @click="toggleMenuMobile"
       class="w-100 h-100 fixed-top fr-sidebar-shim" />
   </div>
 </template>
@@ -279,6 +282,13 @@ export default {
         adminURL: 'wwwfakecom',
       }),
     },
+    /**
+     * State from Layout about if the mobile menu is open (true) or closed (false)
+     */
+    menuMobileIsToggled: {
+      default: () => false,
+      type: Boolean,
+    },
   },
   data() {
     return {
@@ -286,14 +296,25 @@ export default {
     };
   },
   methods: {
+    /**
+     * @description Toggles the menu to stay open or only open on hover
+     * @triggers toggle-menu
+     */
+    toggleMenu() {
+      this.$emit('toggle-menu');
+    },
+    /**
+     * @description In slide menu, it is only possible to close the menu on toggle.
+     * @triggers toggle-menu-mobile
+     */
     toggleMenuMobile() {
       this.$emit('toggle-menu-mobile');
     },
     /**
-     * Toggles the menu to stay open or only open on hover
-     */
-    toggleMenu() {
-      this.$emit('toggle-menu');
+     * @description Allow keyboard users to use the navigation sidebar
+     * */
+    focusFirstItem() {
+      this.$refs.firstItem.$el.querySelector('button').focus();
     },
   },
   watch: {
@@ -308,6 +329,15 @@ export default {
             this.expandedMenus.splice(index, 1, true);
           }
         });
+      }
+    },
+    /**
+     * @description Watch for menu open and focus on the first element
+     * @param isOpen boolean true means the menu is open
+     */
+    menuMobileIsToggled(isOpen) {
+      if (isOpen) {
+        this.focusFirstItem();
       }
     },
   },
