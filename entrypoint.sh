@@ -9,7 +9,7 @@
 # Entrypoint script for all ForgeRock Platform UI applications.
 
 export REPLACEMENT_PATH=/usr/share/nginx/html/js/*.js
-. /home/app/variable_replacement.sh
+. /variable_replacement.sh
 
 echo "Starting Nginx"
 nginx -g 'daemon off;'

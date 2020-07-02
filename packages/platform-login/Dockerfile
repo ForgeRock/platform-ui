@@ -44,6 +44,7 @@ FROM nginxinc/nginx-unprivileged:1.17 as production
 # Copy result of `build` build stage
 COPY --from=build --chown=nginx /home/app/packages/platform-login/dist/ /usr/share/nginx/html
 
+COPY --chown=nginx variable_replacement.sh /variable_replacement.sh
 COPY --chown=nginx entrypoint.sh /entrypoint.sh
 
 CMD ["/entrypoint.sh"]
