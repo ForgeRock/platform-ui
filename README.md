@@ -22,6 +22,8 @@ minikube addons enable ingress
 
 minikube ssh sudo ip link set docker0 promisc on
 
+minikube ssh -- sudo sysctl -w fs.inotify.max_user_watches=1048576
+
 eval $(minikube docker-env)
 
 kubens default
