@@ -8,7 +8,7 @@ of the MIT license. See the LICENSE file for details.
 <template>
   <div>
     <FrAccordion
-      accordion-group="social"
+      accordion-group="accountControls"
       :items="items">
       <template #accordionHeader>
         <div class="p-4">
