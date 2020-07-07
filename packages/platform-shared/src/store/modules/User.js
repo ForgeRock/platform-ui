@@ -92,6 +92,10 @@ const actions = {
     context.commit('clearAccess');
   },
 
+  setAliasListAction(context) {
+    context.commit('setAliasListAction');
+  },
+
   clearStoreAction(context) {
     context.commit('clearStoreAction');
   },
@@ -105,6 +109,7 @@ const mutations = {
     state.userName = profile.userName || '';
     state.consentedMappings = profile.consentedMappings || null;
     state.preferences = profile.preferences || [];
+    state.aliasList = profile.aliasList || [];
   },
 
   clearProfileAction(state) {
@@ -114,6 +119,7 @@ const mutations = {
     state.userName = '';
     state.consentedMappings = [];
     state.preferences = [];
+    state.aliasList = [];
   },
 
   setSchemaAction(state, schema) {
@@ -164,6 +170,10 @@ const mutations = {
     state.access = [];
   },
 
+  setAliasListAction(state, aliasList) {
+    state.aliasList = clone(aliasList);
+  },
+
   clearStoreAction(state) {
     state.userId = null;
     state.managedResource = null;
@@ -178,6 +188,7 @@ const mutations = {
     state.access = [];
     state.consentedMappings = [];
     state.preferences = [];
+    state.aliasList = [];
   },
 };
 

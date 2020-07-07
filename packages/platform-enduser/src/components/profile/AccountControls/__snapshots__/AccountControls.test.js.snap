@@ -2,7 +2,7 @@
 
 exports[`Preferences.vue Account Controls page loaded 1`] = `
 <div>
-  <fraccordion-stub accordiongroup="social" items="[object Object],[object Object]"></fraccordion-stub>
+  <fraccordion-stub accordiongroup="accountControls" items="[object Object],[object Object]"></fraccordion-stub>
   <bmodal-stub id="deleteModal" size="md" ignoreenforcefocusselector="" title="Permanently Delete Your Account?" titletag="h5" dialogclass="fr-modal" headerclosecontent="&amp;times;" headercloselabel="Close" canceltitle="Cancel" oktitle="OK" cancelvariant="secondary" okvariant="primary">
     Are you sure you want to permanently delete your account data?
     <strong>
