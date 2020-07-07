@@ -134,6 +134,20 @@
         "title": "Preferences",
         "subtitle": "Set your communications preferences."
       },
+      "social": {
+        "title": "Social Sign In",
+        "subtitle": "Sign-in to your account using social identity providers.",
+        "notConnected": "Not Connected",
+        "sharedWith": "Shared with {providerName}",
+        "disconnect": "Disconnect",
+        "connect": "Connect",
+        "journeyServiceError": "Error retrieving journey mappings.",
+        "identityProviderError": "Error retrieving social identity providers.",
+        "deleteModalTitle": "Disconnect {providerName}?",
+        "deleteModalBody": "Are you sure you want to disconnect {providerName} as a social identity provider?",
+        "disconnectSuccess": "{providerName} disconnected successfully.",
+        "disconnectError": "Error disconnecting {providerName} as a social identity provider."
+      },
       "oauthApplications": {
         "title": "Authorized Applications",
         "subtitle": "These apps can access your account.",

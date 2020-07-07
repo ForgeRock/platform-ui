@@ -49,6 +49,7 @@ of the MIT license. See the LICENSE file for details.
           @updateKBA="updateKBA" />
         <!-- TODO we need to update these to not rely on the old way of getting AM data endpoints -->
         <!-- <FrAuthorizedApplications v-if="amDataEndpoints && internalUser === false" /> -->
+        <FrSocial class="mb-5" />
         <FrTrustedDevices />
         <FrPreferences
           class="mb-5"
@@ -76,6 +77,8 @@ import EditPersonalInfo from '@/components/profile/EditPersonalInfo';
 import Preferences from '@/components/profile/Preferences';
 import TrustedDevices from '@/components/profile/TrustedDevices';
 import Consent from '@/components/profile/Consent';
+import Social from '@/components/profile/Social/';
+
 /**
  * @description Controlling component for profile management
  *
@@ -110,6 +113,7 @@ export default {
     FrTrustedDevices: TrustedDevices,
     // FrAuthorizedApplications: () => import('@/components/profile/AuthorizedApplications'),
     FrConsent: Consent,
+    FrSocial: Social,
   },
   computed: {
     ...mapState({
