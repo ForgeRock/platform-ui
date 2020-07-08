@@ -6,12 +6,12 @@ to such license between the licensee and ForgeRock AS. -->
 <template>
   <div
     id="app"
-    :class="{
+    :class="[{
       'fr-menu-mobile': toggledMenuMobile,
       'fr-menu-expanded': toggled === true,
       'fr-menu-collapsed': toggled === false,
-      'fr-menu-hidden': hideNav,
-    }">
+      'fr-navbar-hidden': hideNav,
+    }, 'h-100']">
     <FrSideMenu
       @toggle-menu="toggleMenu"
       @toggle-menu-mobile="toggleMenuMobileHandler"
@@ -21,7 +21,7 @@ to such license between the licensee and ForgeRock AS. -->
       :menu-items="menuItems"
       :enduser-link="$store.state.enduserURL"
       v-show="!hideNav" />
-    <div class="content h-100">
+    <div class="content">
       <FrNavBar
         @toggle-menu-mobile="toggleMenuMobileHandler"
         :menu-mobile-is-toggled="toggledMenuMobile"
@@ -29,7 +29,7 @@ to such license between the licensee and ForgeRock AS. -->
         v-show="!hideNav" />
       <div
         id="appContent"
-        class="app-content">
+        :class="[{'show-navbar': !hideNav}, 'app-content']">
         <Transition
           name="fade"
           mode="out-in">
@@ -48,6 +48,34 @@ to such license between the licensee and ForgeRock AS. -->
             </FrAlert>
           </template>
         </notifications>
+      </div>
+      <div
+        v-if="!hideNav"
+        id="appFooter">
+        <div class="d-flex flex-column flex-md-row justify-content-center align-items-center py-4">
+          <div class="mr-3 opacity-20 mb-2 mb-md-0 d-flex">
+            <img
+              src="../../assets/images/vertical-logo-black.svg"
+              alt="ForgeRock"
+              height="21">
+          </div>
+          <div class="mr-4 opacity-70">
+            <span class="pr-1">
+              © 2020
+            </span>
+            <a
+              href="http://www.forgerock.com"
+              target="_blank"
+              class="notranslate text-body">
+              ForgeRock, Inc
+            </a>
+          </div>
+          <div
+            v-if="version"
+            class="mr-4 opacity-70">
+            {{ $t('common.version', {version}) }}
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -83,10 +111,14 @@ export default {
         adminURL: 'www.company.com',
       }),
     },
+    version: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
-      toggled: null,
+      toggled: true,
       toggledMenuMobile: false,
       hideNav: true,
     };
@@ -147,14 +179,17 @@ export default {
   }
 }
 
-#app.fr-menu-hidden {
+#app.fr-navbar-hidden {
   .content {
     padding-left: 0;
+    height: 100%;
   }
 }
 
 #app {
   .content {
+    min-height: 100%;
+    position: relative;
     transition: padding-left 0.2s ease-out;
 
     @media (any-hover: hover) {
@@ -179,4 +214,35 @@ export default {
   }
 }
 
+#appContent {
+  height: 100%;
+
+  &.show-navbar {
+    padding-bottom: 124px;
+    height: calc(100% - 141px);
+  }
+
+  .container,
+  .container-fluid {
+    padding-left: 3.5rem;
+    padding-right: 3.5rem;
+  }
+}
+
+#appFooter {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  font-size: 0.875rem;
+}
+
+@media (min-width: 768px) {
+  #appFooter {
+    width: calc(100% - 4em);
+  }
+
+  .fr-menu-expanded #appFooter {
+    width: calc(100% - 15.25em);
+  }
+}
 </style>

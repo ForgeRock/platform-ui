@@ -121,17 +121,13 @@ hr {
   }
 }
 
-#app,
-#appContent {
-  height: 100%;
+// opacity
+.opacity-20 {
+  opacity: 0.2;
 }
 
-#appContent {
-  .container,
-  .container-fluid {
-    padding-left: 3.5rem;
-    padding-right: 3.5rem;
-  }
+.opacity-70 {
+  opacity: 0.7;
 }
 
 // Page transition

@@ -17,9 +17,9 @@
     "create": "Create",
     "date": "Date",
     "delete": "Delete",
-    "done": "Done",
     "description": "Description",
     "disabled": "Disabled",
+    "done": "Done",
     "edit": "Edit",
     "editName": "Edit Name",
     "end": "End",
@@ -45,16 +45,17 @@
     "search": "Search",
     "settings": "Settings",
     "show": "Show",
-    "signUp": "Sign Up",
     "signOut": "Sign Out",
+    "signUp": "Sign Up",
     "start": "Start",
     "submit": "Submit",
     "time": "Time",
     "typeToSearch": "Type to search",
     "update": "Update",
+    "version": "Version {version}",
     "view": "View",
-    "yes": "Yes",
     "waitingToConnect": "Waiting to connect...",
+    "yes": "Yes",
     "helpText": {
       "timeConstraint": "Assign role only during a selected time period.",
       "resetPassword": "Reset this user password."
@@ -108,6 +109,10 @@
       }
     },
     "status": "Status"
+  },
+  "navbar": {
+    "helpSupport": "Help & Support",
+    "docs": "Docs"
   },
   "routeNames": {
     "Applications": "Applications",
@@ -228,6 +233,7 @@
   },
   "errors": {
     "errorSaving": "Error saving list",
-    "errorCreating": "Error creating file"
+    "errorCreating": "Error creating file",
+    "couldNotRetrieveVersion": "There was an error retrieving version information."
   }
 }
