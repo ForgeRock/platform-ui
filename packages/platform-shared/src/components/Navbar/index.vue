@@ -5,8 +5,9 @@ or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
   <BNavbar
+    class="fr-main-navbar"
     :toggleable="true"
-    class="fr-main-navbar">
+    :sticky="true">
     <button
       v-show="!hideToggle"
       @click="toggleMenuMobile"
@@ -46,7 +47,7 @@ to such license between the licensee and ForgeRock AS. -->
           <a
             class="nav-link text-dark"
             href="#">
-            Help & Support
+            {{ $t('navbar.helpSupport') }}
           </a>
         </li>
         <li
@@ -56,7 +57,7 @@ to such license between the licensee and ForgeRock AS. -->
             class="nav-link text-dark"
             :href="docsLink"
             target="_blank">
-            Docs
+            {{ $t('navbar.docs') }}
           </a>
         </li>
       </div>

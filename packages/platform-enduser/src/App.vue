@@ -4,12 +4,13 @@ Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
-  <Layout
+  <FrLayout
     @logout="this.logoutUser"
     :menu-items="menuItems"
-    :user-details="userDetails">
+    :user-details="userDetails"
+    :version="version">
     <RouterView :key="this.$route.fullPath" />
-  </Layout>
+  </FrLayout>
 </template>
 
 <script>
@@ -19,16 +20,19 @@ import {
 } from 'lodash';
 import { mapState } from 'vuex';
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
-import Layout from '@forgerock/platform-shared/src/components/Layout';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+import FrLayout from '@forgerock/platform-shared/src/components/Layout';
+import { getIdmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
 import './scss/main.scss';
 
 export default {
   name: 'App',
   mixins: [
     LoginMixin,
+    NotificationMixin,
   ],
   components: {
-    Layout,
+    FrLayout,
   },
   data() {
     return {
@@ -41,9 +45,17 @@ export default {
         displayName: this.$t('sideMenu.profile'),
         icon: 'account_circle',
       }],
+      version: '',
     };
   },
   mounted() {
+    getIdmServerInfo().then((results) => {
+      if (results && results.data) {
+        this.version = results.data.productVersion;
+      }
+    }, (error) => {
+      this.showErrorMessage(error, this.$t('errors.couldNotRetrieveVersion'));
+    });
   },
   computed: {
     ...mapState({
