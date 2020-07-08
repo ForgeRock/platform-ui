@@ -159,9 +159,11 @@ hr {
 
 a.card {
   color: $gray-600;
+  transition-duration: 0.25s;
 
   &:hover {
     text-decoration: none;
+    border-color: $blue;
   }
 }
 
