@@ -7,7 +7,7 @@ to such license between the licensee and ForgeRock AS. -->
   <div
     class="text-center">
     <div
-      :class="[{ 'spinner-large': size === 'lg' }, { 'spinner-small': size === 'sm' }, 'spinner-border', 'text-primary']"
+      :class="[{ 'spinner-large': size === 'lg' }, { 'spinner-medium': size === 'md' }, { 'spinner-small': size === 'sm' }, 'spinner-border', 'text-primary']"
       role="status">
       <span class="sr-only">
         Loading...
@@ -37,6 +37,11 @@ export default {
 .spinner-large {
   width: 10rem;
   height: 10rem;
+}
+
+.spinner-medium {
+  width: 3rem;
+  height: 3rem;
 }
 
 .spinner-small {
