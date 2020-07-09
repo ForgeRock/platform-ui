@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 ForgeRock AS. All Rights Reserved
+ * Copyright 2019-2020 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS.
  * or with one of its affiliates. All use shall be exclusively subject
@@ -7,47 +7,50 @@
  */
 import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
-import Vuex from 'vuex';
 import Preferences from '@/components/profile/Preferences';
 import i18n from '@/i18n';
 
 const localVue = createLocalVue();
-localVue.use(Vuex);
 localVue.use(BootstrapVue);
 
 describe('Preferences.vue', () => {
-  let store;
+  const store = {
+    state: {
+      UserStore: {
+        preferences: {
+          updates: {},
+          marketing: {},
+        },
+        schema: {
+          properties: {
+            preferences: {
+              properties: {
+                marketing: {
+                  description: 'Send me special offers and services',
+                  type: true,
+                },
+                updates: {
+                  description: 'Send me news and updates',
+                  type: false,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  };
   let wrapper;
-  let loadData;
 
   beforeEach(() => {
-    store = new Vuex.Store({});
-    loadData = jest.fn();
-
     wrapper = shallowMount(Preferences, {
       localVue,
       store,
       i18n,
-      stubs: {
-        ToggleButton: true,
-      },
-
-      computed: {
-        currentPreferences: {},
-        properties: {},
-      },
-      methods: {
-        loadData,
+      mocks: {
+        $store: store,
       },
     });
-
-    wrapper.setData({
-      preferences: {
-        updates: { description: 'Send me news and updates', type: false },
-        marketing: { description: 'Send me special offers and services', type: true },
-      },
-    });
-    wrapper.vm.loadData = jest.fn();
   });
 
   it('Preferences page loaded', () => {
@@ -58,7 +61,6 @@ describe('Preferences.vue', () => {
   describe('#loadData', () => {
     it('should load the preferences data', () => {
       wrapper.vm.loadData();
-
       const { marketing, updates } = wrapper.vm.preferences;
 
       expect(marketing).toHaveProperty('description');
