@@ -1,8 +1,32 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Preferences.vue Preferences page loaded 1`] = `
-<frlistgroup-stub title="Preferences" subtitle="Set your communications preferences.">
-  <frlistitem-stub></frlistitem-stub>
-  <frlistitem-stub></frlistitem-stub>
-</frlistgroup-stub>
+<bcard-stub bodytag="div" titletag="h4" subtitletag="h6" subtitletextvariant="muted" headertag="div" footertag="div" tag="div" nobody="true">
+  <bcardheader-stub headertag="div" class="p-4">
+    <h4>Preferences</h4>
+    <p class="m-0">
+      Set your communications preferences.
+    </p>
+  </bcardheader-stub>
+  <bcardbody-stub bodytag="div" titletag="h4" subtitletag="h6" subtitletextvariant="muted" class="border-bottom">
+    <div class="d-inline-flex w-100">
+      <h5 class="align-self-center m-0">
+        Send me special offers and services
+      </h5>
+      <div class="ml-auto">
+        <frfield-stub failedpolicies="" field="[object Object]"></frfield-stub>
+      </div>
+    </div>
+  </bcardbody-stub>
+  <bcardbody-stub bodytag="div" titletag="h4" subtitletag="h6" subtitletextvariant="muted" class="border-bottom">
+    <div class="d-inline-flex w-100">
+      <h5 class="align-self-center m-0">
+        Send me news and updates
+      </h5>
+      <div class="ml-auto">
+        <frfield-stub failedpolicies="" field="[object Object]"></frfield-stub>
+      </div>
+    </div>
+  </bcardbody-stub>
+</bcard-stub>
 `;

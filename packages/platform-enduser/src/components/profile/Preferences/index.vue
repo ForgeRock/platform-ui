@@ -4,30 +4,32 @@ Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
-  <FrListGroup
-    :title="$t('pages.profile.preferences.title')"
-    :subtitle="$t('pages.profile.preferences.subtitle')">
-    <FrListItem
+  <BCard no-body>
+    <BCardHeader class="p-4">
+      <h4>{{ $t('pages.profile.preferences.title') }}</h4>
+      <p class="m-0">
+        {{ $t('pages.profile.preferences.subtitle') }}
+      </p>
+    </BCardHeader>
+    <BCardBody
       v-for="(obj, preference) in preferences"
+      class="border-bottom"
       :key="preference"
       :collapsible="false"
       :panel-shown="false">
-      <template v-slot:list-item-header>
-        <div class="d-inline-flex w-100">
-          <h6 class="align-self-center m-0">
-            {{ obj.description }}
-          </h6>
-
-          <div class="ml-auto">
-            <FrField
-              :field="obj"
-              :display-description="false"
-              @valueChange="savePreferences(preference, $event)" />
-          </div>
+      <div class="d-inline-flex w-100">
+        <h5 class="align-self-center m-0">
+          {{ obj.description }}
+        </h5>
+        <div class="ml-auto">
+          <FrField
+            :field="obj"
+            :display-description="false"
+            @valueChange="savePreferences(preference, $event)" />
         </div>
-      </template>
-    </FrListItem>
-  </FrListGroup>
+      </div>
+    </BCardBody>
+  </BCard>
 </template>
 
 <script>
@@ -35,20 +37,24 @@ import {
   cloneDeep,
   keys,
 } from 'lodash';
+import {
+  BCard,
+  BCardBody,
+  BCardHeader,
+} from 'bootstrap-vue';
 import { mapState } from 'vuex';
-import ListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
-import ListItem from '@forgerock/platform-shared/src/components/ListItem/';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 
 /**
- * @description Displays available user preferences, these are typically true/false values associated with a managed resource (e.g. Do you want to recieve marketing emails?).
- *
+ * @description Displays available user preferences, these are typically true/false values associated with a managed resource
+ * (e.g. Do you want to recieve marketing emails?).
  */
 export default {
   name: 'Preferences',
   components: {
-    FrListGroup: ListGroup,
-    FrListItem: ListItem,
+    BCard,
+    BCardBody,
+    BCardHeader,
     FrField,
   },
   data() {
@@ -69,7 +75,6 @@ export default {
     loadData() {
       const newKeys = keys(this.currentPreferences);
       const preferences = cloneDeep(this.properties);
-
       newKeys.forEach((key) => {
         preferences[key].value = this.currentPreferences[key];
       });
