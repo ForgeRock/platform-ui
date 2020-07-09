@@ -7,6 +7,7 @@
  */
 import Vue from 'vue';
 import Vuex from 'vuex';
+import { startsWith } from 'lodash';
 import User from './modules/User';
 import Application from './modules/Application';
 
@@ -37,6 +38,16 @@ export default new Vuex.Store({
     fullName: (state) => `${state.firstName} ${state.lastName}`,
   },
   mutations: {
+    setRealm(state, realm) {
+      if (startsWith(realm, '/')) {
+        state.realm = realm.substr(1);
+      } else {
+        state.realm = realm;
+      }
+      const url = new URL(window.location);
+      url.searchParams.set('realm', realm);
+      window.location = url;
+    },
     setUserId(state, id) {
       state.userId = id;
     },
@@ -107,6 +118,9 @@ export default new Vuex.Store({
     },
   },
   actions: {
+    setRealm(context, realm) {
+      context.commit('setRealm', realm);
+    },
     setUserId(context, id) {
       context.commit('setUserId', id);
     },

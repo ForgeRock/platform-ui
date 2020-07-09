@@ -54,7 +54,8 @@
       "errorDeletingResource": "There was an error deleting the requested resource.",
       "errorSavingRealm": "There was an error saving realm details",
       "errorDeletingRealm": "There was an error deleting a realm",
-      "errorGettingRealmAuthenticationConfig": "There was an error getting realm authentication config"
+      "errorGettingRealmAuthenticationConfig": "There was an error getting realm authentication config",
+      "errorSwitchingRealm": "There was an error switching realm"
     }
   },
   "journey": {
@@ -508,9 +509,15 @@
   "realm": {
     "title": "Realm",
     "saveRealm": "Save Realm",
+    "deleteRealm": "Delete Realm",
     "topLevelRealm": "Top Level Realm",
     "realmSettings": "Realm settings",
+    "switchLink": "Switch",
     "switchRealm": "Switch realm...",
+    "switchRealmModal": "Switch Realm",
+    "switchSuccessful": "Successfully switched realm to '{realmName}'",
+    "searchRealms": "Search realms...",
+    "searchRealmsNoMatch": "There are no realms available.",
     "newRealm": "New Realm",
     "realmSettings": "Realm Settings",
     "dnsAliases": "DNS Aliases (optional)",
@@ -518,6 +525,7 @@
     "useClientBasedSessions": "Use Client-based Sessions",
     "useClientBasedSessionsDescription": "Client-based sessions provide elastic scalability by storing all session state as a JWT in a cookie stored on the client. It is highly recommended to enable signing and encryption of the JWT in the global session service.",
     "successfullyCreated": "'{realmName}' realm successfully created",
+    "successfullyDeleted": "'{realmName}' realm successfully deleted",
     "successfullySaved": "'{realmName}' realm successfully saved",
     "typeToAddDnsAlias": "Type and press enter to add a DNS alias",
     "Status": "Status",
@@ -526,7 +534,7 @@
     "activate": "Activate",
     "deactivate": "Deactivate",
     "deactivateModalTitle": "Deactivate Realm?",
-    "deactivateModalText": "If you deactivate this realm users will be prevented signing in. Are you sure you want to deactivate this realm?",
+    "deactivateModalText": "If you deactivate this realm users will be prevented from signing in. Are you sure you want to deactivate this realm?",
     "deleteModalTitle": "Delete Realm?",
     "activeRealmMessage": "This is an active realm.",
     "deleteModalText1": "All configuration data will be lost if deleted. You can set the realm as inactive to prevent login but retain configuration data.",
