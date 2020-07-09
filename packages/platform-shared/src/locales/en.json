@@ -195,6 +195,11 @@
       "pageNotFound": "Page Not Found",
       "returnRoute": "Return to {returnRoute}",
       "couldNotFind": "We couldn't find the page you were looking for."
+      
+    },
+    "forbidden": {
+      "signOut": "Sign out",
+      "notAuthorized": "You are not authorized to view this site. Please sign out and try again"
     }
   },
   "queryFilterBuilder" : {
