@@ -3,127 +3,60 @@
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
-/* eslint-disable no-underscore-dangle */
 <template>
   <div>
-    <FrListGroup
-      :title="$t('pages.profile.accountControls.title')"
-      :subtitle="$t('pages.profile.accountControls.subtitle')">
-      <FrListItem
-        :collapsible="false"
-        :panel-shown="false"
-        :hover-item="true"
-        @row-click="downloadAccount">
-        <template v-slot:list-item-header>
-          <div class="d-inline-flex w-100">
-            <div class="flex-grow-1">
-              <div>
-                {{ $t('pages.profile.accountControls.downloadTitle') }}
-              </div>
-              <small class="text-muted subtext">
-                {{ $t('pages.profile.accountControls.downloadSubtitle') }}
-              </small>
-            </div>
-            <a
-              class="align-self-center flex-grow-2 text-right"
-              @click.prevent
-              href="#">
-              {{ $t('pages.profile.accountControls.downloadLink') }}
-            </a>
-          </div>
-        </template>
-      </FrListItem>
-      <FrListItem
-        :collapsible="false"
-        :panel-shown="false"
-        :hover-item="true"
-        v-b-modal.deleteAccountModal>
-        <template v-slot:list-item-header>
-          <div class="d-inline-flex w-100">
-            <div class="flex-grow-1">
-              <div>
-                {{ $t('pages.profile.accountControls.deleteTitle') }}
-              </div>
-              <small class="text-muted subtext">
-                {{ $t('pages.profile.accountControls.deleteSubtitle') }}
-              </small>
-            </div>
-            <a
-              class="align-self-center flex-grow-2 text-right"
-              @click.prevent
-              href="#">
-              {{ $t('pages.profile.accountControls.deleteAccount') }}
-            </a>
-          </div>
-        </template>
-      </FrListItem>
-    </FrListGroup>
-    <BModal
-      id="deleteAccountModal"
-      modal-class="fr-full-screen"
-      ref="deleteModal"
-      cancel-variant="outline-secondary">
-      <template v-slot:modal-header>
-        <div class="d-flex w-100 h-100">
-          <h5 class="modal-title align-self-center text-center">
-            {{ $t('pages.profile.accountControls.deleteModalTitle') }}
-          </h5>
-          <button
-            type="button"
-            aria-label="Close"
-            class="close"
-            @click="hideModal">
-            <i class="material-icons-outlined font-weight-bolder md-24">
-              close
-            </i>
-          </button>
+    <FrAccordion
+      accordion-group="social"
+      :items="items">
+      <template #accordionHeader>
+        <div class="p-4">
+          <h4>
+            {{ $t('pages.profile.accountControls.title') }}
+          </h4>
+          <p class="m-0">
+            {{ $t('pages.profile.accountControls.subtitle') }}
+          </p>
         </div>
       </template>
-
-      <BContainer>
-        <h1 class="mb-4">
-          {{ $t('pages.profile.accountControls.deleteModalHeader') }}
-        </h1>
+      <template #header="slotData">
+        <h5 class="mb-0">
+          {{ slotData.header }}
+        </h5>
+      </template>
+      <template #body="slotData">
         <p>
-          {{ $t('pages.profile.accountControls.deleteModalDetails') }}
+          {{ slotData.description }}
         </p>
-        <hr>
-        <p>
-          {{ $t('pages.profile.accountControls.deleteModalDownload1') }} <a
-            @click.prevent="downloadAccount"
-            href="#">
-            {{ $t('pages.profile.accountControls.deleteModalDownload2') }}
-          </a> {{ $t('pages.profile.accountControls.deleteModalDownload3') }}
-        </p>
-        <hr>
-        <h5>{{ $t('pages.profile.accountControls.deleteModalContentList') }}</h5>
-        <ul>
-          <li>{{ $t('pages.profile.accountControls.deleteModalContentListItem') }}</li>
-        </ul>
-        <div class="custom-control custom-checkbox">
-          <input
-            type="checkbox"
-            v-model="confirmDelete"
-            class="custom-control-input"
-            id="confirmDeleteCheck">
-          <label
-            class="custom-control-label"
-            for="confirmDeleteCheck">
-            {{ $t('pages.profile.accountControls.deleteModalAcceptMessage') }}
-          </label>
-        </div>
-      </BContainer>
-
+        <BButton
+          block
+          :variant="slotData.buttonVariant"
+          @click="slotData.buttonMethod">
+          <i class="material-icons-outlined mr-2">
+            {{ slotData.buttonIcon }}
+          </i>
+          {{ slotData.buttonText }}
+        </BButton>
+      </template>
+    </FrAccordion>
+    <BModal
+      dialog-class="fr-modal"
+      id="deleteModal"
+      :title="$t('pages.profile.accountControls.deleteModalTitle')">
+      {{ $t('pages.profile.accountControls.deleteModalBody') }}
+      <strong>
+        {{ $t('pages.profile.accountControls.deleteModalWarning') }}
+      </strong>
       <template v-slot:modal-footer="{ cancel }">
         <BButton
-          variant="outline-secondary mr-2"
+          variant="link"
+          class="text-danger"
           @click="cancel()">
           {{ $t('common.cancel') }}
         </BButton>
         <BButton
-          :disabled="!confirmDelete"
+          type="button"
           variant="danger"
-          @click="deleteAccount">
+          @click="deleteAccount()">
           {{ $t('pages.profile.accountControls.deleteModalButton') }}
         </BButton>
       </template>
@@ -133,23 +66,19 @@ to such license between the licensee and ForgeRock AS. -->
 
 <script>
 import {
+  BModal,
+} from 'bootstrap-vue';
+import {
   each,
   isNull,
 } from 'lodash';
-import ListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
-import ListItem from '@forgerock/platform-shared/src/components/ListItem/';
+import { mapState } from 'vuex';
+import Accordion from '@forgerock/platform-shared/src/components/Accordion';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 
-/**
- * @description Handles displaying basic account controls (delete and download).
- *
- * @fires DELETE resource/name/id (e.g. managed/user/fakeid) - Deletes specific resource record
- * @fires GET resource/name/id?_fields=*,idps/*,_meta/createDate,_meta/lastChanged,_meta/termsAccepted,_meta/loginCount (e.g. managed/user/fakeid) - Gets JSON data on a resource including certain meta data,
- * this is used to generate a downloadable file.
- *
- */
+/* eslint-disable no-underscore-dangle */
 export default {
   name: 'AccountControls',
   mixins: [
@@ -158,33 +87,40 @@ export default {
     LoginMixin,
   ],
   components: {
-    FrListGroup: ListGroup,
-    FrListItem: ListItem,
+    BModal,
+    FrAccordion: Accordion,
   },
   data() {
     return {
-      confirmDelete: false,
+      items: [
+        {
+          name: 'download',
+          header: this.$t('pages.profile.accountControls.downloadTitle'),
+          description: this.$t('pages.profile.accountControls.downloadSubtitle'),
+          buttonText: this.$t('pages.profile.accountControls.downloadLink'),
+          buttonIcon: 'download',
+          buttonVariant: 'primary',
+          buttonMethod: this.downloadAccount,
+        },
+        {
+          name: 'delete',
+          header: this.$t('pages.profile.accountControls.deleteTitle'),
+          description: this.$t('pages.profile.accountControls.deleteSubtitle'),
+          buttonText: this.$t('pages.profile.accountControls.deleteTitle'),
+          buttonIcon: 'delete',
+          buttonVariant: 'danger',
+          buttonMethod: this.showDeleteModal,
+        },
+      ],
     };
   },
   computed: {
-    userId() {
-      return this.$store.state.UserStore.userId;
-    },
-    managedResource() {
-      return this.$store.state.UserStore.managedResource;
-    },
+    ...mapState({
+      userId: (state) => state.UserStore.userId,
+      managedResource: (state) => state.UserStore.managedResource,
+    }),
   },
-  mounted() {},
   methods: {
-    deleteAccount() {
-      const selfServiceInstance = this.getRequestService();
-
-      selfServiceInstance.delete(`/${this.managedResource}/${this.userId}`).then(() => {
-        this.$refs.deleteModal.hide();
-        this.displayNotification('IDMMessages', 'success', this.$t('pages.profile.accountControls.deleteAccountSuccessful'));
-        this.logoutUser();
-      });
-    },
     downloadAccount() {
       const selfServiceInstance = this.getRequestService();
 
@@ -192,8 +128,6 @@ export default {
       selfServiceInstance.get(`/${this.managedResource}/${this.userId}?_fields=*,idps/*,_meta/createDate,_meta/lastChanged,_meta/termsAccepted,_meta/loginCount`, []).then((result) => {
         const downloadName = '';
 
-        /* eslint no-underscore-dangle: ["error", { "allow": ["_meta", "_rev"] }] */
-        /* eslint no-param-reassign: ["error", { "ignorePropertyModificationsFor": ["result", "idp"] }] */
         if (result.data._meta) {
           each(result._meta, (value, key) => {
             if (key.match('_')) {
@@ -231,8 +165,17 @@ export default {
         a.dispatchEvent(e);
       });
     },
-    hideModal() {
-      this.$refs.deleteModal.hide();
+    showDeleteModal() {
+      this.$bvModal.show('deleteModal');
+    },
+    deleteAccount() {
+      const selfServiceInstance = this.getRequestService();
+
+      selfServiceInstance.delete(`/${this.managedResource}/${this.userId}`).then(() => {
+        this.$bvModal.hide('deleteModal');
+        this.displayNotification('IDMMessages', 'success', this.$t('pages.profile.accountControls.deleteAccountSuccessful'));
+        this.logoutUser();
+      });
     },
   },
 };
