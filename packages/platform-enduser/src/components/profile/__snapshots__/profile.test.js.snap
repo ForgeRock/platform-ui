@@ -18,40 +18,10 @@ exports[`Profile.vue Profile page loaded 1`] = `
     </bcol-stub>
     <bcol-stub lg="8" tag="div">
       <!---->
+      <frtrusteddevices-stub></frtrusteddevices-stub>
       <!---->
       <!---->
-      <!---->
-      <div>
-        <frlistgroup-stub title="Account Controls" subtitle="Download your account data or delete your account.">
-          <frlistitem-stub hoveritem="true"></frlistitem-stub>
-          <frlistitem-stub hoveritem="true" role="button" tabindex="0"></frlistitem-stub>
-        </frlistgroup-stub>
-        <bmodal-stub id="deleteAccountModal" size="md" ignoreenforcefocusselector="" title="" titletag="h5" modalclass="fr-full-screen" headerclosecontent="&amp;times;" headercloselabel="Close" canceltitle="Cancel" oktitle="OK" cancelvariant="outline-secondary" okvariant="primary">
-          <bcontainer-stub tag="div">
-            <h1 class="mb-4">
-              Please read this carefully.
-            </h1>
-            <p>
-              You're trying to delete your account, which provides access to various services. You'll
-              no longer be able to use any of those services, and your account and data will be lost.
-            </p>
-            <hr>
-            <p>
-              You can <a href="#">
-                download your data
-              </a> before deleting your account.
-            </p>
-            <hr>
-            <h5>The following content will be deleted.</h5>
-            <ul>
-              <li>Access to your profile</li>
-            </ul>
-            <div class="custom-control custom-checkbox"><input type="checkbox" id="confirmDeleteCheck" class="custom-control-input"> <label for="confirmDeleteCheck" class="custom-control-label">
-                Yes, I want to permanently delete my account
-              </label></div>
-          </bcontainer-stub>
-        </bmodal-stub>
-      </div>
+      <fraccountcontrols-stub class="mb-5"></fraccountcontrols-stub>
     </bcol-stub>
   </brow-stub>
 </bcontainer-stub>

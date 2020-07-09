@@ -7,29 +7,30 @@
  */
 import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
-import { ValidationProvider, ValidationObserver } from 'vee-validate';
 import _ from 'lodash';
-import Vuex from 'vuex';
 import i18n from '@/i18n';
 import EditPersonalInfo from '@/components/profile/EditPersonalInfo';
 
 const localVue = createLocalVue();
-localVue.use(Vuex);
 localVue.use(BootstrapVue);
 
 describe('EditPersonalInfo.vue', () => {
-  const store = new Vuex.Store({});
-
   let wrapper;
-
+  const store = {
+    state: {
+      UserStore: {
+        userId: '1234',
+        managedResource: {},
+        internalUser: true,
+      },
+    },
+  };
   beforeEach(() => {
     wrapper = shallowMount(EditPersonalInfo, {
       localVue,
       i18n,
-      store,
-      stubs: {
-        ValidationProvider,
-        ValidationObserver,
+      mocks: {
+        $store: store,
       },
       propsData: {
         schema: {
@@ -45,11 +46,6 @@ describe('EditPersonalInfo.vue', () => {
           required: [],
         },
         profile: { test: 'test' },
-      },
-      computed: {
-        userId: '1234',
-        managedResource: {},
-        internalUser: true,
       },
     });
 

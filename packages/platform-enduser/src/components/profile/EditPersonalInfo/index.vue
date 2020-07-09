@@ -6,12 +6,11 @@ to such license between the licensee and ForgeRock AS. -->
 <template>
   <BModal
     id="userDetailsModal"
-    modal-class="fr-full-screen"
     ref="fsModal"
     cancel-variant="outline-secondary"
     @show="setModal"
     @keydown.enter.native.prevent="saveForm">
-    <template v-slot:modal-header>
+    <template #modal-header>
       <div class="d-flex w-100 h-100">
         <h5 class="modal-title align-self-center text-center">
           {{ title }}
@@ -27,44 +26,31 @@ to such license between the licensee and ForgeRock AS. -->
         </button>
       </div>
     </template>
-
     <!-- Editing profile currently only supports String, Number and Boolean-->
     <BContainer>
       <BRow>
-        <BCol
-          sm="8"
-          offset-sm="2">
-          <BForm
-            style="flex-direction: column;"
-            v-if="formFields.length > 0"
-            class="mb-3 fr-edit-personal-form"
-            name="edit-personal-form">
-            <ValidationObserver
-              ref="observer"
-              v-slot:default>
-              <template v-for="(field, index) in formFields">
-                <BFormGroup
-                  style="min-width: 200px;"
-                  :key="index"
-                  v-if="field.type === 'string' || field.type === 'number' || field.type === 'boolean'">
-                  <FrField
-                    :field="field"
-                    :prepend-title="true" />
-                </BFormGroup>
-              </template>
-            </ValidationObserver>
-          </BForm>
-          <template v-else>
-            <h3 class="text-center">
-              {{ $t('pages.profile.editProfile.noFields') }}
-            </h3>
+        <ValidationObserver
+          v-if="formFields.length > 0"
+          ref="observer"
+          class="w-100">
+          <template v-for="(field, index) in formFields">
+            <BFormGroup
+              :key="index"
+              v-if="field.type === 'string' || field.type === 'number' || field.type === 'boolean'">
+              <FrField :field="field" />
+            </BFormGroup>
           </template>
-        </BCol>
+        </ValidationObserver>
+        <h3
+          v-else
+          class="text-center">
+          {{ $t('pages.profile.editProfile.noFields') }}
+        </h3>
       </BRow>
     </BContainer>
-    <template v-slot:modal-footer="{ cancel }">
+    <template #modal-footer="{ cancel }">
       <BButton
-        variant="outline-secondary mr-2"
+        variant="link mr-2"
         @click="cancel()">
         {{ $t('common.cancel') }}
       </BButton>
@@ -72,7 +58,7 @@ to such license between the licensee and ForgeRock AS. -->
         variant="primary"
         :disabled="internalUser"
         @click="saveForm">
-        {{ $t('common.saveChanges') }}
+        {{ $t('common.save') }}
       </BButton>
     </template>
   </BModal>
@@ -114,9 +100,19 @@ export default {
     }),
   },
   props: {
-    schema: { type: Object, required: true },
-    profile: { type: Object, required: true },
-    autoOpen: { type: Boolean, required: false, default: false },
+    schema: {
+      type: Object,
+      required: true,
+    },
+    profile: {
+      type: Object,
+      required: true,
+    },
+    autoOpen: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   data() {
     return {

@@ -8,27 +8,36 @@
 import { first } from 'lodash';
 import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
+import {
+  ValidationObserver,
+  ValidationProvider,
+} from 'vee-validate';
 import EditKBA from '@/components/profile/EditKBA';
 import i18n from '@/i18n';
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue);
+localVue.component('ValidationProvider', ValidationProvider);
+localVue.component('ValidationObserver', ValidationObserver);
 
 describe('EditKBA.vue', () => {
   let wrapper;
-  beforeEach(() => {
-    jest.spyOn(EditKBA, 'mounted')
-      .mockImplementation(() => { });
-  });
-
-  afterEach(() => {
-    wrapper = null;
-  });
+  const kbaData = {
+    kbaPropertyName: 'kbaInfo',
+    minimumAnswersToDefine: 1,
+    minimumAnswersToVerify: 1,
+    questions: {
+      1: { en: 'Question1?' },
+    },
+  };
 
   it('AccountSecurity page loaded', () => {
     wrapper = shallowMount(EditKBA, {
       localVue,
       i18n,
+      propsData: {
+        kbaData,
+      },
     });
 
     expect(wrapper.name()).toBe('EditKBA');
@@ -40,11 +49,14 @@ describe('EditKBA.vue', () => {
       wrapper = shallowMount(EditKBA, {
         localVue,
         i18n,
+        propsData: {
+          kbaData,
+        },
       });
     });
 
     it('should correctly generate patches for custom questions', () => {
-      wrapper.setData({ kbaChoices: [{ customQuestion: { value: 'test' }, answer: { value: 'test answer' } }] });
+      wrapper.setData({ kbaChoices: [{ customQuestion: { value: 'test' }, answer: { value: 'test answer' }, selected: { value: 'test' } }] });
 
       const patch = wrapper.vm.generatePatch();
 

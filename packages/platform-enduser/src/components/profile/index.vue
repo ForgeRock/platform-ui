@@ -11,7 +11,7 @@ to such license between the licensee and ForgeRock AS. -->
         lg="4">
         <BCard class="text-center mb-4">
           <BImg
-            :src="require('@/assets/images/profile-default.png')"
+            :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"
             rounded="circle"
             width="112"
             height="112"
@@ -43,19 +43,22 @@ to such license between the licensee and ForgeRock AS. -->
       </BCol>
       <BCol lg="8">
         <FrAccountSecurity
+          class="mb-5"
           v-if="internalUser === false"
           @updateKBA="updateKBA" />
         <!-- TODO we need to update these to not rely on the old way of getting AM data endpoints -->
         <!-- <FrAuthorizedApplications v-if="amDataEndpoints && internalUser === false" /> -->
         <FrTrustedDevices />
         <FrPreferences
+          class="mb-5"
           v-if="internalUser === false"
           @updateProfile="updateProfile" />
         <FrConsent
+          class="mb-5"
           v-if="internalUser === false"
           :consented-mappings="profile.consentedMappings"
           @updateProfile="updateProfile" />
-        <FrAccountControls />
+        <FrAccountControls class="mb-5" />
       </BCol>
     </BRow>
   </BContainer>
@@ -66,6 +69,12 @@ import { startCase } from 'lodash';
 import { mapState } from 'vuex';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+import AccountControls from '@/components/profile/AccountControls';
+import AccountSecurity from '@/components/profile/AccountSecurity';
+import EditPersonalInfo from '@/components/profile/EditPersonalInfo';
+import Preferences from '@/components/profile/Preferences';
+import TrustedDevices from '@/components/profile/TrustedDevices';
+import Consent from '@/components/profile/Consent';
 /**
  * @description Controlling component for profile management
  *
@@ -98,13 +107,13 @@ export default {
     };
   },
   components: {
-    FrAccountControls: () => import('@/components/profile/AccountControls'),
-    FrAccountSecurity: () => import('@/components/profile/AccountSecurity'),
-    FrEditPersonalInfo: () => import('@/components/profile/EditPersonalInfo'),
-    FrPreferences: () => import('@/components/profile/Preferences'),
-    FrTrustedDevices: () => import('@/components/profile/TrustedDevices'),
+    FrAccountControls: AccountControls,
+    FrAccountSecurity: AccountSecurity,
+    FrEditPersonalInfo: EditPersonalInfo,
+    FrPreferences: Preferences,
+    FrTrustedDevices: TrustedDevices,
     // FrAuthorizedApplications: () => import('@/components/profile/AuthorizedApplications'),
-    FrConsent: () => import('@/components/profile/Consent'),
+    FrConsent: Consent,
   },
   computed: {
     ...mapState({
@@ -175,8 +184,3 @@ export default {
   },
 };
 </script>
-<style type="scss" scoped>
-/deep/ .nav-tabs {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
-}
-</style>
