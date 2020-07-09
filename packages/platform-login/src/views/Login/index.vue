@@ -497,15 +497,27 @@ export default {
       }
     },
     /**
+     * Determine if there is a gotoOnFail parameter. if it exists - verify and redirect to that url or hash
      * Redirect to failureUrl when it exists, and displays login failure message if not
      *
      * @param {Object} step - callback metadata containing url of failure
      */
     redirectToFailure(step) {
-      if (has(step, 'payload.detail.failureUrl') && step.payload.detail.failureUrl.length) {
-        window.location.href = step.payload.detail.failureUrl;
-      }
-      this.loginFailure = true;
+      const urlParams = new URLSearchParams(window.location.search);
+      const gotoOnFail = urlParams.get('gotoOnFail');
+      this.verifyGotoUrlAndRedirect(gotoOnFail, false)
+        .then((res) => {
+          if (res && res.length) {
+            window.location.href = res;
+          } else if (has(step, 'payload.detail.failureUrl') && step.payload.detail.failureUrl.length) {
+            window.location.href = step.payload.detail.failureUrl;
+          }
+          this.loginFailure = true;
+        })
+        .catch((error) => {
+          this.displayNotification('IDMMessages', 'error', error.response.data.message);
+          this.loginFailure = true;
+        });
     },
     reloadTree(event) {
       event.preventDefault();
