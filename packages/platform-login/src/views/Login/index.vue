@@ -576,5 +576,11 @@ export default {
   > div {
     margin-bottom: 1rem;
   }
+
+  .hide-polling-spinner ~ .polling-spinner-container {
+    .polling-spinner {
+      display: none;
+    }
+  }
 }
 </style>
