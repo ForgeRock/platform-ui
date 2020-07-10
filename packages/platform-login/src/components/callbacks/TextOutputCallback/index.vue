@@ -5,7 +5,7 @@ or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
   <div
-    class="row mb-2"
+    :class="[{'hide-polling-spinner': hideSpinner }, 'row', 'mb-2']"
     ref="textOutputPanel">
     <div
       v-if="messageType === 'INFORMATION'"
@@ -52,6 +52,14 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      message: this.callback.getMessage(),
+      messageType: '',
+      qrCodeHtml: '',
+      hideSpinner: false,
+    };
+  },
   mounted() {
     const self = this;
     window.QRCodeReader = {
@@ -89,14 +97,8 @@ export default {
 
       // 3 is the size of the painted squares, 8 is the white border around the edge
       this.qrCodeHtml = qr.createImgTag(3, 8);
+      this.hideSpinner = true;
     },
-  },
-  data() {
-    return {
-      message: this.callback.getMessage(),
-      messageType: '',
-      qrCodeHtml: '',
-    };
   },
 };
 </script>
