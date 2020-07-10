@@ -1,9 +1,9 @@
 <template>
   <div
-    class="row justify-content-center">
+    class="polling-spinner-container row justify-content-center">
     <FrSpinner
-      label="Spinning"
-      class="mb-4" />
+      class="polling-spinner mb-4"
+      label="Spinning" />
     <div class="text-center text-muted w-100">
       {{ message }}
     </div>
