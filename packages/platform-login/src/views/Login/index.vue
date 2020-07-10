@@ -79,7 +79,7 @@ import {
   BButton,
 } from 'bootstrap-vue';
 import {
-  FRAuth, FRStep, FRWebAuthn, Config,
+  FRAuth, FRStep, FRWebAuthn,
 } from '@forgerock/javascript-sdk';
 import Vue from 'vue';
 import FrCenterCard from '@/components/utils/CenterCard';
@@ -136,12 +136,6 @@ export default {
   },
   mounted() {
     this.evaluateUrlParams();
-
-    // configure FRAuth
-    Config.set({
-      serverConfig: { baseUrl: `${process.env.VUE_APP_AM_URL}/` },
-      tree: this.authIndexValue || this.$route.params.tree || undefined,
-    });
 
     this.nextStep();
   },
@@ -232,7 +226,7 @@ export default {
       });
     },
     getStepParams() {
-      const stepParams = { query: {} };
+      const stepParams = { query: {}, tree: this.authIndexValue || this.$route.params.tree || undefined };
       if (this.suspendedId) {
         stepParams.query.suspendedId = this.suspendedId;
       } else {
