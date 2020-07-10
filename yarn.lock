@@ -1179,6 +1179,11 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.5.tgz#8eed982e2ee6f7f4e44c253e12962980791efd46"
   integrity sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==
 
+"@forgerock/javascript-sdk@2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@forgerock/javascript-sdk/-/javascript-sdk-2.0.0.tgz#7c72492d689cac1c64b09bdeb67c7ab729463408"
+  integrity sha512-7bJZUYuKLpAAZxAo5ahGpkOIy2mC5VA9HSA5r31eOSVYsB3N9CNmg1PPThZExOa9sYc4QCbCkcrWyPZbXYWZVw==
+
 "@forgerock/javascript-sdk@2.0.0-beta1":
   version "2.0.0-beta1"
   resolved "https://registry.yarnpkg.com/@forgerock/javascript-sdk/-/javascript-sdk-2.0.0-beta1.tgz#f254abc7b90c9ce1c2622976891777d81e6a9b38"
@@ -11599,11 +11604,6 @@ normalize-package-data@^2.3.2, normalize-package-data@^2.3.4, normalize-package-
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/normalize-package-data/-/normalize-package-data-2.5.0.tgz#e66db1838b200c1dfc233225d12cb36520e234a8"
   integrity sha512-/5CMN3T0R4XTj4DcGaexo+roZSdSFW/0AOOTROrjxzCG1wrWXEsGbRKevjlIL+ZDE4sZlJr5ED4YW0yqmkK+eA==
-  dependencies:
-    hosted-git-info "^2.1.4"
-    resolve "^1.10.0"
-    semver "2 || 3 || 4 || 5"
-    validate-npm-package-license "^3.0.1"
 
 normalize-path@^1.0.0:
   version "1.0.0"

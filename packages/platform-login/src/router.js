@@ -18,6 +18,10 @@ export default new Router({
       component: () => import('@/views/Login'),
     },
     {
+      path: '/logout',
+      name: 'logout',
+    },
+    {
       path: '/service/:tree',
       name: 'service',
       component: () => import('@/views/Login'),
