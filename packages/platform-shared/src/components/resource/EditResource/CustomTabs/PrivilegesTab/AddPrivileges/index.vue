@@ -38,7 +38,7 @@ to such license between the licensee and ForgeRock AS. -->
               <i class="material-icons-outlined mr-3">
                 {{ option.icon || 'settings_system_daydream' }}
               </i>
-              {{ option.text }}
+              {{ (option.text ? (option.text) : '') | PluralizeFilter }}
               <small class="text-monospace text-muted ml-1">
                 {{ option.value }}
               </small>

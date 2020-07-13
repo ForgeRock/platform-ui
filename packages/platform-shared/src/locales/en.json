@@ -40,6 +40,7 @@
     "on": "On",
     "onMobileDevice": "On a mobile device?",
     "optional": "optional",
+    "optionalFieldTitle": "{fieldTitle} (optional)",
     "previous": "Previous",
     "remove": "Remove",
     "required": "Required",

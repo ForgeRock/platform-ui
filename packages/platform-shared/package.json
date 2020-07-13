@@ -185,6 +185,7 @@
         "indeterminate",
         "last-child",
         "last-of-type",
+        "first-of-type",
         "not",
         "nth-last-child"
       ],

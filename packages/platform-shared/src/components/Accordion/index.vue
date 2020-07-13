@@ -17,7 +17,8 @@ to such license between the licensee and ForgeRock AS. -->
         :class="padding(key, data.open$)"
         :key="key"
         no-body
-        role="tab">
+        role="tab"
+        @click="$emit('section-expanded', {key, data})">
         <BCardHeader
           class="pr-4 border-0 position-relative"
           role="tab"
@@ -118,12 +119,24 @@ export default {
 
 <style lang="scss">
 .accordion {
-  > .card {
+  > .card:not(:first-of-type) {
     transition: margin 0.25s ease-in-out;
 
     > .card-header::after {
       top: 1.875rem;
       font-size: 1.25rem;
+    }
+
+    > .card-header {
+      cursor: pointer;
+
+      &.collapsed:hover {
+        background-color: $gray-100;
+      }
+    }
+
+    .card-header:not([aria-expanded='true']):not([aria-expanded='false'])::after {
+      display: none;
     }
   }
 
