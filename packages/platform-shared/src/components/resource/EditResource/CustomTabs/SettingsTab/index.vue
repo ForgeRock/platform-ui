@@ -41,6 +41,7 @@ to such license between the licensee and ForgeRock AS. -->
         <template v-if="showForm">
           <template v-if="editProperty.isConditional">
             <FrQueryFilterBuilder
+              @change="queryFilterChange"
               :disabled="properties.condition.disabled"
               :query-filter-string="editProperty.value"
               :resource-name="resourceName"
