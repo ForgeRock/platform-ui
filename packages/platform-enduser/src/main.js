@@ -61,6 +61,11 @@ router.beforeEach((to, from, next) => {
       });
 
       authInstance.post('/authentication?_action=login').then((userDetails) => {
+        if (userDetails.data.authorization.id === 'openidm-admin') {
+          // amadmin/openidm-admin don't need access to end user,
+          // so send them back to the admin to avoid problems.
+          window.location.href = process.env.VUE_APP_ADMIN_URL;
+        }
         store.commit('UserStore/setUserIdAction', userDetails.data.authorization.id);
         store.commit('UserStore/setManagedResourceAction', userDetails.data.authorization.component);
         store.commit('UserStore/setRolesAction', userDetails.data.authorization.roles);

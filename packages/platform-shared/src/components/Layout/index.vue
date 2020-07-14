@@ -20,6 +20,7 @@ to such license between the licensee and ForgeRock AS. -->
       :user-details="userDetails"
       :menu-items="menuItems"
       :enduser-link="$store.state.enduserURL"
+      :show-enduser-link="!userDetails.adminUser"
       v-show="!hideNav" />
     <div class="content">
       <FrNavBar
