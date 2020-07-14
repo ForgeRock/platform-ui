@@ -358,7 +358,7 @@ export default {
       }
     },
     /**
-     * Uses eval api to validate that current filter works
+     * Uses util/validateQueryFilter api to validate that current filter works
      *
      * @property {String} filterSting - Query filter in string form
      *
@@ -366,15 +366,8 @@ export default {
      */
     validateFilter(filterString) {
       const idmInstance = this.getRequestService();
-      const payload = {
-        type: 'text/javascript',
-        source:
-          'org.forgerock.json.resource.QueryFilters.parse(queryFilter).accept(new org.forgerock.util.query.MapFilterVisitor(), null);',
-        globals: {
-          queryFilter: filterString,
-        },
-      };
-      return idmInstance.post('/script?_action=eval', payload).then((query) => query.data, () => false);
+      const payload = { _queryFilter: filterString };
+      return idmInstance.post('/util/validateQueryFilter?_action=validate', payload).then((query) => query.data, () => false);
     },
     /**
      * Walks through each layer of query filter object, removing excess parenthesis, and
