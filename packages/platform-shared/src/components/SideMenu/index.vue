@@ -102,7 +102,7 @@ to such license between the licensee and ForgeRock AS. -->
                 </template>
               </BMedia>
             </BDropdownItem>
-            <BDropdownDivider />
+            <BDropdownDivider v-if="showEnduserLink" />
             <BDropdownItem
               class="mb-2"
               @click="$emit('logout')">
