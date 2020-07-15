@@ -34,12 +34,17 @@ of the MIT license. See the LICENSE file for details.
 
 <script>
 /* eslint-disable no-underscore-dangle */
-import { get, isNull } from 'lodash';
 import styles from '@forgerock/platform-shared/src/scss/main.scss';
 import { ClipLoader } from 'vue-spinner/dist/vue-spinner.min';
 import GenericTask from './GenericTask';
 
 /**
+* @description Dashboard widget that displays the specific details of a task
+*
+* */
+
+/**
+* @description Dashboard widget that displays the specific details of a task
 * @description Dashboard widget that displays the specific details of a task
 *
 * */
@@ -50,44 +55,33 @@ export default {
       type: Object,
       default: () => {},
     },
+    shown: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
+    let temporaryProcessInstance = null;
+
+    if (this.taskInstance.process && this.taskInstance.process.processDefinition) {
+      temporaryProcessInstance = this.taskInstance.process.processDefinition;
+    }
+
     return {
       loadingColor: styles.baseColor,
+      processDefinition: temporaryProcessInstance,
     };
   },
   components: {
-    ClipLoader,
+    'clip-loader': ClipLoader,
     GenericTask,
   },
   computed: {
-    process() {
-      return this.taskInstance.process;
-    },
-    processDefinition() {
-      if (this.process.processDefinition === null) {
-        this.$emit('loadProcess', this.process);
-      }
-      return this.process.processDefinition;
-    },
-    formProperties() {
-      return this.processDefinition ? this.processDefinition.formProperties : [];
-    },
-    task() {
-      return this.taskInstance.task;
-    },
-    taskDetails() {
-      // eslint-disable-next-line no-underscore-dangle
-      return this.formProperties.reduce((acc, property) => acc.concat({ _id: property._id, name: property.name, value: this.task.variables[property._id] }), []);
-    },
-    variables() {
-      return get(this, 'task.variables');
-    },
     taskForm() {
-      const { formGenerationTemplate } = this.task.taskDefinition;
-      const initializeForm = formGenerationTemplate ? Function(`return ${formGenerationTemplate}`) : null // eslint-disable-line
+      const { formGenerationTemplate } = this.taskInstance.task.taskDefinition;
+                    const initializeForm = formGenerationTemplate ? Function(`return ${formGenerationTemplate}`) : null // eslint-disable-line
 
-      if (!isNull(initializeForm)) {
+      if (initializeForm !== null) {
         return initializeForm();
       }
       return null;
@@ -95,10 +89,19 @@ export default {
   },
   methods: {
     submit(formData) {
-      this.$emit('completeTask', { id: this.task._id, formData });
+      this.$emit('completeTask', { id: this.taskInstance.task._id, formData });
     },
     cancel() {
-      this.$emit('cancel', this.task._id);
+      this.$emit('cancel', this.taskInstance.task._id);
+    },
+  },
+  watch: {
+    shown(val) {
+      if (val && this.processDefinition === null) {
+        this.getRequestService().get(`/workflow/processdefinition/${this.taskInstance.task.processDefinitionId}`).then((processDetails) => {
+          this.processDefinition = processDetails.data;
+        });
+      }
     },
   },
 };

@@ -34,21 +34,21 @@ of the MIT license. See the LICENSE file for details.
         </div>
         <div class="form-group row">
           <div class="col-sm-2 col-form-label">
-            Details
+            {{ $t('pages.workflow.details') }}}
           </div>
           <div class="col-sm-10">
             <BCard>
               <dl class="row m-0">
                 <template v-for="(detail, index) in taskDetails">
                   <dt
-                    :key="`taskname-${index}`"
+                    :key="`taskname-${index}-${uniqueId}`"
                     class="col-6">
                     {{ detail.name }}
                   </dt>
                   <dd
-                    :key="`taskvalue-${index}`"
+                    :key="`taskvalue-${index}-${uniqueId}`"
                     class="col-6">
-                    {{ detail.value }}
+                    {{ detail.value || $t('pages.workflow.notAvailable') }}
                   </dd>
                 </template>
               </dl>
@@ -75,47 +75,28 @@ export default {
       type: Object,
       default: () => {},
     },
+    shown: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
+      taskDetailsList: [],
       workflowService: null,
       selected: this.$store.UserStore.state.userName,
+      uniqueId: null,
     };
   },
+  mounted() {
+    this.uniqueId = this._uid;
+  },
   computed: {
-    process() {
-      return this.taskDefinition.process;
-    },
-    processDefinition() {
-      if (this.process.processDefinition === null) {
-        this.$emit('loadProcess', this.process);
-      }
-      return this.process.processDefinition;
-    },
-    formProperties() {
-      if (this.processDefinition && this.processDefinition.formProperties) {
-        return this.processDefinition.formProperties;
-      }
-      return [];
-    },
-    task() {
-      return this.taskDefinition.task;
-    },
-    id() {
-      return this.task._id;
-    },
-    taskDetails() {
-      if (this.formProperties) {
-        // TODO Destructure or just imrpove the readability of this line
-        return this.formProperties.reduce((acc, property) => acc.concat({ _id: property._id, name: property.name, value: this.task.variables[property._id] }), []);
-      }
-      return [];
-    },
     assigneeOptions() {
       const loggedUserName = this.$root.userStore.state.userName;
 
-      if (!isEmpty(this.task.usersToAssign)) {
-        return this.task.usersToAssign.map(({ username, displayableName }) => {
+      if (!isEmpty(this.taskDefinition.task.usersToAssign)) {
+        return this.taskDefinition.task.usersToAssign.map(({ username, displayableName }) => {
           const value = username;
           const text = username === loggedUserName ? this.$t('pages.workflow.me') : displayableName;
           return { value, text };
@@ -126,7 +107,23 @@ export default {
   },
   methods: {
     assignTask() {
-      this.$emit('assignTask', { id: this.id, assignee: this.selected });
+      this.$emit('assignTask', { id: this.taskDefinition.task._id, assignee: this.selected });
+    },
+    generateDisplayDetails(formProperties, variables) {
+      return formProperties.reduce((acc, property) => acc.concat({ _id: property._id, name: property.name, value: variables[property._id] }), []);
+    },
+  },
+  watch: {
+    shown(val) {
+      if (val
+                && (this.taskDefinition.process.processDefinition === null || this.taskDefinition.process.processDefinition === undefined)
+                && this.taskDetailsList.length === 0) {
+        this.getRequestService().get(`/workflow/processdefinition/${this.taskDefinition.task.processDefinitionId}`).then((processDetails) => {
+          this.taskDetailsList = this.generateDisplayDetails(processDetails.data.formProperties, this.taskDefinition.task.variables);
+        });
+      } else if (this.taskDetailsList.length === 0) {
+        this.taskDetailsList = this.generateDisplayDetails(this.taskDefinition.process.processDefinition.formProperties, this.taskDefinition.task.variables);
+      }
     },
   },
 };
