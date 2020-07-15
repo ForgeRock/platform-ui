@@ -32,21 +32,28 @@ of the MIT license. See the LICENSE file for details.
       v-if="messageType === 'SCRIPT'"
       class="w-100"
     >
-      <div
-        v-if="qrCodeHtml"
-        v-html="qrCodeHtml"
-      />
+      <div v-if="qrCodeHtml">
+        <div
+          v-html="qrCodeHtml" />
+        <BButton
+          :href="qrCodeMobileLink"
+          class="mt-2"
+          variant="link">
+          {{ $t('common.onMobileDevice') }}
+        </BButton>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { BAlert } from 'bootstrap-vue';
+import { BAlert, BButton } from 'bootstrap-vue';
 import QRCodeGenerator from 'qrcode-generator';
 
 export default {
   components: {
     BAlert,
+    BButton,
   },
   props: {
     callback: {
@@ -59,6 +66,7 @@ export default {
       message: this.callback.getMessage(),
       messageType: '',
       qrCodeHtml: '',
+      qrCodeMobileLink: '',
       hideSpinner: false,
     };
   },
@@ -99,6 +107,7 @@ export default {
 
       // 3 is the size of the painted squares, 8 is the white border around the edge
       this.qrCodeHtml = qr.createImgTag(3, 8);
+      this.qrCodeMobileLink = text;
       this.hideSpinner = true;
     },
   },
