@@ -36,7 +36,6 @@ to such license between the licensee and ForgeRock AS. -->
 
         <FrEditPersonalInfo
           v-if="profile._id"
-          :auto-open="openProfile"
           @updateProfile="updateProfile"
           :schema="schema"
           :profile="profile" />
@@ -94,11 +93,6 @@ export default {
     linkedProvider: {
       type: String,
       default: '',
-    },
-    openProfile: {
-      type: Boolean,
-      required: false,
-      default: false,
     },
   },
   data() {
