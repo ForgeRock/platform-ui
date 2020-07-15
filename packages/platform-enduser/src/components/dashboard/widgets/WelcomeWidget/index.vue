@@ -55,7 +55,7 @@ export default {
   mounted() {},
   methods: {
     openProfile() {
-      this.$router.push({ name: 'Profile', params: { openProfile: !this.internalUser } });
+      this.$router.push({ name: 'Profile' });
     },
   },
   computed: {
