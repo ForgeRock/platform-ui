@@ -46,7 +46,7 @@ of the MIT license. See the LICENSE file for details.
             ref="callbacksPanelClone" />
           <BButton
             v-show="showNextButton"
-            class="btn btn btn-block btn-lg btn-primary mt-3"
+            class="btn-block btn-lg mt-3"
             type="submit"
             variant="primary"
             ref="callbackSubmitButton"
@@ -610,9 +610,7 @@ export default {
   }
 
   .hide-polling-spinner ~ .polling-spinner-container {
-    .polling-spinner {
-      display: none;
-    }
+    display: none;
   }
 }
 </style>
