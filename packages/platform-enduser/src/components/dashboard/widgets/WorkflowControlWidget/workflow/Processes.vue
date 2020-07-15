@@ -57,7 +57,7 @@ of the MIT license. See the LICENSE file for details.
 
 <script>
 import {
-  isEmpty, first,
+  isEmpty, first, difference, keys, forEach,
 } from 'lodash';
 import styles from '@forgerock/platform-shared/src/scss/main.scss';
 import FrListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
@@ -78,6 +78,7 @@ export default {
   },
   data() {
     return {
+      panelShown: {},
       loadingColor: styles.baseColor,
     };
   },
@@ -88,9 +89,13 @@ export default {
   },
   methods: {
     isEmpty,
+    show(id) {
+      this.$set(this.panelShown, id, true);
+      this.$emit('loadProcess', this.processes[id]);
+    },
     reset(id) {
       const process = first(this.$refs[id]);
-
+      this.$set(this.panelShown, id, false);
       if (process) {
         process.reset();
       }
@@ -102,6 +107,15 @@ export default {
         this.reset(id);
         cancelBtn.click();
       }
+    },
+  },
+  watch: {
+    processes(val, oldVal) {
+      const newVals = difference(keys(val), keys(oldVal));
+
+      forEach(newVals, (process, id) => {
+        this.panelShown[id] = false;
+      });
     },
   },
 };
