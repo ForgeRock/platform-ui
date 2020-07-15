@@ -61,6 +61,7 @@
       "noAssignedTasks": "No assigned tasks at this time",
       "noGroupTasks": "Your group has no tasks at this time",
       "notAssigned": "Not assigned",
+      "notAvailable": "n/a",
       "processStartSuccessMessage": "Process started",
       "me": "Me",
       "requeue": "Requeue",
