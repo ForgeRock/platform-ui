@@ -9,7 +9,7 @@ of the MIT license. See the LICENSE file for details.
   <div
     class="polling-spinner-container row justify-content-center">
     <FrSpinner
-      class="polling-spinner mb-4"
+      class="mb-4"
       label="Spinning" />
     <div class="text-center text-muted w-100">
       {{ message }}
