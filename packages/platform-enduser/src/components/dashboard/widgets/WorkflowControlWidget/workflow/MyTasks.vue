@@ -31,15 +31,29 @@ of the MIT license. See the LICENSE file for details.
                 @click.stop="requeue(id)">
                 {{ $t('pages.workflow.requeue') }}
               </div>
-              <div class="d-flex ml-3 align-self-center">
-                <div
-                  class="btn btn-sm btn-link float-right btn-cancel"
-                  :ref="`cancel-${id}`">
-                  {{ $t('pages.workflow.cancel') }}
-                </div>
-                <div class="btn btn-sm btn-link float-right btn-edit">
-                  {{ $t('pages.workflow.edit') }}
-                </div>
+              <div class="d-flex flex-row ml-2 align-self-center">
+                <BButton
+                  v-if="!isEmpty(task.task.candidates.candidateGroups)"
+                  variant="link"
+                  size="sm"
+                  @click.stop="requeue(id)">
+                  {{ $t('pages.workflow.requeue') }}
+                </BButton>
+                <BButton
+                  v-if="panelShown[id] === true"
+                  variant="link"
+                  size="sm"
+                  :ref="`cancel-${id}`"
+                  class="btn-edit pb-2">
+                  {{ $t('common.form.cancel' ) }}
+                </BButton>
+                <BButton
+                  v-else
+                  variant="link"
+                  size="sm"
+                  class="btn-edit">
+                  {{ $t('common.form.edit' ) }}
+                </BButton>
               </div>
             </div>
             <div
@@ -47,6 +61,7 @@ of the MIT license. See the LICENSE file for details.
               class="d-inline-flex w-100">
               <FrTask
                 :task-instance="task"
+                :shown="panelShown[id]"
                 :ref="id"
                 @loadProcess="(process) => $emit('loadProcess', process)"
                 @cancel="cancel"
@@ -68,7 +83,7 @@ of the MIT license. See the LICENSE file for details.
 
 <script>
 import {
-  isFunction, isEmpty, keys, difference, first, isUndefined,
+  isFunction, isEmpty, keys, difference, first, isUndefined, forEach,
 } from 'lodash';
 import FrListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
 import FrListItem from '@forgerock/platform-shared/src/components/ListItem/';
@@ -87,7 +102,16 @@ export default {
     },
   },
   data() {
-    return { panelShown: {}, onHidden: null };
+    const panelShown = {};
+
+    forEach(this.tasks, (value, id) => {
+      panelShown[id] = false;
+    });
+
+    return {
+      panelShown,
+      onHidden: null,
+    };
   },
   components: {
     FrListGroup,

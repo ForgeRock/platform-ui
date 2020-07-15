@@ -23,28 +23,36 @@ of the MIT license. See the LICENSE file for details.
               slot="list-item-header"
               class="d-inline-flex w-100 media">
               <div class="media-body align-self-center">
-                <h6 class="mb-1 mt-2">
+                <h6 class="mb-1 mt-0">
                   {{ taskDefinition.name }}
                 </h6>
                 <small class="text-muted d-block mb-2">
                   {{ $t('pages.workflow.notAssigned') }}
                 </small>
               </div>
-              <div class="d-flex ml-3 align-self-center">
-                <div
-                  class="btn btn-sm btn-link float-right btn-cancel"
+              <div class="d-flex mb-3 ml-3 align-self-center">
+                <BButton
+                  v-if="panelShown[id] === true"
+                  variant="link"
+                  size="sm"
+                  class="btn-cancel mb-2"
                   :ref="`cancel-${id}`">
-                  {{ $t('pages.workflow.cancel') }}
-                </div>
-                <div class="btn btn-sm btn-link float-right btn-edit">
+                  {{ $t('common.form.cancel') }}
+                </BButton>
+                <BButton
+                  v-else
+                  variant="link"
+                  size="sm"
+                  class="btn-edit">
                   {{ $t('pages.workflow.assign') }}
-                </div>
+                </BButton>
               </div>
             </div>
             <div
               slot="list-item-collapse-body"
               class="d-inline-flex w-100">
               <FrAssignTask
+                :shown="panelShown[id]"
                 :task-definition="taskDefinition"
                 @loadProcess="(process) => $emit('loadProcess', process)"
                 @assignTask="assignTask" />
