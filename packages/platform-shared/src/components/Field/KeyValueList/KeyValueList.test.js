@@ -90,4 +90,28 @@ describe('KeyValueList', () => {
       ],
     });
   });
+
+  it('Displays text indicating when it is empty', () => {
+    const emptyTextElement = wrapper.find('.fr-key-value-panel.text-center.py-3');
+    expect(emptyTextElement.exists()).toBe(true);
+    expect(emptyTextElement.text()).toBe('()');
+  });
+
+  it('Hides the text indicating it is empty when adding a first value', () => {
+    wrapper.find('.fr-key-link').trigger('click');
+    const emptyTextElement = wrapper.find('.fr-key-value-panel.text-center.py-3');
+    expect(emptyTextElement.exists()).toBe(false);
+  });
+
+  it('Hides the text indicating it is empty when it has saved values', () => {
+    wrapper.setData({
+      keyValues: {
+        en: 'value',
+      },
+      currentKey: 'en',
+    });
+
+    const emptyTextElement = wrapper.find('.fr-key-value-panel.text-center.py-3');
+    expect(emptyTextElement.exists()).toBe(false);
+  });
 });

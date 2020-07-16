@@ -43,7 +43,7 @@ to such license between the licensee and ForgeRock AS. -->
       </div>
     </div>
     <div
-      v-if="isEmpty(keyValues) && !currentKey"
+      v-if="isEmpty(keyValues) && currentKey === null"
       class="fr-key-value-panel text-center py-3">
       <span class="text-secondary">
         ({{ $t('trees.editPanel.none') }})
