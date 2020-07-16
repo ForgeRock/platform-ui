@@ -22,7 +22,7 @@ to such license between the licensee and ForgeRock AS. -->
       @animationstart="animationStart"
       ref="input"
       :name="fieldName">
-    <template #revealButton>
+    <template #defaultButtons>
       <BInputGroupAppend
         v-if="type === 'password'">
         <BButton
@@ -48,7 +48,7 @@ to such license between the licensee and ForgeRock AS. -->
           name="copyButton"
           @click.prevent="copyValueToClipboard(value)">
           <i class="material-icons material-icons-outlined">
-            copy
+            file_copy
           </i>
         </button>
       </BInputGroupAppend>
