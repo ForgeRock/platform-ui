@@ -551,7 +551,7 @@ export default {
       const queryParams = window.location.search;
       const urlParams = new URLSearchParams(queryParams.substring(1));
 
-      if (this.$route.name === 'Login' && queryParams.includes('suspendedId=') && queryParams.includes('authIndexValue=')) {
+      if (this.$route.name === 'login' && queryParams.includes('suspendedId=') && queryParams.includes('authIndexValue=')) {
         this.authIndexValue = urlParams.get('authIndexValue');
         this.suspendedId = urlParams.get('suspendedId');
 
