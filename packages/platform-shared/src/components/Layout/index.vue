@@ -20,7 +20,7 @@ to such license between the licensee and ForgeRock AS. -->
       :user-details="userDetails"
       :menu-items="menuItems"
       :dropdown-items="sideMenuDropdownItems"
-      :enduser-link="$store.state.enduserURL"
+      :enduser-link="enduserLink"
       :show-enduser-link="!userDetails.adminUser"
       v-show="!hideNav" />
     <div class="content">
@@ -132,6 +132,11 @@ export default {
   watch: {
     $route(to) {
       this.hideNav = to.meta.hideNav;
+    },
+  },
+  computed: {
+    enduserLink() {
+      return this.$store.state.realm === 'root' ? this.$store.state.enduserURL : `${this.$store.state.enduserURL}?realm=${this.$store.state.realm}`;
     },
   },
   mounted() {

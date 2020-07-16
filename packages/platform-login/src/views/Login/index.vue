@@ -81,7 +81,7 @@ import {
   BButton,
 } from 'bootstrap-vue';
 import {
-  FRAuth, FRStep, FRWebAuthn,
+  FRAuth, FRStep, FRWebAuthn, Config,
 } from '@forgerock/javascript-sdk';
 import Vue from 'vue';
 import FrCenterCard from '@/components/utils/CenterCard';
@@ -134,12 +134,25 @@ export default {
       showNextButton: false,
       step: undefined,
       suspendedId: undefined,
+      realm: '/',
+      params: {},
     };
   },
   mounted() {
-    this.evaluateUrlParams();
+    this.getConfigurationInfo()
+      .then(this.setRealm)
+      .then((realm) => {
+        this.evaluateUrlParams();
+        // configure FRAuth
 
-    this.nextStep();
+        Config.set({
+          serverConfig: { baseUrl: `${process.env.VUE_APP_AM_URL}/` },
+          tree: this.authIndexValue || this.$route.params.tree || undefined,
+          realmPath: realm,
+        });
+
+        this.nextStep();
+      });
   },
   methods: {
     /**
@@ -272,7 +285,7 @@ export default {
                 let isAdmin = false;
                 const rolesArray = userObj.data.roles;
 
-                if (rolesArray.includes('ui-global-admin' || 'ui-realm-admin')) {
+                if (rolesArray.includes('ui-global-admin') || rolesArray.includes('ui-realm-admin')) {
                   isAdmin = true;
                 }
                 return this.verifyGotoUrlAndRedirect(step.getSuccessUrl(), isAdmin);
@@ -544,24 +557,34 @@ export default {
       // reset the hash to the proper tree
       window.location.hash = `service/${this.authIndexValue}`;
     },
+    setRealm(config) {
+      const urlParams = new URLSearchParams(window.location.search);
+      let rlm = urlParams.get('realm') || 'root';
+
+      if (config.data.realm && config.data.realm !== '/' && config.data.realm !== 'root') {
+        rlm = config.data.realm;
+      }
+
+      return rlm;
+    },
     /**
      * @description Look at the url and see if we are returning to a tree from an Email Suspend Node or Redirect Callback.
      * Must be default route and contain the strings "suspendedId=" and "authIndexValue=" for Email Suspend Node.
      * Must contain the strings "state=" and "code=" and "scope=" for redirect callback.
      */
     evaluateUrlParams() {
-      const queryParams = window.location.search;
-      const urlParams = new URLSearchParams(queryParams.substring(1));
+      const paramString = this.getCurrentQueryString();
+      const params = new URLSearchParams(paramString);
 
-      if (this.$route.name === 'login' && queryParams.includes('suspendedId=') && queryParams.includes('authIndexValue=')) {
-        this.authIndexValue = urlParams.get('authIndexValue');
-        this.suspendedId = urlParams.get('suspendedId');
+      if (this.$route.name === 'login' && paramString.includes('suspendedId=') && paramString.includes('authIndexValue=')) {
+        this.authIndexValue = params.get('authIndexValue');
+        this.suspendedId = params.get('suspendedId');
 
         this.removeUrlParams();
-      } else if (queryParams.includes('state=') || queryParams.includes('code=') || queryParams.includes('scope=')) {
-        this.state = urlParams.get('state');
-        this.code = urlParams.get('code');
-        this.scope = urlParams.get('scope');
+      } else if (paramString.includes('state=') || paramString.includes('code=') || paramString.includes('scope=')) {
+        this.state = params.get('state');
+        this.code = params.get('code');
+        this.scope = params.get('scope');
 
         // session storage is used to resume a tree after returning from a redirect
         const stepInfo = this.getStepFromStorage();
@@ -570,6 +593,7 @@ export default {
 
         this.removeUrlParams();
       }
+      this.params = params;
     },
   },
 };

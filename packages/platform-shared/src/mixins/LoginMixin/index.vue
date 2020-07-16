@@ -10,12 +10,18 @@ import {
 import AppAuthHelper from 'appauthhelper';
 import store from '../../store/index';
 import i18n from '../../i18n';
+import NotificationMixin from '../NotificationMixin';
 
 export function redirectToLogin(url) {
   const [origin, hash] = url.split('#');
   const goto = encodeURIComponent(window.location.href);
+  const { realm } = store.state;
 
-  window.location.href = `${origin}?goto=${goto}#${hash}`;
+  if (realm && realm !== 'root' && realm !== '/') {
+    window.location.href = `${origin}?goto=${goto}&realm=${realm}#${hash}`;
+  } else {
+    window.location.href = `${origin}?goto=${goto}#${hash}`;
+  }
 }
 
 export function appAuthLogout() {
@@ -51,6 +57,12 @@ export function getUserInfo(session) {
   }).get(`/users/${session.data.id}`, { withCredentials: true });
 }
 
+export function getConfigurationInfo() {
+  return this.getRequestService({
+    context: 'AM',
+    apiVersion: 'protocol=1.0,resource=1.1',
+  }).get('/serverinfo/*', { withCredentials: true, suppressEvents: true });
+}
 /**
   * @param {string} url - current url after successful login
   * If the url contains either a 'goto' query (i.e. ?goto=www.test.com)
@@ -61,16 +73,22 @@ export function getUserInfo(session) {
   * Else redirect to the default login url.
   */
 export function verifyGotoUrlAndRedirect(url, isAdmin) {
-  const urlParams = new URLSearchParams(window.location.search);
+  const { search } = window.location;
+  const urlParams = new URLSearchParams(search);
   const gotoUrl = JSON.stringify({ goto: urlParams.get('goto') });
-  const isNotDefaultPath = (path) => path !== '/am/console';
+
+  urlParams.delete('goto');
+  urlParams.delete('gotoOnFail');
+
+  const paramsToString = urlParams.toString().length ? `?${urlParams.toString()}` : '';
+  const isDefaultPath = (path) => path === '/am/console';
   const redirectUserBasedOnType = () => {
     if (isAdmin) {
     // admin user
-      return process.env.VUE_APP_ADMIN_URL;
+      return `${process.env.VUE_APP_ADMIN_URL}${paramsToString}`;
     }
     // end user
-    return process.env.VUE_APP_ENDUSER_URL;
+    return `${process.env.VUE_APP_ENDUSER_URL}${paramsToString}`;
   };
 
   return this.getRequestService({
@@ -80,15 +98,39 @@ export function verifyGotoUrlAndRedirect(url, isAdmin) {
     gotoUrl,
     { withCredentials: true })
     .then((res) => {
-      if (isNotDefaultPath(res.data.successURL) && res.data.successURL !== 'undefined') {
+      if (!isDefaultPath(res.data.successURL) && res.data.successURL !== 'undefined') {
+        if (res.data.successURL.startsWith('/')) {
+          // url path
+          if (!res.data.successURL.endsWith('#realms')) {
+            const [path, hash] = res.data.successURL.split('#');
+            return `${path}?${urlParams.toString()}#${hash}`;
+          }
+        }
+        // external url or am/ui-admin
         return res.data.successURL;
+      } if (isDefaultPath(res.data.successURL) && !isDefaultPath(url)) {
+        return url;
       }
       return redirectUserBasedOnType();
-    }).catch(() => redirectUserBasedOnType());
+    })
+    .catch(() => redirectUserBasedOnType());
+}
+
+/**
+ * Returns the query string from the URI
+ * @returns {string} Unescaped query string or empty string if no query string was found
+ */
+export function getCurrentQueryString() {
+  const queryString = window.location.search;
+
+  return queryString.substr(1, queryString.length);
 }
 
 export default {
   name: 'LoginMixin',
+  mixins: [
+    NotificationMixin,
+  ],
   methods: {
     logoutUser() {
       window.logout();
@@ -105,10 +147,13 @@ export default {
     systemLogout() {
       appAuthLogout();
     },
+    redirectToLogin,
+    appAuthLogout,
     getIdFromSession,
     getUserInfo,
+    getConfigurationInfo,
     verifyGotoUrlAndRedirect,
-    redirectToLogin,
+    getCurrentQueryString,
   },
 };
 </script>

@@ -181,18 +181,26 @@ const startApp = () => {
 
 const addAppAuth = () => {
   const AM_URL = store.state.ApplicationStore.amBaseURL;
+  const urlParams = new URLSearchParams(window.location.search);
+  const realm = urlParams.get('realm');
+
+  let realmPath = '';
+  if (realm) {
+    store.dispatch('setRealm', realm);
+    realmPath = `realms/root/realms/${realm}/`;
+  }
   const commonSettings = {
     clientId: store.state.ApplicationStore.idmClientID,
-    authorizationEndpoint: `${AM_URL}/oauth2/authorize`,
+    authorizationEndpoint: `${AM_URL}/oauth2/${realmPath}authorize`,
   };
   const { loginURL } = store.state.ApplicationStore;
 
   AppAuthHelper.init({
     clientId: commonSettings.clientId,
     authorizationEndpoint: commonSettings.authorizationEndpoint,
-    tokenEndpoint: `${AM_URL}/oauth2/access_token`,
-    revocationEndpoint: `${AM_URL}/oauth2/token/revoke`,
-    endSessionEndpoint: `${AM_URL}/oauth2/connect/endSession`,
+    tokenEndpoint: `${AM_URL}/oauth2/${realmPath}access_token`,
+    revocationEndpoint: `${AM_URL}/oauth2/${realmPath}token/revoke`,
+    endSessionEndpoint: `${AM_URL}/oauth2/${realmPath}connect/endSession`,
     resourceServers: {
       [store.state.ApplicationStore.idmBaseURL]: 'openid',
     },
