@@ -110,7 +110,7 @@ export default {
         {
           title: this.$t('common.placeholders.password'),
           linkText: this.$t('common.reset'),
-          linkUrl: `${process.env.VUE_APP_LOGIN}/#/service/UpdatePassword`,
+          linkUrl: `${process.env.VUE_APP_LOGIN_URL}/#/service/UpdatePassword`,
         },
         {
           title: this.$t('pages.profile.accountSecurity.twoStepVerification'),

@@ -46,9 +46,14 @@ export default {
 
         // Use Legacy API
         if (config.context === 'AM') {
+          let amBase = `${amContext}/json/`;
+
+          if (store.state.realm && store.state.realm !== 'root') {
+            amBase = `${amContext}/json/realms/root/realms/${store.state.realm}`;
+          }
+
           const requestDetails = {
-            baseURL: `${amContext}/json/`,
-            timeout: 5000,
+            baseURL: amBase,
             headers: {
               'Content-type': 'application/json',
               'accept-api-version': config.apiVersion || 'protocol=2.1,resource=1.0',
