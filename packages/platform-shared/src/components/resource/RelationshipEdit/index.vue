@@ -73,7 +73,9 @@ to such license between the licensee and ForgeRock AS. -->
               class="pr-1 font-weight-bold">
               {{ option.resource[displayField] }}
             </span>
-            <i class="material-icons-outlined md-14 multiselect__tag-icon" @click="remove(option)">
+            <i
+              class="material-icons-outlined md-14 multiselect__tag-icon"
+              @click="remove(option)">
               close
             </i>
           </div>
