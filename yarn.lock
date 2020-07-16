@@ -1182,11 +1182,6 @@
   resolved "https://registry.yarnpkg.com/@forgerock/javascript-sdk/-/javascript-sdk-2.0.0.tgz#7c72492d689cac1c64b09bdeb67c7ab729463408"
   integrity sha512-7bJZUYuKLpAAZxAo5ahGpkOIy2mC5VA9HSA5r31eOSVYsB3N9CNmg1PPThZExOa9sYc4QCbCkcrWyPZbXYWZVw==
 
-"@forgerock/javascript-sdk@2.0.0-beta1":
-  version "2.0.0-beta1"
-  resolved "https://registry.yarnpkg.com/@forgerock/javascript-sdk/-/javascript-sdk-2.0.0-beta1.tgz#f254abc7b90c9ce1c2622976891777d81e6a9b38"
-  integrity sha512-Xa3qPgQsg/+wgUFziif+fA7mXFTkBgvAWmSI0gjaYAnLQlPk0r3QcS8mHPHx6nckxbi5DRMCAbSijcAmN02Ixg==
-
 "@hapi/address@2.x.x":
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@hapi/address/-/address-2.1.4.tgz#5d67ed43f3fd41a69d4b9ff7b56e7c0d1d0a81e5"

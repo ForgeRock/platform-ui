@@ -6,7 +6,7 @@ to such license between the licensee and ForgeRock AS. -->
 <template>
   <div class="w-100">
     <div
-      :class="[{'form-label-password': reveal}, 'form-label-group', 'mb-0']"
+      class="form-label-group mb-0"
       ref="floatingLabelGroup">
       <!-- @slot Prepend buttons or elements to the input. -->
       <slot name="prepend" />
@@ -26,7 +26,7 @@ to such license between the licensee and ForgeRock AS. -->
           {{ label }}
         </label>
       </div>
-      <slot name="revealButton" />
+      <slot name="defaultButtons" />
       <!-- @slot Append buttons or elements to the input. -->
       <slot name="append" />
     </div>
@@ -96,11 +96,6 @@ export default {
   },
   data() {
     return {};
-  },
-  computed: {
-    reveal() {
-      return !!(this.$slots.revealButton || [])[0];
-    },
   },
 };
 </script>
