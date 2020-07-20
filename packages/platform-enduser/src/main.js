@@ -185,7 +185,7 @@ const addAppAuth = () => {
   const realm = urlParams.get('realm');
 
   let realmPath = '';
-  if (realm) {
+  if (realm && realm !== '/' && realm !== 'root') {
     store.dispatch('setRealm', realm);
     realmPath = `realms/root/realms/${realm}/`;
   }
