@@ -5,7 +5,7 @@ or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <script>
 import {
-  isNull,
+  fromPairs, isNull, isEmpty, map,
 } from 'lodash';
 import AppAuthHelper from 'appauthhelper';
 import store from '../../store/index';
@@ -25,29 +25,29 @@ export function redirectToLogin(url) {
 }
 
 export function appAuthLogout() {
-  AppAuthHelper.logout().then(() => {
-    if (store.state.loginURL) {
-      redirectToLogin(store.state.loginURL);
-    } else {
-      AppAuthHelper.getTokens();
-    }
-  },
-  () => {
-    this.displayNotification({
-      group: 'AdminMessage',
-      type: 'danger',
-      text: i18n.t('application.errors.failedLogout'),
-    });
-  });
+  AppAuthHelper.logout().then(
+    () => {
+      if (store.state.loginURL) {
+        redirectToLogin(store.state.loginURL);
+      } else {
+        AppAuthHelper.getTokens();
+      }
+    },
+    () => {
+      this.displayNotification({
+        group: 'AdminMessage',
+        type: 'danger',
+        text: i18n.t('application.errors.failedLogout'),
+      });
+    },
+  );
 }
 
 export function getIdFromSession() {
   return this.getRequestService({
     context: 'AM',
     apiVersion: 'protocol=1.0,resource=2.0',
-  }).post('/users?_action=idFromSession',
-    {},
-    { withCredentials: true });
+  }).post('/users?_action=idFromSession', {}, { withCredentials: true });
 }
 
 export function getUserInfo(session) {
@@ -64,41 +64,47 @@ export function getConfigurationInfo() {
   }).get('/serverinfo/*', { withCredentials: true, suppressEvents: true });
 }
 /**
-  * @param {string} url - current url after successful login
-  * If the url contains either a 'goto' query (i.e. ?goto=www.test.com)
-  * or a 'goto' param (i.e. ../Login/http%3A%2F%2Ftest.com)
-  * validate the goto url.
-  *
-  * If it has been registered in AM, redirect the user to the url
-  * Else redirect to the default login url.
-  */
+ * @param {string} url - current url after successful login
+ * If the url contains a 'goto' query (i.e. ?goto=www.test.com)
+ * then validate the goto url.
+ *
+ * If it has been registered in AM, redirect the user to the url
+ * Else redirect to the default login url.
+ */
 export function verifyGotoUrlAndRedirect(url, isAdmin) {
   const { search } = window.location;
   const urlParams = new URLSearchParams(search);
   const gotoUrl = JSON.stringify({ goto: urlParams.get('goto') });
+  const realm = urlParams.get('realm');
 
   urlParams.delete('goto');
   urlParams.delete('gotoOnFail');
+  urlParams.delete('realm');
 
-  const paramsToString = urlParams.toString().length ? `?${urlParams.toString()}` : '';
+  const ampersand = urlParams.toString.length ? '&' : '';
+  const paramsToString = urlParams.toString().length
+    ? `?${urlParams.toString()}`
+    : '';
   const isDefaultPath = (path) => path === '/am/console';
   const redirectUserBasedOnType = () => {
     if (isAdmin) {
-    // admin user
-      return `${process.env.VUE_APP_ADMIN_URL}${paramsToString}`;
+      // admin user
+      return `${process.env.VUE_APP_ADMIN_URL}?realm=${realm}${ampersand}${paramsToString}`;
     }
     // end user
-    return `${process.env.VUE_APP_ENDUSER_URL}${paramsToString}`;
+    return `${process.env.VUE_APP_ENDUSER_URL}?realm=${realm}${ampersand}${paramsToString}`;
   };
 
   return this.getRequestService({
     context: 'AM',
     apiVersion: 'protocol=2.1,resource=3.0',
-  }).post('/users?_action=validateGoto',
-    gotoUrl,
-    { withCredentials: true })
+  })
+    .post('/users?_action=validateGoto', gotoUrl, { withCredentials: true })
     .then((res) => {
-      if (!isDefaultPath(res.data.successURL) && res.data.successURL !== 'undefined') {
+      if (
+        !isDefaultPath(res.data.successURL)
+        && res.data.successURL !== 'undefined'
+      ) {
         if (res.data.successURL.startsWith('/')) {
           // url path
           if (!res.data.successURL.endsWith('#realms')) {
@@ -108,7 +114,8 @@ export function verifyGotoUrlAndRedirect(url, isAdmin) {
         }
         // external url or am/ui-admin
         return res.data.successURL;
-      } if (isDefaultPath(res.data.successURL) && !isDefaultPath(url)) {
+      }
+      if (isDefaultPath(res.data.successURL) && !isDefaultPath(url)) {
         return url;
       }
       return redirectUserBasedOnType();
@@ -126,11 +133,20 @@ export function getCurrentQueryString() {
   return queryString.substr(1, queryString.length);
 }
 
+/**
+ * @description Creates an object of key value pairs from the passed in query string
+ * @param {string} paramString A string containing a query string
+ * @returns {object} An Object of key value pairs
+ */
+export function parseParameters(paramString) {
+  const object = isEmpty(paramString)
+    ? {}
+    : fromPairs(map(paramString.split('&'), (pair) => pair.split('=')));
+  return object;
+}
 export default {
   name: 'LoginMixin',
-  mixins: [
-    NotificationMixin,
-  ],
+  mixins: [NotificationMixin],
   methods: {
     logoutUser() {
       window.logout();
@@ -154,6 +170,7 @@ export default {
     getConfigurationInfo,
     verifyGotoUrlAndRedirect,
     getCurrentQueryString,
+    parseParameters,
   },
 };
 </script>
