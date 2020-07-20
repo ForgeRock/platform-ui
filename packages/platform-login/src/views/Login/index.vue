@@ -70,6 +70,7 @@ of the MIT license. See the LICENSE file for details.
 
 <script>
 import {
+  each,
   has,
   map,
   noop,
@@ -132,7 +133,6 @@ export default {
       step: undefined,
       suspendedId: undefined,
       realm: '/',
-      params: {},
     };
   },
   mounted() {
@@ -242,9 +242,15 @@ export default {
       if (this.suspendedId) {
         stepParams.query.suspendedId = this.suspendedId;
       } else {
+        const paramString = this.getCurrentQueryString();
+        const paramsObj = this.parseParameters(paramString);
+
+        stepParams.query = paramsObj;
         stepParams.query.code = this.code ? this.code : undefined;
         stepParams.query.state = this.state ? this.state : undefined;
         stepParams.query.scope = this.scope ? this.scope : undefined;
+        stepParams.query.goto = undefined;
+        stepParams.query.gotoOnFail = undefined;
       }
       return stepParams;
     },
@@ -517,19 +523,24 @@ export default {
     redirectToFailure(step) {
       const urlParams = new URLSearchParams(window.location.search);
       const gotoOnFail = urlParams.get('gotoOnFail');
-      this.verifyGotoUrlAndRedirect(gotoOnFail, false)
-        .then((res) => {
-          if (res && res.length) {
-            window.location.href = res;
-          } else if (has(step, 'payload.detail.failureUrl') && step.payload.detail.failureUrl.length) {
-            window.location.href = step.payload.detail.failureUrl;
-          }
-          this.loginFailure = true;
-        })
-        .catch((error) => {
-          this.displayNotification('IDMMessages', 'error', error.response.data.message);
-          this.loginFailure = true;
-        });
+
+      if (gotoOnFail) {
+        this.verifyGotoUrlAndRedirect(gotoOnFail, false)
+          .then((res) => {
+            if (res && res.length) {
+              window.location.href = res;
+            } else if (has(step, 'payload.detail.failureUrl') && step.payload.detail.failureUrl.length) {
+              window.location.href = step.payload.detail.failureUrl;
+            }
+            this.loginFailure = true;
+          })
+          .catch((error) => {
+            this.displayNotification('IDMMessages', 'error', error.response.data.message);
+            this.loginFailure = true;
+          });
+      } else {
+        this.loginFailure = true;
+      }
     },
     reloadTree(event) {
       event.preventDefault();
@@ -572,6 +583,10 @@ export default {
     evaluateUrlParams() {
       const paramString = this.getCurrentQueryString();
       const params = new URLSearchParams(paramString);
+      const realm = params.get('realm') || '/';
+      const hash = window.location.hash || '';
+
+      if (realm) params.delete('realm');
 
       if (this.$route.name === 'login' && paramString.includes('suspendedId=') && paramString.includes('authIndexValue=')) {
         this.authIndexValue = params.get('authIndexValue');
@@ -589,8 +604,32 @@ export default {
         this.step = new FRStep(stepInfo.step.payload);
 
         this.removeUrlParams();
+      } else {
+        const resourceUrlParam = params.get('resourceURL');
+        if (resourceUrlParam) params.delete('resourceURL');
+        // Rest does not accept the params listed in the array below as is
+        // they must be transformed into the "authIndexType" and "authIndexValue" params
+        // there should only be one authIndexType/Value per request
+        each(['authlevel', 'module', 'service', 'user', 'resource'], (param) => {
+          if (params.get(param)) {
+            const resourceDefinedWithoutUrl = param === 'resource' && !resourceUrlParam;
+            if (resourceDefinedWithoutUrl) {
+              return;
+            }
+
+            const indexValue = param === 'resource' ? resourceUrlParam : params.get(param);
+
+            params.delete(param);
+            params.set('authIndexType', param === 'authlevel' ? 'level' : param);
+            params.set('authIndexValue', indexValue);
+          }
+        });
+
+        const ampersand = params.toString().length > 1 ? '&' : '';
+
+        this.removeUrlParams();
+        window.history.replaceState(null, null, `?realm=${realm}${ampersand}${params.toString()}${hash}`);
       }
-      this.params = params;
     },
   },
 };

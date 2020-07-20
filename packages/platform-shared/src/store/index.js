@@ -44,9 +44,6 @@ export default new Vuex.Store({
       } else {
         state.realm = realm;
       }
-      const url = new URL(window.location);
-      url.searchParams.set('realm', realm);
-      window.location = url;
     },
     setUserId(state, id) {
       state.userId = id;
