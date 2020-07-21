@@ -9,13 +9,15 @@
 import Router from 'vue-router';
 import Vue from 'vue';
 
+import store from '@forgerock/platform-shared/src/store';
+
 Vue.use(Router);
 
 /**
  * Available toolbar configuration
  * hideToolbar - Will hide main toolbar when route accessed
  */
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/',
@@ -88,3 +90,16 @@ export default new Router({
     },
   ],
 });
+
+router.beforeEach((to, from, next) => {
+  const url = new URL(window.location);
+  const realm = url.searchParams.get('realm');
+
+  if (realm !== store.state.realm) {
+    url.searchParams.set('realm', store.state.realm);
+    window.location = url;
+  }
+  next();
+});
+
+export default router;

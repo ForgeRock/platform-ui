@@ -94,7 +94,7 @@ export default {
   methods: {
     /**
      * @description Loads a list of permitted applications
-     * @fires GET realms/root/realms/root/dashboard/assigned
+     * @fires GET realms/root/realms/<current-realm>/dashboard/assigned
      * @return void
      * */
     loadMyApplications() {
@@ -102,7 +102,7 @@ export default {
         context: 'AM',
         apiVersion: 'protocol=1.1,resource=1.0',
       })
-        .get('realms/root/realms/root/dashboard/assigned', { withCredentials: true })
+        .get(`realms/root/realms/${this.$store.state.realm}/dashboard/assigned`, { withCredentials: true })
         .then(({ data }) => {
           // Alpha sorted by name
           this.myApplications = Object.values(data).sort((a, b) => a.dashboardDisplayName[0].localeCompare(b.dashboardDisplayName[0]));
