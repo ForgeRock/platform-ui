@@ -12,35 +12,14 @@ import store from '../../store/index';
 import i18n from '../../i18n';
 import NotificationMixin from '../NotificationMixin';
 
-export function redirectToLogin(url) {
-  const [origin, hash] = url.split('#');
-  const goto = encodeURIComponent(window.location.href);
-  const { realm } = store.state;
-
-  if (realm && realm !== 'root' && realm !== '/') {
-    window.location.href = `${origin}?goto=${goto}&realm=${realm}#${hash}`;
-  } else {
-    window.location.href = `${origin}?goto=${goto}#${hash}`;
-  }
-}
-
 export function appAuthLogout() {
-  AppAuthHelper.logout().then(
-    () => {
-      if (store.state.loginURL) {
-        redirectToLogin(store.state.loginURL);
-      } else {
-        AppAuthHelper.getTokens();
-      }
-    },
-    () => {
-      this.displayNotification({
-        group: 'AdminMessage',
-        type: 'danger',
-        text: i18n.t('application.errors.failedLogout'),
-      });
-    },
-  );
+  AppAuthHelper.logout().then(() => AppAuthHelper.getTokens(), () => {
+    this.displayNotification({
+      group: 'AdminMessage',
+      type: 'danger',
+      text: i18n.t('application.errors.failedLogout'),
+    });
+  });
 }
 
 export function getIdFromSession() {
@@ -163,7 +142,6 @@ export default {
     systemLogout() {
       appAuthLogout();
     },
-    redirectToLogin,
     appAuthLogout,
     getIdFromSession,
     getUserInfo,
