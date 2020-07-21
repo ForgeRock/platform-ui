@@ -80,6 +80,7 @@ import {
 import { mapState } from 'vuex';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import EditKBA from '@/components/profile/EditKBA';
+import store from '@forgerock/platform-shared/src/store';
 /**
  * @description Handles displaying account security controls
  */
@@ -124,7 +125,7 @@ export default {
       passwordItem: {
         title: this.$t('common.placeholders.password'),
         linkText: this.$t('common.reset'),
-        linkUrl: `${process.env.VUE_APP_LOGIN_URL}/#/service/UpdatePassword`,
+        linkUrl: `${store.state.amBaseURL}/UI/Login?realm=${(new URLSearchParams(window.location.search)).get('realm') || '/'}&authIndexType=service&authIndexValue=UpdatePassword&goto=${encodeURIComponent(window.location.href)}`,
       },
       mfaItem: {
         title: this.$t('pages.profile.accountSecurity.twoStepVerification'),
