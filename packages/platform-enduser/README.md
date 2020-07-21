@@ -23,7 +23,7 @@ of the MIT license. See the LICENSE file for details.
 - [Theming](#theming)
 - [Browser support](#browser-support)
 - [Environment variables](#environment-variables)
-  
+
 
 ## Project setup
 If you haven't installed the node packages, you can run it from inside this folder, it will climb up to the top level and install everything appropriately.
@@ -68,7 +68,7 @@ yarn lint
 
 To help you with navigation, the application has the following basic layout:
 
-  
+
 
 ```
 
@@ -128,17 +128,17 @@ Package.json - Node package JSON for dependency management
 
 ```
 
-  
+
 
 <a  name="application-tools"></a>
 
 ## Application tools
 
-  
+
 
 The following application tools are installed when you install the project dependencies:
 
-  
+
 
 - [Vue](https://vuejs.org/v2/api/) - Primary Javascript framework for the project
 
@@ -154,25 +154,25 @@ The following application tools are installed when you install the project depen
 
 - [lodash](https://lodash.com/) - Util library for preforming various efficient calculations
 
-  
+
 
 There are several other libraries included with both node and the application, but these are the primary core libraries used throughout. For additional libraries, see package.json `/package.json`
 
-  
+
 
 <a  name="translations-and-text"></a>
 
 ## Translations and Text
 
-  
+
 
 Application translation uses [Vue i18n](https://kazupon.github.io/vue-i18n/en/) and the `openidm/info/uiconfig` endpoint to get the current user's browser language.
 
-  
+
 
 The project only contains `en` based translations and falls back to `en` if an unsupported language is detected. To change the default language fallback adjust VueI18n `/src/main.js`.
 
-  
+
 
 Adding and changing an existing message for the `en` base language involves either adding a key or editing an existing key.
 
@@ -183,7 +183,7 @@ Inside of your Vue application you would then make use of that key with the buil
 
 Adding a new translation language means creating a new translation file inside of locales folder with a key matching the translation language code.
 
- 
+
 For example:
 
 
@@ -199,7 +199,7 @@ gr.json
 
 Then creating a JSON key structure that should be mirrored across all of the language files.
 
-  
+
 For example:
 
 ``` JSON
@@ -209,7 +209,7 @@ For example:
   }
 }
 ```
-  
+
 <a  name="theming"></a>
 
 ## Theming
@@ -230,7 +230,7 @@ Theming makes use of two concepts:
 
 - The theme file is loaded with an optional flag when running the dev server or distribution build. For example, `npm run dev --theme=red` or `npm run build --theme=red`.
 
- 
+
 When you include the theme flag, the `node` build scripts attempt to locate a corresponding file in `src/scss`. The file must also contain a `-theme.scss` moniker, for example, `red-theme.scss`.
 
 
@@ -247,7 +247,7 @@ The default project includes three themes:
 
 ## Browser support
 
-  
+
 - Latest Firefox
 
 - Latest Safari
@@ -264,7 +264,6 @@ Currently environment variables are:
 1. VUE_APP_AM_URL - URL to be used by default for authentication
 2. VUE_APP_AM_ADMIN_URL - URL for the location of the AM admin UI
 3. VUE_APP_IDM_URL - URL of AM instance that will be used for administration
-4. VUE_APP_LOGIN_URL - URL for the location of the login UI
 5. VUE_APP_ADMIN_URL - URL for the location of the admin UI
 6. THEME - Will load a corresponding theme.scss file (example dark-theme.scss).
 7. VUE_APP_ENDUSER_CLIENT_ID - defaults to 'end-user-ui'
@@ -277,7 +276,6 @@ Access in Vue files:
 process.env.VUE_APP_AM_URL
 process.env.VUE_APP_AM_ADMIN_URL
 process.env.VUE_APP_IDM_URL
-process.VUE_APP_LOGIN_URL
 process.VUE_APP_ADMIN_URL
 process.env.VUE_APP_ENDUSER_CLIENT_ID
 process.env.THEME
