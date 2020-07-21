@@ -51,6 +51,10 @@ of the MIT license. See the LICENSE file for details.
         <!-- <FrAuthorizedApplications v-if="amDataEndpoints && internalUser === false" /> -->
         <FrSocial class="mb-5" />
         <FrTrustedDevices />
+        <FrAuthorizedApplications
+          class="mb-5"
+          v-if="internalUser === false"
+        />
         <FrPreferences
           class="mb-5"
           v-if="internalUser === false"
@@ -73,6 +77,7 @@ import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import AccountControls from '@/components/profile/AccountControls';
 import AccountSecurity from '@/components/profile/AccountSecurity';
+import AuthorizedApplications from '@/components/profile/AuthorizedApplications';
 import EditPersonalInfo from '@/components/profile/EditPersonalInfo';
 import Preferences from '@/components/profile/Preferences';
 import TrustedDevices from '@/components/profile/TrustedDevices';
@@ -108,10 +113,10 @@ export default {
   components: {
     FrAccountControls: AccountControls,
     FrAccountSecurity: AccountSecurity,
+    FrAuthorizedApplications: AuthorizedApplications,
     FrEditPersonalInfo: EditPersonalInfo,
     FrPreferences: Preferences,
     FrTrustedDevices: TrustedDevices,
-    // FrAuthorizedApplications: () => import('@/components/profile/AuthorizedApplications'),
     FrConsent: Consent,
     FrSocial: Social,
   },
