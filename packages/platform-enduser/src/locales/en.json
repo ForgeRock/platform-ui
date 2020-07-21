@@ -150,11 +150,14 @@
       },
       "oauthApplications": {
         "title": "Authorized Applications",
-        "subtitle": "These apps can access your account.",
-        "removeConfirmation": "Are you sure you want to remove '{applicationName}' from your list of authorized applications?",
+        "subtitle": "Applications you have given access to your personal information.",
+        "removeConfirmation": "{applicationName} will no longer have access to your account data.",
+        "removeConfirmationTitle": "Revoke account access for {applicationName}?",
         "removeSuccess": "'{applicationName}' successfully removed.",
+        "revokeAccess": "Revoke Access",
         "expires": "Expires: ",
-        "noApplications": "No Authorized Applications"
+        "noApplications": "No Authorized Applications",
+        "sharedWith": "Shared with {applicationName}"
       },
       "trustedDevices": {
         "title": "Trusted Devices",
