@@ -28,7 +28,6 @@ import Vue from 'vue';
 import AppAuthHelper from 'appauthhelper/appAuthHelperCompat';
 import SessionCheck from 'oidcsessioncheck';
 import store from '@forgerock/platform-shared/src/store';
-import { redirectToLogin } from '@forgerock/platform-shared/src/mixins/LoginMixin';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import router from './router';
@@ -193,7 +192,6 @@ const addAppAuth = () => {
     clientId: store.state.ApplicationStore.idmClientID,
     authorizationEndpoint: `${AM_URL}/oauth2/${realmPath}authorize`,
   };
-  const { loginURL } = store.state.ApplicationStore;
 
   AppAuthHelper.init({
     clientId: commonSettings.clientId,
@@ -204,9 +202,6 @@ const addAppAuth = () => {
     resourceServers: {
       [store.state.ApplicationStore.idmBaseURL]: 'openid',
     },
-    interactionRequiredHandler: store.state.ApplicationStore.loginURL ? () => {
-      redirectToLogin(loginURL);
-    } : undefined,
     tokensAvailableHandler(claims) {
       // this function is called every time the tokens are either
       // originally obtained or renewed
@@ -215,20 +210,13 @@ const addAppAuth = () => {
         opUrl: commonSettings.authorizationEndpoint,
         subject: claims.sub,
         invalidSessionHandler() {
-          AppAuthHelper.logout().then(() => {
-            // eslint-disable-next-line no-unused-expressions
-            this.$store.state.ApplicationStore.loginURL ? redirectToLogin(loginURL) : AppAuthHelper.getTokens();
-          });
+          window.logout();
         },
         cooldownPeriod: 5,
       });
       // check the validity of the session immediately
       sessionCheck.triggerSessionCheck();
 
-      // check every minute
-      setInterval(() => {
-        sessionCheck.triggerSessionCheck();
-      }, 60000);
       // check with every captured event
       document.addEventListener('click', () => {
         sessionCheck.triggerSessionCheck();
@@ -239,17 +227,14 @@ const addAppAuth = () => {
 
       startApp();
     },
-  });
-
-  // In this application, we want tokens immediately, before any user interaction is attempted
-  AppAuthHelper.getTokens();
+  }).then(
+    // In this application, we want tokens immediately, before any user interaction is attempted
+    () => AppAuthHelper.getTokens(),
+  );
 
   // trigger logout from anywhere in the SPA by calling this global function
   window.logout = () => {
-    AppAuthHelper.logout().then(() => {
-      // eslint-disable-next-line no-unused-expressions
-      store.state.ApplicationStore.loginURL ? redirectToLogin(loginURL) : AppAuthHelper.getTokens();
-    });
+    AppAuthHelper.logout().then(() => AppAuthHelper.getTokens());
   };
 };
 

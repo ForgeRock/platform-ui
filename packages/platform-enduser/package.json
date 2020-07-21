@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@forgerock/platform-shared": "1.0.0",
-    "appauthhelper": "0.2.0",
+    "appauthhelper": "0.3.4",
     "axios": "0.19.0",
     "babel-plugin-require-context-hook": "1.0.0",
     "bootstrap": "4.3.1",
@@ -27,7 +27,7 @@
     "dayjs": "1.8.20",
     "es6-promise": "4.2.4",
     "lodash": "4.17.19",
-    "oidcsessioncheck": "0.0.4",
+    "oidcsessioncheck": "1.0.0",
     "ua-parser-js": "0.7.21",
     "vee-validate": "3.2.2",
     "vue": "2.6.11",
