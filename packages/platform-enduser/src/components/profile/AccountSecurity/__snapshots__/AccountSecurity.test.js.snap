@@ -16,6 +16,7 @@ exports[`AccountSecurity.vue AccountSecurity page loaded 1`] = `
         </bcol-stub>
         <bcol-stub md="5" tag="div">
           <!---->
+          <!---->
           user1234
         </bcol-stub>
         <bcol-stub md="2" tag="div">
@@ -30,6 +31,7 @@ exports[`AccountSecurity.vue AccountSecurity page loaded 1`] = `
           <h5>Password</h5>
         </bcol-stub>
         <bcol-stub md="5" tag="div">
+          <!---->
           <!---->
 
         </bcol-stub>
@@ -46,16 +48,15 @@ exports[`AccountSecurity.vue AccountSecurity page loaded 1`] = `
         <bcol-stub md="5" tag="div">
           <h5>2-Step Verification</h5>
         </bcol-stub>
-        <bcol-stub md="5" tag="div"><i class="material-icons mr-2 text-success">
-            check_circle
-          </i>
-          On
+        <bcol-stub md="5" tag="div"><span aria-hidden="true" class="material-icons-outlined mr-2">
+              remove_circle
+            </span>
+          <!---->
+          Off
         </bcol-stub>
         <bcol-stub md="2" tag="div">
           <!---->
-          <routerlink to="/auth-devices" class="py-0 text-right text-nowrap">
-            Change
-          </routerlink>
+          <!---->
         </bcol-stub>
       </brow-stub>
     </bcardbody-stub>
