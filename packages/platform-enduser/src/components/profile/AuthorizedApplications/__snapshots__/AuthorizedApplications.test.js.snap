@@ -1,12 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`AuthorizedApplications.vue Authorized Applications loads 1`] = `
-<frlistgroup-stub title="Authorized Applications" subtitle="These apps can access your account.">
-  <blistgroupitem-stub class="noncollapse text-center">
-    No Authorized Applications
-  </blistgroupitem-stub>
-  <bmodal-stub id="authAppConfirmationModal" cancel-variant="outline-secondary">
-    Are you sure you want to remove '' from your list of authorized applications?
+<div>
+  <fraccordion-stub accordiongroup="oauthApplications" items="" class="oauth-applications"></fraccordion-stub>
+  <bmodal-stub id="authAppConfirmationModal" title="Revoke account access for ?">
+    will no longer have access to your account data.
   </bmodal-stub>
-</frlistgroup-stub>
+</div>
 `;

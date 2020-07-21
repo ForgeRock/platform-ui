@@ -22,7 +22,6 @@ describe('AuthorizedApplications.vue', () => {
       localVue,
       i18n,
       stubs: {
-        BListGroupItem: true,
         BModal: true,
         BButton: true,
       },
