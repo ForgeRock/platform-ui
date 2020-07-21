@@ -58,10 +58,9 @@ of the MIT license. See the LICENSE file for details.
       </BCardBody>
       <BCardBody v-show="loading">
         <div class="h-100 d-flex">
-          <div class="m-auto fr-center-card">
-            <BounceLoader
-              class="mb-4"
-              :color="loadingColor" />
+          <div class="fr-center-card">
+            <Spinner
+              class="mb-4" />
           </div>
         </div>
       </BCardBody>
@@ -75,7 +74,6 @@ import {
   map,
   noop,
 } from 'lodash';
-import { BounceLoader } from 'vue-spinner/dist/vue-spinner.min';
 import {
   BCardBody,
   BButton,
@@ -87,6 +85,7 @@ import Vue from 'vue';
 import FrCenterCard from '@/components/utils/CenterCard';
 import WithCallback from '@forgerock/platform-shared/src/hoc/CallbackHoc';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import Spinner from '@forgerock/platform-shared/src/components/Spinner';
 import BooleanAttributeInputCallback from '@/components/callbacks/BooleanAttributeInputCallback';
 import ChoiceCallback from '@/components/callbacks/ChoiceCallback';
 import ConfirmationCallback from '@/components/callbacks/ConfirmationCallback';
@@ -100,7 +99,6 @@ import SelectIdPCallback from '@/components/callbacks/SelectIdPCallback';
 import TextOutputCallback from '@/components/callbacks/TextOutputCallback';
 import SuspendedTextOutputCallback from '@/components/callbacks/SuspendedTextOutputCallback';
 import ValidatedCreatePasswordCallback from '@/components/callbacks/ValidatedCreatePasswordCallback';
-import styles from '@/scss/main.scss';
 import TermsAndConditionsCallback from '@/components/callbacks/TermsAndConditionsCallback';
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
@@ -112,7 +110,7 @@ export default {
     FrCenterCard,
     BButton,
     BCardBody,
-    BounceLoader,
+    Spinner,
   },
   mixins: [
     RestMixin,
@@ -128,7 +126,6 @@ export default {
       header: '',
       kbaCallbackCount: 0,
       loading: true,
-      loadingColor: styles.basecolor,
       loginFailure: false,
       showClone: false,
       showNextButton: false,
