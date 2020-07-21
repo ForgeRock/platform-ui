@@ -22,6 +22,7 @@ exports[`Profile.vue Profile page loaded 1`] = `
       <frtrusteddevices-stub></frtrusteddevices-stub>
       <!---->
       <!---->
+      <!---->
       <fraccountcontrols-stub class="mb-5"></fraccountcontrols-stub>
     </bcol-stub>
   </brow-stub>

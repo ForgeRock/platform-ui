@@ -6,158 +6,207 @@ of the MIT license. See the LICENSE file for details.
 -->
 
 <template>
-  <FrListGroup
-    v-show="oauthApplications"
-    :title="$t('pages.profile.oauthApplications.title')"
-    :subtitle="$t('pages.profile.oauthApplications.subtitle')">
-    <template v-if="oauthApplications.length > 0">
-      <FrListItem
-        v-for="(application, id) in oauthApplications"
-        :key="id"
-        :collapsible="false"
-        :panel-shown="false">
-        <template v-slot:list-item-header>
-          <div class="d-inline-flex w-100">
-            <div class="d-flex mr-3 align-self-top">
-              <img
-                :src="application.logo_uri || require('@/assets/images/authorized-app.svg')"
-                width="25">
-            </div>
-            <div class="flex-grow-1">
-              <div>
-                {{ application._id }}
-              </div>
-              <small class="text-muted subtext">
-                {{ $t('pages.profile.oauthApplications.expires') }} {{ new Date(application.expiryDateTime).toUTCString() }}
-              </small>
-            </div>
-            <a
-              class="align-self-center flex-grow-2 text-right"
-              @click.prevent="showConfirmationModal(application)"
-              href="#">
-              {{ $t('common.remove') }}
-            </a>
-          </div>
-        </template>
-      </FrListItem>
-    </template>
-    <template v-else>
-      <BListGroupItem class="noncollapse text-center">
-        {{ $t('pages.profile.oauthApplications.noApplications') }}
-      </BListGroupItem>
-    </template>
-
-    <BModal
-      id="authAppConfirmationModal"
-      class=""
-      ref="fsModal"
-      cancel-variant="outline-secondary">
-      <template v-slot:modal-header>
-        <div class="d-flex w-100 h-100">
-          <h6 class="my-0">
-            {{ $t('common.confirm') }}
-          </h6>
-          <button
-            type="button"
-            aria-label="Close"
-            class="close"
-            @click="$refs.fsModal.hide()">
-            <i class="material-icons-outlined font-weight-bolder md-24 mb-1">
-              close
-            </i>
-          </button>
+  <div>
+    <FrAccordion
+      accordion-group="oauthApplications"
+      class="oauth-applications"
+      :items="oauthApplications"
+    >
+      <template #accordionHeader>
+        <div class="p-4">
+          <h4>{{ $t("pages.profile.oauthApplications.title") }}</h4>
+          <p class="m-0">
+            {{ $t("pages.profile.oauthApplications.subtitle") }}
+          </p>
         </div>
       </template>
+      <template #header="slotData">
+        <h5 class="mb-0">
+          <BImg
+            :alt="slotData.name || slotData._id"
+            :src="slotData.logoUri || defaultAppImg"
+            class="mr-4"
+            height="24"
+            width="24"
+            @error="failedImageHandler"
+          />
+          {{ slotData.name || slotData._id }}
+        </h5>
+      </template>
+      <template #body="slotData">
+        <div class="row">
+          <div class="col-md-6">
+            <dl>
+              <dt class="mb-2">
+                <small>
+                  {{
+                    $t('pages.profile.oauthApplications.sharedWith',
+                       {applicationName: slotData.name || slotData._id})
+                  }}
+                </small>
+              </dt>
+              <template v-for="(scope, i) in slotData.scopes">
+                <dd :key="i">
+                  <div class="media">
+                    <i class="material-icons-outlined mr-2 mt-1 text-success">
+                      check
+                    </i>
+                    <div class="media-body">
+                      <div class="media-item">
+                        {{ scope }}
+                      </div>
+                    </div>
+                  </div>
+                </dd>
+              </template>
+            </dl>
+          </div>
+          <div class="col-md-6">
+            <dl>
+              <dt class="mb-2">
+                <small>{{ $t('common.expires') }}</small>
+              </dt>
+              <dd>
+                <div class="media">
+                  <i class="material-icons-outlined mr-2 mt-1 text-muted">
+                    access_time
+                  </i>
+                  <div class="media-body">
+                    <div class="media-item">
+                      {{ formateExpiryDate(slotData.expiryDateTime) }}
+                    </div>
+                  </div>
+                </div>
+              </dd>
+            </dl>
+          </div>
+        </div>
+        <div class="d-flex justify-content-start">
+          <BButton
+            class="w-100"
+            @click="showConfirmationModal(slotData)"
+            type="button"
+            variant="outline-danger"
+          >
+            <i class="material-icons-outlined mr-2">
+              block
+            </i
+            >{{ $t('pages.profile.oauthApplications.revokeAccess') }}
+          </BButton>
+        </div>
+      </template>
+    </FrAccordion>
+    <BModal
+      id="authAppConfirmationModal"
+      ref="fsModal"
+      :title="$t('pages.profile.oauthApplications.removeConfirmationTitle', {applicationName: confirmApplication.name})">
       {{ $t('pages.profile.oauthApplications.removeConfirmation', {applicationName: confirmApplication.name }) }}
       <template v-slot:modal-footer="{ cancel }">
         <BButton
-          variant="outline-secondary mr-2"
+          class="text-danger"
+          variant="link"
           @click="cancel()">
           {{ $t('common.cancel') }}
         </BButton>
         <BButton
           variant="danger"
           @click="removeApplication(confirmApplication.id)">
-          {{ $t('common.remove') }}
+          {{ $t('pages.profile.oauthApplications.revokeAccess') }}
         </BButton>
       </template>
     </BModal>
-  </FrListGroup>
+  </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
-import ListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
-import ListItem from '@forgerock/platform-shared/src/components/ListItem/';
+import FrAccordion from '@forgerock/platform-shared/src/components/Accordion';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+import defaultAppImg from '@forgerock/platform-shared/src/assets/images/default-app.svg';
 
-/**
-* @description If fullstack (AM/IDM) is configured will work with authorized applications endpoiint (AM) and display a list of currently tied applications.
-* It is possible to also remove these applications though if you attempt to remove openIDM it will always re-add since this is needed to ensure fullstack works.
-*
-*/
 export default {
   name: 'AuthorizedApplications',
-  mixins: [
-    RestMixin,
-    NotificationMixin,
-  ],
+  mixins: [RestMixin, NotificationMixin],
   components: {
-    FrListGroup: ListGroup,
-    FrListItem: ListItem,
+    FrAccordion,
   },
   data() {
     return {
-      oauthApplications: {},
+      oauthApplications: [],
       confirmApplication: {
         name: '',
         id: null,
       },
+      defaultAppImg,
     };
   },
   computed: {
     ...mapState({
       userId: (state) => state.UserStore.userId,
+      userName: (state) => state.UserStore.userName,
     }),
   },
   mounted() {
     this.loadData();
   },
   methods: {
-    loadData() {
-      const selfServiceInstance = this.getRequestService();
-      // TODO This will fail until updated with reliable endpoint
-      const url = '';// this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.oauthApplications + query;
+    formateExpiryDate(date) {
+      if (date === null) return 'Never';
 
-      // by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
-      selfServiceInstance.get(url, { withCredentials: true }).then((response) => {
-        this.oauthApplications = response.data.result;
-      })
-        .catch((error) => {
-          this.displayNotification('IDMMessages', 'error', error.response.data.message);
-        });
+      const expiry = new Date(date);
+      const month = expiry.toLocaleString('default', { month: 'long' });
+      const day = expiry.getDay();
+      const year = expiry.getFullYear();
+      return `${month} ${day}, ${year}`;
+    },
+    loadData() {
+      const selfServiceInstance = this.getRequestService({ context: 'AM' });
+      const url = `/users/${this.userId}/oauth2/applications?_queryFilter=true`;
+
+      selfServiceInstance.get(url, { withCredentials: true }).then((res) => {
+        this.$set(this.$data, 'oauthApplications', [...res.data.result]);
+      }).catch((error) => {
+        this.showErrorMessage(error);
+      });
     },
     showConfirmationModal(application) {
       // eslint-disable-next-line no-underscore-dangle
       this.confirmApplication.id = application._id;
+      // eslint-disable-next-line no-underscore-dangle
+      this.confirmApplication.name = application.name || application._id;
       this.$refs.fsModal.show();
     },
-    removeApplication(applicationId) {
-      const selfServiceInstance = this.getRequestService();
-      // TODO This will fail until updated
-      const url = `${applicationId}`; // this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.oauthApplications + applicationId;
+    removeApplication(clientId) {
+      const selfServiceInstance = this.getRequestService({ context: 'AM' });
+      const url = `/users/${this.userId}/oauth2/applications/${clientId}`;
 
-      // by default CORS requests don't allow cookies, the 'withCredentials: true' flag allows it
       selfServiceInstance.delete(url, { withCredentials: true }).then(() => {
-        this.displayNotification('IDMMessages', 'success', this.$t('pages.profile.oauthApplications.removeSuccess', { applicationName: this.confirmApplication.id }));
-        this.loadData();
         this.$refs.fsModal.hide();
-      })
-        .catch((error) => {
-          this.displayNotification('IDMMessages', 'error', error.response.data.message);
-        });
+        this.loadData();
+        this.displayNotification(
+          'AMMessages',
+          'success',
+          this.$t('pages.profile.oauthApplications.removeSuccess', {
+            applicationName: this.confirmApplication.id,
+          }),
+        );
+      }).catch((error) => {
+        this.showErrorMessage(error);
+      });
+    },
+    failedImageHandler(e) {
+      e.target.src = defaultAppImg;
     },
   },
 };
 </script>
+<style lang="scss" scoped>
+/deep/ {
+  .oauth-applications {
+    .media-item {
+      color: $gray-900;
+    }
+  }
+}
+</style>
