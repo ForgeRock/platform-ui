@@ -8,7 +8,6 @@
 
 import Router from 'vue-router';
 import Vue from 'vue';
-import store from '@forgerock/platform-shared/src/store';
 
 Vue.use(Router);
 
@@ -31,14 +30,6 @@ export default new Router({
       path: '/oauthReturn',
       component: () => import('@/components/OAuthReturn'),
       meta: { hideToolbar: true, bodyClass: 'fr-body-image' },
-    },
-    {
-      path: '/login',
-      name: 'Login',
-      alias: ['/_=_'], // Need alias for catching Facebook odd oAuth return
-      beforeEnter: () => {
-        window.location = store.state.ApplicationStore.loginURL;
-      },
     },
     {
       path: '/profile',

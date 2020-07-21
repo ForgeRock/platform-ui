@@ -26,7 +26,6 @@ export default new Vuex.Store({
     idmBaseURL: '/openidm',
     idmClientID: null,
     lastName: '',
-    loginURL: null,
     managedResource: '',
     realm: 'root',
     returnRoute: '',
@@ -86,10 +85,6 @@ export default new Vuex.Store({
 
       if (env.VUE_APP_ENDUSER_URL) {
         state.enduserURL = env.VUE_APP_ENDUSER_URL;
-      }
-
-      if (env.VUE_APP_LOGIN_URL) {
-        state.loginURL = env.VUE_APP_LOGIN_URL;
       }
 
       if (env.VUE_APP_ADMIN_CLIENT_ID) {

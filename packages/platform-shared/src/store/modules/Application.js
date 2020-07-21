@@ -27,7 +27,6 @@ const defaultState = {
   idmBaseURL: '/openidm',
   idmClientID: null,
   loginRedirect: null,
-  loginURL: null,
   oauthSaveObj: null,
   oauthSchema: null,
   theme: 'default',
@@ -104,10 +103,6 @@ const mutations = {
 
     if (env.VUE_APP_ENDUSER_CLIENT_ID) {
       state.idmClientID = env.VUE_APP_ENDUSER_CLIENT_ID;
-    }
-
-    if (env.VUE_APP_LOGIN_URL) {
-      state.loginURL = env.VUE_APP_LOGIN_URL;
     }
 
     if (env.VUE_APP_ADMIN_URL) {
