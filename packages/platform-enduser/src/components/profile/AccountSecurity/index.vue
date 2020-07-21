@@ -17,7 +17,6 @@ of the MIT license. See the LICENSE file for details.
       <template
         v-for="item in items">
         <BCardBody
-          v-show="!item.hide"
           :key="item.title"
           class="border-bottom">
           <BRow>
@@ -26,11 +25,18 @@ of the MIT license. See the LICENSE file for details.
               <h5>{{ item.title }}</h5>
             </BCol>
             <BCol md="5">
-              <i
-                v-if="item.icon"
+              <span
+                v-if="item.iconType === 'OFF'"
+                aria-hidden="true"
+                class="material-icons-outlined mr-2">
+                remove_circle
+              </span>
+              <span
+                v-if="item.iconType === 'ON'"
+                aria-hidden="true"
                 class="material-icons mr-2 text-success">
-                {{ item.icon }}
-              </i>
+                check_circle
+              </span>
               {{ item.text }}
             </BCol>
             <BCol
@@ -97,36 +103,37 @@ export default {
       userId: (state) => state.UserStore.userId,
       userName: (state) => state.UserStore.userName,
     }),
+    usernameItem() {
+      return {
+        title: this.$t('common.placeholders.username'),
+        text: this.userName,
+      };
+    },
+    items() {
+      return [
+        this.usernameItem,
+        this.passwordItem,
+        this.mfaItem,
+      ];
+    },
   },
   data() {
     return {
       isOnKBA: false,
       kbaData: {},
-      items: [
-        {
-          title: this.$t('common.placeholders.username'),
-          text: this.userName,
-        },
-        {
-          title: this.$t('common.placeholders.password'),
-          linkText: this.$t('common.reset'),
-          linkUrl: `${process.env.VUE_APP_LOGIN_URL}/#/service/UpdatePassword`,
-        },
-        {
-          title: this.$t('pages.profile.accountSecurity.twoStepVerification'),
-          hide: true,
-          text: this.$t('common.on'),
-          icon: 'check_circle',
-          linkText: this.$t('common.change'),
-          linkPath: '/auth-devices',
-        },
-      ],
+      passwordItem: {
+        title: this.$t('common.placeholders.password'),
+        linkText: this.$t('common.reset'),
+        linkUrl: `${process.env.VUE_APP_LOGIN_URL}/#/service/UpdatePassword`,
+      },
+      mfaItem: {
+        title: this.$t('pages.profile.accountSecurity.twoStepVerification'),
+        text: this.$t('common.off'),
+        iconType: 'OFF',
+      },
     };
   },
   mounted() {
-    // this forces reactivity for value grabbed from store
-    this.$set(this.items[0], 'text', this.userName);
-
     const selfServiceInstance = this.getRequestService({
       headers: this.getAnonymousHeaders(),
     });
@@ -155,7 +162,13 @@ export default {
         .then((responseArray) => {
           const collapsedResponseArray = responseArray.reduce((acc, response) => acc.concat(response.data.result), []);
           if (collapsedResponseArray.length) {
-            this.$set(this.items[2], 'hide', false);
+            this.mfaItem = {
+              title: this.$t('pages.profile.accountSecurity.twoStepVerification'),
+              text: this.$t('common.on'),
+              iconType: 'ON',
+              linkText: this.$t('common.change'),
+              linkPath: '/auth-devices',
+            };
           }
         });
     },
