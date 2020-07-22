@@ -70,7 +70,6 @@ export default {
     @include media-breakpoint-between(sm, xl) {
       margin: 0;
       border-radius: $border-radius;
-      border: $border-width solid $border-color;
     }
   }
 
