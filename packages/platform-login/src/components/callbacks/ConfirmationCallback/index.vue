@@ -10,7 +10,7 @@ of the MIT license. See the LICENSE file for details.
     <BButton
       v-for="(option, index) in options"
       :key="index"
-      class="btn btn btn-block btn-lg btn-primary mt-3"
+      class="btn-block mt-3"
       variant="primary"
       @click="setValue(index)">
       {{ option }}
