@@ -110,7 +110,7 @@ export default {
 
         .my-applications-list-item-text {
           flex-direction: column;
-          font-weight: $headings-font-weight;
+          font-weight: $font-weight-bold;
           font-size: 1rem;
           color: $black;
           flex: 2;

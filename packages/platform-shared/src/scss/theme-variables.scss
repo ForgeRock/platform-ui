@@ -158,7 +158,7 @@ $input-btn-focus-color: $component-active-bg;
 // Headers styles and sizes
 $headings-margin-bottom: ($spacer / 2);
 $headings-font-family: inherit;
-$headings-font-weight: $font-weight-bold;
+$headings-font-weight: $font-weight-light;
 $headings-line-height: 1.2;
 
 $h1-font-size: $font-size-base * 3;
@@ -170,10 +170,10 @@ $h6-font-size: $font-size-base * 0.875;
 
 $h1-font-weight: 300;
 $h2-font-weight: 300;
-$h3-font-weight: $headings-font-weight;
-$h4-font-weight: $headings-font-weight;
-$h5-font-weight: $headings-font-weight;
-$h6-font-weight: $headings-font-weight;
+$h3-font-weight: $font-weight-bold;
+$h4-font-weight: $font-weight-bold;
+$h5-font-weight: $font-weight-bold;
+$h6-font-weight: $font-weight-bold;
 
 $display1-size: $font-size-base * 5;
 $display2-size: $font-size-base * 4;
@@ -222,7 +222,7 @@ $card-color: null;
 $card-bg: $white;
 $card-img-overlay-padding: 1.25rem;
 $fr-card-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.13);
-$fr-card-border: 1px solid $gray-200;
+$fr-card-border: $border-width solid $gray-200;
 
 // Close
 $close-font-size: $font-size-base * 2.25;
