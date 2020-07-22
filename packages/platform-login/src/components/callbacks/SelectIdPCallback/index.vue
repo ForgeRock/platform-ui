@@ -13,7 +13,7 @@ of the MIT license. See the LICENSE file for details.
       :ref="name"
       :value="value">
     <button
-      class="btn btn-lg btn-light btn-block fr-btn-social"
+      class="btn btn-light btn-block fr-btn-social"
       type="button"
       v-for="(provider, count) in filteredProviders"
       :key="count"

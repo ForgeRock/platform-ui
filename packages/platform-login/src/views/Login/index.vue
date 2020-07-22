@@ -46,7 +46,7 @@ of the MIT license. See the LICENSE file for details.
             ref="callbacksPanelClone" />
           <BButton
             v-show="showNextButton"
-            class="btn-block btn-lg mt-3"
+            class="btn-block mt-3"
             type="submit"
             variant="primary"
             ref="callbackSubmitButton"
@@ -59,8 +59,7 @@ of the MIT license. See the LICENSE file for details.
       <BCardBody v-show="loading">
         <div class="h-100 d-flex">
           <div class="fr-center-card">
-            <Spinner
-              class="mb-4" />
+            <Spinner class="mb-4" />
           </div>
         </div>
       </BCardBody>

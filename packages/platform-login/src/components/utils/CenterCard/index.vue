@@ -73,7 +73,7 @@ export default {
     text-align: center;
 
     @include media-breakpoint-between(sm, xl) {
-      max-width: 420px;
+      max-width: 480px;
       padding: 40px 0;
       margin: 0 auto;
     }
@@ -84,7 +84,6 @@ export default {
       @include media-breakpoint-between(sm, xl) {
         margin: 0;
         border-radius: $border-radius;
-        border: $border-width solid $card-border-color;
       }
     }
 
