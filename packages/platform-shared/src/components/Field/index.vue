@@ -13,6 +13,7 @@ to such license between the licensee and ForgeRock AS. -->
       class="text-secondary mb-1 w-100">
       <span
         :id="`helppopover-${field.key}`"
+        tabindex="0"
         class="fr-label-text">
         {{ field.title || field.description }}
         <i
@@ -26,6 +27,7 @@ to such license between the licensee and ForgeRock AS. -->
         :target="`helppopover-${field.key}`"
         boundary="window"
         placement="left"
+        triggers="focus"
         :title="field.title">
         <div v-html="field.description" />
       </BPopover>
