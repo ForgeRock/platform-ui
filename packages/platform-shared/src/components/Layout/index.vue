@@ -7,16 +7,15 @@ to such license between the licensee and ForgeRock AS. -->
   <div
     id="app"
     :class="[{
-      'fr-menu-mobile': toggledMenuMobile,
+      'fr-menu-mobile': useMobileStyleMenu,
       'fr-menu-expanded': toggled === true,
       'fr-menu-collapsed': toggled === false,
       'fr-navbar-hidden': hideNav,
     }, 'h-100']">
     <FrSideMenu
       @toggle-menu="toggleMenu"
-      @toggle-menu-mobile="toggleMenuMobileHandler"
       @logout="$emit('logout')"
-      :menu-mobile-is-toggled="toggledMenuMobile"
+      :menu-is-toggled="toggled"
       :user-details="userDetails"
       :menu-items="menuItems"
       :dropdown-items="sideMenuDropdownItems"
@@ -25,8 +24,8 @@ to such license between the licensee and ForgeRock AS. -->
       v-show="!hideNav" />
     <div class="content">
       <FrNavBar
-        @toggle-menu-mobile="toggleMenuMobileHandler"
-        :menu-mobile-is-toggled="toggledMenuMobile"
+        @toggle-menu="toggleMenu"
+        :menu-is-toggled="toggled"
         :show-notifications="false"
         v-show="!hideNav" />
       <div
@@ -125,7 +124,7 @@ export default {
   data() {
     return {
       toggled: true,
-      toggledMenuMobile: false,
+      useMobileStyleMenu: false,
       hideNav: true,
     };
   },
@@ -140,25 +139,29 @@ export default {
     },
   },
   mounted() {
+    // Define whether to use the mobile style menu based on initial screen size and if hover is available
+    if (this.media('any-hover').matches) {
+      if (this.media('lt-md').matches) {
+        this.useMobileStyleMenu = true;
+      }
+    } else if (this.media('lt-lg').matches) {
+      this.useMobileStyleMenu = true;
+    }
+
+    if (this.media('lt-lg').matches) {
+      this.toggled = false;
+    }
+
     // fires only once media breakpoint is changed.
     this.media('md').addListener((e) => {
       if (e.matches) {
-        this.toggledMenuMobile = false;
+        this.toggled = false;
       }
     });
   },
   methods: {
     toggleMenu() {
-      if (this.media('lt-lg').matches && this.toggled === null) {
-        this.toggled = true;
-      } else if (this.media('lg').matches && this.toggled === null) {
-        this.toggled = false;
-      } else {
-        this.toggled = this.toggled === null ? false : !this.toggled;
-      }
-    },
-    toggleMenuMobileHandler() {
-      this.toggledMenuMobile = !this.toggledMenuMobile;
+      this.toggled = !this.toggled;
     },
   },
   mixins: [
@@ -184,7 +187,7 @@ export default {
   }
 }
 
-#app.fr-menu-expanded {
+#app.fr-menu-expanded:not(.fr-menu-mobile) {
   .content {
     padding-left: $fr-sidemenu-width-lg;
   }

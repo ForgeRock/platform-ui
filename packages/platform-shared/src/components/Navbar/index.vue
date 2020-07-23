@@ -10,11 +10,11 @@ to such license between the licensee and ForgeRock AS. -->
     :sticky="true">
     <button
       v-show="!hideToggle"
-      @click="toggleMenuMobile"
+      @click="toggleMenu"
       class="navbar-toggler expand-sidebar mt-2"
       type="button"
       aria-controls="#fr-sidebar-nav"
-      :aria-expanded="(menuMobileIsToggled).toString()"
+      :aria-expanded="(menuIsToggled).toString()"
       :aria-label="$t('sideMenu.toggleSidebar')">
       <span
         aria-hidden="true"
@@ -89,9 +89,9 @@ export default {
   },
   props: {
     /**
-     * State from Layout about if the mobile menu is open (true) or closed (false)
+     * State from Layout about if the menu is open (true) or closed (false)
      */
-    menuMobileIsToggled: {
+    menuIsToggled: {
       default: () => false,
       type: Boolean,
     },
@@ -142,8 +142,8 @@ export default {
     /**
      * From the navbar button toggling is possible with keyboard but not mouse or touch.
      * */
-    toggleMenuMobile() {
-      this.$emit('toggle-menu-mobile');
+    toggleMenu() {
+      this.$emit('toggle-menu');
     },
   },
 };

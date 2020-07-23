@@ -83,7 +83,7 @@
     z-index: $zindex-sticky;
   }
 
-  &.fr-menu-mobile {
+  &.fr-menu-mobile.fr-menu-expanded {
     .fr-sidebar-shim {
       display: block;
     }
@@ -109,7 +109,7 @@
   }
 
   @include media-breakpoint-between(sm, md) {
-    #app:not(.fr-menu-mobile):not(.fr-menu-collapsed):not(.fr-menu-expanded) .fr-sidebar-wrapper {
+    #app:not(.fr-menu-collapsed):not(.fr-menu-expanded) .fr-sidebar-wrapper {
       @include fr-menu-collapsed;
     }
   }
@@ -119,13 +119,9 @@
       @include fr-menu-hidden;
     }
 
-    #app.fr-menu-mobile {
+    #app.fr-menu-mobile.fr-menu-expanded {
       .fr-sidebar-wrapper {
         @include fr-menu-expanded;
-
-        .fr-sidebar-bottom {
-          display: none;
-        }
       }
     }
   }
@@ -160,7 +156,7 @@
   transition: transform 0.2s ease-out, width 0.2s ease-out;
   z-index: $zindex-fixed;
 
-  .fr-menu-mobile & {
+  .fr-menu-mobile.fr-menu-expanded & {
     transform: translateX(0);
   }
 

@@ -211,7 +211,7 @@ to such license between the licensee and ForgeRock AS. -->
             <li>
               <a
                 class="d-flex align-items-center"
-                @click="toggleMenu()">
+                @click="toggleMenu">
                 <i class="material-icons material-icons-outlined icon-flipped mr-3">
                   chrome_reader_mode
                 </i>
@@ -225,7 +225,7 @@ to such license between the licensee and ForgeRock AS. -->
       </div>
     </nav>
     <div
-      @click="toggleMenuMobile"
+      @click="toggleMenu"
       class="w-100 h-100 fixed-top fr-sidebar-shim" />
   </div>
 </template>
@@ -302,9 +302,9 @@ export default {
       }),
     },
     /**
-     * State from Layout about if the mobile menu is open (true) or closed (false)
+     * State from Layout about if the menu is open (true) or closed (false)
      */
-    menuMobileIsToggled: {
+    menuIsToggled: {
       default: () => false,
       type: Boolean,
     },
@@ -316,18 +316,11 @@ export default {
   },
   methods: {
     /**
-     * @description Toggles the menu to stay open or only open on hover
+     * @description Toggles the menu
      * @triggers toggle-menu
      */
     toggleMenu() {
       this.$emit('toggle-menu');
-    },
-    /**
-     * @description In slide menu, it is only possible to close the menu on toggle.
-     * @triggers toggle-menu-mobile
-     */
-    toggleMenuMobile() {
-      this.$emit('toggle-menu-mobile');
     },
     /**
      * @description Allow keyboard users to use the navigation sidebar
@@ -354,7 +347,7 @@ export default {
      * @description Watch for menu open and focus on the first element
      * @param isOpen boolean true means the menu is open
      */
-    menuMobileIsToggled(isOpen) {
+    menuIsToggled(isOpen) {
       if (isOpen) {
         this.focusFirstItem();
       }
