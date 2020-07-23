@@ -18,29 +18,38 @@ export function getIdFromSession() {
 }
 
 export function getUserInfo(session) {
+  const urlParams = new URLSearchParams(window.location.search);
+  const realm = urlParams.get('realm');
+  const path = realm.length > 1 ? `/realms/root/realms${realm}/users/${session.data.id}` : `/users/${session.data.id}`;
+
   return this.getRequestService({
     context: 'AM',
     apiVersion: 'protocol=1.0,resource=2.0',
-  }).get(`/users/${session.data.id}`, { withCredentials: true });
+  }).get(path, { withCredentials: true });
 }
 
-export function getConfigurationInfo() {
+export function getConfigurationInfo(realm) {
+  const slash = realm && realm.startsWith('/') ? '' : '/';
+  const requestPath = realm ? `/realms${slash}${realm}/serverinfo/*` : '/serverinfo/*';
+
   return this.getRequestService({
     context: 'AM',
     apiVersion: 'protocol=1.0,resource=1.1',
-  }).get('/serverinfo/*', { withCredentials: true, suppressEvents: true });
+  }).get(requestPath, { withCredentials: true, suppressEvents: true })
+    .catch((error) => {
+      this.displayNotification('AdminMessage', 'error', error.message);
+    });
 }
 /**
- * @param {string} url - current url after successful login
- * If the url contains a 'goto' query (i.e. ?goto=www.test.com)
- * then validate the goto url.
- *
- * If it has been registered in AM, redirect the user to the url
- * Else redirect to the default login url.
- */
+  * @param {string} url - current url after successful login
+  * If the url contains a 'goto' query (i.e. ?goto=www.test.com)
+  * then validate the goto url.
+  *
+  * If it has been registered in AM, redirect the user to the url
+  * Else redirect to the default login url.
+  */
 export function verifyGotoUrlAndRedirect(url, isAdmin) {
-  const { search } = window.location;
-  const urlParams = new URLSearchParams(search);
+  const urlParams = new URLSearchParams(window.location.search);
   const gotoUrl = JSON.stringify({ goto: urlParams.get('goto') });
   const realm = urlParams.get('realm');
 
@@ -49,13 +58,11 @@ export function verifyGotoUrlAndRedirect(url, isAdmin) {
   urlParams.delete('realm');
 
   const ampersand = urlParams.toString.length ? '&' : '';
-  const paramsToString = urlParams.toString().length
-    ? `?${urlParams.toString()}`
-    : '';
+  const paramsToString = urlParams.toString().length ? `?${urlParams.toString()}` : '';
   const isDefaultPath = (path) => path === '/am/console';
   const redirectUserBasedOnType = () => {
     if (isAdmin) {
-      // admin user
+    // admin user
       return `${process.env.VUE_APP_ADMIN_URL}?realm=${realm}${ampersand}${paramsToString}`;
     }
     // end user
@@ -72,13 +79,13 @@ export function verifyGotoUrlAndRedirect(url, isAdmin) {
         !isDefaultPath(res.data.successURL)
         && res.data.successURL !== 'undefined'
       ) {
-        if (res.data.successURL.startsWith('/')) {
-          // url path
-          if (!res.data.successURL.endsWith('#realms')) {
-            const [path, hash] = res.data.successURL.split('#');
-            return `${path}?${urlParams.toString()}#${hash}`;
-          }
-        }
+        // if (res.data.successURL.startsWith('/')) {
+        //   // url path
+        //   if (!res.data.successURL.endsWith('#realms')) {
+        //     const [path, hash] = res.data.successURL.split('#');
+        //     return `${path}?${urlParams.toString()}#${hash}`;
+        //   }
+        // }
         // external url or am/ui-admin
         return res.data.successURL;
       }
@@ -106,9 +113,7 @@ export function getCurrentQueryString() {
  * @returns {object} An Object of key value pairs
  */
 export function parseParameters(paramString) {
-  const object = isEmpty(paramString)
-    ? {}
-    : fromPairs(map(paramString.split('&'), (pair) => pair.split('=')));
+  const object = isEmpty(paramString) ? {} : fromPairs(map(paramString.split('&'), (pair) => pair.split('=')));
   return object;
 }
 export default {
