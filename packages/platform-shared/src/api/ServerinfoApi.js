@@ -20,7 +20,17 @@ const idmInfoApi = {
   * @returns {Promise}
   */
 // eslint-disable-next-line import/prefer-default-export
-export function getAmServerInfo() {
+export function getAmServerInfo(realm) {
+  if (realm && realm !== 'root' && realm !== '/') {
+    return generateAmApi({
+      path: `realms/root/realms/${realm}`,
+      apiVersion: 'protocol=2.1,resource=1.0',
+    }).get(
+      'serverinfo/version',
+      { withCredentials: true },
+    );
+  }
+
   return generateAmApi(amInfoApi).get(
     'serverinfo/version',
     { withCredentials: true },
