@@ -135,16 +135,19 @@ export default {
     };
   },
   mounted() {
-    this.getConfigurationInfo()
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentRealm = urlParams.get('realm') || null;
+
+    this.getConfigurationInfo(currentRealm)
       .then(this.setRealm)
-      .then((realm) => {
+      .then(() => {
         this.evaluateUrlParams();
         // configure FRAuth
 
         Config.set({
           serverConfig: { baseUrl: `${process.env.VUE_APP_AM_URL}/` },
           tree: this.authIndexValue || this.$route.params.tree || undefined,
-          realmPath: realm,
+          realmPath: this.realm,
         });
 
         this.nextStep();
@@ -565,14 +568,7 @@ export default {
       window.location.hash = `service/${this.authIndexValue}`;
     },
     setRealm(config) {
-      const urlParams = new URLSearchParams(window.location.search);
-      let rlm = urlParams.get('realm') || 'root';
-
-      if (config.data.realm && config.data.realm !== '/' && config.data.realm !== 'root') {
-        rlm = config.data.realm;
-      }
-
-      return rlm;
+      this.realm = config ? config.data.realm : '/';
     },
     /**
      * @description Look at the url and see if we are returning to a tree from an Email Suspend Node or Redirect Callback.
@@ -587,6 +583,7 @@ export default {
 
       if (realm) params.delete('realm');
 
+      params.delete('realm');
       if (this.$route.name === 'login' && paramString.includes('suspendedId=') && paramString.includes('authIndexValue=')) {
         this.authIndexValue = params.get('authIndexValue');
         this.suspendedId = params.get('suspendedId');
@@ -627,7 +624,7 @@ export default {
         const ampersand = params.toString().length > 1 ? '&' : '';
 
         this.removeUrlParams();
-        window.history.replaceState(null, null, `?realm=${realm}${ampersand}${params.toString()}${hash}`);
+        window.history.replaceState(null, null, `?realm=${this.realm}${ampersand}${params.toString()}${hash}`);
       }
     },
   },

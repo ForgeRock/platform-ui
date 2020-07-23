@@ -186,8 +186,14 @@ const addAppAuth = () => {
   let realmPath = '';
   if (realm && realm !== '/' && realm !== 'root') {
     store.dispatch('setRealm', realm);
-    realmPath = `realms/root/realms/${realm}/`;
+
+    if (realm.startsWith('/')) {
+      realmPath = `realms/root/realms/${realm.substring(1)}/`;
+    } else {
+      realmPath = `realms/root/realms/${realm}/`;
+    }
   }
+
   const commonSettings = {
     clientId: store.state.ApplicationStore.idmClientID,
     authorizationEndpoint: `${AM_URL}/oauth2/${realmPath}authorize`,
@@ -199,7 +205,6 @@ const addAppAuth = () => {
     tokenEndpoint: `${AM_URL}/oauth2/${realmPath}access_token`,
     revocationEndpoint: `${AM_URL}/oauth2/${realmPath}token/revoke`,
     endSessionEndpoint: `${AM_URL}/oauth2/${realmPath}connect/endSession`,
-    identityProxyPreference: 'XHR',
     resourceServers: {
       [store.state.ApplicationStore.idmBaseURL]: 'openid',
     },
