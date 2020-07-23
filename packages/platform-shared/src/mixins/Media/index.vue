@@ -18,6 +18,7 @@ export default {
       'lt-xl': `screen and (max-width: ${cssCustomProperties.getWithFallback('breakpoint-xl', '1200px')})`,
       dark: '(prefers-color-scheme: dark)',
       'no-animation': '(prefers-reduced-motion)',
+      'any-hover': '(any-hover: hover)',
     },
   }),
   methods: {
