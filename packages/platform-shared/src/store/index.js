@@ -7,7 +7,6 @@
  */
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { startsWith } from 'lodash';
 import User from './modules/User';
 import Application from './modules/Application';
 
@@ -38,10 +37,18 @@ export default new Vuex.Store({
   },
   mutations: {
     setRealm(state, realm) {
-      if (startsWith(realm, '/')) {
-        state.realm = realm.substr(1);
+      const params = new URLSearchParams(window.location.search);
+      const currentRealm = params.get('realm');
+
+      if (realm.startsWith('/')) {
+        state.realm = realm.substring(1);
       } else {
         state.realm = realm;
+      }
+
+      if (currentRealm !== realm) {
+        params.set('realm', realm);
+        window.history.replaceState(null, null, `?${params.toString()}`);
       }
     },
     setUserId(state, id) {
