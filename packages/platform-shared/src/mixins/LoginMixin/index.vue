@@ -7,20 +7,8 @@ to such license between the licensee and ForgeRock AS. -->
 import {
   fromPairs, isNull, isEmpty, map,
 } from 'lodash';
-import AppAuthHelper from 'appauthhelper';
 import store from '../../store/index';
-import i18n from '../../i18n';
 import NotificationMixin from '../NotificationMixin';
-
-export function appAuthLogout() {
-  AppAuthHelper.logout().then(() => AppAuthHelper.getTokens(), () => {
-    this.displayNotification({
-      group: 'AdminMessage',
-      type: 'danger',
-      text: i18n.t('application.errors.failedLogout'),
-    });
-  });
-}
 
 export function getIdFromSession() {
   return this.getRequestService({
@@ -139,10 +127,6 @@ export default {
         this.$router.push('/');
       }
     },
-    systemLogout() {
-      appAuthLogout();
-    },
-    appAuthLogout,
     getIdFromSession,
     getUserInfo,
     getConfigurationInfo,
