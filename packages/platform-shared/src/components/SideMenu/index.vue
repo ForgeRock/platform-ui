@@ -70,7 +70,7 @@ to such license between the licensee and ForgeRock AS. -->
                     <h6 class="text-muted">
                       {{ item.title }}
                     </h6>
-                    <h5 class="text-capitalize">
+                    <h5>
                       {{ item.subTitle }}
                     </h5>
                   </span>
