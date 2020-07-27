@@ -176,7 +176,8 @@
         "custom": "Custom",
         "currentPassword": "Current password",
         "newPassword": "New password",
-        "twoStepVerification": "2-Step Verification"
+        "twoStepVerification": "2-Step Verification",
+        "journeyServiceError": "Error retrieving journey mappings."
       },
       "consent": {
         "allow": "Allow",

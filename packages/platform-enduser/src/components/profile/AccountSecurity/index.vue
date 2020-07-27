@@ -125,7 +125,7 @@ export default {
       passwordItem: {
         title: this.$t('common.placeholders.password'),
         linkText: this.$t('common.reset'),
-        linkUrl: `${store.state.amBaseURL}/UI/Login?realm=${(new URLSearchParams(window.location.search)).get('realm') || '/'}&authIndexType=service&authIndexValue=UpdatePassword&goto=${encodeURIComponent(window.location.href)}`,
+        linkUrl: '',
       },
       mfaItem: {
         title: this.$t('pages.profile.accountSecurity.twoStepVerification'),
@@ -145,8 +145,19 @@ export default {
     }).catch(() => { this.isOnKBA = false; });
 
     this.loadAuthenicationDevices();
+    this.setUpdateJourney();
   },
   methods: {
+    setUpdateJourney() {
+      this.getRequestService({ context: 'AM' }).get('/selfservice/trees').then((res) => {
+        const updateJourney = res.data.mapping.updatePassword;
+        if (updateJourney) {
+          this.$set(this.passwordItem, 'linkUrl', `${store.state.amBaseURL}/UI/Login?realm=${(new URLSearchParams(window.location.search)).get('realm') || '/'}&authIndexType=service&authIndexValue=${updateJourney}&goto=${encodeURIComponent(window.location.href)}`);
+        }
+      }, () => {
+        this.displayNotification('', 'error', this.$t('pages.profile.accountSecurity.journeyServiceError'));
+      });
+    },
     sendUpdateKBA(payload, config) {
       this.$emit('updateKBA', payload, config);
     },
