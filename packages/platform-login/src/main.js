@@ -12,6 +12,7 @@ import { required } from 'vee-validate/dist/rules';
 import ToggleButton from 'vue-js-toggle-button';
 import Notifications from 'vue-notification';
 import {
+  Config,
   SessionManager,
 } from '@forgerock/javascript-sdk';
 import i18n from './i18n';
@@ -54,10 +55,15 @@ extend('unique', {
 });
 setInteractionMode('passive');
 
+Config.set({
+  serverConfig: { baseUrl: `${process.env.VUE_APP_AM_URL}/` },
+});
+
 router.beforeEach(async (to, _from, next) => {
   if (to.name === 'logout') {
     await SessionManager.logout();
     next('/');
+    return;
   }
   next();
 });
