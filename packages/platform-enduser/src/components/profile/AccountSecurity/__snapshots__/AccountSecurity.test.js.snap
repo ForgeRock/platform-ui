@@ -36,9 +36,7 @@ exports[`AccountSecurity.vue AccountSecurity page loaded 1`] = `
 
         </bcol-stub>
         <bcol-stub md="2" tag="div">
-          <bbutton-stub href="null/UI/Login?realm=/&amp;authIndexType=service&amp;authIndexValue=UpdatePassword&amp;goto=http%3A%2F%2Flocalhost%2F" target="_self" event="click" routertag="a" variant="link" type="button" tag="button" class="py-0 text-right text-nowrap">
-            Reset
-          </bbutton-stub>
+          <!---->
           <!---->
         </bcol-stub>
       </brow-stub>
