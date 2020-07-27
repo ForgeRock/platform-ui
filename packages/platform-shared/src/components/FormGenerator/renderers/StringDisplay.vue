@@ -1,5 +1,5 @@
 <template>
-  <div @input="valueChange">
+  <div @input="valueChange(field.value)">
     <FrField
       :field="field"
       :disabled="uiSchema.disabled"
