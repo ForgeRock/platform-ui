@@ -111,7 +111,7 @@ export default {
         const splitObj = obj.privilegePath.split('/');
         this.menuItems.push({
           displayName: capitalize(obj.title),
-          icon: this.accessIcon(obj.icon),
+          icon: this.accessIcon(obj),
           routeName: 'ListResource',
           resourceName: splitObj[1],
           resourceType: splitObj[0],
@@ -120,10 +120,10 @@ export default {
     },
   },
   methods: {
-    accessIcon(icon) {
+    accessIcon(accessObject) {
       let matIcon = 'check_box_outline_blank';
-      if (icon && icon.length && icon.substring(0, 3) !== 'fa-') {
-        matIcon = icon;
+      if (accessObject['mat-icon'] && accessObject['mat-icon'].length && accessObject['mat-icon'].substring(0, 3) !== 'fa-') {
+        matIcon = accessObject['mat-icon'];
       }
 
       return matIcon;
