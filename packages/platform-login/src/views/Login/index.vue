@@ -78,9 +78,7 @@ import {
   BCardBody,
   BButton,
 } from 'bootstrap-vue';
-import {
-  FRAuth, FRStep, FRWebAuthn, Config,
-} from '@forgerock/javascript-sdk';
+import { FRAuth, FRStep, FRWebAuthn } from '@forgerock/javascript-sdk';
 import Vue from 'vue';
 import FrCenterCard from '@/components/utils/CenterCard';
 import WithCallback from '@forgerock/platform-shared/src/hoc/CallbackHoc';
@@ -142,14 +140,6 @@ export default {
       .then(this.setRealm)
       .then(() => {
         this.evaluateUrlParams();
-        // configure FRAuth
-
-        Config.set({
-          serverConfig: { baseUrl: `${process.env.VUE_APP_AM_URL}/` },
-          tree: this.authIndexValue || this.$route.params.tree || undefined,
-          realmPath: this.realm,
-        });
-
         this.nextStep();
       });
   },
@@ -240,7 +230,12 @@ export default {
       });
     },
     getStepParams() {
-      const stepParams = { query: {}, tree: this.authIndexValue || this.$route.params.tree || undefined };
+      const stepParams = {
+        query: {},
+        tree: this.authIndexValue || this.$route.params.tree || undefined,
+        realmPath: this.realm,
+      };
+
       if (this.suspendedId) {
         stepParams.query.suspendedId = this.suspendedId;
       } else {
