@@ -3104,10 +3104,10 @@ app-root-dir@^1.0.2:
   resolved "https://registry.yarnpkg.com/app-root-dir/-/app-root-dir-1.0.2.tgz#38187ec2dea7577fff033ffcb12172692ff6e118"
   integrity sha1-OBh+wt6nV3//Az/8sSFyaS/24Rg=
 
-appauthhelper@0.3.4:
-  version "0.3.4"
-  resolved "https://registry.yarnpkg.com/appauthhelper/-/appauthhelper-0.3.4.tgz#53fc4ad7df0b562b89add3fa502adc22d93300d2"
-  integrity sha512-Kxt4FlL+ahYOgeq1W653psQzDkk0UVU9WHCK93cP/COU6eolZ3QIOSOa69p+FaRovw9XLVWJAZQoa25XBNgXdQ==
+appauthhelper@0.3.9:
+  version "0.3.9"
+  resolved "https://registry.yarnpkg.com/appauthhelper/-/appauthhelper-0.3.9.tgz#14c619c140a14ed8870e25a04ab4c061eb2e81ac"
+  integrity sha512-FAwfoiFh6v8nRDOfM1pl1QQlNNoTnIJMWrPRI5YQWlcooLKvQKQpgBVXYiA+miStUs0gibzAD5IFIEPacT+9bQ==
   dependencies:
     "@openid/appauth" "^1.2.7"
     promise-polyfill "8.1.3"
@@ -11840,10 +11840,10 @@ obuf@^1.0.0, obuf@^1.1.2:
   resolved "https://registry.yarnpkg.com/obuf/-/obuf-1.1.2.tgz#09bea3343d41859ebd446292d11c9d4db619084e"
   integrity sha512-PX1wu0AmAdPqOL1mWhqmlOd8kOIZQwGZw6rh7uby9fTc5lhaOWFLX3I6R1hrF9k3zUY40e6igsLGkDXK92LJNg==
 
-oidcsessioncheck@1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/oidcsessioncheck/-/oidcsessioncheck-1.0.0.tgz#2295433a11ec0ebec37dceb21840d46d5ba99e7f"
-  integrity sha512-wGFZFNgwu/8j8ZQrUVxcUFq4o1tLxVYgSa1Q9TJWOOzXMcMyqMx4G7wukAMtvDpCSlDnd+SNhW1H5yEYOxJw8g==
+oidcsessioncheck@1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/oidcsessioncheck/-/oidcsessioncheck-1.0.1.tgz#6a4332ae2bcebf46c04cda34e5d25f845fbd971f"
+  integrity sha512-EQdFlEoI/uJnDZISPQT6ow1aNElvPXOsPauG310SYIIOQa8iVjOBXDW7r94E1tKzXo/36mRH9ndBxmMTS5mZjQ==
 
 on-finished@~2.3.0:
   version "2.3.0"
