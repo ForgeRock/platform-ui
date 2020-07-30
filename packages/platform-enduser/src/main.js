@@ -220,6 +220,11 @@ const addAppAuth = () => {
         invalidSessionHandler() {
           window.logout();
         },
+        sessionClaimsHandler(newClaims) {
+          if (claims.auth_time !== newClaims.auth_time) {
+            this.invalidSessionHandler();
+          }
+        },
         cooldownPeriod: 5,
       });
       // check the validity of the session immediately
@@ -242,7 +247,7 @@ const addAppAuth = () => {
 
   // trigger logout from anywhere in the SPA by calling this global function
   window.logout = () => {
-    AppAuthHelper.logout().then(() => AppAuthHelper.getTokens());
+    AppAuthHelper.logout().then(() => window.location.reload());
   };
 };
 
