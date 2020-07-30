@@ -30,15 +30,12 @@ export function getUserInfo(session) {
 
 export function getConfigurationInfo(realm) {
   const slash = realm && realm.startsWith('/') ? '' : '/';
-  const requestPath = realm ? `/realms${slash}${realm}/serverinfo/*` : '/serverinfo/*';
+  const requestPath = realm && realm.length > 1 ? `/realms${slash}${realm}/serverinfo/*` : '/serverinfo/*';
 
   return this.getRequestService({
     context: 'AM',
     apiVersion: 'protocol=1.0,resource=1.1',
-  }).get(requestPath, { withCredentials: true, suppressEvents: true })
-    .catch((error) => {
-      this.displayNotification('AdminMessage', 'error', error.message);
-    });
+  }).get(requestPath, { withCredentials: true, suppressEvents: true });
 }
 /**
   * @param {string} url - current url after successful login
