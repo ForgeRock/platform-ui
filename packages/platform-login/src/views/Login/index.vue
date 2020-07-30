@@ -141,6 +141,11 @@ export default {
       .then(() => {
         this.evaluateUrlParams();
         this.nextStep();
+      })
+      .catch(() => {
+        this.errorMessage = this.$t('login.invalidRealm');
+        this.redirectToFailure(this.step);
+        this.loading = false;
       });
   },
   methods: {

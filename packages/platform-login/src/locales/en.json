@@ -26,7 +26,8 @@
     "social": {
       "or": "or",
       "continueWith": "Continue with {buttonDisplayName}"
-    }
+    },
+    "invalidRealm": "Invalid Realm"
   },
   "pages": {
     "selfservice": {
