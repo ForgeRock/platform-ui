@@ -78,7 +78,12 @@ import {
   BCardBody,
   BButton,
 } from 'bootstrap-vue';
-import { FRAuth, FRStep, FRWebAuthn } from '@forgerock/javascript-sdk';
+import {
+  FRAuth,
+  FRStep,
+  FRWebAuthn,
+  SessionManager,
+} from '@forgerock/javascript-sdk';
 import Vue from 'vue';
 import FrCenterCard from '@/components/utils/CenterCard';
 import WithCallback from '@forgerock/platform-shared/src/hoc/CallbackHoc';
@@ -141,8 +146,10 @@ export default {
     this.getConfigurationInfo(currentRealm)
       .then(this.setRealm)
       .then(() => {
-        this.evaluateUrlParams();
-        this.nextStep();
+        this.checkNewSession().then(() => {
+          this.evaluateUrlParams();
+          this.nextStep();
+        });
       })
       .catch(() => {
         this.errorMessage = this.$t('login.invalidRealm');
@@ -575,6 +582,19 @@ export default {
     setRealm(config) {
       this.realm = config ? config.data.realm : '/';
     },
+    // needs to happen before other query params are processed
+    checkNewSession() {
+      return new Promise((resolve) => {
+        // need to logout if query param is present and equal to newsession
+        if (new URLSearchParams(this.getCurrentQueryString()).get('arg') === 'newsession') {
+          SessionManager.logout().then(() => {
+            resolve();
+          });
+        } else {
+          resolve();
+        }
+      });
+    },
     /**
      * @description Look at the url and see if we are returning to a tree from an Email Suspend Node or Redirect Callback.
      * Must be default route and contain the strings "suspendedId=" and "authIndexValue=" for Email Suspend Node.
@@ -587,8 +607,8 @@ export default {
       const hash = window.location.hash || '';
 
       if (realm) params.delete('realm');
-
-      params.delete('realm');
+      // arg query parameter handled in checkNewSession method
+      if (params.get('arg') === 'newsession') params.delete('arg');
       if (this.$route.name === 'login' && paramString.includes('suspendedId=') && paramString.includes('authIndexValue=')) {
         this.authIndexValue = params.get('authIndexValue');
         this.suspendedId = params.get('suspendedId');
