@@ -6,6 +6,9 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+import 'whatwg-fetch';
+import 'core-js/stable';
+
 import {
   each,
   has,
@@ -33,7 +36,6 @@ import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import router from './router';
 import i18n from './i18n';
 import App from './App';
-import 'core-js/stable';
 
 // Turn off production warning messages
 Vue.config.productionTip = false;

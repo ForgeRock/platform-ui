@@ -6,6 +6,10 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+import 'whatwg-fetch';
+import 'core-js/stable';
+import 'regenerator-runtime/runtime';
+
 import Vue from 'vue';
 import { extend, setInteractionMode } from 'vee-validate';
 import { required } from 'vee-validate/dist/rules';
@@ -18,8 +22,6 @@ import {
 import i18n from './i18n';
 import router from './router';
 import App from './App';
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
 
 Vue.config.productionTip = false;
 
