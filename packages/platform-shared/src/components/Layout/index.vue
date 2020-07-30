@@ -8,7 +8,7 @@ to such license between the licensee and ForgeRock AS. -->
     id="app"
     :class="[{
       'fr-menu-mobile': useMobileStyleMenu,
-      'fr-menu-expanded': toggled === true,
+      'fr-menu-expanded': toggled === true && !hideNav,
       'fr-menu-collapsed': toggled === false,
       'fr-navbar-hidden': hideNav,
     }, 'h-100']">
