@@ -223,7 +223,7 @@ const addAppAuth = () => {
     endSessionEndpoint: `${AM_URL}/oauth2/${realmPath}connect/endSession`,
     identityProxyPreference: 'XHR',
     resourceServers: {
-      [store.state.ApplicationStore.idmBaseURL]: 'openid',
+      [store.state.ApplicationStore.idmBaseURL]: 'fr:idm:*',
     },
     tokensAvailableHandler(claims) {
       // this function is called every time the tokens are either
