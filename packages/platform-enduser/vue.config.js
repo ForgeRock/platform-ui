@@ -83,6 +83,9 @@ module.exports = {
     plugins: getPlugins(),
     devtool: 'source-map',
   },
+  transpileDependencies: [
+    'appauthhelper',
+  ],
   css: {
     loaderOptions: {
       sass: {
