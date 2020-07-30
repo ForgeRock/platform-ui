@@ -57,8 +57,8 @@ export function verifyGotoUrlAndRedirect(url, isAdmin) {
   urlParams.delete('gotoOnFail');
   urlParams.delete('realm');
 
-  const ampersand = urlParams.toString.length ? '&' : '';
-  const paramsToString = urlParams.toString().length ? `?${urlParams.toString()}` : '';
+  const ampersand = urlParams.toString().length ? '&' : '';
+  const paramsToString = urlParams.toString().length ? `${urlParams.toString()}` : '';
   const isDefaultPath = (path) => path === '/am/console';
   const redirectUserBasedOnType = () => {
     if (isAdmin) {
@@ -75,18 +75,7 @@ export function verifyGotoUrlAndRedirect(url, isAdmin) {
   })
     .post('/users?_action=validateGoto', gotoUrl, { withCredentials: true })
     .then((res) => {
-      if (
-        !isDefaultPath(res.data.successURL)
-        && res.data.successURL !== 'undefined'
-      ) {
-        // if (res.data.successURL.startsWith('/')) {
-        //   // url path
-        //   if (!res.data.successURL.endsWith('#realms')) {
-        //     const [path, hash] = res.data.successURL.split('#');
-        //     return `${path}?${urlParams.toString()}#${hash}`;
-        //   }
-        // }
-        // external url or am/ui-admin
+      if (!isDefaultPath(res.data.successURL) && res.data.successURL !== 'undefined') {
         return res.data.successURL;
       }
       if (isDefaultPath(res.data.successURL) && !isDefaultPath(url)) {
