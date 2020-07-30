@@ -98,6 +98,7 @@ import TextOutputCallback from '@/components/callbacks/TextOutputCallback';
 import SuspendedTextOutputCallback from '@/components/callbacks/SuspendedTextOutputCallback';
 import ValidatedCreatePasswordCallback from '@/components/callbacks/ValidatedCreatePasswordCallback';
 import TermsAndConditionsCallback from '@/components/callbacks/TermsAndConditionsCallback';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import i18n from '@/i18n';
@@ -111,6 +112,7 @@ export default {
     Spinner,
   },
   mixins: [
+    NotificationMixin,
     RestMixin,
     LoginMixin,
   ],
@@ -308,6 +310,7 @@ export default {
             break;
           case 'LoginFailure':
             this.errorMessage = this.$t('login.loginFailure');
+            this.showErrorMessage(step.payload, step.payload.message);
             this.redirectToFailure(step);
             break;
           default:

@@ -18,13 +18,11 @@ of the MIT license. See the LICENSE file for details.
     <!-- Application View -->
     <!-- eslint-disable-next-line vue/component-name-in-template-casing -->
     <notifications
-      group="IDMMessages"
       position="bottom left"
       width="320"
-      :duration="400000">
+      :duration="4000">
       <template v-slot:body="props">
         <FrAlert
-          class="w-50 m-3"
           :variant="props.item.type"
           show>
           {{ props.item.text }}
