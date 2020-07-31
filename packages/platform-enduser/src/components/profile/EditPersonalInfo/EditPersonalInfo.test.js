@@ -64,7 +64,7 @@ describe('EditPersonalInfo.vue', () => {
   });
 
   it('renders a title', () => {
-    expect(wrapper.vm.title).toBe('Edit your personal info');
+    expect(wrapper.vm.title).toBe('Edit personal info');
   });
 
   it('creates patches array correctly', () => {
