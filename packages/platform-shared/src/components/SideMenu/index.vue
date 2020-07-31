@@ -77,10 +77,9 @@ to such license between the licensee and ForgeRock AS. -->
                 </BDropdownItem>
                 <BDropdownItem
                   v-else
-                  class="my-2"
                   :key="`sideDropdownItems_${index}`"
                   @click="item.action">
-                  <i class="material-icons mr-3">
+                  <i class="material-icons mr-2">
                     {{ item.icon }}
                   </i>
                   <span>
