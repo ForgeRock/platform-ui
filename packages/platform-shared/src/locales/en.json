@@ -117,15 +117,42 @@
     },
     "status": "Status"
   },
+  "dashboard": {
+    "managedAccess": {
+      "title": "Manage Access",
+      "description": "Manage how your users can authenticate and gain access to your systems."
+    },
+    "managedIdentity": {
+      "title": "Manage Identities",
+      "description": "Manage where, when and how your users can change their information."
+    },
+    "welcome": {
+      "title": "Welcome to ForgeRock!",
+      "description": "With the Forgerock platform you can control access, identity management and much more.",
+      "footer": "Get Started"
+    }
+  },
+  "date": {
+    "yearsAgo": "years ago",
+    "yearAgo": "a year ago",
+    "monthsAgo": "months ago",
+    "monthAgo": "a month ago",
+    "daysAgo": "days ago",
+    "dayAgo": "a day ago",
+    "hoursAgo": "hours ago",
+    "hourAgo": "an hour ago",
+    "minutesAgo": "minutes ago",
+    "minuteAgo": "a minute ago",
+    "secondsAgo": "a few seconds ago"
+  },
+  "errors": {
+    "errorSaving": "Error saving list",
+    "errorCreating": "Error creating file",
+    "couldNotRetrieveVersion": "There was an error retrieving version information."
+  },
   "navbar": {
     "helpSupport": "Help & Support",
     "docs": "Docs"
-  },
-  "routeNames": {
-    "Applications": "Applications",
-    "Dashboard": "Dashboard",
-    "EditResource": "Edit Resource",
-    "Login": "Login"
   },
   "pages": {
     "access": {
@@ -176,6 +203,17 @@
       "condtionDescription": "Optionally, assign user to role based on the presence of specific attributes.",
       "temporalConstraintDescription": "Optionally, allow this role to assigned only a temporary basis."
     },
+    "app": {
+      "notifications": {
+        "noNotifications": "No notifications available",
+        "title": "Notifications",
+        "clearAll": "Clear All",
+        "removedAll": "Removed all notifications",
+        "removed": "Removed notification",
+        "failedToRemove": "Failed to remove notification",
+        "failedToClear": "Failed to clear all notifications"
+      }
+    },
     "assignment": {
       "title": "Assignment",
       "attributes": "Attributes",
@@ -224,6 +262,12 @@
     "groupOperatorText2": "conditions are met",
     "properties": "{propertyName} properties"
   },
+  "routeNames": {
+    "Applications": "Applications",
+    "Dashboard": "Dashboard",
+    "EditResource": "Edit Resource",
+    "Login": "Login"
+  },
   "scriptEditor": {
     "title": "Script",
     "type": "Type: ",
@@ -234,13 +278,14 @@
     "json": "JSON",
     "jsonNotStructured": "JSON is not structured properly"
   },
+  "sideMenu": {
+    "signOut": "Sign Out",
+    "toggleSidebar": "Toggle sidebar",
+    "dashboard": "Dashboard",
+    "selectIcon": "Please select icon in admin (Managed Object) settings"
+  },
   "timezone": {
     "helpText": "Time zone offset based on how many hours a location is from GMT.",
     "linkText": "Time zones chart"
-  },
-  "errors": {
-    "errorSaving": "Error saving list",
-    "errorCreating": "Error creating file",
-    "couldNotRetrieveVersion": "There was an error retrieving version information."
   }
 }
