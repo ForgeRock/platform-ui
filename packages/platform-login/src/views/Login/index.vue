@@ -136,7 +136,7 @@ export default {
   },
   mounted() {
     const urlParams = new URLSearchParams(window.location.search);
-    const currentRealm = urlParams.get('realm') || null;
+    const currentRealm = urlParams.get('realm') || 'root';
 
     this.getConfigurationInfo(currentRealm)
       .then(this.setRealm)
@@ -459,8 +459,9 @@ export default {
           this.showNextButton = false;
           if (callback.getOutputByName('trackingCookie')) {
             // save current step information for later resumption of tree.
-            sessionStorage.authIndexValue = this.authIndexValue || this.$route.params.tree;
-            sessionStorage.step = JSON.stringify(this.step);
+            sessionStorage.setItem('authIndexValue', this.authIndexValue || this.$route.params.tree);
+            sessionStorage.setItem('step', JSON.stringify(this.step));
+            sessionStorage.setItem('realm', this.realm);
           }
           window.location.href = callback.getOutputByName('redirectUrl');
           break;
@@ -558,11 +559,12 @@ export default {
     getStepFromStorage() {
       const step = sessionStorage.getItem('step');
       const authIndexValue = sessionStorage.getItem('authIndexValue');
-      if (step !== null && authIndexValue !== null) {
+      const realm = sessionStorage.getItem('realm');
+      if (step !== null && authIndexValue !== null && realm !== null) {
         sessionStorage.clear();
-        return { step: JSON.parse(step), authIndexValue };
+        return { step: JSON.parse(step), authIndexValue, realm };
       }
-      return { step: undefined, authIndexValue: undefined };
+      return { step: undefined, authIndexValue: undefined, realm: undefined };
     },
     removeUrlParams() {
       // remove query params from the url
@@ -601,8 +603,10 @@ export default {
         const stepInfo = this.getStepFromStorage();
         this.authIndexValue = stepInfo.authIndexValue;
         this.step = new FRStep(stepInfo.step.payload);
+        this.realm = stepInfo.realm;
 
         this.removeUrlParams();
+        window.history.replaceState(null, null, `?realm=${this.realm}`);
       } else {
         const resourceUrlParam = params.get('resourceURL');
         if (resourceUrlParam) params.delete('resourceURL');
