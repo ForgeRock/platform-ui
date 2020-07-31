@@ -176,15 +176,15 @@
         "removeSuccess": "Device removed"
       },
       "editProfile": {
-        "userDetailsTitle": "Edit your personal info",
+        "userDetailsTitle": "Edit personal info",
         "failedProfileSave": "Failed to save profile changes",
         "optional": "(optional)",
         "noFields": "No profile fields available"
       },
       "accountSecurity": {
-        "title": "Account Security",
+        "title": "Sign-in & Security",
         "invalidPassword": "Invalid password form",
-        "subtitle": "Update your username, password and secondary methods to protect your account.",
+        "subtitle": "Update your username or password used to sign in.",
         "password": "Password",
         "securityQuestions": "Security Questions",
         "rememberPassword": "Can't remember your current password?",

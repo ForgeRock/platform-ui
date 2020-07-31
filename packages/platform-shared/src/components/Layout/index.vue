@@ -27,6 +27,8 @@ to such license between the licensee and ForgeRock AS. -->
         @toggle-menu="toggleMenu"
         :menu-is-toggled="toggled"
         :show-notifications="false"
+        docsLink="https://ea.forgerock.com/docs/idpaas/index.html"
+        helpURL="https://backstage.forgerock.com/"
         v-show="!hideNav" />
       <div
         id="appContent"

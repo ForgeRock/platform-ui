@@ -4,9 +4,9 @@ exports[`AccountSecurity.vue AccountSecurity page loaded 1`] = `
 <div>
   <bcard-stub bodytag="div" titletag="h4" subtitletag="h6" subtitletextvariant="muted" headertag="div" footertag="div" tag="div" nobody="true">
     <bcardheader-stub headertag="div" class="p-4">
-      <h4>Account Security</h4>
+      <h4>Sign-in &amp; Security</h4>
       <p class="m-0">
-        Update your username, password and secondary methods to protect your account.
+        Update your username or password used to sign in.
       </p>
     </bcardheader-stub>
     <bcardbody-stub bodytag="div" titletag="h4" subtitletag="h6" subtitletextvariant="muted" class="border-bottom">
