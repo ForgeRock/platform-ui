@@ -528,8 +528,8 @@ export default {
       }
     },
     /**
-     * Determine if there is a gotoOnFail parameter. if it exists - verify and redirect to that url or hash
-     * Redirect to failureUrl when it exists, and displays login failure message if not
+     * Determine if there is a gotoOnFail parameter. If it exists, verify and redirect to that url or hash
+     * Redirect to failureUrl when it exists, and display login failure message if not
      *
      * @param {Object} step - callback metadata containing url of failure
      */
@@ -551,6 +551,8 @@ export default {
             this.displayNotification('IDMMessages', 'error', error.response.data.message);
             this.loginFailure = true;
           });
+      } else if (has(step, 'payload.detail.failureUrl') && step.payload.detail.failureUrl.length) {
+        window.location.href = step.payload.detail.failureUrl;
       } else {
         this.loginFailure = true;
       }
