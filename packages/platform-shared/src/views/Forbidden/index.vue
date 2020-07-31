@@ -23,7 +23,7 @@ to such license between the licensee and ForgeRock AS. -->
       <div class="text-center">
         <BButton
           variant="link"
-          @click="this.systemLogout">
+          @click="logoutUser">
           {{ $t('pages.forbidden.signOut') }}
         </BButton>
       </div>
