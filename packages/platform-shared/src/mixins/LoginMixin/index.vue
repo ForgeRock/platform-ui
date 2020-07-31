@@ -48,7 +48,7 @@ export function getConfigurationInfo(realm) {
 export function verifyGotoUrlAndRedirect(url, isAdmin) {
   const urlParams = new URLSearchParams(window.location.search);
   const gotoUrl = JSON.stringify({ goto: urlParams.get('goto') });
-  const realm = urlParams.get('realm');
+  const realm = urlParams.get('realm') || '/';
 
   urlParams.delete('goto');
   urlParams.delete('gotoOnFail');
