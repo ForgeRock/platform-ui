@@ -23,8 +23,10 @@ function loadLocaleMessages() {
     if (matched && matched.length > 1) {
       const locale = matched[1];
       const generatedTranslation = locales(key);
+
       // Check for shared local and merge in if it exists
-      if (sharedLocales(key)) {
+      const sharedLocaleExists = sharedLocales.keys().includes(key);
+      if (sharedLocaleExists) {
         merge(generatedTranslation, sharedLocales(key));
       }
 
