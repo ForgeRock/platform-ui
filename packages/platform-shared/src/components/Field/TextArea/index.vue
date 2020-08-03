@@ -12,6 +12,7 @@ to such license between the licensee and ForgeRock AS. -->
     :label="label"
   >
     <textarea
+      :autofocus="autofocus"
       :id="id"
       :rows="rows"
       :cols="cols"
@@ -21,7 +22,6 @@ to such license between the licensee and ForgeRock AS. -->
       :data-vv-as="label"
       :disabled="disabled"
       @keyup="validator"
-      ref="input"
       :name="fieldName" />
   </FrInputLayout>
 </template>
