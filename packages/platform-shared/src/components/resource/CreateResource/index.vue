@@ -14,7 +14,6 @@ to such license between the licensee and ForgeRock AS. -->
     <BModal
       v-else
       id="createResourceModal"
-      @shown="focusField"
       size="lg"
       cancel-variant="outline-secondary"
       @hide="hideModal"
@@ -35,6 +34,7 @@ to such license between the licensee and ForgeRock AS. -->
                 v-if="((field.type === 'string' && !field.isConditional) || field.type === 'number' || field.type === 'boolean' || field.type === 'password') && field.encryption === undefined">
                 <FrField
                   v-if="field.type !== 'password'"
+                  :autofocus="index === 0"
                   :field="field"
                   :display-description="false" />
 
@@ -46,6 +46,7 @@ to such license between the licensee and ForgeRock AS. -->
                   <template #input>
                     <BFormGroup class="mb-3">
                       <FrField
+                        :autofocus="index === 0"
                         :field="field"
                         :prepend-title="true" />
                     </BFormGroup>
@@ -140,7 +141,6 @@ import {
   clone,
   each,
   find,
-  isArray,
   isString,
   noop,
 } from 'lodash';
@@ -353,11 +353,6 @@ export default {
         }
       });
       return data;
-    },
-    focusField() {
-      if (isArray(this.$refs.focusInput)) {
-        this.$refs.focusInput[0].focus();
-      }
     },
     setSingletonRelationshipValue(data, fieldKey) {
       const property = this.createProperties.find((prop) => prop.key === fieldKey);
