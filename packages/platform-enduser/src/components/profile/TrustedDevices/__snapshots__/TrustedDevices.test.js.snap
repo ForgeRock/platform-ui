@@ -1,3 +1,115 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`TrustedDevices.vue ParseDevice method returns an empty strings if metadata data is missing: console-error-snapshot 1`] = `
+Array [
+  Array [
+    "[Vue warn]: Getter is missing for computed property \\"googleMapsApiKey\\".
+
+found in
+
+---> <TrustedDevices>
+       <Root>",
+  ],
+]
+`;
+
+exports[`TrustedDevices.vue ParseDevice method returns an object with device data: console-error-snapshot 1`] = `
+Array [
+  Array [
+    "[Vue warn]: Getter is missing for computed property \\"googleMapsApiKey\\".
+
+found in
+
+---> <TrustedDevices>
+       <Root>",
+  ],
+]
+`;
+
+exports[`TrustedDevices.vue ParseDevice method sets isCurrent to true on deviceId match: console-error-snapshot 1`] = `
+Array [
+  Array [
+    "[Vue warn]: Getter is missing for computed property \\"googleMapsApiKey\\".
+
+found in
+
+---> <TrustedDevices>
+       <Root>",
+  ],
+]
+`;
+
+exports[`TrustedDevices.vue ParseLocation method returns a promise that resolves with a location object: console-error-snapshot 1`] = `
+Array [
+  Array [
+    "[Vue warn]: Getter is missing for computed property \\"googleMapsApiKey\\".
+
+found in
+
+---> <TrustedDevices>
+       <Root>",
+  ],
+]
+`;
+
+exports[`TrustedDevices.vue SortDevicesByDate method returns devices sorted by lastSelectedDate: console-error-snapshot 1`] = `
+Array [
+  Array [
+    "[Vue warn]: Getter is missing for computed property \\"googleMapsApiKey\\".
+
+found in
+
+---> <TrustedDevices>
+       <Root>",
+  ],
+]
+`;
+
 exports[`TrustedDevices.vue Trusted Devices loads 1`] = ``;
+
+exports[`TrustedDevices.vue Trusted Devices loads: console-error-snapshot 1`] = `
+Array [
+  Array [
+    "[Vue warn]: Getter is missing for computed property \\"googleMapsApiKey\\".
+
+found in
+
+---> <TrustedDevices>
+       <Root>",
+  ],
+]
+`;
+
+exports[`TrustedDevices.vue handleModalPrimaryButton method calls the correct handler: console-error-snapshot 1`] = `
+Array [
+  Array [
+    "[Vue warn]: Getter is missing for computed property \\"googleMapsApiKey\\".
+
+found in
+
+---> <TrustedDevices>
+       <Root>",
+  ],
+  Array [
+    "[Vue warn]: Getter is missing for computed property \\"googleMapsApiKey\\".
+
+found in
+
+---> <TrustedDevices>
+       <Root>",
+  ],
+]
+`;
+
+exports[`TrustedDevices.vue setModalData set modal data: console-error-snapshot 1`] = `
+Array [
+  Array [
+    "[Vue warn]: Getter is missing for computed property \\"googleMapsApiKey\\".
+
+found in
+
+---> <TrustedDevices>
+       <Root>",
+  ],
+]
+`;
