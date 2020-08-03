@@ -37,6 +37,7 @@ to such license between the licensee and ForgeRock AS. -->
         <FrKeyValuePanel
           v-if="currentKey === key"
           :validation-rules="validationRules"
+          :autofocus="true"
           v-model="keyValueObject"
           @cancel="currentKey = null"
           @saveKeyValue="saveKeyValue" />
@@ -52,6 +53,7 @@ to such license between the licensee and ForgeRock AS. -->
     <FrKeyValuePanel
       v-if="currentKey === ''"
       :validation-rules="validationRules"
+      :autofocus="true"
       v-model="keyValueObject"
       @cancel="currentKey = null"
       @saveKeyValue="saveKeyValue" />
