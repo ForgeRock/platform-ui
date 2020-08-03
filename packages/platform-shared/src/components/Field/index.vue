@@ -46,6 +46,7 @@ to such license between the licensee and ForgeRock AS. -->
       v-else-if="field.type === 'checkbox'"
       v-model="inputValue"
       v-on="$listeners"
+      :autofocus="autofocus"
       :disabled="fieldDisabled"
       class="mr-0"
       inline />
@@ -149,6 +150,7 @@ to such license between the licensee and ForgeRock AS. -->
         v-else-if="field.type === 'tag'"
         v-model="inputValue"
         v-on="$listeners"
+        :autofocus="autofocus"
         :field-title="field.title"
         :disabled="fieldDisabled"
         :class="{'fr-error': errors.length || failedPolicies.length}" />
