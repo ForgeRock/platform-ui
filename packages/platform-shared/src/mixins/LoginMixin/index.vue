@@ -45,10 +45,9 @@ export function getConfigurationInfo(realm) {
   * If it has been registered in AM, redirect the user to the url
   * Else redirect to the default login url.
   */
-export function verifyGotoUrlAndRedirect(url, isAdmin) {
+export function verifyGotoUrlAndRedirect(url, realm, isAdmin) {
   const urlParams = new URLSearchParams(window.location.search);
   const gotoUrl = JSON.stringify({ goto: urlParams.get('goto') });
-  const realm = urlParams.get('realm') || '/';
 
   urlParams.delete('goto');
   urlParams.delete('gotoOnFail');
