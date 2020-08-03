@@ -137,19 +137,19 @@ export default {
       step: undefined,
       suspendedId: undefined,
       realm: '/',
+      hideRealm: false,
     };
   },
   mounted() {
     const urlParams = new URLSearchParams(window.location.search);
-    const currentRealm = urlParams.get('realm') || 'root';
+    this.realm = urlParams.get('realm') || '/';
 
-    this.getConfigurationInfo(currentRealm)
+    this.getConfigurationInfo(this.realm)
       .then(this.setRealm)
+      .then(this.checkNewSession)
       .then(() => {
-        this.checkNewSession().then(() => {
-          this.evaluateUrlParams();
-          this.nextStep();
-        });
+        this.evaluateUrlParams();
+        this.nextStep();
       })
       .catch(() => {
         this.errorMessage = this.$t('login.invalidRealm');
@@ -302,14 +302,14 @@ export default {
                 if (rolesArray.includes('ui-global-admin') || rolesArray.includes('ui-realm-admin')) {
                   isAdmin = true;
                 }
-                return this.verifyGotoUrlAndRedirect(step.getSuccessUrl(), isAdmin);
+                return this.verifyGotoUrlAndRedirect(step.getSuccessUrl(), this.realm, isAdmin);
               })
               .then((res) => {
                 window.location.href = res;
               })
               .catch(() => {
                 // attempt to redirect user on failure
-                this.verifyGotoUrlAndRedirect(step.getSuccessUrl(), false)
+                this.verifyGotoUrlAndRedirect(step.getSuccessUrl(), this.realm, false)
                   .then((res) => {
                     window.location.href = res;
                   });
@@ -582,6 +582,12 @@ export default {
       window.location.hash = `service/${this.authIndexValue}`;
     },
     setRealm(config) {
+      const amContext = process.env.VUE_APP_AM_URL;
+      const dnsContext = `${window.location.origin}/am`;
+      // using DNS - need to keep realm obscured
+      if (amContext !== dnsContext) {
+        this.hideRealm = true;
+      }
       this.realm = config ? config.data.realm : '/';
     },
     // needs to happen before other query params are processed
@@ -651,9 +657,14 @@ export default {
         });
 
         const ampersand = params.toString().length > 1 ? '&' : '';
+        const qMark = params.toString().length > 1 ? '?' : '';
 
         this.removeUrlParams();
-        window.history.replaceState(null, null, `?realm=${this.realm}${ampersand}${params.toString()}${hash}`);
+        if (this.hideRealm) {
+          window.history.replaceState(null, null, `${qMark}${params.toString()}${hash}`);
+        } else {
+          window.history.replaceState(null, null, `?realm=${this.realm}${ampersand}${params.toString()}${hash}`);
+        }
       }
     },
   },

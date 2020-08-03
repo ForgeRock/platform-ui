@@ -86,7 +86,7 @@ export default {
           company: company || 'ForgeRock',
           email,
           adminUser,
-          adminURL: state.ApplicationStore.adminURL,
+          adminURL: `${state.ApplicationStore.adminURL}?realm=${state.realm}`,
         };
       },
     }),
