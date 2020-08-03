@@ -7,6 +7,7 @@ to such license between the licensee and ForgeRock AS. -->
   <div class="fr-key-value-panel p-3">
     <ValidationObserver v-slot="{ invalid }">
       <FrField
+        :autofocus="autofocus"
         :field="keyModel"
         :prepend-title="true"
         class="mb-3" />
@@ -49,6 +50,13 @@ export default {
     ValidationObserver,
   },
   props: {
+    /**
+     * Autofocus field.
+     */
+    autofocus: {
+      type: Boolean,
+      default: false,
+    },
     value: {
       type: Object,
       default() {
