@@ -6,6 +6,7 @@ to such license between the licensee and ForgeRock AS. -->
 <template>
   <BFormTags
     v-model="inputValue"
+    :autofocus="autofocus"
     :disabled="disabled"
     :class="[{'fr-error': false}, 'fr-tags']">
     <template v-slot="{ tags, inputAttrs, inputHandlers, addTag, removeTag }">
@@ -57,6 +58,13 @@ export default {
     };
   },
   props: {
+    /**
+     * Autofocus field.
+     */
+    autofocus: {
+      type: Boolean,
+      default: false,
+    },
     /**
      * Flag to disable this field
      */
