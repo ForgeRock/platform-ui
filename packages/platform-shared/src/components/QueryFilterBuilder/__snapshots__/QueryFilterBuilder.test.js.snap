@@ -1,0 +1,105 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`QueryFilterBuilder Checks for boolean operators: console-error-snapshot 1`] = `
+Array [
+  Array [
+    "[Vue warn]: Missing required prop: \\"resourceName\\"
+
+found in
+
+---> <QueryFilterBuilder>
+       <Root>",
+  ],
+]
+`;
+
+exports[`QueryFilterBuilder Checks if filter string is greater than 3 layers deep: console-error-snapshot 1`] = `
+Array [
+  Array [
+    "[Vue warn]: Missing required prop: \\"resourceName\\"
+
+found in
+
+---> <QueryFilterBuilder>
+       <Root>",
+  ],
+]
+`;
+
+exports[`QueryFilterBuilder Creates default group: console-error-snapshot 1`] = `
+Array [
+  Array [
+    "[Vue warn]: Missing required prop: \\"resourceName\\"
+
+found in
+
+---> <QueryFilterBuilder>
+       <Root>",
+  ],
+]
+`;
+
+exports[`QueryFilterBuilder Creates default rule: console-error-snapshot 1`] = `
+Array [
+  Array [
+    "[Vue warn]: Missing required prop: \\"resourceName\\"
+
+found in
+
+---> <QueryFilterBuilder>
+       <Root>",
+  ],
+]
+`;
+
+exports[`QueryFilterBuilder Creates unique index: console-error-snapshot 1`] = `
+Array [
+  Array [
+    "[Vue warn]: Missing required prop: \\"resourceName\\"
+
+found in
+
+---> <QueryFilterBuilder>
+       <Root>",
+  ],
+]
+`;
+
+exports[`QueryFilterBuilder QueryFilterBuilder successfully loaded: console-error-snapshot 1`] = `
+Array [
+  Array [
+    "[Vue warn]: Missing required prop: \\"resourceName\\"
+
+found in
+
+---> <QueryFilterBuilder>
+       <Root>",
+  ],
+]
+`;
+
+exports[`QueryFilterBuilder converts filter object to string: console-error-snapshot 1`] = `
+Array [
+  Array [
+    "[Vue warn]: Missing required prop: \\"resourceName\\"
+
+found in
+
+---> <QueryFilterBuilder>
+       <Root>",
+  ],
+]
+`;
+
+exports[`QueryFilterBuilder normalize query object: console-error-snapshot 1`] = `
+Array [
+  Array [
+    "[Vue warn]: Missing required prop: \\"resourceName\\"
+
+found in
+
+---> <QueryFilterBuilder>
+       <Root>",
+  ],
+]
+`;
