@@ -42,6 +42,9 @@ describe('QueryFilterBuilder', () => {
           },
         },
       },
+      propsData: {
+        resourceName: 'user',
+      },
     });
   });
 

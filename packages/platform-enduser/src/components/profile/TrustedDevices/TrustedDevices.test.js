@@ -13,7 +13,9 @@ import TrustedDevices from '@/components/profile/TrustedDevices';
 const localVue = createLocalVue();
 const MapMixin = {
   computed: {
-    googleMapsApiKey: '',
+    googleMapsApiKey() {
+      return '';
+    },
   },
   methods: {
     reverseGeocode: () => Promise.resolve({
