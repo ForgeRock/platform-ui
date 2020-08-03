@@ -14,7 +14,7 @@ import store from '../../store/index';
 
 const idmContext = process.env.VUE_APP_IDM_URL;
 const amContext = process.env.VUE_APP_AM_URL;
-
+const dnsContext = `${window.location.origin}/am`;
 /**
  * @description Rest API call mixin for global use
  */
@@ -46,10 +46,11 @@ export default {
 
         // Use Legacy API
         if (config.context === 'AM') {
-          let amBase = `${amContext}/json/`;
+          const isDNS = amContext !== dnsContext;
+          let amBase = isDNS ? `${dnsContext}/json/` : `${amContext}/json/`;
 
-          if (store.state.realm && store.state.realm !== 'root') {
-            amBase = `${amContext}/json/realms/root/realms/${store.state.realm}`;
+          if (store.state.realm && store.state.realm !== '/' && store.state.realm !== 'root') {
+            amBase = isDNS ? `${dnsContext}/json/realms/root/realms/${store.state.realm}` : `${amContext}/json/realms/root/realms/${store.state.realm}`;
           }
 
           const requestDetails = {
