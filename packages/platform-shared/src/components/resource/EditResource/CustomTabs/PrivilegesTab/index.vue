@@ -379,7 +379,7 @@ export default {
   },
   mounted() {
     // get schema for all internal/role and all managed objects that are not managed/assignment
-    if (this.$store.state.userId === 'openidm-admin') {
+    if (this.$store.state.UserStore.adminUser) {
       getSchema('?_queryFilter=resourceCollection eq "internal/role" or (resourceCollection sw "managed" and !(resourceCollection eq "managed/assignment"))&_fields=*').then(
         (response) => {
           const schemas = response.data.result;

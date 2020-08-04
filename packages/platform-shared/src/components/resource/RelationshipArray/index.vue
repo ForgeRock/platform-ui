@@ -249,7 +249,7 @@ export default {
       removeModalId: `delete_${this.relationshipArrayProperty.propName}_modal`,
       newRelationships: [],
       selected: [],
-      isOpenidmAdmin: this.$store.state.userId === 'openidm-admin',
+      isOpenidmAdmin: this.$store.state.UserStore.adminUser,
     };
   },
   mounted() {
