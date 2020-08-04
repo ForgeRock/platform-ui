@@ -58,10 +58,9 @@ of the MIT license. See the LICENSE file for details.
           </BRow>
         </BCardBody>
       </template>
-      <BCardBody>
+      <BCardBody v-if="isOnKBA && internalUser === false">
         <FrEditKba
           class="w-100"
-          v-if="isOnKBA && internalUser === false"
           :kba-data="kbaData"
           @updateKBA="sendUpdateKBA" />
       </BCardBody>
@@ -152,7 +151,7 @@ export default {
       this.getRequestService({ context: 'AM' }).get('/selfservice/trees').then((res) => {
         const updateJourney = res.data.mapping.updatePassword;
         if (updateJourney) {
-          this.$set(this.passwordItem, 'linkUrl', `${store.state.amBaseURL}/UI/Login?realm=${(new URLSearchParams(window.location.search)).get('realm') || '/'}&authIndexType=service&authIndexValue=${updateJourney}&goto=${encodeURIComponent(window.location.href)}`);
+          this.$set(this.passwordItem, 'linkUrl', `${store.state.amBaseURL}/UI/Login?realm=${(new URLSearchParams(window.location.search)).get('realm') || '/'}&ForceAuth=true&authIndexType=service&authIndexValue=${updateJourney}&goto=${encodeURIComponent(window.location.href)}`);
         }
       }, () => {
         this.displayNotification('', 'error', this.$t('pages.profile.accountSecurity.journeyServiceError'));
