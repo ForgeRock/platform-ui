@@ -248,7 +248,7 @@ export default {
       displayNameField: '',
       displaySecondaryTitleField: '',
       formFields: {},
-      isOpenidmAdmin: this.$store.state.userId === 'openidm-admin',
+      isOpenidmAdmin: this.$store.state.UserStore.adminUser,
       objectTypeProperties: {},
       relationshipProperties: {},
       settingsProperties: {},
