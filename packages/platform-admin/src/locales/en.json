@@ -63,7 +63,7 @@
     "identityResource": "Identity Object",
     "usage": "How to use",
     "usageInputLabel": "Tree ID",
-    "usageHelp": "Use when configuring the <a href=\"#\">ForgeRock SDK</a> or calling the <a href=\"#\">REST APIs</a>.",
+    "usageHelp": "Use when configuring the <a target=\"_blank\" href=\"https://sdks.forgerock.com/\">ForgeRock SDK</a> or calling the <a target=\"_blank\"  href=\"https://backstage.forgerock.com/docs/\">REST APIs</a>.",
     "description": "Sign in users to your application using any of the out-of-the-box journeys or customize them to suit your specific requirements.",
     "newJourney": "New Journey",
     "duplicateJourney": "Duplicate Journey",
