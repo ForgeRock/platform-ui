@@ -18,6 +18,9 @@ describe('RelationshipArray', () => {
         $store: {
           state: {
             userId: 'foo',
+            UserStore: {
+              adminUser: false,
+            },
           },
         },
       },

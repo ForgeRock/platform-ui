@@ -43,6 +43,9 @@ describe('EditResource.vue', () => {
         $store: {
           state: {
             userId: 'foo',
+            UserStore: {
+              adminUser: false,
+            },
           },
         },
       },
