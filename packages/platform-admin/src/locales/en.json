@@ -514,8 +514,8 @@
       "grantTypesHelp": "Authorization Code is required for SPA/Native apps.",
       "scopesLabel": "Scopes",
       "scopesHelp": "Scopes are strings that are presented to the user for approval and included in tokens so that the protected resource may make decisions about what to give access to.",
-      "logoUriLabel": "App Logo",
-      "logoUriHelp": "Application logo for use in user-facing UIs such as consent pages and application pages."
+      "logoUriLabel": "App Logo URI",
+      "logoUriHelp": "Application logo URI for use in user-facing UIs such as consent pages and application pages."
     },
     "deleteAppPanel": {
       "deleteApp": "Delete Application",
