@@ -33,6 +33,7 @@ to such license between the licensee and ForgeRock AS. -->
       </Draggable>
       <input
         v-bind="inputAttrs"
+        @blur="addTag()"
         v-on="inputHandlers"
         :placeholder="$t('common.addObject', {object: fieldTitle})"
         :class="[{'show': !tags.length}, 'fr-input']">
