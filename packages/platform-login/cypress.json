@@ -1,4 +1,10 @@
 {
   "pluginsFile": "e2e/plugins/index.js",
-  "retries": 3
+  "retries": 3,
+  "reporter": "../../node_modules/mochawesome",
+  "reporterOptions": {
+    "overwrite": false,
+    "html": false,
+    "json": true
+  }
 }

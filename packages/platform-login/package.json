@@ -11,7 +11,7 @@
     "lint": "yarn lint:js && yarn lint:style",
     "lint:js": "vue-cli-service lint",
     "lint:style": "vue-cli-service lint:style '**/*.vue' '**/*.scss'",
-    "test:e2e": "../../e2e-passwords.sh cypress run",
+    "test:e2e": "../../e2e/passwords.sh cypress run",
     "unit": "jest --no-cache",
     "coverage": "jest --verbose --coverage --noStackTrace --no-cache",
     "find-copyright-problems": "echo 'Listing all files which do not contain a valid copywright header for this year - some files do not qualify \n' && cd src && git grep -L --word-regexp \"Copyright (c) $(date +\"%Y\")\""
