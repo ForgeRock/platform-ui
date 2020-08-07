@@ -37,6 +37,7 @@ const defaultState = {
   email: '',
   userName: '',
   preferences: [],
+  aliasList: [],
 };
 
 const getters = {
@@ -92,8 +93,8 @@ const actions = {
     context.commit('clearAccess');
   },
 
-  setAliasListAction(context) {
-    context.commit('setAliasListAction');
+  setAliasListAction(context, aliasList) {
+    context.commit('setAliasListAction', aliasList);
   },
 
   clearStoreAction(context) {
