@@ -13,7 +13,7 @@
     "unit:debug": "node --inspect-brk node_modules/.bin/vue-cli-service test:unit --no-cache --watch --runInBand",
     "snapshot": "jest --updateSnapshot",
     "coverage": "jest --verbose --coverage --noStackTrace --no-cache --silent",
-    "test:e2e": "vue-cli-service test:e2e --mode e2e",
+    "test:e2e": "../../e2e-passwords.sh cypress run",
     "find-copyright-problems": "echo 'Listing all files which do not contain a valid copywright header for this year - some files do not qualify \n' && cd src && git grep -L --word-regexp \"Copyright (c) $(date +\"%Y\")\""
   },
   "dependencies": {
@@ -42,7 +42,6 @@
   "devDependencies": {
     "@ascendancyy/vue-cli-plugin-stylelint": "1.1.2",
     "@vue/cli-plugin-babel": "3.8.0",
-    "@vue/cli-plugin-e2e-cypress": "4.3.1",
     "@vue/cli-plugin-eslint": "4.3.1",
     "@vue/cli-plugin-unit-jest": "3.11.0",
     "@vue/cli-service": "4.3.1",
@@ -53,7 +52,9 @@
     "babel-jest": "24.9.0",
     "chai": "4.1.2",
     "copy-webpack-plugin": "5.0.3",
+    "cypress": "5.0.0",
     "eslint": "5.16.0",
+    "eslint-plugin-cypress": "2.11.1",
     "eslint-plugin-vue": "5.0.0",
     "flush-promises": "1.0.2",
     "jest": "24.9.0",

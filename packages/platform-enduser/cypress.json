@@ -1,4 +1,5 @@
 {
   "pluginsFile": "e2e/plugins/index.js",
-  "chromeWebSecurity": false
+  "chromeWebSecurity": false,
+  "retries": 3
 }

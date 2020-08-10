@@ -1,3 +1,4 @@
 {
-  "pluginsFile": "e2e/plugins/index.js"
+  "pluginsFile": "e2e/plugins/index.js",
+  "retries": 3
 }

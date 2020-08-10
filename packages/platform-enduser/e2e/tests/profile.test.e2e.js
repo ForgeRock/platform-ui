@@ -5,108 +5,106 @@
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
+import { loginUser, createIDMTestUser } from '../managedApi.e2e';
 
-context('Profile View', () => {
-  const userName = 'openidm-admin';
-  const permanentlyDeleteMessage = 'Yes, I want to permanently delete my account';
-  beforeEach(() => {
-    cy.visit('#/profile');
+describe('Enduser Profile View', () => {
+  let userName = '';
+  const password = 'Welcome1';
+  const fullName = 'First Last';
+  const permanentlyDeleteMessage = 'Are you sure you want to permanently delete your account data?';
+  const locationUrl = `${Cypress.config().baseUrl}/enduser/?realm=root#/profile`;
+  const verifyLogin = () => {
+    cy.server().route('/am/json/selfservice/trees').as('verifyPageLoad');
     cy.get('.text-center').then(($text) => {
-      if ($text.hasClass('mb-0')) {
-        cy.get('[placeholder="Username"]').type('amadmin');
-        cy.get('[placeholder="Username"]').should('have.value', 'amadmin');
-        cy.get('[placeholder="Password"]').type('password', { force: true });
-        cy.get('[placeholder="Password"]').should('have.value', 'password');
+      if ($text.hasClass('mb-4') || $text.hasClass('mb-0')) {
+        cy.get('[placeholder="User Name:"]')
+          .type(userName)
+          .should('have.value', userName);
+        cy.get('[placeholder="Password:"]')
+          .type(password, { force: true })
+          .should('have.value', password);
         cy.get('.btn-primary').click();
+        cy.get('img[alt="ForgeRock"]', { timeout: 60000 }).should('be.visible');
+      } else {
+        loginUser.then(() => {
+          cy.visit(locationUrl);
+          cy.wait(2000);
+          cy.get('img[alt="ForgeRock"]', { timeout: 60000 }).should('be.visible');
+        });
       }
     });
-  });
+    cy.location('pathname', { timeout: 20000 }).should('include', '/enduser/');
+    cy.wait('@verifyPageLoad', { timeout: 20000 });
+  };
 
-  it('location should be at profile', () => {
-    // http://localhost:8888/#/profile
-    cy.location().should((location) => {
-      expect(location.hostname).to.eq('localhost');
-      expect(location.pathname).to.eq('/');
-      expect(location.protocol).to.eq('http:');
+  before(() => {
+    createIDMTestUser().then((results) => {
+      // eslint-disable-next-line prefer-destructuring
+      userName = results.body.userName;
     });
   });
 
-  it('should have sidebar and navbar', () => {
-    cy.get('.fr-sidebar-wrapper').should('exist');
-    cy.get('.fr-main-navbar').should('exist');
+  beforeEach(() => {
+    cy.visit(locationUrl);
   });
 
   it('should have profile selected', () => {
-    cy.get('[href="#/profile"]')
+    verifyLogin();
+    cy.get('[href="#/profile"]', { timeout: 30000 })
       .should('exist')
       .should('have.css', 'background-color', 'rgb(228, 244, 253)')
       .should('have.css', 'border-left-color', 'rgb(16, 156, 241)');
   });
 
   it('should show user image and name', () => {
+    verifyLogin();
     cy.get('div.profileCol')
       .get('img.rounded-circle')
       .should('exist');
     cy.get('div.profileCol')
       .get('.text-muted')
-      .should('contain', userName);
-  });
-
-  it('should have account controls in center tabs', () => {
-    cy.get('div.tabs').within(() => {
-      cy.get('a.nav-link')
-        .should('have.css', 'color', 'rgb(16, 156, 241)');
-      cy.get('[href="#"]')
-        .each(($a, index) => {
-          if (index === 1) {
-            expect($a).to.contain('Download');
-          } else if (index === 2) {
-            expect($a).to.contain('Delete Account');
-          }
-        });
-    });
+      .should('contain', fullName);
   });
 
   it('should be able to download user data when clicked', () => {
-    cy.get('div.tabs').within(() => {
-      cy.get('div.media a').each(($a) => {
-        const href = $a.prop('href');
-        expect($a).to.have.attr('href', '#');
-
-        // make a programatic request to it
-        // which will fail if not 2xx response code
-        cy.request(href);
-      });
+    verifyLogin();
+    cy.get('div.accordion').within(() => {
+      cy.get('div.card-header.collapsed').eq(0).click();
+      cy.get('button.btn-primary')
+        .should('contain', 'Download');
+      // .click(); Want to figure out a way on BButton to programatically test the request
+      // works without actually clicking the button as we can do with <a href>
     });
   });
 
   it('should open delete account modal when clicked', () => {
-    cy.get('div.tabs').within(() => {
-      cy.get('div.media').eq(1).click();
+    verifyLogin();
+    cy.get('div.accordion').within(() => {
+      cy.get('div.card-header').contains('Delete Account').click();
     });
-    cy.get('h5.modal-title').should('contain', 'Delete your account');
-    cy.get('button.close').click();
+    cy.get('button.btn-danger:last')
+      .should('exist')
+      .click();
+    cy.get('h5.modal-title').should('contain', 'Permanently Delete Your Account?');
+    cy.get('button.text-danger:visible').contains('Cancel').click();
     cy.get('h5.modal-title').should('not.exist');
   });
 
   it('should be able to delete account', () => {
-    cy.get('div.tabs').within(() => {
-      cy.get('div.media').eq(1).click();
-    });
-    cy.get('div.modal-body').within(() => {
-      cy.get('label.custom-control-label').should('contain', permanentlyDeleteMessage);
-      cy.get('input.custom-control-input').should('not.be.checked');
-      cy.get('label.custom-control-label').click();
-      // TODO: This does not appear to be the actual checkbox, figure out what it is
-      // cy.get('input.custom-control-input').should('be.checked');
-    });
-
+    verifyLogin();
+    cy.get('h5.mb-0:last')
+      .should('exist')
+      .should('contain', 'Delete Account')
+      .click();
+    cy.get('button.btn-danger:last')
+      .should('exist')
+      .click();
+    cy.get('div.modal-body').should('contain', permanentlyDeleteMessage);
     cy.get('footer.modal-footer').within(() => {
       cy.get('button.btn-danger')
         .should('be.enabled')
-        .should('contain', 'Delete Account');
-      // We don't actually want to delete the account
+        .should('contain', 'Delete Account')
+        .click();
     });
-    cy.get('button.close').click();
   });
 });
