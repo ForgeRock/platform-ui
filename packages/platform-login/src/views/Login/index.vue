@@ -129,15 +129,16 @@ export default {
       disableNextButton: false,
       errorMessage: '',
       header: '',
+      hideRealm: false,
       kbaCallbackCount: 0,
       loading: true,
       loginFailure: false,
+      realm: '/',
+      retry: undefined,
       showClone: false,
       showNextButton: false,
       step: undefined,
       suspendedId: undefined,
-      realm: '/',
-      hideRealm: false,
     };
   },
   mounted() {
@@ -280,6 +281,7 @@ export default {
       const stepParams = this.getStepParams();
       FRAuth.next(this.step, stepParams).then(
         (step) => {
+          const previousStep = this.step;
           this.loading = false;
           this.step = step;
 
@@ -316,11 +318,18 @@ export default {
               });
             break;
           case 'LoginFailure':
-            this.errorMessage = this.$t('login.loginFailure');
-            this.showErrorMessage(step.payload, step.payload.message);
-            this.redirectToFailure(step);
+            if (this.retry) {
+              this.retry = false;
+              this.retryWithNewAuthId(previousStep, stepParams);
+            } else {
+              this.errorMessage = this.$t('login.loginFailure');
+              this.showErrorMessage(step.payload, step.getMessage());
+              this.redirectToFailure(step);
+            }
             break;
           default:
+            // retry only when previous was undefined (first step)
+            this.retry = !previousStep;
             // setup the form based on callback info/values obtained from this.step
             this.header = step.getHeader();
             this.description = step.getDescription();
@@ -560,6 +569,25 @@ export default {
     reloadTree(event) {
       event.preventDefault();
       window.location.reload();
+    },
+    /**
+     * Retry a previously failed step with a new authId. The new authId is acquired by calling FRAuth.next with no step.
+     * Then a this.nextStep is called with the previously failed step and new authId
+     *
+     * @param {Object} previousStep - previous step data with prototype intact
+     * @param {Object} stepParams - step params
+     *
+     */
+    retryWithNewAuthId(previousStep, stepParams) {
+      FRAuth.next(undefined, stepParams)
+        .then((step) => {
+          const { authId } = step.payload;
+          this.step = previousStep;
+          if (has(this.step, 'payload')) {
+            this.step.payload.authId = authId;
+          }
+          this.nextStep();
+        });
     },
     /**
      * @description If session storage has step information, extract it and clear session storage
