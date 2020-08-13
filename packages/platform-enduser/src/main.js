@@ -183,10 +183,24 @@ const startApp = () => {
 const addAppAuth = () => {
   const AM_URL = store.state.ApplicationStore.amBaseURL;
   const urlParams = new URLSearchParams(window.location.search);
-  const realm = urlParams.get('realm');
+  const originalLoginRealm = sessionStorage.getItem('originalLoginRealm');
+  const pageLoadUrlRealm = urlParams.get('realm');
+  let realm = pageLoadUrlRealm || store.state.realm;
+
+  /**
+   * If there is an originalLoginRealm here it's because the realm was changed and the page was refreshed or
+   * the user is already logged in to another realm. In this case we want to set the realm used to build the
+   * realmPath below to the originally logged in realm. If we don't do this all the appAuthClient config settings
+   * will be different from when the page was orignially logged in which causes REST calls to fail and breaks
+   * logout because it tries to logout from the wrong realm.
+  */
+  if (originalLoginRealm) {
+    realm = originalLoginRealm;
+    sessionStorage.removeItem('originalLoginRealm');
+  }
 
   let realmPath = '';
-  if (realm && realm !== '/' && realm !== 'root') {
+  if (realm !== '/' && realm !== 'root') {
     store.dispatch('setRealm', realm);
 
     if (realm.startsWith('/')) {
@@ -221,8 +235,15 @@ const addAppAuth = () => {
           window.logout();
         },
         sessionClaimsHandler(newClaims) {
-          if (claims.auth_time !== newClaims.auth_time) {
+          if (claims.auth_time !== newClaims.auth_time || claims.realm !== newClaims.realm) {
             this.invalidSessionHandler();
+          }
+          /**
+           * Check that the originalLoginRealm session variable is set.
+           * If not set it so we know what realm to use for logout.
+           */
+          if (!sessionStorage.getItem('originalLoginRealm')) {
+            sessionStorage.setItem('originalLoginRealm', realm);
           }
         },
         cooldownPeriod: 5,
@@ -247,6 +268,15 @@ const addAppAuth = () => {
 
   // trigger logout from anywhere in the SPA by calling this global function
   window.logout = () => {
+    const loginRealm = sessionStorage.getItem('originalLoginRealm');
+    /**
+     * If there is an originalLoginRealm and that realm is different from the current realm
+     * we need to set store.state.realm to it's original state so we can log out properly.
+     */
+    if (loginRealm && store.state.realm !== loginRealm) {
+      store.dispatch('setRealm', loginRealm);
+      sessionStorage.removeItem('originalLoginRealm');
+    }
     AppAuthHelper.logout().then(() => window.location.reload());
   };
 };
