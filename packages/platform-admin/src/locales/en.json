@@ -539,7 +539,6 @@
     "saveRealm": "Save Realm",
     "deleteRealm": "Delete Realm",
     "topLevelRealm": "Top Level Realm",
-    "realmSettings": "Realm settings",
     "switchLink": "Switch",
     "switchRealm": "Switch realm...",
     "switchRealmModal": "Switch Realm",
@@ -593,6 +592,19 @@
       "createSuccessHeader": "Key successfully created!",
       "oneTimeSecretStatement": "Make sure you copy <code>api_key_secret</code> below as it won't be shown again.",
       "checkIconAltText": "Success icon"
+    }
+  },
+  "email": {
+    "inviteAdmin": {
+      "successHeader": "Your invitation has been sent!",
+      "successCount": "You’ve invited {count} admins",
+      "notice": "IMPORTANT: Each invited admin will receive an email to setup their admin account and have the permission to fully administer this organization.",
+      "toCompany": "to {company}",
+      "inviteAdmins": "Invite Admins",
+      "invitationSent": "Invitations Sent!",
+      "sendInvite": "Send Invitations",
+      "inviteMore": "Invite More People",
+      "members": "Invited Members"
     }
   }
 }
