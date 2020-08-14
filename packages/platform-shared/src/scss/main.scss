@@ -113,7 +113,10 @@ h5 {
 }
 
 h6 {
+  color: $gray-500;
   font-weight: $h6-font-weight;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
 hr {
@@ -124,6 +127,11 @@ hr {
     border-color: $green;
     border-width: 3px;
   }
+}
+
+// small
+small {
+  font-size: $small-font-size;
 }
 
 // opacity
@@ -201,6 +209,14 @@ a.card {
   }
 }
 
+.media {
+  .fr-realm-stamp {
+    font-size: 1rem;
+    height: 34px;
+    width: 34px;
+  }
+}
+
 // General toolbar styles
 .btn-toolbar {
   border-bottom: $fr-table-head-border solid $table-border-color;
@@ -222,4 +238,49 @@ a.card {
   &.toggled .v-switch-core {
     background-color: $fr-switch-toggled-bg;
   }
+}
+
+// Letters & Colors
+.letter-a,
+.letter-g,
+.letter-m,
+.letter-s,
+.letter-y {
+  background-color: $indigo;
+}
+
+.letter-b,
+.letter-h,
+.letter-n,
+.letter-t,
+.letter-z {
+  background-color: $yellow;
+}
+
+.letter-c,
+.letter-i,
+.letter-o,
+.letter-u {
+  background-color: $pink;
+}
+
+.letter-d,
+.letter-j,
+.letter-p,
+.letter-v {
+  background-color: $orange;
+}
+
+.letter-e,
+.letter-k,
+.letter-q,
+.letter-w {
+  background-color: $green;
+}
+
+.letter-f,
+.letter-l,
+.letter-r,
+.letter-x {
+  background-color: $cyan;
 }

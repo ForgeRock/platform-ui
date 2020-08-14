@@ -51,6 +51,7 @@
       "getImportsError": "There was an error getting the list of imports",
       "configUploadCsvError": "There was an error saving upload-csv config",
       "errorDeletingResource": "There was an error deleting the requested resource.",
+      "errorLoadingRealm": "There was an error loading a realm",
       "errorSavingRealm": "There was an error saving realm details",
       "errorDeletingRealm": "There was an error deleting a realm",
       "errorGettingRealmAuthenticationConfig": "There was an error getting realm authentication config",

@@ -18,6 +18,7 @@ to such license between the licensee and ForgeRock AS. -->
       :menu-items="menuItems"
       :dropdown-items="realmMenuItems"
       :realm="realm"
+      :realm-aliases="realmAliases"
       v-show="!hideNav" />
     <div class="content">
       <FrNavBar
@@ -28,7 +29,7 @@ to such license between the licensee and ForgeRock AS. -->
         :tenant-menu-items="tenantMenuItems"
         :user-details="userDetails"
         docs-link="https://ea.forgerock.com/docs/idpaas/index.html"
-        help-u-r-l="https://backstage.forgerock.com/"
+        help-url="https://backstage.forgerock.com/"
         v-show="!hideNav" />
       <div
         id="appContent"
@@ -104,6 +105,14 @@ export default {
       type: Array,
       default: () => [],
     },
+    realm: {
+      type: String,
+      default: '',
+    },
+    realmAliases: {
+      type: String,
+      default: '',
+    },
     realmMenuItems: {
       type: Array,
       default: () => [],
@@ -123,10 +132,6 @@ export default {
       }),
     },
     version: {
-      type: String,
-      default: '',
-    },
-    realm: {
       type: String,
       default: '',
     },
