@@ -17,34 +17,68 @@ to such license between the licensee and ForgeRock AS. -->
             <template #button-content>
               <BMedia
                 vertical-align="center"
+                no-body
                 class="text-left fr-dropdown-button">
-                <template #aside>
-                  <img
-                    :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"
-                    alt="Avatar"
-                    width="34"
-                    height="34">
-                </template>
-                <div class="sidebar-item-text fr-dropdown-button-content">
+                <BMediaAside>
+                  <div
+                    :class="`letter-${getFirstLetter(false)}`"
+                    class="fr-realm-stamp mr-3 rounded-circle p-2 d-flex align-items-center justify-content-center">
+                    <i class="material-icons-outlined text-white d-none">
+                      cloud
+                    </i>
+                    <span
+                      class="text-white"
+                      style="font-size: 1rem;">
+                      {{ getFirstLetter(true) }}
+                    </span>
+                  </div>
+                </BMediaAside>
+                <BMediaBody class="sidebar-item-text overflow-hidden">
                   <h5 class="my-0 text-truncate">
                     {{ realm }}
                   </h5>
-                  <span class="text-muted text-truncate">
-                    {{ realm }}
-                  </span>
-                </div>
+                  <div class="text-truncate">
+                    <small class="text-muted">
+                      {{ realmAliases }}
+                    </small>
+                  </div>
+                </BMediaBody>
               </BMedia>
             </template>
             <template #dropdown-header>
-              <BDropdownHeader class="py-3 fr-dropdown-header">
-                <div class="mt-1">
-                  <h6>
-                    {{ $t('realm.title').toUpperCase() }}
-                  </h6>
-                  <h5 class="my-0">
-                    {{ realm }}
-                  </h5>
-                </div>
+              <BDropdownHeader class="py-3">
+                <h6 class="text-uppercase">
+                  {{ $t('realm.title') }}
+                </h6>
+                <BMedia
+                  vertical-align="center"
+                  no-body
+                  class="text-left">
+                  <BMediaAside>
+                    <div
+                      :class="`letter-${getFirstLetter(false)}`"
+                      class="fr-realm-stamp mr-3 rounded-circle p-2 d-flex align-items-center justify-content-center">
+                      <i class="material-icons-outlined text-white d-none">
+                        cloud
+                      </i>
+                      <span
+                        class="text-white"
+                        style="font-size: 1rem;">
+                        {{ getFirstLetter(true) }}
+                      </span>
+                    </div>
+                  </BMediaAside>
+                  <BMediaBody class="sidebar-item-text overflow-hidden">
+                    <h5 class="my-0 text-truncate">
+                      {{ realm }}
+                    </h5>
+                    <div class="text-truncate">
+                      <small class="text-muted">
+                        {{ realmAliases }}
+                      </small>
+                    </div>
+                  </BMediaBody>
+                </BMedia>
               </BDropdownHeader>
             </template>
           </FrDropdownMenu>
@@ -169,10 +203,16 @@ import {
   BDropdownDivider,
   BImg,
   BMedia,
+  BMediaAside,
+  BMediaBody,
   VBToggle,
 } from 'bootstrap-vue';
 import Vue from 'vue';
 import DropdownMenu from '@forgerock/platform-shared/src/components/DropdownMenu';
+import {
+  capitalize,
+  lowerCase,
+} from 'lodash';
 
 Vue.directive('b-toggle', VBToggle);
 /**
@@ -189,6 +229,8 @@ export default {
     BDropdownDivider,
     BImg,
     BMedia,
+    BMediaAside,
+    BMediaBody,
     FrDropdownMenu: DropdownMenu,
   },
   props: {
@@ -220,6 +262,10 @@ export default {
       type: String,
       default: '',
     },
+    realmAliases: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
@@ -227,6 +273,14 @@ export default {
     };
   },
   methods: {
+    /**
+     * @description Toggles the menu
+     * @triggers toggle-menu
+     */
+    getFirstLetter(isCaps) {
+      const firstLetter = this.realm[0];
+      return isCaps ? capitalize(firstLetter) : lowerCase(firstLetter);
+    },
     /**
      * @description Toggles the menu
      * @triggers toggle-menu

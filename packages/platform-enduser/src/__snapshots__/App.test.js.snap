@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`App.vue App loaded 1`] = `
-<frlayout-stub menuitems="[object Object],[object Object]" realmmenuitems="" tenantmenuitems="" userdetails="[object Object]" version="" realm="">
+<frlayout-stub menuitems="[object Object],[object Object]" realm="" realmaliases="" realmmenuitems="" tenantmenuitems="" userdetails="[object Object]" version="">
   <routerview-stub></routerview-stub>
 </frlayout-stub>
 `;

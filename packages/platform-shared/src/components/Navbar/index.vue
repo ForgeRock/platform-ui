@@ -46,7 +46,7 @@ to such license between the licensee and ForgeRock AS. -->
           class="mr-4 nav-item">
           <a
             class="nav-link text-dark"
-            :href="helpURL"
+            :href="helpUrl"
             target="_blank">
             {{ $t('navbar.helpSupport') }}
           </a>
@@ -160,7 +160,7 @@ export default {
     /**
      * URL of help
      */
-    helpURL: {
+    helpUrl: {
       type: String,
       default: '#',
     },

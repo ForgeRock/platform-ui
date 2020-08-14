@@ -27,6 +27,9 @@ export default new Vuex.Store({
     lastName: '',
     managedResource: '',
     realm: 'root',
+    realms: [],
+    realmAliases: [],
+    realmPath: '/',
     returnRoute: '',
     returnRouteText: '',
     theme: 'default',
@@ -39,19 +42,19 @@ export default new Vuex.Store({
   },
   mutations: {
     setRealm(state, realm) {
-      const params = new URLSearchParams(window.location.search);
-      const currentRealm = params.get('realm');
-
-      if (realm.startsWith('/')) {
-        state.realm = realm.substring(1);
-      } else {
+      if (!state.realms.length) {
         state.realm = realm;
+        state.realmPath = '/';
+        return;
       }
 
-      if (currentRealm !== realm) {
-        params.set('realm', realm);
-        window.history.replaceState(null, null, `?${params.toString()}`);
-      }
+      const newRealm = state.realms.filter((r) => r.name === realm)[0];
+      state.realm = realm;
+      state.realmAliases = newRealm.aliases;
+      state.realmPath = `/${realm}`;
+    },
+    setRealms(state, realms) {
+      state.realms = realms;
     },
     setUserId(state, id) {
       state.userId = id;
@@ -128,6 +131,9 @@ export default new Vuex.Store({
   actions: {
     setRealm(context, realm) {
       context.commit('setRealm', realm);
+    },
+    setRealms(context, realms) {
+      context.commit('setRealms', realms);
     },
     setUserId(context, id) {
       context.commit('setUserId', id);
