@@ -77,7 +77,7 @@ module.exports = {
   devServer: {
     disableHostCheck: true,
     host: process.env.HOST || '0.0.0.0',
-    port: process.env.DEV_PORT || 8080,
+    port: process.env.DEV_PORT || 8888,
   },
   configureWebpack: {
     plugins: getPlugins(),
