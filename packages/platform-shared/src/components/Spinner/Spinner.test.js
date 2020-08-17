@@ -27,4 +27,18 @@ describe('Spinner Component', () => {
     });
     expect(wrapper.find('.spinner-small').text()).toBe('Loading...');
   });
+
+  it('Has the text-primary class by default', () => {
+    const wrapper = shallowMount(Spinner);
+    expect(wrapper.find('.text-primary').text()).toBe('Loading...');
+  });
+
+  it('Does not have the text-primary class when it is a buttonSpinner', () => {
+    const wrapper = shallowMount(Spinner, {
+      propsData: {
+        buttonSpinner: true,
+      },
+    });
+    expect(wrapper.find('.spinner-large').classes('text-primary')).toBe(false);
+  });
 });
