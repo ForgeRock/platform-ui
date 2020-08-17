@@ -19,7 +19,7 @@ to such license between the licensee and ForgeRock AS. -->
         :title="modalTitle">
         <BRow>
           <BCol v-if="stepIndex === -1">
-            <!-- Creating resource currently only supports String, Number, Boolean, and singleton relationships -->
+            <!-- Creating resource currently only supports Array, String, Number, Boolean, and singleton relationships -->
             <BForm
               v-if="clonedCreateProperties.length"
               @keyup.enter="saveForm"
@@ -33,8 +33,8 @@ to such license between the licensee and ForgeRock AS. -->
                   <FrField
                     :autofocus="index === 0"
                     :field="field"
-                    :display-description="false" />
-
+                    :display-description="false"
+                  />
                   <!-- Special logic for password -->
                   <FrPolicyPanel
                     v-if="field.type === 'password' && policies.length"
@@ -43,7 +43,18 @@ to such license between the licensee and ForgeRock AS. -->
                     :num-columns="2"
                     :policies="policies" />
                 </BFormGroup>
-
+                <BFormGroup
+                  :key="'createResource' + index"
+                  v-else-if="field.type === 'array'">
+                  <FrListField
+                    :field="field"
+                    :index="index"
+                    @valueChange="updateField(index, $event)"
+                    @add-object="addObjectToList(index, $event, clonedCreateProperties)"
+                    @remove-object="removeElementFromList(index, $event, clonedCreateProperties)"
+                    @add-list="addElementToList(index, $event, clonedCreateProperties)"
+                    @remove-list="removeElementFromList(index, $event, clonedCreateProperties)" />
+                </BFormGroup>
                 <!-- for singletonRelationhip values -->
                 <FrRelationshipEdit
                   v-else-if="field.type === 'relationship'"
@@ -157,6 +168,7 @@ to such license between the licensee and ForgeRock AS. -->
 
 <script>
 import {
+  camelCase,
   capitalize,
   clone,
   cloneDeep,
@@ -164,6 +176,7 @@ import {
   find,
   isString,
   noop,
+  startCase,
 } from 'lodash';
 import {
   BButton,
@@ -182,6 +195,8 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import PasswordPolicyMixin from '@forgerock/platform-shared/src/mixins/PasswordPolicyMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import FrListField from '@forgerock/platform-shared/src/components/ListField';
+import ListsMixin from '@forgerock/platform-shared/src/mixins/ListsMixin';
 import CustomStep from './CustomStep/index';
 
 /**
@@ -211,12 +226,14 @@ export default {
     BCol,
     BModal,
     ValidationObserver,
+    FrListField,
   },
   mixins: [
     ResourceMixin,
     RestMixin,
     NotificationMixin,
     PasswordPolicyMixin,
+    ListsMixin,
   ],
   props: {
     createProperties: {
@@ -389,6 +406,17 @@ export default {
       each(this.clonedCreateProperties, (prop) => {
         if (prop.type === 'string' || prop.type === 'number') {
           tempFormFields[prop.key] = '';
+        } else if (prop.type === 'array') {
+          const hasTitle = prop.title && prop.title.length > 0;
+          const hasDescription = prop.description && prop.description.length > 0;
+          tempFormFields[prop.key] = [];
+
+          if (!hasTitle && hasDescription) {
+            prop.title = prop.description;
+          } else if (!hasTitle && !hasDescription) {
+            // best effort to create a title when none is provided
+            prop.title = startCase(camelCase(prop.key));
+          }
         } else if (prop.type === 'relationship') {
           tempFormFields[prop.key] = {};
         } else {
@@ -426,6 +454,12 @@ export default {
       if (this.$refs.observer) {
         this.$refs.observer.reset();
       }
+    },
+    /**
+     * change field value for valid fields
+     */
+    updateField(index, newValue) {
+      this.clonedCreateProperties[index].value = newValue;
     },
   },
 };
