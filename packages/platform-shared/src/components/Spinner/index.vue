@@ -7,7 +7,7 @@ to such license between the licensee and ForgeRock AS. -->
   <div
     class="text-center">
     <div
-      :class="[{ 'spinner-large': size === 'lg' }, { 'spinner-medium': size === 'md' }, { 'spinner-small': size === 'sm' }, 'spinner-border', 'text-primary']"
+      :class="[{ 'spinner-large': size === 'lg' }, { 'spinner-medium': size === 'md' }, { 'spinner-small': size === 'sm' }, 'spinner-border', { 'text-primary': !buttonSpinner }]"
       role="status">
       <span class="sr-only">
         Loading...
@@ -30,6 +30,13 @@ export default {
       type: String,
       default: 'lg',
     },
+    /**
+     * Indicates that the spinner being used in a button, where it should inherit colour styling.
+     */
+    buttonSpinner: {
+      type: Boolean,
+      default: false,
+    },
   },
 };
 </script>
@@ -47,5 +54,6 @@ export default {
 .spinner-small {
   width: 1rem;
   height: 1rem;
+  border-width: 0.2em;
 }
 </style>

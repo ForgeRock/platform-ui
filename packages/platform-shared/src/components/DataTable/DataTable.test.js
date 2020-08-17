@@ -99,6 +99,32 @@ describe('DataTable Component', () => {
     expect(wrapper.find(cellDataTableSelector).text()).toEqual('2');
   });
 
+  it('Does not render pagination control if it only has one page of data', () => {
+    const wrapper = mount(DataTable, {
+      propsData: {
+        ...emptyData,
+        items: [1, 2, 3],
+        initialPerPage: 5,
+        pagination: true,
+      },
+    });
+
+    expect(wrapper.find('.pagination').exists()).toBe(false);
+  });
+
+  it('Does not limit the number of items shown if pagination is disabled', () => {
+    const wrapper = mount(DataTable, {
+      propsData: {
+        ...emptyData,
+        items: [1, 2, 3],
+        initialPerPage: 1,
+        pagination: false,
+      },
+    });
+
+    expect(wrapper.findAll('.b-table tbody tr').length).toEqual(3);
+  });
+
   it('DataTable dropdown cell renders and is clickable', async () => {
     function addDropdown(items) {
       return items.map((item) => ({

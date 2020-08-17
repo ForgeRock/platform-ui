@@ -18,6 +18,7 @@ to such license between the licensee and ForgeRock AS. -->
       :placeholder="label"
       :data-vv-as="label"
       :disabled="disabled"
+      :readonly="readonly"
       @keyup="validator"
       @animationstart="animationStart"
       ref="input"
@@ -66,19 +67,17 @@ to such license between the licensee and ForgeRock AS. -->
 </template>
 
 <script>
-import Vue from 'vue';
 import {
   BButton,
   BInputGroupAppend,
 } from 'bootstrap-vue';
 import { delay } from 'lodash';
 /* eslint-disable import/no-extraneous-dependencies */
-import VueClipboard from 'vue-clipboard2';
+import * as clipboard from 'clipboard-polyfill/text';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 import InputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
 
-Vue.use(VueClipboard);
 /**
  * Input with a floating label in the center, this will move when a user types into the input (example can be found on the default login page).
  *
@@ -151,7 +150,7 @@ export default {
       }
     },
     copyValueToClipboard(payload) {
-      this.$copyText(payload).then(() => {
+      clipboard.writeText(payload).then(() => {
         this.displayNotification('IDMMessages', 'success', this.$t('oauth.clientCredentials.copySuccess'));
       }, (error) => {
         this.showErrorMessage(error, this.$t('oauth.clientCredentials.copyFail'));

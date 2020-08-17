@@ -10,7 +10,7 @@ to such license between the licensee and ForgeRock AS. -->
     <BTable
       responsive
       outline
-      hover
+      :hover="hover"
       v-bind="$attrs"
       :per-page="perPage"
       :current-page="currentPage"
@@ -81,7 +81,7 @@ to such license between the licensee and ForgeRock AS. -->
       </template>
     </BTable>
     <div
-      v-if="pagination"
+      v-if="pagination && multiplePages"
       class="border-top pt-3">
       <div class="pagination justify-content-center">
         <BPagination
@@ -165,12 +165,19 @@ export default {
       type: Boolean,
       default: true,
     },
+    /**
+     * Boolean to enable hover highlighting on table rows.
+     */
+    hover: {
+      type: Boolean,
+      default: true,
+    },
   },
   data() {
     return {
       allSelected: this.initialSelected.length === this.pageRows,
       currentPage: this.initialPage,
-      perPage: this.initialPerPage,
+      perPage: this.pagination ? this.initialPerPage : 0,
       selected: this.initialSelected,
       items: this.$attrs.items,
     };
@@ -183,6 +190,9 @@ export default {
     },
     totalRows() {
       return this.items.length;
+    },
+    multiplePages() {
+      return this.totalRows > this.perPage;
     },
   },
   methods: {
