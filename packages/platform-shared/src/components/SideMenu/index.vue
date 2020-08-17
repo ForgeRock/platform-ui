@@ -10,126 +10,52 @@ to such license between the licensee and ForgeRock AS. -->
       class="fr-sidebar-wrapper">
       <div class="fr-sidebar-nav h-100 d-flex flex-column">
         <div class="fr-sidebar-brand">
-          <BDropdown
-            class="h-100"
-            offset="0"
-            variant="link"
-            ref="firstItem"
-            toggle-class="text-decoration-none p-0">
-            <BDropdownHeader
-              class="py-3"
-              v-if="userDetails.company || userDetails.subscription">
-              <div class="mt-1">
-                <h5 class="my-0">
-                  {{ userDetails.company }}
-                </h5>
-                <span class="text-muted">
-                  {{ userDetails.subscription }}
-                </span>
-              </div>
-            </BDropdownHeader>
-            <BDropdownItem
-              v-if="userDetails.adminUser && userDetails.adminURL"
-              :href="userDetails.adminURL">
-              <i class="material-icons material-icons-outlined mr-3">
-                build
-              </i>
-              {{ $t('pages.app.admin') }}
-            </BDropdownItem>
-            <template slot="button-content">
+          <FrDropdownMenu
+            v-if="dropdownItems.length"
+            :dropdown-items="dropdownItems"
+            class="mt-3">
+            <template #button-content>
               <BMedia
                 vertical-align="center"
-                class="fr-dropdown-button text-left align-items-center">
-                <template v-slot:aside>
+                class="text-left fr-dropdown-button">
+                <template #aside>
                   <img
                     :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"
                     alt="Avatar"
                     width="34"
                     height="34">
                 </template>
-                <div
-                  class="sidebar-item-text"
-                  :class="{'mt-1': !userDetails.company}">
-                  <h5 class="my-0">
-                    {{ userDetails.company }}
+                <div class="sidebar-item-text fr-dropdown-button-content">
+                  <h5 class="my-0 text-truncate">
+                    {{ realm }}
                   </h5>
-                  <span class="text-muted">
-                    {{ userDetails.name }}
+                  <span class="text-muted text-truncate">
+                    {{ realm }}
                   </span>
                 </div>
               </BMedia>
             </template>
-            <BDropdownDivider />
-            <template v-for="(item, index) in dropdownItems">
-              <template v-if="!item.hideItem">
-                <BDropdownItem
-                  v-if="item.groupTitle"
-                  :disabled="true"
-                  :key="`sideDropdownItemsGroupTitle_${index}`">
-                  <span>
-                    <h6 class="text-muted">
-                      {{ item.title }}
-                    </h6>
-                    <h5>
-                      {{ item.subTitle }}
-                    </h5>
-                  </span>
-                </BDropdownItem>
-                <BDropdownItem
-                  v-else
-                  :key="`sideDropdownItems_${index}`"
-                  @click="item.action">
-                  <i class="material-icons mr-2">
-                    {{ item.icon }}
-                  </i>
-                  <span>
-                    {{ item.displayName }}
-                  </span>
-                </BDropdownItem>
-              </template>
-              <BDropdownDivider
-                v-if="item.showDivider"
-                :key="`sideDropdownItemsDivider_${index}`" />
+            <template #dropdown-header>
+              <BDropdownHeader class="py-3 fr-dropdown-header">
+                <div class="mt-1">
+                  <h6>
+                    {{ $t('realm.title').toUpperCase() }}
+                  </h6>
+                  <h5 class="my-0">
+                    {{ realm }}
+                  </h5>
+                </div>
+              </BDropdownHeader>
             </template>
-            <BDropdownItem
-              v-if="showEnduserLink"
-              :href="enduserLink"
-              rel="noopener"
-              target="_blank">
-              <BMedia class="text-left">
-                <template v-slot:aside>
-                  <img
-                    :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"
-                    alt="Avatar"
-                    class="mr-3"
-                    width="34"
-                    height="34">
-                  <span>
-                    <h5 class="my-0">
-                      {{ userDetails.name }}
-                    </h5>
-                    <span class="text-muted">
-                      <template v-if="userDetails.email.length === 0">
-                        n/a
-                      </template>
-                      <template v-else>
-                        {{ userDetails.email }}
-                      </template>
-                    </span>
-                  </span>
-                </template>
-              </BMedia>
-            </BDropdownItem>
-            <BDropdownDivider v-if="showEnduserLink" />
-            <BDropdownItem
-              class="mb-2"
-              @click="$emit('logout')">
-              <i class="material-icons material-icons-outlined mr-2">
-                exit_to_app
-              </i>
-              {{ $t('sideMenu.signOut') }}
-            </BDropdownItem>
-          </BDropdown>
+          </FrDropdownMenu>
+          <div
+            v-else
+            class="d-flex align-items-center p-3 h-100">
+            <BImg
+              :height="28"
+              :src="require('@forgerock/platform-shared/src/assets/images/horizontal-logo.svg')"
+              alt="ForgeRock" />
+          </div>
         </div>
         <ul class="fr-sidebar-menuitems flex-grow-1">
           <template v-for="(item, index) in menuItems">
@@ -232,14 +158,14 @@ to such license between the licensee and ForgeRock AS. -->
 <script>
 import {
   BCollapse,
-  BDropdown,
-  BDropdownItem,
-  BDropdownDivider,
   BDropdownHeader,
+  BDropdownDivider,
+  BImg,
   BMedia,
   VBToggle,
 } from 'bootstrap-vue';
 import Vue from 'vue';
+import DropdownMenu from '@forgerock/platform-shared/src/components/DropdownMenu';
 
 Vue.directive('b-toggle', VBToggle);
 /**
@@ -252,11 +178,11 @@ export default {
   name: 'SideMenu',
   components: {
     BCollapse,
-    BDropdown,
-    BDropdownDivider,
     BDropdownHeader,
-    BDropdownItem,
+    BDropdownDivider,
+    BImg,
     BMedia,
+    FrDropdownMenu: DropdownMenu,
   },
   props: {
     /**
@@ -274,38 +200,18 @@ export default {
       default: () => [],
     },
     /**
-     * Show link to Enduser in dropdown menu
-     */
-    showEnduserLink: {
-      type: Boolean,
-      default: true,
-    },
-    /**
-     * Link to enduser ui for user management.
-     */
-    enduserLink: {
-      type: String,
-      default: '/',
-    },
-    /**
-     * Details about the current user. Displayed at top of SideNav and in dropdown menu
-     */
-    userDetails: {
-      type: Object,
-      default: () => ({
-        name: 'Fake Name',
-        company: 'ForgeRock',
-        email: 'email@fake.com',
-        adminUser: false,
-        adminURL: 'wwwfakecom',
-      }),
-    },
-    /**
      * State from Layout about if the menu is open (true) or closed (false)
      */
     menuIsToggled: {
       default: () => false,
       type: Boolean,
+    },
+    /**
+     * Realm name.
+     */
+    realm: {
+      type: String,
+      default: '',
     },
   },
   data() {

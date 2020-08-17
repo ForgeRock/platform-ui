@@ -56,6 +56,7 @@
     "signUp": "Sign Up",
     "start": "Start",
     "submit": "Submit",
+    "tenant": "Tenant",
     "time": "Time",
     "typeToSearch": "Type to search",
     "update": "Update",
@@ -279,7 +280,7 @@
     "jsonNotStructured": "JSON is not structured properly"
   },
   "sideMenu": {
-    "signOut": "Sign Out",
+    "signOut": "Sign out",
     "toggleSidebar": "Toggle sidebar",
     "dashboard": "Dashboard",
     "selectIcon": "Please select icon in admin (Managed Object) settings"
