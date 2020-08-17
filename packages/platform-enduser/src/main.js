@@ -221,6 +221,7 @@ const addAppAuth = () => {
     tokenEndpoint: `${AM_URL}/oauth2/${realmPath}access_token`,
     revocationEndpoint: `${AM_URL}/oauth2/${realmPath}token/revoke`,
     endSessionEndpoint: `${AM_URL}/oauth2/${realmPath}connect/endSession`,
+    identityProxyPreference: 'XHR',
     resourceServers: {
       [store.state.ApplicationStore.idmBaseURL]: 'openid',
     },
