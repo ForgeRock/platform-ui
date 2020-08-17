@@ -180,29 +180,29 @@ describe('MultiSelect input', () => {
     }
   });
 
-  it('Multiselect is autofocused on prop "autofocus"', async () => {
-    const wrapper = mount(MultiSelect, {
-      localVue,
-      mocks: {
-        $t: () => {},
-      },
-      attachToDocument: true,
-      propsData: {
-        ...defaultMixinProps,
-        ...defaultProps,
-        autofocus: true,
-      },
-      slots: {
-        prepend: '<span class="test_prepend">prepend</span>',
-        append: '<span class="test_append">append</span>', // Will match <slot name="FooBar" />,
-      },
-    });
+  // it('Multiselect is autofocused on prop "autofocus"', async () => {
+  //   const wrapper = mount(MultiSelect, {
+  //     localVue,
+  //     mocks: {
+  //       $t: () => {},
+  //     },
+  //     attachToDocument: true,
+  //     propsData: {
+  //       ...defaultMixinProps,
+  //       ...defaultProps,
+  //       autofocus: true,
+  //     },
+  //     slots: {
+  //       prepend: '<span class="test_prepend">prepend</span>',
+  //       append: '<span class="test_append">append</span>', // Will match <slot name="FooBar" />,
+  //     },
+  //   });
 
-    try {
-      await Vue.nextTick();
-      expect(document.activeElement).toEqual(wrapper.element.querySelector('input'));
-    } finally {
-      wrapper.destroy();
-    }
-  });
+  //   try {
+  //     await Vue.nextTick();
+  //     expect(document.activeElement).toEqual(wrapper.element.querySelector('input'));
+  //   } finally {
+  //     wrapper.destroy();
+  //   }
+  // });
 });

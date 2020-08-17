@@ -68,7 +68,7 @@ to such license between the licensee and ForgeRock AS. -->
         v-bind="attrs"
         v-on="$listeners"
         :errors="failedPolicies.concat(errors)"
-        :field-name="field.key"
+        :field-name="field.title || field.key"
         :disabled="fieldDisabled"
         :help-text="getDescription()"
         :select-options="field.options"
@@ -156,7 +156,7 @@ to such license between the licensee and ForgeRock AS. -->
         v-on="$listeners"
         :autofocus="autofocus"
         :errors="failedPolicies.concat(errors)"
-        :field-name="field.key"
+        :field-name="field.title || field.key"
         :disabled="fieldDisabled" />
       <FrTextArea
         v-else-if="field.type === 'textarea'"

@@ -63,10 +63,11 @@ to such license between the licensee and ForgeRock AS. -->
               v-if="displayProperties.length > 0"
               :form-fields="formFields"
               :display-properties="displayProperties"
-              :disable-save-button="disableSaveButton"
               :resource-path="`${resourceType}/${resourceName}/${id}`"
-              :resource-title="resourceTitle"
-              :is-openidm-admin="isOpenidmAdmin" />
+              :is-openidm-admin="isOpenidmAdmin"
+              :show-toggle="true"
+              :disable-save-button="disableSaveButton"
+              @disable-save-button="disableSaveButton = $event" />
             <span v-else>
               {{ $t('pages.access.noAvailableProperties') }}
             </span>
@@ -546,14 +547,9 @@ export default {
     display: none;
   }
 
-  .card-tabs-vertical {
-    .card-body {
-      padding: 0;
-    }
-
-    .tab-content.col {
-      padding: 0;
-    }
+  .tab-content.col {
+    padding: 0;
+    overflow: hidden;
   }
 }
 
