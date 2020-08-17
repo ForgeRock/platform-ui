@@ -200,35 +200,42 @@
           }
 
           .dropdown-menu {
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
-            font-size: 0.875rem;
-            margin: -15px 0 0 -5px;
-            min-width: 243px;
-            padding: 0;
-
-            h5 {
-              font-size: inherit;
-            }
-
-            .dropdown-item {
-              align-items: center;
-              display: flex;
-            }
-          }
-        }
-
-        .dropdown-toggle {
-          border: 0;
-          color: $fr-sidemenu-font-color;
-
-          .fr-dropdown-button {
-            margin-left: 12px;
+            margin: 0 0 0 -5px;
           }
 
           h5 {
-            font-size: inherit;
+            font-size: 0.875rem;
+          }
+
+          span {
+            font-size: 0.8125rem;
+          }
+
+          .dropdown-item {
+            align-items: center;
+            display: flex;
+
+            h5,
+            span {
+              font-size: 0.875rem;
+            }
           }
         }
+
+        .fr-dropdown-button {
+          margin-left: 12px;
+        }
+      }
+    }
+
+    .fr-dropdown-button-content {
+      max-width: 150px;
+      padding-right: 2.25rem;
+    }
+
+    .fr-dropdown-header {
+      h6 {
+        font-size: 0.6875rem;
       }
     }
 

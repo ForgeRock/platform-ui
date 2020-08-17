@@ -108,7 +108,7 @@ export default new Vuex.Store({
         state.theme = env.THEME;
       }
 
-      if (env.VUE_APP_FRAAS) {
+      if (env.VUE_APP_FRAAS === 'true') {
         state.isFraas = true;
         if (env.VUE_APP_FRAAS_LOGGING_URL) {
           state.fraasLoggingKeyURL = env.VUE_APP_FRAAS_LOGGING_URL;
