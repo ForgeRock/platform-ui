@@ -61,6 +61,13 @@ export default {
       type: [Array, Object, Number, String, Boolean],
       default: '',
     },
+    /**
+     * Boolean to show the input as readonly.
+     */
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {

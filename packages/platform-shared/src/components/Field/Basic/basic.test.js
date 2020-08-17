@@ -20,6 +20,7 @@ const defaultMixinProps = {
   hideLabel: false,
   isHtml: false,
   label: '',
+  readonly: false,
 };
 
 const defaultProps = {

@@ -556,5 +556,31 @@
     "deleteModalText2": "Are you sure you want to permanently delete this realm?",
     "deleteModalText3": "This action cannot be undone.",
     "yesDeleteRealm": "Yes, Delete Realm"
+  },
+  "logApiKeys": {
+    "noLogApiKeysText": "You haven't added any log API keys",
+    "logApiKeyDescription": "Send log data to third party services like Splunk or LogStash.",
+    "logAPIKeySectionTitle": "Log API Keys",
+    "getApiKeyDataFail": "Unable to retrieve API key data",
+    "deleteApiKeyFail": "Unable to delete API key",
+    "createApiKey": "New Log API Key",
+    "apiKeyName": "Name",
+    "apiKeyId": "api_key_id",
+    "apiKeyCreated": "Created",
+    "deleteApiKeyModal": {
+      "modalHeader": "Delete Log API Key?",
+      "modalText": "Are you sure you want to delete this log API key?",
+      "deleteButtonText": "Delete Log API Key"
+    },
+    "createApiKeyModal": {
+      "nameDescription": "Human-readable name for your key",
+      "createButtonText": "Create key",
+      "creatingButtonText": "Creating key...",
+      "errorCreatingKey": "Could not create API key",
+      "keySecret": "api_key_secret",
+      "createSuccessHeader": "Key successfully created!",
+      "oneTimeSecretStatement": "Make sure you copy <code>api_key_secret</code> below as it won't be shown again.",
+      "checkIconAltText": "Success icon"
+    }
   }
 }
