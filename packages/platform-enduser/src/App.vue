@@ -6,7 +6,6 @@ of the MIT license. See the LICENSE file for details.
 -->
 <template>
   <FrLayout
-    @logout="this.logoutUser"
     :menu-items="menuItems"
     :user-details="userDetails"
     :version="version">

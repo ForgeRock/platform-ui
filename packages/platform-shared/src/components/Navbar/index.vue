@@ -6,8 +6,8 @@ to such license between the licensee and ForgeRock AS. -->
 <template>
   <BNavbar
     class="fr-main-navbar"
-    :toggleable="true"
-    :sticky="true">
+    sticky
+    toggleable>
     <button
       v-show="!hideToggle"
       @click="toggleMenu"
@@ -61,6 +61,54 @@ to such license between the licensee and ForgeRock AS. -->
             {{ $t('navbar.docs') }}
           </a>
         </li>
+        <li v-if="!hideDropdown">
+          <FrDropdownMenu
+            :user-details="userDetails"
+            :dropdown-items="tenantMenuItems"
+            :enduser-link="enduserLink"
+            enable-logout
+            right
+            class="pl-sm-4">
+            <template #button-content>
+              <BMedia
+                vertical-align="center"
+                class="text-left">
+                <template #aside>
+                  <img
+                    :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"
+                    alt="Avatar"
+                    width="34"
+                    height="34">
+                </template>
+                <div class="d-none d-lg-block sidebar-item-text fr-dropdown-button-content">
+                  <h5 class="my-0 text-truncate">
+                    {{ userDetails.company }}
+                  </h5>
+                  <span class="text-muted text-truncate">
+                    {{ userDetails.name }}
+                  </span>
+                </div>
+              </BMedia>
+            </template>
+            <template #dropdown-header>
+              <BDropdownHeader
+                class="pt-3 pb-1 fr-dropdown-header"
+                v-if="userDetails.company || userDetails.subscription">
+                <div class="mt-1">
+                  <h6 v-if="tenantMenuItems.length">
+                    {{ $t('common.tenant').toUpperCase() }}
+                  </h6>
+                  <h5 class="my-0">
+                    {{ userDetails.company }}
+                  </h5>
+                  <span class="text-muted">
+                    {{ userDetails.subscription }}
+                  </span>
+                </div>
+              </BDropdownHeader>
+            </template>
+          </FrDropdownMenu>
+        </li>
       </div>
     </BNavbarNav>
   </BNavbar>
@@ -68,9 +116,12 @@ to such license between the licensee and ForgeRock AS. -->
 
 <script>
 import {
+  BDropdownHeader,
+  BMedia,
   BNavbar,
   BNavbarNav,
 } from 'bootstrap-vue';
+import DropdownMenu from '@forgerock/platform-shared/src/components/DropdownMenu';
 import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
 import ToolbarNotification from '../ToolbarNotification';
 
@@ -85,6 +136,9 @@ export default {
   ],
   components: {
     FrNotification: ToolbarNotification,
+    FrDropdownMenu: DropdownMenu,
+    BDropdownHeader,
+    BMedia,
     BNavbar,
     BNavbarNav,
   },
@@ -111,6 +165,13 @@ export default {
       default: '#',
     },
     /**
+     * Hide the dropdown button and menu.
+     */
+    hideDropdown: {
+      type: Boolean,
+      default: false,
+    },
+    /**
      * Hide button that emits toggle event to toggle the sidebar. Only visible on mobile.
      */
     hideToggle: {
@@ -132,11 +193,38 @@ export default {
       default: true,
     },
     /**
+     * Show link to Enduser in dropdown menu
+     */
+    enduserLink: {
+      type: String,
+      default: '',
+    },
+    /**
      * Show notifications icon.
      */
     showNotifications: {
       type: Boolean,
       default: false,
+    },
+    /**
+     * Menu items displayed in dropdown
+     */
+    tenantMenuItems: {
+      type: Array,
+      default: () => [],
+    },
+    /**
+     * Details about the current user. Displayed with admin and enduser links.
+     */
+    userDetails: {
+      type: Object,
+      default: () => ({
+        name: 'Fake Name',
+        company: 'ForgeRock',
+        email: 'email@fake.com',
+        adminUser: false,
+        adminURL: 'wwwfakecom',
+      }),
     },
   },
   methods: {
@@ -183,6 +271,17 @@ export default {
 
     &:focus {
       outline: 0;
+    }
+  }
+
+  .fr-dropdown-button-content {
+    max-width: 150px;
+    padding-right: 2.25rem;
+  }
+
+  .fr-dropdown-header {
+    h6 {
+      font-size: 0.6875rem;
     }
   }
 
