@@ -13,6 +13,7 @@ import {
   each,
   has,
   isNull,
+  debounce,
 } from 'lodash';
 import axios from 'axios';
 import BootstrapVue from 'bootstrap-vue/dist/bootstrap-vue.esm.min';
@@ -199,6 +200,9 @@ const addAppAuth = () => {
     sessionStorage.removeItem('originalLoginRealm');
   }
 
+  let clickSession;
+  let keypressSession;
+  let pageFocus;
   let realmPath = '';
   if (realm !== '/' && realm !== 'root') {
     store.dispatch('setRealm', realm);
@@ -249,16 +253,26 @@ const addAppAuth = () => {
         },
         cooldownPeriod: 5,
       });
+
+      const triggerSession = () => {
+        sessionCheck.triggerSessionCheck();
+      };
       // check the validity of the session immediately
-      sessionCheck.triggerSessionCheck();
+      triggerSession();
+
+      // check with every route change thru router
+      router.beforeEach((to, from, next) => {
+        triggerSession();
+        next();
+      });
 
       // check with every captured event
-      document.addEventListener('click', () => {
-        sessionCheck.triggerSessionCheck();
-      });
-      document.addEventListener('keypress', () => {
-        sessionCheck.triggerSessionCheck();
-      });
+      document.removeEventListener('click', clickSession);
+      clickSession = document.addEventListener('click', debounce(triggerSession, 100));
+      document.removeEventListener('keypress', keypressSession);
+      keypressSession = document.addEventListener('keypress', debounce(triggerSession, 100));
+      document.removeEventListener('focusin', pageFocus);
+      pageFocus = document.addEventListener('focusin', debounce(triggerSession, 100));
 
       startApp();
     },
