@@ -14,21 +14,21 @@ to such license between the licensee and ForgeRock AS. -->
     }, 'h-100']">
     <FrSideMenu
       @toggle-menu="toggleMenu"
-      @logout="$emit('logout')"
       :menu-is-toggled="toggled"
-      :user-details="userDetails"
       :menu-items="menuItems"
-      :dropdown-items="sideMenuDropdownItems"
-      :enduser-link="enduserLink"
-      :show-enduser-link="!userDetails.adminUser"
+      :dropdown-items="realmMenuItems"
+      :realm="realm"
       v-show="!hideNav" />
     <div class="content">
       <FrNavBar
         @toggle-menu="toggleMenu"
+        :enduser-link="enduserLink"
         :menu-is-toggled="toggled"
         :show-notifications="false"
-        docsLink="https://ea.forgerock.com/docs/idpaas/index.html"
-        helpURL="https://backstage.forgerock.com/"
+        :tenant-menu-items="tenantMenuItems"
+        :user-details="userDetails"
+        docs-link="https://ea.forgerock.com/docs/idpaas/index.html"
+        help-u-r-l="https://backstage.forgerock.com/"
         v-show="!hideNav" />
       <div
         id="appContent"
@@ -104,7 +104,11 @@ export default {
       type: Array,
       default: () => [],
     },
-    sideMenuDropdownItems: {
+    realmMenuItems: {
+      type: Array,
+      default: () => [],
+    },
+    tenantMenuItems: {
       type: Array,
       default: () => [],
     },
@@ -119,6 +123,10 @@ export default {
       }),
     },
     version: {
+      type: String,
+      default: '',
+    },
+    realm: {
       type: String,
       default: '',
     },
@@ -137,6 +145,7 @@ export default {
   },
   computed: {
     enduserLink() {
+      if (this.userDetails.adminUser) return '';
       return this.$store.state.realm === 'root' ? this.$store.state.enduserURL : `${this.$store.state.enduserURL}?realm=${this.$store.state.realm}`;
     },
   },
