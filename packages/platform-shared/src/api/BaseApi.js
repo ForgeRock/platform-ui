@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 ForgeRock AS. All Rights Reserved
+ * Copyright 2019-2020 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS.
  * or with one of its affiliates. All use shall be exclusively subject
@@ -46,6 +46,23 @@ export function generateAmApi(resource, requestOverride = {}) {
       'Content-type': 'application/json',
       'accept-api-version': resource.apiVersion,
     },
+    ...requestOverride,
+  };
+
+  return axios.create(requestDetails);
+}
+/**
+ * Generates an FRaaS Logging Axios API instance
+ * @param {object} requestOverride Takes an object of AXIOS parameters that can be used to either add
+ * on extra information or override default properties https://github.com/axios/axios#request-config
+ *
+ * @returns {AxiosInstance}
+ */
+export function generateFraasLoggingApi(requestOverride = {}) {
+  const requestDetails = {
+    baseURL: store.state.fraasLoggingKeyURL,
+    timeout: 5000,
+    headers: {},
     ...requestOverride,
   };
 
