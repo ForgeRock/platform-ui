@@ -420,7 +420,7 @@
     },
     "accessTab": {
       "defaultScopesLabel": "Default Scopes",
-      "defaultScopesHelp": "Scopes autmatically given to tokens.",
+      "defaultScopesHelp": "Scopes automatically given to tokens.",
       "responseTypesLabel": "Response Types",
       "responseTypesHelp": "Response types this client will support and use.",
       "claimsLabel": "Claims",
