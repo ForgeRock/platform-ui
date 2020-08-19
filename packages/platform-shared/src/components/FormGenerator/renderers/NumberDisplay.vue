@@ -3,7 +3,7 @@
     @valueChange="updateValue"
     :field="field"
     :disabled="uiSchema.disabled"
-    class="mb-4 px-1" />
+    class="mb-4" />
 </template>
 <script>
 import FrField from '@forgerock/platform-shared/src/components/Field';
