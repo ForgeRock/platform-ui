@@ -264,6 +264,10 @@
               font-size: 0.875rem;
             }
           }
+
+          li.hidden {
+            display: none !important;
+          }
         }
 
         .fr-dropdown-button {
@@ -292,6 +296,7 @@
 
       > li > a,
       > li.dropdown-toggle,
+      > button.dropdown-toggle,
       > li.dropdown-toggle > a,
       > .fr-sidebar-subitem a {
         border-left: 3px solid transparent;
@@ -309,6 +314,10 @@
 
         &:hover {
           background: $fr-sidemenu-hover;
+        }
+
+        &.hidden {
+          display: none !important;
         }
       }
 

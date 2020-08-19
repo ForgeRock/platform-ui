@@ -19,6 +19,7 @@ to such license between the licensee and ForgeRock AS. -->
       :dropdown-items="realmMenuItems"
       :realm="realm"
       :realm-aliases="realmAliases"
+      :user-details="userDetails"
       v-show="!hideNav" />
     <div class="content">
       <FrNavBar
@@ -124,8 +125,8 @@ export default {
         name: 'Company Name',
         company: 'Company',
         email: 'email@company.com',
-        adminUser: false,
         adminURL: 'www.company.com',
+        roles: [],
       }),
     },
     buildNumber: {
@@ -151,7 +152,7 @@ export default {
   },
   computed: {
     enduserLink() {
-      if (this.userDetails.adminUser) return '';
+      if (this.userDetails.roles.includes('realmAdmin') || this.userDetails.roles.includes('amAdmin')) return '';
       return this.$store.state.realm === 'root' ? this.$store.state.enduserURL : `${this.$store.state.enduserURL}?realm=${this.$store.state.realm}`;
     },
     docsLink() {

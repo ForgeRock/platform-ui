@@ -258,6 +258,7 @@
     },
     "forbidden": {
       "signOut": "Sign out",
+      "returnToDashboard": "Return to Dashboard",
       "notAuthorized": "You are not authorized to view this site. Please sign out and try again"
     }
   },

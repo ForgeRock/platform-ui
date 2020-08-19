@@ -90,10 +90,11 @@ to such license between the licensee and ForgeRock AS. -->
                 </div>
               </BMedia>
             </template>
-            <template #dropdown-header>
+            <template
+              #dropdown-header
+              v-if="userDetails.company || userDetails.subscription">
               <BDropdownHeader
-                class="pt-3 pb-1 fr-dropdown-header"
-                v-if="userDetails.company || userDetails.subscription">
+                class="py-1 fr-dropdown-header">
                 <div class="mt-1">
                   <h6 v-if="tenantMenuItems.length">
                     {{ $t('common.tenant').toUpperCase() }}

@@ -13,7 +13,7 @@ to such license between the licensee and ForgeRock AS. -->
     </template>
     <slot name="dropdown-header" />
     <BDropdownItem
-      v-if="userDetails.adminUser && userDetails.adminURL"
+      v-if="userDetails.roles.includes('adminUser') && userDetails.adminURL"
       :href="userDetails.adminURL">
       <i class="material-icons material-icons-outlined mr-2">
         build
@@ -22,9 +22,10 @@ to such license between the licensee and ForgeRock AS. -->
     </BDropdownItem>
 
     <template v-for="(item, index) in dropdownItems">
-      <template v-if="!item.hideItem">
+      <template>
         <BDropdownItem
           :key="`sideDropdownItems_${index}`"
+          :class="{'hidden': item.showForRoles && !userHasRole(item.showForRoles)}"
           @click="item.action">
           <i class="material-icons mr-2">
             {{ item.icon }}
@@ -35,9 +36,7 @@ to such license between the licensee and ForgeRock AS. -->
         </BDropdownItem>
       </template>
     </template>
-
     <template v-if="enduserLink.length">
-      <BDropdownDivider />
       <BDropdownItem
         :href="enduserLink"
         rel="noopener"
@@ -135,9 +134,18 @@ export default {
         name: 'Fake Name',
         company: 'ForgeRock',
         email: 'email@fake.com',
-        adminUser: false,
         adminURL: 'wwwfakecom',
+        roles: [],
       }),
+    },
+  },
+  methods: {
+    userHasRole(roles) {
+      if (roles) {
+        const matchingRoles = this.userDetails.roles.filter((element) => roles.includes(element));
+        return matchingRoles.length > 0;
+      }
+      return false;
     },
   },
 };
@@ -153,6 +161,10 @@ export default {
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
     padding: 0;
     min-width: 243px;
+
+    li:first-child {
+      margin-top: 0.5rem;
+    }
 
     li:last-child {
       margin-bottom: 0.5rem;

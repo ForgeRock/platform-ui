@@ -13,6 +13,7 @@ to such license between the licensee and ForgeRock AS. -->
           <FrDropdownMenu
             v-if="dropdownItems.length"
             :dropdown-items="dropdownItems"
+            :user-details="userDetails"
             class="mt-3">
             <template #button-content>
               <BMedia
@@ -46,7 +47,7 @@ to such license between the licensee and ForgeRock AS. -->
               </BMedia>
             </template>
             <template #dropdown-header>
-              <BDropdownHeader class="py-3">
+              <BDropdownHeader class="pt-2 pb-3">
                 <h6>
                   {{ $t('realm.title') }}
                 </h6>
@@ -101,6 +102,7 @@ to such license between the licensee and ForgeRock AS. -->
                 class="d-flex align-items-center"
                 :ref="`${index === 0 ? 'firstItem' : ''}`"
                 v-if="item.routeName"
+                :class="{'hidden': item.showForRoles && !userHasRole(item.showForRoles)}"
                 :to="{ name: item.routeName, params: { resourceType: item.resourceType, resourceName: item.resourceName} }">
                 <i
                   class="material-icons material-icons-outlined mr-3">
@@ -114,6 +116,7 @@ to such license between the licensee and ForgeRock AS. -->
                 v-else-if="item.url"
                 :ref="`${index === 0 ? 'firstItem' : ''}`"
                 :href="item.url"
+                :class="{'hidden': item.showForRoles && !userHasRole(item.showForRoles)}"
                 target="_blank">
                 {{ item.displayName }}
               </a>
@@ -125,6 +128,7 @@ to such license between the licensee and ForgeRock AS. -->
               <ul class="fr-sidebar-submenuitems">
                 <BButton
                   v-b-toggle="`collapse-`+index"
+                  :class="{'hidden': item.showForRoles && !userHasRole(item.showForRoles)}"
                   class="dropdown-toggle d-flex align-items-center">
                   <i
                     class="material-icons material-icons-outlined mr-3">
@@ -145,6 +149,7 @@ to such license between the licensee and ForgeRock AS. -->
                         <RouterLink
                           class="d-flex align-items-center"
                           v-if="subItem.routeName"
+                          :class="{'hidden': subItem.showForRoles && !userHasRole(subItem.showForRoles)}"
                           :to="{ name: subItem.routeName, params: { resourceType: item.resourceType, resourceName: item.resourceName} }">
                           <span class="sidebar-item-text">
                             {{ subItem.displayName }}
@@ -153,6 +158,7 @@ to such license between the licensee and ForgeRock AS. -->
                         <a
                           v-else-if="subItem.url"
                           :href="subItem.url"
+                          :class="{'hidden': subItem.showForRoles && !userHasRole(subItem.showForRoles)}"
                           target="_blank">
                           {{ subItem.displayName }}
                         </a>
@@ -259,6 +265,16 @@ export default {
       type: String,
       default: '',
     },
+    userDetails: {
+      type: Object,
+      default: () => ({
+        name: 'Company Name',
+        company: 'Company',
+        email: 'email@company.com',
+        adminURL: 'www.company.com',
+        roles: [],
+      }),
+    },
   },
   data() {
     return {
@@ -286,6 +302,13 @@ export default {
      * */
     focusFirstItem() {
       this.$refs.firstItem[0].$el.focus();
+    },
+    userHasRole(roles) {
+      if (roles) {
+        const matchingRoles = this.userDetails.roles.filter((element) => roles.includes(element));
+        return matchingRoles.length > 0;
+      }
+      return false;
     },
   },
   watch: {
