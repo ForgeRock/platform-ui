@@ -86,6 +86,7 @@ export default {
           email,
           adminUser,
           adminURL: `${state.ApplicationStore.adminURL}?realm=${state.realm}`,
+          roles: [],
         };
       },
     }),

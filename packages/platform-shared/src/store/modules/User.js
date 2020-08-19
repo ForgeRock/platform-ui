@@ -30,6 +30,8 @@ const defaultState = {
   roles: null,
   internalUser: false,
   adminUser: false,
+  realmAdmin: false,
+  amAdmin: false,
   schema: null,
   access: [],
   givenName: '',
@@ -79,6 +81,14 @@ const actions = {
 
   setRolesAction(context, roles) {
     context.commit('setRolesAction', roles);
+  },
+
+  setRealmAdmin(context, realmAdmin) {
+    context.commit('setRealmAdmin', realmAdmin);
+  },
+
+  setAmAdmin(context, amAdmin) {
+    context.commit('setAmAdmin', amAdmin);
   },
 
   clearRolesAction(context) {
@@ -159,6 +169,14 @@ const mutations = {
     }
   },
 
+  setRealmAdmin(state, realmAdmin) {
+    state.realmAdmin = clone(realmAdmin);
+  },
+
+  setAmAdmin(state, amAdmin) {
+    state.amAdmin = clone(amAdmin);
+  },
+
   clearRolesAction(state) {
     state.roles = null;
   },
@@ -186,6 +204,8 @@ const mutations = {
     state.userName = '';
     state.internalUser = false;
     state.adminUser = false;
+    state.realmAdmin = false;
+    state.amAdmin = false;
     state.access = [];
     state.consentedMappings = [];
     state.preferences = [];
