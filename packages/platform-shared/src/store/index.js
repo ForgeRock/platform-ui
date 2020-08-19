@@ -36,6 +36,7 @@ export default new Vuex.Store({
     userId: null,
     isFraas: false,
     fraasLoggingKeyURL: '',
+    fraasDefaultRealm: '',
   },
   getters: {
     fullName: (state) => `${state.firstName} ${state.lastName}`,
@@ -115,6 +116,9 @@ export default new Vuex.Store({
         state.isFraas = true;
         if (env.VUE_APP_FRAAS_LOGGING_URL) {
           state.fraasLoggingKeyURL = env.VUE_APP_FRAAS_LOGGING_URL;
+        }
+        if (env.VUE_APP_FRAAS_DEFAULT_REALM) {
+          state.fraasDefaultRealm = env.VUE_APP_FRAAS_DEFAULT_REALM;
         }
       }
     },
