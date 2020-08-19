@@ -2,7 +2,7 @@
   <FrField
     :field="field"
     :disabled="uiSchema.disabled"
-    class="mb-4 px-1" />
+    class="mb-4" />
 </template>
 
 <script>
