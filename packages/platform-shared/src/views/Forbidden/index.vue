@@ -23,6 +23,13 @@ to such license between the licensee and ForgeRock AS. -->
       <div class="text-center">
         <BButton
           variant="link"
+          @click="$router.push({ name: 'Dashboard' })">
+          {{ $t('pages.forbidden.returnToDashboard') }}
+        </BButton>
+      </div>
+      <div class="text-center">
+        <BButton
+          variant="link"
           @click="logoutUser">
           {{ $t('pages.forbidden.signOut') }}
         </BButton>
@@ -50,7 +57,6 @@ export default {
     BImg,
   },
   mixins: [LoginMixin],
-
   beforeRouteLeave(to, from, next) {
     this.$store.dispatch('setUserId', null);
     next();

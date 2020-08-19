@@ -28,7 +28,26 @@ export function generateIdmApi(requestOverride = {}) {
     requestDetails.headers.Authorization = `Bearer ${sessionStorage.getItem('accessToken')}`;
   }
 
-  return axios.create(requestDetails);
+  const request = axios.create(requestDetails);
+
+  request.interceptors.response.use(null, (error) => {
+    // The journeys page is accessible to users with realm-admin priviledges,
+    // however as is makes a call to openidm in order to access the Identities
+    // Objects this causes a 403 if the user doesn't also have openidm-admin
+    // priviledges. This is a temporary check to stop the redirect to forbidden
+    // in that scenario. This check should be removed when a workaround has been found.
+    const resUrl = new URL(error.response.config.url);
+    if (resUrl.pathname !== '/openidm/config/managed' && window.location.hash !== '#/journeys') {
+      if (error.response.status === 403) {
+        window.location.hash = '#/forbidden';
+        window.location.replace(window.location);
+      }
+      return Promise.reject(error);
+    }
+    return false;
+  });
+
+  return request;
 }
 /**
   * Generates an AM Axios API instance
@@ -49,7 +68,17 @@ export function generateAmApi(resource, requestOverride = {}) {
     ...requestOverride,
   };
 
-  return axios.create(requestDetails);
+  const request = axios.create(requestDetails);
+
+  request.interceptors.response.use(null, (error) => {
+    if (error.response.status === 403) {
+      window.location.hash = '#/forbidden';
+      window.location.replace(window.location);
+    }
+    return Promise.reject(error);
+  });
+
+  return request;
 }
 /**
  * Generates an FRaaS Logging Axios API instance
