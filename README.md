@@ -138,6 +138,34 @@ default.iam.example.com/login/#/service/YOURTREENAME
 localhost:8083/#/service/YOURTREENAME
 ```
 
+#### Using a FRAAS tenant for local development
+You will need a FRAAS tenant url, username and password for this. Make sure your local docker desktop is running also. Any place in these instructions that says YOUR_TENANT_NAME should be updated with your actual tenant name.
+If you would like to develop against the regular platform at the same time, you can spin up forgeops and start up platform-ui as normal with `./startSkaffold.sh`. Otherwise, just follow the below.
+1. Update the `proxy_run.sh` file with the correct client names:
+```sh
+export ENDUSER_CLIENT_ID="endUserUIClient"
+export ADMIN_CLIENT_ID="idmAdminClient"
+```
+2. Update your hosts file to point the tenant to your local:
+```sh
+127.0.0.1 YOUR_TENANT_NAME.forgeblocks.com
+```
+3. Open up a terminal window in the platform-ui root and run:
+```sh
+./proxy_run.sh YOUR_TENANT_NAME.forgeblocks.com
+```
+4. Import the generated ig-front/ca.pem file into your system truststore, and double click -> set the dropdown to always trust (the certificate will be called `Local Network - Development`)
+5. Once the proxy_run is up and running, open a terminal for each package you need to develop in (login, enduser, admin, etc). You will need the login package regardless. Run `yarn dev` in each of these terminals
+6. Navigate to `https://YOUR_TENANT_NAME.forgeblocks.com/am/XUI` and use your creds to log in
+
+##### Troubleshooting fraas development
+On some versions of MacOS, you may get an error `envsubst: command not found` when running the proxy_run.sh. 
+To fix, run: 
+```sh
+brew install gettext
+brew link --force gettext
+```
+More info: https://stackoverflow.com/questions/23620827/envsubst-command-not-found-on-mac-os-x-10-8
 
 ### Storybook component build
 
