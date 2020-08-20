@@ -55,6 +55,7 @@ export default {
         enumNames: this.uiSchema.enumNames,
         options: this.uiSchema.options,
         title: this.uiSchema.label,
+        key: this.uiSchema.label,
       };
     },
   },

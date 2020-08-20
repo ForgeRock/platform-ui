@@ -11,28 +11,36 @@ to such license between the licensee and ForgeRock AS. -->
       :disabled="disabled"
       :class="[{'fr-error': errors.length > 0}, 'fr-tags']">
       <template v-slot="{ tags, inputAttrs, inputHandlers, addTag, removeTag }">
-        <Draggable
-          v-model="inputValue"
-          class="d-flex flex-wrap w-100"
-          ghost-class="ghost-tag">
-          <div
-            class="mt-1 mr-1 fr-tag"
-            v-for="tag in tags"
-            :key="tag"
-            body-class="py-1 pr-2 text-nowrap">
-            <span class="fr-tag-text">
-              {{ tag }}
-            </span>
-            <span @click="removeTag(tag)">
-              <i
-                class="material-icons-outlined pl-2"
-                style="font-size: 10px; font-weight: 900;">
-                close
-              </i>
-            </span>
-          </div>
-        </Draggable>
+        <div @click="$refs.input.focus()">
+          <label
+            v-if="inputValue.length"
+            class="text-secondary w-100">
+            {{ fieldName }}
+          </label>
+          <Draggable
+            v-model="inputValue"
+            class="d-flex flex-wrap w-100"
+            ghost-class="ghost-tag">
+            <div
+              class="mt-1 mr-1 fr-tag"
+              v-for="tag in tags"
+              :key="tag"
+              body-class="py-1 pr-2 text-nowrap">
+              <span class="fr-tag-text">
+                {{ tag }}
+              </span>
+              <span @click="removeTag(tag)">
+                <i
+                  class="material-icons-outlined pl-2"
+                  style="font-size: 10px; font-weight: 900;">
+                  close
+                </i>
+              </span>
+            </div>
+          </Draggable>
+        </div>
         <input
+          ref="input"
           v-bind="inputAttrs"
           @blur="addTag()"
           v-on="inputHandlers"
@@ -120,14 +128,26 @@ export default {
   display: flex;
   flex-wrap: wrap;
   line-height: 1em;
-  padding: 10px;
-  min-height: 54px;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+  min-height: calc(3rem + 2px);
+
+  label,
+  .input-group > label {
+    margin: 1px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: $label-color;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+    transition: all 0.1s ease-in-out;
+  }
 
   .fr-tag {
     border-radius: 4px;
     display: flex;
     padding: 3px 5px;
-    margin: 2px;
+    margin: 2px 2px 5px;
     font-size: 0.85em;
     background-color: $light-blue;
     color: $gray-900;
@@ -155,11 +175,11 @@ export default {
     border: 0;
   }
 
-  &:hover > .fr-input,
   .fr-input:focus,
   .show {
     opacity: 1;
     height: 2rem;
+    margin-top: 0.2rem;
   }
 
   .fr-tag-text {
