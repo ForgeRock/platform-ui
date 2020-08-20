@@ -1,8 +1,9 @@
 <template>
-  <div @input="valueChange(field.value)">
+  <div>
     <FrField
       :field="field"
       :disabled="uiSchema.disabled"
+      @input="valueChange"
       class="mb-4">
       <div
         v-if="uiSchema.append"
@@ -78,10 +79,12 @@ export default {
       this.$parent.$emit('copy', value);
     },
     valueChange(value) {
-      this.$emit('update:model', {
-        model: this.saveModel,
-        value,
-      });
+      if (!this.uiSchema.disabled) {
+        this.$emit('update:model', {
+          model: this.saveModel,
+          value,
+        });
+      }
     },
   },
 };
