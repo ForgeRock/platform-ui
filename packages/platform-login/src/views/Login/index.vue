@@ -8,7 +8,7 @@ of the MIT license. See the LICENSE file for details.
 <template>
   <FrCenterCard :show-logo="true">
     <template v-slot:center-card-header>
-      <div v-if="!loading && !loginFailure">
+      <div v-if="!loading">
         <h2 class="h2">
           {{ header }}
         </h2>
@@ -20,21 +20,17 @@ of the MIT license. See the LICENSE file for details.
 
     <template v-slot:center-card-body>
       <BCardBody v-show="!loading">
-        <div
-          v-if="loginFailure"
-          class="h-100 d-flex">
-          <div class="m-auto fr-center-card">
-            <p>{{ errorMessage }}</p>
-            <BButton
-              variant="link"
-              @click="reloadTree"
-              href="#/">
-              {{ $t('login.tryAgain') }}
-            </BButton>
+        <div v-if="loginFailure">
+          <div class="m-auto p-2 text-danger">
+            <p>
+              <i class="material-icons material-icons-outlined">
+                error
+              </i>
+              {{ errorMessage }}
+            </p>
           </div>
         </div>
-        <form
-          v-else>
+        <form>
           <div
             v-show="!showClone"
             id="callbacksPanel"
@@ -277,6 +273,12 @@ export default {
       if (!preventClear) {
         this.clearCallbacks();
       }
+      // if there is a login failure show the failure message and remove the session variable
+      if (sessionStorage.getItem('loginFailure')) {
+        this.loginFailure = true;
+        this.errorMessage = this.$t('login.loginFailure');
+        sessionStorage.removeItem('loginFailure');
+      }
 
       const stepParams = this.getStepParams();
       FRAuth.next(this.step, stepParams).then(
@@ -322,8 +324,6 @@ export default {
               this.retry = false;
               this.retryWithNewAuthId(previousStep, stepParams);
             } else {
-              this.errorMessage = this.$t('login.loginFailure');
-              this.showErrorMessage(step.payload, step.getMessage());
               this.redirectToFailure(step);
             }
             break;
@@ -349,6 +349,7 @@ export default {
       this.description = '';
       this.$refs.callbacksPanel.innerHTML = '';
       this.showNextButton = false;
+      this.loginFailure = false;
       this.loading = true;
 
       // need to set validateOnly flag for some callbacks in order to be able to advance the tree
@@ -562,8 +563,13 @@ export default {
           });
       } else if (has(step, 'payload.detail.failureUrl') && step.payload.detail.failureUrl.length) {
         window.location.href = step.payload.detail.failureUrl;
-      } else {
+      } else if (step === undefined) {
+        // step will be undefined if there is an invalid realm
         this.loginFailure = true;
+      } else {
+        this.loading = true;
+        sessionStorage.setItem('loginFailure', true);
+        window.location.reload();
       }
     },
     reloadTree(event) {
