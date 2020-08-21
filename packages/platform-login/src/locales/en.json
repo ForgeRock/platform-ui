@@ -10,7 +10,7 @@
     "forgotUsername": "Forgot username?",
     "forgotPassword": "Forgot password?",
     "next": "Next",
-    "loginFailure": "Login Failure",
+    "loginFailure": "Sorry that isn't right. Try again.",
     "issueConnecting": "Issue connecting to the server",
     "tryAgain": "Try Again",
     "termsAndConditions": "Terms & Conditions",
