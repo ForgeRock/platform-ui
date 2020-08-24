@@ -160,7 +160,7 @@ const mutations = {
 
     if (endsWith(obj.model, '[0]')) {
       set(state.oauthSaveObj, `${obj.model.substring(0, obj.model.length - 3)}.value`, [obj.value]);
-    } else if (!propertyExists) {
+    } else if (!propertyExists || propName === 'userpassword') {
       set(state.oauthSaveObj, `${obj.model}`, obj.value);
     } else {
       set(state.oauthSaveObj, `${obj.model}.value`, obj.value);
