@@ -375,7 +375,7 @@
       "name": "Name"
     },
     "addAppModal": {
-      "appName": "Application Name",
+      "appClientId": "Client ID",
       "chooseAppType": "Choose an application type",
       "enterprise": "Enterprise",
       "enterpriseHelpText": "Set up SSO to an application like Google, Salesforce, or Office365",
@@ -388,14 +388,16 @@
       "webExample": "Node.js, Java",
       "serviceTitle": "Service",
       "serviceExample": "Machine-to-machine",
-      "createName": "Create a name for your application. You can change it later in the application settings.",
+      "createCredentials": "Create a client ID for your application.",
+      "createCredentialsWithSecret": "Create a client ID and secret for your application.",
       "alphaNumericOnly": "Can only contain alphanumeric characters",
       "noSpace": "Cannot start or end with the space character",
       "createApp": "Create Application",
       "defaultModalTitle": "New Application",
       "appTypeModalTitle": "New %{appType} App",
-      "consumerAppModalTitle": "%{appType} Application Name",
-      "errorCreatingApp": "Could not create application"
+      "consumerAppModalTitle": "%{appType} Application Credentials",
+      "errorCreatingApp": "Could not create application",
+      "clientSecretWarning": "Make sure you copy <small class=\"text-monospace alert-link\">Client Secret</small> as it won't be shown again."
     }
   },
   "oauth": {
@@ -403,7 +405,9 @@
       "schemaFail": "Unable to get application properties",
       "updateSuccess": "Application updated",
       "updateFail": "Application update failed",
-      "deleteFail": "Unable to delete application"
+      "deleteFail": "Unable to delete application",
+      "resetSecretSuccess": "Client secret reset",
+      "resetSecretFail": "Unable to reset client secret"
     },
     "listApps": {
       "getAppDataFail": "Unable to retrieve applications data",
@@ -521,6 +525,12 @@
     "deleteAppPanel": {
       "deleteApp": "Delete Application",
       "modalText": "Are you sure you want to delete {appName}?"
+    },
+    "resetSecretModal": {
+      "title": "Reset Client Secret",
+      "text": "Choose a new client secret.",
+      "newSecretText": "New Client Secret",
+      "secretResetWarning": "The new client secret will be available immediately and the old client secret will no longer work."
     }
   },
   "realm": {
