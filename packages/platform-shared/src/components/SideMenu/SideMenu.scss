@@ -29,6 +29,14 @@
 @mixin fr-menu-expanded {
   width: $fr-sidemenu-width-lg;
   transform: translateX(0);
+
+  .fr-logo-horizontal {
+    display: block;
+  }
+
+  .fr-logo-vertical {
+    display: none;
+  }
 }
 
 @mixin fr-menu-collapsed {
@@ -41,8 +49,13 @@
   }
 
   .sidebar-item-text,
-  .fr-sidebar-subitem {
+  .fr-sidebar-subitem,
+  .fr-logo-horizontal {
     display: none;
+  }
+
+  .fr-logo-vertical {
+    display: block;
   }
 
   &:hover {
@@ -58,6 +71,14 @@
       > li > ul,
       .fr-sidebar-subitem {
         display: block;
+      }
+
+      .fr-logo-horizontal {
+        display: block;
+      }
+
+      .fr-logo-vertical {
+        display: none;
       }
     }
 

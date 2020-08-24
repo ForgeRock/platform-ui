@@ -52,6 +52,13 @@ to such license between the licensee and ForgeRock AS. -->
             v-else
             class="d-flex align-items-center p-3 h-100">
             <BImg
+              class="fr-logo-vertical"
+              :height="28"
+              :width="25"
+              :src="require('@forgerock/platform-shared/src/assets/images/vertical-logo.svg')"
+              alt="ForgeRock" />
+            <BImg
+              class="fr-logo-horizontal"
               :height="28"
               :src="require('@forgerock/platform-shared/src/assets/images/horizontal-logo.svg')"
               alt="ForgeRock" />
