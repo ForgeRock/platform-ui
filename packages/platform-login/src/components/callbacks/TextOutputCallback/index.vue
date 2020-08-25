@@ -60,6 +60,10 @@ export default {
       type: Object,
       required: true,
     },
+    pageRendered: {
+      type: Promise,
+      required: true,
+    },
   },
   data() {
     return {
@@ -93,9 +97,11 @@ export default {
     }
 
     if (this.messageType === 'SCRIPT') {
-      const el = document.createElement('script');
-      el.innerHTML = this.message;
-      this.$refs.textOutputPanel.appendChild(el);
+      this.$emit('hasScripts');
+      this.pageRendered
+        .then(() => {
+          this.appendScript();
+        });
     }
   },
   methods: {
@@ -109,6 +115,11 @@ export default {
       this.qrCodeHtml = qr.createImgTag(3, 8);
       this.qrCodeMobileLink = text;
       this.hideSpinner = true;
+    },
+    appendScript() {
+      const el = document.createElement('script');
+      el.innerHTML = this.message;
+      this.$refs.textOutputPanel.appendChild(el);
     },
   },
 };
