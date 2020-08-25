@@ -30,7 +30,14 @@ of the MIT license. See the LICENSE file for details.
             </p>
           </div>
         </div>
-        <form>
+        <form
+          id="wrapper"
+        >
+          <!-- fieldset field is for backend scripts -->
+          <div
+            v-if="showScriptElms">
+            <fieldset />
+          </div>
           <div
             v-show="!showClone"
             id="callbacksPanel"
@@ -50,6 +57,13 @@ of the MIT license. See the LICENSE file for details.
             @click="nextStep">
             {{ $t('login.next') }}
           </BButton>
+          <input
+            v-if="showScriptElms"
+            id="loginButton_0"
+            role="button"
+            type="submit"
+            @click.prevent="backendScriptsHandler"
+            hidden>
         </form>
       </BCardBody>
       <BCardBody v-show="loading">
@@ -79,6 +93,7 @@ import {
   FRStep,
   FRWebAuthn,
   SessionManager,
+  CallbackType,
 } from '@forgerock/javascript-sdk';
 import Vue from 'vue';
 import FrCenterCard from '@/components/utils/CenterCard';
@@ -135,6 +150,7 @@ export default {
       showNextButton: false,
       step: undefined,
       suspendedId: undefined,
+      showScriptElms: false,
     };
   },
   mounted() {
@@ -156,6 +172,38 @@ export default {
   },
   methods: {
     /**
+     * @description handler for scripts clicking on loginButton_0
+     */
+    backendScriptsHandler() {
+      const type = this.backendScriptsIdentifier();
+      const input = document.getElementById(type);
+      if (input) {
+        const hiddenCallback = this.step
+          .getCallbacksOfType(CallbackType.HiddenValueCallback)
+          .find((x) => x.getOutputByName('id', '') === type);
+        hiddenCallback.setInputValue(input.value);
+      }
+      this.nextStep();
+    },
+    /**
+     * @description identifies the script type by looking for a hidden callback
+     * and matching it with known type. Different script types can be handled differently
+     */
+    backendScriptsIdentifier() {
+      const legacyTypes = [
+        'clientScriptOutputData',
+        'webAuthnOutcome',
+      ];
+      let type = '';
+      this.step.getCallbacksOfType(CallbackType.HiddenValueCallback)
+        .forEach((callback) => legacyTypes.forEach((legacyType) => {
+          if (callback.getOutputByName('id', '') === legacyType) {
+            type = legacyType;
+          }
+        }));
+      return type;
+    },
+    /**
      * @description Injects an instance of a specified component into the callbacksPanel
      * @param {Object} the component object to by added
      * @param {Object} properties used for rendering the component object
@@ -167,12 +215,11 @@ export default {
         i18n,
       });
 
-      instance.$mount();
-
       listeners.forEach((listener) => {
         instance.$on(listener.name, listener.callback);
       });
 
+      instance.$mount();
       this.callbacksPanelComponents.push(instance.$el);
     },
     addField(type, callback, index) {
@@ -350,6 +397,7 @@ export default {
       this.$refs.callbacksPanel.innerHTML = '';
       this.showNextButton = false;
       this.loginFailure = false;
+      this.showScriptElms = false;
       this.loading = true;
 
       // need to set validateOnly flag for some callbacks in order to be able to advance the tree
@@ -364,6 +412,8 @@ export default {
     },
     buildTreeForm() {
       const firstInput = this.$el.querySelector('input');
+      let pageRenderComplete;
+      const pageRendered = new Promise((resolve) => { pageRenderComplete = resolve; });
       this.showNextButton = true;
       this.callbacksPanelComponents = [];
 
@@ -491,7 +541,19 @@ export default {
           });
           break;
         case 'TextOutputCallback':
-          this.addComponent(TextOutputCallback, { callback });
+          this.addComponent(TextOutputCallback, { callback, pageRendered },
+            [{
+              name: 'hasScripts',
+              callback: () => {
+                this.showScriptElms = true;
+                const knownType = this.backendScriptsIdentifier();
+                // only hide next button if we know it should be hidden (webAuthn, deviceId)
+                if (knownType) {
+                  this.loading = true;
+                  this.showNextButton = false;
+                }
+              },
+            }]);
           break;
         case 'SuspendedTextOutputCallback':
           this.showNextButton = false;
@@ -536,6 +598,7 @@ export default {
       });
       this.showClone = false;
       this.$refs.callbacksPanelClone.innerHTML = '';
+      pageRenderComplete();
 
       if (firstInput) {
         // focus on the first input after render

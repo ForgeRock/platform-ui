@@ -12,6 +12,7 @@ of the MIT license. See the LICENSE file for details.
       :name="name"
       :ref="name"
       :value="value"
+      :id="value"
       @change="onChange()">
   </div>
 </template>
