@@ -31,6 +31,10 @@ to such license between the licensee and ForgeRock AS. -->
       <slot name="append" />
     </div>
     <!-- @slot Shows validation errors related to input. -->
+    <FrValidationError
+      class="error-messages"
+      :validator-errors="errors"
+      :field-name="fieldName" />
     <small
       v-if="helpText && isHtml"
       :id="`${id}_helpText`"
@@ -45,11 +49,15 @@ to such license between the licensee and ForgeRock AS. -->
   </div>
 </template>
 <script>
+import ValidationErrorList from '@forgerock/platform-shared/src/components/ValidationErrorList';
 /**
  * Input with a floating label in the center, this will move when a user types into the input (example can be found on the default login page).
  * */
 export default {
   name: 'InputLayout',
+  components: {
+    FrValidationError: ValidationErrorList,
+  },
   props: {
     /**
      * Unique id.
@@ -57,6 +65,10 @@ export default {
     id: {
       type: String,
       default: '',
+    },
+    errors: {
+      type: Array,
+      default: () => [],
     },
     /**
      * Input name.
