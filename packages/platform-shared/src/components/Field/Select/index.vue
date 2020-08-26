@@ -8,6 +8,7 @@ to such license between the licensee and ForgeRock AS. -->
     :id="id"
     :field-name="fieldName"
     :help-text="helpText"
+    :errors="errors"
     :is-html="isHtml"
     :label="label">
     <VueMultiSelect
@@ -83,6 +84,13 @@ export default {
     allowEmpty: {
       type: Boolean,
       default: false,
+    },
+    /**
+     * List of errors related to input value
+     */
+    errors: {
+      type: Array,
+      default: () => [],
     },
     /**
      * Options for select input.

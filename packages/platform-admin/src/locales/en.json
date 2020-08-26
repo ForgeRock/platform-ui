@@ -596,15 +596,23 @@
   },
   "email": {
     "inviteAdmin": {
-      "successHeader": "Your invitation has been sent!",
-      "successCount": "You’ve invited {count} admins",
+      "successHeader": "Your invitation(s) has been sent!",
+      "successCountMessage": "You’ve invited {count} admin(s)",
+      "partialSuccessMessage": "You’ve invited {totalCount} admin(s), but {failCount} invitation(s) didn't send. Review the below errors.",
+      "noSuccessMessage": "{count} invitation(s) didn't send. Review the errors below.",
       "notice": "IMPORTANT: Each invited admin will receive an email to setup their admin account and have the permission to fully administer this organization.",
       "toCompany": "to {company}",
-      "inviteAdmins": "Invite Admins",
-      "invitationSent": "Invitations Sent!",
+      "inviteAdminsTitle": "Invite Admins",
+      "invitationSentTitle": "Invitations Sent!",
+      "partialSuccessTitle": "Partial Success",
+      "oopsTitle": "Oops, That Didn't Work",
       "sendInvite": "Send Invitations",
       "inviteMore": "Invite More People",
-      "members": "Invited Members"
+      "tryAgain": "Try Again",
+      "invitedMembers": "Invited Members",
+      "notInvited": "Not Invited",
+      "errorAdminOnboarding": "There was an issue onboarding admin",
+      "errorUnique": "This person already exists in your tenant."
     }
   }
 }
