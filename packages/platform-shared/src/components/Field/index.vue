@@ -62,11 +62,12 @@ to such license between the licensee and ForgeRock AS. -->
       v-slot="{ errors }">
       <FrMultiselect
         @input="$emit('valueChange', field.value)"
-        class="floating-label-input"
+        :class="[{'fr-error': errors.length || failedPolicies.length}, 'floating-label-input']"
         v-if="field.type === 'multiselect'"
         v-model="inputValue"
         v-bind="attrs"
         v-on="$listeners"
+        :errors="failedPolicies.concat(errors)"
         :field-name="field.key"
         :disabled="fieldDisabled"
         :help-text="getDescription()"
@@ -88,6 +89,7 @@ to such license between the licensee and ForgeRock AS. -->
         v-model="inputValue"
         v-bind="attrs"
         v-on="$listeners"
+        :errors="failedPolicies.concat(errors)"
         :field-name="field.key"
         :disabled="fieldDisabled"
         :help-text="getDescription()"
@@ -110,6 +112,7 @@ to such license between the licensee and ForgeRock AS. -->
         v-bind="attrs"
         v-on="$listeners"
         :disabled="fieldDisabled"
+        :errors="failedPolicies.concat(errors)"
         :field-name="field.key"
         :help-text="getDescription()"
         :label="getLabel()">
@@ -128,6 +131,7 @@ to such license between the licensee and ForgeRock AS. -->
         v-bind="attrs"
         v-on="$listeners"
         :disabled="fieldDisabled"
+        :errors="failedPolicies.concat(errors)"
         :field-name="field.key"
         :help-text="getDescription()"
         :label="getLabel()"
@@ -151,9 +155,9 @@ to such license between the licensee and ForgeRock AS. -->
         v-model="inputValue"
         v-on="$listeners"
         :autofocus="autofocus"
-        :field-title="field.title"
-        :disabled="fieldDisabled"
-        :class="{'fr-error': errors.length || failedPolicies.length}" />
+        :errors="failedPolicies.concat(errors)"
+        :field-name="field.key"
+        :disabled="fieldDisabled" />
       <FrTextArea
         v-else-if="field.type === 'textarea'"
         :class="[{'fr-error': errors.length || failedPolicies.length}, 'floating-label-input']"
@@ -161,22 +165,10 @@ to such license between the licensee and ForgeRock AS. -->
         v-bind="attrs"
         v-on="$listeners"
         :disabled="fieldDisabled"
+        :errors="failedPolicies.concat(errors)"
         :field-name="field.key"
         :help-text="getDescription()"
         :label="getLabel()" />
-      <slot name="validationError">
-        <!-- static error display through props  -->
-        <FrValidationError
-          v-if="failedPolicies.length"
-          :validator-errors="failedPolicies"
-          :field-name="field.key" />
-        <!-- dynamic error display through vee-validate  -->
-        <FrValidationError
-          v-else
-          class="error-messages"
-          :validator-errors="errors"
-          :field-name="field.key" />
-      </slot>
     </ValidationProvider>
     <template v-if="this.field.type === 'boolean' || this.field.type === 'checkbox'">
       <label
@@ -204,7 +196,6 @@ import {
   BFormCheckbox,
 } from 'bootstrap-vue';
 import { ValidationProvider } from 'vee-validate';
-import ValidationErrorList from '@forgerock/platform-shared/src/components/ValidationErrorList';
 import BasicInput from '@forgerock/platform-shared/src/components/Field/Basic';
 import TextArea from '@forgerock/platform-shared/src/components/Field/TextArea';
 import Select from '@forgerock/platform-shared/src/components/Field/Select';
@@ -222,7 +213,6 @@ export default {
     FrTextArea: TextArea,
     FrSelect: Select,
     FrMultiselect: Multiselect,
-    FrValidationError: ValidationErrorList,
     FrKeyValueList: KeyValueList,
     FrTag,
     ToggleButton,
@@ -459,13 +449,17 @@ export default {
   border: none !important;
 
   /deep/ {
-    input,
+    input:not(.multiselect__input),
     textarea {
       border: 1px solid $danger;
 
       &:focus {
         box-shadow: 0 0 0 0.0625rem $danger;
       }
+    }
+
+    .multiselect {
+      border: 1px solid $danger;
     }
 
     button {
