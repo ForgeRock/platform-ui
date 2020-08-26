@@ -102,6 +102,7 @@
       "VALID_SUPPORT_SET_KEY_FORMAT": "Invalid support set key format (1234-1234-1234-1234)",
       "VALID_TENANT_NAME_FORMAT": "Invalid tenant name format (my-tenant2)",
       "VALID_QUERY_FILTER": "Invalid queryFilter format",
+      "VALID_USERNAME": "Invalid username",
       "UNIQUE": "Must be unique",
       "IS_NEW": "Must not be the same as the previous %{historyLength} passwords",
       "ALPHA_DASH": "Must only contain letters, numbers, spaces, hyphens and underscores",
