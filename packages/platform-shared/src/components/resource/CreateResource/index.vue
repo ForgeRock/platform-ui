@@ -41,17 +41,9 @@ to such license between the licensee and ForgeRock AS. -->
                 <!-- Special logic for password -->
                 <FrPolicyPasswordInput
                   v-else
-                  :policy-api="`${resourceType}/${resourceName}/policyTest`"
-                  v-model="field.value">
-                  <template #input>
-                    <BFormGroup class="mb-3">
-                      <FrField
-                        :autofocus="index === 0"
-                        :field="field"
-                        :prepend-title="true" />
-                    </BFormGroup>
-                  </template>
-                </FrPolicyPasswordInput>
+                  :policy-api="`${resourceType}/${resourceName}/policy`"
+                  v-model="passwordValue"
+                  @valid="passwordValid = $event" />
               </BFormGroup>
 
               <!-- for singletonRelationhip values -->
@@ -126,7 +118,7 @@ to such license between the licensee and ForgeRock AS. -->
           <BButton
             variant="primary"
             @click="saveForm"
-            :disabled="formFields.length === 0 || invalid">
+            :disabled="formFields.length === 0 || invalid || (passwordValue !== '' && !passwordValid)">
             {{ $t('common.save') }}
           </BButton>
         </div>
@@ -235,7 +227,7 @@ export default {
 
       // Special logic for password
       if (prop.key === 'password') {
-        prop.validation = 'required|policy';
+        prop.validation = 'required';
         prop.type = 'password';
       }
     });
@@ -243,7 +235,18 @@ export default {
     return {
       formFields: tempFormFields,
       stepIndex: -1,
+      passwordValue: '',
+      passwordValid: true,
     };
+  },
+  watch: {
+    passwordValue(newVal) {
+      const passwordField = find(this.createProperties, { key: 'password' });
+
+      if (passwordField) {
+        passwordField.value = newVal;
+      }
+    },
   },
   computed: {
     steps() {
@@ -335,7 +338,8 @@ export default {
       if (this.$refs.observer) {
         this.$refs.observer.reset();
       }
-
+      this.passwordValue = '';
+      this.passwordValid = true;
       this.createProperties.forEach((field) => {
         if (field.type === 'string' || field.type === 'number' || field.type === 'password' || field.type === 'relationship') {
           field.value = '';
