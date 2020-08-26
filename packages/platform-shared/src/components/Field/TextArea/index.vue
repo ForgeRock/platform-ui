@@ -8,6 +8,7 @@ to such license between the licensee and ForgeRock AS. -->
     :id="id"
     :field-name="fieldName"
     :help-text="helpText"
+    :errors="errors"
     :is-html="isHtml"
     :label="label"
   >
@@ -55,6 +56,13 @@ export default {
     autofocus: {
       type: Boolean,
       default: false,
+    },
+    /**
+     * List of errors related to input value
+     */
+    errors: {
+      type: Array,
+      default: () => [],
     },
     /**
      * specifies the visible height of a text area, in lines.

@@ -69,11 +69,16 @@ to such license between the licensee and ForgeRock AS. -->
         {{ $t('common.add') }}
       </span>
     </div>
+    <FrValidationError
+      class="error-messages"
+      :validator-errors="errors"
+      :field-name="fieldName" />
   </div>
 </template>
 
 <script>
 import { isEmpty, cloneDeep } from 'lodash';
+import ValidationErrorList from '@forgerock/platform-shared/src/components/ValidationErrorList';
 import KeyValuePanel from './KeyValuePanel';
 
 /**
@@ -83,8 +88,23 @@ export default {
   name: 'KeyValueList',
   components: {
     FrKeyValuePanel: KeyValuePanel,
+    FrValidationError: ValidationErrorList,
   },
   props: {
+    /**
+     * List of errors related to input value
+     */
+    errors: {
+      type: Array,
+      default: () => [],
+    },
+    /**
+     * Title of field
+     */
+    fieldName: {
+      type: String,
+      default: '',
+    },
     value: {
       type: [Object, String],
       default() {

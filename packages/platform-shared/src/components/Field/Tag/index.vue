@@ -4,41 +4,47 @@ Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
-  <BFormTags
-    v-model="inputValue"
-    :autofocus="autofocus"
-    :disabled="disabled"
-    :class="[{'fr-error': false}, 'fr-tags']">
-    <template v-slot="{ tags, inputAttrs, inputHandlers, addTag, removeTag }">
-      <Draggable
-        v-model="inputValue"
-        class="d-flex flex-wrap w-100"
-        ghost-class="ghost-tag">
-        <div
-          class="mt-1 mr-1 fr-tag"
-          v-for="tag in tags"
-          :key="tag"
-          body-class="py-1 pr-2 text-nowrap">
-          <span class="fr-tag-text">
-            {{ tag }}
-          </span>
-          <span @click="removeTag(tag)">
-            <i
-              class="material-icons-outlined pl-2"
-              style="font-size: 10px; font-weight: 900;">
-              close
-            </i>
-          </span>
-        </div>
-      </Draggable>
-      <input
-        v-bind="inputAttrs"
-        @blur="addTag()"
-        v-on="inputHandlers"
-        :placeholder="$t('common.addObject', {object: fieldTitle})"
-        :class="[{'show': !tags.length}, 'fr-input']">
-    </template>
-  </BFormTags>
+  <div>
+    <BFormTags
+      v-model="inputValue"
+      :autofocus="autofocus"
+      :disabled="disabled"
+      :class="[{'fr-error': errors.length > 0}, 'fr-tags']">
+      <template v-slot="{ tags, inputAttrs, inputHandlers, addTag, removeTag }">
+        <Draggable
+          v-model="inputValue"
+          class="d-flex flex-wrap w-100"
+          ghost-class="ghost-tag">
+          <div
+            class="mt-1 mr-1 fr-tag"
+            v-for="tag in tags"
+            :key="tag"
+            body-class="py-1 pr-2 text-nowrap">
+            <span class="fr-tag-text">
+              {{ tag }}
+            </span>
+            <span @click="removeTag(tag)">
+              <i
+                class="material-icons-outlined pl-2"
+                style="font-size: 10px; font-weight: 900;">
+                close
+              </i>
+            </span>
+          </div>
+        </Draggable>
+        <input
+          v-bind="inputAttrs"
+          @blur="addTag()"
+          v-on="inputHandlers"
+          :placeholder="$t('common.addObject', {object: fieldName})"
+          :class="[{'show': !tags.length}, 'fr-input']">
+      </template>
+    </BFormTags>
+    <FrValidationError
+      class="error-messages"
+      :validator-errors="errors"
+      :field-name="fieldName" />
+  </div>
 </template>
 
 <script>
@@ -46,12 +52,14 @@ import {
   BFormTags,
 } from 'bootstrap-vue';
 import Draggable from 'vuedraggable';
+import ValidationErrorList from '@forgerock/platform-shared/src/components/ValidationErrorList';
 
 export default {
   name: 'FrTag',
   components: {
     BFormTags,
     Draggable,
+    FrValidationError: ValidationErrorList,
   },
   data() {
     return {
@@ -74,9 +82,16 @@ export default {
       default: false,
     },
     /**
+     * List of errors related to input value
+     */
+    errors: {
+      type: Array,
+      default: () => [],
+    },
+    /**
      * Title of field
      */
-    fieldTitle: {
+    fieldName: {
       type: String,
       default: '',
     },
