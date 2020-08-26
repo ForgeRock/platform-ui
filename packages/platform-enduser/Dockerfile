@@ -4,33 +4,9 @@
 # of the MIT license. See the LICENSE file for details.
 
 ###############################################################################
-# Dependencies Build Stage
-###############################################################################
-FROM node:lts-slim AS dependencies
-
-# Copy dependencies (supports yarn install)
-COPY packages/platform-admin /home/app/packages/platform-admin/
-COPY packages/platform-shared /home/app/packages/platform-shared/
-COPY packages/platform-login /home/app/packages/platform-login/
-
-# Copy dependency descriptors (only invalidates if dependencies change)
-COPY package.json yarn.lock /home/app/
-COPY packages/platform-enduser/package.json /home/app/packages/platform-enduser/
-
-# Install dependencies (don’t generate yarn.lock)
-WORKDIR /home/app/packages/platform-enduser
-RUN yarn install --pure-lockfile
-
-# Copy source code
-COPY . /home/app/
-
-###############################################################################
 # Build Build Stage
 ###############################################################################
-FROM node:lts-slim AS build
-
-# Copy result of `dependencies` build stage
-COPY --from=dependencies /home/app/ /home/app
+FROM platform-shared:latest AS build
 
 WORKDIR /home/app/packages/platform-enduser
 
