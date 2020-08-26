@@ -59,3 +59,8 @@ export function getManagedResourceList(resourceName, params) {
 
   return generateIdmApi().get(resourceUrl);
 }
+
+export function postManagedResource(resourceName, data) {
+  const resourceUrl = `/managed/${resourceName}?_action=create`;
+  return generateIdmApi().post(resourceUrl, data);
+}
