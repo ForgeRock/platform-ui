@@ -12,11 +12,12 @@ RUN apt-get update && apt-get install gettext-base
 
 # Copy dependency descriptors (only invalidates if dependencies change)
 COPY package.json yarn.lock /home/app/
-COPY packages/platform-shared/package.json /home/app/packages/platform-shared/
 COPY packages/platform-admin/package.json /home/app/packages/platform-admin/
-COPY packages/platform-shared/package.json /home/app/packages/platform-shared/
 COPY packages/platform-enduser/package.json /home/app/packages/platform-enduser/
 COPY packages/platform-login/package.json /home/app/packages/platform-login/
+COPY packages/platform-onboarding/package.json /home/app/packages/platform-onboarding/
+COPY packages/platform-registration/package.json /home/app/packages/platform-registration/
+COPY packages/platform-shared/package.json /home/app/packages/platform-shared/
 
 # Install dependencies (don’t generate yarn.lock)
 WORKDIR /home/app/packages/platform-shared
