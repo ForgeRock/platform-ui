@@ -28,7 +28,7 @@ to such license between the licensee and ForgeRock AS. -->
       :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control p-0', {'no-multiselect-label': !this.label }, {'h-100': floatLabels || !this.label }]"
       :placeholder="defaultPlaceholder"
       @search-change="searchChange"
-      @open="floatLabels = true"
+      @open="openHandler"
       @close="addTag"
       v-on="$listeners">
       <slot name="noResult">
@@ -37,7 +37,7 @@ to such license between the licensee and ForgeRock AS. -->
       <template
         v-for="(key, slotName) in $scopedSlots"
         v-slot:[slotName]="slotData">
-        <!-- @slot passthrough slot -->
+        <!-- @slot pass-through slot -->
         <slot
           :name="slotName"
           v-bind="slotData" />
@@ -46,7 +46,7 @@ to such license between the licensee and ForgeRock AS. -->
     <template
       v-for="(key, slotName) in $scopedSlots"
       v-slot:[slotName]="slotData">
-      <!-- @slot passthrough slot -->
+      <!-- @slot pass-through slot -->
       <slot
         :name="slotName"
         v-bind="slotData" />
@@ -109,11 +109,23 @@ export default {
       default: '',
       required: false,
     },
+    /**
+     * @description Enable autofocus
+     */
+    autofocus: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       searchValue: '',
     };
+  },
+  mounted() {
+    if (this.autofocus) {
+      this.openHandler();
+    }
   },
   computed: {
     options() {
@@ -155,10 +167,22 @@ export default {
       this.floatLabels = (newVal.length || document.activeElement === this.$refs.vms.$el.querySelector('input')) > 0 && this.label;
       this.$emit('input', map(newVal, 'value'));
     },
+    /**
+     * @description focus the Vue Multi Select component (vms) and floats the label
+     */
+    openHandler() {
+      this.$refs.vms.$el.querySelector('input').focus();
+      this.floatLabels = true;
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
 @import '~@forgerock/platform-shared/src/components/Field/assets/vue-multiselect.scss';
+
+/deep/ .multiselect:focus-within {
+  border-color: $blue;
+  box-shadow: 0 0 0 0.0625rem $blue;
+}
 </style>
