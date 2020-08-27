@@ -12,6 +12,7 @@ to such license between the licensee and ForgeRock AS. -->
     :is-html="isHtml"
     :label="label">
     <VueMultiSelect
+      ref="vms"
       v-model="inputValue"
       v-bind="$attrs"
       class="h-100"
@@ -26,7 +27,7 @@ to such license between the licensee and ForgeRock AS. -->
       :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control p-0', {'no-multiselect-label': !this.label }]"
       :placeholder="placeholder"
       @search-change="$emit('search-change', $event)"
-      @open="floatLabels = true"
+      @open="openHandler"
       @close="closeDropDown(inputValue)">
       <slot name="noResult">
         {{ $t('common.noResult') }}
@@ -111,6 +112,18 @@ export default {
       default: true,
       required: false,
     },
+    /**
+     * @description Enable autofocus
+     */
+    autofocus: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  mounted() {
+    if (this.autofocus) {
+      this.openHandler();
+    }
   },
   computed: {
     options() {
@@ -138,6 +151,13 @@ export default {
         this.inputValue = find(this.options, { value: newVal });
       }
     },
+    /**
+     * @description focus the Vue Multi Select component (vms) and floats the label
+     */
+    openHandler() {
+      this.$refs.vms.$el.querySelector('input').focus();
+      this.floatLabels = true;
+    },
   },
   watch: {
     value: {
@@ -156,4 +176,9 @@ export default {
 
 <style lang="scss" scoped>
 @import '~@forgerock/platform-shared/src/components/Field/assets/vue-multiselect.scss';
+
+/deep/ .multiselect:focus-within {
+  border-color: $blue;
+  box-shadow: 0 0 0 0.0625rem $blue;
+}
 </style>
