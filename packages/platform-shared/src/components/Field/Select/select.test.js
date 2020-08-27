@@ -150,4 +150,47 @@ describe('Select input', () => {
     expect(wrapper.contains('.test_prepend')).toBe(true);
     expect(wrapper.contains('.test_append')).toBe(true);
   });
+
+  it('Select is not autofocused on absence of prop "autofocus"', () => {
+    const wrapper = mount(Select, {
+      localVue,
+      mocks: {
+        $t: () => {},
+      },
+      propsData: {
+        ...defaultMixinProps,
+        ...defaultProps,
+        autofocus: false,
+      },
+      slots: {
+        prepend: '<span class="test_prepend">prepend</span>',
+        append: '<span class="test_append">append</span>', // Will match <slot name="FooBar" />,
+      },
+    });
+    expect(document.activeElement).toEqual(document.body);
+    document.activeElement.blur();
+    wrapper.destroy();
+  });
+
+  // TODO: to make this test work, follow guide to upgrade vue-test-utils https://vue-test-utils.vuejs.org/upgrading-to-v1/
+  // it('Select is autofocused on prop "autofocus"', () => {
+  //   const wrapper = mount(Select, {
+  //     localVue,
+  //     mocks: {
+  //       $t: () => {},
+  //     },
+  //     attachTo: document.body,
+  //     propsData: {
+  //       ...defaultMixinProps,
+  //       ...defaultProps,
+  //       autofocus: true,
+  //     },
+  //     slots: {
+  //       prepend: '<span class="test_prepend">prepend</span>',
+  //       append: '<span class="test_append">append</span>', // Will match <slot name="FooBar" />,
+  //     },
+  //   });
+  //   expect(document.activeElement).toEqual(wrapper.findComponent({ ref: 'vms' }).querySelector('input'));
+  //   document.activeElement.blur();
+  // });
 });

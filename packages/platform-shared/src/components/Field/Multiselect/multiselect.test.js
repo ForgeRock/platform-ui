@@ -5,6 +5,7 @@
  * or with one of its affiliates. All use shall be exclusively subject
  * to such license between the licensee and ForgeRock AS.
  */
+import Vue from 'vue';
 import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, mount, shallowMount } from '@vue/test-utils';
 import MultiSelect from './index';
@@ -151,5 +152,57 @@ describe('MultiSelect input', () => {
 
     expect(wrapper.contains('.test_prepend')).toBe(true);
     expect(wrapper.contains('.test_append')).toBe(true);
+  });
+
+  it('Multiselect is not autofocused on absence of prop "autofocus"', async () => {
+    const wrapper = mount(MultiSelect, {
+      localVue,
+      mocks: {
+        $t: () => {},
+      },
+      attachToDocument: true,
+      propsData: {
+        ...defaultMixinProps,
+        ...defaultProps,
+        autofocus: false,
+      },
+      slots: {
+        prepend: '<span class="test_prepend">prepend</span>',
+        append: '<span class="test_append">append</span>', // Will match <slot name="FooBar" />,
+      },
+    });
+
+    try {
+      await Vue.nextTick();
+      expect(document.activeElement).toEqual(document.body);
+    } finally {
+      wrapper.destroy();
+    }
+  });
+
+  it('Multiselect is autofocused on prop "autofocus"', async () => {
+    const wrapper = mount(MultiSelect, {
+      localVue,
+      mocks: {
+        $t: () => {},
+      },
+      attachToDocument: true,
+      propsData: {
+        ...defaultMixinProps,
+        ...defaultProps,
+        autofocus: true,
+      },
+      slots: {
+        prepend: '<span class="test_prepend">prepend</span>',
+        append: '<span class="test_append">append</span>', // Will match <slot name="FooBar" />,
+      },
+    });
+
+    try {
+      await Vue.nextTick();
+      expect(document.activeElement).toEqual(wrapper.element.querySelector('input'));
+    } finally {
+      wrapper.destroy();
+    }
   });
 });
