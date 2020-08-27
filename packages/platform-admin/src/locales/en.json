@@ -614,5 +614,16 @@
       "errorAdminOnboarding": "There was an issue onboarding admin",
       "errorUnique": "This person already exists in your tenant."
     }
+  },
+  "tenantSettings": {
+    "title": "Tenant Settings",
+    "globalSettings": {
+      "title": "Global Settings",
+      "getDataFail": "Unable to retrieve global settings data",
+      "server": {
+        "title": "Server",
+        "cookieName": "Cookie Name"
+      }
+    }
   }
 }

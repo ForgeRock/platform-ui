@@ -6,7 +6,7 @@ to such license between the licensee and ForgeRock AS. -->
 <template>
   <BCard
     no-body
-    class="mb-3">
+    :class="{'mb-3': !noMargin}">
     <!-- @slot Header containing title and subtitle -->
     <slot name="list-group-header">
       <BCardBody
@@ -59,6 +59,13 @@ export default {
     subtitle: {
       default: '',
       type: String,
+    },
+    /**
+     * Whether the list should include a margin on it's top level card element
+     */
+    noMargin: {
+      default: false,
+      type: Boolean,
     },
   },
   data() {
