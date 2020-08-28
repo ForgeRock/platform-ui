@@ -56,6 +56,13 @@ export default {
       type: Function,
       required: true,
     },
+    /**
+     * The current realm. Needed to submit to tree for testing password validity
+     */
+    realm: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
@@ -142,8 +149,11 @@ export default {
      * Sends input to backend to be validated and updates the failing policies.
      */
     validatePassword() {
+      const stepParams = {
+        realmPath: this.realm,
+      };
       // call tree without advancing to next node
-      this.auth.next(this.step).then((step) => {
+      this.auth.next(this.step, stepParams).then((step) => {
         const callback = step.getCallbackOfType('ValidatedCreatePasswordCallback');
         this.setFailingPolicies(callback.getOutputByName('failedPolicies'));
       }).catch(() => {

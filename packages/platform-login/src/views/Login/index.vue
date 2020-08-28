@@ -501,7 +501,7 @@ export default {
           if (!callback.getOutputByName('policies').policies) {
             this.addField('password', callback, index);
           } else {
-            this.addComponent(ValidatedCreatePasswordCallback, { callback, step: this.step, auth: FRAuth });
+            this.addComponent(ValidatedCreatePasswordCallback, { callback, step: this.step, auth: FRAuth, realm: this.realm });
           }
           break;
         case 'SelectIdPCallback':
