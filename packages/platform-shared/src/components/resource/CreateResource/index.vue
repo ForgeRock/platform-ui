@@ -25,6 +25,7 @@ to such license between the licensee and ForgeRock AS. -->
           <!-- Creating resource currently only supports String, Number, Boolean, and singleton relationships -->
           <BForm
             v-if="createProperties.length"
+            @keyup.enter="saveForm"
             class="mb-3"
             @submit="saveForm"
             name="edit-personal-form">
@@ -104,6 +105,7 @@ to such license between the licensee and ForgeRock AS. -->
               v-if="isLastStep"
               @click="saveForm"
               :disabled="formFields.length === 0 || invalid"
+              type="submit"
               variant="primary">
               {{ $t('common.save') }}
             </BButton>
@@ -118,7 +120,9 @@ to such license between the licensee and ForgeRock AS. -->
           <BButton
             variant="primary"
             @click="saveForm"
-            :disabled="formFields.length === 0 || invalid || (passwordValue !== '' && !passwordValid)">
+            :disabled="formFields.length === 0 || invalid || (passwordValue !== '' && !passwordValid)"
+            type="submit"
+          >
             {{ $t('common.save') }}
           </BButton>
         </div>
