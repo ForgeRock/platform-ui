@@ -30,14 +30,24 @@ of the MIT license. See the LICENSE file for details.
             </p>
           </div>
         </div>
-        <form
-          id="wrapper"
-        >
-          <!-- fieldset field is for backend scripts -->
-          <div
-            v-if="showScriptElms">
-            <fieldset />
-          </div>
+        <div id="body-append-el">
+          <!-- for backend scripts -->
+          <form
+            id="wrapper"
+            v-if="showScriptElms"
+          >
+            <div>
+              <fieldset />
+            </div>
+            <input
+              id="loginButton_0"
+              role="button"
+              type="submit"
+              @click.prevent="backendScriptsHandler"
+              hidden>
+          </form>
+        </div>
+        <form>
           <div
             v-show="!showClone"
             id="callbacksPanel"
@@ -57,13 +67,6 @@ of the MIT license. See the LICENSE file for details.
             @click="nextStep">
             {{ $t('login.next') }}
           </BButton>
-          <input
-            v-if="showScriptElms"
-            id="loginButton_0"
-            role="button"
-            type="submit"
-            @click.prevent="backendScriptsHandler"
-            hidden>
         </form>
       </BCardBody>
       <BCardBody v-show="loading">
@@ -546,10 +549,18 @@ export default {
               name: 'hasScripts',
               callback: () => {
                 this.showScriptElms = true;
-                const knownType = this.backendScriptsIdentifier();
+                // listen on body.appendchild and append to #body-append-el insted
+                const observer = new MutationObserver((records) => {
+                  const nodeList = records[records.length - 1].addedNodes || [];
+                  Array.prototype.forEach.call(nodeList, (node) => {
+                    document.getElementById('body-append-el').appendChild(node);
+                  });
+                  observer.disconnect();
+                });
+                observer.observe(document.body, { childList: true });
                 // only hide next button if we know it should be hidden (webAuthn, deviceId)
+                const knownType = this.backendScriptsIdentifier();
                 if (knownType) {
-                  this.loading = true;
                   this.showNextButton = false;
                 }
               },
