@@ -7,25 +7,29 @@ to such license between the licensee and ForgeRock AS. -->
   <div>
     <div class="card-body m-4">
       <ValidationObserver ref="observer">
-        <template v-for="(field, index) in displayProperties">
-          <div
-            class="mb-4"
-            v-if="(field.type === 'string' || field.type === 'number' || field.type === 'boolean') && field.encryption === undefined"
-            :key="'editResource' + index">
-            <FrField
-              :field="field"
-              :display-description="field.type !== 'boolean'" />
-          </div>
-          <!-- for singletonRelationhip values -->
-          <FrRelationshipEdit
-            v-if="field.type === 'relationship'"
-            :disabled="field.disabled"
-            :relationship-property="field"
-            :key="'editResource' + index"
-            :index="index"
-            v-model="field.value"
-            @setValue="setSingletonRelationshipValue($event, field)" />
-        </template>
+        <BForm
+          @keyup.enter="saveResource"
+        >
+          <template v-for="(field, index) in displayProperties">
+            <div
+              class="mb-4"
+              v-if="(field.type === 'string' || field.type === 'number' || field.type === 'boolean') && field.encryption === undefined"
+              :key="'editResource' + index">
+              <FrField
+                :field="field"
+                :display-description="field.type !== 'boolean'" />
+            </div>
+            <!-- for singletonRelationhip values -->
+            <FrRelationshipEdit
+              v-if="field.type === 'relationship'"
+              :disabled="field.disabled"
+              :relationship-property="field"
+              :key="'editResource' + index"
+              :index="index"
+              v-model="field.value"
+              @setValue="setSingletonRelationshipValue($event, field)" />
+          </template>
+        </BForm>
       </ValidationObserver>
     </div>
     <div
@@ -48,7 +52,7 @@ import {
   capitalize,
   clone,
 } from 'lodash';
-import { BButton } from 'bootstrap-vue';
+import { BButton, BForm } from 'bootstrap-vue';
 import { ValidationObserver } from 'vee-validate'; // ValidationProvider,
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import RelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
@@ -63,6 +67,7 @@ export default {
     FrRelationshipEdit: RelationshipEdit,
     ValidationObserver,
     BButton,
+    BForm,
   },
   props: {
     displayProperties: {
