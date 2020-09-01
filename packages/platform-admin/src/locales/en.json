@@ -602,6 +602,7 @@
       "noSuccessMessage": "{count} invitation(s) didn't send. Review the errors below.",
       "notice": "IMPORTANT: Each invited admin will receive an email to setup their admin account and have the permission to fully administer this organization.",
       "toCompany": "to {company}",
+      "emailAddresses": "Email addresses",
       "inviteAdminsTitle": "Invite Admins",
       "invitationSentTitle": "Invitations Sent!",
       "partialSuccessTitle": "Partial Success",
