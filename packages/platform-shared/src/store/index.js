@@ -29,7 +29,6 @@ export default new Vuex.Store({
     realm: 'root',
     realms: [],
     realmAliases: [],
-    realmPath: '/',
     returnRoute: '',
     returnRouteText: '',
     theme: 'default',
@@ -43,16 +42,13 @@ export default new Vuex.Store({
   },
   mutations: {
     setRealm(state, realm) {
-      if (!state.realms.length) {
-        state.realm = realm;
-        state.realmPath = '/';
-        return;
-      }
+      const realmName = (realm.startsWith('/')) ? realm.substring(1) : realm;
+      state.realm = realmName;
 
-      const newRealm = state.realms.filter((r) => r.name === realm)[0];
-      state.realm = realm;
-      state.realmAliases = newRealm.aliases;
-      state.realmPath = `/${realm}`;
+      if (state.realms.length) {
+        const newRealm = state.realms.find((r) => r.name === realmName);
+        state.realmAliases = (newRealm) ? newRealm.aliases : [];
+      }
     },
     setRealms(state, realms) {
       state.realms = realms;
