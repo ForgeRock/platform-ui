@@ -61,11 +61,11 @@ Config.set({
   serverConfig: { baseUrl: `${process.env.VUE_APP_AM_URL}/` },
 });
 
-router.beforeEach(async (to, _from, next) => {
+router.beforeEach((to, _from, next) => {
   if (to.name === 'logout') {
-    await SessionManager.logout();
-    next('/');
-    return;
+    SessionManager.logout().then(() => {
+      next('/');
+    });
   }
   next();
 });
