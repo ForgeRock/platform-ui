@@ -392,6 +392,7 @@
       "createCredentials": "Create a client ID for your application.",
       "createCredentialsWithSecret": "Create a client ID and secret for your application.",
       "alphaNumericOnly": "Can only contain alphanumeric characters",
+      "alphaNumericDashOnly": "Can only contain alphanumeric characters, numbers, dashes or underscores",
       "noSpace": "Cannot start or end with the space character",
       "createApp": "Create Application",
       "defaultModalTitle": "New Application",
