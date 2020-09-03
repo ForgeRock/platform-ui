@@ -12,6 +12,7 @@ to such license between the licensee and ForgeRock AS. -->
     :is-html="isHtml"
     :label="label">
     <VueMultiSelect
+      ref="vms"
       v-model="inputValue"
       v-bind="$attrs"
       label="text"
@@ -26,9 +27,9 @@ to such license between the licensee and ForgeRock AS. -->
       :searchable="defaultSearchable"
       :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control p-0', {'no-multiselect-label': !this.label }, {'h-100': floatLabels || !this.label }]"
       :placeholder="defaultPlaceholder"
-      @search-change="$emit('search-change', $event)"
+      @search-change="searchChange"
       @open="floatLabels = true"
-      @close="floatLabels = inputValue && inputValue.length"
+      @close="addTag"
       v-on="$listeners">
       <slot name="noResult">
         {{ $t('common.noResult') }}
@@ -109,6 +110,11 @@ export default {
       required: false,
     },
   },
+  data() {
+    return {
+      searchValue: '',
+    };
+  },
   computed: {
     options() {
       if (this.selectOptions.length && has(this.selectOptions[0], 'value')) {
@@ -128,6 +134,17 @@ export default {
     },
   },
   methods: {
+    addTag() {
+      if (this.$attrs.taggable && this.searchValue.length > 0) {
+        this.options.push({ text: this.searchValue, value: this.searchValue });
+        this.inputValue.push({ text: this.searchValue, value: this.searchValue });
+      }
+      this.floatLabels = this.inputValue && this.inputValue.length;
+    },
+    searchChange(value) {
+      this.searchValue = value;
+      this.$emit('search-change', value);
+    },
     setInputValue(newVal) {
       const newInputValue = map(newVal, (val) => find(this.options, { value: val }));
       if (!isEqual(this.inputValue, newInputValue)) {
@@ -135,7 +152,7 @@ export default {
       }
     },
     inputValueHandler(newVal) {
-      this.floatLabels = newVal.length > 0 && this.label;
+      this.floatLabels = (newVal.length || document.activeElement === this.$refs.vms.$el.querySelector('input')) > 0 && this.label;
       this.$emit('input', map(newVal, 'value'));
     },
   },
