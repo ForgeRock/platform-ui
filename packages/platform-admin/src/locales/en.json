@@ -91,7 +91,7 @@
     "unableToDeleteResource": "Unable to delete {resource}",
     "filterNodes": "Filter nodes",
     "editModal": {
-      "treeNameDescription": "Human-friendly name for use this user flow.",
+      "treeNameDescription": "Human-friendly name for this user flow.",
       "treeManagedIdentityDescription": "Managed identity to authenticate using this journey.",
       "treeDescriptionDescription": "Provide consumers of your flow a brief description of this flow."
     },
