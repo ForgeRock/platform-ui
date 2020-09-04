@@ -268,22 +268,23 @@ export default {
       return this.stepIndex === this.steps.length - 1;
     },
     modalTitle() {
+      const name = capitalize(this.resourceTitle || this.resourceName);
       if (this.steps.length && this.stepIndex > -1) {
         const step = this.steps[this.stepIndex];
 
         if (step.key === 'privileges') {
-          return `${capitalize(this.resourceName)} ${this.$t('pages.access.permissions')} `;
+          return `${name} ${this.$t('pages.access.permissions')} `;
         }
 
         if (step.isConditional) {
-          return `${this.$t('pages.access.dynamic')} ${capitalize(this.resourceName)} ${this.$t('pages.assignment.title')}`;
+          return `${this.$t('pages.access.dynamic')} ${name} ${this.$t('pages.assignment.title')}`;
         }
 
         if (step.isTemporalConstraint) {
-          return `${capitalize(this.resourceName)} ${this.$t('pages.access.timeConstraint')}`;
+          return `${name} ${this.$t('pages.access.timeConstraint')}`;
         }
       }
-      return `${this.$t('common.new')} ${this.resourceTitle || capitalize(this.resourceName)}`;
+      return `${this.$t('common.new')} ${name}`;
     },
   },
   methods: {
