@@ -41,6 +41,7 @@ of the MIT license. See the LICENSE file for details.
         <FrCreateResource
           v-if="routerParameters && createProperties"
           @refreshGrid="getTableData(currentTableParams)"
+          :resource-title="displayName"
           :resource-name="routerParameters.resourceName"
           :resource-type="routerParameters.resourceType"
           :create-properties="createProperties" />
@@ -60,6 +61,7 @@ import {
   capitalize,
   cloneDeep,
   each,
+  has,
   isUndefined,
   pick,
 } from 'lodash';
@@ -110,6 +112,9 @@ export default {
     axios.all([
       getSchema(`${this.$route.params.resourceType}/${this.$route.params.resourceName}`),
       idmInstance.get(`privilege/${this.$route.params.resourceType}/${this.$route.params.resourceName}`)]).then(axios.spread((schema, privilege) => {
+      if (has(schema, 'data.title')) {
+        this.displayName = schema.data.title;
+      }
       const properties = {};
       if (privilege.data.VIEW.allowed) {
         // Generate columns for display and filtering for read/query
@@ -172,7 +177,7 @@ export default {
           if (propList.description) {
             const description = cloneDeep(propList.description);
             description.key = 'description';
-            description.title = `${this.$t('common.optionalFieldTitle', { fieldTitle: this.$t('common.description') })} (${this.$t('common.optional')})`;
+            description.title = `${this.$t('common.optionalFieldTitle', { fieldTitle: this.$t('common.description') })}`;
             description.isOptional = true;
             requiredProps.push(description);
           }
