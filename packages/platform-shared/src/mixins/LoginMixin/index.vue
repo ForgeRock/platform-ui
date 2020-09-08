@@ -45,9 +45,11 @@ export function getConfigurationInfo(realm) {
   * If it has been registered in AM, redirect the user to the url
   * Else redirect to the default login url.
   */
-export function verifyGotoUrlAndRedirect(url, realm, isAdmin) {
+export function verifyGotoUrlAndRedirect(url, realm, isAdmin = false, isGotoOnFail = false) {
   const urlParams = new URLSearchParams(window.location.search);
-  const gotoUrl = JSON.stringify({ goto: urlParams.get('goto') });
+  const gotoUrl = !isGotoOnFail
+    ? JSON.stringify({ goto: urlParams.get('goto') })
+    : JSON.stringify({ goto: urlParams.get('gotoOnFail') });
 
   urlParams.delete('goto');
   urlParams.delete('gotoOnFail');
@@ -73,6 +75,9 @@ export function verifyGotoUrlAndRedirect(url, realm, isAdmin) {
     .then((res) => {
       if (!isDefaultPath(res.data.successURL) && res.data.successURL !== 'undefined') {
         return res.data.successURL;
+      }
+      if (isDefaultPath(res.data.successURL) && isGotoOnFail) {
+        return false;
       }
       if (isDefaultPath(res.data.successURL) && !isDefaultPath(url)) {
         return url;
