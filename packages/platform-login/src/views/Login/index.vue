@@ -627,7 +627,7 @@ export default {
       const gotoOnFail = urlParams.get('gotoOnFail');
 
       if (gotoOnFail) {
-        this.verifyGotoUrlAndRedirect(gotoOnFail, false)
+        this.verifyGotoUrlAndRedirect(gotoOnFail, this.realm, false, true)
           .then((res) => {
             if (res && res.length) {
               window.location.href = res;
