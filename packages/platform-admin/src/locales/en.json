@@ -230,10 +230,8 @@
       "serverDescription": "ForgeRock waits for Remote server to initiate the connection. Use this in the cloud or if identity resource is behind a firewall.",
       "client": "Client",
       "clientDescription": "ForgeRock initiates the connection to the connector server. Use this in on-prem deployments where you have access behind any firewalls.",
-      "instructions": "Creating a connection involves deploying and running a piece of software on your side. Download and complete the installation process before proceeding.",
-      "dotNetServer": ".NET Server",
-      "javaServer": "Java Server",
-      "download": "Download",
+      "downloadInfo": "Creating a connection involves deploying and running a piece of software on your side. Download and complete the installation process before proceeding.",
+      "viewDownloads": "View Downloads",
       "selectConnectionInitiation": "Choose how the connection to the connector server should be initiated."
     },
     "deleteModal": {
