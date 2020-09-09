@@ -123,6 +123,11 @@ export default {
     flex: 1 1 auto;
     width: 100%;
     margin-bottom: 0;
+
+    .form-control {
+      /* border-right: 0; */
+      box-shadow: none;
+    }
   }
 
   button {
@@ -130,13 +135,17 @@ export default {
     border-color: $input-border-color;
     color: $input-btn-color;
 
-    .material-icons {
-      vertical-align: middle;
+    &:active {
+      background-color: $input-bg !important;
+      border-color: $input-border-color !important;
     }
 
     &:hover {
       color: $input-btn-active-color;
-      background-color: $gray-100;
+    }
+
+    .material-icons {
+      vertical-align: middle;
     }
   }
 
@@ -158,6 +167,12 @@ export default {
   .input-group-append:not(:last-child) > * {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
+  }
+
+  .input-group-append {
+    > button {
+      border-left-width: 0;
+    }
   }
 
   .input-group-text {
@@ -217,7 +232,13 @@ export default {
 }
 
 .btn.disabled {
-  background-color: $gray-100 !important;
+  background-color: $input-disabled-bg !important;
+  border-left: 1px solid $input-disabled-bg;
   cursor: default;
+  opacity: 1;
+
+  &:hover {
+    color: $input-btn-color;
+  }
 }
 </style>

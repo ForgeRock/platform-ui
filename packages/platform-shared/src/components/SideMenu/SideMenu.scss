@@ -225,6 +225,10 @@
         background-color: $fr-sidemenu-hover;
       }
 
+      .fr-logo {
+        height: 28px;
+      }
+
       /deep/ {
         .b-dropdown {
           width: 100%;
@@ -317,6 +321,7 @@
   }
 
   .fr-sidebar-bottom {
-    border-top: 1px solid $fr-sidemenu-bottom-color;
+    background-color: $fr-sidemenu-toggler-background-color;
+    border-top: 1px solid $fr-sidemenu-toggler-border-color;
   }
 }

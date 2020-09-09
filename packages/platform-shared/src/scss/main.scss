@@ -334,3 +334,21 @@ a.card {
 .letter-x {
   background-color: $cyan;
 }
+
+.fr-logo-vertical {
+  background-image: url('~@forgerock/platform-shared/src/assets/images/themes/#{$theme}/vertical-logo.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 100%;
+  width: 100%;
+}
+
+.fr-logo-horizontal {
+  background-image: url('~@forgerock/platform-shared/src/assets/images/themes/#{$theme}/horizontal-logo.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: left;
+  height: 100%;
+  width: 100%;
+}
