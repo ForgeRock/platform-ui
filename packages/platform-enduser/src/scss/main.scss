@@ -70,6 +70,7 @@ body {
 .fr-body-image {
   @if $fr-background-image != 'none' {
     background: $fr-background-image;
+    background-size: cover;
   }
 }
 

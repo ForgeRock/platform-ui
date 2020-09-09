@@ -88,8 +88,8 @@ export default {
 
         .fr-logo {
           align-self: center;
-          height: 43px;
-          width: 40px;
+          height: $fr-center-card-logo-height;
+          width: 100%;
         }
       }
     }

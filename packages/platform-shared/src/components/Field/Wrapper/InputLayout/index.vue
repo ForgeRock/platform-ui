@@ -125,7 +125,6 @@ export default {
     margin-bottom: 0;
 
     .form-control {
-      /* border-right: 0; */
       box-shadow: none;
     }
   }
@@ -239,6 +238,7 @@ export default {
 
   &:hover {
     color: $input-btn-color;
+    pointer-events: none;
   }
 }
 </style>

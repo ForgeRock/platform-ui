@@ -21,6 +21,7 @@ body {
   height: 100%;
   font-family: $fr-typeface;
 }
+
 // Missing material design size utilities (not included with outline versions for some reason)
 .material-icons.md-14,
 .material-icons-outlined.md-14 {
@@ -105,27 +106,33 @@ body {
   }
 }
 
-h1 {
+h1,
+.h1 {
   font-weight: $h1-font-weight;
 }
 
-h2 {
+h2,
+.h2 {
   font-weight: $h2-font-weight;
 }
 
-h3 {
+h3,
+.h3 {
   font-weight: $h3-font-weight;
 }
 
-h4 {
+h4,
+.h4 {
   font-weight: $h4-font-weight;
 }
 
-h5 {
+h5,
+.h5 {
   font-weight: $h5-font-weight;
 }
 
-h6 {
+h6,
+.h6 {
   font-weight: $h6-font-weight;
 }
 
@@ -256,6 +263,10 @@ a.card {
 
   tr.b-table-row-selected.table-transparent {
     background-color: $light-blue !important;
+  }
+
+  tr:focus {
+    outline: none;
   }
 }
 
