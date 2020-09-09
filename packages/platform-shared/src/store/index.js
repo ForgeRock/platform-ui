@@ -36,6 +36,7 @@ export default new Vuex.Store({
     isFraas: false,
     fraasLoggingKeyURL: '',
     fraasDefaultRealm: '',
+    fraasAdminManagedObjectName: '',
   },
   getters: {
     fullName: (state) => `${state.firstName} ${state.lastName}`,
@@ -115,6 +116,9 @@ export default new Vuex.Store({
         }
         if (env.VUE_APP_FRAAS_DEFAULT_REALM) {
           state.fraasDefaultRealm = env.VUE_APP_FRAAS_DEFAULT_REALM;
+        }
+        if (env.VUE_APP_FRAAS_ADMIN_MANAGED_OBJECT_NAME) {
+          state.fraasAdminManagedObjectName = env.VUE_APP_FRAAS_ADMIN_MANAGED_OBJECT_NAME;
         }
       }
     },
