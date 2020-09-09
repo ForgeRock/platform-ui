@@ -108,6 +108,7 @@ to such license between the licensee and ForgeRock AS. -->
               :key="`sidebarNav_${index}`">
               <RouterLink
                 class="d-flex align-items-center"
+                :ref="`${index === 0 ? 'firstItem' : ''}`"
                 v-if="item.routeName"
                 :to="{ name: item.routeName, params: { resourceType: item.resourceType, resourceName: item.resourceName} }">
                 <i
@@ -120,6 +121,7 @@ to such license between the licensee and ForgeRock AS. -->
               </RouterLink>
               <a
                 v-else-if="item.url"
+                :ref="`${index === 0 ? 'firstItem' : ''}`"
                 :href="item.url"
                 target="_blank">
                 {{ item.displayName }}
@@ -130,7 +132,7 @@ to such license between the licensee and ForgeRock AS. -->
               :class="[{'expanded': expandedMenus[index]}, 'fr-sidebar-menugroup']"
               :key="`sidebarNav_${index}`">
               <ul class="fr-sidebar-submenuitems">
-                <li
+                <BButton
                   v-b-toggle="`collapse-`+index"
                   class="dropdown-toggle d-flex align-items-center">
                   <i
@@ -140,7 +142,7 @@ to such license between the licensee and ForgeRock AS. -->
                   <span class="sidebar-item-text">
                     {{ item.displayName }}
                   </span>
-                </li>
+                </BButton>
                 <BCollapse
                   :id="`collapse-${index}`"
                   class="fr-sidebar-subitem"
@@ -198,6 +200,7 @@ to such license between the licensee and ForgeRock AS. -->
 
 <script>
 import {
+  BButton,
   BCollapse,
   BDropdownHeader,
   BDropdownDivider,
@@ -224,6 +227,7 @@ Vue.directive('b-toggle', VBToggle);
 export default {
   name: 'SideMenu',
   components: {
+    BButton,
     BCollapse,
     BDropdownHeader,
     BDropdownDivider,
@@ -292,7 +296,7 @@ export default {
      * @description Allow keyboard users to use the navigation sidebar
      * */
     focusFirstItem() {
-      this.$refs.firstItem.$el.querySelector('button').focus();
+      this.$refs.firstItem[0].$el.focus();
     },
   },
   watch: {
