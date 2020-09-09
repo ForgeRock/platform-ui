@@ -14,7 +14,7 @@ describe('Login View', () => {
   });
 
   it('should have logo', () => {
-    cy.get('.fr-center-card').find('img').should('be.visible');
+    cy.get('.fr-center-card').find('.fr-logo').should('be.visible');
   });
 
   it('location should be at login', () => {

@@ -106,6 +106,7 @@ to such license between the licensee and ForgeRock AS. -->
                   </span>
                 </div>
               </BDropdownHeader>
+              <BDropdownDivider />
             </template>
           </FrDropdownMenu>
         </li>
@@ -116,6 +117,7 @@ to such license between the licensee and ForgeRock AS. -->
 
 <script>
 import {
+  BDropdownDivider,
   BDropdownHeader,
   BMedia,
   BNavbar,
@@ -137,6 +139,7 @@ export default {
   components: {
     FrNotification: ToolbarNotification,
     FrDropdownMenu: DropdownMenu,
+    BDropdownDivider,
     BDropdownHeader,
     BMedia,
     BNavbar,
@@ -240,8 +243,8 @@ export default {
 
 <style lang="scss" scoped>
 .fr-main-navbar {
-  background-color: $white;
-  border-bottom: 1px solid $gray-200;
+  background-color: $fr-navbar-bg;
+  border-bottom: 1px solid $fr-navbar-border;
   height: 4.5rem;
 
   .fr-back-link {

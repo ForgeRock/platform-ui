@@ -8,6 +8,7 @@
 
 // Application wide variables can be overridden here
 // Forgerock based styles start with fr
+$theme: 'default';
 $white: white;
 $gray-100: #f6f8fa;
 $gray-200: #e7eef4;
@@ -276,9 +277,11 @@ $fr-modal-footer-padding-y: 1rem;
 $fr-modal-footer-padding-x: 1.5rem;
 
 // Navbar
+$nav-highlight-color: $primary;
+$navbar-default-bg: $white;
+$navbar-default-border: $gray-200;
 $navbar-padding-y: 1.125rem;
 $navbar-padding-x: 1.5rem;
-$nav-highlight-color: $primary;
 $navbar-height: 4.5rem;
 $navbar-toggler-padding-x: 0;
 $navbar-dark-toggler-icon-bg: url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>');
@@ -322,6 +325,8 @@ $fr-toolbar-dropdown-color: rgba(0, 0, 0, 0.5);
 // Custom ForgeRock UI Components
 
 // Navbar Sidebar
+$fr-navbar-bg: $navbar-default-bg;
+$fr-navbar-border: $navbar-default-border;
 $fr-navbar-sidebar-fontsize: 0.8125rem;
 $fr-navbar-sidebar-icon-fontsize: 1.125rem;
 $fr-navbar-sidebar-nav-link-padding: 0.938rem 1rem;
@@ -334,6 +339,7 @@ $fr-sidebar-nav-link-active-border-color: transparent;
 $fr-sidebar-nav-link-active-color: $gray-800;
 
 // Sidemenu
+$fr-sidemenu-toggler-background-color: $white;
 $fr-sidemenu-toggler-border-color: transparent;
 $fr-sidemenu-background-color: $white;
 $fr-sidemenu-active-border-color: $gray-800;

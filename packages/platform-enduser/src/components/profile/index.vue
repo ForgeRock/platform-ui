@@ -28,7 +28,7 @@ of the MIT license. See the LICENSE file for details.
           <BButton
             v-if="internalUser === false"
             ref="editProfileButton"
-            variant="outline-primary"
+            variant="primary"
             block
             class="mt-4"
             v-b-modal.userDetailsModal>

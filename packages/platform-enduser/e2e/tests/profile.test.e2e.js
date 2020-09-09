@@ -24,12 +24,12 @@ describe('Enduser Profile View', () => {
           .type(password, { force: true })
           .should('have.value', password);
         cy.get('.btn-primary').click();
-        cy.get('img[alt="ForgeRock"]', { timeout: 60000 }).should('be.visible');
+        cy.get('.fr-logo', { timeout: 60000 }).should('be.visible');
       } else {
         loginUser(userName, password).then(() => {
           cy.visit(locationUrl);
           cy.wait(2000);
-          cy.get('img[alt="ForgeRock"]', { timeout: 60000 }).should('be.visible');
+          cy.get('.fr-logo', { timeout: 60000 }).should('be.visible');
         });
       }
     });

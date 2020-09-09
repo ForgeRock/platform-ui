@@ -17,14 +17,8 @@ of the MIT license. See the LICENSE file for details.
         header-tag="header"
         footer-tag="footer">
         <BCardHeader class="d-flex align-items-center flex-fill">
-          <!--For dark theme use vertical-logo-white.svg version of logo-->
           <div class="d-flex flex-fill flex-column justify-content-center">
-            <BImg
-              v-if="showLogo"
-              class="fr-logo mb-3 mt-2"
-              :src="`${publicPath}images/vertical-logo.svg`"
-              fluid
-              :alt="$t('common.logo')" />
+            <div class="fr-logo fr-logo-vertical mb-3 mt-2" />
             <slot name="center-card-header" />
           </div>
         </BCardHeader>
@@ -36,7 +30,6 @@ of the MIT license. See the LICENSE file for details.
 </template>
 <script>
 import {
-  BImg,
   BCardHeader,
   BContainer,
   BCard,
@@ -49,7 +42,6 @@ import {
 export default {
   name: 'CenterCard',
   components: {
-    BImg,
     BCard,
     BCardHeader,
     BContainer,

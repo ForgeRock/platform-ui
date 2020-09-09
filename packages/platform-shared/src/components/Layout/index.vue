@@ -57,11 +57,8 @@ to such license between the licensee and ForgeRock AS. -->
         v-if="!hideNav"
         id="appFooter">
         <div class="d-flex flex-column flex-md-row justify-content-center align-items-center py-4">
-          <div class="mr-3 opacity-20 mb-2 mb-md-0 d-flex">
-            <img
-              src="../../assets/images/vertical-logo-black.svg"
-              alt="ForgeRock"
-              height="21">
+          <div class="fr-logo-container mr-3 opacity-20 mb-2 mb-md-0 d-flex">
+            <div class="fr-logo fr-logo-vertical" />
           </div>
           <div class="mr-4 opacity-70">
             <span class="pr-1">
@@ -284,5 +281,10 @@ export default {
   .fr-menu-expanded #appFooter {
     width: calc(100% - 15.25em);
   }
+}
+
+.fr-logo-container {
+  width: 21px;
+  height: 21px;
 }
 </style>

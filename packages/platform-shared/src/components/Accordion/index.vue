@@ -131,7 +131,7 @@ export default {
       cursor: pointer;
 
       &.collapsed:hover {
-        background-color: $gray-100;
+        background-color: $table-hover-bg;
       }
     }
 
