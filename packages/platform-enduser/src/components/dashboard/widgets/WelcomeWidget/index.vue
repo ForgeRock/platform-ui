@@ -8,7 +8,7 @@ of the MIT license. See the LICENSE file for details.
   <BJumbotron class="text-center">
     <template v-slot:header>
       <BImg
-        :src="require('@/assets/images/profile-default.png')"
+        :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"
         rounded="circle"
         width="112"
         height="112"
