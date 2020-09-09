@@ -53,6 +53,10 @@
   @if $fr-background-image != 'none' {
     background: $fr-background-image;
   }
+
+  @if $fr-background-size != 'none' {
+    background-size: $fr-background-size;
+  }
 }
 
 /**
