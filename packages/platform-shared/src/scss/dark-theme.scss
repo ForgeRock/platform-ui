@@ -1,11 +1,13 @@
 /**
- * Copyright (c) 2020 ForgeRock. All rights reserved.
+ * Copyright 2019 ForgeRock AS. All Rights Reserved
  *
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE file for details.
+ * Use of this code requires a commercial software license with ForgeRock AS.
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
  */
 
-// $white:    !default;
+$theme: 'dark';
+$white: white;
 $gray-100: #f7f8fc;
 $gray-200: #eaeaed;
 $gray-300: #dadadf;
@@ -15,16 +17,16 @@ $gray-600: #555767;
 $gray-700: #3b3d4f;
 $gray-800: #292c3d;
 $gray-900: #1b1e2f;
-// $black:    !default;
+$black: black;
 
 $blue:    #4784f1;
 $indigo:  #5e37f8;
-$purple:  #6760fa;
+$purple:  #6b4cd9;
 $pink:    #c65da9;
 $red:     #de4c4b;
 $orange:  #e78c65;
 $yellow:  #f1bd59;
-$green:   #8afaa3;
+$green:   #3fd395;
 $teal:    #84e4d9;
 $cyan:    #72bec8;
 
@@ -34,8 +36,8 @@ $success:       $green;
 $info:          $blue;
 $warning:       $yellow;
 $danger:        $red;
-$light:         $gray-100;
-$dark:          $gray-900;
+$light:         $gray-800;
+$dark:          $gray-200;
 
 //Base
 $theme-colors: (
@@ -50,21 +52,24 @@ $theme-colors: (
 );
 
 // Global Variables
-$enable-shadows:                    false;
+$enable-shadows:                    true;
 $enable-rounded:                    true;
 
 //General
 $body-bg:                              $gray-800;
-$body-color:                           $gray-200;
-$headings-color:                       $gray-200;
-$text-muted:                           $gray-400;
+$body-color:                           $gray-400;
+$headings-color:                       $gray-100;
+$border-color:                         $gray-600;
+$text-muted:                           $gray-500;
 $fr-typeface:                          'Open Sans', sans-serif;
 $link-color:                           lighten($primary, 17%);
 $link-hover-color:                     lighten($link-color, 9%);
 $input-btn-focus-color:                 $gray-900;
-
+$hr-border-color:                       $gray-600;
 $component-active-color:                $gray-900;
 $component-active-bg:                   theme-color('primary');
+$code-color:                            $pink;
+$fr-code-editor-bg:                     $gray-800;
 
 // Inputs
 $input-bg:                              $gray-800;
@@ -79,21 +84,35 @@ $input-focus-color:                     $gray-200;
 $label-color:                           $gray-400;
 $input-btn-color:                       $gray-500;
 $input-btn-active-color:                $white;
+$btn-link-disabled-color:               $gray-400;
 
 $input-group-addon-color:               $gray-200;
 $input-group-addon-bg:                  $gray-800;
 $input-group-addon-border-color:        $gray-800;
+$progress-bg:                           $input-bg;
 
 // Custom form controls// Custom form controls
-$custom-control-indicator-bg:                $gray-800;
-$custom-control-indicator-checked-bg:        $primary;
-$custom-checkbox-indicator-border-color:     $gray-800;
-$custom-select-focus-border-color:           $gray-800;
-$custom-select-bg:                           $input-bg;
-$custom-select-border-color:                 $input-border-color;
-$custom-select-color:                        $input-color;
-$custom-select-indicator-color:              $gray-400;
-$custom-select-indicator:                    str-replace(url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='#{$custom-select-indicator-color}' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E"), '#', '%23');
+$component-active-color:                                            $dark;
+$component-active-bg:                                               $primary;
+$custom-control-indicator-bg:                                       $gray-800;
+$custom-control-indicator-checked-bg:                               $primary;
+$custom-control-indicator-border-color:                             $gray-800;
+$custom-select-focus-border-color:                                  $gray-800;
+$custom-select-bg:                                                  $input-bg;
+$custom-select-border-color:                                        $input-border-color;
+$custom-select-color:                                               $input-color;
+$custom-select-indicator-color:                                     $gray-400;
+$custom-select-indicator:                                           str-replace(url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='#{$custom-select-indicator-color}' d='M2 0L0 2h4zm0 5L0 3h4z'/%3E%3C/svg%3E"), '#', '%23');
+$custom-control-indicator-active-bg:                                $gray-600;
+$custom-control-indicator-active-border-color:                      $gray-600;
+$custom-select-disabled-bg:                                         $gray-800;
+$custom-control-indicator-checked-disabled-bg:                      rgba(theme-color('primary'), 0.4);
+$custom-control-label-disabled-color:                               $body-color;
+$fr-custom-control-indicator-switch-handle-color:                   $gray-400;
+$fr-custom-control-indicator-switch-handle-disabled-color:          $gray-500;
+$fr-custom-control-indicator-switch-border-color:                   $gray-800;
+$fr-custom-control-indicator-switch-background-color:               $gray-800;
+$fr-custom-control-indicator-switch-checked-disabled-border-color:  $custom-control-indicator-checked-disabled-bg;
 
 //List group
 $fr-hover-list-color:                  $gray-600;
@@ -101,6 +120,22 @@ $list-group-bg:                        $gray-700;
 $list-group-hover-bg:                  $gray-600;
 $list-group-active-bg:                 $gray-700;
 $list-group-action-active-bg:          $gray-700;
+$list-group-active-color:              $body-color;
+$fr-list-group-active-border-color:    $primary;
+$fr-hover-list-color:                  $list-group-active-bg;
+$list-group-border-color:              $gray-800;
+$list-group-hover-bg:                  $primary;
+$list-group-active-bg:                 $primary;
+
+// List group
+$list-group-item-padding-y: 1.25rem;
+$list-group-item-padding-x: 1.5rem;
+$list-group-active-color: $body-color;
+$list-group-hover-bg: $gray-800;
+$list-group-active-bg: $gray-800;
+
+// Popover
+$popover-bg:                           $gray-900;
 
 // Switches
 $fr-switch-bg:                         $gray-800;
@@ -108,24 +143,48 @@ $fr-switch-toggled-bg:                 $primary;
 
 // Modals
 $modal-content-bg:                     $gray-700;
+$modal-header-border-color:            $border-color;
 $fr-modal-header-bg:                   $modal-content-bg;
 $fr-modal-footer-bg:                   $fr-modal-header-bg;
+
+$modal-header-border-color: $border-color;
+$modal-inner-padding: 1.5rem;
+$modal-header-padding-y: 1rem;
+$modal-header-padding-x: 1.5rem;
+$modal-header-padding: $modal-header-padding-y $modal-header-padding-x;
+$modal-title-line-height: 2.25rem;
+$fr-modal-title-font-size: 1.25rem;
+
+// Navbar
+$navbar-inverse-bg:                    $gray-800;
+$navbar-inverse-border:                $gray-600;
+$navbar-inverse-color:                 $gray-400;
+$fr-navbar-bg:                         $navbar-inverse-bg;
+$fr-navbar-border:                     $navbar-inverse-border;
+$fr-navbar-color:                      $navbar-inverse-color;
 
 // Close
 $close-color:                          $gray-200;
 $close-text-shadow:                    none;
 
-//Profile nav tavs
+// nav tavs
 $nav-tabs-border-color:                $gray-600;
 $nav-tabs-link-color:                  $gray-400;
 $nav-tabs-link-active-color:           $gray-200;
 $nav-highlight-color:                  $component-active-bg;
+$fr-sidetabs-active-bg:                $gray-800;
+$fr-sidetabs-active-color:             $white;
+$fr-sidetabs-border:                   $body-bg;
 
 // Cards
 $card-cap-bg:                          $gray-700;
 $card-bg:                              $gray-700;
+$card-border-color:                    $gray-800;
+$fr-accordion-border-color:            $gray-700;
+$fr-card-border:                       $border-width solid $gray-700;
 
 // Dropdown
+$dropdown-border-color:                $gray-700;
 $dropdown-bg:                          $gray-700;
 $dropdown-link-color:                  $gray-200;
 $dropdown-link-hover-color:            darken($gray-200, 5%);
@@ -134,6 +193,7 @@ $dropdown-link-disabled-color:         $gray-600;
 $dropdown-header-color:                $gray-200;
 $dropdown-link-active-color:           $component-active-color;
 $dropdown-link-active-bg:              $component-active-bg;
+$dropdown-divider-bg:                  $gray-600;
 
 // Toolbar
 $fr-toolbar-background:                $gray-700;
@@ -144,11 +204,13 @@ $fr-toolbar-dropdown-color:            $gray-100;
 // Sidemenu
 $fr-sidemenu-background-color: $gray-900;
 $fr-sidemenu-toggler-border-color: transparent;
+$fr-sidemenu-toggler-background-color: $gray-900;
 $fr-sidemenu-font-color: $gray-400;
 $fr-sidemenu-color: $gray-400;
 $fr-sidemenu-active-border-color: $yellow;
 $fr-sidemenu-height: 4.5rem;
 $fr-sidemenu-hover:  rgba(0, 0, 0, 0.3);
+$fr-sidemenu-active-color: $white;
 $fr-sidemenu-shadow: 1px 0 9px rgba(0, 0, 0, 0.45);
 $fr-sidemenu-border: $gray-200;
 $fr-sidemenu-width-lg: 14.25em;
@@ -175,19 +237,20 @@ $fr-alert-box-shadow:               0 0 14px 0 rgba(0, 0, 0, 0.75);
 // Paginator
 $pagination-color:                  $link-color;
 $pagination-bg:                     $gray-700;
-$pagination-border-color:           $gray-900;
-
+$pagination-border-color:           transparent;
+$pagination-hover-border-color:     transparent;
+$pagination-active-border-color:    transparent;
+$pagination-disabled-border-color:  transparent;
 $pagination-active-color:           $link-color;
 $pagination-active-bg:              $gray-900;
-$pagination-active-border-color:    $gray-900;
-
 $pagination-hover-color:            $link-hover-color;
-$pagination-hover-bg:               $gray-900;
-
+$pagination-hover-bg:               transparent;
 $pagination-disabled-color:         $gray-500;
 $pagination-disabled-bg:            $gray-700;
-$pagination-disabled-border-color:  $gray-900;
 
-// Grid
+//Table
+$table-bg:                          transparent;
+$table-accent-bg:                   $gray-900;
 $table-hover-bg:                    $gray-900;
-$table-border-color:                $gray-900;
+$table-color:                       $gray-100;
+$table-border-color:                $gray-800;
