@@ -464,7 +464,7 @@ export default {
 
     button {
       border: 1px solid $danger !important;
-      border-left-color: $gray-400 !important;
+      border-left-color: $input-bg !important;
     }
   }
 }
@@ -484,7 +484,11 @@ export default {
 /deep/ {
   .vue-js-switch {
     .v-switch-core {
-      background-color: $gray-400;
+      background-color: $fr-custom-control-indicator-switch-background-color;
+
+      .v-switch-button {
+        background-color: $fr-custom-control-indicator-switch-handle-color;
+      }
     }
 
     &.toggled {
