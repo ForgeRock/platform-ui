@@ -198,6 +198,19 @@
       padding-right: 2.25rem;
     }
 
+    .btn.btn-secondary,
+    .btn.btn-secondary:hover {
+      color: inherit;
+      background-color: inherit;
+      border-color: $white;
+      width: 100%;
+      position: relative;
+
+      &:focus {
+        outline: 5px auto #005fcc;
+      }
+    }
+
     ul,
     li {
       list-style: none;

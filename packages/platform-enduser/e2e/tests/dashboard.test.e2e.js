@@ -26,7 +26,7 @@ describe('Enduser Dashboard View', () => {
         cy.get('.btn-primary').click();
         cy.get('img[alt="ForgeRock"]', { timeout: 60000 }).should('be.visible');
       } else {
-        loginUser.then(() => {
+        loginUser(userName, password).then(() => {
           cy.visit(locationUrl);
           cy.wait(2000);
           cy.get('img[alt="ForgeRock"]', { timeout: 60000 }).should('be.visible');
