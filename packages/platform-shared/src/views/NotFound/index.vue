@@ -8,42 +8,44 @@ to such license between the licensee and ForgeRock AS. -->
     id="notFoundContainer"
     class="h-100 d-flex"
     fluid>
-    <div
-      style="width: 550px;"
-      class="m-auto align-self-center text-center">
-      <div class="fr-speech-bubble">
-        <p>
-          <strong class="text-muted">
-            {{ ghostMessage }}
-          </strong>
+    <div class="p-5 my-5 container">
+      <div
+        class="m-auto align-self-center text-center">
+        <div class="fr-speech-bubble">
+          <p>
+            <strong class="text-muted">
+              {{ ghostMessage }}
+            </strong>
+          </p>
+          <div class="fr-speech-arrow" />
+        </div>
+        <BImg
+          @click="ghostMessage === '404' ? ghostMessage = 'Boo' : ghostMessage = '...'"
+          :src="require('@forgerock/platform-shared/src/assets/images/ghost.svg')"
+          width="112"
+          height="112"
+          alt="img"
+          class="fr-ghost mb-4" />
+        <p class="lead text-center">
+          {{ $t("pages.notFound.couldNotFind") }}
         </p>
-        <div class="fr-speech-arrow" />
+        <div class="text-center">
+          <RouterLink :to="{ name: previousRoute.name }">
+            <BButton
+              class="mt-2"
+              variant="primary">
+              {{ $t('pages.notFound.returnRoute', {returnRoute: $t(`routeNames.${previousRoute.name}`)}) }}
+            </BButton>
+          </RouterLink>
+        </div>
+        <BImg
+          @click="ghostMessage = '404'"
+          :src="require('@forgerock/platform-shared/src/assets/images/ghost-shadow.svg')"
+          width="112"
+          height="112"
+          alt="img"
+          class="fr-shadow" />
       </div>
-      <BImg
-        @click="ghostMessage === '404' ? ghostMessage = 'Boo' : ghostMessage = '...'"
-        :src="require('@forgerock/platform-shared/src/assets/images/ghost.svg')"
-        width="112"
-        height="112"
-        alt="img"
-        class="fr-ghost mb-2" />
-      <p class="lead text-center font-weight-light text-muted mb-5">
-        {{ $t("pages.notFound.couldNotFind") }}
-      </p>
-      <hr class="fr-accent">
-      <div class="text-center">
-        <RouterLink :to="{ name: previousRoute.name }">
-          <BButton variant="link">
-            {{ $t('pages.notFound.returnRoute', {returnRoute: $t(`routeNames.${previousRoute.name}`)}) }}
-          </BButton>
-        </RouterLink>
-      </div>
-      <BImg
-        @click="ghostMessage = '404'"
-        :src="require('@forgerock/platform-shared/src/assets/images/ghost-shadow.svg')"
-        width="112"
-        height="112"
-        alt="img"
-        class="fr-shadow" />
     </div>
   </BContainer>
 </template>
@@ -126,8 +128,8 @@ export default {
     animation: nudge 5s linear infinite alternate;
     font-size: 20px;
     font-weight: 300;
-    background: white;
-    border: 1px solid #a7a7a7;
+    background: $card-bg;
+    border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 4px;
     box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
     line-height: 1.3;
@@ -154,7 +156,7 @@ export default {
 
       &::before {
         border-left: 23px solid transparent;
-        border-top: 23px solid white;
+        border-top: 23px solid $card-bg;
         bottom: 2px;
         content: '';
         position: absolute;
@@ -163,7 +165,7 @@ export default {
 
       &::after {
         border-left: 21px solid transparent;
-        border-top: 21px solid white;
+        border-top: 23px solid $card-bg;
         bottom: 4px;
         content: '';
         position: absolute;

@@ -18,7 +18,7 @@ function generateTheme() {
   `;
 
   if (process.env.THEME && process.env.THEME !== 'default') {
-    variableLoad += `@import "@/scss/${process.env.THEME}-theme.scss"; `;
+    variableLoad += `@import "~@forgerock/platform-shared/src/scss/${process.env.THEME}-theme.scss";`;
   }
 
   variableLoad += '@import "~bootstrap/scss/_variables.scss";';

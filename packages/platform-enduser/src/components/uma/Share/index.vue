@@ -101,7 +101,7 @@ of the MIT license. See the LICENSE file for details.
           v-for="(permission, index) of resource.policy.permissions"
           :key="index">
           <BImg
-            :src="require('@/assets/images/profile-default.png')"
+            :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"
             rounded="circle"
             width="34"
             height="34"
