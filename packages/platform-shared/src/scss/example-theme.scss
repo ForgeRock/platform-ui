@@ -1,5 +1,5 @@
 /**
- * Copyright 2019-2020 ForgeRock AS. All Rights Reserved
+ * Copyright 2019 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS.
  * or with one of its affiliates. All use shall be exclusively subject
@@ -8,7 +8,9 @@
 
 // Application wide variables can be overridden here
 // Forgerock based styles start with fr
-$theme: 'default';
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600&display=swap');
+
+$theme: 'example';
 $white: white;
 $gray-100: #f6f8fa;
 $gray-200: #e7eef4;
@@ -22,7 +24,7 @@ $gray-900: #23282e;
 $black: black;
 
 $blue: #109cf1;
-$indigo: #6610f2;
+$indigo: #ba4de1;
 $purple: #6f42c1;
 $pink: #e83e8c;
 $red: #f7685b;
@@ -30,19 +32,17 @@ $orange: #fd7e14;
 $yellow: #ffb946;
 $green: #2ed47a;
 $teal: #20c997;
-$cyan: #17a2b8;
-$magenta: #d24572;
-$light-blue: #e4f4fd;
-$hover-blue: #0a6eab;
+$cyan: #61e2e2;
 
-$primary: $blue;
+$primary: $teal;
 $secondary: $gray-500;
-$success: $green;
-$info: $blue;
+$success: $teal;
+$info: $cyan;
 $warning: $yellow;
 $danger: $red;
 $light: $gray-100;
 $dark: $gray-800;
+$lightblue: lighten($primary, 23%);
 
 //Base
 $theme-colors: (
@@ -55,8 +55,6 @@ $theme-colors: (
   'light': $light,
   'dark': $dark,
 );
-
-$text-muted: $gray-500;
 
 // Spacing
 //
@@ -88,33 +86,38 @@ $spacers: map-merge(
 // Global Variables
 $enable-shadows: false;
 $enable-rounded: true;
-$border-width: 1px;
-$border-color: $gray-200;
 
 //General
-$body-bg: $gray-100;
+$body-bg: $white;
 $body-color: $gray-600;
 $headings-color: $gray-900;
-$font-size-base: 0.9375rem !default;
-$font-weight-bold: 600;
+$font-size-base: 0.9375rem;
+$font-weight-bold: 500;
 $font-weight-normal: 400;
 $font-weight-light: 300;
 $small-font-size: 0.8125rem;
 $transition-collapse: height 0.25s ease-in;
-$border-radius: 4px;
-$box-shadow-sm: 0 1px 2px rgba($black, 0.13);
-$box-shadow: 0 1px 3px rgba($black, 0.13);
-$box-shadow-lg: 0 2px 11px rgba($black, 0.13);
-$fr-typeface: 'Open Sans', sans-serif;
+$border-radius: 0.25rem;
+$border-radius-lg: 0.3rem;
+$border-radius-sm: 0.2rem;
+$border-width: 1px;
+$border-color: $gray-200;
+$box-shadow-sm: none;
+$box-shadow:  none;
+$box-shadow-lg: none;
+$text-muted: $gray-500;
+$code-color: $pink;
+$hr-border-color: $gray-200;
+$fr-typeface: 'Rubik', sans-serif;
 $fr-background-image: none;
-$fr-background-size: none;
+$fr-code-editor-bg: $gray-100;
 
 // Custom form controls
 $custom-control-gutter: 1rem;
 $custom-control-indicator-bg: $white;
+$custom-control-indicator-active-bg: $gray-200;
+$custom-control-indicator-active-border-color: $gray-200;
 $custom-select-height: 3rem;
-
-// Custom form controls// Custom form controls
 $component-active-color: $white;
 $component-active-bg: $primary;
 $custom-control-indicator-size: 1rem;
@@ -122,20 +125,19 @@ $custom-control-indicator-border-width: 1px;
 $custom-control-indicator-border-color: $gray-400;
 $custom-control-indicator-checked-color: $component-active-color;
 $custom-control-indicator-checked-bg: $primary;
-$custom-checkbox-indicator-border-color: $gray-400;
 $custom-checkbox-indicator-border-radius: $border-radius;
 $custom-checkbox-indicator-indeterminate-box-shadow: none;
 $custom-select-focus-border-color: $gray-500;
 
 $custom-switch-width: ($custom-control-indicator-size * 2) * 1.75;
 $custom-switch-indicator-border-radius: $custom-control-indicator-size;
-$custom-control-indicator-checked-disabled-bg: rgba(theme-color('primary'), 0.5) !default;
-/* stylelint-disable */
+$custom-control-indicator-checked-disabled-bg:  rgba(theme-color('primary'), 0.5);
 $custom-switch-indicator-size: calc(
-  #{$custom-control-indicator-size * 2} - #{$custom-control-indicator-border-width * 4}
+  #{($custom-control-indicator-size * 2)} - #{$custom-control-indicator-border-width *
+  4}
 ) !default;
-/* stylelint-enable */
 $fr-custom-control-indicator-switch-handle-color: $white;
+$fr-custom-control-indicator-switch-handle-disabled-color: $white;
 $fr-custom-control-indicator-switch-border-color: $gray-400;
 $fr-custom-control-indicator-switch-background-color: $gray-400;
 $fr-custom-control-indicator-switch-checked-disabled-border-color: $custom-control-indicator-checked-disabled-bg;
@@ -147,22 +149,28 @@ $input-btn-padding-x: 0.75rem;
 $input-btn-padding-y: 0.75rem;
 $input-btn-padding-x-lg: 1.375rem;
 $input-btn-padding-y-lg: 0.8125rem;
-$input-bg: $white;
+$input-bg: $gray-200;
 $input-disabled-bg: $gray-100;
-$input-border-color: $gray-400;
+$input-border-color: $gray-200;
 $input-color: $gray-900;
-$label-color: $gray-500;
+$label-color: $body-color;
 $input-btn-color: $gray-800;
 $input-btn-active-color: $gray-900;
 $input-group-addon-bg: $input-bg;
 $input-btn-focus-width: 0.0625rem;
 $input-focus-border-color: $component-active-bg;
 $input-btn-focus-color: $component-active-bg;
+$input-box-shadow: none;
+$fr-input-tag-bg: $gray-300;
+
+// Input range
+$custom-range-track-bg: $gray-200;
+$custom-range-track-box-shadow: none;
 
 // Headers styles and sizes
 $headings-margin-bottom: ($spacer / 2);
 $headings-font-family: inherit;
-$headings-font-weight: $font-weight-light;
+$headings-font-weight: $font-weight-bold;
 $headings-line-height: 1.2;
 
 $h1-font-size: $font-size-base * 3;
@@ -170,14 +178,14 @@ $h2-font-size: $font-size-base * 2;
 $h3-font-size: $font-size-base * 1.5;
 $h4-font-size: $font-size-base * 1.25;
 $h5-font-size: $font-size-base;
-$h6-font-size: $font-size-base * 0.875;
+$h6-font-size: $font-size-base * 0.8125;
 
 $h1-font-weight: 300;
 $h2-font-weight: 300;
-$h3-font-weight: $font-weight-bold;
-$h4-font-weight: $font-weight-bold;
-$h5-font-weight: $font-weight-bold;
-$h6-font-weight: $font-weight-bold;
+$h3-font-weight: $headings-font-weight;
+$h4-font-weight: $headings-font-weight;
+$h5-font-weight: $headings-font-weight;
+$h6-font-weight: $headings-font-weight;
 
 $display1-size: $font-size-base * 5;
 $display2-size: $font-size-base * 4;
@@ -199,16 +207,19 @@ $alert-border-width: 0;
 $fr-alert-text-color: $gray-700;
 $fr-alert-dark-text-color: $gray-100;
 $fr-alert-primary-bg-color: lighten($primary, 40%);
-$fr-alert-info-bg-color: lighten($info, 40%);
+$fr-alert-info-bg-color: lighten($info, 26%);
 $fr-alert-secondary-bg-color: lighten($secondary, 40%);
 $fr-alert-success-bg-color: lighten($success, 40%);
 $fr-alert-warning-bg-color: lighten($warning, 26%);
 $fr-alert-danger-bg-color: lighten($danger, 26%);
-$fr-alert-light-bg-color: $white;
+$fr-alert-light-bg-color: $light;
 $fr-alert-dark-bg-color: darken($dark, 8%);
 $fr-alert-box-shadow: transparent;
 
-//Button
+// Badges
+$badge-font-weight: $font-weight-normal;
+
+// Button
 $btn-padding-x: 1.25rem;
 $btn-padding-y: $input-btn-padding-y;
 $btn-padding-y-lg: $input-btn-padding-y-lg;
@@ -217,17 +228,24 @@ $btn-box-shadow: none;
 $btn-focus-box-shadow: none;
 $btn-active-box-shadow: none;
 
+// Allows for customizing button radius independently from global border radius
+$btn-border-radius:           3rem;
+$btn-border-radius-lg:        4rem;
+$btn-border-radius-sm:        2rem;
+
 // Cards
 $card-spacer-y: 1.5rem;
 $card-spacer-x: 1.5rem;
+$card-border-color: $gray-100;
 $card-cap-bg: transparent;
 $card-cap-color: null;
 $card-color: null;
 $card-bg: $white;
 $card-img-overlay-padding: 1.25rem;
-$fr-card-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.13);
-$fr-card-border: $border-width solid $gray-200;
-$fr-center-card-logo-height: 43px;
+$fr-card-box-shadow: none;
+$fr-accordion-border-color: $light;
+$fr-center-card-bg: $white;
+$fr-center-card-logo-height: 64px;
 
 // Close
 $close-font-size: $font-size-base * 2.25;
@@ -238,27 +256,31 @@ $close-text-shadow: none;
 //Dropdown
 $dropdown-border-color: $gray-300;
 $dropdown-link-active-color: $gray-900;
-$dropdown-link-active-bg: lighten($primary, 44%);
+$dropdown-link-active-bg: $gray-100;
 $dropdown-link-hover-bg: $dropdown-link-active-bg;
 $dropdown-header-color: $gray-900;
 $dropdown-padding-y: 0.25rem;
 $dropdown-item-padding-y: 0.675rem;
 $dropdown-link-color: $gray-700;
+$dropdown-divider-bg: $gray-200;
 
 // Forms
 $form-group-margin-bottom: 1.875rem;
 $enable-validation-icons: false;
 
-//Jumbotron
+// Jumbotron
 $jumbotron-bg: transparent;
 
 // List group
+$list-group-bg: $gray-100;
 $list-group-item-padding-y: 1.25rem;
 $list-group-item-padding-x: 1.5rem;
+$list-group-active-color: $body-color;
+$list-group-hover-bg: $lightblue;
+$list-group-active-bg: $lightblue;
 $list-group-border-color: $gray-200;
-$list-group-hover-bg: $white;
-$list-group-active-bg: $white;
 $fr-hover-list-color: $list-group-active-bg;
+$fr-list-group-active-border-color: $primary;
 
 // Modal
 $modal-transition: transform 0.3s ease-out;
@@ -268,8 +290,8 @@ $modal-inner-padding: 1.5rem;
 $modal-header-padding-y: 1rem;
 $modal-header-padding-x: 1.5rem;
 $modal-header-padding: $modal-header-padding-y $modal-header-padding-x;
+$modal-title-line-height: 2.25rem;
 $fr-modal-title-font-size: 1.25rem;
-$fr-modal-title-line-height: 2.25rem;
 
 // Forgerock specific modal variables
 $fr-modal-header-bg: $modal-content-bg;
@@ -278,25 +300,56 @@ $fr-modal-footer-border-color: $border-color;
 $fr-modal-footer-padding-y: 1rem;
 $fr-modal-footer-padding-x: 1.5rem;
 
+// Popover
+$popover-body-padding-y:0;
+$popover-body-padding-x:0;
+
 // Navbar
-$nav-highlight-color: $primary;
-$navbar-default-bg: $white;
-$navbar-default-border: $gray-200;
 $navbar-padding-y: 1.125rem;
 $navbar-padding-x: 1.5rem;
+$nav-highlight-color: $primary;
 $navbar-height: 4.5rem;
 $navbar-toggler-padding-x: 0;
 $navbar-dark-toggler-icon-bg: url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>');
 $navbar-dark-toggler-border-color: transparent;
-$navbar-light-color: $gray-800;
+$navbar-light-color: $dark;
+$navbar-default-color: $gray-800;
+$navbar-default-bg: $white;
+$navbar-default-border: $gray-200;
+$fr-navbar-bg: $navbar-default-bg;
+$fr-navbar-border: $navbar-default-border;
+$fr-navbar-color: $navbar-default-color;
+
+// Sidemenu
+$fr-sidemenu-background-color: $dark;
+$fr-sidemenu-toggler-border-color: $gray-700;
+$fr-sidemenu-toggler-background-color: $fr-sidemenu-background-color;
+$fr-sidemenu-height: 4.5rem;
+$fr-sidemenu-hover:  rgba(0, 0, 0, 0.13);
+$fr-sidemenu-active-bg: rgba(0, 0, 0, 0.13);
+$fr-sidemenu-shadow: 1px 0 9px rgba(0, 0, 0, 0.13);
+$fr-sidemenu-border: none;
+$fr-sidemenu-width-lg: 14.25em;
+$fr-sidemenu-width-sm: 3.75em;
+$fr-sidemenu-color: $gray-200;
+$fr-sidemenu-font-color: $gray-200;
+$fr-sidemenu-active-color: $white;
+$fr-sidemenu-dropdown-heading-color: inherit;
+$fr-sidemenu-dropdown-text-color: $gray-700;
+$fr-sidemenu-item-active-border-color: $primary;
 
 // Nav tabs
 $nav-tabs-border-color: $gray-300;
 $nav-tabs-link-color: inherit;
 $nav-tabs-link-active-color: $primary;
 $nav-highlight-color: inherit !default;
+$fr-sidetabs-active-bg: $lightblue;
+$fr-sidetabs-active-color: $gray-800;
+$fr-sidetabs-border: $light;
 
 //Pagination
+$pagination-color: $text-muted;
+$pagination-bg: $card-bg;
 $pagination-border-color: transparent;
 $pagination-disabled-border-color: transparent;
 $pagination-border-radius: $border-radius;
@@ -304,6 +357,12 @@ $pagination-hover-bg: $gray-100;
 $pagination-hover-border-color: transparent;
 $pagination-active-border-color: transparent;
 $pagination-disabled-border-color: transparent;
+$pagination-active-color: $dark;
+$pagination-active-bg: $gray-100;
+
+// Progress bars
+$progress-height:                   1rem !default;
+$progress-box-shadow:               none;
 
 //Table
 $table-bg: transparent;
@@ -311,7 +370,7 @@ $table-accent-bg: $gray-100;
 $table-hover-bg: $gray-100;
 $table-cell-padding: 1.25rem 1.5rem;
 $table-cell-padding-sm: 0.5rem;
-$table-color: $gray-200;
+$table-color: $gray-900;
 $table-border-color: $gray-200;
 
 // Forgerock specific table variables
@@ -327,36 +386,9 @@ $fr-toolbar-dropdown-color: rgba(0, 0, 0, 0.5);
 // Custom ForgeRock UI Components
 
 // Navbar Sidebar
-$fr-navbar-bg: $navbar-default-bg;
-$fr-navbar-border: $navbar-default-border;
 $fr-navbar-sidebar-fontsize: 0.8125rem;
 $fr-navbar-sidebar-icon-fontsize: 1.125rem;
 $fr-navbar-sidebar-nav-link-padding: 0.938rem 1rem;
-$fr-sidebar-nav-background-color: $gray-800 !default;
-$fr-sidebar-nav-brand-color: $gray-800 !default;
-$fr-sidebar-nav-link-color: $gray-500 !default;
-$fr-sidebar-nav-link-hover-color: $white !default;
-$fr-sidebar-nav-link-border-color: transparent;
-$fr-sidebar-nav-link-active-border-color: transparent;
-$fr-sidebar-nav-link-active-color: $gray-800;
-
-// Sidemenu
-$fr-sidemenu-toggler-background-color: $white;
-$fr-sidemenu-toggler-border-color: transparent;
-$fr-sidemenu-background-color: $white;
-$fr-sidemenu-active-border-color: $gray-800;
-$fr-sidemenu-font-color: $gray-700;
-$fr-sidemenu-height: 4.5rem;
-$fr-sidemenu-hover:  $light-blue;
-$fr-sidemenu-shadow: transparent;
-$fr-sidemenu-border: $gray-200;
-$fr-sidemenu-width-lg: 14.25em;
-$fr-sidemenu-width-sm: 3.75em;
-$fr-sidebar-nav-minimized-width: $fr-sidemenu-width-sm;
-$fr-sidemenu-fontsize: 0.875rem;
-$fr-sidemenu-icon-fontsize: 1.125rem;
-$fr-sidemenu-bottom-color: $gray-200;
-$fr-sidemenu-bottom-background-color: $white;
 
 // Sign up form
 $fr-signup-header-wrapper-height: 5.25rem;
@@ -365,5 +397,5 @@ $fr-signup-header-wrapper-height: 5.25rem;
 $fr-switch-bg: $gray-400;
 $fr-switch-toggled-bg: $primary;
 
-// Tree
-$fr-tree-accent: lighten($primary, 25%);
+$fr-background-image: url('~@forgerock/platform-shared/src/assets/images/themes/example/background-login.jpg') no-repeat center center fixed;
+$fr-background-size: cover;
