@@ -28,7 +28,7 @@ to such license between the licensee and ForgeRock AS. -->
         :show-notifications="false"
         :tenant-menu-items="tenantMenuItems"
         :user-details="userDetails"
-        docs-link="https://ea.forgerock.com/docs/idpaas/index.html"
+        :docs-link="docsLink"
         help-url="https://backstage.forgerock.com/"
         v-show="!hideNav" />
       <div
@@ -152,6 +152,12 @@ export default {
     enduserLink() {
       if (this.userDetails.adminUser) return '';
       return this.$store.state.realm === 'root' ? this.$store.state.enduserURL : `${this.$store.state.enduserURL}?realm=${this.$store.state.realm}`;
+    },
+    docsLink() {
+      if (this.$store.state.isFraas === true) {
+        return 'https://backstage.forgerock.com/docs/idcloud/latest/index.html';
+      }
+      return 'https://backstage.forgerock.com/docs/index.html';
     },
   },
   mounted() {
