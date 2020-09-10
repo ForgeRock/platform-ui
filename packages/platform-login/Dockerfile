@@ -9,6 +9,9 @@
 ARG BASE_TAG
 FROM platform-shared:${BASE_TAG} AS build
 
+ARG VUE_APP_BUILD_NUMBER
+ARG VUE_APP_BUILD_DATE_TIME
+
 WORKDIR /home/app/packages/platform-login
 
 RUN yarn run build
