@@ -34,17 +34,9 @@ to such license between the licensee and ForgeRock AS. -->
                 :key="'createResource' + index"
                 v-if="((field.type === 'string' && !field.isConditional) || field.type === 'number' || field.type === 'boolean' || field.type === 'password') && field.encryption === undefined">
                 <FrField
-                  v-if="field.type !== 'password'"
                   :autofocus="index === 0"
                   :field="field"
                   :display-description="false" />
-
-                <!-- Special logic for password -->
-                <FrPolicyPasswordInput
-                  v-else
-                  :policy-api="`${resourceType}/${resourceName}/policy`"
-                  v-model="passwordValue"
-                  @valid="passwordValid = $event" />
               </BFormGroup>
 
               <!-- for singletonRelationhip values -->
@@ -149,7 +141,6 @@ import {
   BModal,
 } from 'bootstrap-vue';
 import { ValidationObserver } from 'vee-validate';
-import PolicyPasswordInput from '@forgerock/platform-shared/src/components/PolicyPasswordInput/';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import RelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
@@ -175,7 +166,6 @@ export default {
   components: {
     FrCustomStep: CustomStep,
     FrField,
-    FrPolicyPasswordInput: PolicyPasswordInput,
     FrRelationshipEdit: RelationshipEdit,
     FrCreateAssignmentModal: CreateAssignmentModal,
     BButton,
@@ -221,7 +211,7 @@ export default {
       } else {
         tempFormFields[prop.key] = false;
       }
-      if (prop.policies && prop.policies[0].policyId.includes('email')) {
+      if (prop.policies && prop.policies[0] && prop.policies[0].policyId.includes('email')) {
         prop.validation = 'required|email';
       } else if (prop.isOptional) {
         noop();

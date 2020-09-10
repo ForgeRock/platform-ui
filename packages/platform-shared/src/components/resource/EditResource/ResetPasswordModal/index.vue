@@ -8,15 +8,13 @@ to such license between the licensee and ForgeRock AS. -->
     v-bind="$attrs"
     size="lg"
     :title="this.$t('pages.access.resetPassword')"
-    @hidden="passwordValue=''; failures=[]">
+    @hidden="password.value=''; failures=[]">
     <p class="mb-4">
       {{ $t('common.helpText.resetPassword') }}
     </p>
-    <FrPolicyPasswordInput
-      v-model="passwordValue"
-      :policy-api="`${resourceType}/${resourceName}/policy`"
-      :failed="failures"
-      @valid="passwordValid = $event" />
+    <FrField
+      :field="password"
+      :failed-policies="failures" />
     <template #modal-footer="{ ok, cancel }">
       <BButton
         variant="link"
@@ -25,7 +23,6 @@ to such license between the licensee and ForgeRock AS. -->
       </BButton>
       <BButton
         variant="primary"
-        :disabled="!passwordValid"
         @click="savePassword(ok)">
         {{ $t('pages.access.resetPassword') }}
       </BButton>
@@ -39,8 +36,9 @@ import {
   BModal,
 } from 'bootstrap-vue';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
-import PolicyPasswordInput from '@forgerock/platform-shared/src/components/PolicyPasswordInput/';
+import FrField from '@forgerock/platform-shared/src/components/Field';
 
 /**
  * Modal used to reset a users password as an administrator. Used in EditResource component.
@@ -50,11 +48,12 @@ export default {
   components: {
     BButton,
     BModal,
-    FrPolicyPasswordInput: PolicyPasswordInput,
+    FrField,
   },
   mixins: [
     NotificationMixin,
     RestMixin,
+    ResourceMixin,
   ],
   props: {
     /**
@@ -81,8 +80,12 @@ export default {
   },
   data() {
     return {
-      passwordValue: '',
-      passwordValid: false,
+      password: {
+        value: '',
+        type: 'password',
+        title: this.$t('common.placeholders.password'),
+        validation: 'required',
+      },
       failures: [],
     };
   },
@@ -93,16 +96,14 @@ export default {
      */
     savePassword(ok) {
       const idmInstance = this.getRequestService();
-      const saveData = [{ operation: 'add', field: '/password', value: this.passwordValue }];
+      const saveData = [{ operation: 'add', field: '/password', value: this.password.value }];
       idmInstance.patch(`${this.resourceType}/${this.resourceName}/${this.resourceId}`, saveData).then(() => {
         this.displayNotification('AdminMessage', 'success', this.$t('pages.access.successSavePassword'));
-        this.passwordValue = '';
         ok();
       },
       (error) => {
-        if (error.response.data.code === 403 && error.response.data.message === 'Failed policy validation') {
-          this.failures = error.response.data.detail.failedPolicyRequirements;
-        }
+        const err = this.findPolicyError(error.response);
+        if (err.length) this.failures = [err[0].msg];
         this.displayNotification('AdminMessage', 'error', this.$t('pages.access.failedSavePassword'));
       });
     },

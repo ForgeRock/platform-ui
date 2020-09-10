@@ -115,7 +115,6 @@ import PollingWaitCallback from '@/components/callbacks/PollingWaitCallback';
 import SelectIdPCallback from '@/components/callbacks/SelectIdPCallback';
 import TextOutputCallback from '@/components/callbacks/TextOutputCallback';
 import SuspendedTextOutputCallback from '@/components/callbacks/SuspendedTextOutputCallback';
-import ValidatedCreatePasswordCallback from '@/components/callbacks/ValidatedCreatePasswordCallback';
 import TermsAndConditionsCallback from '@/components/callbacks/TermsAndConditionsCallback';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
@@ -402,16 +401,6 @@ export default {
       this.loginFailure = false;
       this.showScriptElms = false;
       this.loading = true;
-
-      // need to set validateOnly flag for some callbacks in order to be able to advance the tree
-      if (this.step) {
-        const pwCallbacks = this.step.getCallbacksOfType('ValidatedCreatePasswordCallback');
-        if (pwCallbacks.length) {
-          pwCallbacks.forEach((cb) => {
-            cb.setInputValue(false, 1);
-          });
-        }
-      }
     },
     buildTreeForm() {
       const firstInput = this.$el.querySelector('input');
@@ -571,16 +560,7 @@ export default {
           this.addComponent(SuspendedTextOutputCallback, { callback });
           break;
         case 'ValidatedCreatePasswordCallback':
-          if (!callback.getOutputByName('policies').policies) {
-            this.addField('password', callback, index);
-          } else {
-            this.addComponent(ValidatedCreatePasswordCallback, {
-              callback,
-              step: this.step,
-              auth: FRAuth,
-              realm: this.realm,
-            });
-          }
+          this.addField('password', callback, index);
           break;
         case 'SelectIdPCallback':
           callback.setInputValue('localAuthentication');
