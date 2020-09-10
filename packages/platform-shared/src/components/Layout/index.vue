@@ -75,9 +75,9 @@ to such license between the licensee and ForgeRock AS. -->
             </a>
           </div>
           <div
-            v-if="version"
+            v-if="buildNumber && buildDateTime"
             class="mr-4 opacity-70">
-            {{ $t('common.version', {version}) }}
+            {{ $t('common.buildNumber', {buildNumber, buildDateTime: $d(buildDateTime, 'buildDateTime')}) }}
           </div>
         </div>
       </div>
@@ -131,9 +131,13 @@ export default {
         adminURL: 'www.company.com',
       }),
     },
-    version: {
+    buildNumber: {
       type: String,
       default: '',
+    },
+    buildDateTime: {
+      type: Date,
+      default: () => new Date(0),
     },
   },
   data() {

@@ -11,6 +11,9 @@
 export REPLACEMENT_PATH=/home/app/packages/$1/.env
 . /home/app/variable_replacement.sh
 
+export VUE_APP_BUILD_NUMBER=local
+export VUE_APP_BUILD_DATE_TIME="$(date +%s)"
+
 cd /home/app/packages/$1
 sed -i 's!\\!!g' .env
 echo "Starting dev server"
