@@ -60,7 +60,7 @@
     "time": "Time",
     "typeToSearch": "Type to search",
     "update": "Update",
-    "version": "Version {version}",
+    "buildNumber": "Build {buildNumber} ({buildDateTime})",
     "view": "View",
     "waitingToConnect": "Waiting to connect...",
     "yes": "Yes",
