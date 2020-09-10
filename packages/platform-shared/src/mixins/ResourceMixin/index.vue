@@ -88,6 +88,23 @@ export default {
         });
       }
 
+      // repo level password policy has a different response and only corresponds to the 'password' field.
+      if (has(errorResponse, 'data.message')) {
+        if (errorResponse.data.code === 400 && errorResponse.data.message.includes('Constraint Violation')) {
+          const re = /:.*:\s(.*)/;
+          const msg = re.exec(errorResponse.data.message)[1];
+          // decode html entities
+          const textArea = document.createElement('textarea');
+          textArea.innerHTML = msg;
+
+          error.push({
+            exists: true,
+            field: 'password',
+            msg: textArea.value,
+          });
+        }
+      }
+
       return error;
     },
   },
