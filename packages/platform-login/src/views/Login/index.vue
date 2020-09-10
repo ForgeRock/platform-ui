@@ -36,6 +36,8 @@ of the MIT license. See the LICENSE file for details.
             id="wrapper"
             v-if="showScriptElms"
           >
+            <!-- needed for GetAuthenticationApp, RecoveryCodeDisplay-->
+            <div id="callback_0" />
             <div>
               <fieldset />
             </div>
