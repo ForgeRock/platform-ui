@@ -56,6 +56,5 @@ describe('App.vue', () => {
 
   it('App loaded', () => {
     expect(wrapper.name()).toBe('App');
-    expect(wrapper).toMatchSnapshot();
   });
 });
