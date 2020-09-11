@@ -17,14 +17,13 @@ to such license between the licensee and ForgeRock AS. -->
       :show-header="index === 0"
       :index="index"
       @input="updateNewPrivilege"
-      @removePrivilege="removeNewPrivilege" />
+      @remove-privilege="removeNewPrivilege" />
     <div>
       <div class="m-4 d-flex">
         <div class="form-group mb-0 mr-1 w-100">
           <FrField
             v-if="!loading"
-            :field="identityObjectField"
-            :model="identityObjectField.value">
+            :field="identityObjectField">
             <template v-slot:option="{ option }">
               <i class="material-icons-outlined mr-3">
                 {{ option.icon || 'settings_system_daydream' }}
@@ -62,7 +61,6 @@ to such license between the licensee and ForgeRock AS. -->
 <script>
 import {
   each,
-  findIndex,
   sortBy,
 } from 'lodash';
 import {
@@ -119,7 +117,7 @@ export default {
       if (this.identityObjectField.value) {
         this.newPrivileges.push({
           path: this.identityObjectField.value,
-          name: this.identityObjectField.value,
+          name: this.$options.filters.PluralizeFilter(this.schemaMap[this.identityObjectField.value].title),
           actions: [],
           filter: '',
           permissions: ['VIEW'],
@@ -155,15 +153,11 @@ export default {
     getIdentityObjectOptions() {
       const options = [];
       each(this.schemaMap, (schema, key) => {
-        const existingPrivilegeIndex = findIndex(this.privilegesField.value, { name: key });
-        const existingNewPrivilegeIndex = findIndex(this.newPrivileges, { name: key });
-        if (existingPrivilegeIndex === -1 && existingNewPrivilegeIndex === -1) {
-          options.push({
-            text: schema.title,
-            value: key,
-            icon: schema['mat-icon'],
-          });
-        }
+        options.push({
+          text: schema.title,
+          value: key,
+          icon: schema['mat-icon'],
+        });
       });
       return sortBy(options, 'text');
     },

@@ -18,12 +18,17 @@ to such license between the licensee and ForgeRock AS. -->
         <slot
           name="identityObject"
           :item="data">
-          <div class="py-2 fixed-width-title-cell">
-            <i class="material-icons-outlined mr-3">
+          <div class="py-2 d-flex fixed-width-title-cell">
+            <i class="material-icons-outlined mr-3 align-middle">
               {{ identityObjectSchema['mat-icon'] || 'settings_system_daydream' }}
             </i>
-            <span>
-              {{ identityObjectSchema.title | PluralizeFilter }}
+            <span class="mw-100">
+              <div class="text-truncate">
+                {{ privilege.name }}
+              </div>
+              <div class="text-truncate text-muted">
+                {{ privilege.path }}
+              </div>
             </span>
           </div>
         </slot>
@@ -96,7 +101,7 @@ to such license between the licensee and ForgeRock AS. -->
                 v-if="showDelete"
                 variant="none"
                 class="p-0"
-                @click="$emit('removePrivilege', index)">
+                @click="$emit('remove-privilege', index)">
                 <i class="material-icons-outlined text-muted">
                   delete
                 </i>
@@ -106,6 +111,10 @@ to such license between the licensee and ForgeRock AS. -->
         </slot>
       </template>
       <template v-slot:row-details>
+        <FrField
+          class="mb-4 flex-grow-1"
+          :field="privilegeName"
+          @input="privilege.name = $event" />
         <BCard
           body-class="p-0"
           class="shadow-none">
@@ -298,6 +307,12 @@ export default {
           label: '',
         },
       ],
+      privilegeName: {
+        type: 'text',
+        title: this.$t('pages.access.privilegeName'),
+        value: this.privilege.name,
+        validation: 'required',
+      },
     };
   },
   computed: {
