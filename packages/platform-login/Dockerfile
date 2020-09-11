@@ -6,7 +6,8 @@
 ###############################################################################
 # Build Build Stage
 ###############################################################################
-FROM platform-shared:latest AS build
+ARG BASE_TAG
+FROM platform-shared:${BASE_TAG} AS build
 
 WORKDIR /home/app/packages/platform-login
 
