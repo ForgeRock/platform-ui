@@ -32,7 +32,7 @@ export default {
         value: this.uiSchema.value,
         title: this.uiSchema.label,
         description: this.uiSchema.helpText,
-        validation: 'numeric',
+        validation: `numeric${this.uiSchema.required ? '|required' : ''}`,
       };
     },
   },
