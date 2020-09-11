@@ -65,12 +65,16 @@ export default {
   },
   computed: {
     field() {
-      return {
+      const field = {
         type: 'string',
         value: this.uiSchema.value,
         title: this.uiSchema.label,
         description: this.uiSchema.helpText,
       };
+      if (this.uiSchema.required) {
+        field.validation = 'required';
+      }
+      return field;
     },
   },
   methods: {

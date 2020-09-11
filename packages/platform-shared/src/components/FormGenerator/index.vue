@@ -81,15 +81,10 @@ export default {
     StringDisplay,
     PasswordDisplay,
   },
-  data() {
-    return {};
-  },
   props: {
-    schema: {
-      type: Object,
-      default() {
-        return {};
-      },
+    schemaType: {
+      type: String,
+      default: '',
     },
     uiSchema: {
       type: Array,
@@ -97,18 +92,22 @@ export default {
         return [];
       },
     },
-    model: {
-      type: Object,
-      default() {
-        return {};
-      },
-    },
   },
   computed: {
+    schema() {
+      return this.$store.state.ApplicationStore.jsonSchemas[this.schemaType];
+    },
+    model() {
+      return this.$store.state.ApplicationStore.jsonSchemaData[this.schemaType];
+    },
     /**
      * Takes the currently defined uiSchema array, iterates through it and adds the current value from the save object for rendering
      */
     populatedUISchema() {
+      if (!this.schema || !this.model) {
+        return [];
+      }
+
       return this.uiSchema.map((formField) => {
         const clonedSchema = cloneDeep(this.schema);
         const clonedModel = cloneDeep(this.model);
@@ -116,6 +115,10 @@ export default {
         const modelName = modelIsArrayElement ? formField.model.substring(0, formField.model.length - 3) : formField.model;
         const schemaObj = assign(get(clonedSchema, modelName), formField);
         const modelObj = isObject(get(clonedModel, modelName)) ? assign(get(clonedModel, modelName), formField) : get(clonedModel, modelName);
+
+        if (schemaObj.required) {
+          formField.required = schemaObj.required;
+        }
 
         if (modelObj) {
           // make sure all formField have render types
@@ -197,12 +200,15 @@ export default {
      */
     showField(model) {
       if (has(model, 'show')) {
-        return get(this.$store.state.ApplicationStore.oauthSaveObj, model.show).value || false;
+        return get(this.$store.state.ApplicationStore.jsonSchemaData[this.schemaType], model.show).value || false;
       }
       return true;
     },
     updateSaveModel(payload) {
-      this.$store.dispatch('ApplicationStore/setOauthSaveObjPropertyValue', payload);
+      this.$store.dispatch('ApplicationStore/setSchemaDataPropertyValue', {
+        schemaType: this.schemaType,
+        ...payload,
+      });
     },
   },
 };

@@ -48,7 +48,7 @@ export default {
         arrayType = 'multiselect';
       }
 
-      return {
+      const field = {
         type: arrayType,
         value: this.uiSchema.value,
         enum: this.uiSchema.enum,
@@ -57,6 +57,10 @@ export default {
         title: this.uiSchema.label,
         key: this.uiSchema.label,
       };
+      if (this.uiSchema.required) {
+        field.validation = 'required';
+      }
+      return field;
     },
   },
   methods: {

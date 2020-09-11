@@ -371,6 +371,7 @@
     "updateFailed": "Error updating {resourceName} password policy"
   },
   "applications": {
+    "application": "Application",
     "listView": {
       "addApp": "Add Application",
       "tableEmpty": "No available applications",
@@ -435,6 +436,7 @@
       "super": "Service Application"
     },
     "accessTab": {
+      "title": "Access",
       "defaultScopesLabel": "Default Scopes",
       "defaultScopesHelp": "Scopes automatically given to tokens.",
       "responseTypesLabel": "Response Types",
@@ -445,6 +447,7 @@
       "loopbackInterfaceRedirectionHelp": "This flag indicates whether wildcards can be used for port numbers in redirect URIs. For example - <code>https://127.0.0.1:{port}/{path}</code> for IPv4 and <code>https://[::1]:{port}/{path}</code> for IPv6."
     },
     "authenticationTab": {
+      "title": "Authentication",
       "tokenEndpointAuthMethodLabel": "Token Endpoint Authentication Method",
       "tokenEndpointAuthMethodHelp": "The authentication method with which a client authenticates to the authorization server at the token endpoint. The authentication method applies to OIDC requests with the openid scope.",
       "clientTypeLabel": "Client Type",
@@ -470,10 +473,12 @@
       "mTLSSubjectDNHelp": "Expected Subject DN of certificate used for mTLS client certificate authentication. Defaults to CN=client_id. Only applicable when using CA-signed certificates."
     },
     "clientManagementTab": {
+      "title": "Client Management",
       "updateAccessTokenLabel": "Access Token",
       "updateAccessTokenHelp": "The access token used to update the client."
     },
     "consentScreenTab": {
+      "title": "Consent Screen",
       "nameLabel": "Display Name",
       "nameHelp": "A client name that may be relevant to the resource owner when considering approval.",
       "descriptionsLabel": "Display Description",
@@ -482,16 +487,19 @@
       "policyUriHelp": "The URI for the client's privacy policy, for use in user-facing consent pages."
     },
     "endpointResponseFormatsTab": {
+      "title": "Endpoint Response Formats",
       "userinfoResponseFormatLabel": "User info response format",
       "userinfoResponseFormatHelp": "The user info endpoint offers different output format. See <a href='http://openid.net/specs/openid-connect-core-1_0.html#UserInfoResponse'>http://openid.net/specs/openid-connect-core-1_0.html#UserInfoResponse</a>",
       "tokenIntrospectionResponseFormatLabel": "Token Introspection Response Format",
       "tokenIntrospectionResponseFormatHelp": "The token introspection endpoint offers different output format. see <a href='https://tools.ietf.org/html/draft-ietf-oauth-jwt-introspection-response-03'>https://tools.ietf.org/html/draft-ietf-oauth-jwt-introspection-response-03</a>"
     },
     "sessionManagementTab": {
+      "title": "Session Management",
       "clientSessionUriLabel": "Client Session URI",
       "clientSessionUriHelp": "This is the URI that will be used to check messages sent to the session management endpoints. This URI must match the origin of the message."
     },
     "signingAndEncryptionTab": {
+      "title": "Signing and Encryption",
       "publicKeyLocationLabel": "Public key selector",
       "publicKeyLocationHelp": "Select the public key for this client to come from either the jwks_uri, manual jwks or X509 field.",
       "jwksUriLabel": "Json Web Key URI",
@@ -503,6 +511,7 @@
       "idTokenEncryptionEnabledLabel": "Enable ID Token Encryption"
     },
     "tokenLifetimesTab": {
+      "title": "Token Lifetimes",
       "authorizationCodeLifetimeLabel": "Authorization code lifetime (seconds)",
       "accessTokenLifetimeLabel": "Access token lifetime (seconds)",
       "refreshTokenLifetimeLabel": "Refresh token lifetime (seconds)",
@@ -533,15 +542,9 @@
       "logoUriLabel": "App Logo URI",
       "logoUriHelp": "Application logo URI for use in user-facing UIs such as consent pages and application pages."
     },
-    "deleteAppPanel": {
+    "deleteAppModal": {
       "deleteApp": "Delete Application",
       "modalText": "Are you sure you want to delete {appName}?"
-    },
-    "resetSecretModal": {
-      "title": "Reset Client Secret",
-      "text": "Choose a new client secret.",
-      "newSecretText": "New Client Secret",
-      "secretResetWarning": "The new client secret will be available immediately and the old client secret will no longer work."
     }
   },
   "realm": {
