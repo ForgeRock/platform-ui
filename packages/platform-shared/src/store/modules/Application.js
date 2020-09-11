@@ -27,8 +27,8 @@ const defaultState = {
   idmBaseURL: '/openidm',
   idmClientID: null,
   loginRedirect: null,
-  oauthSaveObj: null,
-  oauthSchema: null,
+  jsonSchemas: {},
+  jsonSchemaData: {},
   theme: 'default',
   workflow: false,
 };
@@ -58,28 +58,28 @@ const actions = {
     context.commmit('clearLoginRedirect');
   },
 
-  setOauthSaveObj(context, obj) {
-    context.commit('setOauthSaveObj', obj);
-  },
-
-  clearOauthSaveObj(context) {
-    context.commit('clearOauthSaveObj');
-  },
-
-  setOauthSchema(context, obj) {
-    context.commit('setOauthSchema', obj);
-  },
-
-  clearOauthSchema(context) {
-    context.commit('clearOauthSchema');
-  },
-
   setWorkflowState(context, enabled) {
     context.commit('setWorkflowState', enabled);
   },
 
-  setOauthSaveObjPropertyValue(context, obj) {
-    context.commit('setOauthSaveObjPropertyValue', obj);
+  setSchema(context, obj) {
+    context.commit('setSchema', obj);
+  },
+
+  clearSchema(context, schemaType) {
+    context.commit('clearSchema', schemaType);
+  },
+
+  setSchemaData(context, obj) {
+    context.commit('setSchemaData', obj);
+  },
+
+  clearSchemaData(context, schemaType) {
+    context.commit('clearSchemaData', schemaType);
+  },
+
+  setSchemaDataPropertyValue(context, obj) {
+    context.commit('setSchemaDataPropertyValue', obj);
   },
 };
 
@@ -138,32 +138,32 @@ const mutations = {
     state.loginRedirect = null;
   },
 
-  setOauthSaveObj(state, obj) {
-    state.oauthSaveObj = obj;
+  setSchema(state, obj) {
+    state.jsonSchemas[obj.schemaType] = obj.schema;
   },
 
-  clearOauthSaveObj(state) {
-    state.oauthSaveObj = null;
+  clearSchema(state, schemaType) {
+    state.jsonSchemas[schemaType] = null;
   },
 
-  setOauthSchema(state, obj) {
-    state.oauthSchema = obj;
+  setSchemaData(state, obj) {
+    state.jsonSchemaData[obj.schemaType] = obj.data;
   },
 
-  clearOauthSchema(state) {
-    state.oauthSchema = null;
+  clearSchemaData(state, schemaType) {
+    state.jsonSchemaData[schemaType] = null;
   },
 
-  setOauthSaveObjPropertyValue(state, obj) {
-    const [objName, propName] = obj.model.split('.');
-    const propertyExists = has(state.oauthSaveObj[objName], propName);
+  setSchemaDataPropertyValue(state, obj) {
+    const { value, schemaType } = obj;
+    const model = endsWith(obj.model, '[0]') ? obj.model.substring(0, obj.model.length - 3) : obj.model;
 
-    if (endsWith(obj.model, '[0]')) {
-      set(state.oauthSaveObj, `${obj.model.substring(0, obj.model.length - 3)}.value`, [obj.value]);
-    } else if (!propertyExists || propName === 'userpassword') {
-      set(state.oauthSaveObj, `${obj.model}`, obj.value);
+    const propertyExists = has(state.jsonSchemaData[schemaType], model);
+
+    if (!propertyExists || endsWith(model, 'userpassword')) {
+      set(state.jsonSchemaData[schemaType], model, value);
     } else {
-      set(state.oauthSaveObj, `${obj.model}.value`, obj.value);
+      set(state.jsonSchemaData[schemaType], `${model}.value`, value);
     }
   },
 };
