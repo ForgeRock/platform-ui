@@ -40,8 +40,13 @@ to such license between the licensee and ForgeRock AS. -->
           <slot
             name="path"
             :item="data">
-            <span>
-              {{ schemaMap[data.item.path].title | PluralizeFilter }}
+            <span class="overflow-hidden">
+              <div>
+                {{ data.item.name }}
+              </div>
+              <div class="text-muted">
+                {{ data.item.path }}
+              </div>
             </span>
           </slot>
         </template>
@@ -91,57 +96,62 @@ to such license between the licensee and ForgeRock AS. -->
         </template>
       </BTable>
     </div>
-    <BModal
-      id="editPrivilegeModal"
-      ref="editPrivilegeModal"
-      :title="$t('pages.access.editPrivilege')"
-      body-class="p-0"
-      size="lg">
-      <FrPrivilegeEditor
-        v-if="privilegeToEdit"
-        :privilege="privilegeToEdit"
-        :identity-object-schema="schemaMap[privilegeToEdit.path]"
-        :disabled="privilegesField.disabled"
-        @input="updatePrivilege" />
-      <template v-slot:modal-footer="{ cancel }">
-        <BButton
-          variant="link"
-          @click="cancel()">
-          {{ $t('common.cancel') }}
-        </BButton>
-        <BButton
-          variant="primary"
+    <ValidationObserver
+      ref="observer"
+      v-slot="{ invalid }">
+      <BModal
+        id="editPrivilegeModal"
+        ref="editPrivilegeModal"
+        :title="$t('pages.access.editPrivilege')"
+        body-class="p-0"
+        size="lg">
+        <FrPrivilegeEditor
+          v-if="privilegeToEdit"
+          :privilege="privilegeToEdit"
+          :identity-object-schema="schemaMap[privilegeToEdit.path]"
           :disabled="privilegesField.disabled"
-          @click="savePrivilege">
-          {{ $t('common.save') }}
-        </BButton>
-      </template>
-    </BModal>
+          @input="updatePrivilege" />
+        <template v-slot:modal-footer="{ cancel }">
+          <BButton
+            variant="link"
+            @click="cancel()">
+            {{ $t('common.cancel') }}
+          </BButton>
+          <BButton
+            variant="primary"
+            :disabled="privilegesField.disabled || invalid"
+            @click="savePrivilege">
+            {{ $t('common.save') }}
+          </BButton>
+        </template>
+      </BModal>
 
-    <BModal
-      id="addPrivilegesModal"
-      ref="addPrivilegesModal"
-      :title="$t('pages.access.addPrivileges')"
-      body-class="p-0"
-      size="lg">
-      <FrAddPrivileges
-        :new-privileges="newPrivileges"
-        :privileges-field="privilegesField"
-        :schema-map="schemaMap"
-        :loading="loading" />
-      <template v-slot:modal-footer="{ cancel }">
-        <BButton
-          variant="link"
-          @click="cancel()">
-          {{ $t('common.cancel') }}
-        </BButton>
-        <BButton
-          variant="primary"
-          @click="saveNewPrivileges">
-          {{ $t('common.save') }}
-        </BButton>
-      </template>
-    </BModal>
+      <BModal
+        id="addPrivilegesModal"
+        ref="addPrivilegesModal"
+        :title="$t('pages.access.addPrivileges')"
+        body-class="p-0"
+        size="lg">
+        <FrAddPrivileges
+          :new-privileges="newPrivileges"
+          :privileges-field="privilegesField"
+          :schema-map="schemaMap"
+          :loading="loading" />
+        <template v-slot:modal-footer="{ cancel }">
+          <BButton
+            variant="link"
+            @click="cancel()">
+            {{ $t('common.cancel') }}
+          </BButton>
+          <BButton
+            variant="primary"
+            :disabled="invalid"
+            @click="saveNewPrivileges">
+            {{ $t('common.save') }}
+          </BButton>
+        </template>
+      </BModal>
+    </ValidationObserver>
 
     <BModal
       id="removePrivilege"
@@ -185,21 +195,20 @@ import {
   BTable,
 } from 'bootstrap-vue';
 import axios from 'axios';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import PluralizeFilter from '@forgerock/platform-shared/src/filters/PluralizeFilter';
+import { ValidationObserver } from 'vee-validate';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
-import PrivilegeEditor from './PrivilegeEditor';
-import AddPrivileges from './AddPrivileges';
+import FrPrivilegeEditor from './PrivilegeEditor';
+import FrAddPrivileges from './AddPrivileges';
 
 export default {
   name: 'PrivilegesTab',
   components: {
-    FrPrivilegeEditor: PrivilegeEditor,
-    FrAddPrivileges: AddPrivileges,
+    FrPrivilegeEditor,
+    FrAddPrivileges,
     BButton,
     BCol,
     BDropdown,
@@ -208,9 +217,7 @@ export default {
     BRow,
     BTab,
     BTable,
-  },
-  filters: {
-    PluralizeFilter,
+    ValidationObserver,
   },
   data() {
     return {
@@ -221,7 +228,7 @@ export default {
       privilegesColumns: [
         {
           key: 'path',
-          label: this.$t('pages.access.identityObject'),
+          label: this.$t('common.name'),
         },
         {
           key: 'permissions',
