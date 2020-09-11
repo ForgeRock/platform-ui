@@ -1,5 +1,6 @@
 {
   "common": {
+    "active": "Active",
     "add": "Add",
     "addObject": "Add {object}",
     "advancedOptions": "advanced options",
@@ -26,6 +27,7 @@
     "end": "End",
     "error": "Error",
     "expires": "Expires",
+    "inactive": "Inactive",
     "loading": "Loading",
     "name": "Name",
     "new": "New",
@@ -39,6 +41,7 @@
     "onMobileDevice": "On a mobile device?",
     "optional": "optional",
     "optionalFieldTitle": "{fieldTitle} (optional)",
+    "password": "Password",
     "previous": "Previous",
     "remove": "Remove",
     "required": "Required",
@@ -288,5 +291,15 @@
   "timezone": {
     "helpText": "Time zone offset based on how many hours a location is from GMT.",
     "linkText": "Time zones chart"
+  },
+  "deletePanel": {
+    "header": "Delete {type}",
+    "body": "Are you sure you want to delete {itemName}?"
+  },
+  "schemaResetSecret": {
+    "title": "Reset {field}",
+    "modalBody": "Choose a new {field}.",
+    "newSecretText": "New {field}",
+    "secretResetWarning": "The new {field} will be available immediately and the old {field} will no longer work."
   }
 }
