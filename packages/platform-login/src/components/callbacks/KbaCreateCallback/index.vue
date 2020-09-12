@@ -201,7 +201,7 @@ export default {
         const questionInputs = map(document.querySelectorAll(`input[placeholder=${this.questionModel.title}]`), (question) => question.value);
         const answerInputs = map(document.querySelectorAll(`input[placeholder=${this.answerModel.title}]`), (answer) => answer.value);
         // Disable if there is an error shown locally or in the other KbaCreateCallbacks
-        this.callbackSubmitButton.disabled = document.querySelectorAll('.error-messages .error-message').length || questionInputs.includes('') || answerInputs.includes('');
+        this.callbackSubmitButton.disabled = questionInputs.includes('') || answerInputs.includes('');
       }, 1);
     },
   },
