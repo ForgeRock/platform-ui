@@ -53,8 +53,7 @@ of the MIT license. See the LICENSE file for details.
           <div
             v-show="!showClone"
             id="callbacksPanel"
-            ref="callbacksPanel"
-            @keyup.enter="nextStep" />
+            ref="callbacksPanel" />
           <div
             v-show="showClone"
             id="callbacksPanelClone"
