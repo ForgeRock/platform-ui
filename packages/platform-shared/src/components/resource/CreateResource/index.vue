@@ -8,7 +8,7 @@ to such license between the licensee and ForgeRock AS. -->
     ref="observer"
     v-slot="{ invalid }">
     <FrCreateAssignmentModal
-      v-if="resourceType === 'managed' && resourceName === 'assignment'"
+      v-if="isAssignments"
       @refreshGrid="$emit('refreshGrid')"
       :create-properties="createProperties" />
     <BModal
@@ -128,6 +128,7 @@ import {
   capitalize,
   clone,
   each,
+  endsWith,
   find,
   isString,
   noop,
@@ -201,33 +202,8 @@ export default {
     },
   },
   data() {
-    const tempFormFields = {};
-
-    each(this.createProperties, (prop) => {
-      if (prop.type === 'string' || prop.type === 'number') {
-        tempFormFields[prop.key] = '';
-      } else if (prop.type === 'relationship') {
-        tempFormFields[prop.key] = {};
-      } else {
-        tempFormFields[prop.key] = false;
-      }
-      if (prop.policies && prop.policies[0] && prop.policies[0].policyId.includes('email')) {
-        prop.validation = 'required|email';
-      } else if (prop.isOptional) {
-        noop();
-      } else {
-        prop.validation = 'required';
-      }
-
-      // Special logic for password
-      if (prop.key === 'password') {
-        prop.validation = 'required';
-        prop.type = 'password';
-      }
-    });
-
     return {
-      formFields: tempFormFields,
+      formFields: {},
       stepIndex: -1,
       passwordValue: '',
       passwordValid: true,
@@ -276,6 +252,9 @@ export default {
       }
       return `${this.$t('common.new')} ${name}`;
     },
+    isAssignments() {
+      return this.resourceType === 'managed' && endsWith(this.resourceName, 'assignment');
+    },
   },
   methods: {
     saveForm() {
@@ -291,6 +270,7 @@ export default {
               delete this.formFields[field.key];
             }
           });
+
           const saveData = this.cleanData(clone(this.formFields));
 
           idmInstance.post(`${this.resourceType}/${this.resourceName}?_action=create`, saveData).then(() => {
@@ -335,14 +315,7 @@ export default {
       }
       this.passwordValue = '';
       this.passwordValid = true;
-      this.createProperties.forEach((field) => {
-        if (field.type === 'string' || field.type === 'number' || field.type === 'password' || field.type === 'relationship') {
-          field.value = '';
-        } else {
-          field.value = false;
-        }
-        this.formFields[field.key] = field.value;
-      });
+      this.formFields = {};
     },
     // Remove optional fields to not save with empty string
     cleanData(data) {
@@ -378,6 +351,37 @@ export default {
 
       createProperty.value = val;
     },
+    setFormFields() {
+      const tempFormFields = {};
+
+      each(this.createProperties, (prop) => {
+        if (prop.type === 'string' || prop.type === 'number') {
+          tempFormFields[prop.key] = '';
+        } else if (prop.type === 'relationship') {
+          tempFormFields[prop.key] = {};
+        } else {
+          tempFormFields[prop.key] = false;
+        }
+        if (prop.policies && prop.policies[0] && prop.policies[0].policyId.includes('email')) {
+          prop.validation = 'required|email';
+        } else if (prop.isOptional) {
+          noop();
+        } else {
+          prop.validation = 'required';
+        }
+
+        // Special logic for password
+        if (prop.key === 'password') {
+          prop.validation = 'required';
+          prop.type = 'password';
+        }
+      });
+
+      this.formFields = tempFormFields;
+    },
+  },
+  mounted() {
+    this.setFormFields();
   },
 };
 </script>
