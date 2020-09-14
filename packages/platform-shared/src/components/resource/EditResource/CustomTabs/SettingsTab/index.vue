@@ -44,7 +44,7 @@ to such license between the licensee and ForgeRock AS. -->
               @change="queryFilterChange"
               :disabled="properties.condition.disabled"
               :query-filter-string="editProperty.value"
-              :resource-name="resourceName"
+              :resource-name="conditionResource"
               :properties="conditionOptions" />
           </template>
           <div v-else>
@@ -123,6 +123,7 @@ export default {
       conditionOptions: [],
       disableSave: false,
       showForm: false,
+      conditionResource: 'user',
     };
   },
   computed: {
@@ -191,10 +192,16 @@ export default {
       });
     },
     setConditionOptions() {
+      // TODO: replace hard coded "managed/user" with "conditionObject" schema property value
+      let conditionObject = 'managed/user';
       this.conditionOptions = [];
 
-      // TODO: replace hard coded "managed/user" with "conditionObject" schema property value
-      getSchema('managed/user').then((schema) => {
+      if (this.$store.state.isFraas) {
+        conditionObject = `managed/${this.$store.state.realm}_user`;
+        this.conditionResource = `${this.$store.state.realm}_user`;
+      }
+
+      getSchema(conditionObject).then((schema) => {
         const filteredProperties = [];
 
         schema.data.order.forEach((key) => {

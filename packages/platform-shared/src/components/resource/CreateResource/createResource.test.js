@@ -88,8 +88,7 @@ describe('CreateResource.vue', () => {
 
     wrapper.vm.hideModal();
 
-    expect(wrapper.vm.formFields.test).toBe('');
-    expect(wrapper.vm.formFields.boolTest).toBe(false);
+    expect(wrapper.vm.formFields).toStrictEqual({});
   });
 
   it('Clean save data', () => {
