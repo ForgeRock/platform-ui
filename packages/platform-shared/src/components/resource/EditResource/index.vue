@@ -45,7 +45,7 @@ to such license between the licensee and ForgeRock AS. -->
       {{ $t('pages.access.resetPassword') }}
     </BButton>
     <FrEditAssignment
-      v-if="!isLoading && resourceType === 'managed' && resourceName === 'assignment'"
+      v-if="!isLoading && isAssignments"
       :display-properties="displayProperties"
       :relationship-properties="relationshipProperties"
       :parent-id="id"
@@ -164,6 +164,7 @@ to such license between the licensee and ForgeRock AS. -->
 <script>
 import {
   each,
+  endsWith,
   filter,
   find,
   indexOf,
@@ -532,6 +533,9 @@ export default {
       }
 
       return null;
+    },
+    isAssignments() {
+      return this.resourceType === 'managed' && endsWith(this.resourceName, 'assignment');
     },
   },
 };
