@@ -47,7 +47,7 @@ to such license between the licensee and ForgeRock AS. -->
             </template>
             <template #dropdown-header>
               <BDropdownHeader class="py-3">
-                <h6 class="text-uppercase">
+                <h6>
                   {{ $t('realm.title') }}
                 </h6>
                 <BMedia
