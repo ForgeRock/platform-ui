@@ -45,11 +45,12 @@ export default {
         }
 
         // Use Legacy API
+        // pass in config.root === true to prevent adding realm info to request
         if (config.context === 'AM') {
           const isDNS = amContext !== dnsContext;
           let amBase = isDNS ? `${dnsContext}/json/` : `${amContext}/json/`;
 
-          if (store.state.realm && store.state.realm !== '/' && store.state.realm !== 'root') {
+          if (!config.root && store.state.realm && store.state.realm !== '/' && store.state.realm !== 'root') {
             amBase = isDNS ? `${dnsContext}/json/realms/root/realms/${store.state.realm}` : `${amContext}/json/realms/root/realms/${store.state.realm}`;
           }
 
