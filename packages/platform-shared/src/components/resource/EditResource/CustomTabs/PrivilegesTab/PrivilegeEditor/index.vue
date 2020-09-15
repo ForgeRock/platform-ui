@@ -331,7 +331,7 @@ export default {
       const availableAttibutes = [];
       const validProps = pickBy(this.identityObjectSchema.properties, (prop, key) => {
         prop.key = key;
-        return !prop.isVirtual && !key.startsWith('_');
+        return !key.startsWith('_');
       });
 
       this.identityObjectSchema.order.forEach((propertyName) => {
