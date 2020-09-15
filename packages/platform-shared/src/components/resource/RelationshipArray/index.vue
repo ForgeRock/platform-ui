@@ -188,6 +188,7 @@ to such license between the licensee and ForgeRock AS. -->
 <script>
 import {
   find,
+  has,
   last,
   toArray,
   pick,
@@ -310,14 +311,18 @@ export default {
         // eslint-disable-next-line no-underscore-dangle
         const resourceCollectionSchema = find(schema.items.resourceCollection, { path: relationship._refResourceCollection });
         // special display logic for internal user
-        if (resourceCollectionSchema.path === 'internal/user') {
+        if (resourceCollectionSchema && has(resourceCollectionSchema, 'path') && resourceCollectionSchema.path === 'internal/user') {
           // _ref looks "internal/user/openidm-admin"
           // here we are grabbing the last part of the path to display "userName" which is also the internal user's "_id"
           // eslint-disable-next-line no-underscore-dangle
           relationship._relationshipDetails = [last(relationship._ref.split('/'))];
-        } else {
+        } else if (resourceCollectionSchema) {
           // eslint-disable-next-line no-underscore-dangle
           relationship._relationshipDetails = toArray(pick(relationship, resourceCollectionSchema.query.fields));
+        } else {
+          // if no schema information for resourceCollection just show the object's _id
+          // eslint-disable-next-line no-underscore-dangle
+          relationship._relationshipDetails = [relationship._id];
         }
 
         this.gridData.push(relationship);
