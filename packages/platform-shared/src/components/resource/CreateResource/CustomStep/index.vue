@@ -37,7 +37,10 @@ to such license between the licensee and ForgeRock AS. -->
   </div>
 </template>
 
-<script>
+<script>import {
+  has,
+  isEmpty,
+} from 'lodash';
 import axios from 'axios';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
@@ -156,8 +159,11 @@ export default {
             const schemas = response.data.result;
 
             schemas.forEach((schema) => {
-              // eslint-disable-next-line no-underscore-dangle
-              this.schemaMap[schema._id] = schema;
+              // filter out schemas with no properties
+              if (has(schema, 'properties') && !isEmpty(schema.properties)) {
+                // eslint-disable-next-line no-underscore-dangle
+                this.schemaMap[schema._id] = schema;
+              }
             });
 
             this.loading = false;

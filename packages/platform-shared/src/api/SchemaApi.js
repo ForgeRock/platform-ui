@@ -8,12 +8,13 @@
 import {
   has,
   isArray,
+  isEmpty,
   reject,
 } from 'lodash';
 import { generateIdmApi } from './BaseApi';
 
 const setSchemaProperties = (schema) => {
-  if (has(schema, 'properties')) {
+  if (has(schema, 'properties') && !isEmpty(schema.properties)) {
     schema.order.forEach((propName) => {
       const prop = schema.properties[propName];
 
