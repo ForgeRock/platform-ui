@@ -6,7 +6,7 @@ of the MIT license. See the LICENSE file for details.
 -->
 
 <template>
-  <div>
+  <div v-if="oauthApplications.length">
     <FrAccordion
       accordion-group="oauthApplications"
       class="oauth-applications"
@@ -119,6 +119,7 @@ of the MIT license. See the LICENSE file for details.
 </template>
 
 <script>
+/* eslint-disable no-underscore-dangle */
 import { mapState } from 'vuex';
 import FrAccordion from '@forgerock/platform-shared/src/components/Accordion';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
@@ -165,15 +166,15 @@ export default {
       const url = `/users/${this.userId}/oauth2/applications?_queryFilter=true`;
 
       selfServiceInstance.get(url, { withCredentials: true }).then((res) => {
-        this.$set(this.$data, 'oauthApplications', [...res.data.result]);
+        // filter out end-user-ui and idm-admin-ui
+        const applications = res.data.result.filter((application) => (application._id !== 'end-user-ui' && application._id !== 'idm-admin-ui'));
+        this.$set(this.$data, 'oauthApplications', applications);
       }).catch((error) => {
         this.showErrorMessage(error);
       });
     },
     showConfirmationModal(application) {
-      // eslint-disable-next-line no-underscore-dangle
       this.confirmApplication.id = application._id;
-      // eslint-disable-next-line no-underscore-dangle
       this.confirmApplication.name = application.name || application._id;
       this.$refs.fsModal.show();
     },

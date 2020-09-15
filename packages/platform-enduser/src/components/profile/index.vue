@@ -47,8 +47,6 @@ of the MIT license. See the LICENSE file for details.
           class="mb-5"
           v-if="internalUser === false"
           @updateKBA="updateKBA" />
-        <!-- TODO we need to update these to not rely on the old way of getting AM data endpoints -->
-        <!-- <FrAuthorizedApplications v-if="amDataEndpoints && internalUser === false" /> -->
         <FrSocial class="mb-5" />
         <FrTrustedDevices />
         <FrAuthorizedApplications

@@ -148,7 +148,7 @@ export default {
   },
   methods: {
     setUpdateJourney() {
-      this.getRequestService({ context: 'AM' }).get('/selfservice/trees').then((res) => {
+      this.getRequestService({ context: 'AM', root: true }).get('/selfservice/trees').then((res) => {
         const updateJourney = res.data.mapping.updatePassword;
         if (updateJourney) {
           this.$set(this.passwordItem, 'linkUrl', `${store.state.amBaseURL}/UI/Login?realm=${(new URLSearchParams(window.location.search)).get('realm') || '/'}&ForceAuth=true&authIndexType=service&authIndexValue=${updateJourney}&goto=${encodeURIComponent(window.location.href)}`);
