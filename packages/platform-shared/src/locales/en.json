@@ -135,7 +135,7 @@
     },
     "welcome": {
       "title": "Welcome to ForgeRock!",
-      "description": "With the Forgerock platform you can control access, identity management and much more.",
+      "description": "With the ForgeRock platform you can control access, identity management and much more.",
       "footer": "Get Started"
     }
   },
