@@ -16,6 +16,7 @@ to such license between the licensee and ForgeRock AS. -->
       :show-delete="true"
       :show-header="index === 0"
       :index="index"
+      :excluded-names="allExcludedNames"
       @input="updateNewPrivilege"
       @remove-privilege="removeNewPrivilege" />
     <div>
@@ -82,6 +83,10 @@ export default {
     PluralizeFilter,
   },
   props: {
+    existingNames: {
+      type: Array,
+      default: () => [],
+    },
     newPrivileges: {
       type: Array,
       default: () => [],
@@ -108,6 +113,12 @@ export default {
         value: '',
       },
     };
+  },
+  computed: {
+    allExcludedNames() {
+      const newNames = this.newPrivileges.map((privilege) => privilege.name);
+      return [...newNames, ...this.existingNames];
+    },
   },
   methods: {
     /**
@@ -149,6 +160,7 @@ export default {
     },
     /**
     * Reads all the identityObject schemas and sets dropdown options for available identityObjects
+    * @returns sorted identity object options for dropdown consumption
     */
     getIdentityObjectOptions() {
       const options = [];
