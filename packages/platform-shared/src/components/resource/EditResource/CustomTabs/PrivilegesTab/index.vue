@@ -110,6 +110,7 @@ to such license between the licensee and ForgeRock AS. -->
           :privilege="privilegeToEdit"
           :identity-object-schema="schemaMap[privilegeToEdit.path]"
           :disabled="privilegesField.disabled"
+          :excluded-names="editNames"
           @input="updatePrivilege" />
         <template v-slot:modal-footer="{ cancel }">
           <BButton
@@ -136,7 +137,8 @@ to such license between the licensee and ForgeRock AS. -->
           :new-privileges="newPrivileges"
           :privileges-field="privilegesField"
           :schema-map="schemaMap"
-          :loading="loading" />
+          :loading="loading"
+          :existing-names="existingNames" />
         <template v-slot:modal-footer="{ cancel }">
           <BButton
             variant="link"
@@ -181,7 +183,6 @@ to such license between the licensee and ForgeRock AS. -->
 import {
   capitalize,
   cloneDeep,
-  findIndex,
   has,
 } from 'lodash';
 import {
@@ -225,6 +226,7 @@ export default {
       newPrivileges: [],
       privilegeToEdit: null,
       editIndex: null,
+      existingNames: [],
       privilegesColumns: [
         {
           key: 'path',
@@ -269,6 +271,14 @@ export default {
     privileges() {
       return this.privilegesField.value || [];
     },
+    editNames() {
+      return this.privileges.map((privilege, index) => {
+        if (this.editIndex === index) {
+          return '';
+        }
+        return privilege.name;
+      });
+    },
   },
   methods: {
     /**
@@ -299,7 +309,7 @@ export default {
     * Removes confirmed privilege from privileges array
     */
     removePrivilege() {
-      this.privilegesField.value.splice(this.editIndex, 1);
+      this.privileges.splice(this.editIndex, 1);
       this.savePrivileges();
       this.$refs.removePrivilege.hide();
     },
@@ -331,22 +341,17 @@ export default {
     */
     saveNewPrivileges() {
       let doSave = true;
-      this.newPrivileges.forEach((privilege) => {
+      this.newPrivileges.forEach((newPrivilege) => {
         // if there is no privilegesField.value make one
         if (!this.privilegesField.value) {
           this.privilegesField.value = [];
         }
 
-        if (privilege.accessFlags.length === 0) {
+        if (newPrivilege.accessFlags.length === 0) {
           doSave = false;
           this.displayNotification('IDMMessages', 'error', this.$t('pages.access.mustHaveOneAttributeWithRead'));
         } else {
-          const existingPrivilegeIndex = findIndex(this.privilegesField.value, { name: privilege.name });
-          if (existingPrivilegeIndex > -1) {
-            this.privilegesField.value[existingPrivilegeIndex] = privilege;
-          } else {
-            this.privilegesField.value.push(privilege);
-          }
+          this.privilegesField.value.push(newPrivilege);
         }
       });
 
@@ -360,7 +365,7 @@ export default {
     savePrivileges() {
       const idmInstance = this.getRequestService();
 
-      this.privilegesField.value.forEach((privilege) => {
+      this.privileges.forEach((privilege) => {
         if (privilege.filter === '') {
           delete privilege.filter;
         }
@@ -374,6 +379,7 @@ export default {
         this.$refs.editPrivilegeModal.hide();
         this.newPrivileges = [];
         this.$refs.addPrivilegesModal.hide();
+        this.existingNames = this.privileges.map((privilege) => privilege.name);
       }).catch((error) => {
         if (has(error, 'response.data.detail.failedPolicyRequirements[0].policyRequirements[0].params.invalidArrayItems[0].failedPolicyRequirements[0].policyRequirements[0].policyRequirement')) {
           const policyFailure = error.response.data.detail.failedPolicyRequirements[0].policyRequirements[0].params.invalidArrayItems[0].failedPolicyRequirements[0].policyRequirements[0];
@@ -424,6 +430,7 @@ export default {
         },
       );
     }
+    this.existingNames = this.privileges.map((privilege) => privilege.name);
   },
 };
 </script>
