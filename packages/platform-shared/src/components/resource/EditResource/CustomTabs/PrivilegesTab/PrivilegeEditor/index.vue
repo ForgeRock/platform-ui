@@ -19,8 +19,10 @@ to such license between the licensee and ForgeRock AS. -->
           name="identityObject"
           :item="data">
           <div class="py-2 d-flex fixed-width-title-cell">
-            <i class="material-icons-outlined mr-3 align-middle">
-              {{ identityObjectSchema['mat-icon'] || 'settings_system_daydream' }}
+            <i
+              :class="[{ 'color-red': error}, 'material-icons-outlined mr-3 align-self-center cursor-pointer']"
+              @click="showAdvanced = !showAdvanced">
+              {{ error ? 'info' : identityObjectSchema['mat-icon'] || 'settings_system_daydream' }}
             </i>
             <span class="mw-100">
               <div class="text-truncate">
@@ -89,13 +91,7 @@ to such license between the licensee and ForgeRock AS. -->
                 variant="link"
                 class="p-0 mr-3"
                 @click="showAdvanced = !showAdvanced">
-                <span v-if="showAdvanced">
-                  {{ $t('common.hide') }}
-                </span>
-                <span v-else>
-                  {{ $t('common.show') }}
-                </span>
-                {{ $t('common.advanced') }}
+                {{ showAdvanced ? $t('pages.access.hideAdvanced') : $t('pages.access.showAdvanced') }}
               </BButton>
               <BButton
                 v-if="showDelete"
@@ -111,95 +107,97 @@ to such license between the licensee and ForgeRock AS. -->
         </slot>
       </template>
       <template v-slot:row-details>
-        <FrField
-          class="mb-4 flex-grow-1"
-          :field="privilegeName"
-          @input="privilege.name = $event" />
-        <BCard
-          body-class="p-0"
-          class="shadow-none">
-          <div class="p-4 border-bottom">
-            <h5>{{ $t('pages.access.attribute') }} {{ $t('pages.access.permissions') }}</h5>
-            <div class="mb-0 text-muted">
-              {{ $t('pages.access.managePermissions') }}
-              <span>
-                <BDropdown
-                  variant="link"
-                  no-caret
-                  toggle-class="text-decoration-none p-0"
-                  :disabled="disabled">
-                  <template v-slot:button-content>
-                    <span>
-                      {{ $t('pages.access.setAllAttributes') }}
-                    </span>
-                  </template>
-                  <BDropdownItem @click="setAllAccessFlags(true)">
-                    {{ $t('pages.access.read') }}
-                  </BDropdownItem>
-                  <BDropdownItem
-                    v-if="showReadWrite"
-                    @click="setAllAccessFlags(false)">
-                    {{ $t('pages.access.readWrite') }}
-                  </BDropdownItem>
-                  <BDropdownItem @click="removeAllAccessFlags()">
-                    {{ $t('common.none') }}
-                  </BDropdownItem>
-                </BDropdown>
-              </span>.
-            </div>
-          </div>
-          <div
-            id="attributePermissionsContainer"
-            class="overflow-auto">
-            <div
-              v-for="attribute in availableAttibutes"
-              :key="attribute.key"
-              class="p-4 border-top">
-              <small class="d-inline-block text-monospace flex-grow-1">
-                {{ attribute.key }}
-              </small>
-              <div class="float-right">
-                <BDropdown
-                  variant="link"
-                  toggle-class="text-decoration-none p-0"
-                  :disabled="disabled">
-                  <template v-slot:button-content>
-                    <span class="mr-5">
-                      {{ attribute.status }}
-                    </span>
-                  </template>
-                  <BDropdownItem @click="setAccessFlag(attribute.key, true)">
-                    {{ $t('pages.access.read') }}
-                  </BDropdownItem>
-                  <BDropdownItem
-                    v-if="showReadWrite"
-                    @click="setAccessFlag(attribute.key, false)">
-                    {{ $t('pages.access.readWrite') }}
-                  </BDropdownItem>
-                  <BDropdownItem @click="removeAccessFlag(attribute.key)">
-                    {{ $t('common.none') }}
-                  </BDropdownItem>
-                </BDropdown>
+        <span v-show="showAdvanced">
+          <FrField
+            class="mb-4 flex-grow-1"
+            :field="privilegeName"
+            @input="privilege.name = $event" />
+          <BCard
+            body-class="p-0"
+            class="shadow-none">
+            <div class="p-4 border-bottom">
+              <h5>{{ $t('pages.access.attribute') }} {{ $t('pages.access.permissions') }}</h5>
+              <div class="mb-0 text-muted">
+                {{ $t('pages.access.managePermissions') }}
+                <span>
+                  <BDropdown
+                    variant="link"
+                    no-caret
+                    toggle-class="text-decoration-none p-0"
+                    :disabled="disabled">
+                    <template v-slot:button-content>
+                      <span>
+                        {{ $t('pages.access.setAllAttributes') }}
+                      </span>
+                    </template>
+                    <BDropdownItem @click="setAllAccessFlags(true)">
+                      {{ $t('pages.access.read') }}
+                    </BDropdownItem>
+                    <BDropdownItem
+                      v-if="showReadWrite"
+                      @click="setAllAccessFlags(false)">
+                      {{ $t('pages.access.readWrite') }}
+                    </BDropdownItem>
+                    <BDropdownItem @click="removeAllAccessFlags()">
+                      {{ $t('common.none') }}
+                    </BDropdownItem>
+                  </BDropdown>
+                </span>.
               </div>
             </div>
-          </div>
-        </BCard>
-        <BCard class="mt-4 mb-3 py-1 shadow-none">
-          <FrField
-            :field="queryFilterToggleField"
-            :disabled="disabled"
-            @input="toggleFilter" />
-          <div
-            v-if="queryFilterToggleField.value"
-            class="pt-2">
-            <FrQueryFilterBuilder
-              @change="queryFilterChange"
+            <div
+              id="attributePermissionsContainer"
+              class="overflow-auto">
+              <div
+                v-for="attribute in availableAttibutes"
+                :key="attribute.key"
+                class="p-4 border-top">
+                <small class="d-inline-block text-monospace flex-grow-1">
+                  {{ attribute.key }}
+                </small>
+                <div class="float-right">
+                  <BDropdown
+                    variant="link"
+                    toggle-class="text-decoration-none p-0"
+                    :disabled="disabled">
+                    <template v-slot:button-content>
+                      <span class="mr-5">
+                        {{ attribute.status }}
+                      </span>
+                    </template>
+                    <BDropdownItem @click="setAccessFlag(attribute.key, true)">
+                      {{ $t('pages.access.read') }}
+                    </BDropdownItem>
+                    <BDropdownItem
+                      v-if="showReadWrite"
+                      @click="setAccessFlag(attribute.key, false)">
+                      {{ $t('pages.access.readWrite') }}
+                    </BDropdownItem>
+                    <BDropdownItem @click="removeAccessFlag(attribute.key)">
+                      {{ $t('common.none') }}
+                    </BDropdownItem>
+                  </BDropdown>
+                </div>
+              </div>
+            </div>
+          </BCard>
+          <BCard class="mt-4 mb-3 py-1 shadow-none">
+            <FrField
+              :field="queryFilterToggleField"
               :disabled="disabled"
-              :query-filter-string="privilege.filter"
-              :resource-name="identityObjectSchema.title.toLowerCase()"
-              :properties="queryFilterDropdownOptions" />
-          </div>
-        </BCard>
+              @input="toggleFilter" />
+            <div
+              v-if="queryFilterToggleField.value"
+              class="pt-2">
+              <FrQueryFilterBuilder
+                @change="queryFilterChange"
+                :disabled="disabled"
+                :query-filter-string="privilege.filter"
+                :resource-name="identityObjectSchema.title.toLowerCase()"
+                :properties="queryFilterDropdownOptions" />
+            </div>
+          </BCard>
+        </span>
       </template>
     </BTable>
   </div>
@@ -207,6 +205,7 @@ to such license between the licensee and ForgeRock AS. -->
 
 <script>
 import {
+  cloneDeep,
   find,
   findIndex,
   filter,
@@ -251,6 +250,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    excludedNames: {
+      type: Array,
+      default: () => [],
     },
     privilege: {
       type: Object,
@@ -311,11 +314,15 @@ export default {
         type: 'text',
         title: this.$t('pages.access.privilegeName'),
         value: this.privilege.name,
-        validation: 'required',
+        validation: { required: true, unique: this.uniqueName },
       },
+      uniqueNames: [],
     };
   },
   computed: {
+    error() {
+      return this.uniqueNames.includes(this.privilegeName.value.trim());
+    },
     permissions() {
       const { permissions } = this.privilege;
 
@@ -324,7 +331,7 @@ export default {
         create: includes(permissions, 'CREATE'),
         update: includes(permissions, 'UPDATE'),
         delete: includes(permissions, 'DELETE'),
-        _showDetails: this.showAdvanced,
+        _showDetails: true,
       }];
     },
     availableAttibutes() {
@@ -380,6 +387,16 @@ export default {
       deep: true,
       handler(newVal) {
         this.$emit('input', newVal, this.index);
+      },
+    },
+    excludedNames: {
+      immediate: true,
+      deep: true,
+      handler(newVal) {
+        this.uniqueNames = cloneDeep(newVal);
+        this.uniqueNames[this.index] = '';
+        this.uniqueNames.forEach((name) => name.trim());
+        this.privilegeName.validation = { required: true, unique: this.uniqueNames };
       },
     },
   },
@@ -525,6 +542,10 @@ export default {
 
   .fixed-width-checkbox-cell {
     width: 49px;
+  }
+
+  .table.b-table > tbody > .b-table-details > td {
+    padding-top: 0;
   }
 }
 </style>
