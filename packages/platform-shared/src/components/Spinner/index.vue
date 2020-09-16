@@ -42,18 +42,18 @@ export default {
 </script>
 <style lang="scss">
 .spinner-large {
-  width: 10rem;
-  height: 10rem;
+  width: 10rem !important;
+  height: 10rem !important;
 }
 
 .spinner-medium {
-  width: 3rem;
-  height: 3rem;
+  width: 3rem !important;
+  height: 3rem !important;
 }
 
 .spinner-small {
-  width: 1rem;
-  height: 1rem;
-  border-width: 0.2em;
+  width: 1rem !important;
+  height: 1rem !important;
+  border-width: 0.2em !important;
 }
 </style>
