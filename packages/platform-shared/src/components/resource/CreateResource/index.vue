@@ -96,10 +96,23 @@ to such license between the licensee and ForgeRock AS. -->
             <BButton
               v-if="isLastStep"
               @click="saveForm"
-              :disabled="formFields.length === 0 || invalid"
+              :disabled="formFields.length === 0 || invalid || isSaving"
               type="submit"
               variant="primary">
-              {{ $t('common.save') }}
+              <div v-if="!isSaving">
+                {{ $t('common.save') }}
+              </div>
+              <div
+                v-else
+                class="d-flex">
+                <FrSpinner
+                  size="sm"
+                  class="spinner-border-sm mr-2"
+                  button-spinner />
+                <span class="ml-1">
+                  {{ $t('common.saving') }}
+                </span>
+              </div>
             </BButton>
           </div>
         </div>
@@ -112,10 +125,23 @@ to such license between the licensee and ForgeRock AS. -->
           <BButton
             variant="primary"
             @click="saveForm"
-            :disabled="formFields.length === 0 || invalid || (passwordValue !== '' && !passwordValid)"
+            :disabled="formFields.length === 0 || invalid || (passwordValue !== '' && !passwordValid) || isSaving"
             type="submit"
           >
-            {{ $t('common.save') }}
+            <div v-if="!isSaving">
+              {{ $t('common.save') }}
+            </div>
+            <div
+              v-else
+              class="d-flex">
+              <FrSpinner
+                size="sm"
+                class="spinner-border-sm mr-2"
+                button-spinner />
+              <span class="ml-1">
+                {{ $t('common.saving') }}
+              </span>
+            </div>
           </BButton>
         </div>
       </template>
@@ -143,6 +169,7 @@ import {
 } from 'bootstrap-vue';
 import { ValidationObserver } from 'vee-validate';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import RelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
@@ -167,6 +194,7 @@ export default {
   components: {
     FrCustomStep: CustomStep,
     FrField,
+    FrSpinner,
     FrRelationshipEdit: RelationshipEdit,
     FrCreateAssignmentModal: CreateAssignmentModal,
     BButton,
@@ -207,6 +235,7 @@ export default {
       stepIndex: -1,
       passwordValue: '',
       passwordValid: true,
+      isSaving: false,
     };
   },
   watch: {
@@ -258,6 +287,10 @@ export default {
   },
   methods: {
     saveForm() {
+      if (this.isSaving) {
+        return;
+      }
+      this.isSaving = true;
       const idmInstance = this.getRequestService();
       const validateSave = this.$refs.observer.validate();
 
@@ -281,12 +314,15 @@ export default {
             this.displayNotification('IDMMessages', 'success', this.$t('pages.access.successCreate', { resource: this.resourceTitle || capitalize(this.resourceName) }));
           },
           (error) => {
+            this.isSaving = false;
             this.setErrors(error.response);
           });
         } else {
+          this.isSaving = false;
           this.displayNotification('IDMMessages', 'error', this.$t('pages.access.invalidCreate'));
         }
-      });
+      })
+        .catch(() => { this.isSaving = false; });
     },
     setErrors(error) {
       const generatedErrors = this.findPolicyError(error, this.createProperties);
@@ -313,6 +349,7 @@ export default {
       if (this.$refs.observer) {
         this.$refs.observer.reset();
       }
+      this.isSaving = false;
       this.passwordValue = '';
       this.passwordValid = true;
       this.formFields = {};
