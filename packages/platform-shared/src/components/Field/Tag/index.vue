@@ -11,7 +11,9 @@ to such license between the licensee and ForgeRock AS. -->
       :disabled="disabled"
       :class="[{'fr-error': errors.length > 0}, 'fr-tags']">
       <template v-slot="{ tags, inputAttrs, inputHandlers, addTag, removeTag }">
-        <div @click="$refs.input.focus()">
+        <div
+          class="overflow-hidden"
+          @click="$refs.input.focus()">
           <label
             v-if="inputValue.length"
             class="text-secondary w-100">
