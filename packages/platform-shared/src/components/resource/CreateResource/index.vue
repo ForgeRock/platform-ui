@@ -39,6 +39,14 @@ to such license between the licensee and ForgeRock AS. -->
                   :autofocus="index === 0"
                   :field="field"
                   :display-description="false" />
+
+                <!-- Special logic for password -->
+                <FrPolicyPanel
+                  v-if="field.type === 'password' && policies.length"
+                  class="mt-2"
+                  :dynamic="false"
+                  :num-columns="2"
+                  :policies="policies" />
               </BFormGroup>
 
               <!-- for singletonRelationhip values -->
@@ -172,9 +180,11 @@ import {
 } from 'bootstrap-vue';
 import { ValidationObserver } from 'vee-validate';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import PolicyPanel from '@forgerock/platform-shared/src/components/PolicyPanel';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import RelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+import PasswordPolicyMixin from '@forgerock/platform-shared/src/mixins/PasswordPolicyMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import CreateAssignmentModal from '@forgerock/platform-admin/src/views/ManagedIdentities/Assignment/Create';
@@ -200,6 +210,7 @@ export default {
     FrSpinner,
     FrRelationshipEdit: RelationshipEdit,
     FrCreateAssignmentModal: CreateAssignmentModal,
+    FrPolicyPanel: PolicyPanel,
     BButton,
     BFormGroup,
     BForm,
@@ -212,6 +223,7 @@ export default {
     ResourceMixin,
     RestMixin,
     NotificationMixin,
+    PasswordPolicyMixin,
   ],
   props: {
     createProperties: {
@@ -240,6 +252,7 @@ export default {
       passwordValue: '',
       passwordValid: true,
       isSaving: false,
+      policies: [],
     };
   },
   watch: {
@@ -403,6 +416,11 @@ export default {
         if (prop.key === 'password') {
           prop.validation = 'required';
           prop.type = 'password';
+
+          // get the password policy config to display the validation rules
+          this.getPolicies(this.resourceName).then((res) => {
+            this.policies = res.data;
+          });
         }
       });
 

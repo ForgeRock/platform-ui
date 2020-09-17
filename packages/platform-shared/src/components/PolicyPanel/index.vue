@@ -13,7 +13,7 @@ to such license between the licensee and ForgeRock AS. -->
           <li
             v-for="(policy) in policyColumns[i-1]"
             :key="policy.policyId"
-            :class="[{'fr-valid': !includes(policyFailures, policy.name)}, 'text-muted fr-policy-list-item']">
+            :class="[{'fr-valid': dynamic && !includes(policyFailures, policy.name)}, 'text-muted fr-policy-list-item']">
             {{ $t(`common.policyValidationMessages.${policy.name}`, policy.params) }}
           </li>
         </ul>
@@ -62,6 +62,10 @@ export default {
     policyFailures: {
       type: Array,
       default: () => [],
+    },
+    dynamic: {
+      type: Boolean,
+      default: true,
     },
   },
   data() {
