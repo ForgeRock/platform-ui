@@ -1,7 +1,7 @@
 {
   "common": {
-    "active": "Active",
     "activate": "Activate",
+    "active": "Active",
     "add": "Add",
     "addObject": "Add {object}",
     "admin": "Admin",
@@ -9,6 +9,8 @@
     "agree": "I Agree",
     "avatar": "Avatar",
     "back": "Back",
+    "blocked": "Blocked",
+    "buildNumber": "Build {buildNumber} ({buildDateTime})",
     "cancel": "Cancel",
     "cannotBeUndone": "Warning this cannot be undone!",
     "change": "Change",
@@ -30,6 +32,7 @@
     "end": "End",
     "error": "Error",
     "expires": "Expires",
+    "hide": "Hide",
     "inactive": "Inactive",
     "invited": "Invited",
     "loading": "Loading",
@@ -59,12 +62,12 @@
     "signOut": "Sign Out",
     "signUp": "Sign Up",
     "start": "Start",
+    "status": "Status",
     "submit": "Submit",
     "tenant": "Tenant",
     "time": "Time",
     "typeToSearch": "Type to search",
     "update": "Update",
-    "buildNumber": "Build {buildNumber} ({buildDateTime})",
     "view": "View",
     "waitingToConnect": "Waiting to connect...",
     "yes": "Yes",
@@ -131,7 +134,12 @@
       "alphaNumericDashOnly": "Can only contain alphanumeric characters, numbers, dashes or underscores",
       "noSpace": "Cannot start or end with the space character"
     },
-    "status": "Status"
+    "user": {
+      "username": "Username",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email"
+    }
   },
   "dashboard": {
     "managedAccess": {

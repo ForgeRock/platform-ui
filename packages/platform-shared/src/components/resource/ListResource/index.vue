@@ -80,6 +80,14 @@ to such license between the licensee and ForgeRock AS. -->
           </template>
         </slot>
       </template>
+      <template
+        v-for="(key, slotName) in $scopedSlots"
+        v-slot:[slotName]="slotData">
+        <!-- @slot Custom cell slot. -->
+        <slot
+          :name="slotName"
+          v-bind="slotData" />
+      </template>
     </BTable>
     <div class="card-footer py-2">
       <nav aria-label="Page navigation">
@@ -213,6 +221,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    propColumns: {
+      type: Array,
+      default: () => [],
+    },
     lastPage: {
       type: Boolean,
       default: true,
@@ -220,8 +232,8 @@ export default {
   },
   data() {
     return {
-      resourceName: this.$route.params.resourceName,
-      resourceType: this.$route.params.resourceType,
+      resourceName: this.routerParameters.resourceName,
+      resourceType: this.routerParameters.resourceType,
       isRowSelected: false,
       tableHover: true,
       columns: [],
@@ -241,7 +253,18 @@ export default {
   },
   mounted() {
     this.resourceName = this.getResourceName(this.routerParameters.resourceName);
-    this.loadTableDefs();
+    if (this.propColumns.length) {
+      this.displayFields = this.propColumns.map((obj) => obj.key);
+      this.columns = [
+        ...this.propColumns,
+        {
+          key: 'actions',
+          label: '',
+        },
+      ];
+    } else {
+      this.loadTableDefs();
+    }
     this.loadData('true', this.displayFields, this.defaultSort, 1);
   },
   methods: {
@@ -410,3 +433,8 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+  /deep/ .table tr:not(.b-table-empty-row) td {
+    cursor: pointer;
+  }
+</style>
