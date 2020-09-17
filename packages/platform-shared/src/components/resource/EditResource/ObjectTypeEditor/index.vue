@@ -21,6 +21,7 @@ to such license between the licensee and ForgeRock AS. -->
             </div>
             <!-- for singletonRelationhip values -->
             <FrRelationshipEdit
+              class="mb-4"
               v-if="field.type === 'relationship'"
               :disabled="field.disabled"
               :relationship-property="field"
