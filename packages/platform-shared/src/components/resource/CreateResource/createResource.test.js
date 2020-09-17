@@ -78,17 +78,13 @@ describe('CreateResource.vue', () => {
     expect(error[0].msg).toBe('Invalid email format (example@example.com)');
   });
 
-  it('Clean dialog after close', () => {
-    wrapper.setData({
-      formFields: {
-        test: 'test',
-        boolTest: true,
-      },
+  it('Sets formfields using props when initialising', () => {
+    wrapper.vm.initialiseData();
+    expect(wrapper.vm.formFields).toStrictEqual({
+      boolTest: false,
+      password: '',
+      test: '',
     });
-
-    wrapper.vm.hideModal();
-
-    expect(wrapper.vm.formFields).toStrictEqual({});
   });
 
   it('Clean save data', () => {
