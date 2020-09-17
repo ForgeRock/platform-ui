@@ -18,18 +18,19 @@ to such license between the licensee and ForgeRock AS. -->
       cancel-variant="outline-secondary"
       @hide="hideModal"
       @hidden="stepIndex = -1"
+      @show="initialiseData"
       :body-class="[{ 'p-0' : stepIndex > -1 }]"
       :title="modalTitle">
       <BRow>
         <BCol v-if="stepIndex === -1">
           <!-- Creating resource currently only supports String, Number, Boolean, and singleton relationships -->
           <BForm
-            v-if="createProperties.length"
+            v-if="clonedCreateProperties.length"
             @keyup.enter="saveForm"
             class="mb-3"
             @submit="saveForm"
             name="edit-personal-form">
-            <template v-for="(field, index) in createProperties">
+            <template v-for="(field, index) in clonedCreateProperties">
               <BFormGroup
                 :key="'createResource' + index"
                 v-if="((field.type === 'string' && !field.isConditional) || field.type === 'number' || field.type === 'boolean' || field.type === 'password') && field.encryption === undefined">
@@ -153,6 +154,7 @@ to such license between the licensee and ForgeRock AS. -->
 import {
   capitalize,
   clone,
+  cloneDeep,
   each,
   endsWith,
   find,
@@ -232,6 +234,7 @@ export default {
   data() {
     return {
       formFields: {},
+      clonedCreateProperties: [],
       stepIndex: -1,
       passwordValue: '',
       passwordValid: true,
@@ -240,7 +243,7 @@ export default {
   },
   watch: {
     passwordValue(newVal) {
-      const passwordField = find(this.createProperties, { key: 'password' });
+      const passwordField = find(this.clonedCreateProperties, { key: 'password' });
 
       if (passwordField) {
         passwordField.value = newVal;
@@ -251,7 +254,7 @@ export default {
     steps() {
       const steps = [];
 
-      this.createProperties.forEach((property) => {
+      this.clonedCreateProperties.forEach((property) => {
         if (property.isConditional || property.isTemporalConstraint || property.key === 'privileges') {
           steps.push(property);
         }
@@ -296,7 +299,7 @@ export default {
 
       validateSave.then((isValid) => {
         if (isValid) {
-          this.createProperties.forEach((field) => {
+          this.clonedCreateProperties.forEach((field) => {
             this.formFields[field.key] = field.value;
 
             if (!field.value) {
@@ -308,7 +311,6 @@ export default {
 
           idmInstance.post(`${this.resourceType}/${this.resourceName}?_action=create`, saveData).then(() => {
             this.$emit('refreshGrid');
-            this.resetDialog();
             this.hideModal();
 
             this.displayNotification('IDMMessages', 'success', this.$t('pages.access.successCreate', { resource: this.resourceTitle || capitalize(this.resourceName) }));
@@ -325,7 +327,7 @@ export default {
         .catch(() => { this.isSaving = false; });
     },
     setErrors(error) {
-      const generatedErrors = this.findPolicyError(error, this.createProperties);
+      const generatedErrors = this.findPolicyError(error, this.clonedCreateProperties);
       this.$refs.observer.reset();
 
       if (generatedErrors.length > 0) {
@@ -341,18 +343,7 @@ export default {
       }
     },
     hideModal() {
-      this.resetDialog();
       this.$root.$emit('bv::hide::modal', 'createResourceModal');
-    },
-    // Clean dialog after closing/saving
-    resetDialog() {
-      if (this.$refs.observer) {
-        this.$refs.observer.reset();
-      }
-      this.isSaving = false;
-      this.passwordValue = '';
-      this.passwordValid = true;
-      this.formFields = {};
     },
     // Remove optional fields to not save with empty string
     cleanData(data) {
@@ -364,7 +355,7 @@ export default {
       return data;
     },
     setSingletonRelationshipValue(data, fieldKey) {
-      const property = this.createProperties.find((prop) => prop.key === fieldKey);
+      const property = this.clonedCreateProperties.find((prop) => prop.key === fieldKey);
       property.value = data;
     },
     loadNextStep() {
@@ -384,14 +375,14 @@ export default {
       this.stepIndex = this.stepIndex - 1;
     },
     updateStepPropertyValue(property, val) {
-      const createProperty = find(this.createProperties, { key: property });
+      const createProperty = find(this.clonedCreateProperties, { key: property });
 
       createProperty.value = val;
     },
     setFormFields() {
       const tempFormFields = {};
 
-      each(this.createProperties, (prop) => {
+      each(this.clonedCreateProperties, (prop) => {
         if (prop.type === 'string' || prop.type === 'number') {
           tempFormFields[prop.key] = '';
         } else if (prop.type === 'relationship') {
@@ -416,9 +407,17 @@ export default {
 
       this.formFields = tempFormFields;
     },
-  },
-  mounted() {
-    this.setFormFields();
+    initialiseData() {
+      this.isSaving = false;
+      this.passwordValue = '';
+      this.passwordValid = true;
+      this.clonedCreateProperties = cloneDeep(this.createProperties);
+      this.setFormFields();
+
+      if (this.$refs.observer) {
+        this.$refs.observer.reset();
+      }
+    },
   },
 };
 </script>
