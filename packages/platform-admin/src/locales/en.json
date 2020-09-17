@@ -121,7 +121,7 @@
     "matchUsing": "Match Using",
     "matchUsingHelp": "Select one or more properties for unique record match.",
     "viewDetails": "View Details",
-    "uploadingFile": "Uploading file",
+    "uploadingFile": "Uploading file {uploadPercentage}% complete",
     "importComplete": "Import Complete",
     "complete": "Complete",
     "error": "Error",
