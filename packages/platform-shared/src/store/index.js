@@ -31,6 +31,7 @@ export default new Vuex.Store({
     realmAliases: [],
     returnRoute: '',
     returnRouteText: '',
+    tenant: '',
     theme: 'default',
     userId: null,
     userSearchAttribute: null,
@@ -129,6 +130,10 @@ export default new Vuex.Store({
         if (env.VUE_APP_FRAAS_ADMIN_MANAGED_OBJECT_NAME) {
           state.fraasAdminManagedObjectName = env.VUE_APP_FRAAS_ADMIN_MANAGED_OBJECT_NAME;
         }
+        // eslint-disable-next-line no-control-regex
+        const tenantFromUrlReg = new RegExp('^(?:https?://)?(?:[^@/\n]+@)?(?:www.)?([^:/?\n]+)');
+        // eslint-disable-next-line prefer-destructuring
+        state.tenant = state.idmAdminURL.match(tenantFromUrlReg)[1];
       }
     },
     setReturnRoute(state, newValue) {

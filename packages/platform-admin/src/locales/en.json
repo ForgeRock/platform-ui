@@ -626,6 +626,21 @@
   "tenantSettings": {
     "title": "Tenant Settings",
     "dropdownTitle": "Tenant settings",
+    "tabs": {
+      "details": "Details",
+      "admins": "Admins",
+      "globalSettings": "Global Settings"
+    },
+    "details": {
+      "title": "Tenant Details",
+      "organizationName": "Organization Name",
+      "tenantName": "Tenant Name"
+    },
+    "admins": {
+      "title": "Admins",
+      "invite": "Invite Admins",
+      "resendInvite": "Resend Email Invite"
+    },
     "globalSettings": {
       "title": "Global Settings",
       "getDataFail": "Unable to retrieve global settings data",
