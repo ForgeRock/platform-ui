@@ -344,7 +344,6 @@
     "title": "Password Policy",
     "subtitle": "Define password rules for identities.",
     "managedError": "Error retrieving managed objects",
-    "policyReadError": "Error retrieving password policy",
     "passwordLength": "Password length",
     "minLength": "Minimum",
     "maxLength": "and maximum 64 characters",
