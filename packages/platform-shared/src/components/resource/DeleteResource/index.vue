@@ -14,7 +14,7 @@ to such license between the licensee and ForgeRock AS. -->
         {{ $t(`pages.identities.deleteResource.title`, { resource: resourceTitle }) }}
       </h5>
     </template>
-    <p>{{ $t(`pages.identities.deleteResource.body`, { resource: resourceName }) }}</p>
+    <p>{{ $t(`pages.identities.deleteResource.body`, { resource: nameDisplayed }) }}</p>
     <template v-slot:modal-footer="{ cancel }">
       <BButton
         variant="link"
@@ -27,7 +27,7 @@ to such license between the licensee and ForgeRock AS. -->
         @click="deleteResource()"
         data-test-id="deleteButton"
         variant="danger">
-        {{ $t(`pages.identities.deleteResource.primaryButton`, { resource: resourceName }) }}
+        {{ $t(`pages.identities.deleteResource.primaryButton`, { resource: nameDisplayed }) }}
       </BButton>
     </template>
   </BModal>
@@ -51,7 +51,10 @@ export default {
   },
   computed: {
     resourceTitle() {
-      return this.resourceName.charAt(0).toUpperCase() + this.resourceName.slice(1);
+      return this.nameDisplayed.charAt(0).toUpperCase() + this.nameDisplayed.slice(1);
+    },
+    nameDisplayed() {
+      return this.displayName || this.resourceName;
     },
   },
   props: {
@@ -76,6 +79,10 @@ export default {
         };
         return retv;
       },
+    },
+    displayName: {
+      type: String,
+      default: '',
     },
     resourceToDeleteId: {
       type: String,
