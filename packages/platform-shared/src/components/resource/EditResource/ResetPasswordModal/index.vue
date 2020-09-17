@@ -13,8 +13,14 @@ to such license between the licensee and ForgeRock AS. -->
       {{ $t('common.helpText.resetPassword') }}
     </p>
     <FrField
+      class="mb-2"
       :field="password"
       :failed-policies="failures" />
+    <FrPolicyPanel
+      v-if="policies.length"
+      :dynamic="false"
+      :num-columns="2"
+      :policies="policies" />
     <template #modal-footer="{ ok, cancel }">
       <BButton
         variant="link"
@@ -36,9 +42,11 @@ import {
   BModal,
 } from 'bootstrap-vue';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+import PasswordPolicyMixin from '@forgerock/platform-shared/src/mixins/PasswordPolicyMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import PolicyPanel from '@forgerock/platform-shared/src/components/PolicyPanel';
 
 /**
  * Modal used to reset a users password as an administrator. Used in EditResource component.
@@ -49,9 +57,11 @@ export default {
     BButton,
     BModal,
     FrField,
+    FrPolicyPanel: PolicyPanel,
   },
   mixins: [
     NotificationMixin,
+    PasswordPolicyMixin,
     RestMixin,
     ResourceMixin,
   ],
@@ -87,7 +97,13 @@ export default {
         validation: 'required',
       },
       failures: [],
+      policies: [],
     };
+  },
+  mounted() {
+    this.getPolicies(this.resourceName).then((res) => {
+      this.policies = res.data;
+    });
   },
   methods: {
     /**
