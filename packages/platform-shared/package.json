@@ -179,6 +179,7 @@
         "disabled",
         "export",
         "first-child",
+        "focus-within",
         "focus",
         "global",
         "hover",

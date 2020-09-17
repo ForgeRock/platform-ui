@@ -178,6 +178,7 @@
         "not",
         "after",
         "first-child",
+        "focus-within",
         "last-child",
         "last-of-type",
         "active",
