@@ -397,9 +397,6 @@
       "serviceExample": "Machine-to-machine",
       "createCredentials": "Create a client ID for your application.",
       "createCredentialsWithSecret": "Create a client ID and secret for your application.",
-      "alphaNumericOnly": "Can only contain alphanumeric characters",
-      "alphaNumericDashOnly": "Can only contain alphanumeric characters, numbers, dashes or underscores",
-      "noSpace": "Cannot start or end with the space character",
       "createApp": "Create Application",
       "defaultModalTitle": "New Application",
       "appTypeModalTitle": "New %{appType} App",
@@ -520,9 +517,7 @@
       "cardTitle": "Client Credentials",
       "discoveryURILabel": "Discovery URI",
       "clientIDLabel": "Client ID",
-      "userpasswordLabel": "Client Secret",
-      "copySuccess": "Copied to your clipboard",
-      "copyFail": "Failed to copy"
+      "userpasswordLabel": "Client Secret"
     },
     "generalSettings": {
       "showAdvanced": "{stateText} advanced settings",
@@ -637,6 +632,31 @@
         "title": "Server",
         "cookieName": "Cookie Name"
       }
+    }
+  },
+  "gatewaysAndAgents": {
+    "navTitle": "Gateways & Agents",
+    "title": "Gateway and Agent Profiles",
+    "subTitle": "Protect resources at the edge using Identity Gateway or an agent.",
+    "addGatewayOrAgent": "New Profile",
+    "noGatewaysOrAgentsText": "You haven't added any Gateways or Agents",
+    "idFieldTitle": "ID",
+    "userpasswordTitle": "Password",
+    "getListDataFail": "Unable to retrieve Gateways and Agents data",
+    "getEditDataFail": "Unable to get {type} properties",
+    "deleteError": "Unable to delete {type}",
+    "updateSuccess": "Updated {type}",
+    "updateFail": "Unable to update {type}",
+    "resetPasswordSuccess": "Password reset",
+    "resetPasswordFail": "Unable to reset password",
+    "gateway": {
+      "name": "Identity Gateway Profile",
+      "redirectUrlName": "Redirect URLs",
+      "redirectUrlHelp": "Redirect URLs for cross domain single sign-on (CDSSO) eg. http://openig.ext.com:8080/home/cdsso/redirect"
+    },
+    "createModal": {
+      "header": "New Identity Gateway Profile",
+      "errorCreating": "Could not create {type}"
     }
   }
 }
