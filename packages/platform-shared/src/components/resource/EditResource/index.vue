@@ -48,6 +48,7 @@ to such license between the licensee and ForgeRock AS. -->
       v-if="!isLoading && isAssignments"
       :display-properties="displayProperties"
       :relationship-properties="relationshipProperties"
+      :resource-name="resourceName"
       :parent-id="id"
       :disable-save-button="disableSaveButton" />
     <BCard
