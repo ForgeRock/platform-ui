@@ -10,6 +10,7 @@ to such license between the licensee and ForgeRock AS. -->
     <FrCreateAssignmentModal
       v-if="isAssignments"
       @refreshGrid="$emit('refreshGrid')"
+      :resource-name="resourceName"
       :create-properties="createProperties" />
     <BModal
       v-else
