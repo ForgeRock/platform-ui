@@ -82,6 +82,7 @@
       "VALID_PHONE_FORMAT": "Must be a valid phone number",
       "VALID_NAME_FORMAT": "Must have valid name characters",
       "CANNOT_CONTAIN_CHARACTERS": "Cannot contain characters: %{forbiddenChars}",
+      "MUST_CONTAIN_CHARACTERS": "Must have at least %{minItems} of these characters: %{requiredChars}",
       "IS_NUMBER": "Must be a number greater than or equal to zero.",
       "IS_NUMBER_GREATER_ZERO": "Must be a number greater than or equal to 1.",
       "REQUIRED": "Cannot be blank",
