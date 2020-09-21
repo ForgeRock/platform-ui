@@ -6,7 +6,10 @@ of the MIT license. See the LICENSE file for details.
 -->
 
 <template>
-  <FrCenterCard :show-logo="true">
+  <FrCenterCard
+    :hide-footer="true"
+    :logo-path="logo"
+    :show-logo="true">
     <template v-slot:center-card-header>
       <div v-if="!loading">
         <h2 class="h2">
@@ -100,7 +103,7 @@ import {
   CallbackType,
 } from '@forgerock/javascript-sdk';
 import Vue from 'vue';
-import FrCenterCard from '@/components/utils/CenterCard';
+import FrCenterCard from '@forgerock/platform-shared/src/components/CenterCard';
 import WithCallback from '@forgerock/platform-shared/src/hoc/CallbackHoc';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import Spinner from '@forgerock/platform-shared/src/components/Spinner';
@@ -129,6 +132,12 @@ export default {
     BButton,
     BCardBody,
     Spinner,
+  },
+  props: {
+    logo: {
+      type: String,
+      default: '',
+    },
   },
   mixins: [
     NotificationMixin,
