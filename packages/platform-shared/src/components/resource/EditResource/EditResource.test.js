@@ -70,26 +70,32 @@ describe('EditResource.vue', () => {
         userName: {
           type: 'string',
           title: 'Username',
+          viewable: true,
         },
         sn: {
           type: 'string',
           title: 'Last Name',
+          viewable: true,
         },
         email: {
           type: 'string',
           title: 'Email',
+          viewable: true,
         },
         contractor: {
           type: 'boolean',
           title: 'Contractor',
+          viewable: true,
         },
         country: {
           type: 'string',
           title: 'Country',
+          viewable: true,
         },
         manager: {
           type: 'relationship',
           title: 'Manager',
+          viewable: true,
         },
       },
     };
@@ -131,6 +137,7 @@ describe('EditResource.vue', () => {
         readOnly: false,
         disabled: false,
         value: '',
+        viewable: true,
       },
     });
     expect(wrapper.vm.buildResourceUrl()).toEqual('test/test/test?_fields=*,manager/*');

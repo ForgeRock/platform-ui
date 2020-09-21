@@ -437,7 +437,7 @@ export default {
             tempProp.disabled = false;
           }
 
-          if (createPriv.attribute !== 'password' && !tempProp.isVirtual && !tempProp.isConditional) {
+          if (createPriv.attribute !== 'password' && tempProp.viewable && !tempProp.isVirtual && !tempProp.isConditional) {
             this.displayProperties.push(tempProp);
           } else {
             tempProp.type = 'password';
