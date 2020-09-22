@@ -50,11 +50,10 @@ to such license between the licensee and ForgeRock AS. -->
 <script>
 
 import {
-  capitalize,
   clone,
 } from 'lodash';
 import { BButton, BForm } from 'bootstrap-vue';
-import { ValidationObserver } from 'vee-validate'; // ValidationProvider,
+import { ValidationObserver } from 'vee-validate';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import RelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
@@ -90,6 +89,10 @@ export default {
     isOpenidmAdmin: {
       type: Boolean,
       default: false,
+    },
+    resourceTitle: {
+      type: String,
+      default: '',
     },
     subPropertyName: {
       type: String,
@@ -137,9 +140,9 @@ export default {
         }
 
         idmInstance.patch(this.resourcePath, saveData).then(() => {
-          const resourceName = this.resourcePath.split('/')[1];
+          const resourceName = this.resourceTitle ? this.resourceTitle : this.resourcePath.split('/')[1];
           this.oldFormFields = clone(this.formFields);
-          this.displayNotification('IDMMessages', 'success', this.$t('pages.access.successEdited', { resource: capitalize(resourceName) }));
+          this.displayNotification('IDMMessages', 'success', this.$t('pages.access.successEdited', { resource: resourceName }));
         },
         (error) => {
           const generatedErrors = this.findPolicyError(error.response, this.displayProperties);
