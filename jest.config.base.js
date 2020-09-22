@@ -7,6 +7,7 @@
  */
 
 const path = require('path');
+process.env.VUE_APP_AM_URL = 'https://default.iam.example.com/am';
 
 module.exports = {
   moduleFileExtensions: [
