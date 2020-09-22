@@ -65,6 +65,7 @@ to such license between the licensee and ForgeRock AS. -->
               :display-properties="displayProperties"
               :disable-save-button="disableSaveButton"
               :resource-path="`${resourceType}/${resourceName}/${id}`"
+              :resource-title="resourceTitle"
               :is-openidm-admin="isOpenidmAdmin" />
             <span v-else>
               {{ $t('pages.access.noAvailableProperties') }}
