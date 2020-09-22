@@ -155,15 +155,25 @@ const mutations = {
   },
 
   setSchemaDataPropertyValue(state, obj) {
-    const { value, schemaType } = obj;
-    const model = endsWith(obj.model, '[0]') ? obj.model.substring(0, obj.model.length - 3) : obj.model;
+    const { value, schemaType, model } = obj;
 
-    const propertyExists = has(state.jsonSchemaData[schemaType], model);
+    let modelName = model;
+    let valueToSet = value;
 
-    if (!propertyExists || endsWith(model, 'userpassword')) {
-      set(state.jsonSchemaData[schemaType], model, value);
+    // A model path ending with [0] indicates the backend is expecting an array
+    // but we have presented a single value input to the user whose value should be stored as a single array entry
+    if (endsWith(model, '[0]')) {
+      // To get the correct location of the property to save we need to remove the '[0]' from the end of model
+      modelName = model.substring(0, model.length - 3);
+      valueToSet = [value];
+    }
+
+    const propertyExists = has(state.jsonSchemaData[schemaType], modelName);
+
+    if (!propertyExists || endsWith(modelName, 'userpassword')) {
+      set(state.jsonSchemaData[schemaType], modelName, valueToSet);
     } else {
-      set(state.jsonSchemaData[schemaType], `${model}.value`, value);
+      set(state.jsonSchemaData[schemaType], `${modelName}.value`, valueToSet);
     }
   },
 };
