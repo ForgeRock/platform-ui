@@ -14,7 +14,11 @@ import store from '../../store/index';
 
 const idmContext = process.env.VUE_APP_IDM_URL;
 const amContext = process.env.VUE_APP_AM_URL;
-const dnsContext = `${window.location.origin}/am`;
+// deconstruct the amContext to get the correct pathname to be used in dnsContext
+const amContextURL = new URL(amContext);
+// 'window.location.origin' comes from where the ui is running. The assumption here is
+// there is a connection between where the ui is running and where openam is running.
+const dnsContext = `${window.location.origin}${amContextURL.pathname}`;
 /**
  * @description Rest API call mixin for global use
  */
