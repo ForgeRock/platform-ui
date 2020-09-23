@@ -73,7 +73,7 @@ export function verifyGotoUrlAndRedirect(url, realm, isAdmin = false, isGotoOnFa
   })
     .post('/users?_action=validateGoto', gotoUrl, { withCredentials: true })
     .then((res) => {
-      if (!isDefaultPath(res.data.successURL) && res.data.successURL !== 'undefined') {
+      if (!isDefaultPath(res.data.successURL) && res.data.successURL !== 'undefined' && res.data.successURL !== null) {
         return res.data.successURL;
       }
       if (isDefaultPath(res.data.successURL) && isGotoOnFail) {
