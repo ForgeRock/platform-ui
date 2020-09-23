@@ -132,10 +132,12 @@ $custom-select-focus-border-color: $gray-500;
 $custom-switch-width: ($custom-control-indicator-size * 2) * 1.75;
 $custom-switch-indicator-border-radius: $custom-control-indicator-size;
 $custom-control-indicator-checked-disabled-bg:  rgba(theme-color('primary'), 0.5);
+/* stylelint-disable */
 $custom-switch-indicator-size: calc(
-  #{($custom-control-indicator-size * 2)} - #{$custom-control-indicator-border-width *
+  #{$custom-control-indicator-size * 2} - #{$custom-control-indicator-border-width *
   4}
 ) !default;
+/* stylelint-enable */
 $fr-custom-control-indicator-switch-handle-color: $white;
 $fr-custom-control-indicator-switch-handle-disabled-color: $white;
 $fr-custom-control-indicator-switch-border-color: $gray-400;
