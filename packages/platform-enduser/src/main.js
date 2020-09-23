@@ -231,8 +231,8 @@ const addAppAuth = () => {
     },
     tokensAvailableHandler(claims) {
       store.dispatch('UserStore/setUserSearchAttribute', claims.sub);
-      // this function is called every time the tokens are either
-      // originally obtained or renewed
+      let appHasStarted = false;
+
       const sessionCheck = new SessionCheck({
         clientId: commonSettings.clientId,
         opUrl: commonSettings.authorizationEndpoint,
@@ -243,6 +243,9 @@ const addAppAuth = () => {
         sessionClaimsHandler(newClaims) {
           if (claims.auth_time !== newClaims.auth_time || claims.realm !== newClaims.realm) {
             this.invalidSessionHandler();
+          } else if (!appHasStarted) {
+            appHasStarted = true;
+            startApp();
           }
           /**
            * Check that the originalLoginRealm session variable is set.
@@ -274,8 +277,6 @@ const addAppAuth = () => {
       keypressSession = document.addEventListener('keypress', debounce(triggerSession, 100));
       document.removeEventListener('focusin', pageFocus);
       pageFocus = document.addEventListener('focusin', debounce(triggerSession, 100));
-
-      startApp();
     },
   }).then(
     // In this application, we want tokens immediately, before any user interaction is attempted
