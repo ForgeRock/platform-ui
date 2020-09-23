@@ -51,7 +51,8 @@ export default {
         // Use Legacy API
         // pass in config.root === true to prevent adding realm info to request
         if (config.context === 'AM') {
-          const isDNS = amContext !== dnsContext;
+          // if hostnames differ the assumption is this is a realm dns alias
+          const isDNS = amContextURL.hostname !== window.location.hostname;
           let amBase = isDNS ? `${dnsContext}/json/` : `${amContext}/json/`;
 
           if (!config.root && store.state.realm && store.state.realm !== '/' && store.state.realm !== 'root') {
