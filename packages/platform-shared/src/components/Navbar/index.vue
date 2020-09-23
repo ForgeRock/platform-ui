@@ -38,12 +38,12 @@ to such license between the licensee and ForgeRock AS. -->
       <div>
         <slot name="center-content" />
       </div>
-      <div class="flex-row d-none d-sm-flex">
+      <div class="flex-row d-flex">
         <FrNotification v-if="showNotifications" />
         <!--TODO: This html list is invalid when rendered - wont fix today-->
         <li
           v-if="showHelpLink"
-          class="mr-4 nav-item">
+          class="mr-4 d-none d-sm-block nav-item">
           <a
             class="nav-link text-dark"
             :href="helpUrl"
@@ -53,7 +53,7 @@ to such license between the licensee and ForgeRock AS. -->
         </li>
         <li
           v-if="showDocsLink"
-          class="nav-item">
+          class="d-none d-sm-block nav-item">
           <a
             class="nav-link text-dark"
             :href="docsLink"
