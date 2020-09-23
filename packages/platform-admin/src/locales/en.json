@@ -105,7 +105,7 @@
   "bulkImport": {
     "title": "Import Identities",
     "noDataTitle": "Bulk Import",
-    "description": "Bulk import identity data from cvs files.",
+    "description": "Bulk import identity data from CSV files.",
     "cancelImport": "Cancel Import",
     "continueImport": "Continue Import",
     "deleteImport": "Delete Import",
