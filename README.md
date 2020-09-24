@@ -1,191 +1,72 @@
-<!-- Copyright 2019 ForgeRock AS. All Rights Reserved
+# Forgerock UI
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
-# Root for Forgerock platform UI
+<p align="center">
+  <b>Forgerock UI</b>
 
-The root is intended to handle all of the testing, mock and storybook integration for the Forgerock UI platform.
+  <p align="center">
+    Monorepo containing various Forgerock UIs.
+    <br>
+    <a href="https://backstage.forgerock.com/docs/"><strong>Explore ForgeRock docs »</strong></a>
+  </p>
+  <p align="center">
+    The purpose of this readme is to help users explore the ForgeRock UI monorepo. Which contains a variety of UI parts such as views, styles and componentes utilized for different 
+    ForgeRock UIs.
+  </p>
+</p>
 
-## Getting started
-### ForgeOps setup
-First: ensure you have all the latest versions of the required third-party software seen here: [third-party software](https://ea.forgerock.com/docs/forgeops/devops-guide-minikube/#devops-implementation-env-sw).
+## Table of contents
 
-#### Minikube setup and run
-Run each setup scripts from below individually within your local, cloned repo of [forgeops](https://stash.forgerock.org/projects/CLOUD/repos/forgeops/browse):
+- [Quick start](#quick-start)
+- [Build Tools](#build-tools)
+- [Testing tools](#testing-tools)
+- [Application tools](#application-tools)
+- [Code Style](#code-style)
+- [Translations and Text](#translations-and-text)
+- [Deployment](#deployment)
+- [Theming](#theming)
+- [Build command summary](#build-command-summary)
+- [Browser support](#browser-support)
 
-```sh
-minikube start --memory=8192 --disk-size=40g \
-  --vm-driver=virtualbox --bootstrapper kubeadm --kubernetes-version=1.15.0
+<a name="quick-start"></a>
+## Quick start
 
-minikube addons enable ingress
+- [Download and install the latest node](https://nodejs.org/en/download/) or verify your node version `node -v`
+- Make sure you have yarn installed `brew install yarn`
+- Clone or download the repo: `https://stash.forgerock.org/projects/UI/repos/platform-ui/browse` or `https://github.com/ForgeRock/platform-ui`
+- Navigate to your `platform-ui` directory and install dependencies with yarn: `yarn`
+- Depending on what project you wish to utilize. Update `proxyTable:target` in `vue.config.js` to point to your target 
+- Start up target project (default startup is based on project, this information can be found in `vue.config.js`)
+- Start development server with yarn: `yarn dev`
 
-minikube ssh sudo ip link set docker0 promisc on
+### Optional Help
 
-minikube ssh -- sudo sysctl -w fs.inotify.max_user_watches=1048576
+Vue provides a CLI to help with managing clients if you wish to make use of it you can do the following
+- Run command `yarn install -g @vue/cli` to install the Vue Client
+- Then to open the management UI use `vue ui`
 
-eval $(minikube docker-env)
-
-kubens default
-
-./bin/config.sh init
-
-skaffold run -p no-ui
-```
-
-#### Localhost setup
-Add your dev IP to the `/etc/hosts` file:
-
-```sh
-minikube ip
-# copy the IP from stdout
-
-sudo vi /etc/hosts
-
-# Within the hosts file
-<IP copied from above> default.iam.example.com
-```
-
-#### Generate HTTPS certificate and register it with the cluster:
-
-Install the [mkcert](https://github.com/FiloSottile/mkcert) program and generate / install a certificate:
-
-```bash
-mkcert "*.iam.example.com"
-kubectl create secret tls sslcert --cert=_wildcard.iam.example.com.pem --key=_wildcard.iam.example.com-key.pem
-```
-
-You can then visit https://default.iam.example.com/am for AM and https://default.iam.example.com/admin for IDM.
-
-### Developing the Platform UI directly in Kubernetes
-First, build the "platform-shared" docker image:
-
-```bash
-docker build -t platform-shared:latest -f packages/platform-shared/Dockerfile .
-```
-
-This core image will be used for the other platform packages. Building it once and sharing it between the other images speeds up the deployment considerably. You will need to redo this whenever you have new package dependencies, however.
-
-Next, start skaffold:
-```bash
-skaffold dev
-```
-
-This builds and runs the webpack dev server directly in Kubernetes. It also watches for any changes you make to the source code in platform-admin, platform-enduser, and platform-login; when a change is detected, it automatically deploys it into the running cluster. This should make it fast to evaluate your changes.
-
-The skaffold process will continue to run, showing you the output from your various UI packages. You can leave this running as long as you'd like to continue development.
-
-You can hit Ctrl^c to kill skaffold. If you want to start it again, you do not need to rebuild the platform-shared docker image. You only need to rebuild that when setting up a new environment or if your dependencies change.
-
-If you want to run the development servers outside of Kubernetes, follow the instructions below.
-
-### Platform UI setup
-Install `yarn` globally and project dependencies:
-
-```sh
-# Install Yarn for dependency management
-# (Will only need to run once)
-brew install yarn
-
-# Install dependencies at root
-cd ~/<path-to-dir>/platform-ui
-yarn install
-
-# Create a separate terminal window for each package
-# (Except for `platform-shared`)
-cd ~/<path-to-dir>/platform-ui/packages/<package>
-
-# Run the following script in each terminal
-yarn dev
-```
-
-### Creating our first user
-Running `localhost:8888`, and you should be forwarded to login page. If not, you may not have all the packages running. You can go straight to the login with `localhost:8083/#/service/Login`. Once you're there, click on “Create an account” and fill out the form. Upon successful user creation, you will be placed within the end user app: `localhost:8888`.
-
-You will have two users now:
-
-- **an end user**: the one you just created above)
-- **an admin user**: the default one you used to login to AM; `amadmin` and `password`
-
-If you want to use both, remember to use separate browsers or use a regular window and incognito window for the other so the two sessions don't overlap.
-
-### Additional Notes
-#### Platform-UI URLs
-1. Login: `localhost:8083`
-2. Admin: `localhost:8082`
-3. End user: `localhost:8888`
-4. Express: `localhost:8080`
-
-#### Rebuilding ForgeOps
-When you pull new code from `origin` you will need to restart ForgeOps. To do that, run this script to remove the old Minikube instance:
-
-```sh
-minikube delete
-```
-
-Then, rerun *all* the commands above in section “ForgeOps setup”.
-
-#### Troubleshooting
-1. AM pod can become problematic. The solution is to force kill the pod and let the cluster regenerate: `kubectl delete pod <AMPODNAME> —grace-period=0 —force`
-2. Sometimes when you delete the cluster and bring it back up, the IP of the cluster increments: `minikube ip`, then edit your hosts file again `sudo vi /etc/hosts` with that new IP for `default.iam.example.com`
-3. If you get an error about UUID’s from AM when trying to register a user, you may need to go back and edit the IDM configuration to use `userName` as the authentication ID and not `_id`. Make that change (at the top of this file), and then delete and restart your Minikube setup.
-
-#### Testing out journeys created through UI
-If you are creating journeys through this UI and want to test their functionality, you have two options (You likely want to use incognito mode or a different browser):
-
-```sh
-default.iam.example.com/login/#/service/YOURTREENAME
-localhost:8083/#/service/YOURTREENAME
-```
-
-#### Using a FRAAS tenant for local development
-You will need a FRAAS tenant url, username and password for this. Make sure your local docker desktop is running also. Any place in these instructions that says YOUR_TENANT_NAME should be updated with your actual tenant name.
-If you would like to develop against the regular platform at the same time, you can spin up forgeops and start up platform-ui as normal with `./startSkaffold.sh`. Otherwise, just follow the below.
-1. Update the `proxy_run.sh` file with the correct client names:
-```sh
-export ENDUSER_CLIENT_ID="endUserUIClient"
-export ADMIN_CLIENT_ID="idmAdminClient"
-```
-2. Update your hosts file to point the tenant to your local:
-```sh
-127.0.0.1 YOUR_TENANT_NAME.forgeblocks.com
-```
-3. Open up a terminal window in the platform-ui root and run:
-```sh
-./proxy_run.sh YOUR_TENANT_NAME.forgeblocks.com
-```
-4. Import the generated ig-front/ca.pem file into your system truststore, and double click -> set the dropdown to always trust (the certificate will be called `Local Network - Development`)
-5. Once the proxy_run is up and running, open a terminal for each package you need to develop in (login, enduser, admin, etc). You will need the login package regardless. Run `yarn dev` in each of these terminals
-6. Navigate to `https://YOUR_TENANT_NAME.forgeblocks.com/am/XUI` and use your creds to log in
-
-##### Troubleshooting fraas development
-On some versions of MacOS, you may get an error `envsubst: command not found` when running the proxy_run.sh. 
-To fix, run: 
-```sh
-brew install gettext
-brew link --force gettext
-```
-More info: https://stackoverflow.com/questions/23620827/envsubst-command-not-found-on-mac-os-x-10-8
-
-### Storybook component build
-
-```
-yarn run storybook:build
-```
-
-### Storybook component server
-
-```
-yarn run storybook:serve
-```
-
-## Key Build and Deployment Technologies
+<a name="build-tools"></a>
+## Build Tools
 - [Node](https://nodejs.org/en/) - Used for deploymenet and development
 - [Vue CLI](https://cli.vuejs.org/) - Vue project and distribution management (layers ontop of webpack)
 - [Webpack](https://webpack.js.org/) - Core distribution management
 - [Yarn](https://yarnpkg.com/lang/en/) - Package manager
 
-## Key Development Technologies
+<a name="testing"></a>
+## Testing
+
+<a name="testing-tools"></a>
+## Testing tools
+
+The following testing tools are installed when you install the project dependencies:
+
+- [Jest](https://jestjs.io/) - Unit testing
+- [Cypress](https://www.cypress.io/) - E2E testing
+- [Vue Test Utils](https://vue-test-utils.vuejs.org/) - Vue utility testing library
+
+<a name="application-tools"></a>
+## Application tools
+
+The following application tools are installed when you install the project dependencies:
 - [Vue](https://vuejs.org/v2/api/) - Primary JavaScript framework for the project
 - [Vue Router](https://router.vuejs.org/en/) - Application routing Vue library
 - [Vue Bootstrap](https://bootstrap-vue.js.org/) - Bootstrap 4 Vue components
@@ -195,16 +76,103 @@ yarn run storybook:serve
 - [lodash](https://lodash.com/) - Util library for preforming various efficient calculations
 - [VueX](https://vuex.vuejs.org/) - State management
 
-## Key Testing Technologies
-- [Jest](https://jestjs.io/) - Unit testing
-- [Cypress](https://www.cypress.io/) - E2E testing
-
-## Misc Important Technologies
-- [Story Book](https://storybook.js.org/) - Component viewing and testing
-
+<a name="code-style"></a>
 ## Code style
+
 - [Vue Specific Eslint Rules](https://vuejs.github.io/eslint-plugin-vue/rules/#priority-b-strongly-recommended-improving-readability) - Linter rules specific to Vue
 - [General Javascript Styles](https://github.com/airbnb/javascript) - Javascript base eslint rules
 - [CSS Lint Rules](https://github.com/stylelint/stylelint-config-standard) - CSS base lint rules using amalgamation of airbnb's, Googles, Idiomatic's, and @mdo's style config
 
-Please see package.json for any modifications to these rules
+<a name="translations-and-text"></a>
+## Translations and Text
+
+Application translation uses [Vue i18n](https://kazupon.github.io/vue-i18n/en/) and the `openidm/info/uiconfig` endpoint to get the current user's browser language.
+
+The project only contains `en` based translations and falls back to `en` if an unsupported language is detected. To change the default language fallback adjust VueI18n `/src/main.js`.
+
+Adding and changing an existing message for the `en` base language involves either adding a key or editing an existing key.
+Keys follow JSON structure; for example, if you wanted to edit the navigation bar `Profile` to `User Profile` you would need to locate the appropriate key `en.pages.app.profile` and change the text.
+Inside of your Vue application you would then make use of that key with the built in translation function `{{$t('pages.app.profile')}}` or `this.$t('pages.app.profile')`.
+
+Adding a new translation language means creating a new translation file inside of locales folder with a key matching the translation language code.
+
+For example:
+
+```
+en.json
+fr.json
+gr.json
+```
+
+Then creating a JSON key structure that should be mirrored across all of the language files.
+
+For example:
+
+``` JSON
+    {
+        dashboard: {
+            welcomeMessage: 'Welcome!'
+        }
+    }
+```
+
+<a name="deployment"></a>
+## Deployment
+
+- To deploy the application, run: `yarn build`
+
+Running `yarn build` creates a distribution file in the `dist` folder of that specific project. Each deployment use case is different.
+
+<a name="theming"></a>
+## Theming
+
+The following theming tools are installed when you install the project dependencies:
+
+- [SCSS](https://sass-lang.com/) - CSS enhancmenet library
+- [Bootstrap 4.0](https://getbootstrap.com) - CSS Styling framework
+
+Theming makes use of two concepts:
+
+- Theming follows the basic [Bootstrap theming guidelines](https://getbootstrap.com/docs/4.0/getting-started/theming/) and relies on SCSS variable overrides.
+- The theme file is loaded with an optional flag when running the dev server or distribution build. For example, `yarn dev --theme=red` or `yarn build --theme=red`.
+
+When you include the theme flag, the `node` build scripts attempt to locate a corresponding file in `src/scss`. The file must also contain a `-theme.scss` moniker, for example, `red-theme.scss`.
+
+The default project includes three themes:
+- ForgeRock default theme
+- ForgeRock dark theme `yarn dev --theme=dark`
+- ForgeRock rock theme `yarn dev --theme=rock`. This theme demonstrates how to use a full background image, with fallback to the default theme.
+
+
+<a name="build-command-summary"></a>
+## Build command summary
+
+Inside of the packages folder of the monorepo you will find each stand alone project. These stand alone projects all rely on similar commands, on occation there are minor differences (for example theming doesn't apply to admin). Please check and package.json to see the specific commands. Here is a list of the universal commands.
+
+``` bash
+# install dependencies
+yarn
+
+# serve with hot reload at localhost:8080 (increments by 1 automatically if port is in use).
+yarn dev
+
+# server with theme loaded (not admin)
+yarn dev --theme=red
+
+# build for production with minification
+yarn build
+
+# build with theme loaded (not admin)
+yarn build --theme=red
+
+# run all tests
+yarn unit
+```
+
+<a name="browser-support"></a>
+## Browser support
+
+- Internet Explorer 11 or higher
+- Latest Firefox
+- Latest Safari
+- Latest Chrome
