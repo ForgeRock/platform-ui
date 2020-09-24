@@ -60,47 +60,6 @@
     "vue-jest": "3.0.5",
     "vue-template-compiler": "2.6.11"
   },
-  "eslintConfig": {
-    "env": {
-      "node": true,
-      "jest": true
-    },
-    "extends": [
-      "plugin:vue/strongly-recommended",
-      "plugin:cypress/recommended",
-      "@vue/airbnb"
-    ],
-    "rules": {
-      "import/extensions": [
-        "error",
-        "always",
-        {
-          "vue": "never",
-          "js": "never"
-        }
-      ],
-      "no-param-reassign": [
-        "error",
-        {
-          "props": false
-        }
-      ],
-      "indent": [
-        "error",
-        2
-      ],
-      "arrow-parens": [
-        2,
-        "always"
-      ],
-      "no-tabs": 0,
-      "max-len": 0,
-      "vue/html-closing-bracket-newline": 0
-    },
-    "parserOptions": {
-      "parser": "babel-eslint"
-    }
-  },
   "postcss": {
     "plugins": {
       "autoprefixer": {}
