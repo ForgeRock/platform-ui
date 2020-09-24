@@ -37,7 +37,7 @@ export function generateIdmApi(requestOverride = {}) {
     // priviledges. This is a temporary check to stop the redirect to forbidden
     // in that scenario. This check should be removed when a workaround has been found.
     const resUrl = new URL(error.response.config.url);
-    if (resUrl.pathname !== '/openidm/config/managed' && window.location.hash !== '#/journeys') {
+    if (resUrl.pathname !== '/openidm/config/managed' && window.location.hash !== '#/journeys' && window.location.pathname !== '/enduser/') {
       if (error.response.status === 403) {
         window.location.hash = '#/forbidden';
         window.location.replace(window.location);

@@ -393,9 +393,12 @@ export default {
   mounted() {
     // get schema for all internal/role and all managed objects that are not managed/assignment
     if (this.$store.state.UserStore.adminUser) {
-      getSchema('?_queryFilter=resourceCollection eq "internal/role" or (resourceCollection sw "managed" and !(resourceCollection eq "managed/assignment"))&_fields=*').then(
+      getSchema('?_queryFilter=resourceCollection eq "internal/role" or (resourceCollection sw "managed")&_fields=*').then(
         (response) => {
-          const schemas = response.data.result;
+          const schemas = response.data.result.filter((result) => {
+            const resourceName = result.resourceCollection;
+            return resourceName.substring(resourceName.length - 10) !== 'assignment';
+          });
 
           schemas.forEach((schema) => {
             // eslint-disable-next-line no-underscore-dangle

@@ -212,7 +212,7 @@
       "role": "Role",
       "addPrivilegesDescription": "Add identities for which this role should grant administration privileges.",
       "chooseIdentityObject": "Choose an identity object",
-      "dynamic": "Dynamic",
+      "dynamic": "Dynamic {name} Assignment",
       "condtionDescription": "Optionally, assign user to role based on the presence of specific attributes.",
       "temporalConstraintDescription": "Optionally, allow this role to assigned only a temporary basis."
     },
