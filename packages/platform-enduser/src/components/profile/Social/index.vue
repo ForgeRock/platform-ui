@@ -169,7 +169,7 @@ export default {
      * Get the name of the journey used to connect social accounts
      */
     getSocialJourney() {
-      this.getRequestService({ context: 'AM', root: true }).get('/selfservice/trees').then((res) => {
+      this.getRequestService({ context: 'AM' }).get('/selfservice/trees').then((res) => {
         this.connectSocialTree = res.data.mapping.connectSocial;
       }, (error) => {
         this.showErrorMessage(error, this.$t('pages.profile.social.journeyServiceError'));
