@@ -7,108 +7,132 @@ to such license between the licensee and ForgeRock AS. -->
   <ValidationObserver
     ref="observer"
     v-slot="{ invalid }">
-    <FrCreateAssignmentModal
-      v-if="isAssignments"
-      @refreshGrid="$emit('refreshGrid')"
-      :resource-name="resourceName"
-      :create-properties="createProperties" />
-    <BModal
-      v-else
-      id="createResourceModal"
-      size="lg"
-      cancel-variant="outline-secondary"
-      @hide="hideModal"
-      @hidden="stepIndex = -1"
-      @show="initialiseData"
-      :body-class="[{ 'p-0' : stepIndex > -1 }]"
-      :title="modalTitle">
-      <BRow>
-        <BCol v-if="stepIndex === -1">
-          <!-- Creating resource currently only supports String, Number, Boolean, and singleton relationships -->
-          <BForm
-            v-if="clonedCreateProperties.length"
-            @keyup.enter="saveForm"
-            class="mb-3"
-            @submit="saveForm"
-            name="edit-personal-form">
-            <template v-for="(field, index) in clonedCreateProperties">
-              <BFormGroup
-                :key="'createResource' + index"
-                v-if="((field.type === 'string' && !field.isConditional) || field.type === 'number' || field.type === 'boolean' || field.type === 'password') && field.encryption === undefined">
-                <FrField
-                  :autofocus="index === 0"
-                  :field="field"
-                  :display-description="false" />
+    <slot>
+      <BModal
+        id="createResourceModal"
+        size="lg"
+        cancel-variant="outline-secondary"
+        @hide="hideModal"
+        @hidden="stepIndex = -1"
+        @show="initialiseData"
+        :body-class="[{ 'p-0' : stepIndex > -1 }]"
+        :title="modalTitle">
+        <BRow>
+          <BCol v-if="stepIndex === -1">
+            <!-- Creating resource currently only supports String, Number, Boolean, and singleton relationships -->
+            <BForm
+              v-if="clonedCreateProperties.length"
+              @keyup.enter="saveForm"
+              class="mb-3"
+              @submit="saveForm"
+              name="edit-personal-form">
+              <template v-for="(field, index) in clonedCreateProperties">
+                <BFormGroup
+                  :key="'createResource' + index"
+                  v-if="((field.type === 'string' && !field.isConditional) || field.type === 'number' || field.type === 'boolean' || field.type === 'password') && field.encryption === undefined">
+                  <FrField
+                    :autofocus="index === 0"
+                    :field="field"
+                    :display-description="false" />
 
-                <!-- Special logic for password -->
-                <FrPolicyPanel
-                  v-if="field.type === 'password' && policies.length"
-                  class="mt-2"
-                  :dynamic="false"
-                  :num-columns="2"
-                  :policies="policies" />
-              </BFormGroup>
+                  <!-- Special logic for password -->
+                  <FrPolicyPanel
+                    v-if="field.type === 'password' && policies.length"
+                    class="mt-2"
+                    :dynamic="false"
+                    :num-columns="2"
+                    :policies="policies" />
+                </BFormGroup>
 
-              <!-- for singletonRelationhip values -->
-              <FrRelationshipEdit
-                v-else-if="field.type === 'relationship'"
-                v-model="field.value"
-                :parent-resource="`${resourceType}/${resourceName}`"
-                :relationship-property="field"
-                :index="index"
-                :key="'createResource' + index"
-                :new-resource="true"
-                @setValue="setSingletonRelationshipValue($event, field.key)" />
+                <!-- for singletonRelationhip values -->
+                <FrRelationshipEdit
+                  v-else-if="field.type === 'relationship'"
+                  v-model="field.value"
+                  :parent-resource="`${resourceType}/${resourceName}`"
+                  :relationship-property="field"
+                  :index="index"
+                  :key="'createResource' + index"
+                  :new-resource="true"
+                  @setValue="setSingletonRelationshipValue($event, field.key)" />
+              </template>
+            </BForm>
+            <template v-else>
+              <h3 class="text-center">
+                {{ $t('pages.access.noRequiredFields') }}
+              </h3>
             </template>
-          </BForm>
-          <template v-else>
-            <h3 class="text-center">
-              {{ $t('pages.access.noRequiredFields') }}
-            </h3>
-          </template>
-        </BCol>
-        <BCol
-          v-else
-          v-for="(step, index) in steps"
-          :key="index"
-          v-show="stepIndex === index">
-          <FrCustomStep
-            :property="step"
-            @input="updateStepPropertyValue" />
-        </BCol>
-      </BRow>
+          </BCol>
+          <BCol
+            v-else
+            v-for="(step, index) in steps"
+            :key="index"
+            v-show="stepIndex === index">
+            <FrCustomStep
+              :property="step"
+              @input="updateStepPropertyValue" />
+          </BCol>
+        </BRow>
 
-      <template v-slot:modal-footer>
-        <div
-          v-if="steps.length"
-          class="w-100">
-          <div class="float-left w-50 text-left">
-            <BButton
-              v-if="stepIndex >= 0"
-              @click="loadPreviousStep"
-              variant="link">
-              {{ $t('common.previous') }}
-            </BButton>
+        <template v-slot:modal-footer>
+          <div
+            v-if="steps.length"
+            class="w-100">
+            <div class="float-left w-50 text-left">
+              <BButton
+                v-if="stepIndex >= 0"
+                @click="loadPreviousStep"
+                variant="link">
+                {{ $t('common.previous') }}
+              </BButton>
+            </div>
+            <div class="float-right w-50 text-right">
+              <BButton
+                variant="link"
+                @click="hideModal">
+                {{ $t('common.cancel') }}
+              </BButton>
+              <BButton
+                v-if="!isLastStep"
+                @click="loadNextStep"
+                variant="primary"
+                :disabled="invalid">
+                {{ $t('common.next') }}
+              </BButton>
+              <BButton
+                v-if="isLastStep"
+                @click="saveForm"
+                :disabled="formFields.length === 0 || invalid || isSaving"
+                type="submit"
+                variant="primary">
+                <div v-if="!isSaving">
+                  {{ $t('common.save') }}
+                </div>
+                <div
+                  v-else
+                  class="d-flex">
+                  <FrSpinner
+                    size="sm"
+                    class="spinner-border-sm mr-2"
+                    button-spinner />
+                  <span class="ml-1">
+                    {{ $t('common.saving') }}
+                  </span>
+                </div>
+              </BButton>
+            </div>
           </div>
-          <div class="float-right w-50 text-right">
+          <div v-else>
             <BButton
               variant="link"
               @click="hideModal">
               {{ $t('common.cancel') }}
             </BButton>
             <BButton
-              v-if="!isLastStep"
-              @click="loadNextStep"
               variant="primary"
-              :disabled="invalid">
-              {{ $t('common.next') }}
-            </BButton>
-            <BButton
-              v-if="isLastStep"
               @click="saveForm"
-              :disabled="formFields.length === 0 || invalid || isSaving"
+              :disabled="formFields.length === 0 || invalid || (passwordValue !== '' && !passwordValid) || isSaving"
               type="submit"
-              variant="primary">
+            >
               <div v-if="!isSaving">
                 {{ $t('common.save') }}
               </div>
@@ -125,37 +149,9 @@ to such license between the licensee and ForgeRock AS. -->
               </div>
             </BButton>
           </div>
-        </div>
-        <div v-else>
-          <BButton
-            variant="link"
-            @click="hideModal">
-            {{ $t('common.cancel') }}
-          </BButton>
-          <BButton
-            variant="primary"
-            @click="saveForm"
-            :disabled="formFields.length === 0 || invalid || (passwordValue !== '' && !passwordValid) || isSaving"
-            type="submit"
-          >
-            <div v-if="!isSaving">
-              {{ $t('common.save') }}
-            </div>
-            <div
-              v-else
-              class="d-flex">
-              <FrSpinner
-                size="sm"
-                class="spinner-border-sm mr-2"
-                button-spinner />
-              <span class="ml-1">
-                {{ $t('common.saving') }}
-              </span>
-            </div>
-          </BButton>
-        </div>
-      </template>
-    </BModal>
+        </template>
+      </BModal>
+    </slot>
   </ValidationObserver>
 </template>
 
@@ -165,7 +161,6 @@ import {
   clone,
   cloneDeep,
   each,
-  endsWith,
   find,
   isString,
   noop,
@@ -187,7 +182,6 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import PasswordPolicyMixin from '@forgerock/platform-shared/src/mixins/PasswordPolicyMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
-import CreateAssignmentModal from '@forgerock/platform-admin/src/views/ManagedIdentities/Assignment/Create';
 import CustomStep from './CustomStep/index';
 
 /**
@@ -209,7 +203,6 @@ export default {
     FrField,
     FrSpinner,
     FrRelationshipEdit: RelationshipEdit,
-    FrCreateAssignmentModal: CreateAssignmentModal,
     FrPolicyPanel: PolicyPanel,
     BButton,
     BFormGroup,
@@ -289,7 +282,7 @@ export default {
         }
 
         if (step.isConditional) {
-          return `${this.$t('pages.access.dynamic')} ${name} ${this.$t('pages.assignment.title')}`;
+          return this.$t('pages.access.dynamic', { name });
         }
 
         if (step.isTemporalConstraint) {
@@ -297,9 +290,6 @@ export default {
         }
       }
       return `${this.$t('common.new')} ${name}`;
-    },
-    isAssignments() {
-      return this.resourceType === 'managed' && endsWith(this.resourceName, 'assignment');
     },
   },
   methods: {

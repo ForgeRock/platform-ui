@@ -78,7 +78,6 @@
       "save": "Save"
     },
     "notFound": {
-      "couldNotFind": "We couldn't find the page you were looking for.",
       "returnToDashboard": "Return to dashboard"
     },
     "dashboard": {
