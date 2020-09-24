@@ -44,75 +44,72 @@ to such license between the licensee and ForgeRock AS. -->
       </i>
       {{ $t('pages.access.resetPassword') }}
     </BButton>
-    <FrEditAssignment
-      v-if="!isLoading && isAssignments"
-      :display-properties="displayProperties"
-      :relationship-properties="relationshipProperties"
-      :resource-name="resourceName"
-      :parent-id="id"
-      :disable-save-button="disableSaveButton" />
-    <BCard
-      v-else-if="!isLoading"
-      class="card-tabs-vertical mb-5">
-      <BTabs
-        flex-column
-        flex-sm-row
-        vertical
-        pills
-        :class="[{ 'fr-hide-nav' : hideNav }]">
-        <BTab
-          :title="this.$t('pages.access.details')"
-          active>
-          <FrObjectTypeEditor
-            v-if="displayProperties.length > 0"
-            :form-fields="formFields"
-            :display-properties="displayProperties"
-            :disable-save-button="disableSaveButton"
-            :resource-path="`${resourceType}/${resourceName}/${id}`"
-            :is-openidm-admin="isOpenidmAdmin" />
-          <span v-else>
-            {{ $t('pages.access.noAvailableProperties') }}
-          </span>
-        </BTab>
-        <!-- Add a tab for each viewable/editable object type property -->
-        <template v-for="(objectTypeProperty) in objectTypeProperties">
+    <slot
+      :relationshipProperties="relationshipProperties"
+      :displayProperties="displayProperties">
+      <BCard
+        v-if="!isLoading"
+        class="card-tabs-vertical mb-5">
+        <BTabs
+          flex-column
+          flex-sm-row
+          vertical
+          pills
+          :class="[{ 'fr-hide-nav' : hideNav }]">
           <BTab
-            :title="objectTypeProperty.title"
-            :key="`${objectTypeProperty.propName}_tab`">
+            :title="this.$t('pages.access.details')"
+            active>
             <FrObjectTypeEditor
-              :form-fields="formFields[objectTypeProperty.propName] || {}"
-              :sub-property-name="objectTypeProperty.propName"
-              :display-properties="getObjectTypeProperyDisplayProperties(objectTypeProperty)"
-              :disable-save-button="objectTypeProperty.readOnly"
+              v-if="displayProperties.length > 0"
+              :form-fields="formFields"
+              :display-properties="displayProperties"
+              :disable-save-button="disableSaveButton"
               :resource-path="`${resourceType}/${resourceName}/${id}`"
               :is-openidm-admin="isOpenidmAdmin" />
+            <span v-else>
+              {{ $t('pages.access.noAvailableProperties') }}
+            </span>
           </BTab>
-        </template>
-        <FrPrivilegesTab
-          v-if="internalRolePrivilegesField"
-          :disabled="disableSaveButton"
-          :privileges-field="internalRolePrivilegesField"
-          :resource-path="`${resourceType}/${resourceName}/${id}`"
-          :resource-name="resourceName" />
-        <!-- Add a tab for each viewable/editable relationship array property -->
-        <template v-for="(relationshipProperty) in relationshipProperties">
-          <BTab
-            v-if="relationshipProperty.type === 'array'"
-            :title="relationshipProperty.title"
-            :key="`${relationshipProperty.propName}_tab`">
-            <FrRelationshipArray
-              :parent-resource="`${resourceType}/${resourceName}`"
-              :parent-id="id"
-              :relationship-array-property="relationshipProperty" />
-          </BTab>
-        </template>
-        <FrSettingsTab
-          v-if="Object.keys(settingsProperties).length > 0"
-          :properties="settingsProperties"
-          :resource-name="resourceName"
-          :resource-path="`${resourceType}/${resourceName}/${id}`" />
-      </BTabs>
-    </BCard>
+          <!-- Add a tab for each viewable/editable object type property -->
+          <template v-for="(objectTypeProperty) in objectTypeProperties">
+            <BTab
+              :title="objectTypeProperty.title"
+              :key="`${objectTypeProperty.propName}_tab`">
+              <FrObjectTypeEditor
+                :form-fields="formFields[objectTypeProperty.propName] || {}"
+                :sub-property-name="objectTypeProperty.propName"
+                :display-properties="getObjectTypeProperyDisplayProperties(objectTypeProperty)"
+                :disable-save-button="objectTypeProperty.readOnly"
+                :resource-path="`${resourceType}/${resourceName}/${id}`"
+                :is-openidm-admin="isOpenidmAdmin" />
+            </BTab>
+          </template>
+          <FrPrivilegesTab
+            v-if="internalRolePrivilegesField"
+            :disabled="disableSaveButton"
+            :privileges-field="internalRolePrivilegesField"
+            :resource-path="`${resourceType}/${resourceName}/${id}`"
+            :resource-name="resourceName" />
+          <!-- Add a tab for each viewable/editable relationship array property -->
+          <template v-for="(relationshipProperty) in relationshipProperties">
+            <BTab
+              v-if="relationshipProperty.type === 'array'"
+              :title="relationshipProperty.title"
+              :key="`${relationshipProperty.propName}_tab`">
+              <FrRelationshipArray
+                :parent-resource="`${resourceType}/${resourceName}`"
+                :parent-id="id"
+                :relationship-array-property="relationshipProperty" />
+            </BTab>
+          </template>
+          <FrSettingsTab
+            v-if="Object.keys(settingsProperties).length > 0"
+            :properties="settingsProperties"
+            :resource-name="resourceName"
+            :resource-path="`${resourceType}/${resourceName}/${id}`" />
+        </BTabs>
+      </BCard>
+    </slot>
 
     <BCard
       class="mb-5"
@@ -165,7 +162,6 @@ to such license between the licensee and ForgeRock AS. -->
 <script>
 import {
   each,
-  endsWith,
   filter,
   find,
   indexOf,
@@ -193,7 +189,6 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
-import FrEditAssignment from '@forgerock/platform-admin/src/views/ManagedIdentities/Assignment/Edit';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import FrObjectTypeEditor from './ObjectTypeEditor';
@@ -218,7 +213,6 @@ export default {
     FrRelationshipArray,
     FrSettingsTab,
     FrPrivilegesTab,
-    FrEditAssignment,
     BButton,
     BImg,
     BContainer,
@@ -385,6 +379,7 @@ export default {
         // if there are no update properties disable the save button
         if (privilege.UPDATE.properties.length === 0 && !this.isOpenidmAdmin) {
           this.disableSaveButton = true;
+          this.$emit('button-state-change', this.disableSaveButton);
         }
         each(this.mergePrivilegeProperties(privilege, schema), (createPriv) => {
           const tempProp = schema.properties[createPriv.attribute];
@@ -448,6 +443,7 @@ export default {
       }
 
       this.isLoading = false;
+      this.$emit('loading-state-change', this.isLoading);
     },
     deleteResource() {
       const idmInstance = this.getRequestService();
@@ -534,9 +530,6 @@ export default {
       }
 
       return null;
-    },
-    isAssignments() {
-      return this.resourceType === 'managed' && endsWith(this.resourceName, 'assignment');
     },
   },
 };
