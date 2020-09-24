@@ -1,0 +1,53 @@
+{
+  "env": {
+    "node": true,
+    "jest": true
+  },
+  "extends": [
+    "plugin:vue/strongly-recommended",
+    "plugin:cypress/recommended",
+    "@vue/airbnb"
+  ],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [
+          ".js",
+          ".jsx",
+          ".vue"
+        ]
+      }
+    }
+  },
+  "rules": {
+    "import/extensions": [
+      "error",
+      "always",
+      {
+        "vue": "never",
+        "js": "never"
+      }
+    ],
+    "no-param-reassign": [
+      "error",
+      {
+        "props": false
+      }
+    ],
+    "indent": [
+      "error",
+      2
+    ],
+    "no-tabs": 0,
+    "max-len": 0,
+    "arrow-parens": [
+      2,
+      "always"
+    ],
+    "no-underscore-dangle": 0,
+    "vue/html-closing-bracket-newline": 0
+  },
+  "parserOptions": {
+    "parser": "babel-eslint"
+  }
+}
