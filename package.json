@@ -4,19 +4,10 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "storybook:build": "vue-cli-service storybook:build -s ./src/assets,./config/storybook/images -c config/storybook",
-    "storybook:serve": "vue-cli-service storybook:serve -s ./src/assets,./config/storybook/images -p 6006 -c config/storybook",
     "unit": "yarn workspaces run unit",
     "lint": "yarn workspaces run lint"
   },
   "devDependencies": {
-    "@storybook/addon-actions": "5.3.5",
-    "@storybook/addon-docs": "5.3.5",
-    "@storybook/addon-knobs": "5.3.5",
-    "@storybook/addon-links": "5.3.5",
-    "@storybook/addon-notes": "5.3.5",
-    "@storybook/addon-storysource": "5.3.5",
-    "@storybook/vue": "5.3.5",
     "@vue/cli-plugin-babel": "4.3.1",
     "@vue/cli-service": "4.3.1",
     "@vue/test-utils": "1.0.0-beta.29",
@@ -27,12 +18,8 @@
     "mochawesome-merge": "4.1.0",
     "node-sass": "4.12.0",
     "sass-loader": "8.0.2",
-    "storybook-vue-router": "1.0.7",
     "style-resources-loader": "1.2.1",
     "vue": "2.6.11",
-    "vue-cli-plugin-storybook": "1.2.0",
-    "vue-docgen-api": "4.9.0",
-    "vue-docgen-loader": "1.5.0",
     "vue-template-compiler": "2.6.11"
   },
   "resolutions": {
