@@ -1,0 +1,114 @@
+{
+  "extends": "stylelint-config-standard",
+  "rules": {
+    "at-rule-no-vendor-prefix": true,
+    "at-rule-whitelist": [
+      "import",
+      "media",
+      "keyframes",
+      "include",
+      "if",
+      "else",
+      "while",
+      "mixin"
+    ],
+    "at-rule-no-unknown": null,
+    "color-named": "always-where-possible",
+    "custom-media-pattern": "^([a-z]+-?)*([a-z]+)$",
+    "custom-property-pattern": "^([a-z]+-?)*([a-z]+)$",
+    "declaration-block-no-duplicate-properties": true,
+    "font-family-name-quotes": "always-where-recommended",
+    "font-weight-notation": "numeric",
+    "function-url-quotes": "always",
+    "function-whitelist": [
+      "color",
+      "counter",
+      "hsla",
+      "rgba",
+      "rotate",
+      "translate",
+      "translateX",
+      "translateY",
+      "calc",
+      "darken",
+      "lighten",
+      "map-merge",
+      "theme-color",
+      "url",
+      "str-replace",
+      "fade",
+      "scale",
+      "scaleX",
+      "skew",
+      "repeat",
+      "minmax"
+    ],
+    "media-feature-name-no-vendor-prefix": true,
+    "no-descending-specificity": null,
+    "no-duplicate-selectors": true,
+    "property-blacklist": [
+      "float"
+    ],
+    "property-no-unknown": [
+      true,
+      {
+        "ignoreProperties": [
+          "composes"
+        ]
+      }
+    ],
+    "property-no-vendor-prefix": true,
+    "selector-class-pattern": "^([a-z]+((-{1,2}[a-z0-9]+)|(_{2}[a-z0-9]+))*)$",
+    "selector-max-attribute": 1,
+    "selector-max-id": [
+      1,
+      {
+        "severity": "warning"
+      }
+    ],
+    "selector-max-specificity": "3,5,0",
+    "selector-max-type": 3,
+    "selector-max-universal": 1,
+    "selector-no-vendor-prefix": true,
+    "selector-pseudo-class-whitelist": [
+      "hover",
+      "focus",
+      "global",
+      "not",
+      "after",
+      "before",
+      "first-child",
+      "focus-within",
+      "last-child",
+      "nth-last-child",
+      "first-of-type",
+      "last-of-type",
+      "active",
+      "export",
+      "checked",
+      "indeterminate",
+      "disabled"
+    ],
+    "selector-pseudo-class-no-unknown": [
+      true,
+      {
+        "ignorePseudoClasses": [
+          "global",
+          "export"
+        ]
+      }
+    ],
+    "string-quotes": "single",
+    "unit-whitelist": [
+      "%",
+      "px",
+      "em",
+      "vh",
+      "rem",
+      "s",
+      "deg",
+      "fr"
+    ],
+    "value-no-vendor-prefix": true
+  }
+}
