@@ -37,7 +37,6 @@
     "vuex": "3.0.1"
   },
   "devDependencies": {
-    "@ascendancyy/vue-cli-plugin-stylelint": "1.1.2",
     "@vue/cli-plugin-babel": "3.8.0",
     "@vue/cli-plugin-eslint": "4.3.1",
     "@vue/cli-service": "4.3.1",
@@ -54,9 +53,6 @@
     "jest-serializer-vue": "2.0.2",
     "node-sass": "4.12.0",
     "sass-loader": "8.0.2",
-    "stylelint": "11.1.1",
-    "stylelint-config-standard": "19.0.0",
-    "stylelint-order": "^0.8.0",
     "vue-jest": "3.0.5",
     "vue-template-compiler": "2.6.11"
   },
@@ -99,117 +95,6 @@
     },
     "parserOptions": {
       "parser": "babel-eslint"
-    }
-  },
-  "stylelint": {
-    "plugins": [
-      "stylelint-order"
-    ],
-    "extends": "stylelint-config-standard",
-    "rules": {
-      "at-rule-no-vendor-prefix": true,
-      "at-rule-whitelist": [
-        "import",
-        "media",
-        "keyframes",
-        "include",
-        "if",
-        "else",
-        "mixin"
-      ],
-      "at-rule-no-unknown": null,
-      "color-named": "always-where-possible",
-      "custom-media-pattern": "^([a-z]+-?)*([a-z]+)$",
-      "custom-property-pattern": "^([a-z]+-?)*([a-z]+)$",
-      "declaration-block-no-duplicate-properties": true,
-      "font-family-name-quotes": "always-where-recommended",
-      "font-weight-notation": "numeric",
-      "function-url-quotes": "always",
-      "function-whitelist": [
-        "color",
-        "counter",
-        "hsla",
-        "rgba",
-        "rotate",
-        "translate",
-        "translateX",
-        "translateY",
-        "calc",
-        "darken",
-        "lighten",
-        "map-merge",
-        "theme-color",
-        "url",
-        "scaleX",
-        "str-replace",
-        "fade"
-      ],
-      "media-feature-name-no-vendor-prefix": true,
-      "no-descending-specificity": null,
-      "no-duplicate-selectors": true,
-      "property-blacklist": [
-        "float"
-      ],
-      "property-no-unknown": [
-        true,
-        {
-          "ignoreProperties": [
-            "composes"
-          ]
-        }
-      ],
-      "property-no-vendor-prefix": true,
-      "selector-class-pattern": "^([a-z]+((-{1,2}[a-z0-9]+)|(_{2}[a-z0-9]+))*)$",
-      "selector-max-attribute": 1,
-      "selector-max-id": [
-        1,
-        {
-          "severity": "warning"
-        }
-      ],
-      "selector-max-specificity": "3,5,0",
-      "selector-max-type": 3,
-      "selector-max-universal": 1,
-      "selector-no-vendor-prefix": true,
-      "selector-pseudo-class-whitelist": [
-        "active",
-        "after",
-        "before",
-        "checked",
-        "disabled",
-        "export",
-        "first-child",
-        "focus-within",
-        "focus",
-        "global",
-        "hover",
-        "indeterminate",
-        "last-child",
-        "last-of-type",
-        "first-of-type",
-        "not",
-        "nth-last-child"
-      ],
-      "selector-pseudo-class-no-unknown": [
-        true,
-        {
-          "ignorePseudoClasses": [
-            "global",
-            "export"
-          ]
-        }
-      ],
-      "string-quotes": "single",
-      "unit-whitelist": [
-        "%",
-        "px",
-        "em",
-        "vh",
-        "rem",
-        "s",
-        "deg"
-      ],
-      "value-no-vendor-prefix": true
     }
   },
   "postcss": {
