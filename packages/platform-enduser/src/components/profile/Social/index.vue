@@ -85,8 +85,7 @@ of the MIT license. See the LICENSE file for details.
           </BButton>
         </template>
         <BButton
-          v-else
-          :disabled="!connectSocialTree"
+          v-else-if="connectSocialTree"
           @click="connectSocial()"
           variant="outline-primary"
           block>
@@ -199,6 +198,9 @@ export default {
           }
         });
       });
+      if (!this.connectSocialTree) {
+        this.socialProviders = this.socialProviders.filter((provider) => provider.connected);
+      }
     },
     closeModal() {
       this.$bvModal.hide('confirmDisconnectModal');
