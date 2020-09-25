@@ -77,6 +77,7 @@ import {
   BRow,
 } from 'bootstrap-vue';
 import { mapState } from 'vuex';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import EditKBA from '@/components/profile/EditKBA';
 import store from '@forgerock/platform-shared/src/store';
@@ -95,6 +96,7 @@ export default {
     FrEditKba: EditKBA,
   },
   mixins: [
+    NotificationMixin,
     RestMixin,
   ],
   computed: {
