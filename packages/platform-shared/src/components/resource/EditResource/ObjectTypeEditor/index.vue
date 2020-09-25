@@ -124,7 +124,9 @@ export default {
         let saveData;
 
         this.displayProperties.forEach((field) => {
-          this.formFields[field.key] = field.value;
+          if (field.value !== null) {
+            this.formFields[field.key] = field.value;
+          }
         });
 
         if (this.subPropertyName) {
