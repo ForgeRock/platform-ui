@@ -96,7 +96,7 @@ export default {
   },
   computed: {
     ...mapState({
-      userId: (state) => state.UserStore.userId,
+      userId: (state) => state.UserStore.userSearchAttribute,
       managedResource: (state) => state.UserStore.managedResource,
       internalUser: (state) => state.UserStore.internalUser,
     }),

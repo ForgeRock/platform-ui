@@ -26,6 +26,7 @@ import {
 
 const defaultState = {
   userId: null,
+  userSearchAttribute: null,
   managedResource: null,
   roles: null,
   internalUser: false,
@@ -69,6 +70,10 @@ const actions = {
 
   clearUserIdAction(context) {
     context.commit('clearUserIdAction');
+  },
+
+  setUserSearchAttribute(context, userId) {
+    context.commit('setUserSearchAttribute', userId);
   },
 
   setManagedResourceAction(context, managedResource) {
@@ -147,6 +152,10 @@ const mutations = {
 
   clearUserIdAction(state) {
     state.userId = null;
+  },
+
+  setUserSearchAttribute(state, userSearchAttribute) {
+    state.userSearchAttribute = userSearchAttribute;
   },
 
   setManagedResourceAction(state, managedResource) {
