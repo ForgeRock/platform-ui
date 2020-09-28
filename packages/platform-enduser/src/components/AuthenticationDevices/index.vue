@@ -177,7 +177,7 @@ export default {
   },
   computed: {
     ...mapState({
-      userId: (state) => state.UserStore.userId,
+      userId: (state) => state.UserStore.userSearchAttribute,
     }),
   },
   methods: {
@@ -201,7 +201,7 @@ export default {
       });
     },
     get2faUrl(authType) {
-      return `/users/${this.userId}/devices/2fa/${authType}`;
+      return `/users/${this.store.state.userSearchAttribute}/devices/2fa/${authType}`;
     },
     loadAuthenicationDevices() {
       const query = '_queryId=*';
