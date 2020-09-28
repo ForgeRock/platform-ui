@@ -33,6 +33,7 @@ export default new Vuex.Store({
     returnRouteText: '',
     theme: 'default',
     userId: null,
+    userSearchAttribute: null,
     isFraas: false,
     fraasLoggingKeyURL: '',
     fraasDefaultRealm: '',
@@ -56,6 +57,14 @@ export default new Vuex.Store({
     },
     setUserId(state, id) {
       state.userId = id;
+    },
+    /**
+     * Sets the user value to one that works between AM and IDM
+     * @param {String} userSearchAttribute The user attribute that should be used when
+     * querying for users
+     */
+    setUserSearchAttribute(state, userSearchAttribute) {
+      state.userSearchAttribute = userSearchAttribute;
     },
     setUserDetails(state, userDetails) {
       state.firstName = userDetails.givenName;
@@ -141,6 +150,9 @@ export default new Vuex.Store({
     },
     setUserId(context, id) {
       context.commit('setUserId', id);
+    },
+    setUserSearchAttribute(context, userSearchAttribute) {
+      context.commit('setUserSearchAttribute', userSearchAttribute);
     },
     setUserDetails(context, userDetails) {
       context.commit('setUserDetails', {
