@@ -237,7 +237,7 @@ export default {
   },
   computed: {
     ...mapState({
-      userId: (state) => state.UserStore.userId,
+      userId: (state) => state.UserStore.userSearchAttribute,
     }),
   },
   mounted() {
