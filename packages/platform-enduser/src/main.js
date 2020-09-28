@@ -230,6 +230,7 @@ const addAppAuth = () => {
       [store.state.ApplicationStore.idmBaseURL]: 'fr:idm:*',
     },
     tokensAvailableHandler(claims) {
+      store.dispatch('UserStore/setUserSearchAttribute', claims.sub);
       // this function is called every time the tokens are either
       // originally obtained or renewed
       const sessionCheck = new SessionCheck({
