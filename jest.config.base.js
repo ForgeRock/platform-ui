@@ -17,7 +17,7 @@ module.exports = {
   ],
   transform: {
     '^.+\\.vue$': 'vue-jest',
-    '^.+\\.js$': 'babel-jest',
+    '^.+\\.js$': path.join(__dirname, 'config', 'jest', 'babel-transform.js'),
     '.+\\.(css|styl|less|sass|scss|svg|png|jpg|ttf|woff|woff2)$': 'jest-transform-stub',
   },
   transformIgnorePatterns: [
@@ -31,9 +31,6 @@ module.exports = {
   snapshotSerializers: [
     'jest-serializer-vue',
   ],
-  modulePathIgnorePatterns: [
-    "packages/platform-express/"
-  ],
   testMatch: [
     '**/*.test.js',
   ],
@@ -45,7 +42,10 @@ module.exports = {
     '**/*.vue',
     '!**/node_modules/**',
   ],
+  setupFiles: [
+    path.join(__dirname, 'config', 'jest', 'register-context.js'),
+  ],
   setupFilesAfterEnv: [
-    path.join(__dirname, 'config', 'jest', 'snapshot-errors.js')
-  ]
+    path.join(__dirname, 'config', 'jest', 'snapshot-errors.js'),
+  ],
 };

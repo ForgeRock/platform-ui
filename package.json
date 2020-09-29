@@ -4,7 +4,8 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "unit": "yarn workspaces run unit",
+    "unit": "jest",
+    "unit:watch": "jest --watch",
     "lint": "yarn workspaces run lint"
   },
   "devDependencies": {
@@ -12,6 +13,8 @@
     "@vue/cli-plugin-babel": "4.3.1",
     "@vue/cli-service": "4.3.1",
     "@vue/test-utils": "1.0.0-beta.29",
+    "babel-jest": "24.9.0",
+    "babel-plugin-require-context-hook": "1.0.0",
     "jest-transform-stub": "2.0.0",
     "jest-watch-typeahead": "0.6.1",
     "mocha": "8.1.1",
