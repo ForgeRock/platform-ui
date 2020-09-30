@@ -36,34 +36,6 @@ describe('CenterCard Component', () => {
     expect(logo.exists()).toBe(true);
   });
 
-  it('CenterCard has a logo with props set', () => {
-    const wrapper = mount(CenterCard, {
-      mocks: {
-        $t: () => {},
-      },
-      propsData: {
-        hideLogo: false,
-      },
-    });
-
-    const logo = wrapper.find('.fr-logo');
-    expect(logo.exists()).toBe(true);
-  });
-
-  it('CenterCard does not have a logo with props set', () => {
-    const wrapper = mount(CenterCard, {
-      mocks: {
-        $t: () => {},
-      },
-      propsData: {
-        hideLogo: true,
-      },
-    });
-
-    const logo = wrapper.find('.fr-logo');
-    expect(logo.exists()).toBe(false);
-  });
-
   it('CenterCard slots have the correct items', () => {
     const wrapper = mount(CenterCard, {
       mocks: {
