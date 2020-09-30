@@ -1,89 +1,55 @@
-<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
+<!--
+Copyright (c) 2020 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
-<!--AVAILABLE SLOTS: center-card-header, center-card-body, center-card-footer-->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details.
+-->
+
+<!-- AVAILABLE SLOTS: center-card-header, center-card-body, center-card-footer -->
 <template>
-  <div class="min-vh-100 h-100 justify-content-center align-items-sm-center d-flex">
-    <BCard
-      no-body
-      class="fr-center-card flex-column justify-content-center"
-      header-tag="header"
-      footer-tag="footer">
-      <BCardHeader
-        v-if="!hideHeader"
-        class="text-center border-0 pb-0">
-        <BImg
-          v-if="!hideLogo"
-          class="fr-logo mb-3 mt-2"
-          :src="logoPath"
-          fluid
-          :alt="$t('common.logo')" />
-        <!-- @slot Text or HTML Elements the header will contain. -->
-        <slot name="center-card-header" />
-      </BCardHeader>
-      <BCardBody>
-        <!-- @slot Text or HTML Elements the body will contain -->
+  <BContainer
+    fluid
+    class="px-0 h-100 d-flex">
+    <div class="fr-m-auto fr-center-card align-self-center">
+      <BCard
+        no-body
+        class="border-xs-0 border-sm d-flex fr-stretch-card"
+        header-tag="header"
+        footer-tag="footer">
+        <BCardHeader class="d-flex align-items-center flex-fill">
+          <div class="d-flex flex-fill flex-column justify-content-center">
+            <div class="fr-logo fr-logo-vertical mb-3 mt-2" />
+            <slot name="center-card-header" />
+          </div>
+        </BCardHeader>
         <slot name="center-card-body" />
-      </BCardBody>
-      <BCardFooter v-if="!hideFooter">
-        <!-- @slot Text or HTML Elements the footer will contain -->
         <slot name="center-card-footer" />
-      </BCardFooter>
-    </BCard>
-  </div>
+      </BCard>
+    </div>
+  </BContainer>
 </template>
-
 <script>
-/* eslint import/no-extraneous-dependencies: 0 */
 import {
-  BCard,
-  BCardBody,
   BCardHeader,
-  BCardFooter,
-  BImg,
+  BContainer,
+  BCard,
 } from 'bootstrap-vue';
-import frVerticalLogo from '@forgerock/platform-shared/src/assets/images/vertical-logo.svg';
-
 /**
- *  Card container that will stay horizontally and vertically center on the screen (example can be found on the default login page)
+ * @description Card container that will stay horizontally and vertically center on the screen (example can be found on the default login page)
+ *
  * */
 export default {
   name: 'CenterCard',
   components: {
     BCard,
-    BCardBody,
-    BCardFooter,
     BCardHeader,
-    BImg,
+    BContainer,
   },
+  data: () => ({
+    publicPath: process.env.BASE_URL,
+  }),
   props: {
-    /**
-     * Path to logo in header.
-     */
-    logoPath: {
-      type: String,
-      default: frVerticalLogo,
-    },
-    /**
-     * Hide card footer.
-     */
-    hideFooter: {
-      type: Boolean,
-      default: false,
-    },
-    /**
-     * Hide card header.
-     */
-    hideHeader: {
-      type: Boolean,
-      default: false,
-    },
-    /**
-     * Whether or not the header should show the ForgeRock logo
-     */
-    hideLogo: {
+    showLogo: {
       type: Boolean,
       default: false,
     },
@@ -92,26 +58,76 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.fr-center-card {
-  width: 100%;
+  // login/registration/password/username form and card
+  .fr-center-card {
+    width: 100%;
+    text-align: center;
 
-  @include media-breakpoint-between(sm, xl) {
-    max-width: 420px;
-  }
+    @include media-breakpoint-between(sm, xl) {
+      max-width: 480px;
+      padding: 40px 0;
+      margin: 0 auto;
+    }
 
-  .card-header {
-    padding: 40px 50px 0;
+    .card {
+      border: none;
 
-    .fr-logo {
-      height: 43px;
-      width: 40px;
+      @include media-breakpoint-between(sm, xl) {
+        margin: 0;
+        border-radius: $border-radius;
+      }
+    }
+
+    .card-header {
+      border: none;
+      padding: 40px 50px 0;
+
+      .justify-content-center {
+        flex-direction: column;
+
+        .fr-logo {
+          align-self: center;
+          height: $fr-center-card-logo-height;
+          width: 100%;
+        }
+      }
+    }
+
+    .card-body {
+      padding: 20px 40px 40px;
+
+      @include media-breakpoint-between(sm, xl) {
+        padding: 20px 40px 40px;
+      }
+    }
+
+    .card-footer {
+      padding: 20px 50px;
+    }
+
+    .fr-footer-bottom {
+      @media (max-width: 575px) {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+      }
     }
   }
 
-  .card-body {
-    @include media-breakpoint-down(xs) {
-      flex: 0;
+  .fr-m-auto {
+    @include media-breakpoint-between(sm, xl) {
+      margin: auto;
+    }
+
+    @media (max-width: 575px) {
+      height: 100%;
+      margin: 0;
+    }
+
+    .fr-stretch-card {
+      @media (max-width: 575px) {
+        height: 100%;
+      }
     }
   }
-}
 </style>
