@@ -18,7 +18,13 @@ of the MIT license. See the LICENSE file for details.
         footer-tag="footer">
         <BCardHeader class="d-flex align-items-center flex-fill">
           <div class="d-flex flex-fill flex-column justify-content-center">
-            <div class="fr-logo fr-logo-vertical mb-3 mt-2" />
+            <div
+              v-if="logoPath.length === 0"
+              class="fr-logo fr-logo-vertical mb-3 mt-2" />
+            <img
+              v-else
+              class="fr-logo mb-3 mt-2"
+              :src="logoPath">
             <slot name="center-card-header" />
           </div>
         </BCardHeader>
@@ -53,12 +59,21 @@ export default {
       type: Boolean,
       default: false,
     },
+    logoPath: {
+      type: String,
+      default: '',
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
   // login/registration/password/username form and card
+
+  .container-fluid {
+    overflow: auto;
+  }
+
   .fr-center-card {
     width: 100%;
     text-align: center;
@@ -88,7 +103,6 @@ export default {
         .fr-logo {
           align-self: center;
           height: $fr-center-card-logo-height;
-          width: 100%;
         }
       }
     }

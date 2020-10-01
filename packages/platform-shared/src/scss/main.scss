@@ -82,10 +82,6 @@ body {
   transform: scaleX(-1);
 }
 
-.popover {
-  pointer-events: none;
-}
-
 .dropdown-toggle,
 .accordion .card-header {
   &::after {

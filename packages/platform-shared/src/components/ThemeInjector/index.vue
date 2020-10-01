@@ -7,13 +7,21 @@ to such license between the licensee and ForgeRock AS. -->
   <Component :is="'style'">
     #app {
     background-image: url('{{ theme.backgroundImage }}');
+    background-color: {{ theme.backgroundColor }};
+    background-size: cover;
+    background-repeat: no-repeat;
     }
 
     .btn-primary {
     background-color: {{ theme.primaryColor }} !important;
-    border-radius: {{ theme.buttonRounded }} !important;
+    border-radius: {{ theme.buttonRounded }}px !important;
     outline-color: {{ theme.primaryColor }} !important;
     border-color: {{ theme.primaryColor }} !important;
+    color: {{ theme.textColor }};
+    }
+
+    .btn-primary:disabled {
+    background-color: {{ theme.primaryOffColor }} !important;
     }
 
     .btn-primary:hover {
@@ -25,8 +33,9 @@ to such license between the licensee and ForgeRock AS. -->
     box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }};
     }
 
-    body {
-    color: {{ theme.textColor }};
+    .fr-custom-logo {
+    max-width: 80px;
+    align-self: center;
     }
 
     textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {

@@ -564,6 +564,8 @@
     "typeToAddDnsAlias": "Type and press enter to add a DNS alias",
     "Status": "Status",
     "active": "Active",
+    "details": "Details",
+    "theme": "Theme",
     "inactive": "Inactive",
     "activate": "Activate",
     "deactivate": "Deactivate",
@@ -574,6 +576,19 @@
     "deleteModalText2": "Are you sure you want to permanently delete this realm?",
     "deleteModalText3": "This action cannot be undone.",
     "yesDeleteRealm": "Yes, Delete Realm"
+  },
+  "realmTheme": {
+    "realmLogo": "Realm Logo URL",
+    "successfullyUpdatedRealmTheme": "'{realmName}' realm theme successfully updated",
+    "failedToUpdatedRealmTheme": "'{realmName}' realm theme failed to updated",
+    "logoHelp": "URL to logo for use in all user-facing UIs such as consent pages and application pages unless overridden at the app or tree level.",
+    "signInBackground": "Sign-In Background Color",
+    "buttonColor": "Button Color",
+    "buttonActiveColor": "Button Active Color",
+    "buttonTextColor": "Button Text Color",
+    "buttonRadius": "Button Radius",
+    "signInBackgroundImage": "Sign-In Background Image (optional)",
+    "backgroundImageHelp": "URL to optionally display a background image."
   },
   "logApiKeys": {
     "noLogApiKeysText": "You haven't added any log API keys",

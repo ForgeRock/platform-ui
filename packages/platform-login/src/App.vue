@@ -58,7 +58,7 @@ export default {
       theme: null,
     };
   },
-  mounted() {
+  created() {
     const urlParams = new URLSearchParams(window.location.search);
     const idmRequestService = this.getRequestService({
       'X-OpenIDM-NoSession': true,
@@ -70,10 +70,18 @@ export default {
     const realm = urlParams.get('realm') || '/';
 
     idmRequestService.get('/config/ui/themelogin').then((results) => {
+      let cleanRealm = realm;
+
+      // If there is a / we need to remove it so that
+      // both test and /test result in the same realm theme
+      if (results.data.realmTheme[cleanRealm] === undefined && cleanRealm.charAt(0) === '/') {
+        cleanRealm = cleanRealm.substring(1);
+      }
+
       // Set all realm related themeing here
-      if (results.data.realmTheme[realm]) {
-        this.theme = results.data.realmTheme[realm];
-        this.logo = results.data.realmTheme[realm].logo;
+      if (results.data.realmTheme[cleanRealm]) {
+        this.theme = results.data.realmTheme[cleanRealm];
+        this.logo = results.data.realmTheme[cleanRealm].logo;
       } else {
         this.theme = null;
       }

@@ -33,6 +33,7 @@
       "calc",
       "darken",
       "lighten",
+      "linear-gradient",
       "map-merge",
       "theme-color",
       "url",

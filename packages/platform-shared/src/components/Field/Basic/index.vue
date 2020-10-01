@@ -26,10 +26,11 @@ to such license between the licensee and ForgeRock AS. -->
       :name="fieldName">
     <template #defaultButtons>
       <BInputGroupAppend
+        class="fr-hide-input"
         v-if="type === 'password'">
         <BButton
           @click="revealText"
-          :class="[{'disabled': disabled}, 'btn btn-secondary']"
+          :class="[{'disabled': disabled}]"
           name="revealButton"
           @keyup.enter="$emit('enter')">
           <i class="material-icons material-icons-outlined">
@@ -171,6 +172,23 @@ export default {
 <style lang="scss" scoped>
   .form-control.is-invalid {
     background-image: none;
+  }
+
+  .fr-hide-input {
+    position: absolute;
+    right: 0;
+
+    .btn {
+      background-color: transparent !important;
+      border-color: transparent;
+
+      &:active,
+      &:hover,
+      &:focus,
+      &:active:focus {
+        box-shadow: none;
+      }
+    }
   }
 </style>
 
