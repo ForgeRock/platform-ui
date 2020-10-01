@@ -428,13 +428,13 @@ export default {
           }
           tempProp.value = this.formFields[createPriv.attribute];
 
-          if (createPriv.readOnly && !this.isOpenidmAdmin) {
+          if ((createPriv.readOnly && !this.isOpenidmAdmin) || tempProp.isVirtual) {
             tempProp.disabled = true;
           } else {
             tempProp.disabled = false;
           }
 
-          if (createPriv.attribute !== 'password' && tempProp.viewable && !tempProp.isVirtual && !tempProp.isConditional) {
+          if (createPriv.attribute !== 'password' && tempProp.viewable && !tempProp.isConditional) {
             this.displayProperties.push(tempProp);
           } else {
             tempProp.type = 'password';
