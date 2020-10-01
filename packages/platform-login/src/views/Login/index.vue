@@ -69,7 +69,7 @@ of the MIT license. See the LICENSE file for details.
             ref="callbackSubmitButton"
             :disabled="disableNextButton"
             @click="nextStep">
-            {{ $t('login.next') }}
+            {{ buttonText }}
           </BButton>
         </form>
       </BCardBody>
@@ -137,6 +137,12 @@ export default {
     logo: {
       type: String,
       default: '',
+    },
+    buttonText: {
+      type: String,
+      default() {
+        return this.$t('login.next');
+      },
     },
   },
   mixins: [
