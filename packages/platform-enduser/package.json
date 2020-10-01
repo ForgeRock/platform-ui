@@ -17,6 +17,7 @@
     "find-copyright-problems": "echo 'Listing all files which do not contain a valid copywright header for this year - some files do not qualify \n' && cd src && git grep -L --word-regexp \"Copyright (c) $(date +\"%Y\")\""
   },
   "dependencies": {
+    "@ascendancyy/vue-cli-plugin-stylelint": "1.1.2",
     "@forgerock/platform-shared": "1.0.0",
     "appauthhelper": "0.3.19",
     "axios": "0.19.0",
