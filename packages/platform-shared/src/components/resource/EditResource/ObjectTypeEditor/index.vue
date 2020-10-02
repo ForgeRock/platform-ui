@@ -27,7 +27,7 @@ to such license between the licensee and ForgeRock AS. -->
         </BTooltip>
       </div>
     </div>
-    <div
+    <template
       v-if="showJson">
       <div
         class="mt-4"
@@ -42,7 +42,7 @@ to such license between the licensee and ForgeRock AS. -->
           :line-numbers="true"
           @input="currentJson = $event.target.innerText; validateCurrentJson();" />
       </div>
-    </div>
+    </template>
     <div
       v-else
       class="card-body m-4">
@@ -119,7 +119,11 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import ListsMixin from '@forgerock/platform-shared/src/mixins/ListsMixin';
+import 'prismjs';
+import 'prismjs/components/prism-json';
+import 'prismjs/themes/prism.css';
 import VuePrismEditor from 'vue-prism-editor';
+import 'vue-prism-editor/dist/VuePrismEditor.css';
 
 export default {
   name: 'ObjectTypeEditor',
@@ -132,7 +136,6 @@ export default {
     BFormCheckbox,
     VuePrismEditor,
     BTooltip,
-
   },
   props: {
     displayProperties: {
