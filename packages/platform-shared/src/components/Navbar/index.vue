@@ -285,7 +285,9 @@ export default {
 
   .fr-dropdown-header {
     h6 {
-      font-size: 0.6875rem;
+      color: #77869e;
+      letter-spacing: 1px;
+      text-transform: uppercase;
     }
   }
 
