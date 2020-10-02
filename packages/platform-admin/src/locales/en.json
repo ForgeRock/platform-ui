@@ -607,10 +607,10 @@
       "successCountMessage": "You’ve invited {count} admin(s)",
       "partialSuccessMessage": "You’ve invited {totalCount} admin(s), but {failCount} invitation(s) didn't send. Review the below errors.",
       "noSuccessMessage": "{count} invitation(s) didn't send. Review the errors below.",
-      "notice": "IMPORTANT: Each invited admin will receive an email to setup their admin account and have the permission to fully administer this organization.",
+      "notice": "IMPORTANT: Each invited admin will receive an email to setup their admin account and have the permission to fully administer this tenant.",
       "toCompany": "to {company}",
       "emailAddresses": "Email addresses",
-      "inviteAdminsTitle": "Invite Admins",
+      "inviteAdminsTitle": "Invite admins",
       "invitationSentTitle": "Invitations Sent!",
       "partialSuccessTitle": "Partial Success",
       "oopsTitle": "Oops, That Didn't Work",
@@ -625,6 +625,7 @@
   },
   "tenantSettings": {
     "title": "Tenant Settings",
+    "dropdownTitle": "Tenant settings",
     "globalSettings": {
       "title": "Global Settings",
       "getDataFail": "Unable to retrieve global settings data",

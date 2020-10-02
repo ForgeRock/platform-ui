@@ -69,7 +69,7 @@ to such license between the licensee and ForgeRock AS. -->
                       </span>
                     </div>
                   </BMediaAside>
-                  <BMediaBody class="sidebar-item-text overflow-hidden">
+                  <BMediaBody class="overflow-hidden">
                     <h5 class="my-0 text-truncate">
                       {{ realm }}
                     </h5>

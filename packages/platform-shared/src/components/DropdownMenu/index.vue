@@ -35,6 +35,9 @@ to such license between the licensee and ForgeRock AS. -->
           </span>
         </BDropdownItem>
       </template>
+      <BDropdownDivider
+        :key="`sideDropdownItemsDivider_${index}`"
+        v-if="dropdownItems.length == (index + 1) && enableLogout" />
     </template>
     <template v-if="enduserLink.length">
       <BDropdownItem
@@ -49,22 +52,21 @@ to such license between the licensee and ForgeRock AS. -->
               width="34"
               height="34">
           </template>
-          <h5 class="my-0">
+          <h5 class="my-0 text-truncate">
             {{ userDetails.name }}
           </h5>
-          <span class="text-muted">
+          <div class="text-muted text-truncate">
             <template v-if="userDetails.email.length === 0">
               n/a
             </template>
             <template v-else>
               {{ userDetails.email }}
             </template>
-          </span>
+          </div>
         </BMedia>
       </BDropdownItem>
       <BDropdownDivider />
     </template>
-
     <BDropdownItem
       v-if="enableLogout"
       class="mb-2"
@@ -161,6 +163,7 @@ export default {
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
     padding: 0;
     min-width: 243px;
+    max-width: 270px;
 
     li:first-child {
       margin-top: 0.5rem;
@@ -185,5 +188,15 @@ export default {
   .dropdown-toggle::after {
     right: 0.6875rem;
   }
+
+  @include media-breakpoint-down(md) {
+    .dropdown-toggle::after {
+      right: 0;
+    }
+  }
+}
+
+.media-body {
+  overflow: hidden;
 }
 </style>
