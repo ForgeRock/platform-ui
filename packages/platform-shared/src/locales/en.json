@@ -64,6 +64,7 @@
     "start": "Start",
     "status": "Status",
     "submit": "Submit",
+    "tableNavigation": "Table Navigation",
     "tenant": "Tenant",
     "time": "Time",
     "typeToSearch": "Type to search",

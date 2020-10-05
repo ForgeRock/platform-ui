@@ -53,7 +53,7 @@ describe('ListResource.vue', () => {
   });
 
   it('Builds URL Parameters', () => {
-    expect(wrapper.vm.buildUrlParams('name+sw+"test"+OR+description+sw+"test"', ['name', 'description'], '', 1)).toEqual({
+    expect(wrapper.vm.buildUrlParams('name+sw+"test"+OR+description+sw+"test"', ['name', 'description'], '', 0)).toEqual({
       fields: 'name,description',
       pageSize: 10,
       queryFilter: 'name+sw+"test"+OR+description+sw+"test"',
