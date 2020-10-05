@@ -221,10 +221,8 @@ export default {
         managedResourceParams.fields = fields.join(',');
       }
 
-      if (page > 1) {
-        // Pagination starts at 1 and we need to go back an additional one to get the previous page
-        const offsetCalc = (page - 1) * 10;
-
+      if (page > 0) {
+        const offsetCalc = page * 10;
         managedResourceParams.pagedResultsOffset = offsetCalc;
       }
 

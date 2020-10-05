@@ -85,47 +85,11 @@ to such license between the licensee and ForgeRock AS. -->
         </div>
       </template>
     </BTable>
-
-    <div class="card-footer py-2">
-      <nav
-        v-if="gridData.length && gridData.length === gridPageSize || currentPage > 1">
-        <ul class="pagination justify-content-center mb-0">
-          <li
-            @click.prevent="currentPage === 1 ? '' : paginationChange(1)"
-            :class="[{ disabled: currentPage === 1 }, 'page-item']">
-            <a
-              class="page-link"
-              href="#">
-              <i class="material-icons material-icons-outlined mr-2">
-                first_page
-              </i>
-            </a>
-          </li>
-          <li
-            @click.prevent="currentPage === 1 ? '' : paginationChange(currentPage - 1)"
-            :class="[{ disabled: currentPage === 1 }, 'page-item']">
-            <a
-              class="page-link"
-              href="#">
-              <i class="material-icons material-icons-outlined mr-2">
-                keyboard_arrow_left
-              </i>
-            </a>
-          </li>
-          <li
-            @click.prevent="lastPage || gridData.length < gridPageSize ? '' : paginationChange(currentPage + 1)"
-            :class="[{ disabled: lastPage }, 'page-item']">
-            <a
-              class="page-link"
-              href="#">
-              <i class="material-icons material-icons-outlined mr-2">
-                keyboard_arrow_right
-              </i>
-            </a>
-          </li>
-        </ul>
-      </nav>
-    </div>
+    <FrPagination
+      v-if="gridData.length && gridData.length === gridPageSize || currentPage > 0"
+      :current-page="currentPage"
+      :last-page="lastPage"
+      @pagination-change="paginationChange" />
 
     <BModal
       :id="createModalId"
@@ -207,11 +171,13 @@ import pluralize from 'pluralize';
 import RelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import FrPagination from '@forgerock/platform-shared/src/components/DataTable/Pagination';
 
 export default {
   name: 'RelationshipArray',
   components: {
     FrRelationshipEdit: RelationshipEdit,
+    FrPagination,
     BRow,
     BCol,
     BButton,
@@ -244,7 +210,7 @@ export default {
       tableHover: true,
       gridData: [],
       columns: [],
-      currentPage: 1,
+      currentPage: 0,
       lastPage: false,
       createModalId: `create_${this.relationshipArrayProperty.propName}_modal`,
       removeModalId: `delete_${this.relationshipArrayProperty.propName}_modal`,
@@ -254,7 +220,7 @@ export default {
     };
   },
   mounted() {
-    this.loadGrid(1);
+    this.loadGrid(0);
   },
   methods: {
     loadGrid(page) {
@@ -331,9 +297,8 @@ export default {
     buildGridUrl(page) {
       let resourceUrl = `${this.parentResource}/${this.parentId}/${this.relationshipArrayProperty.propName}?_queryFilter=true&_pageSize=${this.gridPageSize}&_totalPagedResultsPolicy=ESTIMATE&_fields=`;
 
-      if (page > 1) {
-        // Pagination starts at 1 and we need to go back an additional one to get the previous page
-        const offsetCalc = (page - 1) * this.gridPageSize;
+      if (page > 0) {
+        const offsetCalc = (page) * this.gridPageSize;
 
         resourceUrl = `${resourceUrl}&_pagedResultsOffset=${offsetCalc}`;
       }
@@ -423,7 +388,7 @@ export default {
       const idmInstance = this.getRequestService();
       const loadAndCloseModal = () => {
         const modal = operation === 'remove' ? this.removeModalId : this.createModalId;
-        this.loadGrid(1);
+        this.loadGrid(0);
         this.$refs[modal].hide();
       };
 

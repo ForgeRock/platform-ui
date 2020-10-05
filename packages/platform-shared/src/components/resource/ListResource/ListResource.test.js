@@ -128,7 +128,7 @@ describe('ListResource Component', () => {
       sortBy: 'test',
     });
 
-    expect(wrapper.vm.currentPage).toBe(1);
+    expect(wrapper.vm.currentPage).toBe(0);
   });
 
   it('New search entered', () => {
@@ -136,7 +136,7 @@ describe('ListResource Component', () => {
     wrapper.vm.search();
 
     expect(wrapper.vm.sortBy).toBeNull();
-    expect(wrapper.vm.currentPage).toBe(1);
+    expect(wrapper.vm.currentPage).toBe(0);
   });
 
   it('Generated query filter for search', () => {
@@ -149,6 +149,6 @@ describe('ListResource Component', () => {
     wrapper.vm.clear();
 
     expect(wrapper.vm.sortBy).toBeNull();
-    expect(wrapper.vm.currentPage).toBe(1);
+    expect(wrapper.vm.currentPage).toBe(0);
   });
 });

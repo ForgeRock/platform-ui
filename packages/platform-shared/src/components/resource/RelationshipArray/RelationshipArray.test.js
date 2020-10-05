@@ -35,7 +35,7 @@ describe('RelationshipArray', () => {
     });
 
     expect(wrapper.name()).toEqual('RelationshipArray');
-    expect(wrapper.vm.buildGridUrl(1)).toEqual('user/bjensen/manager?_queryFilter=true&_pageSize=10&_totalPagedResultsPolicy=ESTIMATE&_fields=');
-    expect(wrapper.vm.buildGridUrl(2)).toEqual('user/bjensen/manager?_queryFilter=true&_pageSize=10&_totalPagedResultsPolicy=ESTIMATE&_fields=&_pagedResultsOffset=10');
+    expect(wrapper.vm.buildGridUrl(0)).toEqual('user/bjensen/manager?_queryFilter=true&_pageSize=10&_totalPagedResultsPolicy=ESTIMATE&_fields=');
+    expect(wrapper.vm.buildGridUrl(1)).toEqual('user/bjensen/manager?_queryFilter=true&_pageSize=10&_totalPagedResultsPolicy=ESTIMATE&_fields=&_pagedResultsOffset=10');
   });
 });
