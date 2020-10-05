@@ -2417,10 +2417,10 @@ anymatch@^3.0.3, anymatch@~3.1.1:
     normalize-path "^3.0.0"
     picomatch "^2.0.4"
 
-appauthhelper@0.3.17:
-  version "0.3.17"
-  resolved "https://registry.yarnpkg.com/appauthhelper/-/appauthhelper-0.3.17.tgz#683058c376ee8403e00bda1cbce11ce80422730d"
-  integrity sha512-CfBKlB5glPP8At+Nk8P/EVUX3zxHueJmTu++TlZ3V+8klTDGy4REJnNmUJLu4A/DjaoIwWH7EIb0X76ZTRUY+A==
+appauthhelper@0.3.19:
+  version "0.3.19"
+  resolved "https://registry.yarnpkg.com/appauthhelper/-/appauthhelper-0.3.19.tgz#65615131e3ce4ff166d141faa12ed931ff228ecb"
+  integrity sha512-1WZ4sx01FMAyaDJA+ggg9FbyHtfyPHC1zNFPKsHLCcOOhOx3wStSnVPgY39M6BtdgHk1muDwqR1LEywR1H3prw==
   dependencies:
     "@openid/appauth" "^1.2.8"
     promise-polyfill "8.1.3"
