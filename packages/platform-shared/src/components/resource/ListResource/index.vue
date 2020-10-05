@@ -89,45 +89,10 @@ to such license between the licensee and ForgeRock AS. -->
           v-bind="slotData" />
       </template>
     </BTable>
-    <div class="card-footer py-2">
-      <nav aria-label="Page navigation">
-        <ul class="pagination justify-content-center mb-0">
-          <li
-            @click.prevent="currentPage === 1 ? '' : paginationChange(1)"
-            :class="[{ disabled: currentPage === 1 }, 'page-item']">
-            <a
-              class="page-link"
-              href="#">
-              <i class="material-icons-outlined mr-2">
-                first_page
-              </i>
-            </a>
-          </li>
-          <li
-            @click.prevent="currentPage === 1 ? '' : paginationChange(currentPage - 1)"
-            :class="[{ disabled: currentPage === 1 }, 'page-item']">
-            <a
-              class="page-link"
-              href="#">
-              <i class="material-icons-outlined mr-2">
-                keyboard_arrow_left
-              </i>
-            </a>
-          </li>
-          <li
-            @click.prevent="lastPage ? '' : paginationChange(currentPage + 1)"
-            :class="[{ disabled: lastPage }, 'page-item']">
-            <a
-              class="page-link"
-              href="#">
-              <i class="material-icons-outlined mr-2">
-                keyboard_arrow_right
-              </i>
-            </a>
-          </li>
-        </ul>
-      </nav>
-    </div>
+    <FrPagination
+      :current-page="currentPage"
+      :last-page="lastPage"
+      @pagination-change="paginationChange" />
 
     <slot name="deleteResourceModal">
       <FrDeleteResource
@@ -161,6 +126,7 @@ import {
 import Vue from 'vue';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import SearchInput from '@forgerock/platform-shared/src/components/SearchInput';
+import FrPagination from '@forgerock/platform-shared/src/components/DataTable/Pagination';
 import DeleteResource from '../DeleteResource';
 
 Vue.directive('b-modal', VBModal);
@@ -181,6 +147,7 @@ export default {
     BDropdownItem,
     BTable,
     FrDeleteResource: DeleteResource,
+    FrPagination,
     FrSearchInput: SearchInput,
   },
   directives: {
@@ -238,7 +205,7 @@ export default {
       tableHover: true,
       columns: [],
       displayFields: [],
-      currentPage: 1,
+      currentPage: 0,
       sortBy: null,
       sortDesc: false,
       filter: '',
@@ -265,7 +232,7 @@ export default {
     } else {
       this.loadTableDefs();
     }
-    this.loadData('true', this.displayFields, this.defaultSort, 1);
+    this.loadData('true', this.displayFields, this.defaultSort, 0);
   },
   methods: {
     getResourceName(resourceName) {
@@ -299,9 +266,9 @@ export default {
       this.filter = '';
       this.sortBy = null;
       this.sortDesc = false;
-      this.currentPage = 1;
+      this.currentPage = 0;
 
-      this.loadData('true', this.displayFields, this.defaultSort, 1);
+      this.loadData('true', this.displayFields, this.defaultSort, this.currentPage);
     },
     /**
      * Builds API URL using value in search box
@@ -416,9 +383,9 @@ export default {
       }
       this.sortBy = null;
       this.sortDesc = false;
-      this.currentPage = 1;
+      this.currentPage = 0;
 
-      this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.defaultSort, 1);
+      this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.defaultSort, this.currentPage);
     },
     /**
      * Repulls data based on new sort, and returns table to first page
@@ -426,9 +393,9 @@ export default {
      * @param {object} sort - Required object containing sort metadata
      */
     sortingChanged(sort) {
-      this.currentPage = 1;
+      this.currentPage = 0;
 
-      this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.calculateSort(sort.sortDesc, sort.sortBy), 1);
+      this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.calculateSort(sort.sortDesc, sort.sortBy), this.currentPage);
     },
   },
 };
