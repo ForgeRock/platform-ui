@@ -316,8 +316,8 @@ export default {
         stepParams.query.code = this.code ? this.code : undefined;
         stepParams.query.state = this.state ? this.state : undefined;
         stepParams.query.scope = this.scope ? this.scope : undefined;
-        stepParams.query.goto = undefined;
-        stepParams.query.gotoOnFail = undefined;
+        stepParams.query.goto = (paramsObj.goto) ? decodeURIComponent(paramsObj.goto) : undefined;
+        stepParams.query.gotoOnFail = (paramsObj.gotoOnFail) ? decodeURIComponent(paramsObj.gotoOnFail) : undefined;
       }
       return stepParams;
     },
