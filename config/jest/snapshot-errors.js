@@ -11,28 +11,27 @@ const path = require('path');
 const baseDir = path.dirname(path.dirname(__dirname));
 
 beforeEach(() => {
-    jest.spyOn(console, "error");
-    jest.spyOn(console, "warn");
+  jest.spyOn(console, 'error');
+  jest.spyOn(console, 'warn');
 });
 
-
-function cleanFilepaths (string) {
-    return string.split(baseDir).join("");
+function cleanFilepaths(string) {
+  return string.split(baseDir).join('');
 }
 
-function cleanMockCall (args) {
-    return args.map((arg) => (typeof arg === "string" ? cleanFilepaths(arg) : arg));
+function cleanMockCall(args) {
+  return args.map((arg) => (typeof arg === 'string' ? cleanFilepaths(arg) : arg));
 }
 
-function snapshotCalls (fn, snapshotName) {
-    if (fn.mock.calls.length > 0) {
-        expect(fn.mock.calls.map(cleanMockCall)).toMatchSnapshot(snapshotName);
-    }
+function snapshotCalls(fn, snapshotName) {
+  if (fn.mock.calls.length > 0) {
+    expect(fn.mock.calls.map(cleanMockCall)).toMatchSnapshot(snapshotName);
+  }
 }
 
 afterEach(() => {
-    snapshotCalls(console.error, "console-error-snapshot");
-    snapshotCalls(console.warn, "console-warn-snapshot");
-    console.error.mockRestore();
-    console.warn.mockRestore();
+  snapshotCalls(console.error, 'console-error-snapshot');
+  snapshotCalls(console.warn, 'console-warn-snapshot');
+  console.error.mockRestore();
+  console.warn.mockRestore();
 });

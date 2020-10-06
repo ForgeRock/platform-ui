@@ -8,7 +8,6 @@
 import { shallowMount } from '@vue/test-utils';
 import DeletePanel from './index';
 
-
 describe('DeletePanel', () => {
   it('DeletePanel successfully loaded', () => {
     const wrapper = shallowMount(DeletePanel, {

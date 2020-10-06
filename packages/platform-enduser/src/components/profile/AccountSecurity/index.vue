@@ -79,8 +79,8 @@ import {
 import { mapState } from 'vuex';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
-import EditKBA from '@/components/profile/EditKBA';
 import store from '@forgerock/platform-shared/src/store';
+import EditKBA from '@/components/profile/EditKBA';
 /**
  * @description Handles displaying account security controls
  */

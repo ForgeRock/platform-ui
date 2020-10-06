@@ -250,7 +250,6 @@ export default {
       // filter subject out of current permissions array
       const permissions = this.resource.policy.permissions.filter((obj) => obj.subject !== subject);
 
-
       const payload = {
         /* eslint no-underscore-dangle: ["error", { "allow": ["_id"] }] */
         policyId: this.resource._id,
@@ -325,7 +324,6 @@ export default {
 
           return processedPermission;
         });
-
 
       const payload = {
         policyId: this.resource._id,

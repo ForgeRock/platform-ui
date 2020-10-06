@@ -38,7 +38,6 @@ describe('PasswordPolicyInput.vue', () => {
     it('Should return true for items that match "password" and then items that do not match "password" ', () => {
       let policyDefinition = { name: '/user/password' };
 
-
       let policyFailureDefinition = { property: '/user/password' };
 
       expect(wrapper.vm.isPasswordPolicyItem('name', policyDefinition)).toEqual(true);
@@ -59,7 +58,6 @@ describe('PasswordPolicyInput.vue', () => {
         params: { numNums: 1 },
         policyRequirements: ['AT_LEAST_X_NUMBERS'],
       };
-
 
       const simplePolicyObj = wrapper.vm.toSimplePolicyObject(policyDefinition);
 

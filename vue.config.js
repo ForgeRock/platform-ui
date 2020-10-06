@@ -1,11 +1,12 @@
 /**
- * Copyright 2019 ForgeRock AS. All Rights Reserved
+ * Copyright 2019-2020 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS.
  * or with one of its affiliates. All use shall be exclusively subject
  * to such license between the licensee and ForgeRock AS.
  */
 const path = require('path');
+
 module.exports = {
   runtimeCompiler: true,
   css: {
@@ -16,7 +17,7 @@ module.exports = {
           @import "~bootstrap/scss/_mixins.scss";
           @import "~@forgerock/platform-shared/src/scss/theme-variables.scss";
           @import "~bootstrap/scss/_variables.scss";
-        `
+        `,
       },
     },
   },
@@ -28,8 +29,8 @@ module.exports = {
           loader: require.resolve('@storybook/source-loader'),
           include: [path.resolve(__dirname, 'packages/platform-shared/src/components/')],
           enforce: 'pre',
-        }
-      ]
-    }
-  }
+        },
+      ],
+    },
+  },
 };

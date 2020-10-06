@@ -215,7 +215,7 @@ export default {
         }
       });
 
-      return Object.assign({}, policyRequirementSet, { policyRequirements, policies });
+      return { ...policyRequirementSet, policyRequirements, policies };
     },
     /**
      * Get an array of error message strings given an array of failing policy objects.
