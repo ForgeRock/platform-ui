@@ -18,7 +18,6 @@ export const defaultConditionOptions = {
   Lt: { label: 'LT (<)', value: 'lt', type: ['number'] },
 };
 
-
 export function getTypeFromValue(value, properties) {
   if (!value) return 'string';
   const property = properties.find((prop) => prop.value === value);
