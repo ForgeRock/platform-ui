@@ -24,25 +24,6 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
-Cypress.Commands.add("login", (username, password) => {
-  // if (sessionStorage.access_token) return;
-
-  // const body = {
-  //     grant_type: "password",
-  //     client_id: Cypress.env("REACT_APP_OAUTH_CLIENT_ID"),
-  //     client_secret: Cypress.env("REACT_APP_OAUTH_CLIENT_SECRET"),
-  //     username: username,
-  //     password: password,
-  //     scope: "*"
-  // };
-
-  // return axios.post("/oauth/token", body).then(response => {
-  //     const token = response.data.access_token;
-  //     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-  //     sessionStorage.access_token = token;
-  // });
-});
-
 // https://stackoverflow.com/questions/50750956/how-to-select-nth-item-inside-select-element-in-cypress
 Cypress.Commands.add(
   'selectNth',
@@ -51,8 +32,8 @@ Cypress.Commands.add(
     cy.wrap(subject)
       .children(children)
       .eq(pos)
-      .then(e => {
-        cy.wrap(subject).select(e.val())
-      })
-  }
-)
+      .then((e) => {
+        cy.wrap(subject).select(e.val());
+      });
+  },
+);

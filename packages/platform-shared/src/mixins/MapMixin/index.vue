@@ -24,7 +24,6 @@ const geocodeTypeGetter = (results) => {
   };
 };
 
-
 export default {
   name: 'MapMixin',
 

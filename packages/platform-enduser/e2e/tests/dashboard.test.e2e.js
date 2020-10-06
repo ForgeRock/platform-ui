@@ -28,6 +28,7 @@ describe('Enduser Dashboard View', () => {
       } else {
         loginUser(userName, password).then(() => {
           cy.visit(locationUrl);
+          // eslint-disable-next-line cypress/no-unnecessary-waiting
           cy.wait(2000);
           cy.get('.fr-logo', { timeout: 60000 }).should('be.visible');
         });

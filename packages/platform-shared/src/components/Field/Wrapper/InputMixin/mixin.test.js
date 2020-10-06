@@ -41,7 +41,6 @@ describe('InputMixin', () => {
     expect(setInputValue).toBeCalled();
   });
 
-
   it('Initial value defaults to empty string', () => {
     const wrapper = shallowMount(TestComponent);
 

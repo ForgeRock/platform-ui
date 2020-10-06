@@ -33,7 +33,6 @@ describe('InputLayout', () => {
     expect(wrapper.name()).toBe('InputLayout');
   });
 
-
   it('InputLayout component renders help text and label', () => {
     const wrapper = mount(InputLayout, {
       localVue,
