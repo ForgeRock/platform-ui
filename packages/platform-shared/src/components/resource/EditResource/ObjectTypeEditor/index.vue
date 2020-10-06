@@ -58,7 +58,7 @@ to such license between the licensee and ForgeRock AS. -->
           </div>
 
           <FrListField
-            v-else-if="field.type === 'array'"
+            v-else-if="field.type === 'array' && field.key !== 'privileges'"
             :key="'editResource' + index"
             :field="field"
             :index="index"

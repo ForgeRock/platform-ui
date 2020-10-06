@@ -45,7 +45,7 @@ to such license between the licensee and ForgeRock AS. -->
                 </BFormGroup>
                 <BFormGroup
                   :key="'createResource' + index"
-                  v-else-if="field.type === 'array'">
+                  v-else-if="field.type === 'array' && field.key !== 'privileges' && !field.isTemporalConstraint">
                   <FrListField
                     :field="field"
                     :index="index"
