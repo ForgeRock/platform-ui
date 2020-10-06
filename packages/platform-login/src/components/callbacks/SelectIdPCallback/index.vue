@@ -26,14 +26,14 @@ of the MIT license. See the LICENSE file for details.
         :src="provider.uiConfig.buttonImage">
       <!-- TODO No material icons for providers, need alternative or always have image for all icons -->
       <span class="ml-1">
-        {{ $t(continueWithText, {buttonDisplayName: provider.uiConfig.buttonDisplayName}) }}
+        {{ $t('login.social.continueWith', {buttonDisplayName: provider.uiConfig.buttonDisplayName}) }}
       </span>
     </button>
 
     <FrHorizontalRule
-      v-if="!standaloneMode"
+      v-if="!isOnlyCallback"
       class="mt-3"
-      :insert="orText" />
+      :insert="$t('login.social.or')" />
   </div>
 </template>
 
@@ -58,29 +58,9 @@ export default {
       type: Number,
       default: 0,
     },
-    continueWithText: {
-      type: String,
-      default: '',
-    },
-    orText: {
-      type: String,
-      default: '',
-    },
-    callbackSubmitButton: {
-      type: HTMLButtonElement,
-      required: true,
-    },
-
-  },
-  mounted() {
-    this.providers = this.callback.getOutputByName('providers');
-
-    // pausing briefly here so the login button is on the dom
-    setTimeout(this.loadIDPs, 10);
-  },
-  computed: {
-    filteredProviders() {
-      return filter(this.providers, (provider) => provider.uiConfig);
+    isOnlyCallback: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -89,8 +69,20 @@ export default {
       value: 'localAuthentication',
       providers: [],
       socialButtonStyles: [],
-      standaloneMode: false,
     };
+  },
+  mounted() {
+    this.providers = this.callback.getOutputByName('providers');
+
+    // pausing briefly here so the login button is on the dom
+    this.$nextTick(
+      this.loadIDPs,
+    );
+  },
+  computed: {
+    filteredProviders() {
+      return filter(this.providers, (provider) => provider.uiConfig);
+    },
   },
   methods: {
     loadIDPs() {
@@ -100,15 +92,8 @@ export default {
         this.$set(this.socialButtonStyles, index, provider.uiConfig.buttonCustomStyle);
       });
 
-      /*
-        If callback_index is zero and the "name" attribute on callbackSubmitButton is callback_1 we
-        know SelectIdPCallback is by itself on the page. In this case we will hide callbackSubmitButton
-        and click it to submit the form automatically when one of the social buttons is pressed.
-      */
-      this.standaloneMode = this.orText === '' || (this.index === 0 && this.callbackSubmitButton && this.callbackSubmitButton.name === 'callback_1');
-
-      if (this.standaloneMode) {
-        this.callbackSubmitButton.style.display = 'none';
+      if (this.isOnlyCallback) {
+        this.$emit('hide-next-button', true);
       }
     },
     hover(index, style) {
@@ -117,12 +102,7 @@ export default {
     setValue(provider) {
       this.value = provider;
       this.callback.setInputValue(this.value);
-      // brief pause here to wait for this.value to propagate to this callback's
-      // hidden input element before submitting the login form
-      setTimeout(() => {
-        this.callbackSubmitButton.disabled = false;
-        this.callbackSubmitButton.click();
-      }, 10);
+      this.$emit('next-step');
     },
   },
 };

@@ -60,10 +60,6 @@ export default {
       type: Object,
       required: true,
     },
-    pageRendered: {
-      type: Promise,
-      required: true,
-    },
   },
   data() {
     return {
@@ -97,11 +93,9 @@ export default {
     }
 
     if (this.messageType === 'SCRIPT') {
-      this.$emit('hasScripts');
-      this.pageRendered
-        .then(() => {
-          this.appendScript();
-        });
+      this.$emit('has-scripts');
+      // will run after $emit is done
+      this.$nextTick(this.appendScript);
     }
   },
   methods: {
