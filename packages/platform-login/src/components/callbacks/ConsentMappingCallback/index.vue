@@ -6,10 +6,12 @@ of the MIT license. See the LICENSE file for details.
 -->
 
 <template>
-  <ul class="m-0 p-0">
+  <ul
+    v-if="index === 0"
+    class="m-0 p-0">
     <ConsentListItem
-      v-for="( callback, index ) in callbacks"
-      :key="`${callback.payload.type }-${ index }`"
+      v-for="( callback, key ) in callbacks"
+      :key="`${callback.payload.type }-${ key }`"
       :callback="callback"
     />
     <li
@@ -41,6 +43,7 @@ export default {
   data() {
     return {
       checked: false,
+      isRequired: false,
     };
   },
   props: {
@@ -48,18 +51,24 @@ export default {
       required: true,
       type: Array,
     },
-    isRequired: {
+    index: {
       required: true,
-      type: Boolean,
+      type: Number,
     },
   },
   methods: {
     onCheckboxChange(isChecked) {
       const consentResponse = isChecked;
-      const canProceed = !(this.isRequired && !isChecked);
-      this.$emit('canProceed', canProceed);
-      this.$emit('didConsent', consentResponse);
+      const disableNextButton = this.isRequired && !isChecked;
+      this.$emit('disable-next-button', disableNextButton);
+      this.$emit('did-consent', consentResponse);
     },
+  },
+  mounted() {
+    if (this.index === 0) {
+      this.isRequired = this.callbacks[0].payload.output.find((item) => item.name === 'isRequired').value;
+      this.$emit('disable-next-button', this.isRequired);
+    }
   },
   watch: {
     checked(isChecked) {

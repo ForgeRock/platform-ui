@@ -5,9 +5,8 @@ or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <script>
 import {
-  fromPairs, isNull, isEmpty, map,
+  fromPairs, isEmpty, map,
 } from 'lodash';
-import store from '../../store/index';
 import NotificationMixin from '../NotificationMixin';
 
 export function getIdFromSession() {
@@ -112,15 +111,6 @@ export default {
   methods: {
     logoutUser() {
       window.logout();
-    },
-    // One location for checking and redirecting a completed login for a user
-    completeLogin() {
-      if (!isNull(store.state.ApplicationStore.loginRedirect)) {
-        this.$router.push(store.state.ApplicationStore.loginRedirect);
-        store.dispatch('ApplicationStore/clearLoginRedirect');
-      } else {
-        this.$router.push('/');
-      }
     },
     getIdFromSession,
     getUserInfo,

@@ -24,6 +24,7 @@ describe('TermsAndConditionsCallback.vue', () => {
           getTerms: () => {},
           setInputValue: () => {},
         },
+        index: 0,
       },
     });
   });
