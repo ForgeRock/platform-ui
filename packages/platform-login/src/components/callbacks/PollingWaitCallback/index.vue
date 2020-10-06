@@ -28,19 +28,21 @@ export default {
       type: Object,
       required: true,
     },
-    nextStep: {
-      type: Function,
-      required: true,
-    },
   },
   data() {
-    return { message: '' };
+    return {
+      message: '',
+      interval: undefined,
+    };
   },
   mounted() {
     this.message = this.callback.getMessage();
-    setTimeout(() => {
-      this.nextStep(null, true);
+    this.interval = setInterval(() => {
+      this.$emit('next-step', null, true);
     }, this.callback.getWaitTime());
+  },
+  beforeDestroy() {
+    clearInterval(this.interval);
   },
 };
 </script>
