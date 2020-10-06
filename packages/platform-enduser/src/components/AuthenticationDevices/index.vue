@@ -137,7 +137,6 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
 import Field from '@forgerock/platform-shared/src/components/Field';
 
-
 /**
  * @description If fullstack (AM/IDM) is configured will work with authorized devices endpoiint (AM) and display a list of currently of authorized devices for the current
  * user. This will also allow a user to remove an authorized device, causing the next login session of that device to trigger the appropriate device authorization flow from AM.
