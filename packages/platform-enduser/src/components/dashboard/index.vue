@@ -59,8 +59,8 @@ of the MIT license. See the LICENSE file for details.
 <script>
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import FrMyApplicationsListItem from '@/components/dashboard/applications/MyApplicationsListItem';
 import ListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
+import FrMyApplicationsListItem from '@/components/dashboard/applications/MyApplicationsListItem';
 import Welcome from './widgets/WelcomeWidget';
 import Workflow from './widgets/WorkflowControlWidget';
 
