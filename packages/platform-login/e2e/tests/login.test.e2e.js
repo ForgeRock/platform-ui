@@ -34,7 +34,7 @@ describe('Login View', () => {
   });
 
   it('should fail login with incorrect credentials', () => {
-    const errorMessage = 'Sorry that isn\'t right. Try again.';
+    const errorMessage = 'Authentication Failed';
     cy.get('[placeholder="User Name:"]')
       .type(userName)
       .should('have.value', userName);

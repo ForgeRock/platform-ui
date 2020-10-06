@@ -14,18 +14,18 @@ of the MIT license. See the LICENSE file for details.
         :ref="name"
         value="true">
       <small class="form-text text-muted">
-        {{ agreeToTermsText }}
+        {{ $t('login.agreeToTerms') }}
         <a
           href="#"
           @click.prevent="$refs['terms-modal'].show()">
-          {{ termsAndConditionsText }}
+          {{ $t('login.termsAndConditions') }}
         </a>.
       </small>
 
       <BModal
         ref="terms-modal"
         hide-footer
-        :title="termsAndConditionsText">
+        :title="$t('login.termsAndConditions')">
         <div class="d-block text-left">
           <p>{{ terms }}</p>
         </div>
@@ -49,19 +49,7 @@ export default {
     },
     index: {
       type: Number,
-      default: 0,
-    },
-    prompt: {
-      type: String,
-      default: '',
-    },
-    termsAndConditionsText: {
-      type: String,
-      default: '',
-    },
-    agreeToTermsText: {
-      type: String,
-      default: '',
+      required: true,
     },
   },
   mounted() {

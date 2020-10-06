@@ -30,10 +30,6 @@ export default {
       type: Object,
       required: true,
     },
-    nextStep: {
-      type: Function,
-      required: true,
-    },
   },
   mounted() {
     this.options = this.callback.getOptions();
@@ -46,7 +42,7 @@ export default {
   methods: {
     setValue(value) {
       this.callback.setInputValue(value);
-      this.nextStep();
+      this.$emit('next-step');
     },
   },
 };
