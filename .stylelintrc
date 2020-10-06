@@ -42,7 +42,8 @@
       "scaleX",
       "skew",
       "repeat",
-      "minmax"
+      "minmax",
+      "linear-gradient"
     ],
     "media-feature-name-no-vendor-prefix": true,
     "no-descending-specificity": null,
