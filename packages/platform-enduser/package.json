@@ -11,6 +11,7 @@
     "coverage": "jest --verbose --coverage --noStackTrace --no-cache --silent",
     "test:e2e": "../../e2e/passwords.sh cypress run",
     "test:e2e:open": "../../e2e/passwords.sh cypress open",
+    "test:lighthouse": "../../e2e/passwords.sh cypress run --spec e2e/tests/lighthouse.suite.js --config ignoreTestFiles=''",
     "find-copyright-problems": "echo 'Listing all files which do not contain a valid copywright header for this year - some files do not qualify \n' && cd src && git grep -L --word-regexp \"Copyright (c) $(date +\"%Y\")\""
   },
   "dependencies": {
@@ -44,6 +45,7 @@
     "chai": "4.1.2",
     "copy-webpack-plugin": "5.0.3",
     "cypress": "5.0.0",
+    "cypress-lighthouse": "0.1.0",
     "flush-promises": "1.0.2",
     "jest": "26.4.2",
     "jest-html-reporters": "1.2.0",
