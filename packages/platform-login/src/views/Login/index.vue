@@ -10,29 +10,29 @@ of the MIT license. See the LICENSE file for details.
     :hide-footer="true"
     :logo-path="logo"
     :show-logo="true">
-    <template v-slot:center-card-header>
+    <template #center-card-header>
       <div v-if="!loading">
         <h2 class="h2">
           {{ header }}
         </h2>
         <p
+          v-if="description"
           class="text-center mb-0"
           v-html="description" />
       </div>
     </template>
 
-    <template v-slot:center-card-body>
-      <BCardBody v-show="!loading">
-        <div v-if="loginFailure">
-          <div class="m-auto p-2 text-danger">
-            <p>
-              <i class="material-icons material-icons-outlined">
-                error
-              </i>
-              {{ errorMessage }}
-            </p>
-          </div>
-        </div>
+    <template #center-card-body>
+      <BCardBody
+        v-show="!loading"
+        id="callbacksPanel">
+        <FrAlert
+          :show="loginFailure"
+          :dismissible="false"
+          variant="error"
+          class="p-3 text-left">
+          {{ errorMessage }}
+        </FrAlert>
         <div id="body-append-el">
           <!-- for backend scripts -->
           <form
@@ -53,21 +53,29 @@ of the MIT license. See the LICENSE file for details.
           </form>
         </div>
         <form>
-          <div
-            v-show="!showClone"
-            id="callbacksPanel"
-            ref="callbacksPanel" />
-          <div
-            v-show="showClone"
-            id="callbacksPanelClone"
-            ref="callbacksPanelClone" />
+          <template
+            v-for="(component) in componentList ">
+            <Component
+              class="callback-component"
+              :field="component.field"
+              :callback="component.callback"
+              :index="component.index"
+              :is="component.type"
+              :key="component.key"
+              v-bind="{...component.callbackSpecificProps}"
+              v-on="{
+                'next-step': (event, preventClear) => {
+                  nextStep(event, preventClear);
+                },
+                ...component.listeners}"
+            />
+          </template>
           <BButton
-            v-show="showNextButton"
+            v-show="nextButtonVisible"
             class="btn-block mt-3"
             type="submit"
             variant="primary"
-            ref="callbackSubmitButton"
-            :disabled="disableNextButton"
+            :disabled="nextButtonDisabled"
             @click="nextStep">
             {{ buttonText }}
           </BButton>
@@ -86,52 +94,66 @@ of the MIT license. See the LICENSE file for details.
 
 <script>
 import {
+  cloneDeep,
   each,
   has,
-  map,
   noop,
 } from 'lodash';
 import {
-  BCardBody,
   BButton,
+  BCardBody,
+  BRow,
 } from 'bootstrap-vue';
 import {
   FRAuth,
   FRStep,
-  FRWebAuthn,
   SessionManager,
   CallbackType,
 } from '@forgerock/javascript-sdk';
-import Vue from 'vue';
 import FrCenterCard from '@forgerock/platform-shared/src/components/CenterCard';
-import WithCallback from '@forgerock/platform-shared/src/hoc/CallbackHoc';
-import FrField from '@forgerock/platform-shared/src/components/Field';
 import Spinner from '@forgerock/platform-shared/src/components/Spinner';
-import BooleanAttributeInputCallback from '@/components/callbacks/BooleanAttributeInputCallback';
-import ChoiceCallback from '@/components/callbacks/ChoiceCallback';
-import ConfirmationCallback from '@/components/callbacks/ConfirmationCallback';
-import ConsentContainer from '@/components/callbacks/ConsentMappingCallback';
-import DeviceProfileCallback from '@/components/callbacks/DeviceProfileCallback';
-import KbaCreateCallback from '@/components/callbacks/KbaCreateCallback';
-import HiddenValueCallback from '@/components/callbacks/HiddenValueCallback';
-import ReCaptchaCallback from '@/components/callbacks/ReCaptchaCallback';
-import PollingWaitCallback from '@/components/callbacks/PollingWaitCallback';
-import SelectIdPCallback from '@/components/callbacks/SelectIdPCallback';
-import TextOutputCallback from '@/components/callbacks/TextOutputCallback';
-import SuspendedTextOutputCallback from '@/components/callbacks/SuspendedTextOutputCallback';
-import TermsAndConditionsCallback from '@/components/callbacks/TermsAndConditionsCallback';
+import FrAlert from '@forgerock/platform-shared/src/components/Alert';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
-import i18n from '@/i18n';
+
+// Name constants
+const {
+  ConfirmationCallback,
+  DeviceProfileCallback,
+  HiddenValueCallback,
+  PasswordCallback,
+  PollingWaitCallback,
+  RedirectCallback = 'RedirectCallback',
+  SelectIdPCallback = 'SelectIdPCallback',
+  SuspendedTextOutputCallback = 'SuspendedTextOutputCallback',
+  ValidatedCreatePasswordCallback,
+} = CallbackType;
 
 export default {
   name: 'Login',
   components: {
-    FrCenterCard,
     BButton,
     BCardBody,
+    BRow,
+    FrAlert,
+    FrCenterCard,
     Spinner,
+    FrBooleanAttributeInputCallback: () => import('@/components/callbacks/BooleanAttributeInputCallback'),
+    FrChoiceCallback: () => import('@/components/callbacks/ChoiceCallback'),
+    FrConfirmationCallback: () => import('@/components/callbacks/ConfirmationCallback'),
+    FrConsentContainer: () => import('@/components/callbacks/ConsentMappingCallback'),
+    FrDeviceProfileCallback: () => import('@/components/callbacks/DeviceProfileCallback'),
+    FrField: () => import('@forgerock/platform-shared/src/components/Field'),
+    FrHiddenValueCallback: () => import('@/components/callbacks/HiddenValueCallback'),
+    FrKbaCreateCallback: () => import('@/components/callbacks/KbaCreateCallback'),
+    FrMetadataCallback: () => import('@/components/callbacks/MetadataCallback'),
+    FrPollingWaitCallback: () => import('@/components/callbacks/PollingWaitCallback'),
+    FrReCaptchaCallback: () => import('@/components/callbacks/ReCaptchaCallback'),
+    FrSelectIdPCallback: () => import('@/components/callbacks/SelectIdPCallback'),
+    FrSuspendedTextOutputCallback: () => import('@/components/callbacks/SuspendedTextOutputCallback'),
+    FrTermsAndConditionsCallback: () => import('@/components/callbacks/TermsAndConditionsCallback'),
+    FrTextOutputCallback: () => import('@/components/callbacks/TextOutputCallback'),
   },
   props: {
     logo: {
@@ -153,22 +175,22 @@ export default {
   data() {
     return {
       authIndexValue: undefined,
-      callbacksPanelComponents: [],
+      componentList: [],
       description: '',
-      disableNextButton: false,
       errorMessage: '',
       header: '',
       hideRealm: false,
+      initalStep: undefined,
       kbaCallbackCount: 0,
       loading: true,
       loginFailure: false,
+      nextButtonDisabled: false,
+      nextButtonVisible: false,
       realm: '/',
       retry: undefined,
-      showClone: false,
-      showNextButton: false,
+      showScriptElms: false,
       step: undefined,
       suspendedId: undefined,
-      showScriptElms: false,
     };
   },
   mounted() {
@@ -197,7 +219,7 @@ export default {
       const input = document.getElementById(type);
       if (input) {
         const hiddenCallback = this.step
-          .getCallbacksOfType(CallbackType.HiddenValueCallback)
+          .getCallbacksOfType(HiddenValueCallback)
           .find((x) => x.getOutputByName('id', '') === type);
         hiddenCallback.setInputValue(input.value);
       }
@@ -213,7 +235,7 @@ export default {
         'webAuthnOutcome',
       ];
       let type = '';
-      this.step.getCallbacksOfType(CallbackType.HiddenValueCallback)
+      this.step.getCallbacksOfType(HiddenValueCallback)
         .forEach((callback) => legacyTypes.forEach((legacyType) => {
           if (callback.getOutputByName('id', '') === legacyType) {
             type = legacyType;
@@ -221,37 +243,19 @@ export default {
         }));
       return type;
     },
+
     /**
-     * @description Injects an instance of a specified component into the callbacksPanel
-     * @param {Object} the component object to by added
-     * @param {Object} properties used for rendering the component object
+     * @description gets field information
+     * @param {Object} callback specific step callback
+     * @param {Object} index callback index
+     * @returns {Object} field object needed for Field component
      */
-    addComponent(component, propsData, listeners = []) {
-      const ComponentClass = Vue.extend(component);
-      const instance = new ComponentClass({
-        propsData,
-        i18n,
-      });
 
-      listeners.forEach((listener) => {
-        instance.$on(listener.name, listener.callback);
-      });
-
-      instance.$mount();
-      this.callbacksPanelComponents.push(instance.$el);
-    },
-    addField(type, callback, index) {
-      const failedPolicies = callback.getFailedPolicies
-        ? callback.getFailedPolicies()
-        : [];
+    getField(callback, index) {
+      const type = callback.getType();
+      const fieldType = type === PasswordCallback || type === ValidatedCreatePasswordCallback ? 'password' : 'string';
 
       let prompt = '';
-      let translatedPolicyMessages = [];
-
-      if (failedPolicies.length) {
-        translatedPolicyMessages = this.translatePolicyFailures(failedPolicies);
-      }
-
       if (callback.getPrompt) {
         prompt = callback.getPrompt();
       } else if (callback.getOutputByName) {
@@ -261,50 +265,69 @@ export default {
           noop();
         }
       }
-      const field = {
+      return {
         title: prompt,
-        type,
+        type: fieldType,
         key: `callback_${index}`,
         value: callback.getInputValue(),
       };
+    },
 
-      return this.addComponent(WithCallback(FrField), {
-        field,
-        autofocus: index === 0,
-        validator: noop,
-        failedPolicies: translatedPolicyMessages,
-        callback,
+    getTranslatePolicyFailures(callback) {
+      const failedPolicies = callback.getFailedPolicies
+        ? callback.getFailedPolicies()
+        : [];
+      return failedPolicies.map((policy) => {
+        const parsedPolicy = JSON.parse(policy);
+        return this.$t(`common.policyValidationMessages.${parsedPolicy.policyRequirement}`, parsedPolicy.params);
       });
     },
+
     /**
-     * @description handles steps with metadata callbacks like webAuthn
+     * @description Used to get listeners for callback components
+     * @param {Object} properties object of any properties needed to have listners context
+     * @param {Array} listenerArray array of string names to populate component listners
+     * @returns {Object} returns object populated with specified listener functions
      */
-    metadataCallback(step) {
-      const webAuthnStepType = FRWebAuthn.getWebAuthnStepType(step);
-      if (webAuthnStepType === 0) {
-        // Not a webAuthn step
-        this.nextStep();
-      } else if (webAuthnStepType === 1) {
-        // Authenticate with a registered device
-        this.showNextButton = false;
-        FRWebAuthn.authenticate(step).then(() => {
-          this.nextStep();
-        });
-      } else if (webAuthnStepType === 2) {
-        // Register a new device
-        this.showNextButton = false;
-        FRWebAuthn.register(step).then(() => {
-          this.nextStep();
-        });
-      }
-    },
-    translatePolicyFailures(failedPolicies) {
-      return map(failedPolicies, (policy) => {
-        const tempPolicy = JSON.parse(policy);
 
-        return this.$t(`common.policyValidationMessages.${tempPolicy.policyRequirement}`, tempPolicy.params);
-      });
+    getListeners({ callback }, listenerArray = []) {
+      const listeners = {
+        'did-consent': (consent) => {
+          this.step.callbacks.forEach((callbackItem) => { callbackItem.setInputValue(consent); });
+        },
+        'disable-next-button': (bool) => {
+          this.nextButtonDisabled = bool;
+        },
+        'has-scripts': () => {
+          this.showScriptElms = true;
+          // listen on body.appendchild and append to #body-append-el insted
+          const observer = new MutationObserver((records) => {
+            const nodeList = records[records.length - 1].addedNodes || [];
+            Array.prototype.forEach.call(nodeList, (node) => {
+              document.getElementById('body-append-el').appendChild(node);
+            });
+            observer.disconnect();
+          });
+          observer.observe(document.body, { childList: true });
+          // only hide next button if we know it should be hidden (webAuthn, deviceId)
+          const knownType = this.backendScriptsIdentifier();
+          if (knownType) {
+            this.nextButtonVisible = false;
+          }
+        },
+        'hide-next-button': (bool) => {
+          this.nextButtonVisible = !bool;
+        },
+        // event emited as camelcase from FrField
+        valueChange: (value) => {
+          if (callback && callback.setInputValue) {
+            callback.setInputValue(value);
+          }
+        },
+      };
+      return listenerArray.reduce((acc, listener) => ({ ...acc, [listener]: listeners[listener] }), {});
     },
+
     getStepParams() {
       const stepParams = {
         query: {},
@@ -335,21 +358,20 @@ export default {
       if (event) {
         event.preventDefault();
       }
+      // for when no change is expected between steps (stops a flash of white)
       if (!preventClear) {
-        this.clearCallbacks();
+        this.loading = true;
+        this.showScriptElms = false;
       }
-      // if there is a login failure show the failure message and remove the session variable
-      if (sessionStorage.getItem('loginFailure')) {
-        this.loginFailure = true;
-        this.errorMessage = this.$t('login.loginFailure');
-        sessionStorage.removeItem('loginFailure');
-      }
+      this.loginFailure = false;
 
       const stepParams = this.getStepParams();
-      FRAuth.next(this.step, stepParams).then(
-        (step) => {
+      FRAuth.next(this.step, stepParams)
+        .then((step) => {
+          if (!this.initalStep) {
+            this.initalStep = cloneDeep(step);
+          }
           const previousStep = this.step;
-          this.loading = false;
           this.step = step;
 
           // these step params only need to be sent one time
@@ -389,16 +411,24 @@ export default {
               this.retry = false;
               this.retryWithNewAuthId(previousStep, stepParams);
             } else {
+              this.errorMessage = step.payload.message || this.$t('login.loginFailure');
               this.redirectToFailure(step);
+              this.step = cloneDeep(this.initalStep);
+              this.retry = true;
+              if (this.step.callbacks) {
+                this.componentList = [];
+                this.buildTreeForm();
+              }
+              this.loading = false;
             }
+            this.loginFailure = true;
             break;
           default:
             // retry only when previous was undefined (first step)
             this.retry = !previousStep;
             // setup the form based on callback info/values obtained from this.step
-            this.header = step.getHeader();
-            this.description = step.getDescription();
             this.buildTreeForm();
+            this.loading = false;
             break;
           }
         },
@@ -406,27 +436,16 @@ export default {
           this.errorMessage = this.$t('login.issueConnecting');
           this.redirectToFailure(this.step);
           this.loading = false;
-        },
-      );
-    },
-    clearCallbacks() {
-      this.header = '';
-      this.description = '';
-      this.$refs.callbacksPanel.innerHTML = '';
-      this.showNextButton = false;
-      this.loginFailure = false;
-      this.showScriptElms = false;
-      this.loading = true;
+        });
     },
     buildTreeForm() {
-      const firstInput = this.$el.querySelector('input');
-      let pageRenderComplete;
-      const pageRendered = new Promise((resolve) => { pageRenderComplete = resolve; });
-      this.showNextButton = true;
-      this.callbacksPanelComponents = [];
+      this.header = this.step.getHeader() || '';
+      this.description = this.step.getDescription() || '';
+      this.nextButtonVisible = true;
+      this.kbaCallbackCount = 0;
 
       // Ensure that Social Buttons appear at top of Page Node
-      const pullToTop = 'SelectIdPCallback';
+      const pullToTop = SelectIdPCallback;
       this.step.callbacks.sort((currentCallback, otherCallback) => {
         if (currentCallback.payload.type === pullToTop) {
           return -1;
@@ -437,101 +456,14 @@ export default {
         return 0;
       });
 
-      map(this.step.callbacks, (callback, index) => {
+      // Some callbacks don't need to render anything so forEach is used instead of map
+      const componentList = [];
+      let keyFromDate = Date.now();
+      this.step.callbacks.forEach((callback, index) => {
         const type = callback.getType();
 
-        switch (type) {
-        case 'BooleanAttributeInputCallback':
-          this.addComponent(BooleanAttributeInputCallback, {
-            callback,
-            index,
-          });
-          break;
-        case 'ChoiceCallback':
-          this.addComponent(ChoiceCallback, {
-            callback,
-            index,
-          });
-          break;
-        case 'ConfirmationCallback':
-          this.showNextButton = false;
-          this.addComponent(ConfirmationCallback, {
-            callback,
-            nextStep: this.nextStep,
-          });
-          break;
-        case 'ConsentMappingCallback':
-          if (index === 0) {
-            const isRequired = this.step.callbacks[0].payload.output.find((item) => item.name === 'isRequired').value;
-            this.disableNextButton = isRequired;
-            this.addComponent(ConsentContainer,
-              { callbacks: this.step.callbacks, isRequired },
-              [
-                {
-                  name: 'canProceed',
-                  callback: (checked) => {
-                    this.disableNextButton = !checked;
-                  },
-                },
-                {
-                  name: 'didConsent',
-                  callback: (didConsent) => {
-                    this.step.callbacks.forEach((callbackItem) => { callbackItem.payload.input[0].value = didConsent; });
-                  },
-                },
-              ]);
-          }
-          break;
-        case 'DeviceProfileCallback':
-          this.showNextButton = false;
-          this.addComponent(DeviceProfileCallback, {
-            callback,
-            nextStep: this.nextStep,
-          });
-          break;
-        case 'HiddenValueCallback':
-          this.addComponent(HiddenValueCallback, {
-            callback,
-            index,
-          });
-          break;
-        case 'KbaCreateCallback':
-          this.addComponent(KbaCreateCallback, {
-            callback,
-            index,
-            descriptionText: this.$t('login.kba.description'),
-            customQuestonOptionText: this.$t('login.kba.custom'),
-            requiredText: this.$t('common.policyValidationMessages.REQUIRED'),
-            uniqueText: this.$t('common.policyValidationMessages.UNIQUE'),
-            showHeader: this.kbaCallbackCount === 0,
-            callbackSubmitButton: this.$refs.callbackSubmitButton,
-          });
-
-          this.kbaCallbackCount += 1;
-          break;
-        case 'MetadataCallback':
-          // Do nothing here. If someone is using MetadataCallback they would need to inject their logic here to utilize result
-          // const metadata = callback.getData();
-          this.metadataCallback(this.step);
-          break;
-        case 'PasswordCallback':
-          this.addField('password', callback, index);
-          break;
-        case 'PollingWaitCallback':
-          this.showNextButton = false;
-          this.addComponent(PollingWaitCallback, {
-            callback,
-            nextStep: this.nextStep,
-          });
-          break;
-        case 'ReCaptchaCallback':
-          this.addComponent(ReCaptchaCallback, {
-            callback,
-            index,
-          });
-          break;
-        case 'RedirectCallback':
-          this.showNextButton = false;
+        if (type === RedirectCallback) {
+          this.nextButtonVisible = false;
           if (callback.getOutputByName('trackingCookie')) {
             // save current step information for later resumption of tree.
             sessionStorage.setItem('authIndexValue', this.authIndexValue || this.$route.params.tree);
@@ -539,78 +471,63 @@ export default {
             sessionStorage.setItem('realm', this.realm);
           }
           window.location.href = callback.getOutputByName('redirectUrl');
-          break;
-        case 'TermsAndConditionsCallback':
-          this.addComponent(TermsAndConditionsCallback, {
-            callback,
-            index,
-            termsAndConditionsText: this.$t('login.termsAndConditions'),
-            agreeToTermsText: this.$t('login.agreeToTerms'),
-          });
-          break;
-        case 'TextOutputCallback':
-          this.addComponent(TextOutputCallback, { callback, pageRendered },
-            [{
-              name: 'hasScripts',
-              callback: () => {
-                this.showScriptElms = true;
-                // listen on body.appendchild and append to #body-append-el insted
-                const observer = new MutationObserver((records) => {
-                  const nodeList = records[records.length - 1].addedNodes || [];
-                  Array.prototype.forEach.call(nodeList, (node) => {
-                    document.getElementById('body-append-el').appendChild(node);
-                  });
-                  observer.disconnect();
-                });
-                observer.observe(document.body, { childList: true });
-                // only hide next button if we know it should be hidden (webAuthn, deviceId)
-                const knownType = this.backendScriptsIdentifier();
-                if (knownType) {
-                  this.showNextButton = false;
-                }
-              },
-            }]);
-          break;
-        case 'SuspendedTextOutputCallback':
-          this.showNextButton = false;
-          this.addComponent(SuspendedTextOutputCallback, { callback });
-          break;
-        case 'ValidatedCreatePasswordCallback':
-          this.addField('password', callback, index);
-          break;
-        case 'SelectIdPCallback':
-          callback.setInputValue('localAuthentication');
-          this.addComponent(SelectIdPCallback, {
-            callback,
-            index,
-            continueWithText: 'login.social.continueWith',
-            orText: this.step.callbacks.length > 1 ? this.$t('login.social.or') : '',
-            callbackSubmitButton: this.$refs.callbackSubmitButton,
-          });
-          break;
-        default:
-          this.addField('text', callback, index);
+          return;
         }
-      });
 
-      // Makes and renders a temporary clone of the callbackPanel using vue
-      // to prevent the flickering of the DOM caused by using non optimized
-      // calls like appendChild
-      // If there's no change in the DOM this prevents flickering
-      this.$refs.callbacksPanelClone.innerHTML = this.$refs.callbacksPanel.innerHTML;
-      this.showClone = true;
-      this.$refs.callbacksPanel.innerHTML = '';
-      this.callbacksPanelComponents.forEach((el) => {
-        this.$refs.callbacksPanel.appendChild(el);
-      });
-      this.showClone = false;
-      this.$refs.callbacksPanelClone.innerHTML = '';
-      pageRenderComplete();
+        // Only components that need extra props or events
+        const componentPropsAndEvents = {
+          ConsentMappingCallback: {
+            callbackSpecificProps: { callbacks: this.step.callbacks },
+            listeners: ['disable-next-button', 'did-consent'],
+          },
+          KbaCreateCallback: {
+            listeners: ['disable-next-button'],
+          },
+          MetadataCallback: {
+            callbackSpecificProps: { step: this.step },
+            listeners: ['hide-next-button'],
+          },
+          SelectIdPCallback: {
+            callbackSpecificProps: { isOnlyCallback: this.step.callbacks.length === 1 },
+            listeners: ['hide-next-button', 'disable-next-button'],
+          },
+          TextOutputCallback: {
+            listeners: ['has-scripts'],
+          },
+        };
 
-      if (firstInput) {
-        // focus on the first input after render
-        firstInput.focus();
-      }
+        const component = {
+          callback,
+          callbackSpecificProps: componentPropsAndEvents[type] && componentPropsAndEvents[type].callbackSpecificProps
+            ? componentPropsAndEvents[type].callbackSpecificProps
+            : {},
+          index,
+          key: keyFromDate += 1,
+          listeners: this.getListeners({ callback }, componentPropsAndEvents[type] && componentPropsAndEvents[type].listeners
+            ? componentPropsAndEvents[type].listeners
+            : []),
+          type: this.$options.components[`Fr${type}`]
+            ? `Fr${type}`
+            : 'FrField',
+        };
+
+        if (component.type === 'FrField') {
+          component.callbackSpecificProps.failedPolicies = this.getTranslatePolicyFailures(callback);
+          component.field = this.getField(callback, index);
+          component.listeners = this.getListeners({ callback }, ['valueChange']);
+        }
+
+        if (component.type === 'FrKbaCreateCallback') {
+          component.callbackSpecificProps.showHeader = this.kbaCallbackCount === 0;
+          this.kbaCallbackCount += 1;
+        }
+
+        const hideNextButtonCallbacks = [ConfirmationCallback, DeviceProfileCallback, PollingWaitCallback, SuspendedTextOutputCallback];
+        this.nextButtonVisible = hideNextButtonCallbacks.indexOf(type) > -1 ? false : this.nextButtonVisible;
+
+        componentList.push(component);
+      });
+      this.componentList = componentList;
     },
     /**
      * Determine if there is a gotoOnFail parameter. If it exists, verify and redirect to that url or hash
@@ -630,26 +547,13 @@ export default {
             } else if (has(step, 'payload.detail.failureUrl') && step.payload.detail.failureUrl.length) {
               window.location.href = step.payload.detail.failureUrl;
             }
-            this.loginFailure = true;
           })
           .catch((error) => {
             this.displayNotification('IDMMessages', 'error', error.response.data.message);
-            this.loginFailure = true;
           });
       } else if (has(step, 'payload.detail.failureUrl') && step.payload.detail.failureUrl.length) {
         window.location.href = step.payload.detail.failureUrl;
-      } else if (step === undefined) {
-        // step will be undefined if there is an invalid realm
-        this.loginFailure = true;
-      } else {
-        this.loading = true;
-        sessionStorage.setItem('loginFailure', true);
-        window.location.reload();
       }
-    },
-    reloadTree(event) {
-      event.preventDefault();
-      window.location.reload();
     },
     /**
      * Retry a previously failed step with a new authId. The new authId is acquired by calling FRAuth.next with no step.
@@ -784,11 +688,11 @@ export default {
 
 <style lang="scss" scoped>
 #callbacksPanel /deep/ {
-  br {
-    display: none;
+  span.material-icons {
+    line-height: 22px;
   }
 
-  > div {
+  .callback-component {
     margin-bottom: 1rem;
   }
 

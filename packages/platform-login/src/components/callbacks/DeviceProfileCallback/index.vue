@@ -30,10 +30,6 @@ export default {
       type: Object,
       required: true,
     },
-    nextStep: {
-      type: Function,
-      required: true,
-    },
   },
   mounted() {
     this.message = this.callback.getMessage();
@@ -52,10 +48,10 @@ export default {
         metadata: this.callback.isMetadataRequired(),
       }).then((profile) => {
         this.callback.setProfile(profile);
-        this.nextStep();
+        this.$emit('next-step');
       }).catch(() => {
         this.callback.setProfile({});
-        this.nextStep();
+        this.$emit('next-step');
       });
     },
   },
