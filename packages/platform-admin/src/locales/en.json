@@ -659,5 +659,29 @@
       "header": "New Identity Gateway Profile",
       "errorCreating": "Could not create {type}"
     }
+  },
+  "tenantAdmins": {
+    "deleteAdmin": "Delete admin",
+    "inviteEmail": "Resend Invite Email",
+    "tabs": {
+      "profile": "Profile"
+    },
+    "user": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "mail": "Email Address",
+      "inviteDate": "Date Invited",
+      "onboardDate": "Date Onboarded",
+      "jurisdiction": "Jurisdiction"
+    },
+    "events": {
+      "errorAdminData": "Error retrieving admin data.",
+      "deleteAdmin": "Are you sure you want to delete this admin?",
+      "errorDeleteAdmin": "Failed to delete admin.",
+      "accountStatus": "Successfully updated status to {status}.",
+      "errorAccountStatus": "Failed to update admin status.",
+      "inviteEmail": "Invite email sent successfully.",
+      "errorInviteEmail": "Error sending invite email."
+    }
   }
 }

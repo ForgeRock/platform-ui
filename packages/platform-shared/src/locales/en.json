@@ -1,8 +1,10 @@
 {
   "common": {
     "active": "Active",
+    "activate": "Activate",
     "add": "Add",
     "addObject": "Add {object}",
+    "admin": "Admin",
     "advancedOptions": "advanced options",
     "agree": "I Agree",
     "avatar": "Avatar",
@@ -18,6 +20,7 @@
     "copySuccess": "Copied to your clipboard",
     "create": "Create",
     "date": "Date",
+    "deactivate": "Deactivate",
     "delete": "Delete",
     "description": "Description",
     "disabled": "Disabled",
@@ -28,6 +31,7 @@
     "error": "Error",
     "expires": "Expires",
     "inactive": "Inactive",
+    "invited": "Invited",
     "loading": "Loading",
     "name": "Name",
     "new": "New",
