@@ -20,6 +20,7 @@ to such license between the licensee and ForgeRock AS. -->
       :data-vv-as="label"
       :disabled="disabled"
       :readonly="readonly"
+      @input="evt=>inputValue=evt.target.value"
       @keyup="validator"
       @animationstart="animationStart"
       ref="input"
