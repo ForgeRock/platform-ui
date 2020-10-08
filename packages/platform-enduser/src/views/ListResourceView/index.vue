@@ -142,7 +142,7 @@ export default {
       }
 
       if (privilege.data.CREATE.allowed) {
-        const propList = pick(this.routerParameters.managedProperties, privilege.data.CREATE.properties);
+        const propList = pick(schema.data.properties, privilege.data.CREATE.properties);
         const requiredProps = [];
 
         schema.data.required.forEach((prop) => {
