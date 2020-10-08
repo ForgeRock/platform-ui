@@ -76,8 +76,14 @@
     "editDetails": "Edit Details",
     "copyOf": "Copy of {treeId}",
     "preview": "Preview",
+    "adminDefault": "Admin Default",
+    "setAsAdminDefault": "Set as Admin Default",
+    "setAsDefault": "Set as Default",
+    "defaultCheckboxTitle": "Default journey for end users",
+    "defaultAdminCheckboxTitle": "Default journey for admins",
     "journeyDeleteSuccess": "\"{treeId}\" journey successfully deleted.",
     "journeyEditSuccess": "\"{treeId}\" journey successfully updated.",
+    "defaultJourneyUpdated": "\"{treeId}\" successfully set as Default Journey.",
     "noJourney": "You haven't created any journeys",
     "noJourneySubtitle": "Configure journeys to allow users to sign in, register and perform self-service functions like reset their password or recover their username.",
     "noAuthServicesMessage": "Sign in users to your application by creating journeys",
@@ -87,7 +93,8 @@
     "errorUpdatingJourney": "Error updating journey",
     "errorDeletingJourney": "Error deleting journey",
     "errorRetrievingJourneyTemplate": "Error retrieving journey template",
-    "errorRetrievingTableData": "Error retrieving table data",
+    "errorRetrievingTableData": "Error retrieving journey data",
+    "errorSettingDefault": "Error setting journey as default",
     "unableToEditResource": "Unable to edit {resource}",
     "unableToDeleteResource": "Unable to delete {resource}",
     "filterNodes": "Filter nodes",
@@ -100,6 +107,13 @@
       "title": "Delete Journey?",
       "content": "Are you sure you want to delete this journey?",
       "deleteJourney": "Delete journey"
+    },
+    "setDefaultModal": {
+      "okText": "Save Default",
+      "adminTitle": "Set as Default Admin Journey",
+      "title": "Set as Default Journey",
+      "adminBody": "Set this journey as the default for admin identities authenticating to this realm?",
+      "body": "Set this journey as the default for identities authenticating to this realm?"
     }
   },
   "bulkImport": {
