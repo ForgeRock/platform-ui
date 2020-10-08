@@ -687,8 +687,10 @@ export default {
     removeUrlParams() {
       // remove query params from the url
       window.history.replaceState(null, null, window.location.pathname);
-      // reset the hash to the proper tree
-      window.location.hash = `service/${this.authIndexValue}`;
+      // if a tree is defined reset the hash to the proper tree
+      if (this.authIndexValue) {
+        window.location.hash = `service/${this.authIndexValue}`;
+      }
     },
     setRealm(config) {
       const amContext = process.env.VUE_APP_AM_URL;
