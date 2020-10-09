@@ -69,19 +69,19 @@ export default {
 
     const realm = urlParams.get('realm') || '/';
 
-    idmRequestService.get('/config/ui/themelogin').then((results) => {
+    idmRequestService.get('/config/ui/themerealm').then((results) => {
       let cleanRealm = realm;
 
       // If there is a / we need to remove it so that
       // both test and /test result in the same realm theme
-      if (results.data.realmTheme[cleanRealm] === undefined && cleanRealm.charAt(0) === '/') {
+      if (results.data.realm[cleanRealm] === undefined && cleanRealm.charAt(0) === '/') {
         cleanRealm = cleanRealm.substring(1);
       }
 
       // Set all realm related themeing here
-      if (results.data.realmTheme[cleanRealm]) {
-        this.theme = results.data.realmTheme[cleanRealm];
-        this.logo = results.data.realmTheme[cleanRealm].logo;
+      if (results.data.realm[cleanRealm]) {
+        this.theme = results.data.realm[cleanRealm];
+        this.logo = results.data.realm[cleanRealm].logo;
       } else {
         this.theme = null;
       }
