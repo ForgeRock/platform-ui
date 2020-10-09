@@ -5,11 +5,14 @@ or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
   <Component :is="'style'">
-    #app {
+    .fr-body-image {
     background-image: url('{{ theme.backgroundImage }}');
-    background-color: {{ theme.backgroundColor }};
     background-size: cover;
     background-repeat: no-repeat;
+    }
+
+    #app {
+    background-color: {{ theme.backgroundColor }};
     }
 
     .btn-primary {
@@ -68,7 +71,7 @@ export default {
      */
     theme: {
       type: Object,
-      default: () => ({ realmTheme: {} }),
+      default: () => ({ realm: {} }),
     },
   },
 };
