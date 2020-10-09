@@ -189,5 +189,10 @@ export default {
     white-space: nowrap;
     overflow: hidden;
   }
+
+  .fr-tag-text:hover {
+    white-space: normal;
+    overflow: scroll;
+  }
 }
 </style>
