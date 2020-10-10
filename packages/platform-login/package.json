@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@ascendancyy/vue-cli-plugin-stylelint": "1.1.2",
-    "@forgerock/javascript-sdk": "2.0.0",
+    "@forgerock/javascript-sdk": "2.1.0",
     "@forgerock/platform-shared": "1.0.0",
     "bootstrap": "4.3.1",
     "bootstrap-vue": "2.13.0",

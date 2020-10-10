@@ -13,8 +13,8 @@ to such license between the licensee and ForgeRock AS. -->
           <li
             v-for="(policy) in policyColumns[i-1]"
             :key="policy.policyId"
-            :class="[{'fr-valid': dynamic && !includes(policyFailures, policy.name)}, 'text-muted fr-policy-list-item']">
-            {{ $t(`common.policyValidationMessages.${policy.name}`, policy.params) }}
+            :class="[{'fr-valid': dynamic && isPolicyMet(policy)}, 'text-muted fr-policy-list-item']">
+            {{ getPolicyDescription(policy) }}
           </li>
         </ul>
       </small>
@@ -81,6 +81,13 @@ export default {
   methods: {
     includes,
     /**
+     * Returns a boolean indicating if the policy has been met.
+     * @param {Object} policy required policy object to evaluate
+     */
+    isPolicyMet(policy) {
+      return !includes(this.policyFailures, policy.name);
+    },
+    /**
      * Given an array of policies and a number of columns, distribute policies evenly.
      * @param {Object[]} policyList policies to be split
      * @param {Number} numColumns number of columns to split into
@@ -105,6 +112,9 @@ export default {
         }
       });
       return policyColumns;
+    },
+    getPolicyDescription(policy) {
+      return this.$t(`common.policyValidationMessages.${policy.name}`, policy.params);
     },
   },
   watch: {
