@@ -8,21 +8,22 @@ of the MIT license. See the LICENSE file for details.
 <template>
   <div>
     <FrField
-      :failed-policies="serverFailures"
+      :failed-policies="failuresForField"
       :field="password"
       @input="updateCallback" />
     <FrPolicyPanel
       class="mt-2"
       :num-columns="1"
       :policies="policies"
-      :policy-failures="failedPolicies" />
+      :policy-failures="failuresForPanel" />
   </div>
 </template>
 
 <script>
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import PolicyPanel from '@forgerock/platform-shared/src/components/PolicyPanel';
-import { debounce, filter } from 'lodash';
+import { debounce } from 'lodash';
+import { CallbackType } from '@forgerock/javascript-sdk';
 
 /**
  * Handles validating a password through node without advancing the tree.
@@ -53,7 +54,7 @@ export default {
      * The current auth object. Needed to submit to tree.
      */
     auth: {
-      type: Function,
+      type: Object,
       required: true,
     },
     /**
@@ -67,37 +68,30 @@ export default {
   data() {
     return {
       debounceValidatePassword: debounce(this.validatePassword, 200),
-      failedPolicies: [],
+      failuresForField: [],
+      failuresForPanel: [],
       password: {
-        title: this.callback.getOutputByName('prompt'),
+        title: this.callback.getPrompt(),
         type: 'password',
         value: '',
       },
       policies: [],
-      serverFailures: [],
     };
   },
   mounted() {
-    // need to set validatOnly flag to true so that tree does not advance when validating input
-    this.callback.setInputValue(true, 1);
+    // need to set validateOnly flag to true so that tree does not advance when validating input
+    this.callback.setValidateOnly(true);
 
-    this.setPolicies(this.callback.getOutputByName('policies').policies);
-    this.setFailingPolicies(this.callback.getOutputByName('failedPolicies'));
+    this.setPolicies(this.callback.getPolicies().policies);
+    this.setFailingPolicies(this.callback.getFailedPolicies());
   },
   methods: {
     /**
-     * Removes policies that do not need to display
-     * @param {Object} policies required policies provided in callback
-     * @return {Object} policy object with only relevant policies
+     * Returns a boolean indicating whether to show the policy in the policy panel
+     * @param {Object} policy required policy object
      */
-    filterPolicies(policies) {
-      const excludedPolicies = [
-        'REQUIRED',
-        'IS_NEW',
-        'VALID_TYPE',
-        'CANNOT_CONTAIN_OTHERS',
-      ];
-      return filter(policies, (policy) => (!excludedPolicies.includes(policy.name)));
+    showInPanel(policy) {
+      return this.policies.some((x) => x.name === policy.policyRequirement);
     },
     /**
      * Sets required policies for PolicyPanel component
@@ -105,37 +99,40 @@ export default {
      * @param {Object[]} policies required policies provided in callback
      */
     setPolicies(policies) {
-      // build policy objects
-      const policyRequirements = policies.map((policy) => {
-        const name = policy.policyRequirements[0];
+      this.$emit('on-policies-set', policies);
 
-        // if a policy has parameters, need to add to object
-        if (policy.params) {
-          const params = {};
-          Object.keys(policy.params).forEach((key) => {
-            params[key] = policy.params[key];
-          });
-          return { name, params };
-        }
-        return { name };
-      });
+      const excluded = [
+        'CANNOT_CONTAIN_OTHERS',
+        'IS_NEW',
+        'REQUIRED',
+        'VALID_TYPE',
+      ];
 
-      this.policies = this.filterPolicies(policyRequirements);
+      this.policies = policies
+        .filter((x) => !excluded.includes(x.policyRequirements[0]))
+        .map((x) => ({
+          name: x.policyRequirements[0],
+          params: x.params ? { ...x.params } : undefined,
+        }));
     },
     /**
      * Sets failing policies for PolicyPanel component
-     * @param {Object[]} failingPolicies failing policy objects
+     * @param {Object[]} policies failing policy objects
      */
-    setFailingPolicies(failingPolicies) {
-      const policies = failingPolicies.map((policy) => (JSON.parse(policy)));
+    setFailingPolicies(policies) {
+      const failingPolicies = policies.map((x) => JSON.parse(x));
 
-      // some failures are not displayed in policy panel and instead are displayed under field input
-      this.serverFailures = policies
-        .filter((failedPolicy) => (!this.policies.find((policy) => (policy.name === failedPolicy.policyRequirement))))
-        .map((pol) => (this.$t(`common.policyValidationMessages.${pol.policyRequirement}`, pol.params)));
+      this.$emit('on-failing-policies-set', failingPolicies);
 
-      // set failing policies for policy panel
-      this.failedPolicies = policies.map((policy) => (policy.policyRequirement));
+      this.failuresForField = failingPolicies
+        .filter((x) => !this.showInPanel(x))
+        .map((x) => this.$t(`common.policyValidationMessages.${x.policyRequirement}`, x.params));
+
+      this.failuresForPanel = failingPolicies
+        .filter((x) => this.showInPanel(x))
+        .map((x) => x.policyRequirement);
+
+      this.$emit('on-validated', this.password.value, failingPolicies.length === 0);
     },
     /**
      * Triggered off of input event of field. Sets callback value and validates.
@@ -154,8 +151,8 @@ export default {
       };
       // call tree without advancing to next node
       this.auth.next(this.step, stepParams).then((step) => {
-        const callback = step.getCallbackOfType('ValidatedCreatePasswordCallback');
-        this.setFailingPolicies(callback.getOutputByName('failedPolicies'));
+        const callback = step.getCallbackOfType(CallbackType.ValidatedCreatePasswordCallback);
+        this.setFailingPolicies(callback.getFailedPolicies());
       }).catch(() => {
         // it's possible to timeout while in the tree so have to start from beginning if that happens
         window.location.reload();
