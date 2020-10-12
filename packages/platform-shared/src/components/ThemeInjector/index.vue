@@ -5,14 +5,14 @@ or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
   <Component :is="'style'">
-    .fr-body-image {
+    body {
+    background-color: {{ theme.backgroundColor }};
+    }
+
+    body.fr-body-image {
     background-image: url('{{ theme.backgroundImage }}');
     background-size: cover;
     background-repeat: no-repeat;
-    }
-
-    #app {
-    background-color: {{ theme.backgroundColor }};
     }
 
     .btn-primary {
