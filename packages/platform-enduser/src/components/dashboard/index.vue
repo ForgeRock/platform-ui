@@ -57,6 +57,7 @@ of the MIT license. See the LICENSE file for details.
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import ListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
@@ -84,8 +85,14 @@ export default {
     return {
       widgets: [],
       myApplications: [],
-      userDetails: this.$store.getters['UserStore/getUserState'],
     };
+  },
+  computed: {
+    ...mapState({
+      userDetails: (state) => state.UserStore,
+      workflow: (state) => state.workflow,
+      realm: (state) => state.realm,
+    }),
   },
   mounted() {
     this.loadWidgets();
@@ -102,7 +109,7 @@ export default {
         context: 'AM',
         apiVersion: 'protocol=1.1,resource=1.0',
       })
-        .get(`realms/root/realms/${this.$store.state.realm}/dashboard/assigned`, { withCredentials: true })
+        .get(`realms/root/realms/${this.realm}/dashboard/assigned`, { withCredentials: true })
         .then(({ data }) => {
           // Alpha sorted by name
           this.myApplications = Object.values(data).sort((a, b) => a.dashboardDisplayName[0].localeCompare(b.dashboardDisplayName[0]));
@@ -118,7 +125,7 @@ export default {
         .then(({ data }) => {
           this.widgets = data.dashboard.widgets;
 
-          if (this.$store.state.ApplicationStore.workflow) {
+          if (this.workflow) {
             this.widgets.push({
               type: 'Workflow',
               size: 'large',
