@@ -32,7 +32,6 @@ of the MIT license. See the LICENSE file for details.
 
 <script>
 import { startCase } from 'lodash';
-import { mapState } from 'vuex';
 
 /**
  * @description Widget that provides a welcome message for the managed resource, also provides a button to directly access editing the resources profile.
@@ -60,9 +59,6 @@ export default {
     },
   },
   computed: {
-    ...mapState({
-      internalUser: (state) => state.UserStore.internalUser,
-    }),
     fullName() {
       let fullName = '';
 
