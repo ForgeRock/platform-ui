@@ -86,7 +86,7 @@ export default {
   },
   methods: {
     changeState(newValue) {
-      this.$store.dispatch('ApplicationStore/setSchemaDataPropertyValue', {
+      this.$store.commit('ApplicationStore/setSchemaDataPropertyValue', {
         schemaType: this.schemaType,
         model: this.model,
         value: newValue,

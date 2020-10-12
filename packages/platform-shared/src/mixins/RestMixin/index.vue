@@ -1,4 +1,4 @@
-<!-- Copyright 2019 ForgeRock AS. All Rights Reserved
+<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
 
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
@@ -10,7 +10,6 @@ import {
   isUndefined,
 } from 'lodash';
 import axios from 'axios';
-import store from '../../store/index';
 
 const idmContext = process.env.VUE_APP_IDM_URL;
 const amContext = process.env.VUE_APP_AM_URL;
@@ -54,8 +53,10 @@ export default {
           const isDNS = amContextURL.hostname !== window.location.hostname;
           let amBase = isDNS ? `${dnsContext}/json/` : `${amContext}/json/`;
 
-          if (store.state.realm && store.state.realm !== '/' && store.state.realm !== 'root') {
-            amBase = isDNS ? `${dnsContext}/json/realms/root/realms/${store.state.realm}` : `${amContext}/json/realms/root/realms/${store.state.realm}`;
+          if (this.$store) {
+            if (this.$store.state.realm && this.$store.state.realm !== '/' && this.$store.state.realm !== 'root') {
+              amBase = isDNS ? `${dnsContext}/json/realms/root/realms/${this.$store.state.realm}` : `${amContext}/json/realms/root/realms/${this.$store.state.realm}`;
+            }
           }
 
           const requestDetails = {
@@ -84,7 +85,9 @@ export default {
         }
       }
 
-      headers = extend(headers, store.state.ApplicationStore.authHeaders || {});
+      if (this.$store) {
+        headers = extend(headers, this.$store.state.authHeaders || {});
+      }
       const instance = axios.create({
         baseURL,
         timeout,
@@ -107,7 +110,7 @@ export default {
     },
     // Headers used for oauth requests and selfservice
     getAnonymousHeaders() {
-      return store.state.ApplicationStore.authHeaders || {};
+      return this.$store.state.authHeaders || {};
     },
   },
 };

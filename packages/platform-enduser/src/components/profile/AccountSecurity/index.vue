@@ -79,8 +79,8 @@ import {
 import { mapState } from 'vuex';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
-import store from '@forgerock/platform-shared/src/store';
 import EditKBA from '@/components/profile/EditKBA';
+import store from '@/store';
 /**
  * @description Handles displaying account security controls
  */
@@ -153,7 +153,7 @@ export default {
       this.getRequestService({ context: 'AM' }).get('/selfservice/trees').then((res) => {
         const updateJourney = res.data.mapping.updatePassword;
         if (updateJourney) {
-          this.$set(this.passwordItem, 'linkUrl', `${store.state.amBaseURL}/UI/Login?realm=${(new URLSearchParams(window.location.search)).get('realm') || '/'}&ForceAuth=true&authIndexType=service&authIndexValue=${updateJourney}&goto=${encodeURIComponent(window.location.href)}`);
+          this.$set(this.passwordItem, 'linkUrl', `${store.state.SharedStore.amBaseURL}/UI/Login?realm=${(new URLSearchParams(window.location.search)).get('realm') || '/'}&ForceAuth=true&authIndexType=service&authIndexValue=${updateJourney}&goto=${encodeURIComponent(window.location.href)}`);
         }
       }, () => {
         this.displayNotification('', 'error', this.$t('pages.profile.accountSecurity.journeyServiceError'));

@@ -5,9 +5,12 @@
  * or with one of its affiliates. All use shall be exclusively subject
  * to such license between the licensee and ForgeRock AS.
  */
-import { shallowMount } from '@vue/test-utils';
+import { createLocalVue, shallowMount } from '@vue/test-utils';
 import Vuex from 'vuex';
 import Layout from './index';
+
+const localVue = createLocalVue();
+localVue.use(Vuex);
 
 // https://jestjs.io/docs/en/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
 Object.defineProperty(window, 'matchMedia', {
@@ -39,6 +42,7 @@ describe('Layout Component', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = shallowMount(Layout, {
+      localVue,
       store,
       mocks: {
         $t: () => {},
