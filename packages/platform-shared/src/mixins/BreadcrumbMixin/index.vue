@@ -17,10 +17,7 @@ export default {
      * Clears out route and text parameters
      */
     clearBreadcrumb() {
-      store.dispatch('setReturnRoute', {
-        returnRoute: '',
-        returnRouteText: '',
-      });
+      this.setBreadcrumb('', '');
     },
     /**
     * Sets the current breadcrumb
@@ -29,7 +26,7 @@ export default {
     * @param {String} returnRouteText displayed title of breadcrumb
     */
     setBreadcrumb(returnRoute, returnRouteText) {
-      store.dispatch('setReturnRoute', {
+      store.commit('SharedStore/setReturnRoute', {
         returnRoute,
         returnRouteText,
       });
@@ -40,8 +37,8 @@ export default {
      * @returns {Object} breadcrumb object containing both route and text
      */
     getBreadcrumb() {
-      if (store.state) {
-        return { returnRoute: store.state.returnRoute, returnRouteText: store.state.returnRouteText };
+      if (store.state.SharedStore) {
+        return { returnRoute: store.state.SharedStore.returnRoute, returnRouteText: store.state.SharedStore.returnRouteText };
       }
       return { returnRoute: '', returnRouteText: '' };
     },
@@ -51,8 +48,8 @@ export default {
      * @returns {String} return route
      */
     getBreadcrumbRoute() {
-      if (store.state) {
-        return store.state.returnRoute;
+      if (store.state.SharedStore) {
+        return store.state.SharedStore.returnRoute;
       }
       return '';
     },
@@ -62,8 +59,8 @@ export default {
      * @returns {String} breadcrumb text
      */
     getBreadcrumbRouteText() {
-      if (store.state) {
-        return store.state.returnRouteText;
+      if (store.state.SharedStore) {
+        return store.state.SharedStore.returnRouteText;
       }
       return '';
     },

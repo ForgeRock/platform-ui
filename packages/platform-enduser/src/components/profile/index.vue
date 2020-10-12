@@ -128,7 +128,6 @@ export default {
       givenName: (state) => state.UserStore.givenName,
       managedResource: (state) => state.UserStore.managedResource,
       internalUser: (state) => state.UserStore.internalUser,
-      passwordReset: (state) => state.ApplicationStore.passwordReset,
     }),
     fullName() {
       let fullName = '';
@@ -168,7 +167,7 @@ export default {
       });
 
       selfServiceInstance.patch(`${endpoint}/${this.userSearchAttribute}`, payload).then((response) => {
-        this.$store.dispatch('UserStore/setProfileAction', response.data);
+        this.$store.commit('UserStore/setProfile', response.data);
         this.displayNotification('IDMMessages', 'success', successMsg);
 
         this.profile = response.data;

@@ -205,7 +205,7 @@ export default {
       return true;
     },
     updateSaveModel(payload) {
-      this.$store.dispatch('ApplicationStore/setSchemaDataPropertyValue', {
+      this.$store.commit('ApplicationStore/setSchemaDataPropertyValue', {
         schemaType: this.schemaType,
         ...payload,
       });

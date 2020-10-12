@@ -9,7 +9,7 @@
 import Router from 'vue-router';
 import Vue from 'vue';
 
-import store from '@forgerock/platform-shared/src/store';
+import store from '@/store';
 
 Vue.use(Router);
 

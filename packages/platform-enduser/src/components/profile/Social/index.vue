@@ -127,10 +127,10 @@ import {
   clone,
   map,
 } from 'lodash';
-import store from '@forgerock/platform-shared/src/store';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import Accordion from '@forgerock/platform-shared/src/components/Accordion';
+import store from '@/store';
 
 export default {
   name: 'Social',
@@ -226,7 +226,7 @@ export default {
       const patch = [{ operation: 'add', field: '/aliasList', value: newProviderList }];
       this.getRequestService().patch(`managed/user/${this.userId}`, patch).then(() => {
         // update store
-        store.commit('UserStore/setAliasListAction', newProviderList);
+        store.commit('UserStore/setAliasList', newProviderList);
 
         const removed = this.socialProviders.find((element) => (element.provider === provider));
         this.$set(removed, 'connected', false);
@@ -238,7 +238,7 @@ export default {
       });
     },
     connectSocial() {
-      window.location.href = `${store.state.amBaseURL}/UI/Login?realm=${(new URLSearchParams(window.location.search)).get('realm') || '/'}&authIndexType=service&authIndexValue=${this.connectSocialTree}&goto=${encodeURIComponent(window.location.href)}`;
+      window.location.href = `${store.state.SharedStore.amBaseURL}/UI/Login?realm=${(new URLSearchParams(window.location.search)).get('realm') || '/'}&authIndexType=service&authIndexValue=${this.connectSocialTree}&goto=${encodeURIComponent(window.location.href)}`;
     },
     collapseAccordion(items) {
       items.forEach((item) => {

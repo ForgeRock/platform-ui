@@ -31,9 +31,8 @@ import * as rules from 'vee-validate/dist/rules';
 import Vue from 'vue';
 import AppAuthHelper from 'appauthhelper/appAuthHelperCompat';
 import SessionCheck from 'oidcsessioncheck';
-import store from '@forgerock/platform-shared/src/store';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
+import store from '@/store';
 import router from './router';
 import i18n from './i18n';
 import App from './App';
@@ -60,7 +59,7 @@ router.beforeEach((to, from, next) => {
       const authInstance = axios.create({
         baseURL: idmContext,
         timeout: 5000,
-        headers: store.state.ApplicationStore.authHeaders,
+        headers: store.state.authHeaders,
       });
 
       authInstance.post('/authentication?_action=login').then((userDetails) => {
@@ -69,15 +68,15 @@ router.beforeEach((to, from, next) => {
           // so send them back to the admin to avoid problems.
           window.location.href = process.env.VUE_APP_ADMIN_URL;
         }
-        store.commit('UserStore/setUserIdAction', userDetails.data.authorization.id);
-        store.commit('UserStore/setManagedResourceAction', userDetails.data.authorization.component);
-        store.commit('UserStore/setRolesAction', userDetails.data.authorization.roles);
+        store.commit('UserStore/setUserId', userDetails.data.authorization.id);
+        store.commit('UserStore/setManagedResource', userDetails.data.authorization.component);
+        store.commit('UserStore/setRoles', userDetails.data.authorization.roles);
         axios.all([
           authInstance.get(`${userDetails.data.authorization.component}/${userDetails.data.authorization.id}`),
           authInstance.post('privilege?_action=listPrivileges'),
           getSchema(userDetails.data.authorization.component, { baseURL: idmContext })]).then(axios.spread((profile, privilege, schema) => {
-          store.commit('UserStore/setProfileAction', profile.data);
-          store.commit('UserStore/setSchemaAction', schema.data);
+          store.commit('UserStore/setProfile', profile.data);
+          store.commit('UserStore/setSchema', schema.data);
           store.commit('UserStore/setAccess', privilege.data);
 
           next();
@@ -172,7 +171,7 @@ const startApp = () => {
 
     each(availability.data.result, (feature) => {
       if (feature.name === 'workflow') {
-        store.commit('ApplicationStore/setWorkflowState', feature.enabled);
+        store.commit('setWorkflowState', feature.enabled);
       }
     });
 
@@ -182,7 +181,7 @@ const startApp = () => {
 };
 
 const addAppAuth = () => {
-  const AM_URL = store.state.ApplicationStore.amBaseURL;
+  const AM_URL = store.state.SharedStore.amBaseURL;
   const urlParams = new URLSearchParams(window.location.search);
   const originalLoginRealm = sessionStorage.getItem('originalLoginRealm');
   const pageLoadUrlRealm = urlParams.get('realm');
@@ -205,7 +204,7 @@ const addAppAuth = () => {
   let pageFocus;
   let realmPath = '';
   if (realm !== '/' && realm !== 'root') {
-    store.dispatch('setRealm', realm);
+    store.commit('setRealm', realm);
 
     if (realm.startsWith('/')) {
       realmPath = `realms/root/realms/${realm.substring(1)}/`;
@@ -215,7 +214,7 @@ const addAppAuth = () => {
   }
 
   const commonSettings = {
-    clientId: store.state.ApplicationStore.idmClientID,
+    clientId: store.state.idmClientID,
     authorizationEndpoint: `${AM_URL}/oauth2/${realmPath}authorize`,
   };
 
@@ -227,10 +226,10 @@ const addAppAuth = () => {
     endSessionEndpoint: `${AM_URL}/oauth2/${realmPath}connect/endSession`,
     identityProxyPreference: 'XHR',
     resourceServers: {
-      [store.state.ApplicationStore.idmBaseURL]: 'fr:idm:*',
+      [store.state.SharedStore.idmBaseURL]: 'fr:idm:*',
     },
     tokensAvailableHandler(claims) {
-      store.dispatch('UserStore/setUserSearchAttribute', claims.sub);
+      store.commit('UserStore/setUserSearchAttribute', claims.sub);
 
       const sessionCheck = new SessionCheck({
         clientId: commonSettings.clientId,
@@ -289,7 +288,7 @@ const addAppAuth = () => {
      * we need to set store.state.realm to it's original state so we can log out properly.
      */
     if (loginRealm && store.state.realm !== loginRealm) {
-      store.dispatch('setRealm', loginRealm);
+      store.commit('setRealm', loginRealm);
       sessionStorage.removeItem('originalLoginRealm');
     }
     AppAuthHelper.logout().then(() => window.location.reload());
@@ -297,5 +296,5 @@ const addAppAuth = () => {
 };
 
 store.commit('setEnvironment', process.env);
-store.commit('ApplicationStore/setEnvironment', process.env);
+store.commit('SharedStore/setBaseURLs', process.env);
 addAppAuth();
