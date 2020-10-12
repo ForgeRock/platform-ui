@@ -48,7 +48,7 @@ export default {
   },
   computed: {
     ...mapState({
-      googleMapsApiKey: (state) => state.ApplicationStore.googleMapsApiKey,
+      googleMapsApiKey: (state) => state.googleMapsApiKey,
     }),
   },
 
