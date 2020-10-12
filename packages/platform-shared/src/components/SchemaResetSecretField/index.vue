@@ -105,7 +105,7 @@ export default {
   },
   methods: {
     resetSecret() {
-      this.$store.dispatch('ApplicationStore/setSchemaDataPropertyValue', {
+      this.$store.commit('ApplicationStore/setSchemaDataPropertyValue', {
         schemaType: this.schemaType,
         model: this.model,
         value: this.newSecret.value,

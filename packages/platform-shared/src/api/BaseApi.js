@@ -6,8 +6,7 @@
  * to such license between the licensee and ForgeRock AS.
  */
 import axios from 'axios';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import store from '@forgerock/platform-shared/src/store';
+import store from '../store';
 
 /**
   * Generates an IDM Axios API instance
@@ -18,7 +17,7 @@ import store from '@forgerock/platform-shared/src/store';
   */
 export function generateIdmApi(requestOverride = {}) {
   const requestDetails = {
-    baseURL: store.state.idmBaseURL,
+    baseURL: store.state.SharedStore.idmBaseURL,
     timeout: 5000,
     headers: {},
     ...requestOverride,
@@ -59,7 +58,7 @@ export function generateIdmApi(requestOverride = {}) {
   */
 export function generateAmApi(resource, requestOverride = {}) {
   const requestDetails = {
-    baseURL: `${store.state.amBaseURL}/json/${resource.path}`,
+    baseURL: `${store.state.SharedStore.amBaseURL}/json/${resource.path}`,
     timeout: 5000,
     headers: {
       'Content-type': 'application/json',
@@ -89,7 +88,7 @@ export function generateAmApi(resource, requestOverride = {}) {
  */
 export function generateFraasLoggingApi(requestOverride = {}) {
   const requestDetails = {
-    baseURL: store.state.fraasLoggingKeyURL,
+    baseURL: store.state.SharedStore.fraasLoggingKeyURL,
     timeout: 5000,
     headers: {},
     ...requestOverride,

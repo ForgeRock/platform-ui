@@ -19,7 +19,6 @@ import {
   cloneDeep,
 } from 'lodash';
 import { mapState } from 'vuex';
-import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrLayout from '@forgerock/platform-shared/src/components/Layout';
 import { getIdmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
@@ -28,7 +27,6 @@ import './scss/main.scss';
 export default {
   name: 'App',
   mixins: [
-    LoginMixin,
     NotificationMixin,
   ],
   components: {
@@ -63,7 +61,7 @@ export default {
       userId: (state) => state.UserStore.userId,
       adminUser: (state) => state.UserStore.adminUser,
       accessObj: (state) => state.UserStore.access,
-      adminURL: (state) => state.ApplicationStore.adminURL,
+      adminURL: (state) => state.adminURL,
       userDetails: (state) => {
         let userFullName;
         const {
@@ -85,7 +83,7 @@ export default {
           company: company || 'ForgeRock',
           email,
           adminUser,
-          adminURL: `${state.ApplicationStore.adminURL}?realm=${state.realm}`,
+          adminURL: `${state.adminURL}?realm=${state.realm}`,
           roles: [],
         };
       },

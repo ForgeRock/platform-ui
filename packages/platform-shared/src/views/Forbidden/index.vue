@@ -58,7 +58,7 @@ export default {
   },
   mixins: [LoginMixin],
   beforeRouteLeave(to, from, next) {
-    this.$store.dispatch('setUserId', null);
+    this.$store.commit('UserStore/setUserId', null);
     next();
   },
 };
