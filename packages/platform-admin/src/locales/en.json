@@ -705,6 +705,7 @@
     }
   },
   "tenantAdmins": {
+    "admin": "Admin",
     "deleteAdmin": "Delete admin",
     "inviteEmail": "Resend Invite Email",
     "tabs": {
