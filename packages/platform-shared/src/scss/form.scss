@@ -21,3 +21,21 @@
   display: inline-block;
   width: 15rem;
 }
+
+// file input error handling
+.b-form-file {
+  &.fr-error {
+    margin-bottom: 0 !important;
+    border: none !important;
+
+    > .custom-file-label {
+      border: 1px solid $danger !important;
+    }
+  }
+
+  > .custom-file-label {
+    > .fr-field {
+      margin: -0.8125rem;
+    }
+  }
+}
