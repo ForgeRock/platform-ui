@@ -13,11 +13,8 @@ describe('Login View', () => {
     cy.visit(`${Cypress.config().baseUrl}/login/?realm=/#/`);
   });
 
-  it('should have logo', () => {
-    cy.get('.fr-center-card').find('.fr-logo').should('be.visible');
-  });
-
   it('location should be at login', () => {
+    cy.get('.fr-center-card').find('.fr-logo').should('be.visible');
     cy.location().should((location) => {
       expect(location.href).to.eq(`${Cypress.config().baseUrl}/login/?realm=/#/`);
       expect(location.host).to.eq(Cypress.env('FQDN'));
@@ -27,9 +24,6 @@ describe('Login View', () => {
       expect(location.port).to.eq('');
       expect(location.protocol).to.eq('https:');
     });
-  });
-
-  it('should have localhost login url', () => {
     cy.url().should('eq', `${Cypress.config().baseUrl}/login/?realm=/#/`);
   });
 

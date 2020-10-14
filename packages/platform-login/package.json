@@ -8,6 +8,7 @@
     "docker:build": "config/scripts/docker:build.sh",
     "docker:run": "config/scripts/docker:run.sh",
     "test:e2e": "../../e2e/passwords.sh cypress run",
+    "test:e2e:open": "../../e2e/passwords.sh cypress open",
     "unit": "jest --no-cache",
     "coverage": "jest --verbose --coverage --noStackTrace --no-cache",
     "find-copyright-problems": "echo 'Listing all files which do not contain a valid copywright header for this year - some files do not qualify \n' && cd src && git grep -L --word-regexp \"Copyright (c) $(date +\"%Y\")\""

@@ -1,3 +1,5 @@
+import { random } from 'lodash';
+
 /**
  * Creates am identity? Works, but not sure if we should use this
  */
@@ -28,27 +30,6 @@ export function createAMTestUser() {
 }
 
 /**
- * Log in with user credentials through service/Login tree
- *
- * @param {String} userName user login username
- * @param {String} password user login password
- */
-export function loginUser(userName, password) {
-  return cy.request({
-    method: 'POST',
-    url: `https://${Cypress.env('FQDN')}/am/json/realms/root/authenticate`,
-    headers: {
-      'X-OpenAM-Username': userName,
-      'X-OpenAM-Password': password,
-      'Content-Type': 'application/json',
-      'Accept-API-Version': 'resource=2.0, protocol=1.0',
-    },
-    body: {},
-    verify: false,
-  });
-}
-
-/**
  * Use idm provisioning token to create super-user
  * Creates a user with
  * username: 'e2eTestUser<RandomNumber>',
@@ -65,7 +46,7 @@ export function createIDMTestUser() {
       'content-type': 'application/json',
     },
     body: {
-      userName: `e2eTestUser${Math.floor(Math.random() * Math.floor(1000))}`,
+      userName: `e2eTestUser${random(Number.MAX_SAFE_INTEGER)}`,
       password: 'Welcome1',
       givenName: 'First',
       sn: 'Last',
@@ -88,21 +69,4 @@ export function deleteIDMTestUser(userId) {
       referer: `https://${Cypress.env('FQDN')}/platform/appAuthHelperRedirect.html`,
     },
   }).then(() => {});
-}
-
-export function logoutUser() {
-  cy.request({
-    method: 'POST',
-    url: `https://${Cypress.env('FQDN')}/openidm/authentication?_action=logout`,
-    headers: {
-      'X-OpenIDM-NoSession': 'false',
-      'X-OpenIDM-Username': 'anonymous',
-      'X-OpenIDM-Password': 'anonymous',
-      'Content-Type': 'application/json',
-      'Cache-Control': 'no-cache',
-      'X-Requested-With': 'XMLHttpRequest',
-    },
-    body: {},
-    verify: false,
-  });
 }
