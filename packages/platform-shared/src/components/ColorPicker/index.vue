@@ -29,7 +29,7 @@ to such license between the licensee and ForgeRock AS. -->
     </BButton>
     <BPopover
       :container="container"
-      triggers="click blur"
+      triggers="focus"
       boundary="window"
       placement="left"
       :target="`color-picker-${id}`">
