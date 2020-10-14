@@ -5,38 +5,11 @@
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
-import { loginUser, createIDMTestUser } from '../managedApi.e2e';
+import { createIDMTestUser } from '../managedApi.e2e';
 
 describe('Enduser Dashboard View', () => {
   let userName = '';
-  const password = 'Welcome1';
   const fullName = 'First Last';
-  const permanentlyDeleteMessage = 'Are you sure you want to permanently delete your account data?';
-  const locationUrl = `https://${Cypress.env('FQDN')}/enduser/?realm=root#/dashboard`;
-  const verifyLogin = () => {
-    cy.server().route('/am/json/realms/root/realms/root/dashboard/assigned').as('verifyPageLoad');
-    cy.get('.text-center').then(($text) => {
-      if ($text.hasClass('mb-4') || $text.hasClass('mb-0')) {
-        cy.get('[placeholder="User Name:"]')
-          .type(userName)
-          .should('have.value', userName);
-        cy.get('[placeholder="Password:"]')
-          .type(password, { force: true })
-          .should('have.value', password);
-        cy.get('.btn-primary').click();
-        cy.get('.fr-logo', { timeout: 60000 }).should('be.visible');
-      } else {
-        loginUser(userName, password).then(() => {
-          cy.visit(locationUrl);
-          // eslint-disable-next-line cypress/no-unnecessary-waiting
-          cy.wait(2000);
-          cy.get('.fr-logo', { timeout: 60000 }).should('be.visible');
-        });
-      }
-    });
-    cy.location('pathname', { timeout: 20000 }).should('include', '/enduser/');
-    cy.wait('@verifyPageLoad', { timeout: 20000 });
-  };
 
   before(() => {
     createIDMTestUser().then((results) => {
@@ -45,27 +18,25 @@ describe('Enduser Dashboard View', () => {
     });
   });
 
-  beforeEach(() => {
-    cy.visit(locationUrl);
-  });
-
   it('should have sidebar and navbar with dashboard selected', () => {
-    verifyLogin();
+    cy.login(userName);
     cy.get('.fr-sidebar-wrapper').should('exist');
     cy.get('.fr-main-navbar').should('exist');
     cy.get('[href="#/dashboard"]')
       .should('exist')
-      .should('have.css', 'background-color', 'rgb(228, 244, 253)')
-      .should('have.css', 'border-left-color', 'rgb(16, 156, 241)');
+      .should('have.class', 'router-link-active');
   });
 
   it(`should be logged in as ${fullName}`, () => {
-    verifyLogin();
+    cy.login(userName);
     cy.get('.fr-dropdown-button-content').should('contain', fullName);
+    cy.get('.jumbotron')
+      .should('contain', `Hello, ${fullName}`)
+      .should('contain', 'The ForgeRock End User UI ');
   });
 
   it('should be able to collapse and expand sidebar', () => {
-    verifyLogin();
+    cy.login(userName);
     cy.get('.fr-menu-expanded')
       .should('exist')
       .get('.fr-sidebar-nav')
@@ -78,7 +49,7 @@ describe('Enduser Dashboard View', () => {
   });
 
   it('should allow user dropdown to show', () => {
-    verifyLogin();
+    cy.login(userName);
     cy.get('.dropdown-menu.show').should('not.exist');
     cy.get('button.dropdown-toggle').click({ force: true });
     cy.get('.dropdown-menu.show')
@@ -102,15 +73,8 @@ describe('Enduser Dashboard View', () => {
   //     .should('contain', 'Notifications (0)');
   // });
 
-  it('should have welcome message', () => {
-    verifyLogin();
-    cy.get('.jumbotron')
-      .should('contain', `Hello, ${fullName}`)
-      .should('contain', 'The ForgeRock End User UI ');
-  });
-
   it('should be able to edit profile', () => {
-    verifyLogin();
+    cy.login(userName);
     cy.get('.jumbotron')
       .get('button.btn-primary')
       .should('contain', 'Edit Your Profile')
@@ -118,7 +82,7 @@ describe('Enduser Dashboard View', () => {
   });
 
   it('should allow user to log out', () => {
-    verifyLogin();
+    cy.login(userName);
     cy.get('button.dropdown-toggle').click();
     cy.get('.dropdown-menu.show')
       .get('a.dropdown-item')
@@ -128,7 +92,8 @@ describe('Enduser Dashboard View', () => {
   });
 
   it('should delete test user', () => {
-    verifyLogin();
+    cy.login(userName);
+    const permanentlyDeleteMessage = 'Are you sure you want to permanently delete your account data?';
     cy.get('[href="#/profile"]:first').click();
     cy.get('h5.mb-0:last')
       .should('exist')
