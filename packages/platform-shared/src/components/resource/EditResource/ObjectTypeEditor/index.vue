@@ -65,9 +65,8 @@ to such license between the licensee and ForgeRock AS. -->
             v-on="$listeners"
             @valueChange="updateField(index, $event)"
             @add-object="addObjectToList(index, $event, displayProperties)"
-            @remove-object="removeElementFromList(index, $event, displayProperties)"
             @add-list="addElementToList(index, $event, displayProperties)"
-            @remove-list="removeElementFromList(index, $event, displayProperties)" />
+            @remove-element="removeElementFromList(index, $event, displayProperties)" />
 
           <div
             v-if="field.type === 'relationship'"
