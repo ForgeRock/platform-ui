@@ -24,7 +24,7 @@ of the MIT license. See the LICENSE file for details.
           :edit-access="hasUpdateAccess"
           :delete-access="hasDeleteAccess"
           @getTableData="getTableData"
-          @rowClicked="resourceClicked">
+          @row-clicked="resourceClicked">
           <template #listToolbar>
             <BButton
               v-if="createProperties"
@@ -120,7 +120,7 @@ export default {
         // Generate columns for display and filtering for read/query
         each(privilege.data.VIEW.properties, (readProp) => {
           const property = schema.data.properties[readProp];
-          if (isUndefined(property.encryption)/* && ['string', 'number', 'boolean'].includes(property.type) */) {
+          if (property && isUndefined(property.encryption)) {
             properties[readProp] = property;
           }
         });

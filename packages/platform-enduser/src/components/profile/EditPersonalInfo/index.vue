@@ -41,6 +41,16 @@ of the MIT license. See the LICENSE file for details.
               v-if="field.type === 'string' || field.type === 'number' || field.type === 'boolean'">
               <FrField :field="field" />
             </BFormGroup>
+            <FrListField
+              v-else-if="field.type === 'array' && field.key !== 'privileges'"
+              :key="index"
+              :field="field"
+              :index="index"
+              v-on="$listeners"
+              @valueChange="field.value = $event"
+              @add-object="addObjectToList(index, $event, formFields)"
+              @add-list="addElementToList(index, $event, formFields)"
+              @remove-element="removeElementFromList(index, $event, formFields)" />
           </template>
         </ValidationObserver>
         <h3
@@ -78,6 +88,8 @@ import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrListField from '@forgerock/platform-shared/src/components/ListField';
+import ListsMixin from '@forgerock/platform-shared/src/mixins/ListsMixin';
 
 /**
  * @description Displays a users profile, auto generates fields based off of resource schema. Currently only displays strings, numbers and booleans. In the case of a policy
@@ -87,12 +99,14 @@ import FrField from '@forgerock/platform-shared/src/components/Field';
 export default {
   name: 'EditPersonalInfo',
   mixins: [
+    ListsMixin,
+    NotificationMixin,
     ResourceMixin,
     RestMixin,
-    NotificationMixin,
   ],
   components: {
     FrField,
+    FrListField,
   },
   computed: {
     ...mapState({
@@ -133,7 +147,6 @@ export default {
       const { order, properties, required } = this.schema;
       const filteredOrder = filter(order, (propName) => properties[propName].viewable
                             && properties[propName].userEditable
-                            && properties[propName].type !== 'array'
                             && properties[propName].type !== 'object');
       const formFields = map(filteredOrder, (name) => ({
         name,
@@ -141,6 +154,7 @@ export default {
         title: `${properties[name].title} ${required.includes(name) ? '' : this.$t('pages.profile.editProfile.optional')}`,
         value: this.profile[name] || null,
         type: properties[name].type,
+        items: properties[name].items,
         validation: required.includes(name) ? 'required' : '',
       }));
 

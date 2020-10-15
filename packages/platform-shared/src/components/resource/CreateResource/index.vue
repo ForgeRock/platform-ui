@@ -51,9 +51,8 @@ to such license between the licensee and ForgeRock AS. -->
                     :index="index"
                     @valueChange="updateField(index, $event)"
                     @add-object="addObjectToList(index, $event, clonedCreateProperties)"
-                    @remove-object="removeElementFromList(index, $event, clonedCreateProperties)"
                     @add-list="addElementToList(index, $event, clonedCreateProperties)"
-                    @remove-list="removeElementFromList(index, $event, clonedCreateProperties)" />
+                    @remove-element="removeElementFromList(index, $event, clonedCreateProperties)" />
                 </BFormGroup>
                 <!-- for singletonRelationhip values -->
                 <FrRelationshipEdit
