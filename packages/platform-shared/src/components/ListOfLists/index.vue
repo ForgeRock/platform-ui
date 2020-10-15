@@ -52,7 +52,7 @@ to such license between the licensee and ForgeRock AS. -->
                 <button
                   type="button"
                   class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
-                  @click.prevent="$emit('remove-list', index)">
+                  @click.prevent="$emit('remove-element', index)">
                   <i class="material-icons-outlined">
                     remove
                   </i>
