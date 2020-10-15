@@ -188,7 +188,6 @@ import axios from 'axios';
 import FrResetPasswordModal from '@forgerock/platform-shared/src/components/resource/EditResource/ResetPasswordModal';
 import FrRelationshipArray from '@forgerock/platform-shared/src/components/resource/RelationshipArray';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -224,7 +223,6 @@ export default {
     BModal,
   },
   mixins: [
-    BreadcrumbMixin,
     ResourceMixin,
     RestMixin,
     NotificationMixin,
@@ -265,7 +263,7 @@ export default {
         idmInstance.get(`privilege/${this.resourceType}/${this.resourceName}/${this.id}`)]).then(axios.spread((schema, privilege) => {
         this.resourceTitle = schema.data.title;
 
-        this.setBreadcrumb(`/${this.$route.meta.listRoute}/${this.resourceType}/${this.resourceName}`, `${this.resourceTitle} ${this.$t('pages.access.list')}`);
+        this.$emit('breadcrumb-data-changed', { route: `/${this.$route.meta.listRoute}/${this.resourceType}/${this.resourceName}`, routeName: `${this.resourceTitle} ${this.$t('pages.access.list')}` });
 
         this.objectTypeProperties = this.getObjectTypeProperties(schema.data, privilege.data);
         this.relationshipProperties = this.getRelationshipProperties(schema.data, privilege.data);
