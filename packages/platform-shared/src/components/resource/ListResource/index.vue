@@ -27,7 +27,7 @@ to such license between the licensee and ForgeRock AS. -->
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
       :sort-direction="sortDirection"
-      @row-clicked="$emit('rowClicked', $event)"
+      @row-clicked="$emit('row-clicked', $event)"
       @sort-changed="sortingChanged">
       <template v-slot:cell(actions)="data">
         <slot
@@ -46,7 +46,7 @@ to such license between the licensee and ForgeRock AS. -->
                     more_horiz
                   </i>
                 </template>
-                <BDropdownItem @click="$emit('rowClicked', data.item)">
+                <BDropdownItem @click="$emit('row-clicked', data.item)">
                   <i class="material-icons-outlined mr-3">
                     edit
                   </i> {{ $t('common.edit') }}
@@ -63,7 +63,7 @@ to such license between the licensee and ForgeRock AS. -->
           <template v-else-if="editAccess">
             <div
               class="cursor-pointer text-right"
-              @click="$emit('rowClicked', data.item)">
+              @click="$emit('row-clicked', data.item)">
               <i class="material-icons-outlined text-muted">
                 edit
               </i>
