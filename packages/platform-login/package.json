@@ -7,15 +7,12 @@
     "dev": "vue-cli-service serve",
     "docker:build": "config/scripts/docker:build.sh",
     "docker:run": "config/scripts/docker:run.sh",
-    "lint": "yarn lint:style",
-    "lint:style": "vue-cli-service lint:style '**/*.vue' '**/*.scss'",
     "test:e2e": "../../e2e/passwords.sh cypress run",
     "unit": "jest --no-cache",
     "coverage": "jest --verbose --coverage --noStackTrace --no-cache",
     "find-copyright-problems": "echo 'Listing all files which do not contain a valid copywright header for this year - some files do not qualify \n' && cd src && git grep -L --word-regexp \"Copyright (c) $(date +\"%Y\")\""
   },
   "dependencies": {
-    "@ascendancyy/vue-cli-plugin-stylelint": "1.1.2",
     "@forgerock/javascript-sdk": "2.1.0",
     "@forgerock/platform-shared": "1.0.0",
     "bootstrap": "4.3.1",
@@ -35,7 +32,6 @@
     "whatwg-fetch": "3.2.0"
   },
   "devDependencies": {
-    "@ascendancyy/vue-cli-plugin-stylelint": "1.1.2",
     "@vue/cli-plugin-babel": "3.8.0",
     "@vue/cli-service": "4.3.1",
     "@vue/test-utils": "1.0.0-beta.29",

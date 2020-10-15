@@ -4,14 +4,11 @@
   "private": true,
   "scripts": {
     "build": "vue-cli-service build",
-    "lint": "yarn lint:style",
-    "lint:style": "vue-cli-service lint:style '**/*.vue' '**/*.scss'",
     "unit": "jest --no-cache",
     "snapshot": "jest --updateSnapshot",
     "coverage": "jest --verbose --coverage --noStackTrace --no-cache"
   },
   "dependencies": {
-    "@ascendancyy/vue-cli-plugin-stylelint": "1.1.2",
     "@forgerock/platform-shared": "1.0.0",
     "appauthhelper": "0.3.19",
     "axios": "0.19.0",
@@ -37,7 +34,6 @@
     "vuex": "3.0.1"
   },
   "devDependencies": {
-    "@ascendancyy/vue-cli-plugin-stylelint": "1.1.2",
     "@vue/cli-plugin-babel": "3.8.0",
     "@vue/cli-service": "4.3.1",
     "@vue/test-utils": "1.0.0-beta.29",
