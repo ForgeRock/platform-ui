@@ -70,7 +70,7 @@ export default {
       const emptyObjectWithKeys = this.createObject(list[fieldNumber].items.properties);
 
       // array of object value for unpopulated valued is empty string
-      if (list[fieldNumber].value === '' || !has(list[fieldNumber], 'value')) {
+      if (list[fieldNumber].value === null || list[fieldNumber].value === '' || !has(list[fieldNumber], 'value')) {
         list[fieldNumber].value = [];
       }
 
