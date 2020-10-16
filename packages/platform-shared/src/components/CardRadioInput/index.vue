@@ -4,28 +4,26 @@ Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
-  <div>
-    <label class="h-100 w-100 mb-0">
-      <!--
-        v-model event. Passed through from input.
-        @event change
-      -->
-      <input
-        type="radio"
-        :checked="isChecked"
-        :disabled="disabled"
-        :name="name"
-        :value="value"
-        class="card-input-element"
-        @change="$emit('change', value)">
-      <BCard :class="['card-input', 'fr-card-clickable', cardBodyClass]">
-        <!-- @slot Provide custom content for card body -->
-        <slot>
+  <label class="h-100 w-100 mb-0 position-relative">
+    <input
+      type="radio"
+      :checked="isChecked"
+      :aria-checked="isChecked"
+      :disabled="disabled"
+      :name="name"
+      :value="value"
+      class="card-input-element"
+      @change="$emit('change', value)"
+      @focus="$emit('change', value)">
+    <BCard :class="['card-input', 'fr-card-clickable', cardBodyClass]">
+      <!-- @slot Provide custom content for card body -->
+      <slot>
+        <div :aria-label="value">
           {{ value }}
-        </slot>
-      </BCard>
-    </label>
-  </div>
+        </div>
+      </slot>
+    </BCard>
+  </label>
 </template>
 
 <script>
@@ -64,7 +62,7 @@ export default {
      */
     name: {
       type: String,
-      default: '',
+      default: 'radio-input',
     },
     /**
      * if initial value is equal to the value prop, will initialize as the selected input.
@@ -91,7 +89,10 @@ export default {
 
 <style lang="scss" scoped>
 .card-input-element {
-  display: none;
+  appearance: none;
+  position: absolute;
+  width: 100%;
+  height: 100%;
 }
 
 .card.card-input {
@@ -108,9 +109,8 @@ export default {
   &::before {
     content: '';
     position: absolute;
-    right: -8px;
+    right: -9px;
     top: -9px;
-    color: $primary;
     background-color: $primary;
     height: 19px;
     width: 19px;
@@ -123,10 +123,9 @@ export default {
     position: absolute;
     font-family: 'Material Icons Outlined', sans-serif;
     right: -7px;
-    top: -8px;
+    top: -9px;
     text-align: right;
     width: 100%;
-    height: 20px;
     line-height: 19px;
     color: $white;
     display: none;
