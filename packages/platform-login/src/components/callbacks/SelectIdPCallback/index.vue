@@ -72,6 +72,8 @@ export default {
     };
   },
   mounted() {
+    // if a user does not click a social provider, the input value should be localAuthentication
+    this.callback.setInputValue('localAuthentication');
     this.providers = this.callback.getOutputByName('providers');
 
     // pausing briefly here so the login button is on the dom
