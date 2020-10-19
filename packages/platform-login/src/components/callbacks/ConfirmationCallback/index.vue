@@ -6,12 +6,12 @@ of the MIT license. See the LICENSE file for details.
 -->
 
 <template>
-  <div class="row text-left ml-1 mb-2">
+  <div class="row text-left mb-2">
     <BButton
       v-for="(option, index) in options"
       :key="index"
       class="btn-block mt-3"
-      variant="primary"
+      :variant="variant"
       @click="setValue(index)">
       {{ option }}
     </BButton>
@@ -29,6 +29,10 @@ export default {
     callback: {
       type: Object,
       required: true,
+    },
+    variant: {
+      type: String,
+      default: 'primary',
     },
   },
   mounted() {
