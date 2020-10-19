@@ -99,6 +99,11 @@ export default {
     }
   },
   methods: {
+    appendScript() {
+      const el = document.createElement('script');
+      el.innerHTML = this.message;
+      this.$refs.textOutputPanel.appendChild(el);
+    },
     getCode(options) {
       const { code = 'M', version = 4, text } = options;
       const qr = new QRCodeGenerator(version, code);
@@ -109,11 +114,6 @@ export default {
       this.qrCodeHtml = qr.createImgTag(3, 8);
       this.qrCodeMobileLink = text;
       this.hideSpinner = true;
-    },
-    appendScript() {
-      const el = document.createElement('script');
-      el.innerHTML = this.message;
-      this.$refs.textOutputPanel.appendChild(el);
     },
   },
 };
