@@ -112,7 +112,7 @@ export default {
         border: 1px solid $gray-400;
         border-radius: 5px 0 0 5px;
         width: 52px;
-        height: 52px;
+        height: 100%;
         padding: 14px 14px 14px 14px;
 
         .swatch-color {

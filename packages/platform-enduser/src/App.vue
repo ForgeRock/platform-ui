@@ -5,12 +5,18 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details.
 -->
 <template>
-  <FrLayout
-    :menu-items="menuItems"
-    :user-details="userDetails"
-    :version="version">
-    <RouterView :key="this.$route.fullPath" />
-  </FrLayout>
+  <div>
+    <FrLayout
+      :menu-items="menuItems"
+      :user-details="userDetails"
+      :version="version">
+      <RouterView :key="this.$route.fullPath" />
+    </FrLayout>
+    <ThemeInjector
+      :theme="theme"
+      :is-enduser="true"
+      v-if="theme !== null" />
+  </div>
 </template>
 
 <script>
@@ -20,17 +26,21 @@ import {
 } from 'lodash';
 import { mapState } from 'vuex';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import FrLayout from '@forgerock/platform-shared/src/components/Layout';
 import { getIdmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
+import ThemeInjector from '@forgerock/platform-shared/src/components/ThemeInjector/';
 import './scss/main.scss';
 
 export default {
   name: 'App',
   mixins: [
     NotificationMixin,
+    RestMixin,
   ],
   components: {
     FrLayout,
+    ThemeInjector,
   },
   data() {
     return {
@@ -44,7 +54,40 @@ export default {
         icon: 'account_circle',
       }],
       version: '',
+      theme: null,
     };
+  },
+  created() {
+    const idmRequestService = this.getRequestService({
+      'X-OpenIDM-NoSession': true,
+      'X-OpenIDM-Password': 'anonymous',
+      'X-OpenIDM-Username': 'anonymous',
+      'cache-control': 'no-cache',
+    });
+
+    idmRequestService.get('/config/ui/themerealm').then((results) => {
+      let cleanRealm = this.$store.state.realm;
+
+      if (cleanRealm === 'root') {
+        cleanRealm = '/';
+      }
+
+      // If there is a / we need to remove it so that
+      // both test and /test result in the same realm theme
+      if (results.data.realm[cleanRealm] === undefined && cleanRealm.charAt(0) === '/') {
+        cleanRealm = cleanRealm.substring(1);
+      }
+
+      // Set all realm related themeing here
+      if (results.data.realm[cleanRealm]) {
+        this.theme = results.data.realm[cleanRealm];
+        this.logo = results.data.realm[cleanRealm].logo;
+      } else {
+        this.theme = null;
+      }
+    }).catch(() => {
+      this.theme = null;
+    });
   },
   mounted() {
     getIdmServerInfo().then((results) => {
