@@ -592,17 +592,25 @@
     "yesDeleteRealm": "Yes, Delete Realm"
   },
   "realmTheme": {
-    "realmLogo": "Realm Logo URL",
+    "logo": "Logo Mark",
+    "logoProfile": "Profile Page Logo (optional)",
+    "themeDetails": "Customize the default look and feel to use for sign-in, registration and profile pages.",
     "successfullyUpdatedRealmTheme": "'{realmName}' realm theme successfully updated",
     "failedToUpdatedRealmTheme": "'{realmName}' realm theme failed to updated",
-    "logoHelp": "URL to logo for use in all user-facing UIs such as consent pages and application pages unless overridden at the app or tree level.",
-    "signInBackground": "Sign-In Background Color",
-    "buttonColor": "Button Color",
-    "buttonActiveColor": "Button Active Color",
-    "buttonTextColor": "Button Text Color",
-    "buttonRadius": "Button Radius",
+    "logoHelp": "URL to logo for use on sign-in and registration pages, as well as for minimized profile navigation state.",
+    "logoProfileHelp": "Appears on the user profile navigation. If not specified, the logo mark will be used by default.",
+    "backgroundColor": "Sign-In Background Color",
+    "primaryColor": "Button Color",
+    "primaryOffColor": "Button Active Color",
+    "textColor": "Button Text Color",
+    "buttonRounded": "Button Radius",
     "signInBackgroundImage": "Sign-In Background Image (optional)",
-    "backgroundImageHelp": "URL to optionally display a background image."
+    "backgroundImageHelp": "URL to optionally display a background image.",
+    "linkColor": "Link Color",
+    "linkActiveColor": "Link Active Color",
+    "profileBackgroundColor": "Profile Background Color",
+    "profileMenuHighlightColor": "Profile Menu Highlight Color",
+    "profileMenuTextHighlightColor": "Profile Menu Highlight Text Color"
   },
   "logApiKeys": {
     "noLogApiKeysText": "You haven't added any log API keys",
