@@ -4,53 +4,141 @@ Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
-  <Component :is="'style'">
-    body {
-    background-color: {{ theme.backgroundColor }};
-    }
+  <div>
+    <Component :is="'style'">
+      /**
+      Shared styles
+      */
+      body {
+      background-color: {{ backgroundColor }};
+      }
 
-    body.fr-body-image {
-    background-image: url('{{ theme.backgroundImage }}');
-    background-size: cover;
-    background-repeat: no-repeat;
-    }
+      body.fr-body-image {
+      background-image: url('{{ theme.backgroundImage }}');
+      background-size: cover;
+      background-repeat: no-repeat;
+      }
 
-    .btn-primary {
-    background-color: {{ theme.primaryColor }} !important;
-    border-radius: {{ theme.buttonRounded }}px !important;
-    outline-color: {{ theme.primaryColor }} !important;
-    border-color: {{ theme.primaryColor }} !important;
-    color: {{ theme.textColor }};
-    }
+      .btn {
+      border-radius: {{ theme.buttonRounded }}px !important;
+      }
 
-    .btn-primary:disabled {
-    background-color: {{ theme.primaryOffColor }} !important;
-    }
+      .btn-primary {
+      background-color: {{ theme.primaryColor }} !important;
+      outline-color: {{ theme.primaryColor }} !important;
+      border-color: {{ theme.primaryColor }} !important;
+      color: {{ theme.textColor }};
+      }
 
-    .btn-primary:hover {
-    background-color: {{ theme.primaryOffColor }} !important;
-    }
+      .btn-primary:disabled {
+      background-color: {{ theme.primaryOffColor }} !important;
+      }
 
-    .btn-primary:focus {
-    -webkit-box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }};
-    box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }};
-    }
+      .btn-primary:hover {
+      background-color: {{ theme.primaryOffColor }} !important;
+      }
 
-    .fr-custom-logo {
-    max-width: 80px;
-    align-self: center;
-    }
+      a {
+      color: {{ theme.linkColor }};
+      }
 
-    textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {
-    border-color: {{ theme.primaryColor }};
-    -webkit-box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }};
-    box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }};
-    outline: 0 none;
-    }
-  </Component>
+      a:hover {
+      color: {{ theme.linkActiveColor }};
+      }
+
+      .btn-link {
+      color: {{ theme.linkColor }};
+      }
+
+      .btn-link:hover {
+      color: {{ theme.linkActiveColor }};
+      }
+
+      .btn-primary:focus {
+      -webkit-box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }};
+      box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }};
+      }
+
+      .fr-custom-logo {
+      max-width: 80px;
+      align-self: center;
+      }
+
+      textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {
+      border-color: {{ theme.primaryColor }};
+      -webkit-box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }};
+      box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }};
+      outline: 0 none;
+      }
+
+      /**
+      Enduser Theme Styles
+      */
+
+      #app .vue-js-switch.toggled .v-switch-core {
+      background-color: {{ theme.primaryColor }};
+      }
+
+      #app .router-link-active {
+      background-color: {{ theme.profileMenuHighlightColor }};
+      color: {{ theme.profileMenuTextHighlightColor }};
+      border-left-color: {{ theme.primaryColor }};
+      }
+
+      #app .router-link-active:hover {
+      background-color: {{ theme.profileMenuHighlightColor }};
+      color: {{ theme.profileMenuTextHighlightColor }};
+      }
+
+      #app .fr-sidebar-menuitems li a {
+      outline-color: {{ theme.primaryColor }};
+      color: inherit;
+      }
+
+      #app .fr-sidebar-menuitems li a:hover {
+      background-color: {{ theme.primaryColor }};
+      color: {{ theme.profileMenuTextHighlightColor }};
+      }
+
+      #app .fr-sidebar-brand:hover {
+      background-color: inherit;
+      color: inherit;
+      }
+    </Component>
+
+    <Component
+      :is="'style'"
+      v-if="isEnduser">
+      .fr-logo.fr-logo-horizontal {
+      background-image: url('{{ theme.logoProfile.length === 0 ? require('@forgerock/platform-shared/src/assets/images/themes/default/horizontal-logo.svg') : theme.logoProfile }}');
+      }
+
+      .fr-logo.fr-logo-vertical {
+      background-image: url('{{ theme.logo.length === 0 ? require('@forgerock/platform-shared/src/assets/images/themes/default/vertical-logo.svg') : theme.logo }}');
+      }
+    </Component>
+  </div>
 </template>
 
 <script>
+/**
+Theme properties examples:
+
+backgroundColor: "#312E2E"
+buttonRounded: "15"
+linkActiveColor: "#B20710"
+linkColor: "#E50914"
+logo: "URL"
+logoProfile: "URL"
+primaryColor: "#E50914"
+// this is poorly named, it has turned into just the button text color
+textColor: "#FFFFFF"
+primaryOffColor: "#B20710"
+profileBackgroundColor: "#D2CBCB"
+profileMenuHighlightAccentColor: "#B20710"
+profileMenuHighlightColor: "#E50914"
+
+ */
 /**
  * Injects a style sheet based on provided theming variables.
  * Intended functionality is to allow for basic themeing and overriding in
@@ -59,19 +147,26 @@ to such license between the licensee and ForgeRock AS. -->
 export default {
   name: 'ThemeInjector',
   props: {
-    /**
-     * Theme Object
-     *      "logo": URL,
-            "backgroundColor": "#000",
-            "backgroundImage": URL,
-            "primaryColor" : "#ed1543",
-            "primaryOffColor" : "#990f24",
-            "textColor": "#000",
-            "buttonRounded": "15px"
-     */
+    isEnduser: {
+      type: Boolean,
+      default: false,
+    },
     theme: {
       type: Object,
       default: () => ({ realm: {} }),
+    },
+  },
+  computed: {
+    backgroundColor() {
+      let tempBackground = 'inherit';
+
+      if (this.isEnduser && this.theme.profileBackgroundColor) {
+        tempBackground = this.theme.profileBackgroundColor;
+      } else if (this.theme.backgroundColor) {
+        tempBackground = this.theme.backgroundColor;
+      }
+
+      return tempBackground;
     },
   },
 };
