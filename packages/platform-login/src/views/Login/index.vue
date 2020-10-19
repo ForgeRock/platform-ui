@@ -57,9 +57,10 @@ of the MIT license. See the LICENSE file for details.
             v-for="(component) in componentList ">
             <Component
               class="callback-component"
-              :field="component.field"
               :callback="component.callback"
+              :field="component.field"
               :index="component.index"
+              :step="component.step"
               :is="component.type"
               :key="component.key"
               v-bind="{...component.callbackSpecificProps}"
@@ -96,6 +97,7 @@ of the MIT license. See the LICENSE file for details.
 import {
   cloneDeep,
   each,
+  find,
   has,
   noop,
 } from 'lodash';
@@ -105,10 +107,13 @@ import {
   BRow,
 } from 'bootstrap-vue';
 import {
-  FRAuth,
-  FRStep,
-  SessionManager,
   CallbackType,
+  FRAuth,
+  FRRecoveryCodes,
+  FRStep,
+  FRWebAuthn,
+  SessionManager,
+  WebAuthnStepType,
 } from '@forgerock/javascript-sdk';
 import FrCenterCard from '@forgerock/platform-shared/src/components/CenterCard';
 import Spinner from '@forgerock/platform-shared/src/components/Spinner';
@@ -117,18 +122,14 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 
-// Name constants
-const {
-  ConfirmationCallback,
-  DeviceProfileCallback,
-  HiddenValueCallback,
-  PasswordCallback,
-  PollingWaitCallback,
-  RedirectCallback = 'RedirectCallback',
-  SelectIdPCallback = 'SelectIdPCallback',
-  SuspendedTextOutputCallback = 'SuspendedTextOutputCallback',
-  ValidatedCreatePasswordCallback,
-} = CallbackType;
+const FrCallbackType = {
+  ...CallbackType,
+  RecoveryCodesComponent: 'RecoveryCodesComponent',
+  RedirectCallback: 'RedirectCallback',
+  SelectIdPCallback: 'SelectIdPCallback',
+  SuspendedTextOutputCallback: 'SuspendedTextOutputCallback',
+  WebAuthnComponent: 'WebAuthnComponent',
+};
 
 export default {
   name: 'Login',
@@ -147,13 +148,14 @@ export default {
     FrField: () => import('@forgerock/platform-shared/src/components/Field'),
     FrHiddenValueCallback: () => import('@/components/callbacks/HiddenValueCallback'),
     FrKbaCreateCallback: () => import('@/components/callbacks/KbaCreateCallback'),
-    FrMetadataCallback: () => import('@/components/callbacks/MetadataCallback'),
     FrPollingWaitCallback: () => import('@/components/callbacks/PollingWaitCallback'),
     FrReCaptchaCallback: () => import('@/components/callbacks/ReCaptchaCallback'),
     FrSelectIdPCallback: () => import('@/components/callbacks/SelectIdPCallback'),
     FrSuspendedTextOutputCallback: () => import('@/components/callbacks/SuspendedTextOutputCallback'),
     FrTermsAndConditionsCallback: () => import('@/components/callbacks/TermsAndConditionsCallback'),
     FrTextOutputCallback: () => import('@/components/callbacks/TextOutputCallback'),
+    FrWebAuthnComponent: () => import('@/components/display/WebAuthn'),
+    FrRecoveryCodesComponent: () => import('@/components/display/RecoveryCodes'),
   },
   props: {
     logo: {
@@ -181,7 +183,6 @@ export default {
       header: '',
       hideRealm: false,
       initalStep: undefined,
-      kbaCallbackCount: 0,
       loading: true,
       loginFailure: false,
       nextButtonDisabled: false,
@@ -219,7 +220,7 @@ export default {
       const input = document.getElementById(type);
       if (input) {
         const hiddenCallback = this.step
-          .getCallbacksOfType(HiddenValueCallback)
+          .getCallbacksOfType(FrCallbackType.HiddenValueCallback)
           .find((x) => x.getOutputByName('id', '') === type);
         hiddenCallback.setInputValue(input.value);
       }
@@ -232,10 +233,9 @@ export default {
     backendScriptsIdentifier() {
       const legacyTypes = [
         'clientScriptOutputData',
-        'webAuthnOutcome',
       ];
       let type = '';
-      this.step.getCallbacksOfType(HiddenValueCallback)
+      this.step.getCallbacksOfType(FrCallbackType.HiddenValueCallback)
         .forEach((callback) => legacyTypes.forEach((legacyType) => {
           if (callback.getOutputByName('id', '') === legacyType) {
             type = legacyType;
@@ -253,7 +253,7 @@ export default {
 
     getField(callback, index) {
       const type = callback.getType();
-      const fieldType = type === PasswordCallback || type === ValidatedCreatePasswordCallback ? 'password' : 'string';
+      const fieldType = type === FrCallbackType.PasswordCallback || type === FrCallbackType.ValidatedCreatePasswordCallback ? 'password' : 'string';
 
       let prompt = '';
       if (callback.getPrompt) {
@@ -442,10 +442,9 @@ export default {
       this.header = this.step.getHeader() || '';
       this.description = this.step.getDescription() || '';
       this.nextButtonVisible = true;
-      this.kbaCallbackCount = 0;
 
       // Ensure that Social Buttons appear at top of Page Node
-      const pullToTop = SelectIdPCallback;
+      const pullToTop = FrCallbackType.SelectIdPCallback;
       this.step.callbacks.sort((currentCallback, otherCallback) => {
         if (currentCallback.payload.type === pullToTop) {
           return -1;
@@ -460,9 +459,10 @@ export default {
       const componentList = [];
       let keyFromDate = Date.now();
       this.step.callbacks.forEach((callback, index) => {
-        const type = callback.getType();
+        const existsInComponentList = (type) => find(componentList, (component) => component.type === `Fr${type}`);
+        let type = callback.getType();
 
-        if (type === RedirectCallback) {
+        if (type === FrCallbackType.RedirectCallback) {
           this.nextButtonVisible = false;
           if (callback.getOutputByName('trackingCookie')) {
             // save current step information for later resumption of tree.
@@ -474,18 +474,35 @@ export default {
           return;
         }
 
+        // Use SDK to handle backend scripts that SDK can parse
+        // Reasign type to use specific component
+        if (type === FrCallbackType.TextOutputCallback || type === FrCallbackType.MetadataCallback) {
+          const isWebAuthnStep = FRWebAuthn.getWebAuthnStepType(this.step) !== WebAuthnStepType.None;
+          const isRecovertCodeStep = FRRecoveryCodes.isDisplayStep(this.step);
+          if (isWebAuthnStep) {
+            const onlyOneWebAuthn = !existsInComponentList(FrCallbackType.WebAuthnComponent);
+            if (onlyOneWebAuthn) {
+              type = FrCallbackType.WebAuthnComponent;
+            } else {
+              return;
+            }
+          } else if (isRecovertCodeStep) {
+            type = FrCallbackType.RecoveryCodesComponent;
+          }
+        }
+
         // Only components that need extra props or events
         const componentPropsAndEvents = {
+          ConfirmationCallback: {
+            callbackSpecificProps: { variant: existsInComponentList(FrCallbackType.WebAuthnComponent) ? 'link' : 'primary' },
+          },
           ConsentMappingCallback: {
             callbackSpecificProps: { callbacks: this.step.callbacks },
             listeners: ['disable-next-button', 'did-consent'],
           },
           KbaCreateCallback: {
+            callbackSpecificProps: { showHeader: !existsInComponentList(FrCallbackType.KbaCreateCallback) },
             listeners: ['disable-next-button'],
-          },
-          MetadataCallback: {
-            callbackSpecificProps: { step: this.step },
-            listeners: ['hide-next-button'],
           },
           SelectIdPCallback: {
             callbackSpecificProps: { isOnlyCallback: this.step.callbacks.length === 1 },
@@ -509,6 +526,7 @@ export default {
           type: this.$options.components[`Fr${type}`]
             ? `Fr${type}`
             : 'FrField',
+          step: this.step,
         };
 
         if (component.type === 'FrField') {
@@ -517,12 +535,14 @@ export default {
           component.listeners = this.getListeners({ callback }, ['valueChange']);
         }
 
-        if (component.type === 'FrKbaCreateCallback') {
-          component.callbackSpecificProps.showHeader = this.kbaCallbackCount === 0;
-          this.kbaCallbackCount += 1;
-        }
-
-        const hideNextButtonCallbacks = [ConfirmationCallback, DeviceProfileCallback, PollingWaitCallback, SuspendedTextOutputCallback];
+        const hideNextButtonCallbacks = [
+          FrCallbackType.ConfirmationCallback,
+          FrCallbackType.DeviceProfileCallback,
+          FrCallbackType.PollingWaitCallback,
+          FrCallbackType.RecoveryCodesComponent,
+          FrCallbackType.SuspendedTextOutputCallback,
+          FrCallbackType.WebAuthnComponent,
+        ];
         this.nextButtonVisible = hideNextButtonCallbacks.indexOf(type) > -1 ? false : this.nextButtonVisible;
 
         componentList.push(component);
@@ -692,7 +712,7 @@ export default {
     line-height: 22px;
   }
 
-  .callback-component {
+  .callback-component:not(:last-of-type):not(.hidden) {
     margin-bottom: 1rem;
   }
 

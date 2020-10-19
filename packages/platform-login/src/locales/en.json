@@ -3,18 +3,19 @@
     "service": "Service"
   },
   "login": {
-    "title": "Login",
-    "newHere": "New here?",
-    "createAccount": "Create an account",
-    "signIn": "Sign-in",
-    "forgotUsername": "Forgot username?",
-    "forgotPassword": "Forgot password?",
-    "next": "Next",
-    "loginFailure": "Sorry that isn't right. Try again.",
-    "issueConnecting": "Issue connecting to the server",
-    "tryAgain": "Try Again",
-    "termsAndConditions": "Terms & Conditions",
     "agreeToTerms": "By clicking 'Next' you agree to our ",
+    "createAccount": "Create an account",
+    "forgotPassword": "Forgot password?",
+    "forgotUsername": "Forgot username?",
+    "invalidRealm": "Invalid Realm",
+    "issueConnecting": "Issue connecting to the server",
+    "loginFailure": "Sorry that isn't right. Try again.",
+    "newHere": "New here?",
+    "next": "Next",
+    "signIn": "Sign-in",
+    "termsAndConditions": "Terms & Conditions",
+    "title": "Login",
+    "tryAgain": "Try Again",
     "kba": {
       "description": "Select security question(s) below. These questions will help us verify your identity if you forget your password.",
       "selectQuestion": "Select a security question...",
@@ -23,11 +24,23 @@
       "answer": "Answer",
       "notUnique": "Custom questions cannot be duplicates"
     },
+    "recoveryCodes": {
+      "header": "Device sign-in is enabled",
+      "subheader": "Now you can use your device as a second step when signing in to your account.",
+      "subtitle": "Don’t get locked out of your account",
+      "info": "If you lose your device, or don’t have it with you, a recovery code is the only way to sign in to your account with 2-step verification enabled. It’s strongly recommended that you print and store these codes in a safe place.",
+      "infoEmphasis": "Each code can only be used once."
+    },
     "social": {
       "or": "or",
       "continueWith": "Continue with {buttonDisplayName}"
     },
-    "invalidRealm": "Invalid Realm"
+    "webAuthn": {
+      "authenticate": "Verifying your identity...",
+      "authenticateInfo": "Use your device to verify your identity.",
+      "register": "Registering your device...",
+      "registerInfo": "Your device will be used to verify your identity."
+    }
   },
   "pages": {
     "selfservice": {

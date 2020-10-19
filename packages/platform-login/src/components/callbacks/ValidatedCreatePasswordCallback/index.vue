@@ -20,10 +20,10 @@ of the MIT license. See the LICENSE file for details.
 </template>
 
 <script>
+import { FRAuth, CallbackType } from '@forgerock/javascript-sdk';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import PolicyPanel from '@forgerock/platform-shared/src/components/PolicyPanel';
 import { debounce } from 'lodash';
-import { CallbackType } from '@forgerock/javascript-sdk';
 
 /**
  * Handles validating a password through node without advancing the tree.
@@ -47,13 +47,6 @@ export default {
      * The current step in the auth tree. Needed to submit to tree.
      */
     step: {
-      type: Object,
-      required: true,
-    },
-    /**
-     * The current auth object. Needed to submit to tree.
-     */
-    auth: {
       type: Object,
       required: true,
     },
@@ -150,13 +143,14 @@ export default {
         realmPath: this.realm,
       };
       // call tree without advancing to next node
-      this.auth.next(this.step, stepParams).then((step) => {
-        const callback = step.getCallbackOfType(CallbackType.ValidatedCreatePasswordCallback);
-        this.setFailingPolicies(callback.getFailedPolicies());
-      }).catch(() => {
+      FRAuth.next(this.step, stepParams)
+        .then((step) => {
+          const callback = step.getCallbackOfType(CallbackType.ValidatedCreatePasswordCallback);
+          this.setFailingPolicies(callback.getFailedPolicies());
+        }).catch(() => {
         // it's possible to timeout while in the tree so have to start from beginning if that happens
-        window.location.reload();
-      });
+          window.location.reload();
+        });
     },
   },
 };

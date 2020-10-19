@@ -6,7 +6,7 @@ of the MIT license. See the LICENSE file for details.
 -->
 
 <template>
-  <div class="row">
+  <div class="row hidden">
     <input
       type="hidden"
       :name="name"
