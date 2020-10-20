@@ -17,12 +17,12 @@ to such license between the licensee and ForgeRock AS. -->
           v-html="label"
           :hidden="hideLabel"
           :for="id"
-          class="no-pointer-events" />
+          class="no-pointer-events overflow-hidden text-nowrap" />
         <label
           v-else-if="label"
           :hidden="hideLabel"
           :for="id"
-          class="no-pointer-events">
+          class="no-pointer-events overflow-hidden text-nowrap">
           {{ label }}
         </label>
       </div>
@@ -113,6 +113,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+/deep/ input[placeholder] { text-overflow: ellipsis; }
+input[placeholder] { text-overflow: ellipsis; }
+
 .form-label-group {
   position: relative;
   margin-bottom: 1rem;

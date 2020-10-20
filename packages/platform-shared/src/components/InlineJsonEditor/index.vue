@@ -40,6 +40,10 @@
 </template>
 <script>
 import VuePrismEditor from 'vue-prism-editor';
+import 'prismjs';
+import 'prismjs/components/prism-json';
+import 'prismjs/themes/prism.css';
+import 'vue-prism-editor/dist/VuePrismEditor.css';
 
 /**
  * @description Component that creates a JSON editor when data is overly complex

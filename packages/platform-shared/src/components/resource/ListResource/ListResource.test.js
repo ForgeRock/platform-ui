@@ -57,19 +57,23 @@ describe('ListResource Component', () => {
           resourceType: 'managed',
           managedProperties: {
             sn: {
-              viewable: true,
+              viewable: false,
+              searchable: true,
               type: 'number',
             },
             name: {
-              viewable: true,
+              viewable: false,
+              searchable: true,
               type: 'string',
             },
             viewTest: {
               viewable: false,
+              searchable: false,
               type: 'boolean',
             },
             typeTest: {
-              viewable: true,
+              viewable: false,
+              searchable: true,
               type: 'array',
             },
           },

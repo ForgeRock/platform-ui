@@ -39,7 +39,9 @@ of the MIT license. See the LICENSE file for details.
             <BFormGroup
               :key="index"
               v-if="field.type === 'string' || field.type === 'number' || field.type === 'boolean'">
-              <FrField :field="field" />
+              <FrField
+                :field="field"
+                :display-description="false" />
             </BFormGroup>
             <FrListField
               v-else-if="field.type === 'array' && field.key !== 'privileges'"
@@ -145,8 +147,8 @@ export default {
   methods: {
     generateFormFields() {
       const { order, properties, required } = this.schema;
-      const filteredOrder = filter(order, (propName) => properties[propName].viewable
-                            && properties[propName].userEditable
+      const filteredOrder = filter(order, (propName) => properties[propName].userEditable
+                            && properties[propName].scope !== 'private'
                             && properties[propName].type !== 'object');
       const formFields = map(filteredOrder, (name) => ({
         name,
@@ -154,6 +156,7 @@ export default {
         title: `${properties[name].title} ${required.includes(name) ? '' : this.$t('pages.profile.editProfile.optional')}`,
         value: this.profile[name] || null,
         type: properties[name].type,
+        description: properties[name].description,
         items: properties[name].items,
         validation: required.includes(name) ? 'required' : '',
       }));

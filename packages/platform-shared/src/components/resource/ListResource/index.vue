@@ -336,7 +336,7 @@ export default {
           if (column
             && ['string', 'boolean', 'number'].includes(column.type)
             && this.displayFields.length < 4
-            && column.viewable
+            && column.searchable
           ) {
             this.displayFields.push(columnName);
             this.columns.push({
