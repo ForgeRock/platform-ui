@@ -336,6 +336,15 @@ a.card {
   background-color: $cyan;
 }
 
+.fr-logo-vertical-black {
+  background-image: url('~@forgerock/platform-shared/src/assets/images/themes/#{$theme}/vertical-logo-black.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 100%;
+  width: 100%;
+}
+
 .fr-logo-vertical {
   background-image: url('~@forgerock/platform-shared/src/assets/images/themes/#{$theme}/vertical-logo.svg');
   background-size: contain;
