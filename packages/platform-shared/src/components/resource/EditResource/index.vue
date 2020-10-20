@@ -398,8 +398,10 @@ export default {
             tempProp.validation = 'required';
           }
           if (tempProp.policies && tempProp.policies[0] && tempProp.policies[0].policyId === 'valid-email-address-format') {
-            if (tempProp.validation.length) {
+            if (tempProp.validation && tempProp.validation.length) {
               tempProp.validation += '|';
+            } else {
+              tempProp.validation = '';
             }
             tempProp.validation += 'email';
           }
