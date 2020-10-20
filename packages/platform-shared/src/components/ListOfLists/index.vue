@@ -12,7 +12,7 @@ to such license between the licensee and ForgeRock AS. -->
         </div>
         <div>
           <div
-            v-if="field.value.length == 0"
+            v-if="field.value && field.value.length === 0"
             class="d-flex pt-3 pb-3 px-0 border-top align-items-center">
             <div class="text-muted text-left flex-grow-1">
               ({{ $t('common.none') }})
