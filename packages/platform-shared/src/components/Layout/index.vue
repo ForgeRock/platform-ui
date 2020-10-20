@@ -59,7 +59,7 @@ to such license between the licensee and ForgeRock AS. -->
         id="appFooter">
         <div class="d-flex flex-column flex-md-row justify-content-center align-items-center py-4">
           <div class="fr-logo-container mr-3 opacity-20 mb-2 mb-md-0 d-flex">
-            <div class="fr-logo fr-logo-vertical" />
+            <div class="fr-logo fr-logo-vertical-black" />
           </div>
           <div class="mr-4 opacity-70">
             <span class="pr-1">
