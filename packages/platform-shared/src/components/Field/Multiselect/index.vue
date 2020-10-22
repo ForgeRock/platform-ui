@@ -18,6 +18,7 @@ to such license between the licensee and ForgeRock AS. -->
       label="text"
       track-by="value"
       :name="fieldName"
+      :tag-placeholder="$t('common.placeholders.addOption')"
       :disabled="disabled"
       :options="options"
       :show-labels="false"
@@ -30,6 +31,7 @@ to such license between the licensee and ForgeRock AS. -->
       @search-change="searchChange"
       @open="openHandler"
       @close="addTag"
+      @tag="addTag"
       v-on="$listeners">
       <slot name="noResult">
         {{ $t('common.noResult') }}
