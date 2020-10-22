@@ -17,6 +17,7 @@ to such license between the licensee and ForgeRock AS. -->
         <div class="pr-sm-2 py-1 py-sm-0">
           <FrField
             class="d-inline-flex"
+            :searchable="false"
             :field="defaultOperatorOptions"
             @valueChange="operatorChange" />
         </div>
