@@ -126,10 +126,15 @@ input[placeholder] { text-overflow: ellipsis; }
     flex: 1 1 auto;
     width: 100%;
     margin-bottom: 0;
+    min-width: 80px;
 
     .form-control {
       box-shadow: none;
     }
+  }
+
+  .no-pointer-events {
+    pointer-events: none;
   }
 
   button {
