@@ -46,6 +46,7 @@
     "next": "Next",
     "no": "No",
     "none": "None",
+    "noResult": "No Results",
     "off": "Off",
     "okay": "Okay",
     "on": "On",
@@ -83,6 +84,7 @@
       "resetPassword": "Reset this user password."
     },
     "placeholders": {
+      "addOption": "Add an option",
       "emailAddress": "Email address",
       "password": "Password",
       "retypePassword": "Retype Password",
