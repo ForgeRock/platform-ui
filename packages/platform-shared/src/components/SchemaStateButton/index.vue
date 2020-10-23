@@ -7,7 +7,8 @@ to such license between the licensee and ForgeRock AS. -->
   <BDropdown
     variant="outline-secondary"
     class="dropdown-toggle"
-    toggle-class="pr-5">
+    toggle-class="pr-5"
+    data-testid="schema-state">
     <template
       v-slot:button-content>
       <i
@@ -21,7 +22,8 @@ to such license between the licensee and ForgeRock AS. -->
     <BDropdownItem
       v-for="item in dropdownOptions"
       @click="changeState(item.value)"
-      :key="item.value">
+      :key="item.value"
+      data-testid="schema-state-toggle">
       <i
         v-if="item.icon"
         :class="`material-icons-outlined mr-md-2 ${item.textClass}`">
