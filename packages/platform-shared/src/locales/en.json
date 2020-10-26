@@ -147,6 +147,10 @@
       "firstName": "First Name",
       "lastName": "Last Name",
       "email": "Email"
+    },
+    "json": {
+      "rawJson": "Raw JSON",
+      "copyJson": "Copy JSON"
     }
   },
   "dashboard": {
@@ -284,10 +288,6 @@
       "signOut": "Sign out",
       "returnToDashboard": "Return to Dashboard",
       "notAuthorized": "You are not authorized to view this site. Please sign out and try again"
-    },
-    "objectTypeEditor": {
-      "json": "JSON",
-      "jsonError": "Disabled because your JSON is invald"
     }
   },
   "queryFilterBuilder": {

@@ -5,47 +5,7 @@ or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
   <div>
-    <div
-      v-if="showToggle"
-      class="d-flex justify-content-between align-items-center px-4 pt-4">
-      <label />
-      <div
-        id="jsonToggle"
-        class="align-items-center text-nowrap custom-control custom-switch b-custom-control-sm">
-        <BFormCheckbox
-          :disabled="!isValidJson"
-          v-model="showJson"
-          switch>
-          {{ $t('pages.objectTypeEditor.json') }}
-        </BFormCheckbox>
-        <BTooltip
-          v-if="!isValidJson"
-          target="jsonToggle"
-          placement="top"
-          triggers="hover">
-          {{ $t('pages.objectTypeEditor.jsonError') }}
-        </BTooltip>
-      </div>
-    </div>
-    <template
-      v-if="showJson">
-      <div
-        class="mt-4"
-        :class="{
-          borderTop: isValidJson,
-          'error-state': !isValidJson
-        }"
-      >
-        <VuePrismEditor
-          language="json"
-          v-model="stringifiedValue"
-          :line-numbers="true"
-          @input="currentJson = $event.target.innerText; validateCurrentJson();" />
-      </div>
-    </template>
-    <div
-      v-else
-      class="card-body m-4">
+    <div class="card-body m-4">
       <ValidationObserver ref="observer">
         <template v-for="(field, index) in displayProperties">
           <div
@@ -84,8 +44,7 @@ to such license between the licensee and ForgeRock AS. -->
         </template>
       </ValidationObserver>
     </div>
-    <div
-      class="card-footer">
+    <div class="card-footer">
       <div class="float-right mb-4">
         <BButton
           :disabled="disableSaveButton"
@@ -107,8 +66,6 @@ import {
 } from 'lodash';
 import {
   BButton,
-  BFormCheckbox,
-  BTooltip,
 } from 'bootstrap-vue';
 import { ValidationObserver } from 'vee-validate';
 import FrField from '@forgerock/platform-shared/src/components/Field';
@@ -117,12 +74,6 @@ import FrListField from '@forgerock/platform-shared/src/components/ListField';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
-import ListsMixin from '@forgerock/platform-shared/src/mixins/ListsMixin';
-import 'prismjs';
-import 'prismjs/components/prism-json';
-import 'prismjs/themes/prism.css';
-import VuePrismEditor from 'vue-prism-editor';
-import 'vue-prism-editor/dist/VuePrismEditor.css';
 
 export default {
   name: 'ObjectTypeEditor',
@@ -132,9 +83,6 @@ export default {
     FrListField,
     ValidationObserver,
     BButton,
-    BFormCheckbox,
-    VuePrismEditor,
-    BTooltip,
   },
   props: {
     displayProperties: {
@@ -166,14 +114,8 @@ export default {
       default: null,
       required: false,
     },
-    showToggle: {
-      type: Boolean,
-      defualt: false,
-      required: false,
-    },
   },
   mixins: [
-    ListsMixin,
     NotificationMixin,
     ResourceMixin,
     RestMixin,
@@ -181,23 +123,7 @@ export default {
   data() {
     return {
       oldFormFields: {},
-      showJson: false,
-      isValidJson: true,
-      currentJson: {},
     };
-  },
-  computed: {
-    stringifiedValue: {
-      get() {
-        if (this.displayProperties) {
-          return JSON.stringify(this.displayProperties, null, 2);
-        }
-        return '';
-      },
-      set(newValue) {
-        return JSON.stringify(newValue, null, 2);
-      },
-    },
   },
   mounted() {
     // make sure display properties have a title
