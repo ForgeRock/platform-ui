@@ -109,6 +109,9 @@ to such license between the licensee and ForgeRock AS. -->
             :properties="settingsProperties"
             :resource-name="resourceName"
             :resource-path="`${resourceType}/${resourceName}/${id}`" />
+          <FrJsonTab
+            v-if="jsonString"
+            :json-string="jsonString" />
         </BTabs>
       </BCard>
     </slot>
@@ -195,6 +198,7 @@ import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import FrObjectTypeEditor from './ObjectTypeEditor';
 import FrSettingsTab from './CustomTabs/SettingsTab';
 import FrPrivilegesTab from './CustomTabs/PrivilegesTab';
+import FrJsonTab from './CustomTabs/JsonTab';
 
 /**
  * @description Full page that provides view/edit of a specific resource for delegated admin. Auto generates fields based on backend return.
@@ -214,6 +218,7 @@ export default {
     FrRelationshipArray,
     FrSettingsTab,
     FrPrivilegesTab,
+    FrJsonTab,
     BButton,
     BImg,
     BContainer,
@@ -250,6 +255,7 @@ export default {
       settingsProperties: {},
       isLoading: true,
       passwordField: {},
+      jsonString: '',
     };
   },
   mounted() {
@@ -269,6 +275,7 @@ export default {
         this.relationshipProperties = this.getRelationshipProperties(schema.data, privilege.data);
 
         idmInstance.get(this.buildResourceUrl()).then((resourceDetails) => {
+          this.jsonString = JSON.stringify(resourceDetails.data, null, 2);
           this.generateDisplay(schema.data, privilege.data, resourceDetails.data);
           this.settingsProperties = this.getSettingsProperties(schema.data, privilege.data);
         }).catch((error) => {
