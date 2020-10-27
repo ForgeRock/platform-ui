@@ -10,8 +10,10 @@ import {
   isArray,
   isEmpty,
   reject,
+  startsWith,
 } from 'lodash';
 import { generateIdmApi } from './BaseApi';
+import { getConfig } from './ConfigApi';
 
 const setSchemaProperties = (schema) => {
   if (has(schema, 'properties') && !isEmpty(schema.properties)) {
@@ -35,6 +37,22 @@ const setSchemaProperties = (schema) => {
   */
 // eslint-disable-next-line import/prefer-default-export
 export function getSchema(obj, requestOverride) {
+  if (startsWith(obj, 'system/')) {
+    const objParts = obj.split('/');
+    // objParts looks like ["system","ldap","account"]
+    return getConfig(`provisioner.openicf/${objParts[1]}`).then((response) => {
+      const connectorObjectTypes = response.data ? response.data.objectTypes : {};
+      const schema = connectorObjectTypes[objParts[2]];
+      // add the order to the schema if it doesn't exist
+      if (schema && !schema.order && schema.properties) {
+        schema.order = Object.keys(schema.properties);
+      }
+      return {
+        data: schema,
+      };
+    });
+  }
+
   return generateIdmApi(requestOverride).get(`/schema/${obj}`).then((response) => {
     if (has(response, 'data.result')) {
       // response.data.result means this is a result of a query so we need to loop over each schema and handle nullable properties
