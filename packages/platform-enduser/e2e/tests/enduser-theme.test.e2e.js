@@ -42,7 +42,7 @@ describe('Enduser Theming', () => {
 
     cy.get('div:visible').contains('Profile Background Color').scrollIntoView().click();
     cy.get('.b-popover:visible').should('exist');
-    cy.get('input.vc-input__input:visible').clear().type('123123');
+    cy.get('input.vc-input__input:visible').clear().type('FFFFFF');
     cy.get('label.btn.btn-outline-primary').contains('Styles').click();
     cy.get('.b-popover').should('not.exist', { timeout: 15000 });
 
@@ -62,7 +62,7 @@ describe('Enduser Theming', () => {
     cy.logout();
     cy.login(enduserUserName);
     cy.visit(`${Cypress.config().baseUrl}/enduser/?realm=root#/profile`);
-    cy.get('body').should('have.css', 'background-color', 'rgb(18, 49, 35)');
+    cy.get('body').should('have.css', 'background-color', 'rgb(255, 255, 255)');
     cy.get('a.btn.btn-link').should('have.css', 'color', 'rgb(22, 255, 150)');
     cy.get('#app .router-link-active').should('have.css', 'background-color', 'rgb(18, 49, 35)');
   });
