@@ -5,14 +5,14 @@ or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
   <BCard
-    :class="[`depth-${depth+1}`, 'card-container-properties card-queryfilter-builder shadow-none mt-3']"
+    :class="[`depth-${depth+1}`, 'card-container-properties card-queryfilter-builder queryfilter-row shadow-none mt-3']"
     body-class="p-3">
     <div class="d-flex flex-sm-wrap flex-md-nowrap">
       <div class="flex-grow-1 pr-md-3">
         <BFormRow>
           <BCol
             md="5"
-            class="mb-2 mb-md-0">
+            class="rule-property-col mb-2 mb-md-0">
             <FrField
               name="field"
               :placeholder="propertyPlaceholder"
@@ -20,7 +20,7 @@ to such license between the licensee and ForgeRock AS. -->
               @valueChange="ruleChange({ field: $event })" />
           </BCol>
           <BCol
-            class="mb-2 mb-md-0"
+            class="rule-condition-col mb-2 mb-md-0"
             :md="true">
             <FrField
               :searchable="false"
@@ -28,7 +28,7 @@ to such license between the licensee and ForgeRock AS. -->
               @valueChange="ruleChange({ operator: $event })" />
           </BCol>
           <BCol
-            class="mb-2 mb-md-0"
+            class="rule-value-col mb-2 mb-md-0"
             v-if="!conditionIsPresent"
             :md="true">
             <FrField
@@ -43,6 +43,7 @@ to such license between the licensee and ForgeRock AS. -->
         :disabled="disabled"
         @click="removeRule" />
       <FrAddButton
+        class="add-button"
         :disabled="disabled"
         :hide-group="isMaxDepth"
         @add-rule="addRule" />
@@ -90,19 +91,22 @@ export default {
     conditionIsPresent() {
       return this.rule.operator === defaultConditionOptions.IsPresent.value || this.rule.operator === defaultConditionOptions.IsNotPresent.value;
     },
+    selectPropOptions() {
+      return {
+        options: this.properties.map((prop) => (
+          { text: prop.label, value: prop.value })),
+        type: 'select',
+        value: this.rule.field,
+        disabled: this.disabled,
+      };
+    },
   },
   data() {
     return {
       propertyPlaceholder: this.$t('queryFilterBuilder.properties', { propertyName: capitalize(this.resourceName) }),
       defaultConditionOptions,
       inputValue: this.parseType(this.rule.field, this.rule.value),
-      selectPropOptions: {
-        options: this.properties.map((prop) => (
-          { text: prop.label, value: prop.value })),
-        type: 'select',
-        value: this.rule.field,
-        disabled: this.disabled,
-      },
+      value: '',
     };
   },
   props: {
@@ -186,9 +190,13 @@ export default {
       }
     },
     ruleChange(value) {
-      this.$emit('rule-change', {
-        depth: this.depth, index: this.index, path: this.path, value,
-      });
+      const ruleChangeKeys = Object.keys(value);
+      const shouldUpdate = ruleChangeKeys.some((key) => this.rule[key] !== value[key]);
+      if (shouldUpdate) {
+        this.$emit('rule-change', {
+          depth: this.depth, index: this.index, path: this.path, value,
+        });
+      }
     },
     removeRule() {
       this.$emit('remove-rule', {
