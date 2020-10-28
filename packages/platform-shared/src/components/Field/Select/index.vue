@@ -124,6 +124,8 @@ export default {
     if (this.autofocus) {
       this.openHandler();
     }
+
+    this.setInputValue(this.value);
   },
   computed: {
     options() {
@@ -155,7 +157,9 @@ export default {
      * @description focus the Vue Multi Select component (vms) and floats the label
      */
     openHandler() {
-      this.$refs.vms.$el.querySelector('input').focus();
+      if (this.searchable) {
+        this.$refs.vms.$el.querySelector('input').focus();
+      }
       this.floatLabels = true;
     },
   },
@@ -169,6 +173,11 @@ export default {
         }
       },
       deep: true,
+    },
+    selectOptions() {
+      if (!this.inputValue || this.value !== this.inputValue.value) {
+        this.setInputValue(this.value);
+      }
     },
   },
 };
