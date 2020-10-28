@@ -226,7 +226,7 @@ export default {
 
 #app {
   .content {
-    min-height: 100%;
+    min-height: 100vh;
     position: relative;
     transition: padding-left 0.2s ease-out;
 
