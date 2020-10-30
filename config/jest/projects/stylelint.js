@@ -33,6 +33,7 @@ module.exports = {
     '/dist/',
     '<rootDir>/mochawesome-report/',
     '<rootDir>/html_reports/',
+    '<rootDir>/coverage/',
   ],
   watchPathIgnorePatterns: [
     // Stops watch mode from looping due to writing the report triggering a new test run.
