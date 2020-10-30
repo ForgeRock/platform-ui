@@ -39,10 +39,6 @@ module.exports = {
     'jest-watch-typeahead/filename',
     'jest-watch-typeahead/testname',
   ],
-  collectCoverageFrom: [
-    '**/*.vue',
-    '!**/node_modules/**',
-  ],
   setupFiles: [
     path.join(__dirname, 'config', 'jest', 'register-context.js'),
   ],
