@@ -6,9 +6,9 @@
 ###############################################################################
 # Platform-shared docker image
 ###############################################################################
-FROM node:lts-slim
+FROM node:14.15.0-stretch-slim
 
-RUN apt-get update && apt-get install gettext-base
+RUN apt-get update && apt-get install -y gettext-base python build-essential
 
 # Copy dependency descriptors (only invalidates if dependencies change)
 COPY package.json yarn.lock /home/app/
