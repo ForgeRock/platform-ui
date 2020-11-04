@@ -16,7 +16,10 @@ of the MIT license. See the LICENSE file for details.
     />
     <li
       class="list-group-item text-left bg-light">
-      <BFormCheckbox v-model="checked">
+      <BFormCheckbox
+        data-testid="consent-mapping-checkbox"
+        v-model="checked"
+        @input="onCheckboxChange">
         {{ consentMessage }}
       </BFormCheckbox>
     </li>
@@ -60,20 +63,15 @@ export default {
     onCheckboxChange(isChecked) {
       const consentResponse = isChecked;
       const disableNextButton = this.isRequired && !isChecked;
-      this.$emit('disable-next-button', disableNextButton);
+      this.$emit('disable-next-button', disableNextButton, this.index);
       this.$emit('did-consent', consentResponse);
     },
   },
   mounted() {
     if (this.index === 0) {
-      this.isRequired = this.callbacks[0].payload.output.find((item) => item.name === 'isRequired').value;
-      this.$emit('disable-next-button', this.isRequired);
+      this.isRequired = this.callbacks[0].getOutputByName('isRequired');
+      this.$emit('disable-next-button', this.isRequired, this.index);
     }
-  },
-  watch: {
-    checked(isChecked) {
-      this.onCheckboxChange(isChecked);
-    },
   },
 };
 </script>

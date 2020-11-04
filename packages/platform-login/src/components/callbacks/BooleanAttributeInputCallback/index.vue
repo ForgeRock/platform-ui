@@ -32,8 +32,8 @@ of the MIT license. See the LICENSE file for details.
 </template>
 
 <script>
-
 export default {
+  name: 'BooleanAttributeInputCallback',
   props: {
     callback: {
       type: Object,
@@ -46,7 +46,6 @@ export default {
   },
   mounted() {
     this.name = `callback_${this.index}`;
-
     this.value = this.callback.getInputValue();
   },
   data() {
@@ -58,7 +57,6 @@ export default {
   methods: {
     onToggle() {
       this.value = !this.value;
-
       this.callback.setInputValue(this.value);
     },
   },
