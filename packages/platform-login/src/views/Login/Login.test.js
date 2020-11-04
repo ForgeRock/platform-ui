@@ -15,6 +15,7 @@ describe('Login.vue', () => {
   const $route = {
     meta: { hideToolbar: true },
     params: {
+      tree: undefined,
     },
   };
 
@@ -36,5 +37,28 @@ describe('Login.vue', () => {
 
   it('Load login component', () => {
     expect(wrapper.name()).toEqual('Login');
+  });
+
+  it('Removes undefined and "undefined" tree from stepParams', () => {
+    const expectedStepParams = {
+      query: {
+        suspendedId: 'test',
+      },
+      realmPath: 'test',
+    };
+    // test undefined tree
+    wrapper.setData({
+      realm: 'test',
+      suspendedId: 'test',
+    });
+    expect(wrapper.vm.getStepParams()).toEqual(expectedStepParams);
+    // test tree with the string "undefined"
+    wrapper.setData({
+      realm: 'test',
+      suspendedId: 'test',
+      authIndexValue: 'undefined',
+    });
+
+    expect(wrapper.vm.getStepParams()).toEqual(expectedStepParams);
   });
 });
