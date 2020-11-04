@@ -334,6 +334,10 @@ export default {
         tree: this.authIndexValue || this.$route.params.tree || undefined,
         realmPath: this.realm,
       };
+      // remove tree from stepParams when undefined
+      if (stepParams.tree === undefined || stepParams.tree === 'undefined') {
+        delete stepParams.tree;
+      }
 
       if (this.suspendedId) {
         stepParams.query.suspendedId = this.suspendedId;
