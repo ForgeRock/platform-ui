@@ -7,14 +7,16 @@ of the MIT license. See the LICENSE file for details.
 
 <template>
   <div>
-    <FrField :field="selected" />
+    <FrField
+      :field="selected"
+      @valueChange="callback.setInputValue(selected.value)" />
   </div>
 </template>
 <script>
-import { map } from 'lodash';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 
 export default {
+  name: 'ChoiceCallback',
   components: {
     FrField,
   },
@@ -29,7 +31,11 @@ export default {
     },
   },
   mounted() {
-    this.loadOptions();
+    const choices = this.callback.getChoices();
+    this.selected.options = choices.map((item, itemIndex) => ({
+      text: item,
+      value: itemIndex,
+    }));
   },
   data() {
     return {
@@ -40,24 +46,7 @@ export default {
         value: this.callback.getDefaultChoice(),
         options: [],
       },
-      choices: this.callback.getChoices(),
     };
-  },
-  watch: {
-    selected: {
-      handler(newVal) {
-        this.callback.setInputValue(newVal.value);
-      },
-      deep: true,
-    },
-  },
-  methods: {
-    loadOptions() {
-      this.selected.options = map(this.choices, (item, itemIndex) => ({
-        text: item,
-        value: itemIndex,
-      }));
-    },
   },
 };
 </script>

@@ -1,0 +1,67 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DeviceProfileCallback Loads DeviceProfileCallback component: console-error-snapshot 1`] = `
+Array [
+  Array [
+    "Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (/node_modules/jsdom/lib/jsdom/living/nodes/HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (/node_modules/jsdom/lib/jsdom/living/generated/HTMLCanvasElement.js:130:58)
+    at FRDevice.getInstalledFonts (/node_modules/@forgerock/javascript-sdk/src/fr-device/index.ts:145:49)
+    at FRDevice.<anonymous> (/node_modules/@forgerock/javascript-sdk/src/fr-device/index.ts:221:23)
+    at step (/node_modules/@forgerock/javascript-sdk/lib/fr-device/index.js:57:23)
+    at Object.next (/node_modules/@forgerock/javascript-sdk/lib/fr-device/index.js:38:53)
+    at /node_modules/@forgerock/javascript-sdk/lib/fr-device/index.js:32:71
+    at new Promise (<anonymous>)
+    at __awaiter (/node_modules/@forgerock/javascript-sdk/lib/fr-device/index.js:28:12)",
+    undefined,
+  ],
+]
+`;
+
+exports[`DeviceProfileCallback Loads DeviceProfileCallback component: console-warn-snapshot 1`] = `
+Array [
+  Array [
+    "Cannot generate profile ID. Crypto and/or getRandomValues is not supported.",
+  ],
+  Array [
+    "Cannot collect font data. Browser does not support 2d canvas context",
+  ],
+  Array [
+    "Cannot collect geolocation information. navigator.geolocation is not defined.",
+  ],
+]
+`;
+
+exports[`DeviceProfileCallback Sets profile data and emits "next-step": console-error-snapshot 1`] = `
+Array [
+  Array [
+    "Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (/node_modules/jsdom/lib/jsdom/living/nodes/HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (/node_modules/jsdom/lib/jsdom/living/generated/HTMLCanvasElement.js:130:58)
+    at FRDevice.getInstalledFonts (/node_modules/@forgerock/javascript-sdk/src/fr-device/index.ts:145:49)
+    at FRDevice.<anonymous> (/node_modules/@forgerock/javascript-sdk/src/fr-device/index.ts:221:23)
+    at step (/node_modules/@forgerock/javascript-sdk/lib/fr-device/index.js:57:23)
+    at Object.next (/node_modules/@forgerock/javascript-sdk/lib/fr-device/index.js:38:53)
+    at /node_modules/@forgerock/javascript-sdk/lib/fr-device/index.js:32:71
+    at new Promise (<anonymous>)
+    at __awaiter (/node_modules/@forgerock/javascript-sdk/lib/fr-device/index.js:28:12)",
+    undefined,
+  ],
+]
+`;
+
+exports[`DeviceProfileCallback Sets profile data and emits "next-step": console-warn-snapshot 1`] = `
+Array [
+  Array [
+    "Cannot generate profile ID. Crypto and/or getRandomValues is not supported.",
+  ],
+  Array [
+    "Cannot collect font data. Browser does not support 2d canvas context",
+  ],
+  Array [
+    "Cannot collect geolocation information. navigator.geolocation is not defined.",
+  ],
+]
+`;

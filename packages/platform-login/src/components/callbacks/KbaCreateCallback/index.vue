@@ -26,7 +26,7 @@ of the MIT license. See the LICENSE file for details.
 
     <p
       v-if="showHeader"
-      class="text-center">
+      class="text-center kbaHeaderText">
       {{ $t('login.kba.description') }}
     </p>
 
@@ -86,13 +86,6 @@ export default {
   },
   data() {
     return {
-      options: [],
-      questionModel: {
-        key: `callback_${this.index}_field`,
-        title: 'Question',
-        value: '',
-        validation: { required: true },
-      },
       answerModel: {
         key: `callback_${this.index}00_field`,
         type: 'password',
@@ -100,28 +93,34 @@ export default {
         value: '',
         validation: { required: true },
       },
+      questionModel: {
+        key: `callback_${this.index}_field`,
+        title: 'Question',
+        value: '',
+        validation: { required: true },
+      },
+      options: [],
       selected: null,
       showCustom: false,
     };
   },
   mounted() {
-    this.predefinedQuestions = this.callback.getPredefinedQuestions();
-
+    this.$emit('disable-next-button', true, this.index);
     this.loadOptions();
   },
   methods: {
     loadOptions() {
       const placeholder = { value: null, text: this.callback.getPrompt(), disabled: true };
       const customQuestionOption = { value: 'custom', text: this.$t('login.kba.custom'), disabled: false };
+      const predefinedQuestions = this.callback.getPredefinedQuestions();
       // Add the placeholder to the first element in the question options
-      this.options = [placeholder];
-      // Add any predefined questions
-      map(this.predefinedQuestions, (item) => {
-        this.options.push(item);
-      });
-      // Add the custom question option to the list of questions
-      this.options.push(customQuestionOption);
-      this.$emit('disable-next-button', true);
+      // then add any predefined question
+      // then add custom question option to the list of questions
+      this.options = [
+        placeholder,
+        ...predefinedQuestions,
+        customQuestionOption,
+      ];
     },
     // This function sets the value of the question's hidden input and disbables the question value from other kba question selection options on the dom
     onQuestionSelectionChange() {
@@ -138,11 +137,7 @@ export default {
       });
 
       // if "Provide your own" is selected, show the custom question input
-      if (this.selected === 'custom') {
-        this.showCustom = true;
-      } else {
-        this.showCustom = false;
-      }
+      this.showCustom = this.selected === 'custom';
 
       this.validateQuestion();
     },
@@ -166,14 +161,13 @@ export default {
     // This function disables/enables the callback form's submit button
     setSubmitButton() {
       // A delay is needed here so the .error-message class can be added to the field component in the case of invalid data
-      setTimeout(() => {
+      this.$nextTick(() => {
         // Let vee-validate determine if the form is valid for each field
-        this.$refs.observer.validate();
-        const questionInputs = map(document.querySelectorAll(`input[placeholder=${this.questionModel.title}]`), (question) => question.value);
-        const answerInputs = map(document.querySelectorAll(`input[placeholder=${this.answerModel.title}]`), (answer) => answer.value);
         // Disable if there is an error shown locally or in the other KbaCreateCallbacks
-        this.$emit('disable-next-button', questionInputs.includes('') || answerInputs.includes(''));
-      }, 1);
+        this.$refs.observer.validate().then((isValid) => {
+          this.$emit('disable-next-button', !isValid, this.index);
+        });
+      });
     },
   },
 };

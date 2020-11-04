@@ -22,6 +22,7 @@ of the MIT license. See the LICENSE file for details.
 import { BButton } from 'bootstrap-vue';
 
 export default {
+  name: 'ConfirmationCallback',
   components: {
     BButton,
   },

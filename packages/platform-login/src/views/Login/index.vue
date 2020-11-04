@@ -143,7 +143,7 @@ export default {
     FrBooleanAttributeInputCallback: () => import('@/components/callbacks/BooleanAttributeInputCallback'),
     FrChoiceCallback: () => import('@/components/callbacks/ChoiceCallback'),
     FrConfirmationCallback: () => import('@/components/callbacks/ConfirmationCallback'),
-    FrConsentContainer: () => import('@/components/callbacks/ConsentMappingCallback'),
+    FrConsentMappingCallback: () => import('@/components/callbacks/ConsentMappingCallback'),
     FrDeviceProfileCallback: () => import('@/components/callbacks/DeviceProfileCallback'),
     FrField: () => import('@forgerock/platform-shared/src/components/Field'),
     FrHiddenValueCallback: () => import('@/components/callbacks/HiddenValueCallback'),
@@ -185,7 +185,7 @@ export default {
       initalStep: undefined,
       loading: true,
       loginFailure: false,
-      nextButtonDisabled: false,
+      nextButtonDisabledArray: [],
       nextButtonVisible: false,
       realm: '/',
       retry: undefined,
@@ -193,6 +193,12 @@ export default {
       step: undefined,
       suspendedId: undefined,
     };
+  },
+  computed: {
+    nextButtonDisabled() {
+      // checks if there are any true bool values in array
+      return this.nextButtonDisabledArray.some((bool) => bool);
+    },
   },
   mounted() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -295,8 +301,8 @@ export default {
         'did-consent': (consent) => {
           this.step.callbacks.forEach((callbackItem) => { callbackItem.setInputValue(consent); });
         },
-        'disable-next-button': (bool) => {
-          this.nextButtonDisabled = bool;
+        'disable-next-button': (bool, index) => {
+          this.nextButtonDisabledArray.splice(index, 1, bool);
         },
         'has-scripts': () => {
           this.showScriptElms = true;
@@ -446,6 +452,7 @@ export default {
       this.header = this.step.getHeader() || '';
       this.description = this.step.getDescription() || '';
       this.nextButtonVisible = true;
+      this.nextButtonDisabledArray = [];
 
       // Ensure that Social Buttons appear at top of Page Node
       const pullToTop = FrCallbackType.SelectIdPCallback;
@@ -463,6 +470,7 @@ export default {
       const componentList = [];
       let keyFromDate = Date.now();
       this.step.callbacks.forEach((callback, index) => {
+        this.nextButtonDisabledArray.push(false);
         const existsInComponentList = (type) => find(componentList, (component) => component.type === `Fr${type}`);
         let type = callback.getType();
 

@@ -14,6 +14,7 @@ describe('ReCaptchaCallback.vue', () => {
   let wrapper;
 
   beforeEach(() => {
+    window.document.head.appendChild = jest.fn();
     wrapper = shallowMount(ReCaptchaCallback, {
       i18n,
       stubs: {
@@ -21,13 +22,31 @@ describe('ReCaptchaCallback.vue', () => {
       },
       propsData: {
         callback: {
-          getSiteKey: () => {},
+          getSiteKey: jest.fn(() => 'siteKey'),
+          setInputValue: jest.fn(),
         },
+        index: 5,
       },
     });
   });
 
   it('Load ReCaptchaCallback component', () => {
     expect(wrapper.name()).toEqual('ReCaptchaCallback');
+  });
+
+  it('Sets data', () => {
+    expect(wrapper.vm.$data.name).toBe('callback_5');
+    expect(wrapper.vm.$props.callback.getSiteKey).toHaveBeenCalled();
+    expect(wrapper.vm.$data.recaptchaSiteKey).toBe('siteKey');
+  });
+
+  it('Appends Script to the dom', () => {
+    expect(window.document.head.appendChild).toHaveBeenCalledWith(expect.any(Element));
+  });
+
+  it('Handles recaptcha callback', () => {
+    wrapper.vm.handleCaptchaCallback('abcd');
+    expect(wrapper.vm.$data.value).toEqual('abcd');
+    expect(wrapper.vm.$props.callback.setInputValue).toHaveBeenCalledWith('abcd');
   });
 });
