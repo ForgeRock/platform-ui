@@ -17,14 +17,13 @@ of the MIT license. See the LICENSE file for details.
 
 <script>
 export default {
-  components: {},
+  name: 'SuspendedTextOutputCallback',
   props: {
     callback: {
       type: Object,
       required: true,
     },
   },
-  mounted() {},
   data() {
     return {
       message: this.callback.getOutputValue(),

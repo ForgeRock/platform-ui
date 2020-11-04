@@ -51,6 +51,7 @@ import { BAlert, BButton } from 'bootstrap-vue';
 import QRCodeGenerator from 'qrcode-generator';
 
 export default {
+  name: 'TextOutputCallback',
   components: {
     BAlert,
     BButton,
