@@ -20,6 +20,7 @@ of the MIT license. See the LICENSE file for details.
 import Spinner from '@forgerock/platform-shared/src/components/Spinner/';
 
 export default {
+  name: 'PollingWaitCallback',
   components: {
     FrSpinner: Spinner,
   },
@@ -32,17 +33,17 @@ export default {
   data() {
     return {
       message: '',
-      interval: undefined,
+      timeout: undefined,
     };
   },
   mounted() {
     this.message = this.callback.getMessage();
-    this.interval = setInterval(() => {
+    this.timeout = setTimeout(() => {
       this.$emit('next-step', null, true);
     }, this.callback.getWaitTime());
   },
   beforeDestroy() {
-    clearInterval(this.interval);
+    clearTimeout(this.timeout);
   },
 };
 </script>
