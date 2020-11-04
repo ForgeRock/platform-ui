@@ -22,6 +22,7 @@ import Spinner from '@forgerock/platform-shared/src/components/Spinner/';
 import { FRDevice } from '@forgerock/javascript-sdk';
 
 export default {
+  name: 'DeviceProfileCallback',
   components: {
     FrSpinner: Spinner,
   },
