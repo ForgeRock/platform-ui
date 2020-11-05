@@ -79,6 +79,15 @@ module.exports = {
     host: process.env.HOST || '0.0.0.0',
     port: process.env.DEV_PORT || 8888,
   },
+  chainWebpack: (config) => {
+    config.module
+      .rule('js')
+      .use('babel-loader')
+      .tap((options) => ({
+        ...options,
+        rootMode: 'upward',
+      }));
+  },
   configureWebpack: {
     plugins: getPlugins(),
     devtool: 'source-map',

@@ -30,6 +30,15 @@ module.exports = {
     host: process.env.HOST || '0.0.0.0',
     port: process.env.DEV_PORT || 8083,
   },
+  chainWebpack: (config) => {
+    config.module
+      .rule('js')
+      .use('babel-loader')
+      .tap((options) => ({
+        ...options,
+        rootMode: 'upward',
+      }));
+  },
   configureWebpack: {
     devtool: 'source-map',
   },
