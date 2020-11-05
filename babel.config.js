@@ -6,10 +6,11 @@
  * of the MIT license. See the LICENSE file for details.
  */
 module.exports = {
-  babelrcRoots: [
-    '.',
-    'packages/*',
-  ],
+  // Disabled temporarily due a bug in babel: https://github.com/babel/babel/issues/12314
+  // babelrcRoots: [
+  //   '.',
+  //   'packages/*',
+  // ],
   env: {
     development: {
       sourceMaps: true,
