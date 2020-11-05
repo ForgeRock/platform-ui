@@ -8,8 +8,6 @@
     "unit:watch": "jest --watch"
   },
   "devDependencies": {
-    "@vue/cli-plugin-babel": "4.3.1",
-    "@vue/cli-service": "4.3.1",
     "@vue/test-utils": "1.0.0-beta.29",
     "babel-jest": "24.9.0",
     "babel-plugin-require-context-hook": "1.0.0",
