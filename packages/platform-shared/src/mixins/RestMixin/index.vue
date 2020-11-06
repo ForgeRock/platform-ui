@@ -13,11 +13,6 @@ import axios from 'axios';
 
 const idmContext = process.env.VUE_APP_IDM_URL;
 const amContext = process.env.VUE_APP_AM_URL;
-// deconstruct the amContext to get the correct pathname to be used in dnsContext
-const amContextURL = new URL(amContext);
-// 'window.location.origin' comes from where the ui is running. The assumption here is
-// there is a connection between where the ui is running and where openam is running.
-const dnsContext = `${window.location.origin}${amContextURL.pathname}`;
 /**
  * @description Rest API call mixin for global use
  */
@@ -49,13 +44,11 @@ export default {
 
         // Use Legacy API
         if (config.context === 'AM') {
-          // if hostnames differ the assumption is this is a realm dns alias
-          const isDNS = amContextURL.hostname !== window.location.hostname;
-          let amBase = isDNS ? `${dnsContext}/json/` : `${amContext}/json/`;
+          let amBase = `${amContext}/json/`;
 
           if (this.$store) {
             if (this.$store.state.realm && this.$store.state.realm !== '/' && this.$store.state.realm !== 'root') {
-              amBase = isDNS ? `${dnsContext}/json/realms/root/realms/${this.$store.state.realm}` : `${amContext}/json/realms/root/realms/${this.$store.state.realm}`;
+              amBase = `${amContext}/json/realms/root/realms/${this.$store.state.realm}`;
             }
           }
 
