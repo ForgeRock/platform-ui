@@ -88,12 +88,8 @@ export default {
   },
   methods: {
     changeState(newValue) {
-      this.$store.commit('ApplicationStore/setSchemaDataPropertyValue', {
-        schemaType: this.schemaType,
-        model: this.model,
-        value: newValue,
-      });
       this.value = newValue;
+      this.$emit('change', newValue);
     },
   },
 };
