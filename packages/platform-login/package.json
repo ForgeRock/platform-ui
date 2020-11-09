@@ -12,6 +12,7 @@
     "test:lighthouse": "../../e2e/passwords.sh cypress run --spec e2e/tests/lighthouse.suite.js --config ignoreTestFiles=''",
     "unit": "jest --no-cache",
     "coverage": "jest --verbose --coverage --noStackTrace --no-cache",
+    "test:cb": "jest --config=../../jest.config.crossbrowser.js",
     "find-copyright-problems": "echo 'Listing all files which do not contain a valid copywright header for this year - some files do not qualify \n' && cd src && git grep -L --word-regexp \"Copyright (c) $(date +\"%Y\")\""
   },
   "dependencies": {
