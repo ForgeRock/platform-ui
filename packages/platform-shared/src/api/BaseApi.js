@@ -57,14 +57,22 @@ export function generateIdmApi(requestOverride = {}) {
   * @returns {AxiosInstance}
   */
 export function generateAmApi(resource, requestOverride = {}) {
+  let headers = {
+    'Content-type': 'application/json',
+    'accept-api-version': resource.apiVersion,
+  };
+  if (requestOverride.headers) {
+    headers = {
+      ...headers,
+      ...requestOverride.headers,
+    };
+  }
+
   const requestDetails = {
     baseURL: `${store.state.SharedStore.amBaseURL}/json/${resource.path}`,
     timeout: 5000,
-    headers: {
-      'Content-type': 'application/json',
-      'accept-api-version': resource.apiVersion,
-    },
     ...requestOverride,
+    headers,
   };
 
   const request = axios.create(requestDetails);
