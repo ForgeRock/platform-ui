@@ -225,17 +225,13 @@ input[placeholder] { text-overflow: ellipsis; }
     padding-bottom: 0;
     font-size: 12px;
     color: $label-color;
+    width: auto;
   }
 }
 
 .form-label-group .white-label-background ~ label {
   background-color: $fr-toolbar-background;
-  width: calc(100% - 20px);
   margin: 1px;
-}
-
-.form-label-group .white-label-background.multiselect--disabled ~ label {
-  background-color: transparent;
 }
 
 .btn.disabled {
