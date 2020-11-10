@@ -275,7 +275,6 @@ export default {
         this.relationshipProperties = this.getRelationshipProperties(schema.data, privilege.data);
 
         idmInstance.get(this.buildResourceUrl()).then((resourceDetails) => {
-          this.jsonString = JSON.stringify(resourceDetails.data, null, 2);
           this.generateDisplay(schema.data, privilege.data, resourceDetails.data);
           this.settingsProperties = this.getSettingsProperties(schema.data, privilege.data);
         }).catch((error) => {
@@ -371,6 +370,8 @@ export default {
       } else {
         this.formFields = pick(resourceDetails, privilege.VIEW.properties);
       }
+      // save string used for JSON tab
+      this.jsonString = JSON.stringify(this.formFields, null, 2);
 
       if (privilege.DELETE.allowed || this.isOpenidmAdmin) {
         this.canDelete = true;
