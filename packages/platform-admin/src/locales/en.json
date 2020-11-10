@@ -11,24 +11,26 @@
     "ManagedIdentity": "Manage Identity"
   },
   "sideMenu": {
-    "authorizationRole": "Internal Role",
     "accessManagement": "Access Management",
     "applications": "Applications",
+    "authentication": "Authentication",
+    "authorizationRole": "Internal Role",
     "bulkImport": "Import",
     "connect": "Connect",
     "dashboard": "Dashboard",
-    "selectIcon": "Please select icon in admin (Managed Object) settings",
-    "provisioningRole": "External Role",
+    "email": "Email",
     "identities": "Identities",
     "identityManagement": "Identity Management",
+    "journeys": "Journeys",
     "managed": "Manage",
     "nativeConsoles": "Native Consoles",
+    "policy": "Policy",
+    "provisioningRole": "External Role",
+    "selectIcon": "Please select icon in admin (Managed Object) settings",
     "settings": "Settings",
     "signOut": "Sign Out",
-    "toggleSidebar": "Toggle sidebar",
-    "authentication": "Authentication",
-    "journeys": "Journeys",
-    "policy": "Policy"
+    "templates": "Templates",
+    "toggleSidebar": "Toggle sidebar"
   },
   "connect": {
     "connectIdentities": "Connect Identities",
@@ -657,6 +659,22 @@
       "notInvited": "Not Invited",
       "errorAdminOnboarding": "There was an issue onboarding admin",
       "errorUnique": "This person already exists in your tenant."
+    },
+    "templates": {
+      "emailTemplates": "Email Templates",
+      "subTitle": "Customize email templates for welcome, password reset, and account verification.",
+      "noTemplatesTitle": "You haven't added any email templates yet",
+      "newTemplate": "New Template",
+      "template": "Template",
+      "errorRetrievingList": "Error retrieving email template list.",
+      "errorSaving": "Error saving email template",
+      "successDelete":"Successfully deleted email template.",
+      "successStatusChange":"Successfully changed status of email template.",
+      "deleteModal": {
+        "title": "Delete Template?",
+        "content": "Are you sure you want to delete this template?",
+        "confirm": "Delete template"
+      }
     }
   },
   "tenantSettings": {
