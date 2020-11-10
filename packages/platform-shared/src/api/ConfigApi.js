@@ -33,3 +33,12 @@ export function getConfig(file) {
 export function putConfig(file, config) {
   return generateIdmApi().put(`config/${file}`, config);
 }
+
+/**
+ * Deletes config file from config store
+ *
+ * @returns {Promise} API promise with result from config delete
+ */
+export function deleteConfig(file) {
+  return generateIdmApi().delete(`config/${file}`);
+}
