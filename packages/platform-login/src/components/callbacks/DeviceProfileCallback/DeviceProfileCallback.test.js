@@ -7,14 +7,25 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import DeviceProfileCallback from '@/components/callbacks/DeviceProfileCallback';
 import i18n from '@/i18n';
+
+jest.mock('@forgerock/javascript-sdk', () => ({
+  // eslint-disable-next-line object-shorthand
+  FRDevice: function FRDevice() {
+    return {
+      getProfile() {
+        return Promise.resolve({ identifier: 'hi' });
+      },
+    };
+  },
+}));
 
 describe('DeviceProfileCallback', () => {
   let wrapper;
   beforeEach(() => {
-    wrapper = mount(DeviceProfileCallback, {
+    wrapper = shallowMount(DeviceProfileCallback, {
       i18n,
       propsData: {
         callback: {
