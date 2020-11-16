@@ -120,7 +120,7 @@ to such license between the licensee and ForgeRock AS. -->
       class="mb-5"
       v-if="canDelete">
       <h5 class="card-title">
-        {{ $t('common.delete') }} {{ resourceTitle }}
+        {{ $t('deletePanel.header', {type: resourceTitle}) }}
       </h5>
       <p class="text-danger">
         {{ $t('common.cannotBeUndone') }}
@@ -128,7 +128,7 @@ to such license between the licensee and ForgeRock AS. -->
       <BButton
         variant="danger"
         v-b-modal.deleteModal>
-        {{ $t('common.delete') }} {{ resourceTitle }}
+        {{ $t('deletePanel.header', {type: resourceTitle}) }}
       </BButton>
     </BCard>
 
@@ -138,7 +138,7 @@ to such license between the licensee and ForgeRock AS. -->
       ref="deleteModal"
       :title="this.$t('pages.access.deleteModalTitle')">
       <div>
-        {{ $t('pages.access.deleteConfirm') }} {{ this.resourceName }}?
+        {{ $t('pages.access.deleteConfirm', {entity: this.resourceName}) }}
       </div>
 
       <template v-slot:modal-footer="{ cancel }">
