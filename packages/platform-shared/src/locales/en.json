@@ -140,6 +140,7 @@
       "successMessages": {
         "password": "Your password is secure!"
       },
+      "alphaOnly": "Can only contain alphabetic characters",
       "alphaNumericOnly": "Can only contain alphanumeric characters",
       "alphaNumericDashOnly": "Can only contain alphanumeric characters, numbers, dashes or underscores",
       "noSpace": "Cannot start or end with the space character"
