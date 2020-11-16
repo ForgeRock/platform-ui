@@ -7,13 +7,13 @@ Array [
     at module.exports (/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
     at HTMLCanvasElementImpl.getContext (/node_modules/jsdom/lib/jsdom/living/nodes/HTMLCanvasElement-impl.js:42:5)
     at HTMLCanvasElement.getContext (/node_modules/jsdom/lib/jsdom/living/generated/HTMLCanvasElement.js:130:58)
-    at FRDevice.getInstalledFonts (/node_modules/@forgerock/javascript-sdk/src/fr-device/index.ts:145:49)
+    at FRDevice.Object.<anonymous>.FRDevice.getInstalledFonts (/node_modules/@forgerock/javascript-sdk/src/fr-device/index.ts:145:49)
     at FRDevice.<anonymous> (/node_modules/@forgerock/javascript-sdk/src/fr-device/index.ts:221:23)
     at step (/node_modules/@forgerock/javascript-sdk/lib/fr-device/index.js:57:23)
     at Object.next (/node_modules/@forgerock/javascript-sdk/lib/fr-device/index.js:38:53)
     at /node_modules/@forgerock/javascript-sdk/lib/fr-device/index.js:32:71
     at new Promise (<anonymous>)
-    at __awaiter (/node_modules/@forgerock/javascript-sdk/lib/fr-device/index.js:28:12)",
+    at Object.<anonymous>.__awaiter (/node_modules/@forgerock/javascript-sdk/lib/fr-device/index.js:28:12)",
     undefined,
   ],
 ]
@@ -40,13 +40,13 @@ Array [
     at module.exports (/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
     at HTMLCanvasElementImpl.getContext (/node_modules/jsdom/lib/jsdom/living/nodes/HTMLCanvasElement-impl.js:42:5)
     at HTMLCanvasElement.getContext (/node_modules/jsdom/lib/jsdom/living/generated/HTMLCanvasElement.js:130:58)
-    at FRDevice.getInstalledFonts (/node_modules/@forgerock/javascript-sdk/src/fr-device/index.ts:145:49)
+    at FRDevice.Object.<anonymous>.FRDevice.getInstalledFonts (/node_modules/@forgerock/javascript-sdk/src/fr-device/index.ts:145:49)
     at FRDevice.<anonymous> (/node_modules/@forgerock/javascript-sdk/src/fr-device/index.ts:221:23)
     at step (/node_modules/@forgerock/javascript-sdk/lib/fr-device/index.js:57:23)
     at Object.next (/node_modules/@forgerock/javascript-sdk/lib/fr-device/index.js:38:53)
     at /node_modules/@forgerock/javascript-sdk/lib/fr-device/index.js:32:71
     at new Promise (<anonymous>)
-    at __awaiter (/node_modules/@forgerock/javascript-sdk/lib/fr-device/index.js:28:12)",
+    at Object.<anonymous>.__awaiter (/node_modules/@forgerock/javascript-sdk/lib/fr-device/index.js:28:12)",
     undefined,
   ],
 ]
