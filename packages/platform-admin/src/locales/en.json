@@ -668,12 +668,19 @@
       "template": "Template",
       "errorRetrievingList": "Error retrieving email template list.",
       "errorSaving": "Error saving email template",
+      "errorCreating": "Error creating email template",
       "successDelete":"Successfully deleted email template.",
       "successStatusChange":"Successfully changed status of email template.",
       "deleteModal": {
         "title": "Delete Template?",
         "content": "Are you sure you want to delete this template?",
         "confirm": "Delete template"
+      },
+      "createModal": {
+        "title": "New Template",
+        "name": "Template Name",
+        "description": "Human-readable name for this email template.",
+        "id": "Template ID"
       }
     }
   },
