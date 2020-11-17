@@ -7,7 +7,7 @@ to such license between the licensee and ForgeRock AS. -->
   <div>
     <BFormGroup
       v-if="showResourceType"
-      :label-cols="isRelationshipArray || newResource ? 11 : 0"
+      :label-cols="isRelationshipArray || newResource ? 12 : 0"
       :label="$t('common.placeholders.relationshipLabel', {relationshipTitle: relationshipProperty.title})"
       :label-for="'editResourceType' + index"
       horizontal>
@@ -106,7 +106,7 @@ to such license between the licensee and ForgeRock AS. -->
     </FrField>
     <BFormGroup
       v-if="relationshipProperty.relationshipGrantTemporalConstraintsEnforced"
-      :label-cols="isRelationshipArray || newResource ? 11 : 0"
+      :label-cols="isRelationshipArray || newResource ? 12 : 0"
       horizontal>
       <div class="d-flex-row form-group">
         <FrField
@@ -133,7 +133,6 @@ import TimeConstraint from '@forgerock/platform-shared/src/components/TimeConstr
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 
 export default {
