@@ -671,6 +671,7 @@
       "template": "Template",
       "errorRetrievingList": "Error retrieving email template list.",
       "errorRetrievingTemplate": "Error retrieving email template.",
+      "errorRetrievingProviderConfig": "Error retrieving email provider config. You may need to set this up.",
       "errorSaving": "Error saving email template",
       "errorCreating": "Error creating email template",
       "successDelete":"Successfully deleted email template.",
@@ -691,7 +692,14 @@
       "noSubjectInformation": "No Subject Information",
       "noFromInformation": "No From Information",
       "noMessageInformation": "No Message Information",
-      "defaultLocale": "en"
+      "defaultLocale": "en",
+      "sendTestEmailModal": {
+        "title": "Send Test Email",
+        "testEmailAddressDescription": "Email address to send test email to.",
+        "emailSent": "Email sent!",
+        "emailSentDescription": "If you don't receive an email within the next hour, please check logs for \"Failed Sending Notification\" events and review your configuration according to Email Provider. If the problem persists, please contact support.",
+        "errorTestEmail": "Test email not sent"
+      }
     },
     "availablePropertiesModal": {
       "description": "Choose the type of identity you are going to use this template with to view the available properites.",
