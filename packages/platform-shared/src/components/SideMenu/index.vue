@@ -123,19 +123,24 @@ to such license between the licensee and ForgeRock AS. -->
             </li>
             <li
               v-else
-              :class="[{'expanded': expandedMenus[index]}, 'fr-sidebar-menugroup']"
+              class="fr-sidebar-menugroup"
               :key="`sidebarNav_${index}`">
               <ul class="fr-sidebar-submenuitems">
                 <BButton
                   v-b-toggle="`collapse-`+index"
                   :class="{'hidden': item.showForRoles && !userHasRole(item.showForRoles)}"
-                  class="dropdown-toggle d-flex align-items-center">
-                  <i
-                    class="material-icons material-icons-outlined mr-3">
-                    {{ item.icon }}
-                  </i>
-                  <span class="sidebar-item-text">
-                    {{ item.displayName }}
+                  class="d-flex align-items-center border-0 rounded-0 p-0">
+                  <span
+                    tabindex="-1"
+                    class="dropdown-toggle"
+                    :aria-expanded="expandedMenus[index]">
+                    <i
+                      class="material-icons material-icons-outlined mr-3">
+                      {{ item.icon }}
+                    </i>
+                    <span class="sidebar-item-text">
+                      {{ item.displayName }}
+                    </span>
                   </span>
                 </BButton>
                 <BCollapse
