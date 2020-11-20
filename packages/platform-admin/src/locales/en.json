@@ -726,7 +726,7 @@
       "locale": "Locale",
       "markdown": "Markdown",
       "message": "Message",
-      "messageDescription": "Use <a href=\"https://daringfireball.net/projects/markdown/syntax\" target=\"_blank\">markdown</a> to format your email content and use <a href=\"#\" onclick=\"event.preventDefault(); window.showAvailablePropertiesModal()\" target=\"blank\">available variables</a> in your body text eg. <code>{{user.name.givenName}}</code>",
+      "messageDescription": "Use <a href=\"https://daringfireball.net/projects/markdown/syntax\" target=\"_blank\">markdown</a> to format your email content and use <a href=\"#\" onclick=\"event.preventDefault(); window.showAvailablePropertiesModal()\" target=\"blank\">available variables</a> in your body text eg. <code>{{object.givenName}}</code>",
       "resetStyles": "Reset styles",
       "subject": "Subject",
       "switchedLocale": "Switched to new locale ({locale})",
