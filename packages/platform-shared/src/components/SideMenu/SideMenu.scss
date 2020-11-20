@@ -83,7 +83,7 @@
     }
 
     .sidebar-item-text {
-      display: block;
+      display: inline;
     }
   }
 }
@@ -205,10 +205,6 @@
       border-color: $white;
       width: 100%;
       position: relative;
-
-      &:focus {
-        outline: 5px auto #005fcc;
-      }
     }
 
     ul,
@@ -322,8 +318,23 @@
       }
 
       > .fr-sidebar-menugroup {
+        .btn {
+          &:focus {
+            outline: 2px auto -webkit-focus-ring-color;
+          }
+
+          .dropdown-toggle {
+            padding: 15px 60px 15px 19px;
+
+            .sidebar-item-text {
+              margin-left: -5px;
+            }
+          }
+        }
+
         .fr-sidebar-subitem a {
-          padding: 16px 24px 15px 50px;
+          padding: 10px 5px 10px 49px;
+          height: 41px;
         }
       }
     }
