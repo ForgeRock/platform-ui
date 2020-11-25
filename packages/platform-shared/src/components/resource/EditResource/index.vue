@@ -61,6 +61,8 @@ to such license between the licensee and ForgeRock AS. -->
             active>
             <FrObjectTypeEditor
               v-if="displayProperties.length > 0"
+              @updateRevision="updateRevision"
+              :revision="revision"
               :form-fields="formFields"
               :display-properties="displayProperties"
               :resource-path="`${resourceType}/${resourceName}/${id}`"
@@ -78,6 +80,8 @@ to such license between the licensee and ForgeRock AS. -->
               :title="objectTypeProperty.title"
               :key="`${objectTypeProperty.propName}_tab`">
               <FrObjectTypeEditor
+                @updateRevision="updateRevision"
+                :revision="revision"
                 :form-fields="formFields[objectTypeProperty.propName] || {}"
                 :sub-property-name="objectTypeProperty.propName"
                 :display-properties="getObjectTypeProperyDisplayProperties(objectTypeProperty)"
@@ -256,6 +260,7 @@ export default {
       isLoading: true,
       passwordField: {},
       jsonString: '',
+      revision: '',
     };
   },
   mounted() {
@@ -275,6 +280,7 @@ export default {
         this.relationshipProperties = this.getRelationshipProperties(schema.data, privilege.data);
 
         idmInstance.get(this.buildResourceUrl()).then((resourceDetails) => {
+          this.revision = resourceDetails.data._rev;
           this.generateDisplay(schema.data, privilege.data, resourceDetails.data);
           this.settingsProperties = this.getSettingsProperties(schema.data, privilege.data);
         }).catch((error) => {
@@ -488,6 +494,9 @@ export default {
       });
 
       return properties;
+    },
+    updateRevision(newRevision) {
+      this.revision = newRevision;
     },
   },
   computed: {
