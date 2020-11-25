@@ -44,6 +44,8 @@ to such license between the licensee and ForgeRock AS. -->
         <notifications
           position="bottom left"
           width="320"
+          animation-type="velocity"
+          :animation="animation"
           :duration="4000">
           <template v-slot:body="props">
             <FrAlert
@@ -160,6 +162,28 @@ export default {
         return 'https://backstage.forgerock.com/docs/idcloud/latest/index.html';
       }
       return 'https://backstage.forgerock.com/docs/index.html';
+    },
+    animation() {
+      return {
+        enter(element) {
+          /*
+          *  "element" - is a notification element
+          *    (before animation, meaning that you can take it's initial height, width, color, etc)
+          */
+          const height = element.clientHeight;
+
+          return {
+            // Animates from 0px to "height"
+            height: [height, 0],
+            // Animates from 0 to 1
+            opacity: [1, 0],
+          };
+        },
+        leave: {
+          height: 0,
+          opacity: 0,
+        },
+      };
     },
   },
   mounted() {
