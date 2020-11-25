@@ -34,7 +34,10 @@ export default {
       let errorMessage = defaultMessage;
 
       if (has(error, 'response.data.message')) {
-        errorMessage = error.response.data.message;
+        // error message may have html encoding for example &#39; aka single quote
+        const errorTextElement = document.createElement('div');
+        errorTextElement.innerHTML = error.response.data.message;
+        errorMessage = errorTextElement.innerText;
       }
 
       this.displayNotification('AdminMessage', 'danger', errorMessage);
