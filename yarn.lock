@@ -13847,6 +13847,11 @@ vee-validate@3.2.2:
   resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-3.2.2.tgz#ec5132bca84f0549a5030a9a20e49569765eb350"
   integrity sha512-6XogX8Y8HHBQ+be+u1tj3Je6pcIWv2j2JX/BqRpymyObtx1C4ERxY3O3z2ExRBlQ3oM0dN/Y0RsSaBsRyTNIRw==
 
+velocity-animate@1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/velocity-animate/-/velocity-animate-1.5.1.tgz#606837047bab8fbfb59a636d1d82ecc3f7bd71a6"
+  integrity sha512-VJ3csMz5zP1ifkbBlsNYpxnoWkPHfVRQ8tUongS78W5DxSGHB68pjYHDTgUYBkVM7P/HpYdVukgVUFcxjr1gGg==
+
 vendors@^1.0.0:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/vendors/-/vendors-1.0.4.tgz#e2b800a53e7a29b93506c3cf41100d16c4c4ad8e"

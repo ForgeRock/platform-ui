@@ -5,7 +5,7 @@ or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
   <BAlert
-    class="fr-alert"
+    class="fr-alert ml-3"
     v-bind="$props">
     <template v-slot:dismiss>
       <i class="fr-alert-dismiss material-icons">
