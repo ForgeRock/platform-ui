@@ -228,7 +228,7 @@ describe('FrField.vue', () => {
       stubs,
     });
     await flush();
-    expect(wrapper.find('.v-switch-core').isVisible()).toBeTruthy();
+    expect(wrapper.find('.fr-toggle-primary').isVisible()).toBeTruthy();
   });
 
   it('uses checkbox component for boolean type', async () => {
