@@ -145,16 +145,6 @@ label {
   }
 }
 
-.fr-toggle-primary {
-  .v-switch-core {
-    background-color: $fr-switch-bg;
-  }
-
-  &.toggled .v-switch-core {
-    background-color: $fr-switch-toggled-bg;
-  }
-}
-
 // Form Break
 .fr-form-break {
   display: flex;
