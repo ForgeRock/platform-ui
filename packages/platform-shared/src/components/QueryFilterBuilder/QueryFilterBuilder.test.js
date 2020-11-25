@@ -32,7 +32,6 @@ describe('QueryFilterBuilder', () => {
     wrapper = shallowMount(QueryFilterBuilder, {
       stubs: {
         'router-link': true,
-        ToggleButton: true,
       },
       mocks: {
         $t: () => {},

@@ -75,7 +75,7 @@ to such license between the licensee and ForgeRock AS. -->
       Enduser Theme Styles
       */
 
-      #app .vue-js-switch.toggled .v-switch-core {
+      #app .custom-switch .custom-control-input:checked ~ .custom-control-label::before {
       background-color: {{ theme.primaryColor }};
       }
 
