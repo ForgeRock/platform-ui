@@ -85,6 +85,10 @@ export default {
     BButton,
   },
   props: {
+    revision: {
+      type: String,
+      default: '',
+    },
     displayProperties: {
       type: Array,
       default: () => [],
@@ -146,7 +150,11 @@ export default {
       field.value = value;
     },
     async saveResource() {
-      const idmInstance = this.getRequestService();
+      const idmInstance = this.getRequestService({
+        headers: {
+          'if-match': this.revision,
+        },
+      });
 
       this.$refs.observer.reset();
 
@@ -172,9 +180,10 @@ export default {
           saveData = this.generateUpdatePatch(cloneDeep(this.oldFormFields), cloneDeep(this.formFields));
         }
 
-        idmInstance.patch(this.resourcePath, saveData).then(() => {
+        idmInstance.patch(this.resourcePath, saveData).then((response) => {
           const resourceName = this.resourceTitle ? this.resourceTitle : this.resourcePath.split('/')[1];
           this.oldFormFields = cloneDeep(this.formFields);
+          this.$emit('updateRevision', response.data._rev);
           this.displayNotification('IDMMessages', 'success', this.$t('pages.access.successEdited', { resource: resourceName }));
         },
         (error) => {
@@ -192,7 +201,7 @@ export default {
             });
           }
 
-          this.displayNotification('IDMMessages', 'error', this.$t('pages.access.invalidEdit'));
+          this.showErrorMessage(error, this.$t('pages.access.invalidEdit'));
         });
       } else {
         this.displayNotification('IDMMessages', 'error', this.$t('pages.access.invalidEdit'));
