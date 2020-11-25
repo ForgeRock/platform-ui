@@ -5,10 +5,11 @@ or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <script>
 import Notifications from 'vue-notification';
+import velocity from 'velocity-animate';
 import Vue from 'vue';
 import { has } from 'lodash';
 
-Vue.use(Notifications);
+Vue.use(Notifications, { velocity });
 
 /**
  * @description Notification mixin used for generating messages to users to convey information
