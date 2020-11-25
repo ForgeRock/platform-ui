@@ -32,16 +32,15 @@ to such license between the licensee and ForgeRock AS. -->
         <div v-html="field.description" />
       </BPopover>
     </label>
-    <ToggleButton
+    <BFormCheckbox
       v-if="field.type === 'boolean'"
-      :css-colors="true"
+      switch
+      size="lg"
       v-model="inputValue"
       v-on="$listeners"
-      :sync="true"
-      :height="field.height || defaultToggleHeight"
-      :width="field.width || defaultToggleWidth"
+      :autofocus="autofocus"
       :disabled="fieldDisabled"
-      class="pr-2 mb-0" />
+      class="d-inline-flex fr-toggle-primary" />
     <BFormCheckbox
       v-else-if="field.type === 'checkbox'"
       v-model="inputValue"
@@ -201,7 +200,6 @@ import TextArea from '@forgerock/platform-shared/src/components/Field/TextArea';
 import Select from '@forgerock/platform-shared/src/components/Field/Select';
 import Multiselect from '@forgerock/platform-shared/src/components/Field/Multiselect';
 import FrTag from '@forgerock/platform-shared/src/components/Field/Tag';
-import { ToggleButton } from 'vue-js-toggle-button';
 import KeyValueList from './KeyValueList';
 
 export default {
@@ -215,7 +213,6 @@ export default {
     FrMultiselect: Multiselect,
     FrKeyValueList: KeyValueList,
     FrTag,
-    ToggleButton,
     ValidationProvider,
   },
   data() {
@@ -223,8 +220,6 @@ export default {
       inputValue: this.field.value,
       loading: true,
       oldValue: {},
-      defaultToggleHeight: 32,
-      defaultToggleWidth: 56,
     };
   },
   props: {
@@ -478,24 +473,6 @@ export default {
   &:hover {
     color: $primary;
     cursor: pointer;
-  }
-}
-
-/deep/ {
-  .vue-js-switch {
-    .v-switch-core {
-      background-color: $fr-custom-control-indicator-switch-background-color;
-
-      .v-switch-button {
-        background-color: $fr-custom-control-indicator-switch-handle-color;
-      }
-    }
-
-    &.toggled {
-      .v-switch-core {
-        background-color: $primary;
-      }
-    }
   }
 }
 </style>
