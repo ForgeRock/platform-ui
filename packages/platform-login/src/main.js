@@ -13,7 +13,6 @@ import 'regenerator-runtime/runtime';
 import Vue from 'vue';
 import { extend, setInteractionMode } from 'vee-validate';
 import { required } from 'vee-validate/dist/rules';
-import ToggleButton from 'vue-js-toggle-button';
 import Notifications from 'vue-notification';
 import {
   Config,
@@ -26,7 +25,6 @@ import App from './App';
 Vue.config.productionTip = false;
 
 Vue.use(Notifications);
-Vue.use(ToggleButton);
 
 // Required rule - errors if no value is supplied
 extend('required', {

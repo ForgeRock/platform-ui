@@ -19,7 +19,6 @@ import axios from 'axios';
 import BootstrapVue from 'bootstrap-vue/dist/bootstrap-vue.esm.min';
 import Notifications from 'vue-notification';
 import PromisePoly from 'es6-promise';
-import ToggleButton from 'vue-js-toggle-button';
 import {
   ValidationObserver,
   ValidationProvider,
@@ -132,7 +131,6 @@ localize('en', en);
   });
  */
 Vue.use(Notifications);
-Vue.use(ToggleButton);
 
 // required to use PascalCase `RouterView` and `RouterLink` instead of `router-view` and `router-link`
 const RouterView = Vue.component('router-view');
