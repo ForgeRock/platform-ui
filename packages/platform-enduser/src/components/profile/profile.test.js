@@ -41,9 +41,6 @@ describe('Profile.vue', () => {
           return '';
         },
       },
-      stubs: {
-        ToggleButton: true,
-      },
       methods: {
         getUserProfile,
       },

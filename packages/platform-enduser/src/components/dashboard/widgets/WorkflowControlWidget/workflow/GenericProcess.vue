@@ -35,14 +35,13 @@ of the MIT license. See the LICENSE file for details.
               </label>
 
               <div class="mr-auto">
-                <ToggleButton
-                  class="mt-2 p-0 fr-toggle-primary"
-                  :height="28"
-                  :width="56"
-                  :sync="true"
-                  :css-colors="true"
-                  :labels="{checked: $t('pages.workflow.yes'), unchecked: $t('pages.workflow.no')}"
-                  v-model="formValues[field.key]" />
+                <BFormCheckbox
+                  switch
+                  size="lg"
+                  v-model="formValues[field.key]"
+                  class="fr-toggle-primary inner-text">
+                  {{ formValues[field.key] ? $t('pages.workflow.yes') : $t('pages.workflow.no') }}
+                </BFormCheckbox>
               </div>
             </div>
           </BFormGroup>

@@ -74,16 +74,6 @@
   animation-duration: 0.75s;
 }
 
-.fr-toggle-primary {
-  &.toggled .v-switch-core {
-    background-color: $fr-switch-toggled-bg;
-  }
-
-  .v-switch-core {
-    background-color: $fr-switch-bg;
-  }
-}
-
 @keyframes fadeInOpacity {
   0% {
     opacity: 0;

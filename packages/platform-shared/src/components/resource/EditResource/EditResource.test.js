@@ -35,7 +35,6 @@ describe('EditResource.vue', () => {
       localVue,
       stubs: {
         'router-link': true,
-        ToggleButton: true,
       },
       mocks: {
         $route,
