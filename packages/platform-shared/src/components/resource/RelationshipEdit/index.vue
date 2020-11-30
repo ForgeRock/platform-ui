@@ -134,6 +134,7 @@ import FrField from '@forgerock/platform-shared/src/components/Field';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
+import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
 
 export default {
   name: 'RelationshipEdit',
@@ -270,10 +271,15 @@ export default {
       if (query) {
         queryFilter = map(displayFields, (field) => `/${field} sw "${query}"`).join(' or ');
 
-        const urlQuery = `?_sortKeys=${this.resourceCollection.query.fields[0]}&_pageSize=${maxPageSize}&_fields=${displayFields.join(',')}&_queryFilter=${queryFilter}`;
+        const urlParams = {
+          _sortKeys: this.resourceCollection.query.fields[0],
+          _pageSize: maxPageSize,
+          _fields: displayFields.join(','),
+          _queryFilter: queryFilter,
+        };
         const idmInstance = this.getRequestService();
 
-        idmInstance.get(`${this.resourceCollection.path}${urlQuery}`).then((queryResults) => {
+        idmInstance.get(`${this.resourceCollection.path}?${encodeQueryString(urlParams)}`).then((queryResults) => {
           this.relationshipField.options = [];
           each(queryResults.data.result, (resource) => {
             // eslint-disable-next-line no-underscore-dangle
