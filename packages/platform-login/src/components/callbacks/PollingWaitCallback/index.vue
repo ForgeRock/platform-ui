@@ -36,11 +36,24 @@ export default {
       timeout: undefined,
     };
   },
-  mounted() {
-    this.message = this.callback.getMessage();
-    this.timeout = setTimeout(() => {
-      this.$emit('next-step', null, true);
-    }, this.callback.getWaitTime());
+  watch: {
+    callback: {
+      immediate: true,
+      handler() {
+        this.callTimeout();
+      },
+    },
+  },
+  methods: {
+    callTimeout() {
+      this.message = this.callback.getMessage();
+      this.timeout = setTimeout(() => {
+        this.$emit('next-step', null, true);
+      }, this.callback.getWaitTime());
+    },
+  },
+  beforeUpdate() {
+    clearTimeout(this.timeout);
   },
   beforeDestroy() {
     clearTimeout(this.timeout);
