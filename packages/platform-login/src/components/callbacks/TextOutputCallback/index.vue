@@ -49,6 +49,7 @@ of the MIT license. See the LICENSE file for details.
 <script>
 import { BAlert, BButton } from 'bootstrap-vue';
 import QRCodeGenerator from 'qrcode-generator';
+import { CallbackType } from '@forgerock/javascript-sdk';
 
 export default {
   name: 'TextOutputCallback',
@@ -58,6 +59,14 @@ export default {
   },
   props: {
     callback: {
+      type: Object,
+      required: true,
+    },
+    index: {
+      type: Number,
+      required: true,
+    },
+    step: {
       type: Object,
       required: true,
     },
@@ -72,13 +81,6 @@ export default {
     };
   },
   mounted() {
-    const self = this;
-    window.QRCodeReader = {
-      createCode(options) {
-        self.getCode(options);
-      },
-    };
-
     switch (this.callback.getMessageType()) {
     case '1':
       this.messageType = 'WARNING';
@@ -94,18 +96,30 @@ export default {
     }
 
     if (this.messageType === 'SCRIPT') {
-      this.$emit('has-scripts');
-      // will run after $emit is done
-      this.$nextTick(this.appendScript);
+      this.$emit('has-scripts', this.invokeScriptWithHelpers);
     }
   },
   methods: {
-    appendScript() {
-      const el = document.createElement('script');
-      el.innerHTML = this.message;
-      this.$refs.textOutputPanel.appendChild(el);
+    invokeScriptWithHelpers() {
+      const loginHelpers = {
+        disableNextButton: (bool) => { this.$emit('disable-next-button', bool, this.index); },
+        hideNextButton: (bool) => { this.$emit('hide-next-button', bool); },
+        nextStep: () => { this.$emit('next-step'); },
+        nextStepCallback: (cb) => { this.$emit('next-step-callback', cb); },
+        setHiddenCallback: (name, value) => { this.setHiddenCallback(name, value); },
+      };
+      const QRCodeReader = {
+        createCode: (options) => { this.createCode(options); },
+      };
+      // eslint-disable-next-line no-new-func
+      (Function(`"use strict"; return (
+        function (loginHelpers, QRCodeReader) { 
+          window.QRCodeReader = QRCodeReader;
+          ${this.message} 
+        })`)()
+      )(loginHelpers, QRCodeReader);
     },
-    getCode(options) {
+    createCode(options) {
       const { code = 'M', version = 4, text } = options;
       const qr = new QRCodeGenerator(version, code);
       qr.addData(text);
@@ -115,6 +129,15 @@ export default {
       this.qrCodeHtml = qr.createImgTag(3, 8);
       this.qrCodeMobileLink = text;
       this.hideSpinner = true;
+    },
+    setHiddenCallback(name, value) {
+      // keep dom updated too
+      const el = document.getElementById(name);
+      if (el) el.value = value;
+      this.step
+        .getCallbacksOfType(CallbackType.HiddenValueCallback)
+        .find((x) => x.getOutputByName('id', '') === name)
+        .setInputValue(value);
     },
   },
 };

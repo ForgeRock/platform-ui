@@ -10,15 +10,14 @@ of the MIT license. See the LICENSE file for details.
     <input
       type="hidden"
       :name="name"
-      :ref="name"
-      :id="value"
+      :ref="`callback_${this.index}`"
+      :id="callback.getInputValue()"
       v-model="value"
       @input="onChange">
   </div>
 </template>
 
 <script>
-
 export default {
   name: 'HiddenValueCallback',
   props: {
@@ -34,6 +33,7 @@ export default {
   mounted() {
     this.name = `callback_${this.index}`;
     this.value = this.callback.getInputValue();
+    this.$emit('hidden-value-callback-ref', this.$refs[this.name]);
   },
   data() {
     return {

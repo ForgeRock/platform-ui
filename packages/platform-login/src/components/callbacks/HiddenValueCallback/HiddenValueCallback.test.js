@@ -6,14 +6,14 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import HiddenValueCallback from '@/components/callbacks/HiddenValueCallback';
 import i18n from '@/i18n';
 
 describe('HiddenValueCallback', () => {
   let wrapper;
   beforeEach(() => {
-    wrapper = mount(HiddenValueCallback, {
+    wrapper = shallowMount(HiddenValueCallback, {
       i18n,
       propsData: {
         callback: {
@@ -23,20 +23,27 @@ describe('HiddenValueCallback', () => {
         index: 5,
       },
     });
+    wrapper.vm.$props.callback.setInputValue.mockReset();
   });
 
   it('Load HiddenValueCallback component', () => {
     expect(wrapper.name()).toEqual('HiddenValueCallback');
   });
 
-  it('Sets name and value data', () => {
+  it('Sets name, and value data and emits ref', () => {
     expect(wrapper.vm.$data.name).toEqual('callback_5');
     expect(wrapper.vm.$data.value).toEqual('a');
+
+    const emitted = wrapper.emitted()['hidden-value-callback-ref'].pop();
+    expect(emitted.length).toBe(1);
+    expect(emitted).toEqual([expect.any(Element)]);
   });
 
-  it('Sets value onChange', async () => {
-    const input = wrapper.find('input');
-    await input.setValue('b');
-    expect(wrapper.vm.$props.callback.setInputValue).toHaveBeenCalledWith('b');
+  it('Sets value value for callback', async () => {
+    await wrapper.setData({ value: 'element value change' });
+    wrapper.vm.onChange();
+
+    expect(wrapper.vm.$props.callback.setInputValue).toHaveBeenCalledTimes(1);
+    expect(wrapper.vm.$props.callback.setInputValue).toHaveBeenCalledWith('element value change');
   });
 });

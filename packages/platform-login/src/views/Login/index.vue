@@ -37,14 +37,44 @@ of the MIT license. See the LICENSE file for details.
           <!-- for backend scripts -->
           <form
             id="wrapper"
-            v-if="showScriptElms"
           >
             <!-- needed for GetAuthenticationApp, RecoveryCodeDisplay-->
-            <div id="callback_0" />
-            <div>
+            <div v-if="showScriptElms">
               <fieldset />
             </div>
+            <div
+              v-if="showScriptElms"
+              id="callback_0"
+            />
+            <template
+              v-for="(component) in componentList ">
+              <Component
+                class="callback-component"
+                :callback="component.callback"
+                :field="component.field"
+                :index="component.index"
+                :is="component.type"
+                :key="component.key"
+                :step="step"
+                v-bind="{...component.callbackSpecificProps}"
+                v-on="{
+                  'next-step': (event, preventClear) => {
+                    nextStep(event, preventClear);
+                  },
+                  ...component.listeners}"
+              />
+            </template>
+            <BButton
+              v-show="nextButtonVisible"
+              class="btn-block mt-3"
+              type="submit"
+              variant="primary"
+              :disabled="nextButtonDisabled"
+              @click="nextStep">
+              {{ buttonText }}
+            </BButton>
             <input
+              v-if="showScriptElms"
               id="loginButton_0"
               role="button"
               type="submit"
@@ -52,35 +82,6 @@ of the MIT license. See the LICENSE file for details.
               hidden>
           </form>
         </div>
-        <form>
-          <template
-            v-for="(component) in componentList ">
-            <Component
-              class="callback-component"
-              :callback="component.callback"
-              :field="component.field"
-              :index="component.index"
-              :step="component.step"
-              :is="component.type"
-              :key="component.key"
-              v-bind="{...component.callbackSpecificProps}"
-              v-on="{
-                'next-step': (event, preventClear) => {
-                  nextStep(event, preventClear);
-                },
-                ...component.listeners}"
-            />
-          </template>
-          <BButton
-            v-show="nextButtonVisible"
-            class="btn-block mt-3"
-            type="submit"
-            variant="primary"
-            :disabled="nextButtonDisabled"
-            @click="nextStep">
-            {{ buttonText }}
-          </BButton>
-        </form>
       </BCardBody>
       <BCardBody v-show="loading">
         <div class="h-100 d-flex">
@@ -181,12 +182,14 @@ export default {
       description: '',
       errorMessage: '',
       header: '',
+      hiddenValueCallbacksRefs: [],
       hideRealm: false,
       initalStep: undefined,
       loading: true,
       loginFailure: false,
       nextButtonDisabledArray: [],
       nextButtonVisible: false,
+      nextStepCallbacks: [],
       realm: '/',
       retry: undefined,
       showScriptElms: false,
@@ -220,34 +223,26 @@ export default {
   methods: {
     /**
      * @description handler for scripts clicking on loginButton_0
+     * if a script clicks on loginButton_0 we want to make sure that the
+     * the hiddenValue elements values are added to the callback data structure since \
+     * that is what will be sent with the request
+     * this function itterates through the hiddenValue dom refs to accomplish that
      */
     backendScriptsHandler() {
-      const type = this.backendScriptsIdentifier();
-      const input = document.getElementById(type);
-      if (input) {
-        const hiddenCallback = this.step
+      this.hiddenValueCallbacksRefs.forEach((ref) => {
+        const refId = ref.id;
+        const refValue = ref.value;
+        this.step
           .getCallbacksOfType(FrCallbackType.HiddenValueCallback)
-          .find((x) => x.getOutputByName('id', '') === type);
-        hiddenCallback.setInputValue(input.value);
-      }
+          .find((x) => x.getOutputByName('id', '') === refId)
+          .setInputValue(refValue);
+      });
       this.nextStep();
     },
-    /**
-     * @description identifies the script type by looking for a hidden callback
-     * and matching it with known type. Different script types can be handled differently
-     */
-    backendScriptsIdentifier() {
-      const legacyTypes = [
-        'clientScriptOutputData',
-      ];
-      let type = '';
-      this.step.getCallbacksOfType(FrCallbackType.HiddenValueCallback)
-        .forEach((callback) => legacyTypes.forEach((legacyType) => {
-          if (callback.getOutputByName('id', '') === legacyType) {
-            type = legacyType;
-          }
-        }));
-      return type;
+    backendScriptsIdsConatins(matcher) {
+      const typeArr = this.step.getCallbacksOfType(FrCallbackType.HiddenValueCallback)
+        .map((callback) => callback.getOutputByName('id', ''));
+      return typeArr.indexOf(matcher) >= 0;
     },
 
     /**
@@ -304,7 +299,7 @@ export default {
         'disable-next-button': (bool, index) => {
           this.nextButtonDisabledArray.splice(index, 1, bool);
         },
-        'has-scripts': () => {
+        'has-scripts': (appendScript) => {
           this.showScriptElms = true;
           // listen on body.appendchild and append to #body-append-el insted
           const observer = new MutationObserver((records) => {
@@ -316,13 +311,21 @@ export default {
           });
           observer.observe(document.body, { childList: true });
           // only hide next button if we know it should be hidden (webAuthn, deviceId)
-          const knownType = this.backendScriptsIdentifier();
-          if (knownType) {
+          if (this.backendScriptsIdsConatins('clientScriptOutputData')) {
             this.nextButtonVisible = false;
           }
+          setTimeout(() => {
+            this.$nextTick(appendScript);
+          }, 20);
         },
         'hide-next-button': (bool) => {
           this.nextButtonVisible = !bool;
+        },
+        'hidden-value-callback-ref': (ref) => {
+          this.hiddenValueCallbacksRefs.push(ref);
+        },
+        'next-step-callback': (cb) => {
+          this.nextStepCallbacks.push(cb);
         },
         // event emited as camelcase from FrField
         valueChange: (value) => {
@@ -368,12 +371,17 @@ export default {
       if (event) {
         event.preventDefault();
       }
-      // for when no change is expected between steps (stops a flash of white)
+      // for when no change is expected between steps (stops a flash of white from rerender)
       if (!preventClear) {
         this.loading = true;
         this.showScriptElms = false;
+        this.hiddenValueCallbacksRefs = [];
       }
       this.loginFailure = false;
+
+      // invoke callbacks before nextStep
+      this.nextStepCallbacks.forEach((cb) => { cb(); });
+      this.nextStepCallbacks = [];
 
       const stepParams = this.getStepParams();
       FRAuth.next(this.step, stepParams)
@@ -417,6 +425,7 @@ export default {
               });
             break;
           case 'LoginFailure':
+            this.loading = true;
             if (this.retry) {
               this.retry = false;
               this.retryWithNewAuthId(previousStep, stepParams);
@@ -436,6 +445,17 @@ export default {
           default:
             // retry only when previous was undefined (first step)
             this.retry = !previousStep;
+
+            // check if we are still polling with the same callbacks and set loading to false
+            if (preventClear && previousStep) {
+              const arrayLengthMatch = previousStep.callbacks.length === step.callbacks.length;
+              let sameCallbacks;
+              if (arrayLengthMatch) {
+                sameCallbacks = previousStep.callbacks.every((prevCallback, i) => prevCallback.getType() === step.callbacks[i].getType());
+              }
+              this.loading = !(arrayLengthMatch && sameCallbacks);
+              this.showScriptElms = arrayLengthMatch && sameCallbacks;
+            }
             // setup the form based on callback info/values obtained from this.step
             this.buildTreeForm();
             this.loading = false;
@@ -469,7 +489,9 @@ export default {
       // Some callbacks don't need to render anything so forEach is used instead of map
       const componentList = [];
       let keyFromDate = Date.now();
-      this.step.callbacks.forEach((callback, index) => {
+      this.step.callbacks.forEach((callback, i) => {
+        // index 0 is reserved for callback_0 used in backend scripts
+        const index = i + 1;
         this.nextButtonDisabledArray.push(false);
         const existsInComponentList = (type) => find(componentList, (component) => component.type === `Fr${type}`);
         let type = callback.getType();
@@ -504,41 +526,44 @@ export default {
         }
 
         // Only components that need extra props or events
-        const componentPropsAndEvents = {
-          ConfirmationCallback: {
-            callbackSpecificProps: { variant: existsInComponentList(FrCallbackType.WebAuthnComponent) ? 'link' : 'primary' },
-          },
-          ConsentMappingCallback: {
-            callbackSpecificProps: { callbacks: this.step.callbacks },
-            listeners: ['disable-next-button', 'did-consent'],
-          },
-          KbaCreateCallback: {
-            callbackSpecificProps: { showHeader: !existsInComponentList(FrCallbackType.KbaCreateCallback) },
-            listeners: ['disable-next-button'],
-          },
-          SelectIdPCallback: {
-            callbackSpecificProps: { isOnlyCallback: this.step.callbacks.length === 1 },
-            listeners: ['hide-next-button', 'disable-next-button'],
-          },
-          TextOutputCallback: {
-            listeners: ['has-scripts'],
-          },
+        const getcomponentPropsAndEvents = (componentType) => {
+          const componentPropsAndEvents = {
+            ConfirmationCallback: () => ({
+              callbackSpecificProps: { variant: existsInComponentList(FrCallbackType.WebAuthnComponent) ? 'link' : 'primary' },
+            }),
+            ConsentMappingCallback: () => ({
+              callbackSpecificProps: { callbacks: this.step.callbacks },
+              listeners: ['disable-next-button', 'did-consent'],
+            }),
+            HiddenValueCallback: () => ({
+              listeners: ['hidden-value-callback-ref'],
+            }),
+            KbaCreateCallback: () => ({
+              callbackSpecificProps: { showHeader: !existsInComponentList(FrCallbackType.KbaCreateCallback) },
+              listeners: ['disable-next-button'],
+            }),
+            SelectIdPCallback: () => ({
+              callbackSpecificProps: { isOnlyCallback: this.step.callbacks.length === 1 },
+              listeners: ['hide-next-button', 'disable-next-button'],
+            }),
+            TextOutputCallback: () => ({
+              listeners: ['disable-next-button', 'has-scripts', 'hide-next-button', 'next-step-callback'],
+            }),
+          };
+          return componentPropsAndEvents[componentType] ? componentPropsAndEvents[componentType]() : {};
         };
 
+        const { callbackSpecificProps = {}, listeners = [] } = getcomponentPropsAndEvents(type);
         const component = {
           callback,
-          callbackSpecificProps: componentPropsAndEvents[type] && componentPropsAndEvents[type].callbackSpecificProps
-            ? componentPropsAndEvents[type].callbackSpecificProps
-            : {},
+          callbackSpecificProps,
           index,
-          key: keyFromDate += 1,
-          listeners: this.getListeners({ callback }, componentPropsAndEvents[type] && componentPropsAndEvents[type].listeners
-            ? componentPropsAndEvents[type].listeners
-            : []),
+          // if the app isn't loading update existing component props
+          key: this.loading ? keyFromDate += 1 : this.componentList[i].key,
+          listeners: this.getListeners({ callback }, listeners),
           type: this.$options.components[`Fr${type}`]
             ? `Fr${type}`
             : 'FrField',
-          step: this.step,
         };
 
         if (component.type === 'FrField') {
