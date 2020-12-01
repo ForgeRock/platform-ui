@@ -15,6 +15,7 @@ to such license between the licensee and ForgeRock AS. -->
         </label>
         <FrField
           :field="scriptType"
+          :searchable="false"
           @valueChange="emitScriptValue" />
         <FrField :field="uploadFileToggle" />
       </div>
@@ -420,6 +421,11 @@ export default {
     .multiselect__single {
       margin-left: initial;
       color: $blue;
+    }
+
+    &.no-multiselect-label .multiselect__tags {
+      padding-top: 0.6rem !important;
+      border: none;
     }
 
     .multiselect__tags,
