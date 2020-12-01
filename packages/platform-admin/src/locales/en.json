@@ -615,6 +615,30 @@
     "profileMenuHighlightColor": "Profile Menu Highlight Color",
     "profileMenuTextHighlightColor": "Profile Menu Highlight Text Color"
   },
+  "customDomain": {
+    "active": "Active",
+    "addDomain": "Add a Custom Domain",
+    "customDomain": "Custom Domain",
+    "descriptionLink": "globally-configured custom domains.",
+    "domain": "Domain",
+    "domainDescription1": "Use a custom domain to enable a seamless user experience between your domain and ForgeRock. Adding a custom domain to this realm will override any",
+    "domainDescription2": "To complete setup you’ll need access to your Domain Name Registrar so that you can modify Domain Name Server (DNS) records.",
+    "noDomainMessage": "You haven't added a custom domain for this realm yet",
+    "pending": "Pending...",
+    "pendingModal": {
+      "title": "Custom Domain Status: Pending",
+      "description1": "We are in the process of generating your certificate. Once the certificate has been generated you have completed setting up a Custom Domain Name for your ForgeRock realm. <span class=\"font-weight-bold\">It may take up to 48 hours for these changes to propagate.</span> Warning notices may appear on your custom URL domain until propagation is finished completely.",
+      "description2": "To confirm that ForgeRock is serving traffic over HTTPS (TLS) for your custom domain, visit: ",
+      "description3": "ForgeRock will continue to serve traffic through {serveLink} and your custom domain. If your changes do not appear within 48 hours, you may need to confirm your settings."
+    },
+    "deleteModal": {
+      "title": "Delete Custom Domain?",
+      "content": "Are you sure you want to delete your custom domain?",
+      "confirmButton": "Delete custom domain"
+    },
+    "unverified": "Unverified",
+    "verifyDomain": "Verify Domain"
+  },
   "logApiKeys": {
     "noLogApiKeysText": "You haven't added any log API keys",
     "logApiKeyDescription": "Send log data to third party services like Splunk or LogStash.",
