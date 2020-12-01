@@ -1,11 +1,10 @@
 /**
- * @license
- * Copyright (c) 2020 ForgeRock. All rights reserved.
+ * Copyright 2020 ForgeRock AS. All Rights Reserved
  *
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE file for details.
+ * Use of this code requires a commercial software license with ForgeRock AS.
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
  */
-
 import { first } from 'lodash';
 import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
@@ -13,8 +12,8 @@ import {
   ValidationObserver,
   ValidationProvider,
 } from 'vee-validate';
-import EditKBA from '@/components/profile/EditKBA';
 import i18n from '@/i18n';
+import EditKBA from './index';
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue);
