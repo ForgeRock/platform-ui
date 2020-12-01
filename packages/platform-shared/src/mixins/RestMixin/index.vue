@@ -46,7 +46,12 @@ export default {
         if (config.context === 'AM') {
           let amBase = `${amContext}/json/`;
 
-          if (this.$store) {
+          // can force request to a realm by passing in config.realm, else use the store value
+          if (config.realm) {
+            if (config.realm !== '/' && config.realm !== 'root') {
+              amBase = `${amContext}/json/realms/root/realms/${config.realm}`;
+            }
+          } else if (this.$store) {
             if (this.$store.state.realm && this.$store.state.realm !== '/' && this.$store.state.realm !== 'root') {
               amBase = `${amContext}/json/realms/root/realms/${this.$store.state.realm}`;
             }
