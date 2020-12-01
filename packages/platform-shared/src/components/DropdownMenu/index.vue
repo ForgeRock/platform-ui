@@ -39,31 +39,30 @@ to such license between the licensee and ForgeRock AS. -->
         :key="`sideDropdownItemsDivider_${index}`"
         v-if="dropdownItems.length == (index + 1) && enableLogout" />
     </template>
-    <template v-if="enduserLink.length">
-      <BDropdownItem
-        :href="enduserLink"
-        rel="noopener"
-        target="_blank">
-        <BMedia class="text-left">
-          <template #aside>
-            <img
-              :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"
-              alt="Avatar"
-              width="34"
-              height="34">
-          </template>
-          <h5 class="my-0 text-truncate">
-            {{ userDetails.name }}
-          </h5>
-          <div class="text-muted text-truncate">
-            <template v-if="userDetails.email.length === 0">
-              n/a
+    <template v-if="showProfileLink">
+      <BDropdownItem>
+        <RouterLink :to="{ name: 'Profile' }">
+          <BMedia class="text-left">
+            <template #aside>
+              <img
+                :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"
+                alt="Avatar"
+                width="34"
+                height="34">
             </template>
-            <template v-else>
-              {{ userDetails.email }}
-            </template>
-          </div>
-        </BMedia>
+            <h5 class="my-0 text-truncate">
+              {{ userDetails.name }}
+            </h5>
+            <div class="text-muted text-truncate">
+              <template v-if="userDetails.email.length === 0">
+                n/a
+              </template>
+              <template v-else>
+                {{ userDetails.email }}
+              </template>
+            </div>
+          </BMedia>
+        </RouterLink>
       </BDropdownItem>
       <BDropdownDivider />
     </template>
@@ -114,11 +113,11 @@ export default {
       default: false,
     },
     /**
-     * Link to enduser. No menu item when length is 0.
+     * Link to profile.
      */
-    enduserLink: {
-      type: String,
-      default: '',
+    showProfileLink: {
+      type: Boolean,
+      default: false,
     },
     /**
      * Align dropdown menu with right edge of dropdown button.
@@ -128,7 +127,7 @@ export default {
       default: false,
     },
     /**
-     * Details about the current user. Displayed with admin and enduser links.
+     * Details about the current user. Displayed with admin and profile links.
      */
     userDetails: {
       type: Object,

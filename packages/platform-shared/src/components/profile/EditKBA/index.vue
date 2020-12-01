@@ -1,10 +1,8 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
 
-This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+Use of this code requires a commercial software license with ForgeRock AS.
+or with one of its affiliates. All use shall be exclusively subject
+to such license between the licensee and ForgeRock AS. -->
 <template>
   <div>
     <BRow>
@@ -13,15 +11,15 @@ of the MIT license. See the LICENSE file for details.
           {{ $t('pages.profile.accountSecurity.securityQuestions') }}
         </h5>
       </BCol>
-      <BCol md="2">
-        <BButton
+      <BCol
+        md="2"
+        class="text-right text-nowrap">
+        <BLink
           v-b-toggle.collapse-1
-          variant="link"
-          class="py-0"
           ref="button"
           @click="initializeForm(kbaData.minimumAnswersToDefine)">
           {{ showCancel ? $t('common.cancel') : $t('common.reset') }}
-        </BButton>
+        </BLink>
       </BCol>
     </BRow>
     <BCollapse
@@ -65,12 +63,12 @@ import {
   times,
 } from 'lodash';
 import {
-  BButton,
   BCol,
+  BLink,
   BRow,
 } from 'bootstrap-vue';
 import FrField from '@forgerock/platform-shared/src/components/Field';
-import LoadingButton from '@/components/utils/LoadingButton';
+import LoadingButton from '@forgerock/platform-shared/src/components/LoadingButton';
 
 /**
  * @description Allows a user to change their KBA, will ensure based on KBA configuration a user must match the systems KBA requirements.
@@ -81,8 +79,8 @@ export default {
   components: {
     FrLoadingButton: LoadingButton,
     FrField,
-    BButton,
     BCol,
+    BLink,
     BRow,
   },
   props: {

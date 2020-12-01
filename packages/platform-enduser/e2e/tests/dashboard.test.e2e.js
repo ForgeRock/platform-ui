@@ -86,6 +86,7 @@ describe('Enduser Dashboard View', () => {
     cy.get('button.dropdown-toggle').click();
     cy.get('.dropdown-menu.show')
       .get('a.dropdown-item')
+      .last()
       .should('exist')
       .should('contain', 'Sign out')
       .click();

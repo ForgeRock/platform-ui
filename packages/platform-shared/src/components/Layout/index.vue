@@ -24,7 +24,6 @@ to such license between the licensee and ForgeRock AS. -->
     <div class="content">
       <FrNavBar
         @toggle-menu="toggleMenu"
-        :enduser-link="enduserLink"
         :menu-is-toggled="toggled"
         :show-notifications="false"
         :tenant-menu-items="tenantMenuItems"

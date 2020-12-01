@@ -174,27 +174,6 @@
         "removeModalText": "This will remove access to your account from the device.",
         "removeSuccess": "Device removed"
       },
-      "editProfile": {
-        "userDetailsTitle": "Edit personal info",
-        "failedProfileSave": "Failed to save profile changes",
-        "optional": "(optional)",
-        "noFields": "No profile fields available"
-      },
-      "accountSecurity": {
-        "title": "Sign-in & Security",
-        "invalidPassword": "Invalid password form",
-        "subtitle": "Update your username or password used to sign in.",
-        "password": "Password",
-        "securityQuestions": "Security Questions",
-        "rememberPassword": "Can't remember your current password?",
-        "resetPassword": "Reset your password",
-        "savePassword": "Save password",
-        "custom": "Custom",
-        "currentPassword": "Current password",
-        "newPassword": "New password",
-        "twoStepVerification": "2-Step Verification",
-        "journeyServiceError": "Error retrieving journey mappings."
-      },
       "consent": {
         "allow": "Allow",
         "allowConsentHeader": "Allow Access",

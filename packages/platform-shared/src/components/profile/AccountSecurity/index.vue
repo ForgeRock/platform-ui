@@ -1,10 +1,8 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
 
-This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+Use of this code requires a commercial software license with ForgeRock AS.
+or with one of its affiliates. All use shall be exclusively subject
+to such license between the licensee and ForgeRock AS. -->
 <template>
   <div>
     <BCard no-body>
@@ -40,14 +38,13 @@ of the MIT license. See the LICENSE file for details.
               {{ item.text }}
             </BCol>
             <BCol
+              class="text-right text-nowrap"
               md="2">
-              <BButton
-                class="py-0 text-right text-nowrap"
-                variant="link"
+              <a
                 v-if="item.linkUrl"
                 :href="item.linkUrl">
                 {{ item.linkText }}
-              </BButton>
+              </a>
               <RouterLink
                 class="py-0 text-right text-nowrap"
                 v-if="item.linkPath"
@@ -69,7 +66,6 @@ of the MIT license. See the LICENSE file for details.
 </template>
 <script>
 import {
-  BButton,
   BCard,
   BCardBody,
   BCardHeader,
@@ -79,7 +75,7 @@ import {
 import { mapState } from 'vuex';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
-import EditKBA from '@/components/profile/EditKBA';
+import EditKBA from '@forgerock/platform-shared/src/components/profile/EditKBA';
 import store from '@/store';
 /**
  * @description Handles displaying account security controls
@@ -87,7 +83,6 @@ import store from '@/store';
 export default {
   name: 'AccountSecurity',
   components: {
-    BButton,
     BCard,
     BCardBody,
     BCardHeader,
@@ -99,18 +94,18 @@ export default {
     NotificationMixin,
     RestMixin,
   ],
+  props: {
+    forceRoot: {
+      type: Boolean,
+      default: false,
+    },
+  },
   computed: {
     ...mapState({
       internalUser: (state) => state.UserStore.internalUser,
       userId: (state) => state.UserStore.userSearchAttribute,
       userName: (state) => state.UserStore.userName,
     }),
-    usernameItem() {
-      return {
-        title: this.$t('common.placeholders.username'),
-        text: this.userName,
-      };
-    },
     items() {
       return [
         this.usernameItem,
@@ -133,6 +128,12 @@ export default {
         text: this.$t('common.off'),
         iconType: 'OFF',
       },
+      usernameItem: {
+        title: this.$t('common.placeholders.username'),
+        text: '',
+        linkText: 'Update',
+        linkUrl: '',
+      },
     };
   },
   mounted() {
@@ -146,14 +147,28 @@ export default {
     }).catch(() => { this.isOnKBA = false; });
 
     this.loadAuthenicationDevices();
-    this.setUpdateJourney();
+    this.setUpdateJourneys();
+  },
+  watch: {
+    '$store.state.UserStore.userName': {
+      handler(newVal) {
+        this.usernameItem.text = newVal;
+      },
+      immediate: true,
+    },
   },
   methods: {
-    setUpdateJourney() {
-      this.getRequestService({ context: 'AM' }).get('/selfservice/trees').then((res) => {
-        const updateJourney = res.data.mapping.updatePassword;
-        if (updateJourney) {
-          this.$set(this.passwordItem, 'linkUrl', `${store.state.SharedStore.amBaseURL}/UI/Login?realm=${(new URLSearchParams(window.location.search)).get('realm') || '/'}&ForceAuth=true&authIndexType=service&authIndexValue=${updateJourney}&goto=${encodeURIComponent(window.location.href)}`);
+    setUpdateJourneys() {
+      const configOptions = this.forceRoot ? { context: 'AM', realm: 'root' } : { context: 'AM' };
+      this.getRequestService(configOptions).get('/selfservice/trees').then((res) => {
+        const realm = this.forceRoot ? '/' : (new URLSearchParams(window.location.search)).get('realm') || '/';
+        const passwordJourney = res.data.mapping.updatePassword;
+        if (passwordJourney) {
+          this.$set(this.passwordItem, 'linkUrl', `${store.state.SharedStore.amBaseURL}/UI/Login?realm=${realm}&ForceAuth=true&authIndexType=service&authIndexValue=${passwordJourney}&goto=${encodeURIComponent(window.location.href)}`);
+        }
+        const usernameJourney = res.data.mapping.updateUsername;
+        if (usernameJourney) {
+          this.$set(this.usernameItem, 'linkUrl', `${store.state.SharedStore.amBaseURL}/UI/Login?realm=${realm}&ForceAuth=true&authIndexType=service&authIndexValue=${usernameJourney}&goto=${encodeURIComponent(window.location.href)}`);
         }
       }, () => {
         this.displayNotification('', 'error', this.$t('pages.profile.accountSecurity.journeyServiceError'));

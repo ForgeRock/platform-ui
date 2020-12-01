@@ -283,6 +283,31 @@
       "noOperation": "No Operation",
       "newEventText": "\/\/ Script has access to the following variables:\n\/\/ sourceObject\n\/\/ targetObject\n\/\/ existingTargetObject\n\/\/ linkQualifier \nreturn targetObject;\n\/\/ Role assignment scripts must always return targetObject, otherwise\n\/\/ other scripts and code that occur downstream of your script will\n\/\/ not work as expected. "
     },
+    "profile": {
+      "editPersonalInfo": "Edit personal info",
+      "updateSuccess": "Updated your profile.",
+      "failedProfileSave": "Failed to save profile changes.",
+      "failedGettingProfile": "Failed to get profile information.",
+      "accountSecurity": {
+        "title": "Sign-in & Security",
+        "subtitle": "Update your username or password used to sign in.",
+        "password": "Password",
+        "securityQuestions": "Security Questions",
+        "rememberPassword": "Can't remember your current password?",
+        "resetPassword": "Reset your password",
+        "savePassword": "Save password",
+        "custom": "Custom",
+        "currentPassword": "Current password",
+        "newPassword": "New password",
+        "twoStepVerification": "2-Step Verification",
+        "journeyServiceError": "Error retrieving journey mappings."
+      },
+      "editProfile": {
+        "userDetailsTitle": "Edit personal info",
+        "optional": "(optional)",
+        "noFields": "No profile fields available"
+      }
+    },
     "notFound": {
       "pageNotFound": "Page Not Found",
       "returnRoute": "Return to {returnRoute}",

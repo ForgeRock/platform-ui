@@ -65,7 +65,7 @@ to such license between the licensee and ForgeRock AS. -->
           <FrDropdownMenu
             :user-details="userDetails"
             :dropdown-items="tenantMenuItems"
-            :enduser-link="enduserLink"
+            :show-profile-link="!$store.state.UserStore.amAdmin"
             enable-logout
             right
             class="pl-sm-4">
@@ -197,13 +197,6 @@ export default {
       default: true,
     },
     /**
-     * Show link to Enduser in dropdown menu
-     */
-    enduserLink: {
-      type: String,
-      default: '',
-    },
-    /**
      * Show notifications icon.
      */
     showNotifications: {
@@ -218,7 +211,7 @@ export default {
       default: () => [],
     },
     /**
-     * Details about the current user. Displayed with admin and enduser links.
+     * Details about the current user. Displayed with admin and profile links.
      */
     userDetails: {
       type: Object,

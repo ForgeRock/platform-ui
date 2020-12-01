@@ -17,6 +17,14 @@ describe('Navbar Component', () => {
       localVue,
       mocks: {
         $t: () => {},
+        $store: {
+          state: {
+            userId: 'foo',
+            UserStore: {
+              adminUser: false,
+            },
+          },
+        },
       },
       stubs: ['RouterLink'],
     });
