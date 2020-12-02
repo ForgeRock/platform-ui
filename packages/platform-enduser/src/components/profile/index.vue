@@ -121,7 +121,6 @@ export default {
   computed: {
     ...mapState({
       userId: (state) => state.UserStore.userId,
-      userSearchAttribute: (state) => state.UserStore.userSearchAttribute,
       email: (state) => state.UserStore.email,
       schema: (state) => state.UserStore.schema,
       sirName: (state) => state.UserStore.sn,
@@ -146,7 +145,7 @@ export default {
   },
   methods: {
     getUserProfile() {
-      this.getRequestService().get(`${this.managedResource}/${this.userSearchAttribute}`)
+      this.getRequestService().get(`${this.managedResource}/${this.userId}`)
         .then((results) => {
           this.profile = results.data;
         })
@@ -166,7 +165,7 @@ export default {
         headers: config.headers,
       });
 
-      selfServiceInstance.patch(`${endpoint}/${this.userSearchAttribute}`, payload).then((response) => {
+      selfServiceInstance.patch(`${endpoint}/${this.userId}`, payload).then((response) => {
         this.$store.commit('UserStore/setProfile', response.data);
         this.displayNotification('IDMMessages', 'success', successMsg);
 
