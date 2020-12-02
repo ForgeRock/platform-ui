@@ -156,7 +156,7 @@ export default {
   computed: {
     ...mapState({
       aliasList: (state) => state.UserStore.aliasList,
-      userId: (state) => state.UserStore.userSearchAttribute,
+      userId: (state) => state.UserStore.userId,
     }),
   },
   mounted() {
