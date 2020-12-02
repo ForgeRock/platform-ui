@@ -44,7 +44,8 @@
       "skew",
       "repeat",
       "minmax",
-      "linear-gradient"
+      "linear-gradient",
+      "change-color"
     ],
     "media-feature-name-no-vendor-prefix": true,
     "no-descending-specificity": null,
