@@ -25,7 +25,6 @@ of the MIT license. See the LICENSE file for details.
         </h5>
         <div class="ml-auto">
           <FrField
-            class="mr-4"
             :field="obj"
             :display-description="false"
             @valueChange="savePreferences(preference, $event)" />
