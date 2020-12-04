@@ -14,7 +14,7 @@ exports[`Preferences.vue Preferences page loaded 1`] = `
         Send me special offers and services
       </h5>
       <div class="ml-auto">
-        <frfield-stub failedpolicies="" field="[object Object]" class="mr-4"></frfield-stub>
+        <frfield-stub failedpolicies="" field="[object Object]"></frfield-stub>
       </div>
     </div>
   </bcardbody-stub>
@@ -24,7 +24,7 @@ exports[`Preferences.vue Preferences page loaded 1`] = `
         Send me news and updates
       </h5>
       <div class="ml-auto">
-        <frfield-stub failedpolicies="" field="[object Object]" class="mr-4"></frfield-stub>
+        <frfield-stub failedpolicies="" field="[object Object]"></frfield-stub>
       </div>
     </div>
   </bcardbody-stub>
