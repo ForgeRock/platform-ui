@@ -1,4 +1,4 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright 2020-2021 ForgeRock AS. All Rights Reserved
 
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
@@ -314,7 +314,7 @@ export default {
         type: 'text',
         title: this.$t('pages.access.privilegeName'),
         value: this.privilege.name,
-        validation: { required: true, unique: this.uniqueName },
+        validation: { required: true, unique: this.uniqueNames },
       },
       uniqueNames: [],
     };
