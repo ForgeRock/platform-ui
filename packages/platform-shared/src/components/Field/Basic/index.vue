@@ -1,4 +1,4 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright 2020-2021 ForgeRock AS. All Rights Reserved
 
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
@@ -52,7 +52,7 @@ to such license between the licensee and ForgeRock AS. -->
           name="copyButton"
           @click.prevent="copyValueToClipboard(value)">
           <i class="material-icons material-icons-outlined">
-            file_copy
+            copy
           </i>
         </button>
       </BInputGroupAppend>
@@ -135,7 +135,11 @@ export default {
   mounted() {
     // Browser consistent focus
     if (this.autofocus) {
-      delay(() => this.$refs.input.focus(), 600);
+      delay(() => {
+        if (this.$refs.input) {
+          this.$refs.input.focus();
+        }
+      }, 600);
     }
   },
   computed: {
