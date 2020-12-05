@@ -1,4 +1,4 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright 2020-2021 ForgeRock AS. All Rights Reserved
 
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
@@ -174,12 +174,6 @@ input[placeholder] { text-overflow: ellipsis; }
   .input-group-append:not(:last-child) > * {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
-  }
-
-  .input-group-append {
-    > button {
-      border-left-width: 0;
-    }
   }
 
   .input-group-text {
