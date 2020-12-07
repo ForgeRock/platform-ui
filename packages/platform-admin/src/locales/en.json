@@ -187,6 +187,7 @@
     }
   },
   "connectorServers": {
+    "client": "Client",
     "clientMode": "Client Mode",
     "clientModeDescription": "By default, Identity Cloud initiates connections using the connector server port.<br>In client mode, the remote connector server initiates connections to Identity Cloud using HTTP or HTTPS.",
     "confirmDeleteConnectorServer": "Are you sure you want to delete the \"{name}\" connector server?",
@@ -227,6 +228,7 @@
     "proxyPort": "Proxy Port",
     "proxyUser": "Proxy User",
     "proxyUserDescription": "Administrator or username authorized to access the proxy host.",
+    "server": "Server",
     "showAdvanced": "Show advanced settings",
     "subtitle": "Enable data sync from remote on-prem servers. Cluster connector servers together to enable scaling and fallback.",
     "successDelete": "Successfully deleted connector server.",
