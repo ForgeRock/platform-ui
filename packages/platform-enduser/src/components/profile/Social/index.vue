@@ -222,9 +222,14 @@ export default {
         }
       });
 
+      let conditionObject = 'managed/user';
+      if (this.$store.state.isFraas) {
+        conditionObject = `managed/${this.$store.state.realm}_user`;
+      }
+
       // patch user object
       const patch = [{ operation: 'add', field: '/aliasList', value: newProviderList }];
-      this.getRequestService().patch(`managed/user/${this.userId}`, patch).then(() => {
+      this.getRequestService().patch(`${conditionObject}/${this.userId}`, patch).then(() => {
         // update store
         store.commit('UserStore/setAliasList', newProviderList);
 
