@@ -19,7 +19,7 @@ RUN yarn run build
 ###############################################################################
 # Production Build Stage
 ###############################################################################
-FROM nginxinc/nginx-unprivileged:1.17 as production
+FROM nginx-unprivileged-headers-more:${BASE_TAG} as production
 
 # Copy result of `build` build stage
 COPY --from=build --chown=nginx /home/app/packages/platform-enduser/dist/ /usr/share/nginx/html
