@@ -4,26 +4,28 @@ Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
-  <div>
-    <BCard
-      class="mb-5">
-      <h5 class="card-title">
-        {{ $t('deletePanel.header', {type: translatedItemType}) }}
-      </h5>
-      <p class="text-danger">
-        {{ $t('common.cannotBeUndone') }}
-      </p>
+  <BModal
+    id="deleteModal"
+    ref="deleteModal"
+    @hidden="$emit('hidden')"
+    :title="$t('deletePanel.header', {type: translatedItemType})">
+    <div>
+      {{ $t('deletePanel.body', { itemName }) }}
+    </div>
+    <template v-slot:modal-footer="{ cancel }">
+      <BButton
+        variant="link"
+        class="text-danger"
+        @click="cancel()">
+        {{ $t('common.cancel') }}
+      </BButton>
       <BButton
         variant="danger"
-        @click="showModal">
-        {{ $t('deletePanel.header', {type: translatedItemType}) }}
+        @click="deleteItem">
+        {{ $t('common.delete') }}
       </BButton>
-    </BCard>
-    <FrDeleteModal
-      :item-name="itemName"
-      :translated-item-type="translatedItemType"
-      @delete-item="deleteItem" />
-  </div>
+    </template>
+  </BModal>
 </template>
 
 /**
@@ -33,33 +35,29 @@ to such license between the licensee and ForgeRock AS. -->
 <script>
 import {
   BButton,
-  BCard,
+  BModal,
 } from 'bootstrap-vue';
-import FrDeleteModal from '@forgerock/platform-shared/src/components/DeleteModal';
 
 export default {
-  name: 'DeletePanel',
+  name: 'DeleteModal',
   components: {
     BButton,
-    BCard,
-    FrDeleteModal,
+    BModal,
   },
   props: {
-    translatedItemType: {
+    itemName: {
       type: String,
       default: '',
     },
-    itemName: {
+    translatedItemType: {
       type: String,
       default: '',
     },
   },
   methods: {
     deleteItem() {
+      this.$refs.deleteModal.hide();
       this.$emit('delete-item');
-    },
-    showModal() {
-      this.$root.$emit('bv::show::modal', 'deleteModal');
     },
   },
 };

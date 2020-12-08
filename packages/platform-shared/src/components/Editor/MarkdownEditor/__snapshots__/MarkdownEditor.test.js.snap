@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MarkdownEditor MarkdownEditor successfully loaded: console-error-snapshot 1`] = `
+Array [
+  Array [
+    "[Vue warn]: Missing required prop: \\"styles\\"
+
+found in
+
+---> <MarkdownEditor>
+       <Root>",
+  ],
+]
+`;

@@ -6,7 +6,6 @@ to such license between the licensee and ForgeRock AS. -->
 <template>
   <BDropdown
     variant="outline-secondary"
-    class="dropdown-toggle"
     toggle-class="pr-5"
     data-testid="schema-state">
     <template
