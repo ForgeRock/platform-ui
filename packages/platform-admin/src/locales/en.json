@@ -663,6 +663,7 @@
       "errorUnique": "This person already exists in your tenant."
     },
     "templates": {
+      "emailTemplate": "Email Template",
       "emailTemplates": "Email Templates",
       "subTitle": "Customize email templates for welcome, password reset, and account verification.",
       "noTemplatesTitle": "You haven't added any email templates yet",
@@ -692,10 +693,38 @@
       "noMessageInformation": "No Message Information",
       "defaultLocale": "en"
     },
+    "availablePropertiesModal": {
+      "description": "Choose the type of identity you are going to use this template with to view the available properites.",
+      "identityLabel": "Identity Type",
+      "title": "Available Properties"
+    },
     "deleteModal": {
       "title": "Delete Template?",
       "content": "Are you sure you want to delete this template?",
-      "confirm": "Delete template"
+      "confirm": "Delete template",
+      "thisTemplate": "this template",
+      "noTemplatesTitle": "You haven't added any email templates yet"
+    },
+    "addLocale":{
+      "description": "Enter the ISO 639-1 code for the language you are adding.",
+      "title": "Add a Locale"
+    },
+    "edit": {
+      "addLocale": "Add a locale",
+      "editTemplate": "Edit Template",
+      "fromFieldTitle": "From",
+      "fromFieldDescription": "Name of sending organization (eg. ‘Organization Name’)",
+      "fromHelpMessage": "Name of sending organization (eg. ‘Organization Name’)",
+      "locale": "Locale",
+      "markdown": "Markdown",
+      "message": "Message",
+      "messageDescription": "Use <a href=\"https://daringfireball.net/projects/markdown/syntax\" target=\"_blank\">markdown</a> to format your email content and use <a href=\"#\" onclick=\"event.preventDefault(); window.showAvailablePropertiesModal()\" target=\"blank\">available variables</a> in your body text eg. <code>{{user.name.givenName}}</code>",
+      "resetStyles": "Reset styles",
+      "subject": "Subject",
+      "switchedLocale": "Switched to new locale ({locale})",
+      "stylesHeader": "Styles",
+      "stylesHelpMessage": "Edit inline styles to customize the look and feel of your email.",
+      "templateNameFieldTitle": "Template Name"
     }
   },
   "tenantSettings": {
