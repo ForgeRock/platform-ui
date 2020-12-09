@@ -78,7 +78,6 @@
     "typeToSearch": "Type to search",
     "update": "Update",
     "view": "View",
-    "waitingToConnect": "Waiting to connect...",
     "yes": "Yes",
     "helpText": {
       "timeConstraint": "Assign role only during a selected time period.",
