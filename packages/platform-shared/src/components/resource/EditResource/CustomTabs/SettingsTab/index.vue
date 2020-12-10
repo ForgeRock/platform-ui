@@ -104,6 +104,10 @@ export default {
     FrQueryFilterBuilder: QueryFilterBuilder,
   },
   props: {
+    revision: {
+      type: String,
+      default: '',
+    },
     properties: {
       type: Object,
       default: () => {},
@@ -165,6 +169,10 @@ export default {
       if (property.isConditional) {
         this.setConditionOptions();
       }
+      // If there is a null value or an empty string or array set editPropert.value to ''
+      if (this.editProperty.value === null || this.editProperty.value.length === 0) {
+        this.editProperty.value = '';
+      }
 
       this.showForm = this.editProperty.value !== '';
 
@@ -174,7 +182,11 @@ export default {
       this.$refs.settingsModal.hide();
     },
     saveSetting() {
-      const idmInstance = this.getRequestService();
+      const idmInstance = this.getRequestService({
+        headers: {
+          'if-match': this.revision,
+        },
+      });
       const propValue = (this.editProperty.isTemporalConstraint) ? [{ duration: this.editProperty.value }] : this.editProperty.value;
 
       let patch = [{ operation: 'add', field: `/${this.editProperty.propName}`, value: propValue }];
@@ -186,6 +198,7 @@ export default {
       idmInstance.patch(this.resourcePath, patch).then(() => {
         this.displayNotification('IDMMessages', 'success', this.$t('pages.access.successEdited', { resource: capitalize(this.resourceName) }));
         this.hideModal();
+        this.$emit('refreshData');
       },
       () => {
         this.displayNotification('IDMMessages', 'error', this.$t('pages.access.invalidEdit'));
