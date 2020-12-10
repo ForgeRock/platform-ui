@@ -63,7 +63,7 @@ describe('FrField.vue', () => {
     expect(input.element.value).toBe('test');
   });
 
-  it('uses integer floating label input for integer type', async () => {
+  it('uses number floating label input for integer type', async () => {
     wrapper = mount(FrField, {
       sync: false,
       mocks: {
@@ -71,7 +71,7 @@ describe('FrField.vue', () => {
       },
       propsData: {
         field: {
-          type: 'integer',
+          type: 'number',
           key: 'testField',
           value: '',
         },
