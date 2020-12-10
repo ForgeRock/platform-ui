@@ -220,7 +220,7 @@ export default {
 
 <style lang="scss">
 #app.fr-menu-collapsed {
-  @media (any-hover: hover) {
+  @media (any-hover: hover), all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
     @include media-breakpoint-up(sm) {
       .content {
         padding-left: $fr-sidemenu-width-sm;
@@ -254,7 +254,7 @@ export default {
     position: relative;
     transition: padding-left 0.2s ease-out;
 
-    @media (any-hover: hover) {
+    @media (any-hover: hover), all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
       @include media-breakpoint-up(md) {
         padding-left: $fr-sidemenu-width-lg;
       }

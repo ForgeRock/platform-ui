@@ -291,7 +291,7 @@ export default {
     }
   }
 
-  @media (any-hover: hover) {
+  @media (any-hover: hover), all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
     @include media-breakpoint-up(md) {
       .navbar-toggler {
         display: none;
