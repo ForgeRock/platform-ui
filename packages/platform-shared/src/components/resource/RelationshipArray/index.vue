@@ -190,6 +190,10 @@ export default {
     RestMixin,
   ],
   props: {
+    revision: {
+      type: String,
+      default: '',
+    },
     parentId: {
       type: String,
       required: true,
@@ -385,7 +389,11 @@ export default {
         };
       });
       const translation = operation === 'remove' ? 'pages.access.successRemoved' : 'pages.access.successAdded';
-      const idmInstance = this.getRequestService();
+      const idmInstance = this.getRequestService({
+        headers: {
+          'if-match': this.revision,
+        },
+      });
       const loadAndCloseModal = () => {
         const modal = operation === 'remove' ? this.removeModalId : this.createModalId;
         this.loadGrid(0);
@@ -396,6 +404,7 @@ export default {
       idmInstance.patch(`${this.parentResource}/${this.parentId}`, patchArray).then(() => {
         loadAndCloseModal();
         this.displayNotification('IDMMessages', 'success', this.$t(translation, { resource: this.relationshipArrayProperty.title }));
+        this.$emit('refreshData');
       })
         .catch((error) => {
           loadAndCloseModal();
