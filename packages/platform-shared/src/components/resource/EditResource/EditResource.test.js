@@ -61,7 +61,7 @@ describe('EditResource.vue', () => {
   });
 
   it('Format display data', () => {
-    const schema = {
+    wrapper.vm.resourceSchema = {
       icon: 'fa-test',
       order: ['country', 'userName', 'sn', 'email', 'contractor', 'manager'],
       required: ['userName'],
@@ -99,7 +99,7 @@ describe('EditResource.vue', () => {
       },
     };
 
-    const privilege = {
+    wrapper.vm.resourcePrivilege = {
       UPDATE: {
         allowed: true,
         properties: ['userName', 'contractor', 'sn', 'email', 'manager'],
@@ -113,12 +113,12 @@ describe('EditResource.vue', () => {
       },
     };
 
-    const resourceDetails = {
+    wrapper.vm.resourceDetails = {
       userName: 'test',
       email: 'test@test.com',
     };
 
-    wrapper.vm.generateDisplay(schema, privilege, resourceDetails);
+    wrapper.vm.generateDisplay();
 
     expect(wrapper.vm.icon).toBe('check_box_outline_blank');
     expect(wrapper.vm.formFields.contractor).toBe(false);
@@ -126,7 +126,7 @@ describe('EditResource.vue', () => {
     expect(wrapper.vm.displayProperties.length).toBe(6);
     expect(wrapper.vm.displayProperties[0].key).toBe('country');
     // set relationshipProperties
-    wrapper.vm.relationshipProperties = wrapper.vm.getRelationshipProperties(schema, privilege);
+    wrapper.vm.relationshipProperties = wrapper.vm.getRelationshipProperties(wrapper.vm.resourceSchema, wrapper.vm.resourcePrivilege);
     expect(wrapper.vm.relationshipProperties).toEqual({
       manager: {
         type: 'relationship',
