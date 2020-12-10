@@ -403,6 +403,9 @@ export default {
       const tempFormFields = {};
 
       each(this.clonedCreateProperties, (prop) => {
+        if (Object.prototype.hasOwnProperty.call(prop, 'default') && prop.default !== null) {
+          prop.value = prop.default;
+        }
         if (prop.type === 'string' || prop.type === 'number') {
           tempFormFields[prop.key] = '';
         } else if (prop.type === 'array') {
