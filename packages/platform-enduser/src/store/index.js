@@ -16,7 +16,6 @@ export default new Vuex.Store({
   state: {
     // environment variables
     adminURL: null,
-    googleMapsApiKey: '',
     idmClientID: null,
     theme: 'default',
 
@@ -37,10 +36,6 @@ export default new Vuex.Store({
 
       if (env.VUE_APP_ENDUSER_CLIENT_ID) {
         state.idmClientID = env.VUE_APP_ENDUSER_CLIENT_ID;
-      }
-
-      if (env.VUE_APP_GOOGLE_MAPS_API_KEY) {
-        state.googleMapsApiKey = env.VUE_APP_GOOGLE_MAPS_API_KEY;
       }
 
       if (env.THEME) {

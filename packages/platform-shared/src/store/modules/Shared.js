@@ -11,6 +11,7 @@ const defaultState = {
   amBaseURL: '',
   idmBaseURL: '',
   fraasLoggingKeyURL: null,
+  googleMapsApiKey: '',
   returnRoute: '',
   returnRouteText: '',
 };
@@ -29,6 +30,10 @@ const mutations = {
       if (env.VUE_APP_FRAAS_LOGGING_URL) {
         state.fraasLoggingKeyURL = env.VUE_APP_FRAAS_LOGGING_URL;
       }
+    }
+
+    if (env.VUE_APP_GOOGLE_MAPS_API_KEY) {
+      state.googleMapsApiKey = env.VUE_APP_GOOGLE_MAPS_API_KEY;
     }
   },
 

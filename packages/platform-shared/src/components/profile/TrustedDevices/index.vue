@@ -1,10 +1,8 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
 
-This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+Use of this code requires a commercial software license with ForgeRock AS.
+or with one of its affiliates. All use shall be exclusively subject
+to such license between the licensee and ForgeRock AS. -->
 <template>
   <div v-if="devices.length">
     <FrAccordion
@@ -191,7 +189,7 @@ import { get } from 'lodash';
 
 import { mapState } from 'vuex';
 import {
-  BButton, BCol, BModal, BRow,
+  BButton, BCol, BModal, BRow, VBModal,
 } from 'bootstrap-vue';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
@@ -221,6 +219,15 @@ export default {
     BRow,
     FrAccordion: Accordion,
     FrField: Field,
+  },
+  directives: {
+    'b-modal': VBModal,
+  },
+  props: {
+    forceRoot: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -323,7 +330,8 @@ export default {
     },
     loadData() {
       const query = '?_queryFilter=true';
-      const selfServiceInstance = this.getRequestService({ context: 'AM' });
+      const configOptions = this.forceRoot ? { context: 'AM', realm: 'root' } : { context: 'AM' };
+      const selfServiceInstance = this.getRequestService(configOptions);
       const url = `/users/${this.userId}/devices/profile${query}`;
 
       selfServiceInstance.get(url, { withCredentials: true })
@@ -344,7 +352,8 @@ export default {
         });
     },
     updateDeviceAlias(id, newAlias, index) {
-      const selfServiceInstance = this.getRequestService({ context: 'AM' });
+      const configOptions = this.forceRoot ? { context: 'AM', realm: 'root' } : { context: 'AM' };
+      const selfServiceInstance = this.getRequestService(configOptions);
       const url = `/users/${this.userId}/devices/profile/${id}`;
       const payload = { alias: newAlias };
 
@@ -360,7 +369,8 @@ export default {
     },
 
     removeDevice(id) {
-      const selfServiceInstance = this.getRequestService({ context: 'AM' });
+      const configOptions = this.forceRoot ? { context: 'AM', realm: 'root' } : { context: 'AM' };
+      const selfServiceInstance = this.getRequestService(configOptions);
       const url = `/users/${this.userId}/devices/profile/${id}`;
 
       selfServiceInstance.delete(url, { withCredentials: true })

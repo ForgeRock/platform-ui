@@ -75,10 +75,10 @@ import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import AccountSecurity from '@forgerock/platform-shared/src/components/profile/AccountSecurity';
 import EditPersonalInfo from '@forgerock/platform-shared/src/components/profile/EditPersonalInfo';
+import TrustedDevices from '@forgerock/platform-shared/src/components/profile/TrustedDevices';
 import AccountControls from '@/components/profile/AccountControls';
 import AuthorizedApplications from '@/components/profile/AuthorizedApplications';
 import Preferences from '@/components/profile/Preferences';
-import TrustedDevices from '@/components/profile/TrustedDevices';
 import Consent from '@/components/profile/Consent';
 import Social from '@/components/profile/Social/';
 
