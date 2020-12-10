@@ -250,6 +250,10 @@ export default {
     NotificationMixin,
   ],
   props: {
+    revision: {
+      type: String,
+      default: '',
+    },
     disabled: {
       type: Boolean,
       default: false,
@@ -309,7 +313,7 @@ export default {
     * Removes confirmed privilege from privileges array
     */
     removePrivilege() {
-      this.privileges.splice(this.editIndex, 1);
+      this.privilegesField.value.splice(this.editIndex, 1);
       this.savePrivileges();
       this.$refs.removePrivilege.hide();
     },
@@ -363,15 +367,19 @@ export default {
     * Saves privileges
     */
     savePrivileges() {
-      const idmInstance = this.getRequestService();
+      const idmInstance = this.getRequestService({
+        headers: {
+          'if-match': this.revision,
+        },
+      });
 
-      this.privileges.forEach((privilege) => {
+      this.privilegesField.value.forEach((privilege) => {
         if (privilege.filter === '') {
           delete privilege.filter;
         }
       });
 
-      const patch = [{ operation: 'add', field: '/privileges', value: this.privileges }];
+      const patch = [{ operation: 'add', field: '/privileges', value: this.privilegesField.value }];
 
       idmInstance.patch(this.resourcePath, patch).then((response) => response.data).then(() => {
         this.displayNotification('IDMMessages', 'success', this.$t('pages.access.successEdited', { resource: capitalize(this.resourceName) }));
@@ -380,6 +388,7 @@ export default {
         this.newPrivileges = [];
         this.$refs.addPrivilegesModal.hide();
         this.existingNames = this.privileges.map((privilege) => privilege.name);
+        this.$emit('refreshData');
       }).catch((error) => {
         if (has(error, 'response.data.detail.failedPolicyRequirements[0].policyRequirements[0].params.invalidArrayItems[0].failedPolicyRequirements[0].policyRequirements[0].policyRequirement')) {
           const policyFailure = error.response.data.detail.failedPolicyRequirements[0].policyRequirements[0].params.invalidArrayItems[0].failedPolicyRequirements[0].policyRequirements[0];
