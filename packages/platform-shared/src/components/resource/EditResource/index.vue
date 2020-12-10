@@ -4,7 +4,9 @@ Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
-  <BContainer class="my-5">
+  <BContainer
+    v-if="!isLoading"
+    class="my-5">
     <div
       class="mb-4 media">
       <BImg
@@ -46,22 +48,24 @@ to such license between the licensee and ForgeRock AS. -->
     </BButton>
     <slot
       :relationshipProperties="relationshipProperties"
-      :displayProperties="displayProperties">
-      <BCard
-        v-if="!isLoading"
-        class="card-tabs-vertical mb-5">
+      :displayProperties="displayProperties"
+      :revision="revision"
+      :refreshData="refreshData"
+      :resourceDetails="resourceDetails">
+      <BCard class="card-tabs-vertical mb-5">
         <BTabs
           flex-column
           flex-sm-row
           vertical
           pills
-          :class="[{ 'fr-hide-nav' : hideNav }]">
+          :class="[{ 'fr-hide-nav' : hideNav }]"
+          ref="resourceTabs"
+          v-model="currentTab">
           <BTab
-            :title="this.$t('pages.access.details')"
-            active>
+            :title="this.$t('pages.access.details')">
             <FrObjectTypeEditor
               v-if="displayProperties.length > 0"
-              @updateRevision="updateRevision"
+              @refreshData="refreshData"
               :revision="revision"
               :form-fields="formFields"
               :display-properties="displayProperties"
@@ -80,7 +84,7 @@ to such license between the licensee and ForgeRock AS. -->
               :title="objectTypeProperty.title"
               :key="`${objectTypeProperty.propName}_tab`">
               <FrObjectTypeEditor
-                @updateRevision="updateRevision"
+                @refreshData="refreshData"
                 :revision="revision"
                 :form-fields="formFields[objectTypeProperty.propName] || {}"
                 :sub-property-name="objectTypeProperty.propName"
@@ -95,7 +99,9 @@ to such license between the licensee and ForgeRock AS. -->
             :disabled="disableSaveButton"
             :privileges-field="internalRolePrivilegesField"
             :resource-path="`${resourceType}/${resourceName}/${id}`"
-            :resource-name="resourceName" />
+            :resource-name="resourceName"
+            :revision="revision"
+            @refreshData="refreshData" />
           <!-- Add a tab for each viewable/editable relationship array property -->
           <template v-for="(relationshipProperty) in relationshipProperties">
             <BTab
@@ -105,14 +111,18 @@ to such license between the licensee and ForgeRock AS. -->
               <FrRelationshipArray
                 :parent-resource="`${resourceType}/${resourceName}`"
                 :parent-id="id"
-                :relationship-array-property="relationshipProperty" />
+                :relationship-array-property="relationshipProperty"
+                :revision="revision"
+                @refreshData="refreshData" />
             </BTab>
           </template>
           <FrSettingsTab
             v-if="Object.keys(settingsProperties).length > 0"
             :properties="settingsProperties"
             :resource-name="resourceName"
-            :resource-path="`${resourceType}/${resourceName}/${id}`" />
+            :resource-path="`${resourceType}/${resourceName}/${id}`"
+            :revision="revision"
+            @refreshData="refreshData" />
           <FrJsonTab
             v-if="jsonString"
             :json-string="jsonString" />
@@ -244,6 +254,9 @@ export default {
       resourceTitle: '',
       resourceName: this.$route.params.resourceName,
       resourceType: this.$route.params.resourceType,
+      resourceDetails: null,
+      resourceSchema: null,
+      resourcePrivilege: null,
       id: this.$route.params.resourceId,
       displayProperties: [],
       canDelete: false,
@@ -261,6 +274,7 @@ export default {
       passwordField: {},
       jsonString: '',
       revision: '',
+      currentTab: 0,
     };
   },
   mounted() {
@@ -273,6 +287,8 @@ export default {
         getSchema(`${this.resourceType}/${this.resourceName}`),
         idmInstance.get(`privilege/${this.resourceType}/${this.resourceName}/${this.id}`)]).then(axios.spread((schema, privilege) => {
         this.resourceTitle = schema.data.title;
+        this.resourceSchema = schema.data;
+        this.resourcePrivilege = privilege.data;
 
         this.$emit('breadcrumb-data-changed', { route: `/${this.$route.meta.listRoute}/${this.resourceType}/${this.resourceName}`, routeName: `${this.resourceTitle} ${this.$t('pages.access.list')}` });
 
@@ -281,7 +297,8 @@ export default {
 
         idmInstance.get(this.buildResourceUrl()).then((resourceDetails) => {
           this.revision = resourceDetails.data._rev;
-          this.generateDisplay(schema.data, privilege.data, resourceDetails.data);
+          this.resourceDetails = resourceDetails.data;
+          this.generateDisplay();
           this.settingsProperties = this.getSettingsProperties(schema.data, privilege.data);
         }).catch((error) => {
           this.displayNotification('IDMMessages', 'error', error.response.data.message);
@@ -360,11 +377,14 @@ export default {
         return isSettingsPropery && hasPermission;
       });
     },
-    generateDisplay(schema, privilege, resourceDetails) {
+    generateDisplay() {
+      const schema = this.resourceSchema;
+      const privilege = this.resourcePrivilege;
+
       if (this.isOpenidmAdmin) {
         const filteredFields = [];
 
-        keys(resourceDetails).forEach((key) => {
+        keys(this.resourceDetails).forEach((key) => {
           const prop = schema.properties[key];
 
           if (prop) {
@@ -372,9 +392,9 @@ export default {
           }
         });
 
-        this.formFields = pick(resourceDetails, filteredFields);
+        this.formFields = pick(this.resourceDetails, filteredFields);
       } else {
-        this.formFields = pick(resourceDetails, privilege.VIEW.properties);
+        this.formFields = pick(this.resourceDetails, privilege.VIEW.properties);
       }
       // save string used for JSON tab
       this.jsonString = JSON.stringify(this.formFields, null, 2);
@@ -495,8 +515,17 @@ export default {
 
       return properties;
     },
-    updateRevision(newRevision) {
-      this.revision = newRevision;
+    refreshData() {
+      this.isLoading = true;
+      // set the currentTab so we know which tab to return to after data is refreshed
+      this.currentTab = (this.$refs.resourceTabs) ? this.$refs.resourceTabs.currentTab : 0;
+      // clear out existing data and reload everything
+      this.displayProperties = [];
+      this.objectTypeProperties = {};
+      this.relationshipProperties = {};
+      this.settingsProperties = {};
+      this.jsonString = '';
+      this.loadData();
     },
   },
   computed: {

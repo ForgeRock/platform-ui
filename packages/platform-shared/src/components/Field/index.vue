@@ -123,7 +123,7 @@ to such license between the licensee and ForgeRock AS. -->
         </template>
       </FrBasicInput>
       <FrBasicInput
-        v-else-if="field.type === 'integer'"
+        v-else-if="field.type === 'number' || field.type === 'integer'"
         @input="$emit('valueChange', field.value)"
         :class="[{'fr-error': errors.length || failedPolicies.length}, 'floating-label-input']"
         v-model.number="inputValue"
@@ -219,7 +219,7 @@ export default {
     return {
       inputValue: this.field.value,
       loading: true,
-      oldValue: {},
+      oldField: {},
     };
   },
   props: {
@@ -363,7 +363,6 @@ export default {
       }
       const typeMap = {
         text: 'string',
-        number: 'integer',
         array: 'tag',
       };
       if (typeMap[type]) {

@@ -74,6 +74,7 @@ import FrListField from '@forgerock/platform-shared/src/components/ListField';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
+import ListsMixin from '@forgerock/platform-shared/src/mixins/ListsMixin';
 
 export default {
   name: 'ObjectTypeEditor',
@@ -120,6 +121,7 @@ export default {
     },
   },
   mixins: [
+    ListsMixin,
     NotificationMixin,
     ResourceMixin,
     RestMixin,
@@ -129,23 +131,32 @@ export default {
       oldFormFields: {},
     };
   },
-  mounted() {
-    // make sure display properties have a title
-    this.displayProperties.forEach((displayProperty) => {
-      const hasTitle = displayProperty.title && displayProperty.title.length > 0;
-      const hasDescription = displayProperty.description && displayProperty.description.length > 0;
-
-      if (!hasTitle && hasDescription) {
-        displayProperty.title = displayProperty.description;
-      } else if (!hasTitle && !hasDescription) {
-        // best effort to create a title when none is provided
-        displayProperty.title = startCase(camelCase(displayProperty.key));
-      }
-    });
-
-    this.oldFormFields = cloneDeep(this.formFields);
+  watch: {
+    displayProperties: {
+      immediate: true,
+      deep: true,
+      handler() {
+        this.loadData();
+      },
+    },
   },
   methods: {
+    loadData() {
+      // make sure display properties have a title
+      this.displayProperties.forEach((displayProperty) => {
+        const hasTitle = displayProperty.title && displayProperty.title.length > 0;
+        const hasDescription = displayProperty.description && displayProperty.description.length > 0;
+
+        if (!hasTitle && hasDescription) {
+          displayProperty.title = displayProperty.description;
+        } else if (!hasTitle && !hasDescription) {
+          // best effort to create a title when none is provided
+          displayProperty.title = startCase(camelCase(displayProperty.key));
+        }
+      });
+
+      this.oldFormFields = cloneDeep(this.formFields);
+    },
     setSingletonRelationshipValue(value, field) {
       field.value = value;
     },
@@ -180,10 +191,10 @@ export default {
           saveData = this.generateUpdatePatch(cloneDeep(this.oldFormFields), cloneDeep(this.formFields));
         }
 
-        idmInstance.patch(this.resourcePath, saveData).then((response) => {
+        idmInstance.patch(this.resourcePath, saveData).then(() => {
           const resourceName = this.resourceTitle ? this.resourceTitle : this.resourcePath.split('/')[1];
           this.oldFormFields = cloneDeep(this.formFields);
-          this.$emit('updateRevision', response.data._rev);
+          this.$emit('refreshData');
           this.displayNotification('IDMMessages', 'success', this.$t('pages.access.successEdited', { resource: resourceName }));
         },
         (error) => {
