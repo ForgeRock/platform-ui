@@ -129,6 +129,10 @@
       "ALPHA_DASH": "Must only contain letters, numbers, spaces, hyphens and underscores",
       "NO_REPEAT": "Cannot contain more than %{numRepeat} repeated characters",
       "DICTIONARY": "Cannot contain common passwords",
+      "LENGTH_BASED": "Must be at least %{min-password-length} characters and no longer than %{max-password-length} characters",
+      "REPEATED_CHARACTERS": "Cannot contain more than %{max-consecutive-length} repeated consecutive characters",
+      "CHARACTER_SET": "Must contain character(s) from the character set",
+      "ATTRIBUTE_VALUE": "Cannot be found in another attribute of the object",
       "test": "succeed",
       "VALID_INT": "Value must be of type integer.",
       "policyServiceError": {
