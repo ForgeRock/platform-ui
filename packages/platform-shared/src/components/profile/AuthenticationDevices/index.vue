@@ -1,9 +1,8 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
 
-This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
+Use of this code requires a commercial software license with ForgeRock AS.
+or with one of its affiliates. All use shall be exclusively subject
+to such license between the licensee and ForgeRock AS. -->
 <template>
   <div class="mt-5 w-100">
     <div class="pl-0">
@@ -129,7 +128,7 @@ of the MIT license. See the LICENSE file for details.
 
 <script>
 import {
-  BCol, BDropdown, BDropdownDivider, BDropdownItemButton, BRow,
+  BCol, BDropdown, BDropdownDivider, BDropdownItemButton, BRow, BModal, BButton,
 } from 'bootstrap-vue';
 import { mapState } from 'vuex';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
@@ -153,12 +152,20 @@ export default {
     BreadcrumbMixin,
   ],
   components: {
+    BButton,
     BCol,
     BDropdown,
     BDropdownDivider,
     BDropdownItemButton,
+    BModal,
     BRow,
     FrField: Field,
+  },
+  props: {
+    forceRoot: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -204,7 +211,8 @@ export default {
     },
     loadAuthenicationDevices() {
       const query = '_queryId=*';
-      const selfServiceInstance = this.getRequestService({ context: 'AM' });
+      const configOptions = this.forceRoot ? { context: 'AM', realm: 'root' } : { context: 'AM' };
+      const selfServiceInstance = this.getRequestService(configOptions);
 
       const authPromises = AUTH_TYPES.map((authType) => {
         const url = `${this.get2faUrl(authType)}?${query}`;
@@ -216,11 +224,15 @@ export default {
             const devicesWithAuthType = response.data.result.map((device) => ({ ...device, authType: AUTH_TYPES[index] }));
             return acc.concat(devicesWithAuthType);
           }, []);
+          if (!flattenedArray.length) {
+            this.$router.push({ path: '/profile' });
+          }
           this.authenticationDevicesArray = this.addDropdown(flattenedArray);
         });
     },
     deleteDevice(authType, id) {
-      const selfServiceInstance = this.getRequestService({ context: 'AM' });
+      const configOptions = this.forceRoot ? { context: 'AM', realm: 'root' } : { context: 'AM' };
+      const selfServiceInstance = this.getRequestService(configOptions);
       const url = `${this.get2faUrl(authType)}/${id}`;
 
       selfServiceInstance.delete(url, { withCredentials: true })
@@ -238,7 +250,8 @@ export default {
         });
     },
     updateDeviceName(authType, id, newName) {
-      const selfServiceInstance = this.getRequestService({ context: 'AM' });
+      const configOptions = this.forceRoot ? { context: 'AM', realm: 'root' } : { context: 'AM' };
+      const selfServiceInstance = this.getRequestService(configOptions);
       const url = `${this.get2faUrl(authType)}/${id}`;
       const payload = { deviceName: newName };
 
@@ -290,7 +303,7 @@ export default {
         this.editModal.value = undefined;
         break;
       }
-      this.$bvModal.show('authentication-devices-modal');
+      this.$refs.fsModal.show();
     },
     handleModalPrimaryButton(type) {
       const { uuid, authType } = this.modalItem;
