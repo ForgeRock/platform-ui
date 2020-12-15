@@ -39,7 +39,7 @@ to such license between the licensee and ForgeRock AS. -->
         :key="`sideDropdownItemsDivider_${index}`"
         v-if="dropdownItems.length == (index + 1) && enableLogout" />
     </template>
-    <template v-if="showProfileLink">
+    <!-- <template v-if="showProfileLink">
       <BDropdownItem>
         <RouterLink :to="{ name: 'Profile' }">
           <BMedia class="text-left">
@@ -65,7 +65,7 @@ to such license between the licensee and ForgeRock AS. -->
         </RouterLink>
       </BDropdownItem>
       <BDropdownDivider />
-    </template>
+    </template> -->
     <BDropdownItem
       v-if="enableLogout"
       class="mb-2"
@@ -82,7 +82,7 @@ import {
   BDropdown,
   BDropdownItem,
   BDropdownDivider,
-  BMedia,
+  // BMedia,
 } from 'bootstrap-vue';
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 
@@ -92,7 +92,7 @@ export default {
     BDropdown,
     BDropdownDivider,
     BDropdownItem,
-    BMedia,
+    // BMedia,
   },
   mixins: [
     LoginMixin,
