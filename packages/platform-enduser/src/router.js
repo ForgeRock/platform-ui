@@ -77,7 +77,7 @@ const router = new Router({
     },
     {
       path: '/auth-devices',
-      component: () => import('@/components/AuthenticationDevices'),
+      component: () => import('@forgerock/platform-shared/src/components/profile/AuthenticationDevices'),
       meta: {
         authenticate: true,
         hideToolbar: true,
