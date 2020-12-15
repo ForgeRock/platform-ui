@@ -330,6 +330,22 @@
         "removeSuccess": "Device removed"
       }
     },
+    "authenticationDevices": {
+      "title": "2-Step/Push Authentication",
+      "subtitle": "View devices used for 2-step verification or push authentication for your account.",
+      "editName": "Edit Name",
+      "editModalTitle": "Edit Device Name",
+      "editModalInput": "Device name",
+      "editSuccess": "Device name saved",
+      "delete": "Delete device",
+      "deleteModalTitle": "Delete Device?",
+      "deleteModalText": "You will not be able to authenticate using this device and may result in you getting locked out of your account if you rely solely on this device.",
+      "deleteSuccess": "Device deleted",
+      "unableToEditModalTitle": "Unable to Edit Device Name",
+      "unableToEditModalText": "Unable to edit this device name. Please sign in with this device in order to edit it.",
+      "unableToDeleteModalTitle": "Unable to Delete Device",
+      "unableToDeleteModalText": "Unable to delete this device. Please sign in with this device in order to delete it."
+    },
     "notFound": {
       "pageNotFound": "Page Not Found",
       "returnRoute": "Return to {returnRoute}",
@@ -355,7 +371,8 @@
     "Applications": "Applications",
     "Dashboard": "Dashboard",
     "EditResource": "Edit Resource",
-    "Login": "Login"
+    "Login": "Login",
+    "Profile": "Profile"
   },
   "scriptEditor": {
     "title": "Script",

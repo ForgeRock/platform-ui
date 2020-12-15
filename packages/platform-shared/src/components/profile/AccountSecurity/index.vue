@@ -179,7 +179,8 @@ export default {
     },
     loadAuthenicationDevices() {
       const query = '_queryId=*';
-      const selfServiceInstance = this.getRequestService({ context: 'AM' });
+      const configOptions = this.forceRoot ? { context: 'AM', realm: 'root' } : { context: 'AM' };
+      const selfServiceInstance = this.getRequestService(configOptions);
       const authTypes = ['oath', 'push', 'webauthn'];
 
       const authPromises = authTypes.map((authType) => {
