@@ -8,7 +8,6 @@ of the MIT license. See the LICENSE file for details.
   <div>
     <FrLayout
       :menu-items="menuItems"
-      :user-details="userDetails"
       :version="version">
       <RouterView :key="this.$route.fullPath" />
     </FrLayout>
@@ -24,7 +23,6 @@ import {
   capitalize,
   cloneDeep,
 } from 'lodash';
-import { mapState } from 'vuex';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import FrLayout from '@forgerock/platform-shared/src/components/Layout';
@@ -97,40 +95,6 @@ export default {
     }, (error) => {
       this.showErrorMessage(error, this.$t('errors.couldNotRetrieveVersion'));
     });
-  },
-  computed: {
-    ...mapState({
-      internalUser: (state) => state.UserStore.internalUser,
-      userId: (state) => state.UserStore.userId,
-      adminUser: (state) => state.UserStore.adminUser,
-      accessObj: (state) => state.UserStore.access,
-      adminURL: (state) => state.adminURL,
-      userDetails: (state) => {
-        let userFullName;
-        const {
-          givenName,
-          sn,
-          userName,
-          company,
-          email,
-          adminUser,
-          userId,
-        } = state.UserStore;
-        if (givenName || sn) {
-          userFullName = `${givenName} ${sn}`;
-        } else {
-          userFullName = userName || userId;
-        }
-        return {
-          name: userFullName,
-          company: company || 'ForgeRock',
-          email,
-          adminUser,
-          adminURL: `${state.adminURL}?realm=${state.realm}`,
-          roles: [],
-        };
-      },
-    }),
   },
   watch: {
     /**
