@@ -12,15 +12,6 @@ to such license between the licensee and ForgeRock AS. -->
       <slot name="button-content" />
     </template>
     <slot name="dropdown-header" />
-    <BDropdownItem
-      v-if="userDetails.roles.includes('adminUser') && userDetails.adminURL"
-      :href="userDetails.adminURL">
-      <i class="material-icons material-icons-outlined mr-2">
-        build
-      </i>
-      {{ $t('pages.app.admin') }}
-    </BDropdownItem>
-
     <template v-for="(item, index) in dropdownItems">
       <template>
         <BDropdownItem

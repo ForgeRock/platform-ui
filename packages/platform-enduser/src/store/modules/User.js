@@ -41,6 +41,24 @@ const defaultState = {
   userSearchAttribute: null,
 };
 
+const getters = {
+  userDetails: (state) => {
+    let userFullName;
+    if (state.givenName || state.sn) {
+      userFullName = `${state.givenName} ${state.sn}`;
+    } else {
+      userFullName = state.userName || state.userId;
+    }
+
+    return {
+      name: userFullName,
+      company: state.company || 'ForgeRock',
+      email: state.email,
+      roles: state.roles || [],
+    };
+  },
+};
+
 const mutations = {
   setAccess(state, access) {
     state.access = clone(access);
@@ -91,5 +109,6 @@ const mutations = {
 
 export default {
   state: defaultState,
+  getters,
   mutations,
 };
