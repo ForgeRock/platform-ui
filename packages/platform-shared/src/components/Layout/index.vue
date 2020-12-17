@@ -85,6 +85,7 @@ to such license between the licensee and ForgeRock AS. -->
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import Alert from '@forgerock/platform-shared/src/components/Alert/';
 import Navbar from '@forgerock/platform-shared/src/components/Navbar/';
 import SideMenu from '@forgerock/platform-shared/src/components/SideMenu/';
@@ -120,16 +121,6 @@ export default {
       type: Array,
       default: () => [],
     },
-    userDetails: {
-      type: Object,
-      default: () => ({
-        name: 'Company Name',
-        company: 'Company',
-        email: 'email@company.com',
-        adminURL: 'www.company.com',
-        roles: [],
-      }),
-    },
     buildNumber: {
       type: String,
       default: '',
@@ -152,10 +143,9 @@ export default {
     },
   },
   computed: {
-    enduserLink() {
-      if (this.userDetails.roles.includes('realmAdmin') || this.userDetails.roles.includes('amAdmin')) return '';
-      return this.$store.state.realm === 'root' ? this.$store.state.enduserURL : `${this.$store.state.enduserURL}?realm=${this.$store.state.realm}`;
-    },
+    ...mapGetters({
+      userDetails: 'UserStore/userDetails',
+    }),
     docsLink() {
       if (this.$store.state.isFraas === true) {
         return 'https://backstage.forgerock.com/docs/idcloud/latest/index.html';

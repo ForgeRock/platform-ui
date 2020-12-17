@@ -69,6 +69,7 @@ export default new Vuex.Store({
   modules: {
     UserStore: {
       namespaced: true,
+      getters: User.getters,
       state: User.state,
       mutations: User.mutations,
     },

@@ -33,8 +33,7 @@ const store = new Vuex.Store({
     ApplicationStore: {},
   },
   getters: {
-    UserStore: (state) => state.UserStore,
-    ApplicationStore: (state) => state.ApplicationStore,
+    'UserStore/userDetails': (state) => state.UserStore,
   },
 });
 
