@@ -12,6 +12,6 @@ module.exports = {
   rootDir: path.resolve(__dirname, '..', '..', '..'),
   runner: 'jest-runner-eslint',
   displayName: 'lint',
-  testMatch: ['<rootDir>/**/*.{js,vue}'],
-  moduleFileExtensions: ['js', 'json', 'vue'],
+  testMatch: ['<rootDir>/**/*.{js,vue,mjs}'],
+  moduleFileExtensions: ['js', 'json', 'vue', 'mjs'],
 };
