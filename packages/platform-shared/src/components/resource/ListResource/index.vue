@@ -36,7 +36,6 @@ to such license between the licensee and ForgeRock AS. -->
           <template v-if="editAccess && deleteAccess">
             <div class="text-right">
               <BDropdown
-                boundary="window"
                 variant="link"
                 no-caret
                 right
