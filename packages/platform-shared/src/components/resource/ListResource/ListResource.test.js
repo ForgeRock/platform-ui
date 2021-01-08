@@ -145,7 +145,7 @@ describe('ListResource Component', () => {
   });
 
   it('Generated query filter for search', () => {
-    expect(wrapper.vm.generateSearch('test', ['test1', 'test2'])).toBe('test1+sw+"test"+OR+test2+sw+"test"');
+    expect(wrapper.vm.generateSearch('test', ['test1', 'test2'])).toBe('test1+sw+%22test%22+OR+test2+sw+%22test%22');
     expect(wrapper.vm.generateSearch('', ['test1', 'test2'])).toBe('true');
   });
 
