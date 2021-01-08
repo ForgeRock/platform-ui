@@ -305,9 +305,11 @@ export default {
             }
           } else if ((index + 1) < displayFields.length) {
             // Fallback to general string search if all other criteria fails
-            filterUrl = `${filterUrl}${field}+sw+"${filter}"+OR+`;
+            // IAM-1003 revealed an issue with some url encoding differences between
+            // chrome and IE. Need to use %22 instead of " to avoid the encoding
+            filterUrl = `${filterUrl}${field}+sw+%22${filter}%22+OR+`;
           } else {
-            filterUrl = `${filterUrl}${field}+sw+"${filter}"`;
+            filterUrl = `${filterUrl}${field}+sw+%22${filter}%22`;
           }
         });
       } else {
