@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div :class="['text-muted', { 'p-4' : property.key !== 'privileges' }]">
     <template v-if="showToggle">
@@ -48,8 +47,8 @@ import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrTimeConstraint from '@forgerock/platform-shared/src/components/TimeConstraint';
 import FrAddPrivileges from '@forgerock/platform-shared/src/components/resource/EditResource/CustomTabs/PrivilegesTab/AddPrivileges';
 import FrQueryFilterBuilder from '@forgerock/platform-shared/src/components/QueryFilterBuilder';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
+import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
 
 export default {
   name: 'CustomStep',
@@ -152,9 +151,13 @@ export default {
     setPrivilegesStep() {
       this.showForm = true;
       this.showToggle = false;
+      const urlParams = {
+        queryFilter: 'resourceCollection eq "internal/role" or (resourceCollection sw "managed")',
+        fields: '*',
+      };
       // get schema for all internal/role and all managed objects that are not managed/assignment
       if (this.$store.state.UserStore.adminUser) {
-        getSchema('?_queryFilter=resourceCollection eq "internal/role" or (resourceCollection sw "managed")&_fields=*').then(
+        getSchema(encodeQueryString(urlParams)).then(
           (response) => {
             const schemas = response.data.result.filter((result) => {
               const resourceName = result.resourceCollection;

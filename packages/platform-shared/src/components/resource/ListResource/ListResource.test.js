@@ -1,10 +1,10 @@
 /**
- * Copyright 2019-2020 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2019-2021 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
+
 import { shallowMount, createLocalVue } from '@vue/test-utils';
 import BootstrapVue from 'bootstrap-vue';
 import generateIDMAPI from './__mocks__/generateIDMAPI';
@@ -145,7 +145,7 @@ describe('ListResource Component', () => {
   });
 
   it('Generated query filter for search', () => {
-    expect(wrapper.vm.generateSearch('test', ['test1', 'test2'])).toBe('test1+sw+%22test%22+OR+test2+sw+%22test%22');
+    expect(wrapper.vm.generateSearch('test', ['test1', 'test2'])).toBe('test1 sw "test" OR test2 sw "test"');
     expect(wrapper.vm.generateSearch('', ['test1', 'test2'])).toBe('true');
   });
 
