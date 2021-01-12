@@ -1,10 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <FrListGroup
     v-show="mappings.length"
@@ -124,6 +121,7 @@ import { mapState } from 'vuex';
 import ListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
 import ListItem from '@forgerock/platform-shared/src/components/ListItem/';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
 import AccessLevel from '@/components/profile/AccessLevel';
 import FallbackImage from '@/components/utils/FallbackImage';
 
@@ -195,8 +193,9 @@ export default {
       first(this.$refs[name]).show();
     },
     loadConsent() {
+      const urlParams = { queryFilter: `/source eq "${this.managedResource}"` };
       this.getRequestService()
-        .get(`consent?_queryFilter=/source eq "${this.managedResource}"`)
+        .get(`consent${encodeQueryString(urlParams)}`)
         .then(({ data }) => {
           this.consentableMappings = data.result;
         });
