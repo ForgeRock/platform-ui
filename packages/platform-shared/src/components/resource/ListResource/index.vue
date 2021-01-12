@@ -1,8 +1,7 @@
-<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2019-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <div class="p-3 d-flex justify-content-between flex-column flex-lg-row card-header">
@@ -291,24 +290,24 @@ export default {
           if (type === 'number' && !isNaN(toNumber(filter))) {
             // Search based on number and proper number value
             if ((index + 1) < displayFields.length) {
-              filterUrl = `${filterUrl}${field}+eq+ ${filter}+OR+`;
+              filterUrl = `${filterUrl}${field} eq ${filter} OR `;
             } else {
-              filterUrl = `${filterUrl}${field}+eq+ ${filter}`;
+              filterUrl = `${filterUrl}${field} eq ${filter}`;
             }
           } else if (type === 'boolean' && (filter === 'true' || filter === 'false')) {
             // Search based on boolean and proper boolean true/false
             if ((index + 1) < displayFields.length) {
-              filterUrl = `${filterUrl}${field}+eq+ ${filter}+OR+`;
+              filterUrl = `${filterUrl}${field} eq ${filter} OR `;
             } else {
-              filterUrl = `${filterUrl}${field}+eq+ ${filter}`;
+              filterUrl = `${filterUrl}${field} eq ${filter}`;
             }
           } else if ((index + 1) < displayFields.length) {
             // Fallback to general string search if all other criteria fails
             // IAM-1003 revealed an issue with some url encoding differences between
             // chrome and IE. Need to use %22 instead of " to avoid the encoding
-            filterUrl = `${filterUrl}${field}+sw+%22${filter}%22+OR+`;
+            filterUrl = `${filterUrl}${field} sw "${filter}" OR `;
           } else {
-            filterUrl = `${filterUrl}${field}+sw+%22${filter}%22`;
+            filterUrl = `${filterUrl}${field} sw "${filter}"`;
           }
         });
       } else {
