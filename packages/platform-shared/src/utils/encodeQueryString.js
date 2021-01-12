@@ -1,9 +1,8 @@
 /**
- * Copyright 2020 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 /**
@@ -12,5 +11,19 @@
  * @param {Object} params
  */
 export default function encodeQueryString(params) {
-  return Object.entries(params).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
+  // empty object means empty query string
+  if (!Object.keys(params).length) {
+    return '';
+  }
+
+  // add underscore to key if not present
+  Object.keys(params).forEach((key) => {
+    if (key.charAt(0) !== '_') {
+      params[`_${key}`] = params[key];
+      delete params[key];
+    }
+  });
+
+  const queryString = Object.entries(params).map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`).join('&');
+  return `?${queryString}`;
 }
