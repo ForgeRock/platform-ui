@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BTab :title="$t('pages.access.privileges')">
     <div
@@ -202,6 +201,7 @@ import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
 import FrPrivilegeEditor from './PrivilegeEditor';
 import FrAddPrivileges from './AddPrivileges';
 
@@ -402,7 +402,11 @@ export default {
   mounted() {
     // get schema for all internal/role and all managed objects that are not managed/assignment
     if (this.$store.state.UserStore.adminUser) {
-      getSchema('?_queryFilter=resourceCollection eq "internal/role" or (resourceCollection sw "managed")&_fields=*').then(
+      const urlParams = {
+        queryFilter: 'resourceCollection eq "internal/role" or (resourceCollection sw "managed")',
+        fields: '*',
+      };
+      getSchema(encodeQueryString(urlParams)).then(
         (response) => {
           const schemas = response.data.result.filter((result) => {
             const resourceName = result.resourceCollection;

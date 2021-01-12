@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <BFormGroup
@@ -272,14 +271,13 @@ export default {
         queryFilter = map(displayFields, (field) => `/${field} sw "${query}"`).join(' or ');
 
         const urlParams = {
-          _sortKeys: this.resourceCollection.query.fields[0],
-          _pageSize: maxPageSize,
-          _fields: displayFields.join(','),
-          _queryFilter: queryFilter,
+          sortKeys: this.resourceCollection.query.fields[0],
+          pageSize: maxPageSize,
+          fields: displayFields.join(','),
+          queryFilter,
         };
         const idmInstance = this.getRequestService();
-
-        idmInstance.get(`${this.resourceCollection.path}?${encodeQueryString(urlParams)}`).then((queryResults) => {
+        idmInstance.get(`${this.resourceCollection.path}${encodeQueryString(urlParams)}`).then((queryResults) => {
           this.relationshipField.options = [];
           each(queryResults.data.result, (resource) => {
             // eslint-disable-next-line no-underscore-dangle

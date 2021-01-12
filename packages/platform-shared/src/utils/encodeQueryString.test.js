@@ -1,9 +1,8 @@
 /**
- * Copyright 2020 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 import encodeQueryString from './encodeQueryString';
@@ -16,5 +15,19 @@ it('encodes flat object correctly', () => {
     _queryFilter: '/userName sw "d" or /givenName sw "d" or /sn sw "d"',
   });
 
-  expect(queryString).toBe('_sortKeys=userName&_pageSize=10&_fields=userName%2CgivenName%2Csn&_queryFilter=%2FuserName%20sw%20%22d%22%20or%20%2FgivenName%20sw%20%22d%22%20or%20%2Fsn%20sw%20%22d%22');
+  expect(queryString).toBe('?_sortKeys=userName&_pageSize=10&_fields=userName%2CgivenName%2Csn&_queryFilter=%2FuserName%20sw%20%22d%22%20or%20%2FgivenName%20sw%20%22d%22%20or%20%2Fsn%20sw%20%22d%22');
+});
+
+it('returns an empty string for empty object argument', () => {
+  const queryString = encodeQueryString({});
+  expect(queryString).toBe('');
+});
+
+it('adds leading underscores to query parameters', () => {
+  const queryString = encodeQueryString({
+    _sortKeys: 'userName',
+    pageSize: 10,
+  });
+
+  expect(queryString).toBe('?_sortKeys=userName&_pageSize=10');
 });
