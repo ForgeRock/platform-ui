@@ -35,6 +35,7 @@
     "edit": "Edit",
     "editName": "Edit Name",
     "end": "End",
+    "endSessions": "End Sessions",
     "error": "Error",
     "expires": "Expires",
     "hide": "Hide",
@@ -375,5 +376,11 @@
     "collapse": "Collapse",
     "expand": "Click to Expand",
     "invalidJson": "invalid JSON"
+  },
+  "clearSessionsModal": {
+    "modalText": "Are you sure you want to end sessions for {name}?",
+    "consequencesText": "This action will end all application sessions and log the user out.",
+    "errorClearingSessions": "There was an error ending sessions",
+    "successClearingSessions": "Sessions ended"
   }
 }
