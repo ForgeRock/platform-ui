@@ -1,8 +1,7 @@
-<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2019-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BContainer
     v-if="!isLoading"
@@ -45,6 +44,16 @@ to such license between the licensee and ForgeRock AS. -->
         cached
       </i>
       {{ $t('pages.access.resetPassword') }}
+    </BButton>
+    <BButton
+      v-if="canClearSessions && hasActiveSessions"
+      class="mb-4"
+      variant="outline-secondary"
+      @click="showClearSessionsModal = true">
+      <i class="material-icons-outlined mr-md-2 text-nowrap">
+        clear_all
+      </i>
+      {{ $t('common.endSessions') }}
     </BButton>
     <slot
       :relationshipProperties="relationshipProperties"
@@ -175,6 +184,12 @@ to such license between the licensee and ForgeRock AS. -->
       :resource-type="resourceType"
       :resource-name="resourceName"
       :resource-id="id" />
+    <FrClearResourceSessions
+      :show="showClearSessionsModal"
+      :resource-id="id"
+      :resource-name="clearSessionsName"
+      :clear-sessions="clearSessions"
+      :close-modal="closeClearSessionsModal" />
   </BContainer>
 </template>
 
@@ -209,6 +224,8 @@ import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
+import { getSessionInfo, clearSessions } from '@forgerock/platform-shared/src/api/SessionsApi';
+import ClearResourceSessions from '@forgerock/platform-shared/src/components/resource/ClearResourceSessions';
 import FrObjectTypeEditor from './ObjectTypeEditor';
 import FrSettingsTab from './CustomTabs/SettingsTab';
 import FrPrivilegesTab from './CustomTabs/PrivilegesTab';
@@ -240,6 +257,7 @@ export default {
     BTab,
     BCard,
     BModal,
+    FrClearResourceSessions: ClearResourceSessions,
   },
   mixins: [
     ResourceMixin,
@@ -248,6 +266,12 @@ export default {
   ],
   directives: {
     'b-modal': VBModal,
+  },
+  props: {
+    canClearSessions: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -275,6 +299,9 @@ export default {
       jsonString: '',
       revision: '',
       currentTab: 0,
+      hasActiveSessions: false,
+      showClearSessionsModal: false,
+      clearSessionsName: '',
     };
   },
   mounted() {
@@ -285,7 +312,8 @@ export default {
       const idmInstance = this.getRequestService();
       axios.all([
         getSchema(`${this.resourceType}/${this.resourceName}`),
-        idmInstance.get(`privilege/${this.resourceType}/${this.resourceName}/${this.id}`)]).then(axios.spread((schema, privilege) => {
+        idmInstance.get(`privilege/${this.resourceType}/${this.resourceName}/${this.id}`),
+      ]).then(axios.spread((schema, privilege) => {
         this.resourceTitle = schema.data.title;
         this.resourceSchema = schema.data;
         this.resourcePrivilege = privilege.data;
@@ -295,9 +323,14 @@ export default {
         this.objectTypeProperties = this.getObjectTypeProperties(schema.data, privilege.data);
         this.relationshipProperties = this.getRelationshipProperties(schema.data, privilege.data);
 
-        idmInstance.get(this.buildResourceUrl()).then((resourceDetails) => {
+        axios.all([
+          idmInstance.get(this.buildResourceUrl()),
+          getSessionInfo(this.id),
+        ]).then(([resourceDetails, sessionInfo]) => {
           this.revision = resourceDetails.data._rev;
           this.resourceDetails = resourceDetails.data;
+          this.hasActiveSessions = sessionInfo.data.resultCount > 0;
+          this.clearSessionsName = `${this.resourceDetails.givenName} ${this.resourceDetails.sn}`;
           this.generateDisplay();
           this.settingsProperties = this.getSettingsProperties(schema.data, privilege.data);
         }).catch((error) => {
@@ -526,6 +559,11 @@ export default {
       this.settingsProperties = {};
       this.jsonString = '';
       this.loadData();
+    },
+    clearSessions,
+    closeClearSessionsModal() {
+      this.showClearSessionsModal = false;
+      this.refreshData();
     },
   },
   computed: {
