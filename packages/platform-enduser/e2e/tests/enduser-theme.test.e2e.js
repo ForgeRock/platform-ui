@@ -9,7 +9,7 @@ import { createIDMTestUser } from '../managedApi.e2e';
 
 describe('Enduser Theming', () => {
   const platformLoginUrl = `${Cypress.config().baseUrl}/platform/`;
-  const locationUrl = `${Cypress.config().baseUrl}/platform/?realm=root#/realm/theme`;
+  const locationUrl = `${Cypress.config().baseUrl}/platform/?realm=root#/realm`;
   let enduserUserName = '';
   const adminUserName = Cypress.env('AM_USERNAME');
   const adminPassword = Cypress.env('AM_PASSWORD');
