@@ -32,45 +32,50 @@ of the MIT license. See the LICENSE file for details. -->
         <slot
           name="actions"
           :item="data">
-          <div
-            class="text-right"
-            v-if="editAccess || deleteAccess || hasClearSessionAccess(data)">
-            <BDropdown
-              variant="link"
-              no-caret
-              right
-              toggle-class="text-decoration-none p-0">
-              <template v-slot:button-content>
-                <i class="material-icons-outlined text-muted md-24">
-                  more_horiz
-                </i>
-              </template>
-              <BDropdownItem
-                v-if="editAccess"
-                @click="$emit('row-clicked', data.item)">
-                <i class="material-icons-outlined mr-3">
-                  edit
-                </i> {{ $t('common.edit') }}
-              </BDropdownItem>
-              <BDropdownItem
-                v-if="hasClearSessionAccess(data)"
-                @click="setResourceToClearSessionsFor(data.item)">
-                <i class="material-icons-outlined mr-3">
-                  clear_all
-                </i> {{ $t('common.endSessions') }}
-              </BDropdownItem>
-              <template v-if="deleteAccess">
-                <template v-if="editAccess || hasClearSessionAccess(data)">
-                  <BDropdownDivider />
+          <template v-if="editAccess && deleteAccess">
+            <div class="text-right">
+              <BDropdown
+                variant="link"
+                no-caret
+                right
+                toggle-class="text-decoration-none p-0">
+                <template v-slot:button-content>
+                  <i class="material-icons-outlined text-muted md-24">
+                    more_horiz
+                  </i>
                 </template>
+                <BDropdownItem @click="$emit('row-clicked', data.item)">
+                  <i class="material-icons-outlined mr-3">
+                    edit
+                  </i> {{ $t('common.edit') }}
+                </BDropdownItem>
+                <BDropdownDivider />
                 <BDropdownItem @click="confirmDeleteResource(data.item._id)">
                   <i class="material-icons-outlined mr-3">
                     delete
                   </i> {{ $t('common.delete') }}
                 </BDropdownItem>
-              </template>
-            </BDropdown>
-          </div>
+              </BDropdown>
+            </div>
+          </template>
+          <template v-else-if="editAccess">
+            <div
+              class="cursor-pointer text-right"
+              @click="$emit('row-clicked', data.item)">
+              <i class="material-icons-outlined text-muted">
+                edit
+              </i>
+            </div>
+          </template>
+          <template v-else-if="deleteAccess">
+            <div
+              class="cursor-pointer text-right"
+              @click="confirmDeleteResource(data.item._id)">
+              <i class="material-icons-outlined text-muted">
+                delete
+              </i>
+            </div>
+          </template>
         </slot>
       </template>
       <template
@@ -90,22 +95,13 @@ of the MIT license. See the LICENSE file for details. -->
     <slot name="deleteResourceModal">
       <FrDeleteResource
         modal-id="deleteResource"
-        @resource-deleted="loadData('true', displayFields, defaultSort, currentPage)"
+        @resource-deleted="loadData('true', displayFields, defaultSort, 1)"
         @cancel-resource-deletion="clearSelection()"
         :resource-name="resourceName"
         :resource-type="resourceType"
         :resource-to-delete-id="resourceToDeleteId"
         :delete-managed-resource="deleteManagedResource"
         :delete-internal-resource="deleteInternalResource" />
-    </slot>
-
-    <slot name="clearSessionsModal">
-      <FrClearResourceSessions
-        :show="showClearSessionsModal"
-        :resource-id="resourceToClearSessionsForId"
-        :resource-name="resourceToClearSessionsForName"
-        :clear-sessions="clearSessions"
-        :close-modal="closeClearSessionsModal" />
     </slot>
   </div>
 </template>
@@ -130,7 +126,6 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import SearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrPagination from '@forgerock/platform-shared/src/components/DataTable/Pagination';
 import DeleteResource from '../DeleteResource';
-import ClearResourceSessions from '../ClearResourceSessions';
 
 Vue.directive('b-modal', VBModal);
 /**
@@ -149,7 +144,6 @@ export default {
     BDropdownDivider,
     BDropdownItem,
     BTable,
-    FrClearResourceSessions: ClearResourceSessions,
     FrDeleteResource: DeleteResource,
     FrPagination,
     FrSearchInput: SearchInput,
@@ -176,15 +170,6 @@ export default {
         return retv;
       },
     },
-    clearSessions: {
-      type: Function,
-      default: () => {
-        const retv = {
-          then: () => {},
-        };
-        return retv;
-      },
-    },
     deleteAccess: {
       type: Boolean,
       default: true,
@@ -192,10 +177,6 @@ export default {
     editAccess: {
       type: Boolean,
       default: true,
-    },
-    canClearSessions: {
-      type: Boolean,
-      default: false,
     },
     routerParameters: {
       type: Object,
@@ -228,9 +209,6 @@ export default {
       filter: '',
       resourceToDeleteId: '',
       sortDirection: 'asc',
-      showClearSessionsModal: false,
-      resourceToClearSessionsForId: '',
-      resourceToClearSessionsForName: '',
     };
   },
   computed: {
@@ -418,28 +396,6 @@ export default {
       this.currentPage = 0;
 
       this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.calculateSort(sort.sortDesc, sort.sortBy), this.currentPage);
-    },
-    hasClearSessionAccess(rowData) {
-      return this.canClearSessions && rowData.item.hasActiveSessions === true;
-    },
-    /**
-     * Uses a resource to populate and show the clear sessions modal
-     *
-     * @param {Object} resource the resource to show the clear sessions modal for
-     */
-    setResourceToClearSessionsFor(resource) {
-      this.resourceToClearSessionsForId = resource._id;
-      this.resourceToClearSessionsForName = `${resource.givenName} ${resource.sn}`;
-      this.showClearSessionsModal = true;
-    },
-    /**
-     * Hides the clear sessions modal and refreshes the table data
-     */
-    closeClearSessionsModal() {
-      this.resourceToClearSessionsForId = '';
-      this.resourceToClearSessionsForName = '';
-      this.showClearSessionsModal = false;
-      this.loadData('true', this.displayFields, this.defaultSort, this.currentPage);
     },
   },
 };
