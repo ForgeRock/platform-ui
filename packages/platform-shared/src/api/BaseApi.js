@@ -1,5 +1,5 @@
 /**
- * Copyright 2019-2020 ForgeRock AS. All Rights Reserved
+ * Copyright 2019-2021 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS.
  * or with one of its affiliates. All use shall be exclusively subject
@@ -7,6 +7,7 @@
  */
 import axios from 'axios';
 import store from '../store';
+import getFQDN from '../utils/getFQDN';
 
 /**
   * Generates an IDM Axios API instance
@@ -35,7 +36,7 @@ export function generateIdmApi(requestOverride = {}) {
     // Objects this causes a 403 if the user doesn't also have openidm-admin
     // priviledges. This is a temporary check to stop the redirect to forbidden
     // in that scenario. This check should be removed when a workaround has been found.
-    const resUrl = new URL(error.response.config.url);
+    const resUrl = new URL(getFQDN(error.response.config.url));
     if (resUrl.pathname !== '/openidm/config/managed' && window.location.hash !== '#/journeys' && window.location.pathname !== '/enduser/') {
       if (error.response.status === 403) {
         window.location.hash = '#/forbidden';
