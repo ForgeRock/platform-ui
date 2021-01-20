@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright (c) 2020 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -18,6 +18,7 @@ import {
   Config,
   SessionManager,
 } from '@forgerock/javascript-sdk';
+import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 import i18n from './i18n';
 import router from './router';
 import App from './App';
@@ -56,7 +57,7 @@ extend('unique', {
 setInteractionMode('passive');
 
 Config.set({
-  serverConfig: { baseUrl: `${process.env.VUE_APP_AM_URL}/` },
+  serverConfig: { baseUrl: getFQDN(`${process.env.VUE_APP_AM_URL}/`) },
 });
 
 router.beforeEach((to, _from, next) => {
