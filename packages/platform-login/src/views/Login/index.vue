@@ -1,10 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <FrCenterCard
     :hide-footer="true"
@@ -731,11 +728,19 @@ export default {
         const ampersand = params.toString().length > 1 ? '&' : '';
         const qMark = params.toString().length > 1 ? '?' : '';
 
+        let stringParams = '';
+        params.forEach((value, key) => {
+          if (stringParams.length) {
+            stringParams += '&';
+          }
+          stringParams += `${key}=${value}`;
+        });
+
         this.removeUrlParams();
         if (this.hideRealm) {
-          window.history.replaceState(null, null, `${qMark}${params.toString()}${hash}`);
+          window.history.replaceState(null, null, `${qMark}${stringParams}${hash}`);
         } else {
-          window.history.replaceState(null, null, `?realm=${this.realm}${ampersand}${params.toString()}${hash}`);
+          window.history.replaceState(null, null, `?realm=${this.realm}${ampersand}${stringParams}${hash}`);
         }
       }
     },

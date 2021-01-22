@@ -1,8 +1,7 @@
-<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2019-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <script>
 import {
   fromPairs, isEmpty, map,
@@ -87,11 +86,11 @@ export function verifyGotoUrlAndRedirect(url, realm, isAdmin = false, isGotoOnFa
 }
 
 /**
- * Returns the query string from the URI
+ * Returns the decoded query string from the URI
  * @returns {string} Unescaped query string or empty string if no query string was found
  */
 export function getCurrentQueryString() {
-  const queryString = window.location.search;
+  const queryString = decodeURI(window.location.search);
 
   return queryString.substr(1, queryString.length);
 }
