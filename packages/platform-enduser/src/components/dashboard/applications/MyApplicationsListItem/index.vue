@@ -1,5 +1,5 @@
 <!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details.
@@ -59,7 +59,15 @@ export default {
       return this.applicationDetails.dashboardDisplayName[0];
     },
     applicationIcon() {
-      return `${window.location.origin}/am/XUI/${this.applicationDetails.dashboardIcon[0]}`;
+      const iconPath = this.applicationDetails.dashboardIcon[0];
+      // if iconPath starts with images/logos/ we assume it lives in
+      // the default set of logos built in to our app
+      // else we are assuming iconPath is a FQDN
+      if (iconPath.indexOf('images/logos/') === 0) {
+        return require(`@/assets/${iconPath}`);// eslint-disable-line
+      }
+
+      return iconPath;
     },
     applicationIconAltText() {
       return `${this.applicationName} ${this.$t('pages.dashboard.applications.listItemBrandIconAltText')}`;
