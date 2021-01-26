@@ -137,6 +137,9 @@
       "REPEATED_CHARACTERS": "Cannot contain more than %{max-consecutive-length} repeated consecutive characters",
       "CHARACTER_SET": "Must contain character(s) from the character set",
       "ATTRIBUTE_VALUE": "Cannot be found in another attribute of the object",
+      "HISTORY": "Cannot have been used recently",
+      "UNKNOWN": "Unable to create or modify %{property-name} due to an unknown configuration issue",
+      "EXTENDED_FIELD_POLICY": "%{property-name} is not valid",
       "test": "succeed",
       "VALID_INT": "Value must be of type integer.",
       "policyServiceError": {
