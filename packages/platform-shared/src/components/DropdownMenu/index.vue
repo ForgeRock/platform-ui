@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BDropdown
     :right="right"
@@ -30,7 +29,7 @@ to such license between the licensee and ForgeRock AS. -->
         :key="`sideDropdownItemsDivider_${index}`"
         v-if="dropdownItems.length == (index + 1) && enableLogout" />
     </template>
-    <!-- <template v-if="showProfileLink">
+    <template v-if="showProfileLink">
       <BDropdownItem>
         <RouterLink :to="{ name: 'Profile' }">
           <BMedia class="text-left">
@@ -56,7 +55,7 @@ to such license between the licensee and ForgeRock AS. -->
         </RouterLink>
       </BDropdownItem>
       <BDropdownDivider />
-    </template> -->
+    </template>
     <BDropdownItem
       v-if="enableLogout"
       class="mb-2"
@@ -73,7 +72,7 @@ import {
   BDropdown,
   BDropdownItem,
   BDropdownDivider,
-  // BMedia,
+  BMedia,
 } from 'bootstrap-vue';
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 
@@ -83,7 +82,7 @@ export default {
     BDropdown,
     BDropdownDivider,
     BDropdownItem,
-    // BMedia,
+    BMedia,
   },
   mixins: [
     LoginMixin,
