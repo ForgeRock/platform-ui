@@ -67,6 +67,11 @@ describe('Login.vue', () => {
     expect(wrapper.vm.isDefaultPath('/am/fail')).toEqual(false);
   });
 
+  it('Detects /auth/console as the default path', () => {
+    expect(wrapper.vm.isDefaultPath('/auth/console')).toEqual(true);
+    expect(wrapper.vm.isDefaultPath('/auth/fail')).toEqual(false);
+  });
+
   it('Detects SAML urls', () => {
     const samlUrls = [
       'https://default.iam.example.com/am/Consumer/metaAlias/avsp',
