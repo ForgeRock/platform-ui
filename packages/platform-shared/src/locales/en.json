@@ -130,6 +130,7 @@
       "UNIQUE": "Must be unique",
       "IS_NEW": "Must not be the same as the previous %{historyLength} password(s)",
       "ALPHA_DASH": "Must only contain letters, numbers, spaces, hyphens and underscores",
+      "PERIOD_REQUIRED": "Must contain at least one period character",
       "NO_REPEAT": "Cannot contain more than %{numRepeat} repeated characters",
       "DICTIONARY": "Cannot contain common passwords",
       "LENGTH_BASED": "Must be at least %{min-password-length} characters and no longer than %{max-password-length} characters",
