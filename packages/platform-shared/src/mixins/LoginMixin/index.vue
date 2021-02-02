@@ -4,7 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <script>
 import {
-  fromPairs, isEmpty, map,
+  fromPairs, isEmpty, map, last,
 } from 'lodash';
 import NotificationMixin from '../NotificationMixin';
 
@@ -35,9 +35,9 @@ export function getConfigurationInfo(realm) {
     apiVersion: 'protocol=1.0,resource=1.1',
   }).get(requestPath, { withCredentials: true, suppressEvents: true });
 }
-
+// isDefaultPath is looking for a path that looks like '/am/console' or '/auth/console'
 export function isDefaultPath(path) {
-  return path === '/am/console';
+  return last(path.split('/')) === 'console';
 }
 
 export function isSamlURL(url) {
