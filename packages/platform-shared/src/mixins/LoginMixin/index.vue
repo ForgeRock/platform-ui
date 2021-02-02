@@ -28,7 +28,7 @@ export function getUserInfo(session) {
 
 export function getConfigurationInfo(realm) {
   const slash = realm && realm.startsWith('/') ? '' : '/';
-  const requestPath = realm && realm.length > 1 ? `/realms${slash}${realm}/serverinfo/*` : '/serverinfo/*';
+  const requestPath = realm && realm.length > 1 ? `/realms/root/realms${slash}${realm}/serverinfo/*` : '/serverinfo/*';
 
   return this.getRequestService({
     context: 'AM',
