@@ -8,7 +8,9 @@
     "EditServerClusterServers": "Edit Server Cluster Servers",
     "Journeys": "Journeys",
     "JourneyTree": "Journey Tree",
-    "ManagedIdentity": "Manage Identity"
+    "ManagedIdentity": "Manage Identity",
+    "PasswordPolicy": "Password Policy",
+    "Realm": "Realm Settings"
   },
   "sideMenu": {
     "accessManagement": "Access Management",
@@ -614,6 +616,49 @@
     "profileBackgroundColor": "Profile Background Color",
     "profileMenuHighlightColor": "Profile Menu Highlight Color",
     "profileMenuTextHighlightColor": "Profile Menu Highlight Text Color"
+  },
+  "customDomain": {
+    "active": "Active",
+    "addDomain": "Add a Custom Domain",
+    "addModal": {
+      "cName": "CNAME",
+      "content": "Enter the fully qualified domain name that you want as your ForgeRock realm’s URL.",
+      "data": "Data",
+      "domain": "Domain",
+      "domainFieldDescription": "For example, mycompany.com or example.mycompany.com.",
+      "host": "Host",
+      "secondStageDescription1": "Before ForgeRock can serve traffic over your domain, you need to add an alias from your custom domain to the ForgeRock subdomain of your ForgeRock realm. You do this by creating or modifying a <code>CNAME</code> record for your custom domain name.",
+      "secondStageDescription2": "To create a CNAME record:",
+      "secondStageDescription3": "Sign in to your Domain Name Registrar.",
+      "secondStageDescription4": "Find the option to modify your DNS Records.",
+      "secondStageDescription5": "Create a <code>CNAME</code> record with the following values for <code>Host</code> and <code>Data</code>:",
+      "secondStageDescription6": "Once you have added the <code>CNAME</code> record, click 'Verify' to continue",
+      "thirdStageDescription1": "<span class=\"font-weight-bold\">It may take up to 48 hours for these changes to propagate.</span> Warning notices may appear on your custom URL domain until propagation is finished completely.",
+      "thirdStageDescription1Cloud": "We will now start the process of generating your certificate. Once the certificate has been generated you have completed setting up a Custom Domain Name for your ForgeRock realm. ",
+      "thirdStageDescription2": "To confirm that ForgeRock is serving traffic over HTTPS (TLS) for your custom domain, visit:",
+      "thirdStageDescription3": "ForgeRock will continue to serve traffic through {dataValue} and your custom domain. If your changes do not appear within 48 hours, you may need to confirm your DNS settings.",
+      "titleStageTwo": "Verify Domain Name Ownership",
+      "verify": "Verify",
+      "verifying": "Verifying...",
+      "verifyError": "Could not verify the specified custom domain. Make sure the CNAME record matches the expected value.",
+      "verifySuccess": "Domain successfully saved!",
+      "verifySuccessCloud": "Domain successfully verified!"
+    },
+    "customDomain": "Custom Domain",
+    "deleteModal": {
+      "title": "Delete Custom Domain?",
+      "content": "Are you sure you want to delete your custom domain?",
+      "confirmButton": "Delete Custom Domain"
+    },
+    "descriptionLink": "globally-configured custom domains.",
+    "domain": "Domain",
+    "domainDescription1": "Use a custom domain to enable a seamless user experience between your domain and ForgeRock. Adding a custom domain to this realm will override any",
+    "domainDescription2": "To complete setup you’ll need access to your Domain Name Registrar so that you can modify Domain Name Server (DNS) records.",
+    "errorDeletngDomains": "There was an error deleting the custom domains",
+    "errorRetrievingDomains": "There was an error retrieving this realm's custom domains",
+    "errorSavingDomains": "There was an error saving the custom domains",
+    "noDomainMessage": "You haven't added a custom domain for this realm yet",
+    "reverifyDomain": "Re-verify"
   },
   "logApiKeys": {
     "noLogApiKeysText": "You haven't added any log API keys",
