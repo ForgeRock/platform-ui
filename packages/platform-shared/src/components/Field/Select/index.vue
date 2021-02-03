@@ -15,7 +15,7 @@ of the MIT license. See the LICENSE file for details. -->
       ref="vms"
       v-model="inputValue"
       v-bind="$attrs"
-      class="h-100"
+      class="h-100 text-nowrap"
       label="text"
       track-by="value"
       :name="fieldName"
@@ -174,9 +174,17 @@ export default {
       },
       deep: true,
     },
-    selectOptions() {
+    selectOptions(newOptions, oldOptions) {
       if (!this.inputValue || this.value !== this.inputValue.value) {
         this.setInputValue(this.value);
+      }
+      // Look for changes to the text of the selected option and update the input value if needed
+      if (this.value) {
+        const oldValueObject = oldOptions.find(({ value }) => value === this.value);
+        const newValueObject = newOptions.find(({ value }) => value === this.value);
+        if (oldValueObject.value === newValueObject.value && oldValueObject.text !== newValueObject.text) {
+          this.setInputValue(this.value);
+        }
       }
     },
   },

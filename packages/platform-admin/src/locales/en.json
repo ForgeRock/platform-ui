@@ -29,6 +29,7 @@
     "nativeConsoles": "Native Consoles",
     "policy": "Policy",
     "provider": "Provider",
+    "scripts": "Scripts",
     "provisioningRole": "External Role",
     "selectIcon": "Please select icon in admin (Managed Object) settings",
     "settings": "Settings",
@@ -352,6 +353,7 @@
   "trees": {
     "treeSaveSuccessful": "All Changes Saved",
     "failedToGetNodeType": "Failed to gather node type details",
+    "failedToGetNodeData": "Failed to gather node data",
     "failedToUpdateNodeOutcomes": "Failed to update node type outcomes",
     "configurationRequired": "Requires Configuration",
     "editPanel": {
@@ -921,6 +923,68 @@
       "errorAccountStatus": "Failed to update admin status.",
       "inviteEmail": "Invite email sent successfully.",
       "errorInviteEmail": "Error sending invite email."
+    }
+  },
+  "scripts": {
+    "title": "Scripts",
+    "listView": {
+      "addScript": "New Script",
+      "noDataTitle": "You haven't added any scripts yet",
+      "subTitle": "Manage scripts used for authentication and authorization."
+    },
+    "getListDataFail": "Unable to retrieve Script data",
+    "deleteFail": "Unable to delete script",
+    "editorModal": {
+      "selectTypeTitle": "New Script",
+      "editTitle": {
+        "create": "New {typeName} Script",
+        "edit": "Edit {typeName} Script",
+        "duplicate": "Duplicate {typeName} Script"
+      },
+      "chooseType": "Choose the type of script to create.",
+      "errorSaving": "Error saving script",
+      "errorLoading": "Error loading script data"
+    },
+    "deleteModal": {
+      "thisScript": "this script"
+    },
+    "typeOptions": {
+      "AUTHENTICATION_TREE_DECISION_NODE": {
+        "name": "Journey Decision Node",
+        "description": "Script to be included in an authentication journey node and executed on the server during authentication."
+      },
+      "OAUTH2_ACCESS_TOKEN_MODIFICATION": {
+        "name": "OAuth2 Access Token Modification",
+        "description": "Script to modify OAuth2 authentication tokens when they are passed from the server to the client."
+      },
+      "OIDC_CLAIMS": {
+        "name": "OIDC Claims",
+        "description": "Script to gather and populate the claims in a request when issuing an ID token or making a request to the userinfo endpoint."
+      },
+      "AUTHENTICATION_CLIENT_SIDE": {
+        "name": "Client-side Authentication",
+        "description": "Script executed on the client during authentication."
+      },
+      "AUTHENTICATION_SERVER_SIDE": {
+        "name": "Server-side Authentication",
+        "description": "Script to be included in an authentication module within a chain and executed on the server during authentication."
+      },
+      "POLICY_CONDITION": {
+        "name": "Policy Condition",
+        "description": "Script to be used as conditions within authorization policies."
+      },
+      "SOCIAL_IDP_PROFILE_TRANSFORMATION": {
+        "name": "Social Identity Provider Profile Transformation",
+        "description": "Script to adapt the fields received by the provider to align with the fields expected by the platform."
+      },
+      "OAUTH2_MAY_ACT": {
+        "name": "OAuth2 May Act",
+        "description": "Scripts are included in an authentication module within a chain and are executed on the server during authentication."
+      }
+    },
+    "languages": {
+      "GROOVY": "Groovy",
+      "JAVASCRIPT": "JavaScript"
     }
   }
 }
