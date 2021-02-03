@@ -92,6 +92,22 @@ of the MIT license. See the LICENSE file for details. -->
             v-bind="slotData" />
         </template>
       </FrSelect>
+      <FrSelectWithActions
+        v-if="field.type === 'selectWithActions'"
+        @input="$emit('valueChange', field.value)"
+        class="floating-label-input"
+        v-model="inputValue"
+        v-bind="attrs"
+        v-on="$listeners"
+        :errors="failedPolicies.concat(errors)"
+        :field-name="field.key"
+        :disabled="fieldDisabled"
+        :help-text="fieldDescription"
+        :select-options="field.options"
+        :label="fieldLabel"
+        :add-row-text="field.addRowText"
+        :add-label="field.addLabel"
+        :edit-label="field.editLabel" />
       <FrBasicInput
         v-else-if="fieldType === 'password' || fieldType === 'string'"
         :type="fieldType"
@@ -173,6 +189,7 @@ import BasicInput from '@forgerock/platform-shared/src/components/Field/Basic';
 import TextArea from '@forgerock/platform-shared/src/components/Field/TextArea';
 import Select from '@forgerock/platform-shared/src/components/Field/Select';
 import Multiselect from '@forgerock/platform-shared/src/components/Field/Multiselect';
+import SelectWithActions from '@forgerock/platform-shared/src/components/Field/SelectWithActions';
 import FrTag from '@forgerock/platform-shared/src/components/Field/Tag';
 import KeyValueList from './KeyValueList';
 
@@ -184,6 +201,7 @@ export default {
     FrTextArea: TextArea,
     FrSelect: Select,
     FrMultiselect: Multiselect,
+    FrSelectWithActions: SelectWithActions,
     FrKeyValueList: KeyValueList,
     FrTag,
     ValidationProvider,
@@ -337,12 +355,25 @@ export default {
      *
      * @param {String} field current field object
      */
-    getOptions(field) {
+    getOptionsFromEnum(field) {
       const options = [];
       field.enum.forEach((enumString, index) => {
         options.push({ text: field.enumNames[index], value: enumString });
       });
       field.options = options;
+    },
+    /**
+     * Checks if the data used to construct options for a select based field differ between the passed field objects
+     *
+     * @param {Object} fieldA The first field to use in the comparison
+     * @param {Object} fieldB The second field to use in the comparison
+     */
+    doSelectOptionsDifferForFields(fieldA, fieldB) {
+      if (fieldA.enum.length !== fieldB.enum.length) {
+        return true;
+      }
+      return fieldA.enum.some((newOption, index) => (newOption !== fieldB.enum[index]))
+        || fieldA.enumNames.some((newOption, index) => (newOption !== fieldB.enumNames[index]));
     },
   },
   mounted() {
@@ -350,7 +381,7 @@ export default {
       this.field.validation = '';
     }
     if (this.field.enum) {
-      this.getOptions(this.field);
+      this.getOptionsFromEnum(this.field);
     }
     if ((this.fieldType === 'object') && (this.field.validation.required || this.field.validation.includes('required'))) {
       this.field.validation = {
@@ -383,13 +414,20 @@ export default {
   },
   watch: {
     /**
-     * Runs required check on few remaining field types that have not converted
-     * to vee-validate. Also emits out changed value.
+     * Watches the field prop to check for:
+     * - changes in field value, updating the prop for the child component if needed
+     * - changes in field type, ensuring this gets mapped to the correct input type
+     * - changes in the available options for select based fields, regenerating options if needed
      */
     field: {
       handler(newField) {
         if (!isEqual(this.oldField.value, newField.value)) {
           this.inputValue = this.field.value;
+          this.oldField = cloneDeep(newField);
+        }
+        if (this.field.type.includes('select') && newField.enum && this.doSelectOptionsDifferForFields(newField, this.oldField)) {
+          // Update select options for selects where we generate options from an enum if those have changed with the field update
+          this.getOptionsFromEnum(newField);
           this.oldField = cloneDeep(newField);
         }
       },

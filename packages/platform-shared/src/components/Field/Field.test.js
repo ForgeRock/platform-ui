@@ -1,13 +1,13 @@
 /**
- * Copyright 2020 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
+
 import BootstrapVue from 'bootstrap-vue';
 import {
-  createLocalVue, mount,
+  createLocalVue, mount, shallowMount,
 } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
 import { extend, ValidationObserver, ValidationProvider } from 'vee-validate';
@@ -241,6 +241,73 @@ describe('FrField.vue', () => {
     });
     await flush();
     expect(wrapper.vm.field.value).toBe(true);
+  });
+
+  describe('field update logic', () => {
+    describe('comparing options between field objects', () => {
+      beforeEach(() => {
+        wrapper = shallowMount(FrField, {
+          mocks: {
+            $t: () => {},
+          },
+          propsData: {
+            field: {
+              key: 'testField',
+              value: '',
+            },
+          },
+          stubs,
+        });
+      });
+
+      it('finds that field options differ if their number of options differs', () => {
+        const fieldA = {
+          enum: [1, 2],
+          enumNames: [1, 2],
+        };
+        const fieldB = {
+          enum: [1],
+          enumNames: [1],
+        };
+        expect(wrapper.vm.doSelectOptionsDifferForFields(fieldA, fieldB)).toBe(true);
+      });
+
+      it('finds that field options differ if their enum contents differ', () => {
+        const fieldA = {
+          enum: [1, 2],
+          enumNames: [1, 2],
+        };
+        const fieldB = {
+          enum: [1, 3],
+          enumNames: [1, 2],
+        };
+        expect(wrapper.vm.doSelectOptionsDifferForFields(fieldA, fieldB)).toBe(true);
+      });
+
+      it('finds that field options differ if their enumNames contents differ', () => {
+        const fieldA = {
+          enum: [1, 2],
+          enumNames: [1, 2],
+        };
+        const fieldB = {
+          enum: [1, 2],
+          enumNames: [1, 3],
+        };
+        expect(wrapper.vm.doSelectOptionsDifferForFields(fieldA, fieldB)).toBe(true);
+      });
+
+      it('finds that field options do not differ if their number of options, and the contents of enum and enumnames is the same', () => {
+        const fieldA = {
+          enum: [1, 2],
+          enumNames: [1, 2],
+        };
+        const fieldB = {
+          enum: [1, 2],
+          enumNames: [1, 2],
+        };
+        expect(wrapper.vm.doSelectOptionsDifferForFields(fieldA, fieldB)).toBe(false);
+      });
+    });
   });
 
   // Need to figure out how to get vee-validate and jest working together
