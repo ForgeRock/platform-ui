@@ -1,10 +1,10 @@
 /**
- * Copyright 2020 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
+
 import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, mount, shallowMount } from '@vue/test-utils';
 import Select from './index';
@@ -149,6 +149,38 @@ describe('Select input', () => {
 
     expect(wrapper.contains('.test_prepend')).toBe(true);
     expect(wrapper.contains('.test_append')).toBe(true);
+  });
+
+  it('will update the displayed selected value if the text for that option changes', async () => {
+    const wrapper = mount(Select, {
+      localVue,
+      mocks: {
+        $t: () => {},
+      },
+      propsData: {
+        ...defaultMixinProps,
+        selectOptions: [
+          { text: 'ayy', value: 'a' },
+          { text: 'bee', value: 'b' },
+          { text: 'cee', value: 'c' },
+        ],
+      },
+    });
+
+    await wrapper.setProps({ value: 'b' });
+
+    // Check that the select shows the correct initial text
+    expect(wrapper.find('.multiselect__single').text()).toBe('bee');
+
+    await wrapper.setProps({
+      selectOptions: [
+        { text: 'ayy', value: 'a' },
+        { text: 'beegees?', value: 'b' },
+        { text: 'cee', value: 'c' },
+      ],
+    });
+
+    expect(wrapper.find('.multiselect__single').text()).toBe('beegees?');
   });
 
   it('Select is not autofocused on absence of prop "autofocus"', () => {
