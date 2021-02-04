@@ -1,41 +1,68 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
-  <FrInputLayout
-    :id="id"
-    :field-name="fieldName"
-    :help-text="helpText"
-    :errors="errors"
-    :is-html="isHtml"
-    :label="label">
-    <VueMultiSelect
-      ref="vms"
-      v-model="inputValue"
-      v-bind="$attrs"
-      label="text"
-      track-by="value"
-      :name="fieldName"
-      :tag-placeholder="$t('common.placeholders.addOption')"
-      :disabled="disabled"
-      :options="options"
-      :show-labels="false"
-      :hide-selected="true"
-      :multiple="true"
-      :close-on-select="false"
-      :searchable="defaultSearchable"
-      :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control p-0', {'no-multiselect-label': !this.label }, {'h-100': floatLabels || !this.label }]"
-      :placeholder="defaultPlaceholder"
-      @search-change="searchChange"
-      @open="openHandler"
-      @close="addTag"
-      @tag="addTag"
-      v-on="$listeners">
-      <slot name="noResult">
-        {{ $t('common.noResult') }}
-      </slot>
+  <div
+    @keydown.meta.67="copyOptions"
+    @keydown.ctrl.67="copyOptions">
+    <FrInputLayout
+      :id="id"
+      :field-name="fieldName"
+      :help-text="helpText"
+      :errors="errors"
+      :is-html="isHtml"
+      :label="label">
+      <VueMultiSelect
+        v-if="options"
+        ref="vms"
+        v-model="inputValue"
+        v-bind="$attrs"
+        label="text"
+        track-by="id"
+        :taggable="taggable"
+        :name="fieldName"
+        :tag-placeholder="$t('common.placeholders.addOption')"
+        :disabled="disabled"
+        :options="options"
+        :show-labels="false"
+        :hide-selected="true"
+        :multiple="true"
+        :close-on-select="false"
+        :searchable="defaultSearchable"
+        :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control p-0', {'no-multiselect-label': !label }, {'h-100': floatLabels || !label }]"
+        :placeholder="defaultPlaceholder"
+        @search-change="searchChange"
+        @open="openHandler"
+        @close="close"
+        @tag="addTag"
+        v-on="$listeners">
+        <slot name="noResult">
+          {{ $t('common.noResult') }}
+        </slot>
+        <template #tag="{option, remove}">
+          <span
+            :class="['multiselect__tag', {'multiselect__tag-selected': option && option.copySelect}]"
+            @click="setSelectedForCopy(option)">
+            <span>
+              {{ option && option.text }}
+            </span>
+            <i
+              @click="remove(option)"
+              aria-hidden="true"
+              tabindex="1"
+              class="multiselect__tag-icon" />
+          </span>
+        </template>
+        <template
+          v-for="(key, slotName) in $scopedSlots"
+          v-slot:[slotName]="slotData">
+          <!-- @slot pass-through slot -->
+          <slot
+            :name="slotName"
+            v-bind="slotData" />
+        </template>
+      </VueMultiSelect>
       <template
         v-for="(key, slotName) in $scopedSlots"
         v-slot:[slotName]="slotData">
@@ -44,16 +71,8 @@ to such license between the licensee and ForgeRock AS. -->
           :name="slotName"
           v-bind="slotData" />
       </template>
-    </VueMultiSelect>
-    <template
-      v-for="(key, slotName) in $scopedSlots"
-      v-slot:[slotName]="slotData">
-      <!-- @slot pass-through slot -->
-      <slot
-        :name="slotName"
-        v-bind="slotData" />
-    </template>
-  </FrInputLayout>
+    </FrInputLayout>
+  </div>
 </template>
 
 <script>
@@ -64,6 +83,8 @@ import {
   map,
 } from 'lodash';
 import VueMultiSelect from 'vue-multiselect';
+import * as clipboard from 'clipboard-polyfill/text';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 import InputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
 
@@ -81,7 +102,7 @@ import InputMixin from '../Wrapper/InputMixin';
  */
 export default {
   name: 'MultiSelect',
-  mixins: [InputMixin],
+  mixins: [InputMixin, NotificationMixin],
   components: {
     FrInputLayout: InputLayout,
     VueMultiSelect,
@@ -106,6 +127,11 @@ export default {
       default: true,
       required: false,
     },
+    taggable: {
+      type: Boolean,
+      default: false,
+      required: false,
+    },
     placeholder: {
       type: String,
       default: '',
@@ -122,6 +148,9 @@ export default {
   data() {
     return {
       searchValue: '',
+      lastTagId: 0,
+      isOpen: false,
+      customOptions: [],
     };
   },
   mounted() {
@@ -130,15 +159,30 @@ export default {
     }
   },
   computed: {
-    options() {
-      if (this.selectOptions.length && has(this.selectOptions[0], 'value')) {
-        return this.selectOptions;
-      }
-
-      return map(this.selectOptions, (option) => ({
-        text: option,
-        value: option,
-      }));
+    options: {
+      get() {
+        if (this.selectOptions.length && has(this.selectOptions[0], 'value')) {
+          const thing = map(this.selectOptions, (option) => ({
+            id: this.tagId(),
+            text: option.text,
+            value: option.value,
+            copySelect: false,
+          }));
+          return thing;
+        }
+        if (this.selectOptions.length) {
+          return map(this.selectOptions, (option) => ({
+            id: this.tagId(),
+            text: option,
+            value: option,
+            copySelect: false,
+          }));
+        }
+        return this.customOptions;
+      },
+      set(newValue) {
+        this.customOptions = newValue;
+      },
     },
     defaultSearchable() {
       return this.searchable || this.options.length > 9;
@@ -148,10 +192,54 @@ export default {
     },
   },
   methods: {
+    tagId() {
+      const id = this.lastTagId;
+      this.lastTagId += 1;
+      return id;
+    },
+    setSelectedForCopy(option) {
+      option.copySelect = !option.copySelect;
+      option.id = this.tagId();
+    },
+    copyOptions() {
+      const selectedOptions = this.inputValue
+        .filter((option) => option.copySelect)
+        .map((option) => option.value)
+        .join(', ');
+      if (selectedOptions.length) {
+        clipboard.writeText(selectedOptions).then(() => {
+          this.displayNotification('IDMMessages', 'success', this.$t('common.copySuccess'));
+        }, (error) => {
+          this.showErrorMessage(error, this.$t('common.copyFail'));
+        });
+      }
+    },
+    close() {
+      this.addTag();
+      this.isOpen = false;
+      setTimeout(() => {
+        if (!this.isOpen) {
+          this.options.forEach((option) => {
+            option.copySelect = false;
+          });
+        }
+      }, 50);
+    },
     addTag() {
-      if (this.$attrs.taggable && this.searchValue.length > 0) {
-        this.options.push({ text: this.searchValue, value: this.searchValue });
-        this.inputValue.push({ text: this.searchValue, value: this.searchValue });
+      if (this.taggable && this.searchValue.length > 0) {
+        this.searchValue.split(',').forEach((untrimmedVal) => {
+          const newVal = untrimmedVal.trim();
+          const existsIncurrentValues = find(this.inputValue, { value: newVal });
+          if (!existsIncurrentValues) {
+            this.options = [...this.inputValue];
+            this.options.push({
+              id: this.tagId(), text: newVal, value: newVal, copySelect: false,
+            });
+            this.inputValue.push({
+              id: this.tagId(), text: newVal, value: newVal, copySelect: false,
+            });
+          }
+        });
       }
       this.floatLabels = this.inputValue && this.inputValue.length;
     },
@@ -174,6 +262,7 @@ export default {
      */
     openHandler() {
       this.$refs.vms.$el.querySelector('input').focus();
+      this.isOpen = true;
       this.floatLabels = true;
     },
   },
@@ -186,5 +275,19 @@ export default {
 /deep/ .multiselect:focus-within {
   border-color: $blue;
   box-shadow: 0 0 0 0.0625rem $blue;
+}
+
+.multiselect .multiselect__tag-selected {
+  color: white;
+  background-color: $primary;
+  border-color: $primary;
+
+  .multiselect__tag-icon::after {
+    color: white;
+  }
+
+  .multiselect__tag-icon:hover {
+    background-color: $primary;
+  }
 }
 </style>
