@@ -179,6 +179,10 @@
 
   .fr-menu-mobile.fr-menu-expanded & {
     transform: translateX(0);
+
+    .fr-logo-vertical {
+      display: none;
+    }
   }
 
   :not(.fr-menu-mobile) & {
