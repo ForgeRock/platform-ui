@@ -1,10 +1,10 @@
 /**
- * Copyright 2020 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
+
 import Vue from 'vue';
 import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, mount, shallowMount } from '@vue/test-utils';
@@ -57,19 +57,37 @@ describe('MultiSelect input', () => {
     });
 
     const expected = [
-      { text: 'a', value: 'a' },
-      { text: 'b', value: 'b' },
-      { text: 'c', value: 'c' },
+      {
+        copySelect: false, id: 0, text: 'a', value: 'a',
+      },
+      {
+        copySelect: false, id: 1, text: 'b', value: 'b',
+      },
+      {
+        copySelect: false, id: 2, text: 'c', value: 'c',
+      },
     ];
 
     expect(wrapper.vm.options).toEqual(expected);
   });
 
-  it('MultiSelect input component passes through selectOptions object prop', () => {
+  it('MultiSelect input component passes through selectOptions object prop and adds id and copy selected', () => {
     const selectOptions = [
       { text: 'd', value: 'd' },
       { text: 'e', value: 'e' },
       { text: 'f', value: 'f' },
+    ];
+
+    const expected = [
+      {
+        copySelect: false, id: 0, text: 'd', value: 'd',
+      },
+      {
+        copySelect: false, id: 1, text: 'e', value: 'e',
+      },
+      {
+        copySelect: false, id: 2, text: 'f', value: 'f',
+      },
     ];
 
     const wrapper = mount(MultiSelect, {
@@ -84,7 +102,7 @@ describe('MultiSelect input', () => {
       },
     });
 
-    expect(wrapper.vm.options).toEqual(selectOptions);
+    expect(wrapper.vm.options).toEqual(expected);
   });
 
   it('MultiSelect input component renders the options', () => {
@@ -125,12 +143,27 @@ describe('MultiSelect input', () => {
 
     multiselect.trigger('click');
     elements().at(1).trigger('click');
-    expect(wrapper.vm.inputValue).toEqual([{ text: 'b', value: 'b' }]);
+    expect(wrapper.vm.inputValue).toEqual([{
+      copySelect: false,
+      id: 1,
+      text: 'b',
+      value: 'b',
+    }]);
     expect(wrapper.emitted().input[1]).toEqual([['b']]);
 
     multiselect.trigger('click');
     elements().at(0).trigger('click');
-    expect(wrapper.vm.inputValue).toEqual([{ text: 'b', value: 'b' }, { text: 'a', value: 'a' }]);
+    expect(wrapper.vm.inputValue).toEqual([{
+      copySelect: false,
+      id: 1,
+      text: 'b',
+      value: 'b',
+    }, {
+      copySelect: false,
+      id: 0,
+      text: 'a',
+      value: 'a',
+    }]);
     expect(wrapper.emitted().input[2]).toEqual([['b', 'a']]);
   });
 
