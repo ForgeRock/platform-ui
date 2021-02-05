@@ -1,5 +1,5 @@
 <!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details.
@@ -23,6 +23,7 @@ import {
   capitalize,
   cloneDeep,
 } from 'lodash';
+import { mapState } from 'vuex';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import FrLayout from '@forgerock/platform-shared/src/components/Layout';
@@ -39,6 +40,11 @@ export default {
   components: {
     FrLayout,
     ThemeInjector,
+  },
+  computed: {
+    ...mapState({
+      accessObj: (state) => state.UserStore.access,
+    }),
   },
   data() {
     return {
