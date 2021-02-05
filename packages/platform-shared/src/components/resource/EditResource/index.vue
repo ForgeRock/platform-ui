@@ -323,16 +323,24 @@ export default {
         this.objectTypeProperties = this.getObjectTypeProperties(schema.data, privilege.data);
         this.relationshipProperties = this.getRelationshipProperties(schema.data, privilege.data);
 
-        axios.all([
-          idmInstance.get(this.buildResourceUrl()),
-          getSessionInfo(this.id),
-        ]).then(([resourceDetails, sessionInfo]) => {
+        idmInstance.get(this.buildResourceUrl()).then((resourceDetails) => {
           this.revision = resourceDetails.data._rev;
           this.resourceDetails = resourceDetails.data;
-          this.hasActiveSessions = sessionInfo.data.resultCount > 0;
-          this.clearSessionsName = `${this.resourceDetails.givenName} ${this.resourceDetails.sn}`;
-          this.generateDisplay();
-          this.settingsProperties = this.getSettingsProperties(schema.data, privilege.data);
+
+          if (this.canClearSessions) {
+            // only get session info if canClearSessions
+            getSessionInfo(this.id).then((sessionInfo) => {
+              this.hasActiveSessions = sessionInfo.data.resultCount > 0;
+              this.clearSessionsName = `${this.resourceDetails.givenName} ${this.resourceDetails.sn}`;
+              this.generateDisplay();
+              this.settingsProperties = this.getSettingsProperties(schema.data, privilege.data);
+            }).catch((error) => {
+              this.displayNotification('IDMMessages', 'error', error.response.data.message);
+            });
+          } else {
+            this.generateDisplay();
+            this.settingsProperties = this.getSettingsProperties(schema.data, privilege.data);
+          }
         }).catch((error) => {
           this.displayNotification('IDMMessages', 'error', error.response.data.message);
         });
