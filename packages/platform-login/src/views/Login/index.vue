@@ -350,6 +350,10 @@ export default {
       } else {
         const paramString = this.getCurrentQueryString();
         const paramsObj = this.parseParameters(paramString);
+        const authIndexValue = find(paramsObj, (paramObject, key) => key === 'authIndexValue');
+        if (authIndexValue) {
+          paramsObj.authIndexValue = decodeURI(paramsObj.authIndexValue);
+        }
 
         stepParams.query = paramsObj;
         stepParams.query.code = this.code ? this.code : undefined;
@@ -733,7 +737,11 @@ export default {
           if (stringParams.length) {
             stringParams += '&';
           }
-          stringParams += `${key}=${value}`;
+          if (key === 'authIndexValue') {
+            stringParams += `${key}=${value}`;
+          } else {
+            stringParams += `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+          }
         });
 
         this.removeUrlParams();
