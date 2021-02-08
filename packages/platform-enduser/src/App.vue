@@ -26,6 +26,7 @@ import {
 import { mapState } from 'vuex';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 import FrLayout from '@forgerock/platform-shared/src/components/Layout';
 import { getIdmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
 import ThemeInjector from '@forgerock/platform-shared/src/components/ThemeInjector/';
@@ -36,6 +37,7 @@ export default {
   mixins: [
     NotificationMixin,
     RestMixin,
+    LoginMixin,
   ],
   components: {
     FrLayout,
@@ -62,35 +64,9 @@ export default {
     };
   },
   created() {
-    const idmRequestService = this.getRequestService({
-      'X-OpenIDM-NoSession': true,
-      'X-OpenIDM-Password': 'anonymous',
-      'X-OpenIDM-Username': 'anonymous',
-      'cache-control': 'no-cache',
-    });
-
-    idmRequestService.get('/config/ui/themerealm').then((results) => {
-      let cleanRealm = this.$store.state.realm;
-
-      if (cleanRealm === 'root') {
-        cleanRealm = '/';
-      }
-
-      // If there is a / we need to remove it so that
-      // both test and /test result in the same realm theme
-      if (results.data.realm[cleanRealm] === undefined && cleanRealm.charAt(0) === '/') {
-        cleanRealm = cleanRealm.substring(1);
-      }
-
-      // Set all realm related themeing here
-      if (results.data.realm[cleanRealm]) {
-        this.theme = results.data.realm[cleanRealm];
-        this.logo = results.data.realm[cleanRealm].logo;
-      } else {
-        this.theme = null;
-      }
-    }).catch(() => {
-      this.theme = null;
+    // if this is a dns alias making this call will get the true realm when no realm param is provided
+    this.getConfigurationInfo().then((config) => {
+      this.setTheme(config.data.realm);
     });
   },
   mounted() {
