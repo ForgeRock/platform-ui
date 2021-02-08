@@ -208,6 +208,7 @@ export default {
       .then(this.setRealm)
       .then(this.checkNewSession)
       .then(() => {
+        this.$emit('set-theme', this.realm);
         this.evaluateUrlParams();
         this.nextStep();
       })
