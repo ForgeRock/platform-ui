@@ -86,11 +86,11 @@ export function verifyGotoUrlAndRedirect(url, realm, isAdmin = false, isGotoOnFa
 }
 
 /**
- * Returns the decoded query string from the URI
+ * Returns the query string from the URI
  * @returns {string} Unescaped query string or empty string if no query string was found
  */
 export function getCurrentQueryString() {
-  const queryString = decodeURI(window.location.search);
+  const queryString = window.location.search;
 
   return queryString.substr(1, queryString.length);
 }
