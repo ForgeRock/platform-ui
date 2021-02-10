@@ -377,7 +377,7 @@
     "managedError": "Error retrieving managed objects",
     "passwordLength": "Password length",
     "minLength": "Minimum",
-    "maxLength": "and maximum 64 characters",
+    "characters": "characters",
     "cannotInclude": "Cannot include",
     "restrictRepetitive": "Repetitive characters (e.g. aaaa)",
     "restrictCommon": "Commonly used passwords (e.g. p@ssw0rd, etc.)",
