@@ -35,6 +35,15 @@ export function getConfigurationInfo(realm) {
     apiVersion: 'protocol=1.0,resource=1.1',
   }).get(requestPath, { withCredentials: true, suppressEvents: true });
 }
+
+export function isDefaultPath(path) {
+  return path === '/am/console';
+}
+
+export function isSamlURL(url) {
+  return url.includes('/Consumer/metaAlias') || url.includes('/saml2');
+}
+
 /**
   * @param {string} url - current url after successful login
   * If the url contains a 'goto' query (i.e. ?goto=www.test.com)
@@ -55,7 +64,6 @@ export function verifyGotoUrlAndRedirect(url, realm, isAdmin = false, isGotoOnFa
 
   const ampersand = urlParams.toString().length ? '&' : '';
   const paramsToString = urlParams.toString().length ? `${urlParams.toString()}` : '';
-  const isDefaultPath = (path) => path === '/am/console';
   const redirectUserBasedOnType = () => {
     if (isAdmin) {
     // admin user
@@ -79,6 +87,9 @@ export function verifyGotoUrlAndRedirect(url, realm, isAdmin = false, isGotoOnFa
       }
       if (isDefaultPath(res.data.successURL) && !isDefaultPath(url)) {
         return url;
+      }
+      if (isDefaultPath(res.data.successURL) && isSamlURL(JSON.parse(gotoUrl).goto)) {
+        return JSON.parse(gotoUrl).goto;
       }
       return redirectUserBasedOnType();
     })
@@ -145,6 +156,8 @@ export default {
     getIdFromSession,
     getUserInfo,
     getConfigurationInfo,
+    isDefaultPath,
+    isSamlURL,
     verifyGotoUrlAndRedirect,
     getCurrentQueryString,
     parseParameters,
