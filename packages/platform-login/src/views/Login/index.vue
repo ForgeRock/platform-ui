@@ -180,7 +180,6 @@ export default {
       errorMessage: '',
       header: '',
       hiddenValueCallbacksRefs: [],
-      hideRealm: false,
       initalStep: undefined,
       loading: true,
       loginFailure: false,
@@ -656,12 +655,6 @@ export default {
       }
     },
     setRealm(config) {
-      const amContext = process.env.VUE_APP_AM_URL;
-      const dnsContext = `${window.location.origin}/am`;
-      // using DNS - need to keep realm obscured
-      if (amContext !== dnsContext) {
-        this.hideRealm = true;
-      }
       this.realm = config ? config.data.realm : '/';
     },
     // needs to happen before other query params are processed
@@ -731,7 +724,6 @@ export default {
         });
 
         const ampersand = params.toString().length > 1 ? '&' : '';
-        const qMark = params.toString().length > 1 ? '?' : '';
 
         let stringParams = '';
         params.forEach((value, key) => {
@@ -746,11 +738,8 @@ export default {
         });
 
         this.removeUrlParams();
-        if (this.hideRealm) {
-          window.history.replaceState(null, null, `${qMark}${stringParams}${hash}`);
-        } else {
-          window.history.replaceState(null, null, `?realm=${this.realm}${ampersand}${stringParams}${hash}`);
-        }
+
+        window.history.replaceState(null, null, `?realm=${this.realm}${ampersand}${stringParams}${hash}`);
       }
     },
   },
