@@ -118,6 +118,17 @@
       "title": "Set as Default Journey",
       "adminBody": "Set this journey as the default for admin identities authenticating to this realm?",
       "body": "Set this journey as the default for identities authenticating to this realm?"
+    },
+    "tag": {
+      "basicAuthentication": "Basic Authentication",
+      "mfa": "Multi Factor Auth",
+      "risk": "Risk",
+      "behavioral": "Behavioral",
+      "contextual": "Contextual",
+      "federation": "Federation",
+      "identityManagement": "Identity Management",
+      "utilities": "Utilities",
+      "uncategorized": "Uncategorized"
     }
   },
   "bulkImport": {
