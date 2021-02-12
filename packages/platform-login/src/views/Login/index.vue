@@ -33,6 +33,7 @@ of the MIT license. See the LICENSE file for details. -->
         <div id="body-append-el">
           <!-- for backend scripts -->
           <form
+            @submit.prevent="nextStep"
             id="wrapper"
           >
             <!-- needed for GetAuthenticationApp, RecoveryCodeDisplay-->
@@ -62,7 +63,7 @@ of the MIT license. See the LICENSE file for details. -->
               />
             </template>
             <BButton
-              v-show="nextButtonVisible"
+              v-if="nextButtonVisible"
               class="btn-block mt-3"
               type="submit"
               variant="primary"
