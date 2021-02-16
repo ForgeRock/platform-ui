@@ -1,8 +1,7 @@
-<!-- Copyright 2020-2021 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <BTable
@@ -18,10 +17,12 @@ to such license between the licensee and ForgeRock AS. -->
         <slot
           name="identityObject"
           :item="data">
-          <div class="py-2 d-flex fixed-width-title-cell">
+          <div
+            class="py-2 d-flex fixed-width-title-cell"
+            @click="showAdvanced = !showAdvanced">
             <i
               :class="[{ 'color-red': error}, 'material-icons-outlined mr-3 align-self-center cursor-pointer']"
-              @click="showAdvanced = !showAdvanced">
+              aria-hidden="true">
               {{ error ? 'info' : identityObjectSchema['mat-icon'] || 'settings_system_daydream' }}
             </i>
             <span class="mw-100">
