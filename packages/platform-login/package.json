@@ -41,7 +41,7 @@
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.0.1",
     "copy-webpack-plugin": "5.0.3",
-    "cypress": "5.0.0",
+    "cypress": "6.5.0",
     "cypress-lighthouse": "0.1.0",
     "jest": "26.4.2",
     "jest-html-reporters": "1.2.0",
