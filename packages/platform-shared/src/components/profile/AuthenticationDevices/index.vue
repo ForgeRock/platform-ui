@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="mt-5 w-100">
     <div class="pl-0">
@@ -28,7 +27,8 @@ to such license between the licensee and ForgeRock AS. -->
                   <BRow class="px-4">
                     <div class="w-100 media align-items-center">
                       <i
-                        class="material-icons-outlined md-24 mr-3">
+                        class="material-icons-outlined md-24 mr-3"
+                        aria-hidden="true">
                         stay_primary_portrait
                       </i>
                       <div class="media-body">
@@ -52,7 +52,9 @@ to such license between the licensee and ForgeRock AS. -->
                             :key="button.text">
                             <BDropdownDivider v-if="index > 0" />
                             <BDropdownItemButton @click="button.action">
-                              <i class="material-icons-outlined text-muted mr-2">
+                              <i
+                                class="material-icons-outlined text-muted mr-2"
+                                aria-hidden="true">
                                 {{ button.icon }}
                               </i>
                               {{ button.text }}

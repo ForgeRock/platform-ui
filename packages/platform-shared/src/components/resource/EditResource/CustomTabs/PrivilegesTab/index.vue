@@ -16,7 +16,9 @@ of the MIT license. See the LICENSE file for details. -->
             class="mr-1"
             @click="$refs.addPrivilegesModal.show()"
             id="add_privilege">
-            <i class="material-icons mr-2">
+            <i
+              class="material-icons mr-2"
+              aria-hidden="true">
               add
             </i>
             {{ $t("pages.access.addPrivileges") }}
@@ -80,12 +82,16 @@ of the MIT license. See the LICENSE file for details. -->
                   </i>
                 </template>
                 <BDropdownItem @click="showEditModal(data.item, data.index)">
-                  <i class="material-icons-outlined mr-3">
+                  <i
+                    class="material-icons-outlined mr-3"
+                    aria-hidden="true">
                     edit
                   </i> {{ $t('common.edit') }}
                 </BDropdownItem>
                 <BDropdownItem @click="confirmRemovePrivilege(data.index)">
-                  <i class="material-icons-outlined mr-3">
+                  <i
+                    class="material-icons-outlined mr-3"
+                    aria-hidden="true">
                     delete
                   </i> {{ $t('common.delete') }}
                 </BDropdownItem>

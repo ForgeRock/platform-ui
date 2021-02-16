@@ -1,10 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div v-if="oauthApplications.length">
     <FrAccordion
@@ -48,7 +45,9 @@ of the MIT license. See the LICENSE file for details.
               <template v-for="(scope, i) in slotData.scopes">
                 <dd :key="i">
                   <div class="media">
-                    <i class="material-icons-outlined mr-2 mt-1 text-success">
+                    <i
+                      class="material-icons-outlined mr-2 mt-1 text-success"
+                      aria-hidden="true">
                       check
                     </i>
                     <div class="media-body">
@@ -68,7 +67,9 @@ of the MIT license. See the LICENSE file for details.
               </dt>
               <dd>
                 <div class="media">
-                  <i class="material-icons-outlined mr-2 mt-1 text-muted">
+                  <i
+                    class="material-icons-outlined mr-2 mt-1 text-muted"
+                    aria-hidden="true">
                     access_time
                   </i>
                   <div class="media-body">
@@ -88,7 +89,9 @@ of the MIT license. See the LICENSE file for details.
             type="button"
             variant="outline-danger"
           >
-            <i class="material-icons-outlined mr-2">
+            <i
+              class="material-icons-outlined mr-2"
+              aria-hidden="true">
               block
             </i
             >{{ $t('pages.profile.oauthApplications.revokeAccess') }}

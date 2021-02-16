@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
     :id="field.key"
@@ -33,6 +32,7 @@ to such license between the licensee and ForgeRock AS. -->
       </BPopover>
     </label>
     <BFormCheckbox
+      role="switch"
       v-if="field.type === 'boolean'"
       switch
       size="lg"
@@ -42,6 +42,7 @@ to such license between the licensee and ForgeRock AS. -->
       :disabled="fieldDisabled"
       class="d-inline-flex fr-toggle-primary" />
     <BFormCheckbox
+      role="checkbox"
       v-else-if="field.type === 'checkbox'"
       v-model="inputValue"
       v-on="$listeners"

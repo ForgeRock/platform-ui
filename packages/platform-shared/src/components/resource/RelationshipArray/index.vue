@@ -1,8 +1,7 @@
 <!-- Copyright 2020-2021 ForgeRock AS. All Rights Reserved
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <div class="px-4 py-2 card-header">
@@ -15,7 +14,9 @@ to such license between the licensee and ForgeRock AS. -->
             class="mr-1"
             @click="openCreateModal"
             :id="'add_' + relationshipArrayProperty.key">
-            <i class="material-icons mr-2">
+            <i
+              class="material-icons mr-2"
+              aria-hidden="true">
               add
             </i>
             {{ $t("common.addObject", {object: relationshipArrayProperty.title}) }}
