@@ -1,3 +1,10 @@
+/**
+ * Copyright (c) 2021 ForgeRock. All rights reserved.
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
+ */
+
 import { random } from 'lodash';
 
 /**
@@ -42,7 +49,7 @@ export function createIDMTestUser() {
     method: 'POST',
     url: `https://${Cypress.env('FQDN')}/openidm/managed/user?_action=create`,
     headers: {
-      authorization: `Bearer ${JSON.parse(Cypress.env('ACCESS_TOKEN')).access_token}`,
+      authorization: `Bearer ${Cypress.env('ACCESS_TOKEN').access_token}`,
       'content-type': 'application/json',
     },
     body: {
