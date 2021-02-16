@@ -1,8 +1,7 @@
-<!-- Copyright 2020-2021 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="form-group">
     <div class="d-flex justify-content-end align-items-center">
@@ -42,7 +41,9 @@ to such license between the licensee and ForgeRock AS. -->
         v-if="selectedVariables.length === 0 && !jsonEditToggle.value"
         variant="link"
         @click="addVariable('', '', 0)">
-        <i class="material-icons-outlined">
+        <i
+          class="material-icons-outlined"
+          aria-hidden="true">
           add
         </i>
         {{ $t('common.addObject', {object: $t('scriptEditor.variables')}) }}
