@@ -1,9 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
+of the MIT license. See the LICENSE file for details. -->
 <template functional>
   <dl class="row">
     <dt class="col-xl-5 mb-3">
@@ -15,7 +13,9 @@ of the MIT license. See the LICENSE file for details.
           class="py-1"
           v-for="field in props.fields"
           :key="field.name">
-          <i class="material-icons-outlined md-16 text-success font-weight-bolder mr-2">
+          <i
+            class="material-icons-outlined md-16 text-success font-weight-bolder mr-2"
+            aria-hidden="true">
             check
           </i>
           {{ field.title }}
