@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div v-if="devices.length">
     <FrAccordion
@@ -51,7 +50,9 @@ to such license between the licensee and ForgeRock AS. -->
               <BCol
                 md="6">
                 <span v-if="slotData.isCurrent">
-                  <i class="material-icons mr-2 text-success">
+                  <i
+                    class="material-icons mr-2 text-success"
+                    aria-hidden="true">
                     check_circle
                   </i>
                   {{ $t('pages.profile.trustedDevices.currentDevice') }}
@@ -77,7 +78,9 @@ to such license between the licensee and ForgeRock AS. -->
                 class="mb-3 w-100"
                 :src="slotData.map">
               <div class="media">
-                <i class="material-icons-outlined mr-2 mt-1 text-muted">
+                <i
+                  class="material-icons-outlined mr-2 mt-1 text-muted"
+                  aria-hidden="true">
                   place
                 </i>
                 <div class="media-body">
@@ -126,7 +129,9 @@ to such license between the licensee and ForgeRock AS. -->
             class="w-100"
             v-b-modal.trusted-devices-modal
             @click="setModalData('remove', slotData)">
-            <i class="material-icons-outlined mr-2">
+            <i
+              class="material-icons-outlined mr-2"
+              aria-hidden="true">
               block
             </i> {{ $t('pages.profile.trustedDevices.remove') }}
           </BButton>
