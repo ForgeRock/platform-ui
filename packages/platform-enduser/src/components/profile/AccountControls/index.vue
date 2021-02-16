@@ -1,10 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <FrAccordion
@@ -33,7 +30,9 @@ of the MIT license. See the LICENSE file for details.
           block
           :variant="slotData.buttonVariant"
           @click="slotData.buttonMethod">
-          <i class="material-icons-outlined mr-2">
+          <i
+            class="material-icons-outlined mr-2"
+            aria-hidden="true">
             {{ slotData.buttonIcon }}
           </i>
           {{ slotData.buttonText }}

@@ -1,3 +1,7 @@
+<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BDropdown
     no-caret
@@ -5,7 +9,8 @@
     :disabled="disabled">
     <i
       class="material-icons-outlined"
-      slot="button-content">
+      slot="button-content"
+      aria-hidden="true">
       add
     </i>
     <BDropdownItem @click="$emit('add-rule', 'row')">

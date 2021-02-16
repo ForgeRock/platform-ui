@@ -71,7 +71,7 @@ export function deleteIDMTestUser(userId) {
     method: 'DELETE',
     url: `https://${Cypress.env('FQDN')}/openidm/managed/user/${userId}`,
     headers: {
-      authorization: `Bearer ${JSON.parse(Cypress.env('ACCESS_TOKEN')).access_token}`,
+      authorization: `Bearer ${Cypress.env('ACCESS_TOKEN').access_token}`,
       'content-type': 'application/json',
       referer: `https://${Cypress.env('FQDN')}/platform/appAuthHelperRedirect.html`,
     },

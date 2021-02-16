@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <div class="text-muted m-4">
@@ -26,7 +25,9 @@ to such license between the licensee and ForgeRock AS. -->
             v-if="!loading"
             :field="identityObjectField">
             <template v-slot:option="{ option }">
-              <i class="material-icons-outlined mr-3">
+              <i
+                class="material-icons-outlined mr-3"
+                aria-hidden="true">
                 {{ option.icon || 'settings_system_daydream' }}
               </i>
               {{ (option.text ? (option.text) : '') | PluralizeFilter }}
@@ -35,7 +36,9 @@ to such license between the licensee and ForgeRock AS. -->
               </small>
             </template>
             <template v-slot:singleLabel="{ option }">
-              <i class="material-icons-outlined mr-3">
+              <i
+                class="material-icons-outlined mr-3"
+                aria-hidden="true">
                 {{ option.icon || 'settings_system_daydream' }}
               </i>
               {{ (option.text ? (option.text) : '') | PluralizeFilter }}
@@ -50,7 +53,9 @@ to such license between the licensee and ForgeRock AS. -->
           class="w-25"
           @click="addNewPrivilege"
           id="add_new_privilege">
-          <i class="material-icons mr-2">
+          <i
+            class="material-icons-outlined mr-2"
+            aria-hidden="true">
             add
           </i>{{ $t("common.add") }}
         </BButton>

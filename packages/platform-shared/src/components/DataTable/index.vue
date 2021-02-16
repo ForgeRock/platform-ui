@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="fr-datatable">
     <!-- @slot Toolbar above the datatable for buttons, search, etc. -->
@@ -69,7 +68,9 @@ to such license between the licensee and ForgeRock AS. -->
             v-for="(lineItem, index) in data.item.dropdown"
             :key="index">
             <BDropdownItem @click="lineItem.action">
-              <i class="material-icons-outlined mr-3">
+              <i
+                class="material-icons-outlined mr-3"
+                aria-hidden="true">
                 {{ lineItem.icon }}
               </i> {{ lineItem.text }}
             </BDropdownItem>

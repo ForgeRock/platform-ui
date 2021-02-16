@@ -1,10 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <template>
@@ -60,7 +57,9 @@ of the MIT license. See the LICENSE file for details.
                   <div
                     class="allow text-success"
                     v-if="request.allowed">
-                    <i class="material-icons-outlined font-weight-bolder md-16 mb-1">
+                    <i
+                      class="material-icons-outlined font-weight-bolder md-16 mb-1"
+                      aria-hidden="true">
                       check
                     </i>
                     {{ $t('pages.uma.requests.allowed') }}
@@ -68,7 +67,9 @@ of the MIT license. See the LICENSE file for details.
                   <div
                     class="deny text-danger"
                     v-if="!request.allowed">
-                    <i class="material-icons-outlined font-weight-bolder md-16 mb-1">
+                    <i
+                      class="material-icons-outlined font-weight-bolder md-16 mb-1"
+                      aria-hidden="true">
                       block
                     </i>
                     {{ $t('pages.uma.requests.denied') }}

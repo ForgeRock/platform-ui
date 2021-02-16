@@ -9,7 +9,8 @@ of the MIT license. See the LICENSE file for details. -->
       v-if="active"
       v-slot:button-content>
       <i
-        class="material-icons-outlined mr-md-2 text-success">
+        class="material-icons-outlined mr-md-2 text-success"
+        aria-hidden="true">
         check_circle
       </i>
       <span>{{ $t('common.active') }}</span>
@@ -26,7 +27,8 @@ of the MIT license. See the LICENSE file for details. -->
         @click="changeState(false)"
       >
         <i
-          class="material-icons-outlined mr-md-2">
+          class="material-icons-outlined mr-md-2"
+          aria-hidden="true">
           power_settings_new
         </i>
         <span>{{ $t('common.deactivate') }}</span>
@@ -38,7 +40,8 @@ of the MIT license. See the LICENSE file for details. -->
         @click="changeState(true)"
       >
         <i
-          class="material-icons-outlined mr-md-2 text-success">
+          class="material-icons-outlined mr-md-2 text-success"
+          aria-hidden="true">
           check_circle
         </i>
         <span>{{ $t('common.activate') }}</span>

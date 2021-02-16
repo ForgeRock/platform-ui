@@ -1,8 +1,7 @@
-<!-- Copyright 2019-2021 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2019-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <ValidationObserver
     ref="observer"
@@ -337,8 +336,9 @@ export default {
             this.displayNotification('IDMMessages', 'success', this.$t('pages.access.successCreate', { resource: this.resourceTitle || capitalize(this.resourceName) }));
           },
           (error) => {
-            this.isSaving = false;
             this.setErrors(error.response);
+          }).finally(() => {
+            this.isSaving = false;
           });
         } else {
           this.isSaving = false;

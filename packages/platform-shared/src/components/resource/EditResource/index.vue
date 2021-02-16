@@ -17,7 +17,8 @@ of the MIT license. See the LICENSE file for details. -->
         :alt="$t('common.avatar')" />
       <i
         v-else
-        class="material-icons-outlined mr-4 md-48">
+        class="material-icons-outlined mr-4 md-48"
+        aria-hidden="true">
         {{ setIcon }}
       </i>
       <div class="media-body align-self-center">
@@ -40,7 +41,9 @@ of the MIT license. See the LICENSE file for details. -->
       class="mb-4"
       variant="outline-secondary"
       v-b-modal.resetModal>
-      <i class="material-icons-outlined mr-md-2 text-nowrap">
+      <i
+        class="material-icons-outlined mr-md-2 text-nowrap"
+        aria-hidden="true">
         cached
       </i>
       {{ $t('pages.access.resetPassword') }}
@@ -143,6 +146,7 @@ of the MIT license. See the LICENSE file for details. -->
 
     <BCard
       class="mb-5"
+      data-testid="delete-panel"
       v-if="canDelete">
       <h5 class="card-title">
         {{ $t('deletePanel.header', {type: resourceTitle}) }}

@@ -14,6 +14,7 @@ of the MIT license. See the LICENSE file for details. -->
       :is-html="isHtml"
       :label="label">
       <VueMultiSelect
+        :id="id"
         v-if="options"
         ref="vms"
         v-model="inputValue"
@@ -32,7 +33,6 @@ of the MIT license. See the LICENSE file for details. -->
         :searchable="defaultSearchable"
         :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control p-0', {'no-multiselect-label': !label }, {'h-100': floatLabels || !label }]"
         :placeholder="defaultPlaceholder"
-        :id="id"
         @search-change="searchChange"
         @open="openHandler"
         @close="close"

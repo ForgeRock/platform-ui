@@ -1,9 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <BContainer fluid="true">
@@ -24,7 +22,9 @@ of the MIT license. See the LICENSE file for details.
         v-else
         class="mt-4 text-center">
         <div class="d-flex justify-content-center mt-3">
-          <i class="material-icons-outlined mr-4 md-64">
+          <i
+            class="material-icons-outlined mr-4 md-64"
+            aria-hidden="true">
             donut_large
           </i>
           <div class="flex-fow-1">
