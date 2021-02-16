@@ -1,10 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div v-if="socialProviders.length">
     <FrAccordion
@@ -37,13 +34,17 @@ of the MIT license. See the LICENSE file for details.
               <BCol md="6">
                 <span>
                   <template v-if="slotData.connected">
-                    <i class="material-icons mr-2 text-success">
+                    <i
+                      class="material-icons mr-2 text-success"
+                      aria-hidden="true">
                       check_circle
                     </i>
                     {{ $t("common.connected") }}
                   </template>
                   <template v-else>
-                    <i class="material-icons mr-2 text-muted">
+                    <i
+                      class="material-icons mr-2 text-muted"
+                      aria-hidden="true">
                       remove_circle
                     </i>
                     {{ $t('pages.profile.social.notConnected') }}
@@ -65,7 +66,9 @@ of the MIT license. See the LICENSE file for details.
                 v-for="scope in slotData.scopes"
                 :key="slotData.provider + scope"
                 class="mt-2">
-                <i class="material-icons-outlined mr-2 text-success">
+                <i
+                  class="material-icons-outlined mr-2 text-success"
+                  aria-hidden="true">
                   check
                 </i>
                 <span class="text-dark">
@@ -78,7 +81,9 @@ of the MIT license. See the LICENSE file for details.
             @click="showModal(slotData.provider)"
             variant="outline-danger"
             block>
-            <i class="material-icons-outlined mr-2">
+            <i
+              class="material-icons-outlined mr-2"
+              aria-hidden="true">
               block
             </i>
             {{ $t('pages.profile.social.disconnect') }}
