@@ -24,7 +24,7 @@
     "dayjs": "1.8.20",
     "es6-promise": "4.2.4",
     "lodash": "4.17.19",
-    "oidcsessioncheck": "1.0.1",
+    "oidcsessioncheck": "1.0.2",
     "vee-validate": "3.2.2",
     "vue": "2.6.11",
     "vue-i18n": "8.0.0",
