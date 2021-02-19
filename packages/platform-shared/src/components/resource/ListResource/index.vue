@@ -113,10 +113,7 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import {
   isNull,
-  each,
   isUndefined,
-  isNaN,
-  toNumber,
 } from 'lodash';
 import {
   BDropdown,
@@ -127,6 +124,7 @@ import {
 } from 'bootstrap-vue';
 import Vue from 'vue';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import SearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrPagination from '@forgerock/platform-shared/src/components/DataTable/Pagination';
 import DeleteResource from '../DeleteResource';
@@ -143,6 +141,7 @@ export default {
   name: 'ListResource',
   mixins: [
     NotificationMixin,
+    ResourceMixin,
   ],
   components: {
     BDropdown,
@@ -289,54 +288,6 @@ export default {
       this.currentPage = 0;
 
       this.loadData('true', this.displayFields, this.defaultSort, this.currentPage);
-    },
-    /**
-     * Builds API URL using value in search box
-     *
-     * @param {string} filter - Required current value of search box
-     * @param {array} displayFields - Required array of field names that we want to query on
-     * @param {object} schemaProps - Required metadata of current schema
-     */
-    generateSearch(filter, displayFields, schemaProps) {
-      let filterUrl = '';
-
-      if (filter.length > 0) {
-        each(displayFields, (field, index) => {
-          let type = 'string';
-
-          if (!isUndefined(schemaProps) && !isUndefined(schemaProps[field])) {
-            // eslint-disable-next-line prefer-destructuring
-            type = schemaProps[field].type;
-          }
-
-          if (type === 'number' && !isNaN(toNumber(filter))) {
-            // Search based on number and proper number value
-            if ((index + 1) < displayFields.length) {
-              filterUrl = `${filterUrl}${field} eq ${filter} OR `;
-            } else {
-              filterUrl = `${filterUrl}${field} eq ${filter}`;
-            }
-          } else if (type === 'boolean' && (filter === 'true' || filter === 'false')) {
-            // Search based on boolean and proper boolean true/false
-            if ((index + 1) < displayFields.length) {
-              filterUrl = `${filterUrl}${field} eq ${filter} OR `;
-            } else {
-              filterUrl = `${filterUrl}${field} eq ${filter}`;
-            }
-          } else if ((index + 1) < displayFields.length) {
-            // Fallback to general string search if all other criteria fails
-            // IAM-1003 revealed an issue with some url encoding differences between
-            // chrome and IE. Need to use %22 instead of " to avoid the encoding
-            filterUrl = `${filterUrl}${field} sw "${filter}" OR `;
-          } else {
-            filterUrl = `${filterUrl}${field} sw "${filter}"`;
-          }
-        });
-      } else {
-        filterUrl = 'true';
-      }
-
-      return filterUrl;
     },
     loadData(filter, fields, sortField, page) {
       this.$emit('getTableData', {
