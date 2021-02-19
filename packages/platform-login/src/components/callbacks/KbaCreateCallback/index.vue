@@ -33,7 +33,8 @@ of the MIT license. See the LICENSE file for details. -->
         v-model="selected"
         :id="questionModel.key + '_selector'"
         class="mb-2 kbaQuestionSelect"
-        @change="onQuestionSelectionChange()" />
+        @change="onQuestionSelectionChange()"
+        role="listbox" />
       <FrField
         v-if="showCustom"
         class="mb-3"
@@ -44,7 +45,8 @@ of the MIT license. See the LICENSE file for details. -->
         class="mb-3"
         :field="answerModel"
         :disabled="selected === null"
-        :validator="validateAnswer" />
+        :validator="validateAnswer"
+      />
     </ValidationObserver>
     <hr>
   </div>
