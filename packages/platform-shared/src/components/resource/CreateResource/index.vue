@@ -1,4 +1,4 @@
-<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright 2019-2021 ForgeRock AS. All Rights Reserved
 
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
@@ -43,6 +43,17 @@ to such license between the licensee and ForgeRock AS. -->
                     :num-columns="2"
                     :policies="policies" />
                 </BFormGroup>
+                <!-- for relationship values -->
+                <BFormGroup
+                  v-else-if="field.type === 'relationship' || (field.type === 'array' && field.items.type === 'relationship')"
+                  :key="'createResource' + index">
+                  <FrRelationshipEdit
+                    :parent-resource="`${resourceType}/${resourceName}`"
+                    :relationship-property="field"
+                    :index="index"
+                    :new-resource="true"
+                    @setValue="setRelationshipValue($event, field.key)" />
+                </BFormGroup>
                 <BFormGroup
                   :key="'createResource' + index"
                   v-else-if="field.type === 'array' && field.key !== 'privileges' && !field.isTemporalConstraint">
@@ -54,16 +65,6 @@ to such license between the licensee and ForgeRock AS. -->
                     @add-list="addElementToList(index, $event, clonedCreateProperties)"
                     @remove-element="removeElementFromList(index, $event, clonedCreateProperties)" />
                 </BFormGroup>
-                <!-- for singletonRelationhip values -->
-                <FrRelationshipEdit
-                  v-else-if="field.type === 'relationship'"
-                  v-model="field.value"
-                  :parent-resource="`${resourceType}/${resourceName}`"
-                  :relationship-property="field"
-                  :index="index"
-                  :key="'createResource' + index"
-                  :new-resource="true"
-                  @setValue="setSingletonRelationshipValue($event, field.key)" />
               </template>
             </BForm>
             <template v-else>
@@ -374,7 +375,7 @@ export default {
       });
       return data;
     },
-    setSingletonRelationshipValue(data, fieldKey) {
+    setRelationshipValue(data, fieldKey) {
       const property = this.clonedCreateProperties.find((prop) => prop.key === fieldKey);
       property.value = data;
     },
@@ -408,6 +409,8 @@ export default {
         }
         if (prop.type === 'string' || prop.type === 'number') {
           tempFormFields[prop.key] = '';
+        } else if (prop.type === 'array' && prop.items.type === 'relationship') {
+          tempFormFields[prop.key] = [];
         } else if (prop.type === 'array') {
           const hasTitle = prop.title && prop.title.length > 0;
           const hasDescription = prop.description && prop.description.length > 0;
@@ -427,6 +430,8 @@ export default {
         if (prop.policies && prop.policies[0] && prop.policies[0].policyId.includes('email')) {
           prop.validation = 'required|email';
         } else if (prop.isOptional) {
+          noop();
+        } else if (prop.type === 'array' && prop.items.type === 'relationship') {
           noop();
         } else {
           prop.validation = 'required';
