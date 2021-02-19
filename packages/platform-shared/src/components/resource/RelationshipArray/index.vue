@@ -1,15 +1,15 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright 2020-2021 ForgeRock AS. All Rights Reserved
 
 Use of this code requires a commercial software license with ForgeRock AS.
 or with one of its affiliates. All use shall be exclusively subject
 to such license between the licensee and ForgeRock AS. -->
 <template>
   <div>
-    <div
-      v-show="!relationshipArrayProperty.readOnly || isOpenidmAdmin"
-      class="px-4 py-2 card-header">
+    <div class="px-4 py-2 card-header">
       <BRow>
-        <BCol class="my-1">
+        <BCol
+          v-show="!relationshipArrayProperty.readOnly || isOpenidmAdmin"
+          class="my-1">
           <BButton
             variant="primary"
             class="mr-1"
@@ -28,6 +28,12 @@ to such license between the licensee and ForgeRock AS. -->
             {{ $t("common.remove") }}
           </BButton>
         </BCol>
+        <FrSearchInput
+          v-if="showFilter"
+          v-model="filter"
+          :placeholder="$t('common.search')"
+          @clear="clear"
+          @search="search" />
       </BRow>
     </div>
 
@@ -41,11 +47,15 @@ to such license between the licensee and ForgeRock AS. -->
       :per-page="0"
       :hover="tableHover"
       :no-local-sorting="true"
+      :sort-by.sync="sortBy"
+      :sort-desc.sync="sortDesc"
+      :sort-direction="sortDirection"
       class="mb-0"
       :selectable="!relationshipArrayProperty.readOnly || isOpenidmAdmin"
       selected-variant="transparent"
       @row-clicked="resourceClicked"
-      @row-selected="onRowSelected">
+      @row-selected="onRowSelected"
+      @sort-changed="sortingChanged">
       <template v-slot:head(selected)>
         <div
           v-show="gridData.length > 0"
@@ -153,6 +163,7 @@ to such license between the licensee and ForgeRock AS. -->
 import {
   find,
   has,
+  isNull,
   last,
   toArray,
   pick,
@@ -170,8 +181,11 @@ import dayjs from 'dayjs';
 import pluralize from 'pluralize';
 import RelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import FrPagination from '@forgerock/platform-shared/src/components/DataTable/Pagination';
+import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
+import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 
 export default {
   name: 'RelationshipArray',
@@ -184,10 +198,12 @@ export default {
     BTable,
     BFormCheckbox,
     BModal,
+    FrSearchInput,
   },
   mixins: [
     NotificationMixin,
     RestMixin,
+    ResourceMixin,
   ],
   props: {
     revision: {
@@ -215,12 +231,17 @@ export default {
       gridData: [],
       columns: [],
       currentPage: 0,
+      sortBy: null,
+      sortDesc: false,
+      filter: '',
       lastPage: false,
+      sortDirection: 'asc',
       createModalId: `create_${this.relationshipArrayProperty.propName}_modal`,
       removeModalId: `delete_${this.relationshipArrayProperty.propName}_modal`,
       newRelationships: [],
       selected: [],
       isOpenidmAdmin: this.$store.state.UserStore.adminUser,
+      showFilter: false,
     };
   },
   mounted() {
@@ -229,52 +250,73 @@ export default {
   methods: {
     loadGrid(page) {
       const idmInstance = this.getRequestService();
+      const doLoad = (resourceCollectionSchema) => {
+        idmInstance.get(this.buildGridUrl(page, resourceCollectionSchema)).then((resourceData) => {
+          if (resourceData.data.pagedResultsCookie) {
+            this.lastPage = false;
+          } else {
+            this.lastPage = true;
+          }
 
-      idmInstance.get(this.buildGridUrl(page)).then((resourceData) => {
-        if (resourceData.data.pagedResultsCookie) {
-          this.lastPage = false;
-        } else {
-          this.lastPage = true;
-        }
+          if (!this.relationshipArrayProperty.readOnly || this.isOpenidmAdmin) {
+            this.columns.push({
+              key: 'selected',
+              label: '',
+              class: 'checkbox-column',
+            });
+          }
 
-        if (!this.relationshipArrayProperty.readOnly || this.isOpenidmAdmin) {
-          this.columns.push({
-            key: 'selected',
-            label: '',
-            class: 'checkbox-column',
-          });
-        }
+          if (resourceCollectionSchema) {
+            this.relationshipArrayProperty.items.resourceCollection[0].query.fields.forEach((fieldName) => {
+              this.columns.push({
+                key: fieldName,
+                label: resourceCollectionSchema.properties[fieldName].title || pluralize.singular(fieldName),
+                sortable: true,
+                sortDirection: 'desc',
+              });
+            });
+          } else {
+            this.columns.push({
+              key: '_relationshipDetails',
+              label: pluralize.singular(this.relationshipArrayProperty.title),
+            });
+          }
 
-        this.columns.push({
-          key: '_relationshipDetails',
-          label: pluralize.singular(this.relationshipArrayProperty.title),
+          if (this.relationshipArrayProperty.relationshipGrantTemporalConstraintsEnforced) {
+            this.columns.push({
+              key: '_refProperties.temporalConstraints[0].duration',
+              label: this.$t('pages.access.timeConstraint'),
+              formatter: (value) => {
+                if (value) {
+                  const dates = map(value.split('/'), (date) => {
+                    const retVal = dayjs(date).format('MMMM D, YYYY h:mm A');
+
+                    return retVal;
+                  });
+
+                  return `${dates[0]} to ${dates[1]}`;
+                }
+
+                return value;
+              },
+            });
+          }
+
+          this.gridData = [];
+          this.setGridData(resourceData.data.result, this.relationshipArrayProperty);
+        }).catch((error) => {
+          this.displayNotification('IDMMessages', 'error', error.response.data.message);
         });
+      };
 
-        if (this.relationshipArrayProperty.relationshipGrantTemporalConstraintsEnforced) {
-          this.columns.push({
-            key: '_refProperties.temporalConstraints[0].duration',
-            label: this.$t('pages.access.timeConstraint'),
-            formatter: (value) => {
-              if (value) {
-                const dates = map(value.split('/'), (date) => {
-                  const retVal = dayjs(date).format('MMMM D, YYYY h:mm A');
-
-                  return retVal;
-                });
-
-                return `${dates[0]} to ${dates[1]}`;
-              }
-
-              return value;
-            },
-          });
-        }
-
-        this.gridData = [];
-        this.setGridData(resourceData.data.result, this.relationshipArrayProperty);
-      }).catch((error) => {
-        this.displayNotification('IDMMessages', 'error', error.response.data.message);
-      });
+      if (has(this.relationshipArrayProperty, 'items.resourceCollection') && this.relationshipArrayProperty.items.resourceCollection.length === 1) {
+        getSchema(this.relationshipArrayProperty.items.resourceCollection[0].path).then((response) => {
+          this.showFilter = true;
+          doLoad(response.data);
+        });
+      } else {
+        doLoad();
+      }
     },
     setGridData(relationships, schema) {
       relationships.forEach((relationship) => {
@@ -298,13 +340,32 @@ export default {
         this.gridData.push(relationship);
       });
     },
-    buildGridUrl(page) {
-      let resourceUrl = `${this.parentResource}/${this.parentId}/${this.relationshipArrayProperty.propName}?_queryFilter=true&_pageSize=${this.gridPageSize}&_totalPagedResultsPolicy=ESTIMATE&_fields=`;
+    buildGridUrl(page, resourceCollectionSchema) {
+      let resourceUrl = `${this.parentResource}/${this.parentId}/${this.relationshipArrayProperty.propName}?_pageSize=${this.gridPageSize}&_totalPagedResultsPolicy=ESTIMATE&_fields=`;
+
+      if (this.filter) {
+        resourceUrl = `${resourceUrl}&_queryFilter=${this.generateSearch(this.filter, this.relationshipArrayProperty.items.resourceCollection[0].query.fields, resourceCollectionSchema.properties)}`;
+      } else {
+        resourceUrl = `${resourceUrl}&_queryFilter=true`;
+      }
 
       if (page > 0) {
         const offsetCalc = (page) * this.gridPageSize;
 
         resourceUrl = `${resourceUrl}&_pagedResultsOffset=${offsetCalc}`;
+      }
+
+      if (this.sortBy) {
+        let sortUrl = null;
+
+        if (!isNull(this.sortBy)) {
+          if (this.sortDesc) {
+            sortUrl = `${this.sortBy}`;
+          } else {
+            sortUrl = `-${this.sortBy}`;
+          }
+        }
+        resourceUrl = `${resourceUrl}&_sortKeys=${sortUrl}`;
       }
 
       return resourceUrl;
@@ -410,6 +471,43 @@ export default {
           loadAndCloseModal();
           this.displayNotification('IDMMessages', 'error', error.response.data.message);
         });
+    },
+    /**
+     * Repulls data based on new sort, and returns table to first page
+     *
+     * @param {object} sort - Required object containing sort metadata
+     */
+    sortingChanged(sort) {
+      this.currentPage = 0;
+      this.sortBy = sort.sortBy;
+      this.sortDesc = sort.sortDesc;
+
+      this.loadGrid(0);
+    },
+    /**
+     * Reloads data after search box filter text is cleared
+     */
+    clear() {
+      this.filter = '';
+      this.sortBy = null;
+      this.sortDesc = false;
+      this.currentPage = 0;
+
+      this.loadGrid(0);
+    },
+    /**
+     * Repulls data based on input search box text
+     */
+    search() {
+      if (this.filter === '') {
+        this.clear();
+        return;
+      }
+      this.sortBy = null;
+      this.sortDesc = false;
+      this.currentPage = 0;
+
+      this.loadGrid(0);
     },
   },
 };
