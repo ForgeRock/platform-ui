@@ -7,6 +7,7 @@ to such license between the licensee and ForgeRock AS. -->
   <div>
     <nav
       id="fr-sidebar-nav"
+      data-testid="fr-sidebar-nav"
       class="fr-sidebar-wrapper">
       <div class="fr-sidebar-nav h-100 d-flex flex-column">
         <div class="fr-sidebar-brand">
@@ -24,7 +25,9 @@ to such license between the licensee and ForgeRock AS. -->
                   <div
                     :class="`letter-${getFirstLetter(false)}`"
                     class="fr-realm-stamp mr-3 rounded-circle p-2 d-flex align-items-center justify-content-center">
-                    <i class="material-icons-outlined text-white d-none">
+                    <i
+                      class="material-icons-outlined text-white d-none"
+                      aria-hidden="true">
                       cloud
                     </i>
                     <span
@@ -59,7 +62,9 @@ to such license between the licensee and ForgeRock AS. -->
                     <div
                       :class="`letter-${getFirstLetter(false)}`"
                       class="fr-realm-stamp mr-3 rounded-circle p-2 d-flex align-items-center justify-content-center">
-                      <i class="material-icons-outlined text-white d-none">
+                      <i
+                        class="material-icons-outlined text-white d-none"
+                        aria-hidden="true">
                         cloud
                       </i>
                       <span
@@ -105,7 +110,8 @@ to such license between the licensee and ForgeRock AS. -->
                 :class="{'hidden': item.showForRoles && !userHasRole(item.showForRoles)}"
                 :to="{ name: item.routeName, params: { resourceType: item.resourceType, resourceName: item.resourceName} }">
                 <i
-                  class="material-icons material-icons-outlined mr-3">
+                  class="material-icons material-icons-outlined mr-3"
+                  aria-hidden="true">
                   {{ item.icon }}
                 </i>
                 <span class="sidebar-item-text">
@@ -135,7 +141,8 @@ to such license between the licensee and ForgeRock AS. -->
                     class="dropdown-toggle"
                     :aria-expanded="expandedMenus[index]">
                     <i
-                      class="material-icons material-icons-outlined mr-3">
+                      class="material-icons material-icons-outlined mr-3"
+                      aria-hidden="true">
                       {{ item.icon }}
                     </i>
                     <span class="sidebar-item-text">
@@ -182,7 +189,9 @@ to such license between the licensee and ForgeRock AS. -->
               <a
                 class="d-flex align-items-center"
                 @click="toggleMenu">
-                <i class="material-icons material-icons-outlined icon-flipped mr-3">
+                <i
+                  class="material-icons material-icons-outlined icon-flipped mr-3"
+                  aria-hidden="true">
                   chrome_reader_mode
                 </i>
                 <span class="sidebar-item-text">
