@@ -14,7 +14,7 @@ const localVue = createLocalVue();
 localVue.use(BootstrapVue);
 
 const defaultMixinProps = {
-  id: '',
+  multiselectId: '',
   errorMessages: [],
   fieldName: '',
   helpText: '',
@@ -58,13 +58,13 @@ describe('MultiSelect input', () => {
 
     const expected = [
       {
-        copySelect: false, id: 0, text: 'a', value: 'a',
+        copySelect: false, multiselectId: 0, text: 'a', value: 'a',
       },
       {
-        copySelect: false, id: 1, text: 'b', value: 'b',
+        copySelect: false, multiselectId: 1, text: 'b', value: 'b',
       },
       {
-        copySelect: false, id: 2, text: 'c', value: 'c',
+        copySelect: false, multiselectId: 2, text: 'c', value: 'c',
       },
     ];
 
@@ -80,13 +80,13 @@ describe('MultiSelect input', () => {
 
     const expected = [
       {
-        copySelect: false, id: 0, text: 'd', value: 'd',
+        copySelect: false, multiselectId: 0, text: 'd', value: 'd',
       },
       {
-        copySelect: false, id: 1, text: 'e', value: 'e',
+        copySelect: false, multiselectId: 1, text: 'e', value: 'e',
       },
       {
-        copySelect: false, id: 2, text: 'f', value: 'f',
+        copySelect: false, multiselectId: 2, text: 'f', value: 'f',
       },
     ];
 
@@ -145,7 +145,7 @@ describe('MultiSelect input', () => {
     elements().at(1).trigger('click');
     expect(wrapper.vm.inputValue).toEqual([{
       copySelect: false,
-      id: 1,
+      multiselectId: 1,
       text: 'b',
       value: 'b',
     }]);
@@ -155,12 +155,12 @@ describe('MultiSelect input', () => {
     elements().at(0).trigger('click');
     expect(wrapper.vm.inputValue).toEqual([{
       copySelect: false,
-      id: 1,
+      multiselectId: 1,
       text: 'b',
       value: 'b',
     }, {
       copySelect: false,
-      id: 0,
+      multiselectId: 0,
       text: 'a',
       value: 'a',
     }]);
