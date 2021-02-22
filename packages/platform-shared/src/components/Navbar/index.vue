@@ -6,6 +6,7 @@ to such license between the licensee and ForgeRock AS. -->
 <template>
   <BNavbar
     class="fr-main-navbar"
+    data-testid="fr-main-navbar"
     sticky
     toggleable>
     <button
@@ -29,7 +30,9 @@ to such license between the licensee and ForgeRock AS. -->
           v-show="getBreadcrumbRoute().length > 0"
           :to="getBreadcrumbRoute()">
           <h4 class="text-truncate">
-            <i class="material-icons material-icons-outlined md-24 mr-3">
+            <i
+              class="material-icons material-icons-outlined md-24 mr-3"
+              aria-hidden="true">
               arrow_back
             </i><span>{{ getBreadcrumbRouteText() }}</span>
           </h4>
