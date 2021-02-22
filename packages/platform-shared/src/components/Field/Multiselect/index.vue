@@ -19,7 +19,7 @@ of the MIT license. See the LICENSE file for details. -->
         v-model="inputValue"
         v-bind="$attrs"
         label="text"
-        track-by="id"
+        track-by="multiselectId"
         :taggable="taggable"
         :name="fieldName"
         :tag-placeholder="$t('common.placeholders.addOption')"
@@ -148,7 +148,7 @@ export default {
   data() {
     return {
       searchValue: '',
-      lastTagId: 0,
+      nextIdTag: 0,
       isOpen: false,
       customOptions: [],
     };
@@ -162,19 +162,19 @@ export default {
     options: {
       get() {
         if (this.selectOptions.length && has(this.selectOptions[0], 'value')) {
-          const thing = map(this.selectOptions, (option) => ({
-            id: this.tagId(),
+          return map(this.selectOptions, (option) => ({
             text: option.text,
             value: option.value,
+            multiselectId: this.tagId(),
             copySelect: false,
+            ...option,
           }));
-          return thing;
         }
         if (this.selectOptions.length) {
           return map(this.selectOptions, (option) => ({
-            id: this.tagId(),
             text: option,
             value: option,
+            multiselectId: this.tagId(),
             copySelect: false,
           }));
         }
@@ -193,13 +193,13 @@ export default {
   },
   methods: {
     tagId() {
-      const id = this.lastTagId;
-      this.lastTagId += 1;
-      return id;
+      const { nextIdTag } = this;
+      this.nextIdTag += 1;
+      return nextIdTag;
     },
     setSelectedForCopy(option) {
       option.copySelect = !option.copySelect;
-      option.id = this.tagId();
+      option.multiselectId = this.tagId();
     },
     copyOptions() {
       const selectedOptions = this.inputValue
@@ -229,14 +229,14 @@ export default {
       if (this.taggable && this.searchValue.length > 0) {
         this.searchValue.split(',').forEach((untrimmedVal) => {
           const newVal = untrimmedVal.trim();
-          const existsIncurrentValues = find(this.inputValue, { value: newVal });
-          if (!existsIncurrentValues) {
+          const existsInCurrentValues = find(this.inputValue, { value: newVal });
+          if (!existsInCurrentValues) {
             this.options = [...this.inputValue];
             this.options.push({
-              id: this.tagId(), text: newVal, value: newVal, copySelect: false,
+              multiselectId: this.tagId(), text: newVal, value: newVal, copySelect: false,
             });
             this.inputValue.push({
-              id: this.tagId(), text: newVal, value: newVal, copySelect: false,
+              multiselectId: this.tagId(), text: newVal, value: newVal, copySelect: false,
             });
           }
         });
