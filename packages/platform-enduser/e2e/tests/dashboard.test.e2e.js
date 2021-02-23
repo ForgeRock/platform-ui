@@ -32,7 +32,9 @@ describe('Enduser Dashboard View', () => {
     cy.get('.fr-dropdown-button-content').should('contain', fullName);
     cy.get('.jumbotron')
       .get('div')
-      .should('contain', `Hello, ${fullName}`);
+      .should('contain', 'Hello,')
+      .get('span')
+      .should('contain', fullName);
   });
 
   it('should be able to collapse and expand sidebar', () => {
