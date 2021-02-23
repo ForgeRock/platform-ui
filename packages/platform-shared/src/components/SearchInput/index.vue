@@ -5,7 +5,9 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
     class="fr-icon-input-holder">
-    <i class="fr-icon-input-left material-icons-outlined">
+    <i
+      aria-hidden="true"
+      class="fr-icon-input-left material-icons-outlined">
       {{ prependIcon }}
     </i>
     <a
@@ -14,6 +16,7 @@ of the MIT license. See the LICENSE file for details. -->
       @click.prevent="clearSearch()"
       href="#">
       <i
+        aria-hidden="true"
         class="fr-icon-input-right material-icons-outlined">
         {{ appendIcon }}
       </i>

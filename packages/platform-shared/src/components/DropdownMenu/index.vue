@@ -17,7 +17,9 @@ of the MIT license. See the LICENSE file for details. -->
           :key="`sideDropdownItems_${index}`"
           :class="{'hidden': item.showForRoles && !userHasRole(item.showForRoles)}"
           @click="item.action">
-          <i class="material-icons mr-2">
+          <i
+            class="material-icons mr-2"
+            aria-hidden="true">
             {{ item.icon }}
           </i>
           <span>
