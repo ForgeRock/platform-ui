@@ -48,14 +48,18 @@ of the MIT license. See the LICENSE file for details. -->
               <BDropdownItem
                 v-if="editAccess"
                 @click="$emit('row-clicked', data.item)">
-                <i class="material-icons-outlined mr-3">
+                <i
+                  class="material-icons-outlined mr-3"
+                  aria-hidden="true">
                   edit
                 </i> {{ $t('common.edit') }}
               </BDropdownItem>
               <BDropdownItem
                 v-if="hasClearSessionAccess(data)"
                 @click="setResourceToClearSessionsFor(data.item)">
-                <i class="material-icons-outlined mr-3">
+                <i
+                  class="material-icons-outlined mr-3"
+                  aria-hidden="true">
                   clear_all
                 </i> {{ $t('common.endSessions') }}
               </BDropdownItem>
@@ -64,7 +68,9 @@ of the MIT license. See the LICENSE file for details. -->
                   <BDropdownDivider />
                 </template>
                 <BDropdownItem @click="confirmDeleteResource(data.item._id)">
-                  <i class="material-icons-outlined mr-3">
+                  <i
+                    class="material-icons-outlined mr-3"
+                    aria-hidden="true">
                     delete
                   </i> {{ $t('common.delete') }}
                 </BDropdownItem>
