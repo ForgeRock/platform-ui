@@ -50,7 +50,9 @@ of the MIT license. See the LICENSE file for details. -->
       class="mb-4"
       variant="outline-secondary"
       @click="showClearSessionsModal = true">
-      <i class="material-icons-outlined mr-md-2 text-nowrap">
+      <i
+        class="material-icons-outlined mr-md-2 text-nowrap"
+        aria-hidden="true">
         clear_all
       </i>
       {{ $t('common.endSessions') }}
