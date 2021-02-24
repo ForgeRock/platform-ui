@@ -1,18 +1,17 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BDropdown
     variant="outline-secondary"
-    toggle-class="pr-5"
-    data-testid="schema-state">
+    toggle-class="pr-5">
     <template
       v-slot:button-content>
       <i
         v-if="value === $t('common.active')"
-        class="material-icons-outlined mr-md-2 text-success">
+        class="material-icons-outlined mr-md-2 text-success"
+        aria-hidden="true">
         check_circle
       </i>
       <span>{{ value }}</span>
@@ -21,11 +20,11 @@ to such license between the licensee and ForgeRock AS. -->
     <BDropdownItem
       v-for="item in dropdownOptions"
       @click="changeState(item.value)"
-      :key="item.value"
-      data-testid="schema-state-toggle">
+      :key="item.value">
       <i
         v-if="item.icon"
-        :class="`material-icons-outlined mr-md-2 ${item.textClass}`">
+        :class="`material-icons-outlined mr-md-2 ${item.textClass}`"
+        aria-hidden="true">
         {{ item.icon }}
       </i>
       <span>{{ item.text }}</span>
