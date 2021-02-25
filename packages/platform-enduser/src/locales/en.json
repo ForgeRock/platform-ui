@@ -89,7 +89,7 @@
       "widgets": {
         "welcome": {
           "greeting": "Hello",
-          "welcomeMessage": "The ForgeRock End User UI helps users manage their account data, consent, and shared resources.",
+          "welcomeMessage": "The End User UI helps users manage their account data, consent, and shared resources.",
           "editProfile": "Edit Your Profile"
         }
       }
@@ -195,7 +195,7 @@
       }
     },
     "identities": {
-      "subTitle": "ForgeRock-hosted identity resources",
+      "subTitle": "Hosted identity resources",
       "deleteResource": {
         "title": "Delete {resource}?",
         "body": "Are you sure you want to delete this {resource}?",

@@ -1,10 +1,10 @@
 /**
- * @license
- * Copyright (c) 2020 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
+
 import { createIDMTestUser } from '../managedApi.e2e';
 
 describe('Enduser Dashboard View', () => {
@@ -31,8 +31,7 @@ describe('Enduser Dashboard View', () => {
     cy.login(userName);
     cy.get('.fr-dropdown-button-content').should('contain', fullName);
     cy.get('.jumbotron')
-      .should('contain', `Hello, ${fullName}`)
-      .should('contain', 'The ForgeRock End User UI ');
+      .should('contain', `Hello, ${fullName}`);
   });
 
   it('should be able to collapse and expand sidebar', () => {
@@ -55,9 +54,7 @@ describe('Enduser Dashboard View', () => {
     cy.get('.dropdown-menu.show')
       .should('exist');
     cy.get('.dropdown-menu.show')
-      .should('exist')
-      .get('.dropdown-header h5')
-      .should('contain', 'ForgeRock');
+      .should('exist');
     cy.get('button.dropdown-toggle').click({ force: true });
   });
 

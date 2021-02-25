@@ -1,10 +1,10 @@
 /**
- * @license
- * Copyright (c) 2020 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
+
 import { createIDMTestUser } from '../managedApi.e2e';
 
 describe('Enduser Profile View', () => {
@@ -34,8 +34,7 @@ describe('Enduser Profile View', () => {
     cy.get('div.profileCol')
       .get('img.rounded-circle')
       .should('exist');
-    cy.get('div.profileCol')
-      .get('.text-muted')
+    cy.get('div.profileCol .card-body')
       .should('contain', fullName);
   });
 

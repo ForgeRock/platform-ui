@@ -1,8 +1,7 @@
-<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2019-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BNavbar
     class="fr-main-navbar"
@@ -85,11 +84,11 @@ to such license between the licensee and ForgeRock AS. -->
                 </template>
                 <div class="d-none d-lg-block sidebar-item-text fr-dropdown-button-content">
                   <h5 class="my-0 text-truncate">
-                    {{ userDetails.company }}
+                    {{ userDetails.company || userDetails.name }}
                   </h5>
-                  <span class="text-muted text-truncate">
-                    {{ userDetails.name }}
-                  </span>
+                  <div class="text-muted text-truncate">
+                    {{ userDetails.company ? userDetails.name : userDetails.email }}
+                  </div>
                 </div>
               </BMedia>
             </template>
@@ -220,7 +219,7 @@ export default {
       type: Object,
       default: () => ({
         name: 'Fake Name',
-        company: 'ForgeRock',
+        company: '',
         email: 'email@fake.com',
         adminUser: false,
         adminURL: 'wwwfakecom',
