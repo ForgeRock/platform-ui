@@ -1,9 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BJumbotron class="text-center">
     <template v-slot:header>
@@ -17,7 +15,7 @@ of the MIT license. See the LICENSE file for details.
       <div>{{ $t('pages.dashboard.widgets.welcome.greeting') }}, {{ fullName }}</div>
     </template>
     <template v-slot:lead>
-      <div>
+      <div v-if="!$store.state.isFraas">
         {{ $t('pages.dashboard.widgets.welcome.welcomeMessage') }}
       </div>
       <BButton

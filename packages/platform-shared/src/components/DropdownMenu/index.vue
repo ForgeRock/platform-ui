@@ -125,7 +125,7 @@ export default {
       type: Object,
       default: () => ({
         name: 'Fake Name',
-        company: 'ForgeRock',
+        company: '',
         email: 'email@fake.com',
         adminURL: 'wwwfakecom',
         roles: [],
