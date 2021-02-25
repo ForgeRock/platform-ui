@@ -1,8 +1,7 @@
-<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2019-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
     id="app"
@@ -26,6 +25,8 @@ to such license between the licensee and ForgeRock AS. -->
         @toggle-menu="toggleMenu"
         :menu-is-toggled="toggled"
         :show-notifications="false"
+        :show-help-link="!$store.state.isFraas"
+        :show-docs-link="!$store.state.isFraas"
         :tenant-menu-items="tenantMenuItems"
         :user-details="userDetails"
         :docs-link="docsLink"
@@ -56,7 +57,7 @@ to such license between the licensee and ForgeRock AS. -->
         </notifications>
       </div>
       <div
-        v-if="!hideNav"
+        v-if="!hideNav && !isEnduser"
         id="appFooter">
         <div class="d-flex flex-column flex-md-row justify-content-center align-items-center py-4">
           <div class="fr-logo-container mr-3 opacity-20 mb-2 mb-md-0 d-flex">
@@ -101,6 +102,10 @@ export default {
     FrAlert: Alert,
   },
   props: {
+    isEnduser: {
+      type: Boolean,
+      default: false,
+    },
     menuItems: {
       type: Array,
       default: () => [],
