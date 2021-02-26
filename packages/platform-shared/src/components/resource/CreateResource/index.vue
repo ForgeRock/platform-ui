@@ -444,7 +444,8 @@ export default {
 
           // get the password policy config to display the validation rules
           this.getPolicies(this.resourceName).then((res) => {
-            this.policies = res.data;
+            // maxLength of 0 means unlimited length allowed, no need to display
+            this.policies = res.data.filter((policy) => (!(policy.name === 'MAX_LENGTH' && policy.params.maxLength === 0)));
           });
         }
       });
