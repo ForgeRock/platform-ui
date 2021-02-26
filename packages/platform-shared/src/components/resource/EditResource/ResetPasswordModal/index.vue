@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BModal
     v-bind="$attrs"
@@ -102,7 +101,8 @@ export default {
   },
   mounted() {
     this.getPolicies(this.resourceName).then((res) => {
-      this.policies = res.data;
+      // maxLength of 0 means unlimited length allowed, no need to display
+      this.policies = res.data.filter((policy) => (!(policy.name === 'MAX_LENGTH' && policy.params.maxLength === 0)));
     });
   },
   methods: {
