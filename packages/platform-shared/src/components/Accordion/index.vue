@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
     class="accordion"
@@ -17,12 +16,12 @@ to such license between the licensee and ForgeRock AS. -->
         :class="padding(key, data.open$)"
         :key="key"
         no-body
-        role="tab"
         @click="$emit('section-expanded', {key, data})">
         <BCardHeader
           class="pr-4 border-0 position-relative"
           role="tab"
-          v-b-toggle="`accordion-${accordionGroup}-${key}`">
+          v-b-toggle="`accordion-${accordionGroup}-${key}`"
+          v-bind="headerProps(data, key)">
           <!-- @slot Item array header. -->
           <slot
             name="header"
@@ -83,6 +82,12 @@ export default {
         }];
       },
       required: true,
+    },
+    headerProps: {
+      type: Function,
+      default() {
+        return () => ({});
+      },
     },
   },
   mounted() {

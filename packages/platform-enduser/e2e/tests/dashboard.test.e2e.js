@@ -20,18 +20,17 @@ describe('Enduser Dashboard View', () => {
 
   it('should have sidebar and navbar with dashboard selected', () => {
     cy.login(userName);
-    cy.get('.fr-sidebar-wrapper').should('exist');
-    cy.get('.fr-main-navbar').should('exist');
-    cy.get('[href="#/dashboard"]')
-      .should('exist')
+    cy.findByTestId('fr-sidebar-nav').should('exist');
+    cy.findByTestId('fr-main-navbar').should('exist');
+    cy.findByRole('link', { name: 'Dashboard' })
+      .should('have.attr', 'href', '#/dashboard')
       .should('have.class', 'router-link-active');
   });
 
   it(`should be logged in as ${fullName}`, () => {
     cy.login(userName);
     cy.get('.fr-dropdown-button-content').should('contain', fullName);
-    cy.get('.jumbotron')
-      .should('contain', `Hello, ${fullName}`);
+    cy.findByRole('heading', { level: 1, name: `Hello, ${fullName}` });
   });
 
   it('should be able to collapse and expand sidebar', () => {

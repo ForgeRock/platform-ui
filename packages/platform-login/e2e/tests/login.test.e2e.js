@@ -1,6 +1,5 @@
 /**
- * @license
- * Copyright (c) 2020 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -29,24 +28,24 @@ describe('Login View', () => {
 
   it('should fail login with incorrect credentials', () => {
     const errorMessage = 'Authentication Failed';
-    cy.get('[placeholder="User Name:"]')
+    cy.findByPlaceholderText('User Name:')
       .type(userName)
       .should('have.value', userName);
-    cy.get('[placeholder="Password:"]')
+    cy.findByPlaceholderText('Password:')
       .type(userName, { force: true })
       .should('have.value', userName);
-    cy.get('.btn-primary').click();
-    cy.get('.fr-center-card').should('contain', errorMessage);
+    cy.findByRole('button', { name: 'Next' }).click();
+    cy.findByRole('alert').should('contain', errorMessage);
   });
 
   it('should succeed login with valid credentials', () => {
-    cy.get('[placeholder="User Name:"]')
+    cy.findByPlaceholderText('User Name:')
       .type(userName)
       .should('have.value', userName);
-    cy.get('[placeholder="Password:"]')
+    cy.findByPlaceholderText('Password:')
       .type(password, { force: true })
       .should('have.value', password);
-    cy.get('.btn-primary').click();
+    cy.findByRole('button', { name: 'Next' }).click();
     cy.location().should((location) => {
       expect(location.href).to.not.eq(`${Cypress.config().baseUrl}/login/?realm=/#/`);
     });
