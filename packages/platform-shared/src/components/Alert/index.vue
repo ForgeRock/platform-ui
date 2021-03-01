@@ -1,8 +1,7 @@
-<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2019-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BAlert
     class="fr-alert ml-3"
@@ -12,7 +11,9 @@ to such license between the licensee and ForgeRock AS. -->
         close
       </i>
     </template>
-    <i class="material-icons-outlined mr-2">
+    <i
+      class="material-icons-outlined mr-2"
+      aria-hidden="true">
       {{ alertIcon }}
     </i>
     <!-- @slot Text that the alert will contain. -->
