@@ -10,7 +10,7 @@ of the MIT license. See the LICENSE file for details. -->
         rounded="circle"
         width="112"
         height="112"
-        alt="img"
+        alt=""
         class="m-1 mb-3" />
       <div>{{ $t('pages.dashboard.widgets.welcome.greeting') }}, {{ fullName }}</div>
     </template>
