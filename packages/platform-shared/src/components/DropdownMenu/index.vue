@@ -62,7 +62,9 @@ of the MIT license. See the LICENSE file for details. -->
       v-if="enableLogout"
       class="mb-2"
       @click="logoutUser()">
-      <i class="material-icons material-icons-outlined mr-2">
+      <i
+        aria-hidden="true"
+        class="material-icons material-icons-outlined mr-2">
         exit_to_app
       </i>
       {{ $t('sideMenu.signOut') }}
