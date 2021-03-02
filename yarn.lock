@@ -2641,10 +2641,10 @@ anymatch@^3.0.3, anymatch@~3.1.1:
     normalize-path "^3.0.0"
     picomatch "^2.0.4"
 
-appauthhelper@0.3.19:
-  version "0.3.19"
-  resolved "https://registry.yarnpkg.com/appauthhelper/-/appauthhelper-0.3.19.tgz"
-  integrity sha512-1WZ4sx01FMAyaDJA+ggg9FbyHtfyPHC1zNFPKsHLCcOOhOx3wStSnVPgY39M6BtdgHk1muDwqR1LEywR1H3prw==
+appauthhelper@0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/appauthhelper/-/appauthhelper-0.4.0.tgz#dd4ee9abd79461354f5226486a2b6930f0d9e361"
+  integrity sha512-AL1ULP+Q+uH8vyYXbsvA4YCY/9OhOmRn4kP59KTi0pNFCPQYLtXp8BlFf9tAzn1eNUpzdFyJJsCwNJoZcMza1g==
   dependencies:
     "@openid/appauth" "^1.2.8"
     promise-polyfill "8.1.3"
@@ -5009,6 +5009,11 @@ cyclist@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/cyclist/-/cyclist-1.0.1.tgz"
   integrity sha1-WW6WmP0MgOEgOMK4LW6xs1tiJNk=
+
+cypress-file-upload@5.0.6:
+  version "5.0.6"
+  resolved "https://registry.yarnpkg.com/cypress-file-upload/-/cypress-file-upload-5.0.6.tgz#90a4a49ac4d147f955a642a25b6b3f0706a767b5"
+  integrity sha512-Zop7M8xhP9WSoc5tVYJcUUn+iPn3RpsOEzHaTUKFQPiqxD5Bz19azO/BwiyuNJ5m82zPMd0i+KY/ubVog8cyGQ==
 
 cypress-lighthouse@0.1.0:
   version "0.1.0"
