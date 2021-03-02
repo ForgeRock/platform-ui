@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@forgerock/platform-shared": "1.0.0",
-    "appauthhelper": "0.3.19",
+    "appauthhelper": "0.4.0",
     "axios": "0.19.0",
     "bootstrap": "4.3.1",
     "bootstrap-vue": "2.13.0",
