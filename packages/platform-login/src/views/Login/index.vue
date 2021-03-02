@@ -149,12 +149,12 @@ export default {
     FrKbaCreateCallback: () => import('@/components/callbacks/KbaCreateCallback'),
     FrPollingWaitCallback: () => import('@/components/callbacks/PollingWaitCallback'),
     FrReCaptchaCallback: () => import('@/components/callbacks/ReCaptchaCallback'),
+    FrRecoveryCodesComponent: () => import('@/components/display/RecoveryCodes'),
     FrSelectIdPCallback: () => import('@/components/callbacks/SelectIdPCallback'),
     FrSuspendedTextOutputCallback: () => import('@/components/callbacks/SuspendedTextOutputCallback'),
     FrTermsAndConditionsCallback: () => import('@/components/callbacks/TermsAndConditionsCallback'),
     FrTextOutputCallback: () => import('@/components/callbacks/TextOutputCallback'),
     FrWebAuthnComponent: () => import('@/components/display/WebAuthn'),
-    FrRecoveryCodesComponent: () => import('@/components/display/RecoveryCodes'),
   },
   props: {
     logo: {
@@ -615,6 +615,23 @@ export default {
       }
     },
     /**
+     * @description Returns boolean true if reentry cookie is set
+     * @returns {Boolean}
+     */
+    hasReentryToken() {
+      return !!document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('reentry='));
+    },
+    /**
+     * @description clears and sets the reentry cookie to be deleted
+     */
+    clearReentryToken() {
+      const date = new Date();
+      date.setTime(date.getTime() + (-1 * 24 * 60 * 60 * 1000));
+      document.cookie = `${'reentry=""'};expires="${date.toGMTString()}";path=/`;
+    },
+    /**
      * Retry a previously failed step with a new authId. The new authId is acquired by calling FRAuth.next with no step.
      * Then a this.nextStep is called with the previously failed step and new authId
      *
@@ -675,6 +692,7 @@ export default {
      * @description Look at the url and see if we are returning to a tree from an Email Suspend Node or Redirect Callback.
      * Must be default route and contain the strings "suspendedId=" and "authIndexValue=" for Email Suspend Node.
      * Must contain the strings "state=" and "code=" and "scope=" for redirect callback.
+     * Must contain reentry cookie for SAML redirect.
      */
     evaluateUrlParams() {
       const paramString = this.getCurrentQueryString();
@@ -696,13 +714,21 @@ export default {
         this.scope = params.get('scope');
 
         // session storage is used to resume a tree after returning from a redirect
-        const stepInfo = this.getStepFromStorage();
-        this.authIndexValue = stepInfo.authIndexValue;
-        this.step = new FRStep(stepInfo.step.payload);
-        this.realm = stepInfo.realm;
+        const { authIndexValue, step, realm: stepRealm } = this.getStepFromStorage();
+        this.authIndexValue = authIndexValue;
+        this.step = new FRStep(step.payload);
+        this.realm = stepRealm;
 
         this.removeUrlParams();
         window.history.replaceState(null, null, `?realm=${this.realm}`);
+      } else if (this.hasReentryToken()) {
+        const { authIndexValue, step, realm: stepRealm } = this.getStepFromStorage();
+        if (authIndexValue && step && step.payload) {
+          this.authIndexValue = authIndexValue;
+          this.step = new FRStep(step.payload);
+          this.realm = stepRealm;
+        }
+        this.clearReentryToken();
       } else {
         const resourceUrlParam = params.get('resourceURL');
         if (resourceUrlParam) params.delete('resourceURL');
