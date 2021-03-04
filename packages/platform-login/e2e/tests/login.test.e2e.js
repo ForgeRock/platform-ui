@@ -35,7 +35,7 @@ describe('Login View', () => {
       .type(userName, { force: true })
       .should('have.value', userName);
     cy.findByRole('button', { name: 'Next' }).click();
-    cy.findByRole('alert').should('contain', errorMessage);
+    cy.findAllByRole('alert').contains(errorMessage);
   });
 
   it('should succeed login with valid credentials', () => {
