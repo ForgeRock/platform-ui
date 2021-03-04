@@ -50,6 +50,7 @@ of the MIT license. See the LICENSE file for details. -->
           <template v-slot:body="props">
             <FrAlert
               :variant="props.item.type"
+              :title="props.item.text"
               show>
               {{ props.item.text }}
             </FrAlert>

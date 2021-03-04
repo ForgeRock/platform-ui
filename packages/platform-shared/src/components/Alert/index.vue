@@ -54,6 +54,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    title: {
+      type: String,
+      default: '',
+    },
     /**
      * Type of alert. Available types: Primary, Secondary, Success, Danger, Warning, Information, Light, Dark'
      */
@@ -61,9 +65,6 @@ export default {
       type: String,
       default: 'primary',
     },
-  },
-  data() {
-    return {};
   },
   computed: {
     alertIcon() {
