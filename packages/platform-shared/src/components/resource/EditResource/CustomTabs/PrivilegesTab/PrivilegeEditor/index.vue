@@ -151,6 +151,7 @@ of the MIT license. See the LICENSE file for details. -->
               class="overflow-auto">
               <div
                 v-for="attribute in availableAttibutes"
+                role="row"
                 :key="attribute.key"
                 class="p-4 border-top">
                 <small class="d-inline-block text-monospace flex-grow-1">
