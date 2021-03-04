@@ -757,7 +757,7 @@ export default {
           if (stringParams.length) {
             stringParams += '&';
           }
-          if (key === 'authIndexValue') {
+          if (key === 'authIndexValue' && params.get('authIndexType') === 'service') {
             stringParams += `${key}=${value}`;
           } else {
             stringParams += `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
