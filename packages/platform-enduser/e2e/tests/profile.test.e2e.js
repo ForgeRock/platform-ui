@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { createIDMTestUser } from '../managedApi.e2e';
+import { createIDMUser } from '../api/managedApi.e2e';
 
 describe('Enduser Profile View', () => {
   let userName = '';
@@ -14,7 +14,7 @@ describe('Enduser Profile View', () => {
   const locationUrl = `${Cypress.config().baseUrl}/enduser/?realm=root#/profile`;
 
   before(() => {
-    createIDMTestUser().then((results) => {
+    createIDMUser().then((results) => {
       // eslint-disable-next-line prefer-destructuring
       userName = results.body.userName;
     });

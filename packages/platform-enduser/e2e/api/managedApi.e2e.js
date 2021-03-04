@@ -7,10 +7,29 @@
 
 import { random } from 'lodash';
 
+export function addRoleMember(roleId, userId, accessToken = Cypress.env('ACCESS_TOKEN').access_token, resourceType = 'internal') {
+  return cy.request({
+    method: 'PATCH',
+    url: `https://${Cypress.env('FQDN')}/openidm/${resourceType}/role/${roleId}`,
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+      'content-type': 'application/json',
+    },
+    body: [{
+      field: `/${resourceType === 'internal' ? 'authzMembers' : 'members'}/-`,
+      operation: 'add',
+      value: {
+        _ref: `managed/user/${userId}`,
+        _refProperties: {},
+      },
+    }],
+  });
+}
+
 /**
- * Creates am identity? Works, but not sure if we should use this
+ * Creates am identity. Works, but not sure if we should use this
  */
-export function createAMTestUser() {
+export function createAMUser() {
   return cy.request({
     method: 'POST',
     url: `https://${Cypress.env('FQDN')}/am/json/realms/root/authenticate`,
@@ -36,6 +55,18 @@ export function createAMTestUser() {
   }));
 }
 
+export function createIDMResource(resourceType = 'managed', resourceName, body, accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
+  return cy.request({
+    method: 'POST',
+    url: `https://${Cypress.env('FQDN')}/openidm/${resourceType}/${resourceName}?_action=create`,
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+      'content-type': 'application/json',
+    },
+    body,
+  });
+}
+
 /**
  * Use idm provisioning token to create super-user
  * Creates a user with
@@ -44,29 +75,23 @@ export function createAMTestUser() {
  * First Name: 'First'
  * Last Name: 'Last'
  */
-export function createIDMTestUser() {
-  return cy.request({
-    method: 'POST',
-    url: `https://${Cypress.env('FQDN')}/openidm/managed/user?_action=create`,
-    headers: {
-      authorization: `Bearer ${Cypress.env('ACCESS_TOKEN').access_token}`,
-      'content-type': 'application/json',
-    },
-    body: {
-      userName: `e2eTestUser${random(Number.MAX_SAFE_INTEGER)}`,
-      password: 'Welcome1',
-      givenName: 'First',
-      sn: 'Last',
-      mail: 'forgerockdemo@example.com',
-    },
-  });
+export function createIDMUser(userBody) {
+  const body = {
+    userName: `e2eTestUser${random(Number.MAX_SAFE_INTEGER)}`,
+    password: 'Welcome1',
+    givenName: 'First',
+    sn: 'Last',
+    mail: 'forgerockdemo@example.com',
+    ...userBody,
+  };
+  return createIDMResource('managed', 'user', body);
 }
 
 /**
  * Delete user, but does not currently work as idm provisioning is not allowed to perform delete
  * @param {*} userId
  */
-export function deleteIDMTestUser(userId) {
+export function deleteIDMUser(userId) {
   return cy.request({
     method: 'DELETE',
     url: `https://${Cypress.env('FQDN')}/openidm/managed/user/${userId}`,
