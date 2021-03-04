@@ -359,9 +359,8 @@ export default {
             });
           }
         });
-      } else {
-        this.displayNotification('IDMMessages', 'error', this.$t('pages.access.invalidCreate'));
       }
+      this.showErrorMessage(error, this.$t('pages.access.invalidCreate'));
     },
     hideModal() {
       this.$root.$emit('bv::hide::modal', 'createResourceModal');

@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { createIDMTestUser } from '../managedApi.e2e';
+import { createIDMUser } from '../api/managedApi.e2e';
 
 describe('Enduser Theming', () => {
   const platformLoginUrl = `${Cypress.config().baseUrl}/platform/`;
@@ -15,7 +15,7 @@ describe('Enduser Theming', () => {
   const adminPassword = Cypress.env('AM_PASSWORD');
 
   before(() => {
-    createIDMTestUser().then((results) => {
+    createIDMUser().then((results) => {
       enduserUserName = results.body.userName;
     });
   });
