@@ -629,7 +629,7 @@ export default {
     clearReentryToken() {
       const date = new Date();
       date.setTime(date.getTime() + (-1 * 24 * 60 * 60 * 1000));
-      document.cookie = `${'reentry=""'};expires="${date.toGMTString()}";path=/`;
+      document.cookie = `reentry="";expires="${date.toGMTString()}";path=/`;
     },
     /**
      * Retry a previously failed step with a new authId. The new authId is acquired by calling FRAuth.next with no step.
