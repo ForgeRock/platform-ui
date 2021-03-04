@@ -25,7 +25,9 @@ of the MIT license. See the LICENSE file for details. -->
     <BNavbarNav class="flex-row align-items-center justify-content-between flex-grow-1">
       <div>
         <RouterLink
+          aria-label="Breadcrumb"
           class="fr-back-link overflow-hidden nav-link"
+          role="navigation"
           v-show="getBreadcrumbRoute().length > 0"
           :to="getBreadcrumbRoute()">
           <h4 class="text-truncate">
