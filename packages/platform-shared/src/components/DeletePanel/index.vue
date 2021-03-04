@@ -5,7 +5,8 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <BCard
-      class="mb-5">
+      class="mb-5"
+      data-testid="delete-panel">
       <h5 class="card-title">
         {{ $t('deletePanel.header', {type: translatedItemType}) }}
       </h5>
