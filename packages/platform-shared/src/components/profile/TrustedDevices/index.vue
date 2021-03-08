@@ -7,7 +7,8 @@ of the MIT license. See the LICENSE file for details. -->
     <FrAccordion
       class="mb-4"
       :items="devices"
-      accordion-group="trustedDevices">
+      accordion-group="trustedDevices"
+      :title="$t('pages.profile.trustedDevices.title')">
       <template v-slot:accordionHeader>
         <div class="p-4">
           <h4>
@@ -72,7 +73,7 @@ of the MIT license. See the LICENSE file for details. -->
             md="5">
             <div class="w-100">
               <div class="mb-2">
-                <small>{{ $t('pages.profile.trustedDevices.recentActivity') }}</small>
+                <h5 class="small">{{ $t('pages.profile.trustedDevices.recentActivity') }}</h5>
               </div>
               <img
                 class="mb-3 w-100"
@@ -99,7 +100,7 @@ of the MIT license. See the LICENSE file for details. -->
               <div
                 v-if="slotData.os"
                 class="mb-3">
-                <small>{{ $t('pages.profile.trustedDevices.os') }}</small>
+                <h5 class="small">{{ $t('pages.profile.trustedDevices.os') }}</h5>
                 <p class="bold">
                   {{ slotData.os }}
                 </p>
@@ -107,13 +108,13 @@ of the MIT license. See the LICENSE file for details. -->
               <div
                 v-if="slotData.browser"
                 class="mb-3">
-                <small>{{ $t('pages.profile.trustedDevices.browser') }}</small>
+                <h5 class="small">{{ $t('pages.profile.trustedDevices.browser') }}</h5>
                 <p class="bold">
                   {{ slotData.browser }}
                 </p>
               </div>
               <div v-if="slotData.cpu">
-                <small>{{ $t('pages.profile.trustedDevices.cpu') }}</small>
+                <h5 class="small">{{ $t('pages.profile.trustedDevices.cpu') }}</h5>
                 <p class="bold">
                   {{ slotData.cpu }}
                 </p>
@@ -394,5 +395,9 @@ export default {
 <style lang="scss" scoped>
 .bold {
   color: $gray-900;
+}
+
+h5.small {
+  color: $gray-600;
 }
 </style>
