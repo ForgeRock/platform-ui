@@ -277,7 +277,7 @@
       "registerConnectorServer": "Register your connector server by providing a name and connection settings.",
       "resetSecret": "Reset the client secret",
       "secureConnect": "to securely connect your connector server.",
-      "connectorServerInitiatedConnection": "Connecter Server-Initiated Connection",
+      "connectorServerInitiatedConnection": "Connector Server-Initiated Connection",
       "connectorServerInitiatedConnectionDescription": "ForgeRock waits for the connector server to initiate the connection. Use this option if the connector server is behind a firewall, and if the firewall prevents ForgeRock from directly accessing the connector server.",
       "serverDetails": "Server Details",
       "setupComplete": "Setup Complete",
