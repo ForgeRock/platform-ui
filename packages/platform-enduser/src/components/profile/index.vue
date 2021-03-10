@@ -8,36 +8,15 @@ of the MIT license. See the LICENSE file for details. -->
       <BCol
         class="profileCol mb-4"
         lg="4">
-        <BCard class="text-center mb-4">
-          <BImg
-            :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"
-            rounded="circle"
-            width="112"
-            height="112"
-            alt="img"
-            class="m-1 mb-3" />
-          <h4 class="text-truncate">
-            {{ fullName }}
-          </h4>
-          <div class="text-muted text-truncate">
-            {{ email }}
-          </div>
-          <BButton
-            v-if="internalUser === false"
-            ref="editProfileButton"
-            variant="primary"
-            block
-            class="mt-4"
-            v-b-modal.userDetailsModal>
-            {{ $t('pages.profile.editPersonalInfo') }}
-          </BButton>
-        </BCard>
-
-        <FrEditPersonalInfo
-          v-if="profile._id"
+        <FrEditProfile
           @updateProfile="updateProfile"
+          :header="fullName"
+          :profile-image="profileImage"
+          :secondary-header="profile.mail"
           :schema="schema"
-          :profile="profile" />
+          :profile="profile"
+          :show-edit="profile._id !== undefined && internalUser === false"
+          :show-image-upload="schema.properties && schema.properties.profileImage !== undefined" />
       </BCol>
       <BCol lg="8">
         <FrAccountSecurity
@@ -71,8 +50,8 @@ import { mapState } from 'vuex';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import AccountSecurity from '@forgerock/platform-shared/src/components/profile/AccountSecurity';
-import EditPersonalInfo from '@forgerock/platform-shared/src/components/profile/EditPersonalInfo';
 import TrustedDevices from '@forgerock/platform-shared/src/components/profile/TrustedDevices';
+import EditProfile from '@forgerock/platform-shared/src/components/profile/EditProfile';
 import AccountControls from '@/components/profile/AccountControls';
 import AuthorizedApplications from '@/components/profile/AuthorizedApplications';
 import Preferences from '@/components/profile/Preferences';
@@ -90,26 +69,19 @@ export default {
     RestMixin,
     NotificationMixin,
   ],
-  props: {
-    clientToken: {
-      type: String,
-      default: '',
-    },
-    linkedProvider: {
-      type: String,
-      default: '',
-    },
-  },
   data() {
     return {
-      profile: {},
+      profile: {
+        givenName: '',
+        sn: '',
+      },
     };
   },
   components: {
     FrAccountControls: AccountControls,
     FrAccountSecurity: AccountSecurity,
     FrAuthorizedApplications: AuthorizedApplications,
-    FrEditPersonalInfo: EditPersonalInfo,
+    FrEditProfile: EditProfile,
     FrPreferences: Preferences,
     FrTrustedDevices: TrustedDevices,
     FrConsent: Consent,
@@ -118,23 +90,29 @@ export default {
   computed: {
     ...mapState({
       userId: (state) => state.UserStore.userId,
-      email: (state) => state.UserStore.email,
-      schema: (state) => state.UserStore.schema,
-      sirName: (state) => state.UserStore.sn,
-      givenName: (state) => state.UserStore.givenName,
-      managedResource: (state) => state.UserStore.managedResource,
       internalUser: (state) => state.UserStore.internalUser,
+      managedResource: (state) => state.UserStore.managedResource,
+      schema: (state) => state.UserStore.schema,
     }),
     fullName() {
       let fullName = '';
 
-      if (this.givenName.length > 0 || this.sirName.length > 0) {
-        fullName = startCase(`${this.givenName} ${this.sirName}`);
+      if (this.profile.givenName.length > 0 || this.profile.sn.length > 0) {
+        fullName = startCase(`${this.profile.givenName} ${this.profile.sn}`);
       } else {
         fullName = this.userId;
       }
 
       return fullName;
+    },
+    profileImage() {
+      let profileImage = '';
+
+      if (this.profile.profileImage && this.profile.profileImage.length > 0) {
+        profileImage = this.profile.profileImage;
+      }
+
+      return profileImage;
     },
   },
   mounted() {
@@ -150,7 +128,7 @@ export default {
           this.displayNotification('IDMMessages', 'error', error.response.data.message);
         });
     },
-    updateProfile(payload, config = {}) {
+    updateProfile(payload, config) {
       this.makeUpdateRequest(this.managedResource, payload, config);
     },
     updateKBA(payload, config) {
