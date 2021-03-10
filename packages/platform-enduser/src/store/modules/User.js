@@ -32,6 +32,7 @@ const defaultState = {
   internalUser: false,
   managedResource: null,
   preferences: [],
+  profileImage: '',
   roles: null,
   schema: null,
   sn: '',
@@ -83,6 +84,7 @@ const mutations = {
     state.consentedMappings = profile.consentedMappings || null;
     state.preferences = profile.preferences || [];
     state.aliasList = profile.aliasList || [];
+    state.profileImage = profile.profileImage || '';
   },
 
   setRoles(state, roles) {
