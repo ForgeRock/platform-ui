@@ -67,9 +67,6 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import {
-  BModal,
-} from 'bootstrap-vue';
-import {
   each,
   isNull,
 } from 'lodash';
@@ -88,7 +85,6 @@ export default {
     LoginMixin,
   ],
   components: {
-    BModal,
     FrAccordion: Accordion,
   },
   data() {

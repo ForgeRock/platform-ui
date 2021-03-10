@@ -94,67 +94,6 @@
         }
       }
     },
-    "profile": {
-      "editPersonalInfo": "Edit personal info",
-      "settings": "Settings",
-      "activity": "Activity",
-      "accountControls": {
-        "title": "Account Controls",
-        "subtitle": "Download or delete your account data.",
-        "deleteTitle": "Delete Account",
-        "deleteSubtitle": "Permanently delete all your account data.",
-        "deleteModalTitle": "Permanently Delete Your Account?",
-        "deleteModalBody": "Are you sure you want to permanently delete your account data?",
-        "deleteModalWarning": "This action is irreversible.",
-        "deleteModalButton": "Delete Account",
-        "deleteAccountSuccessful": "Successfully deleted your account.",
-        "downloadTitle": "Download your data",
-        "downloadSubtitle": "Download your account profile data, including personal information, account activity, device data, privacy and consent agreements.",
-        "downloadLink": "Download"
-      },
-      "preferences": {
-        "title": "Preferences",
-        "subtitle": "Set your communications preferences."
-      },
-      "social": {
-        "title": "Social Sign In",
-        "subtitle": "Sign-in to your account using social identity providers.",
-        "notConnected": "Not Connected",
-        "sharedWith": "Shared with {providerName}",
-        "disconnect": "Disconnect",
-        "connect": "Connect",
-        "journeyServiceError": "Error retrieving journey mappings.",
-        "identityProviderError": "Error retrieving social identity providers.",
-        "deleteModalTitle": "Disconnect {providerName}?",
-        "deleteModalBody": "Are you sure you want to disconnect {providerName} as a social identity provider?",
-        "disconnectSuccess": "{providerName} disconnected successfully.",
-        "disconnectError": "Error disconnecting {providerName} as a social identity provider."
-      },
-      "oauthApplications": {
-        "title": "Authorized Applications",
-        "subtitle": "Applications you have given access to your personal information.",
-        "removeConfirmation": "{applicationName} will no longer have access to your account data.",
-        "removeConfirmationTitle": "Revoke account access for {applicationName}?",
-        "removeSuccess": "'{applicationName}' successfully removed.",
-        "revokeAccess": "Revoke Access",
-        "expires": "Expires: ",
-        "noApplications": "No Authorized Applications",
-        "sharedWith": "Shared with {applicationName}"
-      },
-      "consent": {
-        "allow": "Allow",
-        "allowConsentHeader": "Allow Access",
-        "accessType": "Access Type",
-        "accountAccess": "Account Access",
-        "authorized": "Authorized",
-        "confirmDeny": "<strong>{mappingName}</strong> will no longer have access to your data.",
-        "deny": "Deny",
-        "denyConsentHeader": "Deny Access",
-        "notAuthorized": "Not Authorized",
-        "subtitle": "Control how your data is shared with third parties.",
-        "title": "Personal Data Sharing"
-      }
-    },
     "uma": {
       "activity": {
         "Authorisation_Granted": "You created",

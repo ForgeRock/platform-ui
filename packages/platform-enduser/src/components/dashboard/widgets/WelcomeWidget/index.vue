@@ -5,13 +5,10 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <BJumbotron class="text-center">
     <template v-slot:header>
-      <BImg
-        :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"
-        rounded="circle"
-        width="112"
-        height="112"
-        alt=""
-        class="m-1 mb-3" />
+      <BAvatar
+        variant="link"
+        size="112px"
+        :src="$store.state.UserStore.profileImage.length > 0 ? $store.state.UserStore.profileImage : require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
       <div>{{ $t('pages.dashboard.widgets.welcome.greeting') }}, {{ fullName }}</div>
     </template>
     <template v-slot:lead>

@@ -32,7 +32,7 @@ describe('Enduser Profile View', () => {
     cy.login(userName);
     cy.visit(locationUrl);
     cy.get('div.profileCol')
-      .get('img.rounded-circle')
+      .get('.b-avatar')
       .should('exist');
     cy.get('div.profileCol .card-body')
       .should('contain', fullName);
