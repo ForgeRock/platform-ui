@@ -30,7 +30,9 @@ describe('Enduser Dashboard View', () => {
   it(`should be logged in as ${fullName}`, () => {
     cy.login(userName);
     cy.get('.fr-dropdown-button-content').should('contain', fullName);
-    cy.findByRole('heading', { level: 1, name: `Hello, ${fullName}` });
+    cy.get('.jumbotron')
+      .get('div')
+      .should('contain', `Hello, ${fullName}`);
   });
 
   it('should be able to collapse and expand sidebar', () => {
