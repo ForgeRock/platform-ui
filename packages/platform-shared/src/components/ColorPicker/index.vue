@@ -7,6 +7,7 @@ to such license between the licensee and ForgeRock AS. -->
   <div class="color-picker d-flex align-items-stretch">
     <BButton
       class="w-100 p-0"
+      href="#"
       variant="outline-secondary"
       :id="`color-picker-${id}`">
       <div class="d-flex align-items-stretch">
