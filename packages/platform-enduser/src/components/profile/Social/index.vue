@@ -248,7 +248,7 @@ export default {
       });
     },
     connectSocial() {
-      window.location.href = `${store.state.SharedStore.amBaseURL}/UI/Login?realm=${(new URLSearchParams(window.location.search)).get('realm') || '/'}&authIndexType=service&authIndexValue=${this.connectSocialTree}&goto=${encodeURIComponent(window.location.href)}`;
+      window.location.href = encodeURI(`${store.state.SharedStore.amBaseURL}/UI/Login?realm=${(new URLSearchParams(window.location.search)).get('realm') || '/'}&authIndexType=service&authIndexValue=${this.connectSocialTree}&goto=${encodeURIComponent(window.location.href)}`);
     },
     collapseAccordion(items) {
       items.forEach((item) => {
