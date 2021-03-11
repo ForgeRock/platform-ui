@@ -97,7 +97,7 @@ router.beforeEach((to, from, next) => {
 
   if (realm !== store.state.realm) {
     url.searchParams.set('realm', store.state.realm);
-    window.location = url;
+    window.location = encodeURI(url);
   }
   next();
 });
