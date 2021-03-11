@@ -607,7 +607,7 @@ export default {
         this.verifyGotoUrlAndRedirect(gotoOnFail, this.realm, false, true)
           .then((res) => {
             if (res && res.length) {
-              window.location.href = res;
+              window.location.href = encodeURI(res);
             } else if (has(step, 'payload.detail.failureUrl') && step.payload.detail.failureUrl.length) {
               window.location.href = step.payload.detail.failureUrl;
             }
