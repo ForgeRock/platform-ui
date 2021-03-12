@@ -780,6 +780,7 @@
     },
     "edit": {
       "addLocale": "Add a locale",
+      "defaultLocale": "Default Locale",
       "editTemplate": "Edit Template",
       "fromFieldTitle": "From",
       "fromFieldDescription": "Name of sending organization (eg. ‘Organization Name’)",
@@ -789,8 +790,8 @@
       "message": "Message",
       "messageDescription": "Use <a href=\"https://daringfireball.net/projects/markdown/syntax\" target=\"_blank\">markdown</a> to format your email content and use <a href=\"#\" onclick=\"event.preventDefault(); window.showAvailablePropertiesModal()\" target=\"blank\">available variables</a> in your body text eg. <code>{{object.givenName}}</code>",
       "resetStyles": "Reset styles",
+      "setAsDefaultLocale": "Set as Default Locale",
       "subject": "Subject",
-      "switchedLocale": "Switched to new locale ({locale})",
       "stylesHeader": "Styles",
       "stylesHelpMessage": "Edit inline styles to customize the look and feel of your email.",
       "templateNameFieldTitle": "Template Name"
