@@ -295,8 +295,15 @@ export default {
 
       this.loadData('true', this.displayFields, this.defaultSort, this.currentPage);
     },
+    /**
+     * Emits out request to obtain data based on current query parameters
+     * @param {string} filter the query filter we want to use (defaults to true)
+     * @param {array} fields List of fields to query for
+     * @param {string} sortField field to sort results on
+     * @param {number} page The current table page for results offset
+     */
     loadData(filter, fields, sortField, page) {
-      this.$emit('getTableData', {
+      this.$emit('get-table-data', {
         filter,
         fields,
         sortField,
