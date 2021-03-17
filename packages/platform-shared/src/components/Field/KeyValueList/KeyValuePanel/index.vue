@@ -1,19 +1,20 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="fr-key-value-panel p-3">
     <ValidationObserver v-slot="{ invalid }">
       <FrField
         :autofocus="autofocus"
+        :display-description="false"
+        :external-title="true"
         :field="keyModel"
-        :prepend-title="true"
         class="mb-3" />
       <FrField
-        :field="valueModel"
-        :prepend-title="true" />
+        :display-description="false"
+        :external-title="true"
+        :field="valueModel" />
       <div class="fr-key-value-add-panel-footer mt-3">
         <div class="pt-3 mr-3">
           <span
