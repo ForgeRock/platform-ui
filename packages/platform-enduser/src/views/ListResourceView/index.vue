@@ -20,7 +20,7 @@ of the MIT license. See the LICENSE file for details. -->
           :last-page="lastPage"
           :edit-access="hasUpdateAccess"
           :delete-access="hasDeleteAccess"
-          @getTableData="getTableData"
+          @get-table-data="getTableData"
           @row-clicked="resourceClicked">
           <template #listToolbar>
             <BButton

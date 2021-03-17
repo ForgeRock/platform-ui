@@ -123,7 +123,8 @@
         color: $gray-700;
       }
 
-      &:hover {
+      &:hover,
+      &:focus {
         background-color: $light-blue;
       }
     }
