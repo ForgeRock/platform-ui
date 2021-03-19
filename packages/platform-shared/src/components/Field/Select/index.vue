@@ -145,7 +145,7 @@ export default {
         this.floatLabels = false;
       } else {
         const value = typeof newVal === 'object' && Object.hasOwnProperty.call(newVal, 'value') ? newVal.value : newVal;
-        this.floatLabels = !!value && (value.toString().length > 0 || this.value.length > 0) && !!this.label;
+        this.floatLabels = value !== undefined && value !== null && (value.toString().length > 0 || this.value.length > 0) && !!this.label;
       }
     },
     setInputValue(newVal) {
