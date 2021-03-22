@@ -102,6 +102,9 @@ export default {
     FrSideMenu: SideMenu,
     FrAlert: Alert,
   },
+  mixins: [
+    Media,
+  ],
   props: {
     isEnduser: {
       type: Boolean,
@@ -182,14 +185,8 @@ export default {
     },
   },
   mounted() {
-    // Define whether to use the mobile style menu based on initial screen size and if hover is available
-    if (this.media('any-hover').matches) {
-      if (this.media('lt-md').matches) {
-        this.useMobileStyleMenu = true;
-      }
-    } else if (this.media('lt-lg').matches) {
-      this.useMobileStyleMenu = true;
-    }
+    this.useMobileStyleMenu = this.determineMobileStyleMenu();
+    window.addEventListener('resize', () => { this.useMobileStyleMenu = this.determineMobileStyleMenu(); });
 
     if (this.media('lt-lg').matches) {
       this.toggled = false;
@@ -203,13 +200,26 @@ export default {
     });
   },
   methods: {
+    /**
+     * Define whether to use the mobile style menu based on screen size and if hover is available
+     */
+    determineMobileStyleMenu() {
+      if (this.media('any-hover').matches) {
+        if (this.media('lt-md').matches) {
+          return true;
+        }
+      } else if (this.media('lt-lg').matches) {
+        return true;
+      }
+      return false;
+    },
     toggleMenu() {
       this.toggled = !this.toggled;
     },
   },
-  mixins: [
-    Media,
-  ],
+  beforeDestroy() {
+    window.removeEventListener('resize', () => { this.useMobileStyleMenu = this.determineMobileStyleMenu(); });
+  },
 };
 </script>
 
