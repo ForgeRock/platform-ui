@@ -1,3 +1,7 @@
+<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <div
@@ -15,10 +19,10 @@
         :readonly="readOnly"
         @input="validateCurrentJson($event.target.innerText)"
       />
-      <div class="d-flex justify-content-center w-100 position-absolute py-2 code-editor-expander no-pointer-events">
+      <div class="d-flex justify-content-center w-100 position-absolute py-2 code-editor-expander pe-none">
         <button
           v-if="hover"
-          class="btn btn-outline-secondary btn-sm pointer-events"
+          class="btn btn-outline-secondary btn-sm pe-initial"
           @click.prevent="expanded = !expanded">
           <span v-if="expanded">
             {{ $t('listTypesShared.collapse') }}
@@ -126,11 +130,11 @@ export default {
   background: linear-gradient(180deg, rgba(246, 248, 250, 0), $gray-100);
 }
 
-.no-pointer-events {
+.pe-none {
   pointer-events: none;
 }
 
-.pointer-events {
+.pe-initial {
   pointer-events: initial;
 }
 </style>

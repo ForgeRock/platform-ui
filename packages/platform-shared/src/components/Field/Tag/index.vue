@@ -192,7 +192,7 @@ export default {
 
   .fr-tag-text:hover {
     white-space: normal;
-    overflow: scroll;
+    overflow: auto;
   }
 }
 </style>

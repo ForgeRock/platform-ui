@@ -16,12 +16,12 @@ of the MIT license. See the LICENSE file for details. -->
           v-html="label"
           :hidden="hideLabel"
           :for="id"
-          class="no-pointer-events overflow-hidden text-nowrap" />
+          class="pe-none overflow-hidden w-100 text-nowrap" />
         <label
           v-else-if="label"
           :hidden="hideLabel"
           :for="id"
-          class="no-pointer-events overflow-hidden text-nowrap">
+          class="pe-none overflow-hidden w-100 text-nowrap">
           {{ label }}
         </label>
       </div>
@@ -112,9 +112,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/deep/ input[placeholder] { text-overflow: ellipsis; }
-input[placeholder] { text-overflow: ellipsis; }
-
 .form-label-group {
   position: relative;
   margin-bottom: 1rem;
@@ -127,13 +124,52 @@ input[placeholder] { text-overflow: ellipsis; }
     margin-bottom: 0;
     min-width: 80px;
 
+    > label {
+      padding: $input-btn-padding-y;
+      max-height: calc(100% - 2px);
+      text-align: left;
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: block;
+      margin-bottom: 0; /* Override default `<label>` margin */
+      line-height: 1.5;
+      color: $label-color;
+      border: 1px solid transparent;
+      pointer-events: none;
+      border-radius: 0.25rem;
+      transition: all 0.1s ease-in-out;
+      width: calc(100% - 40px);
+
+      &::placeholder {
+        color: transparent;
+      }
+
+      .pe-none {
+        pointer-events: none;
+      }
+    }
+
+    .polyfill-placeholder {
+      padding-top: $input-btn-padding-y + $input-btn-padding-y * (2 / 3);
+      padding-bottom: $input-btn-padding-y / 3;
+      color: $input-color;
+
+      ~ label {
+        padding-top: $input-btn-padding-y / 3;
+        padding-bottom: 0;
+        font-size: 12px;
+      }
+    }
+
     .form-control {
       box-shadow: none;
     }
   }
 
-  .no-pointer-events {
-    pointer-events: none;
+  .white-label-background ~ label {
+    background-color: $fr-toolbar-background;
+    margin: 1px;
   }
 
   button {
@@ -179,52 +215,6 @@ input[placeholder] { text-overflow: ellipsis; }
     padding-left: $btn-padding-x;
     padding-right: $btn-padding-x;
   }
-}
-
-//-->
-// Bootstrap Floating Labels
-// https://getbootstrap.com/docs/4.0/examples/floating-labels/
-//-->
-
-.form-label-group-input > label {
-  padding: $input-btn-padding-y;
-  max-height: calc(100% - 2px);
-  text-align: left;
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: block;
-  width: 100%;
-  margin-bottom: 0; /* Override default `<label>` margin */
-  line-height: 1.5;
-  color: $label-color;
-  border: 1px solid transparent;
-  pointer-events: none;
-  border-radius: 0.25rem;
-  transition: all 0.1s ease-in-out;
-}
-
-.form-label-group input::placeholder {
-  color: transparent;
-}
-
-.form-label-group .polyfill-placeholder {
-  padding-top: $input-btn-padding-y + $input-btn-padding-y * (2 / 3);
-  padding-bottom: $input-btn-padding-y / 3;
-  color: $input-color;
-
-  ~ label {
-    padding-top: $input-btn-padding-y / 3;
-    padding-bottom: 0;
-    font-size: 12px;
-    color: $label-color;
-    width: auto;
-  }
-}
-
-.form-label-group .white-label-background ~ label {
-  background-color: $fr-toolbar-background;
-  margin: 1px;
 }
 
 .btn.disabled {
