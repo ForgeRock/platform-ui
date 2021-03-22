@@ -428,7 +428,7 @@ export default {
             break;
           case 'LoginFailure':
             this.loading = true;
-            if (this.retry) {
+            if (this.retry && this.isSessionTimedOut(step.payload)) {
               this.retry = false;
               this.retryWithNewAuthId(previousStep, stepParams);
             } else {
@@ -630,6 +630,14 @@ export default {
       const date = new Date();
       date.setTime(date.getTime() + (-1 * 24 * 60 * 60 * 1000));
       document.cookie = `reentry="";expires="${date.toGMTString()}";path=/`;
+    },
+    /**
+     * @description Returns boolean true if payload has session timeout error code
+     * @param {Object} payload - step payload data
+     * @returns {Boolean}
+     */
+    isSessionTimedOut(payload) {
+      return payload.detail && payload.detail.errorCode === '110';
     },
     /**
      * Retry a previously failed step with a new authId. The new authId is acquired by calling FRAuth.next with no step.
