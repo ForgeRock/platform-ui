@@ -38,6 +38,7 @@ of the MIT license. See the LICENSE file for details. -->
             <BDropdown
               variant="link"
               no-caret
+              boundary="window"
               right
               toggle-class="text-decoration-none p-0">
               <template v-slot:button-content>
