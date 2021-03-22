@@ -69,7 +69,7 @@ of the MIT license. See the LICENSE file for details. -->
               variant="primary"
               :disabled="nextButtonDisabled"
               @click="nextStep">
-              {{ buttonText }}
+              {{ buttonTextLocalized }}
             </BButton>
             <input
               v-if="showScriptElms"
@@ -120,6 +120,7 @@ import FrAlert from '@forgerock/platform-shared/src/components/Alert';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import i18n from '../../i18n';
 
 const FrCallbackType = {
   ...CallbackType,
@@ -163,9 +164,7 @@ export default {
     },
     buttonText: {
       type: String,
-      default() {
-        return this.$t('login.next');
-      },
+      default: '',
     },
   },
   mixins: [
@@ -199,13 +198,19 @@ export default {
       // checks if there are any true bool values in array
       return this.nextButtonDisabledArray.some((bool) => bool);
     },
+    buttonTextLocalized() {
+      return this.buttonText || this.$t('login.next');
+    },
   },
   mounted() {
     const urlParams = new URLSearchParams(window.location.search);
     this.realm = urlParams.get('realm') || '/';
 
     this.getConfigurationInfo(this.realm)
-      .then(this.setRealm)
+      .then((config) => {
+        this.setRealm(config);
+        this.setLocale(config);
+      })
       .then(this.checkNewSession)
       .then(() => {
         this.$emit('set-theme', this.realm);
@@ -678,6 +683,11 @@ export default {
       // if a tree is defined reset the hash to the proper tree
       if (this.authIndexValue) {
         window.location.hash = `service/${this.authIndexValue}`;
+      }
+    },
+    setLocale(config) {
+      if (config && config.data.lang) {
+        i18n.locale = config.data.lang;
       }
     },
     setRealm(config) {
