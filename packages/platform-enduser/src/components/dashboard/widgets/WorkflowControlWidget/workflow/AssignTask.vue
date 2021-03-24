@@ -1,9 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BCardBody class="pt-3">
     <BRow>
@@ -84,7 +82,7 @@ export default {
     return {
       taskDetailsList: [],
       workflowService: null,
-      selected: this.$store.UserStore.state.userName,
+      selected: this.$store.state.UserStore.userName,
       uniqueId: null,
     };
   },
@@ -93,7 +91,7 @@ export default {
   },
   computed: {
     assigneeOptions() {
-      const loggedUserName = this.$root.userStore.state.userName;
+      const loggedUserName = this.$store.state.UserStore.userName;
 
       if (!isEmpty(this.taskDefinition.task.usersToAssign)) {
         return this.taskDefinition.task.usersToAssign.map(({ username, displayableName }) => {
