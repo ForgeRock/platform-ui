@@ -75,6 +75,7 @@ import {
 import FrField from '@forgerock/platform-shared/src/components/Field';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import PluralizeFilter from '@forgerock/platform-shared/src/filters/PluralizeFilter';
+import IsFraasFilterMixin from '@forgerock/platform-shared/src/mixins/IsFraasFilterMixin';
 import PrivilegeEditor from '../PrivilegeEditor';
 
 export default {
@@ -87,6 +88,9 @@ export default {
   filters: {
     PluralizeFilter,
   },
+  mixins: [
+    IsFraasFilterMixin,
+  ],
   props: {
     existingNames: {
       type: Array,
@@ -168,7 +172,7 @@ export default {
     * @returns sorted identity object options for dropdown consumption
     */
     getIdentityObjectOptions() {
-      const options = [];
+      let options = [];
       each(this.schemaMap, (schema, key) => {
         options.push({
           text: schema.title,
@@ -176,6 +180,12 @@ export default {
           icon: schema['mat-icon'],
         });
       });
+
+      if (this.$store.state.isFraas) {
+        // filter out options that don't pertain to the current realm
+        options = this.isFraasFilter(options, 'value');
+      }
+
       return sortBy(options, 'text');
     },
   },
