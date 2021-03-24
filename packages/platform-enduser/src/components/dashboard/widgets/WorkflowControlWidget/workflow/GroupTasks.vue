@@ -1,10 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <FrListGroup :title="this.$t('pages.workflow.unassignedTasks')">
@@ -37,7 +34,7 @@ of the MIT license. See the LICENSE file for details.
                   size="sm"
                   class="btn-cancel mb-2"
                   :ref="`cancel-${id}`">
-                  {{ $t('common.form.cancel') }}
+                  {{ $t('common.cancel') }}
                 </BButton>
                 <BButton
                   v-else
