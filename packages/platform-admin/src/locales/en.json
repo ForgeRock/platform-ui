@@ -381,7 +381,7 @@
     "minCharacters": "Minimum characters",
     "numMinCharacters": "Number of minimum characters",
     "cannotInclude": "Cannot include",
-    "restrictRepetitive": "Repetitive characters (e.g. aaaa)",
+    "restrictRepetitive": "Repetitive characters (e.g. aaa)",
     "restrictCommon": "Commonly used passwords (e.g. p@ssw0rd, etc.)",
     "restrictAttributes": "Part of {resourceName} attributes",
     "restrictAttributesPlaceholder": "Forbidden {resourceName} attributes",

@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <script>
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { getConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
@@ -18,48 +17,56 @@ export default {
     };
   },
   methods: {
+    getPoliciesFromCharacterSet(sets) {
+      const translatedSets = [];
+      sets.forEach((set) => {
+        if (set.includes(this.lowerSet) && set.charAt(0) !== '0') translatedSets.push(this.$t('common.policyValidationMessages.sets.lowercase'));
+        if (set.includes(this.upperSet) && set.charAt(0) !== '0') translatedSets.push(this.$t('common.policyValidationMessages.sets.uppercase'));
+        if (set.includes(this.numberSet) && set.charAt(0) !== '0') translatedSets.push(this.$t('common.policyValidationMessages.sets.number'));
+        if (set.includes(this.symbolSet) && set.charAt(0) !== '0') translatedSets.push(this.$t('common.policyValidationMessages.sets.symbol'));
+      });
+      const policy = {
+        policyRequirement: 'CHARACTER_SET',
+        params: {},
+      };
+      // no sets means no set is required
+      if (!translatedSets.length) return null;
+
+      policy.params.sets = translatedSets.join(', ');
+      return policy;
+    },
     getValidatorIdForType(type) {
       return `${this.resourceName}PasswordPolicy-${type}-password-validator`;
     },
-    getPolicies(resourceName) {
+    getDsPolicies(resourceName) {
       return new Promise((resolve) => {
         const policies = [];
         getConfig(`fieldPolicy/${resourceName}`).then((res) => {
           const policy = res.data;
-          if (policy) {
-            if (policy.passwordHistoryCount > 0) {
-              policies.push({ name: 'IS_NEW', params: { historyLength: policy.passwordHistoryCount } });
-            }
-            if (policy.validator) {
-              policy.validator.forEach((validator) => {
-                // eslint-disable-next-line no-underscore-dangle
-                switch (validator._id) {
-                case this.getValidatorIdForType('length-based'):
+          if (policy && policy.validator) {
+            policy.validator.forEach((validator) => {
+              // eslint-disable-next-line no-underscore-dangle
+              switch (validator._id) {
+              case this.getValidatorIdForType('length-based'):
+                if (validator.maxPasswordLength) {
+                  policies.push({ name: 'LENGTH_BASED', params: { 'min-password-length': validator.minPasswordLength, 'max-password-length': validator.maxPasswordLength } });
+                } else {
                   policies.push({ name: 'MIN_LENGTH', params: { minLength: validator.minPasswordLength } });
-                  policies.push({ name: 'MAX_LENGTH', params: { maxLength: validator.maxPasswordLength } });
-                  break;
-                case this.getValidatorIdForType('repeated-characters'):
-                  policies.push({ name: 'NO_REPEAT', params: { numRepeat: validator.maxConsecutiveLength } });
-                  break;
-                case this.getValidatorIdForType('dictionary'):
-                  policies.push({ name: 'DICTIONARY' });
-                  break;
-                case this.getValidatorIdForType('attribute-value'):
-                  policies.push({ name: 'CANNOT_CONTAIN_OTHERS', params: { disallowedFields: validator.matchAttribute } });
-                  break;
-                case this.getValidatorIdForType('character-set'):
-                  validator.characterSet.forEach((set) => {
-                    if (set.includes(this.lowerSet) && set.charAt(0) !== '0') policies.push({ name: 'AT_LEAST_X_LOWER_LETTERS', params: { numLower: set.charAt(0) } });
-                    if (set.includes(this.upperSet) && set.charAt(0) !== '0') policies.push({ name: 'AT_LEAST_X_CAPITAL_LETTERS', params: { numCaps: set.charAt(0) } });
-                    if (set.includes(this.numberSet) && set.charAt(0) !== '0') policies.push({ name: 'AT_LEAST_X_NUMBERS', params: { numNums: set.charAt(0) } });
-                    if (set.includes(this.symbolSet) && set.charAt(0) !== '0') policies.push({ name: 'AT_LEAST_X_SYMBOLS', params: { numSyms: set.charAt(0) } });
-                  });
-                  break;
-                default:
-                  break;
                 }
-              });
-            }
+                break;
+              case this.getValidatorIdForType('repeated-characters'):
+                policies.push({ name: 'REPEATED_CHARACTERS', params: { 'max-consecutive-length': validator.maxConsecutiveLength } });
+                break;
+              case this.getValidatorIdForType('dictionary'):
+                policies.push({ name: 'DICTIONARY' });
+                break;
+              case this.getValidatorIdForType('character-set'):
+                if (this.getPoliciesFromCharacterSet(validator.characterSet)) policies.push(this.getPoliciesFromCharacterSet(validator.characterSet));
+                break;
+              default:
+                break;
+              }
+            });
           }
           resolve({ msg: 'Success', data: policies });
         }, () => {
@@ -67,6 +74,38 @@ export default {
           resolve({ msg: 'Success', data: [] });
         });
       });
+    },
+    validatePassword(resourceType, resourceName, value) {
+      const headers = this.getAnonymousHeaders();
+      const policyService = this.getRequestService({ headers });
+      return policyService.post(`/policy/${resourceType}/${resourceName}/policy/?_action=validateObject`, { password: value });
+    },
+    normalizePolicies(policies) {
+      // remove character set policy where no character sets are required
+      let normalizedPolicies = policies.filter((policy) => (!(policy.policyRequirement === 'CHARACTER_SET' && this.getPoliciesFromCharacterSet(policy.params['character-sets']) === null)));
+
+      normalizedPolicies = policies.map((policy) => {
+        switch (policy.policyRequirement) {
+        case 'LENGTH_BASED':
+          if (policy.params['max-password-length'] === 0) {
+            return {
+              policyRequirement: 'MIN_LENGTH',
+              params: { minLength: policy.params['min-password-length'] },
+            };
+          }
+          return policy;
+        case 'CHARACTER_SET':
+          return this.getPoliciesFromCharacterSet(policy.params['character-sets']);
+        case 'ATTRIBUTE_VALUE':
+          return {
+            policyRequirement: 'ATTRIBUTE_VALUE',
+            params: { disallowedFields: policy.params['match-attributes'].join(', ') },
+          };
+        default:
+          return policy;
+        }
+      });
+      return normalizedPolicies;
     },
   },
 };

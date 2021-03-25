@@ -155,6 +155,7 @@ export default {
     FrSuspendedTextOutputCallback: () => import('@/components/callbacks/SuspendedTextOutputCallback'),
     FrTermsAndConditionsCallback: () => import('@/components/callbacks/TermsAndConditionsCallback'),
     FrTextOutputCallback: () => import('@/components/callbacks/TextOutputCallback'),
+    FrValidatedCreatePasswordCallback: () => import('@/components/callbacks/ValidatedCreatePasswordCallback'),
     FrWebAuthnComponent: () => import('@/components/display/WebAuthn'),
   },
   props: {
@@ -391,6 +392,17 @@ export default {
       this.nextStepCallbacks = [];
 
       const stepParams = this.getStepParams();
+
+      // need to set validateOnly input to false for some callbacks in order to be able to advance the tree
+      if (this.step) {
+        const pwCallbacks = this.step.getCallbacksOfType('ValidatedCreatePasswordCallback');
+        if (pwCallbacks.length) {
+          pwCallbacks.forEach((cb) => {
+            cb.setInputValue(false, 1);
+          });
+        }
+      }
+
       FRAuth.next(this.step, stepParams)
         .then((step) => {
           if (!this.initalStep) {
@@ -555,6 +567,10 @@ export default {
             }),
             TextOutputCallback: () => ({
               listeners: ['disable-next-button', 'has-scripts', 'hide-next-button', 'next-step-callback'],
+            }),
+            ValidatedCreatePasswordCallback: () => ({
+              callbackSpecificProps: { overrideInitialPolicies: true, realm: this.realm },
+              listeners: ['disable-next-button'],
             }),
           };
           return componentPropsAndEvents[componentType] ? componentPropsAndEvents[componentType]() : {};

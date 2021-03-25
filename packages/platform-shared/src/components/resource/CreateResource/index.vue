@@ -28,19 +28,23 @@ of the MIT license. See the LICENSE file for details. -->
               <template v-for="(field, index) in clonedCreateProperties">
                 <BFormGroup
                   :key="'createResource' + index"
-                  v-if="((field.type === 'string' && !field.isConditional) || field.type === 'number' || field.type === 'boolean' || field.type === 'password') && field.encryption === undefined">
+                  v-if="((field.type === 'string' && !field.isConditional) || field.type === 'number' || field.type === 'boolean') && field.encryption === undefined">
                   <FrField
                     :autofocus="index === 0"
                     :field="field"
                     :display-description="false"
                   />
-                  <!-- Special logic for password -->
-                  <FrPolicyPanel
-                    v-if="field.type === 'password' && policies.length"
-                    class="mt-2"
-                    :dynamic="false"
-                    :num-columns="2"
-                    :policies="policies" />
+                </BFormGroup>
+                <BFormGroup
+                  v-else-if="field.type === 'password' && field.encryption === undefined"
+                  :key="'createResource' + index">
+                  <FrPolicyPasswordInput
+                    v-model="passwordValue"
+                    @is-valid="passwordValid=$event"
+                    :failures-on-submit="passwordFailures"
+                    :resource-name="resourceName"
+                    :resource-type="resourceType"
+                    :validation="field.validation" />
                 </BFormGroup>
                 <!-- for relationship values -->
                 <BFormGroup
@@ -187,11 +191,11 @@ import {
 } from 'bootstrap-vue';
 import { ValidationObserver } from 'vee-validate';
 import FrField from '@forgerock/platform-shared/src/components/Field';
-import PolicyPanel from '@forgerock/platform-shared/src/components/PolicyPanel';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import RelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import PasswordPolicyMixin from '@forgerock/platform-shared/src/mixins/PasswordPolicyMixin';
+import FrPolicyPasswordInput from '@forgerock/platform-shared/src/components/PolicyPasswordInput';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import FrListField from '@forgerock/platform-shared/src/components/ListField';
@@ -217,7 +221,6 @@ export default {
     FrField,
     FrSpinner,
     FrRelationshipEdit: RelationshipEdit,
-    FrPolicyPanel: PolicyPanel,
     BButton,
     BFormGroup,
     BForm,
@@ -226,6 +229,7 @@ export default {
     BModal,
     ValidationObserver,
     FrListField,
+    FrPolicyPasswordInput,
   },
   mixins: [
     ResourceMixin,
@@ -259,9 +263,9 @@ export default {
       clonedCreateProperties: [],
       stepIndex: -1,
       passwordValue: '',
-      passwordValid: true,
+      passwordValid: false,
+      passwordFailures: [],
       isSaving: false,
-      policies: [],
     };
   },
   watch: {
@@ -349,6 +353,7 @@ export default {
     },
     setErrors(error) {
       const generatedErrors = this.findPolicyError(error, this.clonedCreateProperties);
+      const passwordErrors = [];
       this.$refs.observer.reset();
 
       if (generatedErrors.length > 0) {
@@ -357,9 +362,13 @@ export default {
             this.$refs.observer.setErrors({
               [generatedError.field]: [generatedError.msg],
             });
+            if (generatedError.field === 'password') {
+              passwordErrors.push(generatedError.msg);
+            }
           }
         });
       }
+      this.passwordFailures = passwordErrors;
       this.showErrorMessage(error, this.$t('pages.access.invalidCreate'));
     },
     hideModal() {
@@ -440,12 +449,6 @@ export default {
         if (prop.key === 'password') {
           prop.validation = 'required';
           prop.type = 'password';
-
-          // get the password policy config to display the validation rules
-          this.getPolicies(this.resourceName).then((res) => {
-            // maxLength of 0 means unlimited length allowed, no need to display
-            this.policies = res.data.filter((policy) => (!(policy.name === 'MAX_LENGTH' && policy.params.maxLength === 0)));
-          });
         }
       });
 
@@ -454,7 +457,8 @@ export default {
     initialiseData() {
       this.isSaving = false;
       this.passwordValue = '';
-      this.passwordValid = true;
+      this.passwordValid = false;
+      this.passwordFailures = [];
       this.clonedCreateProperties = cloneDeep(this.createProperties);
       this.setFormFields();
 
