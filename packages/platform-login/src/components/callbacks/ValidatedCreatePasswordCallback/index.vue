@@ -1,10 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <FrField
@@ -23,7 +20,13 @@ of the MIT license. See the LICENSE file for details.
 import { FRAuth, CallbackType } from '@forgerock/javascript-sdk';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import PolicyPanel from '@forgerock/platform-shared/src/components/PolicyPanel';
-import { debounce } from 'lodash';
+import PasswordPolicyMixin from '@forgerock/platform-shared/src/mixins/PasswordPolicyMixin';
+import {
+  cloneDeep,
+  debounce,
+  isEqual,
+  uniqWith,
+} from 'lodash';
 
 /**
  * Handles validating a password through node without advancing the tree.
@@ -35,6 +38,9 @@ export default {
     FrField,
     FrPolicyPanel: PolicyPanel,
   },
+  mixins: [
+    PasswordPolicyMixin,
+  ],
   props: {
     /**
      * Validated password callback containing all inputs and outputs.
@@ -57,6 +63,13 @@ export default {
       type: String,
       required: true,
     },
+    /**
+     * Overrides the list of policies returned by the node and instead gather policies based on failures.
+     */
+    overrideInitialPolicies: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -75,8 +88,13 @@ export default {
     // need to set validateOnly flag to true so that tree does not advance when validating input
     this.callback.setValidateOnly(true);
 
-    this.setPolicies(this.callback.getPolicies().policies);
-    this.setFailingPolicies(this.callback.getFailedPolicies());
+    if (this.overrideInitialPolicies) {
+      this.setPoliciesFromFailures(this.step);
+    } else {
+      this.setPolicies(this.callback.getPolicies().policies);
+      const failingPolicies = this.callback.getFailedPolicies().map((x) => JSON.parse(x));
+      this.setFailingPolicies(failingPolicies);
+    }
   },
   methods: {
     /**
@@ -85,6 +103,43 @@ export default {
      */
     showInPanel(policy) {
       return this.policies.some((x) => x.name === policy.policyRequirement);
+    },
+    /**
+     * Sends input to backend to be validated with supplied value
+     * @param {Object} step current auth step
+     * @param {String} value value to validate with
+     */
+    testInputValue(step, value) {
+      const sampleStep = cloneDeep(step);
+      const sampleCallback = sampleStep.getCallbackOfType(CallbackType.ValidatedCreatePasswordCallback);
+      sampleCallback.setInputValue(value);
+
+      return FRAuth.next(sampleStep, { realmPath: this.realm });
+    },
+    /**
+     * Sends two sample strings which combined will fail all ds policy
+     * Then use the response to populate initial list of policy
+     * @param {Object} step current auth step
+     */
+    setPoliciesFromFailures(step) {
+      // should fail character set, min length
+      const testString1 = '';
+      // should fail dictionary and repeated characters
+      const testString2 = 'passwordaaa';
+
+      // test both values and set policies and failed policies based on results
+      Promise.all([this.testInputValue(step, testString1), this.testInputValue(step, testString2)]).then((res) => {
+        const failures1 = res[0].getCallbackOfType(CallbackType.ValidatedCreatePasswordCallback).getFailedPolicies();
+        const failures2 = res[1].getCallbackOfType(CallbackType.ValidatedCreatePasswordCallback).getFailedPolicies();
+        let failures = [...failures1.map((pol) => (JSON.parse(pol))), ...failures2.map((pol) => (JSON.parse(pol)))];
+        failures = uniqWith(failures, isEqual);
+        const normailizedFailures = this.normalizePolicies(failures);
+        this.policies = normailizedFailures.map((x) => ({ name: x.policyRequirement, params: x.params }));
+        this.setFailingPolicies(failures);
+      }).catch(() => {
+        // it's possible to timeout while in the tree so have to start from beginning if that happens
+        window.location.reload();
+      });
     },
     /**
      * Sets required policies for PolicyPanel component
@@ -113,7 +168,7 @@ export default {
      * @param {Object[]} policies failing policy objects
      */
     setFailingPolicies(policies) {
-      const failingPolicies = policies.map((x) => JSON.parse(x));
+      const failingPolicies = this.normalizePolicies(policies);
 
       this.$emit('on-failing-policies-set', failingPolicies);
 
@@ -125,6 +180,7 @@ export default {
         .filter((x) => this.showInPanel(x))
         .map((x) => x.policyRequirement);
 
+      this.$emit('disable-next-button', failingPolicies.length !== 0, this.index);
       this.$emit('on-validated', this.password.value, failingPolicies.length === 0);
     },
     /**
@@ -146,9 +202,10 @@ export default {
       FRAuth.next(this.step, stepParams)
         .then((step) => {
           const callback = step.getCallbackOfType(CallbackType.ValidatedCreatePasswordCallback);
-          this.setFailingPolicies(callback.getFailedPolicies());
+          const policies = callback.getFailedPolicies().map((x) => JSON.parse(x));
+          this.setFailingPolicies(policies);
         }).catch(() => {
-        // it's possible to timeout while in the tree so have to start from beginning if that happens
+          // it's possible to timeout while in the tree so have to start from beginning if that happens
           window.location.reload();
         });
     },
