@@ -1,8 +1,7 @@
-<!-- Copyright 2019-2021 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2019-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <script>
 import {
   cloneDeep,
@@ -17,12 +16,14 @@ import {
   isUndefined,
   toNumber,
 } from 'lodash';
+import PasswordPolicyMixin from '@forgerock/platform-shared/src/mixins/PasswordPolicyMixin';
 
 /**
  * @description Resource management mixin used for generating an update patch and handling policy errors
  */
 export default {
   name: 'ResourceMixin',
+  mixins: [PasswordPolicyMixin],
   methods: {
     generateUpdatePatch(original, newForm) {
       const clonedOriginal = cloneDeep(original);
@@ -67,6 +68,7 @@ export default {
       if (has(errorResponse, 'data.detail.failedPolicyRequirements')) {
         each(errorResponse.data.detail.failedPolicyRequirements, (policy) => {
           if (policy.policyRequirements.length > 0) {
+            policy.policyRequirements = this.normalizePolicies([policy.policyRequirements[0]]);
             let displayTitle = '';
 
             const foundProperty = find(properties, (prop) => prop.key === policy.property);
@@ -89,23 +91,6 @@ export default {
             });
           }
         });
-      }
-
-      // repo level password policy has a different response and only corresponds to the 'password' field.
-      if (has(errorResponse, 'data.message')) {
-        if (errorResponse.data.code === 400 && errorResponse.data.message.includes('Constraint Violation')) {
-          const re = /:.*:\s(.*)/;
-          const msg = re.exec(errorResponse.data.message)[1];
-          // decode html entities
-          const textArea = document.createElement('textarea');
-          textArea.innerHTML = msg;
-
-          error.push({
-            exists: true,
-            field: 'password',
-            msg: textArea.value,
-          });
-        }
       }
 
       return error;
