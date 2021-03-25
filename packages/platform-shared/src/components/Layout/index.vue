@@ -7,13 +7,13 @@ of the MIT license. See the LICENSE file for details. -->
     id="app"
     :class="[{
       'fr-menu-mobile': useMobileStyleMenu,
-      'fr-menu-expanded': toggled === true && !hideNav,
-      'fr-menu-collapsed': toggled === false,
+      'fr-menu-expanded': menuExpanded === true && !hideNav,
+      'fr-menu-collapsed': menuExpanded === false,
       'fr-navbar-hidden': hideNav,
     }, 'h-100']">
     <FrSideMenu
       @toggle-menu="toggleMenu"
-      :menu-is-toggled="toggled"
+      :menu-is-expanded="menuExpanded"
       :menu-items="menuItems"
       :dropdown-items="realmMenuItems"
       :realm="realm"
@@ -23,7 +23,7 @@ of the MIT license. See the LICENSE file for details. -->
     <div class="content">
       <FrNavBar
         @toggle-menu="toggleMenu"
-        :menu-is-toggled="toggled"
+        :menu-is-expanded="menuExpanded"
         :show-notifications="false"
         :show-help-link="!$store.state.isFraas || !isEnduser"
         :show-docs-link="!$store.state.isFraas || !isEnduser"
@@ -141,7 +141,7 @@ export default {
   },
   data() {
     return {
-      toggled: true,
+      menuExpanded: true,
       useMobileStyleMenu: false,
       hideNav: true,
     };
@@ -185,17 +185,17 @@ export default {
     },
   },
   mounted() {
-    this.useMobileStyleMenu = this.determineMobileStyleMenu();
-    window.addEventListener('resize', () => { this.useMobileStyleMenu = this.determineMobileStyleMenu(); });
+    this.determineMobileStyleMenu();
+    window.addEventListener('resize', this.determineMobileStyleMenu);
 
     if (this.media('lt-lg').matches) {
-      this.toggled = false;
+      this.menuExpanded = false;
     }
 
     // fires only once media breakpoint is changed.
     this.media('md').addListener((e) => {
       if (e.matches) {
-        this.toggled = false;
+        this.menuExpanded = false;
       }
     });
   },
@@ -206,19 +206,22 @@ export default {
     determineMobileStyleMenu() {
       if (this.media('any-hover').matches) {
         if (this.media('lt-md').matches) {
-          return true;
+          this.useMobileStyleMenu = true;
+        } else {
+          this.useMobileStyleMenu = false;
         }
       } else if (this.media('lt-lg').matches) {
-        return true;
+        this.useMobileStyleMenu = true;
+      } else {
+        this.useMobileStyleMenu = false;
       }
-      return false;
     },
     toggleMenu() {
-      this.toggled = !this.toggled;
+      this.menuExpanded = !this.menuExpanded;
     },
   },
   beforeDestroy() {
-    window.removeEventListener('resize', () => { this.useMobileStyleMenu = this.determineMobileStyleMenu(); });
+    window.removeEventListener('resize', this.determineMobileStyleMenu);
   },
 };
 </script>
