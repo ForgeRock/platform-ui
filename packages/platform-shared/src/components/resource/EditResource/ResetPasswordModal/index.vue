@@ -7,19 +7,17 @@ of the MIT license. See the LICENSE file for details. -->
     v-bind="$attrs"
     size="lg"
     :title="this.$t('pages.access.resetPassword')"
-    @hidden="password.value=''; failures=[]">
+    @hidden="password=''; failures=[]">
     <p class="mb-4">
       {{ $t('common.helpText.resetPassword') }}
     </p>
-    <FrField
-      class="mb-2"
-      :field="password"
-      :failed-policies="failures" />
-    <FrPolicyPanel
-      v-if="policies.length"
-      :dynamic="false"
-      :num-columns="2"
-      :policies="policies" />
+    <FrPolicyPasswordInput
+      @is-valid="isValid=$event"
+      v-model="password"
+      :resource-type="resourceType"
+      :resource-name="resourceName"
+      :failures-on-submit="failures"
+      validation="required" />
     <template #modal-footer="{ ok, cancel }">
       <BButton
         variant="link"
@@ -27,6 +25,7 @@ of the MIT license. See the LICENSE file for details. -->
         {{ $t('common.cancel') }}
       </BButton>
       <BButton
+        :disabled="!isValid || !password.length"
         variant="primary"
         @click="savePassword(ok)">
         {{ $t('pages.access.resetPassword') }}
@@ -44,8 +43,7 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import PasswordPolicyMixin from '@forgerock/platform-shared/src/mixins/PasswordPolicyMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
-import FrField from '@forgerock/platform-shared/src/components/Field';
-import PolicyPanel from '@forgerock/platform-shared/src/components/PolicyPanel';
+import FrPolicyPasswordInput from '@forgerock/platform-shared/src/components/PolicyPasswordInput';
 
 /**
  * Modal used to reset a users password as an administrator. Used in EditResource component.
@@ -55,8 +53,7 @@ export default {
   components: {
     BButton,
     BModal,
-    FrField,
-    FrPolicyPanel: PolicyPanel,
+    FrPolicyPasswordInput,
   },
   mixins: [
     NotificationMixin,
@@ -89,21 +86,10 @@ export default {
   },
   data() {
     return {
-      password: {
-        value: '',
-        type: 'password',
-        title: this.$t('common.placeholders.password'),
-        validation: 'required',
-      },
+      password: '',
       failures: [],
-      policies: [],
+      isValid: false,
     };
-  },
-  mounted() {
-    this.getPolicies(this.resourceName).then((res) => {
-      // maxLength of 0 means unlimited length allowed, no need to display
-      this.policies = res.data.filter((policy) => (!(policy.name === 'MAX_LENGTH' && policy.params.maxLength === 0)));
-    });
   },
   methods: {
     /**
@@ -112,14 +98,14 @@ export default {
      */
     savePassword(ok) {
       const idmInstance = this.getRequestService();
-      const saveData = [{ operation: 'add', field: '/password', value: this.password.value }];
+      const saveData = [{ operation: 'add', field: '/password', value: this.password }];
       idmInstance.patch(`${this.resourceType}/${this.resourceName}/${this.resourceId}`, saveData).then(() => {
         this.displayNotification('AdminMessage', 'success', this.$t('pages.access.successSavePassword'));
         ok();
       },
       (error) => {
-        const err = this.findPolicyError(error.response);
-        if (err.length) this.failures = [err[0].msg];
+        const err = this.findPolicyError(error.response).map((message) => message.msg);
+        if (err.length) this.failures = err;
         this.displayNotification('AdminMessage', 'error', this.$t('pages.access.failedSavePassword'));
       });
     },

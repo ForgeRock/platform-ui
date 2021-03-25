@@ -135,9 +135,15 @@
       "DICTIONARY": "Cannot contain common passwords",
       "LENGTH_BASED": "Must be at least %{min-password-length} characters and no longer than %{max-password-length} characters",
       "REPEATED_CHARACTERS": "Cannot contain more than %{max-consecutive-length} repeated consecutive characters",
-      "CHARACTER_SET": "Must contain character(s) from the character set",
-      "ATTRIBUTE_VALUE": "Cannot be found in another attribute of the object",
-      "HISTORY": "Cannot have been used recently",
+      "CHARACTER_SET": "Must contain the following character(s): %{sets}",
+      "sets": {
+        "lowercase": "lowercase",
+        "uppercase": "uppercase",
+        "number": "number",
+        "symbol": "symbol"
+      },
+      "ATTRIBUTE_VALUE": "Cannot match the value of another attribute for this user",
+      "HISTORY": "Cannot match a recently used password",
       "UNKNOWN": "Unable to create or modify %{property-name} due to an unknown configuration issue",
       "EXTENDED_FIELD_POLICY": "%{property-name} is not valid",
       "test": "succeed",
