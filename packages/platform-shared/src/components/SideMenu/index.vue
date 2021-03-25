@@ -265,7 +265,7 @@ export default {
     /**
      * State from Layout about if the menu is open (true) or closed (false)
      */
-    menuIsToggled: {
+    menuIsExpanded: {
       default: () => false,
       type: Boolean,
     },
@@ -344,7 +344,7 @@ export default {
      * @description Watch for menu open and focus on the first element
      * @param isOpen boolean true means the menu is open
      */
-    menuIsToggled(isOpen) {
+    menuIsExpanded(isOpen) {
       if (isOpen) {
         this.focusFirstItem();
       }

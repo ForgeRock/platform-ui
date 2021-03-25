@@ -14,7 +14,7 @@ of the MIT license. See the LICENSE file for details. -->
       class="navbar-toggler expand-sidebar mt-2"
       type="button"
       aria-controls="#fr-sidebar-nav"
-      :aria-expanded="(menuIsToggled).toString()"
+      :aria-expanded="(menuIsExpanded).toString()"
       :aria-label="$t('sideMenu.toggleSidebar')">
       <span
         aria-hidden="true"
@@ -154,7 +154,7 @@ export default {
     /**
      * State from Layout about if the menu is open (true) or closed (false)
      */
-    menuIsToggled: {
+    menuIsExpanded: {
       default: () => false,
       type: Boolean,
     },
