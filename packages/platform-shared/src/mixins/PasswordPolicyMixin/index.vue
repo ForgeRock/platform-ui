@@ -75,11 +75,6 @@ export default {
         });
       });
     },
-    validatePassword(resourceType, resourceName, value) {
-      const headers = this.getAnonymousHeaders();
-      const policyService = this.getRequestService({ headers });
-      return policyService.post(`/policy/${resourceType}/${resourceName}/policy/?_action=validateObject`, { password: value });
-    },
     normalizePolicies(policies) {
       // remove character set policy where no character sets are required
       let normalizedPolicies = policies.filter((policy) => (!(policy.policyRequirement === 'CHARACTER_SET' && this.getPoliciesFromCharacterSet(policy.params['character-sets']) === null)));
