@@ -1,10 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="kbaQuestionAnswerContainer">
     <div
@@ -89,13 +86,13 @@ export default {
       answerModel: {
         key: `callback_${this.index}00_field`,
         type: 'password',
-        title: 'Answer',
+        title: this.$t('login.kba.answer'),
         value: '',
         validation: { required: true },
       },
       questionModel: {
         key: `callback_${this.index}_field`,
-        title: 'Question',
+        title: this.$t('login.kba.question'),
         value: '',
         validation: { required: true },
       },
