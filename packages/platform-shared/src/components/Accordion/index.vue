@@ -86,7 +86,7 @@ export default {
     headerProps: {
       type: Function,
       default() {
-        return () => ({});
+        return {};
       },
     },
   },
