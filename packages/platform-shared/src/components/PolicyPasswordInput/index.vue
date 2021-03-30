@@ -26,6 +26,13 @@ import FrField from '@forgerock/platform-shared/src/components/Field';
 import PolicyPanel from '@forgerock/platform-shared/src/components/PolicyPanel';
 import PasswordPolicyMixin from '@forgerock/platform-shared/src/mixins/PasswordPolicyMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+
+const ignoredPolicies = [
+  'REQUIRED',
+  'VALID_TYPE',
+  'CANNOT_CONTAIN_OTHERS',
+];
 
 /**
  * The main display for the password policy component.
@@ -35,6 +42,7 @@ export default {
   mixins: [
     RestMixin,
     PasswordPolicyMixin,
+    NotificationMixin,
   ],
   components: {
     FrField,
@@ -64,7 +72,7 @@ export default {
   },
   data() {
     return {
-      policyEndpoint: `/policy/${this.resourceType}/${this.resourceName}/policy/?_action=validateObject`,
+      policyEndpoint: `/policy/${this.resourceType}/${this.resourceName}`,
       policyFailures: [],
       policies: [],
     };
@@ -82,6 +90,7 @@ export default {
   mounted() {
     this.getDsPolicies(this.resourceName).then((res) => {
       this.policies = res.data;
+      this.getIdmPolicies();
     });
   },
   methods: {
@@ -89,7 +98,7 @@ export default {
       const headers = this.getAnonymousHeaders();
       const policyService = this.getRequestService({ headers });
 
-      policyService.post(this.policyEndpoint, { password: value })
+      policyService.post(`${this.policyEndpoint}/policy/?_action=validateObject`, { password: value })
         .then((res) => {
           if (res.data.failedPolicyRequirements) {
             const failedPolicies = [];
@@ -100,6 +109,19 @@ export default {
             this.policyFailures = this.normalizePolicies(failedPolicies).map((policy) => (policy.policyRequirement || policy.name));
           }
         });
+    },
+    getIdmPolicies() {
+      const headers = this.getAnonymousHeaders();
+      const policyService = this.getRequestService({ headers });
+
+      policyService.get(this.policyEndpoint).then((res) => {
+        const passwordPolicies = res.data.properties.find((pol) => (pol.name === 'password')).policies;
+        const filteredPolicies = passwordPolicies.filter((pol) => (ignoredPolicies.indexOf(pol.policyRequirements[0]) === -1));
+        const policyObjects = filteredPolicies.map((pol) => ({ name: pol.policyRequirements[0], params: pol.params }));
+        this.policies = [...this.policies, ...policyObjects];
+      }).catch((error) => {
+        this.showErrorMessage(error, this.$t('common.policyValidationMessages.policyReadError'));
+      });
     },
   },
 };
