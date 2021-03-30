@@ -19,6 +19,9 @@ describe('PasswordPolicyInput.vue', () => {
       sync: false,
       mocks: {
         $t: () => {},
+        $store: {
+          state: {},
+        },
       },
       propsData: {
         resourceType: 'managed',
