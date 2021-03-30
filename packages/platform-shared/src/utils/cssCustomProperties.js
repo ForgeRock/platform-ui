@@ -1,9 +1,16 @@
+/**
+ * Copyright (c) 2021 ForgeRock. All rights reserved.
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
+ */
+
 export default {
   /**
    * @description test if css custom properties AKA css variables are supported.
    * */
   get supported() {
-    return window.CSS && CSS.supports('color', 'var(--test-prop)');
+    return window.CSS && window.CSS.supports && CSS.supports('color', 'var(--test-prop)');
   },
   /**
    * @description Set or update a single css variable
