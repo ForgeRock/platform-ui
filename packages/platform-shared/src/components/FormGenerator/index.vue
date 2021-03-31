@@ -1,3 +1,7 @@
+<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="fr-generated-schema-holder">
     <form
@@ -174,23 +178,23 @@ export default {
       const valueIsNumber = isNumber(model.value);
 
       switch (model.type) {
-      case 'string':
-        return valueIsString;
-      case 'array':
-        if (model.arrayType === 'selectOne') {
+        case 'string':
           return valueIsString;
-        }
-        return valueIsArray;
-      case 'boolean':
-        return valueIsBool;
-      case 'integer':
-        return valueIsNumber;
-      case 'radio':
-        return true;
-      case 'password':
-        return true;
-      default:
-        return false;
+        case 'array':
+          if (model.arrayType === 'selectOne') {
+            return valueIsString;
+          }
+          return valueIsArray;
+        case 'boolean':
+          return valueIsBool;
+        case 'integer':
+          return valueIsNumber;
+        case 'radio':
+          return true;
+        case 'password':
+          return true;
+        default:
+          return false;
       }
     },
     /**

@@ -275,35 +275,35 @@ export default {
       this.modalType = type;
       this.modalItem = { ...data };
       switch (type) {
-      case 'delete':
-        this.modalInfo.title = this.$t('pages.authenticationDevices.deleteModalTitle', { deviceAlias: data.alias });
-        this.modalInfo.primaryButtonText = this.$t('pages.authenticationDevices.delete');
-        this.modalInfo.showCancel = true;
-        this.editModal.value = undefined;
-        break;
-      case 'edit':
-        this.modalInfo.title = this.$t('pages.authenticationDevices.editModalTitle');
-        this.modalInfo.primaryButtonText = this.$t('common.save');
-        this.modalInfo.showCancel = true;
-        this.editModal.value = data.deviceName;
-        break;
-      case 'errorEdit':
-        this.modalInfo.title = this.$t('pages.authenticationDevices.unableToEditModalTitle');
-        this.modalInfo.primaryButtonText = this.$t('common.done');
-        this.modalInfo.showCancel = false;
-        this.editModal.value = undefined;
-        break;
-      case 'errorDelete':
-        this.modalInfo.title = this.$t('pages.authenticationDevices.unableToDeleteModalTitle');
-        this.modalInfo.primaryButtonText = this.$t('common.done');
-        this.modalInfo.showCancel = false;
-        this.editModal.value = undefined;
-        break;
-      default:
-        this.modalInfo.title = '';
-        this.modalInfo.primaryButtonText = '';
-        this.editModal.value = undefined;
-        break;
+        case 'delete':
+          this.modalInfo.title = this.$t('pages.authenticationDevices.deleteModalTitle', { deviceAlias: data.alias });
+          this.modalInfo.primaryButtonText = this.$t('pages.authenticationDevices.delete');
+          this.modalInfo.showCancel = true;
+          this.editModal.value = undefined;
+          break;
+        case 'edit':
+          this.modalInfo.title = this.$t('pages.authenticationDevices.editModalTitle');
+          this.modalInfo.primaryButtonText = this.$t('common.save');
+          this.modalInfo.showCancel = true;
+          this.editModal.value = data.deviceName;
+          break;
+        case 'errorEdit':
+          this.modalInfo.title = this.$t('pages.authenticationDevices.unableToEditModalTitle');
+          this.modalInfo.primaryButtonText = this.$t('common.done');
+          this.modalInfo.showCancel = false;
+          this.editModal.value = undefined;
+          break;
+        case 'errorDelete':
+          this.modalInfo.title = this.$t('pages.authenticationDevices.unableToDeleteModalTitle');
+          this.modalInfo.primaryButtonText = this.$t('common.done');
+          this.modalInfo.showCancel = false;
+          this.editModal.value = undefined;
+          break;
+        default:
+          this.modalInfo.title = '';
+          this.modalInfo.primaryButtonText = '';
+          this.editModal.value = undefined;
+          break;
       }
       this.$refs.fsModal.show();
     },
