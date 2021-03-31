@@ -931,25 +931,94 @@
     "navTitle": "Gateways & Agents",
     "title": "Gateway and Agent Profiles",
     "subTitle": "Protect resources at the edge using Identity Gateway or an agent.",
-    "addGatewayOrAgent": "New Profile",
+    "addGatewayOrAgent": "New Gateway/Agent",
     "noGatewaysOrAgentsText": "You haven't added any Gateways or Agents",
-    "idFieldTitle": "ID",
+    "idFieldTitle": "Agent ID",
     "userpasswordTitle": "Password",
+    "applicationUrlTitle": "Application URL",
+    "amServerUrlTitle": "AM Server URL",
+    "amUrlTitle": "AM Server URL",
+    "realmTitle": "Agent Realm",
     "getListDataFail": "Unable to retrieve Gateways and Agents data",
     "getEditDataFail": "Unable to get {type} properties",
     "deleteError": "Unable to delete {type}",
-    "updateSuccess": "Updated {type}",
+    "updateSuccess": {
+      "gateway": "Updated gateway",
+      "java-agent": "Updated java agent",
+      "web-agent": "Updated web agent"
+    },
     "updateFail": "Unable to update {type}",
     "resetPasswordSuccess": "Password reset",
     "resetPasswordFail": "Unable to reset password",
+    "nativeEdit": "Edit advanced settings in the Access Management Native Console",
+    "usePolicyAuthorizationName": "Use Policy Authorization",
+    "usePolicyAuthorizationHelp": "Use policy to perform fine-grained user authorization. If not enabled the agent will only manage basic user authentication. (Deactivating policy authorization activates SSO_Only).",
+    "policySetName": "Policy Set",
+    "policySetHelp": "Choose a set of policies for this agent to use to protect your application endpoints.",
     "gateway": {
       "name": "Identity Gateway Profile",
       "redirectUrlName": "Redirect URLs",
       "redirectUrlHelp": "Redirect URLs for cross domain single sign-on (CDSSO) eg. http://openig.ext.com:8080/home/cdsso/redirect"
     },
+    "java-agent": {
+      "name": "Java Agent Profile"
+    },
+    "web-agent": {
+      "name": "Web Agent Profile"
+    },
     "createModal": {
-      "header": "New Identity Gateway Profile",
-      "errorCreating": "Could not create {type}"
+      "selectType": {
+        "header": "New Gateway/Agent",
+        "introduction": "Deploying an agent or gateway involves downloading and installing a piece of software on your server. To get started choose whether to protect your application using Identity Gateway or an agent."
+      },
+      "addDetails": {
+        "introduction": "Create a profile for the agent to connect to and communicate with ForgeRock.",
+        "header": {
+          "gateway": "Create Identity Gateway Profile",
+          "java-agent": "Create Java Agent Profile",
+          "web-agent": "Create Web Agent Profile"
+        }
+      },
+      "created": {
+        "editProfile": "Edit Profile",
+        "createdMessage": {
+          "gateway": "Identity Gateway profile created!",
+          "java-agent": "Java Agent profile created!",
+          "web-agent": "Web Agent profile created!"
+        },
+        "nextSteps": "Next Steps",
+        "gateway": {
+          "download": "<a href='https://backstage.forgerock.com/downloads/browse/ig/featured'>Download Identity Gateway</a>.",
+          "instructions": "Follow the <a href='https://backstage.forgerock.com/docs/idcloud/latest/gateways-agents.html'>step-by-step instructions</a> to install and configure Identity Gateway using the following values:"
+        },
+        "web-agent": {
+          "download": "<a href='https://backstage.forgerock.com/downloads/browse/am/featured/web-agents'>Download a web agent</a> based on your needs.",
+          "instructions": "Follow the <a href='https://backstage.forgerock.com/docs/idcloud/latest/gateways-agents.html'>step-by-step instructions</a> to install and configure the agent using the following values:"
+        },
+        "java-agent": {
+          "download": "<a href='https://backstage.forgerock.com/downloads/browse/am/featured/java-agents'>Download a java agent</a> based on your needs.",
+          "instructions": "Follow the <a href='https://backstage.forgerock.com/docs/idcloud/latest/gateways-agents.html'>step-by-step instructions</a> to install and configure the agent using the following values:"
+        }
+      },
+      "errorCreating": "Could not create {type}",
+      "identityGatewayTitle": "Identity Gateway",
+      "javaAgentTitle": "Java Agent",
+      "webAgentTitle": "Web Agent",
+      "save": "Save Profile"
+    },
+    "editPage": {
+      "downloadTitle": "Download and Install",
+      "settingsTitle": "Settings",
+      "nativeEdit": "Edit advanced settings in the Access Management Native Console",
+      "gateway": {
+        "downloadDescription": "<a href='https://backstage.forgerock.com/downloads/browse/ig/featured'>Download a identity gateway</a> based on your needs, and follow the <a href='https://backstage.forgerock.com/docs/idcloud/latest/gateways-agents.html'>step-by-step instructions</a> to install and configure the agent using the following values:"
+      },
+      "java-agent": {
+        "downloadDescription": "<a href='https://backstage.forgerock.com/downloads/browse/am/featured/java-agents'>Download a java agent</a> based on your needs, and follow the <a href='https://backstage.forgerock.com/docs/idcloud/latest/gateways-agents.html'>step-by-step instructions</a> to install and configure the agent using the following values:"
+      },
+      "web-agent": {
+        "downloadDescription": "<a href='https://backstage.forgerock.com/downloads/browse/am/featured/web-agents'>Download a web agent</a> based on your needs, and follow the <a href='https://backstage.forgerock.com/docs/idcloud/latest/gateways-agents.html'>step-by-step instructions</a> to install and configure the agent using the following values:"
+      }
     }
   },
   "tenantAdmins": {
