@@ -171,7 +171,10 @@
       "alphaOnly": "Can only contain alphabetic characters",
       "alphaNumericOnly": "Can only contain alphanumeric characters",
       "alphaNumericDashOnly": "Can only contain alphanumeric characters, numbers, dashes or underscores",
-      "noSpace": "Cannot start or end with the space character"
+      "noSpace": "Cannot start or end with the space character",
+      "url": "Must be a valid URL",
+      "urlWithPath": "URL must have a path",
+      "urlWithoutPath": "URL must not have a path"
     },
     "user": {
       "username": "Username",
