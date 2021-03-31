@@ -1,5 +1,4 @@
 /**
- * @license
  * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
@@ -19,6 +18,7 @@ import {
   SessionManager,
 } from '@forgerock/javascript-sdk';
 import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
+import VueSanitize from 'vue-sanitize';
 import i18n from './i18n';
 import router from './router';
 import App from './App';
@@ -26,6 +26,7 @@ import App from './App';
 Vue.config.productionTip = false;
 
 Vue.use(Notifications);
+Vue.use(VueSanitize);
 
 // Required rule - errors if no value is supplied
 extend('required', {

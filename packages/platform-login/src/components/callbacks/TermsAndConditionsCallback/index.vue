@@ -1,10 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="row text-left mb-2">
     <div class="col-sm text-center d-inline-block">
@@ -27,7 +24,7 @@ of the MIT license. See the LICENSE file for details.
         hide-footer
         :title="$t('login.termsAndConditions')">
         <div class="d-block text-left">
-          <p>{{ terms }}</p>
+          <p v-html="terms" />
         </div>
       </BModal>
     </div>
@@ -54,7 +51,7 @@ export default {
   },
   mounted() {
     this.name = `callback_${this.index}`;
-    this.terms = this.callback.getTerms();
+    this.terms = this.$sanitize(this.callback.getTerms());
     this.callback.setInputValue(true);
   },
   data() {
