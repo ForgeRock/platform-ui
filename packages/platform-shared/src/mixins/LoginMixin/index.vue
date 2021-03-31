@@ -55,7 +55,7 @@ export function isSamlURL(url) {
 export function verifyGotoUrlAndRedirect(url, realm, isAdmin = false, isGotoOnFail = false) {
   const urlParams = new URLSearchParams(window.location.search);
   const gotoUrl = !isGotoOnFail
-    ? JSON.stringify({ goto: urlParams.get('goto') })
+    ? JSON.stringify({ goto: urlParams.get('goto') || url })
     : JSON.stringify({ goto: urlParams.get('gotoOnFail') });
 
   urlParams.delete('goto');
