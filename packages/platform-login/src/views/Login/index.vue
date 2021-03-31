@@ -424,66 +424,66 @@ export default {
           }
 
           switch (step.type) {
-          case 'LoginSuccess':
-            // If we have a session token, get user information
-            this.getIdFromSession()
-              .then(this.getUserInfo)
-              .then((userObj) => {
-                let isAdmin = false;
-                const rolesArray = userObj.data.roles;
+            case 'LoginSuccess':
+              // If we have a session token, get user information
+              this.getIdFromSession()
+                .then(this.getUserInfo)
+                .then((userObj) => {
+                  let isAdmin = false;
+                  const rolesArray = userObj.data.roles;
 
-                if (rolesArray.includes('ui-global-admin') || rolesArray.includes('ui-realm-admin')) {
-                  isAdmin = true;
+                  if (rolesArray.includes('ui-global-admin') || rolesArray.includes('ui-realm-admin')) {
+                    isAdmin = true;
+                  }
+                  return this.verifyGotoUrlAndRedirect(step.getSuccessUrl(), this.realm, isAdmin);
+                })
+                .then((res) => {
+                  window.location.href = res;
+                })
+                .catch(() => {
+                  // attempt to redirect user on failure
+                  this.verifyGotoUrlAndRedirect(step.getSuccessUrl(), this.realm, false)
+                    .then((res) => {
+                      window.location.href = res;
+                    });
+                });
+              break;
+            case 'LoginFailure':
+              this.loading = true;
+              if (this.retry && this.isSessionTimedOut(step.payload)) {
+                this.retry = false;
+                this.retryWithNewAuthId(previousStep, stepParams);
+              } else {
+                this.errorMessage = step.payload.message || this.$t('login.loginFailure');
+                this.redirectToFailure(step);
+                this.step = cloneDeep(this.initalStep);
+                this.retry = true;
+                if (this.step.callbacks) {
+                  this.componentList = [];
+                  this.buildTreeForm();
                 }
-                return this.verifyGotoUrlAndRedirect(step.getSuccessUrl(), this.realm, isAdmin);
-              })
-              .then((res) => {
-                window.location.href = res;
-              })
-              .catch(() => {
-                // attempt to redirect user on failure
-                this.verifyGotoUrlAndRedirect(step.getSuccessUrl(), this.realm, false)
-                  .then((res) => {
-                    window.location.href = res;
-                  });
-              });
-            break;
-          case 'LoginFailure':
-            this.loading = true;
-            if (this.retry && this.isSessionTimedOut(step.payload)) {
-              this.retry = false;
-              this.retryWithNewAuthId(previousStep, stepParams);
-            } else {
-              this.errorMessage = step.payload.message || this.$t('login.loginFailure');
-              this.redirectToFailure(step);
-              this.step = cloneDeep(this.initalStep);
-              this.retry = true;
-              if (this.step.callbacks) {
-                this.componentList = [];
-                this.buildTreeForm();
+                this.loading = false;
               }
-              this.loading = false;
-            }
-            this.loginFailure = true;
-            break;
-          default:
-            // retry only when previous was undefined (first step)
-            this.retry = !previousStep;
+              this.loginFailure = true;
+              break;
+            default:
+              // retry only when previous was undefined (first step)
+              this.retry = !previousStep;
 
-            // check if we are still polling with the same callbacks and set loading to false
-            if (preventClear && previousStep) {
-              const arrayLengthMatch = previousStep.callbacks.length === step.callbacks.length;
-              let sameCallbacks;
-              if (arrayLengthMatch) {
-                sameCallbacks = previousStep.callbacks.every((prevCallback, i) => prevCallback.getType() === step.callbacks[i].getType());
+              // check if we are still polling with the same callbacks and set loading to false
+              if (preventClear && previousStep) {
+                const arrayLengthMatch = previousStep.callbacks.length === step.callbacks.length;
+                let sameCallbacks;
+                if (arrayLengthMatch) {
+                  sameCallbacks = previousStep.callbacks.every((prevCallback, i) => prevCallback.getType() === step.callbacks[i].getType());
+                }
+                this.loading = !(arrayLengthMatch && sameCallbacks);
+                this.showScriptElms = arrayLengthMatch && sameCallbacks;
               }
-              this.loading = !(arrayLengthMatch && sameCallbacks);
-              this.showScriptElms = arrayLengthMatch && sameCallbacks;
-            }
-            // setup the form based on callback info/values obtained from this.step
-            this.buildTreeForm();
-            this.loading = false;
-            break;
+              // setup the form based on callback info/values obtained from this.step
+              this.buildTreeForm();
+              this.loading = false;
+              break;
           }
         },
         () => {

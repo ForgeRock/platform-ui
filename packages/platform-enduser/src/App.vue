@@ -66,6 +66,8 @@ export default {
     // if this is a dns alias making this call will get the true realm when no realm param is provided
     this.getConfigurationInfo().then((config) => {
       this.setTheme(config.data.realm);
+    }, (error) => {
+      this.showErrorMessage(error, this.$t('errors.couldNotRetrieveConfigurationInfo'));
     });
   },
   mounted() {
