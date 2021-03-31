@@ -1,10 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BContainer>
     <BRow>
@@ -114,14 +111,14 @@ export default {
     },
     setDefaults(type) {
       switch (type) {
-      case 'boolean':
-        return Boolean();
-      case 'number':
-        return Number();
-      case 'string':
-        return String();
-      default:
-        return null;
+        case 'boolean':
+          return Boolean();
+        case 'number':
+          return Number();
+        case 'string':
+          return String();
+        default:
+          return null;
       }
     },
   },

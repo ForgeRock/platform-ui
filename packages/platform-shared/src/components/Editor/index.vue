@@ -61,15 +61,15 @@ export default {
       }
 
       switch (this.language) {
-      case 'css':
-        return pd.css(content);
-      case 'json':
-        return pd.json(content);
-      case 'html':
-      case 'xml':
-        return pd.xml(content);
-      default:
-        return content;
+        case 'css':
+          return pd.css(content);
+        case 'json':
+          return pd.json(content);
+        case 'html':
+        case 'xml':
+          return pd.xml(content);
+        default:
+          return content;
       }
     },
   },
