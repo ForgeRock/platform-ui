@@ -71,22 +71,22 @@ export default {
       let icon;
 
       switch (this.variant) {
-      case 'info':
-      case 'primary':
-        icon = 'info';
-        break;
-      case 'danger':
-      case 'error':
-        icon = 'error_outline';
-        break;
-      case 'warning':
-        icon = 'warning';
-        break;
-      case 'success':
-        icon = 'check_circle';
-        break;
-      default:
-        icon = 'message';
+        case 'info':
+        case 'primary':
+          icon = 'info';
+          break;
+        case 'danger':
+        case 'error':
+          icon = 'error_outline';
+          break;
+        case 'warning':
+          icon = 'warning';
+          break;
+        case 'success':
+          icon = 'check_circle';
+          break;
+        default:
+          icon = 'message';
       }
 
       return icon;

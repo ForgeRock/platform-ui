@@ -1,10 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
     :class="[{'hide-polling-spinner': hideSpinner }, 'row', 'mb-2']"
@@ -82,17 +79,17 @@ export default {
   },
   mounted() {
     switch (this.callback.getMessageType()) {
-    case '1':
-      this.messageType = 'WARNING';
-      break;
-    case '2':
-      this.messageType = 'ERROR';
-      break;
-    case '4':
-      this.messageType = 'SCRIPT';
-      break;
-    default:
-      this.messageType = 'INFORMATION';
+      case '1':
+        this.messageType = 'WARNING';
+        break;
+      case '2':
+        this.messageType = 'ERROR';
+        break;
+      case '4':
+        this.messageType = 'SCRIPT';
+        break;
+      default:
+        this.messageType = 'INFORMATION';
     }
 
     if (this.messageType === 'SCRIPT') {

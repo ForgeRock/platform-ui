@@ -73,7 +73,9 @@ of the MIT license. See the LICENSE file for details. -->
             md="5">
             <div class="w-100">
               <div class="mb-2">
-                <h5 class="small">{{ $t('pages.profile.trustedDevices.recentActivity') }}</h5>
+                <h5 class="small">
+                  {{ $t('pages.profile.trustedDevices.recentActivity') }}
+                </h5>
               </div>
               <img
                 class="mb-3 w-100"
@@ -100,7 +102,9 @@ of the MIT license. See the LICENSE file for details. -->
               <div
                 v-if="slotData.os"
                 class="mb-3">
-                <h5 class="small">{{ $t('pages.profile.trustedDevices.os') }}</h5>
+                <h5 class="small">
+                  {{ $t('pages.profile.trustedDevices.os') }}
+                </h5>
                 <p class="bold">
                   {{ slotData.os }}
                 </p>
@@ -108,13 +112,17 @@ of the MIT license. See the LICENSE file for details. -->
               <div
                 v-if="slotData.browser"
                 class="mb-3">
-                <h5 class="small">{{ $t('pages.profile.trustedDevices.browser') }}</h5>
+                <h5 class="small">
+                  {{ $t('pages.profile.trustedDevices.browser') }}
+                </h5>
                 <p class="bold">
                   {{ slotData.browser }}
                 </p>
               </div>
               <div v-if="slotData.cpu">
-                <h5 class="small">{{ $t('pages.profile.trustedDevices.cpu') }}</h5>
+                <h5 class="small">
+                  {{ $t('pages.profile.trustedDevices.cpu') }}
+                </h5>
                 <p class="bold">
                   {{ slotData.cpu }}
                 </p>
@@ -308,21 +316,21 @@ export default {
         index: data.index$,
       };
       switch (type) {
-      case 'edit':
-        this.modalDevice.title = this.$t('pages.profile.trustedDevices.editModalTitle');
-        this.modalDevice.primaryButtonText = this.$t('common.save');
-        this.editModal.value = data.alias;
-        break;
-      case 'remove':
-        this.modalDevice.title = this.$t('pages.profile.trustedDevices.removeModalTitle', { deviceAlias: data.alias });
-        this.modalDevice.primaryButtonText = this.$t('pages.profile.trustedDevices.remove');
-        this.editModal.value = undefined;
-        break;
-      default:
-        this.modalDevice.title = '';
-        this.modalDevice.primaryButtonText = '';
-        this.editModal.value = undefined;
-        break;
+        case 'edit':
+          this.modalDevice.title = this.$t('pages.profile.trustedDevices.editModalTitle');
+          this.modalDevice.primaryButtonText = this.$t('common.save');
+          this.editModal.value = data.alias;
+          break;
+        case 'remove':
+          this.modalDevice.title = this.$t('pages.profile.trustedDevices.removeModalTitle', { deviceAlias: data.alias });
+          this.modalDevice.primaryButtonText = this.$t('pages.profile.trustedDevices.remove');
+          this.editModal.value = undefined;
+          break;
+        default:
+          this.modalDevice.title = '';
+          this.modalDevice.primaryButtonText = '';
+          this.editModal.value = undefined;
+          break;
       }
     },
     handleModalPrimaryButton(type) {
