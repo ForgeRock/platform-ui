@@ -113,6 +113,9 @@ export default {
         .then(({ data }) => {
           // Alpha sorted by name
           this.myApplications = Object.values(data).sort((a, b) => a.dashboardDisplayName[0].localeCompare(b.dashboardDisplayName[0]));
+        })
+        .catch((error) => {
+          this.showErrorMessage(error, this.$t('pages.dashboard.errorGetApplications'));
         });
     },
     /**

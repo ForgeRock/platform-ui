@@ -204,6 +204,7 @@
   "errors": {
     "errorSaving": "Error saving list",
     "errorCreating": "Error creating file",
+    "couldNotRetrieveConfigurationInfo": "There was an error retrieving configuration information.",
     "couldNotRetrieveVersion": "There was an error retrieving version information.",
     "idInUse": "That ID is already in use, please choose a different ID"
   },

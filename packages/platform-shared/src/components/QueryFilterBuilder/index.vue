@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BCard body-class="p-3 p-sm-4">
     <template v-if="isBasic && allowBasicMode">
@@ -193,25 +192,25 @@ export default {
       const group = this.findGroup(tempFilter, paths, 0, depth);
 
       switch (eventName) {
-      case 'add-rule':
-        if (type === 'row') {
-          group.subfilters.splice(index + 1, 0, this.getDefaultRule());
-        } else {
-          group.subfilters.splice(index + 1, 0, this.getDefaultGroup());
-        }
-        this.$emit('error');
-        break;
-      case 'operator-change':
-        group.operator = value;
-        break;
-      case 'rule-change':
-        group.subfilters[index] = { ...group.subfilters[index], ...value };
-        break;
-      case 'remove-rule':
-        group.subfilters.splice(index, 1);
-        break;
-      default:
-        break;
+        case 'add-rule':
+          if (type === 'row') {
+            group.subfilters.splice(index + 1, 0, this.getDefaultRule());
+          } else {
+            group.subfilters.splice(index + 1, 0, this.getDefaultGroup());
+          }
+          this.$emit('error');
+          break;
+        case 'operator-change':
+          group.operator = value;
+          break;
+        case 'rule-change':
+          group.subfilters[index] = { ...group.subfilters[index], ...value };
+          break;
+        case 'remove-rule':
+          group.subfilters.splice(index, 1);
+          break;
+        default:
+          break;
       }
       this.$set(this.$data, 'queryFilter', tempFilter);
     },
@@ -313,16 +312,16 @@ export default {
     toType(val, field) {
       const type = getTypeFromValue(field.substring(1), this.properties);
       switch (type) {
-      case 'string':
-        return `"${val}"`;
-      case 'number':
-        return val;
-      case 'boolean':
-        if (val === 'True' || val === 'true' || val === true) return true;
-        if (val === 'False' || val === 'false' || val === false) return false;
-        break;
-      default:
-        return `"${val}"`;
+        case 'string':
+          return `"${val}"`;
+        case 'number':
+          return val;
+        case 'boolean':
+          if (val === 'True' || val === 'true' || val === true) return true;
+          if (val === 'False' || val === 'false' || val === false) return false;
+          break;
+        default:
+          return `"${val}"`;
       }
       return `"${val}"`;
     },

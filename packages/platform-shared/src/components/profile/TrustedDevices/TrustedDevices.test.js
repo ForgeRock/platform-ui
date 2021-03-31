@@ -1,10 +1,10 @@
 /**
- * Copyright 2020 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
+
 import { createLocalVue, shallowMount } from '@vue/test-utils';
 import i18n from '@/i18n';
 import TrustedDevices from './index';
@@ -149,16 +149,16 @@ describe('TrustedDevices.vue', () => {
       mocks: {
         $t: (match) => {
           switch (match) {
-          case 'pages.profile.trustedDevices.editModalTitle':
-            return 'editTitle';
-          case 'pages.profile.trustedDevices.removeModalTitle':
-            return 'removeTitle';
-          case 'pages.profile.trustedDevices.remove':
-            return 'remove';
-          case 'common.save':
-            return 'save';
-          default:
-            return 'none';
+            case 'pages.profile.trustedDevices.editModalTitle':
+              return 'editTitle';
+            case 'pages.profile.trustedDevices.removeModalTitle':
+              return 'removeTitle';
+            case 'pages.profile.trustedDevices.remove':
+              return 'remove';
+            case 'common.save':
+              return 'save';
+            default:
+              return 'none';
           }
         },
         $store: () => {},

@@ -45,26 +45,25 @@ export default {
           const policy = res.data;
           if (policy && policy.validator) {
             policy.validator.forEach((validator) => {
-              // eslint-disable-next-line no-underscore-dangle
               switch (validator._id) {
-              case this.getValidatorIdForType('length-based'):
-                if (validator.maxPasswordLength) {
-                  policies.push({ name: 'LENGTH_BASED', params: { 'min-password-length': validator.minPasswordLength, 'max-password-length': validator.maxPasswordLength } });
-                } else {
-                  policies.push({ name: 'MIN_LENGTH', params: { minLength: validator.minPasswordLength } });
-                }
-                break;
-              case this.getValidatorIdForType('repeated-characters'):
-                policies.push({ name: 'REPEATED_CHARACTERS', params: { 'max-consecutive-length': validator.maxConsecutiveLength } });
-                break;
-              case this.getValidatorIdForType('dictionary'):
-                policies.push({ name: 'DICTIONARY' });
-                break;
-              case this.getValidatorIdForType('character-set'):
-                if (this.getPoliciesFromCharacterSet(validator.characterSet)) policies.push(this.getPoliciesFromCharacterSet(validator.characterSet));
-                break;
-              default:
-                break;
+                case this.getValidatorIdForType('length-based'):
+                  if (validator.maxPasswordLength) {
+                    policies.push({ name: 'LENGTH_BASED', params: { 'min-password-length': validator.minPasswordLength, 'max-password-length': validator.maxPasswordLength } });
+                  } else {
+                    policies.push({ name: 'MIN_LENGTH', params: { minLength: validator.minPasswordLength } });
+                  }
+                  break;
+                case this.getValidatorIdForType('repeated-characters'):
+                  policies.push({ name: 'REPEATED_CHARACTERS', params: { 'max-consecutive-length': validator.maxConsecutiveLength } });
+                  break;
+                case this.getValidatorIdForType('dictionary'):
+                  policies.push({ name: 'DICTIONARY' });
+                  break;
+                case this.getValidatorIdForType('character-set'):
+                  if (this.getPoliciesFromCharacterSet(validator.characterSet)) policies.push(this.getPoliciesFromCharacterSet(validator.characterSet));
+                  break;
+                default:
+                  break;
               }
             });
           }
@@ -81,23 +80,23 @@ export default {
 
       normalizedPolicies = policies.map((policy) => {
         switch (policy.policyRequirement) {
-        case 'LENGTH_BASED':
-          if (policy.params['max-password-length'] === 0) {
+          case 'LENGTH_BASED':
+            if (policy.params['max-password-length'] === 0) {
+              return {
+                policyRequirement: 'MIN_LENGTH',
+                params: { minLength: policy.params['min-password-length'] },
+              };
+            }
+            return policy;
+          case 'CHARACTER_SET':
+            return this.getPoliciesFromCharacterSet(policy.params['character-sets']);
+          case 'ATTRIBUTE_VALUE':
             return {
-              policyRequirement: 'MIN_LENGTH',
-              params: { minLength: policy.params['min-password-length'] },
+              policyRequirement: 'ATTRIBUTE_VALUE',
+              params: { disallowedFields: policy.params['match-attributes'].join(', ') },
             };
-          }
-          return policy;
-        case 'CHARACTER_SET':
-          return this.getPoliciesFromCharacterSet(policy.params['character-sets']);
-        case 'ATTRIBUTE_VALUE':
-          return {
-            policyRequirement: 'ATTRIBUTE_VALUE',
-            params: { disallowedFields: policy.params['match-attributes'].join(', ') },
-          };
-        default:
-          return policy;
+          default:
+            return policy;
         }
       });
       return normalizedPolicies;

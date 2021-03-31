@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BCard
     :class="[`depth-${depth+1}`, 'card-container-properties card-queryfilter-builder queryfilter-row shadow-none mt-3']"
@@ -179,14 +178,14 @@ export default {
 
       const type = getTypeFromValue(fieldValue, this.properties);
       switch (type) {
-      case 'boolean':
-        return {
-          type: 'select', value: value.toLowerCase() === 'false' || value === false ? 'False' : 'True', options: ['True', 'False'], disabled: this.disabled,
-        };
-      case 'number':
-        return { type: 'integer', value: typeof value === 'number' ? value : '', disabled: this.disabled };
-      default:
-        return { type, value, disabled: this.disabled };
+        case 'boolean':
+          return {
+            type: 'select', value: value.toLowerCase() === 'false' || value === false ? 'False' : 'True', options: ['True', 'False'], disabled: this.disabled,
+          };
+        case 'number':
+          return { type: 'integer', value: typeof value === 'number' ? value : '', disabled: this.disabled };
+        default:
+          return { type, value, disabled: this.disabled };
       }
     },
     ruleChange(value) {

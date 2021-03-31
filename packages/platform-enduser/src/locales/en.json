@@ -84,6 +84,7 @@
         "heading": "My Applications",
         "listItemBrandIconAltText": "icon."
       },
+      "errorGetApplications": "There was an error retrieving your applications",
       "noWidget": "No Widgets Available",
       "noWidgetSubText": "Don't worry, you still have a <a href=\"#/profile\">profile</a>.",
       "widgets": {
