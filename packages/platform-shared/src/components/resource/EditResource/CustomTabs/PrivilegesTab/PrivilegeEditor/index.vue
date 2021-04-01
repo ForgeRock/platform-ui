@@ -185,6 +185,7 @@ of the MIT license. See the LICENSE file for details. -->
           </BCard>
           <BCard class="mt-4 mb-3 py-1 shadow-none">
             <FrField
+              class="mb-3"
               :field="queryFilterToggleField"
               :disabled="disabled"
               @input="toggleFilter" />
