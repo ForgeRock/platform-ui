@@ -8,12 +8,12 @@ of the MIT license. See the LICENSE file for details. -->
       <FrField
         :autofocus="autofocus"
         :display-description="false"
-        :external-title="true"
+        :display-external-title="true"
         :field="keyModel"
         class="mb-3" />
       <FrField
         :display-description="false"
-        :external-title="true"
+        :display-external-title="true"
         :field="valueModel" />
       <div class="fr-key-value-add-panel-footer mt-3">
         <div class="pt-3 mr-3">
