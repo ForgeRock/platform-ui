@@ -369,6 +369,11 @@ export default {
         stepParams.query.goto = (paramsObj.goto) ? decodeURIComponent(paramsObj.goto) : undefined;
         stepParams.query.gotoOnFail = (paramsObj.gotoOnFail) ? decodeURIComponent(paramsObj.gotoOnFail) : undefined;
       }
+      // stepParams.query.realm never needs to be included. We are already sending stepParams.realmPath which is what the
+      // sdk uses to build the authenticate url ('/am/json/realms/root/realms/alpha/authenticate').
+      // When realm is included ('/am/json/realms/root/realms/alpha/authenticate?realm=/alpha') this can confuse
+      // some parts of am like SAML (see FRAAS-6573).
+      delete stepParams.query.realm;
       return stepParams;
     },
     /**
