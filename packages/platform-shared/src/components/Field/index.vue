@@ -8,14 +8,14 @@ of the MIT license. See the LICENSE file for details. -->
     :class="[{'d-flex flex-row-reverse': appendTitle}, 'fr-field']"
     v-if="!loading">
     <label
-      v-if="externalTitle || appendTitle"
+      v-if="displayExternalTitle || appendTitle"
       :class="[{'mb-0 mt-2': this.field.type === 'boolean'}, {'mb-1 align-top': this.field.type === 'checkbox'}, 'text-secondary w-100']">
       <slot name="title">
         <span
           :id="`helppopover-${field.key}`"
           tabindex="0"
           class="fr-label-text">
-          {{ field.title || displayDescription ? field.description : '' }}
+          {{ externalTitle }}
         </span>
       </slot>
     </label>
@@ -268,7 +268,7 @@ export default {
     /**
      * Places title of field outside actual field instead of floating label within
      */
-    externalTitle: {
+    displayExternalTitle: {
       type: Boolean,
       default: false,
     },
@@ -279,6 +279,9 @@ export default {
     },
     attrs() {
       return { ...this.$options.propsData, ...this.$attrs };
+    },
+    externalTitle() {
+      return this.field.title || (this.displayDescription ? this.field.description : '');
     },
     /**
      * Returns description to display below field if not shown in popup
@@ -300,7 +303,7 @@ export default {
      * @returns {String} The text to display as a floating label
      */
     fieldLabel() {
-      if (this.externalTitle) {
+      if (this.displayExternalTitle) {
         return '';
       }
       return this.field.title;
