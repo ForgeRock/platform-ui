@@ -64,6 +64,7 @@ import {
   capitalize,
   cloneDeep,
   each,
+  findIndex,
   has,
   isUndefined,
   pick,
@@ -167,13 +168,13 @@ export default {
         });
 
         // Special case for Assignments, add 'attributes' property so it is included in createProperties for the CreateResource modal.
-        if (this.routerParameters.resourceName === 'assignment') {
+        if (this.routerParameters.resourceName.endsWith('assignment')) {
           propList.attributes.key = 'attributes';
           requiredProps.push(propList.attributes);
         }
 
         // Special case for Internal and Managed Roles, add 'condition' and 'temporalConstraints' properties so they are included in createProperties for the CreateResource modal.
-        if (this.routerParameters.resourceName === 'role') {
+        if (this.routerParameters.resourceName.endsWith('role')) {
           // Another special case for internal role add 'privileges'
           if (propList.privileges && this.routerParameters.resourceType === 'internal') {
             propList.privileges.key = 'privileges';
@@ -195,6 +196,21 @@ export default {
             description.isOptional = true;
             requiredProps.push(description);
           }
+        }
+
+        // Special case for Organization, add 'parent' property so it is included in createProperties for the CreateResource modal.
+        if (this.routerParameters.resourceName.endsWith('organization') && propList.parent && findIndex(requiredProps, { key: 'parent' }) === -1) {
+          // Note: only added if "parent" exists in CREATE privileges for current user (i.e. organization admin/owner)
+          propList.parent.key = 'parent';
+          requiredProps.push(propList.parent);
+        }
+
+        // Special case for User, add 'memberOfOrg' property so it is included in createProperties for the CreateResource modal.
+        if (this.routerParameters.resourceName.endsWith('user') && propList.memberOfOrg && findIndex(requiredProps, { key: 'memberOfOrg' }) === -1) {
+          // Note: only added if "memberOfOrg" exists in CREATE privileges for current user (i.e. organization admin/owner)
+          propList.memberOfOrg.key = 'memberOfOrg';
+          propList.memberOfOrg.validation = 'required';
+          requiredProps.push(propList.memberOfOrg);
         }
 
         this.createProperties = requiredProps;
