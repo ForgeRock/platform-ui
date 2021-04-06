@@ -42,14 +42,14 @@ of the MIT license. See the LICENSE file for details. -->
           {{ $t('common.noResult') }}
         </slot>
         <template #tag="{option, remove}">
-          <span
-            :class="['multiselect__tag', {'multiselect__tag-selected': option && option.copySelect}]"
-            @click="setSelectedForCopy(option)">
-            <span>
+          <span :class="['multiselect__tag', {'multiselect__tag-selected': option.copySelect}]">
+            <span
+              class="multiselect__tag-contents"
+              @mousedown="setSelectedForCopy(option)">
               {{ option && option.text }}
             </span>
             <i
-              @click="remove(option)"
+              @click.prevent="remove(option)"
               aria-hidden="true"
               tabindex="1"
               class="multiselect__tag-icon" />
@@ -150,8 +150,7 @@ export default {
     return {
       searchValue: '',
       nextIdTag: 0,
-      isOpen: false,
-      customOptions: [],
+      tagOptions: [],
     };
   },
   mounted() {
@@ -160,30 +159,27 @@ export default {
     }
   },
   computed: {
-    options: {
-      get() {
-        if (this.selectOptions.length && has(this.selectOptions[0], 'value')) {
-          return map(this.selectOptions, (option) => ({
+    options() {
+      let mapOptions = [];
+      if (this.selectOptions.length) {
+        if (has(this.selectOptions[0], 'value')) {
+          mapOptions = map(this.selectOptions, (option) => ({
             text: option.text,
             value: option.value,
-            multiselectId: this.tagId(),
+            multiselectId: this.generateTagId(),
             copySelect: false,
             ...option,
           }));
-        }
-        if (this.selectOptions.length) {
-          return map(this.selectOptions, (option) => ({
+        } else {
+          mapOptions = map(this.selectOptions, (option) => ({
             text: option,
             value: option,
-            multiselectId: this.tagId(),
+            multiselectId: this.generateTagId(),
             copySelect: false,
           }));
         }
-        return this.customOptions;
-      },
-      set(newValue) {
-        this.customOptions = newValue;
-      },
+      }
+      return [...mapOptions, ...this.tagOptions];
     },
     defaultSearchable() {
       return this.searchable || this.options.length > 9;
@@ -193,14 +189,14 @@ export default {
     },
   },
   methods: {
-    tagId() {
+    generateTagId() {
       const { nextIdTag } = this;
       this.nextIdTag += 1;
       return nextIdTag;
     },
     setSelectedForCopy(option) {
       option.copySelect = !option.copySelect;
-      option.multiselectId = this.tagId();
+      option.multiselectId = option.multiselectId !== undefined ? option.multiselectId : this.generateTagId();
     },
     copyOptions() {
       const selectedOptions = this.inputValue
@@ -216,15 +212,13 @@ export default {
       }
     },
     close() {
+      const selected = this.options.map((option) => option.copySelect);
       this.addTag();
-      this.isOpen = false;
-      setTimeout(() => {
-        if (!this.isOpen) {
-          this.options.forEach((option) => {
-            option.copySelect = false;
-          });
+      this.options.forEach((option, index) => {
+        if (selected[index]) {
+          option.copySelect = true;
         }
-      }, 50);
+      });
     },
     addTag() {
       if (this.taggable && this.searchValue.length > 0) {
@@ -232,12 +226,11 @@ export default {
           const newVal = untrimmedVal.trim();
           const existsInCurrentValues = find(this.inputValue, { value: newVal });
           if (!existsInCurrentValues) {
-            this.options = [...this.inputValue];
-            this.options.push({
-              multiselectId: this.tagId(), text: newVal, value: newVal, copySelect: false,
+            this.tagOptions.push({
+              multiselectId: this.generateTagId(), text: newVal, value: newVal, copySelect: false,
             });
             this.inputValue.push({
-              multiselectId: this.tagId(), text: newVal, value: newVal, copySelect: false,
+              multiselectId: this.generateTagId(), text: newVal, value: newVal, copySelect: false,
             });
           }
         });
@@ -263,7 +256,6 @@ export default {
      */
     openHandler() {
       this.$refs.vms.$el.querySelector('input').focus();
-      this.isOpen = true;
       this.floatLabels = true;
     },
   },
@@ -273,9 +265,26 @@ export default {
 <style lang="scss" scoped>
 @import '~@forgerock/platform-shared/src/components/Field/assets/vue-multiselect.scss';
 
-/deep/ .multiselect:focus-within {
-  border-color: $blue;
-  box-shadow: 0 0 0 0.0625rem $blue;
+/deep/ .multiselect {
+  &:focus-within {
+    border-color: $blue;
+    box-shadow: 0 0 0 0.0625rem $blue;
+  }
+
+  .multiselect__tag {
+    display: inline-flex;
+    padding: initial;
+    margin-bottom: 0.25rem;
+
+    .multiselect__tag-contents {
+      padding: 4px 0 4px 10px;
+    }
+
+    .multiselect__tag-icon {
+      position: relative;
+      margin-left: 0;
+    }
+  }
 }
 
 .multiselect .multiselect__tag-selected {

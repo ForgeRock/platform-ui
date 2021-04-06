@@ -126,7 +126,8 @@
 
       &:hover,
       &:focus {
-        background-color: $light-blue;
+        background-color: initial;
+        outline: none;
       }
     }
   }
