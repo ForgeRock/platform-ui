@@ -479,11 +479,10 @@ export default {
           }
           if (tempProp.policies && tempProp.policies[0] && tempProp.policies[0].policyId === 'valid-email-address-format') {
             if (tempProp.validation && tempProp.validation.length) {
-              tempProp.validation += '|';
+              tempProp.validation += '|email';
             } else {
-              tempProp.validation = '';
+              tempProp.validation += 'email';
             }
-            tempProp.validation += 'email';
           }
 
           // Try and do some primary detection for a display name

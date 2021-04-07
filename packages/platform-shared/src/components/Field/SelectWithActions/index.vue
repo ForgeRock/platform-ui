@@ -7,7 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     v-bind="$attrs"
     v-on="$listeners">
     <template v-slot:beforeList>
-      <div class="d-flex align-items-center justify-content-between pl-3 pr-2 mr-1 py-2">
+      <div class="cursor-default d-flex align-items-center justify-content-between pl-3 pr-2 mr-1 py-2">
         <h5 class="mb-0">
           {{ addRowText }}
         </h5>
@@ -98,3 +98,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.cursor-default {
+  cursor: default;
+}
+</style>

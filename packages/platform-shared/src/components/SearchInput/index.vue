@@ -100,7 +100,7 @@ export default {
   watch: {
     value(newVal) {
       /**
-       * Emmitted when input value changes.
+       * Emitted when input value changes.
        * @event input
        */
       this.$emit('input', newVal);

@@ -1,15 +1,16 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <FrField
-      :field="selected"
-      @valueChange="callback.setInputValue(selected.value)" />
+      v-model="selected.value"
+      type="select"
+      :label="selected.label"
+      :name="selected.name"
+      :options="selected.options"
+      @input="callback.setInputValue(selected.value)" />
   </div>
 </template>
 <script>
@@ -40,9 +41,8 @@ export default {
   data() {
     return {
       selected: {
-        key: `callback_${this.index}`,
-        title: this.callback.getPrompt(),
-        type: 'select',
+        name: `callback_${this.index}`,
+        label: this.callback.getPrompt(),
         value: this.callback.getDefaultChoice(),
         options: [],
       },

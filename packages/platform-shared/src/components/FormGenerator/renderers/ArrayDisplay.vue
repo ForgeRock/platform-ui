@@ -1,20 +1,18 @@
+<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <FrField
-      @valueChange="updateValue"
-      :field="field"
-    />
-    <small
-      v-if="uiSchema.isHtml"
-      v-html="uiSchema.helpText"
-      class="form-text text-muted pb-4">
-      {{ uiSchema.helpText }}
-    </small>
-    <small
-      v-else
-      class="form-text text-muted pb-4">
-      {{ uiSchema.helpText }}
-    </small>
+      v-model="uiSchema.value"
+      class="pb-4"
+      :description="uiSchema.description"
+      :label="uiSchema.label"
+      :options="arrayOptions"
+      :type="arrayType"
+      :validation="uiSchema.required ? 'required' : ''"
+      @input="updateValue" />
   </div>
 </template>
 <script>
@@ -38,29 +36,21 @@ export default {
     },
   },
   computed: {
-    field() {
-      let arrayType;
+    arrayType() {
       if (this.uiSchema.arrayType === 'addMany') {
-        arrayType = 'tag';
-      } else if (this.uiSchema.arrayType === 'selectOne') {
-        arrayType = 'select';
-      } else {
-        arrayType = 'multiselect';
+        return 'tag';
       }
-
-      const field = {
-        type: arrayType,
-        value: this.uiSchema.value,
-        enum: this.uiSchema.enum,
-        enumNames: this.uiSchema.enumNames,
-        options: this.uiSchema.options,
-        title: this.uiSchema.label,
-        key: this.uiSchema.label,
-      };
-      if (this.uiSchema.required) {
-        field.validation = 'required';
+      if (this.uiSchema.arrayType === 'selectOne') {
+        return 'select';
       }
-      return field;
+      return 'multiselect';
+    },
+    arrayOptions() {
+      const { options } = this.uiSchema;
+      if (!options) {
+        return [];
+      }
+      return options;
     },
   },
   methods: {

@@ -13,32 +13,40 @@ of the MIT license. See the LICENSE file for details. -->
           {{ $t('scriptEditor.type') }}
         </label>
         <FrField
-          :field="scriptType"
+          v-model="scriptType.value"
+          name="scriptType"
+          type="select"
+          :options="scriptType.options"
           :searchable="false"
-          @valueChange="emitScriptValue" />
-        <FrField :field="uploadFileToggle" />
+          @input="emitScriptValue" />
+        <FrField
+          v-model="uploadFileToggle"
+          type="boolean"
+          :label="$t('scriptEditor.uploadFile')"
+          size="sm" />
       </div>
     </div>
     <VuePrismEditor
-      v-if="uploadFileToggle.value === false"
+      v-if="uploadFileToggle === false"
       v-model="code"
       :language="scriptType.value"
       :line-numbers="true"
       @input="emitScriptValue" />
     <BFormFile
-      v-show="uploadFileToggle.value === true"
+      v-show="uploadFileToggle === true"
       @change="onFileChange"
       accept=".js, .groovy"
       :placeholder="fieldPlaceholder">
       <template v-slot:file-name>
         <FrField
-          :field="filePathModel"
-          class="file-import-floating-label" />
+          v-model="filePathModel"
+          class="file-import-floating-label"
+          :label="$t('scriptEditor.uploadFile')" />
       </template>
     </BFormFile>
     <div class="justify-content-between pt-3">
       <BButton
-        v-if="selectedVariables.length === 0 && !jsonEditToggle.value"
+        v-if="selectedVariables.length === 0 && !jsonEditToggle"
         variant="link"
         @click="addVariable('', '', 0)">
         <i
@@ -60,10 +68,13 @@ of the MIT license. See the LICENSE file for details. -->
           </label>
           <FrField
             v-else
-            :field="jsonEditToggle"
-            @valueChange="jsonEditorToggle($event)" />
+            v-model="jsonEditToggle"
+            type="boolean"
+            :label="$t('scriptEditor.json')"
+            size="sm"
+            @change="jsonEditorToggle($event)" />
         </div>
-        <template v-if="jsonEditToggle.value">
+        <template v-if="jsonEditToggle">
           <VuePrismEditor
             v-model="variablesJsonCode"
             language="json"
@@ -79,13 +90,18 @@ of the MIT license. See the LICENSE file for details. -->
                 <div class="flex-grow-1 pr-3">
                   <div class="form-row">
                     <FrField
-                      :field.sync="selectedVariable.name"
+                      v-model="selectedVariable.name"
                       class="px-1 col-6"
-                      @valueChange="emitScriptValue" />
+                      validation="required"
+                      :label="$t('common.name')"
+                      @input="emitScriptValue" />
                     <FrField
-                      :field.sync="selectedVariable.value"
+                      v-model="selectedVariable.value.value"
                       class="px-1 col-6"
-                      @valueChange="emitScriptValue" />
+                      validation="required"
+                      :label="$t('scriptEditor.value')"
+                      :type="selectedVariable.type"
+                      @input="emitScriptValue" />
                   </div>
                 </div>
                 <BButton
@@ -163,20 +179,10 @@ export default {
       code: '',
       currentJSONCode: '',
       fieldPlaceholder: this.$t('scriptEditor.uploadFile'),
-      filePathModel: {
-        title: this.$t('scriptEditor.uploadFile'),
-        value: '',
-      },
-      jsonEditToggle: {
-        title: this.$t('scriptEditor.json'),
-        type: 'boolean',
-        value: false,
-        height: 17,
-        width: 28,
-      },
+      filePathModel: '',
+      jsonEditToggle: false,
       variablesJsonCode: '',
       scriptType: {
-        type: 'select',
         value: 'javascript',
         options: [
           { text: 'Javascript', value: 'javascript' },
@@ -185,13 +191,7 @@ export default {
       },
       selectedVariables: [],
       uniqueVariables: 0,
-      uploadFileToggle: {
-        title: this.$t('scriptEditor.uploadFile'),
-        type: 'boolean',
-        value: false,
-        height: 17,
-        width: 28,
-      },
+      uploadFileToggle: false,
     };
   },
   mounted() {
@@ -212,15 +212,9 @@ export default {
         type = 'textarea';
       }
       this.selectedVariables.splice(index, 0, {
-        name: {
-          title: this.$t('common.name'),
-          value: name,
-          validation: 'required',
-        },
+        name,
         value: {
-          title: this.$t('scriptEditor.value'),
           value: value !== '' ? JSON.stringify(value, null, 2) : value,
-          validation: 'required',
           type,
         },
         index: this.uniqueVariables,
@@ -262,7 +256,7 @@ export default {
             this.sendEmit(this.scriptType.value, globals);
           }
         });
-      } else if (this.jsonEditToggle.value) {
+      } else if (this.jsonEditToggle) {
         this.checkIfCodeIsParsable(this.currentJSONCode);
       } else {
         this.sendEmit(this.scriptType.value, {});
@@ -277,7 +271,7 @@ export default {
       if (toggle) {
         const globals = {};
         this.selectedVariables.forEach((selectedVariable) => {
-          globals[selectedVariable.name.value] = this.tryParse(selectedVariable.value.value);
+          globals[selectedVariable.name] = this.tryParse(selectedVariable.value.value);
         });
         this.variablesJsonCode = JSON.stringify(globals, null, 2);
       } else {
@@ -320,8 +314,8 @@ export default {
         this.emitScriptValue();
       };
       reader.readAsText(file);
-      this.filePathModel.value = event.target.files[0].name;
-      this.uploadFileToggle.value = false;
+      this.filePathModel = event.target.files[0].name;
+      this.uploadFileToggle = false;
     },
     /**
      * Builds current save object and emits out to parent that uses this component
@@ -359,7 +353,7 @@ export default {
         this.addVariable(name, globalValue, index + 1);
       });
       if (newValue.file) {
-        this.uploadFileToggle.value = true;
+        this.uploadFileToggle = true;
         this.fieldPlaceholder = newValue.file;
       } else if (newValue.source) {
         this.code = newValue.source;

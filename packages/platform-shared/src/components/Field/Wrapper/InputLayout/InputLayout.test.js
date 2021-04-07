@@ -1,10 +1,10 @@
 /**
- * Copyright 2020 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2021 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
+
 import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, mount, shallowMount } from '@vue/test-utils';
 import InputLayout from './index';
@@ -15,9 +15,8 @@ localVue.use(BootstrapVue);
 const defaultProps = {
   id: '',
   errorMessages: [],
-  fieldName: '',
-  helpText: '',
-  hideLabel: false,
+  name: '',
+  description: '',
   label: '',
 };
 
@@ -38,17 +37,17 @@ describe('InputLayout', () => {
       localVue,
       propsData: {
         ...defaultProps,
-        helpText: 'Help text',
+        description: 'Help text',
         label: 'Label',
       },
     });
     const label = wrapper.find('label');
-    const helpText = wrapper.find('small');
+    const description = wrapper.find('small');
 
     expect(label.exists()).toBe(true);
     expect(label.html().includes('Label')).toBe(true);
-    expect(helpText.exists()).toBe(true);
-    expect(helpText.html().includes('Help text')).toBe(true);
+    expect(description.exists()).toBe(true);
+    expect(description.html().includes('Help text')).toBe(true);
   });
 
   it('InputLayout component renders slots', () => {

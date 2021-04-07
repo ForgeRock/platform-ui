@@ -193,7 +193,9 @@
       "getTableDataFail": "Failed to load identity profiless"
     },
     "managedObjectSettings": {
+      "minimumCharacters": "Minimum Characters",
       "minimumFilter": "minimumFilter",
+      "minimumFilterDescription": "Minimum number of characters required to search.",
       "saveFilterSuccess": "Updated Identity Profile settings",
       "saveFilterFail": "Unable to save filter settings",
       "identityProfile": "Identity Profile",
@@ -891,7 +893,7 @@
       "subject": "Subject",
       "stylesHeader": "Styles",
       "stylesHelpMessage": "Edit inline styles to customize the look and feel of your email.",
-      "templateNameFieldTitle": "Template Name"
+      "displayNameFieldTitle": "Template Name"
     }
   },
   "tenantSettings": {
