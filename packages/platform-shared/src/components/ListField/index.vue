@@ -77,6 +77,12 @@ export default {
     ListsMixin,
   ],
   computed: {
+    inputValue() {
+      if (this.$attrs.value === '') {
+        return [];
+      }
+      return this.$attrs.value;
+    },
     validation() {
       if (this.items.type === 'boolean') {
         return 'oneOf:true,false';
@@ -85,12 +91,6 @@ export default {
         return 'numeric';
       }
       return '';
-    },
-    inputValue() {
-      if (this.$attrs.value === '') {
-        return [];
-      }
-      return this.$attrs.value;
     },
   },
 };
