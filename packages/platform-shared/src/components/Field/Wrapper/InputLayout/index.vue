@@ -77,7 +77,7 @@ export default {
       type: String,
       default: '',
     },
-    errors: {
+    inputErrors: {
       type: Array,
       default: () => [],
     },
