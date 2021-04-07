@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <ValidationObserver
     v-slot="{ invalid }"
@@ -40,20 +39,25 @@ to such license between the licensee and ForgeRock AS. -->
                 :key="index"
                 v-if="field.type === 'string' || field.type === 'number' || field.type === 'boolean'">
                 <FrField
-                  :field="field"
-                  :display-description="false" />
+                  v-model="field.value"
+                  :label="field.title"
+                  :name="field.name"
+                  :type="field.type"
+                  :validation="field.validation" />
               </BFormGroup>
               <FrListField
-                v-else-if="field.type === 'array' && field.key !== 'privileges'"
+                v-else-if="field.type === 'array' && field.name !== 'privileges'"
+                v-model="field.value"
                 class="w-100"
                 :key="index"
-                :field="field"
+                :description="field.description"
+                :items="field.items"
+                :label="field.title"
+                :name="field.name"
+                :required="field.required"
                 :index="index"
                 v-on="$listeners"
-                @valueChange="field.value = $event"
-                @add-object="addObjectToList(index, $event, formFields)"
-                @add-list="addElementToList(index, $event, formFields)"
-                @remove-element="removeElementFromList(index, $event, formFields)" />
+                @input="updateField(index, $event)" />
             </template>
           </template>
           <h3
@@ -169,7 +173,6 @@ export default {
                             && properties[propName].type !== 'object');
       const formFields = map(filteredOrder, (name) => ({
         name,
-        key: name,
         title: `${properties[name].title} ${required.includes(name) ? '' : this.$t('pages.profile.editProfile.optional')}`,
         value: this.profile[name] || null,
         type: properties[name].type,
@@ -230,6 +233,10 @@ export default {
           }
         });
       }
+    },
+    updateField(index, newValue) {
+      this.formFields[index].value = newValue;
+      this.$forceUpdate();
     },
   },
 };

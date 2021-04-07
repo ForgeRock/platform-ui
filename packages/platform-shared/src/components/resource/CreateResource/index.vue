@@ -30,10 +30,13 @@ of the MIT license. See the LICENSE file for details. -->
                   :key="'createResource' + index"
                   v-if="((field.type === 'string' && !field.isConditional) || field.type === 'number' || field.type === 'boolean') && field.encryption === undefined">
                   <FrField
+                    v-model="field.value"
                     :autofocus="index === 0"
-                    :field="field"
-                    :display-description="false"
-                  />
+                    :label="field.title"
+                    :name="field.key"
+                    :options="field.options"
+                    :type="field.type"
+                    :validation="field.validation" />
                 </BFormGroup>
                 <BFormGroup
                   v-else-if="field.type === 'password' && field.encryption === undefined"
@@ -61,12 +64,14 @@ of the MIT license. See the LICENSE file for details. -->
                   :key="'createResource' + index"
                   v-else-if="field.type === 'array' && field.key !== 'privileges' && !field.isTemporalConstraint">
                   <FrListField
-                    :field="field"
+                    v-model="field.value"
+                    :description="field.description"
                     :index="index"
-                    @valueChange="updateField(index, $event)"
-                    @add-object="addObjectToList(index, $event, clonedCreateProperties)"
-                    @add-list="addElementToList(index, $event, clonedCreateProperties)"
-                    @remove-element="removeElementFromList(index, $event, clonedCreateProperties)" />
+                    :items="field.items"
+                    :label="field.title"
+                    :name="field.key"
+                    :required="field.required"
+                    @input="updateField(index, $event)" />
                 </BFormGroup>
               </template>
             </BForm>
@@ -471,6 +476,7 @@ export default {
      */
     updateField(index, newValue) {
       this.clonedCreateProperties[index].value = newValue;
+      this.$forceUpdate();
     },
   },
 };

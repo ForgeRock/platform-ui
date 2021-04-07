@@ -1,12 +1,10 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <script>
 import {
   capitalize,
-  has,
   keys,
   lowerCase,
 } from 'lodash';
@@ -63,63 +61,18 @@ export default {
         return accum;
       }, {});
     },
-    /**
-     * populate list of objects with new member.  Set defaults for boolean and number properties
-     */
-    addObjectToList(fieldNumber, index, list) {
-      const emptyObjectWithKeys = this.createObject(list[fieldNumber].items.properties);
-
-      // array of object value for unpopulated valued is empty string
-      if (list[fieldNumber].value === null || list[fieldNumber].value === '' || !has(list[fieldNumber], 'value')) {
-        list[fieldNumber].value = [];
-      }
-
-      list[fieldNumber].value.splice(index + 1, 0, emptyObjectWithKeys);
-    },
-    /**
-     * add empty list to list of lists component after index
-     */
-    addElementToList(fieldNumber, index, list) {
-      const { items } = list[fieldNumber];
-      const newElement = this.getValueBasedOnType(items);
-
-      // set value to empty array instead of string
-      if (list[fieldNumber].value === '' || !has(list[fieldNumber], 'value')) {
-        list[fieldNumber].value = [];
-      }
-
-      if (list[fieldNumber].value.length === 0) {
-        list[fieldNumber].value.push(newElement);
-      } else {
-        list[fieldNumber].value.splice(index + 1, 0, newElement);
-      }
-
-      if (list[fieldNumber].value === []) {
-        list[fieldNumber].value = '';
-      }
-    },
-    /**
-     * remove list from list of lists component at index
-     */
-    removeElementFromList(fieldNumber, index, list) {
-      list[fieldNumber].value.splice(index, 1);
-
-      if (list[fieldNumber].value.length === 0) {
-        list[fieldNumber].value = '';
-      }
-    },
   },
   computed: {
     lineCount() {
-      if (this.field && this.field.value) {
+      if (this.value) {
         return this.stringifiedValue.split(/\r\n|\r|\n/).length;
       }
       return 1;
     },
     stringifiedValue: {
       get() {
-        if (this.field && this.field.value) {
-          return JSON.stringify(this.field.value, null, 4);
+        if (this.value) {
+          return JSON.stringify(this.value, null, 4);
         }
         return '';
       },
@@ -127,13 +80,13 @@ export default {
         return JSON.stringify(newValue, null, 4);
       },
     },
-    description() {
-      if (this.field && this.field.description) {
-        return capitalize(this.field.description);
-      } if (this.field && this.field.title) {
-        return capitalize(this.field.title);
+    capitalizedDescription() {
+      if (this.description) {
+        return capitalize(this.description);
+      } if (this.label) {
+        return capitalize(this.label);
       }
-      return capitalize(lowerCase(this.field.key));
+      return capitalize(lowerCase(this.name));
     },
     readOnly() {
       return this.expanded === false;

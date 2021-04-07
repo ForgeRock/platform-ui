@@ -3,59 +3,71 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div class="w-100">
-    <div
-      class="form-label-group mb-0"
-      ref="floatingLabelGroup">
-      <!-- @slot Prepend buttons or elements to the input. -->
-      <slot name="prepend" />
-      <div class="form-label-group-input">
-        <slot />
-        <label
-          v-if="label && isHtml"
-          v-html="label"
-          :hidden="hideLabel"
-          :for="id"
-          class="pe-none overflow-hidden text-nowrap full-width" />
-        <label
-          v-else-if="label"
-          :hidden="hideLabel"
-          :for="id"
-          class="pe-none overflow-hidden text-nowrap">
-          {{ label }}
-        </label>
+  <ValidationProvider
+    v-slot="validationObject"
+    mode="aggressive"
+    :bails="false"
+    :immediate="validationImmediate"
+    :name="name"
+    :ref="name"
+    :rules="validation"
+    :vid="name">
+    <div class="w-100">
+      <div
+        :class="[{'fr-field-error': errors.concat(validationObject.errors).length}, 'form-label-group']"
+        ref="floatingLabelGroup">
+        <!-- @slot Prepend buttons or elements to the input. -->
+        <slot name="prepend" />
+        <div class="form-label-group-input">
+          <slot />
+          <label
+            v-if="label && isHtml"
+            v-html="label"
+            :for="id"
+            class="pe-none overflow-hidden text-nowrap full-width" />
+          <label
+            v-else-if="label"
+            :for="id"
+            class="pe-none overflow-hidden text-nowrap">
+            {{ label }}
+          </label>
+        </div>
+        <slot name="defaultButtons" />
+        <!-- slot appends buttons or elements to the input -->
+        <slot name="append" />
       </div>
-      <slot name="defaultButtons" />
-      <!-- @slot Append buttons or elements to the input. -->
-      <slot name="append" />
+      <!-- slot shows validation errors related to input -->
+      <FrValidationError
+        class="error-messages"
+        :validator-errors="errors.concat(validationObject.errors)"
+        :field-name="name" />
+      <template v-if="description">
+        <small
+          v-if="isHtml"
+          :id="`${id}_helpText`"
+          v-html="description"
+          class="form-text text-muted" />
+        <small
+          v-else
+          :id="`${id}_helpText`"
+          class="form-text text-muted">
+          {{ description }}
+        </small>
+      </template>
     </div>
-    <!-- @slot Shows validation errors related to input. -->
-    <FrValidationError
-      class="error-messages"
-      :validator-errors="errors"
-      :field-name="fieldName" />
-    <small
-      v-if="helpText && isHtml"
-      :id="`${id}_helpText`"
-      v-html="helpText"
-      class="form-text text-muted" />
-    <small
-      v-if="helpText && !isHtml"
-      :id="`${id}_helpText`"
-      class="form-text text-muted">
-      {{ helpText }}
-    </small>
-  </div>
+  </ValidationProvider>
 </template>
 <script>
-import ValidationErrorList from '@forgerock/platform-shared/src/components/ValidationErrorList';
+import { ValidationProvider } from 'vee-validate';
+import FrValidationError from '@forgerock/platform-shared/src/components/ValidationErrorList';
 /**
  * Input with a floating label in the center, this will move when a user types into the input (example can be found on the default login page).
- * */
+ */
 export default {
   name: 'InputLayout',
   components: {
-    FrValidationError: ValidationErrorList,
+    FrValidationError,
+    ValidationProvider,
   },
   props: {
     /**
@@ -72,23 +84,16 @@ export default {
     /**
      * Input name.
      */
-    fieldName: {
+    name: {
       type: String,
       default: '',
     },
     /**
      * Related text that displays underneath field.
      */
-    helpText: {
+    description: {
       type: String,
       default: '',
-    },
-    /**
-     * Hide placeholder value.
-     */
-    hideLabel: {
-      type: Boolean,
-      default: false,
     },
     /**
      * Boolean to render label and help text as html.
@@ -104,27 +109,66 @@ export default {
       type: String,
       default: '',
     },
-  },
-  data() {
-    return {};
+    /**
+     * Vee-validate validation types to check against
+     */
+    validation: {
+      type: [String, Object],
+      default: '',
+    },
+    /**
+     * Whether error validation should happen when this component renders
+     */
+    validationImmediate: {
+      type: Boolean,
+      default: false,
+    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.form-label-group {
+/deep/ .form-label-group {
   position: relative;
-  margin-bottom: 1rem;
   display: flex;
 
-  > .form-label-group-input {
+  &.fr-field-error {
+    margin-bottom: 0 !important;
+    border: none !important;
+
+    input:not(.multiselect__input):not(.fr-tag-input),
+    textarea,
+    button:not(.btn-sm),
+    .multiselect,
+    .b-form-tags {
+      border: 1px solid $danger;
+    }
+
+    button:not(.btn-sm) {
+      border-left: none;
+      border-radius: 0 !important;
+    }
+  }
+
+  .form-label-group-input {
     position: relative;
     flex: 1 1 auto;
     width: 100%;
-    margin-bottom: 0;
     min-width: 80px;
 
-    > label {
+    .polyfill-placeholder {
+      padding-top: $input-btn-padding-y + $input-btn-padding-y * (2 / 3);
+      padding-bottom: $input-btn-padding-y / 3;
+      color: $input-color;
+
+      ~ label {
+        padding-top: $input-btn-padding-y / 3;
+        padding-bottom: 0;
+        font-size: 12px;
+      }
+    }
+
+    label {
       padding: $input-btn-padding-y;
       max-height: calc(100% - 2px);
       text-align: left;
@@ -141,35 +185,19 @@ export default {
       transition: all 0.1s ease-in-out;
       width: calc(100% - 40px);
 
-      &::placeholder {
-        color: transparent;
-      }
-
       .pe-none {
         pointer-events: none;
       }
     }
 
-    .polyfill-placeholder {
-      padding-top: $input-btn-padding-y + $input-btn-padding-y * (2 / 3);
-      padding-bottom: $input-btn-padding-y / 3;
-      color: $input-color;
-
-      ~ label {
-        padding-top: $input-btn-padding-y / 3;
-        padding-bottom: 0;
-        font-size: 12px;
-      }
+    .white-label-background ~ label {
+      background-color: $fr-toolbar-background;
+      margin: 1px;
     }
 
     .form-control {
       box-shadow: none;
     }
-  }
-
-  .white-label-background ~ label {
-    background-color: $fr-toolbar-background;
-    margin: 1px;
   }
 
   button {
@@ -183,6 +211,7 @@ export default {
     }
 
     &:hover {
+      background-color: #dde5ec;
       color: $input-btn-active-color;
     }
 
@@ -196,15 +225,19 @@ export default {
     color: transparent;
   }
 
+  .multiselect--active input::placeholder {
+    color: initial;
+  }
+
   .input-group-prepend > *,
   .form-label-group-input > *,
   .input-group-append > * {
     border-radius: 0.25rem;
   }
 
+  .input-group-append > *,
   .input-group-prepend:not(:first-child) > *,
-  .form-label-group-input:not(:first-child) > *,
-  .input-group-append > * {
+  .form-label-group-input:not(:first-child) > * {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
   }
@@ -214,11 +247,6 @@ export default {
   .input-group-append:not(:last-child) > * {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
-  }
-
-  .input-group-text {
-    padding-left: $btn-padding-x;
-    padding-right: $btn-padding-x;
   }
 }
 

@@ -9,6 +9,7 @@
 import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
 import * as SessionsApi from '@/api/SessionsApi';
+import * as SchemaApi from '@/api/SchemaApi';
 import EditResource from './index';
 
 const localVue = createLocalVue();
@@ -145,6 +146,7 @@ describe('EditResource.vue', () => {
     it('calls the API clearSessions method and displays a notification when clearing sessions is successful', async () => {
       const displayNotificationSpy = jest.spyOn(wrapper.vm, 'displayNotification');
       const clearSpy = jest.spyOn(SessionsApi, 'clearSessions').mockImplementation(() => Promise.resolve());
+      jest.spyOn(SchemaApi, 'getSchema').mockImplementation(() => Promise.resolve());
 
       await wrapper.vm.clearSessionsAndCloseModal();
 
@@ -155,6 +157,7 @@ describe('EditResource.vue', () => {
     it('calls the API clearSessions method and displays an error notification when clearing sessions is not successful', async () => {
       const showErrorSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
       const clearSpy = jest.spyOn(SessionsApi, 'clearSessions').mockImplementation(() => Promise.reject());
+      jest.spyOn(SchemaApi, 'getSchema').mockImplementation(() => Promise.resolve());
 
       await wrapper.vm.clearSessionsAndCloseModal();
 
