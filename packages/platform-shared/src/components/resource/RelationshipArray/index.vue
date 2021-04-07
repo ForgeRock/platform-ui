@@ -1,4 +1,4 @@
-<!-- Copyright 2020-2021 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -250,6 +250,8 @@ export default {
   },
   methods: {
     loadGrid(page) {
+      const errorMessage = this.$t('errors.errorRetrievingRelationships');
+      const timeConstraint = this.$t('pages.access.timeConstraint');
       const idmInstance = this.getRequestService();
       const doLoad = (resourceCollectionSchema) => {
         idmInstance.get(this.buildGridUrl(page, resourceCollectionSchema)).then((resourceData) => {
@@ -286,7 +288,7 @@ export default {
           if (this.relationshipArrayProperty.relationshipGrantTemporalConstraintsEnforced) {
             this.columns.push({
               key: '_refProperties.temporalConstraints[0].duration',
-              label: this.$t('pages.access.timeConstraint'),
+              label: timeConstraint,
               formatter: (value) => {
                 if (value) {
                   const dates = map(value.split('/'), (date) => {
@@ -306,7 +308,7 @@ export default {
           this.gridData = [];
           this.setGridData(resourceData.data.result, this.relationshipArrayProperty);
         }).catch((error) => {
-          this.displayNotification('IDMMessages', 'error', error.response.data.message);
+          this.showErrorMessage(error, errorMessage);
         });
       };
 

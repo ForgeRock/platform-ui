@@ -7,37 +7,39 @@ of the MIT license. See the LICENSE file for details. -->
     @keydown.meta.67="copyOptions"
     @keydown.ctrl.67="copyOptions">
     <FrInputLayout
+      :description="description"
       :id="id"
-      :field-name="fieldName"
-      :help-text="helpText"
       :errors="errors"
       :is-html="isHtml"
-      :label="label">
+      :label="label"
+      :name="name"
+      :validation="validation"
+      :validation-immediate="validationImmediate">
       <VueMultiSelect
         :id="id"
-        v-if="options"
-        ref="vms"
-        v-model="inputValue"
         v-bind="$attrs"
+        v-if="selectOptions"
+        v-model="inputValue"
         label="text"
+        ref="vms"
         track-by="multiselectId"
-        :taggable="taggable"
-        :name="fieldName"
-        :tag-placeholder="$t('common.placeholders.addOption')"
+        :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control p-0', {'no-multiselect-label': !label }, {'h-100': floatLabels || !label }]"
+        :close-on-select="false"
         :disabled="disabled"
-        :options="options"
-        :show-labels="false"
         :hide-selected="true"
         :multiple="true"
-        :close-on-select="false"
-        :searchable="defaultSearchable"
-        :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control p-0', {'no-multiselect-label': !label }, {'h-100': floatLabels || !label }]"
+        :name="name"
+        :options="selectOptions"
         :placeholder="defaultPlaceholder"
-        @search-change="searchChange"
-        @open="openHandler"
+        :searchable="defaultSearchable"
+        :show-labels="false"
+        :tag-placeholder="$t('common.placeholders.addOption')"
+        :taggable="taggable"
         @close="close"
-        @tag="addTag"
-        v-on="$listeners">
+        @input="$emit('input', map(inputValue, 'value'))"
+        @open="openHandler"
+        @search-change="searchChange"
+        @tag="addTag">
         <slot name="noResult">
           {{ $t('common.noResult') }}
         </slot>
@@ -86,69 +88,45 @@ import {
 import VueMultiSelect from 'vue-multiselect';
 import * as clipboard from 'clipboard-polyfill/text';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
-import InputLayout from '../Wrapper/InputLayout';
+import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
 
 /**
- *  Multi select input. Allows selection of multiple element in a dropdown
+ *  Multi select input. Allows selection of multiple elements in a dropdown
  *
  *  @Mixes InputMixin - default props and methods for inputs
- *  @prop {boolean} disabled default false
- *  @prop {string} fieldName default ''
- *  @prop {string} helpText default ''
- *  @prop {string} label default ''
- *  @prop {array|object} failedPolicies default {}
- *  @prop {function} validator default noop
- *  @prop {Array|Object|Number|String} value default ''
+ *  @param {Array} value default []
  */
 export default {
   name: 'MultiSelect',
   mixins: [InputMixin, NotificationMixin],
   components: {
-    FrInputLayout: InputLayout,
+    FrInputLayout,
     VueMultiSelect,
   },
   props: {
-    /**
-     * List of errors related to input value
-     */
-    errors: {
-      type: Array,
-      default: () => [],
+    placeholder: {
+      type: String,
+      default: '',
     },
     /**
      * Options for select input.
      */
-    selectOptions: {
+    options: {
       type: [Array, Object],
       default: () => [],
     },
     searchable: {
       type: Boolean,
       default: true,
-      required: false,
     },
     taggable: {
       type: Boolean,
       default: false,
-      required: false,
-    },
-    placeholder: {
-      type: String,
-      default: '',
-      required: false,
     },
     valueClass: {
       type: String,
       default: '',
-      required: false,
-    },
-    /**
-     * @description Enable autofocus
-     */
-    autofocus: {
-      type: Boolean,
-      default: false,
     },
   },
   data() {
@@ -164,19 +142,19 @@ export default {
     }
   },
   computed: {
-    options() {
+    selectOptions() {
       let mapOptions = [];
-      if (this.selectOptions.length) {
-        if (has(this.selectOptions[0], 'value')) {
-          mapOptions = map(this.selectOptions, (option) => ({
+      if (this.options.length) {
+        if (has(this.options[0], 'value')) {
+          mapOptions = map(this.options, (option) => ({
             text: option.text,
             value: option.value,
-            multiselectId: this.generateTagId(),
+            multiselectId: option.multiselectId !== undefined ? option.multiselectId : this.generateTagId(),
             copySelect: false,
             ...option,
           }));
         } else {
-          mapOptions = map(this.selectOptions, (option) => ({
+          mapOptions = map(this.options, (option) => ({
             text: option,
             value: option,
             multiselectId: this.generateTagId(),
@@ -187,21 +165,39 @@ export default {
       return [...mapOptions, ...this.tagOptions];
     },
     defaultSearchable() {
-      return this.searchable || this.options.length > 9;
+      return this.searchable || this.selectOptions.length > 9;
     },
     defaultPlaceholder() {
       return this.placeholder || this.$t('common.typeToSearch');
     },
   },
   methods: {
-    generateTagId() {
-      const { nextIdTag } = this;
-      this.nextIdTag += 1;
-      return nextIdTag;
+    addTag() {
+      if (this.taggable && this.searchValue.length > 0) {
+        this.searchValue.split(',').forEach((untrimmedVal) => {
+          const newVal = untrimmedVal.trim();
+          const existsInCurrentValues = find(this.inputValue, { value: newVal });
+          if (!existsInCurrentValues) {
+            this.tagOptions.push({
+              multiselectId: this.generateTagId(), text: newVal, value: newVal, copySelect: false,
+            });
+            this.inputValue.push({
+              multiselectId: this.generateTagId(), text: newVal, value: newVal, copySelect: false,
+            });
+            this.$emit('input', map(this.inputValue, 'value'));
+          }
+        });
+      }
     },
-    setSelectedForCopy(option) {
-      option.copySelect = !option.copySelect;
-      option.multiselectId = option.multiselectId !== undefined ? option.multiselectId : this.generateTagId();
+    close() {
+      const selected = this.options.map((option) => option.copySelect);
+      this.addTag();
+      this.selectOptions.forEach((option, index) => {
+        if (selected[index]) {
+          option.copySelect = true;
+        }
+      });
+      this.inputValueHandler(this.inputValue);
     },
     copyOptions() {
       const selectedOptions = this.inputValue
@@ -216,52 +212,38 @@ export default {
         });
       }
     },
-    close() {
-      const selected = this.options.map((option) => option.copySelect);
-      this.addTag();
-      this.options.forEach((option, index) => {
-        if (selected[index]) {
-          option.copySelect = true;
-        }
-      });
+    inputValueHandler(inputValue) {
+      this.floatLabels = (inputValue.length || document.activeElement === this.$refs.vms.$el.querySelector('input')) > 0 && this.label;
     },
-    addTag() {
-      if (this.taggable && this.searchValue.length > 0) {
-        this.searchValue.split(',').forEach((untrimmedVal) => {
-          const newVal = untrimmedVal.trim();
-          const existsInCurrentValues = find(this.inputValue, { value: newVal });
-          if (!existsInCurrentValues) {
-            this.tagOptions.push({
-              multiselectId: this.generateTagId(), text: newVal, value: newVal, copySelect: false,
-            });
-            this.inputValue.push({
-              multiselectId: this.generateTagId(), text: newVal, value: newVal, copySelect: false,
-            });
-          }
-        });
-      }
-      this.floatLabels = this.inputValue && this.inputValue.length;
+    generateTagId() {
+      const { nextIdTag } = this;
+      this.nextIdTag += 1;
+      return nextIdTag;
     },
-    searchChange(value) {
-      this.searchValue = value;
-      this.$emit('search-change', value);
-    },
-    setInputValue(newVal) {
-      const newInputValue = map(newVal, (val) => find(this.options, { value: val }));
-      if (!isEqual(this.inputValue, newInputValue)) {
-        this.inputValue = newInputValue;
-      }
-    },
-    inputValueHandler(newVal) {
-      this.floatLabels = (newVal.length || document.activeElement === this.$refs.vms.$el.querySelector('input')) > 0 && this.label;
-      this.$emit('input', map(newVal, 'value'));
-    },
+    map,
     /**
      * @description focus the Vue Multi Select component (vms) and floats the label
      */
     openHandler() {
       this.$refs.vms.$el.querySelector('input').focus();
       this.floatLabels = true;
+    },
+    searchChange(value) {
+      this.searchValue = value;
+      this.$emit('search-change', value);
+    },
+    setInputValue(newVal) {
+      let newInputValue = newVal;
+      if (!has(newInputValue[0], 'value')) {
+        newInputValue = map(newVal, (val) => find(this.selectOptions, { value: val }));
+      }
+      if (!isEqual(this.inputValue, newInputValue)) {
+        this.inputValue = newInputValue;
+      }
+    },
+    setSelectedForCopy(option) {
+      option.copySelect = !option.copySelect;
+      option.multiselectId = option.multiselectId !== undefined ? option.multiselectId : this.generateTagId();
     },
   },
 };

@@ -3,30 +3,35 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div>
+  <FrInputLayout
+    :description="description"
+    :id="`${id}___input__`"
+    :errors="errors"
+    :label="label"
+    :name="name"
+    :validation="validation"
+    :validation-immediate="validationImmediate">
     <BFormTags
       v-model="inputValue"
+      v-on="$listeners"
+      add-on-change
       :autofocus="autofocus"
+      :class="{'polyfill-placeholder': floatLabels}"
       :disabled="disabled"
-      :class="[{'fr-error': errors.length > 0}, 'fr-tags']">
-      <template v-slot="{ tags, inputAttrs, inputHandlers, addTag, removeTag }">
+      :id="id">
+      <template v-slot="{ tags, inputAttrs, inputHandlers, removeTag }">
         <div
           class="overflow-hidden"
           @click="$refs.input.focus()">
-          <label
-            v-if="inputValue.length"
-            class="text-secondary w-100">
-            {{ fieldName }}
-          </label>
           <Draggable
             v-model="inputValue"
             class="d-flex flex-wrap w-100"
             ghost-class="ghost-tag">
             <div
-              class="mt-1 mr-1 fr-tag"
               v-for="tag in tags"
-              :key="tag"
-              body-class="py-1 pr-2 text-nowrap">
+              body-class="py-1 pr-2 text-nowrap"
+              class="fr-tag"
+              :key="tag">
               <span class="fr-tag-text">
                 {{ tag }}
               </span>
@@ -41,97 +46,71 @@ of the MIT license. See the LICENSE file for details. -->
           </Draggable>
         </div>
         <input
-          ref="input"
           v-bind="inputAttrs"
-          @blur="addTag()"
           v-on="inputHandlers"
-          :placeholder="$t('common.addObject', {object: fieldName})"
-          :class="[{'show': !tags.length}, 'fr-input']">
+          ref="input"
+          :class="[{'has-values': tags.length}, 'fr-tag-input']"
+          :placeholder="label"
+          @input="inputValueHandler(inputValue, $event.target.value)">
       </template>
     </BFormTags>
-    <FrValidationError
-      role="alert"
-      class="error-messages"
-      :validator-errors="errors"
-      :field-name="fieldName" />
-  </div>
+  </FrInputLayout>
 </template>
 
 <script>
-import {
-  BFormTags,
-} from 'bootstrap-vue';
+import { cloneDeep, isEqual } from 'lodash';
+import { BFormTags } from 'bootstrap-vue';
 import Draggable from 'vuedraggable';
-import ValidationErrorList from '@forgerock/platform-shared/src/components/ValidationErrorList';
+import FrInputLayout from '../Wrapper/InputLayout';
+import InputMixin from '../Wrapper/InputMixin';
 
 export default {
-  name: 'FrTag',
+  name: 'Tag',
+  mixins: [
+    InputMixin,
+  ],
   components: {
     BFormTags,
     Draggable,
-    FrValidationError: ValidationErrorList,
+    FrInputLayout,
   },
   data() {
     return {
-      inputValue: this.value,
+      inputValue: [],
+      oldValue: [],
     };
   },
-  props: {
-    /**
-     * Autofocus field.
-     */
-    autofocus: {
-      type: Boolean,
-      default: false,
+  methods: {
+    inputValueHandler(inputValue, toggle) {
+      this.floatLabels = (toggle || inputValue.toString().length > 0) && !!this.label;
     },
     /**
-     * Flag to disable this field
-     */
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-    /**
-     * List of errors related to input value
-     */
-    errors: {
-      type: Array,
-      default: () => [],
-    },
-    /**
-     * Title of field
-     */
-    fieldName: {
-      type: String,
-      default: '',
-    },
-    /**
-     * Binding to v-model
-     */
-    value: {
-      type: [String, Array],
-      default: '',
-    },
-  },
-  watch: {
-    inputValue(newVal) {
-      this.$emit('input', newVal);
-    },
-    value(newVal) {
-      if (!this.inputValue) {
-        this.inputValue = newVal;
+    * Default setInputValue method. Overrides possible in components
+    *
+    * @param {Array|Object|Number|String} newVal value to be set for internal model
+    */
+    setInputValue(newVal) {
+      if (newVal !== undefined && newVal !== null) {
+        if (!isEqual(this.oldValue, newVal)) {
+          if (newVal === '') {
+            this.inputValue = [];
+          } else {
+            this.inputValue = newVal;
+          }
+          this.oldValue = cloneDeep(newVal);
+        }
       }
     },
   },
 };
 </script>
 <style lang="scss" scoped>
-.fr-tags {
+.b-form-tags {
   display: flex;
   flex-wrap: wrap;
-  line-height: 1em;
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
+  line-height: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
   min-height: calc(3rem + 2px);
 
   label,
@@ -148,9 +127,9 @@ export default {
   .fr-tag {
     border-radius: 4px;
     display: flex;
-    padding: 3px 5px;
-    margin: 2px 2px 5px;
-    font-size: 0.85em;
+    padding: 2px 5px 0 10px;
+    margin: 0.25rem 0.5rem 0.25rem 0;
+    font-size: 0.8125rem;
     background-color: $light-blue;
     color: $gray-900;
     cursor: move;
@@ -167,32 +146,33 @@ export default {
     opacity: 0.3;
   }
 
-  .fr-input {
+  .fr-tag-input {
     opacity: 0;
     padding: 0;
     height: 0;
-    transition: all 0.15s;
     outline: 0;
     width: 100%;
     border: 0;
+
+    &.has-values {
+      transition: all 0.15s;
+    }
   }
 
-  .fr-input:focus,
-  .show {
+  .fr-tag-input:focus,
+  .polyfill-placeholder {
     opacity: 1;
-    height: 2rem;
-    margin-top: 0.2rem;
+    height: 1.85rem;
   }
 
   .fr-tag-text {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-  }
 
-  .fr-tag-text:hover {
-    white-space: normal;
-    overflow: auto;
+    &:hover {
+      overflow: auto;
+    }
   }
 }
 </style>

@@ -1,3 +1,7 @@
+<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BFormGroup
     :label="uiSchema.label">
@@ -8,14 +12,12 @@
       stacked />
     <small
       v-if="uiSchema.isHtml"
-      v-html="uiSchema.helpText"
-      class="form-text text-muted">
-      {{ uiSchema.helpText }}
-    </small>
+      v-html="uiSchema.description"
+      class="form-text text-muted" />
     <small
       v-else
       class="form-text text-muted">
-      {{ uiSchema.helpText }}
+      {{ uiSchema.description }}
     </small>
   </BFormGroup>
 </template>

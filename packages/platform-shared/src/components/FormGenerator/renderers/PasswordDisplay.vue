@@ -1,8 +1,15 @@
+<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <FrField
-    :field="field"
+    v-model="field"
+    class="mb-4"
+    type="password"
     :disabled="uiSchema.disabled"
-    class="mb-4" />
+    :description="uiSchema.description"
+    :label="uiSchema.label" />
 </template>
 
 <script>
@@ -28,12 +35,7 @@ export default {
   computed: {
     field: {
       get() {
-        return {
-          type: 'password',
-          value: this.uiSchema.value || '',
-          title: this.uiSchema.label,
-          description: this.uiSchema.helpText,
-        };
+        return this.uiSchema.value || '';
       },
       set(newValue) {
         this.$emit('update:model', {
