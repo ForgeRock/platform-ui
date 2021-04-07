@@ -1,34 +1,33 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="pt-2">
     <BCardBody>
-      <div :class="{ 'border-bottom': isValidJSONString(field.value) && isValidField(field.items)}">
+      <div :class="{ 'border-bottom': isValidJSONString(listValues) && isValidField(items)}">
         <div class="d-flex justify-content-between align-items-center">
-          <label>{{ description }}</label>
+          <label>{{ capitalizedDescription }}</label>
         </div>
         <div>
           <div
-            v-if="field.value && field.value.length === 0"
+            v-if="listValues && listValues.length === 0"
             class="d-flex pt-3 pb-3 px-0 border-top align-items-center">
             <div class="text-muted text-left flex-grow-1">
               ({{ $t('common.none') }})
             </div>
             <button
               class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
-              @click.prevent="$emit('add-list', 0)">
+              @click.prevent="addElementToList(-1)">
               <i class="material-icons-outlined">
                 add
               </i>
             </button>
           </div>
           <div
-            v-else-if="isValidJSONString(field.value) && isValidField(field.items)"
-            v-for="(list, index) in field.value"
-            :key="index"
+            v-else-if="isValidJSONString(listValues) && isValidField(items)"
+            v-for="(list, index) in listValues"
+            :key="list.listUniqueIndex"
             class="d-flex pt-3 pb-2 px-0 border-top">
             <div class="flex-grow-1 pr-3 position-relative">
               <div class="form-row align-items-center">
@@ -36,11 +35,10 @@ to such license between the licensee and ForgeRock AS. -->
                   <div>
                     <div class="position-relative">
                       <FrField
-                        v-model="field.value[index]"
-                        :field="{
-                          type: 'tag',
-                          value: list
-                        }"
+                        v-model="list.value"
+                        type="tag"
+                        :label="label"
+                        @input="emitInput(listValues)"
                       />
                     </div>
                   </div>
@@ -52,7 +50,7 @@ to such license between the licensee and ForgeRock AS. -->
                 <button
                   type="button"
                   class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
-                  @click.prevent="$emit('remove-element', index)">
+                  @click.prevent="removeElementFromList(index)">
                   <i class="material-icons-outlined">
                     remove
                   </i>
@@ -60,7 +58,7 @@ to such license between the licensee and ForgeRock AS. -->
                 <button
                   type="button"
                   class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
-                  @click.prevent="$emit('add-list', index)">
+                  @click.prevent="addElementToList(index)">
                   <i class="material-icons-outlined">
                     add
                   </i>
@@ -71,11 +69,11 @@ to such license between the licensee and ForgeRock AS. -->
           <div v-else>
             <FrInlineJsonEditor
               language="json"
-              :value="field.value"
+              :value="advancedValue"
               :read-only="false"
               :line-count="lineCount"
-              @update-field="field.value = $event"
-              v-on="$listeners" />
+              v-on="$listeners"
+              @update-field="$emit('input', $event)" />
           </div>
         </div>
       </div>
@@ -86,6 +84,7 @@ to such license between the licensee and ForgeRock AS. -->
 <script>
 import {
   forEach,
+  cloneDeep,
 } from 'lodash';
 import {
   BCardBody,
@@ -111,35 +110,79 @@ export default {
     ListsMixin,
   ],
   props: {
-    /**
-     * field schema for constructing list of lists component
-     */
-    field: {
+    description: {
+      type: String,
+      default: '',
+    },
+    items: {
       type: Object,
       default: () => {},
+    },
+    label: {
+      type: String,
+      default: '',
+    },
+    name: {
+      type: String,
+      default: '',
+    },
+    value: {
+      type: [String, Array],
+      default: '',
     },
   },
   data() {
     return {
       hover: false,
       expanded: false,
+      listValues: [],
+      // eslint-disable-next-line vue/no-reserved-keys
+      listUniqueIndex: 0,
     };
+  },
+  computed: {
+    advancedValue() {
+      return this.listValues.map((val) => (val.value));
+    },
+  },
+  mounted() {
+    if (this.value && this.value !== '' && this.value !== null) {
+      const listValues = cloneDeep(this.value).map((val) => ({
+        value: val,
+        listUniqueIndex: this.getUniqueIndex(),
+      }));
+      this.listValues = listValues;
+    }
   },
   methods: {
     /**
-     * determine whether the array is too complex to render
+     * add empty list to list of lists component after index
      */
-    isValidField(schema) {
-      const results = [];
-
-      forEach(schema.items, (val, key) => {
-        if (key === 'type' && (val === 'array' || val === 'object')) {
-          results.push(false);
-        }
-        results.push(true);
-      });
-
-      return !results.includes(false);
+    addElementToList(index) {
+      const newElement = { value: this.getValueBasedOnType(this.items), listUniqueIndex: this.getUniqueIndex() };
+      if (this.listValues.length === 0) {
+        this.listValues.push(newElement);
+      } else {
+        this.listValues.splice(index + 1, 0, newElement);
+      }
+      this.emitInput(this.listValues);
+    },
+    emitInput(value) {
+      const emitValue = cloneDeep(value).map((val) => (val.value));
+      if (emitValue.length === 0) {
+        this.$emit('input', '');
+      } else {
+        this.$emit('input', emitValue);
+      }
+    },
+    /**
+     * Ensures our keys in v-if iteration have unique values
+     *
+     * @returns {number} New unique index
+     */
+    getUniqueIndex() {
+      this.listUniqueIndex += 1;
+      return this.listUniqueIndex;
     },
     /**
      * determine how many levels deep an array nests
@@ -157,6 +200,28 @@ export default {
         });
       }
       return depth + complexity;
+    },
+    /**
+     * determine whether the array is too complex to render
+     */
+    isValidField(schema) {
+      const results = [];
+
+      forEach(schema.items, (val, key) => {
+        if (key === 'type' && (val === 'array' || val === 'object')) {
+          results.push(false);
+        }
+        results.push(true);
+      });
+
+      return !results.includes(false);
+    },
+    /**
+     * remove element from list component at index
+     */
+    removeElementFromList(index) {
+      this.listValues.splice(index, 1);
+      this.emitInput(this.listValues);
     },
   },
 };

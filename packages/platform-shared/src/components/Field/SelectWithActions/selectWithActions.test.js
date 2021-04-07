@@ -18,12 +18,11 @@ const defaultProps = {
   editLabel: 'editButton?',
   id: '',
   errorMessages: [],
-  fieldName: '',
-  helpText: '',
-  hideLabel: false,
+  name: '',
+  description: '',
   isHtml: false,
   label: '',
-  selectOptions: [
+  options: [
     { text: 'a', value: 'ID_a' },
     { text: 'b', value: 'ID_b' },
   ],

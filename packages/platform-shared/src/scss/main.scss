@@ -365,11 +365,8 @@ a.card {
       }
 
       ~ .custom-control-label {
-        // left: -1.4rem;
-
         &::before {
           background-color: $blue;
-          // left: -0.6rem;
         }
 
         &::after {

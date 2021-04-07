@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <BDropdown
@@ -14,9 +13,10 @@ to such license between the licensee and ForgeRock AS. -->
       v-bind="$attrs">
       <template #button-content>
         <FrField
-          class="timezone-field"
           v-bind="$attrs"
-          :field="timezone">
+          v-model="timezone"
+          class="timezone-field"
+          :label="placeholder">
           <template #prepend>
             <BInputGroupPrepend>
               <div :class="[{'disabled': $attrs.disabled}, 'input-group-text inset']">
@@ -50,7 +50,7 @@ to such license between the licensee and ForgeRock AS. -->
       </div>
     </BDropdown>
     <small class="form-text">
-      {{ $t('timezone.helpText') }}
+      {{ $t('timezone.description') }}
       <BLink
         href="https://www.timeanddate.com/time/zones/"
         target="_blank">
@@ -101,11 +101,7 @@ export default {
   data() {
     return {
       offset: this.value,
-      timezone: {
-        type: 'string',
-        value: this.$options.filters.offsetString(this.value),
-        title: this.placeholder,
-      },
+      timezone: this.$options.filters.offsetString(this.value),
     };
   },
   filters: {
@@ -128,7 +124,7 @@ export default {
   },
   watch: {
     offset(newVal) {
-      this.timezone.value = this.$options.filters.offsetString(newVal);
+      this.timezone = this.$options.filters.offsetString(newVal);
       this.$emit('input', Number(newVal));
     },
     value(newVal) {

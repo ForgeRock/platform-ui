@@ -3,42 +3,61 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div class="fr-key-value-panel p-3">
-    <ValidationObserver v-slot="{ invalid }">
-      <FrField
+  <ValidationObserver v-slot="{ invalid }">
+    <div class="mb-2">
+      <label class="text-secondary w-100">
+        <span
+          :id="keyModel.label"
+          tabindex="0"
+          class="fr-label-text">
+          {{ keyModel.label }}
+        </span>
+      </label>
+      <FrBasicInput
+        v-model="keyModel.value"
+        type="string"
         :autofocus="autofocus"
-        :display-description="false"
-        :display-external-title="true"
-        :field="keyModel"
-        class="mb-3" />
-      <FrField
-        :display-description="false"
-        :display-external-title="true"
-        :field="valueModel" />
-      <div class="fr-key-value-add-panel-footer mt-3">
-        <div class="pt-3 mr-3">
-          <span
-            class="fr-key-link"
-            @click="$emit('cancel')">
-            {{ $t('common.cancel') }}
-          </span>
-        </div>
-        <BButton
-          @click="saveKeyValue"
-          :disabled="invalid"
-          variant="outline-primary">
-          {{ $t('common.save') }}
-        </BButton>
+        :name="keyModel.label"
+        :validation="validationRules" />
+    </div>
+    <div class="mb-2">
+      <label class="text-secondary w-100">
+        <span
+          :id="valueModel.label"
+          tabindex="0"
+          class="fr-label-text">
+          {{ valueModel.label }}
+        </span>
+      </label>
+      <FrTextArea
+        v-model="valueModel.value"
+        validation="required"
+        :data-vv-as="valueModel.label"
+        :name="valueModel.label" />
+    </div>
+    <div class="fr-key-value-add-panel-footer mt-3">
+      <div class="pt-3 mr-3">
+        <span
+          class="fr-link"
+          @click="$emit('cancel')">
+          {{ $t('common.cancel') }}
+        </span>
       </div>
-    </ValidationObserver>
-  </div>
+      <BButton
+        @click="saveKeyValue"
+        :disabled="invalid"
+        variant="outline-primary">
+        {{ $t('common.save') }}
+      </BButton>
+    </div>
+  </ValidationObserver>
 </template>
 
 <script>
-import {
-  BButton,
-} from 'bootstrap-vue';
+import { BButton } from 'bootstrap-vue';
 import { ValidationObserver } from 'vee-validate';
+import FrBasicInput from '@forgerock/platform-shared/src/components/Field/BasicInput';
+import FrTextArea from '@forgerock/platform-shared/src/components/Field/TextArea';
 
 /**
  * New/Edit Key value pair component
@@ -47,7 +66,8 @@ export default {
   name: 'KeyValuePanel',
   components: {
     BButton,
-    FrField: () => import ('@forgerock/platform-shared/src/components/Field'),
+    FrBasicInput,
+    FrTextArea,
     ValidationObserver,
   },
   props: {
@@ -60,29 +80,22 @@ export default {
     },
     value: {
       type: Object,
-      default() {
-        return {};
-      },
+      default: () => {},
     },
     validationRules: {
       type: Object,
-      default() {
-        return {};
-      },
+      default: () => {},
     },
   },
   data() {
     return {
       keyModel: {
-        title: this.$t('trees.editPanel.key'),
+        label: this.$t('trees.editPanel.key'),
         value: '',
-        validation: this.validationRules,
       },
       valueModel: {
-        title: this.$t('trees.editPanel.value'),
-        type: 'textarea',
+        label: this.$t('trees.editPanel.value'),
         value: '',
-        validation: 'required',
       },
     };
   },
@@ -95,22 +108,18 @@ export default {
       * Emits an input change to notify v-model that the component has updated
       */
     saveKeyValue() {
-      this.$emit('saveKeyValue', { key: this.keyModel.value, value: this.valueModel.value });
+      this.$emit('save-key-value', { key: this.keyModel.value, value: this.valueModel.value });
     },
   },
 };
 </script>
 <style lang="scss" scoped>
-.fr-key-value-panel {
-  background-color: $gray-100;
-}
-
 .fr-key-value-add-panel-footer {
   display: flex;
   justify-content: flex-end;
 }
 
-.fr-key-link {
+.fr-link {
   color: $blue;
 
   &:hover {
