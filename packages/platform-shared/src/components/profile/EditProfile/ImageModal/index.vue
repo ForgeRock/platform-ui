@@ -29,10 +29,10 @@ of the MIT license. See the LICENSE file for details. -->
         :state="!imageError">
         <FrField
           v-model="imageURL"
-          @input="imageError = false"
           debounce="300"
-          :field="profileImageField"
-          :display-description="false" />
+          name="profileImage"
+          :label="$t('pages.profile.editProfile.profileImageModal.profileImageUrl')"
+          @input="imageError = false" />
       </BFormGroup>
       <small class="text-muted">
         {{ $t('pages.profile.editProfile.profileImageModal.formHelp') }}
@@ -69,7 +69,7 @@ of the MIT license. See the LICENSE file for details. -->
         </BRow>
       </div>
     </div>
-    <template #modal-footer="{ ok, cancel }">
+    <template #modal-footer="{ cancel }">
       <BButton
         size="md"
         variant="link"
@@ -120,11 +120,6 @@ export default {
   mixins: [],
   data() {
     return {
-      profileImageField: {
-        name: 'profileImage',
-        title: this.$t('pages.profile.editProfile.profileImageModal.profileImageUrl'),
-        value: this.profileImage,
-      },
       imageURL: this.profileImage,
       imageError: false,
     };
@@ -152,7 +147,7 @@ export default {
   },
   watch: {
     profileImage(newProfileImage) {
-      this.profileImageField.value = newProfileImage;
+      this.imageURL = newProfileImage;
     },
   },
 };

@@ -23,7 +23,10 @@ of the MIT license. See the LICENSE file for details. -->
         <div class="form-group mb-0 mr-1 w-100">
           <FrField
             v-if="!loading"
-            :field="identityObjectField">
+            v-model="identityObjectField.value"
+            type="select"
+            :label="$t('pages.access.chooseIdentityObject')"
+            :options="identityObjectField.options">
             <template v-slot:option="{ option }">
               <i
                 class="material-icons-outlined mr-3"
@@ -116,8 +119,6 @@ export default {
   data() {
     return {
       identityObjectField: {
-        title: this.$t('pages.access.chooseIdentityObject'),
-        type: 'select',
         options: this.getIdentityObjectOptions(),
         value: '',
       },

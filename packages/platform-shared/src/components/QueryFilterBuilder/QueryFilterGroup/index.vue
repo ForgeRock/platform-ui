@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BCard
     :class="groupCardClass"
@@ -16,10 +15,14 @@ to such license between the licensee and ForgeRock AS. -->
         </div>
         <div class="pr-sm-2 py-1 py-sm-0">
           <FrField
+            v-model="defaultOperatorOptions.value"
             class="d-inline-flex"
+            name="defaultOperatorOptions"
+            type="select"
+            :disabled="disabled"
+            :options="defaultOperatorOptions.options"
             :searchable="false"
-            :field="defaultOperatorOptions"
-            @valueChange="operatorChange" />
+            @input="operatorChange" />
         </div>
         <template v-if="isBaseGroup">
           {{ $t('queryFilterBuilder.groupOperatorText2') }}
@@ -76,20 +79,20 @@ to such license between the licensee and ForgeRock AS. -->
 
 <script>
 import { BCard } from 'bootstrap-vue';
-import Field from '@forgerock/platform-shared/src/components/Field';
-import QueryFilterRow from '../QueryFilterRow';
-import AddButton from '../QueryFilterAddButton';
-import RemoveButton from '../QueryFilterRemoveButton';
+import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrQueryFilterRow from '../QueryFilterRow';
+import FrAddButton from '../QueryFilterAddButton';
+import FrRemoveButton from '../QueryFilterRemoveButton';
 import filterOperators from '../QueryFilterDefaults';
 
 export default {
   name: 'QueryFilterGroup',
   components: {
     BCard,
-    FrAddButton: AddButton,
-    FrField: Field,
-    FrRemoveButton: RemoveButton,
-    FrQueryFilterRow: QueryFilterRow,
+    FrAddButton,
+    FrField,
+    FrRemoveButton,
+    FrQueryFilterRow,
   },
   computed: {
     groupCardClass() {
@@ -115,9 +118,7 @@ export default {
         options: Object.values(filterOperators).map(
           (prop) => ({ text: prop.label, value: prop.delimeter }),
         ),
-        type: 'select',
         value: this.rules.operator,
-        disabled: this.disabled,
       },
       filterOperators,
     };

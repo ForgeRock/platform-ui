@@ -1,30 +1,44 @@
-<!-- Copyright 2020-2021 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <FrInputLayout
     :id="id"
-    :field-name="fieldName"
-    :help-text="helpText"
+    :name="name"
+    :description="description"
     :errors="errors"
     :is-html="isHtml"
-    :label="label">
+    :label="label"
+    :validation="validation"
+    :validation-immediate="validationImmediate">
     <input
-      :type="fieldType"
-      :id="id"
+      v-if="fieldType === 'number'"
+      v-model.number="inputValue"
+      ref="input"
+      type="number"
       :class="[{'polyfill-placeholder': floatLabels, 'is-invalid': errorMessages && errorMessages.length }, 'form-control']"
-      v-model="inputValue"
-      :placeholder="label"
       :data-vv-as="label"
       :disabled="disabled"
+      :id="id"
+      :name="name"
+      :placeholder="label"
       :readonly="readonly"
-      @input="evt=>inputValue=evt.target.value"
-      @keyup="validator"
-      @animationstart="animationStart"
+      @animationstart="animationStart">
+    <input
+      v-else
+      v-model="inputValue"
       ref="input"
-      :name="fieldName">
+      :class="[{'polyfill-placeholder': floatLabels, 'is-invalid': errorMessages && errorMessages.length }, 'form-control']"
+      :data-vv-as="label"
+      :disabled="disabled"
+      :id="id"
+      :name="name"
+      :placeholder="label"
+      :readonly="readonly"
+      :type="fieldType"
+      @input="evt=>inputValue=evt.target.value"
+      @animationstart="animationStart">
     <template #defaultButtons>
       <BInputGroupAppend
         class="fr-hide-input"
@@ -33,8 +47,11 @@ to such license between the licensee and ForgeRock AS. -->
           @click="revealText"
           :class="[{'disabled': disabled}]"
           name="revealButton"
+          :aria-label="showPassword ? 'visibility_off' : 'visibility'"
           @keyup.enter="$emit('enter')">
-          <i class="material-icons material-icons-outlined">
+          <i
+            aria-hidden="true"
+            class="material-icons-outlined">
             <template v-if="showPassword">
               visibility_off
             </template>
@@ -51,7 +68,7 @@ to such license between the licensee and ForgeRock AS. -->
           class="btn btn-outline-secondary"
           name="copyButton"
           @click.prevent="copyValueToClipboard(value)">
-          <i class="material-icons material-icons-outlined">
+          <i class="material-icons-outlined">
             copy
           </i>
         </button>
@@ -78,20 +95,14 @@ import { delay } from 'lodash';
 /* eslint-disable import/no-extraneous-dependencies */
 import * as clipboard from 'clipboard-polyfill/text';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
-import InputLayout from '../Wrapper/InputLayout';
+import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
 
 /**
- * Input with a floating label in the center, this will move when a user types into the input (example can be found on the default login page).
+ * Input with a floating label in the center, this will move when a user types into the input (example can be seen on default login page).
  *
  *  @Mixes InputMixin - default props and methods for inputs
- *  @prop {boolean} disabled default false
- *  @prop {string} fieldName default ''
- *  @prop {string} helpText default ''
- *  @prop {string} label default ''
- *  @prop {array|object} failedPolicies default {}
- *  @prop {function} validator default noop
- *  @prop {Array|Object|Number|String} value default ''
+ *  @param {Number|String} value default ''
  */
 export default {
   name: 'BasicInput',
@@ -102,23 +113,9 @@ export default {
   components: {
     BButton,
     BInputGroupAppend,
-    FrInputLayout: InputLayout,
+    FrInputLayout,
   },
   props: {
-    /**
-     * Autofocus field.
-     */
-    autofocus: {
-      type: Boolean,
-      default: false,
-    },
-    /**
-     * List of errors related to input value
-     */
-    errors: {
-      type: Array,
-      default: () => [],
-    },
     /**
      * Input type password|text
      */
@@ -169,6 +166,17 @@ export default {
       }, (error) => {
         this.showErrorMessage(error, this.$t('common.copyFail'));
       });
+    },
+    /**
+    * Default inputValueHandler method.
+    *
+    * @param {Array|Object|Number|String} newVal value to be set for internal model
+    */
+    inputValueHandler(newVal) {
+      if (newVal !== null) {
+        this.floatLabels = newVal.toString().length > 0 && !!this.label;
+      }
+      this.$emit('input', newVal);
     },
   },
 };

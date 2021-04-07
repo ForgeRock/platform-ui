@@ -1,10 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BCard no-body>
     <BCardHeader class="p-4">
@@ -25,9 +22,10 @@ of the MIT license. See the LICENSE file for details.
         </h5>
         <div class="ml-auto">
           <FrField
-            :field="obj"
-            :display-description="false"
-            @valueChange="savePreferences(preference, $event)" />
+            v-model="obj.value"
+            type="boolean"
+            :name="preference"
+            @change="savePreferences(preference, $event)" />
         </div>
       </div>
     </BCardBody>

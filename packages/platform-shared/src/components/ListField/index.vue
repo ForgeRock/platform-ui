@@ -1,44 +1,48 @@
+<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <div
-      v-if="populatedField.items && populatedField.items.type && (populatedField.items.type === 'string' || populatedField.items.type === 'number' || populatedField.items.type === 'boolean')"
+      v-if="items && items.type && (items.type === 'string' || items.type === 'number' || items.type === 'boolean')"
       class="mb-4"
-      :key="'managedResource' + index">
+      :key="`managedResource${index}`">
       <FrField
-        :field="{
-          value: populatedField.value,
-          type: 'tag',
-          title: populatedField.title,
-          disabled: populatedField.disabled,
-          validation: populatedField.validation
-        }"
-        v-on="$listeners" />
+        v-bind="$attrs"
+        v-on="$listeners"
+        type="tag"
+        :disabled="disabled"
+        :label="label"
+        :options="items"
+        :validation="validation" />
     </div>
     <div
-      v-else-if="populatedField.items && populatedField.items.type && populatedField.items.type === 'object'"
+      v-else-if="items && items.type && items.type === 'object'"
       class="mb-4"
-      :key="'managedResource' + index">
+      :key="`managedResource${index}`">
       <FrListOfObjects
-        :field="field"
+        v-bind="$attrs"
         v-on="$listeners"
+        :properties="items.properties"
+        :label="label"
       />
     </div>
     <div
-      v-else-if="populatedField.items && populatedField.items.type && populatedField.items.type === 'array'"
+      v-else-if="items && items.type && items.type === 'array'"
       class="mb-4"
-      :key="'managedResource' + index">
+      :key="`managedResource${index}`">
       <FrListOfLists
-        :field="field"
+        v-bind="$attrs"
         v-on="$listeners"
+        :items="items"
+        :label="label"
       />
     </div>
   </div>
 </template>
 
 <script>
-import {
-  clone,
-} from 'lodash';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrListOfLists from '@forgerock/platform-shared/src/components/ListOfLists';
 import FrListOfObjects from '@forgerock/platform-shared/src/components/ListOfObjects';
@@ -52,32 +56,41 @@ export default {
     FrListOfObjects,
   },
   props: {
-    field: {
-      type: Object,
-      default: () => {},
+    disabled: {
+      type: Boolean,
+      default: false,
     },
     index: {
       type: Number,
       default: () => 0,
+    },
+    items: {
+      type: [Array, Object],
+      default: () => [],
+    },
+    label: {
+      type: String,
+      default: '',
     },
   },
   mixins: [
     ListsMixin,
   ],
   computed: {
-    populatedField() {
-      const fieldClone = clone(this.field);
-
-      if (!fieldClone.value || fieldClone.value === '') {
-        fieldClone.value = [];
+    validation() {
+      if (this.items.type === 'boolean') {
+        return 'oneOf:true,false';
       }
-
-      if (fieldClone.items.type === 'boolean') {
-        fieldClone.validation = 'oneOf:true,false';
-      } else if (fieldClone.items.type === 'number') {
-        fieldClone.validation = 'numeric';
+      if (this.items.type === 'number') {
+        return 'numeric';
       }
-      return fieldClone;
+      return '';
+    },
+    inputValue() {
+      if (this.$attrs.value === '') {
+        return [];
+      }
+      return this.$attrs.value;
     },
   },
 };
