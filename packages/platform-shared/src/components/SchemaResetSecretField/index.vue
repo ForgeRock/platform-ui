@@ -1,11 +1,13 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
-    <FrField :field="placeHolderSecretField">
+    <FrField
+      v-model="placeHolderSecretField"
+      disabled
+      :label="translatedFieldName">
       <template v-slot:append>
         <BInputGroupAppend>
           <BButton v-b-modal.resetSecretModal>
@@ -24,14 +26,18 @@ to such license between the licensee and ForgeRock AS. -->
         ref="resetSecretModal"
         :title="$t('schemaResetSecret.title', { field: translatedFieldName })"
         cancel-variant="link"
-        @hidden="newSecret.value = ''"
+        @hidden="newSecret = ''"
         @ok="resetSecret"
         :ok-disabled="invalid"
         :ok-title="$t('common.save')"
         :cancel-title="$t('common.cancel')">
         <p>{{ $t('schemaResetSecret.modalBody', { field: lowerCaseFieldName }) }}</p>
         <div class="form-group">
-          <FrField :field="newSecret" />
+          <FrField
+            v-model="newSecret"
+            type="password"
+            validation="required"
+            :label="$t('schemaResetSecret.newSecretText', { field: translatedFieldName })" />
         </div>
         <FrAlert
           show
@@ -89,18 +95,8 @@ export default {
   },
   data() {
     return {
-      placeHolderSecretField: {
-        type: 'text',
-        title: this.translatedFieldName,
-        value: '••••••••••••••••••',
-        disabled: true,
-      },
-      newSecret: {
-        type: 'password',
-        title: this.$t('schemaResetSecret.newSecretText', { field: this.translatedFieldName }),
-        value: '',
-        validation: 'required',
-      },
+      placeHolderSecretField: '••••••••••••••••••',
+      newSecret: '',
     };
   },
   methods: {
@@ -108,7 +104,7 @@ export default {
       this.$store.commit('ApplicationStore/setSchemaDataPropertyValue', {
         schemaType: this.schemaType,
         model: this.model,
-        value: this.newSecret.value,
+        value: this.newSecret,
       });
       this.$emit('secret-updated');
     },

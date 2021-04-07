@@ -46,6 +46,19 @@ describe('ListResource.vue', () => {
       },
     });
     wrapper.setMethods({ loadGrid: () => { } });
+
+    wrapper.setData({
+      currentTableParams: {
+        filter: 'true',
+        fields: [''],
+        sortField: 'sn',
+        page: 0,
+      },
+      routerParameters: {
+        resourceName: 'test',
+        resourceType: 'managed',
+      },
+    });
   });
 
   it('ListResourceView page loaded', () => {
@@ -64,7 +77,6 @@ describe('ListResource.vue', () => {
 
   it('Gets Table Data', async () => {
     expect(wrapper.vm.tableData).toStrictEqual([]);
-    wrapper.vm.routerParameters = { resourceType: 'managed' };
     wrapper.vm.getTableData({
       fields: ['name', 'description'],
       filter: 'name+sw+"test"+OR+description+sw+"test"',
@@ -80,6 +92,12 @@ describe('ListResource.vue', () => {
     it('calls deleteInternalResource when the delete button is clicked and the resourceType is "internal"', async () => {
       await wrapper.setData({ routerParameters: { resourceName: 'bob', resourceType: 'internal' } });
       const deleteInternalResourceSpy = jest.spyOn(InternalResourceApi, 'deleteInternalResource').mockImplementation(() => Promise.resolve());
+      jest.spyOn(InternalResourceApi, 'getInternalResourceList').mockImplementation(() => Promise.resolve({
+        data: {
+          pagedResultsCookie: 'sdfsdf',
+          result: [],
+        },
+      }));
 
       await wrapper.vm.deleteResource('blah');
 

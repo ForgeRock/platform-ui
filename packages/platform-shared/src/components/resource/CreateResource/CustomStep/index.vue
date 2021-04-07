@@ -9,7 +9,9 @@ of the MIT license. See the LICENSE file for details. -->
         {{ descriptionText }}
       </div>
       <FrField
-        :field="checkboxField"
+        v-model="showForm"
+        type="boolean"
+        :label="property.description"
         @input="toggleForm" />
     </template>
     <div
@@ -86,13 +88,6 @@ export default {
     };
   },
   computed: {
-    checkboxField() {
-      return {
-        type: 'boolean',
-        title: this.property.description,
-        value: this.showForm,
-      };
-    },
     descriptionText() {
       if (this.property.isConditional) {
         return this.$t('pages.access.condtionDescription');
@@ -130,7 +125,6 @@ export default {
     * Opens/Closes either the QueryFilterBuilder or the TimeConstraint compoent
     */
     toggleForm() {
-      this.showForm = !this.showForm;
       // If the toggle is off set the property value to null
       if (!this.showForm) {
         this.queryFilterField.value = '';

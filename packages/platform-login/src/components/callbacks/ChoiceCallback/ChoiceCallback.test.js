@@ -1,6 +1,5 @@
 /**
- * @license
- * Copyright (c) 2020 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -34,9 +33,8 @@ describe('ChoiceCallback', () => {
   it('Sets selected and choices/options data', () => {
     expect(wrapper.vm.$data.selected).toMatchObject(
       {
-        key: 'callback_5',
-        title: 'select',
-        type: 'select',
+        name: 'callback_5',
+        label: 'select',
         value: 0,
         options: [
           { text: 'a', value: 0 },
