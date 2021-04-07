@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BTab :title="$t('common.settings')">
     <table class="table">
@@ -35,8 +34,11 @@ to such license between the licensee and ForgeRock AS. -->
       size="lg">
       <div>
         <FrField
+          v-model="showForm"
           class="mb-4"
-          :field="checkboxField"
+          type="boolean"
+          :disabled="editProperty.disabled"
+          :label="editProperty.description"
           @input="toggleForm" />
         <template v-if="showForm">
           <template v-if="editProperty.isConditional">
@@ -131,14 +133,6 @@ export default {
     };
   },
   computed: {
-    checkboxField() {
-      return {
-        type: 'boolean',
-        title: this.editProperty.description,
-        value: this.showForm,
-        disabled: this.editProperty.disabled,
-      };
-    },
     saveDisabled() {
       if (this.disableSave
         || (!this.editProperty.isConditional && this.properties.temporalConstraints.disabled)
@@ -150,7 +144,6 @@ export default {
   },
   methods: {
     toggleForm() {
-      this.showForm = !this.showForm;
       // If the toggle is off set the property value to null
       if (!this.showForm) {
         this.editProperty.value = '';

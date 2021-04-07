@@ -1,10 +1,10 @@
 /**
- * Copyright 2020 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
+
 import { mount } from '@vue/test-utils';
 import SchemaMixin from './index';
 
@@ -95,21 +95,13 @@ const expectedMappedApplicationSchema = {
     tokenEndpointAuthMethod: {
       arrayType: 'selectOne',
       description: 'blah',
-      enum: [
-        'client_secret_post',
-        'client_secret_basic',
-        'private_key_jwt',
-        'tls_client_auth',
-        'self_signed_tls_client_auth',
-        'none',
-      ],
-      enumNames: [
-        'client_secret_post',
-        'client_secret_basic',
-        'private_key_jwt',
-        'tls_client_auth',
-        'self_signed_tls_client_auth',
-        'none',
+      options: [
+        { value: 'client_secret_post', text: 'client_secret_post' },
+        { value: 'client_secret_basic', text: 'client_secret_basic' },
+        { value: 'private_key_jwt', text: 'private_key_jwt' },
+        { value: 'tls_client_auth', text: 'tls_client_auth' },
+        { value: 'self_signed_tls_client_auth', text: 'self_signed_tls_client_auth' },
+        { value: 'none', text: 'none' },
       ],
       required: true,
       title: 'Token Endpoint Authentication Method',
@@ -152,15 +144,10 @@ const expectedMappedGatewaySchema = {
   igTokenIntrospection: {
     arrayType: 'selectOne',
     description: 'blah',
-    enum: [
-      'None',
-      'Realm',
-      'Realm_Subs',
-    ],
-    enumNames: [
-      'None',
-      'Realm Only',
-      'Realm and Sub Realms',
+    options: [
+      { value: 'None', text: 'None' },
+      { value: 'Realm', text: 'Realm Only' },
+      { value: 'Realm_Subs', text: 'Realm and Sub Realms' },
     ],
     title: 'Token Introspection',
     type: 'array',

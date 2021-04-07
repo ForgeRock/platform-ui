@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <BRow>
@@ -32,15 +31,24 @@ to such license between the licensee and ForgeRock AS. -->
           :key="id"
           class="pb-3">
           <FrField
-            :field="kbaChoice.selected"
-            class="mb-3" />
+            v-model="kbaChoice.selected"
+            class="mb-3"
+            type="select"
+            :label="$t('user.kba.selectQuestion')"
+            :options="selectOptions" />
           <FrField
-            v-if="kbaChoice.selected.value === customIndex"
-            :field="kbaChoice.customQuestion"
-            class="mb-3" />
+            v-if="kbaChoice.selected === customIndex"
+            v-model="kbaChoice.customQuestion"
+            class="mb-3"
+            validation="required"
+            :label="$t('pages.profile.accountSecurity.custom')"
+            :name="`${$t('pages.profile.accountSecurity.custom')} ${id + 1}`" />
           <FrField
-            :field="kbaChoice.answer"
-            class="mb-3" />
+            v-model="kbaChoice.answer"
+            class="mb-3"
+            validation="required"
+            :label="$t('user.kba.answer')"
+            :name="`${$t('user.kba.answer')} ${id + 1}`" />
           <hr
             v-if="id !== kbaChoices.length - 1"
             class="mt-4">
@@ -120,26 +128,11 @@ export default {
       this.selectOptions.push({ value: this.customIndex, text: this.$t('user.kba.custom'), $isDisabled: false });
 
       // set form state based on stored user questions
-      times(minimumRequired, (index) => {
+      times(minimumRequired, () => {
         this.kbaChoices.push({
-          selected: {
-            type: 'select',
-            title: this.$t('user.kba.selectQuestion'),
-            value: '',
-            options: this.selectOptions,
-          },
-          answer: {
-            key: `${this.$t('user.kba.answer')} ${index + 1}`,
-            title: this.$t('user.kba.answer'),
-            value: '',
-            validation: 'required',
-          },
-          customQuestion: {
-            key: `${this.$t('pages.profile.accountSecurity.custom')} ${index + 1}`,
-            title: this.$t('pages.profile.accountSecurity.custom'),
-            value: '',
-            validation: 'required',
-          },
+          selected: '',
+          answer: '',
+          customQuestion: '',
         });
       });
       this.showCancel = true;
@@ -150,15 +143,15 @@ export default {
      */
     generatePatch() {
       const values = map(this.kbaChoices, (field) => {
-        if (field.customQuestion.value) {
+        if (field.customQuestion) {
           return {
-            answer: field.answer.value,
-            customQuestion: field.customQuestion.value,
+            answer: field.answer,
+            customQuestion: field.customQuestion,
           };
         }
         return {
-          answer: field.answer.value,
-          questionId: field.selected.value,
+          answer: field.answer,
+          questionId: field.selected,
         };
       });
 
@@ -202,8 +195,8 @@ export default {
       handler() {
         // create array of selected options that aren't custom
         const toDisable = map(this.kbaChoices, (kbaChoice) => {
-          if (kbaChoice.selected.value !== null && kbaChoice.selected.value !== this.customIndex) {
-            return kbaChoice.selected.value;
+          if (kbaChoice.selected !== null && kbaChoice.selected !== this.customIndex) {
+            return kbaChoice.selected;
           }
           return null;
         });

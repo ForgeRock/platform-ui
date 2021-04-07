@@ -274,17 +274,17 @@ describe('TrustedDevices.vue', () => {
     wrapper.vm.setModalData('edit', data);
     expect(wrapper.vm.$data.modalDevice).toEqual(expectedEditModalData.modalDevice);
     expect(wrapper.vm.$data.modalType).toEqual(expectedEditModalData.modalType);
-    expect(wrapper.vm.$data.editModal.value).toEqual(expectedEditModalData.editModalValue);
+    expect(wrapper.vm.$data.editModal).toEqual(expectedEditModalData.editModalValue);
 
     wrapper.vm.setModalData('remove', data);
     expect(wrapper.vm.$data.modalDevice).toEqual(expectedRemoveModalData.modalDevice);
     expect(wrapper.vm.$data.modalType).toEqual(expectedRemoveModalData.modalType);
-    expect(wrapper.vm.$data.editModal.value).toEqual(expectedRemoveModalData.editModalValue);
+    expect(wrapper.vm.$data.editModal).toEqual(expectedRemoveModalData.editModalValue);
 
     wrapper.vm.setModalData('', {});
     expect(wrapper.vm.$data.modalDevice).toEqual(expectedClearModalData.modalDevice);
     expect(wrapper.vm.$data.modalType).toEqual(expectedClearModalData.modalType);
-    expect(wrapper.vm.$data.editModal.value).toEqual(expectedClearModalData.editModalValue);
+    expect(wrapper.vm.$data.editModal).toEqual(expectedClearModalData.editModalValue);
   });
 
   it('handleModalPrimaryButton method calls the correct handler', () => {
@@ -303,7 +303,7 @@ describe('TrustedDevices.vue', () => {
       i18n,
     });
     wrapper.vm.$data.modalDevice = { id: '111', index: '1' };
-    wrapper.vm.$data.editModal.value = 'update';
+    wrapper.vm.$data.editModal = 'update';
 
     wrapper.vm.handleModalPrimaryButton('edit');
     expect(spy).toHaveBeenCalledWith('111', 'update', '1');

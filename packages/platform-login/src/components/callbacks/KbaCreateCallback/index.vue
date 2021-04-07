@@ -29,24 +29,30 @@ of the MIT license. See the LICENSE file for details. -->
 
     <ValidationObserver ref="observer">
       <BFormSelect
-        :options="options"
         v-model="selected"
-        :id="questionModel.key + '_selector'"
         class="mb-2 kbaQuestionSelect"
-        @change="onQuestionSelectionChange()"
-        role="listbox" />
+        role="listbox"
+        :id="questionModel.key + '_selector'"
+        :options="options"
+        @change="onQuestionSelectionChange()" />
       <FrField
         v-if="showCustom"
+        v-model="questionModel.value"
         class="mb-3"
-        :field="questionModel"
-        :validator="validateQuestion"
-        :validation-immediate="true" />
+        :label="questionModel.title"
+        :name="questionModel.key"
+        :validation="questionModel.validation"
+        :validation-immediate="true"
+        @input="validateQuestion" />
       <FrField
+        v-model="answerModel"
         class="mb-3"
-        :field="answerModel"
+        type="password"
+        validation="required"
+        :label="$t('login.kba.answer')"
+        :name="`callback_${index}_answer_field`"
         :disabled="selected === null"
-        :validator="validateAnswer"
-      />
+        @input="validateAnswer" />
     </ValidationObserver>
     <hr>
   </div>
@@ -85,15 +91,9 @@ export default {
   },
   data() {
     return {
-      answerModel: {
-        key: `callback_${this.index}00_field`,
-        type: 'password',
-        title: this.$t('login.kba.answer'),
-        value: '',
-        validation: { required: true },
-      },
+      answerModel: '',
       questionModel: {
-        key: `callback_${this.index}_field`,
+        key: `callback_${this.index}_question_field`,
         title: this.$t('login.kba.question'),
         value: '',
         validation: { required: true },
@@ -153,7 +153,7 @@ export default {
     },
     // This function looks at the question's answer to make sure it is not empty
     validateAnswer() {
-      this.callback.setAnswer(this.answerModel.value);
+      this.callback.setAnswer(this.answerModel);
 
       this.setSubmitButton();
     },

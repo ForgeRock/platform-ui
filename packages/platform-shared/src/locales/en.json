@@ -216,7 +216,8 @@
     "errorCreating": "Error creating file",
     "couldNotRetrieveConfigurationInfo": "There was an error retrieving configuration information.",
     "couldNotRetrieveVersion": "There was an error retrieving version information.",
-    "idInUse": "That ID is already in use, please choose a different ID"
+    "idInUse": "That ID is already in use, please choose a different ID",
+    "errorRetrievingRelationships": "There was an error retrieving relationships."
   },
   "navbar": {
     "helpSupport": "Help & Support",
@@ -305,6 +306,7 @@
       "operation": "Operation",
       "targetSystemAttribute": "Target system attribute",
       "onAssignment": "On Assignment",
+      "onUnassignment": "On Unassignment",
       "mergeWithTarget": "Merge with target",
       "replaceTarget": "Replace target",
       "removeFromTarget": "Remove from target",
@@ -478,7 +480,7 @@
     "toggleSidebar": "Toggle sidebar"
   },
   "timezone": {
-    "helpText": "Time zone offset based on how many hours a location is from GMT.",
+    "description": "Time zone offset based on how many hours a location is from GMT.",
     "linkText": "Time zones chart"
   },
   "deletePanel": {

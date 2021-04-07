@@ -10,7 +10,7 @@ of the MIT license. See the LICENSE file for details. -->
       :label="$t('common.placeholders.relationshipLabel', {relationshipTitle: relationshipProperty.title})"
       :label-for="'editResourceType' + index"
       horizontal>
-      <Multiselect
+      <VueMultiSelect
         open-direction="below"
         label="label"
         track-by="label"
@@ -23,25 +23,32 @@ of the MIT license. See the LICENSE file for details. -->
           v-slot:option="{ option }">
           {{ option.text }}
         </template>
-      </Multiselect>
+      </VueMultiSelect>
     </BFormGroup>
 
     <FrField
+      v-model="relationshipField.value"
       open-direction="bottom"
-      :field="relationshipField"
       :allow-empty="true"
-      :id="relationshipProperty.key + index"
-      :placeholder="$t('common.placeholders.typeToSearchFor', {item: resourceCollection.label})"
-      :show-labels="false"
-      :internal-search="false"
       :clear-on-select="false"
-      :preserve-search="isRelationshipArray"
-      :options-limit="10"
+      :disabled="disabled"
+      :id="relationshipProperty.key + index"
+      :internal-search="false"
+      :label="relationshipField.title"
       :limit="10"
       :max-height="600"
+      :name="relationshipField.key"
+      :options="relationshipField.options"
+      :options-limit="10"
+      :placeholder="$t('common.placeholders.typeToSearchFor', {item: resourceCollection.label})"
+      :preserve-search="isRelationshipArray"
+      :show-labels="false"
       :show-no-results="false"
       :show-no-options="false"
       :searchable="true"
+      :type="relationshipField.type"
+      :validation="relationshipField.validation"
+      :validation-immediade="relationshipField.validation"
       @search-change="setOptions"
       @input="emitSelected">
       <template
@@ -78,9 +85,7 @@ of the MIT license. See the LICENSE file for details. -->
               close
             </i>
           </div>
-          <div class="text-muted">
-            {{ option.resource[option.displayFields[0]] }}
-          </div>
+          {{ option.resource[option.displayFields[0]] }}
         </div>
       </template>
       <template
@@ -107,16 +112,14 @@ of the MIT license. See the LICENSE file for details. -->
       v-if="relationshipProperty.relationshipGrantTemporalConstraintsEnforced"
       :label-cols="isRelationshipArray || newResource ? 12 : 0"
       horizontal>
-      <div class="d-flex-row form-group">
-        <FrField
-          class="d-inline"
-          :field="temporalConstraintEnabled" />
-        <label class="text-muted">
-          {{ $t('common.helpText.timeConstraint') }}
-        </label>
-      </div>
+      <FrField
+        v-model="temporalConstraintEnabled"
+        class="mb-3"
+        name="temporalConstraintEnabled"
+        type="boolean"
+        :label="$t('common.helpText.timeConstraint')" />
       <FrTimeConstraint
-        v-if="temporalConstraintEnabled.value"
+        v-if="temporalConstraintEnabled"
         v-model="temporalConstraint" />
     </BFormGroup>
   </div>
@@ -127,7 +130,7 @@ import {
   map, each, find, has,
 } from 'lodash';
 import { BFormGroup } from 'bootstrap-vue';
-import Multiselect from 'vue-multiselect';
+import VueMultiSelect from 'vue-multiselect';
 import TimeConstraint from '@forgerock/platform-shared/src/components/TimeConstraint';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
@@ -138,7 +141,7 @@ import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryS
 export default {
   name: 'RelationshipEdit',
   components: {
-    Multiselect,
+    VueMultiSelect,
     BFormGroup,
     FrField,
     FrTimeConstraint: TimeConstraint,
@@ -181,15 +184,11 @@ export default {
       resourceCollections: [],
       isRelationshipArray: has(this.relationshipProperty, 'items'),
       temporalConstraint: '',
-      temporalConstraintEnabled: {
-        value: false,
-        type: 'boolean',
-      },
+      temporalConstraintEnabled: false,
       relationshipField: {
         ...this.relationshipProperty,
         type: has(this.relationshipProperty, 'items') ? 'multiselect' : 'select',
         options: [],
-        disabled: this.disabled,
       },
     };
   },
@@ -222,16 +221,13 @@ export default {
     /**
      * adds/removes temporal constraint property of relationship based on toggle value
      */
-    temporalConstraintEnabled: {
-      handler(newVal) {
-        if (this.relationshipField.value && this.relationshipField.value.length) {
-          this.relationshipField.value.forEach((selection) => {
-            const refProperties = newVal.value ? { temporalConstraints: [{ duration: this.temporalConstraint }] } : null;
-            this.$emit('setValue', { property: this.relationshipProperty.key, value: { _ref: selection.value, _refProperties: refProperties } });
-          });
-        }
-      },
-      deep: true,
+    temporalConstraintEnabled(newVal) {
+      if (this.relationshipField.value && this.relationshipField.value.length) {
+        this.relationshipField.value.forEach((selection) => {
+          const refProperties = newVal ? { temporalConstraints: [{ duration: this.temporalConstraint }] } : null;
+          this.$emit('setValue', { property: this.relationshipProperty.key, value: { _ref: selection.value, _refProperties: refProperties } });
+        });
+      }
     },
   },
   methods: {
@@ -243,7 +239,7 @@ export default {
         index = rescourceCollectionType.index;
       }
 
-      this.relationshipField.value = null;
+      this.relationshipField.value = '';
 
       // set the default resourceCollection to the first resourceCollection
       this.resourceCollection = this.allResourceCollections[index];

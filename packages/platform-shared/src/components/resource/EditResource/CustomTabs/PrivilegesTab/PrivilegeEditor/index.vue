@@ -110,8 +110,10 @@ of the MIT license. See the LICENSE file for details. -->
       <template v-slot:row-details>
         <span v-show="showAdvanced">
           <FrField
+            v-model="privilegeName"
             class="mb-4 flex-grow-1"
-            :field="privilegeName"
+            :label="$t('pages.access.privilegeName')"
+            :validation="privilegeNameValidation"
             @input="privilege.name = $event" />
           <BCard
             body-class="p-0"
@@ -185,12 +187,14 @@ of the MIT license. See the LICENSE file for details. -->
           </BCard>
           <BCard class="mt-4 mb-3 py-1 shadow-none">
             <FrField
+              v-model="filterOn"
               class="mb-3"
-              :field="queryFilterToggleField"
+              type="boolean"
               :disabled="disabled"
+              :label="$t('pages.access.applyFilter', { resource: $options.filters.PluralizeFilter(identityObjectSchema.title) })"
               @input="toggleFilter" />
             <div
-              v-if="queryFilterToggleField.value"
+              v-if="filterOn"
               class="pt-2">
               <FrQueryFilterBuilder
                 @change="queryFilterChange"
@@ -313,18 +317,13 @@ export default {
           label: '',
         },
       ],
-      privilegeName: {
-        type: 'text',
-        title: this.$t('pages.access.privilegeName'),
-        value: this.privilege.name,
-        validation: { required: true, unique: this.uniqueNames },
-      },
+      privilegeName: this.privilege.name,
       uniqueNames: [],
     };
   },
   computed: {
     error() {
-      return this.uniqueNames.includes(this.privilegeName.value.trim());
+      return this.uniqueNames.includes(this.privilegeName.trim());
     },
     permissions() {
       const { permissions } = this.privilege;
@@ -360,6 +359,9 @@ export default {
 
       return availableAttibutes;
     },
+    privilegeNameValidation() {
+      return { required: true, unique: this.uniqueNames };
+    },
     queryFilterDropdownOptions() {
       const allOptions = map(this.availableAttibutes, (attribute) => {
         const option = {
@@ -375,13 +377,6 @@ export default {
         const isValidType = ['string', 'boolean', 'number'].includes(option.type);
         return isValidType;
       });
-    },
-    queryFilterToggleField() {
-      return {
-        type: 'boolean',
-        title: this.$t('pages.access.applyFilter', { resource: this.$options.filters.PluralizeFilter(this.identityObjectSchema.title) }),
-        value: this.filterOn,
-      };
     },
   },
   watch: {
@@ -399,7 +394,6 @@ export default {
         this.uniqueNames = cloneDeep(newVal);
         this.uniqueNames[this.index] = '';
         this.uniqueNames.forEach((name) => name.trim());
-        this.privilegeName.validation = { required: true, unique: this.uniqueNames };
       },
     },
   },
@@ -411,7 +405,7 @@ export default {
     */
     toggleFilter(val) {
       if (!val) {
-        this.privilege.filter = '';
+        delete this.privilege.filter;
         this.filterOn = false;
       } else {
         this.filterOn = true;
@@ -496,7 +490,9 @@ export default {
     * @property {string} queryFilterString - new queryFilterString value
     */
     queryFilterChange(queryFilterString) {
-      this.privilege.filter = queryFilterString;
+      if (queryFilterString) {
+        this.privilege.filter = queryFilterString;
+      }
     },
     /**
     * Sets default access flags for View (all readOnly true), and for  Create and Update (all readOnly to false)

@@ -67,7 +67,7 @@ of the MIT license. See the LICENSE file for details. -->
           </div>
           <div class="mr-4 opacity-70">
             <span class="pr-1">
-              © 2020
+              © {{ currentYear }}
             </span>
             <a
               href="http://www.forgerock.com"
@@ -142,6 +142,7 @@ export default {
   },
   data() {
     return {
+      currentYear: new Date().getFullYear(),
       menuExpanded: true,
       useMobileStyleMenu: false,
       hideNav: true,

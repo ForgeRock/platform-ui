@@ -137,14 +137,9 @@ export default {
             if (schemaObj.arrayType === 'addMany') {
               formField.value = modelObj.value;
               formField.options = modelObj.value;
-            } else if (schemaObj.arrayType === 'selectOne') {
-              formField.enum = schemaObj.enum;
-              formField.enumNames = schemaObj.enumNames;
+            } else if (schemaObj.arrayType === 'selectOne' || schemaObj.arrayType === 'selectMany') {
               formField.value = modelObj.value;
-            } else if (schemaObj.arrayType === 'selectMany') {
-              formField.enum = schemaObj.enum;
-              formField.enumNames = schemaObj.enumNames;
-              formField.value = modelObj.value;
+              formField.options = schemaObj.options;
             }
           } else if (formField.type === 'boolean') {
             formField.value = modelObj.value || false;

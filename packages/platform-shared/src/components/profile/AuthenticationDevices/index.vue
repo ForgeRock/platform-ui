@@ -94,8 +94,10 @@ of the MIT license. See the LICENSE file for details. -->
         </template>
         <FrField
           v-if="modalType === 'edit'"
-          :field="editModal"
-          :autofocus="true" />
+          v-model="deviceName"
+          autofocus
+          name="name"
+          :label="$t('pages.authenticationDevices.editModalInput')" />
         <template
           v-if="modalType === 'delete'">
           {{ $t('pages.authenticationDevices.deleteModalText') }}
@@ -136,7 +138,7 @@ import { mapState } from 'vuex';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
-import Field from '@forgerock/platform-shared/src/components/Field';
+import FrField from '@forgerock/platform-shared/src/components/Field';
 
 /**
  * @description If fullstack (AM/IDM) is configured will work with authorized devices endpoiint (AM) and display a list of currently of authorized devices for the current
@@ -161,7 +163,7 @@ export default {
     BDropdownItemButton,
     BModal,
     BRow,
-    FrField: Field,
+    FrField,
   },
   props: {
     forceRoot: {
@@ -175,12 +177,7 @@ export default {
       modalType: null,
       modalItem: {},
       modalInfo: {},
-      editModal: {
-        key: 'name',
-        type: 'text',
-        title: this.$t('pages.authenticationDevices.editModalInput'),
-        value: '',
-      },
+      deviceName: '',
     };
   },
   computed: {
@@ -279,37 +276,37 @@ export default {
           this.modalInfo.title = this.$t('pages.authenticationDevices.deleteModalTitle', { deviceAlias: data.alias });
           this.modalInfo.primaryButtonText = this.$t('pages.authenticationDevices.delete');
           this.modalInfo.showCancel = true;
-          this.editModal.value = undefined;
+          this.deviceName = undefined;
           break;
         case 'edit':
           this.modalInfo.title = this.$t('pages.authenticationDevices.editModalTitle');
           this.modalInfo.primaryButtonText = this.$t('common.save');
           this.modalInfo.showCancel = true;
-          this.editModal.value = data.deviceName;
+          this.deviceName = data.deviceName;
           break;
         case 'errorEdit':
           this.modalInfo.title = this.$t('pages.authenticationDevices.unableToEditModalTitle');
           this.modalInfo.primaryButtonText = this.$t('common.done');
           this.modalInfo.showCancel = false;
-          this.editModal.value = undefined;
+          this.deviceName = undefined;
           break;
         case 'errorDelete':
           this.modalInfo.title = this.$t('pages.authenticationDevices.unableToDeleteModalTitle');
           this.modalInfo.primaryButtonText = this.$t('common.done');
           this.modalInfo.showCancel = false;
-          this.editModal.value = undefined;
+          this.deviceName = undefined;
           break;
         default:
           this.modalInfo.title = '';
           this.modalInfo.primaryButtonText = '';
-          this.editModal.value = undefined;
+          this.deviceName = undefined;
           break;
       }
       this.$refs.fsModal.show();
     },
     handleModalPrimaryButton(type) {
       const { uuid, authType } = this.modalItem;
-      const newName = this.editModal.value;
+      const newName = this.deviceName;
       if (type === 'edit') {
         this.updateDeviceName(authType, uuid, newName);
       } else if (type === 'delete') {

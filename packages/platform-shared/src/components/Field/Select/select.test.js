@@ -15,15 +15,14 @@ localVue.use(BootstrapVue);
 const defaultMixinProps = {
   id: '',
   errorMessages: [],
-  fieldName: '',
-  helpText: '',
-  hideLabel: false,
+  name: '',
+  description: '',
   isHtml: false,
   label: '',
 };
 
 const defaultProps = {
-  selectOptions: [],
+  options: [],
 };
 
 describe('Select input', () => {
@@ -42,7 +41,7 @@ describe('Select input', () => {
     expect(wrapper.name()).toBe('Select');
   });
 
-  it('Select input component process selectOptions prop from array', () => {
+  it('Select input component process options prop from array', () => {
     const wrapper = mount(Select, {
       localVue,
       mocks: {
@@ -51,7 +50,7 @@ describe('Select input', () => {
       propsData: {
         ...defaultMixinProps,
         ...defaultProps,
-        selectOptions: ['a', 'b', 'c'],
+        options: ['a', 'b', 'c'],
       },
     });
 
@@ -61,11 +60,11 @@ describe('Select input', () => {
       { text: 'c', value: 'c' },
     ];
 
-    expect(wrapper.vm.options).toEqual(expected);
+    expect(wrapper.vm.selectOptions).toEqual(expected);
   });
 
-  it('Select input component passes through selectOptions object prop', () => {
-    const selectOptions = [
+  it('Select input component passes through options object prop', () => {
+    const options = [
       { text: 'd', value: 'd' },
       { text: 'e', value: 'e' },
       { text: 'f', value: 'f' },
@@ -79,11 +78,11 @@ describe('Select input', () => {
       propsData: {
         ...defaultMixinProps,
         ...defaultProps,
-        selectOptions,
+        options,
       },
     });
 
-    expect(wrapper.vm.options).toEqual(selectOptions);
+    expect(wrapper.vm.selectOptions).toEqual(options);
   });
 
   it('Select input component renders the options', () => {
@@ -95,7 +94,7 @@ describe('Select input', () => {
       propsData: {
         ...defaultMixinProps,
         ...defaultProps,
-        selectOptions: ['a', 'b', 'c'],
+        options: ['a', 'b', 'c'],
       },
     });
 
@@ -115,7 +114,7 @@ describe('Select input', () => {
       propsData: {
         ...defaultMixinProps,
         ...defaultProps,
-        selectOptions: ['a', 'b', 'c'],
+        options: ['a', 'b', 'c'],
       },
     });
 
@@ -159,7 +158,7 @@ describe('Select input', () => {
       },
       propsData: {
         ...defaultMixinProps,
-        selectOptions: [
+        options: [
           { text: 'ayy', value: 'a' },
           { text: 'bee', value: 'b' },
           { text: 'cee', value: 'c' },
@@ -173,7 +172,7 @@ describe('Select input', () => {
     expect(wrapper.find('.multiselect__single').text()).toBe('bee');
 
     await wrapper.setProps({
-      selectOptions: [
+      options: [
         { text: 'ayy', value: 'a' },
         { text: 'beegees?', value: 'b' },
         { text: 'cee', value: 'c' },

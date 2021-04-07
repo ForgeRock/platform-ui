@@ -51,7 +51,6 @@ of the MIT license. See the LICENSE file for details. -->
               <Component
                 class="callback-component"
                 :callback="component.callback"
-                :field="component.field"
                 :index="component.index"
                 :is="component.type"
                 :key="component.key"
@@ -267,26 +266,26 @@ export default {
      * @description gets field information
      * @param {Object} callback specific step callback
      * @param {Object} index callback index
-     * @returns {Object} field object needed for Field component
+     * @returns {Object} field props needed for Field component
      */
     getField(callback, index) {
-      const type = callback.getType();
-      const fieldType = type === FrCallbackType.PasswordCallback || type === FrCallbackType.ValidatedCreatePasswordCallback ? 'password' : 'string';
+      const callbackType = callback.getType();
+      const fieldType = callbackType === FrCallbackType.PasswordCallback || callbackType === FrCallbackType.ValidatedCreatePasswordCallback ? 'password' : 'string';
 
-      let prompt = '';
+      let label = '';
       if (callback.getPrompt) {
-        prompt = callback.getPrompt();
+        label = callback.getPrompt();
       } else if (callback.getOutputByName) {
         try {
-          prompt = callback.getOutputByName('prompt').value;
+          label = callback.getOutputByName('prompt').value;
         } catch (e) {
           noop();
         }
       }
       return {
-        title: prompt,
-        type: fieldType,
-        key: `callback_${index}`,
+        label,
+        fieldType,
+        name: `callback_${index}`,
         value: callback.getInputValue(),
       };
     },
@@ -344,8 +343,8 @@ export default {
         'next-step-callback': (cb) => {
           this.nextStepCallbacks.push(cb);
         },
-        // event emited as camelcase from FrField
-        valueChange: (value) => {
+        // event emited from FrField
+        input: (value) => {
           if (callback && callback.setInputValue) {
             callback.setInputValue(value);
           }
@@ -616,9 +615,14 @@ export default {
         };
 
         if (component.type === 'FrField') {
-          component.callbackSpecificProps.failedPolicies = this.getTranslatePolicyFailures(callback);
-          component.field = this.getField(callback, index);
-          component.listeners = this.getListeners({ callback }, ['valueChange']);
+          const {
+            fieldType, label, name, value,
+          } = this.getField(callback, index);
+          const errors = this.getTranslatePolicyFailures(callback);
+          component.callbackSpecificProps = {
+            errors, label, name, type: fieldType, value,
+          };
+          component.listeners = this.getListeners({ callback }, ['input']);
         }
 
         const hideNextButtonCallbacks = [

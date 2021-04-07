@@ -5,64 +5,47 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <FrInputLayout
     :id="id"
-    :field-name="fieldName"
-    :help-text="helpText"
+    :name="name"
+    :description="description"
     :errors="errors"
     :is-html="isHtml"
     :label="label"
-  >
+    :validation="validation"
+    :validation-immediate="validationImmediate">
     <textarea
-      :autofocus="autofocus"
-      :id="id"
-      :rows="rows"
-      :cols="cols"
-      :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control']"
       v-model="inputValue"
-      :placeholder="label"
+      :autofocus="autofocus"
+      :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control']"
+      :cols="cols"
       :data-vv-as="label"
       :disabled="disabled"
-      @keyup="validator"
-      :name="fieldName" />
+      :id="id"
+      :name="name"
+      :placeholder="label"
+      :rows="rows"
+      @input="$emit('input', inputValue)"
+      @click="onClick"
+      @blur="inputValueHandler(inputValue)" />
   </FrInputLayout>
 </template>
 
 <script>
-import InputLayout from '../Wrapper/InputLayout';
+import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
 
 /**
  *  Text area input
  *
  *  @Mixes InputMixin - default props and methods for inputs
- *  @prop {boolean} disabled default false
- *  @prop {string} fieldName default ''
- *  @prop {string} helpText default ''
- *  @prop {string} label default ''
- *  @prop {array|object} failedPolicies default {}
- *  @prop {function} validator default noop
- *  @prop {Array|Object|Number|String} value default ''
+ *  @param {String} value default ''
  */
 export default {
   name: 'TextArea',
   mixins: [InputMixin],
   components: {
-    FrInputLayout: InputLayout,
+    FrInputLayout,
   },
   props: {
-    /**
-     * Autofocus field.
-     */
-    autofocus: {
-      type: Boolean,
-      default: false,
-    },
-    /**
-     * List of errors related to input value
-     */
-    errors: {
-      type: Array,
-      default: () => [],
-    },
     /**
      * specifies the visible height of a text area, in lines.
      */
@@ -78,13 +61,20 @@ export default {
       default: 10,
     },
   },
-  data() {
-    return {};
-  },
   methods: {
-    setInputValue(newVal) {
-      if (newVal !== undefined && newVal !== null) {
-        this.inputValue = newVal.toString();
+    onClick() {
+      if (this.label) {
+        this.floatLabels = true;
+      }
+    },
+    /**
+    * Default inputValueHandler method.
+    *
+    * @param {Array|Object|Number|String} inputValue value to be set for internal model
+    */
+    inputValueHandler(inputValue) {
+      if (inputValue !== null) {
+        this.floatLabels = inputValue.toString().length > 0 && !!this.label;
       }
     },
   },

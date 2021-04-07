@@ -3,119 +3,111 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div class="mt-3">
-    <div
-      v-if="!isEmpty(keyValues)"
-      class="fr-key-value-list">
+  <ValidationProvider
+    v-slot="validationObject"
+    mode="aggressive"
+    :bails="false"
+    :immediate="validationImmediate"
+    :name="name"
+    :ref="name"
+    :rules="validation"
+    :vid="name">
+    <div :class="[{'fr-field-error': errors.concat(validationObject.errors).length}, 'mt-3']">
       <div
-        v-for="(text, key) in keyValues"
-        :key="`${id}_keyvalue-${key}`"
-        class="fr-key-value-list-item">
-        <div class="fr-key-value-list-header mt-3">
-          <h5 class="text-truncate">
-            {{ key }}
-          </h5>
-          <i
-            v-if="!disabled"
-            @click="deleteItem(key)"
-            class="material-icons-outlined fr-key-value-icon noselect">
-            delete
-          </i>
+        v-if="!isEmpty(keyValues)"
+        class="fr-key-value-list">
+        <div
+          v-for="(text, key) in keyValues"
+          :key="`${id}_keyvalue-${key}`"
+          class="fr-key-value-list-item">
+          <div class="fr-key-value-list-header mt-3">
+            <h5 class="text-truncate">
+              {{ key }}
+            </h5>
+            <i
+              v-if="!disabled"
+              @click="deleteItem(key)"
+              class="material-icons-outlined fr-key-value-icon noselect">
+              delete
+            </i>
+          </div>
+          <p class="d-flex">
+            <span class="flex-fill overflow-auto">
+              {{ text }}
+            </span>
+            <i
+              v-if="!disabled"
+              @click="editItem(key)"
+              class="material-icons-outlined fr-key-value-icon noselect d-none">
+              edit
+            </i>
+          </p>
+          <FrKeyValuePanel
+            v-if="currentKey === key"
+            v-model="keyValueObject"
+            autofocus
+            class="fr-key-value-panel py-3"
+            :validation-rules="validationRules"
+            @cancel="currentKey = null"
+            @save-key-value="saveKeyValue" />
         </div>
-        <p class="d-flex">
-          <span class="flex-fill overflow-auto">
-            {{ text }}
-          </span>
-          <i
-            v-if="!disabled"
-            @click="editItem(key)"
-            class="material-icons-outlined fr-key-value-icon noselect d-none">
-            edit
-          </i>
-        </p>
-        <FrKeyValuePanel
-          v-if="currentKey === key"
-          :validation-rules="validationRules"
-          :autofocus="true"
-          v-model="keyValueObject"
-          @cancel="currentKey = null"
-          @saveKeyValue="saveKeyValue" />
       </div>
+      <div
+        v-else-if="isEmpty(keyValues) && currentKey === null"
+        class="fr-key-value-panel text-center py-3">
+        <span class="text-secondary">
+          ({{ $t('trees.editPanel.none') }})
+        </span>
+      </div>
+      <FrKeyValuePanel
+        v-if="currentKey === ''"
+        v-model="keyValueObject"
+        autofocus
+        class="fr-key-value-panel py-3"
+        :validation-rules="validationRules"
+        @cancel="currentKey = null"
+        @save-key-value="saveKeyValue" />
+      <div
+        v-else-if="!disabled"
+        class="mt-3">
+        <span
+          class="fr-link"
+          @click="showAdd()">
+          <i
+            class="material-icons-outlined mr-1 mb-1"
+            aria-hidden="true">
+            add
+          </i>
+          {{ $t('common.add') }}
+        </span>
+      </div>
+      <FrValidationError
+        class="error-messages"
+        :validator-errors="errors.concat(validationObject.errors)"
+        :field-name="name" />
     </div>
-    <div
-      v-if="isEmpty(keyValues) && currentKey === null"
-      class="fr-key-value-panel text-center py-3">
-      <span class="text-secondary">
-        ({{ $t('trees.editPanel.none') }})
-      </span>
-    </div>
-    <FrKeyValuePanel
-      v-if="currentKey === ''"
-      :validation-rules="validationRules"
-      :autofocus="true"
-      v-model="keyValueObject"
-      @cancel="currentKey = null"
-      @saveKeyValue="saveKeyValue" />
-    <div
-      v-else-if="!disabled"
-      class="mt-3">
-      <span
-        class="fr-key-link"
-        @click="showAdd()">
-        <i
-          class="material-icons-outlined mr-1 mb-1"
-          aria-hidden="true">
-          add
-        </i>
-        {{ $t('common.add') }}
-      </span>
-    </div>
-    <FrValidationError
-      class="error-messages"
-      :validator-errors="errors"
-      :field-name="fieldName" />
-  </div>
+  </ValidationProvider>
 </template>
 
 <script>
 import { isEmpty, cloneDeep } from 'lodash';
-import ValidationErrorList from '@forgerock/platform-shared/src/components/ValidationErrorList';
-import KeyValuePanel from './KeyValuePanel';
+import { ValidationProvider } from 'vee-validate';
+import FrValidationError from '@forgerock/platform-shared/src/components/ValidationErrorList';
+import FrKeyValuePanel from './KeyValuePanel';
+import InputMixin from '../Wrapper/InputMixin';
 
 /**
  * Key value pair component
  */
 export default {
   name: 'KeyValueList',
+  mixins: [
+    InputMixin,
+  ],
   components: {
-    FrKeyValuePanel: KeyValuePanel,
-    FrValidationError: ValidationErrorList,
-  },
-  props: {
-    /**
-     * List of errors related to input value
-     */
-    errors: {
-      type: Array,
-      default: () => [],
-    },
-    /**
-     * Title of field
-     */
-    fieldName: {
-      type: String,
-      default: '',
-    },
-    value: {
-      type: [Object, String],
-      default() {
-        return {};
-      },
-    },
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
+    FrKeyValuePanel,
+    FrValidationError,
+    ValidationProvider,
   },
   data() {
     let keyValues;
@@ -204,7 +196,7 @@ export default {
   background-color: $gray-100;
 }
 
-.fr-key-link {
+.fr-link {
   color: $blue;
 
   &:hover {
@@ -235,5 +227,10 @@ export default {
       }
     }
   }
+}
+
+.fr-field-error {
+  border: 1px solid $danger;
+  border-radius: 4px;
 }
 </style>

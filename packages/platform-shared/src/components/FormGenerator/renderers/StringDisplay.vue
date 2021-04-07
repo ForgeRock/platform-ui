@@ -1,20 +1,27 @@
+<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <FrField
-      :field="field"
+      v-model="uiSchema.value"
+      class="mb-4"
       :disabled="uiSchema.disabled"
-      @input="valueChange"
-      class="mb-4">
+      :description="uiSchema.description"
+      :label="uiSchema.label"
+      :validation="uiSchema.required ? 'required' : ''"
+      @input="valueChange">
       <div
         v-if="uiSchema.append"
         slot="append"
         class="input-group-append">
         <button
-          :id="`copyButton-${field.value}`"
+          :id="`copyButton-${uiSchema.label}`"
           class="btn btn-outline-secondary"
           type="button"
           :name="uiSchema.append + 'Button'"
-          @click="copyValueToClipboard(field.value)">
+          @click="copyValueToClipboard(uiSchema.value)">
           <template
             v-if="uiSchema.append.split(':')[0] === 'text'">
             {{ uiSchema.append.split(':')[1] }}
@@ -27,7 +34,7 @@
         </button>
         <BTooltip
           :show.sync="show"
-          :target="`copyButton-${field.value}`"
+          :target="`copyButton-${uiSchema.label}`"
           placement="top"
           triggers="hover"
           title="Copy" />
@@ -68,20 +75,6 @@ export default {
     return {
       show: false,
     };
-  },
-  computed: {
-    field() {
-      const field = {
-        type: 'string',
-        value: this.uiSchema.value,
-        title: this.uiSchema.label,
-        description: this.uiSchema.helpText,
-      };
-      if (this.uiSchema.required) {
-        field.validation = 'required';
-      }
-      return field;
-    },
   },
   methods: {
     copyValueToClipboard(value) {

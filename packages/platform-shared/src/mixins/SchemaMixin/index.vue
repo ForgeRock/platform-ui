@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <script>
 import {
   mapKeys,
@@ -98,11 +97,13 @@ export default {
       } else if (hasEnumNames) {
         mappedProp.arrayType = 'selectOne';
         mappedProp.type = 'array';
+        mappedProp.options = mappedProp.enumNames.map((text, index) => ({ text, value: mappedProp.enum[index] }));
+        delete mappedProp.enum;
+        delete mappedProp.enumNames;
       } else if (hasEnumNamesInItems) {
         mappedProp.arrayType = 'selectMany';
         mappedProp.type = 'array';
-        mappedProp.enum = mappedProp.items.enum;
-        mappedProp.enumNames = mappedProp.items.enumNames;
+        mappedProp.options = mappedProp.items.enumNames.map((text, index) => ({ text, value: mappedProp.items.enum[index] }));
         delete mappedProp.items;
       } else if (hasItems) {
         mappedProp.arrayType = 'addMany';

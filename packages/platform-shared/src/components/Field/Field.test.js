@@ -7,7 +7,7 @@
 
 import BootstrapVue from 'bootstrap-vue';
 import {
-  createLocalVue, mount, shallowMount,
+  createLocalVue, mount,
 } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
 import { extend, ValidationObserver, ValidationProvider } from 'vee-validate';
@@ -27,7 +27,7 @@ const stubs = {
 
 let localVue;
 
-describe('FrField.vue', () => {
+describe('Field Component', () => {
   let wrapper;
   beforeEach(() => {
     localVue = createLocalVue();
@@ -49,10 +49,8 @@ describe('FrField.vue', () => {
         $t: () => {},
       },
       propsData: {
-        field: {
-          key: 'testField',
-          value: '',
-        },
+        name: 'testField',
+        value: '',
       },
       stubs,
     });
@@ -70,22 +68,20 @@ describe('FrField.vue', () => {
         $t: () => {},
       },
       propsData: {
-        field: {
-          type: 'number',
-          key: 'testField',
-          value: '',
-        },
+        type: 'number',
+        name: 'testField',
+        value: '',
       },
       stubs,
     });
     await flush();
     const input = wrapper.find('#testField input');
-    input.setValue('5');
+    input.setValue(5);
     await flush();
-    expect(wrapper.vm.field.value).not.toBe('5');
-    input.setValue('3');
+    expect(input.element.value).not.toBe('3');
+    input.setValue(3);
     await flush();
-    expect(wrapper.vm.field.value).toBe(3);
+    expect(input.element.value).toBe('3');
   });
 
   it('uses password floating label input for password type', async () => {
@@ -95,11 +91,9 @@ describe('FrField.vue', () => {
         $t: () => {},
       },
       propsData: {
-        field: {
-          type: 'password',
-          key: 'testField',
-          value: '',
-        },
+        type: 'password',
+        name: 'testField',
+        value: '',
       },
       stubs,
     });
@@ -109,7 +103,7 @@ describe('FrField.vue', () => {
     expect(passwordButton.exists()).toBe(true);
     input.setValue('pass');
     await flush();
-    expect(wrapper.vm.field.value).toBe('pass');
+    expect(input.element.value).toBe('pass');
   });
 
   it('uses select floating label input for select type', async () => {
@@ -119,23 +113,20 @@ describe('FrField.vue', () => {
         $t: () => {},
       },
       propsData: {
-        field: {
-          type: 'select',
-          key: 'testField',
-          enum: ['enum1', 'enum2'],
-          enumNames: ['option1', 'option2'],
-        },
+        type: 'select',
+        name: 'testField',
+        options: [{ value: 'enum1', text: 'option1' }, { value: 'enum2', text: 'option2' }],
       },
       stubs,
     });
     // Ensure we get a failure when trying to select a value that is not in options
-    wrapper.vm.field.value = ['option3'];
+    wrapper.vm.$attrs.value = ['option3'];
     await flush();
-    expect(wrapper.vm.field.value).not.toBe(['option3']);
+    expect(wrapper.vm.$attrs.value).not.toBe(['option3']);
     // Ensure we get a success when trying to select a value that is in options
-    wrapper.vm.field.value = 'option2';
+    wrapper.vm.$attrs.value = 'option2';
     await flush();
-    expect(wrapper.vm.field.value).toBe('option2');
+    expect(wrapper.vm.$attrs.value).toBe('option2');
   });
 
   it('uses multiselect floating label input for multiselect type', async () => {
@@ -145,27 +136,24 @@ describe('FrField.vue', () => {
         $t: () => {},
       },
       propsData: {
-        field: {
-          type: 'multiselect',
-          key: 'testField',
-          enum: ['enum1', 'enum2'],
-          enumNames: ['option1', 'option2'],
-        },
+        type: 'multiselect',
+        name: 'testField',
+        options: [{ value: 'enum1', text: 'option1' }, { value: 'enum2', text: 'option2' }],
       },
       stubs,
     });
     // Ensure we get a failure when trying to select a value that is not in options
-    wrapper.vm.field.value = ['option3'];
+    wrapper.vm.$attrs.value = ['option3'];
     await flush();
-    expect(wrapper.vm.field.value).not.toBe(['option3']);
+    expect(wrapper.vm.$attrs.value).not.toBe(['option3']);
     // Ensure we get a success when trying to select a value that is in options
-    wrapper.vm.field.value = ['option2'];
+    wrapper.vm.$attrs.value = ['option2'];
     await flush();
-    expect(wrapper.vm.field.value).toStrictEqual(['option2']);
+    expect(wrapper.vm.$attrs.value).toStrictEqual(['option2']);
     // Ensure we get a success when trying to select two values that are in options
     await flush();
-    wrapper.vm.field.value = ['option1', 'option2'];
-    expect(wrapper.vm.field.value).toStrictEqual(['option1', 'option2']);
+    wrapper.vm.$attrs.value = ['option1', 'option2'];
+    expect(wrapper.vm.$attrs.value).toStrictEqual(['option1', 'option2']);
   });
 
   it('uses bootstrap form tags component for tag type', async () => {
@@ -175,21 +163,19 @@ describe('FrField.vue', () => {
         $t: () => {},
       },
       propsData: {
-        field: {
-          type: 'tag',
-          key: 'testField',
-          value: [],
-          options: ['option1', 'option2'],
-        },
+        type: 'tag',
+        name: 'testField',
+        value: [],
+        options: ['option1', 'option2'],
       },
       stubs,
     });
     await flush();
-    expect(wrapper.vm.field.value).toStrictEqual([]);
+    expect(wrapper.vm.$attrs.value).toStrictEqual([]);
     const input = wrapper.find('#testField input');
     input.setValue('should convert to empty array without hitting return');
     await flush();
-    expect(wrapper.vm.field.value).toStrictEqual([]);
+    expect(wrapper.vm.$attrs.value).toStrictEqual([]);
   });
 
   it('uses key value list component for object type', async () => {
@@ -199,17 +185,15 @@ describe('FrField.vue', () => {
         $t: () => {},
       },
       propsData: {
-        field: {
-          type: 'object',
-          key: 'testField',
-          value: {},
-        },
+        type: 'object',
+        name: 'testField',
+        value: {},
       },
       stubs,
     });
     await flush();
-    expect(wrapper.vm.field.value).toStrictEqual({});
-    expect(wrapper.find('.fr-key-link')).toBeTruthy();
+    expect(wrapper.vm.$attrs.value).toStrictEqual({});
+    expect(wrapper.find('.fr-link')).toBeTruthy();
   });
 
   it('uses toggle button component for boolean type', async () => {
@@ -219,11 +203,9 @@ describe('FrField.vue', () => {
         $t: () => {},
       },
       propsData: {
-        field: {
-          type: 'boolean',
-          key: 'testField',
-          value: true,
-        },
+        type: 'boolean',
+        name: 'testField',
+        value: true,
       },
       stubs,
     });
@@ -231,97 +213,13 @@ describe('FrField.vue', () => {
     expect(wrapper.find('.fr-toggle-primary').isVisible()).toBeTruthy();
   });
 
-  it('uses checkbox component for boolean type', async () => {
+  it('uses checkbox component for checkbox type', async () => {
     wrapper.setProps({
-      field: {
-        type: 'checkbox',
-        key: 'testField',
-        value: true,
-      },
+      type: 'checkbox',
+      name: 'testField',
+      value: true,
     });
     await flush();
-    expect(wrapper.vm.field.value).toBe(true);
+    expect(wrapper.vm.$attrs.value).toBe(true);
   });
-
-  describe('field update logic', () => {
-    describe('comparing options between field objects', () => {
-      beforeEach(() => {
-        wrapper = shallowMount(FrField, {
-          mocks: {
-            $t: () => {},
-          },
-          propsData: {
-            field: {
-              key: 'testField',
-              value: '',
-            },
-          },
-          stubs,
-        });
-      });
-
-      it('finds that field options differ if their number of options differs', () => {
-        const fieldA = {
-          enum: [1, 2],
-          enumNames: [1, 2],
-        };
-        const fieldB = {
-          enum: [1],
-          enumNames: [1],
-        };
-        expect(wrapper.vm.doSelectOptionsDifferForFields(fieldA, fieldB)).toBe(true);
-      });
-
-      it('finds that field options differ if their enum contents differ', () => {
-        const fieldA = {
-          enum: [1, 2],
-          enumNames: [1, 2],
-        };
-        const fieldB = {
-          enum: [1, 3],
-          enumNames: [1, 2],
-        };
-        expect(wrapper.vm.doSelectOptionsDifferForFields(fieldA, fieldB)).toBe(true);
-      });
-
-      it('finds that field options differ if their enumNames contents differ', () => {
-        const fieldA = {
-          enum: [1, 2],
-          enumNames: [1, 2],
-        };
-        const fieldB = {
-          enum: [1, 2],
-          enumNames: [1, 3],
-        };
-        expect(wrapper.vm.doSelectOptionsDifferForFields(fieldA, fieldB)).toBe(true);
-      });
-
-      it('finds that field options do not differ if their number of options, and the contents of enum and enumnames is the same', () => {
-        const fieldA = {
-          enum: [1, 2],
-          enumNames: [1, 2],
-        };
-        const fieldB = {
-          enum: [1, 2],
-          enumNames: [1, 2],
-        };
-        expect(wrapper.vm.doSelectOptionsDifferForFields(fieldA, fieldB)).toBe(false);
-      });
-    });
-  });
-
-  // Need to figure out how to get vee-validate and jest working together
-  // it('Checks for required on string type', async () => {
-  //   wrapper.vm.field.type = 'string';
-  //   wrapper.vm.field.value = '';
-  //   wrapper.vm.field.validation = 'required|email';
-  //   await flush();
-  //   const stringInput = wrapper.find('#testField input');
-  //   stringInput.setValue('test');
-  //   await flush();
-  //   expect(stringInput.element.value).toBe('test');
-
-  //   const errorEl = wrapper.find('.error-message');
-  //   expect(errorEl.text()).toBeTruthy();
-  // });
 });

@@ -16,15 +16,14 @@ localVue.use(BootstrapVue);
 const defaultMixinProps = {
   multiselectId: '',
   errorMessages: [],
-  fieldName: '',
-  helpText: '',
-  hideLabel: false,
+  name: '',
+  description: '',
   isHtml: false,
   label: '',
 };
 
 const defaultProps = {
-  selectOptions: [],
+  options: [],
 };
 
 describe('MultiSelect input', () => {
@@ -43,7 +42,7 @@ describe('MultiSelect input', () => {
     expect(wrapper.name()).toBe('MultiSelect');
   });
 
-  it('MultiSelect input component process selectOptions prop from array', () => {
+  it('MultiSelect input component process options prop from array', () => {
     const wrapper = mount(MultiSelect, {
       localVue,
       mocks: {
@@ -52,7 +51,7 @@ describe('MultiSelect input', () => {
       propsData: {
         ...defaultMixinProps,
         ...defaultProps,
-        selectOptions: ['a', 'b', 'c'],
+        options: ['a', 'b', 'c'],
       },
     });
 
@@ -68,11 +67,11 @@ describe('MultiSelect input', () => {
       },
     ];
 
-    expect(wrapper.vm.options).toEqual(expected);
+    expect(wrapper.vm.selectOptions).toEqual(expected);
   });
 
-  it('MultiSelect input component passes through selectOptions object prop and adds id and copy selected', () => {
-    const selectOptions = [
+  it('MultiSelect input component passes through options object prop and adds id and copy selected', () => {
+    const options = [
       { text: 'd', value: 'd' },
       { text: 'e', value: 'e' },
       { text: 'f', value: 'f' },
@@ -98,11 +97,11 @@ describe('MultiSelect input', () => {
       propsData: {
         ...defaultMixinProps,
         ...defaultProps,
-        selectOptions,
+        options,
       },
     });
 
-    expect(wrapper.vm.options).toEqual(expected);
+    expect(wrapper.vm.selectOptions).toEqual(expected);
   });
 
   it('MultiSelect input component renders the options', () => {
@@ -114,7 +113,7 @@ describe('MultiSelect input', () => {
       propsData: {
         ...defaultMixinProps,
         ...defaultProps,
-        selectOptions: ['a', 'b', 'c'],
+        options: ['a', 'b', 'c'],
       },
     });
 
@@ -134,7 +133,7 @@ describe('MultiSelect input', () => {
       propsData: {
         ...defaultMixinProps,
         ...defaultProps,
-        selectOptions: ['a', 'b', 'c'],
+        options: ['a', 'b', 'c'],
       },
     });
 
@@ -149,7 +148,7 @@ describe('MultiSelect input', () => {
       text: 'b',
       value: 'b',
     }]);
-    expect(wrapper.emitted().input[1]).toEqual([['b']]);
+    expect(wrapper.emitted().input).toEqual([[['b']]]);
 
     multiselect.trigger('click');
     elements().at(0).trigger('click');
@@ -164,7 +163,7 @@ describe('MultiSelect input', () => {
       text: 'a',
       value: 'a',
     }]);
-    expect(wrapper.emitted().input[2]).toEqual([['b', 'a']]);
+    expect(wrapper.emitted().input).toEqual([[['b']], [['b', 'a']]]);
   });
 
   it('MultiSelect passes through component slots', () => {

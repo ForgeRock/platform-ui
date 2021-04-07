@@ -55,7 +55,7 @@ describe('EditKBA.vue', () => {
     });
 
     it('should correctly generate patches for custom questions', () => {
-      wrapper.setData({ kbaChoices: [{ customQuestion: { value: 'test' }, answer: { value: 'test answer' }, selected: { value: 'test' } }] });
+      wrapper.setData({ kbaChoices: [{ customQuestion: 'test', answer: 'test answer', selected: 'test' }] });
 
       const patch = wrapper.vm.generatePatch();
 
@@ -67,7 +67,7 @@ describe('EditKBA.vue', () => {
     });
 
     it('should correctly generate patches for provided questions', () => {
-      wrapper.setData({ kbaChoices: [{ selected: { value: 'test' }, answer: { value: 'test answer' }, customQuestion: { value: '' } }] });
+      wrapper.setData({ kbaChoices: [{ selected: 'test', answer: 'test answer', customQuestion: '' }] });
 
       const patch = wrapper.vm.generatePatch();
 

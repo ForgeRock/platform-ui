@@ -1,103 +1,101 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="pt-2">
-    <div :class="{ 'border-bottom': isValidJSONString(field.value) && isValidField(field.items)}">
+    <div :class="{ 'border-bottom': isValidJSONString(listValues) && isValidField()}">
       <div class="d-flex justify-content-between align-items-center">
-        <label>{{ description }}</label>
+        <label>{{ capitalizedDescription }}</label>
       </div>
       <div>
         <div
-          v-if="!field.value || field.value === ''"
+          v-if="!listValues || !listValues.length"
           class="d-flex pt-3 pb-3 px-0 border-top align-items-center">
           <div class="text-muted text-left flex-grow-1">
             ({{ $t('common.none') }})
           </div>
           <button
             class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
-            @click.prevent="$emit('add-object', 0)">
+            @click.prevent="addObjectToList(-1)">
             <i class="material-icons-outlined">
               add
             </i>
           </button>
         </div>
-        <div
-          v-else-if="isValidJSONString(field.value) && isValidField(field.items)"
-          v-for="(obj, ndx) in field.value"
-          :key="ndx"
-          class="d-flex pt-3 pb-2 px-0 border-top">
-          <div class="flex-grow-1 pr-3 position-relative">
-            <div class="form-row align-items-center">
-              <div
-                v-for="(value, key) in obj"
-                :key="key"
-                class="col-lg-4 pb-2">
-                <div class="position-relative">
-                  <div v-if="field.items.properties[key].type === 'boolean'">
-                    <BFormCheckbox
-                      v-model="obj[key]"
-                      :name="key">
-                      {{ key }}
-                    </BFormCheckbox>
-                  </div>
-                  <div v-else-if="field.items.properties[key].type === 'number'">
-                    <FrField
-                      v-model.number="obj[key]"
-                      :field="{
-                        type: 'integer',
-                        title: key,
-                        value: value,
-                        validation: 'required|numeric',
-                      }"
-                    />
-                  </div>
-                  <div v-else>
-                    <FrField
-                      v-model="obj[key]"
-                      :field="{
-                        type: field.items.properties[key].type,
-                        title: key,
-                        value: value,
-                        validation: field.required && field.required.length && field.required.includes(field.items.properties[key].title) ? 'required' : ''
-                      }"
-                    />
+        <template v-if="isValidJSONString(listValues) && isValidField()">
+          <div
+            v-for="(obj, index) in listValues"
+            :key="obj.listUniqueIndex"
+            class="d-flex pt-3 pb-2 px-0 border-top">
+            <div class="flex-grow-1 pr-3 position-relative">
+              <div class="form-row align-items-center">
+                <div
+                  v-for="(objValue, key) in obj"
+                  :key="key"
+                  class="col-lg-4 pb-2">
+                  <div
+                    v-if="key !== 'listUniqueIndex'"
+                    class="position-relative">
+                    <div v-if="properties[key].type === 'boolean'">
+                      <BFormCheckbox
+                        v-model="obj[key]"
+                        :name="key">
+                        {{ key }}
+                      </BFormCheckbox>
+                    </div>
+                    <div v-else-if="properties[key].type === 'number'">
+                      <FrField
+                        v-model.number="obj[key]"
+                        type="number"
+                        validation="required|numeric"
+                        :label="key"
+                        @input="emitInput(listValues)"
+                      />
+                    </div>
+                    <div v-else>
+                      <FrField
+                        v-model="obj[key]"
+                        :label="key"
+                        :type="properties[key].type"
+                        :validation="required && required.length && required.includes(properties[key].title) ? 'required' : ''"
+                        @input="emitInput(listValues)"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div>
-            <div
-              class="position-relative d-inline-flex justify-content-end"
-              style="width: 128px;">
-              <button
-                class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
-                @click.prevent="$emit('remove-element', ndx)">
-                <i class="material-icons-outlined">
-                  remove
-                </i>
-              </button>
-              <button
-                class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
-                @click.prevent="$emit('add-object', ndx)">
-                <i class="material-icons-outlined">
-                  add
-                </i>
-              </button>
+            <div>
+              <div
+                class="position-relative d-inline-flex justify-content-end"
+                style="width: 128px;">
+                <button
+                  class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
+                  @click.prevent="removeElementFromList(index)">
+                  <i class="material-icons-outlined">
+                    remove
+                  </i>
+                </button>
+                <button
+                  class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
+                  @click.prevent="addObjectToList(index)">
+                  <i class="material-icons-outlined">
+                    add
+                  </i>
+                </button>
+              </div>
             </div>
           </div>
-        </div>
+        </template>
         <div v-else>
           <FrInlineJsonEditor
+            v-on="$listeners"
             language="json"
-            :value="field.value"
-            :read-only="false"
             :line-count="lineCount"
-            @update-field="field.value = [$event]"
-            v-on="$listeners" />
+            :read-only="false"
+            :value="advancedValue"
+            @update-field="$emit('input', $event)" />
         </div>
       </div>
     </div>
@@ -105,6 +103,9 @@ to such license between the licensee and ForgeRock AS. -->
 </template>
 
 <script>
+import {
+  cloneDeep,
+} from 'lodash';
 import {
   BFormCheckbox,
 } from 'bootstrap-vue';
@@ -129,28 +130,94 @@ export default {
     ListsMixin,
   ],
   props: {
-    /**
-     * field schema for constructing list of Obects component
-     */
-    field: {
+    description: {
+      type: String,
+      default: '',
+    },
+    properties: {
       type: Object,
       default: () => {},
+    },
+    label: {
+      type: String,
+      default: '',
+    },
+    name: {
+      type: String,
+      default: '',
+    },
+    required: {
+      type: Array,
+      default: () => [],
+    },
+    value: {
+      type: [Array, String],
+      default: () => [],
     },
   },
   data() {
     return {
-      hover: false,
       expanded: false,
+      hover: false,
       isValidJason: true,
+      listValues: [],
+      // eslint-disable-next-line vue/no-reserved-keys
+      listUniqueIndex: 0,
     };
   },
+  computed: {
+    advancedValue() {
+      return this.listValues.map((val) => {
+        delete val.listUniqueIndex;
+        return val;
+      });
+    },
+  },
+  mounted() {
+    if (this.value && this.value !== '' && this.value !== null) {
+      const listValues = cloneDeep(this.value);
+      listValues.forEach((val) => {
+        val.listUniqueIndex = this.getUniqueIndex();
+      });
+      this.listValues = listValues;
+    }
+  },
   methods: {
+    /**
+     * populate list of objects with new member.  Set defaults for boolean and number properties
+     */
+    addObjectToList(valueIndex) {
+      const emptyObjectWithKeys = this.createObject(this.properties);
+      this.listValues.splice(valueIndex + 1, 0, { ...emptyObjectWithKeys, listUniqueIndex: this.getUniqueIndex() });
+      this.emitInput(this.listValues);
+    },
+    emitInput(value) {
+      const emitValue = cloneDeep(value);
+      emitValue.map((val) => {
+        delete val.listUniqueIndex;
+        return val;
+      });
+      if (emitValue.length === 0) {
+        this.$emit('input', '');
+      } else {
+        this.$emit('input', emitValue);
+      }
+    },
+    /**
+     * Ensures our keys in v-if iteration have unique values
+     *
+     * @returns {number} New unique index
+     */
+    getUniqueIndex() {
+      this.listUniqueIndex += 1;
+      return this.listUniqueIndex;
+    },
     /**
      * determine whether any properties of an object in the array
      * are too complex to render (i.e. objects with sub object or array properties)
      */
-    isValidField(items) {
-      const values = Object.values(items.properties) || [];
+    isValidField() {
+      const values = Object.values(this.properties) || [];
       const results = [];
 
       values.forEach((val) => {
@@ -161,6 +228,13 @@ export default {
       });
 
       return !results.includes(false);
+    },
+    /**
+     * remove element from list component at index
+     */
+    removeElementFromList(index) {
+      this.listValues.splice(index, 1);
+      this.emitInput(this.listValues);
     },
   },
 };

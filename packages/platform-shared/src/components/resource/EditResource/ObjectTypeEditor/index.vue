@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <div class="card-body m-4">
@@ -13,20 +12,28 @@ to such license between the licensee and ForgeRock AS. -->
             class="mb-4"
             :key="'editResource' + index">
             <FrField
-              :field="field"
-              :display-description="field.type !== 'boolean'" />
+              v-model="field.value"
+              :disabled="field.disabled"
+              :description="field.type !== 'boolean' ? field.description : ''"
+              :label="field.title"
+              :name="field.key"
+              :options="field.options"
+              :type="field.type"
+              :validation="field.validation" />
           </div>
 
           <FrListField
             v-else-if="field.type === 'array' && field.key !== 'privileges'"
-            :key="'editResource' + index"
-            :field="field"
-            :index="index"
+            v-model="field.value"
             v-on="$listeners"
-            @valueChange="updateField(index, $event)"
-            @add-object="addObjectToList(index, $event, displayProperties)"
-            @add-list="addElementToList(index, $event, displayProperties)"
-            @remove-element="removeElementFromList(index, $event, displayProperties)" />
+            :key="'editResource' + index"
+            :description="field.description"
+            :index="index"
+            :items="field.items"
+            :label="field.title"
+            :name="field.key"
+            :required="field.required"
+            @input="updateField(index, $event)" />
 
           <div
             v-if="field.type === 'relationship'"
@@ -140,6 +147,9 @@ export default {
       },
     },
   },
+  mounted() {
+    this.oldFormFields = cloneDeep(this.formFields);
+  },
   methods: {
     loadData() {
       // make sure display properties have a title
@@ -154,8 +164,6 @@ export default {
           displayProperty.title = startCase(camelCase(displayProperty.key));
         }
       });
-
-      this.oldFormFields = cloneDeep(this.formFields);
     },
     setSingletonRelationshipValue(value, field) {
       field.value = value;
@@ -220,6 +228,7 @@ export default {
     },
     updateField(index, newValue) {
       this.displayProperties[index].value = newValue;
+      this.$forceUpdate();
     },
   },
 };

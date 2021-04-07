@@ -172,8 +172,9 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
       <FrField
         v-if="modalType === 'edit'"
-        :field="editModal"
-        :autofocus="true" />
+        v-model="editModal"
+        autofocus
+        :label="$t('pages.profile.trustedDevices.editModalInput')" />
       <template
         v-if="modalType === 'remove'">
         {{ $t('pages.profile.trustedDevices.removeModalText') }}
@@ -207,7 +208,7 @@ import {
 } from 'bootstrap-vue';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import Field from '@forgerock/platform-shared/src/components/Field';
+import FrField from '@forgerock/platform-shared/src/components/Field';
 import Accordion from '@forgerock/platform-shared/src/components/Accordion';
 import MapMixin from '@forgerock/platform-shared/src/mixins/MapMixin';
 
@@ -232,7 +233,7 @@ export default {
     BModal,
     BRow,
     FrAccordion: Accordion,
-    FrField: Field,
+    FrField,
   },
   directives: {
     'b-modal': VBModal,
@@ -248,12 +249,7 @@ export default {
       devices: [],
       modalType: null,
       modalDevice: {},
-      editModal: {
-        key: 'name',
-        type: 'text',
-        title: this.$t('pages.profile.trustedDevices.editModalInput'),
-        value: '',
-      },
+      editModal: '',
     };
   },
   computed: {
@@ -319,23 +315,23 @@ export default {
         case 'edit':
           this.modalDevice.title = this.$t('pages.profile.trustedDevices.editModalTitle');
           this.modalDevice.primaryButtonText = this.$t('common.save');
-          this.editModal.value = data.alias;
+          this.editModal = data.alias;
           break;
         case 'remove':
           this.modalDevice.title = this.$t('pages.profile.trustedDevices.removeModalTitle', { deviceAlias: data.alias });
           this.modalDevice.primaryButtonText = this.$t('pages.profile.trustedDevices.remove');
-          this.editModal.value = undefined;
+          this.editModal = undefined;
           break;
         default:
           this.modalDevice.title = '';
           this.modalDevice.primaryButtonText = '';
-          this.editModal.value = undefined;
+          this.editModal = undefined;
           break;
       }
     },
     handleModalPrimaryButton(type) {
       const { id, index } = this.modalDevice;
-      const newAlias = this.editModal.value;
+      const newAlias = this.editModal;
       if (type === 'edit') {
         this.updateDeviceAlias(id, newAlias, index);
       } else if (type === 'remove') {

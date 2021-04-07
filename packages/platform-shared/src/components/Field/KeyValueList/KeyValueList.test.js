@@ -1,24 +1,30 @@
 /**
- * Copyright 2019-2020 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2019-2021 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
-import { shallowMount } from '@vue/test-utils';
+
+import { mount } from '@vue/test-utils';
 import KeyValueList from './index';
 
 describe('KeyValueList', () => {
   let wrapper;
   beforeEach(() => {
-    wrapper = shallowMount(KeyValueList, {
+    wrapper = mount(KeyValueList, {
       mocks: {
-        $t: () => {},
+        $t: (key) => {
+          const translationMap = {
+            'trees.editPanel.none': 'none',
+            'trees.editPanel.key': 'key',
+            'trees.editPanel.value': 'value',
+          };
+          return translationMap[key];
+        },
       },
       propsData: {
-        schema: {
-          properties: {},
-        },
+        value: '',
+        name: 'testField',
       },
     });
   });
@@ -92,13 +98,21 @@ describe('KeyValueList', () => {
   });
 
   it('Displays text indicating when it is empty', () => {
+    wrapper.setData({
+      keyValues: {},
+      currentKey: null,
+    });
     const emptyTextElement = wrapper.find('.fr-key-value-panel.text-center.py-3');
     expect(emptyTextElement.exists()).toBe(true);
-    expect(emptyTextElement.text()).toBe('()');
+    expect(emptyTextElement.text()).toBe('(none)');
   });
 
   it('Hides the text indicating it is empty when adding a first value', () => {
-    wrapper.find('.fr-key-link').trigger('click');
+    wrapper.setData({
+      keyValues: {},
+      currentKey: null,
+    });
+    wrapper.find('.fr-link').trigger('click');
     const emptyTextElement = wrapper.find('.fr-key-value-panel.text-center.py-3');
     expect(emptyTextElement.exists()).toBe(false);
   });

@@ -5,11 +5,13 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <FrInputLayout
     :id="id"
-    :field-name="fieldName"
-    :help-text="helpText"
+    :name="name"
+    :description="description"
     :errors="errors"
     :is-html="isHtml"
-    :label="label">
+    :label="label"
+    :validation="validation"
+    :validation-immediate="validationImmediate">
     <VueMultiSelect
       :id="id"
       ref="vms"
@@ -18,9 +20,9 @@ of the MIT license. See the LICENSE file for details. -->
       class="h-100 text-nowrap"
       label="text"
       track-by="value"
-      :name="fieldName"
+      :name="name"
       :disabled="disabled"
-      :options="options"
+      :options="selectOptions"
       :searchable="searchable"
       :show-labels="false"
       :allow-empty="allowEmpty"
@@ -28,7 +30,8 @@ of the MIT license. See the LICENSE file for details. -->
       :placeholder="placeholder"
       @search-change="$emit('search-change', $event)"
       @open="openHandler"
-      @close="closeDropDown(inputValue)">
+      @close="closeDropDown(inputValue)"
+      @input="$emit('input', inputValue.value)">
       <slot name="noResult">
         {{ $t('common.noResult') }}
       </slot>
@@ -59,26 +62,20 @@ import {
   map,
 } from 'lodash';
 import VueMultiSelect from 'vue-multiselect';
-import InputLayout from '../Wrapper/InputLayout';
+import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
 
 /**
  *  Single select input. Allows selection of one element in a dropdown
  *
  *  @Mixes InputMixin - default props and methods for inputs
- *  @prop {boolean} disabled default false
- *  @prop {string} fieldName default ''
- *  @prop {string} helpText default ''
- *  @prop {string} label default ''
- *  @prop {array|object} failedPolicies default {}
- *  @prop {function} validator default noop
- *  @prop {Array|Object|Number|String} value default ''
+ *  @param {String} value default ''
  */
 export default {
   name: 'Select',
   mixins: [InputMixin],
   components: {
-    FrInputLayout: InputLayout,
+    FrInputLayout,
     VueMultiSelect,
   },
   props: {
@@ -86,38 +83,22 @@ export default {
       type: Boolean,
       default: false,
     },
-    /**
-     * List of errors related to input value
-     */
-    errors: {
-      type: Array,
-      default: () => [],
-    },
-    /**
-     * Options for select input.
-     */
-    selectOptions: {
-      type: [Array, Object],
-      required: true,
-    },
     placeholder: {
       type: String,
       default() {
         return this.$t('common.typeToSearch');
       },
-      required: false,
     },
     searchable: {
       type: Boolean,
       default: true,
-      required: false,
     },
     /**
-     * @description Enable autofocus
+     * Options for select input.
      */
-    autofocus: {
-      type: Boolean,
-      default: false,
+    options: {
+      type: [Array, Object],
+      required: true,
     },
   },
   mounted() {
@@ -128,12 +109,12 @@ export default {
     this.setInputValue(this.value);
   },
   computed: {
-    options() {
-      if (this.selectOptions.length && has(this.selectOptions[0], 'value')) {
-        return this.selectOptions;
+    selectOptions() {
+      if (this.options.length && has(this.options[0], 'value')) {
+        return this.options;
       }
 
-      return map(this.selectOptions, (option) => ({
+      return map(this.options, (option) => ({
         text: option,
         value: option,
       }));
@@ -148,9 +129,12 @@ export default {
         this.floatLabels = value !== undefined && value !== null && (value.toString().length > 0 || this.value.length > 0) && !!this.label;
       }
     },
+    inputValueHandler(inputValue) {
+      this.floatLabels = inputValue.value !== null && inputValue.value.toString().length > 0 && !!this.label;
+    },
     setInputValue(newVal) {
       if (newVal !== undefined && newVal !== null) {
-        this.inputValue = find(this.options, { value: newVal });
+        this.inputValue = find(this.selectOptions, { value: newVal });
       }
     },
     /**
@@ -174,7 +158,7 @@ export default {
       },
       deep: true,
     },
-    selectOptions(newOptions, oldOptions) {
+    options(newOptions, oldOptions) {
       if (!this.inputValue || this.value !== this.inputValue.value) {
         this.setInputValue(this.value);
       }
@@ -182,7 +166,7 @@ export default {
       if (this.value) {
         const oldValueObject = oldOptions.find(({ value }) => value === this.value);
         const newValueObject = newOptions.find(({ value }) => value === this.value);
-        if (oldValueObject.value === newValueObject.value && oldValueObject.text !== newValueObject.text) {
+        if (!oldValueObject || (oldValueObject.value === newValueObject.value && oldValueObject.text !== newValueObject.text)) {
           this.setInputValue(this.value);
         }
       }
@@ -193,9 +177,4 @@ export default {
 
 <style lang="scss" scoped>
 @import '~@forgerock/platform-shared/src/components/Field/assets/vue-multiselect.scss';
-
-/deep/ .multiselect:focus-within {
-  border-color: $blue;
-  box-shadow: 0 0 0 0.0625rem $blue;
-}
 </style>

@@ -5,8 +5,10 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <FrField
-      :failed-policies="failuresForField"
-      :field="password"
+      v-model="password.value"
+      type="password"
+      :errors="failuresForField"
+      :label="password.label"
       @input="updateCallback" />
     <FrPolicyPanel
       class="mt-2"
@@ -77,8 +79,7 @@ export default {
       failuresForField: [],
       failuresForPanel: [],
       password: {
-        title: this.callback.getPrompt(),
-        type: 'password',
+        label: this.callback.getPrompt(),
         value: '',
       },
       policies: [],

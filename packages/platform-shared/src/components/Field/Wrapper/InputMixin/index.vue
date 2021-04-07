@@ -1,17 +1,25 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <script>
 import {
   delay,
   noop,
+  cloneDeep,
+  isEqual,
 } from 'lodash';
 
 export default {
   name: 'InputMixin',
   props: {
+    /**
+     * Autofocus field when rendered.
+     */
+    autofocus: {
+      type: Boolean,
+      default: false,
+    },
     /**
      * if field should be disabled.
      */
@@ -20,16 +28,23 @@ export default {
       default: false,
     },
     /**
+     * List of errors related to input value (mostly used for callback components)
+     */
+    errors: {
+      type: Array,
+      default: () => [],
+    },
+    /**
      * Input name.
      */
-    fieldName: {
+    name: {
       type: String,
-      default: '',
+      required: true,
     },
     /**
      * Related text that displays underneath field.
      */
-    helpText: {
+    description: {
       type: String,
       default: '',
     },
@@ -48,11 +63,25 @@ export default {
       default: '',
     },
     /**
-     * Function used to validate data.
+     * Boolean to show the input as readonly.
      */
-    validator: {
-      type: Function,
-      default: () => noop,
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * Vee-validate validation types to check against.
+     */
+    validation: {
+      type: [String, Object],
+      default: '',
+    },
+    /**
+     * Whether error validation should happen when this component renders.
+     */
+    validationImmediate: {
+      type: Boolean,
+      default: false,
     },
     /**
      * v-model value
@@ -61,24 +90,16 @@ export default {
       type: [Array, Object, Number, String, Boolean],
       default: '',
     },
-    /**
-     * Boolean to show the input as readonly.
-     */
-    readonly: {
-      type: Boolean,
-      default: false,
-    },
   },
   data() {
     return {
       errorMessages: [],
       floatLabels: false,
-      hideLabel: true,
       id: null,
       inputValue: '',
+      oldValue: null,
     };
   },
-
   beforeMount() {
     // eslint-disable-next-line no-underscore-dangle
     this.id = `floatingLabelInput${this._uid}`;
@@ -88,7 +109,7 @@ export default {
       if (navigator.userAgent.includes('Edge')) {
         const element = document.getElementById(`${this.id}`);
         if (element && element.value.length && this.label) {
-          this.floatLabels = true;
+          this.floatLabels = !!this.label;
           this.inputValue = element.value;
         }
       } else if (navigator.userAgent.includes('Chrome')) {
@@ -96,28 +117,27 @@ export default {
         try {
           const nativeMatches = node.matches || node.msMatchesSelector;
           if (nativeMatches.call(node, ':-webkit-autofill') && this.label) {
-            this.floatLabels = true;
+            this.floatLabels = !!this.label;
           }
         } catch (e) {
           noop();
         }
       }
-      this.hideLabel = false;
     }, 500, this);
 
     this.setInputValue(this.value);
   },
   watch: {
+    value(newVal) {
+      this.setInputValue(newVal);
+    },
     inputValue: {
       handler(newVal) {
-        if (newVal !== undefined) {
+        if (newVal !== undefined && this.inputValueHandler) {
           this.inputValueHandler(newVal);
         }
       },
       deep: true,
-    },
-    value(newVal) {
-      this.setInputValue(newVal);
     },
   },
   methods: {
@@ -128,22 +148,10 @@ export default {
     */
     setInputValue(newVal) {
       if (newVal !== undefined && newVal !== null) {
-        this.inputValue = newVal;
-      }
-    },
-    /**
-    * Default inputValueHandler method. Overrides possible in components
-    *
-    * @param {Array|Object|Number|String} newVal value to be set for internal model
-    */
-    inputValueHandler(newVal) {
-      if (newVal === null) {
-        this.$emit('input', null);
-      } else {
-        // for select when value in a key in an object
-        const value = typeof newVal === 'object' && Object.hasOwnProperty.call(newVal, 'value') ? newVal.value : newVal;
-        this.floatLabels = value.toString().length > 0 && !!this.label;
-        this.$emit('input', value);
+        if (!isEqual(this.oldValue, newVal)) {
+          this.inputValue = newVal;
+          this.oldValue = cloneDeep(newVal);
+        }
       }
     },
   },

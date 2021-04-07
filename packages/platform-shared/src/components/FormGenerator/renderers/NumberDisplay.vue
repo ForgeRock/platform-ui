@@ -1,9 +1,17 @@
+<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <FrField
-    @valueChange="updateValue"
-    :field="field"
+    v-model="uiSchema.value"
+    class="mb-4"
+    type="number"
     :disabled="uiSchema.disabled"
-    class="mb-4" />
+    :description="uiSchema.description"
+    :label="uiSchema.label"
+    :validation="validation"
+    @input="updateValue" />
 </template>
 <script>
 import FrField from '@forgerock/platform-shared/src/components/Field';
@@ -26,14 +34,8 @@ export default {
     },
   },
   computed: {
-    field() {
-      return {
-        type: 'integer',
-        value: this.uiSchema.value,
-        title: this.uiSchema.label,
-        description: this.uiSchema.helpText,
-        validation: `numeric${this.uiSchema.required ? '|required' : ''}`,
-      };
+    validation() {
+      return `numeric${this.uiSchema.required ? '|required' : ''}`;
     },
   },
   methods: {

@@ -6,8 +6,11 @@ of the MIT license. See the LICENSE file for details. -->
   <div>
     <slot name="input">
       <FrField
-        :field="passwordField"
-        :failed-policies="failuresOnSubmit"
+        v-bind="$attrs"
+        type="password"
+        :errors="failuresOnSubmit"
+        :label="$t('common.placeholders.password')"
+        :validation="validation"
         @input="checkPassword($event); $emit('input', $event)" />
     </slot>
     <slot name="policy-panel">
@@ -61,10 +64,6 @@ export default {
       type: Array,
       default: () => [],
     },
-    value: {
-      type: String,
-      default: '',
-    },
     validation: {
       type: [String, Object],
       default: '',
@@ -76,16 +75,6 @@ export default {
       policyFailures: [],
       policies: [],
     };
-  },
-  computed: {
-    passwordField() {
-      return {
-        value: this.value,
-        type: 'password',
-        title: this.$t('common.placeholders.password'),
-        validation: this.validation,
-      };
-    },
   },
   mounted() {
     this.getDsPolicies(this.resourceName).then((res) => {

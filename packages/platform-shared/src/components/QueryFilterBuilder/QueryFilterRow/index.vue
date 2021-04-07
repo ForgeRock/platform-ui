@@ -13,26 +13,37 @@ of the MIT license. See the LICENSE file for details. -->
             md="5"
             class="rule-property-col mb-2 mb-md-0">
             <FrField
-              name="field"
+              v-model="selectPropOptions.value"
+              name="selectPropOptions"
+              type="select"
+              :disabled="disabled"
+              :options="selectPropOptions.options"
               :placeholder="propertyPlaceholder"
-              :field="selectPropOptions"
-              @valueChange="ruleChange({ field: $event })" />
+              @input="ruleChange({ field: $event })" />
           </BCol>
           <BCol
             class="rule-condition-col mb-2 mb-md-0"
             :md="true">
             <FrField
+              v-model="selectConditionOptions.value"
+              name="selectConditionOptions"
+              type="select"
+              :disabled="disabled"
+              :options="selectConditionOptions.options"
               :searchable="false"
-              :field="selectConditionOptions"
-              @valueChange="ruleChange({ operator: $event })" />
+              @input="ruleChange({ operator: $event })" />
           </BCol>
           <BCol
             class="rule-value-col mb-2 mb-md-0"
             v-if="!conditionIsPresent"
             :md="true">
             <FrField
-              :field="inputValue"
-              @valueChange="ruleChange({ value: $event })" />
+              v-model="inputValue.value"
+              name="inputValue"
+              :disabled="disabled"
+              :options="inputValue.options"
+              :type="inputValue.type"
+              @input="ruleChange({ value: $event })" />
           </BCol>
         </BFormRow>
       </div>
@@ -79,9 +90,7 @@ export default {
         : options.shift().value;
       return {
         options,
-        type: 'select',
         value,
-        disabled: this.disabled,
       };
     },
     isMaxDepth() {
@@ -94,9 +103,7 @@ export default {
       return {
         options: this.properties.map((prop) => (
           { text: prop.label, value: prop.value })),
-        type: 'select',
         value: this.rule.field,
-        disabled: this.disabled,
       };
     },
   },
@@ -174,18 +181,18 @@ export default {
       return conditions.length === 0 ? defaultConditions : conditions;
     },
     parseType(fieldValue, value) {
-      if (!fieldValue) return { type: 'string', value: '', disabled: this.disabled };
+      if (!fieldValue) return { type: 'string', value: '' };
 
       const type = getTypeFromValue(fieldValue, this.properties);
       switch (type) {
         case 'boolean':
           return {
-            type: 'select', value: value.toLowerCase() === 'false' || value === false ? 'False' : 'True', options: ['True', 'False'], disabled: this.disabled,
+            type: 'select', value: value.toLowerCase() === 'false' || value === false ? 'False' : 'True', options: ['True', 'False'],
           };
         case 'number':
-          return { type: 'integer', value: typeof value === 'number' ? value : '', disabled: this.disabled };
+          return { type: 'integer', value: typeof value === 'number' ? value : '' };
         default:
-          return { type, value, disabled: this.disabled };
+          return { type, value };
       }
     },
     ruleChange(value) {
