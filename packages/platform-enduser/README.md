@@ -176,9 +176,9 @@ The project only contains `en` based translations and falls back to `en` if an u
 
 Adding and changing an existing message for the `en` base language involves either adding a key or editing an existing key.
 
-Keys follow JSON structure; for example, if you wanted to edit the navigation bar `Profile` to `User Profile` you would need to locate the appropriate key `en.pages.app.profile` and change the text.
+Keys follow JSON structure; for example, if you wanted to edit the navigation bar `Profile` to `User Profile` you would need to locate the appropriate key `en.sideMenu.profile` and change the text.
 
-Inside of your Vue application you would then make use of that key with the built in translation function `{{$t('pages.app.profile')}}` or `this.$t('pages.app.profile')`.
+Inside of your Vue application you would then make use of that key with the built in translation function `{{$t('sideMenu.profile')}}` or `this.$t('sideMenu.profile')`.
 
 
 Adding a new translation language means creating a new translation file inside of locales folder with a key matching the translation language code.

@@ -302,6 +302,27 @@
       "noOperation": "No Operation",
       "newEventText": "\/\/ Script has access to the following variables:\n\/\/ sourceObject\n\/\/ targetObject\n\/\/ existingTargetObject\n\/\/ linkQualifier \nreturn targetObject;\n\/\/ Role assignment scripts must always return targetObject, otherwise\n\/\/ other scripts and code that occur downstream of your script will\n\/\/ not work as expected. "
     },
+    "authenticationDevices": {
+      "title": "2-Step/Push Authentication",
+      "subtitle": "View devices used for 2-step verification or push authentication for your account.",
+      "editName": "Edit Name",
+      "editModalTitle": "Edit Device Name",
+      "editModalInput": "Device name",
+      "editSuccess": "Device name saved",
+      "delete": "Delete device",
+      "deleteModalTitle": "Delete Device?",
+      "deleteModalText": "You will not be able to authenticate using this device and may result in you getting locked out of your account if you rely solely on this device.",
+      "deleteSuccess": "Device deleted",
+      "unableToEditModalTitle": "Unable to Edit Device Name",
+      "unableToEditModalText": "Unable to edit this device name. Please sign in with this device in order to edit it.",
+      "unableToDeleteModalTitle": "Unable to Delete Device",
+      "unableToDeleteModalText": "Unable to delete this device. Please sign in with this device in order to delete it."
+    },
+    "forbidden": {
+      "signOut": "Sign out",
+      "returnToDashboard": "Return to Dashboard",
+      "notAuthorized": "You are not authorized to view this site. Please sign out and try again"
+    },
     "profile": {
       "editPersonalInfo": "Edit Personal Info",
       "updateSuccess": "Updated your profile.",
@@ -408,31 +429,10 @@
         "title": "Personal Data Sharing"
       }
     },
-    "authenticationDevices": {
-      "title": "2-Step/Push Authentication",
-      "subtitle": "View devices used for 2-step verification or push authentication for your account.",
-      "editName": "Edit Name",
-      "editModalTitle": "Edit Device Name",
-      "editModalInput": "Device name",
-      "editSuccess": "Device name saved",
-      "delete": "Delete device",
-      "deleteModalTitle": "Delete Device?",
-      "deleteModalText": "You will not be able to authenticate using this device and may result in you getting locked out of your account if you rely solely on this device.",
-      "deleteSuccess": "Device deleted",
-      "unableToEditModalTitle": "Unable to Edit Device Name",
-      "unableToEditModalText": "Unable to edit this device name. Please sign in with this device in order to edit it.",
-      "unableToDeleteModalTitle": "Unable to Delete Device",
-      "unableToDeleteModalText": "Unable to delete this device. Please sign in with this device in order to delete it."
-    },
     "notFound": {
       "pageNotFound": "Page Not Found",
       "returnRoute": "Return to {returnRoute}",
       "couldNotFind": "We couldn't find the page you were looking for."
-    },
-    "forbidden": {
-      "signOut": "Sign out",
-      "returnToDashboard": "Return to Dashboard",
-      "notAuthorized": "You are not authorized to view this site. Please sign out and try again"
     }
   },
   "queryFilterBuilder": {
@@ -463,10 +463,10 @@
     "jsonNotStructured": "JSON is not structured properly"
   },
   "sideMenu": {
-    "signOut": "Sign out",
-    "toggleSidebar": "Toggle sidebar",
     "dashboard": "Dashboard",
-    "selectIcon": "Please select icon in admin (Managed Object) settings"
+    "selectIcon": "Please select icon in admin (Managed Object) settings",
+    "signOut": "Sign out",
+    "toggleSidebar": "Toggle sidebar"
   },
   "timezone": {
     "helpText": "Time zone offset based on how many hours a location is from GMT.",
