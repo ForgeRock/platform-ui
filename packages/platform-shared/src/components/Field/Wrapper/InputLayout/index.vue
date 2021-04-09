@@ -40,7 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
       v-html="helpText"
       class="form-text text-muted" />
     <small
-      v-if="helpText"
+      v-if="helpText && !isHtml"
       :id="`${id}_helpText`"
       class="form-text text-muted">
       {{ helpText }}

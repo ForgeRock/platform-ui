@@ -726,6 +726,52 @@
       "checkIconAltText": "Success icon"
     }
   },
+  "cors": {
+    "addCorsConfig": "Add a CORS Configuration",
+    "corsSectionTitle": "Cross-Origin Resource Sharing (CORS)",
+    "corsDescription": "Allow requests to ForgeRock-protected resources to be made from trusted domains.",
+    "deleteCorsConfigError": "Unable to delete CORS Configuration",
+    "getCorsConfigsDataError": "Unable to retrieve CORS Configurations",
+    "getServiceStatusError": "Failed to retrieve CORS Service status",
+    "saveServiceStatusError": "Unable to update CORS Service status",
+    "saveCorsConfigError": "Unable to save CORS Configuration",
+    "noCorsConfigText": "You haven't added any CORS Configurations",
+    "successSaving": "Successfully saved CORS Configuration",
+    "successSavingService": "Successfully saved CORS Service status",
+    "corsConfigModal": {
+      "chooseTemplate": "Choose a template for your new CORS Configuration.",
+      "sdk": "ForgeRock SDK",
+      "sdkDescription": "Defaults for the JavaScript sample app",
+      "custom": "Custom",
+      "customDescription": "Start with a blank slate",
+      "editCorsConfig": "Edit CORS Configuration {id}",
+      "newCorsConfig": "New CORS Configuration",
+      "nameDescription": "Human-readable name for this configuration.",
+      "acceptedOrigins": "Accepted Origins",
+      "acceptedOriginsDescription": "Accepted origins that will be allowed to make requests to ForgeRock from your application in a cross-origin context. Wildcards are not supported – each value should be an exact match for the origin of the CORS request including the port number. Eg. <code>https://myapp.example.com:443</code>",
+      "acceptedMethods": "Accepted Methods",
+      "acceptedMethodsDescription": "The set of (non-simple) accepted HTTP methods allowed when making CORS requests to ForgeRock. The method names are case-sensitive, ensure they are entered in all uppercase characters.",
+      "acceptedHeaders": "Accepted Headers (optional)",
+      "acceptedHeadersDescription": "Accepted header names when making requests from the above specified trusted domains. Header names are case-insensitive. By default, the following simple headers are explicitly accepted: <code>Cache-Control</code><code>Content-Language</code><code>Expires</code><code>Last-Modified</code><code>Pragma</code>. If you do not specify values for this element, the presence of any header in the CORS request, other than the simple headers listed above, will cause the request to be rejected.",
+      "saveCorsConfiguration": "Save CORS Configuration",
+      "exposedHeaders": "Exposed Headers (optional)",
+      "exposedHeadersDescription": "Add the response header names that ForgeRock returns. The header names are case-insensitive. User agents can make use of any headers that are listed in this property, as well as the simple response headers, which are as follows: <code>Cache-Control</code><code>Content-Language</code><code>Expires</code><code>Last-Modified</code><code>Pragma</code><code>Content-Type</code>. User agents must filter out all other response headers.",
+      "enableCaching": "Enable Caching",
+      "enableCachingDescription": "Enable the browser to cache the pre-flight response.",
+      "maxAge": "Max Age",
+      "maxAgeDescription": "The max age (in seconds) for caching.",
+      "allowCredentials": "Allow Credentials",
+      "allowCredentialsDescription": "Whether to transmit the Access-Control-Allow-Credentials: true header in the response.",
+      "successCreate": "Successfully created CORS Configuration"
+
+    },
+    "deleteCorsConfigModal": {
+      "modalHeader": "Delete CORS Configuration?",
+      "modalText": "Are you sure you want to delete this CORS Configuration?",
+      "deleteButtonText": "Delete CORS Configuration",
+      "successDeleting": "Successfully deleted CORS Configuration"
+    }
+  },
   "email": {
     "inviteAdmin": {
       "successHeader": "Your invitation(s) has been sent!",
@@ -869,10 +915,7 @@
     "globalSettings": {
       "title": "Global Settings",
       "getDataFail": "Unable to retrieve global settings data",
-      "server": {
-        "title": "Server",
-        "cookieName": "Cookie Name"
-      }
+      "cookie": "Cookie"
     }
   },
   "gatewaysAndAgents": {
