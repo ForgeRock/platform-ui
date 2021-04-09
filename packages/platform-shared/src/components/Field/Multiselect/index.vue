@@ -42,7 +42,7 @@ of the MIT license. See the LICENSE file for details. -->
           {{ $t('common.noResult') }}
         </slot>
         <template #tag="{option, remove}">
-          <span :class="['multiselect__tag', {'multiselect__tag-selected': option.copySelect}]">
+          <span :class="['multiselect__tag', {'multiselect__tag-selected': option.copySelect}, valueClass]">
             <span
               class="multiselect__tag-contents"
               @mousedown="setSelectedForCopy(option)">
@@ -134,6 +134,11 @@ export default {
       required: false,
     },
     placeholder: {
+      type: String,
+      default: '',
+      required: false,
+    },
+    valueClass: {
       type: String,
       default: '',
       required: false,
