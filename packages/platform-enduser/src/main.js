@@ -1,6 +1,5 @@
 /**
- * @license
- * Copyright (c) 2020 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -165,6 +164,10 @@ const startApp = () => {
     idmInstance.get('info/features?_queryFilter=true')]).then(axios.spread((uiConfig, availability) => {
     if (uiConfig.data.configuration.lang) {
       i18n.locale = uiConfig.data.configuration.lang;
+    }
+
+    if (uiConfig.data.configuration && uiConfig.data.configuration.platformSettings) {
+      store.commit('setHostedPagesState', uiConfig.data.configuration.platformSettings.hostedPages === undefined ? true : uiConfig.data.configuration.platformSettings.hostedPages);
     }
 
     each(availability.data.result, (feature) => {
