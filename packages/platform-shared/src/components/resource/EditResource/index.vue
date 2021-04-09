@@ -192,10 +192,9 @@ of the MIT license. See the LICENSE file for details. -->
       :resource-id="id" />
     <FrClearResourceSessions
       :show="showClearSessionsModal"
-      :resource-id="id"
       :resource-name="clearSessionsName"
-      :clear-sessions="clearSessions"
-      :close-modal="closeClearSessionsModal" />
+      @clear-sessions="clearSessionsAndCloseModal"
+      @close-modal="showClearSessionsModal = false" />
   </BContainer>
 </template>
 
@@ -230,7 +229,7 @@ import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
-import { getSessionInfo, clearSessions } from '@forgerock/platform-shared/src/api/SessionsApi';
+import { clearSessions, getSessionInfo } from '@forgerock/platform-shared/src/api/SessionsApi';
 import ClearResourceSessions from '@forgerock/platform-shared/src/components/resource/ClearResourceSessions';
 import FrObjectTypeEditor from './ObjectTypeEditor';
 import FrSettingsTab from './CustomTabs/SettingsTab';
@@ -574,10 +573,24 @@ export default {
       this.jsonString = '';
       this.loadData();
     },
-    clearSessions,
-    closeClearSessionsModal() {
-      this.showClearSessionsModal = false;
-      this.refreshData();
+    /**
+     * Triggers clearing sessions for the resource, shows a notification based on the result,
+     * closes the modal and refreshes resource data
+     */
+    clearSessionsAndCloseModal() {
+      clearSessions(this.id)
+        .then(() => {
+          this.displayNotification('AdminMessage', 'success', this.$t('clearSessionsModal.successClearingSessions'));
+        }, (err) => {
+          this.showErrorMessage(
+            err,
+            this.$t('clearSessionsModal.errorClearingSessions'),
+          );
+        })
+        .finally(() => {
+          this.showClearSessionsModal = false;
+          this.refreshData();
+        });
     },
   },
   computed: {

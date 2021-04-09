@@ -13,15 +13,14 @@ of the MIT license. See the LICENSE file for details. -->
         class="card-tabs-vertical">
         <FrListResource
           v-if="routerParameters"
-          :delete-managed-resource="deleteManagedResource"
-          :delete-internal-resource="deleteInternalResource"
           :router-parameters="routerParameters"
           :table-data="tableData"
           :last-page="lastPage"
           :edit-access="hasUpdateAccess"
           :delete-access="hasDeleteAccess"
           @get-table-data="getTableData"
-          @row-clicked="resourceClicked">
+          @row-clicked="resourceClicked"
+          @delete-resource="deleteResource">
           <template #listToolbar>
             <BButton
               v-if="createProperties"
@@ -189,8 +188,6 @@ export default {
     });
   },
   methods: {
-    deleteManagedResource,
-    deleteInternalResource,
     /**
      * Builds url to call for API to pull table data of current managed resource
      *
@@ -272,6 +269,26 @@ export default {
           resourceId: item._id,
         },
       });
+    },
+    /**
+     * Trigger deletion of a resource
+     *
+     * @param {String} id the id of the resource to delete
+     */
+    deleteResource(id) {
+      const { resourceName, resourceType } = this.routerParameters;
+      const resourceFunction = resourceType === 'managed' ? deleteManagedResource : deleteInternalResource;
+
+      resourceFunction(resourceName, id)
+        .catch((err) => {
+          this.showErrorMessage(
+            err,
+            this.$t('application.errors.errorDeletingResource'),
+          );
+        })
+        .finally(() => {
+          this.getTableData(this.currentTableParams);
+        });
     },
   },
 };
