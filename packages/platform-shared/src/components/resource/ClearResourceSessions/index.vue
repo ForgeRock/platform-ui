@@ -7,7 +7,8 @@ of the MIT license. See the LICENSE file for details. -->
     id="clearSessionsModal"
     ref="clearSessionsModal"
     :title="$t('common.endSessions')"
-    :static="isTesting">
+    :static="isTesting"
+    @hidden="$emit('close-modal')">
     <p>
       {{ $t('clearSessionsModal.modalText', { name: resourceName }) }}
     </p>
@@ -19,11 +20,11 @@ of the MIT license. See the LICENSE file for details. -->
         variant="link"
         class="text-danger"
         data-test-id="cancelButton"
-        @click="closeModal()">
+        @click="$emit('close-modal')">
         {{ $t('common.cancel') }}
       </BButton>
       <BButton
-        @click="clearSessionsAndClose()"
+        @click="$emit('clear-sessions')"
         data-test-id="clearSessionsButton"
         variant="danger">
         {{ $t('common.endSessions') }}
@@ -37,40 +38,14 @@ import {
   BButton,
   BModal,
 } from 'bootstrap-vue';
-import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 
 export default {
   name: 'ClearResourceSessions',
-  mixins: [
-    NotificationMixin,
-  ],
   components: {
     BButton,
     BModal,
   },
   props: {
-    clearSessions: {
-      type: Function,
-      default: () => {
-        const retv = {
-          then: () => {},
-        };
-        return retv;
-      },
-    },
-    closeModal: {
-      type: Function,
-      default: () => {
-        const retv = {
-          then: () => {},
-        };
-        return retv;
-      },
-    },
-    resourceId: {
-      type: String,
-      default: '',
-    },
     resourceName: {
       type: String,
       default: '',
@@ -83,23 +58,6 @@ export default {
     isTesting: {
       type: Boolean,
       default: false,
-    },
-  },
-  methods: {
-    clearSessionsAndClose() {
-      return this.clearSessions(this.resourceId)
-        .then(() => {
-          this.displayNotification('AdminMessage', 'success', this.$t('clearSessionsModal.successClearingSessions'));
-        })
-        .catch((err) => {
-          this.showErrorMessage(
-            err,
-            this.$t('clearSessionsModal.errorClearingSessions'),
-          );
-        })
-        .finally(() => {
-          this.closeModal();
-        });
     },
   },
   watch: {

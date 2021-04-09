@@ -1,14 +1,14 @@
 /**
- * Copyright 2019-2020 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2019-2021 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 /* eslint-disable import/no-extraneous-dependencies */
 import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
+import * as SessionsApi from '@/api/SessionsApi';
 import EditResource from './index';
 
 const localVue = createLocalVue();
@@ -140,5 +140,27 @@ describe('EditResource.vue', () => {
       },
     });
     expect(wrapper.vm.buildResourceUrl()).toEqual('test/test/test?_fields=*,manager/*');
+  });
+
+  describe('clearing sessions', () => {
+    it('calls the API clearSessions method and displays a notification when clearing sessions is successful', async () => {
+      const displayNotificationSpy = jest.spyOn(wrapper.vm, 'displayNotification');
+      const clearSpy = jest.spyOn(SessionsApi, 'clearSessions').mockImplementation(() => Promise.resolve());
+
+      await wrapper.vm.clearSessionsAndCloseModal();
+
+      expect(clearSpy).toHaveBeenCalled();
+      expect(displayNotificationSpy).toHaveBeenCalled();
+    });
+
+    it('calls the API clearSessions method and displays an error notification when clearing sessions is not successful', async () => {
+      const showErrorSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
+      const clearSpy = jest.spyOn(SessionsApi, 'clearSessions').mockImplementation(() => Promise.reject());
+
+      await wrapper.vm.clearSessionsAndCloseModal();
+
+      expect(clearSpy).toHaveBeenCalled();
+      expect(showErrorSpy).toHaveBeenCalled();
+    });
   });
 });

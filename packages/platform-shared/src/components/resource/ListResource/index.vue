@@ -96,23 +96,18 @@ of the MIT license. See the LICENSE file for details. -->
 
     <slot name="deleteResourceModal">
       <FrDeleteResource
-        modal-id="deleteResource"
-        @resource-deleted="loadData('true', displayFields, defaultSort, currentPage)"
-        @cancel-resource-deletion="clearSelection()"
-        :resource-name="resourceName"
-        :resource-type="resourceType"
         :resource-to-delete-id="resourceToDeleteId"
-        :delete-managed-resource="deleteManagedResource"
-        :delete-internal-resource="deleteInternalResource" />
+        :resource-display-name="resourceName"
+        @delete-resource="deleteResource"
+        @cancel-resource-deletion="cancelDelete" />
     </slot>
 
     <slot name="clearSessionsModal">
       <FrClearResourceSessions
         :show="showClearSessionsModal"
-        :resource-id="resourceToClearSessionsForId"
         :resource-name="resourceToClearSessionsForName"
-        :clear-sessions="clearSessions"
-        :close-modal="closeClearSessionsModal" />
+        @clear-sessions="clearSessionsAndCloseModal"
+        @close-modal="closeClearSessionsModal" />
     </slot>
   </div>
 </template>
@@ -164,33 +159,6 @@ export default {
     'b-modal': VBModal,
   },
   props: {
-    deleteManagedResource: {
-      type: Function,
-      default: () => {
-        const retv = {
-          then: () => {},
-        };
-        return retv;
-      },
-    },
-    deleteInternalResource: {
-      type: Function,
-      default: () => {
-        const retv = {
-          then: () => {},
-        };
-        return retv;
-      },
-    },
-    clearSessions: {
-      type: Function,
-      default: () => {
-        const retv = {
-          then: () => {},
-        };
-        return retv;
-      },
-    },
     deleteAccess: {
       type: Boolean,
       default: true,
@@ -223,7 +191,6 @@ export default {
   data() {
     return {
       resourceName: this.routerParameters.resourceName,
-      resourceType: this.routerParameters.resourceType,
       isRowSelected: false,
       tableHover: true,
       columns: [],
@@ -354,11 +321,15 @@ export default {
       this.currentPage = page;
       this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.calculateSort(this.sortDesc, this.sortBy), page);
     },
-    clearSelection() {
+    cancelDelete() {
       this.resourceToDeleteId = '';
     },
     confirmDeleteResource(id) {
       this.resourceToDeleteId = id;
+    },
+    deleteResource() {
+      this.$emit('delete-resource', this.resourceToDeleteId);
+      this.resourceToDeleteId = '';
     },
     /**
      * Repulls data based on input search box text
@@ -398,13 +369,21 @@ export default {
       this.showClearSessionsModal = true;
     },
     /**
-     * Hides the clear sessions modal and refreshes the table data
+     * Hides the clear sessions modal
      */
     closeClearSessionsModal() {
       this.resourceToClearSessionsForId = '';
       this.resourceToClearSessionsForName = '';
       this.showClearSessionsModal = false;
-      this.loadData('true', this.displayFields, this.defaultSort, this.currentPage);
+    },
+    /**
+     * Triggers clearing sessions for the selected resource,
+     * closes the modal and refreshes the table data
+     */
+    clearSessionsAndCloseModal() {
+      this.$emit('clear-resource-sessions', this.resourceToClearSessionsForId);
+      this.closeClearSessionsModal();
+      this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.defaultSort, this.currentPage);
     },
   },
 };

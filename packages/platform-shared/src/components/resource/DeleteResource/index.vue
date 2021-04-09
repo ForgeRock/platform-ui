@@ -1,33 +1,33 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BModal
-    :id="modalId"
+    id="deleteResource"
     ref="resourceDeleteModal"
-    :static="isTesting">
+    :static="isTesting"
+    @hidden="$emit('cancel-resource-deletion')">
     <template #modal-title>
       <h5
         class="fr-modal-title mb-0">
-        {{ $t(`pages.identities.deleteResource.title`, { resource: resourceTitle }) }}
+        {{ $t(`pages.identities.deleteResource.title`, { resource: resourceNameForModalTitle }) }}
       </h5>
     </template>
-    <p>{{ $t(`pages.identities.deleteResource.body`, { resource: nameDisplayed }) }}</p>
-    <template v-slot:modal-footer="{ cancel }">
+    <p>{{ $t(`pages.identities.deleteResource.body`, { resource: resourceDisplayName }) }}</p>
+    <template v-slot:modal-footer>
       <BButton
         variant="link"
         class="text-danger"
         data-test-id="cancelButton"
-        @click="cancel()">
+        @click="$emit('cancel-resource-deletion')">
         {{ $t('common.cancel') }}
       </BButton>
       <BButton
-        @click="deleteResource()"
+        @click="$emit('delete-resource')"
         data-test-id="deleteButton"
         variant="danger">
-        {{ $t(`pages.identities.deleteResource.primaryButton`, { resource: nameDisplayed }) }}
+        {{ $t(`pages.identities.deleteResource.primaryButton`, { resource: resourceDisplayName }) }}
       </BButton>
     </template>
   </BModal>
@@ -35,64 +35,30 @@ to such license between the licensee and ForgeRock AS. -->
 
 <script>
 import {
+  capitalize,
+} from 'lodash';
+import {
   BButton,
   BModal,
 } from 'bootstrap-vue';
-import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 
 export default {
   name: 'DeleteResource',
-  mixins: [
-    NotificationMixin,
-  ],
   components: {
     BButton,
     BModal,
   },
   computed: {
-    resourceTitle() {
-      return this.nameDisplayed.charAt(0).toUpperCase() + this.nameDisplayed.slice(1);
-    },
-    nameDisplayed() {
-      return this.displayName || this.resourceName;
+    resourceNameForModalTitle() {
+      return capitalize(this.resourceDisplayName);
     },
   },
   props: {
-    modalId: {
-      type: String,
-      default: 'deleteResource',
-    },
-    deleteManagedResource: {
-      type: Function,
-      default: () => {
-        const retv = {
-          then: () => {},
-        };
-        return retv;
-      },
-    },
-    deleteInternalResource: {
-      type: Function,
-      default: () => {
-        const retv = {
-          then: () => {},
-        };
-        return retv;
-      },
-    },
-    displayName: {
-      type: String,
-      default: '',
-    },
     resourceToDeleteId: {
       type: String,
       default: '',
     },
-    resourceName: {
-      type: String,
-      default: '',
-    },
-    resourceType: {
+    resourceDisplayName: {
       type: String,
       default: '',
     },
@@ -102,49 +68,13 @@ export default {
       default: false,
     },
   },
-  methods: {
-    deleteResource() {
-      let resourceFunction;
-      // TODO: unify the below endpoints for "managed" and "internal"
-      if (this.resourceType === 'managed') {
-        resourceFunction = this.deleteManagedResource(this.resourceName, this.resourceToDeleteId);
-      } else {
-        resourceFunction = this.deleteInternalResource(this.resourceName, this.resourceToDeleteId);
-      }
-      resourceFunction
-        .then(() => {
-          this.$refs.resourceDeleteModal.hide();
-          this.$emit('resource-deleted');
-        })
-        .catch((err) => {
-          this.showErrorMessage(
-            err,
-            this.$t('application.errors.errorDeletingResource'),
-          );
-        });
-    },
-  },
-  mounted() {
-    /**
-     * Trigger cancel event for parent.
-     */
-    this.$root.$on('bv::modal::hide', (bvEvent) => {
-      /**
-       * `bvEvent.trigger` for programmatic modal hiding is `null`.
-       * Programmatic `hide` is only used when a resource is successfully deleted,
-       * and this (below) is only used when the delete action is *cancelled*.
-       */
-      if (bvEvent.trigger) {
-        this.$emit('cancel-resource-deletion');
-      }
-    });
-  },
   watch: {
     resourceToDeleteId(value) {
-      /**
-       * Don't open if "clearing" value
-       */
-      if (value) { this.$refs.resourceDeleteModal.show(); }
+      if (value) {
+        this.$refs.resourceDeleteModal.show();
+      } else {
+        this.$refs.resourceDeleteModal.hide();
+      }
     },
   },
 };

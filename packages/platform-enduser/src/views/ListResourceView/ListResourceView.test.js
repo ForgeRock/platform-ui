@@ -1,6 +1,5 @@
 /**
- * @license
- * Copyright (c) 2020 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -9,6 +8,8 @@
 import BootstrapVue from 'bootstrap-vue';
 import flushPromises from 'flush-promises';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
+import * as InternalResourceApi from '@forgerock/platform-shared/src/api/InternalResourceApi';
+import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import i18n from '@/i18n';
 import ListResource from './index';
 
@@ -74,5 +75,25 @@ describe('ListResource.vue', () => {
     await flush();
 
     expect(wrapper.vm.tableData).toStrictEqual([]);
+  });
+
+  describe('Deleting resources', () => {
+    it('calls deleteInternalResource when the delete button is clicked and the resourceType is "internal"', async () => {
+      await wrapper.setData({ routerParameters: { resourceName: 'bob', resourceType: 'internal' } });
+      const deleteInternalResourceSpy = jest.spyOn(InternalResourceApi, 'deleteInternalResource').mockImplementation(() => Promise.resolve());
+
+      await wrapper.vm.deleteResource('blah');
+
+      expect(deleteInternalResourceSpy).toHaveBeenCalled();
+    });
+
+    it('calls deleteManagedResource when the delete button is clicked and the resourceType is "managed"', async () => {
+      await wrapper.setData({ routerParameters: { resourceName: 'bob', resourceType: 'managed' } });
+      const deleteManagedResourceSpy = jest.spyOn(ManagedResourceApi, 'deleteManagedResource').mockImplementation(() => Promise.resolve());
+
+      await wrapper.vm.deleteResource('blah');
+
+      expect(deleteManagedResourceSpy).toHaveBeenCalled();
+    });
   });
 });
