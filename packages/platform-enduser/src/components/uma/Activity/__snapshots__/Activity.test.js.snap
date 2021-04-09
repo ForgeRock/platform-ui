@@ -3,11 +3,11 @@
 exports[`Uma Activity Component activityGroups Activity page loaded 1`] = `
 <div>
   <frlistgroup-stub title="" subtitle="">
-    <frlistitem-stub></frlistitem-stub>
+    <frlistitem-stub clickable="true"></frlistitem-stub>
   </frlistgroup-stub>
   <frlistgroup-stub title="" subtitle="">
-    <frlistitem-stub></frlistitem-stub>
-    <frlistitem-stub></frlistitem-stub>
+    <frlistitem-stub clickable="true"></frlistitem-stub>
+    <frlistitem-stub clickable="true"></frlistitem-stub>
   </frlistgroup-stub>
 </div>
 `;

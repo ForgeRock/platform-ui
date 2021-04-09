@@ -1,6 +1,5 @@
 /**
- * @license
- * Copyright (c) 2020 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -84,6 +83,12 @@ const router = new Router({
       },
     },
     {
+      path: '/forbidden',
+      name: 'Forbidden',
+      component: () => import(/* webpackChunkName: "forbidden" */ '@/components/forbidden'),
+      meta: { hideNav: true, hideToolbar: true },
+    },
+    {
       path: '*',
       component: () => import('@forgerock/platform-shared/src/views/NotFound'),
       meta: { hideToolbar: true },
@@ -95,11 +100,15 @@ router.beforeEach((to, from, next) => {
   const url = new URL(window.location);
   const realm = url.searchParams.get('realm');
 
-  if (realm !== store.state.realm) {
+  if (store.state.hostedPages === false && to.name !== 'Forbidden') {
+    next({ name: 'Forbidden' });
+  } else if (realm !== store.state.realm) {
     url.searchParams.set('realm', store.state.realm);
     window.location = encodeURI(url);
+    next();
+  } else {
+    next();
   }
-  next();
 });
 
 export default router;

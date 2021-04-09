@@ -1,7 +1,8 @@
 {
   "common": {
-    "activate": "Activate",
     "active": "Active",
+    "activate": "Activate",
+    "activated": "Activated",
     "add": "Add",
     "addObject": "Add {object}",
     "admin": "Admin",
