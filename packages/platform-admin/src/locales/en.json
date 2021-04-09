@@ -63,6 +63,10 @@
       "errorSwitchingRealm": "There was an error switching realm"
     }
   },
+  "hostedPages": {
+    "hostedPagesTitle": "Hosted Pages",
+    "hostedPagesSubtitle": "Activate or deactivate hosted account and delegated administration pages."
+  },
   "journey": {
     "title": "Journeys",
     "journeyName": "Journey Name",
