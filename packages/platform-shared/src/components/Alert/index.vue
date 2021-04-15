@@ -4,7 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BAlert
-    class="fr-alert ml-3"
+    class="fr-alert"
     v-bind="$props">
     <template v-slot:dismiss>
       <i class="fr-alert-dismiss material-icons">
