@@ -65,7 +65,9 @@
   },
   "hostedPages": {
     "hostedPagesTitle": "Hosted Pages",
-    "hostedPagesSubtitle": "Activate or deactivate hosted account and delegated administration pages."
+    "hostedPagesSubtitle": "Activate or deactivate hosted account and delegated administration pages.",
+    "configurationLoadingFail": "Configuration Not Found",
+    "configurationSaveFail": "Failed to Save Configuration"
   },
   "journey": {
     "title": "Journeys",
