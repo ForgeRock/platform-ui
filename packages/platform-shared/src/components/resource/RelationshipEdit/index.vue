@@ -210,10 +210,15 @@ export default {
   watch: {
     temporalConstraint(newVal) {
       if (this.relationshipField.value && this.relationshipField.value.length) {
+        const relationships = [];
+
         this.relationshipField.value.forEach((selection) => {
           const refProperties = { temporalConstraints: [{ duration: newVal }] };
-          this.$emit('setValue', { property: this.relationshipProperty.key, value: { _ref: selection.value, _refProperties: refProperties } });
+
+          relationships.push({ _ref: selection, _refProperties: refProperties });
         });
+
+        this.$emit('setValue', relationships);
       }
     },
     /**
