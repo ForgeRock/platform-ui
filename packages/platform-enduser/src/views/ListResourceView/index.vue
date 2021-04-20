@@ -18,6 +18,11 @@ of the MIT license. See the LICENSE file for details. -->
           :last-page="lastPage"
           :edit-access="hasUpdateAccess"
           :delete-access="hasDeleteAccess"
+          :is-loading="showWheel"
+          :no-data="noData"
+          :query-threshold="datasetFilter"
+          :show-divider="createProperties !== null"
+          @clear-table="noData = true"
           @get-table-data="getTableData"
           @row-clicked="resourceClicked"
           @delete-resource="deleteResource">
@@ -102,6 +107,9 @@ export default {
       hasUpdateAccess: false,
       hasDeleteAccess: false,
       createProperties: null,
+      datasetFilter: null,
+      noData: false,
+      showWheel: false,
     };
   },
   mounted() {
@@ -109,10 +117,16 @@ export default {
 
     axios.all([
       getSchema(`${this.$route.params.resourceType}/${this.$route.params.resourceName}`),
-      idmInstance.get(`privilege/${this.$route.params.resourceType}/${this.$route.params.resourceName}`)]).then(axios.spread((schema, privilege) => {
+      idmInstance.get(`privilege/${this.$route.params.resourceType}/${this.$route.params.resourceName}`),
+    ]).then(axios.spread((schema, privilege) => {
       if (has(schema, 'data.title')) {
         this.displayName = schema.data.title;
       }
+
+      if (has(schema, 'data.minimumUIFilterLength')) {
+        this.datasetFilter = schema.data.minimumUIFilterLength;
+      }
+
       const properties = {};
       if (privilege.data.VIEW.allowed) {
         // Generate columns for display and filtering for read/query
@@ -242,6 +256,8 @@ export default {
         page,
       } = tableParams;
       let resourceFunction;
+
+      this.showWheel = true;
       this.currentTableParams = tableParams;
       if (this.routerParameters.resourceType === 'managed') {
         resourceFunction = getManagedResourceList(this.routerParameters.resourceName, this.buildUrlParams(filter, fields, sortField, page));
@@ -249,13 +265,19 @@ export default {
         resourceFunction = getInternalResourceList(this.routerParameters.resourceName, this.buildUrlParams(filter, fields, sortField, page));
       }
       resourceFunction.then((resourceData) => {
+        // set noData prop for ListResource
+        this.noData = resourceData.data.result.length === 0;
+
         if (resourceData.data.pagedResultsCookie) {
           this.lastPage = false;
         } else {
           this.lastPage = true;
         }
+
+        this.showWheel = false;
         this.tableData = resourceData.data.result;
       }, (error) => {
+        this.showWheel = false;
         this.showErrorMessage(error, this.$t('authentication.errorRetrievingTableData'));
       });
     },
