@@ -33,7 +33,7 @@ describe('ListResource Component', () => {
       },
       mocks: {
         $route,
-        $t: () => {},
+        $t: (translation) => translation,
         generateIDMAPI: () => {
           const retv = {
             data: {
@@ -115,8 +115,6 @@ describe('ListResource Component', () => {
 
   it('ListResource page loaded', () => {
     expect(wrapper.name()).toBe('ListResource');
-    // Disabled because serialisation of function props changes with code coverage instrumentation
-    // expect(wrapper).toMatchSnapshot();
   });
 
   it('ListResource sort column', () => {
@@ -155,5 +153,23 @@ describe('ListResource Component', () => {
 
     expect(wrapper.vm.sortBy).toBeNull();
     expect(wrapper.vm.currentPage).toBe(0);
+  });
+
+  it('Sets help text from search field length', () => {
+    wrapper.vm.queryThreshold = 0;
+    wrapper.vm.filter = '';
+    wrapper.vm.setHelpTextFromSearchLength();
+
+    expect(wrapper.vm.hasFocus).toBe(true);
+    expect(wrapper.vm.searchHelpText).toBe('');
+
+    wrapper.vm.queryThreshold = 3;
+    wrapper.vm.setHelpTextFromSearchLength();
+
+    expect(wrapper.vm.searchHelpText).toBe('listResource.searchInProgressText');
+
+    wrapper.vm.filter = '1234';
+    wrapper.vm.setHelpTextFromSearchLength();
+    expect(wrapper.vm.searchHelpText).toBe('listResource.searchActiveText');
   });
 });
