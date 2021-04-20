@@ -11,6 +11,7 @@
     "avatar": "Avatar",
     "back": "Back",
     "blocked": "Blocked",
+    "browse": "Browse",
     "buildNumber": "Build {buildNumber} ({buildDateTime})",
     "cancel": "Cancel",
     "cannotBeUndone": "Warning this cannot be undone!",
@@ -492,5 +493,12 @@
     "consequencesText": "This action will end all application sessions and log the user out.",
     "errorClearingSessions": "There was an error ending sessions",
     "successClearingSessions": "Sessions ended"
+  },
+  "listResource": {
+    "noManaged":  "No %{capitalizedResourceName} Found",
+    "searchHelp": "Use the search box above to find a %{resourceName}.",
+    "searchInProgressText": "Type at least %{queryThreshold} characters",
+    "searchActiveText": "Press Enter",
+    "noResultsHelp": "Try a new search in the seach box above."
   }
 }
