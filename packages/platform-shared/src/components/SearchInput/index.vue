@@ -25,20 +25,26 @@ of the MIT license. See the LICENSE file for details. -->
       Emitted when pressing enter key to search
       @event search
      -->
-    <BFormInput
-      ref="searchInput"
-      :placeholder="placeholder"
-      :aria-label="placeholder"
-      @keydown.native.enter="$emit('search')"
-      v-model="value"
-      class="fr-icon-input mx-0"
-      type="search" />
+    <BInputGroup>
+      <BFormInput
+        ref="searchInput"
+        :placeholder="placeholder"
+        :aria-label="placeholder"
+        @focus="$emit('search-input-focus')"
+        @blur="$emit('search-input-blur')"
+        @keydown.native.enter="$emit('search')"
+        v-model="value"
+        class="fr-icon-input mx-0"
+        type="search" />
+      <slot name="append" />
+    </BInputGroup>
   </div>
 </template>
 
 <script>
 import {
   BFormInput,
+  BInputGroup,
 } from 'bootstrap-vue';
 
 /**
@@ -48,6 +54,7 @@ export default {
   name: 'SearchInput',
   components: {
     BFormInput,
+    BInputGroup,
   },
   props: {
     /**
@@ -75,6 +82,7 @@ export default {
   data() {
     return {
       value: '',
+      searchHasFocus: false,
     };
   },
   methods: {
@@ -106,6 +114,7 @@ export default {
   .fr-icon-input {
     padding-left: 3.75rem;
     padding-right: 3.75rem;
+    border: none;
 
     &::-webkit-search-cancel-button {
       display: none;
@@ -132,5 +141,23 @@ export default {
       }
     }
   }
+
+  .input-group {
+    border: 1px solid $gray-400;
+    border-radius: 5px;
+  }
+
+  .form-control:focus {
+    border-color: transparent;
+    box-shadow: none;
+    outline: none;
+  }
+
+  .fr-icon-input:only-child:focus {
+    box-shadow: 0 0 0 1pt $blue;
+    outline: 0;
+    border-radius: 5px;
+  }
 }
+
 </style>
