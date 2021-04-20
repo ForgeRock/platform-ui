@@ -473,6 +473,9 @@
     "json": "JSON",
     "jsonNotStructured": "JSON is not structured properly"
   },
+  "centerCard": {
+    "logoAltText": "ForgeRock logo"
+  },
   "sideMenu": {
     "dashboard": "Dashboard",
     "selectIcon": "Please select icon in admin (Managed Object) settings",

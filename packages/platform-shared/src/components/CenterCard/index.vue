@@ -1,10 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <!-- AVAILABLE SLOTS: center-card-header, center-card-body, center-card-footer -->
 <template>
   <BContainer
@@ -20,10 +17,12 @@ of the MIT license. See the LICENSE file for details.
           <div class="d-flex flex-fill flex-column justify-content-center">
             <div
               v-if="logoPath.length === 0"
-              class="fr-logo fr-logo-vertical mb-3 mt-2" />
+              class="fr-logo fr-logo-vertical mb-3 mt-2"
+              :alt="$t('centerCard.logoAltText')" />
             <img
               v-else
               class="fr-logo mb-3 mt-2"
+              :alt="logoAltText"
               :src="logoPath">
             <slot name="center-card-header" />
           </div>
@@ -60,6 +59,10 @@ export default {
       default: false,
     },
     logoPath: {
+      type: String,
+      default: '',
+    },
+    logoAltText: {
       type: String,
       default: '',
     },

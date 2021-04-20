@@ -29,6 +29,7 @@ of the MIT license. See the LICENSE file for details. -->
 
     <ValidationObserver ref="observer">
       <BFormSelect
+        :aria-label="callback.getPrompt()"
         v-model="selected"
         class="mb-2 kbaQuestionSelect"
         role="listbox"

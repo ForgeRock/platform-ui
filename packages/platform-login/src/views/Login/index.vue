@@ -5,7 +5,8 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <FrCenterCard
     :hide-footer="true"
-    :logo-path="logo"
+    :logo-path="logoPath"
+    :logo-alt-text="logoAltText"
     :show-logo="true">
     <template #center-card-header>
       <div v-if="!loading">
@@ -160,7 +161,11 @@ export default {
     FrWebAuthnComponent: () => import('@/components/display/WebAuthn'),
   },
   props: {
-    logo: {
+    logoPath: {
+      type: String,
+      default: '',
+    },
+    logoAltText: {
       type: String,
       default: '',
     },
