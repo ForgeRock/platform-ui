@@ -92,6 +92,14 @@ describe('Enduser Theming', () => {
       .should('have.value', '')
       .type('https://www.logosurfer.com/wp-content/uploads/2018/03/quicken-loans-logo_0.png')
       .should('have.value', 'https://www.logosurfer.com/wp-content/uploads/2018/03/quicken-loans-logo_0.png');
+    cy.get('[placeholder="Profile Page Logo Alt Text"]')
+      .scrollIntoView()
+      .click()
+      .focused()
+      .clear()
+      .should('have.value', '')
+      .type('Profile Page Logo')
+      .should('have.value', 'Profile Page Logo');
     cy.get('button.btn-primary:visible').contains('Save').click();
     cy.logout();
     cy.login(enduserUserName);

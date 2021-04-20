@@ -14,7 +14,8 @@ of the MIT license. See the LICENSE file for details. -->
         name="fade"
         mode="out-in">
         <RouterView
-          :logo="logo"
+          :logo-path="logo"
+          :logo-alt-text="logoAltText"
           @set-theme="setTheme"
           :key="$route.fullPath" />
       </Transition>
@@ -57,6 +58,7 @@ export default {
   data() {
     return {
       logo: '',
+      logoAltText: '',
       theme: null,
     };
   },
