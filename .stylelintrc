@@ -30,6 +30,7 @@
       "translate",
       "translateX",
       "translateY",
+      "translate3d",
       "calc",
       "darken",
       "lighten",
@@ -45,7 +46,8 @@
       "repeat",
       "minmax",
       "linear-gradient",
-      "change-color"
+      "change-color",
+      "cubic-bezier",
     ],
     "media-feature-name-no-vendor-prefix": true,
     "no-descending-specificity": null,
@@ -91,7 +93,8 @@
       "export",
       "checked",
       "indeterminate",
-      "disabled"
+      "disabled",
+      "only-child"
     ],
     "selector-pseudo-class-no-unknown": [
       true,
@@ -111,7 +114,8 @@
       "rem",
       "s",
       "deg",
-      "fr"
+      "fr",
+      "pt"
     ],
     "value-no-vendor-prefix": true
   }
