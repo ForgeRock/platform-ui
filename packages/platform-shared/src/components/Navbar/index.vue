@@ -282,7 +282,7 @@ export default {
 
   .fr-dropdown-header {
     h6 {
-      color: #77869e;
+      color: $gray-500;
       letter-spacing: 1px;
       text-transform: uppercase;
     }

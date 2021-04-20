@@ -642,7 +642,9 @@
   },
   "realmTheme": {
     "logo": "Logo Mark",
+    "logoAltText": "Logo Mark Alt Text",
     "logoProfile": "Profile Page Logo (optional)",
+    "logoProfileAltText": "Profile Page Logo Alt Text",
     "themeDetails": "Customize the default look and feel to use for sign-in, registration and profile pages.",
     "successfullyUpdatedRealmTheme": "'{realmName}' realm theme successfully updated",
     "failedToUpdatedRealmTheme": "'{realmName}' realm theme failed to updated",
