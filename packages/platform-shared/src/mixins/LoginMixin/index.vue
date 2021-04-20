@@ -137,6 +137,7 @@ export function setTheme(realm) {
     if (results.data.realm[cleanRealm]) {
       this.theme = results.data.realm[cleanRealm];
       this.logo = results.data.realm[cleanRealm].logo;
+      this.logoAltText = results.data.realm[cleanRealm].logoAltText;
     } else {
       this.theme = null;
       this.logo = `${process.env.BASE_URL}images/vertical-logo.svg`;
