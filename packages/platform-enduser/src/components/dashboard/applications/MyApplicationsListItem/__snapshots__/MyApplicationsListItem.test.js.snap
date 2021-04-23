@@ -1,7 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`Dashboard.vue My Applications List Item widget loaded 1`] = `
-<li data-test-id="my-applications-item" class="my-applications-list-item" dashboarddisplayname="Google" dashboardlogin="https://www.google.com" dashboardicon="google.png" brandlogoalttext="Google logo">
-  <listitem-stub clickable="true"></listitem-stub>
-</li>
-`;
