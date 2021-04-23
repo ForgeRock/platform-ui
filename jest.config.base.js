@@ -28,9 +28,6 @@ module.exports = {
     '^@/(.*)$': '<rootDir>/src/$1',
     '\\.(css)$': '<rootDir>/../../node_modules/jest-css-modules',
   },
-  snapshotSerializers: [
-    'jest-serializer-vue',
-  ],
   testMatch: [
     '**/*.test.js',
   ],

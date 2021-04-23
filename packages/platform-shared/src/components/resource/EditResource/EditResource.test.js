@@ -57,7 +57,6 @@ describe('EditResource.vue', () => {
 
   it('EditResource page loaded', () => {
     expect(wrapper.name()).toBe('EditResource');
-    expect(wrapper).toMatchSnapshot();
   });
 
   it('Format display data', () => {
