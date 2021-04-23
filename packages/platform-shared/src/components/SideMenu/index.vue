@@ -163,7 +163,7 @@ of the MIT license. See the LICENSE file for details. -->
                           class="d-flex align-items-center"
                           v-if="subItem.routeName"
                           :class="{'hidden': subItem.showForRoles && !userHasRole(subItem.showForRoles)}"
-                          :to="{ name: subItem.routeName, params: { resourceType: item.resourceType, resourceName: item.resourceName} }">
+                          :to="{ name: subItem.routeName, params: subItem.params }">
                           <span class="sidebar-item-text">
                             {{ subItem.displayName }}
                           </span>
