@@ -1,3 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`Profile Consent Component Consent.vue Consent page loaded 1`] = `<frlistgroup-stub title="Personal Data Sharing" subtitle="Control how your data is shared with third parties." style="display: none;"></frlistgroup-stub>`;

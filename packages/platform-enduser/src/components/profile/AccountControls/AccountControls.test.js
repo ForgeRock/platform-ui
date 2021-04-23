@@ -14,14 +14,12 @@ const localVue = createLocalVue();
 localVue.use(BootstrapVue);
 
 describe('Preferences.vue', () => {
-  // Disabled due to https://github.com/eddyerburgh/jest-serializer-vue/issues/37
-  it.skip('Account Controls page loaded', () => {
+  it('Account Controls page loaded', () => {
     const wrapper = shallowMount(AccountControls, {
       localVue,
       i18n,
     });
 
     expect(wrapper.name()).toBe('AccountControls');
-    expect(wrapper).toMatchSnapshot();
   });
 });
