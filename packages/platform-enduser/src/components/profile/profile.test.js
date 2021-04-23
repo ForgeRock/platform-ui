@@ -64,6 +64,5 @@ describe('Profile.vue', () => {
 
   it('Profile page loaded', () => {
     expect(wrapper.name()).toBe('Profile');
-    expect(wrapper).toMatchSnapshot();
   });
 });
