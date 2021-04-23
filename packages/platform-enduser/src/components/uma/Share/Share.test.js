@@ -1,6 +1,5 @@
 /**
- * @license
- * Copyright (c) 2020 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -54,7 +53,6 @@ describe('Sharing.vue', () => {
 
   it('Resources page loaded', () => {
     expect(wrapper.name()).toBe('Share');
-    expect(wrapper).toMatchSnapshot();
   });
 
   it('Emits "modifyResource" event', () => {

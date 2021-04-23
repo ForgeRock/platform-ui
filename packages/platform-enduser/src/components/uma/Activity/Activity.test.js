@@ -1,10 +1,10 @@
 /**
- * @license
- * Copyright (c) 2020 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
+
 import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
 import i18n from '@/i18n';
@@ -41,7 +41,6 @@ describe('Uma Activity Component', () => {
   describe('activityGroups', () => {
     it('Activity page loaded', () => {
       expect(wrapper.name()).toBe('UmaActivity');
-      expect(wrapper).toMatchSnapshot();
     });
 
     it('should be sorted into day groups with events in reverse chrono order', () => {

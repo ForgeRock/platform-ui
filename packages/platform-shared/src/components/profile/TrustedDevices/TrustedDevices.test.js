@@ -172,7 +172,6 @@ describe('TrustedDevices.vue', () => {
 
   it('Trusted Devices loads', () => {
     expect(wrapper.name()).toBe('TrustedDevices');
-    expect(wrapper).toMatchSnapshot();
   });
 
   it('ParseDevice method returns an object with device data', () => {

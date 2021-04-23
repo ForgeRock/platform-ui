@@ -1,7 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`utils/FallbackImage.vue FallbackImage component loaded 1`] = `
-<div>
-  <bimg-stub src="" width="" height="" alt=""></bimg-stub>
-</div>
-`;

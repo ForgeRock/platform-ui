@@ -1,3 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`EditPersonalInfo.vue EditPersonalInfo modal loaded 1`] = `<validationobserver-stub tag="span" vid="obs_0"></validationobserver-stub>`;

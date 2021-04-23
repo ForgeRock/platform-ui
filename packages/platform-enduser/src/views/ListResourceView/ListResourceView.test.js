@@ -50,7 +50,6 @@ describe('ListResource.vue', () => {
 
   it('ListResourceView page loaded', () => {
     expect(wrapper.name()).toBe('ListResourceView');
-    expect(wrapper).toMatchSnapshot();
   });
 
   it('Builds URL Parameters', () => {
