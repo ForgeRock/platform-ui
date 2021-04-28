@@ -19,10 +19,12 @@ of the MIT license. See the LICENSE file for details. -->
         @input="setHelpTextFromSearchLength"
         @search-input-focus="setHelpTextFromSearchLength"
         @search-input-blur="removeHelpText"
+        class="w-50"
         :class="{'fr-managed-search-focus': hasFocus, 'flex-grow-1': showDivider}">
         <template #append>
           <BInputGroupText>
             <small
+              role="searchbox"
               class="d-none d-md-block text-muted"
               :class="{'pr-3': filter.length > 0, 'mr-3': filter.length > 0}">
               <div :class="{'text-danger': submitBeforeLengthValid, shake: submitBeforeLengthValid}">
@@ -40,14 +42,13 @@ of the MIT license. See the LICENSE file for details. -->
       </div>
     </div>
     <div
-      v-else-if="queryThreshold > 0 && noData"
+      v-else-if="queryThreshold > 0 && !noData && !tableData.length"
       class="col-lg-8 offset-lg-2">
       <div class="text-center mt-2 mb-5 py-5">
-        <i
+        <FrIcon
           class="fr-no-data-icon material-icons material-icons-outlined md-48 text-secondary opacity-20 mt-4 mb-2"
-          aria-hidden="true">
-          {{ managedIcon }}
-        </i>
+          :name="managedIcon"
+          aria-hidden="true" />
         <h5>{{ $t('common.browse') }} {{ capitalizedResourceName }}</h5>
         <p class="mb-4">
           {{ $t('listResource.searchHelp', { resourceName }) }}
@@ -59,11 +60,10 @@ of the MIT license. See the LICENSE file for details. -->
       class="col-lg-8 offset-lg-2">
       <div
         class="text-center mt-2 mb-5 py-5">
-        <i
+        <FrIcon
           class="fr-no-data-icon material-icons material-icons-outlined md-48 text-secondary opacity-20 mt-4 mb-2"
-          aria-hidden="true">
-          {{ managedIcon }}
-        </i>
+          :name="managedIcon"
+          aria-hidden="true" />
         <h5>{{ $t('listResource.noManaged', { capitalizedResourceName }) }}</h5>
         <p class="mb-4">
           {{ $t('listResource.noResultsHelp') }}
@@ -72,7 +72,7 @@ of the MIT license. See the LICENSE file for details. -->
       </div>
     </div>
     <BTable
-      v-show="tableData.length && !isLoading && !noData"
+      v-show="tableData.length && !isLoading"
       class="mb-0"
       show-empty
       :fields="columns"
@@ -148,7 +148,7 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
     </BTable>
     <FrPagination
-      v-if="tableData && tableData.length > 0 && !isLoading && !noData"
+      v-if="tableData && tableData.length > 0 && !isLoading"
       :current-page="currentPage"
       :last-page="lastPage"
       @pagination-change="paginationChange" />
@@ -191,10 +191,11 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import FrPagination from '@forgerock/platform-shared/src/components/DataTable/Pagination';
 import PluralizeFilter from '@forgerock/platform-shared/src/filters/PluralizeFilter';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
-import FrClearResourceSessions from '../ClearResourceSessions';
 import FrDeleteResource from '../DeleteResource';
+import FrClearResourceSessions from '../ClearResourceSessions';
 
 Vue.directive('b-modal', VBModal);
 /**
@@ -215,6 +216,7 @@ export default {
     BDropdownItem,
     BInputGroupText,
     BTable,
+    FrIcon,
     FrPagination,
     FrSearchInput,
     FrSpinner,
@@ -261,15 +263,15 @@ export default {
       type: Boolean,
       default: false,
     },
-    noData: {
-      type: Boolean,
-      default: false,
-    },
     managedIcon: {
       type: String,
       default: '',
     },
     showDivider: {
+      type: Boolean,
+      default: false,
+    },
+    noData: {
       type: Boolean,
       default: false,
     },
@@ -358,10 +360,7 @@ export default {
       this.currentPage = 0;
 
       this.$emit('clear-table');
-
-      if (!this.queryThreshold) {
-        this.loadData('true', this.displayFields, this.defaultSort, this.currentPage);
-      }
+      this.loadData('true', this.displayFields, this.defaultSort, this.currentPage);
     },
     /**
      * Emits out request to obtain data based on current query parameters
@@ -494,6 +493,9 @@ export default {
       this.closeClearSessionsModal();
       this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.defaultSort, this.currentPage);
     },
+    /**
+     * Change help text based on query threshold value and the current search text length
+     */
     setHelpTextFromSearchLength() {
       this.hasFocus = true;
 
