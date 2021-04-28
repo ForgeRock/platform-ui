@@ -18,6 +18,7 @@
     "authentication": "Authentication",
     "authorizationRole": "Internal Role",
     "bulkImport": "Import",
+    "configureManaged": "Configure",
     "connect": "Connect",
     "dashboard": "Dashboard",
     "email": "Email",
@@ -182,6 +183,22 @@
     "selectIdentity": "Select the managed identity object into which you want to import your CSV identities.",
     "importTo": "Import to",
     "deleteImportConfirmation": "If you delete this import the entries imported will remain, but import record will be deleted from the list."
+  },
+  "configure": {
+    "managedListView": {
+      "title": "Configure Identities",
+      "description": "Configure the properties and settings for each identity profile",
+      "tableEmpty": "No identity profiles created",
+      "getTableDataFail": "Failed to load identity profiless"
+    },
+    "managedObjectSettings": {
+      "minimumFilter": "minimumFilter",
+      "saveFilterSuccess": "Updated Identity Profile settings",
+      "saveFilterFail": "Unable to save filter settings",
+      "identityProfile": "Identity Profile",
+      "requireSearch": "Require UI Search Filter",
+      "filterHelpText": "Optimize performance by requiring administrators to type a minimum length search before displaying identities."
+    }
   },
   "dashboard": {
     "createApplication": {

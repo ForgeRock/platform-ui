@@ -156,20 +156,22 @@ describe('ListResource Component', () => {
   });
 
   it('Sets help text from search field length', () => {
-    wrapper.vm.queryThreshold = 0;
-    wrapper.vm.filter = '';
+    wrapper.setProps({
+      queryThreshold: 0,
+      filter: '',
+    });
+
     wrapper.vm.setHelpTextFromSearchLength();
 
     expect(wrapper.vm.hasFocus).toBe(true);
     expect(wrapper.vm.searchHelpText).toBe('');
 
-    wrapper.vm.queryThreshold = 3;
+    wrapper.setProps({
+      queryThreshold: 3,
+    });
+
     wrapper.vm.setHelpTextFromSearchLength();
 
     expect(wrapper.vm.searchHelpText).toBe('listResource.searchInProgressText');
-
-    wrapper.vm.filter = '1234';
-    wrapper.vm.setHelpTextFromSearchLength();
-    expect(wrapper.vm.searchHelpText).toBe('listResource.searchActiveText');
   });
 });
