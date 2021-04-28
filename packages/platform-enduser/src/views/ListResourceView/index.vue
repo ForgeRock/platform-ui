@@ -20,9 +20,9 @@ of the MIT license. See the LICENSE file for details. -->
           :delete-access="hasDeleteAccess"
           :is-loading="showWheel"
           :no-data="noData"
-          :query-threshold="datasetFilter"
+          :query-threshold="queryThreshold"
           :show-divider="createProperties !== null"
-          @clear-table="noData = true"
+          @clear-table="resetTableData"
           @get-table-data="getTableData"
           @row-clicked="resourceClicked"
           @delete-resource="deleteResource">
@@ -73,6 +73,7 @@ import FrListResource from '@forgerock/platform-shared/src/components/resource/L
 import FrCreateResource from '@forgerock/platform-shared/src/components/resource/CreateResource';
 import { getManagedResourceList, deleteManagedResource } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { getInternalResourceList, deleteInternalResource } from '@forgerock/platform-shared/src/api/InternalResourceApi';
+import { getConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
@@ -107,7 +108,7 @@ export default {
       hasUpdateAccess: false,
       hasDeleteAccess: false,
       createProperties: null,
-      datasetFilter: null,
+      queryThreshold: null,
       noData: false,
       showWheel: false,
     };
@@ -118,13 +119,14 @@ export default {
     axios.all([
       getSchema(`${this.$route.params.resourceType}/${this.$route.params.resourceName}`),
       idmInstance.get(`privilege/${this.$route.params.resourceType}/${this.$route.params.resourceName}`),
-    ]).then(axios.spread((schema, privilege) => {
+      getConfig('ui/configuration'),
+    ]).then(axios.spread((schema, privilege, uiConfig) => {
       if (has(schema, 'data.title')) {
         this.displayName = schema.data.title;
       }
 
-      if (has(schema, 'data.minimumUIFilterLength')) {
-        this.datasetFilter = schema.data.minimumUIFilterLength;
+      if (has(uiConfig.data.configuration.platformSettings.managedObjectsSettings, this.$route.params.resourceName)) {
+        this.queryThreshold = uiConfig.data.configuration.platformSettings.managedObjectsSettings[this.$route.params.resourceName].minimumUIFilterLength || null;
       }
 
       const properties = {};
@@ -311,6 +313,9 @@ export default {
         .finally(() => {
           this.getTableData(this.currentTableParams);
         });
+    },
+    resetTableData() {
+      this.tableData = [];
     },
   },
 };
