@@ -9,7 +9,9 @@ of the MIT license. See the LICENSE file for details. -->
     :show-logo="true">
     <template #center-card-header>
       <div v-if="!loading">
-        <h2 class="h2">
+        <h2
+          v-if="header"
+          class="h2">
           {{ header }}
         </h2>
         <p
@@ -250,12 +252,23 @@ export default {
     },
 
     /**
+     * @description  Invokes WebAuthn registration or authentication
+     * @param {Number} type enum number that represents WebAuthn type WebAuthnStepType.Authentication or WebAuthnStepType.Registration
+     * @returns {Promise} SDK WebAuthn promise resolved when WebAuthn is completed
+     */
+    createWebAuthnCallbackPromise(type) {
+      if (type === WebAuthnStepType.Authentication) {
+        return FRWebAuthn.authenticate(this.step);
+      }
+      return FRWebAuthn.register(this.step);
+    },
+
+    /**
      * @description gets field information
      * @param {Object} callback specific step callback
      * @param {Object} index callback index
      * @returns {Object} field object needed for Field component
      */
-
     getField(callback, index) {
       const type = callback.getType();
       const fieldType = type === FrCallbackType.PasswordCallback || type === FrCallbackType.ValidatedCreatePasswordCallback ? 'password' : 'string';
@@ -538,6 +551,7 @@ export default {
           const isWebAuthnStep = FRWebAuthn.getWebAuthnStepType(this.step) !== WebAuthnStepType.None;
           const isRecovertCodeStep = FRRecoveryCodes.isDisplayStep(this.step);
           if (isWebAuthnStep) {
+            // dont call the sdk twice on the same webAuthn step
             const onlyOneWebAuthn = !existsInComponentList(FrCallbackType.WebAuthnComponent);
             if (onlyOneWebAuthn) {
               type = FrCallbackType.WebAuthnComponent;
@@ -577,6 +591,13 @@ export default {
               callbackSpecificProps: { overrideInitialPolicies: true, realm: this.realm },
               listeners: ['disable-next-button'],
             }),
+            WebAuthnComponent: () => {
+              const webAuthnType = FRWebAuthn.getWebAuthnStepType(this.step);
+              const webAuthnPromise = this.createWebAuthnCallbackPromise(webAuthnType);
+              return {
+                callbackSpecificProps: { webAuthnType, webAuthnPromise },
+              };
+            },
           };
           return componentPropsAndEvents[componentType] ? componentPropsAndEvents[componentType]() : {};
         };

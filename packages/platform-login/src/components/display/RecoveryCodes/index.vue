@@ -1,9 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <h2>
@@ -123,7 +121,9 @@ export default {
 
 <style lang="scss" scoped>
 .column-wrapper {
-  column-count: 2;
+  @media (min-width: 575px) {
+    column-count: 2;
+  }
 
   ::marker {
     color: $gray-400;
