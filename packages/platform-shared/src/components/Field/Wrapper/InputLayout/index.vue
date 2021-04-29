@@ -191,6 +191,11 @@ export default {
     }
   }
 
+  textarea::placeholder,
+  input::placeholder {
+    color: transparent;
+  }
+
   .input-group-prepend > *,
   .form-label-group-input > *,
   .input-group-append > * {
