@@ -55,4 +55,26 @@ describe('TextArea input', () => {
     expect(textarea.attributes('cols')).toBe('5');
     expect(textarea.attributes('rows')).toBe('6');
   });
+
+  it('TextArea input component sets floatLabels correctly', () => {
+    const wrapper = shallowMount(TextArea, {
+      localVue,
+      propsData: {
+        ...defaultMixinProps,
+        ...defaultProps,
+      },
+    });
+    expect(wrapper.vm.floatLabels).toBe(false);
+    wrapper.vm.onClick();
+    expect(wrapper.vm.floatLabels).toBe(false);
+    wrapper.setProps({ label: 'test' });
+    wrapper.vm.onClick();
+    expect(wrapper.vm.floatLabels).toBe(true);
+
+    wrapper.vm.floatLabels = false;
+    wrapper.vm.inputValueHandler(null);
+    expect(wrapper.vm.floatLabels).toBe(false);
+    wrapper.vm.inputValueHandler('test');
+    expect(wrapper.vm.floatLabels).toBe(true);
+  });
 });

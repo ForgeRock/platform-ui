@@ -108,7 +108,7 @@ export default {
     delay(() => {
       if (navigator.userAgent.includes('Edge')) {
         const element = document.getElementById(`${this.id}`);
-        if (element && element.value.length && this.label) {
+        if (element && element.value.length && !!this.label) {
           this.floatLabels = !!this.label;
           this.inputValue = element.value;
         }
@@ -116,7 +116,7 @@ export default {
         const node = this.$refs.input;
         try {
           const nativeMatches = node.matches || node.msMatchesSelector;
-          if (nativeMatches.call(node, ':-webkit-autofill') && this.label) {
+          if (nativeMatches.call(node, ':-webkit-autofill') && !!this.label) {
             this.floatLabels = !!this.label;
           }
         } catch (e) {

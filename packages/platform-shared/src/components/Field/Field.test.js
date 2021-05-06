@@ -163,7 +163,7 @@ describe('Field Component', () => {
         $t: () => {},
       },
       propsData: {
-        type: 'tag',
+        type: 'array',
         name: 'testField',
         value: [],
         options: ['option1', 'option2'],
