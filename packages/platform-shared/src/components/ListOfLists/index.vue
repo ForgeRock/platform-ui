@@ -185,23 +185,6 @@ export default {
       return this.listUniqueIndex;
     },
     /**
-     * determine how many levels deep an array nests
-     */
-    getArrayDepth(arr) {
-      let complexity = 0;
-      let depth = 0;
-
-      if (Array.isArray(arr)) {
-        depth = 1 + Math.max(...arr.map((elem) => this.getArrayDepth(elem)));
-        arr.forEach((elem) => {
-          if (typeof elem === 'object' && elem !== null && !Array.isArray(elem)) {
-            complexity += 1;
-          }
-        });
-      }
-      return depth + complexity;
-    },
-    /**
      * determine whether the array is too complex to render
      */
     isValidField(schema) {
