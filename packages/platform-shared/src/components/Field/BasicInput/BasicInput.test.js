@@ -20,6 +20,7 @@ const defaultMixinProps = {
   isHtml: false,
   label: '',
   readonly: false,
+  autofocus: true,
 };
 
 const defaultProps = {
@@ -37,7 +38,36 @@ describe('BasicInput', () => {
       },
     });
 
+    wrapper.vm.$refs = {
+      input: {
+        focus: () => {},
+      },
+    };
+
     expect(wrapper.name()).toBe('BasicInput');
+  });
+
+  it('starts animation', () => {
+    const wrapper = shallowMount(BasicInput, {
+      localVue,
+      propsData: {
+        ...defaultMixinProps,
+        ...defaultProps,
+        label: 'test',
+      },
+    });
+
+    wrapper.vm.$refs = {
+      input: {
+        matches: {
+          call: () => true,
+        },
+      },
+    };
+
+    expect(wrapper.vm.floatLabels).toBe(false);
+    wrapper.vm.animationStart();
+    expect(wrapper.vm.floatLabels).toBe(true);
   });
 
   it('BasicInput component renders reveal button for password', () => {

@@ -21,6 +21,7 @@ describe('KeyValueList', () => {
           };
           return translationMap[key];
         },
+        setValidationRules: () => ({}),
       },
       propsData: {
         value: '',
@@ -55,6 +56,25 @@ describe('KeyValueList', () => {
     });
   });
 
+  it('deletes item', () => {
+    wrapper.setData({
+      keyValues: {
+        en: 'value',
+      },
+      currentKey: '',
+    });
+
+    wrapper.vm.deleteItem('en');
+
+    expect(wrapper.emitted()).toEqual({
+      input: [
+        [
+          {},
+        ],
+      ],
+    });
+  });
+
   it('Edits existing value when key is left the same', () => {
     wrapper.setData({
       keyValues: {
@@ -76,7 +96,7 @@ describe('KeyValueList', () => {
     });
   });
 
-  it('Edits existing key when key is changed', () => {
+  it('Edits key when editItem is called', () => {
     wrapper.setData({
       keyValues: {
         en: 'value',
@@ -84,17 +104,12 @@ describe('KeyValueList', () => {
       currentKey: 'en',
     });
 
-    wrapper.vm.saveKeyValue({ key: 'fr', value: 'frValue' });
-
-    expect(wrapper.emitted()).toEqual({
-      input: [
-        [
-          {
-            fr: 'frValue',
-          },
-        ],
-      ],
-    });
+    expect(wrapper.vm.keyValueObject.value).toBe('');
+    expect(wrapper.vm.keyValueObject.key).toBe('');
+    expect(wrapper.vm.currentKey).toBe('en');
+    wrapper.vm.editItem('en');
+    expect(wrapper.vm.keyValueObject.value).toBe('value');
+    expect(wrapper.vm.keyValueObject.key).toBe('en');
   });
 
   it('Displays text indicating when it is empty', () => {

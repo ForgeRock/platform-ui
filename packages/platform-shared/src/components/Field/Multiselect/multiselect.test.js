@@ -8,6 +8,7 @@
 import Vue from 'vue';
 import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, mount, shallowMount } from '@vue/test-utils';
+import * as clipboard from 'clipboard-polyfill/text';
 import MultiSelect from './index';
 
 const localVue = createLocalVue();
@@ -40,6 +41,112 @@ describe('MultiSelect input', () => {
     });
 
     expect(wrapper.name()).toBe('MultiSelect');
+  });
+
+  it('MultiSelect input sets default options', () => {
+    const wrapper = shallowMount(MultiSelect, {
+      localVue,
+      mocks: {
+        $t: () => {},
+      },
+      propsData: {
+        ...defaultMixinProps,
+      },
+    });
+
+    expect(wrapper.vm.options).toStrictEqual([]);
+  });
+
+  it('MultiSelect input adds tags', () => {
+    const wrapper = shallowMount(MultiSelect, {
+      localVue,
+      mocks: {
+        $t: () => {},
+      },
+      propsData: {
+        ...defaultMixinProps,
+        taggable: true,
+      },
+    });
+
+    expect(wrapper.vm.tagOptions).toStrictEqual([]);
+    expect(wrapper.vm.inputValue).toStrictEqual([]);
+    wrapper.vm.searchValue = 'test';
+
+    wrapper.vm.addTag();
+    expect(wrapper.vm.tagOptions).toStrictEqual([
+      {
+        multiselectId: 0,
+        text: 'test',
+        value: 'test',
+        copySelect: false,
+      },
+    ]);
+    expect(wrapper.vm.inputValue).toStrictEqual([
+      {
+        multiselectId: 1,
+        text: 'test',
+        value: 'test',
+        copySelect: false,
+      },
+    ]);
+
+    expect(wrapper.emitted().input).toEqual([[['test']]]);
+  });
+
+  it('MultiSelect input sets copySelect on options when input closed', () => {
+    const wrapper = shallowMount(MultiSelect, {
+      localVue,
+      mocks: {
+        $t: () => {},
+      },
+      propsData: {
+        ...defaultMixinProps,
+        taggable: true,
+        options: [
+          {
+            text: 'test1',
+            value: 'test1',
+            copySelect: true,
+          },
+        ],
+      },
+    });
+
+    expect(wrapper.vm.tagOptions).toStrictEqual([]);
+    expect(wrapper.vm.options).toStrictEqual([{
+      text: 'test1',
+      value: 'test1',
+      copySelect: true,
+    }]);
+    expect(wrapper.vm.inputValue).toStrictEqual([]);
+    wrapper.vm.searchValue = 'test2';
+
+    wrapper.vm.close();
+    expect(wrapper.vm.selectOptions).toStrictEqual([
+      {
+        multiselectId: 5,
+        text: 'test1',
+        value: 'test1',
+        copySelect: true,
+      },
+      {
+        multiselectId: 1,
+        text: 'test2',
+        value: 'test2',
+        copySelect: false,
+      },
+    ]);
+    expect(wrapper.vm.inputValue).toStrictEqual([
+      {
+        multiselectId: 4,
+        text: 'test2',
+        value: 'test2',
+        copySelect: false,
+      },
+    ]);
+
+    expect(wrapper.emitted().input).toEqual([[['test2']]]);
   });
 
   it('MultiSelect input component process options prop from array', () => {
@@ -186,6 +293,30 @@ describe('MultiSelect input', () => {
     expect(wrapper.contains('.test_append')).toBe(true);
   });
 
+  it('MultiSelect copies options', () => {
+    const wrapper = mount(MultiSelect, {
+      localVue,
+      mocks: {
+        $t: () => {},
+      },
+      propsData: {
+        ...defaultMixinProps,
+        ...defaultProps,
+      },
+    });
+    wrapper.vm.inputValue = [
+      {
+        copySelect: true,
+        value: 'test',
+      },
+    ];
+    const clipboardSpy = jest.spyOn(clipboard, 'writeText').mockImplementation(() => Promise.resolve());
+
+    wrapper.vm.copyOptions();
+
+    expect(clipboardSpy).toHaveBeenCalled();
+  });
+
   it('Multiselect is not autofocused on absence of prop "autofocus"', async () => {
     const wrapper = mount(MultiSelect, {
       localVue,
@@ -212,29 +343,29 @@ describe('MultiSelect input', () => {
     }
   });
 
-  // it('Multiselect is autofocused on prop "autofocus"', async () => {
-  //   const wrapper = mount(MultiSelect, {
-  //     localVue,
-  //     mocks: {
-  //       $t: () => {},
-  //     },
-  //     attachToDocument: true,
-  //     propsData: {
-  //       ...defaultMixinProps,
-  //       ...defaultProps,
-  //       autofocus: true,
-  //     },
-  //     slots: {
-  //       prepend: '<span class="test_prepend">prepend</span>',
-  //       append: '<span class="test_append">append</span>', // Will match <slot name="FooBar" />,
-  //     },
-  //   });
+  it('Multiselect is autofocused on prop "autofocus"', async () => {
+    const wrapper = mount(MultiSelect, {
+      localVue,
+      mocks: {
+        $t: () => {},
+      },
+      attachToDocument: true,
+      propsData: {
+        ...defaultMixinProps,
+        ...defaultProps,
+        autofocus: true,
+      },
+      slots: {
+        prepend: '<span class="test_prepend">prepend</span>',
+        append: '<span class="test_append">append</span>', // Will match <slot name="FooBar" />,
+      },
+    });
 
-  //   try {
-  //     await Vue.nextTick();
-  //     expect(document.activeElement).toEqual(wrapper.element.querySelector('input'));
-  //   } finally {
-  //     wrapper.destroy();
-  //   }
-  // });
+    try {
+      await Vue.nextTick();
+      expect(document.activeElement).toEqual(wrapper.element.querySelector('input'));
+    } finally {
+      wrapper.destroy();
+    }
+  });
 });

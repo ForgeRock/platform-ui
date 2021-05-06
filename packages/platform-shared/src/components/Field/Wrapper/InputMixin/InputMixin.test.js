@@ -34,6 +34,53 @@ describe('InputMixin', () => {
     expect(wrapper.vm.$data.id).toBe(expected);
   });
 
+  it('InputMixin sets floating label on Chrome', () => {
+    jest.useFakeTimers();
+    // eslint-disable-next-line no-restricted-properties
+    navigator.__defineGetter__('userAgent', () => ['Chrome']);
+
+    const wrapper = shallowMount(TestComponent, {
+      propsData: {
+        name: 'testMixin',
+        label: 'test',
+      },
+    });
+
+    wrapper.vm.$refs = {
+      input: {
+        matches: {
+          call: () => true,
+        },
+        msMatchesSelector: {
+          call: () => true,
+        },
+      },
+    };
+    setTimeout(() => {
+      expect(wrapper.vm.floatLabels).toEqual(true);
+    }, 1000);
+    jest.runAllTimers();
+  });
+
+  it('InputMixin sets floating label on Edge', () => {
+    jest.useFakeTimers();
+    // eslint-disable-next-line no-restricted-properties
+    navigator.__defineGetter__('userAgent', () => ['Edge']);
+    window.document.getElementById = () => ({ value: 'test' });
+
+    const wrapper = shallowMount(TestComponent, {
+      propsData: {
+        name: 'testMixin',
+        label: 'test',
+      },
+    });
+
+    setTimeout(() => {
+      expect(wrapper.vm.floatLabels).toEqual(true);
+    }, 1000);
+    jest.runAllTimers();
+  });
+
   it('Initial value calls setter method setInputValue', () => {
     const setInputValue = jest.fn();
     shallowMount(TestComponent, {

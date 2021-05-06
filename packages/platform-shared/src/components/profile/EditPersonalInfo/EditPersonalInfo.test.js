@@ -7,7 +7,7 @@
 
 import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
-import _ from 'lodash';
+import { first } from 'lodash';
 import i18n from '@/i18n';
 import EditPersonalInfo from './index';
 
@@ -110,7 +110,7 @@ describe('EditPersonalInfo.vue', () => {
   describe('#generateFormFields', () => {
     it('should create the proper fields based on schema', () => {
       const formFields = wrapper.vm.generateFormFields();
-      const firstFormField = _.first(formFields);
+      const firstFormField = first(formFields);
 
       expect(typeof formFields).toBe('object');
       expect(formFields.length).toBe(1);

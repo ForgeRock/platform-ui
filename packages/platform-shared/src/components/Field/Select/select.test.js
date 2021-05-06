@@ -5,6 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+import Vue from 'vue';
 import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, mount, shallowMount } from '@vue/test-utils';
 import Select from './index';
@@ -105,6 +106,28 @@ describe('Select input', () => {
     expect(elements.length).toBe(3);
   });
 
+  it('Select input component Closes Dropdown', () => {
+    const wrapper = shallowMount(Select, {
+      localVue,
+      mocks: {
+        $t: () => {},
+      },
+      propsData: {
+        ...defaultMixinProps,
+        ...defaultProps,
+        options: ['a', 'b', 'c'],
+        label: 'testLabel',
+      },
+    });
+
+    wrapper.vm.floatLabels = true;
+    expect(wrapper.vm.floatLabels).toBe(true);
+    wrapper.vm.closeDropDown();
+    expect(wrapper.vm.floatLabels).toBe(false);
+    wrapper.vm.closeDropDown('test');
+    expect(wrapper.vm.floatLabels).toBe(true);
+  });
+
   it('Select input component allows single selections', () => {
     const wrapper = mount(Select, {
       localVue,
@@ -150,7 +173,7 @@ describe('Select input', () => {
     expect(wrapper.contains('.test_append')).toBe(true);
   });
 
-  it('will update the displayed selected value if the text for that option changes', async () => {
+  it('will update the displayed selected value if the text for that option changes', () => {
     const wrapper = mount(Select, {
       localVue,
       mocks: {
@@ -166,12 +189,12 @@ describe('Select input', () => {
       },
     });
 
-    await wrapper.setProps({ value: 'b' });
+    wrapper.setProps({ value: 'b' });
 
     // Check that the select shows the correct initial text
     expect(wrapper.find('.multiselect__single').text()).toBe('bee');
 
-    await wrapper.setProps({
+    wrapper.setProps({
       options: [
         { text: 'ayy', value: 'a' },
         { text: 'beegees?', value: 'b' },
@@ -180,6 +203,29 @@ describe('Select input', () => {
     });
 
     expect(wrapper.find('.multiselect__single').text()).toBe('beegees?');
+  });
+
+  it('Select removes float for blank values', () => {
+    const wrapper = mount(Select, {
+      localVue,
+      mocks: {
+        $t: () => {},
+      },
+      propsData: {
+        ...defaultMixinProps,
+        options: [
+          { text: 'ayy', value: 'a' },
+          { text: 'bee', value: 'b' },
+        ],
+      },
+    });
+
+    wrapper.vm.floatLabels = true;
+
+    wrapper.setProps({ value: 'sdf' });
+    expect(wrapper.vm.floatLabels).toBe(true);
+    wrapper.setProps({ value: '', options: [] });
+    expect(wrapper.vm.floatLabels).toBe(false);
   });
 
   it('Select is not autofocused on absence of prop "autofocus"', () => {
@@ -204,24 +250,29 @@ describe('Select input', () => {
   });
 
   // TODO: to make this test work, follow guide to upgrade vue-test-utils https://vue-test-utils.vuejs.org/upgrading-to-v1/
-  // it('Select is autofocused on prop "autofocus"', () => {
-  //   const wrapper = mount(Select, {
-  //     localVue,
-  //     mocks: {
-  //       $t: () => {},
-  //     },
-  //     attachTo: document.body,
-  //     propsData: {
-  //       ...defaultMixinProps,
-  //       ...defaultProps,
-  //       autofocus: true,
-  //     },
-  //     slots: {
-  //       prepend: '<span class="test_prepend">prepend</span>',
-  //       append: '<span class="test_append">append</span>', // Will match <slot name="FooBar" />,
-  //     },
-  //   });
-  //   expect(document.activeElement).toEqual(wrapper.findComponent({ ref: 'vms' }).querySelector('input'));
-  //   document.activeElement.blur();
-  // });
+  it('Select is autofocused on prop "autofocus"', async () => {
+    const wrapper = mount(Select, {
+      localVue,
+      mocks: {
+        $t: () => {},
+      },
+      attachToDocument: true,
+      propsData: {
+        ...defaultMixinProps,
+        ...defaultProps,
+        autofocus: true,
+        searchable: true,
+      },
+      slots: {
+        prepend: '<span class="test_prepend">prepend</span>',
+        append: '<span class="test_append">append</span>', // Will match <slot name="FooBar" />,
+      },
+    });
+    try {
+      await Vue.nextTick();
+      expect(document.activeElement).toEqual(wrapper.element.querySelector('input'));
+    } finally {
+      wrapper.destroy();
+    }
+  });
 });
