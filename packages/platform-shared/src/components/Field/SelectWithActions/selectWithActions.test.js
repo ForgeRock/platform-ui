@@ -63,4 +63,32 @@ describe('SelectWithActions input', () => {
     expect(wrapper.emitted()['edit-item-clicked'].length).toBe(1);
     expect(wrapper.emitted()['edit-item-clicked'][0][0]).toEqual('ID_b');
   });
+
+  it('sets default props', () => {
+    const wrapper = mount(SelectWithActions, {
+      localVue,
+      mocks: {
+        $t: (string) => {
+          const translations = {
+            'common.add': 'add',
+            'common.edit': 'edit',
+          };
+          return translations[string];
+        },
+      },
+      propsData: {
+        id: '',
+        errorMessages: [],
+        name: '',
+        description: '',
+        isHtml: false,
+        label: '',
+        options: [],
+      },
+    });
+
+    expect(wrapper.vm.addRowText).toBe('add');
+    expect(wrapper.vm.addLabel).toBe('add');
+    expect(wrapper.vm.editLabel).toBe('edit');
+  });
 });
