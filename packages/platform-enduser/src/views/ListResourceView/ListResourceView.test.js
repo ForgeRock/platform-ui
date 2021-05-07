@@ -4,7 +4,7 @@
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
-
+import { keys, map } from 'lodash';
 import BootstrapVue from 'bootstrap-vue';
 import flushPromises from 'flush-promises';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
@@ -94,5 +94,145 @@ describe('ListResource.vue', () => {
 
       expect(deleteManagedResourceSpy).toHaveBeenCalled();
     });
+  });
+
+  it('Sets Privileges', () => {
+    const privileges = {
+      data: {
+        VIEW: {
+          allowed: true,
+          properties: [
+            'userName',
+            'password',
+            'givenName',
+            'sn',
+            'mail',
+          ],
+        },
+        CREATE: {
+          allowed: true,
+          properties: [
+            'userName',
+            'password',
+            'givenName',
+            'sn',
+            'mail',
+            'privileges',
+            'temporalConstraints',
+            'condition',
+            'description',
+            'parent',
+            'attributes',
+            'memberOfOrg',
+          ],
+        },
+        UPDATE: {
+          allowed: true,
+          properties: [
+            'userName',
+            'password',
+            'givenName',
+            'sn',
+            'mail',
+          ],
+        },
+        DELETE: {
+          allowed: true,
+        },
+        ACTION: {
+          allowed: false,
+          actions: [],
+        },
+      },
+    };
+    const schema = {
+      data: {
+        title: 'User',
+        viewable: true,
+        order: [
+          'userName',
+          'password',
+          'givenName',
+          'sn',
+          'mail',
+        ],
+        properties: {
+          password: {
+            title: 'Password',
+          },
+          mail: {
+            title: 'Email Address',
+          },
+          sn: {
+            title: 'Last Name',
+          },
+          givenName: {
+            title: 'First Name',
+          },
+          userName: {
+            title: 'Username',
+          },
+          memberOfOrg: {
+            title: 'Organizations to which I Belong',
+          },
+          attributes: {
+            title: 'Attributes',
+          },
+          privileges: {
+            title: 'Privileges',
+          },
+          condition: {
+            title: 'Condition',
+          },
+          temporalConstraints: {
+            title: 'Temporal Constraints',
+          },
+          description: {
+            title: 'Description',
+          },
+          parent: {
+            title: 'Parent',
+          },
+        },
+        type: 'object',
+        required: [
+          'userName',
+          'givenName',
+          'sn',
+          'mail',
+        ],
+      },
+    };
+
+    wrapper.vm.setPrivileges(privileges, schema);
+
+    expect(keys(wrapper.vm.routerParameters.managedProperties).length).toEqual(5);
+    expect(wrapper.vm.routerParameters.order.length).toEqual(5);
+    expect(keys(wrapper.vm.routerParameters.managedProperties)).toStrictEqual(['userName', 'password', 'givenName', 'sn', 'mail']);
+    expect(wrapper.vm.routerParameters.resourceName).toBe('test');
+    expect(wrapper.vm.routerParameters.resourceType).toBe('test');
+    expect(wrapper.vm.hasUpdateAccess).toEqual(true);
+    expect(wrapper.vm.hasDeleteAccess).toEqual(true);
+    expect(map(wrapper.vm.createProperties, 'key')).toStrictEqual(['userName', 'givenName', 'sn', 'mail']);
+
+    wrapper.vm.$route.params.resourceName = 'assignment';
+    wrapper.vm.setPrivileges(privileges, schema);
+    expect(map(wrapper.vm.createProperties, 'key')).toStrictEqual(['userName', 'givenName', 'sn', 'mail', 'attributes']);
+
+    wrapper.vm.$route.params.resourceName = 'role';
+    wrapper.vm.setPrivileges(privileges, schema);
+    expect(map(wrapper.vm.createProperties, 'key')).toStrictEqual(['userName', 'givenName', 'sn', 'mail', 'condition', 'temporalConstraints', 'description']);
+
+    wrapper.vm.$route.params.resourceType = 'internal';
+    wrapper.vm.setPrivileges(privileges, schema);
+    expect(map(wrapper.vm.createProperties, 'key')).toStrictEqual(['userName', 'givenName', 'sn', 'mail', 'privileges', 'condition', 'temporalConstraints', 'description']);
+
+    wrapper.vm.$route.params.resourceName = 'organization';
+    wrapper.vm.setPrivileges(privileges, schema);
+    expect(map(wrapper.vm.createProperties, 'key')).toStrictEqual(['userName', 'givenName', 'sn', 'mail', 'parent']);
+
+    wrapper.vm.$route.params.resourceName = 'user';
+    wrapper.vm.setPrivileges(privileges, schema);
+    expect(map(wrapper.vm.createProperties, 'key')).toStrictEqual(['userName', 'givenName', 'sn', 'mail', 'memberOfOrg']);
   });
 });
