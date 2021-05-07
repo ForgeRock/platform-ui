@@ -33,6 +33,7 @@ of the MIT license. See the LICENSE file for details. -->
         @focus="$emit('search-input-focus')"
         @blur="$emit('search-input-blur')"
         @keydown.native.enter="$emit('search')"
+        @keydown.native.esc="clearSearch"
         v-model="value"
         class="fr-icon-input mx-0"
         type="search" />
