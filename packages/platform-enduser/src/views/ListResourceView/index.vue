@@ -130,91 +130,7 @@ export default {
         this.queryThreshold = uiConfig.data.configuration.platformSettings.managedObjectsSettings[this.$route.params.resourceName].minimumUIFilterLength || null;
       }
 
-      const properties = {};
-      if (privilege.data.VIEW.allowed) {
-        // Generate columns for display and filtering for read/query
-        each(privilege.data.VIEW.properties, (readProp) => {
-          const property = schema.data.properties[readProp];
-          if (property && isUndefined(property.encryption)) {
-            properties[readProp] = property;
-          }
-        });
-      }
-
-      this.routerParameters = {
-        resourceName: this.$route.params.resourceName,
-        resourceType: this.$route.params.resourceType,
-        managedProperties: properties,
-        order: schema.data.order,
-      };
-
-      if (privilege.data.UPDATE.allowed) {
-        this.hasUpdateAccess = true;
-      }
-
-      if (privilege.data.DELETE.allowed) {
-        this.hasDeleteAccess = true;
-      }
-
-      if (privilege.data.CREATE.allowed) {
-        const propList = pick(schema.data.properties, privilege.data.CREATE.properties);
-        const requiredProps = [];
-
-        schema.data.required.forEach((prop) => {
-          const tempProp = cloneDeep(propList[prop]);
-          tempProp.key = prop;
-          tempProp.required = true;
-          requiredProps.push(tempProp);
-        });
-
-        // Special case for Assignments, add 'attributes' property so it is included in createProperties for the CreateResource modal.
-        if (this.routerParameters.resourceName.endsWith('assignment')) {
-          propList.attributes.key = 'attributes';
-          requiredProps.push(propList.attributes);
-        }
-
-        // Special case for Internal and Managed Roles, add 'condition' and 'temporalConstraints' properties so they are included in createProperties for the CreateResource modal.
-        if (this.routerParameters.resourceName.endsWith('role')) {
-          // Another special case for internal role add 'privileges'
-          if (propList.privileges && this.routerParameters.resourceType === 'internal') {
-            propList.privileges.key = 'privileges';
-            requiredProps.push(propList.privileges);
-          }
-
-          if (propList.condition) {
-            propList.condition.key = 'condition';
-            requiredProps.push(propList.condition);
-          }
-          if (propList.temporalConstraints) {
-            propList.temporalConstraints.key = 'temporalConstraints';
-            requiredProps.push(propList.temporalConstraints);
-          }
-          if (propList.description) {
-            const description = cloneDeep(propList.description);
-            description.key = 'description';
-            description.title = `${this.$t('common.optionalFieldTitle', { fieldTitle: this.$t('common.description') })}`;
-            description.isOptional = true;
-            requiredProps.push(description);
-          }
-        }
-
-        // Special case for Organization, add 'parent' property so it is included in createProperties for the CreateResource modal.
-        if (this.routerParameters.resourceName.endsWith('organization') && propList.parent && findIndex(requiredProps, { key: 'parent' }) === -1) {
-          // Note: only added if "parent" exists in CREATE privileges for current user (i.e. organization admin/owner)
-          propList.parent.key = 'parent';
-          requiredProps.push(propList.parent);
-        }
-
-        // Special case for User, add 'memberOfOrg' property so it is included in createProperties for the CreateResource modal.
-        if (this.routerParameters.resourceName.endsWith('user') && propList.memberOfOrg && findIndex(requiredProps, { key: 'memberOfOrg' }) === -1) {
-          // Note: only added if "memberOfOrg" exists in CREATE privileges for current user (i.e. organization admin/owner)
-          propList.memberOfOrg.key = 'memberOfOrg';
-          propList.memberOfOrg.validation = 'required';
-          requiredProps.push(propList.memberOfOrg);
-        }
-
-        this.createProperties = requiredProps;
-      }
+      this.setPrivileges(privilege, schema);
     }), (error) => {
       this.displayNotification('IDMMessages', 'error', error.response.data.message);
     });
@@ -332,6 +248,93 @@ export default {
     },
     resetTableData() {
       this.tableData = [];
+    },
+    setPrivileges(privilege, schema) {
+      const properties = {};
+      if (privilege.data.VIEW.allowed) {
+        // Generate columns for display and filtering for read/query
+        each(privilege.data.VIEW.properties, (readProp) => {
+          const property = schema.data.properties[readProp];
+          if (property && isUndefined(property.encryption)) {
+            properties[readProp] = property;
+          }
+        });
+      }
+
+      this.routerParameters = {
+        resourceName: this.$route.params.resourceName,
+        resourceType: this.$route.params.resourceType,
+        managedProperties: properties,
+        order: schema.data.order,
+      };
+
+      if (privilege.data.UPDATE.allowed) {
+        this.hasUpdateAccess = true;
+      }
+
+      if (privilege.data.DELETE.allowed) {
+        this.hasDeleteAccess = true;
+      }
+
+      if (privilege.data.CREATE.allowed) {
+        const propList = pick(schema.data.properties, privilege.data.CREATE.properties);
+        const requiredProps = [];
+
+        schema.data.required.forEach((prop) => {
+          const tempProp = cloneDeep(propList[prop]);
+          tempProp.key = prop;
+          tempProp.required = true;
+          requiredProps.push(tempProp);
+        });
+
+        // Special case for Assignments, add 'attributes' property so it is included in createProperties for the CreateResource modal.
+        if (this.routerParameters.resourceName.endsWith('assignment')) {
+          propList.attributes.key = 'attributes';
+          requiredProps.push(propList.attributes);
+        }
+
+        // Special case for Internal and Managed Roles, add 'condition' and 'temporalConstraints' properties so they are included in createProperties for the CreateResource modal.
+        if (this.routerParameters.resourceName.endsWith('role')) {
+          // Another special case for internal role add 'privileges'
+          if (propList.privileges && this.routerParameters.resourceType === 'internal') {
+            propList.privileges.key = 'privileges';
+            requiredProps.push(propList.privileges);
+          }
+
+          if (propList.condition) {
+            propList.condition.key = 'condition';
+            requiredProps.push(propList.condition);
+          }
+          if (propList.temporalConstraints) {
+            propList.temporalConstraints.key = 'temporalConstraints';
+            requiredProps.push(propList.temporalConstraints);
+          }
+          if (propList.description) {
+            const description = cloneDeep(propList.description);
+            description.key = 'description';
+            description.title = `${this.$t('common.optionalFieldTitle', { fieldTitle: this.$t('common.description') })}`;
+            description.isOptional = true;
+            requiredProps.push(description);
+          }
+        }
+
+        // Special case for Organization, add 'parent' property so it is included in createProperties for the CreateResource modal.
+        if (this.routerParameters.resourceName.endsWith('organization') && propList.parent && findIndex(requiredProps, { key: 'parent' }) === -1) {
+          // Note: only added if "parent" exists in CREATE privileges for current user (i.e. organization admin/owner)
+          propList.parent.key = 'parent';
+          requiredProps.push(propList.parent);
+        }
+
+        // Special case for User, add 'memberOfOrg' property so it is included in createProperties for the CreateResource modal.
+        if (this.routerParameters.resourceName.endsWith('user') && propList.memberOfOrg && findIndex(requiredProps, { key: 'memberOfOrg' }) === -1) {
+          // Note: only added if "memberOfOrg" exists in CREATE privileges for current user (i.e. organization admin/owner)
+          propList.memberOfOrg.key = 'memberOfOrg';
+          propList.memberOfOrg.validation = 'required';
+          requiredProps.push(propList.memberOfOrg);
+        }
+
+        this.createProperties = requiredProps;
+      }
     },
   },
 };
