@@ -40,7 +40,6 @@ describe('Profile.vue', () => {
           email: '',
           userName: '',
         },
-        ApplicationStore: {},
       },
     });
 
