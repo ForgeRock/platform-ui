@@ -7,7 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     v-bind="$attrs"
     v-on="$listeners">
     <template v-slot:beforeList>
-      <div class="d-flex align-items-center justify-content-between pl-3 pr-2 py-2">
+      <div class="d-flex align-items-center justify-content-between pl-3 pr-2 mr-1 py-2">
         <h5 class="mb-0">
           {{ addRowText }}
         </h5>
@@ -30,7 +30,7 @@ of the MIT license. See the LICENSE file for details. -->
       </div>
     </template>
     <template v-slot:option="{ option }">
-      <div class="d-flex align-items-center justify-content-between w-100 pr-2">
+      <div class="d-flex align-items-center justify-content-between w-100">
         <div
           :title="option.text"
           class="text-truncate py-2 pl-3 pr-2">

@@ -172,20 +172,15 @@
   .multiselect__option {
     display: flex;
     min-height: 40px;
-    padding: 0;
     line-height: 0.9375rem;
     text-decoration: none;
     text-transform: none;
     position: relative;
     cursor: pointer;
     white-space: nowrap;
-
-    & span {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      display: block;
-      padding: 12px 12px 12px 16px;
-    }
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 12px 12px 12px 16px;
 
     & button {
       display: none;
