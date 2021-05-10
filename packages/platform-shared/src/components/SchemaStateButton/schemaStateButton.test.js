@@ -1,10 +1,10 @@
 /**
- * Copyright 2020 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
+
 import { mount } from '@vue/test-utils';
 import SchemaStateButton from './index';
 
@@ -14,34 +14,23 @@ beforeEach(() => {
   wrapper = mount(SchemaStateButton, {
     mocks: {
       $t: () => {},
-      $store: {
-        state: {
-          ApplicationStore: {
-            jsonSchemas: {
-              test: {
-                status: {
-                  options: [
-                    { value: 'on', text: 'on' },
-                    { value: 'off', text: 'off' },
-                    { value: 'standby', text: 'standby' },
-                  ],
-                },
-              },
-            },
-            jsonSchemaData: {
-              test: {
-                status: {
-                  value: 'on',
-                },
-              },
-            },
-          },
-        },
-      },
     },
     propsData: {
-      schemaType: 'test',
-      model: 'status',
+      schema: {
+        status: {
+          options: [
+            { value: 'on', text: 'on' },
+            { value: 'off', text: 'off' },
+            { value: 'standby', text: 'standby' },
+          ],
+        },
+      },
+      model: {
+        status: {
+          value: 'on',
+        },
+      },
+      field: 'status',
     },
   });
 });

@@ -5,14 +5,14 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="custom-control custom-checkbox pb-3">
     <input
-      :id="`checkbox-${saveModel}`"
+      :id="`checkbox-${path}`"
       type="checkbox"
-      :name="`checkbox-${saveModel}`"
+      :name="`checkbox-${path}`"
       autocomplete="off"
       class="custom-control-input"
       v-model="checked">
     <label
-      :for="`checkbox-${saveModel}`"
+      :for="`checkbox-${path}`"
       class="custom-control-label">
       {{ uiSchema.label }}
       <small
@@ -38,7 +38,7 @@ export default {
         return {};
       },
     },
-    saveModel: {
+    path: {
       type: String,
       default: '',
     },
@@ -50,7 +50,7 @@ export default {
       },
       set(newValue) {
         this.$emit('update:model', {
-          model: this.saveModel,
+          path: this.path,
           value: newValue,
         });
       },
