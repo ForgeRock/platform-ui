@@ -270,28 +270,6 @@ export default {
 <style lang="scss" scoped>
 @import '~@forgerock/platform-shared/src/components/Field/assets/vue-multiselect.scss';
 
-/deep/ .multiselect {
-  &:focus-within {
-    border-color: $blue;
-    box-shadow: 0 0 0 0.0625rem $blue;
-  }
-
-  .multiselect__tag {
-    display: inline-flex;
-    padding: initial;
-    margin-bottom: 0.25rem;
-
-    .multiselect__tag-contents {
-      padding: 4px 0 4px 10px;
-    }
-
-    .multiselect__tag-icon {
-      position: relative;
-      margin-left: 0;
-    }
-  }
-}
-
 .multiselect .multiselect__tag-selected {
   color: white;
   background-color: $primary;
