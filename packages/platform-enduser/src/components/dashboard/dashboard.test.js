@@ -33,16 +33,6 @@ describe('Dashboard.vue', () => {
           email: '',
           userName: '',
         },
-        ApplicationStore: {
-          authHeaders: null,
-          loginRedirect: null,
-          amBaseURL: 'https://default.iam.example.com/am',
-          amAdminURL: 'https://default.iam.example.com/am/ui-admin/',
-          idmBaseURL: 'https://default.iam.example.com/openidm',
-          theme: 'default',
-          idmClientID: 'end-user-ui',
-          adminURL: 'http://localhost:8082',
-        },
       },
     });
 

@@ -231,4 +231,42 @@ describe('Schema mixin', () => {
       expect(wrapper.vm.filterAndMapRawSchema(exampleGatewaySchema)).toEqual(expectedMappedGatewaySchema);
     });
   });
+
+  describe('setSchemaPropertyValue method', () => {
+    const model = {
+      core: {
+        propThatExists: {
+          value: 'oldValue',
+        },
+        userpassword: null,
+      },
+      advanced: {
+        propThatIsArray: {
+          value: ['oldArrayValue'],
+        },
+      },
+    };
+
+    it('updates values of existing properties under a nested "value" prop', () => {
+      const newModel = wrapper.vm.setSchemaPropertyValue({ path: 'core.propThatExists', value: 'newValue' }, model);
+      expect(newModel.core.propThatExists.value).toBe('newValue');
+    });
+
+    it('updates values of non-existing properties directly at the specified path', () => {
+      const newModel = wrapper.vm.setSchemaPropertyValue({ path: 'core.propThatDoesntExist', value: 'existingValue' }, model);
+      expect(newModel.core.propThatDoesntExist).toBe('existingValue');
+    });
+
+    it('updates values of "userpassword" properties directly at the specified path', () => {
+      const newModel = wrapper.vm.setSchemaPropertyValue({ path: 'core.userpassword', value: 'newPassword' }, model);
+      expect(newModel.core.userpassword).toBe('newPassword');
+    });
+
+    it('updates values with paths ending in "[0]" as single values in an array at the specified path', () => {
+      const newModel = wrapper.vm.setSchemaPropertyValue({ path: 'advanced.propThatIsArray[0]', value: 'newArrayValue' }, model);
+      const newValueArray = newModel.advanced.propThatIsArray.value;
+      expect(newValueArray.length).toBe(1);
+      expect(newValueArray[0]).toBe('newArrayValue');
+    });
+  });
 });

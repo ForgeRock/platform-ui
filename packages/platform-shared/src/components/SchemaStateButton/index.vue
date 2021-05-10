@@ -6,7 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <BDropdown
     variant="outline-secondary">
     <template
-      v-slot:button-content>
+      #button-content>
       <i
         v-if="value === $t('common.active')"
         class="material-icons-outlined mr-md-2 text-success"
@@ -51,19 +51,23 @@ export default {
     BDropdownItem,
   },
   props: {
-    schemaType: {
-      type: String,
-      default: '',
+    schema: {
+      type: Object,
+      default: () => {},
     },
     model: {
+      type: Object,
+      default: () => {},
+    },
+    field: {
       type: String,
       default: 'status',
     },
   },
   data() {
     return {
-      value: get(this.$store.state.ApplicationStore.jsonSchemaData[this.schemaType], `${this.model}.value`),
-      options: get(this.$store.state.ApplicationStore.jsonSchemas[this.schemaType], `${this.model}.options`),
+      value: get(this.model, `${this.field}.value`),
+      options: get(this.schema, `${this.field}.options`),
     };
   },
   computed: {

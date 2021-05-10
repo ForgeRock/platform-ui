@@ -7,6 +7,9 @@ import {
   mapKeys,
   omit,
   has,
+  cloneDeep,
+  endsWith,
+  set,
 } from 'lodash';
 /**
  * @description Schema mixin used for filtering and mapping json schema information to be consumed by schema driven components such as FormGenerator.
@@ -116,6 +119,36 @@ export default {
         mappedProp.required = true;
       }
       return mappedProp;
+    },
+    /**
+     * Updates model using the value and path passed in obj.
+     * This is used when updating values that are driven by schema.
+     * @param {Object} obj - object containing property location as model and new value as value
+     * @param {Object} model - object representing the current model data
+     * @returns {Object} model with updated property values
+     */
+    setSchemaPropertyValue(obj, model) {
+      const { value, path } = obj;
+      const saveSchema = cloneDeep(model);
+      let pathName = path;
+      let valueToSet = value;
+
+      // A model path ending with [0] indicates the backend is expecting an array
+      // but we have presented a single value input to the user whose value should be stored as a single array entry
+      if (endsWith(path, '[0]')) {
+        // To get the correct location of the property to save we need to remove the '[0]' from the end of model
+        pathName = path.substring(0, path.length - 3);
+        valueToSet = [value];
+      }
+
+      const propertyExists = has(saveSchema, pathName);
+
+      if (!propertyExists || endsWith(pathName, 'userpassword')) {
+        set(saveSchema, pathName, valueToSet);
+      } else {
+        set(saveSchema, `${pathName}.value`, valueToSet);
+      }
+      return saveSchema;
     },
   },
 };

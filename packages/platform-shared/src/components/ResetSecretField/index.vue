@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -8,7 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
       v-model="placeHolderSecretField"
       disabled
       :label="translatedFieldName">
-      <template v-slot:append>
+      <template #append>
         <BInputGroupAppend>
           <BButton v-b-modal.resetSecretModal>
             {{ $t('common.reset') }}
@@ -32,13 +32,13 @@ of the MIT license. See the LICENSE file for details. -->
         :ok-title="$t('common.save')"
         :cancel-title="$t('common.cancel')">
         <p>{{ $t('schemaResetSecret.modalBody', { field: lowerCaseFieldName }) }}</p>
-        <div class="form-group">
+        <BFormGroup>
           <FrField
             v-model="newSecret"
             type="password"
             validation="required"
             :label="$t('schemaResetSecret.newSecretText', { field: translatedFieldName })" />
-        </div>
+        </BFormGroup>
         <FrAlert
           show
           variant="warning"
@@ -52,9 +52,10 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import {
-  BModal,
   BButton,
+  BFormGroup,
   BInputGroupAppend,
+  BModal,
   VBModal,
 } from 'bootstrap-vue';
 import FrAlert from '@forgerock/platform-shared/src/components/Alert';
@@ -62,11 +63,12 @@ import FrField from '@forgerock/platform-shared/src/components/Field';
 import { ValidationObserver } from 'vee-validate';
 
 export default {
-  name: 'SchemaResetSecretField',
+  name: 'ResetSecretField',
   components: {
-    BModal,
     BButton,
+    BFormGroup,
     BInputGroupAppend,
+    BModal,
     FrAlert,
     FrField,
     ValidationObserver,
@@ -75,14 +77,6 @@ export default {
     'b-modal': VBModal,
   },
   props: {
-    schemaType: {
-      type: String,
-      default: '',
-    },
-    model: {
-      type: String,
-      default: 'userpassword',
-    },
     translatedFieldName: {
       type: String,
       default: 'Password',
@@ -101,12 +95,7 @@ export default {
   },
   methods: {
     resetSecret() {
-      this.$store.commit('ApplicationStore/setSchemaDataPropertyValue', {
-        schemaType: this.schemaType,
-        model: this.model,
-        value: this.newSecret,
-      });
-      this.$emit('secret-updated');
+      this.$emit('secret-updated', this.newSecret);
     },
   },
 };

@@ -41,7 +41,7 @@ export default {
         return {};
       },
     },
-    saveModel: {
+    path: {
       type: String,
       default: '',
     },
@@ -53,7 +53,7 @@ export default {
       },
       set(newValue) {
         this.$emit('update:model', {
-          model: this.saveModel,
+          path: this.path,
           value: newValue,
         });
       },
