@@ -16,12 +16,12 @@ of the MIT license. See the LICENSE file for details. -->
           v-html="label"
           :hidden="hideLabel"
           :for="id"
-          class="pe-none overflow-hidden w-100 text-nowrap" />
+          class="pe-none overflow-hidden text-nowrap full-width" />
         <label
           v-else-if="label"
           :hidden="hideLabel"
           :for="id"
-          class="pe-none overflow-hidden w-100 text-nowrap">
+          class="pe-none overflow-hidden text-nowrap">
           {{ label }}
         </label>
       </div>
