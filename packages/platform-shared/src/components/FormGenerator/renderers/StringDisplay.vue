@@ -66,7 +66,7 @@ export default {
         return {};
       },
     },
-    saveModel: {
+    path: {
       type: String,
       default: '',
     },
@@ -87,7 +87,7 @@ export default {
     valueChange(value) {
       if (!this.uiSchema.disabled) {
         this.$emit('update:model', {
-          model: this.saveModel,
+          path: this.path,
           value,
         });
       }
