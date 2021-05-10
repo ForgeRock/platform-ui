@@ -489,13 +489,16 @@
 
     },
     "nativeApp": {
+      "alt": "Native App",
       "super": "Native / SPA",
       "newApp": "New App"
     },
     "webApp": {
+      "alt": "Web App",
       "super": "Web Application"
     },
     "serviceApp": {
+      "alt": "Service App",
       "super": "Service Application"
     },
     "accessTab": {
