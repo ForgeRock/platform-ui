@@ -8,48 +8,13 @@ of the MIT license. See the LICENSE file for details. -->
       v-if="schema && model && populatedUISchema.length"
       class="fr-generated-schema-body">
       <template v-for="(display, index) in populatedUISchema">
-        <StringDisplay
+        <Component
+          v-if="getDisplayComponent(display)"
+          @update:model="$emit('update:model', $event)"
+          :is="getDisplayComponent(display)"
           :key="`${display.model}_${index}`"
           :ui-schema="display"
-          :save-model="display.model"
-          v-if="display.type === 'string' && safeCompare(display) && showField(display)"
-          @update:model="updateSaveModel" />
-
-        <ArrayDisplay
-          :key="`${display.model}_${index}`"
-          :ui-schema="display"
-          :save-model="display.model"
-          v-else-if="display.type === 'array' && safeCompare(display) && showField(display)"
-          @update:model="updateSaveModel" />
-
-        <BooleanDisplay
-          :key="`${display.model}_${index}`"
-          :ui-schema="display"
-          :save-model="display.model"
-          :is-html="display.renderHTML"
-          v-else-if="display.type === 'boolean' && safeCompare(display) && showField(display)"
-          @update:model="updateSaveModel" />
-
-        <NumberDisplay
-          :key="`${display.model}_${index}`"
-          :ui-schema="display"
-          :save-model="display.model"
-          v-else-if="display.type === 'integer' && safeCompare(display) && showField(display)"
-          @update:model="updateSaveModel" />
-
-        <RadioDisplay
-          :key="`${display.model}_${index}`"
-          :ui-schema="display"
-          :save-model="display.model"
-          v-else-if="display.type === 'radio' && safeCompare(display) && showField(display)"
-          @update:model="updateSaveModel" />
-
-        <PasswordDisplay
-          :key="`${display.model}_${index}`"
-          :ui-schema="display"
-          :save-model="display.model"
-          v-else-if="display.type === 'password' && safeCompare(display) && showField(display)"
-          @update:model="updateSaveModel" />
+          :path="display.model" />
       </template>
     </form>
   </div>
@@ -61,6 +26,7 @@ import {
   has,
   get,
   isArray,
+  isEmpty,
   isObject,
   isString,
   isNumber,
@@ -68,47 +34,43 @@ import {
   cloneDeep,
 } from 'lodash';
 
-import ArrayDisplay from './renderers/ArrayDisplay';
-import BooleanDisplay from './renderers/BooleanDisplay';
-import NumberDisplay from './renderers/NumberDisplay';
-import RadioDisplay from './renderers/RadioDisplay';
-import StringDisplay from './renderers/StringDisplay';
-import PasswordDisplay from './renderers/PasswordDisplay';
+import FrArrayDisplay from './renderers/ArrayDisplay';
+import FrBooleanDisplay from './renderers/BooleanDisplay';
+import FrNumberDisplay from './renderers/NumberDisplay';
+import FrPasswordDisplay from './renderers/PasswordDisplay';
+import FrRadioDisplay from './renderers/RadioDisplay';
+import FrStringDisplay from './renderers/StringDisplay';
 
 export default {
   name: 'FormGenerator',
   components: {
-    ArrayDisplay,
-    BooleanDisplay,
-    NumberDisplay,
-    RadioDisplay,
-    StringDisplay,
-    PasswordDisplay,
+    FrArrayDisplay,
+    FrBooleanDisplay,
+    FrNumberDisplay,
+    FrPasswordDisplay,
+    FrRadioDisplay,
+    FrStringDisplay,
   },
   props: {
-    schemaType: {
-      type: String,
-      default: '',
-    },
     uiSchema: {
       type: Array,
-      default() {
-        return [];
-      },
+      default: () => [],
+    },
+    model: {
+      type: Object,
+      default: () => {},
+    },
+    schema: {
+      type: Object,
+      default: () => {},
     },
   },
   computed: {
-    schema() {
-      return this.$store.state.ApplicationStore.jsonSchemas[this.schemaType];
-    },
-    model() {
-      return this.$store.state.ApplicationStore.jsonSchemaData[this.schemaType];
-    },
     /**
      * Takes the currently defined uiSchema array, iterates through it and adds the current value from the save object for rendering
      */
     populatedUISchema() {
-      if (!this.schema || !this.model) {
+      if (isEmpty(this.schema) || isEmpty(this.model)) {
         return [];
       }
 
@@ -199,15 +161,24 @@ export default {
      */
     showField(model) {
       if (has(model, 'show')) {
-        return get(this.$store.state.ApplicationStore.jsonSchemaData[this.schemaType], model.show).value || false;
+        return get(this.model, model.show).value || false;
       }
       return true;
     },
-    updateSaveModel(payload) {
-      this.$store.commit('ApplicationStore/setSchemaDataPropertyValue', {
-        schemaType: this.schemaType,
-        ...payload,
-      });
+    getDisplayComponent(display) {
+      if (this.safeCompare(display) && this.showField(display)) {
+        const componentNames = {
+          string: 'FrStringDisplay',
+          array: 'FrArrayDisplay',
+          boolean: 'FrBooleanDisplay',
+          integer: 'FrNumberDisplay',
+          radio: 'FrRadioDisplay',
+          password: 'FrPasswordDisplay',
+        };
+
+        return componentNames[display.type] ? componentNames[display.type] : null;
+      }
+      return null;
     },
   },
 };
