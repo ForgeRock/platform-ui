@@ -808,6 +808,7 @@
       "errorRetrievingTemplate": "Error retrieving email template.",
       "errorRetrievingProviderConfig": "Error retrieving email provider config. You may need to set this up.",
       "errorSaving": "Error saving email template",
+      "errorDeleting": "Error deleting email template",
       "errorCreating": "Error creating email template",
       "successDelete":"Successfully deleted email template.",
       "successSaving":"Successfully saved email template.",
