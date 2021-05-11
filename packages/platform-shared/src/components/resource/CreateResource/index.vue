@@ -117,27 +117,14 @@ of the MIT license. See the LICENSE file for details. -->
                 :disabled="invalid">
                 {{ $t('common.next') }}
               </BButton>
-              <BButton
+              <FrButtonWithSpinner
                 v-if="isLastStep"
-                @click="saveForm"
+                :button-text="$t('common.save')"
                 :disabled="formFields.length === 0 || invalid || isSaving"
+                :show-spinner="isSaving"
+                :spinner-text="$t('common.saving')"
                 type="submit"
-                variant="primary">
-                <div v-if="!isSaving">
-                  {{ $t('common.save') }}
-                </div>
-                <div
-                  v-else
-                  class="d-flex">
-                  <FrSpinner
-                    size="sm"
-                    class="spinner-border-sm mr-2"
-                    button-spinner />
-                  <span class="ml-1">
-                    {{ $t('common.saving') }}
-                  </span>
-                </div>
-              </BButton>
+                @click="saveForm" />
             </div>
           </div>
           <div v-else>
@@ -146,27 +133,13 @@ of the MIT license. See the LICENSE file for details. -->
               @click="hideModal">
               {{ $t('common.cancel') }}
             </BButton>
-            <BButton
-              variant="primary"
-              @click="saveForm"
+            <FrButtonWithSpinner
+              :button-text="$t('common.save')"
               :disabled="formFields.length === 0 || invalid || (passwordValue !== '' && !passwordValid) || isSaving"
+              :show-spinner="isSaving"
+              :spinner-text="$t('common.saving')"
               type="submit"
-            >
-              <div v-if="!isSaving">
-                {{ $t('common.save') }}
-              </div>
-              <div
-                v-else
-                class="d-flex">
-                <FrSpinner
-                  size="sm"
-                  class="spinner-border-sm mr-2"
-                  button-spinner />
-                <span class="ml-1">
-                  {{ $t('common.saving') }}
-                </span>
-              </div>
-            </BButton>
+              @click="saveForm" />
           </div>
         </template>
       </BModal>
@@ -196,7 +169,7 @@ import {
 } from 'bootstrap-vue';
 import { ValidationObserver } from 'vee-validate';
 import FrField from '@forgerock/platform-shared/src/components/Field';
-import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
+import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
 import RelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import PasswordPolicyMixin from '@forgerock/platform-shared/src/mixins/PasswordPolicyMixin';
@@ -222,9 +195,9 @@ import CustomStep from './CustomStep/index';
 export default {
   name: 'CreateResource',
   components: {
+    FrButtonWithSpinner,
     FrCustomStep: CustomStep,
     FrField,
-    FrSpinner,
     FrRelationshipEdit: RelationshipEdit,
     BButton,
     BFormGroup,
