@@ -53,10 +53,11 @@ of the MIT license. See the LICENSE file for details. -->
             v-if="id !== kbaChoices.length - 1"
             class="mt-4">
         </div>
-        <FrLoadingButton
-          variant="primary"
-          :label="$t('common.save')"
-          :loading="loading"
+        <FrButtonWithSpinner
+          :button-text="$t('common.save')"
+          :disabled="loading"
+          :show-spinner="loading"
+          :spinner-text="$t('common.saving')"
           @click="onSaveKBA" />
       </ValidationObserver>
     </BCollapse>
@@ -76,7 +77,7 @@ import {
   BRow,
 } from 'bootstrap-vue';
 import FrField from '@forgerock/platform-shared/src/components/Field';
-import LoadingButton from '@forgerock/platform-shared/src/components/LoadingButton';
+import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
 
 /**
  * @description Allows a user to change their KBA, will ensure based on KBA configuration a user must match the systems KBA requirements.
@@ -85,7 +86,7 @@ import LoadingButton from '@forgerock/platform-shared/src/components/LoadingButt
 export default {
   name: 'EditKBA',
   components: {
-    FrLoadingButton: LoadingButton,
+    FrButtonWithSpinner,
     FrField,
     BCol,
     BLink,
