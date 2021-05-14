@@ -12,6 +12,7 @@ const defaultState = {
   idmBaseURL: '',
   currentPackage: '',
   fraasLoggingKeyURL: null,
+  fraasEnvironmentUrl: null,
   googleMapsApiKey: '',
   returnRoute: '',
   returnRouteText: '',
@@ -31,6 +32,9 @@ const mutations = {
     }
 
     if (env.VUE_APP_FRAAS === 'true') {
+      if (env.VUE_APP_FRAAS_ENV_URL) {
+        state.fraasEnvironmentUrl = env.VUE_APP_FRAAS_ENV_URL;
+      }
       if (env.VUE_APP_FRAAS_LOGGING_URL) {
         state.fraasLoggingKeyURL = env.VUE_APP_FRAAS_LOGGING_URL;
       }

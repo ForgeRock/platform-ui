@@ -77,6 +77,11 @@ export function getRules(i18n) {
     message: i18n.t('common.policyValidationMessages.LOWERCASE_PERIOD_REQUIRED'),
   };
 
+  const max = {
+    ...rules.max,
+    message: i18n.t('common.policyValidationMessages.maxLength'),
+  };
+
   // Minimum required rule
   // errors if input value's length is less than the input minimum number
   const minimumRequired = {
@@ -150,6 +155,28 @@ export function getRules(i18n) {
     },
   };
 
+  // Rule to check for compatibility with ESV naming schema
+  const lower_case_alpha_numeric_underscore_hyphen_only = {
+    validate(value) {
+      const regex = /^([a-z0-9_-])+$/g;
+      return regex.test(value);
+    },
+    message: i18n.t('common.policyValidationMessages.lowerCaseAlphaNumericUnderscoreHyphenOnly'),
+  };
+
+  // Rule to check if the value is valid JSON
+  const json = {
+    validate(value) {
+      try {
+        JSON.parse(value);
+        return true;
+      } catch (e) {
+        return false;
+      }
+    },
+    message: i18n.t('common.json.invalidJson'),
+  };
+
   const validationRules = {
     alpha,
     alpha_dash,
@@ -159,6 +186,8 @@ export function getRules(i18n) {
     date_format,
     email,
     google_cloud_platform_certificate_validation,
+    json,
+    max,
     minimumRequired,
     numeric,
     oneOf,
@@ -168,6 +197,7 @@ export function getRules(i18n) {
     unique,
     url_with_path,
     url_without_path,
+    lower_case_alpha_numeric_underscore_hyphen_only,
   };
   return validationRules;
 }

@@ -89,7 +89,7 @@ export function generateAmApi(resource, requestOverride = {}) {
   return request;
 }
 /**
- * Generates an FRaaS Logging Axios API instance
+ * Generates a FRaaS Logging API Axios instance
  * @param {object} requestOverride Takes an object of AXIOS parameters that can be used to either add
  * on extra information or override default properties https://github.com/axios/axios#request-config
  *
@@ -98,6 +98,23 @@ export function generateAmApi(resource, requestOverride = {}) {
 export function generateFraasLoggingApi(requestOverride = {}) {
   const requestDetails = {
     baseURL: store.state.SharedStore.fraasLoggingKeyURL,
+    timeout: 5000,
+    headers: {},
+    ...requestOverride,
+  };
+
+  return axios.create(requestDetails);
+}
+/**
+ * Generates a FRaaS Environment API Axios instance
+ * @param {object} requestOverride Takes an object of AXIOS parameters that can be used to either add
+ * on extra information or override default properties https://github.com/axios/axios#request-config
+ *
+ * @returns {AxiosInstance}
+ */
+export function generateFraasEnvironmentApi(requestOverride = {}) {
+  const requestDetails = {
+    baseURL: store.state.SharedStore.fraasEnvironmentUrl,
     timeout: 5000,
     headers: {},
     ...requestOverride,
