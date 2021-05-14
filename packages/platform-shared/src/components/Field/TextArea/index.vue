@@ -15,7 +15,7 @@ of the MIT license. See the LICENSE file for details. -->
     <textarea
       v-model="inputValue"
       :autofocus="autofocus"
-      :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control']"
+      :class="[{'polyfill-placeholder': floatLabels }, 'form-control']"
       :cols="cols"
       :data-vv-as="label"
       :disabled="disabled"
@@ -23,6 +23,7 @@ of the MIT license. See the LICENSE file for details. -->
       :name="name"
       :placeholder="label"
       :rows="rows"
+      :readonly="readonly"
       @input="$emit('input', inputValue)"
       @click="onClick"
       @blur="inputValueHandler(inputValue)" />
@@ -63,7 +64,7 @@ export default {
   },
   methods: {
     onClick() {
-      if (this.label) {
+      if (this.label && !this.readonly) {
         this.floatLabels = true;
       }
     },

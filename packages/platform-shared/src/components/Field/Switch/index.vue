@@ -17,11 +17,12 @@ of the MIT license. See the LICENSE file for details. -->
     <BFormCheckbox
       v-model="inputValue"
       v-on="$listeners"
-      class="d-inline-flex fr-toggle-primary"
+      class="d-inline-flex fr-toggle-primary mb-1"
       role="switch"
       switch
       :name="name"
-      :size="size">
+      :size="size"
+      :disabled="disabled">
       <span
         class="sr-only">
         {{ switchLabel }}
