@@ -1,10 +1,13 @@
 {
   "common": {
+    "actions": "Actions",
     "active": "Active",
     "activate": "Activate",
     "activated": "Activated",
     "add": "Add",
+    "adding": "Adding...",
     "addObject": "Add {object}",
+    "addAObject": "Add a {object}",
     "admin": "Admin",
     "advancedOptions": "advanced options",
     "agree": "I Agree",
@@ -18,6 +21,7 @@
     "change": "Change",
     "checkIconAltText": "Success icon",
     "close": "Close",
+    "code": "Code",
     "confirm": "Confirm",
     "confirmDelete": "Confirm Delete",
     "connected": "Connected",
@@ -25,12 +29,14 @@
     "copyFail": "Failed to copy",
     "copySuccess": "Copied to your clipboard",
     "create": "Create",
+    "created": "Created",
     "date": "Date",
     "deactivate": "Deactivate",
     "deactivated": "Deactivated",
     "default": "Default",
     "delete": "Delete",
     "deleting": "Deleting...",
+    "deleteObject": "Delete {object}",
     "description": "Description",
     "disabled": "Disabled",
     "done": "Done",
@@ -48,7 +54,11 @@
     "hideAdvanced": "Hide advanced settings",
     "inactive": "Inactive",
     "invited": "Invited",
+    "JSON": "JSON",
+    "label": "Label",
     "language": "Language",
+    "lastUpdated": "Last Updated",
+    "lastUpdatedBy": "Last Updated By",
     "learnMore": "Learn more",
     "loading": "Loading",
     "loadingEtc": "Loading...",
@@ -77,12 +87,15 @@
     "revoke": "Revoke",
     "save": "Save",
     "saveChanges": "Save changes",
+    "saveObject": "Save {object}",
     "saving": "Saving...",
     "script": "Script",
     "scripts": "Scripts",
     "search": "Search",
     "select": "Select",
     "selectSelection": "Select {selection}",
+    "secret": "Secret",
+    "secrets": "Secrets",
     "send": "Send",
     "settings": "Settings",
     "showAdvanced": "Show advanced settings",
@@ -98,8 +111,15 @@
     "type": "Type",
     "typeToSearch": "Type to search",
     "update": "Update",
+    "updated": "Updated",
+    "updatedObject": "{object} Updated",
+    "value": "Value",
+    "variable": "Variable",
+    "variables": "Variables",
     "version": "Version",
+    "versions": "Versions",
     "view": "View",
+    "viewDetails": "View Details",
     "yes": "Yes",
     "helpText": {
       "timeConstraint": "Assign role only during a selected time period.",
@@ -193,7 +213,10 @@
       "noSpace": "Cannot start or end with the space character",
       "url": "Must be a valid URL",
       "urlWithPath": "Please provide a valid URL that contains a path",
-      "urlWithoutPath": "Please provide a valid URL that does not contain a path"
+      "urlWithoutPath": "Please provide a valid URL that does not contain a path",
+      "lowerCaseAlphaNumericUnderscoreHyphenOnly": "Can only contain lowercase a-z, 0-9, underscores and hyphens",
+      "lowerCaseAlphaNumericUnderscoreHyphenOnlyWithHtml": "Can only contain lowercase <code>a-z</code>, <code>0-9</code>, <code>underscores</code> and <code>hyphens</code>",
+      "maxLength": "{length} characters maximum"
     },
     "user": {
       "username": "Username",
@@ -203,7 +226,8 @@
     },
     "json": {
       "rawJson": "Raw JSON",
-      "copyJson": "Copy JSON"
+      "copyJson": "Copy JSON",
+      "invalidJson": "Invalid JSON"
     }
   },
   "dashboard": {
@@ -242,7 +266,10 @@
     "idInUse": "That ID is already in use, please choose a different ID",
     "errorRetrievingRelationships": "There was an error retrieving relationships.",
     "themeSaveError": "There was an error saving theme",
-    "themeSetError": "There was an error setting theme"
+    "themeSetError": "There was an error setting theme",
+    "deleteObject": "Unable to delete {object}",
+    "retrievingObject": "Error retrieving {object}",
+    "savingObject": "Error saving {object}"
   },
   "locale": {
     "addLocale": "Add Locale",

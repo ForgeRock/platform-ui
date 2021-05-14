@@ -35,6 +35,7 @@ import FrSelectWithActions from '@forgerock/platform-shared/src/components/Field
 import FrSwitch from '@forgerock/platform-shared/src/components/Field/Switch';
 import FrTag from '@forgerock/platform-shared/src/components/Field/Tag';
 import FrTextArea from '@forgerock/platform-shared/src/components/Field/TextArea';
+import FrJsonInput from '@forgerock/platform-shared/src/components/Field/JsonInput';
 
 export default {
   name: 'FrField',
@@ -48,6 +49,7 @@ export default {
     FrSwitch,
     FrTag,
     FrTextArea,
+    FrJsonInput,
   },
   props: {
     name: {
@@ -83,6 +85,7 @@ export default {
         string: 'FrBasicInput',
         tag: 'FrTag',
         textarea: 'FrTextArea',
+        json: 'FrJsonInput',
       };
       return componentMap[this.fieldType];
     },
