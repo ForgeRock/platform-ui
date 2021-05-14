@@ -13,6 +13,7 @@ of the MIT license. See the LICENSE file for details. -->
         name="close" />
     </template>
     <FrIcon
+      v-if="showIcon"
       class="mr-2"
       :name="alertIcon"
     />
@@ -69,6 +70,13 @@ export default {
     variant: {
       type: String,
       default: 'primary',
+    },
+    /**
+     * Should the Alert component render an icon
+     */
+    showIcon: {
+      type: Boolean,
+      default: true,
     },
   },
   computed: {
