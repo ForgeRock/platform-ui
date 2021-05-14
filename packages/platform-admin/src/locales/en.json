@@ -14,6 +14,7 @@
     "EmailProvider": "Email Provider",
     "EmailTemplates": "Email Templates",
     "EmailTemplatePreview": "Email Template Preview",
+    "ESV": "Environment Secrets & Variables",
     "HostedPages": "Hosted Pages",
     "Journeys": "Journeys",
     "JourneyTree": "Journey Tree",
@@ -42,6 +43,7 @@
     "EmailProvider": "Email Provider",
     "EmailTemplates": "Email Templates",
     "EmailTemplatePreview": "Email Template Preview",
+    "ESV": "Environment Secrets & Variables",
     "Forbidden": "Forbidden",
     "GatewaysAndAgents": "Gateways And Agents",
     "HostedPages": "Hosted Pages",
@@ -1310,6 +1312,67 @@
     "languages": {
       "GROOVY": "Groovy",
       "JAVASCRIPT": "JavaScript"
+    }
+  },
+  "esv": {
+    "title": "Environment Secrets & Variables",
+    "subTitle": "Set secrets and variables that are specific to this environment. These will be substituted into configuration or script placeholders.",
+    "placeholder": "Configuration Placeholder",
+    "updateStarted": "Update process started",
+    "updateFinished": "Update process completed",
+    "list": {
+      "secretsNoDataTitle": "You haven't added any secrets yet",
+      "variablesNoDataTitle": "You haven't added any variables yet",
+      "secretsNoDataSubtitle": "Add secrets for use within your environment.",
+      "variablesNoDataSubtitle": "Add variables for use within your environment.",
+      "noSearchResult": "No results found"
+    },
+    "deleteModal": {
+      "thisType": "this {type}"
+    },
+    "createModal": {
+      "addVariable": "Add a Variable",
+      "addSecret": "Add a Secret",
+      "variableDescription": "Add a variable to create a non-sensitive configuration value that is specific to this environment. Variables are simple key/value pairs.",
+      "secretDescription": "Add a secret to create a sensitive configuration value that is specific to this environment. Secrets have multiple secret versions, each containing their own encrypted value. By design, the value of a secret version cannot be read after it has been created."
+    },
+    "updateVariableModal": {
+      "editDescriptionTitle": "Edit Variable Description",
+      "editValueTitle": "Edit Variable Value",
+      "errorUpdatingVariable": "Error updating variable"
+    },
+    "updateSecretModal": {
+      "editDescriptionTitle": "Edit Secret Description",
+      "newVersionHeader": "Create a New Secret Version",
+      "confirmDeleteHeader": "Delete Secret Version?",
+      "newVersionButtonText": "New Version",
+      "addVersionButtonText": "Add Version",
+      "confirmDeleteText": "Are you sure you want to delete secret <span class=\"font-weight-bold text-dark\">Version {version}</span>?",
+      "errorUpdatingSecret": "Error updating secret",
+      "errorAddingSecretVersion": "Error creating Secret Version",
+      "errorChangingSecretVersionStatus": "Error changing Secret Version status",
+      "errorDeletingSecretVersion": "Error deleting Secret Version",
+      "versionCreated": "Version successfully created",
+      "versionDeleted": "Version successfully deleted",
+      "versionActivated": "Version successfully activated",
+      "versionDeactivated": "Version successfully deactivated"
+    },
+    "pendingUpdates": {
+      "updatesToApply": "You have <span class=\"font-weight-bold text-dark\">{count} update</span> to apply. | You have <span class=\"font-weight-bold text-dark\">{count} updates</span> to apply.",
+      "viewUpdates": "View Update | View Updates",
+      "errorApplyingUpdates": "Error applying updates",
+      "updateInProgress": "<span class=\"font-weight-bold\">Update in progress.</span> Adding or editing of environment variables is inactive until update has completed, which may take up to 10 minutes."
+    },
+    "pendingUpdatesModal": {
+      "applyUpdates": "Apply Now",
+      "pendingTitle": "Pending Updates",
+      "applyTitle": "Apply {count} Update? | Apply {count} Updates?",
+      "applyButton": "Apply {count} Update | Apply {count} Updates",
+      "tableStageDescription": "The following <span class=\"font-weight-bold text-dark\">{count} update</span> is pending application to your environment. | The following <span class=\"font-weight-bold text-dark\">{count} updates</span> are pending application to your environment.",
+      "confirmStageBeforeLink": "Are you sure you want to apply ",
+      "confirmStageBackLinkText": "{count} pending update | {count} pending updates",
+      "confirmStageAfterLink": " to your environment?",
+      "updateWarning": "Changes may take up to 10 minutes to propagate, during which time you will not be able to make further updates."
     }
   }
 }

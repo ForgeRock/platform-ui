@@ -221,11 +221,15 @@ legend {
 
 // opacity
 .opacity-20 {
-  opacity: 0.2;
+  opacity: 0.2 !important;
+}
+
+.opacity-50 {
+  opacity: 0.5 !important;
 }
 
 .opacity-70 {
-  opacity: 0.7;
+  opacity: 0.7 !important;
 }
 
 // Page transition
@@ -380,29 +384,76 @@ a.card {
   text-align: center;
 }
 
-.fr-toggle-primary {
-  &.custom-switch.b-custom-control-lg {
-    user-select: none;
-    padding-left: 2rem;
+.fr-toggle-primary.custom-switch {
+  user-select: none;
+  padding-left: 2rem;
 
+  .custom-control-label {
+    cursor: pointer;
+    color: white;
+    z-index: 0;
+
+    &::before {
+      background-color: #c0c9d5;
+      border: none;
+      z-index: -1;
+    }
+
+    &::after {
+      background-color: $white;
+    }
+  }
+
+  .custom-control-input:disabled {
+    ~ .custom-control-label {
+      cursor: initial;
+    }
+  }
+
+  .custom-control-input:focus ~ .custom-control-label::before {
+    box-shadow: none;
+  }
+
+  .custom-control-input:checked {
+    &:disabled {
+      ~ .custom-control-label {
+        cursor: initial;
+
+        &::before {
+          background-color: #79c3f6;
+        }
+      }
+    }
+
+    ~ .custom-control-label {
+      &::before {
+        background-color: $blue;
+      }
+    }
+  }
+
+  &.b-custom-control-sm {
     .custom-control-label {
-      cursor: pointer;
+      line-height: 1.5rem;
+      font-size: 1rem;
+      padding-left: 0.5rem;
+      font-weight: 400;
+    }
+  }
+
+  &.b-custom-control-lg {
+    .custom-control-label {
       font-size: 0.625rem;
       font-weight: 600;
-      color: white;
       line-height: 3;
       padding-top: 2rem;
       padding-left: 2rem;
-      z-index: 0;
 
       &::before {
         left: -2rem;
         height: 2rem;
         width: 3.5rem;
         border-radius: 1rem;
-        background-color: #c0c9d5;
-        border: none;
-        z-index: -1;
       }
 
       &::after {
@@ -411,36 +462,11 @@ a.card {
         width: calc(1.875rem - 4px);
         height: calc(1.875rem - 4px);
         border-radius: 1rem;
-        background-color: $white;
       }
-    }
-
-    .custom-control-input:disabled {
-      ~ .custom-control-label {
-        cursor: initial;
-      }
-    }
-
-    .custom-control-input:focus ~ .custom-control-label::before {
-      box-shadow: none;
     }
 
     .custom-control-input:checked {
-      &:disabled {
-        ~ .custom-control-label {
-          cursor: initial;
-
-          &::before {
-            background-color: #79c3f6;
-          }
-        }
-      }
-
       ~ .custom-control-label {
-        &::before {
-          background-color: $blue;
-        }
-
         &::after {
           transform: translateX(1.45rem);
         }
@@ -587,4 +613,12 @@ button:focus-visible {
       outline-offset: 2px;
     }
   }
+}
+
+.border-darkened {
+  border-color: #d2dfea !important;
+}
+
+dd {
+  color: #23282e;
 }

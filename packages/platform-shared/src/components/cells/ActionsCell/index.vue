@@ -5,7 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
     align="right"
-    class="pr-3">
+    :class="wrapperClass ? wrapperClass : 'pr-3'">
     <BDropdown
       boundary="window"
       class="p-0"
@@ -141,6 +141,13 @@ export default {
     toggleIsActive: {
       default: true,
       type: Boolean,
+    },
+    /**
+     * A class to use for the wrapping component of the cell
+     */
+    wrapperClass: {
+      type: String,
+      default: '',
     },
   },
 };
