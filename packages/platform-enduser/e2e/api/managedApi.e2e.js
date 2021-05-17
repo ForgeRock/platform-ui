@@ -54,7 +54,6 @@ export function createAMUser() {
     },
   }));
 }
-
 export function createIDMResource(resourceType = 'managed', resourceName, body, accessToken = Cypress.env('ACCESS_TOKEN').access_token) {
   return cy.request({
     method: 'POST',
@@ -101,4 +100,32 @@ export function deleteIDMUser(userId) {
       referer: `https://${Cypress.env('FQDN')}/platform/appAuthHelperRedirect.html`,
     },
   }).then(() => {});
+}
+
+/**
+ * Assigns dashboard apps to a user in AM
+ * @param {*} userId
+ */
+export function assignUserDashboard(userId, dashboards) {
+  return cy.request({
+    method: 'POST',
+    url: `https://${Cypress.env('FQDN')}/am/json/realms/root/authenticate`,
+    headers: {
+      'X-OpenAM-Username': Cypress.env('AM_USERNAME'),
+      'X-OpenAM-Password': Cypress.env('AM_PASSWORD'),
+      'content-type': 'application/json',
+      'accept-api-version': 'resource=2.1',
+    },
+  }).then(() => cy.request({
+    method: 'PUT',
+    url: `https://${Cypress.env('FQDN')}/am/json/realms/root/users/${userId}/services/dashboard`,
+    body: {
+      assignedDashboard: dashboards,
+    },
+    headers: {
+      'content-type': 'application/json',
+      'x-requested-with': 'XMLHttpRequest',
+      'accept-api-version': 'protocol=1.0,resource=1.0',
+    },
+  }));
 }
