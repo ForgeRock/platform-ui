@@ -5,19 +5,21 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { createIDMUser } from '../api/managedApi.e2e';
+import { createIDMUser, assignUserDashboard } from '../api/managedApi.e2e';
 
 describe('Enduser Dashboard View', () => {
+  let userId = '';
   let userName = '';
   const fullName = 'First Last';
+  const givenName = 'First';
 
   before(() => {
     createIDMUser().then((results) => {
       // eslint-disable-next-line prefer-destructuring
+      userId = results.body._id;
       userName = results.body.userName;
     });
   });
-
   it('should have sidebar and navbar with dashboard selected', () => {
     cy.login(userName);
     cy.findByTestId('fr-sidebar-nav').should('exist');
@@ -90,6 +92,20 @@ describe('Enduser Dashboard View', () => {
       .should('exist')
       .should('contain', 'Sign out')
       .click();
+  });
+
+  it('should show compact header on enduser login with applications dashboard enabled', () => {
+    const dashboards = ['Google', 'Zendesk', 'salesforce'];
+    assignUserDashboard(userId, dashboards).then(() => {
+      cy.logout();
+      cy.clock(new Date(2021, 4, 29, 11, 19, 11), ['Date']);
+      cy.login(userName);
+      cy.get('.fr-dropdown-button-content').should('contain', fullName);
+      cy.get('h1')
+        .should('contain', `Good Morning ${givenName}!`);
+      cy.get('p')
+        .should('contain', "Here's a look at what's going on.");
+    });
   });
 
   it('should delete test user', () => {

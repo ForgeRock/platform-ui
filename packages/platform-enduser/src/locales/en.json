@@ -33,7 +33,11 @@
       "widgets": {
         "welcome": {
           "greeting": "Hello",
+          "greetingMorning": "Good Morning {name}!",
+          "greetingAfternoon": "Good Afternoon {name}!",
+          "greetingEvening": "Good Evening {name}!",
           "welcomeMessage": "The End User UI helps users manage their account data, consent, and shared resources.",
+          "welcomeMessageCompact": "Here's a look at what's going on.",
           "editProfile": "Edit Your Profile"
         }
       }
