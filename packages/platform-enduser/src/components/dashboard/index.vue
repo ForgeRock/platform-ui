@@ -15,7 +15,9 @@ of the MIT license. See the LICENSE file for details. -->
           <Component
             :is="widget.type"
             :user-details="userDetails"
-            :details="widget.details" />
+            :details="widget.details"
+            :display-compact-header="myApplications.length > 0"
+          />
         </div>
       </BRow>
       <BJumbotron
@@ -34,7 +36,8 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
       </BJumbotron>
     </BContainer>
-    <BContainer v-if="myApplications.length">
+    <BContainer
+      v-if="myApplications.length">
       <BCol>
         <section
           data-test-id="my-applications"
