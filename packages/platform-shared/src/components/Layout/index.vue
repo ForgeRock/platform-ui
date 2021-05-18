@@ -25,8 +25,9 @@ of the MIT license. See the LICENSE file for details. -->
         @toggle-menu="toggleMenu"
         :menu-is-expanded="menuExpanded"
         :show-notifications="false"
-        :show-help-link="!$store.state.isFraas || !isEnduser"
-        :show-docs-link="!$store.state.isFraas || !isEnduser"
+        :show-help-link="!isFraas || !isEnduser"
+        :show-docs-link="!isFraas || !isEnduser"
+        :show-profile-link="!isInternalUser"
         :tenant-menu-items="tenantMenuItems"
         :user-details="userDetails"
         :docs-link="docsLink"
@@ -88,7 +89,6 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
 import Alert from '@forgerock/platform-shared/src/components/Alert/';
 import Navbar from '@forgerock/platform-shared/src/components/Navbar/';
 import SideMenu from '@forgerock/platform-shared/src/components/SideMenu/';
@@ -111,6 +111,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    isFraas: {
+      type: Boolean,
+      default: false,
+    },
+    isInternalUser: {
+      type: Boolean,
+      default: false,
+    },
     menuItems: {
       type: Array,
       default: () => [],
@@ -130,6 +138,10 @@ export default {
     tenantMenuItems: {
       type: Array,
       default: () => [],
+    },
+    userDetails: {
+      type: Object,
+      default: () => {},
     },
     buildNumber: {
       type: String,
@@ -154,11 +166,8 @@ export default {
     },
   },
   computed: {
-    ...mapGetters({
-      userDetails: 'UserStore/userDetails',
-    }),
     docsLink() {
-      if (this.$store.state.isFraas === true) {
+      if (this.isFraas) {
         return 'https://backstage.forgerock.com/docs/idcloud/latest/index.html';
       }
       return 'https://backstage.forgerock.com/docs/index.html';

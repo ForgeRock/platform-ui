@@ -6,7 +6,9 @@ of the MIT license. See the LICENSE file for details. -->
   <div>
     <FrLayout
       :menu-items="menuItems"
+      :user-details="userDetails"
       :is-enduser="true"
+      :is-fraas="$store.state.isFraas"
       :version="version">
       <RouterView :key="this.$route.fullPath" />
     </FrLayout>
@@ -22,7 +24,10 @@ import {
   capitalize,
   cloneDeep,
 } from 'lodash';
-import { mapState } from 'vuex';
+import {
+  mapGetters,
+  mapState,
+} from 'vuex';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
@@ -45,6 +50,9 @@ export default {
   computed: {
     ...mapState({
       accessObj: (state) => state.UserStore.access,
+    }),
+    ...mapGetters({
+      userDetails: 'UserStore/userDetails',
     }),
   },
   data() {
