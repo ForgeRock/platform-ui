@@ -69,7 +69,7 @@ of the MIT license. See the LICENSE file for details. -->
           <FrDropdownMenu
             :user-details="userDetails"
             :dropdown-items="tenantMenuItems"
-            :show-profile-link="!$store.state.UserStore.amAdmin"
+            :show-profile-link="showProfileLink"
             enable-logout
             right
             class="pl-sm-4">
@@ -206,6 +206,13 @@ export default {
     showNotifications: {
       type: Boolean,
       default: false,
+    },
+    /**
+     * Show link to view profile
+     */
+    showProfileLink: {
+      type: Boolean,
+      default: true,
     },
     /**
      * Menu items displayed in dropdown
