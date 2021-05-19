@@ -14,6 +14,7 @@ const defaultState = {
   googleMapsApiKey: '',
   returnRoute: '',
   returnRouteText: '',
+  uiConfig: null,
 };
 
 const mutations = {
@@ -45,6 +46,10 @@ const mutations = {
     if (newValue.returnRouteText || newValue.returnRouteText === '') {
       state.returnRouteText = newValue.returnRouteText;
     }
+  },
+
+  setUiConfig(state, newValue) {
+    state.uiConfig = newValue;
   },
 };
 
