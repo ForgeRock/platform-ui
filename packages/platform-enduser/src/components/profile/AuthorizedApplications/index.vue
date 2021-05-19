@@ -7,8 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     <FrAccordion
       accordion-group="oauthApplications"
       class="oauth-applications"
-      :items="oauthApplications"
-    >
+      :items="oauthApplications">
       <template #accordionHeader>
         <div class="p-4">
           <h4>{{ $t("pages.profile.oauthApplications.title") }}</h4>
