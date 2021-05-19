@@ -235,7 +235,15 @@ export default {
     setInputValue(newVal) {
       let newInputValue = newVal;
       if (!has(newInputValue[0], 'value')) {
-        newInputValue = map(newVal, (val) => find(this.selectOptions, { value: val }));
+        newInputValue = map(newVal, (val) => {
+          const existingValue = find(this.inputValue, { value: val });
+          const selectOption = find(this.selectOptions, { value: val });
+          if (existingValue) {
+            return existingValue;
+          } else {
+            return selectOption;
+          }
+        });
       }
       if (!isEqual(this.inputValue, newInputValue)) {
         this.inputValue = newInputValue;
