@@ -106,6 +106,7 @@ export default {
         .fr-logo {
           align-self: center;
           height: $fr-center-card-logo-height;
+          max-width: 100%;
         }
       }
     }
