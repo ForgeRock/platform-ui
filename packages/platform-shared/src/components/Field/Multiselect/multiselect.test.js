@@ -368,4 +368,31 @@ describe('MultiSelect input', () => {
       wrapper.destroy();
     }
   });
+
+  it('MultiSelect input sets inputValue properly', () => {
+    const selectOption = {
+      value: 'selectOption',
+      copySelect: false,
+      multiselectId: 0,
+      text: 'selectOption',
+    };
+    const existingValue = { value: 'existingValue' };
+    const wrapper = shallowMount(MultiSelect, {
+      localVue,
+      mocks: {
+        $t: () => {},
+      },
+      propsData: {
+        ...defaultMixinProps,
+        options: [selectOption],
+      },
+    });
+    wrapper.vm.inputValue = [existingValue];
+    wrapper.vm.setInputValue(['selectOption']);
+    expect(wrapper.vm.inputValue).toEqual([selectOption]);
+    wrapper.vm.inputValue = [existingValue];
+    wrapper.vm.setInputValue(['existingValue', 'selectOption']);
+    expect(wrapper.vm.inputValue.length).toEqual(2);
+    expect(wrapper.vm.inputValue).toEqual([existingValue, selectOption]);
+  });
 });
