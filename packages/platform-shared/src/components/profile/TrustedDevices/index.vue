@@ -5,10 +5,9 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div v-if="devices.length">
     <FrAccordion
-      class="mb-4"
-      :items="devices"
       accordion-group="trustedDevices"
-      :title="$t('pages.profile.trustedDevices.title')">
+      class="mb-4"
+      :items="devices">
       <template v-slot:accordionHeader>
         <div class="p-4">
           <h4>
@@ -19,8 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
           </p>
         </div>
       </template>
-      <template
-        v-slot:header="slotData">
+      <template v-slot:header="slotData">
         <BRow>
           <BCol
             cols="10">
@@ -48,8 +46,7 @@ of the MIT license. See the LICENSE file for details. -->
                   </div>
                 </div>
               </BCol>
-              <BCol
-                md="6">
+              <BCol md="6">
                 <span v-if="slotData.isCurrent">
                   <i
                     class="material-icons mr-2 text-success"
@@ -175,8 +172,7 @@ of the MIT license. See the LICENSE file for details. -->
         v-model="editModal"
         autofocus
         :label="$t('pages.profile.trustedDevices.editModalInput')" />
-      <template
-        v-if="modalType === 'remove'">
+      <template v-if="modalType === 'remove'">
         {{ $t('pages.profile.trustedDevices.removeModalText') }}
       </template>
       <template v-slot:modal-footer="{ cancel }">
@@ -201,7 +197,6 @@ import UAParser from 'ua-parser-js';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { get } from 'lodash';
-
 import { mapState } from 'vuex';
 import {
   BButton, BCol, BModal, BRow, VBModal,
