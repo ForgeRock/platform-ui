@@ -40,7 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
       :name="relationshipField.key"
       :options="relationshipField.options"
       :options-limit="10"
-      :placeholder="$t('common.placeholders.typeToSearchFor', {item: resourceCollection.label})"
+      :placeholder="searchPlaceholder"
       :preserve-search="isRelationshipArray"
       :show-labels="false"
       :show-no-results="false"
@@ -49,7 +49,7 @@ of the MIT license. See the LICENSE file for details. -->
       :type="relationshipField.type"
       :validation="relationshipField.validation"
       :validation-immediade="relationshipField.validation"
-      @search-change="setOptions"
+      @search-change="debouncedSetOptions"
       @input="emitSelected">
       <template
         v-slot:singleLabel="{ option }">
@@ -127,7 +127,11 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import {
-  map, each, find, has,
+  debounce,
+  each,
+  find,
+  has,
+  map,
 } from 'lodash';
 import { BFormGroup } from 'bootstrap-vue';
 import VueMultiSelect from 'vue-multiselect';
@@ -190,21 +194,12 @@ export default {
         type: has(this.relationshipProperty, 'items') ? 'multiselect' : 'select',
         options: [],
       },
+      debouncedSetOptions: debounce(this.setOptions, 1000),
+      searchPlaceholder: '',
     };
   },
   mounted() {
-    this.allResourceCollections = this.isRelationshipArray ? this.relationshipProperty.items.resourceCollection : this.relationshipProperty.resourceCollection;
-
-    this.rescourceCollectionTypes = map(this.allResourceCollections, (prop, index) => ({ value: prop.path, text: prop.label, index }));
-
-    if (this.value) {
-      // eslint-disable-next-line no-underscore-dangle
-      const currentResourceCollectionType = find(this.rescourceCollectionTypes, { value: this.value._refResourceCollection });
-
-      this.setResourceCollectionType(currentResourceCollectionType);
-    } else {
-      this.setResourceCollectionType();
-    }
+    this.setupEditor();
   },
   watch: {
     temporalConstraint(newVal) {
@@ -223,14 +218,32 @@ export default {
      */
     temporalConstraintEnabled(newVal) {
       if (this.relationshipField.value && this.relationshipField.value.length) {
-        this.relationshipField.value.forEach((selection) => {
+        const relationships = this.relationshipField.value.map((selection) => {
           const refProperties = newVal ? { temporalConstraints: [{ duration: this.temporalConstraint }] } : null;
-          this.$emit('setValue', { property: this.relationshipProperty.key, value: { _ref: selection.value, _refProperties: refProperties } });
+          return { _ref: selection, _refProperties: refProperties };
         });
+
+        this.$emit('setValue', relationships);
       }
     },
   },
   methods: {
+    setupEditor() {
+      this.allResourceCollections = this.isRelationshipArray ? this.relationshipProperty.items.resourceCollection : this.relationshipProperty.resourceCollection;
+
+      this.rescourceCollectionTypes = map(this.allResourceCollections, (prop, index) => ({ value: prop.path, text: prop.label, index }));
+
+      if (this.value) {
+        // eslint-disable-next-line no-underscore-dangle
+        const currentResourceCollectionType = find(this.rescourceCollectionTypes, { value: this.value._refResourceCollection });
+
+        this.setResourceCollectionType(currentResourceCollectionType);
+      } else {
+        this.setResourceCollectionType();
+      }
+
+      this.setSearchPlaceholder();
+    },
     setResourceCollectionType(rescourceCollectionType) {
       let index = 0;
 
@@ -254,10 +267,25 @@ export default {
           this.displayNotification('IDMMessages', 'error', error.response.data.message);
         });
     },
+    setSearchPlaceholder(numChars) {
+      if (numChars) {
+        this.searchPlaceholder = this.$t('common.placeholders.typeXCharactersToSearchFor', { numChars, item: this.resourceCollection.label });
+      } else {
+        this.searchPlaceholder = this.$t('common.placeholders.typeToSearchFor', { item: this.resourceCollection.label });
+      }
+    },
     setOptions(query) {
       const maxPageSize = 10;
-      const displayFields = this.resourceCollection.query.fields;
-      let queryFilter = true;
+      const { fields: displayFields } = this.resourceCollection.query;
+      const { uiConfig } = this.$store.state.SharedStore;
+      const managedObjectName = this.resourceCollection.path.split('/')[1];
+      const queryThreshold = has(uiConfig.configuration.platformSettings.managedObjectsSettings, managedObjectName) ? uiConfig.configuration.platformSettings.managedObjectsSettings[managedObjectName].minimumUIFilterLength : null;
+      const queryFilter = true;
+      let requestEnabled = true;
+
+      if (queryThreshold) {
+        this.setSearchPlaceholder(queryThreshold);
+      }
 
       if (!query && (!this.relationshipField.value || this.relationshipField.value.length === 0) && this.value) {
         // eslint-disable-next-line no-underscore-dangle
@@ -266,15 +294,23 @@ export default {
         this.relationshipField.value = this.value._ref;
       }
 
-      if (query) {
-        queryFilter = map(displayFields, (field) => `/${field} sw "${query}"`).join(' or ');
+      const urlParams = {
+        pageSize: maxPageSize,
+        fields: displayFields.join(','),
+        queryFilter,
+      };
 
-        const urlParams = {
-          sortKeys: this.resourceCollection.query.fields[0],
-          pageSize: maxPageSize,
-          fields: displayFields.join(','),
-          queryFilter,
-        };
+      if (query) {
+        urlParams.queryFilter = map(displayFields, (field) => `/${field} sw "${query}"`).join(' or ');
+        // eslint-disable-next-line prefer-destructuring
+        urlParams.sortKeys = displayFields[0];
+      }
+
+      if (queryThreshold && query && query.length < queryThreshold) {
+        requestEnabled = false;
+      }
+
+      if (requestEnabled) {
         const idmInstance = this.getRequestService();
         idmInstance.get(`${this.resourceCollection.path}${encodeQueryString(urlParams)}`).then((queryResults) => {
           this.relationshipField.options = [];

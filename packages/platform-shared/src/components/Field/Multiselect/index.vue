@@ -238,13 +238,14 @@ export default {
         newInputValue = map(newVal, (val) => {
           const existingValue = find(this.inputValue, { value: val });
           const selectOption = find(this.selectOptions, { value: val });
-          if (existingValue) {
-            return existingValue;
-          } else {
+          if (selectOption) {
             return selectOption;
           }
+
+          return existingValue;
         });
       }
+
       if (!isEqual(this.inputValue, newInputValue)) {
         this.inputValue = newInputValue;
       }

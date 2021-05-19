@@ -105,7 +105,8 @@
       "timeZoneOffset": "Time Zone Offest",
       "username": "Username",
       "relationshipLabel": "{relationshipName} Type",
-      "typeToSearchFor": "Type to search for {item}"
+      "typeToSearchFor": "Type to search for {item}",
+      "typeXCharactersToSearchFor": "Type at least {numChars} characters to search for {item}"
     },
     "policyValidationMessages": {
       "GENERIC_FIELD_REQUIRED": "{_field_} is required",

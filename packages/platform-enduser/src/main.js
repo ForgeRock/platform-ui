@@ -165,6 +165,7 @@ const startApp = () => {
     if (uiConfig.data.configuration.lang) {
       i18n.locale = uiConfig.data.configuration.lang;
     }
+    store.commit('SharedStore/setUiConfig', uiConfig.data);
 
     if (uiConfig.data.configuration && uiConfig.data.configuration.platformSettings) {
       store.commit('setHostedPagesState', uiConfig.data.configuration.platformSettings.hostedPages === undefined ? true : uiConfig.data.configuration.platformSettings.hostedPages);
