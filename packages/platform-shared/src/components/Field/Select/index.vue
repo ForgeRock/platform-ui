@@ -166,7 +166,7 @@ export default {
       if (this.value) {
         const oldValueObject = oldOptions.find(({ value }) => value === this.value);
         const newValueObject = newOptions.find(({ value }) => value === this.value);
-        if (!oldValueObject || (oldValueObject.value === newValueObject.value && oldValueObject.text !== newValueObject.text)) {
+        if (!oldValueObject || (newValueObject && (oldValueObject.value === newValueObject.value && oldValueObject.text !== newValueObject.text))) {
           this.setInputValue(this.value);
         }
       }
