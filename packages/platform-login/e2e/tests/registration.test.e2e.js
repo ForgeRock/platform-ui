@@ -5,14 +5,17 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+import { random } from 'lodash';
+
 describe('Registration form', () => {
   const locationUrl = `${Cypress.config().baseUrl}/login/?realm=/&authIndexType=service&authIndexValue=Registration#/`;
+  const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
 
   beforeEach(() => {
     cy.visit(locationUrl);
 
     cy.findByPlaceholderText('Username')
-      .type('newTestUser1');
+      .type(userName);
 
     cy.findByPlaceholderText('First Name')
       .type('newTest');
@@ -29,17 +32,10 @@ describe('Registration form', () => {
     cy.findAllByPlaceholderText('Answer').last().type('ForgeRock');
   });
 
-  it('missing credentials should show error', () => {
-    // no password set - check policy
-    cy.get('li:contains("Cannot be blank")')
-      .should('not.have.class', 'fr-valid');
-
+  it('incorrect credentials should show error', () => {
     // set short and long passwords - check policy
     cy.findByPlaceholderText('Password')
       .type('2short');
-
-    cy.get('li:contains("Cannot be blank")')
-      .should('have.class', 'fr-valid');
 
     cy.get('li:contains("Must be at least 8 characters long")')
       .should('not.have.class', 'fr-valid');
