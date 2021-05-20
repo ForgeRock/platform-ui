@@ -20,9 +20,16 @@ of the MIT license. See the LICENSE file for details. -->
       :disabled="disabled"
       :id="id">
       <template v-slot="{ tags, inputAttrs, inputHandlers, removeTag }">
-        <div
-          class="overflow-hidden"
-          @click="$refs.input.focus()">
+        <ul
+          class="overflow-hidden pl-0"
+          @click="$refs.input.focus()"
+          :id="`fr-tags-list_${id}`">
+          <label
+            v-if="inputValue.length"
+            class="text-secondary w-100"
+          >
+            {{ fieldName }}
+          </label>
           <Draggable
             v-model="inputValue"
             class="d-flex flex-wrap w-100"
@@ -31,27 +38,30 @@ of the MIT license. See the LICENSE file for details. -->
               v-for="tag in tags"
               body-class="py-1 pr-2 text-nowrap"
               class="fr-tag"
-              :key="tag">
+              :key="tag"
+              :id="`fr-tags-tag_${tag.replace(/\s/g, '_')}`">
               <span class="fr-tag-text">
                 {{ tag }}
               </span>
               <span @click="removeTag(tag)">
                 <i
+                  :aria-controls="`fr-tags-tag_${tag.replace(/\s/g, '_')}`"
                   class="material-icons-outlined pl-2"
-                  style="font-size: 10px; font-weight: 900;">
+                  style="font-size: 12px; font-weight: 900;">
                   close
                 </i>
               </span>
             </div>
           </Draggable>
-        </div>
+        </ul>
         <input
           v-bind="inputAttrs"
           v-on="inputHandlers"
           ref="input"
           :class="[{'has-values': tags.length}, 'fr-tag-input']"
           :placeholder="label"
-          @input="inputValueHandler(inputValue, $event.target.value)">
+          @input="inputValueHandler(inputValue, $event.target.value)"
+          :aria-describedby="`fr-tags-list_${id}`">
       </template>
     </BFormTags>
   </FrInputLayout>
