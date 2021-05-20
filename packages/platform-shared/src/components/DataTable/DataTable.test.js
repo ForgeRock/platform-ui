@@ -25,6 +25,9 @@ const emptyData = {
 describe('DataTable Component', () => {
   it('DataTable successfully loaded', () => {
     const wrapper = shallowMount(DataTable, {
+      mocks: {
+        $t: () => {},
+      },
       propsData: {
         ...emptyData,
       },
@@ -35,6 +38,9 @@ describe('DataTable Component', () => {
 
   it('DataTable renders basic elements: Optional Toolbar Slot', () => {
     const wrapper = mount(DataTable, {
+      mocks: {
+        $t: () => {},
+      },
       slots: {
         toolbar: '<div class="toolbar">simple toolbar</div>',
       },
@@ -50,6 +56,9 @@ describe('DataTable Component', () => {
 
   it('DataTable renders basic elements: Column Heading', () => {
     const wrapper = mount(DataTable, {
+      mocks: {
+        $t: () => {},
+      },
       propsData: {
         ...emptyData,
         items: [...itemData.usersSimple.items],
@@ -65,6 +74,9 @@ describe('DataTable Component', () => {
 
   it('DataTable renders basic elements: Pagination', () => {
     const wrapper = mount(DataTable, {
+      mocks: {
+        $t: () => {},
+      },
       propsData: {
         ...emptyData,
         items: [...itemData.test.items],
@@ -101,6 +113,9 @@ describe('DataTable Component', () => {
 
   it('Does not render pagination control if it only has one page of data', () => {
     const wrapper = mount(DataTable, {
+      mocks: {
+        $t: () => {},
+      },
       propsData: {
         ...emptyData,
         items: [1, 2, 3],
@@ -114,6 +129,9 @@ describe('DataTable Component', () => {
 
   it('Does not limit the number of items shown if pagination is disabled', () => {
     const wrapper = mount(DataTable, {
+      mocks: {
+        $t: () => {},
+      },
       propsData: {
         ...emptyData,
         items: [1, 2, 3],
@@ -144,6 +162,9 @@ describe('DataTable Component', () => {
     }
 
     const wrapper = mount(DataTable, {
+      mocks: {
+        $t: () => {},
+      },
       stubs: {
         transition: false,
       },
@@ -161,8 +182,11 @@ describe('DataTable Component', () => {
     expect(visibleDropdownMenu().length).toEqual(0);
   });
 
-  it('DataTable renders field specified row checkboxes', () => {
+  it('DataTable renders field specified row checkboxes', async () => {
     const wrapper = mount(DataTable, {
+      mocks: {
+        $t: () => {},
+      },
       propsData: {
         ...emptyData,
         items: [...itemData.users.items],
@@ -187,26 +211,33 @@ describe('DataTable Component', () => {
     expect(checkboxBooleans(visibleCheckboxes())).toEqual([false, false, false, false]);
 
     checkbox0().setChecked(true);
+    await wrapper.vm.$nextTick();
     expect(checkboxBooleans(visibleCheckboxes())).toEqual([false, true, false, false]);
 
     checkbox1().setChecked(true);
     checkbox2().setChecked(true);
+    await wrapper.vm.$nextTick();
     expect(checkboxBooleans(visibleCheckboxes())).toEqual([true, true, true, true]);
 
     checkbox1().setChecked(false);
+    await wrapper.vm.$nextTick();
     expect(checkboxBooleans(visibleCheckboxes())).toEqual([false, true, false, true]);
 
     checkboxAll().setChecked(true);
+    await wrapper.vm.$nextTick();
     expect(checkboxBooleans(visibleCheckboxes())).toEqual([true, true, true, true]);
 
     checkboxAll().setChecked(false);
+    await wrapper.vm.$nextTick();
     expect(checkboxBooleans(visibleCheckboxes())).toEqual([false, false, false, false]);
 
     checkboxAll().setChecked(true);
+    await wrapper.vm.$nextTick();
     nextPage().trigger('click');
     expect(checkboxBooleans(visibleCheckboxes())).toEqual([false, false]);
 
     checkbox0().setChecked(true);
+    await wrapper.vm.$nextTick();
     previousPage().trigger('click');
     expect(checkboxBooleans(visibleCheckboxes())).toEqual([false, false, false, false]);
   });
@@ -223,6 +254,9 @@ describe('DataTable Component', () => {
       }));
     }
     const wrapper = mount(DataTable, {
+      mocks: {
+        $t: () => {},
+      },
       attachToDocument: true,
       scopedSlots: {
         // scoped data is passed in as props by default

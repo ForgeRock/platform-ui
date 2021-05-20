@@ -118,5 +118,14 @@
   },
   "sideMenu": {
     "profile": "Profile"
-  }
+  },
+  "pageTitles": {
+    "pageTitle": "Platform Enduser - {page}",
+    "Profile": "Profile",
+    "ListResource": "List Resource",
+    "EditResource": "Edit Resource",
+    "Dashboard": "Dashboard",
+    "Sharing": "Sharing",
+    "Forbidden": "Forbidden"
+  } 
 }

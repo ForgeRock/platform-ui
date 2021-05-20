@@ -51,6 +51,11 @@ of the MIT license. See the LICENSE file for details. -->
           v-if="isCustomLabel('dropdown', data.label)">
           {{ data.label }}
         </span>
+        <span
+          v-else
+          class="sr-only">
+          {{ $t('dataTable.dropdownMenuOptions') }}
+        </span>
       </template>
 
       <template #cell(dropdown)="data">
