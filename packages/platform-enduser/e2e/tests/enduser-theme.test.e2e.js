@@ -98,8 +98,8 @@ describe('Enduser Theming', () => {
     cy.findByRole('cell', { name: 'Starter Theme' }).click();
     cy.findByRole('tab', { name: 'Layout' }).click();
     cy.findByRole('button', { name: 'Account Page' }).click();
-    cy.findByRole('checkbox', { name: 'Password' }).click();
-    cy.findByRole('checkbox', { name: '2-Step Verification' }).click();
+    cy.findByRole('checkbox', { name: 'Password' }).click({ force: true });
+    cy.findByRole('checkbox', { name: '2-Step Verification' }).click({ force: true });
     cy.findByRole('button', { name: 'Save' }).click();
     cy.logout();
     cy.login(enduserUserName);
