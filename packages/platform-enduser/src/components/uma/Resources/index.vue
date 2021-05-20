@@ -14,9 +14,7 @@ of the MIT license. See the LICENSE file for details.
         aria-label="Toolbar with button groups">
         <div class="input-group col-sm-4">
           <div class="input-group-prepend">
-            <div
-              class="input-group-text"
-              id="btnGroupAddon">
+            <div class="input-group-text">
               <i class="material-icons-outlined md-24">
                 search
               </i>

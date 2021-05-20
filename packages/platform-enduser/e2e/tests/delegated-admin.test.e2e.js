@@ -297,7 +297,7 @@ describe('Delegated Admin', () => {
     cy.findByRole('row', { name: 'There are no records to show' });
     cy.findByRole('tab', { name: 'Authorization Roles' }).click();
     cy.findAllByRole('row').should('have.length', 2);
-    cy.findByRole('row', { name: internalRoleName });
+    cy.findByRole('cell', { name: internalRoleName });
     // Ensure user can add and delete internal roles
     cy.findByRole('button', { name: 'Add Authorization Roles' }).click();
     cy.findByRole('dialog').findByLabelText('Authorization Roles').click({ force: true }).type(`${internalRoleName}`);

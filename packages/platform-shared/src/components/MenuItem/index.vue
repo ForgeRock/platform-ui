@@ -45,7 +45,7 @@ of the MIT license. See the LICENSE file for details. -->
     class="fr-menu-item-group"
     :role="isNav ? '' : 'presentation'">
     <BButton
-      v-b-toggle="`collapse-${displayName}`"
+      v-b-toggle="`collapse-${displayName.split(' ').join('-')}`"
       class="dropdown-toggle d-flex align-items-center rounded-0"
       :aria-expanded="isExpanded"
       :role="isNav ? '' : 'menuitem'">
@@ -58,7 +58,7 @@ of the MIT license. See the LICENSE file for details. -->
       </span>
     </BButton>
     <BCollapse
-      :id="`collapse-${displayName}`"
+      :id="`collapse-${displayName.split(' ').join('-')}`"
       class="fr-menu-item-submenuitems"
       tag="ul"
       v-model="isExpanded">

@@ -7,6 +7,7 @@
 
 import Router from 'vue-router';
 import Vue from 'vue';
+import i18n from './i18n';
 
 import store from '@/store';
 
@@ -97,6 +98,8 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
+  const page = to.name ? i18n.t(`pageTitles.${to.name}`) : '';
+  document.title = i18n.t('pageTitles.pageTitle', { page });
   const url = new URL(window.location);
   const realm = url.searchParams.get('realm');
 
