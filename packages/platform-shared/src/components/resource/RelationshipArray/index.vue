@@ -65,7 +65,11 @@ of the MIT license. See the LICENSE file for details. -->
           <BFormCheckbox
             class="pl-3"
             disabled
-            v-model="allRowsSelected" />
+            v-model="allRowsSelected">
+            <span class="sr-only">
+              {{ $t('common.select') }}
+            </span>
+          </BFormCheckbox>
         </div>
       </template>
       <template v-slot:cell(selected)="data">
@@ -73,7 +77,11 @@ of the MIT license. See the LICENSE file for details. -->
           class="pl-3"
           :id="'rowSelectCheckbox_' + relationshipArrayProperty.key + data.index"
           @change="onCheckboxClicked(data)"
-          v-model="data.rowSelected" />
+          v-model="data.rowSelected">
+          <span class="sr-only">
+            {{ $t('common.selectSelection', { selection: data.item.name ? data.item.name: data.item._relationshipDetails.join(' ') }) }}
+          </span>
+        </BFormCheckbox>
       </template>
       <template v-slot:cell(_relationshipDetails)="data">
         <div
@@ -262,6 +270,9 @@ export default {
     },
   },
   methods: {
+    stringify(a) {
+      return JSON.stringify(a);
+    },
     loadGrid(page) {
       const doLoad = (resourceCollectionSchema) => {
         this.getRequestService().get(this.buildGridUrl(page, resourceCollectionSchema)).then((resourceData) => {

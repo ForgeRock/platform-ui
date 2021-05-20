@@ -81,6 +81,8 @@
     "script": "Script",
     "scripts": "Scripts",
     "search": "Search",
+    "select": "Select",
+    "selectSelection": "Select {selection}",
     "send": "Send",
     "settings": "Settings",
     "showAdvanced": "Show advanced settings",
@@ -498,6 +500,12 @@
     "value": "Value",
     "json": "JSON",
     "jsonNotStructured": "JSON is not structured properly"
+  },
+  "centerCard": {
+    "logoAltText": "ForgeRock logo"
+  },
+  "dataTable" : {
+    "dropdownMenuOptions": "Dropdown Menu Options"
   },
   "sideMenu": {
     "dashboard": "Dashboard",
