@@ -331,10 +331,12 @@
   "dashboard": {
     "createApplication": {
       "title": "Add a New Application",
+      "altText": "Application Icon",
       "description": "Add your application to the platform, and integrate the app with ForgeRock authentication."
     },
     "connectIdentities": {
       "title": "Connect Identities",
+      "altText": "Identities Icon",
       "description": "Create and manage identity profiles across applications and IT infrastructure."
     },
     "managedAccess": {
