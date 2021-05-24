@@ -30,9 +30,9 @@ import {
 } from 'vuex';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
-import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
+import ThemeMixin from '@forgerock/platform-shared/src/mixins/ThemeMixin';
 import FrLayout from '@forgerock/platform-shared/src/components/Layout';
-import { getIdmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
+import { getAmServerInfo, getIdmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
 import ThemeInjector from '@forgerock/platform-shared/src/components/ThemeInjector/';
 import './scss/main.scss';
 
@@ -41,7 +41,7 @@ export default {
   mixins: [
     NotificationMixin,
     RestMixin,
-    LoginMixin,
+    ThemeMixin,
   ],
   components: {
     FrLayout,
@@ -67,13 +67,12 @@ export default {
         icon: 'account_circle',
       }],
       version: '',
-      theme: null,
     };
   },
   created() {
     // if this is a dns alias making this call will get the true realm when no realm param is provided
-    this.getConfigurationInfo().then((config) => {
-      this.setTheme(config.data.realm);
+    getAmServerInfo().then(({ data }) => {
+      this.setTheme(data.realm);
     }, (error) => {
       this.showErrorMessage(error, this.$t('errors.couldNotRetrieveConfigurationInfo'));
     });

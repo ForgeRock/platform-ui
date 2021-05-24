@@ -7,7 +7,6 @@ of the MIT license. See the LICENSE file for details. -->
     <div
       v-if="showHeader"
       class="row kbaHeaderText">
-      <!-- TODO Convert to use HR component -->
       <div class="col pr-0">
         <hr>
       </div>
