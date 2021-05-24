@@ -35,7 +35,7 @@ of the MIT license. See the LICENSE file for details. -->
         v-show="!hideNav" />
       <div
         id="appContent"
-        :class="[{'show-navbar': !hideNav}, 'app-content']">
+        :class="{'show-navbar': !hideNav}">
         <Transition
           name="fade"
           mode="out-in">
@@ -73,7 +73,7 @@ of the MIT license. See the LICENSE file for details. -->
             <a
               href="http://www.forgerock.com"
               target="_blank"
-              class="notranslate text-body">
+              class="text-body">
               ForgeRock, Inc
             </a>
           </div>
