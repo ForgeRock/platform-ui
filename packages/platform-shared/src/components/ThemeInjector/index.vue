@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <Component :is="'style'">
@@ -109,12 +108,14 @@ to such license between the licensee and ForgeRock AS. -->
     <Component
       :is="'style'"
       v-if="isEnduser">
-      .fr-logo.fr-logo-horizontal {
-      background-image: url('{{ theme.logoProfile.length === 0 ? require('@forgerock/platform-shared/src/assets/images/themes/default/horizontal-logo.svg') : theme.logoProfile }}');
+      .fr-logo.fr-logo-vertical {
+      background-image: url('{{ theme.logoProfileCollapsed ? theme.logoProfileCollapsed : theme.logo ? theme.logo : require('@forgerock/platform-shared/src/assets/images/themes/default/vertical-logo.svg') }}');
+      height: {{ theme.logoProfileCollapsed ? theme.logoProfileCollapsedHeight : theme.logoHeight }}px;
       }
 
-      .fr-logo.fr-logo-vertical {
-      background-image: url('{{ theme.logo.length === 0 ? require('@forgerock/platform-shared/src/assets/images/themes/default/vertical-logo.svg') : theme.logo }}');
+      .fr-logo.fr-logo-horizontal {
+      background-image: url('{{ theme.logoProfile ? theme.logoProfile : theme.logo ? theme.logo : require('@forgerock/platform-shared/src/assets/images/themes/default/horizontal-logo.svg') }}');
+      height: {{ theme.logoProfileHeight }}px;
       }
     </Component>
   </div>
@@ -141,7 +142,7 @@ profileMenuHighlightColor: "#E50914"
  */
 /**
  * Injects a style sheet based on provided theming variables.
- * Intended functionality is to allow for basic themeing and overriding in
+ * Intended functionality is to allow for basic theming and overriding in
  * certain parts of the UI.
  */
 export default {

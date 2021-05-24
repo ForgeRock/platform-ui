@@ -134,7 +134,7 @@ of the MIT license. See the LICENSE file for details. -->
               :key="`sidebarNav_${index}`">
               <ul class="fr-sidebar-submenuitems">
                 <BButton
-                  v-b-toggle="`collapse-`+index"
+                  v-b-toggle="`collapse-${index}`"
                   :class="{'hidden': item.showForRoles && !userHasRole(item.showForRoles)}"
                   class="d-flex align-items-center border-0 rounded-0 p-0">
                   <span

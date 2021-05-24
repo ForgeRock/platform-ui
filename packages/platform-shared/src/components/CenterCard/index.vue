@@ -23,7 +23,8 @@ of the MIT license. See the LICENSE file for details. -->
               v-else
               class="fr-logo mb-3 mt-2"
               :alt="logoAltText"
-              :src="logoPath">
+              :src="logoPath"
+              :style="{ height: `${logoHeight}px`}">
             <slot name="center-card-header" />
           </div>
         </BCardHeader>
@@ -57,6 +58,10 @@ export default {
     showLogo: {
       type: Boolean,
       default: false,
+    },
+    logoHeight: {
+      type: String,
+      default: '40',
     },
     logoPath: {
       type: String,

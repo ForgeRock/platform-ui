@@ -52,11 +52,8 @@
   }
 
   .multiselect__content-wrapper {
-    position: absolute;
-    width: 100%;
     overflow-x: hidden;
-    border: 1px solid $gray-100;
-    border-top: none;
+    border-color: $gray-100;
     border-bottom-left-radius: 0.25rem;
     border-bottom-right-radius: 0.25rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.13);

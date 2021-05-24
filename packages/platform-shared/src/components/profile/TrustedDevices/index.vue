@@ -149,24 +149,8 @@ of the MIT license. See the LICENSE file for details. -->
       id="trusted-devices-modal"
       ref="fsModal"
       cancel-variant="outline-secondary"
+      :title="modalDevice.title"
       @close="setModalData('', {})">
-      <template v-slot:modal-header="{ close }">
-        <div class="d-flex w-100 h-100">
-          <h5
-            class="modal-title my-0">
-            {{ modalDevice.title }}
-          </h5>
-          <button
-            type="button"
-            aria-label="Close"
-            class="close"
-            @click="close()">
-            <i class="material-icons-outlined font-weight-bolder md-24 mb-1">
-              close
-            </i>
-          </button>
-        </div>
-      </template>
       <FrField
         v-if="modalType === 'edit'"
         v-model="editModal"

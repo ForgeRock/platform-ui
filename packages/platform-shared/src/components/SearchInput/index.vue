@@ -113,8 +113,7 @@ export default {
   position: relative;
 
   .fr-icon-input {
-    padding-left: 3.75rem;
-    padding-right: 3.75rem;
+    padding-left: 2.5rem;
     border: none;
 
     &::-webkit-search-cancel-button {
