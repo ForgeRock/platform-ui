@@ -7,9 +7,16 @@
 
 import { createIDMUser } from '../api/managedApi.e2e';
 
+function changeColour(name, value) {
+  cy.findByRole('button', { name }).scrollIntoView().click();
+  cy.findByRole('tooltip').findByLabelText('hex').clear().type(value);
+  cy.findByRole('tab', { name: 'Styles' }).click({ force: true });
+  cy.findByRole('tooltip').should('not.exist', { timeout: 15000 });
+}
+
 describe('Enduser Theming', () => {
   const platformLoginUrl = `${Cypress.config().baseUrl}/platform/`;
-  const locationUrl = `${Cypress.config().baseUrl}/platform/?realm=root#/realm/theme`;
+  const locationUrl = `${Cypress.config().baseUrl}/platform/?realm=root#/hosted-pages`;
   let enduserUserName = '';
   const adminUserName = Cypress.env('AM_USERNAME');
   const adminPassword = Cypress.env('AM_PASSWORD');
@@ -24,39 +31,15 @@ describe('Enduser Theming', () => {
     cy.login(adminUserName, adminPassword, platformLoginUrl);
 
     cy.visit(locationUrl);
-    cy.get('#appContent a.nav-link:visible')
-      .contains('Theme')
+    cy.get('#appContent button:visible')
+      .contains('Edit')
       .click();
 
-    cy.get('div:visible').contains('Link Color').scrollIntoView().click();
-    cy.get('.b-popover:visible').should('exist');
-    cy.get('input.vc-input__input:visible').clear().type('16FF96');
-    cy.get('label.btn.btn-outline-primary').contains('Styles').click();
-    cy.get('.b-popover').should('not.exist', { timeout: 15000 });
-
-    cy.get('div:visible').contains('Link Active Color').scrollIntoView().click();
-    cy.get('.b-popover:visible').should('exist');
-    cy.get('input.vc-input__input:visible').clear().type('123123');
-    cy.get('label.btn.btn-outline-primary').contains('Styles').click();
-    cy.get('.b-popover').should('not.exist', { timeout: 15000 });
-
-    cy.get('div:visible').contains('Profile Background Color').scrollIntoView().click();
-    cy.get('.b-popover:visible').should('exist');
-    cy.get('input.vc-input__input:visible').clear().type('FFFFFF');
-    cy.get('label.btn.btn-outline-primary').contains('Styles').click();
-    cy.get('.b-popover').should('not.exist', { timeout: 15000 });
-
-    cy.get('div:visible').contains('Profile Menu Highlight Color').scrollIntoView().click();
-    cy.get('.b-popover:visible').should('exist');
-    cy.get('input.vc-input__input:visible').clear().type('123123');
-    cy.get('label.btn.btn-outline-primary').contains('Styles').click();
-    cy.get('.b-popover').should('not.exist', { timeout: 15000 });
-
-    cy.get('div:visible').contains('Profile Menu Highlight Text Color').scrollIntoView().click();
-    cy.get('.b-popover:visible').should('exist');
-    cy.get('input.vc-input__input:visible').clear().type('16FF96');
-    cy.get('label.btn.btn-outline-primary').contains('Styles').click();
-    cy.get('.b-popover').should('not.exist', { timeout: 15000 });
+    changeColour(/^Link Color/, '16FF96');
+    changeColour(/^Link Active Color/, '123123');
+    changeColour(/^Enduser Background Color/, 'FFFFFF');
+    changeColour(/^Menu Highlight Color/, '123123');
+    changeColour(/^Menu Highlight Text Color/, '16FF96');
 
     cy.get('button.btn-primary:visible').contains('Save').scrollIntoView().click();
     cy.logout();
@@ -71,36 +54,25 @@ describe('Enduser Theming', () => {
     cy.login(adminUserName, adminPassword, platformLoginUrl);
 
     cy.visit(locationUrl);
-    cy.get('#appContent a.nav-link:visible')
-      .contains('Theme')
+    cy.get('#appContent button:visible')
+      .contains('Edit')
       .click();
-    cy.get('label.btn.btn-outline-primary')
-      .contains('Logo')
-      .click();
-    cy.get('[placeholder="Profile Page Logo (optional)"]')
-      .type('h', { force: true });
-    cy.get('.text-center img')
+    cy.findByRole('tab', { name: 'Logos' }).click();
+    cy.findAllByPlaceholderText('Logo URL')
+      .eq(1)
+      .clear()
+      .type('h');
+    cy.findByTestId('in-situ-logo-preview')
       .should('have.attr', 'src')
-      .should('include', 'h', { timeout: 20000 });
-    cy.get('label.btn.btn-outline-primary')
-      .should('have.class', 'active');
-    cy.get('[placeholder="Profile Page Logo (optional)"]')
-      .scrollIntoView()
-      .click()
-      .focused()
+      .should('include', 'h');
+    cy.findAllByPlaceholderText('Logo URL')
+      .eq(1)
+      .type('ttps://www.logosurfer.com/wp-content/uploads/2018/03/quicken-loans-logo_0.png');
+    cy.findAllByPlaceholderText('Alt Text')
+      .eq(1)
       .clear()
-      .should('have.value', '')
-      .type('https://www.logosurfer.com/wp-content/uploads/2018/03/quicken-loans-logo_0.png')
-      .should('have.value', 'https://www.logosurfer.com/wp-content/uploads/2018/03/quicken-loans-logo_0.png');
-    cy.get('[placeholder="Profile Page Logo Alt Text"]')
-      .scrollIntoView()
-      .click()
-      .focused()
-      .clear()
-      .should('have.value', '')
-      .type('Profile Page Logo')
-      .should('have.value', 'Profile Page Logo');
-    cy.get('button.btn-primary:visible').contains('Save').click();
+      .type('alt');
+    cy.findByRole('button', { name: 'Save' }).click();
     cy.logout();
     cy.login(enduserUserName);
     cy.get('div.fr-logo:visible')
