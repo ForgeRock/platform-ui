@@ -119,6 +119,7 @@ of the MIT license. See the LICENSE file for details. -->
         <div class="float-right">
           <BButton
             variant="link"
+            class="text-danger"
             @click="$refs[createModalId].hide()">
             {{ $t('common.cancel') }}
           </BButton>

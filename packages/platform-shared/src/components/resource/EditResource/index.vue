@@ -659,7 +659,6 @@ export default {
 
   .tab-content.col {
     padding: 0;
-    overflow: hidden;
   }
 }
 

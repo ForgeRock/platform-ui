@@ -14,10 +14,11 @@ of the MIT license. See the LICENSE file for details. -->
         name="fade"
         mode="out-in">
         <RouterView
-          :logo-path="logo"
           :logo-alt-text="logoAltText"
-          @set-theme="setTheme"
-          :key="$route.fullPath" />
+          :logo-height="logoHeight"
+          :logo-path="logo"
+          :key="$route.fullPath"
+          @set-theme="setTheme" />
       </Transition>
     </div>
     <!-- Application View -->
@@ -42,7 +43,7 @@ of the MIT license. See the LICENSE file for details. -->
 import Alert from '@forgerock/platform-shared/src/components/Alert/';
 import ThemeInjector from '@forgerock/platform-shared/src/components/ThemeInjector/';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
-import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
+import ThemeMixin from '@forgerock/platform-shared/src/mixins/ThemeMixin';
 import './scss/main.scss';
 
 export default {
@@ -53,14 +54,7 @@ export default {
   },
   mixins: [
     RestMixin,
-    LoginMixin,
+    ThemeMixin,
   ],
-  data() {
-    return {
-      logo: '',
-      logoAltText: '',
-      theme: null,
-    };
-  },
 };
 </script>

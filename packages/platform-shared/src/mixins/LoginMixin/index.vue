@@ -116,37 +116,6 @@ export function parseParameters(paramString) {
   return object;
 }
 
-export function setTheme(realm) {
-  const idmRequestService = this.getRequestService({
-    'X-OpenIDM-NoSession': true,
-    'X-OpenIDM-Password': 'anonymous',
-    'X-OpenIDM-Username': 'anonymous',
-    'cache-control': 'no-cache',
-  });
-
-  idmRequestService.get('/config/ui/themerealm').then((results) => {
-    let cleanRealm = realm;
-
-    // If there is a / we need to remove it so that
-    // both test and /test result in the same realm theme
-    if (results.data.realm[cleanRealm] === undefined && cleanRealm.charAt(0) === '/') {
-      cleanRealm = cleanRealm.substring(1);
-    }
-
-    // Set all realm related themeing here
-    if (results.data.realm[cleanRealm]) {
-      this.theme = results.data.realm[cleanRealm];
-      this.logo = results.data.realm[cleanRealm].logo;
-      this.logoAltText = results.data.realm[cleanRealm].logoAltText;
-    } else {
-      this.theme = null;
-      this.logo = `${process.env.BASE_URL}images/vertical-logo.svg`;
-    }
-  }).catch(() => {
-    this.theme = null;
-  });
-}
-
 export default {
   name: 'LoginMixin',
   mixins: [NotificationMixin],
@@ -162,7 +131,6 @@ export default {
     verifyGotoUrlAndRedirect,
     getCurrentQueryString,
     parseParameters,
-    setTheme,
   },
 };
 </script>
