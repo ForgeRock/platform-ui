@@ -14,6 +14,7 @@ of the MIT license. See the LICENSE file for details. -->
         <FrListResource
           v-if="routerParameters"
           :router-parameters="routerParameters"
+          :resource-title="displayName"
           :table-data="tableData"
           :last-page="lastPage"
           :edit-access="hasUpdateAccess"
@@ -152,7 +153,7 @@ export default {
       };
       let sortKeys = sortField;
 
-      if (!sortKeys) {
+      if (!sortKeys && (!this.queryThreshold && filter === 'true')) {
         // Default to sorting on first column
         [sortKeys] = fields;
       }
