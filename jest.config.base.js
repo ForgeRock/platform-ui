@@ -40,5 +40,6 @@ module.exports = {
   setupFilesAfterEnv: [
     path.join(__dirname, 'config', 'jest', 'snapshot-errors.js'),
     path.join(__dirname, 'config', 'jest', 'jest-dom.js'),
+    path.join(__dirname, 'config', 'jest', 'domrect-polyfill.js'),
   ],
 };
