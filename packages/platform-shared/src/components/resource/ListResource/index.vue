@@ -38,25 +38,11 @@ of the MIT license. See the LICENSE file for details. -->
     <div v-if="isLoading">
       <FrSpinner class="py-5" />
       <div class="text-center pb-4">
-        Loading {{ resourceName | pluralizeFilter }}...
+        Loading {{ this.resourceTitle || resourceName | pluralizeFilter }}...
       </div>
     </div>
     <div
-      v-else-if="queryThreshold > 0 && !noData && !tableData.length"
-      class="col-lg-8 offset-lg-2">
-      <div class="text-center mt-2 mb-5 py-5">
-        <FrIcon
-          class="fr-no-data-icon material-icons material-icons-outlined md-48 text-secondary opacity-20 mt-4 mb-2"
-          :name="managedIcon"
-          aria-hidden="true" />
-        <h5>{{ $t('common.browse') }} {{ capitalizedResourceName }}</h5>
-        <p class="mb-4">
-          {{ $t('listResource.searchHelp', { resourceName }) }}
-        </p>
-      </div>
-    </div>
-    <div
-      v-else-if="!tableData.length"
+      v-else-if="!tableData.length & !(queryThreshold > 0 && !noData && !tableData.length)"
       class="col-lg-8 offset-lg-2">
       <div
         class="text-center mt-2 mb-5 py-5">
@@ -156,7 +142,7 @@ of the MIT license. See the LICENSE file for details. -->
     <slot name="deleteResourceModal">
       <FrDeleteResource
         :resource-to-delete-id="resourceToDeleteId"
-        :resource-display-name="resourceName"
+        :resource-display-name="resourceTitle || resourceName"
         @delete-resource="deleteResource"
         @cancel-resource-deletion="cancelDelete" />
     </slot>
@@ -263,6 +249,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    resourceTitle: {
+      type: String,
+      default: '',
+    },
     managedIcon: {
       type: String,
       default: '',
@@ -300,10 +290,15 @@ export default {
   },
   computed: {
     defaultSort() {
-      return '';
+      // queryThreshold means we do not want to sort desc on the first grid column when there is no filter
+      if (this.queryThreshold && this.filter === '') {
+        return '';
+      }
+      // sort on first grid column if available
+      return this.columns[0] ? this.columns[0].key : '';
     },
     capitalizedResourceName() {
-      return pluralize(capitalize(this.resourceName));
+      return pluralize(capitalize(this.resourceTitle || this.resourceName));
     },
   },
   filters: {
@@ -324,6 +319,18 @@ export default {
       this.loadTableDefs();
     }
     this.loadData('true', this.displayFields, this.defaultSort, 0);
+  },
+  watch: {
+    tableData() {
+      // if there is a queryThreshold and there is a filter we want to allow sorting
+      this.columns = this.columns.map((col) => {
+        if (col.key !== 'actions') {
+          col.sortable = !this.queryThreshold || (this.filter.length >= this.queryThreshold);
+        }
+
+        return col;
+      });
+    },
   },
   methods: {
     getResourceName(resourceName) {
@@ -371,7 +378,7 @@ export default {
      */
     loadData(filter, fields, sortField, page) {
       // only emit `get-table-data` event when either there is not queryThreshold or the filter has met the threshold
-      if ((!this.queryThreshold) || (this.queryThreshold && this.filter.length >= this.queryThreshold)) {
+      if (!this.queryThreshold || (this.queryThreshold && this.filter === '') || (this.queryThreshold && this.filter.length >= this.queryThreshold)) {
         this.$emit('get-table-data', {
           filter,
           fields,
