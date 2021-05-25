@@ -79,6 +79,14 @@ describe('ListResource Component', () => {
           },
           order: ['name', 'sn', 'viewTest', 'typeTest'],
         },
+        propColumns: [
+          {
+            key: 'userName',
+            label: 'Username',
+            sortable: true,
+            sortDirection: 'desc',
+          },
+        ],
       },
     });
   });
@@ -86,6 +94,7 @@ describe('ListResource Component', () => {
   it('Component successfully loaded', () => {
     expect(wrapper.isVueInstance()).toEqual(true);
     expect(wrapper.name()).toEqual('ListResource');
+    expect(wrapper.vm.columns.length).toEqual(2);
   });
 
   it('Loads table column definitions', () => {
@@ -134,12 +143,28 @@ describe('ListResource Component', () => {
     expect(wrapper.vm.currentPage).toBe(0);
   });
 
-  it('New search entered', () => {
+  it('Empty search entered', () => {
     wrapper.setMethods({ loadTable: () => { } });
     wrapper.vm.search();
 
     expect(wrapper.vm.sortBy).toBeNull();
     expect(wrapper.vm.currentPage).toBe(0);
+  });
+
+  it('New search entered with queryThreshold enabled', () => {
+    wrapper.setMethods({ loadTable: () => { } });
+
+    wrapper.setProps({
+      queryThreshold: 3,
+    });
+
+    wrapper.vm.filter = 'foo';
+    wrapper.vm.search();
+    expect(wrapper.vm.submitBeforeLengthValid).toEqual(false);
+
+    wrapper.vm.filter = 'fo';
+    wrapper.vm.search();
+    expect(wrapper.vm.submitBeforeLengthValid).toEqual(true);
   });
 
   it('Generated query filter for search', () => {
@@ -158,8 +183,9 @@ describe('ListResource Component', () => {
   it('Sets help text from search field length', () => {
     wrapper.setProps({
       queryThreshold: 0,
-      filter: '',
     });
+
+    wrapper.vm.filter = '';
 
     wrapper.vm.setHelpTextFromSearchLength();
 
@@ -171,7 +197,92 @@ describe('ListResource Component', () => {
     });
 
     wrapper.vm.setHelpTextFromSearchLength();
-
     expect(wrapper.vm.searchHelpText).toBe('listResource.searchInProgressText');
+
+    wrapper.vm.filter = 'fo';
+    wrapper.vm.setHelpTextFromSearchLength();
+    expect(wrapper.vm.searchHelpText).toBe('listResource.searchInProgressText');
+
+    wrapper.vm.filter = 'foo';
+    wrapper.vm.setHelpTextFromSearchLength();
+    expect(wrapper.vm.searchHelpText).toBe('listResource.searchActiveText');
+  });
+
+  it('Enables/disables column sorting based on queryThreshold when table data changes', async () => {
+    wrapper.vm.columns = [
+      {
+        key: 'userName',
+        label: 'Username',
+        sortable: true,
+        sortDirection: 'desc',
+      },
+    ];
+
+    wrapper.vm.filter = '';
+    wrapper.setProps({
+      queryThreshold: 0,
+      tableData: ['sortWithNoFilter'],
+    });
+    expect(wrapper.vm.columns[0].sortable).toEqual(true);
+    expect(wrapper.vm.defaultSort).toEqual('userName');
+
+    wrapper.vm.filter = '';
+    wrapper.setProps({
+      queryThreshold: 3,
+      tableData: ['doNotSortWithEmptyFilterAndQueryThreshold'],
+    });
+    expect(wrapper.vm.columns[0].sortable).toEqual(false);
+    expect(wrapper.vm.defaultSort).toEqual('');
+
+    wrapper.vm.filter = 'foo';
+    wrapper.setProps({
+      queryThreshold: 0,
+      tableData: ['sortAgainWithAFilter'],
+    });
+    expect(wrapper.vm.columns[0].sortable).toEqual(true);
+
+    wrapper.vm.filter = 'fo';
+    wrapper.setProps({
+      queryThreshold: 3,
+      tableData: ['doNotSort'],
+    });
+    expect(wrapper.vm.columns[0].sortable).toEqual(false);
+
+    wrapper.vm.filter = 'foo';
+    wrapper.setProps({
+      queryThreshold: 3,
+      tableData: ['sortWithQueryThresholdAndLongEnoughFilter'],
+    });
+    expect(wrapper.vm.columns[0].sortable).toEqual(true);
+  });
+
+  it('Sets hasClearSessionAccess', () => {
+    let rowData = { item: { hasActiveSessions: true } };
+    wrapper.setProps({
+      canClearSessions: false,
+    });
+    expect(wrapper.vm.hasClearSessionAccess(rowData)).toEqual(false);
+    wrapper.setProps({
+      canClearSessions: true,
+    });
+    expect(wrapper.vm.hasClearSessionAccess(rowData)).toEqual(true);
+    rowData = { item: { hasActiveSessions: false } };
+    expect(wrapper.vm.hasClearSessionAccess(rowData)).toEqual(false);
+  });
+
+  it('Removes help text and focus', () => {
+    wrapper.vm.hasFocus = true;
+    wrapper.vm.searchHelpText = 'foo';
+
+    wrapper.vm.removeHelpText();
+    expect(wrapper.vm.hasFocus).toEqual(false);
+    expect(wrapper.vm.searchHelpText).toEqual('');
+  });
+
+  it('Pagination change works', () => {
+    wrapper.setMethods({ loadTable: () => { } });
+    wrapper.vm.paginationChange(2);
+
+    expect(wrapper.vm.currentPage).toBe(2);
   });
 });

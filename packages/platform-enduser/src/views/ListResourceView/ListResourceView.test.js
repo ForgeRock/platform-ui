@@ -66,11 +66,28 @@ describe('ListResource.vue', () => {
   });
 
   it('Builds URL Parameters', () => {
-    expect(wrapper.vm.buildUrlParams('name+sw+"test"+OR+description+sw+"test"', ['name', 'description'], '', 0)).toEqual({
+    // with a queryFilter
+    expect(wrapper.vm.buildUrlParams('name+sw+"test"+OR+description+sw+"test"', ['name', 'description'], 'name', 0)).toEqual({
       fields: 'name,description',
       pageSize: 10,
       queryFilter: 'name+sw+"test"+OR+description+sw+"test"',
       sortKeys: 'name',
+      totalPagedResultsPolicy: 'EXACT',
+    });
+    // with queryFilter = true
+    expect(wrapper.vm.buildUrlParams('true', ['name', 'description'], '', 0)).toEqual({
+      fields: 'name,description',
+      pageSize: 10,
+      queryFilter: 'true',
+      sortKeys: 'name',
+      totalPagedResultsPolicy: 'EXACT',
+    });
+    // with a queryThreshold and queryFilter = true
+    wrapper.vm.queryThreshold = 2;
+    expect(wrapper.vm.buildUrlParams('true', ['name', 'description'], '', 0)).toEqual({
+      fields: 'name,description',
+      pageSize: 10,
+      queryFilter: 'true',
       totalPagedResultsPolicy: 'EXACT',
     });
   });
