@@ -200,7 +200,7 @@
       "saveFilterFail": "Unable to save filter settings",
       "identityProfile": "Identity Profile",
       "requireSearch": "Require UI Search Filter",
-      "filterHelpText": "Optimize performance by requiring administrators to type a minimum length search before displaying identities."
+      "filterHelpText": "Optimize performance by requiring administrators to type a minimum length search before displaying sorted identities."
     }
   },
   "dashboard": {
