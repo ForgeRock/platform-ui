@@ -238,7 +238,7 @@ const addAppAuth = () => {
         opUrl: commonSettings.authorizationEndpoint,
         subject: claims.sub,
         invalidSessionHandler() {
-          window.logout();
+          window.logout(false);
         },
         sessionClaimsHandler(newClaims) {
           if (claims.auth_time !== newClaims.auth_time || claims.realm !== newClaims.realm) {
@@ -283,7 +283,7 @@ const addAppAuth = () => {
   );
 
   // trigger logout from anywhere in the SPA by calling this global function
-  window.logout = () => {
+  window.logout = (clearHash = true) => {
     const loginRealm = sessionStorage.getItem('originalLoginRealm');
     /**
      * If there is an originalLoginRealm and that realm is different from the current realm
@@ -293,6 +293,9 @@ const addAppAuth = () => {
       store.commit('setRealm', loginRealm);
       sessionStorage.removeItem('originalLoginRealm');
     }
+    // clear hash so user is not directed to previous hash on subsequent logins
+    if (clearHash) window.location.hash = '';
+
     AppAuthHelper.logout().then(() => window.location.reload());
   };
 };
