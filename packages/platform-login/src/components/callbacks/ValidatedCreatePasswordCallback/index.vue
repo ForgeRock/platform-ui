@@ -126,7 +126,7 @@ export default {
       // should fail character set, min length
       const testString1 = '';
       // should fail dictionary and repeated characters
-      const testString2 = 'passwordaaa';
+      const testString2 = 'aaa';
 
       // test both values and set policies and failed policies based on results
       Promise.all([this.testInputValue(step, testString1), this.testInputValue(step, testString2)]).then((res) => {
