@@ -14,14 +14,14 @@ of the MIT license. See the LICENSE file for details. -->
         md="2"
         class="text-right text-nowrap">
         <BLink
-          v-b-toggle.collapse-1
-          ref="button"
+          :aria-label="$t('pages.profile.accountSecurity.resetSecurityQuestions')"
           @click="initializeForm(kbaData.minimumAnswersToDefine)">
           {{ showCancel ? $t('common.cancel') : $t('common.reset') }}
         </BLink>
       </BCol>
     </BRow>
     <BCollapse
+      v-model="showKBAResetForm"
       @hidden="clearComponent"
       id="collapse-1"
       class="mt-4">
@@ -35,7 +35,10 @@ of the MIT license. See the LICENSE file for details. -->
             class="mb-3"
             type="select"
             :label="$t('user.kba.selectQuestion')"
-            :options="selectOptions" />
+            :options="selectOptions"
+            validation="required"
+            :name="`${$t('user.kba.selectQuestion')} ${id + 1}`"
+          />
           <FrField
             v-if="kbaChoice.selected === customIndex"
             v-model="kbaChoice.customQuestion"
@@ -106,6 +109,7 @@ export default {
       customIndex: null,
       loading: false,
       showCancel: false,
+      showKBAResetForm: false,
     };
   },
   mounted() {
@@ -117,10 +121,8 @@ export default {
      * @param {Number} minimumRequired number of KBA definitions required
      */
     initializeForm(minimumRequired) {
-      // if cancel form is already showing, don't need to initialize
-      if (this.showCancel) {
-        return;
-      }
+      // toggle form collapse
+      this.showKBAResetForm = !this.showKBAResetForm;
       const { locale, fallbackLocale } = this.$i18n;
 
       // create select options
@@ -182,7 +184,8 @@ export default {
         this.loading = true;
         this.$emit('updateKBA', this.generatePatch(), {
           onSuccess: () => {
-            this.$refs.button.click();
+            this.loading = false;
+            this.showKBAResetForm = false;
           },
           onError: () => {
             this.loading = false;
