@@ -356,7 +356,9 @@
         "currentPassword": "Current password",
         "newPassword": "New password",
         "twoStepVerification": "2-Step Verification",
-        "journeyServiceError": "Error retrieving journey mappings."
+        "journeyServiceError": "Error retrieving journey mappings.",
+        "updateUsername": "Update Username",
+        "resetSecurityQuestions": "Reset Security Questions"
       },
       "editProfile": {
         "userDetailsTitle": "Edit personal info",
