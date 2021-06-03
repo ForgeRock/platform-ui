@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <BCard no-body>
@@ -41,11 +40,13 @@ to such license between the licensee and ForgeRock AS. -->
               class="text-right text-nowrap"
               md="2">
               <a
+                :aria-label="item.ariaLabel"
                 v-if="item.linkUrl"
                 :href="item.linkUrl">
                 {{ item.linkText }}
               </a>
               <RouterLink
+                :aria-label="item.ariaLabel"
                 class="py-0 text-right text-nowrap"
                 v-if="item.linkPath"
                 :to="item.linkPath">
@@ -122,6 +123,7 @@ export default {
         title: this.$t('common.placeholders.password'),
         linkText: this.$t('common.reset'),
         linkUrl: '',
+        ariaLabel: this.$t('pages.access.resetPassword'),
       },
       mfaItem: {
         title: this.$t('pages.profile.accountSecurity.twoStepVerification'),
@@ -133,6 +135,7 @@ export default {
         text: '',
         linkText: 'Update',
         linkUrl: '',
+        ariaLabel: this.$t('pages.profile.accountSecurity.resetUsername'),
       },
     };
   },
