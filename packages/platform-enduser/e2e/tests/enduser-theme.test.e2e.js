@@ -63,7 +63,7 @@ describe('Enduser Theming', () => {
     cy.login(enduserUserName);
     cy.visit(`${Cypress.config().baseUrl}/enduser/?realm=root#/profile`);
     cy.get('body').should('have.css', 'background-color', 'rgb(255, 255, 255)');
-    cy.get('a.collapsed').contains('Reset').should('have.css', 'color', 'rgb(22, 255, 150)');
+    cy.findByRole('link', { name: 'Reset Security Questions' }).should('have.css', 'color', 'rgb(22, 255, 150)');
     cy.get('#app .router-link-active').should('have.css', 'background-color', 'rgb(18, 49, 35)');
   });
 
