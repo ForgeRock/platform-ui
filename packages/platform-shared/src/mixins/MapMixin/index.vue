@@ -83,7 +83,7 @@ export default {
           const geocoder = new this.googleMaps.Geocoder();
           const latlng = { lat: parseFloat(latitude), lng: parseFloat(longitude) };
           geocoder.geocode({ location: latlng }, (results, status) => {
-            if (results.length) {
+            if (results && results.length) {
               resolve(geocodeTypeGetter(results));
             } else {
               reject(status);
