@@ -138,7 +138,7 @@ of the MIT license. See the LICENSE file for details. -->
             :revision="revision"
             @refreshData="refreshData" />
           <FrJsonTab
-            v-if="jsonString"
+            v-if="isOpenidmAdmin && jsonString"
             :json-string="jsonString" />
         </BTabs>
       </BCard>
