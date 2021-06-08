@@ -30,7 +30,7 @@ of the MIT license. See the LICENSE file for details. -->
           </BButton>
         </BCol>
         <FrSearchInput
-          v-if="showFilter"
+          v-if="showFilter && !disableSortAndSearch"
           v-model="filter"
           :placeholder="$t('common.search')"
           @clear="clear"
@@ -63,14 +63,14 @@ of the MIT license. See the LICENSE file for details. -->
           class="cursor-pointer"
           @click="toggleSelectAll">
           <BFormCheckbox
-            class="pl-4"
+            class="pl-3"
             disabled
             v-model="allRowsSelected" />
         </div>
       </template>
       <template v-slot:cell(selected)="data">
         <BFormCheckbox
-          class="pl-4"
+          class="pl-3"
           :id="'rowSelectCheckbox_' + relationshipArrayProperty.key + data.index"
           @change="onCheckboxClicked(data)"
           v-model="data.rowSelected" />
@@ -243,77 +243,46 @@ export default {
       selected: [],
       isOpenidmAdmin: this.$store.state.UserStore.adminUser,
       showFilter: false,
+      disableSortAndSearch: false,
     };
   },
   mounted() {
     this.loadGrid(0);
   },
+  watch: {
+    gridData() {
+      this.columns = this.columns.map((col) => {
+        if (col.key !== 'selected') {
+          col.sortable = !this.disableSortAndSearch;
+        }
+
+        return col;
+      });
+    },
+  },
   methods: {
     loadGrid(page) {
-      const errorMessage = this.$t('errors.errorRetrievingRelationships');
-      const timeConstraint = this.$t('pages.access.timeConstraint');
-      const idmInstance = this.getRequestService();
       const doLoad = (resourceCollectionSchema) => {
-        idmInstance.get(this.buildGridUrl(page, resourceCollectionSchema)).then((resourceData) => {
+        this.getRequestService().get(this.buildGridUrl(page, resourceCollectionSchema)).then((resourceData) => {
           if (resourceData.data.pagedResultsCookie) {
             this.lastPage = false;
           } else {
             this.lastPage = true;
           }
 
-          if (!this.relationshipArrayProperty.readOnly || this.isOpenidmAdmin) {
-            this.columns.push({
-              key: 'selected',
-              label: '',
-              class: 'checkbox-column',
-            });
-          }
-
-          if (resourceCollectionSchema) {
-            this.relationshipArrayProperty.items.resourceCollection[0].query.fields.forEach((fieldName) => {
-              this.columns.push({
-                key: fieldName,
-                label: resourceCollectionSchema.properties[fieldName].title || pluralize.singular(fieldName),
-                sortable: true,
-                sortDirection: 'desc',
-              });
-            });
-          } else {
-            this.columns.push({
-              key: '_relationshipDetails',
-              label: pluralize.singular(this.relationshipArrayProperty.title),
-            });
-          }
-
-          if (this.relationshipArrayProperty.relationshipGrantTemporalConstraintsEnforced) {
-            this.columns.push({
-              key: '_refProperties.temporalConstraints[0].duration',
-              label: timeConstraint,
-              formatter: (value) => {
-                if (value) {
-                  const dates = map(value.split('/'), (date) => {
-                    const retVal = dayjs(date).format('MMMM D, YYYY h:mm A');
-
-                    return retVal;
-                  });
-
-                  return `${dates[0]} to ${dates[1]}`;
-                }
-
-                return value;
-              },
-            });
-          }
-
           this.gridData = [];
+          this.setColumns(resourceCollectionSchema);
           this.setGridData(resourceData.data.result, this.relationshipArrayProperty);
         }).catch((error) => {
-          this.showErrorMessage(error, errorMessage);
+          this.showErrorMessage(error, this.$t('errors.errorRetrievingRelationships'));
         });
       };
 
       if (has(this.relationshipArrayProperty, 'items.resourceCollection') && this.relationshipArrayProperty.items.resourceCollection.length === 1) {
-        getSchema(this.relationshipArrayProperty.items.resourceCollection[0].path).then((response) => {
+        const resourceCollection = this.relationshipArrayProperty.items.resourceCollection[0];
+        this.setDisableSortAndSearch(resourceCollection);
+
+        getSchema(resourceCollection.path).then((response) => {
           this.showFilter = true;
           doLoad(response.data);
         });
@@ -321,35 +290,120 @@ export default {
         doLoad();
       }
     },
-    setGridData(relationships, schema) {
-      relationships.forEach((relationship) => {
-        // eslint-disable-next-line no-underscore-dangle
-        const resourceCollectionSchema = find(schema.items.resourceCollection, { path: relationship._refResourceCollection });
-        // special display logic for internal user
-        if (resourceCollectionSchema && has(resourceCollectionSchema, 'path') && resourceCollectionSchema.path === 'internal/user') {
-          // _ref looks "internal/user/openidm-admin"
-          // here we are grabbing the last part of the path to display "userName" which is also the internal user's "_id"
-          // eslint-disable-next-line no-underscore-dangle
-          relationship._relationshipDetails = [last(relationship._ref.split('/'))];
-        } else if (resourceCollectionSchema) {
-          // eslint-disable-next-line no-underscore-dangle
-          relationship._relationshipDetails = toArray(pick(relationship, resourceCollectionSchema.query.fields));
-        } else {
-          // if no schema information for resourceCollection just show the object's _id
-          // eslint-disable-next-line no-underscore-dangle
-          relationship._relationshipDetails = [relationship._id];
-        }
+    setDisableSortAndSearch(resourceCollection) {
+      const { uiConfig } = this.$store.state.SharedStore;
+      const resourceType = resourceCollection.path.split('/')[0];
+      const resourceName = resourceCollection.path.split('/')[1];
+      const configDisableRelationshipSortAndSearch = has(uiConfig, `configuration.platformSettings.managedObjectsSettings.${resourceName}`) ? uiConfig.configuration.platformSettings.managedObjectsSettings[resourceName].disableRelationshipSortAndSearch : false;
+      this.disableSortAndSearch = !this.isOpenidmAdmin && resourceType === 'managed' && configDisableRelationshipSortAndSearch;
+    },
+    setColumns(resourceCollectionSchema) {
+      if (!this.relationshipArrayProperty.readOnly || this.isOpenidmAdmin) {
+        this.columns.push({
+          key: 'selected',
+          label: '',
+          class: 'checkbox-column',
+        });
+      }
 
-        this.gridData.push(relationship);
-      });
+      if (resourceCollectionSchema) {
+        this.relationshipArrayProperty.items.resourceCollection[0].query.fields.forEach((fieldName) => {
+          this.columns.push({
+            key: fieldName,
+            label: resourceCollectionSchema.properties[fieldName].title || pluralize.singular(fieldName),
+            sortable: true,
+            sortDirection: 'desc',
+          });
+        });
+      } else {
+        this.columns.push({
+          key: '_relationshipDetails',
+          label: pluralize.singular(this.relationshipArrayProperty.title),
+        });
+      }
+
+      if (this.relationshipArrayProperty.relationshipGrantTemporalConstraintsEnforced) {
+        this.columns.push({
+          key: '_refProperties.temporalConstraints[0].duration',
+          label: this.$t('pages.access.timeConstraint'),
+          formatter: (value) => {
+            if (value) {
+              const dates = map(value.split('/'), (date) => {
+                const retVal = dayjs(date).format('MMMM D, YYYY h:mm A');
+
+                return retVal;
+              });
+
+              return `${dates[0]} to ${dates[1]}`;
+            }
+
+            return value;
+          },
+        });
+      }
+    },
+    setGridData(relationships, schema) {
+      const addRows = () => {
+        relationships.forEach((relationship) => {
+          // eslint-disable-next-line no-underscore-dangle
+          const resourceCollectionSchema = find(schema.items.resourceCollection, { path: relationship._refResourceCollection });
+          // special display logic for internal user
+          if (resourceCollectionSchema && has(resourceCollectionSchema, 'path') && resourceCollectionSchema.path === 'internal/user') {
+            // _ref looks "internal/user/openidm-admin"
+            // here we are grabbing the last part of the path to display "userName" which is also the internal user's "_id"
+            // eslint-disable-next-line no-underscore-dangle
+            relationship._relationshipDetails = [last(relationship._ref.split('/'))];
+          } else if (resourceCollectionSchema) {
+            // eslint-disable-next-line no-underscore-dangle
+            relationship._relationshipDetails = toArray(pick(relationship, resourceCollectionSchema.query.fields));
+          } else {
+            // if no schema information for resourceCollection just show the object's _id
+            // eslint-disable-next-line no-underscore-dangle
+            relationship._relationshipDetails = [relationship._id];
+          }
+
+          this.gridData.push(relationship);
+        });
+      };
+
+      if (this.disableSortAndSearch) {
+        const promises = [];
+        // When we disable sort and search the list of relationships does not include the related object's data.
+        // In this case to retrieve the data needed to fill in grid columns we need to loop over each relationship
+        // record and do a get on the _ref ('managed/user/USER_GUUID').
+        relationships.forEach((relationship, index) => {
+          // eslint-disable-next-line no-underscore-dangle
+          const resourceCollectionSchema = find(schema.items.resourceCollection, { path: relationship._refResourceCollection });
+          promises.push(
+            this.getRelationshipFieldsData(relationship, resourceCollectionSchema.query.fields).then((fieldsData) => {
+              // once we get fields data merge it with the existing relationship data
+              relationships[index] = { ...relationship, ...fieldsData };
+            }),
+          );
+        });
+
+        Promise.all(promises).then(() => {
+          addRows();
+        });
+      } else {
+        addRows();
+      }
+    },
+    getRelationshipFieldsData(relationship, fields) {
+      return this.getRequestService().get(`${relationship._ref}?_fields=${fields}`).then((response) => pick(response.data, fields));
     },
     buildGridUrl(page, resourceCollectionSchema) {
-      let resourceUrl = `${this.parentResource}/${this.parentId}/${this.relationshipArrayProperty.propName}?_pageSize=${this.gridPageSize}&_totalPagedResultsPolicy=ESTIMATE&_fields=`;
+      const currentResourceCollection = find(this.relationshipArrayProperty.items.resourceCollection, { path: resourceCollectionSchema ? resourceCollectionSchema.resourceCollection : null });
+      let resourceUrl = `${this.parentResource}/${this.parentId}/${this.relationshipArrayProperty.propName}?_pageSize=${this.gridPageSize}&_totalPagedResultsPolicy=ESTIMATE`;
 
       if (this.filter) {
-        resourceUrl = `${resourceUrl}&_queryFilter=${this.generateSearch(this.filter, this.relationshipArrayProperty.items.resourceCollection[0].query.fields, resourceCollectionSchema.properties)}`;
+        resourceUrl = `${resourceUrl}&_queryFilter=${this.generateSearch(this.filter, currentResourceCollection.query.fields, resourceCollectionSchema.properties)}`;
       } else {
         resourceUrl = `${resourceUrl}&_queryFilter=true`;
+      }
+
+      if (!this.disableSortAndSearch && currentResourceCollection) {
+        resourceUrl = `${resourceUrl}&_fields=${currentResourceCollection.query.fields.join(',')}`;
       }
 
       if (page > 0) {
@@ -452,20 +506,18 @@ export default {
           value: item,
         };
       });
-      const translation = operation === 'remove' ? 'pages.access.successRemoved' : 'pages.access.successAdded';
-      const idmInstance = this.getRequestService({
-        headers: {
-          'if-match': this.revision,
-        },
-      });
       const loadAndCloseModal = () => {
         const modal = operation === 'remove' ? this.removeModalId : this.createModalId;
         this.loadGrid(0);
         this.$refs[modal].hide();
       };
 
-      /* istanbul ignore next */
-      idmInstance.patch(`${this.parentResource}/${this.parentId}`, patchArray).then(() => {
+      this.getRequestService({
+        headers: {
+          'if-match': this.revision,
+        },
+      }).patch(`${this.parentResource}/${this.parentId}`, patchArray).then(() => {
+        const translation = operation === 'remove' ? 'pages.access.successRemoved' : 'pages.access.successAdded';
         loadAndCloseModal();
         this.displayNotification('IDMMessages', 'success', this.$t(translation, { resource: this.relationshipArrayProperty.title }));
         this.$emit('refreshData');
@@ -525,7 +577,7 @@ export default {
       }
 
       .checkbox-column {
-        width: 1px;
+        width: 15px;
         padding-right: 0;
         vertical-align: middle;
       }
