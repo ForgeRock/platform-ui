@@ -60,7 +60,9 @@ of the MIT license. See the LICENSE file for details. -->
         <FrEditKba
           class="w-100"
           :kba-data="kbaData"
-          @updateKBA="sendUpdateKBA" />
+          @updateKBA="sendUpdateKBA"
+          :processing-request="processingRequest"
+        />
       </BCardBody>
     </BCard>
   </div>
@@ -97,6 +99,10 @@ export default {
   ],
   props: {
     forceRoot: {
+      type: Boolean,
+      default: false,
+    },
+    processingRequest: {
       type: Boolean,
       default: false,
     },

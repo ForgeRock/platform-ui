@@ -77,5 +77,50 @@ describe('EditKBA.vue', () => {
       expect(first(patch)).toHaveProperty('value');
       expect(first(patch).value).toEqual([{ answer: 'test answer', questionId: 'test' }]);
     });
+    it('emits updateKBA event if form data is valid', async () => {
+      const validateSpy = jest.spyOn(wrapper.vm, 'validate').mockImplementation(() => Promise.resolve(true));
+      wrapper.vm.onSaveKBA();
+
+      await expect(validateSpy).toBeTruthy();
+      expect(wrapper.emitted().updateKBA).toBeTruthy();
+    });
+
+    it('does not emit updateKBA event if the form data is invalid', async () => {
+      const validateSpy = jest.spyOn(wrapper.vm, 'validate').mockImplementation(() => Promise.resolve(false));
+      wrapper.vm.onSaveKBA();
+
+      await expect(validateSpy).toHaveBeenCalled();
+      expect(wrapper.emitted().updateKBA).toBeFalsy();
+    });
+
+    it('emits updateKBA event with correct patch payload', async () => {
+      const validateSpy = jest.spyOn(wrapper.vm, 'validate').mockImplementation(() => Promise.resolve(true));
+      const patchSpy = jest.spyOn(wrapper.vm, 'generatePatch').mockImplementation(() => 'patch');
+      wrapper.vm.onSaveKBA();
+
+      await expect(validateSpy).toHaveBeenCalled();
+      expect(patchSpy).toHaveBeenCalled();
+      expect(wrapper.emitted().updateKBA).toBeTruthy();
+      expect(wrapper.emitted().updateKBA[0]).toEqual(['patch']);
+    });
+
+    it('Collapses the reset-security-questions-form, when the network request has been processed', () => {
+      wrapper = shallowMount(EditKBA, {
+        localVue,
+        i18n,
+        propsData: {
+          kbaData,
+          processingRequest: true,
+        },
+        data() {
+          return {
+            showKBAResetForm: true,
+          };
+        },
+      });
+      wrapper.setProps({ processingRequest: false });
+
+      expect(wrapper.vm.showKBAResetForm).toBe(false);
+    });
   });
 });

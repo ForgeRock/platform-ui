@@ -58,8 +58,8 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
         <FrButtonWithSpinner
           :button-text="$t('common.save')"
-          :disabled="loading"
-          :show-spinner="loading"
+          :disabled="processingRequest"
+          :show-spinner="processingRequest"
           :spinner-text="$t('common.saving')"
           @click="onSaveKBA" />
       </ValidationObserver>
@@ -100,6 +100,10 @@ export default {
       type: Object,
       default: () => {},
     },
+    processingRequest: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -107,7 +111,6 @@ export default {
       selectOptions: [],
       kbaChoices: [],
       customIndex: null,
-      loading: false,
       showCancel: false,
       showKBAResetForm: false,
     };
@@ -168,7 +171,6 @@ export default {
      * Clear the component data
      */
     clearComponent() {
-      this.loading = false;
       this.selectOptions = [];
       this.kbaChoices = [];
       this.customIndex = null;
@@ -176,24 +178,25 @@ export default {
       this.showCancel = false;
     },
     /**
-     * Sends event to update KBA and collapses component if successful
+     * Validates form input, then sends event to update KBA and collapses component if successful
      */
-    async onSaveKBA() {
-      const isValid = await this.$refs.observer.validate();
-      if (isValid) {
-        this.loading = true;
-        this.$emit('updateKBA', this.generatePatch(), {
-          onSuccess: () => {
-            this.loading = false;
-            this.showKBAResetForm = false;
-          },
-          onError: () => {
-            this.loading = false;
-          },
+
+    validate() {
+      const valid = this.$refs.observer.validate();
+      return valid;
+    },
+
+    onSaveKBA() {
+      return this.validate()
+        .then((valid) => {
+          if (valid) {
+            const patch = this.generatePatch();
+            this.$emit('updateKBA', patch);
+          }
         });
-      }
     },
   },
+
   watch: {
     kbaChoices: {
       handler() {
@@ -217,6 +220,13 @@ export default {
       deep: true,
     },
     kbaData: { deep: true, handler: noop },
+    processingRequest: {
+      handler() {
+        if (!this.processingRequest) {
+          this.showKBAResetForm = !this.showKBAResetForm;
+        }
+      },
+    },
   },
 };
 </script>
