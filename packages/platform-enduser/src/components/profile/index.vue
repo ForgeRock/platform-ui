@@ -22,7 +22,9 @@ of the MIT license. See the LICENSE file for details. -->
         <FrAccountSecurity
           class="mb-5"
           v-if="internalUser === false"
-          @updateKBA="updateKBA" />
+          @updateKBA="updateKBA"
+          :processing-request="processingRequest"
+        />
         <FrSocial class="mb-5" />
         <FrTrustedDevices />
         <FrAuthorizedApplications
@@ -75,6 +77,7 @@ export default {
         givenName: '',
         sn: '',
       },
+      processingRequest: false,
     };
   },
   components: {
@@ -132,6 +135,7 @@ export default {
       this.makeUpdateRequest(this.managedResource, payload, config);
     },
     updateKBA(payload, config) {
+      this.processingRequest = true;
       this.makeUpdateRequest('selfservice/user', payload, config);
     },
     makeUpdateRequest(endpoint, payload, config = {}) {
@@ -143,7 +147,6 @@ export default {
       selfServiceInstance.patch(`${endpoint}/${this.userId}`, payload).then((response) => {
         this.$store.commit('UserStore/setProfile', response.data);
         this.displayNotification('IDMMessages', 'success', successMsg);
-
         this.profile = response.data;
 
         if (config.onSuccess) {
@@ -156,6 +159,8 @@ export default {
         if (config.onError) {
           config.onError(error);
         }
+      }).finally(() => {
+        this.processingRequest = false;
       });
     },
   },
