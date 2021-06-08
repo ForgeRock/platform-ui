@@ -30,6 +30,7 @@ import PolicyPanel from '@forgerock/platform-shared/src/components/PolicyPanel';
 import PasswordPolicyMixin from '@forgerock/platform-shared/src/mixins/PasswordPolicyMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+import axios from 'axios';
 
 const ignoredPolicies = [
   'REQUIRED',
@@ -74,6 +75,7 @@ export default {
       policyEndpoint: `/policy/${this.resourceType}/${this.resourceName}`,
       policyFailures: [],
       policies: [],
+      checkPasswordCancelTokenSource: null,
     };
   },
   mounted() {
@@ -84,10 +86,16 @@ export default {
   },
   methods: {
     checkPassword(value) {
+      if (this.checkPasswordCancelTokenSource) {
+        this.checkPasswordCancelTokenSource.cancel('Outdated password checking cancelled');
+      }
+
+      this.checkPasswordCancelTokenSource = axios.CancelToken.source();
+
       const headers = this.getAnonymousHeaders();
       const policyService = this.getRequestService({ headers });
 
-      policyService.post(`${this.policyEndpoint}/policy/?_action=validateObject`, { password: value })
+      policyService.post(`${this.policyEndpoint}/policy/?_action=validateObject`, { password: value }, { cancelToken: this.checkPasswordCancelTokenSource.token })
         .then((res) => {
           if (res.data.failedPolicyRequirements) {
             const failedPolicies = [];
@@ -96,6 +104,11 @@ export default {
             });
             this.$emit('is-valid', failedPolicies.length === 0);
             this.policyFailures = this.normalizePolicies(failedPolicies).map((policy) => (policy.policyRequirement || policy.name));
+          }
+        })
+        .catch((error) => {
+          if (!axios.inCancel(error)) {
+            throw error;
           }
         });
     },
