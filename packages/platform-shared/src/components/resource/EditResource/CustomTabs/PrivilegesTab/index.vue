@@ -109,7 +109,7 @@ of the MIT license. See the LICENSE file for details. -->
         ref="editPrivilegeModal"
         :title="$t('pages.access.editPrivilege')"
         body-class="p-0"
-        size="lg">
+        size="xl">
         <FrPrivilegeEditor
           v-if="privilegeToEdit"
           :privilege="privilegeToEdit"
@@ -137,7 +137,7 @@ of the MIT license. See the LICENSE file for details. -->
         ref="addPrivilegesModal"
         :title="$t('pages.access.addPrivileges')"
         body-class="p-0"
-        size="lg">
+        size="xl">
         <FrAddPrivileges
           :new-privileges="newPrivileges"
           :privileges-field="privilegesField"

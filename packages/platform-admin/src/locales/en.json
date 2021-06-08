@@ -200,7 +200,8 @@
       "saveFilterFail": "Unable to save filter settings",
       "identityProfile": "Identity Profile",
       "requireSearch": "Require UI Search Filter",
-      "filterHelpText": "Optimize performance by requiring administrators to type a minimum length search before displaying sorted identities."
+      "filterHelpText": "Optimize performance by requiring administrators to type a minimum length search before displaying sorted identities.",
+      "disableRelationshipSortAndSearch": "Disable sorting and searching on grids that use this object as a resource collection."
     }
   },
   "dashboard": {
