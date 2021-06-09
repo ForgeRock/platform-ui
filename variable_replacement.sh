@@ -26,7 +26,7 @@ echo "Setting FRAAS DEFAULT REALM as $FRAAS_DEFAULT_REALM"
 echo "Setting FRAAS ADMIN NAME as $FRAAS_ADMIN_MANAGED_OBJECT_NAME"
 
 # Replace env vars in JavaScript files
-for file in $REPLACEMENT_PATH
+for file in $@
 do
   echo "Processing $file ..."
 
