@@ -188,6 +188,7 @@ const addAppAuth = () => {
   const originalLoginRealm = sessionStorage.getItem('originalLoginRealm');
   const pageLoadUrlRealm = urlParams.get('realm');
   let realm = pageLoadUrlRealm || store.state.realm;
+  let postLogoutUrlClaim;
 
   /**
    * If there is an originalLoginRealm here it's because the realm was changed and the page was refreshed or
@@ -232,7 +233,8 @@ const addAppAuth = () => {
     },
     tokensAvailableHandler(claims) {
       store.commit('UserStore/setUserSearchAttribute', claims.sub);
-
+      // if there is a post_logout_url claim set postLogoutUrlClaim here for use in window.logout()
+      postLogoutUrlClaim = claims.post_logout_url;
       const sessionCheck = new SessionCheck({
         clientId: commonSettings.clientId,
         opUrl: commonSettings.authorizationEndpoint,
@@ -296,7 +298,13 @@ const addAppAuth = () => {
     // clear hash so user is not directed to previous hash on subsequent logins
     if (clearHash) window.location.hash = '';
 
-    AppAuthHelper.logout().then(() => window.location.reload());
+    AppAuthHelper.logout().then(() => {
+      if (postLogoutUrlClaim) {
+        window.location.href = postLogoutUrlClaim;
+      } else {
+        window.location.reload();
+      }
+    });
   };
 };
 
