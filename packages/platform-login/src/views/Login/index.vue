@@ -876,6 +876,22 @@ export default {
       const realm = params.get('realm') || '/';
       const hash = window.location.hash || '';
 
+      const createParamString = (urlParams) => {
+        const ampersand = urlParams.toString().length > 1 ? '&' : '';
+        let stringParams = '';
+        urlParams.forEach((value, key) => {
+          if (stringParams.length) {
+            stringParams += '&';
+          }
+          if (key === 'authIndexValue' && urlParams.get('authIndexType') === 'service') {
+            stringParams += `${key}=${value}`;
+          } else {
+            stringParams += `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+          }
+        });
+        return `${ampersand}${stringParams}`;
+      };
+
       if (realm) params.delete('realm');
       // arg query parameter handled in checkNewSession method
       if (params.get('arg') === 'newsession') params.delete('arg');
@@ -886,8 +902,11 @@ export default {
         this.removeUrlParams();
       } else if (paramString.includes('state=') || paramString.includes('code=') || paramString.includes('scope=')) {
         this.state = params.get('state');
+        params.delete('state');
         this.code = params.get('code');
+        params.delete('code');
         this.scope = params.get('scope');
+        params.delete('scope');
 
         // session storage is used to resume a tree after returning from a redirect
         const { authIndexValue, step, realm: stepRealm } = this.getStepFromStorage();
@@ -895,8 +914,9 @@ export default {
         this.step = new FRStep(step.payload);
         this.realm = stepRealm;
 
+        const stringParams = createParamString(params);
         this.removeUrlParams();
-        window.history.replaceState(null, null, `?realm=${this.realm}`);
+        window.history.replaceState(null, null, `?realm=${this.realm}${stringParams}`);
       } else if (this.hasReentryToken()) {
         const { authIndexValue, step, realm: stepRealm } = this.getStepFromStorage();
         if (authIndexValue && step && step.payload) {
@@ -926,23 +946,10 @@ export default {
           }
         });
 
-        const ampersand = params.toString().length > 1 ? '&' : '';
-
-        let stringParams = '';
-        params.forEach((value, key) => {
-          if (stringParams.length) {
-            stringParams += '&';
-          }
-          if (key === 'authIndexValue' && params.get('authIndexType') === 'service') {
-            stringParams += `${key}=${value}`;
-          } else {
-            stringParams += `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
-          }
-        });
-
+        const stringParams = createParamString(params);
         this.removeUrlParams();
 
-        window.history.replaceState(null, null, `?realm=${this.realm}${ampersand}${stringParams}${hash}`);
+        window.history.replaceState(null, null, `?realm=${this.realm}${stringParams}${hash}`);
       }
     },
   },
