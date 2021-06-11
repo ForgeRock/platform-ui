@@ -88,9 +88,15 @@ body {
   &::after {
     margin: 0;
     position: absolute;
-    right: 1.25rem;
     top: 50%;
     transform: translateY(-50%);
+  }
+}
+
+.fr-sidebar-nav .dropdown-toggle,
+.accordion .card-header {
+  &::after {
+    right: 1.25rem;
   }
 }
 
