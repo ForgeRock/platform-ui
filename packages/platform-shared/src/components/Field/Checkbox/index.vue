@@ -11,6 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
       role="checkbox"
       inline
       :aria-label="switchLabel"
+      :disabled="disabled"
       :name="name" />
     <label class="mb-1 text-secondary">
       {{ switchLabel }}
