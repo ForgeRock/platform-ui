@@ -5,9 +5,10 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <VuePrismEditor
     v-if="editorCanRender"
+    v-model="contentField"
     :language="language"
     :line-numbers="true"
-    v-model="contentField" />
+    @input="$emit('input', $event.target.innerText)" />
 </template>
 
 <script>
@@ -38,15 +39,13 @@ export default {
      */
     language: {
       default: '',
-      required: false,
       type: String,
     },
     /**
      * Code to be displayed in editor
      */
-    content: {
+    value: {
       default: undefined,
-      required: false,
       type: String,
     },
     /**
@@ -98,25 +97,17 @@ export default {
     },
   },
   mounted() {
-    this.contentField = this.prettify(this.content);
+    this.contentField = this.prettify(this.value);
   },
   watch: {
     content(val) {
       this.contentField = this.prettify(val);
       this.shouldReset = false;
     },
-    contentField() {
-      /**
-        * Triggered when a change is made in the editor
-        *
-        * @property {string} contentField current value of editor
-        */
-      this.$emit('change', this.contentField);
-    },
     reset(val) {
       if (val) {
         this.shouldReset = true;
-        this.contentField = this.prettify(this.content);
+        this.contentField = this.prettify(this.value);
       }
     },
   },

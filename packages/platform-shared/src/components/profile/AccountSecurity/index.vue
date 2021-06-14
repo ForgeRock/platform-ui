@@ -11,29 +11,24 @@ of the MIT license. See the LICENSE file for details. -->
           {{ $t('pages.profile.accountSecurity.subtitle') }}
         </p>
       </BCardHeader>
-      <template
-        v-for="item in items">
+      <template v-for="item in items">
         <BCardBody
+          v-if="!themeSections.securityQuestions || themeSections[item.key].enabled"
           :key="item.title"
           class="border-bottom">
           <BRow>
-            <BCol
-              md="5">
+            <BCol md="5">
               <h5>{{ item.title }}</h5>
             </BCol>
             <BCol md="5">
-              <span
+              <FrIcon
                 v-if="item.iconType === 'OFF'"
-                aria-hidden="true"
-                class="material-icons-outlined mr-2">
-                remove_circle
-              </span>
-              <span
-                v-if="item.iconType === 'ON'"
-                aria-hidden="true"
-                class="material-icons mr-2 text-success">
-                check_circle
-              </span>
+                name="remove_circle"
+                class="mr-2" />
+              <FrIcon
+                v-else-if="item.iconType === 'ON'"
+                name="check_circle"
+                class="mr-2 text-success" />
               {{ item.text }}
             </BCol>
             <BCol
@@ -56,7 +51,7 @@ of the MIT license. See the LICENSE file for details. -->
           </BRow>
         </BCardBody>
       </template>
-      <BCardBody v-if="isOnKBA && internalUser === false">
+      <BCardBody v-if="isOnKBA && internalUser === false && (!themeSections.securityQuestions || themeSections.securityQuestions.enabled)">
         <FrEditKba
           class="w-100"
           :kba-data="kbaData"
@@ -78,7 +73,8 @@ import {
 import { mapState } from 'vuex';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
-import EditKBA from '@forgerock/platform-shared/src/components/profile/EditKBA';
+import FrEditKba from '@forgerock/platform-shared/src/components/profile/EditKBA';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import store from '@/store';
 /**
  * @description Handles displaying account security controls
@@ -91,7 +87,8 @@ export default {
     BCardHeader,
     BCol,
     BRow,
-    FrEditKba: EditKBA,
+    FrEditKba,
+    FrIcon,
   },
   mixins: [
     NotificationMixin,
@@ -105,6 +102,10 @@ export default {
     processingRequest: {
       type: Boolean,
       default: false,
+    },
+    themeSections: {
+      type: Object,
+      required: true,
     },
   },
   computed: {
@@ -126,22 +127,25 @@ export default {
       isOnKBA: false,
       kbaData: {},
       passwordItem: {
-        title: this.$t('common.placeholders.password'),
+        ariaLabel: this.$t('pages.access.resetPassword'),
+        key: 'password',
         linkText: this.$t('common.reset'),
         linkUrl: '',
-        ariaLabel: this.$t('pages.access.resetPassword'),
+        title: this.$t('common.placeholders.password'),
       },
       mfaItem: {
+        iconType: 'OFF',
+        key: 'twoStepVerification',
         title: this.$t('pages.profile.accountSecurity.twoStepVerification'),
         text: this.$t('common.off'),
-        iconType: 'OFF',
       },
       usernameItem: {
-        title: this.$t('common.placeholders.username'),
-        text: '',
-        linkText: 'Update',
-        linkUrl: '',
         ariaLabel: this.$t('pages.profile.accountSecurity.resetUsername'),
+        key: 'username',
+        linkText: this.$t('common.update'),
+        linkUrl: '',
+        text: '',
+        title: this.$t('common.placeholders.username'),
       },
     };
   },
