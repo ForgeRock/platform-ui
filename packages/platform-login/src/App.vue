@@ -20,7 +20,7 @@ of the MIT license. See the LICENSE file for details. -->
           :logo-height="logoHeight"
           :logo-path="logo"
           :key="$route.fullPath"
-          @set-theme="setTheme" />
+          @set-theme="setupTheme" />
       </Transition>
     </div>
     <!-- Application View -->
@@ -58,5 +58,14 @@ export default {
     RestMixin,
     ThemeMixin,
   ],
+  methods: {
+    setupTheme(theme) {
+      this.setTheme(theme).then(() => {
+        if (this.favicon) {
+          document.getElementById('favicon').href = this.favicon;
+        }
+      });
+    },
+  },
 };
 </script>

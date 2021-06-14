@@ -19,6 +19,7 @@ export default {
         backgroundColor: '#f6f8fa',
         backgroundImage: '',
         buttonRounded: 5,
+        favicon: '',
         journeyFooter: `<span class="pr-1">© ${new Date().getFullYear()}</span>
 <a href="#" target="_blank" class="text-body">My Company, Inc</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Privacy Policy</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Terms & Conditions</a>`,
         journeyLayout: 'card',
@@ -40,6 +41,7 @@ export default {
         profileMenuTextHighlightColor: '#455469',
         textColor: '#ffffff',
       },
+      favicon: '',
       journeyFooter: '',
       journeyLayout: 'card',
       logoHeight: '40',
@@ -59,7 +61,7 @@ export default {
         'cache-control': 'no-cache',
       });
 
-      idmRequestService.get('/config/ui/themerealm').then((results) => {
+      return idmRequestService.get('/config/ui/themerealm').then((results) => {
         const themeResults = results.data.realm;
         let cleanRealm = realm;
 
@@ -76,10 +78,10 @@ export default {
             theme = theme[themeName];
           }
         }
-
         // Set all realm related theming here
         if (theme) {
           this.theme = theme;
+          this.favicon = theme.favicon;
           this.journeyFooter = theme.journeyFooter;
           this.journeyLayout = theme.journeyLayout;
           this.logo = theme.logo;

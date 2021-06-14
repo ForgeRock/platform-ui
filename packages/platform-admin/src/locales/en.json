@@ -95,6 +95,8 @@
       "editDetails": "Edit Details",
       "editTitle": "Edit Theme",
       "failedToUpdateRealmTheme": "'{realmName}' realm theme failed to updated",
+      "favicon": "Favicon",
+      "faviconHelp": "Favicon to display in the browser's location bar.",
       "journeyPage": "Journey Page",
       "layoutTab": {
         "accountControls": "Account Controls",

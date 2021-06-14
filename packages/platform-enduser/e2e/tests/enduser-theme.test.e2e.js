@@ -121,6 +121,32 @@ describe('Enduser Theming', () => {
     });
   });
 
+  it('should change login/profile favicon', () => {
+    cy.login(adminUserName, adminPassword, platformLoginUrl);
+
+    cy.visit(locationUrl);
+    cy.findByRole('cell', { name: 'Starter Theme' }).click();
+    cy.findByRole('tab', { name: 'Logos' }).click();
+    cy.findByPlaceholderText('Favicon')
+      .clear()
+      .type('h');
+    cy.findByTestId('favicon-preview')
+      .should('have.attr', 'src')
+      .should('include', 'h');
+    cy.findByPlaceholderText('Favicon')
+      .type('ttps://www.forgerock.com//themes/custom/forgerock/favicon.ico');
+    cy.findByRole('button', { name: 'Save' }).click();
+    cy.logout();
+    cy.visit(locationUrl);
+    // ensure login has proper favicon
+    cy.visit(`${Cypress.config().baseUrl}/enduser/`);
+    cy.findByTestId('favicon').should('have.attr', 'href').should('include', 'https://www.forgerock.com//themes/custom/forgerock/favicon.ico');
+
+    // ensure enduser has proper favicon
+    cy.login(enduserUserName);
+    cy.findByTestId('favicon').should('have.attr', 'href').should('include', 'https://www.forgerock.com//themes/custom/forgerock/favicon.ico');
+  });
+
   it('should delete test user', () => {
     cy.login(enduserUserName);
     const permanentlyDeleteMessage = 'Are you sure you want to permanently delete your account data?';
