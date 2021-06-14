@@ -6,6 +6,7 @@
  */
 
 import { createIDMUser } from '../api/managedApi.e2e';
+import { setBaseTheme } from '../api/themeApi.e2e';
 
 function changeColour(name, value) {
   cy.findByRole('button', { name }).scrollIntoView().click();
@@ -28,16 +29,21 @@ describe('Enduser Theming', () => {
   });
 
   it('should change enduser colors', () => {
-    cy.login(adminUserName, adminPassword, platformLoginUrl);
-
+    cy.intercept('POST', '/am/oauth2/access_token').as('getAccessToken');
+    cy.login(adminUserName, adminPassword, platformLoginUrl).then(() => {
+      cy.wait('@getAccessToken').then(({ response }) => {
+        const accessToken = response.body.access_token;
+        setBaseTheme(accessToken);
+      });
+    });
     cy.visit(locationUrl);
     cy.findByRole('cell', { name: 'Starter Theme' }).click();
 
     changeColour(/^Link Color/, '16FF96');
     changeColour(/^Link Active Color/, '123123');
     changeColour(/^Enduser Background Color/, 'FFFFFF');
-    changeColour(/^Menu Highlight Color/, '123123');
-    changeColour(/^Menu Highlight Text Color/, '16FF96');
+    changeColour(/^Menu Active Color/, '123123');
+    changeColour(/^Menu Active Text Color/, '16FF96');
 
     cy.get('button.btn-primary:visible').contains('Save').scrollIntoView().click();
     cy.logout();
@@ -49,8 +55,13 @@ describe('Enduser Theming', () => {
   });
 
   it('should change profile page logo', () => {
-    cy.login(adminUserName, adminPassword, platformLoginUrl);
-
+    cy.intercept('POST', '/am/oauth2/access_token').as('getAccessToken');
+    cy.login(adminUserName, adminPassword, platformLoginUrl).then(() => {
+      cy.wait('@getAccessToken').then(({ response }) => {
+        const accessToken = response.body.access_token;
+        setBaseTheme(accessToken);
+      });
+    });
     cy.visit(locationUrl);
     cy.findByRole('cell', { name: 'Starter Theme' }).click();
     cy.findByRole('tab', { name: 'Logos' }).click();
@@ -73,6 +84,41 @@ describe('Enduser Theming', () => {
     cy.login(enduserUserName);
     cy.get('div.fr-logo:visible')
       .should('have.css', 'background-image', 'url("https://www.logosurfer.com/wp-content/uploads/2018/03/quicken-loans-logo_0.png")');
+  });
+
+  it('should toggle profile pieces', () => {
+    cy.intercept('POST', '/am/oauth2/access_token').as('getAccessToken');
+    cy.login(adminUserName, adminPassword, platformLoginUrl).then(() => {
+      cy.wait('@getAccessToken').then(({ response }) => {
+        const accessToken = response.body.access_token;
+        setBaseTheme(accessToken);
+      });
+    });
+    cy.visit(locationUrl);
+    cy.findByRole('cell', { name: 'Starter Theme' }).click();
+    cy.findByRole('tab', { name: 'Layout' }).click();
+    cy.findByRole('button', { name: 'Account Page' }).click();
+    cy.findByRole('checkbox', { name: 'Password' }).click();
+    cy.findByRole('checkbox', { name: '2-Step Verification' }).click();
+    cy.findByRole('button', { name: 'Save' }).click();
+    cy.logout();
+    cy.login(enduserUserName);
+    cy.visit(`${Cypress.config().baseUrl}/enduser/?realm=root#/profile`);
+    // verify personal information, password row, and 2-step verification row do not appear
+    cy.findByRole('heading', { name: 'Sign-in & Security' }).should('exist');
+    cy.findByRole('heading', { name: 'Password' }).should('not.exist');
+    cy.findByRole('heading', { name: '2-Step Verification' }).should('not.exist');
+    // verify username and Security Questions rows do appear
+    cy.findByRole('heading', { name: 'Username' }).should('exist');
+    cy.findByRole('heading', { name: 'Security Questions' }).should('exist');
+    // reset theme to keep environment clean
+    cy.logout();
+    cy.login(adminUserName, adminPassword, platformLoginUrl).then(() => {
+      cy.wait('@getAccessToken').then(({ response }) => {
+        const accessToken = response.body.access_token;
+        setBaseTheme(accessToken);
+      });
+    });
   });
 
   it('should delete test user', () => {

@@ -3,96 +3,190 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <FrCenterCard
-    :hide-footer="true"
-    :logo-alt-text="logoAltText"
-    :logo-height="logoHeight"
-    :logo-path="logoPath"
-    :show-logo="true">
-    <template #center-card-header>
-      <div v-if="!loading">
-        <h2
-          v-if="header"
-          class="h2">
-          {{ header }}
-        </h2>
-        <p
-          v-if="description"
-          class="text-center mb-0"
-          v-html="description" />
-      </div>
-    </template>
-
-    <template #center-card-body>
-      <BCardBody
-        v-show="!loading"
-        id="callbacksPanel">
-        <FrAlert
-          :show="loginFailure"
-          :dismissible="false"
-          variant="error"
-          class="p-3 text-left">
-          {{ errorMessage }}
-        </FrAlert>
-        <div id="body-append-el">
-          <!-- for backend scripts -->
-          <form
-            @submit.prevent="nextStep"
-            id="wrapper"
-          >
-            <!-- needed for GetAuthenticationApp, RecoveryCodeDisplay-->
-            <div v-if="showScriptElms">
-              <fieldset />
-            </div>
-            <div
-              v-if="showScriptElms"
-              id="callback_0"
-            />
-            <template
-              v-for="(component) in componentList ">
-              <Component
-                class="callback-component"
-                :callback="component.callback"
-                :index="component.index"
-                :is="component.type"
-                :key="component.key"
-                :step="step"
-                v-bind="{...component.callbackSpecificProps}"
-                v-on="{
-                  'next-step': (event, preventClear) => {
-                    nextStep(event, preventClear);
-                  },
-                  ...component.listeners}"
-              />
-            </template>
-            <BButton
-              v-if="nextButtonVisible"
-              class="btn-block mt-3"
-              type="submit"
-              variant="primary"
-              :disabled="nextButtonDisabled"
-              @click="nextStep">
-              {{ buttonTextLocalized }}
-            </BButton>
-            <input
-              v-if="showScriptElms"
-              id="loginButton_0"
-              role="button"
-              type="submit"
-              @click.prevent="backendScriptsHandler"
-              hidden>
-          </form>
+  <div class="h-100 d-flex">
+    <FrCenterCard
+      v-if="!journeyLayout || journeyLayout === 'card'"
+      :logo-alt-text="logoAltText"
+      :logo-height="logoHeight"
+      :logo-path="logoPath"
+      :show-logo="true">
+      <template #center-card-header>
+        <div v-if="!loading">
+          <h1
+            v-if="header"
+            class="h2">
+            {{ header }}
+          </h1>
+          <p
+            v-if="description"
+            class="text-center mb-0"
+            v-html="description" />
         </div>
-      </BCardBody>
-      <BCardBody v-show="loading">
-        <div class="h-100 d-flex">
-          <div class="fr-center-card">
-            <Spinner class="mb-4" />
+      </template>
+
+      <template #center-card-body>
+        <BCardBody
+          v-show="!loading"
+          id="callbacksPanel">
+          <FrAlert
+            :show="loginFailure"
+            :dismissible="false"
+            variant="error"
+            class="p-3 text-left">
+            {{ errorMessage }}
+          </FrAlert>
+          <div id="body-append-el">
+            <!-- for backend scripts -->
+            <form
+              @submit.prevent="nextStep"
+              id="wrapper"
+            >
+              <!-- needed for GetAuthenticationApp, RecoveryCodeDisplay-->
+              <template v-if="showScriptElms">
+                <div>
+                  <fieldset />
+                </div>
+                <div id="callback_0" />
+              </template>
+              <template
+                v-for="(component) in componentList ">
+                <Component
+                  class="callback-component"
+                  :callback="component.callback"
+                  :index="component.index"
+                  :is="component.type"
+                  :key="component.key"
+                  :step="step"
+                  v-bind="{...component.callbackSpecificProps}"
+                  v-on="{
+                    'next-step': (event, preventClear) => {
+                      nextStep(event, preventClear);
+                    },
+                    ...component.listeners}"
+                />
+              </template>
+              <BButton
+                v-if="nextButtonVisible"
+                class="btn-block mt-3"
+                type="submit"
+                variant="primary"
+                :disabled="nextButtonDisabled"
+                @click="nextStep">
+                {{ buttonTextLocalized }}
+              </BButton>
+              <input
+                v-if="showScriptElms"
+                id="loginButton_0"
+                role="button"
+                type="submit"
+                @click.prevent="backendScriptsHandler"
+                hidden>
+            </form>
+          </div>
+        </BCardBody>
+        <BCardBody v-show="loading">
+          <div class="h-100 d-flex">
+            <div class="fr-center-card">
+              <Spinner class="mb-4" />
+            </div>
+          </div>
+        </BCardBody>
+      </template>
+    </FrCenterCard>
+    <div
+      v-else
+      id="callbacksPanel"
+      :class="[{'flex-row-reverse': journeyLayout === 'justified-right'}, 'd-flex w-100']">
+      <div class="w-50 full-height d-md-flex align-items-start flex-column bg-white">
+        <div
+          class="px-4 px-md-5"
+          data-testid="in-situ-logo-preview">
+          <div class="d-flex flex-fill flex-column justify-content-left w-100">
+            <img
+              class="fr-logo mt-4"
+              :alt="logoAltText"
+              :style="{ height: `${logoHeight}px` }"
+              :src="logoPath">
           </div>
         </div>
-      </BCardBody>
-    </template>
-  </FrCenterCard>
+        <div class="px-4 px-md-5 d-md-flex align-items-center w-100 flex-grow-1">
+          <div class="w-100">
+            <h2 class="mb-5">
+              {{ $t('common.signIn') }}
+            </h2>
+            <FrAlert
+              :show="loginFailure"
+              :dismissible="false"
+              variant="error"
+              class="p-3 text-left">
+              {{ errorMessage }}
+            </FrAlert>
+            <div id="body-append-el">
+              <!-- for backend scripts -->
+              <form
+                @submit.prevent="nextStep"
+                id="wrapper">
+                <!-- needed for GetAuthenticationApp, RecoveryCodeDisplay-->
+                <template v-if="showScriptElms">
+                  <div>
+                    <fieldset />
+                  </div>
+                  <div id="callback_0" />
+                </template>
+                <template
+                  v-for="(component) in componentList ">
+                  <Component
+                    class="callback-component"
+                    :callback="component.callback"
+                    :index="component.index"
+                    :is="component.type"
+                    :key="component.key"
+                    :step="step"
+                    v-bind="{...component.callbackSpecificProps}"
+                    v-on="{
+                      'next-step': (event, preventClear) => {
+                        nextStep(event, preventClear);
+                      },
+                      ...component.listeners}"
+                  />
+                </template>
+                <BButton
+                  v-if="nextButtonVisible"
+                  class="btn-block mt-3"
+                  type="submit"
+                  variant="primary"
+                  :disabled="nextButtonDisabled"
+                  @click="nextStep">
+                  {{ buttonTextLocalized }}
+                </BButton>
+                <input
+                  v-if="showScriptElms"
+                  id="loginButton_0"
+                  role="button"
+                  type="submit"
+                  @click.prevent="backendScriptsHandler"
+                  hidden>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div
+          class="d-flex justify-content-center py-4 w-100"
+          id="appFooter">
+          <p v-html="journeyFooter" />
+        </div>
+      </div>
+      <div class="fr-background-half-screen overflow-hidden position-relative w-50 h-100 d-none d-md-flex" />
+    </div>
+    <div
+      v-if="journeyFooter && journeyLayout === 'card'"
+      class="position-absolute w-100"
+      id="appFooter">
+      <div class="d-flex flex-column flex-md-row justify-content-center align-items-center py-4">
+        <p v-html="journeyFooter" />
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -162,19 +256,27 @@ export default {
     FrWebAuthnComponent: () => import('@/components/display/WebAuthn'),
   },
   props: {
-    logoHeight: {
-      type: String,
-      default: '40',
-    },
-    logoPath: {
+    buttonText: {
       type: String,
       default: '',
+    },
+    journeyFooter: {
+      type: String,
+      default: '',
+    },
+    journeyLayout: {
+      type: String,
+      default: 'card',
     },
     logoAltText: {
       type: String,
       default: '',
     },
-    buttonText: {
+    logoHeight: {
+      type: String,
+      default: '40',
+    },
+    logoPath: {
       type: String,
       default: '',
     },
@@ -860,5 +962,9 @@ export default {
   .hide-polling-spinner ~ .polling-spinner-container {
     display: none;
   }
+}
+
+#appFooter {
+  bottom: 0;
 }
 </style>

@@ -14,9 +14,14 @@ export default {
   data() {
     return {
       defaultThemeParams: {
+        accountFooter: `<span class="pr-1">© ${new Date().getFullYear()}</span>
+<a href="#" target="_blank" class="text-body">My Company, Inc</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Privacy Policy</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Terms & Conditions</a>`,
         backgroundColor: '#f6f8fa',
         backgroundImage: '',
         buttonRounded: 5,
+        journeyFooter: `<span class="pr-1">© ${new Date().getFullYear()}</span>
+<a href="#" target="_blank" class="text-body">My Company, Inc</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Privacy Policy</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Terms & Conditions</a>`,
+        journeyLayout: 'card',
         linkActiveColor: '#0c85cf',
         linkColor: '#109cf1',
         logo: '',
@@ -35,6 +40,8 @@ export default {
         profileMenuTextHighlightColor: '#455469',
         textColor: '#ffffff',
       },
+      journeyFooter: '',
+      journeyLayout: 'card',
       logoHeight: '40',
       logoProfileHeight: '40',
       logoProfileCollapsedHeight: '40',
@@ -73,6 +80,8 @@ export default {
         // Set all realm related theming here
         if (theme) {
           this.theme = theme;
+          this.journeyFooter = theme.journeyFooter;
+          this.journeyLayout = theme.journeyLayout;
           this.logo = theme.logo;
           this.logoAltText = theme.logoAltText;
           this.logoHeight = theme.logoHeight;

@@ -55,6 +55,9 @@ describe('Profile.vue', () => {
           return '';
         },
       },
+      propsData: {
+        theme: {},
+      },
       methods: {
         getUserProfile,
       },

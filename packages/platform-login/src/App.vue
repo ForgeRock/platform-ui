@@ -14,6 +14,8 @@ of the MIT license. See the LICENSE file for details. -->
         name="fade"
         mode="out-in">
         <RouterView
+          :journey-footer="journeyFooter"
+          :journey-layout="journeyLayout"
           :logo-alt-text="logoAltText"
           :logo-height="logoHeight"
           :logo-path="logo"
