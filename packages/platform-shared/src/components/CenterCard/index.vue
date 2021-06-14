@@ -17,7 +17,8 @@ of the MIT license. See the LICENSE file for details. -->
             <div
               v-if="logoPath.length === 0"
               class="fr-logo fr-logo-vertical mb-3 mt-2"
-              :alt="$t('centerCard.logoAltText')" />
+              fluid
+              :alt="$t('common.logo')" />
             <img
               v-else
               class="fr-logo mb-3 mt-2"

@@ -18,6 +18,12 @@ of the MIT license. See the LICENSE file for details. -->
       background-repeat: no-repeat;
       }
 
+      .fr-background-half-screen {
+      background-image: url('{{ theme.backgroundImage }}');
+      background-size: cover;
+      background-repeat: no-repeat;
+      }
+
       .btn {
       border-radius: {{ theme.buttonRounded }}px !important;
       }

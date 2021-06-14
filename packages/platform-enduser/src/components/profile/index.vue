@@ -6,6 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <BContainer>
     <BRow class="my-5">
       <BCol
+        v-if="!theme.accountPageSections || theme.accountPageSections.personalInformation.enabled"
         class="profileCol mb-4"
         lg="4">
         <FrEditProfile
@@ -18,29 +19,32 @@ of the MIT license. See the LICENSE file for details. -->
           :show-edit="profile._id !== undefined && internalUser === false"
           :show-image-upload="schema.properties && schema.properties.profileImage !== undefined" />
       </BCol>
-      <BCol lg="8">
+      <BCol :lg="(!theme.accountPageSections || theme.accountPageSections.personalInformation.enabled) ? 8 : 12">
         <FrAccountSecurity
+          v-if="(!theme.accountPageSections || theme.accountPageSections.accountSecurity.enabled) && internalUser === false"
           class="mb-5"
-          v-if="internalUser === false"
-          @updateKBA="updateKBA"
           :processing-request="processingRequest"
-        />
-        <FrSocial class="mb-5" />
-        <FrTrustedDevices />
+          :theme-sections="theme.accountPageSections ? theme.accountPageSections.accountSecurity.subsections : {}"
+          @updateKBA="updateKBA" />
+        <FrSocial
+          v-if="!theme.accountPageSections || theme.accountPageSections.social.enabled"
+          class="mb-5" />
+        <FrTrustedDevices v-if="!theme.accountPageSections || theme.accountPageSections.trustedDevices.enabled" />
         <FrAuthorizedApplications
-          class="mb-5"
-          v-if="internalUser === false"
-        />
+          v-if="(!theme.accountPageSections || theme.accountPageSections.oauthApplications.enabled) && internalUser === false"
+          class="mb-5" />
         <FrPreferences
+          v-if="(!theme.accountPageSections || theme.accountPageSections.preferences.enabled) && internalUser === false"
           class="mb-5"
-          v-if="internalUser === false"
           @updateProfile="updateProfile" />
         <FrConsent
+          v-if="!theme.accountPageSections || theme.accountPageSections.consent.enabled"
           class="mb-5"
-          v-if="internalUser === false"
           :consented-mappings="profile.consentedMappings"
           @updateProfile="updateProfile" />
-        <FrAccountControls class="mb-5" />
+        <FrAccountControls
+          v-if="!theme.accountPageSections || theme.accountPageSections.accountControls.enabled"
+          class="mb-5" />
       </BCol>
     </BRow>
   </BContainer>
@@ -89,6 +93,12 @@ export default {
     FrTrustedDevices: TrustedDevices,
     FrConsent: Consent,
     FrSocial: Social,
+  },
+  props: {
+    theme: {
+      type: Object,
+      default: () => {},
+    },
   },
   computed: {
     ...mapState({

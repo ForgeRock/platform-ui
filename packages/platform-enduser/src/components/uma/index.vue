@@ -1,10 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BContainer fluid>
     <template v-if="requestsLoaded">
@@ -83,7 +80,7 @@ import {
 import { mapState } from 'vuex';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import CenterCard from '@/components/utils/CenterCard';
+import FrCenterCard from '@forgerock/platform-shared/src/components/CenterCard';
 import Activity from '@/components/uma/Activity';
 import Requests from '@/components/uma/Requests';
 import Resources from '@/components/uma/Resources';
@@ -102,7 +99,7 @@ export default {
   ],
   components: {
     FrActivity: Activity,
-    FrCenterCard: CenterCard,
+    FrCenterCard,
     FrRequests: Requests,
     FrResources: Resources,
     FrShare: Share,
