@@ -19,7 +19,9 @@ of the MIT license. See the LICENSE file for details. -->
       class="card-input-element"
       @change="$emit('change', value)"
       @focus="$emit('change', value)">
-    <BCard :class="['card-input', 'fr-card-clickable', cardBodyClass]">
+    <BCard
+      class="card-input fr-card-clickable"
+      :body-class="cardBodyClass">
       <!-- @slot Provide custom content for card body -->
       <slot>
         <div :aria-label="value">
