@@ -13,7 +13,9 @@ of the MIT license. See the LICENSE file for details. -->
         header-tag="header"
         footer-tag="footer">
         <BCardHeader class="d-flex align-items-center flex-fill">
-          <div class="d-flex flex-fill flex-column justify-content-center">
+          <div
+            v-if="showLogo"
+            class="d-flex flex-fill flex-column justify-content-center">
             <div
               v-if="logoPath.length === 0"
               class="fr-logo fr-logo-vertical mb-3 mt-2"
