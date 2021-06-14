@@ -81,7 +81,11 @@ export default {
   created() {
     // if this is a dns alias making this call will get the true realm when no realm param is provided
     getAmServerInfo().then(({ data }) => {
-      this.setTheme(data.realm);
+      this.setTheme(data.realm).then(() => {
+        if (this.favicon) {
+          document.getElementById('favicon').href = this.favicon;
+        }
+      });
     }, (error) => {
       this.showErrorMessage(error, this.$t('errors.couldNotRetrieveConfigurationInfo'));
     });
