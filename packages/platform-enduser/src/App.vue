@@ -5,12 +5,15 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <FrLayout
-      :menu-items="menuItems"
-      :user-details="userDetails"
+      :footer="accountFooter"
       :is-enduser="true"
       :is-fraas="$store.state.isFraas"
+      :menu-items="menuItems"
+      :user-details="userDetails"
       :version="version">
-      <RouterView :key="this.$route.fullPath" />
+      <RouterView
+        :key="$route.fullPath"
+        :theme="theme" />
     </FrLayout>
     <ThemeInjector
       :theme="theme"
@@ -48,6 +51,12 @@ export default {
     ThemeInjector,
   },
   computed: {
+    accountFooter() {
+      if (this.theme) {
+        return this.theme.accountFooter;
+      }
+      return '';
+    },
     ...mapState({
       accessObj: (state) => state.UserStore.access,
     }),

@@ -1,13 +1,12 @@
 /**
- * Copyright 2019-2020 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2019-2021 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
+
 import BootstrapVue from 'bootstrap-vue';
 import { mount, shallowMount, createLocalVue } from '@vue/test-utils';
-
 import CenterCard from './index';
 
 const localVue = createLocalVue();
@@ -24,12 +23,26 @@ describe('CenterCard Component', () => {
     expect(wrapper.name()).toEqual('CenterCard');
   });
 
+  it('Center Card component loaded with header images', () => {
+    const wrapper = shallowMount(CenterCard, {
+      localVue,
+      mocks: {
+        $t: () => {},
+      },
+    });
+
+    expect(wrapper.name()).toBe('CenterCard');
+    expect(wrapper.contains('.fr-logo')).toBe(true);
+  });
+
   it('CenterCard has a logo with default props', () => {
     const wrapper = mount(CenterCard, {
       mocks: {
         $t: () => {},
       },
-      propsData: {},
+      propsData: {
+        showLogo: true,
+      },
     });
 
     const logo = wrapper.find('.fr-logo');
