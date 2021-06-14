@@ -511,7 +511,7 @@ export default {
     },
     buildTreeForm() {
       this.header = this.step.getHeader() || '';
-      this.description = this.step.getDescription() || '';
+      this.description = this.$sanitize(this.step.getDescription() || '');
       this.nextButtonVisible = true;
       this.nextButtonDisabledArray = [];
 
