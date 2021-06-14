@@ -6,6 +6,7 @@
  */
 
 import { createIDMUser, assignUserDashboard } from '../api/managedApi.e2e';
+import { setBaseTheme } from '../api/themeApi.e2e';
 
 describe('Enduser Dashboard View', () => {
   let userId = '';
@@ -109,6 +110,17 @@ describe('Enduser Dashboard View', () => {
   });
 
   it('should delete test user', () => {
+    const platformLoginUrl = `${Cypress.config().baseUrl}/platform/`;
+    const adminUserName = Cypress.env('AM_USERNAME');
+    const adminPassword = Cypress.env('AM_PASSWORD');
+    cy.intercept('POST', '/am/oauth2/access_token').as('getAccessToken');
+    cy.login(adminUserName, adminPassword, platformLoginUrl).then(() => {
+      cy.wait('@getAccessToken').then(({ response }) => {
+        const accessToken = response.body.access_token;
+        setBaseTheme(accessToken);
+      });
+    });
+    cy.logout();
     cy.login(userName);
     const permanentlyDeleteMessage = 'Are you sure you want to permanently delete your account data?';
     cy.get('[href="#/profile"]:first').click();
