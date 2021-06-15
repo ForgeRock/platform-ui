@@ -25,7 +25,7 @@
     "dashboard": {
       "applications": {
         "heading": "My Applications",
-        "listItemBrandIconAltText": "icon."
+        "listItemBrandIconAltText": "{appName} icon."
       },
       "errorGetApplications": "There was an error retrieving your applications",
       "noWidget": "No Widgets Available",

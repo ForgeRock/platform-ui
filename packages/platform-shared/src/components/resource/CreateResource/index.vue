@@ -276,7 +276,7 @@ export default {
         const step = this.steps[this.stepIndex];
 
         if (step.key === 'privileges') {
-          return `${name} ${this.$t('pages.access.permissions')} `;
+          return this.$t('pages.access.objectPermissions', { object: name });
         }
 
         if (step.isConditional) {
@@ -284,10 +284,10 @@ export default {
         }
 
         if (step.isTemporalConstraint) {
-          return `${name} ${this.$t('pages.access.timeConstraint')}`;
+          return this.$t('pages.access.timeConstraint', { object: name });
         }
       }
-      return `${this.$t('common.new')} ${name}`;
+      return this.$t('common.newObject', { object: name });
     },
   },
   methods: {

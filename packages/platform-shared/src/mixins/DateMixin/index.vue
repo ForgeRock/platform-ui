@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <script>
 import dayjs from 'dayjs';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
@@ -24,15 +23,15 @@ export default {
       const day = hour * 24;
 
       const thresholds = [
-        { threshold: 540 * day, modifier: 365 * day, render: (elapsed) => `${elapsed} ${this.$t('date.yearsAgo')}` },
+        { threshold: 540 * day, modifier: 365 * day, render: (elapsed) => this.$t('date.yearsAgo', { elapsed }) },
         { threshold: 320 * day, render: () => this.$t('date.yearAgo') },
-        { threshold: 45 * day, modifier: 30 * day, render: (elapsed) => `${elapsed} ${this.$t('date.monthsAgo')}` },
+        { threshold: 45 * day, modifier: 30 * day, render: (elapsed) => this.$t('date.monthsAgo', { elapsed }) },
         { threshold: 26 * day, render: () => this.$t('date.monthAgo') },
-        { threshold: 36 * hour, modifier: 24 * hour, render: (elapsed) => `${elapsed} ${this.$t('date.daysAgo')}` },
+        { threshold: 36 * hour, modifier: 24 * hour, render: (elapsed) => this.$t('date.daysAgo', { elapsed }) },
         { threshold: 22 * hour, render: () => this.$t('date.dayAgo') },
-        { threshold: 90 * minute, modifier: 60 * minute, render: (elapsed) => `${elapsed} ${this.$t('date.hoursAgo')}` },
+        { threshold: 90 * minute, modifier: 60 * minute, render: (elapsed) => this.$t('date.hoursAgo', { elapsed }) },
         { threshold: 45 * minute, render: () => this.$t('date.hourAgo') },
-        { threshold: 90 * second, modifier: 60 * second, render: (elapsed) => `${elapsed} ${this.$t('date.minutesAgo')}` },
+        { threshold: 90 * second, modifier: 60 * second, render: (elapsed) => this.$t('date.minutesAgo', { elapsed }) },
         { threshold: 46 * second, render: () => this.$t('date.minuteAgo') },
         { threshold: 0 * second, render: () => this.$t('date.secondsAgo') },
       ];

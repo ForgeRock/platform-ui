@@ -1,9 +1,7 @@
-<!--
-Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <li
     class="my-applications-list-item"
@@ -70,7 +68,7 @@ export default {
       return iconPath;
     },
     applicationIconAltText() {
-      return `${this.applicationName} ${this.$t('pages.dashboard.applications.listItemBrandIconAltText')}`;
+      return this.$t('pages.dashboard.applications.listItemBrandIconAltText', { appName: this.applicationName });
     },
     applicationLoginLink() {
       return this.applicationDetails.dashboardLogin[0];
