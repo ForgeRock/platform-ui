@@ -1132,6 +1132,10 @@
       "OAUTH2_MAY_ACT": {
         "name": "OAuth2 May Act",
         "description": "Scripts are included in an authentication module within a chain and are executed on the server during authentication."
+      },
+      "OAUTH2_VALIDATE_SCOPE": {
+        "name": "OAuth2 Validate Scope",
+        "description": "Script used for validating OAuth2 scopes."
       }
     },
     "languages": {
