@@ -262,7 +262,7 @@
       "resetPassword": "Reset Password",
       "failedSavePassword": "Failed to save password",
       "successSavePassword": "Successfully saved password",
-      "removeConfirm": "Are you sure you want to remove the selected Privilege?",
+      "removeConfirm": "Are you sure you want to remove the selected",
       "removeModalTitle": "Confirm Removal",
       "onePermissionRequired": "At least one permission is required",
       "list": "List",
