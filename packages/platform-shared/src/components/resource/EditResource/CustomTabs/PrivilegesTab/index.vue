@@ -165,7 +165,7 @@ of the MIT license. See the LICENSE file for details. -->
       ref="removePrivilege"
       :title="$t('pages.access.removeModalTitle')">
       <div>
-        {{ $t('pages.access.removeConfirm') }}
+        {{ $t('pages.access.removeConfirm') }} {{ $t('pages.access.privilege') }}?
       </div>
       <template v-slot:modal-footer="{ cancel }">
         <BButton
