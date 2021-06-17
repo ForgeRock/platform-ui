@@ -294,9 +294,13 @@ export default {
     setDisableSortAndSearch(resourceCollection) {
       const { uiConfig } = this.$store.state.SharedStore;
       const resourceType = resourceCollection.path.split('/')[0];
-      const resourceName = resourceCollection.path.split('/')[1];
+      let resourceName = resourceCollection.path.split('/')[1];
+      // special case for internal/role
+      if (resourceName === 'role' && resourceType === 'internal') {
+        resourceName = 'internalrole';
+      }
       const configDisableRelationshipSortAndSearch = has(uiConfig, `configuration.platformSettings.managedObjectsSettings.${resourceName}`) ? uiConfig.configuration.platformSettings.managedObjectsSettings[resourceName].disableRelationshipSortAndSearch : false;
-      this.disableSortAndSearch = !this.isOpenidmAdmin && resourceType === 'managed' && configDisableRelationshipSortAndSearch;
+      this.disableSortAndSearch = !this.isOpenidmAdmin && configDisableRelationshipSortAndSearch;
     },
     setColumns(resourceCollectionSchema) {
       if (!this.relationshipArrayProperty.readOnly || this.isOpenidmAdmin) {

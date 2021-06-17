@@ -233,5 +233,9 @@ describe('RelationshipArray', () => {
     wrapper.vm.$store.state.SharedStore.uiConfig.configuration.platformSettings.managedObjectsSettings.user.disableRelationshipSortAndSearch = false;
     wrapper.vm.setDisableSortAndSearch(wrapper.vm.relationshipArrayProperty.items.resourceCollection[0]);
     expect(wrapper.vm.disableSortAndSearch).toEqual(false);
+    wrapper.vm.$store.state.SharedStore.uiConfig.configuration.platformSettings.managedObjectsSettings.internalrole = { disableRelationshipSortAndSearch: true };
+    wrapper.vm.relationshipArrayProperty.items.resourceCollection[0].path = 'internal/role';
+    wrapper.vm.setDisableSortAndSearch(wrapper.vm.relationshipArrayProperty.items.resourceCollection[0]);
+    expect(wrapper.vm.disableSortAndSearch).toEqual(true);
   });
 });

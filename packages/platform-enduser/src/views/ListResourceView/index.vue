@@ -123,12 +123,18 @@ export default {
       idmInstance.get(`privilege/${this.$route.params.resourceType}/${this.$route.params.resourceName}`),
       getConfig('ui/configuration'),
     ]).then(axios.spread((schema, privilege, uiConfig) => {
+      let { resourceName } = this.$route.params;
+
+      if (resourceName === 'role' && this.$route.params.resourceType === 'internal') {
+        resourceName = 'internalrole';
+      }
+
       if (has(schema, 'data.title')) {
         this.displayName = schema.data.title;
       }
 
-      if (has(uiConfig.data.configuration.platformSettings.managedObjectsSettings, this.$route.params.resourceName)) {
-        this.queryThreshold = uiConfig.data.configuration.platformSettings.managedObjectsSettings[this.$route.params.resourceName].minimumUIFilterLength || null;
+      if (has(uiConfig.data.configuration.platformSettings.managedObjectsSettings, resourceName)) {
+        this.queryThreshold = uiConfig.data.configuration.platformSettings.managedObjectsSettings[resourceName].minimumUIFilterLength || null;
       }
 
       this.setPrivileges(privilege, schema);
