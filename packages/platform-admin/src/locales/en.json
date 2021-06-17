@@ -183,7 +183,8 @@
     "uploadCSV": "Upload CSV",
     "selectIdentity": "Select the managed identity object into which you want to import your CSV identities.",
     "importTo": "Import to",
-    "deleteImportConfirmation": "If you delete this import the entries imported will remain, but import record will be deleted from the list."
+    "deleteImportConfirmation": "If you delete this import the entries imported will remain, but import record will be deleted from the list.",
+    "uploadingMessage": "Your file is being uploaded. Please do not close this window or navigate away from this page until the uploading process completes."
   },
   "configure": {
     "managedListView": {
