@@ -311,8 +311,8 @@ export default {
 
           const saveData = this.cleanData(clone(this.formFields));
 
-          idmInstance.post(`${this.resourceType}/${this.resourceName}?_action=create`, saveData).then(() => {
-            this.$emit('refreshGrid');
+          idmInstance.post(`${this.resourceType}/${this.resourceName}?_action=create`, saveData).then((newObjectResponse) => {
+            this.$emit('showDetails', newObjectResponse.data);
             this.hideModal();
 
             this.displayNotification('IDMMessages', 'success', this.$t('pages.access.successCreate', { resource: this.resourceTitle || capitalize(this.resourceName) }));
