@@ -98,98 +98,20 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
         <ul class="fr-sidebar-menuitems flex-grow-1">
           <template v-for="(item, index) in menuItems">
-            <BDropdownDivider
-              :key="`sidebarNavBreak_${index}`"
-              v-if="item.break" />
-            <li
-              v-else-if="!item.menuGroup"
-              :key="`sidebarNav_${index}`">
-              <RouterLink
-                class="d-flex align-items-center"
-                :ref="`${index === 0 ? 'firstItem' : ''}`"
-                v-if="item.routeName"
-                :class="{'hidden': item.showForRoles && !userHasRole(item.showForRoles)}"
-                :to="{ name: item.routeName, params: { resourceType: item.resourceType, resourceName: item.resourceName} }">
-                <i
-                  class="material-icons material-icons-outlined mr-3"
-                  aria-hidden="true">
-                  {{ item.icon }}
-                </i>
-                <span class="sidebar-item-text">
-                  {{ item.displayName }}
-                </span>
-              </RouterLink>
-              <a
-                v-else-if="item.url"
-                :ref="`${index === 0 ? 'firstItem' : ''}`"
-                :href="item.url"
-                :class="{'hidden': item.showForRoles && !userHasRole(item.showForRoles)}"
-                target="_blank">
-                {{ item.displayName }}
-              </a>
-            </li>
-            <li
-              v-else
-              class="fr-sidebar-menugroup"
-              :key="`sidebarNav_${index}`">
-              <ul class="fr-sidebar-submenuitems">
-                <BButton
-                  v-b-toggle="`collapse-${index}`"
-                  :class="{'hidden': item.showForRoles && !userHasRole(item.showForRoles)}"
-                  class="d-flex align-items-center border-0 rounded-0 p-0">
-                  <span
-                    tabindex="-1"
-                    class="dropdown-toggle"
-                    :aria-expanded="expandedMenus[index]">
-                    <i
-                      class="material-icons material-icons-outlined mr-3"
-                      aria-hidden="true">
-                      {{ item.icon }}
-                    </i>
-                    <span class="sidebar-item-text">
-                      {{ item.displayName }}
-                    </span>
-                  </span>
-                </BButton>
-                <BCollapse
-                  :id="`collapse-${index}`"
-                  class="fr-sidebar-subitem"
-                  tag="li"
-                  v-model="expandedMenus[index]">
-                  <ul>
-                    <template v-for="(subItem, subIndex) in item.menus">
-                      <li :key="`sidebarNav_${index}_${subIndex}`">
-                        <RouterLink
-                          class="d-flex align-items-center"
-                          v-if="subItem.routeName"
-                          :class="{'hidden': subItem.showForRoles && !userHasRole(subItem.showForRoles)}"
-                          :to="{ name: subItem.routeName, params: subItem.params }">
-                          <span class="sidebar-item-text">
-                            {{ subItem.displayName }}
-                          </span>
-                        </RouterLink>
-                        <a
-                          v-else-if="subItem.url"
-                          :href="subItem.url"
-                          :class="{'hidden': subItem.showForRoles && !userHasRole(subItem.showForRoles)}"
-                          target="_blank">
-                          {{ subItem.displayName }}
-                        </a>
-                      </li>
-                    </template>
-                  </ul>
-                </BCollapse>
-              </ul>
-            </li>
+            <FrMenuItem
+              :key="`sidebarNav_${index}`"
+              v-bind="item"
+              :user-roles="userDetails.roles"
+              is-nav />
           </template>
         </ul>
 
         <div class="fr-sidebar-bottom">
-          <ul class="fr-sidebar-menuitems flex-grow-1">
+          <ul class="fr-sidebar-menuitems flex-grow-1 border-top">
             <li>
-              <a
-                class="d-flex align-items-center"
-                @click="toggleMenu">
+              <BButton
+                @click="toggleMenu"
+                class="d-flex align-items-center">
                 <i
                   class="material-icons material-icons-outlined icon-flipped mr-3"
                   aria-hidden="true">
@@ -198,7 +120,7 @@ of the MIT license. See the LICENSE file for details. -->
                 <span class="sidebar-item-text">
                   {{ $t('sideMenu.toggleSidebar') }}
                 </span>
-              </a>
+              </BButton>
             </li>
           </ul>
         </div>
@@ -213,22 +135,18 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import {
   BButton,
-  BCollapse,
   BDropdownHeader,
-  BDropdownDivider,
   BMedia,
   BMediaAside,
   BMediaBody,
-  VBToggle,
 } from 'bootstrap-vue';
-import Vue from 'vue';
 import DropdownMenu from '@forgerock/platform-shared/src/components/DropdownMenu';
+import MenuItem from '@forgerock/platform-shared/src/components/MenuItem';
 import {
   capitalize,
   lowerCase,
 } from 'lodash';
 
-Vue.directive('b-toggle', VBToggle);
 /**
  * SideMenu is an expandable menu which contains navigation icons to navigate to different routes.
  * Contains a toggle button to toggle between collapsed and expanded states.
@@ -239,13 +157,12 @@ export default {
   name: 'SideMenu',
   components: {
     BButton,
-    BCollapse,
     BDropdownHeader,
-    BDropdownDivider,
     BMedia,
     BMediaAside,
     BMediaBody,
     FrDropdownMenu: DropdownMenu,
+    FrMenuItem: MenuItem,
   },
   props: {
     /**
@@ -261,13 +178,6 @@ export default {
     menuItems: {
       type: Array,
       default: () => [],
-    },
-    /**
-     * State from Layout about if the menu is open (true) or closed (false)
-     */
-    menuIsExpanded: {
-      default: () => false,
-      type: Boolean,
     },
     /**
      * Realm name.
@@ -291,11 +201,6 @@ export default {
       }),
     },
   },
-  data() {
-    return {
-      expandedMenus: [],
-    };
-  },
   methods: {
     /**
      * @description Toggles the menu
@@ -311,43 +216,6 @@ export default {
      */
     toggleMenu() {
       this.$emit('toggle-menu');
-    },
-    /**
-     * @description Allow keyboard users to use the navigation sidebar
-     * */
-    focusFirstItem() {
-      this.$refs.firstItem[0].$el.focus();
-    },
-    userHasRole(roles) {
-      if (roles) {
-        const matchingRoles = this.userDetails.roles.filter((element) => roles.includes(element));
-        return matchingRoles.length > 0;
-      }
-      return false;
-    },
-  },
-  watch: {
-    '$route.path': function expandMenu(path) {
-      const regex = /\/(.*)\//;
-      const match = regex.exec(path);
-      // ensure menugroup is expanded for current route
-      if (match) {
-        const menuGroup = match[1];
-        this.menuItems.forEach((menuItem, index) => {
-          if (menuItem.displayName && menuItem.displayName.toLowerCase() === menuGroup.toLowerCase()) {
-            this.expandedMenus.splice(index, 1, true);
-          }
-        });
-      }
-    },
-    /**
-     * @description Watch for menu open and focus on the first element
-     * @param isOpen boolean true means the menu is open
-     */
-    menuIsExpanded(isOpen) {
-      if (isOpen) {
-        this.focusFirstItem();
-      }
     },
   },
 };
