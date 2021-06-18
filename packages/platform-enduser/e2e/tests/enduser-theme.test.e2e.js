@@ -31,9 +31,7 @@ describe('Enduser Theming', () => {
     cy.login(adminUserName, adminPassword, platformLoginUrl);
 
     cy.visit(locationUrl);
-    cy.get('#appContent button:visible')
-      .contains('Edit')
-      .click();
+    cy.findByRole('cell', { name: 'Starter Theme' }).click();
 
     changeColour(/^Link Color/, '16FF96');
     changeColour(/^Link Active Color/, '123123');
@@ -54,9 +52,7 @@ describe('Enduser Theming', () => {
     cy.login(adminUserName, adminPassword, platformLoginUrl);
 
     cy.visit(locationUrl);
-    cy.get('#appContent button:visible')
-      .contains('Edit')
-      .click();
+    cy.findByRole('cell', { name: 'Starter Theme' }).click();
     cy.findByRole('tab', { name: 'Logos' }).click();
     cy.findAllByPlaceholderText('Logo URL')
       .eq(1)
