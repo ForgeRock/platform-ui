@@ -49,7 +49,8 @@
   }
 
   .sidebar-item-text,
-  .fr-sidebar-subitem,
+  /deep/ .menu-item-text,
+  /deep/ .fr-menu-item-submenuitems,
   .fr-logo-horizontal {
     display: none;
   }
@@ -69,7 +70,7 @@
       }
 
       > li > ul,
-      .fr-sidebar-subitem {
+      /deep/ .fr-menu-item-submenuitems {
         display: block;
       }
 
@@ -82,6 +83,7 @@
       }
     }
 
+    /deep/ .menu-item-text,
     .sidebar-item-text {
       display: inline;
     }
@@ -202,13 +204,16 @@
       padding-right: 2.25rem;
     }
 
-    .btn.btn-secondary,
-    .btn.btn-secondary:hover {
+    .btn.btn-secondary {
       color: inherit;
       background-color: inherit;
       border-color: $white;
       width: 100%;
       position: relative;
+
+      &:hover {
+        background-color: $fr-sidemenu-hover;
+      }
     }
 
     ul,
@@ -283,65 +288,22 @@
       }
     }
 
-    ul.fr-sidebar-menuitems,
-    ul.fr-sidebar-submenuitems {
+    ul.fr-sidebar-menuitems {
       font-size: 0.875rem;
       overflow-x: hidden;
-      overflow-y: auto;
+      overflow-y: hidden;
       white-space: nowrap;
-
-      > li > a,
-      > li.dropdown-toggle,
-      > button.dropdown-toggle,
-      > li.dropdown-toggle > a,
-      > .fr-sidebar-subitem a {
-        border-left: 3px solid transparent;
-        cursor: pointer;
-        color: $fr-sidemenu-font-color;
-        display: block;
-        padding: 15px 20px 15px 16px;
-        position: relative;
-        text-decoration: none;
-
-        &.router-link-active {
-          background-color: $fr-sidemenu-hover;
-          border-left-color: $primary;
-        }
-
-        &:hover {
-          background: $fr-sidemenu-hover;
-        }
-
-        &.hidden {
-          display: none !important;
-        }
-      }
-
-      > .fr-sidebar-menugroup {
-        .btn {
-          &:focus {
-            outline: 2px auto -webkit-focus-ring-color;
-          }
-
-          .dropdown-toggle {
-            padding: 15px 60px 15px 19px;
-
-            .sidebar-item-text {
-              margin-left: -5px;
-            }
-          }
-        }
-
-        .fr-sidebar-subitem a {
-          padding: 10px 5px 10px 49px;
-          height: 41px;
-        }
-      }
     }
   }
 
   .fr-sidebar-bottom {
     background-color: $fr-sidemenu-toggler-background-color;
     border-top: 1px solid $fr-sidemenu-toggler-border-color;
+
+    .btn {
+      &:focus {
+        outline: 2px auto -webkit-focus-ring-color;
+      }
+    }
   }
 }
