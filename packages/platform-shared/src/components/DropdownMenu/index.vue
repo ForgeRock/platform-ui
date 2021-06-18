@@ -13,25 +13,14 @@ of the MIT license. See the LICENSE file for details. -->
     <slot name="dropdown-header" />
     <template v-for="(item, index) in dropdownItems">
       <template>
-        <BDropdownItem
+        <FrMenuItem
           :key="`sideDropdownItems_${index}`"
-          :class="{'hidden': item.showForRoles && !userHasRole(item.showForRoles)}"
-          @click="item.action">
-          <i
-            class="material-icons mr-2"
-            aria-hidden="true">
-            {{ item.icon }}
-          </i>
-          <span>
-            {{ item.displayName }}
-          </span>
-        </BDropdownItem>
+          v-bind="item"
+          :user-roles="userDetails.roles" />
       </template>
-      <BDropdownDivider
-        :key="`sideDropdownItemsDivider_${index}`"
-        v-if="dropdownItems.length == (index + 1) && enableLogout" />
     </template>
     <template v-if="showProfileLink">
+      <BDropdownDivider v-if="enableLogout" />
       <BDropdownItem>
         <RouterLink :to="{ name: 'Profile' }">
           <BMedia class="text-left">
@@ -56,7 +45,7 @@ of the MIT license. See the LICENSE file for details. -->
           </BMedia>
         </RouterLink>
       </BDropdownItem>
-      <BDropdownDivider />
+      <BDropdownDivider v-if="enableLogout" />
     </template>
     <BDropdownItem
       v-if="enableLogout"
@@ -78,6 +67,7 @@ import {
   BDropdownDivider,
   BMedia,
 } from 'bootstrap-vue';
+import MenuItem from '@forgerock/platform-shared/src/components/MenuItem';
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 
 export default {
@@ -87,6 +77,7 @@ export default {
     BDropdownDivider,
     BDropdownItem,
     BMedia,
+    FrMenuItem: MenuItem,
   },
   mixins: [
     LoginMixin,
@@ -132,15 +123,6 @@ export default {
         adminURL: 'wwwfakecom',
         roles: [],
       }),
-    },
-  },
-  methods: {
-    userHasRole(roles) {
-      if (roles) {
-        const matchingRoles = this.userDetails.roles.filter((element) => roles.includes(element));
-        return matchingRoles.length > 0;
-      }
-      return false;
     },
   },
 };

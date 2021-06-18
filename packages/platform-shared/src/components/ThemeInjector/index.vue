@@ -89,12 +89,14 @@ of the MIT license. See the LICENSE file for details. -->
       color: {{ theme.profileMenuTextHighlightColor }};
       }
 
-      #app .fr-sidebar-menuitems li a {
+      #app .fr-sidebar-menuitems li a,
+      #app .fr-sidebar-menuitems li button {
       outline-color: {{ theme.primaryColor }};
       color: inherit;
       }
 
-      #app .fr-sidebar-menuitems li a:hover {
+      #app .fr-sidebar-menuitems li a:hover,
+      #app .fr-sidebar-menuitems li button:hover {
       background-color: {{ theme.primaryColor }};
       color: {{ theme.profileMenuTextHighlightColor }};
       }
