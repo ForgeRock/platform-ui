@@ -94,7 +94,8 @@
       "checked",
       "indeterminate",
       "disabled",
-      "only-child"
+      "only-child",
+      "focus-visible",
     ],
     "selector-pseudo-class-no-unknown": [
       true,
