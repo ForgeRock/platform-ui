@@ -58,11 +58,11 @@ export default {
   data() {
     return {
       menuItems: [{
-        routeName: 'Dashboard',
+        routeTo: { name: 'Dashboard' },
         displayName: this.$t('sideMenu.dashboard'),
         icon: 'dashboard',
       }, {
-        routeName: 'Profile',
+        routeTo: { name: 'Profile' },
         displayName: this.$t('sideMenu.profile'),
         icon: 'account_circle',
       }],
@@ -107,9 +107,10 @@ export default {
         this.menuItems.push({
           displayName: capitalize(obj.title),
           icon: this.accessIcon(obj),
-          routeName: 'ListResource',
-          resourceName: splitObj[1],
-          resourceType: splitObj[0],
+          routeTo: {
+            name: 'ListResource',
+            params: { resourceName: splitObj[1], resourceType: splitObj[0] },
+          },
         });
       });
     },
