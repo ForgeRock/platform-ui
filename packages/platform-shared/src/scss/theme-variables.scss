@@ -297,11 +297,14 @@ $nav-tabs-link-active-color: $primary;
 $nav-highlight-color: inherit !default;
 
 //Pagination
+$pagination-color: $gray-500;
 $pagination-border-color: transparent;
 $pagination-disabled-border-color: transparent;
 $pagination-border-radius: $border-radius;
 $pagination-hover-bg: $gray-100;
 $pagination-hover-border-color: transparent;
+$pagination-active-color: $gray-500;
+$pagination-active-bg: $gray-100;
 $pagination-active-border-color: transparent;
 $pagination-disabled-border-color: transparent;
 

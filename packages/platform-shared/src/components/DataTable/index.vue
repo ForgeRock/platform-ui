@@ -91,22 +91,22 @@ of the MIT license. See the LICENSE file for details. -->
           :per-page="perPage"
           aria-controls="my-table">
           <template v-slot:first-text>
-            <i class="material-icons material-icons-outlined md-24">
+            <i class="material-icons material-icons-outlined">
               first_page
             </i>
           </template>
           <template v-slot:prev-text>
-            <i class="material-icons material-icons-outlined md-24">
+            <i class="material-icons material-icons-outlined">
               chevron_left
             </i>
           </template>
           <template v-slot:next-text>
-            <i class="material-icons material-icons-outlined md-24">
+            <i class="material-icons material-icons-outlined">
               chevron_right
             </i>
           </template>
           <template v-slot:last-text>
-            <i class="material-icons material-icons-outlined md-24">
+            <i class="material-icons material-icons-outlined">
               last_page
             </i>
           </template>
