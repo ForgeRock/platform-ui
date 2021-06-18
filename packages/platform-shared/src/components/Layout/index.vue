@@ -13,7 +13,6 @@ of the MIT license. See the LICENSE file for details. -->
     }, 'h-100']">
     <FrSideMenu
       @toggle-menu="toggleMenu"
-      :menu-is-expanded="menuExpanded"
       :menu-items="menuItems"
       :dropdown-items="realmMenuItems"
       :realm="realm"
