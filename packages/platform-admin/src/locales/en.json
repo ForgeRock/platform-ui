@@ -100,7 +100,8 @@
       "errorSavingRealm": "There was an error saving realm details",
       "errorDeletingRealm": "There was an error deleting a realm",
       "errorGettingRealmAuthenticationConfig": "There was an error getting realm authentication config",
-      "errorSwitchingRealm": "There was an error switching realm"
+      "errorSwitchingRealm": "There was an error switching realm",
+      "errorLoadingMenusFile": "There was an error loading site configuration"
     }
   },
   "hostedPages": {

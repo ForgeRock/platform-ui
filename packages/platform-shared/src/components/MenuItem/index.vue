@@ -19,7 +19,7 @@ of the MIT license. See the LICENSE file for details. -->
         class="mr-3"
         :name="icon" />
       <span class="menu-item-text">
-        {{ displayName }}
+        {{ $t(displayName) }}
       </span>
     </BButton>
   </li>
@@ -36,7 +36,7 @@ of the MIT license. See the LICENSE file for details. -->
       class="mr-3"
       :name="icon" />
     <span class="menu-item-text">
-      {{ displayName }}
+      {{ $t(displayName) }}
     </span>
   </Component>
   <!-- Item is an expandable menu with a submenu -->
@@ -54,7 +54,7 @@ of the MIT license. See the LICENSE file for details. -->
         class="mr-3"
         :name="icon" />
       <span class="menu-item-text">
-        {{ displayName }}
+        {{ $t(displayName) }}
       </span>
     </BButton>
     <BCollapse
@@ -74,7 +74,7 @@ of the MIT license. See the LICENSE file for details. -->
             class="mr-3"
             :name="subItem.icon" />
           <span class="menu-item-text">
-            {{ subItem.displayName }}
+            {{ $t(subItem.displayName) }}
           </span>
         </Component>
       </template>

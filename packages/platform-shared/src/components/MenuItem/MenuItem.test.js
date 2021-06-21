@@ -13,7 +13,10 @@ let wrapper;
 function mountComponent(propsData, mocks = { $route: { name: 'daniel' } }) {
   wrapper = shallowMount(MenuItem, {
     propsData,
-    mocks,
+    mocks: {
+      $t: () => {},
+      ...mocks,
+    },
   });
 }
 
