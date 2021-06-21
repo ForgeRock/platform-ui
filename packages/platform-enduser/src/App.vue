@@ -71,12 +71,12 @@ export default {
       menuItems: [
         {
           routeTo: { name: 'Dashboard' },
-          displayName: this.$t('sideMenu.dashboard'),
+          displayName: 'sideMenu.dashboard',
           icon: 'dashboard',
         },
         {
           routeTo: { name: 'Profile' },
-          displayName: this.$t('sideMenu.profile'),
+          displayName: 'sideMenu.profile',
           icon: 'account_circle',
         },
       ],
