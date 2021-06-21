@@ -11,7 +11,8 @@ ARG HEADERS_MORE_VERSION
 
 USER root
 
-RUN apt-get update && \
+RUN apt-get upgrade && \ 
+    apt-get update && \
     apt-get install -y \
         openssh-client \
         git \
@@ -48,3 +49,7 @@ FROM nginxinc/nginx-unprivileged:${NGINX_VERSION}
 
 COPY nginx-unprivileged-headers-more/nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /usr/src/nginx-${NGINX_VERSION}/objs/ngx_http_headers_more_filter_module.so /usr/lib/nginx/modules/ngx_http_headers_more_filter_module.so
+
+USER root
+RUN chown -R nginx /usr/share/nginx/html
+USER nginx

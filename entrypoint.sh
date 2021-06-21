@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Copyright 2019-2021 ForgeRock AS. All Rights Reserved
 #
@@ -9,6 +9,11 @@
 # Entrypoint script for all ForgeRock Platform UI applications.
 
 /variable_replacement.sh /usr/share/nginx/html/js/*.js
+
+if [[ -v SUBFOLDER ]]; then
+    echo "Hosting under $SUBFOLDER"
+    ln -s /usr/share/nginx/html /usr/share/nginx/html/$SUBFOLDER
+fi
 
 echo "Starting Nginx"
 nginx -g 'daemon off;'
