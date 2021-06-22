@@ -12,7 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
           <li
             v-for="(policy) in policyColumns[i-1]"
             :key="policy.policyId"
-            :class="[{'fr-valid': dynamic && isPolicyMet(policy)}, 'text-muted fr-policy-list-item']">
+            :class="[{'fr-valid': isPolicyMet(policy)}, 'text-muted fr-policy-list-item']">
             {{ getPolicyDescription(policy) }}
           </li>
         </ul>
@@ -31,7 +31,7 @@ import {
 } from 'bootstrap-vue';
 
 /**
- * @description Part of the password policy component that displays the list of policy items required.
+ * Part of the password policy component that displays the list of policy items required.
  * Shows failed policies in a normal text and passing policies in a light text.
  * */
 export default {
@@ -49,7 +49,7 @@ export default {
       default: 1,
     },
     /**
-     * Array of policy objects [{ name: POLICYNAME, params: { PARAMNAME: VALUE } }, ...]
+     * Array of policy objects [{ policyRequirement: POLICYNAME, params: { PARAMNAME: VALUE } }, ...]
      */
     policies: {
       type: Array,
@@ -61,10 +61,6 @@ export default {
     policyFailures: {
       type: Array,
       default: () => [],
-    },
-    dynamic: {
-      type: Boolean,
-      default: true,
     },
   },
   data() {
@@ -84,7 +80,7 @@ export default {
      * @param {Object} policy required policy object to evaluate
      */
     isPolicyMet(policy) {
-      return !includes(this.policyFailures, policy.name);
+      return !includes(this.policyFailures, policy.policyRequirement);
     },
     /**
      * Given an array of policies and a number of columns, distribute policies evenly.
@@ -104,7 +100,7 @@ export default {
         if (typeof policyColumns[curColumnIndex] === 'undefined') {
           policyColumns.push([]);
         }
-        policyColumns[curColumnIndex].push({ name: policy.name || policy.policyRequirement, params: policy.params });
+        policyColumns[curColumnIndex].push(policy);
         const limit = curColumnIndex < remaining ? (policiesPerColumn + 1) : policiesPerColumn;
         if (policyColumns[curColumnIndex].length >= limit) {
           curColumnIndex += 1;
@@ -112,8 +108,12 @@ export default {
       });
       return policyColumns;
     },
+    /**
+     * Get the translated policy messages
+     * @param {Object} policy object containing policy data needed for translation
+     */
     getPolicyDescription(policy) {
-      return this.$t(`common.policyValidationMessages.${policy.name}`, policy.params);
+      return this.$t(`common.policyValidationMessages.${policy.policyRequirement}`, policy.params);
     },
   },
   watch: {

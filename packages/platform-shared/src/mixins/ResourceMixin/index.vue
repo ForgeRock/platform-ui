@@ -68,11 +68,11 @@ export default {
       if (has(errorResponse, 'data.detail.failedPolicyRequirements')) {
         each(errorResponse.data.detail.failedPolicyRequirements, (policy) => {
           if (policy.policyRequirements.length > 0) {
-            policy.policyRequirements = this.normalizePolicies([policy.policyRequirements[0]]);
+            const policyRequirements = this.normalizePolicies(policy.policyRequirements);
             let displayTitle = '';
 
             const foundProperty = find(properties, (prop) => prop.key === policy.property);
-            const params = policy.policyRequirements[0].params || {};
+            const params = policyRequirements[0].params || {};
 
             if (foundProperty) {
               if (foundProperty.title) {
@@ -87,7 +87,7 @@ export default {
             error.push({
               exists: displayTitle.length > 0,
               field: policy.property,
-              msg: this.$t(`common.policyValidationMessages.${policy.policyRequirements[0].policyRequirement}`, params),
+              msg: this.$t(`common.policyValidationMessages.${policyRequirements[0].policyRequirement}`, params),
             });
           }
         });
