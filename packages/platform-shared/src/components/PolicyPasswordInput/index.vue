@@ -26,10 +26,10 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import FrField from '@forgerock/platform-shared/src/components/Field';
-import PolicyPanel from '@forgerock/platform-shared/src/components/PolicyPanel';
+import FrPolicyPanel from '@forgerock/platform-shared/src/components/PolicyPanel';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import PasswordPolicyMixin from '@forgerock/platform-shared/src/mixins/PasswordPolicyMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
-import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import axios from 'axios';
 
 const ignoredPolicies = [
@@ -39,32 +39,48 @@ const ignoredPolicies = [
 ];
 
 /**
- * The main display for the password policy component.
+ * Component that has an input and a list of policies displayed below.
+ * As the input value is updated, the policies are updated to show which are passing and failing.
  */
 export default {
   name: 'PolicyPasswordInput',
   mixins: [
-    RestMixin,
-    PasswordPolicyMixin,
     NotificationMixin,
+    PasswordPolicyMixin,
+    RestMixin,
   ],
   components: {
     FrField,
-    FrPolicyPanel: PolicyPanel,
+    FrPolicyPanel,
   },
   props: {
+    /**
+     * Managed resource type
+     * @values managed, internal
+     */
     resourceType: {
       type: String,
       required: true,
     },
+    /**
+     * Managed resource name e.g. user
+     */
     resourceName: {
       type: String,
       required: true,
     },
+    /**
+     * Failures that only occur on submit.
+     * Displayed under the input, separate from the policy list
+     */
     failuresOnSubmit: {
       type: Array,
       default: () => [],
     },
+    /**
+     * Vee-validate validation
+     * Client side validation for input
+     */
     validation: {
       type: [String, Object],
       default: '',
@@ -85,7 +101,12 @@ export default {
     });
   },
   methods: {
+    /**
+     * Check input value against IDM policy service. Update policy list accordingly.
+     * @param {String} value input value to be validated
+     */
     checkPassword(value) {
+      // Make sure only one request is active at a time
       if (this.checkPasswordCancelTokenSource) {
         this.checkPasswordCancelTokenSource.cancel('Outdated password checking cancelled');
       }
@@ -95,6 +116,7 @@ export default {
       const headers = this.getAnonymousHeaders();
       const policyService = this.getRequestService({ headers });
 
+      // validate value and update failed policies
       policyService.post(`${this.policyEndpoint}/policy/?_action=validateObject`, { password: value }, { cancelToken: this.checkPasswordCancelTokenSource.token })
         .then((res) => {
           if (res.data.failedPolicyRequirements) {
@@ -102,6 +124,10 @@ export default {
             res.data.failedPolicyRequirements.forEach((policy) => {
               if (policy.property === 'password') failedPolicies.push(policy.policyRequirements[0]);
             });
+            /**
+             * triggered whenever validation occurs
+             * @param {boolean} valid only when there are no failed policies returned
+             */
             this.$emit('is-valid', failedPolicies.length === 0);
             this.policyFailures = this.normalizePolicies(failedPolicies).map((policy) => (policy.policyRequirement));
           }
@@ -112,6 +138,10 @@ export default {
           }
         });
     },
+    /**
+     * Get a list of all IDM policies for the password property.
+     * Merge these with the DS policies for a complete list of policies.
+     */
     getIdmPolicies() {
       const headers = this.getAnonymousHeaders();
       const policyService = this.getRequestService({ headers });

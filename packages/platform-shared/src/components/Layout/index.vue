@@ -38,6 +38,7 @@ of the MIT license. See the LICENSE file for details. -->
         <Transition
           name="fade"
           mode="out-in">
+          <!-- slot for router -->
           <slot />
         </Transition>
         <!-- eslint-disable-next-line vue/component-name-in-template-casing -->
@@ -92,8 +93,9 @@ import Alert from '@forgerock/platform-shared/src/components/Alert/';
 import Navbar from '@forgerock/platform-shared/src/components/Navbar/';
 import SideMenu from '@forgerock/platform-shared/src/components/SideMenu/';
 import MediaMixin from '@forgerock/platform-shared/src/mixins/MediaMixin';
+
 /**
- * @description Layout component for any packages that use the same sidemenu, navbar, and app content UX
+ * Layout component for any packages that use the same sidemenu, navbar, and app content UX
  */
 export default {
   name: 'Layout',
@@ -104,46 +106,79 @@ export default {
   },
   mixins: [MediaMixin],
   props: {
+    /**
+     * Is this component being used in enduser
+     */
     isEnduser: {
       type: Boolean,
       default: false,
     },
+    /**
+     * Indicates if we are running in cloud
+     */
     isFraas: {
       type: Boolean,
       default: false,
     },
+    /**
+     * Is the current user internal or external
+     */
     isInternalUser: {
       type: Boolean,
       default: false,
     },
+    /**
+     * Menu items to display for primary navigation (SideMenu)
+     */
     menuItems: {
       type: Array,
       default: () => [],
     },
+    /**
+     * Realm name (SideMenu)
+     */
     realm: {
       type: String,
       default: '',
     },
+    /**
+     * Realm alias (SideMenu)
+     */
     realmAliases: {
       type: String,
       default: '',
     },
+    /**
+     * Menu items to display in realm dropdown (SideMenu)
+     */
     realmMenuItems: {
       type: Array,
       default: () => [],
     },
+    /**
+     * Menu items to display in tenant dropdown (Navbar)
+     */
     tenantMenuItems: {
       type: Array,
       default: () => [],
     },
+    /**
+     * Details about the current user
+     */
     userDetails: {
       type: Object,
       default: () => {},
     },
+    /**
+     * Build number displayed in footer
+     */
     buildNumber: {
       type: String,
       default: '',
     },
+    /**
+     * Build date and time displayed in footer
+     */
     buildDateTime: {
       type: Date,
       default: () => new Date(0),
@@ -224,6 +259,9 @@ export default {
         this.useMobileStyleMenu = false;
       }
     },
+    /**
+     * Toggle the expanded state of the menu
+     */
     toggleMenu() {
       this.menuExpanded = !this.menuExpanded;
     },

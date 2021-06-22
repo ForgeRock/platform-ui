@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BFormDatepicker
     v-bind="$attrs"
@@ -46,6 +45,7 @@ to such license between the licensee and ForgeRock AS. -->
     </template>
   </BFormDatepicker>
 </template>
+
 <script>
 import {
   BFormDatepicker,
@@ -53,7 +53,6 @@ import {
 
 /**
  * Bootstrap datepicker with custom icons, default values set.
- * v-model value returns 'YYYY-MM-DD'.
  */
 export default {
   name: 'Datepicker',
@@ -62,7 +61,7 @@ export default {
   },
   props: {
     /**
-     * v-model value
+     * @model String representation of date. Format YYYY-MM-DD
      */
     value: {
       type: String,
@@ -78,6 +77,7 @@ export default {
   },
 };
 </script>
+
 <style lang="scss" scoped>
 // floating label support
 .input-has-value {
