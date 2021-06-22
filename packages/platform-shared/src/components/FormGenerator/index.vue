@@ -33,7 +33,6 @@ import {
   isBoolean,
   cloneDeep,
 } from 'lodash';
-
 import FrArrayDisplay from './renderers/ArrayDisplay';
 import FrBooleanDisplay from './renderers/BooleanDisplay';
 import FrNumberDisplay from './renderers/NumberDisplay';
@@ -52,14 +51,23 @@ export default {
     FrStringDisplay,
   },
   props: {
+    /**
+     * Contains objects with information for displaying the correct field, in order.
+     */
     uiSchema: {
       type: Array,
       default: () => [],
     },
+    /**
+     * Model data.
+     */
     model: {
       type: Object,
       default: () => {},
     },
+    /**
+     * Schema data.
+     */
     schema: {
       type: Object,
       default: () => {},
@@ -124,9 +132,8 @@ export default {
   },
   methods: {
     /**
-     * @param model - Current field model
-     *
      * Preforms a case insensitive check of values
+     * @param model - Current field model
      */
     safeCompare(model) {
       const valueIsArray = isArray(model.value);
@@ -155,9 +162,8 @@ export default {
       }
     },
     /**
-     * @param model - Current field model
-     *
      * Tests to see if model object has "show" property which indicates visibility is tied to another model.
+     * @param model - Current field model
      */
     showField(model) {
       if (has(model, 'show')) {

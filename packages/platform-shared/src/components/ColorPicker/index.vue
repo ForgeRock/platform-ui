@@ -37,14 +37,16 @@ of the MIT license. See the LICENSE file for details. -->
     </BPopover>
   </div>
 </template>
+
 <script>
 import {
   BButton,
   BPopover,
 } from 'bootstrap-vue';
 import { Chrome } from 'vue-color';
+
 /**
- * Extends Bootstrap alert to provide alternative icon and styling
+ * Input that allows a user to select a color
  */
 export default {
   name: 'ColorPicker',
@@ -54,14 +56,23 @@ export default {
     ChromePicker: Chrome,
   },
   props: {
+    /**
+     * Hex represenation of a color
+     */
     color: {
       type: String,
       default: '#ffffff',
     },
+    /**
+     * Input label
+     */
     label: {
       type: String,
       default: 'Color',
     },
+    /**
+     * Container element to append the rendered popover to when visible
+     */
     container: {
       type: String,
       default: '',
@@ -89,6 +100,11 @@ export default {
      * Relies on .sync to bind a variable to the changed color
      */
     pickerColor(color) {
+      /**
+        * triggers when selecting a color or entering a valid hex value
+        *
+        * @property {string} color.hex hex representation of color
+        */
       this.$emit('update:color', color.hex);
     },
   },
