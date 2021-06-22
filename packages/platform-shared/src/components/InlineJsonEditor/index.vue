@@ -50,8 +50,7 @@ import 'prismjs/themes/prism.css';
 import 'vue-prism-editor/dist/VuePrismEditor.css';
 
 /**
- * @description Component that creates a JSON editor when data is overly complex
- *
+ * JSON editor. Code editor used when data is too complex to edit with various inputs.
  */
 export default {
   name: 'InlineJsonEditor',

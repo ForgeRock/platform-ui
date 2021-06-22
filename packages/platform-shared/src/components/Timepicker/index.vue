@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BFormTimepicker
     v-bind="$attrs"
@@ -28,7 +27,6 @@ import {
 
 /**
  * Bootstrap timepicker with custom icons, default values set.
- * v-model value returns 'hh:mm:ss'.
  */
 export default {
   name: 'Timepicker',
@@ -37,7 +35,7 @@ export default {
   },
   props: {
     /**
-     * v-model value
+     * @model String representation of time 'hh:mm:ss'
      */
     value: {
       type: String,
@@ -53,6 +51,7 @@ export default {
   },
 };
 </script>
+
 <style lang="scss" scoped>
 // floating label support
 .input-has-value {

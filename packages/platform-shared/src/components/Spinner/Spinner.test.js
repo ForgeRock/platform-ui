@@ -1,43 +1,45 @@
 /**
- * Copyright 2020 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
+
 import { shallowMount } from '@vue/test-utils';
 import Spinner from './index';
 
 describe('Spinner Component', () => {
+  let wrapper;
+  beforeEach(() => {
+    wrapper = shallowMount(Spinner, {
+      mocks: {
+        $t: () => {},
+      },
+    });
+  });
+
   it('Spinner successfully loaded', () => {
-    const wrapper = shallowMount(Spinner);
     expect(wrapper.name()).toEqual('Spinner');
   });
 
   it('Is a large spinner by default', () => {
-    const wrapper = shallowMount(Spinner);
-    expect(wrapper.find('.spinner-large').text()).toBe('Loading...');
+    expect(wrapper.find('.spinner-large').exists()).toBe(true);
   });
 
   it('Is a small spinner when using sm size', () => {
-    const wrapper = shallowMount(Spinner, {
-      propsData: {
-        size: 'sm',
-      },
+    wrapper.setProps({
+      size: 'sm',
     });
-    expect(wrapper.find('.spinner-small').text()).toBe('Loading...');
+    expect(wrapper.find('.spinner-small').exists()).toBe(true);
   });
 
   it('Has the text-primary class by default', () => {
-    const wrapper = shallowMount(Spinner);
-    expect(wrapper.find('.text-primary').text()).toBe('Loading...');
+    expect(wrapper.find('.text-primary').exists()).toBe(true);
   });
 
   it('Does not have the text-primary class when it is a buttonSpinner', () => {
-    const wrapper = shallowMount(Spinner, {
-      propsData: {
-        buttonSpinner: true,
-      },
+    wrapper.setProps({
+      buttonSpinner: true,
     });
     expect(wrapper.find('.spinner-large').classes('text-primary')).toBe(false);
   });

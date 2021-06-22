@@ -40,6 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
         </RouterLink>
       </div>
       <div>
+        <!-- Content displayed in center of navbar -->
         <slot name="center-content" />
       </div>
       <div class="flex-row d-flex">
@@ -240,6 +241,9 @@ export default {
      * From the navbar button toggling is possible with keyboard but not mouse or touch.
      * */
     toggleMenu() {
+      /**
+       * Triggered when the toggle button is clicked
+       */
       this.$emit('toggle-menu');
     },
   },

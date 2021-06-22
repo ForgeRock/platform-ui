@@ -56,6 +56,11 @@ import {
   BDropdownItem,
 } from 'bootstrap-vue';
 
+/**
+ * A button with a dropdown used to toggle between active and inactive states
+ * If state is active, dropdown item translation will be 'common.deactivate'
+ * If inactive, dropdown item translation will be 'common.activate'
+ */
 export default {
   name: 'StateButton',
   components: {
@@ -63,21 +68,23 @@ export default {
     BDropdownItem,
   },
   props: {
+    /**
+     * The state.
+     */
     active: {
       type: Boolean,
       default: false,
     },
-    schemaType: {
-      type: String,
-      default: '',
-    },
-    model: {
-      type: String,
-      default: 'status',
-    },
   },
   methods: {
+    /**
+     * Emits the change event with the selected value
+     */
     changeState(newValue) {
+      /**
+       * Triggered whenever an item is selected from the dropdown
+       * @property {Boolean} newValue The new state value
+       */
       this.$emit('change', newValue);
     },
   },

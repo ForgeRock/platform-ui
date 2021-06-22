@@ -26,10 +26,6 @@ of the MIT license. See the LICENSE file for details. -->
   </div>
 </template>
 
-/**
- * Generic delete panel shown in a Bootstrap card. Shows a BModal for confirmation and emits an event deleteItem on delete.
- * Takes the name of the item being deleted and a translation of the item's type for use in text.
- */
 <script>
 import {
   BButton,
@@ -37,6 +33,10 @@ import {
 } from 'bootstrap-vue';
 import FrDeleteModal from '@forgerock/platform-shared/src/components/DeleteModal';
 
+/**
+ * Generic delete panel shown in a Bootstrap card. Clicking the delete button
+ * shows a modal for confirmation and emits an event delete-item on delete.
+ */
 export default {
   name: 'DeletePanel',
   components: {
@@ -45,17 +45,26 @@ export default {
     FrDeleteModal,
   },
   props: {
-    translatedItemType: {
+    /**
+     * Name of item being deleted. Displayed in modal body
+     */
+    itemName: {
       type: String,
       default: '',
     },
-    itemName: {
+    /**
+     * Type of item being deleted. Displayed in card header, button text, and modal title
+     */
+    translatedItemType: {
       type: String,
       default: '',
     },
   },
   methods: {
     deleteItem() {
+      /**
+        * triggered when delete confirmation button is clicked in modal
+        */
       this.$emit('delete-item');
     },
     showModal() {

@@ -2,7 +2,6 @@
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
-<!-- AVAILABLE SLOTS: center-card-header, center-card-body, center-card-footer -->
 <template>
   <BContainer
     fluid
@@ -25,25 +24,30 @@ of the MIT license. See the LICENSE file for details. -->
               :alt="logoAltText"
               :src="logoPath"
               :style="{ height: `${logoHeight}px`}">
+            <!-- @slot Content for card header -->
             <slot name="center-card-header" />
           </div>
         </BCardHeader>
+        <!-- @slot Content for card body -->
         <slot name="center-card-body" />
+        <!-- @slot Content for card footer -->
         <slot name="center-card-footer" />
       </BCard>
     </div>
   </BContainer>
 </template>
+
 <script>
 import {
   BCardHeader,
   BContainer,
   BCard,
 } from 'bootstrap-vue';
+
 /**
- * @description Card container that will stay horizontally and vertically center on the screen (example can be found on the default login page)
- *
- * */
+ * Card container that will stay horizontally and vertically centered on the screen
+ * (example can be found on the default login page)
+ */
 export default {
   name: 'CenterCard',
   components: {
@@ -51,22 +55,24 @@ export default {
     BCardHeader,
     BContainer,
   },
-  data: () => ({
-    publicPath: process.env.BASE_URL,
-  }),
   props: {
-    showLogo: {
-      type: Boolean,
-      default: false,
-    },
+    /**
+     * Height of logo
+     */
     logoHeight: {
       type: String,
       default: '40',
     },
+    /**
+     * Path to logo
+     */
     logoPath: {
       type: String,
       default: '',
     },
+    /**
+     * Alt text for logo
+     */
     logoAltText: {
       type: String,
       default: '',
@@ -77,7 +83,6 @@ export default {
 
 <style lang="scss" scoped>
   // login/registration/password/username form and card
-
   .container-fluid {
     overflow: auto;
   }

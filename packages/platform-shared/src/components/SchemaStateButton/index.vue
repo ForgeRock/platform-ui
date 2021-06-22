@@ -31,10 +31,6 @@ of the MIT license. See the LICENSE file for details. -->
   </BDropdown>
 </template>
 
-/**
- * A component for switching json schema defined items (applications, Agent/gateway config etc) between active and inactive states (and others).
- * Takes the type of schema to use from the store and the location within that model of the status value and options as props.
- */
 <script>
 import {
   BDropdown,
@@ -44,6 +40,10 @@ import {
   get,
 } from 'lodash';
 
+/**
+ * A component for switching json schema defined items (applications, Agent/gateway config etc) between active and inactive states (and others).
+ * Takes the schema, model and field name as props and uses these to generate the state options and current state
+ */
 export default {
   name: 'SchemaStateButton',
   components: {
@@ -51,14 +51,23 @@ export default {
     BDropdownItem,
   },
   props: {
+    /**
+     * Schema data
+     */
     schema: {
       type: Object,
       default: () => {},
     },
+    /**
+     * Model data
+     */
     model: {
       type: Object,
       default: () => {},
     },
+    /**
+     * Name of field to read from schema and model
+     */
     field: {
       type: String,
       default: 'status',
@@ -88,8 +97,15 @@ export default {
     },
   },
   methods: {
+    /**
+     * Change to selected value and emit change event
+     */
     changeState(newValue) {
       this.value = newValue;
+      /**
+       * triggered when a new value is selected from the dropdown
+       * @param {string} newValue new selected value
+       */
       this.$emit('change', newValue);
     },
   },

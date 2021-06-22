@@ -201,9 +201,8 @@ export default {
       const start = (this.currentPage - 1) * this.perPage;
       const selectedArray = this.selected.map((tableIndex) => ({ ...this.items[+tableIndex + start], tableIndex: +tableIndex }));
       /**
-       * On change event for checkbox selection. Payload: array[indexOfSelected].
+       * On change event for checkbox selection.
        *
-       * @event update-selected
        * @property {array} selectedArray Array of selected table indexes.
        */
       this.$emit('update-selected', selectedArray);

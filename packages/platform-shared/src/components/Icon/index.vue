@@ -11,13 +11,23 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+
+/**
+ * Material icon
+ */
 export default {
   name: 'Icon',
   props: {
+    /**
+     * Use outline variant
+     */
     outlined: {
       type: Boolean,
       default: true,
     },
+    /**
+     * Icon name
+     */
     name: {
       type: String,
       required: true,

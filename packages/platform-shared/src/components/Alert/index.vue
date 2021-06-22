@@ -16,7 +16,7 @@ of the MIT license. See the LICENSE file for details. -->
       aria-hidden="true">
       {{ alertIcon }}
     </i>
-    <!-- @slot Text that the alert will contain. -->
+    <!-- @slot Text that the alert will contain -->
     <slot />
   </BAlert>
 </template>
@@ -54,12 +54,16 @@ export default {
       type: Boolean,
       default: true,
     },
+    /**
+     * Accessibility name
+     */
     title: {
       type: String,
       default: '',
     },
     /**
-     * Type of alert. Available types: Primary, Secondary, Success, Danger, Warning, Information, Light, Dark'
+     * Type of alert
+     * @values primary, secondary, success, danger, warning, information, light, dark
      */
     variant: {
       type: String,
@@ -90,15 +94,6 @@ export default {
       }
 
       return icon;
-    },
-  },
-  methods: {
-    collapse() {
-      /**
-       * Toggle alert collapse
-       * @event toggle
-       */
-      this.$emit('toggle', true);
     },
   },
 };

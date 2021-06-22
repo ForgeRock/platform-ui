@@ -12,6 +12,12 @@ of the MIT license. See the LICENSE file for details. -->
       <slot name="accordionHeader" />
     </BCard>
     <template v-for="(data, key) in items">
+      <!--
+        triggered on click
+        @event section-expanded
+        @property {string} key item index
+        @property {object} data item data
+       -->
       <BCard
         :class="padding(key, data.open$)"
         :key="key"
@@ -22,7 +28,7 @@ of the MIT license. See the LICENSE file for details. -->
           class="pr-4 border-0 position-relative"
           role="tab"
           v-b-toggle="`accordion-${accordionGroup}-${key}`">
-          <!-- @slot Item array header -->
+          <!-- @slot item header (shown while collapsed and expanded) -->
           <slot
             name="header"
             v-bind="{...data, index$:key}" />
@@ -37,7 +43,7 @@ of the MIT license. See the LICENSE file for details. -->
           role="tabpanel">
           <BCardBody
             class="pt-0">
-            <!-- @slot Item array body -->
+            <!-- @slot item body (shown while expanded) -->
             <slot
               name="body"
               v-bind="{...data, index$:key}" />
@@ -56,6 +62,9 @@ import {
   BCollapse,
 } from 'bootstrap-vue';
 
+/**
+ * List that has a header and collapsible cards for each item
+ */
 export default {
   name: 'Accordion',
   components: {
@@ -70,6 +79,9 @@ export default {
     };
   },
   props: {
+    /**
+     * The name of the accordion group used to group the collapsable elements
+     */
     accordionGroup: {
       type: String,
       required: true,
@@ -81,6 +93,9 @@ export default {
       type: String,
       default: 'accordion',
     },
+    /**
+     * Items contained in the list
+     */
     items: {
       type: Array,
       default() {
@@ -95,6 +110,12 @@ export default {
     this.emitAccordionState();
   },
   methods: {
+    /**
+     * Calculate padding based on position of item and open state
+     *
+     * @param {Number} position index of list element
+     * @param {Boolean} open is the list element expanded
+     */
     padding(position, open) {
       if (open) {
         if (position === 0) {
@@ -106,16 +127,18 @@ export default {
       }
       return '';
     },
+    /**
+     * Checks to see if any item is expanded and emits that value
+     */
     emitAccordionState() {
       const isOpen = this.items.reduce((acc, cur) => acc || cur.open$, false);
       if (this.wasOpen !== isOpen) {
         this.wasOpen = isOpen;
         /**
-        * On state change event for entire accordion. Open [boolean]
-        *
-        * @event open
-        * @property {boolean} isOpen open state of accordion
-        */
+         * On state change event for entire accordion. Open [boolean]
+         *
+         * @property {boolean} isOpen open state of accordion
+         */
         this.$emit('open', isOpen);
       }
     },

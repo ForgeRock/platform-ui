@@ -150,10 +150,16 @@ profileMenuHighlightColor: "#E50914"
 export default {
   name: 'ThemeInjector',
   props: {
+    /**
+     * Is this component being used in enduser
+     */
     isEnduser: {
       type: Boolean,
       default: false,
     },
+    /**
+     * Theme data
+     */
     theme: {
       type: Object,
       default: () => ({ realm: {} }),

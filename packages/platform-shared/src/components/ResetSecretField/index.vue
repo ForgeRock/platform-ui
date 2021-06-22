@@ -62,6 +62,10 @@ import FrAlert from '@forgerock/platform-shared/src/components/Alert';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import { ValidationObserver } from 'vee-validate';
 
+/**
+ * Input that allows resetting of a secret field. Main input is disabled and dots are shown as a value.
+ * Click append button to open a modal which allows user to input the new value for a secret.
+ */
 export default {
   name: 'ResetSecretField',
   components: {
@@ -77,6 +81,9 @@ export default {
     'b-modal': VBModal,
   },
   props: {
+    /**
+     * Label for inputs and title for modal
+     */
     translatedFieldName: {
       type: String,
       default: 'Password',
@@ -95,6 +102,10 @@ export default {
   },
   methods: {
     resetSecret() {
+      /**
+       * Triggered when modal confirm button is clicked
+       * @param {string} newSecret new secret value
+       */
       this.$emit('secret-updated', this.newSecret);
     },
   },

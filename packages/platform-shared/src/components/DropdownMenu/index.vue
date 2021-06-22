@@ -8,8 +8,10 @@ of the MIT license. See the LICENSE file for details. -->
     variant="link"
     toggle-class="text-decoration-none p-0">
     <template #button-content>
+      <!-- @slot Button content -->
       <slot name="button-content" />
     </template>
+    <!-- @slot Dropdown header -->
     <slot name="dropdown-header" />
     <template v-for="(item, index) in dropdownItems">
       <template>
@@ -60,6 +62,7 @@ of the MIT license. See the LICENSE file for details. -->
     </BDropdownItem>
   </BDropdown>
 </template>
+
 <script>
 import {
   BDropdown,
@@ -70,6 +73,9 @@ import {
 import MenuItem from '@forgerock/platform-shared/src/components/MenuItem';
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 
+/**
+ * Bootstrap dropdown menu used in navbar and sidemenu
+ */
 export default {
   name: 'DropdownMenu',
   components: {
@@ -127,6 +133,7 @@ export default {
   },
 };
 </script>
+
 <style lang="scss" scoped>
 /deep/ {
   .b-dropdown {
