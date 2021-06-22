@@ -64,6 +64,11 @@ import {
 import FrListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
 import FrListItem from '@forgerock/platform-shared/src/components/ListItem/';
 
+/**
+ * A card with a badge that shows the current state and a link to switch between active and inactive
+ * If state is active, link text will be 'deactivate'
+ * If inacvtive, link text will be 'activate'
+ */
 export default {
   name: 'StateCard',
   components: {
@@ -76,13 +81,23 @@ export default {
     FrListItem,
   },
   props: {
+    /**
+     * The state.
+     */
     enabled: {
       type: Boolean,
       default: false,
     },
   },
   methods: {
+    /**
+     * Emits the change event with the selected value
+     */
     changeState(newValue) {
+      /**
+       * Triggered whenever the link is clicked to change the state
+       * @property {Boolean} newValue The new state value
+       */
       this.$emit('change', newValue);
     },
   },

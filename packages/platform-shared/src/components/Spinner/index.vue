@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
     class="text-center">
@@ -10,13 +9,14 @@ to such license between the licensee and ForgeRock AS. -->
       :class="[{ 'spinner-large': size === 'lg' }, { 'spinner-medium': size === 'md' }, { 'spinner-small': size === 'sm' }, 'spinner-border', { 'text-primary': !buttonSpinner }]"
       role="status">
       <span class="sr-only">
-        Loading...
+        {{ $t('common.loadingEtc') }}
       </span>
     </div>
   </div>
 </template>
 
 <script>
+
 /**
  * Spinners are loading indicators that should be shown when retrieving data or performing slow computations.
  */
@@ -24,7 +24,8 @@ export default {
   name: 'Spinner',
   props: {
     /**
-     * Size of the spinner. Available sizes: sm, lg.
+     * Size of the spinner.
+     * @values sm, md, lg
      */
     size: {
       type: String,
@@ -40,6 +41,7 @@ export default {
   },
 };
 </script>
+
 <style lang="scss">
 .spinner-large {
   width: 10rem !important;

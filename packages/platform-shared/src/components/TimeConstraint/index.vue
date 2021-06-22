@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <label>{{ $t('common.start') }}</label>
@@ -57,39 +56,38 @@ to such license between the licensee and ForgeRock AS. -->
 </template>
 
 <script>
-/**
- * Input that allows selection of a start and end date/time as well as an offset.
- * v-model value is two ISO strings separated by a '/'
- * example ISO string range: 2020-04-25T07:00:00.000Z/2020-04-30T07:00:00.000Z
- */
 import {
   BCol,
   BRow,
 } from 'bootstrap-vue';
-import Datepicker from '@forgerock/platform-shared/src/components/Datepicker';
-import Timepicker from '@forgerock/platform-shared/src/components/Timepicker';
-import TimezoneOffset from '@forgerock/platform-shared/src/components/TimezoneOffset';
+import FrDatepicker from '@forgerock/platform-shared/src/components/Datepicker';
+import FrTimepicker from '@forgerock/platform-shared/src/components/Timepicker';
+import FrTimezoneOffset from '@forgerock/platform-shared/src/components/TimezoneOffset';
 import dayjs from 'dayjs';
 
+/**
+ * Input that allows selection of a start and end date/time as well as an offset.
+ */
 export default {
   name: 'TimeConstraint',
   components: {
     BCol,
     BRow,
-    FrDatepicker: Datepicker,
-    FrTimepicker: Timepicker,
-    FrTimezoneOffset: TimezoneOffset,
+    FrDatepicker,
+    FrTimepicker,
+    FrTimezoneOffset,
   },
   props: {
     /**
-     * set initial control values to current date, time, and local offset
+     * Set initial control values to current date, time, and local offset
      */
     setInitialNow: {
       type: Boolean,
       default: true,
     },
     /**
-     * v-model value
+     * @model two ISO strings joined by a '/'
+     * eg. 2020-04-25T07:00:00.000Z/2020-04-30T07:00:00.000Z
      */
     value: {
       type: String,
@@ -139,7 +137,7 @@ export default {
 
       /**
        * v-model event.
-       * @event input
+       *
        * @type {String} Two ISO values separated by a '/' representing a range.
        */
       this.$emit('input', this.rangeISO);
@@ -205,7 +203,7 @@ export default {
       }
       /**
        * v-model event.
-       * @event input
+       *
        * @type {String} Two ISO values separated by a '/' representing a range.
        */
       this.$emit('input', this.rangeISO);
