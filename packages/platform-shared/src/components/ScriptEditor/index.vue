@@ -162,7 +162,7 @@ export default {
   },
   props: {
     /**
-     * Binding to v-model
+     * @model Contains all relevant script information
      */
     value: {
       type: Object,
@@ -202,9 +202,9 @@ export default {
     /**
      * Adds new and existing variable to array at bottom of component
      *
-     * @property {string} name - current value which shows the name of new variable
-     * @property {string} value - shows current value of new variable
-     * @property {string} index - where in variable array to add new variable
+     * @param {String} name - name of new variable
+     * @param {String} value - shows current value of new variable
+     * @param {String} index - where in variable array to add new variable
      */
     addVariable(name, value, index) {
       let type = 'string';
@@ -224,7 +224,7 @@ export default {
     /**
      * Validates code string can be parsed back if desired
      *
-     * @property {string} code - current code string
+     * @param {String} code - current code string
      */
     checkIfCodeIsParsable(code) {
       // Current solution to avoid cursor not moving with entered code if JSON is
@@ -235,9 +235,17 @@ export default {
           const globals = JSON.parse(code);
           this.jsonStructured = true;
           this.sendEmit(this.scriptType.value, globals);
+          /**
+           * triggered when script can be parsed
+           * @property {Boolean} false script is not invalid
+           */
           this.$emit('disableSave', false);
         } catch (e) {
           this.jsonStructured = false;
+          /**
+           * triggered when script cannot be parsed
+           * @property {Boolean} true script is invalid
+           */
           this.$emit('disableSave', true);
         }
       }, 0);
@@ -265,7 +273,7 @@ export default {
     /**
      * Constructs globals object into object or string depending on toggle
      *
-     * @property {boolean} toggle - whether JSON toggle is enabled
+     * @param {Boolean} toggle - whether JSON editor toggle is enabled
      */
     jsonEditorToggle(toggle) {
       if (toggle) {
@@ -287,7 +295,7 @@ export default {
     /**
      * Splices out a variable from the variable array at the index selected
      *
-     * @property {Number} variableIndex - index of variable we want to remove
+     * @param {Number} variableIndex - index of variable we want to remove
      */
     removeVariable(variableIndex) {
       this.selectedVariables.splice(variableIndex, 1);
@@ -297,7 +305,7 @@ export default {
      * Pulls in code string and plugs into code edit window, as well as switches
      * view back to code edit window
      *
-     * @property {Object} event - metadata containing details of selected file
+     * @param {Object} event - metadata containing details of selected file
      */
     onFileChange(event) {
       delete this.value.file;
@@ -319,6 +327,9 @@ export default {
     },
     /**
      * Builds current save object and emits out to parent that uses this component
+     *
+     * @param {String} type script type
+     * @param {Object} globals script global variables
      */
     sendEmit(type, globals) {
       const scriptObject = {
@@ -330,12 +341,16 @@ export default {
       } else {
         scriptObject.source = this.code;
       }
+      /**
+       * triggered whenever script is edited and has been validated
+       * @property scriptObject the current script values (type, globals, file, source)
+       */
       this.$emit('input', scriptObject);
     },
     /**
      * Sets prop values based on passed in value object
      *
-     * @property {Object} newValue - saved metadata from backend
+     * @param {Object} newValue - saved metadata from backend
      * {
      *  type: javascript or groovy file type,
      *  globals: selected variable names and values,
@@ -362,7 +377,7 @@ export default {
     /**
      * Attempts to parse value
      *
-     * @property {any} value - value we want to try to parse
+     * @param {any} value - value we want to try to parse
      *
      * @returns parsed value on success, original value on fail
      */

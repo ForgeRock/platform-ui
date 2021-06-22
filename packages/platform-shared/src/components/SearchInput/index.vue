@@ -87,12 +87,14 @@ export default {
     };
   },
   methods: {
+    /**
+     * Clear the value from the input.
+     */
     clearSearch() {
       this.value = '';
       this.$refs.searchInput.$el.focus();
       /**
        * Emitted after clicking the append icon and input set to empty string.
-       * @event clear
        */
       this.$emit('clear');
     },
@@ -101,13 +103,15 @@ export default {
     value(newVal) {
       /**
        * Emitted when input value changes.
-       * @event input
+       *
+       * @property {String} newVal input value.
        */
       this.$emit('input', newVal);
     },
   },
 };
 </script>
+
 <style lang="scss" scoped>
 .fr-icon-input-holder {
   position: relative;

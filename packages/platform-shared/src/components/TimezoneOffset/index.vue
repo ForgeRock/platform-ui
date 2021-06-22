@@ -59,8 +59,8 @@ of the MIT license. See the LICENSE file for details. -->
     </small>
   </div>
 </template>
-<script>
 
+<script>
 import {
   BDropdown,
   BFormInput,
@@ -72,6 +72,7 @@ import FrField from '@forgerock/platform-shared/src/components/Field';
 /**
  * Input that allows user to select a timezone offset. Uses BInput with type range.
  * Display values are filtered to a user friendly string, but v-model value is a number.
+ * Example string: 'GMT +/- hh:mm'
  */
 export default {
   name: 'TimezoneOffset',
@@ -84,7 +85,7 @@ export default {
   },
   props: {
     /**
-     * v-model value. A string 'GMT +/- hh:mm' representing offset from GMT
+     * @model Number representation of offset
      */
     value: {
       type: Number,
@@ -125,6 +126,10 @@ export default {
   watch: {
     offset(newVal) {
       this.timezone = this.$options.filters.offsetString(newVal);
+      /**
+       * triggered whenever the offset is changed.
+       * @property {Number} newVal new offset value
+       */
       this.$emit('input', Number(newVal));
     },
     value(newVal) {

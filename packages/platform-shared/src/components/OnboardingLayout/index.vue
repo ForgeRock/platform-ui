@@ -1,3 +1,7 @@
+<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="signup-step-layout d-flex">
     <div
@@ -18,6 +22,7 @@
           alt="ForgeRock" />
       </div>
       <div class="signup-form-wrapper px-4 px-md-5 d-md-flex align-items-center w-100">
+        <!-- @slot Main content -->
         <slot />
       </div>
     </div>
@@ -27,15 +32,19 @@
 <script>
 import { BImg } from 'bootstrap-vue';
 
+/**
+ * Used to handle the layout for pages used in onboarding/registration for cloud tenants.
+ * Has two sections. Left contains large hero text and right contains main app content.
+ */
 export default {
   name: 'Onboarding',
   components: {
     BImg,
   },
-  data() {
-    return {};
-  },
   props: {
+    /**
+     * Text that displays in left panel.
+     */
     heroText: {
       type: String,
       default: '',
