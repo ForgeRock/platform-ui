@@ -35,24 +35,40 @@ export default {
   name: 'ButtonWithSpinner',
   components: { BButton, FrSpinner },
   props: {
+    /**
+     * Text displayed in button
+     */
     buttonText: {
       type: String,
       default() {
         return this.$t('common.save');
       },
     },
+    /**
+     * Disable button
+     */
     disabled: {
       type: Boolean,
       default: false,
     },
+    /**
+     * Show spinner and alternate spinnerText if provided
+     */
     showSpinner: {
       type: Boolean,
       default: false,
     },
+    /**
+     * Text to show when spinner is present
+     * buttonText will show if no spinnerText
+     */
     spinnerText: {
       type: String,
       default: null,
     },
+    /**
+     * Bootstrap variant
+     */
     variant: {
       type: String,
       default: 'primary',

@@ -19,6 +19,9 @@ import 'prismjs/components/prism-css';
 import 'prismjs/themes/prism.css';
 import 'vue-prism-editor/dist/VuePrismEditor.css';
 
+/**
+ * Code editor.
+ */
 export default {
   name: 'Editor',
   components: {
@@ -30,16 +33,25 @@ export default {
     },
   },
   props: {
+    /**
+     * Code language. Supported languages can be found here: https://prismjs.com/#supported-languages
+     */
     language: {
       default: '',
       required: false,
       type: String,
     },
+    /**
+     * Code to be displayed in editor
+     */
     content: {
       default: undefined,
       required: false,
       type: String,
     },
+    /**
+     * Reset editor to initial state
+     */
     reset: {
       default: false,
       type: Boolean,
@@ -52,9 +64,21 @@ export default {
     };
   },
   methods: {
+    /**
+     * Highlight code
+     *
+     * @param {String} code code to highlight
+     * @returns highlighted code
+     */
     highlighter(code) {
       return highlight(code, languages.html);
     },
+    /**
+     * Gets pretty printed code for CSS, JSON, HTML, XML
+     *
+     * @param {String} content code to attempt to prettify
+     * @returns {String} If current language is set to one of the supported types, return prettified content
+     */
     prettify(content) {
       if (content === undefined) {
         return content;
@@ -82,6 +106,11 @@ export default {
       this.shouldReset = false;
     },
     contentField() {
+      /**
+        * Triggered when a change is made in the editor
+        *
+        * @property {string} contentField current value of editor
+        */
       this.$emit('change', this.contentField);
     },
     reset(val) {
