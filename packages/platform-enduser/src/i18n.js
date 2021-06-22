@@ -1,6 +1,5 @@
 /**
- * @license
- * Copyright (c) 2020 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -37,6 +36,14 @@ function loadLocaleMessages() {
 
   return messages;
 }
+
+Vue.mixin({
+  methods: {
+    translationExists(path) {
+      return this.$t(path) !== path;
+    },
+  },
+});
 
 export default new VueI18n({
   locale: process.env.VUE_APP_I18N_LOCALE || 'en',
