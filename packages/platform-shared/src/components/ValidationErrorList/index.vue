@@ -24,16 +24,23 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+
 /**
- * @description Component for displaying error message for form fields
+ * Component for displaying error message for form fields
  */
 export default {
   name: 'ValidationErrorList',
   props: {
+    /**
+     * List of validation errors
+     */
     validatorErrors: {
       type: [Array, Object],
       default: () => {},
     },
+    /**
+     * Name of field
+     */
     fieldName: {
       type: String,
       default: () => '',

@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="d-flex">
     <div class="d-flex flex-column w-50 bg-light">
@@ -35,6 +34,9 @@ import 'vue-prism-editor/dist/VuePrismEditor.css';
 import showdown from 'showdown';
 import { pd } from 'pretty-data';
 
+/**
+ * Markdown editor.
+ */
 export default {
   name: 'MarkdownEditor',
   components: {
@@ -48,25 +50,40 @@ export default {
     };
   },
   props: {
+    /**
+     * Markdown displayed in editor
+     */
     markdown: {
       default: '',
       required: false,
       type: String,
     },
+    /**
+     * HTML
+     */
     markup: {
       default: '',
       required: false,
       type: String,
     },
+    /**
+     * Styles to apply to preview
+     */
     styles: {
       required: true,
       type: String,
     },
   },
   methods: {
+    /**
+     * Highlight code as HTML
+     */
     highlighter(code) {
       return highlight(code, languages.html);
     },
+    /**
+     * Checks if content is wrapped in a div, and if not, wraps it
+     */
     wrapContent(message) {
       const domparser = new DOMParser();
       const doc = domparser.parseFromString(message, 'text/html');
@@ -81,6 +98,9 @@ export default {
 
       return pd.xmlmin(doc.body.innerHTML);
     },
+    /**
+     * Get content children
+     */
     getContentChildren(content) {
       const domparser = new DOMParser();
       const doc = domparser.parseFromString(content, 'text/html');
@@ -88,12 +108,18 @@ export default {
       const hasContentDiv = contentDiv.length > 0;
       return hasContentDiv ? contentDiv[0].innerHTML : content;
     },
+    /**
+     * Get a markdown string from HTML
+     */
     parseMarkdown() {
       const content = this.getContentChildren(this.markup);
       const converter = new showdown.Converter();
       const markdown = converter.makeMarkdown(content);
       this.markdownField = markdown;
     },
+    /**
+     * Get HTML from markdown
+     */
     parseHtml() {
       const converter = new showdown.Converter({ completeHTMLDocument: false });
       const html = converter.makeHtml(this.markdownField);

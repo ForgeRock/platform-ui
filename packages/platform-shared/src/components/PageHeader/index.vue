@@ -1,8 +1,7 @@
-<!-- Copyright 2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <h1>
@@ -17,24 +16,27 @@ to such license between the licensee and ForgeRock AS. -->
 </template>
 
 <script>
+
 /**
- * @description Standard page header
- *
- * */
+ * Standard page header
+ */
 export default {
   name: 'PageHeader',
   props: {
+    /**
+     * Main text displayed in large font.
+     */
     title: {
       type: String,
       default: '',
     },
+    /**
+     * Smaller text displayed below title.
+     */
     subtitle: {
       type: String,
       default: '',
     },
-  },
-  data() {
-    return {};
   },
 };
 </script>

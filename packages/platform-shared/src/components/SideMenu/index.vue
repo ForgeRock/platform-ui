@@ -140,8 +140,8 @@ import {
   BMediaAside,
   BMediaBody,
 } from 'bootstrap-vue';
-import DropdownMenu from '@forgerock/platform-shared/src/components/DropdownMenu';
-import MenuItem from '@forgerock/platform-shared/src/components/MenuItem';
+import FrDropdownMenu from '@forgerock/platform-shared/src/components/DropdownMenu';
+import FrMenuItem from '@forgerock/platform-shared/src/components/MenuItem';
 import {
   capitalize,
   lowerCase,
@@ -161,8 +161,8 @@ export default {
     BMedia,
     BMediaAside,
     BMediaBody,
-    FrDropdownMenu: DropdownMenu,
-    FrMenuItem: MenuItem,
+    FrDropdownMenu,
+    FrMenuItem,
   },
   props: {
     /**
@@ -186,6 +186,9 @@ export default {
       type: String,
       default: '',
     },
+    /**
+     * Realm aliases
+     */
     realmAliases: {
       type: String,
       default: '',
@@ -203,18 +206,22 @@ export default {
   },
   methods: {
     /**
-     * @description Toggles the menu
-     * @triggers toggle-menu
+     * Get first letter of realm and either capitalize or lowercase it
+     * @param {Boolean} isCaps capitalize the letter
+     * @returns {String} first letter of the realm
      */
     getFirstLetter(isCaps) {
       const firstLetter = this.realm[0];
       return isCaps ? capitalize(firstLetter) : lowerCase(firstLetter);
     },
     /**
-     * @description Toggles the menu
-     * @triggers toggle-menu
+     * Toggles the menu
      */
     toggleMenu() {
+      /**
+       * Triggered whenever the toggle button is clicked.
+       * Used to indicate the whether menu is expanded or collapsed.
+       */
       this.$emit('toggle-menu');
     },
   },
