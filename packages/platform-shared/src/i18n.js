@@ -1,10 +1,10 @@
 /**
- * Copyright 2019 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2019-2021 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
+
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
 import dateTimeFormats from './dateTimeFormats.json';
@@ -25,6 +25,14 @@ function loadLocaleMessages() {
 
   return messages;
 }
+
+Vue.mixin({
+  methods: {
+    translationExists(path) {
+      return this.$t(path) !== path;
+    },
+  },
+});
 
 export default new VueI18n({
   locale: process.env.VUE_APP_I18N_LOCALE || 'en',
