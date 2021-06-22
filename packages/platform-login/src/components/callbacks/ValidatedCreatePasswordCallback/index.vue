@@ -103,7 +103,7 @@ export default {
      * @param {Object} policy required policy object
      */
     showInPanel(policy) {
-      return this.policies.some((x) => x.name === policy.policyRequirement);
+      return this.policies.some((x) => x.policyRequirement === policy.policyRequirement);
     },
     /**
      * Sends input to backend to be validated with supplied value
@@ -134,8 +134,7 @@ export default {
         const failures2 = res[1].getCallbackOfType(CallbackType.ValidatedCreatePasswordCallback).getFailedPolicies();
         let failures = [...failures1.map((pol) => (JSON.parse(pol))), ...failures2.map((pol) => (JSON.parse(pol)))];
         failures = uniqWith(failures, isEqual);
-        const normailizedFailures = this.normalizePolicies(failures);
-        this.policies = normailizedFailures.map((x) => ({ name: x.policyRequirement, params: x.params }));
+        this.policies = this.normalizePolicies(failures);
         this.setFailingPolicies(failures);
       }).catch(() => {
         // it's possible to timeout while in the tree so have to start from beginning if that happens
@@ -160,7 +159,7 @@ export default {
       this.policies = policies
         .filter((x) => !excluded.includes(x.policyRequirements[0]))
         .map((x) => ({
-          name: x.policyRequirements[0],
+          policyRequirement: x.policyRequirements[0],
           params: x.params ? { ...x.params } : undefined,
         }));
     },

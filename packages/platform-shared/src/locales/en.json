@@ -154,7 +154,13 @@
         "number": "number",
         "symbol": "symbol"
       },
-      "ATTRIBUTE_VALUE": "Cannot match the value of another attribute for this user",
+      "ATTRIBUTE_VALUE": "Cannot match the value of {disallowedFields}",
+      "attributes": {
+        "givenName": "First Name",
+        "sn": "Last Name",
+        "userName": "Username",
+        "mail": "Email"
+      },
       "HISTORY": "Cannot match a recently used password",
       "UNKNOWN": "Unable to create or modify {property-name} due to an unknown configuration issue",
       "EXTENDED_FIELD_POLICY": "{property-name} is not valid",
