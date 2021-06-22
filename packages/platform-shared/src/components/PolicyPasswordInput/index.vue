@@ -103,11 +103,11 @@ export default {
               if (policy.property === 'password') failedPolicies.push(policy.policyRequirements[0]);
             });
             this.$emit('is-valid', failedPolicies.length === 0);
-            this.policyFailures = this.normalizePolicies(failedPolicies).map((policy) => (policy.policyRequirement || policy.name));
+            this.policyFailures = this.normalizePolicies(failedPolicies).map((policy) => (policy.policyRequirement));
           }
         })
         .catch((error) => {
-          if (!axios.inCancel(error)) {
+          if (!axios.isCancel(error)) {
             throw error;
           }
         });
@@ -119,7 +119,7 @@ export default {
       policyService.get(this.policyEndpoint).then((res) => {
         const passwordPolicies = res.data.properties.find((pol) => (pol.name === 'password')).policies;
         const filteredPolicies = passwordPolicies.filter((pol) => (ignoredPolicies.indexOf(pol.policyRequirements[0]) === -1));
-        const policyObjects = filteredPolicies.map((pol) => ({ name: pol.policyRequirements[0], params: pol.params }));
+        const policyObjects = filteredPolicies.map((pol) => ({ policyRequirement: pol.policyRequirements[0], params: pol.params }));
         this.policies = [...this.policies, ...policyObjects];
       }).catch((error) => {
         this.showErrorMessage(error, this.$t('common.policyValidationMessages.policyReadError'));

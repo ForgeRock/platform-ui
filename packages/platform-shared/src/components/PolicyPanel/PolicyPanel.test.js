@@ -20,9 +20,9 @@ describe('PolicyPanel.vue', () => {
       localVue,
       propsData: {
         policies: [
-          { name: 'test', params: { args: 'test args' } },
-          { name: 'test2', params: { args: 'test args' } },
-          { name: 'test3', params: { args: 'test args' } },
+          { policyRequirement: 'test', params: { args: 'test args' } },
+          { policyRequirement: 'test2', params: { args: 'test args' } },
+          { policyRequirement: 'test3', params: { args: 'test args' } },
         ],
         policyFailures: ['test'],
       },
@@ -64,10 +64,10 @@ describe('PolicyPanel.vue', () => {
 
   describe('getPolicyColumns()', () => {
     const policyList = [
-      { name: 'test1' },
-      { name: 'test2' },
-      { name: 'test3' },
-      { name: 'test4' },
+      { policyRequirement: 'test1' },
+      { policyRequirement: 'test2' },
+      { policyRequirement: 'test3' },
+      { policyRequirement: 'test4' },
     ];
 
     it('Will put all policies in one column', () => {

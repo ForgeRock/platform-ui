@@ -48,16 +48,16 @@ export default {
               switch (validator._id) {
                 case this.getValidatorIdForType('length-based'):
                   if (validator.maxPasswordLength) {
-                    policies.push({ name: 'LENGTH_BASED', params: { 'min-password-length': validator.minPasswordLength, 'max-password-length': validator.maxPasswordLength } });
+                    policies.push({ policyRequirement: 'LENGTH_BASED', params: { 'min-password-length': validator.minPasswordLength, 'max-password-length': validator.maxPasswordLength } });
                   } else {
-                    policies.push({ name: 'MIN_LENGTH', params: { minLength: validator.minPasswordLength } });
+                    policies.push({ policyRequirement: 'MIN_LENGTH', params: { minLength: validator.minPasswordLength } });
                   }
                   break;
                 case this.getValidatorIdForType('repeated-characters'):
-                  policies.push({ name: 'REPEATED_CHARACTERS', params: { 'max-consecutive-length': validator.maxConsecutiveLength } });
+                  policies.push({ policyRequirement: 'REPEATED_CHARACTERS', params: { 'max-consecutive-length': validator.maxConsecutiveLength } });
                   break;
                 case this.getValidatorIdForType('dictionary'):
-                  policies.push({ name: 'DICTIONARY' });
+                  policies.push({ policyRequirement: 'DICTIONARY' });
                   break;
                 case this.getValidatorIdForType('character-set'):
                   if (this.getPoliciesFromCharacterSet(validator.characterSet)) policies.push(this.getPoliciesFromCharacterSet(validator.characterSet));
@@ -75,12 +75,11 @@ export default {
       });
     },
     normalizePolicies(policies) {
-      // remove character set policy where no character sets are required
-      let normalizedPolicies = policies.filter((policy) => (!(policy.policyRequirement === 'CHARACTER_SET' && this.getPoliciesFromCharacterSet(policy.params['character-sets']) === null)));
-
-      normalizedPolicies = policies.map((policy) => {
+      const normalizedPolicies = policies.map((policy) => {
+        const attributes = [];
         switch (policy.policyRequirement) {
           case 'LENGTH_BASED':
+            // use min length policy if max is 0
             if (policy.params['max-password-length'] === 0) {
               return {
                 policyRequirement: 'MIN_LENGTH',
@@ -91,9 +90,17 @@ export default {
           case 'CHARACTER_SET':
             return this.getPoliciesFromCharacterSet(policy.params['character-sets']);
           case 'ATTRIBUTE_VALUE':
+            policy.params['match-attributes'].forEach((attribute) => {
+              // translate attribute names if possible
+              if (this.translationExists(`common.policyValidationMessages.attributes.${attribute}`)) {
+                attributes.push(this.$t(`common.policyValidationMessages.attributes.${attribute}`));
+              } else {
+                attributes.push(attribute);
+              }
+            });
             return {
               policyRequirement: 'ATTRIBUTE_VALUE',
-              params: { disallowedFields: policy.params['match-attributes'].join(', ') },
+              params: { disallowedFields: attributes.join(', ') },
             };
           default:
             return policy;
