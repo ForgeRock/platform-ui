@@ -58,8 +58,6 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import {
   find,
-  has,
-  map,
 } from 'lodash';
 import VueMultiSelect from 'vue-multiselect';
 import FrInputLayout from '../Wrapper/InputLayout';
@@ -100,6 +98,20 @@ export default {
       type: [Array, Object],
       required: true,
     },
+    /**
+     * Optionally sorts the displayed select options by their text attribute.
+     */
+    sortOptions: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * Optionally scrolls the selected option into view when the select is opened.
+     */
+    showSelectedOptionOnOpen: {
+      type: Boolean,
+      default: false,
+    },
   },
   mounted() {
     if (this.autofocus) {
@@ -110,14 +122,21 @@ export default {
   },
   computed: {
     selectOptions() {
-      if (this.options.length && has(this.options[0], 'value')) {
-        return this.options;
+      let formattedOptions;
+
+      if (this.options.length && Object.hasOwnProperty.call(this.options[0], 'value')) {
+        formattedOptions = [...this.options];
+      } else {
+        formattedOptions = this.options.map((option) => ({
+          text: option,
+          value: option,
+        }));
       }
 
-      return map(this.options, (option) => ({
-        text: option,
-        value: option,
-      }));
+      if (this.sortOptions) {
+        formattedOptions.sort((a, b) => a.text.localeCompare(b.text));
+      }
+      return formattedOptions;
     },
   },
   methods: {
@@ -139,12 +158,20 @@ export default {
     },
     /**
      * @description focus the Vue Multi Select component (vms) and floats the label
+     * Also scrolls the selected option into view if showSelectedOptionOnOpen is true
      */
     openHandler() {
       if (this.searchable) {
         this.$refs.vms.$el.querySelector('input').focus();
       }
       this.floatLabels = true;
+
+      // Scroll the select list to show the selected option
+      if (this.showSelectedOptionOnOpen && this.value) {
+        setTimeout(() => {
+          this.$refs.vms.$el.querySelector('.multiselect__option--selected').scrollIntoView({ block: 'center' });
+        }, 20);
+      }
     },
   },
   watch: {
