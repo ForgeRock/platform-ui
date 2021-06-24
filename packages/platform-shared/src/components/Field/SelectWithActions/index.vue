@@ -5,9 +5,37 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <FrSelect
     v-bind="$attrs"
-    v-on="$listeners">
+    v-on="$listeners"
+    sort-options
+    show-selected-option-on-open>
+    <template v-slot:singleLabel="{ option }">
+      <div :class="[{'can-edit': showEdit(option)}, 'collapsed-option d-flex align-items-center justify-content-between w-100']">
+        <div
+          :title="option.text"
+          class="text-truncate">
+          {{ option.text }}
+        </div>
+        <!--
+          Triggered on click, indicates user would like to view or edit this select list item
+          @event edit-item-clicked
+          @property {string} the value (id) of the item to view/edit
+        -->
+        <BButton
+          @mousedown.stop
+          @click.stop="$emit('edit-item-clicked', option.value)"
+          v-if="showEdit(option)"
+          :aria-label="editLabel"
+          :title="editLabel"
+          size="sm"
+          variant="light">
+          <FrIcon
+            outlined
+            name="edit" />
+        </BButton>
+      </div>
+    </template>
     <template v-slot:beforeList>
-      <div class="cursor-default d-flex align-items-center justify-content-between pl-3 pr-2 mr-1 py-2">
+      <div class="row-before-list cursor-default d-flex align-items-center justify-content-between pl-3 py-2">
         <h5 class="mb-0">
           {{ addRowText }}
         </h5>
@@ -21,11 +49,9 @@ of the MIT license. See the LICENSE file for details. -->
           :title="addLabel"
           size="sm"
           variant="light">
-          <i
-            aria-hidden="true"
-            class="material-icons-outlined">
-            add
-          </i>
+          <FrIcon
+            outlined
+            name="add" />
         </BButton>
       </div>
     </template>
@@ -48,11 +74,9 @@ of the MIT license. See the LICENSE file for details. -->
           :title="editLabel"
           size="sm"
           variant="light">
-          <i
-            aria-hidden="true"
-            class="material-icons-outlined">
-            edit
-          </i>
+          <FrIcon
+            outlined
+            name="edit" />
         </BButton>
       </div>
     </template>
@@ -61,6 +85,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import { BButton } from 'bootstrap-vue';
+import Icon from '@forgerock/platform-shared/src/components/Icon';
 import Select from '@forgerock/platform-shared/src/components/Field/Select';
 
 /**
@@ -72,6 +97,7 @@ export default {
   components: {
     BButton,
     FrSelect: Select,
+    FrIcon: Icon,
   },
   props: {
     addRowText: {
@@ -95,6 +121,15 @@ export default {
       },
       required: false,
     },
+    showCollapsedEdit: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  methods: {
+    showEdit(option) {
+      return this.showCollapsedEdit && option.value !== '[Empty]';
+    },
   },
 };
 </script>
@@ -102,5 +137,35 @@ export default {
 <style lang="scss" scoped>
 .cursor-default {
   cursor: default;
+}
+
+/deep/ .multiselect__tags > span.multiselect__single {
+  margin-top: 0;
+}
+
+.multiselect__single > .collapsed-option {
+  margin-top: 4px;
+
+  button {
+    display: none;
+    padding: 0.22rem 0.5rem;
+  }
+
+  &.can-edit:hover {
+    margin-top: 0;
+
+    button {
+      display: block;
+    }
+  }
+}
+
+.row-before-list {
+  position: sticky;
+  top: 0;
+  padding-right: 12px;
+  z-index: 10;
+  background: $white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.13);
 }
 </style>
