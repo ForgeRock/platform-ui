@@ -195,10 +195,18 @@
     &.multiselect__option--selected,
     &.multiselect__option--highlight,
     &.multiselect__option--highlight::after {
-      background: $light-blue;
       outline: none;
       color: inherit;
       font-weight: inherit;
+    }
+
+    &.multiselect__option--selected {
+      background: $light-blue;
+    }
+
+    &.multiselect__option--highlight:not(.multiselect__option--selected),
+    &.multiselect__option--highlight:not(.multiselect__option--selected)::after {
+      background: $gray-100;
     }
 
     &.multiselect__option--selected .btn {
