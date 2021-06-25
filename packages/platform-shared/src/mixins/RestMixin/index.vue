@@ -12,6 +12,13 @@ import axios from 'axios';
 
 const idmContext = process.env.VUE_APP_IDM_URL;
 const amContext = process.env.VUE_APP_AM_URL;
+
+function createRealmPath(realm) {
+  if (realm === '/') {
+    return '';
+  }
+  return realm.split('/').join('/realms/').substring(1);
+}
 /**
  * @description Rest API call mixin for global use
  */
@@ -48,11 +55,13 @@ export default {
           // can force request to a realm by passing in config.realm, else use the store value
           if (config.realm) {
             if (config.realm !== '/' && config.realm !== 'root') {
-              amBase = `${amContext}/json/realms/root/realms/${config.realm}`;
+              const realmPath = createRealmPath(config.realm);
+              amBase = `${amContext}/json/realms/root/realms/${realmPath}`;
             }
           } else if (this.$store) {
             if (this.$store.state.realm && this.$store.state.realm !== '/' && this.$store.state.realm !== 'root') {
-              amBase = `${amContext}/json/realms/root/realms/${this.$store.state.realm}`;
+              const realmPath = createRealmPath(this.$store.state.realm);
+              amBase = `${amContext}/json/realms/root/realms/${realmPath}`;
             }
           }
 

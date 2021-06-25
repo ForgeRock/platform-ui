@@ -8,6 +8,13 @@ import {
 } from 'lodash';
 import NotificationMixin from '../NotificationMixin';
 
+function createRealmPath(realm) {
+  if (realm === '/') {
+    return '';
+  }
+  return realm.split('/').join('/realms/').substring(1);
+}
+
 export function getIdFromSession() {
   return this.getRequestService({
     context: 'AM',
@@ -18,7 +25,8 @@ export function getIdFromSession() {
 export function getUserInfo(session) {
   const urlParams = new URLSearchParams(window.location.search);
   const realm = urlParams.get('realm');
-  const path = realm.length > 1 ? `/realms/root/realms${realm}/users/${session.data.id}` : `/users/${session.data.id}`;
+  const realmPath = createRealmPath(realm);
+  const path = realmPath.length !== 0 ? `/realms/root/${realmPath}/users/${session.data.id}` : `/users/${session.data.id}`;
 
   return this.getRequestService({
     context: 'AM',
@@ -27,8 +35,8 @@ export function getUserInfo(session) {
 }
 
 export function getConfigurationInfo(realm) {
-  const slash = realm && realm.startsWith('/') ? '' : '/';
-  const requestPath = realm && realm.length > 1 ? `/realms/root/realms${slash}${realm}/serverinfo/*` : '/serverinfo/*';
+  const realmPath = createRealmPath(realm);
+  const requestPath = realmPath.length !== 0 ? `/realms/root/${realmPath}/serverinfo/*` : '/serverinfo/*';
 
   return this.getRequestService({
     context: 'AM',
