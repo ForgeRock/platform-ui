@@ -12,6 +12,11 @@
 
 if [[ -v SUBFOLDER ]]; then
     echo "Hosting under $SUBFOLDER"
+    # creating with -p will build out recursive folders;
+    mkdir -p /usr/share/nginx/html/$SUBFOLDER
+    # rmdir will remove the top-level;
+    rmdir /usr/share/nginx/html/$SUBFOLDER
+    # which allows us to create a symlink at the top level
     ln -s /usr/share/nginx/html /usr/share/nginx/html/$SUBFOLDER
 fi
 
