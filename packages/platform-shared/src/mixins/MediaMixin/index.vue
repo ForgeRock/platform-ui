@@ -1,8 +1,12 @@
+<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <script>
 import cssCustomProperties from '../../utils/cssCustomProperties';
 
 export default {
-  name: 'Media',
+  name: 'MediaMixin',
   data: () => ({
     /**
      * @description IE 10 does not support custom properties so a fallback value is provided, elsewhere css variables from bootstrap controls this code.

@@ -20,6 +20,8 @@ export default {
     getPoliciesFromCharacterSet(sets) {
       const translatedSets = [];
       sets.forEach((set) => {
+        // if a set starts with 0, it is not required, so it doesn't need to be included
+        // required sets start with 1. (ex: 1:abc... vs 0:abc...)
         if (set.includes(this.lowerSet) && set.charAt(0) !== '0') translatedSets.push(this.$t('common.policyValidationMessages.sets.lowercase'));
         if (set.includes(this.upperSet) && set.charAt(0) !== '0') translatedSets.push(this.$t('common.policyValidationMessages.sets.uppercase'));
         if (set.includes(this.numberSet) && set.charAt(0) !== '0') translatedSets.push(this.$t('common.policyValidationMessages.sets.number'));
@@ -35,9 +37,16 @@ export default {
       policy.params.sets = translatedSets.join(', ');
       return policy;
     },
-    getValidatorIdForType(type) {
-      return `${this.resourceName}PasswordPolicy-${type}-password-validator`;
+    getValidatorIdForType(resourceName, type) {
+      return `${resourceName}PasswordPolicy-${type}-password-validator`;
     },
+    /**
+     * Gets policies based on resource type, and adjusts the response to work for
+     * IDM and DS- the responses are inconsistent and require small tweaks
+     *
+     * @param {String} resourceName name of resource to retrieve policies for
+     * @returns {Object} object with success message and the policies
+     */
     getDsPolicies(resourceName) {
       return new Promise((resolve) => {
         const policies = [];
@@ -46,20 +55,20 @@ export default {
           if (policy && policy.validator) {
             policy.validator.forEach((validator) => {
               switch (validator._id) {
-                case this.getValidatorIdForType('length-based'):
+                case this.getValidatorIdForType(resourceName, 'length-based'):
                   if (validator.maxPasswordLength) {
                     policies.push({ policyRequirement: 'LENGTH_BASED', params: { 'min-password-length': validator.minPasswordLength, 'max-password-length': validator.maxPasswordLength } });
                   } else {
                     policies.push({ policyRequirement: 'MIN_LENGTH', params: { minLength: validator.minPasswordLength } });
                   }
                   break;
-                case this.getValidatorIdForType('repeated-characters'):
+                case this.getValidatorIdForType(resourceName, 'repeated-characters'):
                   policies.push({ policyRequirement: 'REPEATED_CHARACTERS', params: { 'max-consecutive-length': validator.maxConsecutiveLength } });
                   break;
-                case this.getValidatorIdForType('dictionary'):
+                case this.getValidatorIdForType(resourceName, 'dictionary'):
                   policies.push({ policyRequirement: 'DICTIONARY' });
                   break;
-                case this.getValidatorIdForType('character-set'):
+                case this.getValidatorIdForType(resourceName, 'character-set'):
                   if (this.getPoliciesFromCharacterSet(validator.characterSet)) policies.push(this.getPoliciesFromCharacterSet(validator.characterSet));
                   break;
                 default:
@@ -74,6 +83,14 @@ export default {
         });
       });
     },
+    /**
+     *
+     * IDM and DS policies are returned in slightly different formats-
+     * we need to normalize the different responses to be consistent
+     *
+     * @param {Object} policies object containing all required policies
+     * @returns {Object} object with adjusted policies
+     */
     normalizePolicies(policies) {
       const normalizedPolicies = policies.map((policy) => {
         const attributes = [];

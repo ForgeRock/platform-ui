@@ -91,7 +91,7 @@ of the MIT license. See the LICENSE file for details. -->
 import Alert from '@forgerock/platform-shared/src/components/Alert/';
 import Navbar from '@forgerock/platform-shared/src/components/Navbar/';
 import SideMenu from '@forgerock/platform-shared/src/components/SideMenu/';
-import Media from '@forgerock/platform-shared/src/mixins/Media';
+import MediaMixin from '@forgerock/platform-shared/src/mixins/MediaMixin';
 /**
  * @description Layout component for any packages that use the same sidemenu, navbar, and app content UX
  */
@@ -102,9 +102,7 @@ export default {
     FrSideMenu: SideMenu,
     FrAlert: Alert,
   },
-  mixins: [
-    Media,
-  ],
+  mixins: [MediaMixin],
   props: {
     isEnduser: {
       type: Boolean,
