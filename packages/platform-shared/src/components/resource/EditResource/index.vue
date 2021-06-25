@@ -393,7 +393,7 @@ export default {
       return pickBy(schema.properties, (property, key) => {
         const isInPropertyOrder = schema.order.includes(key);
         const hasPermission = privilege.VIEW.properties.includes(key) || privilege.UPDATE.properties.includes(key) || this.isOpenidmAdmin;
-        const isRelationship = property.type === 'relationship' || (property.type === 'array' && property.items.type === 'relationship');
+        const isRelationship = property.type === 'relationship' || (property.type === 'array' && (property.items.type === 'relationship' || property.items.isRelationship));
 
         property.propName = key;
 
