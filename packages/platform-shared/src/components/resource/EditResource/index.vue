@@ -85,7 +85,6 @@ of the MIT license. See the LICENSE file for details. -->
               :display-properties="displayProperties"
               :resource-path="`${resourceType}/${resourceName}/${id}`"
               :is-openidm-admin="isOpenidmAdmin"
-              :show-toggle="true"
               :disable-save-button="disableSaveButton"
               @disable-save-button="disableSaveButton = $event" />
             <span v-else>
