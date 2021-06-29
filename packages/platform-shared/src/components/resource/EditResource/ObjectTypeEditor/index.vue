@@ -23,7 +23,7 @@ of the MIT license. See the LICENSE file for details. -->
           </div>
 
           <FrListField
-            v-else-if="field.type === 'array' && field.key !== 'privileges'"
+            v-else-if="field.type === 'array' && field.key !== 'privileges' && !field.items.isRelationship"
             v-model="field.value"
             v-on="$listeners"
             :key="'editResource' + index"
