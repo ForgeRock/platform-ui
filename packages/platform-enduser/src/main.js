@@ -21,15 +21,12 @@ import PromisePoly from 'es6-promise';
 import {
   ValidationObserver,
   ValidationProvider,
-  extend,
-  localize,
 } from 'vee-validate';
-import en from 'vee-validate/dist/locale/en.json';
-import * as rules from 'vee-validate/dist/rules';
 import Vue from 'vue';
 import AppAuthHelper from 'appauthhelper/appAuthHelperCompat';
 import SessionCheck from 'oidcsessioncheck';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
+import overrideTranslations from '@forgerock/platform-shared/src/utils/overrideTranslations';
 import store from '@/store';
 import router from './router';
 import i18n from './i18n';
@@ -104,21 +101,6 @@ Vue.use(BootstrapVue);
 // Register validation components for global use
 Vue.component('ValidationProvider', ValidationProvider);
 Vue.component('ValidationObserver', ValidationObserver);
-Object.keys(rules).forEach((rule) => {
-  extend(rule, rules[rule]);
-});
-
-// How to add an extra validation rule
-// Date rule added for workflow
-extend('date_format', {
-  validate(value) {
-    return value.match(/^\d{2}[.//]\d{2}[.//]\d{4}$/);
-  },
-  message: () => 'Invalid date format',
-});
-
-// For now use vee validate loclization, need to eventually convert to vue i18n
-localize('en', en);
 
 /*
   Basic Notification Example:
@@ -177,10 +159,9 @@ const startApp = () => {
         store.commit('setWorkflowState', feature.enabled);
       }
     });
-
-    return loadApp();
   }))
-    .catch(() => loadApp());
+    .then(() => overrideTranslations(idmContext, i18n, 'enduser'))
+    .finally(() => loadApp());
 };
 
 const addAppAuth = () => {
