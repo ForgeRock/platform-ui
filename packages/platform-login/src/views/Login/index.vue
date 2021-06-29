@@ -217,7 +217,6 @@ import FrAlert from '@forgerock/platform-shared/src/components/Alert';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
-import i18n from '../../i18n';
 
 const FrCallbackType = {
   ...CallbackType,
@@ -323,7 +322,6 @@ export default {
     this.getConfigurationInfo(this.realm)
       .then((config) => {
         this.setRealm(config);
-        this.setLocale(config);
       })
       .then(this.checkNewSession)
       .then(() => {
@@ -841,11 +839,6 @@ export default {
       // if a tree is defined reset the hash to the proper tree
       if (this.authIndexValue) {
         window.location.hash = `service/${this.authIndexValue}`;
-      }
-    },
-    setLocale(config) {
-      if (config && config.data.lang) {
-        i18n.locale = config.data.lang;
       }
     },
     setRealm(config) {

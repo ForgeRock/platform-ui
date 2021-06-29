@@ -22,12 +22,12 @@ function loadLocaleMessages() {
     const matched = key.match(/([A-Za-z0-9-_]+)\./i);
     if (matched && matched.length > 1) {
       const locale = matched[1];
-      const generatedTranslation = locales(key);
+      let generatedTranslation = locales(key);
 
       // Check for shared local and merge in if it exists
       const sharedLocaleExists = sharedLocales.keys().includes(key);
       if (sharedLocaleExists) {
-        merge(generatedTranslation, sharedLocales(key));
+        generatedTranslation = merge(sharedLocales(key), generatedTranslation);
       }
 
       messages[locale] = generatedTranslation;

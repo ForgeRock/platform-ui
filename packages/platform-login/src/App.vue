@@ -42,6 +42,8 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import { extend, setInteractionMode } from 'vee-validate';
+import { required } from 'vee-validate/dist/rules';
 import Alert from '@forgerock/platform-shared/src/components/Alert/';
 import ThemeInjector from '@forgerock/platform-shared/src/components/ThemeInjector/';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
@@ -58,6 +60,36 @@ export default {
     RestMixin,
     ThemeMixin,
   ],
+  created() {
+    // Required rule - errors if no value is supplied
+    extend('required', {
+      ...required,
+      message: this.$t('common.policyValidationMessages.REQUIRED'),
+    });
+    // Unique rule - errors if input value matches any of provided array of values
+    extend('unique', {
+      params: ['otherValues'],
+      validate(value, { otherValues }) {
+        let uniqueValues;
+        if (typeof otherValues === 'string') {
+          uniqueValues = [otherValues];
+        } else {
+          uniqueValues = otherValues;
+        }
+        let returnValue = true;
+        if (uniqueValues) {
+          uniqueValues.forEach((uniqueValue) => {
+            if (uniqueValue.toLowerCase().trim() === value.toLowerCase().trim()) {
+              returnValue = false;
+            }
+          });
+        }
+        return returnValue;
+      },
+      message: this.$t('common.policyValidationMessages.UNIQUE'),
+    });
+    setInteractionMode('passive');
+  },
   methods: {
     setupTheme(theme) {
       this.setTheme(theme).then(() => {
