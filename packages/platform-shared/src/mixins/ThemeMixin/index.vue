@@ -80,11 +80,13 @@ export default {
         }
         // Set all realm related theming here
         if (theme) {
+          // eslint-disable-next-line global-require
+          const placeholderImage = require('@forgerock/platform-shared/src/assets/images/placeholder.svg');
           this.theme = theme;
           this.favicon = theme.favicon;
           this.journeyFooter = theme.journeyFooter;
           this.journeyLayout = theme.journeyLayout;
-          this.logo = theme.logo;
+          this.logo = theme.logo || placeholderImage;
           this.logoAltText = theme.logoAltText;
           this.logoHeight = theme.logoHeight;
           this.logoProfileHeight = theme.logoProfileHeight;
