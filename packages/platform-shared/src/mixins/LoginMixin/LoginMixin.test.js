@@ -23,7 +23,7 @@ describe('LoginMixin', () => {
   // getIdFromSession, getUserInfo, getConfigurationInfo,
   // getCurrentQueryString, parseParameters
   // Or are constructed in a way that makes unit testing undesirable:
-  // setTheme, verifyGotoUrlAndRedirect
+  // verifyGotoUrlAndRedirect
   it('Checks for a default path', () => {
     const isDefault = wrapper.vm.isDefaultPath('/am/console');
     const isNotDefault = wrapper.vm.isDefaultPath('/am/foo');
