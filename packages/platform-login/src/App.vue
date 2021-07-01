@@ -91,8 +91,10 @@ export default {
     setInteractionMode('passive');
   },
   methods: {
-    setupTheme(theme) {
-      this.setTheme(theme).then(() => {
+    setupTheme(realm, tree) {
+      const themeId = localStorage.getItem('theme-id');
+      const themeOpts = { tree, themeId };
+      this.setTheme(realm, themeOpts).then(() => {
         if (this.favicon) {
           document.getElementById('favicon').href = this.favicon;
         }

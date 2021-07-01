@@ -31,7 +31,7 @@ of the MIT license. See the LICENSE file for details. -->
       @search-change="$emit('search-change', $event)"
       @open="openHandler"
       @close="closeDropDown(inputValue)"
-      @input="$emit('input', inputValue.value)">
+      @input="$emit('input', inputValue ? inputValue.value : '')">
       <slot name="noResult">
         {{ $t('common.noResult') }}
       </slot>
@@ -149,7 +149,7 @@ export default {
       }
     },
     inputValueHandler(inputValue) {
-      this.floatLabels = inputValue.value !== null && inputValue.value.toString().length > 0 && !!this.label;
+      this.floatLabels = inputValue && inputValue.value !== null && inputValue.value.toString().length > 0 && !!this.label;
     },
     setInputValue(newVal) {
       if (newVal !== undefined && newVal !== null) {

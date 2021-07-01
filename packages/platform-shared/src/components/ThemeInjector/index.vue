@@ -16,12 +16,7 @@ of the MIT license. See the LICENSE file for details. -->
       background-image: url('{{ theme.backgroundImage }}');
       background-size: cover;
       background-repeat: no-repeat;
-      }
-
-      .fr-background-half-screen {
-      background-image: url('{{ theme.backgroundImage }}');
-      background-size: cover;
-      background-repeat: no-repeat;
+      background-attachment: fixed;
       }
 
       .btn {

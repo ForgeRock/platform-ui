@@ -96,10 +96,10 @@ of the MIT license. See the LICENSE file for details. -->
     <div
       v-else
       id="callbacksPanel"
-      :class="[{'flex-row-reverse': journeyLayout === 'justified-right'}, 'd-flex w-100']">
+      :class="[{'flex-row-reverse': journeyLayout === 'justified-right'}, 'd-flex w-100 flex-grow-1']">
       <div class="w-50 full-height d-md-flex align-items-start flex-column bg-white">
         <div
-          class="px-4 px-md-5"
+          class="pb-4 px-4 px-md-5"
           data-testid="in-situ-logo-preview">
           <div class="d-flex flex-fill flex-column justify-content-left w-100">
             <img
@@ -176,7 +176,6 @@ of the MIT license. See the LICENSE file for details. -->
           <p v-html="journeyFooter" />
         </div>
       </div>
-      <div class="fr-background-half-screen overflow-hidden position-relative w-50 h-100 d-none d-md-flex" />
     </div>
     <div
       v-if="journeyFooter && journeyLayout === 'card'"
@@ -304,6 +303,7 @@ export default {
       showScriptElms: false,
       step: undefined,
       suspendedId: undefined,
+      themeTree: undefined,
     };
   },
   computed: {
@@ -325,8 +325,8 @@ export default {
       })
       .then(this.checkNewSession)
       .then(() => {
-        this.$emit('set-theme', this.realm);
         this.evaluateUrlParams();
+        this.$emit('set-theme', this.realm, this.themeTree);
         this.nextStep();
       })
       .catch(() => {
@@ -620,6 +620,8 @@ export default {
       this.nextButtonVisible = true;
       this.nextButtonDisabledArray = [];
 
+      this.checkNodeForThemeOverride(this.step.getStage());
+
       // Ensure that Social Buttons appear at top of Page Node
       const pullToTop = FrCallbackType.SelectIdPCallback;
       this.step.callbacks.sort((currentCallback, otherCallback) => {
@@ -878,6 +880,7 @@ export default {
           }
           if (key === 'authIndexValue' && urlParams.get('authIndexType') === 'service') {
             stringParams += `${key}=${value}`;
+            this.themeTree = value;
           } else {
             stringParams += `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
           }
@@ -890,6 +893,7 @@ export default {
       if (params.get('arg') === 'newsession') params.delete('arg');
       if (this.$route.name === 'login' && paramString.includes('suspendedId=') && paramString.includes('authIndexValue=')) {
         this.authIndexValue = params.get('authIndexValue');
+        this.themeTree = params.get('authIndexValue');
         this.suspendedId = params.get('suspendedId');
 
         this.removeUrlParams();
@@ -904,6 +908,7 @@ export default {
         // session storage is used to resume a tree after returning from a redirect
         const { authIndexValue, step, realm: stepRealm } = this.getStepFromStorage();
         this.authIndexValue = authIndexValue;
+        this.themeTree = authIndexValue;
         this.step = new FRStep(step.payload);
         this.realm = stepRealm;
 
@@ -914,6 +919,7 @@ export default {
         const { authIndexValue, step, realm: stepRealm } = this.getStepFromStorage();
         if (authIndexValue && step && step.payload) {
           this.authIndexValue = authIndexValue;
+          this.themeTree = authIndexValue;
           this.step = new FRStep(step.payload);
           this.realm = stepRealm;
         }
@@ -941,9 +947,20 @@ export default {
 
         const stringParams = createParamString(params);
         this.removeUrlParams();
+        if (!this.themeTree && this.$route.params.tree) {
+          this.themeTree = this.$route.params.tree;
+        }
 
         window.history.replaceState(null, null, `?realm=${this.realm}${stringParams}${hash}`);
       }
+    },
+    checkNodeForThemeOverride(stageText) {
+      const regexp = /themeId=(\s*)(.*)(\s*)/g;
+      const match = regexp.exec(stageText);
+      if (match && match[2]) {
+        localStorage.setItem('theme-id', match[2]);
+      }
+      this.$emit('set-theme', this.realm, this.themeTree);
     },
   },
 };

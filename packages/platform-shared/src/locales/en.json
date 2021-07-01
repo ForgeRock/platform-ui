@@ -237,7 +237,8 @@
     "couldNotRetrieveConfigurationInfo": "There was an error retrieving configuration information.",
     "couldNotRetrieveVersion": "There was an error retrieving version information.",
     "idInUse": "That ID is already in use, please choose a different ID",
-    "errorRetrievingRelationships": "There was an error retrieving relationships."
+    "errorRetrievingRelationships": "There was an error retrieving relationships.",
+    "themeSaveError": "There was an error saving theme"
   },
   "navbar": {
     "helpSupport": "Help & Support",

@@ -105,7 +105,7 @@ export default {
     localize('en', en);
     // if this is a dns alias making this call will get the true realm when no realm param is provided
     getAmServerInfo().then(({ data }) => {
-      this.setTheme(data.realm).then(() => {
+      this.setTheme(data.realm, { themeId: localStorage.getItem('theme-id') }).then(() => {
         if (this.favicon) {
           document.getElementById('favicon').href = this.favicon;
         }
