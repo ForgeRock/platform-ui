@@ -105,7 +105,7 @@ export default {
     },
     themeSections: {
       type: Object,
-      required: true,
+      default: () => ({}),
     },
   },
   computed: {

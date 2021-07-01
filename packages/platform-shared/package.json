@@ -23,6 +23,7 @@
     "prismjs": "1.20.0",
     "showdown": "1.9.1",
     "ua-parser-js": "0.7.21",
+    "uuid": "3.3.3",
     "vee-validate": "3.2.2",
     "velocity-animate": "1.5.1",
     "vkbeautify": "0.99.3",
