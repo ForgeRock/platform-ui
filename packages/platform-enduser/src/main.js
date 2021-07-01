@@ -7,7 +7,6 @@
 
 import 'whatwg-fetch';
 import 'core-js/stable';
-
 import {
   each,
   has,
@@ -19,6 +18,7 @@ import BootstrapVue from 'bootstrap-vue/dist/bootstrap-vue.esm.min';
 import Notifications from 'vue-notification';
 import PromisePoly from 'es6-promise';
 import {
+  setInteractionMode,
   ValidationObserver,
   ValidationProvider,
 } from 'vee-validate';
@@ -34,6 +34,12 @@ import App from './App';
 
 // Turn off production warning messages
 Vue.config.productionTip = false;
+
+// Register validation components for global use
+Vue.component('ValidationProvider', ValidationProvider);
+Vue.component('ValidationObserver', ValidationObserver);
+
+setInteractionMode('passive');
 
 PromisePoly.polyfill();
 
@@ -97,10 +103,6 @@ router.beforeEach((to, from, next) => {
 
 // Globally load bootstrap vue components for use
 Vue.use(BootstrapVue);
-
-// Register validation components for global use
-Vue.component('ValidationProvider', ValidationProvider);
-Vue.component('ValidationObserver', ValidationObserver);
 
 /*
   Basic Notification Example:

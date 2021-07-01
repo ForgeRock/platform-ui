@@ -15,6 +15,7 @@ import {
   Config,
   SessionManager,
 } from '@forgerock/javascript-sdk';
+import { setInteractionMode } from 'vee-validate';
 import axios from 'axios';
 import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 import overrideTranslations from '@forgerock/platform-shared/src/utils/overrideTranslations';
@@ -27,6 +28,8 @@ Vue.config.productionTip = false;
 
 Vue.use(Notifications);
 Vue.use(VueSanitize);
+
+setInteractionMode('passive');
 
 const idmContext = process.env.VUE_APP_IDM_URL;
 

@@ -187,6 +187,7 @@
       "alphaNumericOnly": "Can only contain alphanumeric characters",
       "alphaNumericLowerCaseOnly": "Can only contain lower case alphanumeric characters",
       "alphaNumericDashOnly": "Can only contain alphanumeric characters, numbers, dashes or underscores",
+      "dateFormat": "Invalid date format",
       "noSpace": "Cannot start or end with the space character",
       "url": "Must be a valid URL",
       "urlWithPath": "URL must have a path",
