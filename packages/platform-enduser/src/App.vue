@@ -31,18 +31,14 @@ import {
   mapGetters,
   mapState,
 } from 'vuex';
-import {
-  extend,
-  localize,
-} from 'vee-validate';
-import en from 'vee-validate/dist/locale/en.json';
-import * as rules from 'vee-validate/dist/rules';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import ThemeMixin from '@forgerock/platform-shared/src/mixins/ThemeMixin';
+import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import FrLayout from '@forgerock/platform-shared/src/components/Layout';
 import { getAmServerInfo, getIdmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
 import ThemeInjector from '@forgerock/platform-shared/src/components/ThemeInjector/';
+import i18n from './i18n';
 import './scss/main.scss';
 
 export default {
@@ -88,21 +84,10 @@ export default {
     };
   },
   created() {
-    Object.keys(rules).forEach((rule) => {
-      extend(rule, rules[rule]);
-    });
+    // add vee-validate rules
+    const rules = ValidationRules.getRules(i18n);
+    ValidationRules.extendRules(rules);
 
-    // How to add an extra validation rule
-    // Date rule added for workflow
-    extend('date_format', {
-      validate(value) {
-        return value.match(/^\d{2}[.//]\d{2}[.//]\d{4}$/);
-      },
-      message: () => 'Invalid date format',
-    });
-
-    // For now use vee validate loclization, need to eventually convert to vue i18n
-    localize('en', en);
     // if this is a dns alias making this call will get the true realm when no realm param is provided
     getAmServerInfo().then(({ data }) => {
       this.setTheme(data.realm, { themeId: localStorage.getItem('theme-id') }).then(() => {

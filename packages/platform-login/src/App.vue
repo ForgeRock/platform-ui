@@ -43,12 +43,12 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import { extend, setInteractionMode } from 'vee-validate';
-import { required } from 'vee-validate/dist/rules';
 import Alert from '@forgerock/platform-shared/src/components/Alert/';
 import ThemeInjector from '@forgerock/platform-shared/src/components/ThemeInjector/';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import ThemeMixin from '@forgerock/platform-shared/src/mixins/ThemeMixin';
+import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
+import i18n from './i18n';
 import './scss/main.scss';
 
 export default {
@@ -62,34 +62,9 @@ export default {
     ThemeMixin,
   ],
   created() {
-    // Required rule - errors if no value is supplied
-    extend('required', {
-      ...required,
-      message: this.$t('common.policyValidationMessages.REQUIRED'),
-    });
-    // Unique rule - errors if input value matches any of provided array of values
-    extend('unique', {
-      params: ['otherValues'],
-      validate(value, { otherValues }) {
-        let uniqueValues;
-        if (typeof otherValues === 'string') {
-          uniqueValues = [otherValues];
-        } else {
-          uniqueValues = otherValues;
-        }
-        let returnValue = true;
-        if (uniqueValues) {
-          uniqueValues.forEach((uniqueValue) => {
-            if (uniqueValue.toLowerCase().trim() === value.toLowerCase().trim()) {
-              returnValue = false;
-            }
-          });
-        }
-        return returnValue;
-      },
-      message: this.$t('common.policyValidationMessages.UNIQUE'),
-    });
-    setInteractionMode('passive');
+    // add vee-validate rules
+    const rules = ValidationRules.getRules(i18n);
+    ValidationRules.extendRules(rules);
   },
   methods: {
     setupTheme(realm, tree) {
