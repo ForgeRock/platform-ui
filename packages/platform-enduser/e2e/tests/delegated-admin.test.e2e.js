@@ -335,7 +335,7 @@ describe('Delegated Admin', () => {
     cy.findByRole('button', { name: 'Save' }).should('be.disabled');
     cy.findByPlaceholderText('Email Address').type('badEmail@email');
     cy.findByRole('button', { name: 'Save' }).should('be.disabled');
-    cy.findAllByRole('alert').contains('The mail field must be a valid email');
+    cy.findAllByRole('alert').contains('Invalid email format (example@example.com)');
     cy.findByPlaceholderText('Email Address').type('.com');
     cy.findByRole('button', { name: 'Save' }).click();
     cy.wait('@saveManagedUser').then(({ response }) => {
