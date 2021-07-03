@@ -22,10 +22,9 @@ of the MIT license. See the LICENSE file for details. -->
       <BModal
         ref="terms-modal"
         hide-footer
+        body-class="p-3 border-none"
         :title="$t('login.termsAndConditions')">
-        <div class="d-block text-left">
-          <p v-html="terms" />
-        </div>
+        <p v-html="terms" />
       </BModal>
     </div>
   </div>
@@ -51,7 +50,9 @@ export default {
   },
   mounted() {
     this.name = `callback_${this.index}`;
-    this.terms = this.$sanitize(this.callback.getTerms());
+    this.terms = this.$sanitize(this.callback.getTerms(), {
+      allowedTags: false,
+    });
     this.callback.setInputValue(true);
   },
   data() {
@@ -62,3 +63,8 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+  .html-preview {
+    border: none;
+  }
+</style>
