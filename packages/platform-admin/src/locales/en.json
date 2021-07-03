@@ -2,6 +2,7 @@
   "routeNames": {
     "BulkImport": "Import",
     "Connect": "Connect",
+    "Consent": "Consent",
     "EditApplication": "Edit Application",
     "EditConnectorServer": "Edit Connector Server",
     "EditServerCluster": "Edit Server Cluster",
@@ -1054,6 +1055,40 @@
       "web-agent": {
         "downloadDescription": "<a href='https://backstage.forgerock.com/downloads/browse/am/featured/web-agents'>Download a web agent</a> based on your needs, and follow the <a href='https://backstage.forgerock.com/docs/idcloud/latest/gateways-agents.html'>step-by-step instructions</a> to install and configure the agent using the following values:"
       }
+    }
+  },
+  "consent": {
+    "title": "Consent",
+    "subTitle": "Configure versioned terms & conditions to track and manage user consent.",
+    "newVersion": "New Version",
+    "getTermsFail": "Unable to retrieve terms & conditions",
+    "noTermsAndConditions": "No terms & conditions created",
+    "view": "View Details",
+    "setActive": "Set to Active Version",
+    "setActiveError": "Unable to set Version to 'Active'",
+    "setActiveSuccess": "Successfully set version to 'Active'",
+    "copyOf": "Copy of {version}",
+    "termsTimeStamp": "{date} at {time}",
+    "draft": "draft",
+    "newVersionModal": {
+      "title": "New Version",
+      "fieldHelp": "Unique version name used to monitor user consent."
+    },
+    "editTermsAndConditions": {
+      "consent": "Consent",
+      "testModalHeader": "Terms & Conditions",
+      "locale": "Locale",
+      "addLocale": "Add locale",
+      "markdown": "Markdown",
+      "styles": "Styles",
+      "try": "Try it out",
+      "saveDraft": "Save as Draft",
+      "setActive": "Set as Active Version",
+      "saveSuccess": "Created a new T&C version",
+      "saveDraftSuccess": "Saved a new T&C draft",
+      "saveError": "Unable to save new Terms & Conditions version",
+      "getTermsFail": "Failed to retrieve Terms & Conditions data",
+      "publishConfirmationText": "Are you sure you want to publish this version of terms and conditions? You will not be able to make any further changes after you publish."
     }
   },
   "tenantAdmins": {

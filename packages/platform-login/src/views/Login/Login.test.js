@@ -1,5 +1,4 @@
 /**
- * @license
  * Copyright (c) 2021 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
@@ -36,7 +35,7 @@ describe('Login.vue', () => {
   });
 
   it('Load login component', () => {
-    expect(wrapper.name()).toEqual('Login');
+    expect(wrapper.vm.$options.name).toEqual('Login');
   });
 
   it('Removes undefined and "undefined" tree from stepParams', () => {

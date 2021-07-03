@@ -3,29 +3,54 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div class="d-flex">
-    <div class="d-flex flex-column w-50 bg-light">
-      <h6 class="m-0 p-3 pt-4 text-uppercase text-secondary">
-        {{ $t('email.edit.markdown') }}
-      </h6>
-      <VuePrismEditor
-        language="html"
-        :highlight="highlighter"
-        :line-numbers="true"
-        v-model="markdownField"
-      />
+  <div
+    class="d-flex"
+    :class="{ 'fr-spacer h-100 position-relative': wideNavbar}">
+    <div class="bg-light border-right w-50 overflow-hidden position-relative">
+      <div
+        class="h-100"
+        :class="{ 'flex-grow-1 overflow-auto': wideNavbar}">
+        <h6
+          v-if="showHeader"
+          class="m-0 p-3 pt-4 text-uppercase text-secondary">
+          {{ $t('email.edit.markdown') }}
+        </h6>
+        <VuePrismEditor
+          v-if="isMarkdown"
+          role="textbox"
+          language="html"
+          :line-numbers="true"
+          v-model="markdownField"
+          :readonly="disabled"
+          :class="{ 'pt-4': wideNavbar}" />
+        <VuePrismEditor
+          v-else
+          role="textbox"
+          language="css"
+          :line-numbers="true"
+          v-model="stylesField"
+          :readonly="disabled"
+          :class="{ 'pt-4': wideNavbar}" />
+      </div>
     </div>
-    <div
-      class="w-50">
-      <iframe
-        class="html-preview w-100 h-100 p-0 m-0 border-none"
-        :srcdoc="parsedHtml" />
+    <div class="w-50">
+      <div
+        class="h-100 w-100 overflow-auto bg-white pt-4 pl-3"
+        :class="{ 'py-5 px-3': wideNavbar}">
+        <div class="d-flex w-100 h-100 position-relative">
+          <div class="flex-grow-1 h-100">
+            <iframe
+              role="article"
+              class="html-preview w-100 h-100 m-0 border-none"
+              :srcdoc="parsedHtml" />
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { highlight, languages } from 'prismjs/components/prism-core';
 import VuePrismEditor from 'vue-prism-editor';
 import 'prismjs';
 import 'prismjs/components/prism-markdown';
@@ -46,6 +71,7 @@ export default {
     return {
       htmlField: '',
       markdownField: '',
+      stylesField: '',
       parsedHtml: '',
     };
   },
@@ -73,14 +99,28 @@ export default {
       required: true,
       type: String,
     },
+    isMarkdown: {
+      default: true,
+      required: false,
+      type: Boolean,
+    },
+    showHeader: {
+      default: false,
+      required: false,
+      type: Boolean,
+    },
+    wideNavbar: {
+      default: false,
+      required: false,
+      type: Boolean,
+    },
+    disabled: {
+      default: false,
+      required: false,
+      type: Boolean,
+    },
   },
   methods: {
-    /**
-     * Highlight code as HTML
-     */
-    highlighter(code) {
-      return highlight(code, languages.html);
-    },
     /**
      * Checks if content is wrapped in a div, and if not, wraps it
      */
@@ -124,15 +164,17 @@ export default {
       const converter = new showdown.Converter({ completeHTMLDocument: false });
       const html = converter.makeHtml(this.markdownField);
       this.htmlField = html;
-      this.parsedHtml = `<style>${this.styles}</style>${this.wrapContent(html)}`;
+      this.parsedHtml = `<style>${this.stylesField}</style>${this.wrapContent(html)}`;
+      this.$emit('parsed-html', this.parsedHtml);
     },
   },
   watch: {
     htmlField() {
       this.$emit('change', this.markdownField, this.wrapContent(this.htmlField));
     },
-    markdown() {
-      this.markdownField = this.markdown;
+    stylesField() {
+      this.$emit('styles-change', this.stylesField);
+      this.parseHtml();
     },
     markup() {
       this.parseMarkdown();
@@ -141,8 +183,18 @@ export default {
       this.parseHtml();
     },
     styles() {
+      this.stylesField = this.styles;
       this.parseHtml();
     },
   },
 };
 </script>
+<style lang="scss" scoped>
+    .fr-spacer {
+      padding-top: 8.25rem;
+    }
+
+    .prism-editor__line-numbers {
+      height: 700px;
+    }
+</style>

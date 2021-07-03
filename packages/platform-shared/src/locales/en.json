@@ -69,6 +69,8 @@
     "password": "Password",
     "previous": "Previous",
     "print": "Print",
+    "publish": "Publish",
+    "published": "Published",
     "remove": "Remove",
     "required": "Required",
     "reset": "Reset",
@@ -94,6 +96,7 @@
     "type": "Type",
     "typeToSearch": "Type to search",
     "update": "Update",
+    "version": "Version",
     "view": "View",
     "yes": "Yes",
     "helpText": {
