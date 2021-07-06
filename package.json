@@ -10,6 +10,7 @@
     "test:cb": "jest --config=jest.config.crossbrowser.js"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "7.12.1",
     "@testing-library/dom": "7.30.0",
     "@testing-library/jest-dom": "5.11.9",
     "@testing-library/user-event": "13.0.1",
