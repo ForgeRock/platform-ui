@@ -37,6 +37,8 @@ of the MIT license. See the LICENSE file for details. -->
               <BFormGroup
                 class="w-100"
                 :key="index"
+                :label="title"
+                label-sr-only
                 v-if="field.type === 'string' || field.type === 'number' || field.type === 'boolean'">
                 <FrField
                   v-model="field.value"
