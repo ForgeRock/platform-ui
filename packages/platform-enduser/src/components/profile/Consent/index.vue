@@ -20,7 +20,7 @@ of the MIT license. See the LICENSE file for details. -->
           class="mr-3"
           width="24"
           height="24"
-          :alt="mapping.name"
+          alt=""
           fallback="settings_applications" />
         <div
           class="media-body"
