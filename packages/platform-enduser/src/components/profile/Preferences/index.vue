@@ -25,6 +25,8 @@ of the MIT license. See the LICENSE file for details. -->
             v-model="obj.value"
             type="boolean"
             :name="preference"
+            :label="obj.description"
+            :sr-only-label="true"
             @change="savePreferences(preference, $event)" />
         </div>
       </div>

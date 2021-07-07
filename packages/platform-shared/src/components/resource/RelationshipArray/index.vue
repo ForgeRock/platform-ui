@@ -270,9 +270,6 @@ export default {
     },
   },
   methods: {
-    stringify(a) {
-      return JSON.stringify(a);
-    },
     loadGrid(page) {
       const doLoad = (resourceCollectionSchema) => {
         this.getRequestService().get(this.buildGridUrl(page, resourceCollectionSchema)).then((resourceData) => {
