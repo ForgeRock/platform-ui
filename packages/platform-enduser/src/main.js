@@ -164,6 +164,7 @@ const startApp = () => {
     idmInstance.get('info/features?_queryFilter=true')]).then(axios.spread((uiConfig, availability) => {
     if (uiConfig.data.configuration.lang) {
       i18n.locale = uiConfig.data.configuration.lang;
+      document.getElementsByTagName('html')[0].setAttribute('lang', uiConfig.data.configuration.lang);
     }
     store.commit('SharedStore/setUiConfig', uiConfig.data);
 
