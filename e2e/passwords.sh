@@ -11,6 +11,7 @@ export CYPRESS_ACCESS_TOKEN=`curl -u idm-provisioning:$(kubectl --namespace $kub
 export CYPRESS_FQDN=`kubectl --namespace $kubernetes_namespace get configmaps platform-config -o jsonpath='{.data.FQDN}'`
 export CYPRESS_BASE_URL="https://$CYPRESS_FQDN"
 export CYPRESS_MENUS_FILE="menus.e2e"
+export CYPRESS_ROUTES_FILE="routes.e2e"
 export TZ="Europe/London"
 
 $@

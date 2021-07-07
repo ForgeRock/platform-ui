@@ -101,7 +101,8 @@
       "errorDeletingRealm": "There was an error deleting a realm",
       "errorGettingRealmAuthenticationConfig": "There was an error getting realm authentication config",
       "errorSwitchingRealm": "There was an error switching realm",
-      "errorLoadingMenusFile": "There was an error loading site configuration"
+      "errorLoadingMenusFile": "There was an error loading site configuration",
+      "errorLoadingRoutes": "Error loading route definitions."
     }
   },
   "hostedPages": {
