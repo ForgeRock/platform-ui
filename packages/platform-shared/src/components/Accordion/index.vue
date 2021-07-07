@@ -24,7 +24,6 @@ of the MIT license. See the LICENSE file for details. -->
         no-body
         @click="$emit('section-expanded', {key, data})">
         <BCardHeader
-          :aria-labelledby="`${ariaGroup}-tab-${key}`"
           class="pr-4 border-0 position-relative"
           role="tab"
           v-b-toggle="`accordion-${accordionGroup}-${key}`">
