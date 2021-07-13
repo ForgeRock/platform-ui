@@ -224,6 +224,10 @@ li {
   list-style: none;
   margin: 0;
   padding: 0;
+
+  .material-icons-outlined {
+    line-height: 1.35rem;
+  }
 }
 
 /deep/ a.nav-link,
