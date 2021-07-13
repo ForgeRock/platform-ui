@@ -3,9 +3,7 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <BContainer
-    fluid
-    class="px-0 flex-grow-1 d-flex">
+  <BContainer class="px-0 flex-grow-1 d-flex">
     <div class="fr-m-auto fr-center-card align-self-center">
       <BCard
         no-body
@@ -14,17 +12,19 @@ of the MIT license. See the LICENSE file for details. -->
         footer-tag="footer">
         <BCardHeader class="d-flex align-items-center flex-fill">
           <div class="d-flex flex-fill flex-column justify-content-center">
-            <div
-              v-if="logoPath.length === 0"
-              class="fr-logo fr-logo-vertical mb-3 mt-2"
-              fluid
-              :alt="$t('common.logo')" />
-            <img
-              v-else
-              class="fr-logo mb-3 mt-2"
-              :alt="logoAltText"
-              :src="logoPath"
-              :style="{ height: `${logoHeight}px`}">
+            <template v-if="logoEnabled">
+              <div
+                v-if="logoPath.length === 0"
+                class="fr-logo fr-logo-vertical mb-3 mt-2"
+                fluid
+                :alt="$t('common.logo')" />
+              <img
+                v-else
+                class="fr-logo mb-3 mt-2"
+                :alt="logoAltText"
+                :src="logoPath"
+                :style="{ height: `${logoHeight}px`}">
+            </template>
             <!-- @slot Content for card header -->
             <slot name="center-card-header" />
           </div>
@@ -77,6 +77,13 @@ export default {
     logoAltText: {
       type: String,
       default: '',
+    },
+    /**
+     * Whether we want to show a logo on the card
+     */
+    logoEnabled: {
+      type: Boolean,
+      default: true,
     },
   },
 };

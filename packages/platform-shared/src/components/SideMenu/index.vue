@@ -109,7 +109,7 @@ of the MIT license. See the LICENSE file for details. -->
         <div class="fr-sidebar-bottom">
           <ul class="fr-sidebar-menuitems flex-grow-1 border-top">
             <li>
-              <BButton
+              <button
                 @click="toggleMenu"
                 class="d-flex align-items-center">
                 <i
@@ -120,7 +120,7 @@ of the MIT license. See the LICENSE file for details. -->
                 <span class="sidebar-item-text">
                   {{ $t('sideMenu.toggleSidebar') }}
                 </span>
-              </BButton>
+              </button>
             </li>
           </ul>
         </div>
@@ -134,7 +134,6 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import {
-  BButton,
   BDropdownHeader,
   BMedia,
   BMediaAside,
@@ -156,7 +155,6 @@ import {
 export default {
   name: 'SideMenu',
   components: {
-    BButton,
     BDropdownHeader,
     BMedia,
     BMediaAside,

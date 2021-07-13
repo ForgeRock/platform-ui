@@ -133,13 +133,13 @@ of the MIT license. See the LICENSE file for details. -->
       :is="'style'"
       v-if="isEnduser">
       .fr-logo.fr-logo-vertical {
-      background-image: url('{{ theme.logoProfileCollapsed ? theme.logoProfileCollapsed : theme.logo ? theme.logo : require('@forgerock/platform-shared/src/assets/images/placeholder.svg') }}');
+      background-image: url("{{ theme.logoProfileCollapsed ? theme.logoProfileCollapsed : require('@forgerock/platform-shared/src/assets/images/placeholder.svg') }}");
       height: {{ theme.logoProfileCollapsed ? theme.logoProfileCollapsedHeight : theme.logoHeight }}px;
       }
 
       .fr-logo.fr-logo-horizontal {
-      background-image: url('{{ theme.logoProfile ? theme.logoProfile : theme.logo ? theme.logo : require('@forgerock/platform-shared/src/assets/images/horizontal-placeholder.svg') }}');
-      height: {{ theme.logoProfileHeight }}px;
+      background-image: url("{{ theme.logoProfile ? theme.logoProfile : require('@forgerock/platform-shared/src/assets/images/horizontal-placeholder.svg') }}");
+      height: {{ theme.logoProfileHeight ? theme.logoProfileHeight : theme.logoHeight }}px;
       }
     </Component>
   </div>
