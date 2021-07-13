@@ -5,7 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <BContainer
     fluid
-    class="px-0 h-100 d-flex">
+    class="px-0 flex-grow-1 d-flex">
     <div class="fr-m-auto fr-center-card align-self-center">
       <BCard
         no-body

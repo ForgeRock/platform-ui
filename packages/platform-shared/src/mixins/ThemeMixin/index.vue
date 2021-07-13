@@ -92,11 +92,11 @@ export default {
           this.logoProfileHeight = theme.logoProfileHeight;
           this.logoProfileCollapsedHeight = theme.logoProfileCollapsedHeight;
         } else {
-          this.theme = null;
+          this.theme = {};
           this.logo = `${process.env.BASE_URL}images/vertical-logo.svg`;
         }
       }).catch(() => {
-        this.theme = null;
+        this.theme = {};
       });
     },
   },

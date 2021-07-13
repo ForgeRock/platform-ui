@@ -3,7 +3,7 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div class="h-100 d-flex">
+  <div class="min-vh-100 d-flex flex-column">
     <FrCenterCard
       v-if="!journeyLayout || journeyLayout === 'card'"
       :logo-alt-text="logoAltText"
@@ -180,7 +180,7 @@ of the MIT license. See the LICENSE file for details. -->
     </div>
     <div
       v-if="journeyFooter && journeyLayout === 'card'"
-      class="position-absolute w-100"
+      class="w-100"
       id="appFooter">
       <div class="d-flex flex-column flex-md-row justify-content-center align-items-center py-4">
         <p v-html="journeyFooter" />
