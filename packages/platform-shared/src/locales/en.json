@@ -476,6 +476,11 @@
       "couldNotFind": "We couldn't find the page you were looking for."
     }
   },
+  "pagination": {
+    "gotoFirstPage": "Go to first page",
+    "gotoNextPage": "Go to next page",
+    "gotoPreviousPage": "Go to previous page"
+  },
   "queryFilterBuilder": {
     "addGroupButton": "Add Group",
     "addRuleButton": "Add Rule",
