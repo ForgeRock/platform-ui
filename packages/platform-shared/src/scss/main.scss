@@ -494,3 +494,35 @@ a.card {
 .vh-100 {
   height: 100vh !important;
 }
+
+// Keyboard navigation highlighting
+button:focus-visible,
+tr:focus-visible,
+a:focus-visible {
+  outline-offset: -2px;
+  outline: 2px solid $black !important;
+  background: transparent;
+}
+
+button:focus-visible {
+  outline-offset: 2px;
+}
+
+// Keyboard navigation highlighting custom fix for Safari 10+
+/* stylelint-disable */
+@media not all and (min-resolution: 0.001dpcm) {
+  @supports (-webkit-appearance:none) {
+/* stylelint-enable */
+    button:focus,
+    tr:focus,
+    a:focus {
+      outline-offset: -2px;
+      outline: 2px solid $black !important;
+      background: transparent;
+    }
+
+    button:focus {
+      outline-offset: 2px;
+    }
+  }
+}
