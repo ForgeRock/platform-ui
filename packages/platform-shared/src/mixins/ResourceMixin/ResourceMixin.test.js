@@ -70,7 +70,7 @@ describe('ResourceMixin', () => {
       },
     };
 
-    const properties = [{ key: 'foo' }, { key: 'bar', title: 'Title Bar' }];
+    const properties = [{ name: 'foo' }, { name: 'bar', title: 'Title Bar' }];
     const finalErrorKey = [{ exists: true, field: 'foo', msg: 'common.policyValidationMessages.REQUIRED' }];
     const finalErrorTitle = [{ exists: true, field: 'bar', msg: 'common.policyValidationMessages.REQUIRED' }];
 
