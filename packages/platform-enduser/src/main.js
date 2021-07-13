@@ -25,6 +25,7 @@ import {
 import Vue from 'vue';
 import AppAuthHelper from 'appauthhelper/appAuthHelperCompat';
 import SessionCheck from 'oidcsessioncheck';
+import VueSanitize from 'vue-sanitize';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import overrideTranslations from '@forgerock/platform-shared/src/utils/overrideTranslations';
 import store from '@/store';
@@ -38,6 +39,11 @@ Vue.config.productionTip = false;
 // Register validation components for global use
 Vue.component('ValidationProvider', ValidationProvider);
 Vue.component('ValidationObserver', ValidationObserver);
+
+VueSanitize.defaults.allowedAttributes['*'] = ['class', 'style', 'data-testid'];
+VueSanitize.defaults.allowedAttributes.img.push('height');
+VueSanitize.defaults.allowedTags = [...VueSanitize.defaults.allowedTags, 'style', 'img'];
+Vue.use(VueSanitize);
 
 setInteractionMode('passive');
 
