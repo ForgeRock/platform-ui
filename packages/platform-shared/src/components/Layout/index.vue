@@ -62,32 +62,32 @@ of the MIT license. See the LICENSE file for details. -->
       <div
         v-if="showFooter"
         id="appFooter">
-        <div class="d-flex flex-column flex-md-row justify-content-center align-items-center py-4">
-          <p
-            v-if="footer"
-            v-html="footer" />
-          <template v-else>
-            <div class="fr-logo-container mr-3 opacity-20 mb-2 mb-md-0 d-flex">
-              <div class="fr-logo fr-logo-vertical-black" />
-            </div>
-            <div
-              class="mr-4 opacity-70">
-              <span class="pr-1">
-                © {{ currentYear }}
-              </span>
-              <a
-                href="http://www.forgerock.com"
-                target="_blank"
-                class="text-body">
-                ForgeRock, Inc
-              </a>
-            </div>
-            <div
-              v-if="buildNumber && buildDateTime"
-              class="mr-4 opacity-70">
-              {{ $t('common.buildNumber', {buildNumber, buildDateTime: $d(buildDateTime, 'buildDateTime')}) }}
-            </div>
-          </template>
+        <div
+          v-if="footer"
+          v-html="footer" />
+        <div
+          v-else
+          class="d-flex flex-column flex-md-row justify-content-center align-items-center py-4">
+          <div class="fr-logo-container mr-3 opacity-20 mb-2 mb-md-0 d-flex">
+            <div class="fr-logo fr-logo-vertical-black" />
+          </div>
+          <div
+            class="mr-4 opacity-70">
+            <span class="pr-1">
+              © {{ currentYear }}
+            </span>
+            <a
+              href="http://www.forgerock.com"
+              target="_blank"
+              class="text-body">
+              ForgeRock, Inc
+            </a>
+          </div>
+          <div
+            v-if="buildNumber && buildDateTime"
+            class="mr-4 opacity-70">
+            {{ $t('common.buildNumber', {buildNumber, buildDateTime: $d(buildDateTime, 'buildDateTime')}) }}
+          </div>
         </div>
       </div>
     </div>

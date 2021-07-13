@@ -23,6 +23,7 @@ of the MIT license. See the LICENSE file for details. -->
           :journey-justified-content-enabled="journeyJustifiedContentEnabled"
           :journey-layout="journeyLayout"
           :logo-alt-text="logoAltText"
+          :logo-enabled="logoEnabled"
           :logo-height="logoHeight"
           :logo-path="logo"
           :key="$route.fullPath"

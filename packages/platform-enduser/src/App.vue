@@ -36,7 +36,7 @@ import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import ThemeMixin from '@forgerock/platform-shared/src/mixins/ThemeMixin';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import FrLayout from '@forgerock/platform-shared/src/components/Layout';
-import { getAmServerInfo, getIdmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
+import { getIdmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
 import ThemeInjector from '@forgerock/platform-shared/src/components/ThemeInjector/';
 import i18n from './i18n';
 import './scss/main.scss';
@@ -89,14 +89,10 @@ export default {
     ValidationRules.extendRules(rules);
 
     // if this is a dns alias making this call will get the true realm when no realm param is provided
-    getAmServerInfo().then(({ data }) => {
-      this.setTheme(data.realm, { themeId: localStorage.getItem('theme-id') }).then(() => {
-        if (this.favicon) {
-          document.getElementById('favicon').href = this.favicon;
-        }
-      });
-    }, (error) => {
-      this.showErrorMessage(error, this.$t('errors.couldNotRetrieveConfigurationInfo'));
+    this.setTheme(this.$store.state.realm, { themeId: localStorage.getItem('theme-id') }).then(() => {
+      if (this.favicon) {
+        document.getElementById('favicon').href = this.favicon;
+      }
     });
   },
   mounted() {
