@@ -92,6 +92,7 @@ import {
   each,
   filter,
   map,
+  reject,
 } from 'lodash';
 import {
   BButton,
@@ -207,6 +208,9 @@ export default {
         });
 
         idmInstance.post(`policy/${this.managedResource}/${this.userId}?_action=validateObject`, policyFields).then((policyResult) => {
+          // reject any failedPolicyRequirements on properties that don't exist in this.formFields
+          policyResult.data.failedPolicyRequirements = reject(policyResult.data.failedPolicyRequirements, (policy) => !map(this.formFields, 'name').includes(policy.property));
+
           if (policyResult.data.failedPolicyRequirements.length === 0) {
             this.$emit('updateProfile', this.generateUpdatePatch(this.originalFormFields, this.formFields));
             this.$refs.observer.reset();
