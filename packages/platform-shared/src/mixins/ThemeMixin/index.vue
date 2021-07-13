@@ -36,6 +36,7 @@ export default {
         linkedTrees: [],
         logo: '',
         logoAltText: '',
+        logoEnabled: true,
         logoHeight: '40',
         logoProfile: '',
         logoProfileAltText: '',
@@ -66,6 +67,7 @@ export default {
       logoProfileCollapsedHeight: '40',
       logo: '',
       logoAltText: '',
+      logoEnabled: true,
       theme: null,
       themesConfig: { realm: {} },
       realmThemeNames: [],
@@ -87,7 +89,7 @@ export default {
 
       return idmRequestService.get('/config/ui/themerealm').then((results) => {
         const themeResults = results.data.realm;
-        let cleanRealm = realm;
+        let cleanRealm = realm === 'root' ? '/' : realm;
 
         // If there is a /, remove it so both test and /test result in same realm theme
         if (themeResults[cleanRealm] === undefined && cleanRealm.charAt(0) === '/') {
@@ -131,6 +133,7 @@ export default {
           this.journeyLayout = theme.journeyLayout;
           this.logo = theme.logo || placeholderImage;
           this.logoAltText = theme.logoAltText;
+          this.logoEnabled = theme.logoEnabled;
           this.logoHeight = theme.logoHeight;
           this.logoProfileHeight = theme.logoProfileHeight;
           this.logoProfileCollapsedHeight = theme.logoProfileCollapsedHeight;
