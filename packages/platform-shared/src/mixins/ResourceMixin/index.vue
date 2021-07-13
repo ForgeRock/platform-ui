@@ -71,14 +71,14 @@ export default {
             const policyRequirements = this.normalizePolicies(policy.policyRequirements);
             let displayTitle = '';
 
-            const foundProperty = find(properties, (prop) => prop.key === policy.property);
+            const foundProperty = find(properties, (prop) => prop.name === policy.property);
             const params = policyRequirements[0].params || {};
 
             if (foundProperty) {
               if (foundProperty.title) {
                 displayTitle = foundProperty.title;
               } else {
-                displayTitle = foundProperty.key;
+                displayTitle = foundProperty.name;
               }
 
               params.property = displayTitle;
