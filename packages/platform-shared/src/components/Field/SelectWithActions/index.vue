@@ -68,6 +68,8 @@ of the MIT license. See the LICENSE file for details. -->
           @property {string} the value (id) of the item to view/edit
         -->
         <BButton
+          @mousedown.stop
+          @mouseup.stop
           @click.stop="$emit('edit-item-clicked', option.value)"
           v-if="option.value !== '[Empty]'"
           :aria-label="editLabel"
