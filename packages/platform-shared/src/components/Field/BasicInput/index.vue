@@ -37,6 +37,7 @@ of the MIT license. See the LICENSE file for details. -->
       :placeholder="label"
       :readonly="readonly"
       :type="fieldType"
+      :aria-label="label"
       @input="evt=>inputValue=evt.target.value"
       @animationstart="animationStart">
     <template #defaultButtons>
