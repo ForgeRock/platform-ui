@@ -88,6 +88,7 @@ of the MIT license. See the LICENSE file for details. -->
             v-show="stepIndex === index">
             <FrCustomStep
               :property="step"
+              :resource-name="resourceName"
               @input="updateStepPropertyValue" />
           </BCol>
         </BRow>

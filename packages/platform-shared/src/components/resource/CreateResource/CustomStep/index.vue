@@ -69,6 +69,10 @@ export default {
       type: Object,
       default: () => {},
     },
+    resourceName: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
@@ -90,7 +94,7 @@ export default {
   computed: {
     descriptionText() {
       if (this.property.isConditional) {
-        return this.$t('pages.access.condtionDescription');
+        return this.$t('pages.access.conditionDescription', { resourceName: this.resourceName });
       }
 
       return this.$t('pages.access.temporalConstraintDescription');
