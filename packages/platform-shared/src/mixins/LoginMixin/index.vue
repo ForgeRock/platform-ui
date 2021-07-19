@@ -6,14 +6,8 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   fromPairs, isEmpty, map, last,
 } from 'lodash';
+import createRealmPath from '../../utils/createRealmPath';
 import NotificationMixin from '../NotificationMixin';
-
-function createRealmPath(realm) {
-  if (realm === '/') {
-    return '';
-  }
-  return realm.split('/').join('/realms/').substring(1);
-}
 
 export function getIdFromSession() {
   return this.getRequestService({
