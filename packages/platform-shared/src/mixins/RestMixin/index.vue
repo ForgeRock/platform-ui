@@ -9,16 +9,11 @@ import {
   isUndefined,
 } from 'lodash';
 import axios from 'axios';
+import createRealmPath from '../../utils/createRealmPath';
 
 const idmContext = process.env.VUE_APP_IDM_URL;
 const amContext = process.env.VUE_APP_AM_URL;
 
-function createRealmPath(realm) {
-  if (realm === '/') {
-    return '';
-  }
-  return realm.split('/').join('/realms/').substring(1);
-}
 /**
  * @description Rest API call mixin for global use
  */
@@ -56,12 +51,12 @@ export default {
           if (config.realm) {
             if (config.realm !== '/' && config.realm !== 'root') {
               const realmPath = createRealmPath(config.realm);
-              amBase = `${amContext}/json/realms/root/realms/${realmPath}`;
+              amBase = `${amContext}/json/realms/root/${realmPath}`;
             }
           } else if (this.$store) {
             if (this.$store.state.realm && this.$store.state.realm !== '/' && this.$store.state.realm !== 'root') {
               const realmPath = createRealmPath(this.$store.state.realm);
-              amBase = `${amContext}/json/realms/root/realms/${realmPath}`;
+              amBase = `${amContext}/json/realms/root/${realmPath}`;
             }
           }
 
