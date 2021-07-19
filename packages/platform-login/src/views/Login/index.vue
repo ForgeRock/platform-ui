@@ -4,6 +4,14 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="min-vh-100 d-flex flex-column">
+    <div
+      v-if="journeyHeader && journeyLayout === 'card'"
+      class="w-100 d-flex justify-content-center"
+      id="appHeader">
+      <div class="d-flex flex-md-row py-4">
+        <p v-html="journeyHeader" />
+      </div>
+    </div>
     <FrCenterCard
       v-if="!journeyLayout || journeyLayout === 'card'"
       :logo-alt-text="logoAltText"
@@ -99,14 +107,19 @@ of the MIT license. See the LICENSE file for details. -->
       :class="[{'flex-row-reverse': journeyLayout === 'justified-right'}, 'd-flex w-100 flex-grow-1']">
       <div class="w-50 full-height d-md-flex align-items-start flex-column bg-white">
         <div
-          class="pb-4 px-4 px-md-5"
+          class="pb-4 px-4 px-md-5 w-100"
           data-testid="in-situ-logo-preview">
-          <div class="d-flex flex-fill flex-column justify-content-left w-100">
+          <div class="d-flex flex-fill justify-content-left w-100">
             <img
               class="fr-logo mt-4"
               :alt="logoAltText"
               :style="{ height: `${logoHeight}px` }"
               :src="logoPath">
+            <div
+              class="d-flex justify-content-center mt-4 w-100"
+              id="appHeader">
+              <p v-html="journeyHeader" />
+            </div>
           </div>
         </div>
         <div class="px-4 px-md-5 d-md-flex align-items-center w-100 flex-grow-1">
@@ -262,6 +275,10 @@ export default {
       type: String,
       default: '',
     },
+    journeyHeader: {
+      type: String,
+      default: '',
+    },
     journeyLayout: {
       type: String,
       default: 'card',
@@ -358,261 +375,6 @@ export default {
       const typeArr = this.step.getCallbacksOfType(FrCallbackType.HiddenValueCallback)
         .map((callback) => callback.getOutputByName('id', ''));
       return typeArr.indexOf(matcher) >= 0;
-    },
-
-    /**
-     * @description  Invokes WebAuthn registration or authentication
-     * @param {Number} type enum number that represents WebAuthn type WebAuthnStepType.Authentication or WebAuthnStepType.Registration
-     * @returns {Promise} SDK WebAuthn promise resolved when WebAuthn is completed
-     */
-    createWebAuthnCallbackPromise(type) {
-      if (type === WebAuthnStepType.Authentication) {
-        return FRWebAuthn.authenticate(this.step);
-      }
-      return FRWebAuthn.register(this.step);
-    },
-
-    /**
-     * @description gets field information
-     * @param {Object} callback specific step callback
-     * @param {Object} index callback index
-     * @returns {Object} field props needed for Field component
-     */
-    getField(callback, index) {
-      const callbackType = callback.getType();
-      const fieldType = callbackType === FrCallbackType.PasswordCallback || callbackType === FrCallbackType.ValidatedCreatePasswordCallback ? 'password' : 'string';
-
-      let label = '';
-      if (callback.getPrompt) {
-        label = callback.getPrompt();
-      } else if (callback.getOutputByName) {
-        try {
-          label = callback.getOutputByName('prompt').value;
-        } catch (e) {
-          noop();
-        }
-      }
-      return {
-        label,
-        fieldType,
-        name: `callback_${index}`,
-        value: callback.getInputValue(),
-      };
-    },
-
-    getTranslatePolicyFailures(callback) {
-      const failedPolicies = callback.getFailedPolicies
-        ? callback.getFailedPolicies()
-        : [];
-      return failedPolicies.map((policy) => {
-        const parsedPolicy = JSON.parse(policy);
-        return this.$t(`common.policyValidationMessages.${parsedPolicy.policyRequirement}`, parsedPolicy.params);
-      });
-    },
-
-    /**
-     * @description Used to get listeners for callback components
-     * @param {Object} properties object of any properties needed to have listners context
-     * @param {Array} listenerArray array of string names to populate component listners
-     * @returns {Object} returns object populated with specified listener functions
-     */
-
-    getListeners({ callback }, listenerArray = []) {
-      const listeners = {
-        'did-consent': (consent) => {
-          this.step.callbacks.forEach((callbackItem) => { callbackItem.setInputValue(consent); });
-        },
-        'disable-next-button': (bool, index) => {
-          this.nextButtonDisabledArray.splice(index, 1, bool);
-        },
-        'has-scripts': (appendScript) => {
-          this.showScriptElms = true;
-          // listen on body.appendchild and append to #body-append-el insted
-          const observer = new MutationObserver((records) => {
-            const nodeList = records[records.length - 1].addedNodes || [];
-            Array.prototype.forEach.call(nodeList, (node) => {
-              document.getElementById('body-append-el').appendChild(node);
-            });
-            observer.disconnect();
-          });
-          observer.observe(document.body, { childList: true });
-          // only hide next button if we know it should be hidden (webAuthn, deviceId)
-          if (this.backendScriptsIdsConatins('clientScriptOutputData')) {
-            this.nextButtonVisible = false;
-          }
-          setTimeout(() => {
-            this.$nextTick(appendScript);
-          }, 20);
-        },
-        'hide-next-button': (bool) => {
-          this.nextButtonVisible = !bool;
-        },
-        'hidden-value-callback-ref': (ref) => {
-          this.hiddenValueCallbacksRefs.push(ref);
-        },
-        'next-step-callback': (cb) => {
-          this.nextStepCallbacks.push(cb);
-        },
-        // event emited from FrField
-        input: (value) => {
-          if (callback && callback.setInputValue) {
-            callback.setInputValue(value);
-          }
-        },
-      };
-      return listenerArray.reduce((acc, listener) => ({ ...acc, [listener]: listeners[listener] }), {});
-    },
-
-    getStepParams() {
-      const stepParams = {
-        query: {},
-        tree: this.authIndexValue || this.$route.params.tree || undefined,
-        realmPath: this.realm,
-      };
-      // remove tree from stepParams when undefined
-      if (stepParams.tree === undefined || stepParams.tree === 'undefined') {
-        delete stepParams.tree;
-      }
-
-      if (this.suspendedId) {
-        stepParams.query.suspendedId = this.suspendedId;
-      } else {
-        const paramString = this.getCurrentQueryString();
-        const paramsObj = this.parseParameters(paramString);
-        const authIndexValue = find(paramsObj, (paramObject, key) => key === 'authIndexValue');
-        if (authIndexValue) {
-          paramsObj.authIndexValue = decodeURI(paramsObj.authIndexValue);
-        }
-
-        stepParams.query = paramsObj;
-        stepParams.query.code = this.code ? this.code : undefined;
-        stepParams.query.state = this.state ? this.state : undefined;
-        stepParams.query.scope = this.scope ? this.scope : undefined;
-        stepParams.query.goto = (paramsObj.goto) ? decodeURIComponent(paramsObj.goto) : undefined;
-        stepParams.query.gotoOnFail = (paramsObj.gotoOnFail) ? decodeURIComponent(paramsObj.gotoOnFail) : undefined;
-      }
-      // stepParams.query.realm never needs to be included. We are already sending stepParams.realmPath which is what the
-      // sdk uses to build the authenticate url ('/am/json/realms/root/realms/alpha/authenticate').
-      // When realm is included ('/am/json/realms/root/realms/alpha/authenticate?realm=/alpha') this can confuse
-      // some parts of am like SAML (see FRAAS-6573).
-      delete stepParams.query.realm;
-      return stepParams;
-    },
-    /**
-     * @description Gets callbacks needed for authentication when this.step is undefined, and submits callback values when
-     * this.step is defined. Then determines based on step.type what action to take.
-     */
-    nextStep(event, preventClear) {
-      if (event) {
-        event.preventDefault();
-      }
-      // for when no change is expected between steps (stops a flash of white from rerender)
-      if (!preventClear) {
-        this.loading = true;
-        this.showScriptElms = false;
-        this.hiddenValueCallbacksRefs = [];
-      }
-      this.loginFailure = false;
-
-      // invoke callbacks before nextStep
-      this.nextStepCallbacks.forEach((cb) => { cb(); });
-      this.nextStepCallbacks = [];
-
-      const stepParams = this.getStepParams();
-
-      // need to set validateOnly input to false for some callbacks in order to be able to advance the tree
-      if (this.step) {
-        const pwCallbacks = this.step.getCallbacksOfType('ValidatedCreatePasswordCallback');
-        if (pwCallbacks.length) {
-          pwCallbacks.forEach((cb) => {
-            cb.setInputValue(false, 1);
-          });
-        }
-      }
-
-      FRAuth.next(this.step, stepParams)
-        .then((step) => {
-          if (!this.initalStep) {
-            this.initalStep = cloneDeep(step);
-          }
-          const previousStep = this.step;
-          this.step = step;
-
-          // these step params only need to be sent one time
-          if (this.code || this.state || this.scope) {
-            this.code = undefined;
-            this.state = undefined;
-            this.scope = undefined;
-          }
-
-          switch (step.type) {
-            case 'LoginSuccess':
-              // If we have a session token, get user information
-              this.getIdFromSession()
-                .then(this.getUserInfo)
-                .then((userObj) => {
-                  let isAdmin = false;
-                  const rolesArray = userObj.data.roles;
-
-                  if (rolesArray.includes('ui-global-admin') || rolesArray.includes('ui-realm-admin')) {
-                    isAdmin = true;
-                  }
-                  return this.verifyGotoUrlAndRedirect(step.getSuccessUrl(), this.realm, isAdmin);
-                })
-                .then((res) => {
-                  window.location.href = res;
-                })
-                .catch(() => {
-                  // attempt to redirect user on failure
-                  this.verifyGotoUrlAndRedirect(step.getSuccessUrl(), this.realm, false)
-                    .then((res) => {
-                      window.location.href = res;
-                    });
-                });
-              break;
-            case 'LoginFailure':
-              this.loading = true;
-              if (this.retry && this.isSessionTimedOut(step.payload)) {
-                this.retry = false;
-                this.retryWithNewAuthId(previousStep, stepParams);
-              } else {
-                this.errorMessage = step.payload.message || this.$t('login.loginFailure');
-                this.redirectToFailure(step);
-                this.step = cloneDeep(this.initalStep);
-                this.retry = true;
-                if (this.step.callbacks) {
-                  this.componentList = [];
-                  this.buildTreeForm();
-                }
-                this.loading = false;
-              }
-              this.loginFailure = true;
-              break;
-            default:
-              // retry only when previous was undefined (first step)
-              this.retry = !previousStep;
-
-              // check if we are still polling with the same callbacks and set loading to false
-              if (preventClear && previousStep) {
-                const arrayLengthMatch = previousStep.callbacks.length === step.callbacks.length;
-                let sameCallbacks;
-                if (arrayLengthMatch) {
-                  sameCallbacks = previousStep.callbacks.every((prevCallback, i) => prevCallback.getType() === step.callbacks[i].getType());
-                }
-                this.loading = !(arrayLengthMatch && sameCallbacks);
-                this.showScriptElms = arrayLengthMatch && sameCallbacks;
-              }
-              // setup the form based on callback info/values obtained from this.step
-              this.buildTreeForm();
-              this.loading = false;
-              break;
-          }
-        },
-        () => {
-          this.errorMessage = this.$t('login.issueConnecting');
-          this.redirectToFailure(this.step);
-          this.loading = false;
-        });
     },
     buildTreeForm() {
       this.header = this.step.getHeader() || '';
@@ -751,101 +513,6 @@ export default {
       });
       this.componentList = componentList;
     },
-    /**
-     * Determine if there is a gotoOnFail parameter. If it exists, verify and redirect to that url or hash
-     * Redirect to failureUrl when it exists, and display login failure message if not
-     *
-     * @param {Object} step - callback metadata containing url of failure
-     */
-    redirectToFailure(step) {
-      const urlParams = new URLSearchParams(window.location.search);
-      const gotoOnFail = urlParams.get('gotoOnFail');
-
-      if (gotoOnFail) {
-        this.verifyGotoUrlAndRedirect(gotoOnFail, this.realm, false, true)
-          .then((res) => {
-            if (res && res.length) {
-              window.location.href = encodeURI(res);
-            } else if (has(step, 'payload.detail.failureUrl') && step.payload.detail.failureUrl.length) {
-              window.location.href = step.payload.detail.failureUrl;
-            }
-          })
-          .catch((error) => {
-            this.displayNotification('IDMMessages', 'error', error.response.data.message);
-          });
-      } else if (has(step, 'payload.detail.failureUrl') && step.payload.detail.failureUrl.length) {
-        window.location.href = step.payload.detail.failureUrl;
-      }
-    },
-    /**
-     * @description Returns boolean true if reentry cookie is set
-     * @returns {Boolean}
-     */
-    hasReentryToken() {
-      return !!document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('reentry='));
-    },
-    /**
-     * @description clears and sets the reentry cookie to be deleted
-     */
-    clearReentryToken() {
-      const date = new Date();
-      date.setTime(date.getTime() + (-1 * 24 * 60 * 60 * 1000));
-      document.cookie = `reentry="";expires="${date.toGMTString()}";path=/`;
-    },
-    /**
-     * @description Returns boolean true if payload has session timeout error code
-     * @param {Object} payload - step payload data
-     * @returns {Boolean}
-     */
-    isSessionTimedOut(payload) {
-      return payload.detail && payload.detail.errorCode === '110';
-    },
-    /**
-     * Retry a previously failed step with a new authId. The new authId is acquired by calling FRAuth.next with no step.
-     * Then a this.nextStep is called with the previously failed step and new authId
-     *
-     * @param {Object} previousStep - previous step data with prototype intact
-     * @param {Object} stepParams - step params
-     *
-     */
-    retryWithNewAuthId(previousStep, stepParams) {
-      FRAuth.next(undefined, stepParams)
-        .then((step) => {
-          const { authId } = step.payload;
-          this.step = previousStep;
-          if (has(this.step, 'payload')) {
-            this.step.payload.authId = authId;
-          }
-          this.nextStep();
-        });
-    },
-    /**
-     * @description If session storage has step information, extract it and clear session storage
-     * @returns {Object} two properties needed to resume tree: step and authIndex value
-     */
-    getStepFromStorage() {
-      const step = sessionStorage.getItem('step');
-      const authIndexValue = sessionStorage.getItem('authIndexValue');
-      const realm = sessionStorage.getItem('realm');
-      if (step !== null && authIndexValue !== null && realm !== null) {
-        sessionStorage.clear();
-        return { step: JSON.parse(step), authIndexValue, realm };
-      }
-      return { step: undefined, authIndexValue: undefined, realm: undefined };
-    },
-    removeUrlParams() {
-      // remove query params from the url
-      window.history.replaceState(null, null, window.location.pathname);
-      // if a tree is defined reset the hash to the proper tree
-      if (this.authIndexValue) {
-        window.location.hash = `service/${this.authIndexValue}`;
-      }
-    },
-    setRealm(config) {
-      this.realm = config ? config.data.realm : '/';
-    },
     // needs to happen before other query params are processed
     checkNewSession() {
       return new Promise((resolve) => {
@@ -858,6 +525,33 @@ export default {
           resolve();
         }
       });
+    },
+    checkNodeForThemeOverride(stageText) {
+      const regexp = /themeId=(\s*)(.*)(\s*)/g;
+      const match = regexp.exec(stageText);
+      if (match && match[2]) {
+        localStorage.setItem('theme-id', match[2]);
+      }
+      this.$emit('set-theme', this.realm, this.themeTree);
+    },
+    /**
+     * @description clears and sets the reentry cookie to be deleted
+     */
+    clearReentryToken() {
+      const date = new Date();
+      date.setTime(date.getTime() + (-1 * 24 * 60 * 60 * 1000));
+      document.cookie = `reentry="";expires="${date.toGMTString()}";path=/`;
+    },
+    /**
+     * @description  Invokes WebAuthn registration or authentication
+     * @param {Number} type enum number that represents WebAuthn type WebAuthnStepType.Authentication or WebAuthnStepType.Registration
+     * @returns {Promise} SDK WebAuthn promise resolved when WebAuthn is completed
+     */
+    createWebAuthnCallbackPromise(type) {
+      if (type === WebAuthnStepType.Authentication) {
+        return FRWebAuthn.authenticate(this.step);
+      }
+      return FRWebAuthn.register(this.step);
     },
     /**
      * @description Look at the url and see if we are returning to a tree from an Email Suspend Node or Redirect Callback.
@@ -954,13 +648,330 @@ export default {
         window.history.replaceState(null, null, `?realm=${this.realm}${stringParams}${hash}`);
       }
     },
-    checkNodeForThemeOverride(stageText) {
-      const regexp = /themeId=(\s*)(.*)(\s*)/g;
-      const match = regexp.exec(stageText);
-      if (match && match[2]) {
-        localStorage.setItem('theme-id', match[2]);
+    /**
+     * @description gets field information
+     * @param {Object} callback specific step callback
+     * @param {Object} index callback index
+     * @returns {Object} field props needed for Field component
+     */
+    getField(callback, index) {
+      const callbackType = callback.getType();
+      const fieldType = callbackType === FrCallbackType.PasswordCallback || callbackType === FrCallbackType.ValidatedCreatePasswordCallback ? 'password' : 'string';
+
+      let label = '';
+      if (callback.getPrompt) {
+        label = callback.getPrompt();
+      } else if (callback.getOutputByName) {
+        try {
+          label = callback.getOutputByName('prompt').value;
+        } catch (e) {
+          noop();
+        }
       }
-      this.$emit('set-theme', this.realm, this.themeTree);
+      return {
+        label,
+        fieldType,
+        name: `callback_${index}`,
+        value: callback.getInputValue(),
+      };
+    },
+    /**
+     * @description Used to get listeners for callback components
+     * @param {Object} properties object of any properties needed to have listners context
+     * @param {Array} listenerArray array of string names to populate component listners
+     * @returns {Object} returns object populated with specified listener functions
+     */
+    getListeners({ callback }, listenerArray = []) {
+      const listeners = {
+        'did-consent': (consent) => {
+          this.step.callbacks.forEach((callbackItem) => { callbackItem.setInputValue(consent); });
+        },
+        'disable-next-button': (bool, index) => {
+          this.nextButtonDisabledArray.splice(index, 1, bool);
+        },
+        'has-scripts': (appendScript) => {
+          this.showScriptElms = true;
+          // listen on body.appendchild and append to #body-append-el insted
+          const observer = new MutationObserver((records) => {
+            const nodeList = records[records.length - 1].addedNodes || [];
+            Array.prototype.forEach.call(nodeList, (node) => {
+              document.getElementById('body-append-el').appendChild(node);
+            });
+            observer.disconnect();
+          });
+          observer.observe(document.body, { childList: true });
+          // only hide next button if we know it should be hidden (webAuthn, deviceId)
+          if (this.backendScriptsIdsConatins('clientScriptOutputData')) {
+            this.nextButtonVisible = false;
+          }
+          setTimeout(() => {
+            this.$nextTick(appendScript);
+          }, 20);
+        },
+        'hide-next-button': (bool) => {
+          this.nextButtonVisible = !bool;
+        },
+        'hidden-value-callback-ref': (ref) => {
+          this.hiddenValueCallbacksRefs.push(ref);
+        },
+        'next-step-callback': (cb) => {
+          this.nextStepCallbacks.push(cb);
+        },
+        // event emited from FrField
+        input: (value) => {
+          if (callback && callback.setInputValue) {
+            callback.setInputValue(value);
+          }
+        },
+      };
+      return listenerArray.reduce((acc, listener) => ({ ...acc, [listener]: listeners[listener] }), {});
+    },
+    /**
+     * @description If session storage has step information, extract it and clear session storage
+     * @returns {Object} two properties needed to resume tree: step and authIndex value
+     */
+    getStepFromStorage() {
+      const step = sessionStorage.getItem('step');
+      const authIndexValue = sessionStorage.getItem('authIndexValue');
+      const realm = sessionStorage.getItem('realm');
+      if (step !== null && authIndexValue !== null && realm !== null) {
+        sessionStorage.clear();
+        return { step: JSON.parse(step), authIndexValue, realm };
+      }
+      return { step: undefined, authIndexValue: undefined, realm: undefined };
+    },
+    getStepParams() {
+      const stepParams = {
+        query: {},
+        tree: this.authIndexValue || this.$route.params.tree || undefined,
+        realmPath: this.realm,
+      };
+      // remove tree from stepParams when undefined
+      if (stepParams.tree === undefined || stepParams.tree === 'undefined') {
+        delete stepParams.tree;
+      }
+
+      if (this.suspendedId) {
+        stepParams.query.suspendedId = this.suspendedId;
+      } else {
+        const paramString = this.getCurrentQueryString();
+        const paramsObj = this.parseParameters(paramString);
+        const authIndexValue = find(paramsObj, (paramObject, key) => key === 'authIndexValue');
+        if (authIndexValue) {
+          paramsObj.authIndexValue = decodeURI(paramsObj.authIndexValue);
+        }
+
+        stepParams.query = paramsObj;
+        stepParams.query.code = this.code ? this.code : undefined;
+        stepParams.query.state = this.state ? this.state : undefined;
+        stepParams.query.scope = this.scope ? this.scope : undefined;
+        stepParams.query.goto = (paramsObj.goto) ? decodeURIComponent(paramsObj.goto) : undefined;
+        stepParams.query.gotoOnFail = (paramsObj.gotoOnFail) ? decodeURIComponent(paramsObj.gotoOnFail) : undefined;
+      }
+      // stepParams.query.realm never needs to be included. We are already sending stepParams.realmPath which is what the
+      // sdk uses to build the authenticate url ('/am/json/realms/root/realms/alpha/authenticate').
+      // When realm is included ('/am/json/realms/root/realms/alpha/authenticate?realm=/alpha') this can confuse
+      // some parts of am like SAML (see FRAAS-6573).
+      delete stepParams.query.realm;
+      return stepParams;
+    },
+    getTranslatePolicyFailures(callback) {
+      const failedPolicies = callback.getFailedPolicies
+        ? callback.getFailedPolicies()
+        : [];
+      return failedPolicies.map((policy) => {
+        const parsedPolicy = JSON.parse(policy);
+        return this.$t(`common.policyValidationMessages.${parsedPolicy.policyRequirement}`, parsedPolicy.params);
+      });
+    },
+    /**
+     * @description Returns boolean true if reentry cookie is set
+     * @returns {Boolean}
+     */
+    hasReentryToken() {
+      return !!document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('reentry='));
+    },
+    /**
+     * @description Returns boolean true if payload has session timeout error code
+     * @param {Object} payload - step payload data
+     * @returns {Boolean}
+     */
+    isSessionTimedOut(payload) {
+      return payload.detail && payload.detail.errorCode === '110';
+    },
+    /**
+     * @description Gets callbacks needed for authentication when this.step is undefined, and submits callback values when
+     * this.step is defined. Then determines based on step.type what action to take.
+     */
+    nextStep(event, preventClear) {
+      if (event) {
+        event.preventDefault();
+      }
+      // for when no change is expected between steps (stops a flash of white from rerender)
+      if (!preventClear) {
+        this.loading = true;
+        this.showScriptElms = false;
+        this.hiddenValueCallbacksRefs = [];
+      }
+      this.loginFailure = false;
+
+      // invoke callbacks before nextStep
+      this.nextStepCallbacks.forEach((cb) => { cb(); });
+      this.nextStepCallbacks = [];
+
+      const stepParams = this.getStepParams();
+
+      // need to set validateOnly input to false for some callbacks in order to be able to advance the tree
+      if (this.step) {
+        const pwCallbacks = this.step.getCallbacksOfType('ValidatedCreatePasswordCallback');
+        if (pwCallbacks.length) {
+          pwCallbacks.forEach((cb) => {
+            cb.setInputValue(false, 1);
+          });
+        }
+      }
+
+      FRAuth.next(this.step, stepParams)
+        .then((step) => {
+          if (!this.initalStep) {
+            this.initalStep = cloneDeep(step);
+          }
+          const previousStep = this.step;
+          this.step = step;
+
+          // these step params only need to be sent one time
+          if (this.code || this.state || this.scope) {
+            this.code = undefined;
+            this.state = undefined;
+            this.scope = undefined;
+          }
+
+          switch (step.type) {
+            case 'LoginSuccess':
+              // If we have a session token, get user information
+              this.getIdFromSession()
+                .then(this.getUserInfo)
+                .then((userObj) => {
+                  let isAdmin = false;
+                  const rolesArray = userObj.data.roles;
+
+                  if (rolesArray.includes('ui-global-admin') || rolesArray.includes('ui-realm-admin')) {
+                    isAdmin = true;
+                  }
+                  return this.verifyGotoUrlAndRedirect(step.getSuccessUrl(), this.realm, isAdmin);
+                })
+                .then((res) => {
+                  window.location.href = res;
+                })
+                .catch(() => {
+                  // attempt to redirect user on failure
+                  this.verifyGotoUrlAndRedirect(step.getSuccessUrl(), this.realm, false)
+                    .then((res) => {
+                      window.location.href = res;
+                    });
+                });
+              break;
+            case 'LoginFailure':
+              this.loading = true;
+              if (this.retry && this.isSessionTimedOut(step.payload)) {
+                this.retry = false;
+                this.retryWithNewAuthId(previousStep, stepParams);
+              } else {
+                this.errorMessage = step.payload.message || this.$t('login.loginFailure');
+                this.redirectToFailure(step);
+                this.step = cloneDeep(this.initalStep);
+                this.retry = true;
+                if (this.step.callbacks) {
+                  this.componentList = [];
+                  this.buildTreeForm();
+                }
+                this.loading = false;
+              }
+              this.loginFailure = true;
+              break;
+            default:
+              // retry only when previous was undefined (first step)
+              this.retry = !previousStep;
+
+              // check if we are still polling with the same callbacks and set loading to false
+              if (preventClear && previousStep) {
+                const arrayLengthMatch = previousStep.callbacks.length === step.callbacks.length;
+                let sameCallbacks;
+                if (arrayLengthMatch) {
+                  sameCallbacks = previousStep.callbacks.every((prevCallback, i) => prevCallback.getType() === step.callbacks[i].getType());
+                }
+                this.loading = !(arrayLengthMatch && sameCallbacks);
+                this.showScriptElms = arrayLengthMatch && sameCallbacks;
+              }
+              // setup the form based on callback info/values obtained from this.step
+              this.buildTreeForm();
+              this.loading = false;
+              break;
+          }
+        },
+        () => {
+          this.errorMessage = this.$t('login.issueConnecting');
+          this.redirectToFailure(this.step);
+          this.loading = false;
+        });
+    },
+    /**
+     * Determine if there is a gotoOnFail parameter. If it exists, verify and redirect to that url or hash
+     * Redirect to failureUrl when it exists, and display login failure message if not
+     *
+     * @param {Object} step - callback metadata containing url of failure
+     */
+    redirectToFailure(step) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const gotoOnFail = urlParams.get('gotoOnFail');
+
+      if (gotoOnFail) {
+        this.verifyGotoUrlAndRedirect(gotoOnFail, this.realm, false, true)
+          .then((res) => {
+            if (res && res.length) {
+              window.location.href = encodeURI(res);
+            } else if (has(step, 'payload.detail.failureUrl') && step.payload.detail.failureUrl.length) {
+              window.location.href = step.payload.detail.failureUrl;
+            }
+          })
+          .catch((error) => {
+            this.displayNotification('IDMMessages', 'error', error.response.data.message);
+          });
+      } else if (has(step, 'payload.detail.failureUrl') && step.payload.detail.failureUrl.length) {
+        window.location.href = step.payload.detail.failureUrl;
+      }
+    },
+    removeUrlParams() {
+      // remove query params from the url
+      window.history.replaceState(null, null, window.location.pathname);
+      // if a tree is defined reset the hash to the proper tree
+      if (this.authIndexValue) {
+        window.location.hash = `service/${this.authIndexValue}`;
+      }
+    },
+    /**
+     * Retry a previously failed step with a new authId. The new authId is acquired by calling FRAuth.next with no step.
+     * Then a this.nextStep is called with the previously failed step and new authId
+     *
+     * @param {Object} previousStep - previous step data with prototype intact
+     * @param {Object} stepParams - step params
+     *
+     */
+    retryWithNewAuthId(previousStep, stepParams) {
+      FRAuth.next(undefined, stepParams)
+        .then((step) => {
+          const { authId } = step.payload;
+          this.step = previousStep;
+          if (has(this.step, 'payload')) {
+            this.step.payload.authId = authId;
+          }
+          this.nextStep();
+        });
+    },
+    setRealm(config) {
+      this.realm = config ? config.data.realm : '/';
     },
   },
 };

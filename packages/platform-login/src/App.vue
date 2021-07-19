@@ -15,6 +15,7 @@ of the MIT license. See the LICENSE file for details. -->
         mode="out-in">
         <RouterView
           :journey-footer="journeyFooter"
+          :journey-header="journeyHeader"
           :journey-layout="journeyLayout"
           :logo-alt-text="logoAltText"
           :logo-height="logoHeight"

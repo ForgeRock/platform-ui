@@ -23,6 +23,7 @@ export default {
         favicon: '',
         journeyFooter: `<span class="pr-1">© ${new Date().getFullYear()}</span>
 <a href="#" target="_blank" class="text-body">My Company, Inc</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Privacy Policy</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Terms & Conditions</a>`,
+        journeyHeader: '',
         journeyLayout: 'card',
         linkActiveColor: '#0c85cf',
         linkColor: '#109cf1',
@@ -45,6 +46,7 @@ export default {
       },
       favicon: '',
       journeyFooter: '',
+      journeyHeader: '',
       journeyLayout: 'card',
       logoHeight: '40',
       logoProfileHeight: '40',
@@ -107,6 +109,7 @@ export default {
           this.theme = theme;
           this.favicon = theme.favicon;
           this.journeyFooter = theme.journeyFooter;
+          this.journeyHeader = theme.journeyHeader;
           this.journeyLayout = theme.journeyLayout;
           this.logo = theme.logo || placeholderImage;
           this.logoAltText = theme.logoAltText;
