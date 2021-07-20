@@ -9,21 +9,21 @@ describe('Login View', () => {
   const userName = Cypress.env('AM_USERNAME');
   const password = Cypress.env('AM_PASSWORD');
   beforeEach(() => {
-    cy.visit(`${Cypress.config().baseUrl}/login/?realm=/#/`);
+    cy.visit(`${Cypress.config().baseUrl}/am/XUI/?realm=/#/`);
   });
 
-  it('location should be at login', () => {
+  it('location should be at /am/XUI', () => {
     cy.get('.fr-center-card').find('.fr-logo').should('be.visible');
     cy.location().should((location) => {
-      expect(location.href).to.eq(`${Cypress.config().baseUrl}/login/?realm=/#/`);
+      expect(location.href).to.eq(`${Cypress.config().baseUrl}/am/XUI/?realm=/#/`);
       expect(location.host).to.eq(Cypress.env('FQDN'));
       expect(location.hostname).to.eq(Cypress.env('FQDN'));
       expect(location.origin).to.eq(`${Cypress.config().baseUrl}`);
-      expect(location.pathname).to.eq('/login/');
+      expect(location.pathname).to.eq('/am/XUI/');
       expect(location.port).to.eq('');
       expect(location.protocol).to.eq('https:');
     });
-    cy.url().should('eq', `${Cypress.config().baseUrl}/login/?realm=/#/`);
+    cy.url().should('eq', `${Cypress.config().baseUrl}/am/XUI/?realm=/#/`);
   });
 
   it('should fail login with incorrect credentials', () => {
@@ -47,7 +47,7 @@ describe('Login View', () => {
       .should('have.value', password);
     cy.findByRole('button', { name: 'Next' }).click();
     cy.location().should((location) => {
-      expect(location.href).to.not.eq(`${Cypress.config().baseUrl}/login/?realm=/#/`);
+      expect(location.href).to.not.eq(`${Cypress.config().baseUrl}/am/XUI/?realm=/#/`);
     });
   });
 });
