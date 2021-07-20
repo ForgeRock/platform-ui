@@ -8,7 +8,7 @@
 import { random } from 'lodash';
 
 describe('Registration form', () => {
-  const locationUrl = `${Cypress.config().baseUrl}/login/?realm=/&authIndexType=service&authIndexValue=Registration#/`;
+  const locationUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=/&authIndexType=service&authIndexValue=Registration#/`;
   const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
 
   beforeEach(() => {
