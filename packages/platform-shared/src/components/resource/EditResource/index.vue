@@ -574,9 +574,11 @@ export default {
     /**
      * Triggers clearing sessions for the resource, shows a notification based on the result,
      * closes the modal and refreshes resource data
+     *
+     * @returns {Promise} a promise which resolves when the session has been cleared
      */
     clearSessionsAndCloseModal() {
-      clearSessions(this.id)
+      return clearSessions(this.id)
         .then(() => {
           this.displayNotification('AdminMessage', 'success', this.$t('clearSessionsModal.successClearingSessions'));
         }, (err) => {
