@@ -966,10 +966,10 @@
     debug "^3.1.0"
     lodash.once "^4.1.1"
 
-"@forgerock/javascript-sdk@2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@forgerock/javascript-sdk/-/javascript-sdk-2.2.0.tgz"
-  integrity sha512-wCczG7BI0BdQHIydO8T26VDrjaPme+xvUmlYh2cQH7Gwfl+6Dm2EcaRVGwM/eOJyj621NBs1ovixl6yJ9KhzwQ==
+"@forgerock/javascript-sdk@3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@forgerock/javascript-sdk/-/javascript-sdk-3.0.0.tgz#0d6e3e7776eddfdbc404eec59f9bc3ccd007d7d4"
+  integrity sha512-wPveEsfi0Mp7lK6vISx0sB4Ok0OlCB9i3qKpybO2a73Xua+R9gHjRAYsACd2Pw6cXgOyNGfS+sbRV2FpcgIpbg==
 
 "@hapi/address@2.x.x":
   version "2.1.4"
