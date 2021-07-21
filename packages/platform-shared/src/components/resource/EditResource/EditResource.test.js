@@ -52,10 +52,6 @@ describe('EditResource.vue', () => {
     });
   });
 
-  afterEach(() => {
-    wrapper = null;
-  });
-
   it('EditResource page loaded', () => {
     expect(wrapper.name()).toBe('EditResource');
   });
@@ -146,23 +142,27 @@ describe('EditResource.vue', () => {
     it('calls the API clearSessions method and displays a notification when clearing sessions is successful', async () => {
       const displayNotificationSpy = jest.spyOn(wrapper.vm, 'displayNotification');
       const clearSpy = jest.spyOn(SessionsApi, 'clearSessions').mockImplementation(() => Promise.resolve());
+      const refreshDataSpy = jest.spyOn(wrapper.vm, 'refreshData').mockImplementation(() => {});
       jest.spyOn(SchemaApi, 'getSchema').mockImplementation(() => Promise.resolve());
 
       await wrapper.vm.clearSessionsAndCloseModal();
 
       expect(clearSpy).toHaveBeenCalled();
       expect(displayNotificationSpy).toHaveBeenCalled();
+      expect(refreshDataSpy).toHaveBeenCalled();
     });
 
     it('calls the API clearSessions method and displays an error notification when clearing sessions is not successful', async () => {
       const showErrorSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
       const clearSpy = jest.spyOn(SessionsApi, 'clearSessions').mockImplementation(() => Promise.reject());
+      const refreshDataSpy = jest.spyOn(wrapper.vm, 'refreshData').mockImplementation(() => {});
       jest.spyOn(SchemaApi, 'getSchema').mockImplementation(() => Promise.resolve());
 
       await wrapper.vm.clearSessionsAndCloseModal();
 
       expect(clearSpy).toHaveBeenCalled();
       expect(showErrorSpy).toHaveBeenCalled();
+      expect(refreshDataSpy).toHaveBeenCalled();
     });
   });
 });
