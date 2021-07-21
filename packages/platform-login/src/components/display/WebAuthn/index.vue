@@ -60,10 +60,6 @@ export default {
       .then(() => {
         this.$emit('next-step');
       }).catch(() => {
-        // remove setting input value when SDK handles the error correctly
-        const HiddenValueCallback = this.step.getCallbacksOfType(CallbackType.HiddenValueCallback);
-        HiddenValueCallback[0].setInputValue('ERROR::NotAllowedError: The operation either timed out or was not allowed. See: https://www.w3.org/TR/webauthn-2/#sctn-privacy-considerations-client.');
-        // remove end
         const hasRecoveryCodeOption = !!this.step.getCallbacksOfType(CallbackType.ConfirmationCallback).length;
         if (hasRecoveryCodeOption) {
           this.webAuthnCanceled = true;
