@@ -4,125 +4,134 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="min-vh-100 d-flex flex-column">
-    <div
-      v-if="journeyHeader && journeyLayout === 'card'"
-      class="w-100 d-flex justify-content-center"
+    <template
+      v-if="journeyHeaderEnabled && journeyHeader && (journeyLayout === 'card' || journeyTheaterMode)"
       id="appHeader">
-      <div class="d-flex flex-md-row py-4">
-        <p v-html="journeyHeader" />
-      </div>
-    </div>
-    <FrCenterCard
-      v-if="!journeyLayout || journeyLayout === 'card'"
-      :logo-alt-text="logoAltText"
-      :logo-height="logoHeight"
-      :logo-path="logoPath"
-      :show-logo="true">
-      <template #center-card-header>
-        <div v-if="!loading">
-          <h1
-            v-if="header"
-            class="h2">
-            {{ header }}
-          </h1>
-          <p
-            v-if="description"
-            class="text-center mb-0"
-            v-html="description" />
-        </div>
-      </template>
-
-      <template #center-card-body>
-        <BCardBody
-          v-show="!loading"
-          id="callbacksPanel">
-          <FrAlert
-            :show="loginFailure"
-            :dismissible="false"
-            variant="error"
-            class="p-3 text-left">
-            {{ errorMessage }}
-          </FrAlert>
-          <div id="body-append-el">
-            <!-- for backend scripts -->
-            <form
-              @submit.prevent="nextStep"
-              id="wrapper"
-            >
-              <!-- needed for GetAuthenticationApp, RecoveryCodeDisplay-->
-              <template v-if="showScriptElms">
-                <div>
-                  <fieldset />
-                </div>
-                <div id="callback_0" />
-              </template>
-              <template
-                v-for="(component) in componentList ">
-                <Component
-                  class="callback-component"
-                  :callback="component.callback"
-                  :index="component.index"
-                  :is="component.type"
-                  :key="component.key"
-                  :step="step"
-                  v-bind="{...component.callbackSpecificProps}"
-                  v-on="{
-                    'next-step': (event, preventClear) => {
-                      nextStep(event, preventClear);
-                    },
-                    ...component.listeners}"
-                />
-              </template>
-              <BButton
-                v-if="nextButtonVisible"
-                class="btn-block mt-3"
-                type="submit"
-                variant="primary"
-                :disabled="nextButtonDisabled"
-                @click="nextStep">
-                {{ buttonTextLocalized }}
-              </BButton>
-              <input
-                v-if="showScriptElms"
-                id="loginButton_0"
-                role="button"
-                type="submit"
-                @click.prevent="backendScriptsHandler"
-                hidden>
-            </form>
-          </div>
-        </BCardBody>
-        <BCardBody v-show="loading">
-          <div class="h-100 d-flex">
-            <div class="fr-center-card">
-              <Spinner class="mb-4" />
+      <div v-html="journeyHeader" />
+    </template>
+    <BRow
+      v-if="!journeyLayout || journeyLayout === 'card' || journeyTheaterMode"
+      :class="[{'flex-row-reverse': journeyLayout === 'justified-right'}, 'align-items-center m-0 flex-grow-1']">
+      <BCol :lg="journeyLayout !== 'card' ? 6 : 12">
+        <FrCenterCard
+          :logo-alt-text="logoAltText"
+          :logo-height="logoHeight"
+          :logo-path="logoPath"
+          :show-logo="true">
+          <template #center-card-header>
+            <div v-if="!loading">
+              <h1
+                v-if="header"
+                class="h2">
+                {{ header }}
+              </h1>
+              <p
+                v-if="description"
+                class="text-center mb-0"
+                v-html="description" />
             </div>
-          </div>
-        </BCardBody>
-      </template>
-    </FrCenterCard>
+          </template>
+
+          <template #center-card-body>
+            <BCardBody
+              v-show="!loading"
+              id="callbacksPanel">
+              <FrAlert
+                :show="loginFailure"
+                :dismissible="false"
+                variant="error"
+                class="p-3 text-left">
+                {{ errorMessage }}
+              </FrAlert>
+              <div id="body-append-el">
+                <!-- for backend scripts -->
+                <form
+                  @submit.prevent="nextStep"
+                  id="wrapper">
+                  <!-- needed for GetAuthenticationApp, RecoveryCodeDisplay-->
+                  <template v-if="showScriptElms">
+                    <div>
+                      <fieldset />
+                    </div>
+                    <div id="callback_0" />
+                  </template>
+                  <template
+                    v-for="(component) in componentList ">
+                    <Component
+                      class="callback-component"
+                      :callback="component.callback"
+                      :index="component.index"
+                      :is="component.type"
+                      :key="component.key"
+                      :step="step"
+                      v-bind="{...component.callbackSpecificProps}"
+                      v-on="{
+                        'next-step': (event, preventClear) => {
+                          nextStep(event, preventClear);
+                        },
+                        ...component.listeners}" />
+                  </template>
+                  <BButton
+                    v-if="nextButtonVisible"
+                    class="btn-block mt-3"
+                    type="submit"
+                    variant="primary"
+                    :disabled="nextButtonDisabled"
+                    @click="nextStep">
+                    {{ buttonTextLocalized }}
+                  </BButton>
+                  <input
+                    v-if="showScriptElms"
+                    id="loginButton_0"
+                    role="button"
+                    type="submit"
+                    @click.prevent="backendScriptsHandler"
+                    hidden>
+                </form>
+              </div>
+            </BCardBody>
+            <BCardBody v-show="loading">
+              <div class="h-100 d-flex">
+                <div class="fr-center-card">
+                  <Spinner class="mb-4" />
+                </div>
+              </div>
+            </BCardBody>
+          </template>
+        </FrCenterCard>
+      </BCol>
+      <BCol
+        v-if="journeyLayout !== 'card' && journeyJustifiedContentEnabled"
+        class="d-none d-lg-block"
+        lg="6">
+        <div
+          v-html="journeyJustifiedContent"
+          class="d-flex justify-content-center" />
+      </BCol>
+    </BRow>
     <div
       v-else
       id="callbacksPanel"
       :class="[{'flex-row-reverse': journeyLayout === 'justified-right'}, 'd-flex w-100 flex-grow-1']">
-      <div class="w-50 full-height d-md-flex align-items-start flex-column bg-white">
+      <div class="w-md-50 w-100 d-flex align-items-start flex-column bg-white">
         <div
           class="pb-4 px-4 px-md-5 w-100"
           data-testid="in-situ-logo-preview">
-          <div class="d-flex flex-fill justify-content-left w-100">
+          <div class="d-flex">
             <img
               class="fr-logo mt-4"
               :alt="logoAltText"
               :style="{ height: `${logoHeight}px` }"
               :src="logoPath">
             <div
-              class="d-flex justify-content-center mt-4 w-100"
+              v-if="journeyHeaderEnabled"
+              class="flex-grow-1"
               id="appHeader">
-              <p v-html="journeyHeader" />
+              <div v-html="journeyHeader" />
             </div>
           </div>
         </div>
-        <div class="px-4 px-md-5 d-md-flex align-items-center w-100 flex-grow-1">
+        <div class="px-4 px-md-5 d-flex align-items-center w-100 flex-grow-1">
           <div class="w-100">
             <h2 class="mb-5">
               {{ $t('common.signIn') }}
@@ -184,20 +193,23 @@ of the MIT license. See the LICENSE file for details. -->
           </div>
         </div>
         <div
-          class="d-flex justify-content-center py-4 w-100"
+          v-if="journeyFooterEnabled && journeyFooter"
+          class="w-100"
           id="appFooter">
-          <p v-html="journeyFooter" />
+          <div v-html="journeyFooter" />
         </div>
       </div>
-    </div>
-    <div
-      v-if="journeyFooter && journeyLayout === 'card'"
-      class="w-100"
-      id="appFooter">
-      <div class="d-flex flex-column flex-md-row justify-content-center align-items-center py-4">
-        <p v-html="journeyFooter" />
+      <div class="overflow-hidden w-md-50 d-none d-md-flex">
+        <div
+          v-html="journeyJustifiedContent"
+          class="d-flex w-100 justify-content-center align-self-center" />
       </div>
     </div>
+    <template
+      v-if="journeyFooterEnabled && journeyFooter && (journeyLayout === 'card' || journeyTheaterMode)"
+      id="appFooter">
+      <div v-html="journeyFooter" />
+    </template>
   </div>
 </template>
 
@@ -212,6 +224,7 @@ import {
 import {
   BButton,
   BCardBody,
+  BCol,
   BRow,
 } from 'bootstrap-vue';
 import {
@@ -244,6 +257,7 @@ export default {
   components: {
     BButton,
     BCardBody,
+    BCol,
     BRow,
     FrAlert,
     FrCenterCard,
@@ -275,9 +289,29 @@ export default {
       type: String,
       default: '',
     },
+    journeyFooterEnabled: {
+      type: Boolean,
+      default: false,
+    },
     journeyHeader: {
       type: String,
       default: '',
+    },
+    journeyHeaderEnabled: {
+      type: Boolean,
+      default: false,
+    },
+    journeyTheaterMode: {
+      type: Boolean,
+      default: false,
+    },
+    journeyJustifiedContent: {
+      type: String,
+      default: '',
+    },
+    journeyJustifiedContentEnabled: {
+      type: Boolean,
+      default: false,
     },
     journeyLayout: {
       type: String,
@@ -992,7 +1026,9 @@ export default {
   }
 }
 
-#appFooter {
-  bottom: 0;
+@media (min-width: 768px) {
+  .w-md-50 {
+    width: 50% !important;
+  }
 }
 </style>

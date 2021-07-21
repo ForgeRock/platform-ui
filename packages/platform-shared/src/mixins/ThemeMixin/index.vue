@@ -15,15 +15,21 @@ export default {
   data() {
     return {
       defaultThemeParams: {
-        accountFooter: `<span class="pr-1">© ${new Date().getFullYear()}</span>
-<a href="#" target="_blank" class="text-body">My Company, Inc</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Privacy Policy</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Terms & Conditions</a>`,
+        accountFooter: `<div class="d-flex justify-content-center py-4 w-100"><span class="pr-1">© ${new Date().getFullYear()}</span>
+<a href="#" target="_blank" class="text-body">My Company, Inc</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Privacy Policy</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Terms & Conditions</a></div>`,
+        accountFooterEnabled: false,
         backgroundColor: '#f6f8fa',
         backgroundImage: '',
         buttonRounded: 5,
         favicon: '',
-        journeyFooter: `<span class="pr-1">© ${new Date().getFullYear()}</span>
-<a href="#" target="_blank" class="text-body">My Company, Inc</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Privacy Policy</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Terms & Conditions</a>`,
-        journeyHeader: '',
+        journeyFooter: `<div class="d-flex justify-content-center py-4 w-100"><span class="pr-1">© ${new Date().getFullYear()}</span>
+<a href="#" target="_blank" class="text-body">My Company, Inc</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Privacy Policy</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Terms & Conditions</a></div>`,
+        journeyFooterEnabled: false,
+        journeyHeader: '<div class="d-flex justify-content-center py-4 flex-grow-1">Header Content</div>',
+        journeyHeaderEnabled: false,
+        journeyTheaterMode: false,
+        journeyJustifiedContent: '',
+        journeyJustifiedContentEnabled: false,
         journeyLayout: 'card',
         linkActiveColor: '#0c85cf',
         linkColor: '#109cf1',
@@ -42,11 +48,18 @@ export default {
         profileBackgroundColor: '#f6f8fa',
         profileMenuHighlightColor: '#e4f4fd',
         profileMenuTextHighlightColor: '#455469',
+        profileMenuHoverColor: '#109cf1',
+        profileMenuHoverTextColor: '#ffffff',
         textColor: '#ffffff',
       },
       favicon: '',
       journeyFooter: '',
+      journeyFooterEnabled: false,
       journeyHeader: '',
+      journeyHeaderEnabled: false,
+      journeyTheaterMode: false,
+      journeyJustifiedContent: '',
+      journeyJustifiedContentEnabled: false,
       journeyLayout: 'card',
       logoHeight: '40',
       logoProfileHeight: '40',
@@ -109,7 +122,12 @@ export default {
           this.theme = theme;
           this.favicon = theme.favicon;
           this.journeyFooter = theme.journeyFooter;
+          this.journeyFooterEnabled = theme.journeyFooterEnabled;
           this.journeyHeader = theme.journeyHeader;
+          this.journeyHeaderEnabled = theme.journeyHeaderEnabled;
+          this.journeyTheaterMode = theme.journeyTheaterMode;
+          this.journeyJustifiedContent = theme.journeyJustifiedContent;
+          this.journeyJustifiedContentEnabled = theme.journeyJustifiedContentEnabled;
           this.journeyLayout = theme.journeyLayout;
           this.logo = theme.logo || placeholderImage;
           this.logoAltText = theme.logoAltText;

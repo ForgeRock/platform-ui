@@ -40,7 +40,7 @@ describe('Enduser Theming', () => {
     cy.findByRole('cell', { name: 'Starter Theme' }).click();
 
     changeColour(/^Link Color/, '16FF96');
-    changeColour(/^Link Active Color/, '123123');
+    changeColour(/^Link Hover Color/, '123123');
     changeColour(/^Enduser Background Color/, 'FFFFFF');
     changeColour(/^Menu Active Color/, '123123');
     changeColour(/^Menu Active Text Color/, '16FF96');

@@ -54,7 +54,7 @@ export default {
   },
   computed: {
     accountFooter() {
-      if (this.theme) {
+      if (this.theme && this.theme.accountFooterEnabled) {
         return this.theme.accountFooter;
       }
       return '';

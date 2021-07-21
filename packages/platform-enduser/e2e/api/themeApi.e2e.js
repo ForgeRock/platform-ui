@@ -22,6 +22,10 @@ export function setBaseTheme(accessToken = Cypress.env('ACCESS_TOKEN').access_to
       realm: {
         '/': [
           {
+            accountFooter: '',
+            accountFooterEnabled: false,
+            accountHeader: '',
+            accountHeaderEnabled: false,
             accountPageSections: {
               personalInformation: { enabled: true },
               accountSecurity: {
@@ -57,8 +61,12 @@ export function setBaseTheme(accessToken = Cypress.env('ACCESS_TOKEN').access_to
             primaryColor: '#109cf1',
             primaryOffColor: '#0c85cf',
             profileBackgroundColor: '#ffffff',
+            profileFooter: '',
+            profileFooterEnabled: false,
             profileMenuHighlightColor: '#e4f4fd',
             profileMenuTextHighlightColor: '#455469',
+            profileMenuHoverColor: '#109cf1',
+            profileMenuHoverTextColor: '#ffffff',
             textColor: '#ffffff',
             name: 'Starter Theme',
             isDefault: true,

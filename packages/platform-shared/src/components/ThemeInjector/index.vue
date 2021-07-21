@@ -12,7 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
       background-color: {{ backgroundColor }};
       }
 
-      body.fr-body-image {
+      .fr-body-image {
       background-image: url('{{ theme.backgroundImage }}');
       background-size: cover;
       background-repeat: no-repeat;
@@ -46,12 +46,34 @@ of the MIT license. See the LICENSE file for details. -->
       color: {{ theme.linkActiveColor }};
       }
 
-      .btn-link {
+      .btn-link,
+      .nav-link {
       color: {{ theme.linkColor }};
       }
 
-      .btn-link:hover {
+      .btn-link:hover,
+      .nav-link:hover {
       color: {{ theme.linkActiveColor }};
+      }
+
+      body {
+      color: {{ theme.bodyText }};
+      }
+
+      .text-body {
+      color: {{ theme.bodyText }} !important;
+      }
+
+      .text-muted {
+      color: {{ theme.secondaryColor }} !important;
+      }
+
+      .text-danger {
+      color: {{ theme.dangerColor }} !important;
+      }
+
+      h1 {
+      color: {{ theme.pageTitle }};
       }
 
       .btn-primary:focus {
@@ -79,6 +101,17 @@ of the MIT license. See the LICENSE file for details. -->
       background-color: {{ theme.primaryColor }};
       }
 
+      #app .fr-sidebar-menuitems li a,
+      #app .fr-sidebar-menuitems li button {
+      outline-color: {{ theme.primaryColor }};
+      }
+
+      #app .fr-sidebar-menuitems li a:hover,
+      #app .fr-sidebar-menuitems li button:hover {
+      background-color: {{ theme.profileMenuHoverColor }};
+      color: {{ theme.profileMenuHoverTextColor }};
+      }
+
       #app .router-link-active {
       background-color: {{ theme.profileMenuHighlightColor }};
       color: {{ theme.profileMenuTextHighlightColor }};
@@ -86,20 +119,8 @@ of the MIT license. See the LICENSE file for details. -->
       }
 
       #app .router-link-active:hover {
-      background-color: {{ theme.profileMenuHighlightColor }};
-      color: {{ theme.profileMenuTextHighlightColor }};
-      }
-
-      #app .fr-sidebar-menuitems li a,
-      #app .fr-sidebar-menuitems li button {
-      outline-color: {{ theme.primaryColor }};
-      color: inherit;
-      }
-
-      #app .fr-sidebar-menuitems li a:hover,
-      #app .fr-sidebar-menuitems li button:hover {
-      background-color: {{ theme.primaryColor }};
-      color: {{ theme.profileMenuTextHighlightColor }};
+      background-color: {{ theme.profileMenuHoverColor }};
+      color: {{ theme.profileMenuHoverTextColor }};
       }
 
       #app .fr-sidebar-brand:hover {
@@ -141,6 +162,8 @@ primaryOffColor: "#B20710"
 profileBackgroundColor: "#D2CBCB"
 profileMenuHighlightAccentColor: "#B20710"
 profileMenuHighlightColor: "#E50914"
+profileMenuHoverColor: '#109cf1',
+profileMenuHoverTextColor: '#ffffff',
 
  */
 /**
