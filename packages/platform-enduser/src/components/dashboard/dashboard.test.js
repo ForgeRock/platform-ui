@@ -15,6 +15,8 @@ const localVue = createLocalVue();
 localVue.use(Vuex);
 localVue.use(BootstrapVue);
 
+Dashboard.mounted = jest.fn();
+
 describe('Dashboard.vue', () => {
   it('Dashboard page loaded', () => {
     const store = new Vuex.Store({
