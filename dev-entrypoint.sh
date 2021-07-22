@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Copyright 2019-2021 ForgeRock AS. All Rights Reserved
 #
@@ -15,5 +15,12 @@ export VUE_APP_BUILD_DATE_TIME="$(date +%s)"
 
 cd /home/app/packages/$1
 sed -i 's!\\!!g' .env
+
+if [[ -v SUBFOLDER ]]; then
+    echo "Hosting under $SUBFOLDER"
+
+    sed -i "s!const SUBFOLDER = '\./';!const SUBFOLDER = '/$SUBFOLDER/';!g" vue.config.js
+fi
+
 echo "Starting dev server"
 yarn run dev
