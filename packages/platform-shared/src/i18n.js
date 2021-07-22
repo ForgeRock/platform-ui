@@ -26,14 +26,6 @@ function loadLocaleMessages() {
   return messages;
 }
 
-Vue.mixin({
-  methods: {
-    translationExists(path) {
-      return this.$t(path) !== path;
-    },
-  },
-});
-
 export default new VueI18n({
   locale: process.env.VUE_APP_I18N_LOCALE || 'en',
   fallbackLocale: process.env.VUE_APP_I18N_FALLBACK_LOCALE || 'en',
