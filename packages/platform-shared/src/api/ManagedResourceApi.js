@@ -55,3 +55,8 @@ export function postManagedResource(resourceName, data) {
   const resourceUrl = `/managed/${resourceName}?_action=create`;
   return generateIdmApi().post(resourceUrl, data);
 }
+
+export function getLinkedApplications(resourceName, userId) {
+  const resourceUrl = `/sync?_action=getLinkedResources&resourceName=managed/${resourceName}/${userId}`;
+  return generateIdmApi().post(resourceUrl);
+}
