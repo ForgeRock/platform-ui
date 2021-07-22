@@ -9,6 +9,7 @@ import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
 import * as SessionsApi from '@/api/SessionsApi';
 import * as SchemaApi from '@/api/SchemaApi';
+import * as ManagedResourceApi from '@/api/ManagedResourceApi';
 import EditResource from './index';
 
 const localVue = createLocalVue();
@@ -319,5 +320,158 @@ describe('EditResource.vue', () => {
     await wrapper.vm.deleteResource();
     expect(hideSpy).toHaveBeenCalled();
     expect(notificationSpy).toHaveBeenCalledWith('IDMMessages', 'success', undefined);
+  });
+
+  describe('linked applications', () => {
+    it('Only loads linked applications for openidm-admins', async () => {
+      const linkedSpy = jest.spyOn(ManagedResourceApi, 'getLinkedApplications').mockImplementation(() => Promise.resolve());
+
+      wrapper.vm.isOpenidmAdmin = false;
+      await wrapper.vm.loadLinkedApplicationsData();
+      expect(linkedSpy).not.toHaveBeenCalled();
+
+      wrapper.vm.isOpenidmAdmin = true;
+      await wrapper.vm.loadLinkedApplicationsData();
+      expect(linkedSpy).toHaveBeenCalled();
+    });
+
+    it('Extracts the linked application name in a human readable format', async () => {
+      jest.spyOn(SchemaApi, 'getSchema').mockImplementation(() => Promise.resolve(
+        {
+          data: {
+            properties: {},
+            connectorRef: {
+              displayName: '',
+            },
+          },
+        },
+      ));
+      const apps = [
+        { resourceName: 'system/ConnectorName/__ACCOUNT__/user', content: {} },
+      ];
+      await wrapper.vm.formatLinkedApplications(apps);
+      const appName = wrapper.vm.linkedApplications[0].name;
+      expect(appName).toEqual('ConnectorName');
+    });
+
+    it('Extracts the linked application type from connectorRef using displayName if it exists', async () => {
+      jest.spyOn(SchemaApi, 'getSchema').mockImplementation(() => Promise.resolve(
+        {
+          data: {
+            properties: {},
+            connectorRef: {
+              displayName: 'TestType',
+            },
+          },
+        },
+      ));
+      const apps = [
+        { resourceName: 'system/ConnectorName/__ACCOUNT__/user', content: {} },
+      ];
+      await wrapper.vm.formatLinkedApplications(apps);
+      let appConnectorType = wrapper.vm.linkedApplications[0].connectorType;
+      expect(appConnectorType).toEqual('TestType');
+
+      jest.spyOn(SchemaApi, 'getSchema').mockImplementation(() => Promise.resolve(
+        {
+          data: {
+            properties: {},
+            connectorRef: {
+              connectorName: 'Test2Type',
+            },
+          },
+        },
+      ));
+
+      await wrapper.vm.formatLinkedApplications(apps);
+      appConnectorType = wrapper.vm.linkedApplications[0].connectorType;
+      expect(appConnectorType).toEqual('Test2Type');
+    });
+
+    it('Gets the image for a linked application if it exists, and sets a default if not', () => {
+      const ldapImg = 'ldap.svg';
+      const defaultImg = 'database.svg';
+      const connectorType = 'org.identityconnectors.ldap.LdapConnector';
+      let result = wrapper.vm.getLinkedAppImg(connectorType);
+      expect(result).toEqual(ldapImg);
+
+      result = wrapper.vm.getLinkedAppImg('test-for-default');
+      expect(result).toBeTruthy();
+      expect(result).toEqual(defaultImg);
+    });
+
+    it('Sets linked application property names, value and types', async () => {
+      jest.spyOn(SchemaApi, 'getSchema').mockImplementation(() => Promise.resolve(
+        {
+          data: {
+            properties: {
+              username: {
+                type: 'string',
+                nativeName: 'username',
+              },
+              tel: {
+                type: 'integer',
+                nativeName: 'telephone',
+              },
+            },
+            connectorRef: {
+              displayName: '',
+            },
+          },
+        },
+      ));
+      const apps = [
+        {
+          resourceName: 'system/ConnectorName/__ACCOUNT__/user',
+          content: {
+            username: 'testuser',
+            tel: 123456,
+          },
+        },
+      ];
+      await wrapper.vm.formatLinkedApplications(apps);
+      expect(wrapper.vm.linkedApplications[0].data[0].name).toEqual('username');
+      expect(wrapper.vm.linkedApplications[0].data[0].type).toEqual('string');
+      expect(wrapper.vm.linkedApplications[0].data[0].value).toEqual('testuser');
+      expect(wrapper.vm.linkedApplications[0].data[1].name).toEqual('telephone');
+      expect(wrapper.vm.linkedApplications[0].data[1].type).toEqual('integer');
+      expect(wrapper.vm.linkedApplications[0].data[1].value).toEqual(123456);
+    });
+
+    it('Ignores any linked application properties that do not have an associated schema or neccessary schema properties', async () => {
+      jest.spyOn(SchemaApi, 'getSchema').mockImplementation(() => Promise.resolve(
+        {
+          data: {
+            properties: {
+              testProp1: {
+                type: 'string',
+              },
+              testProp2: {
+                nativeName: 'testprop2',
+              },
+              testProp3: {
+                nativeName: 'testprop3-ignored',
+                type: 'string',
+              },
+            },
+            connectorRef: {
+              displayName: '',
+            },
+          },
+        },
+      ));
+      const apps = [
+        {
+          resourceName: 'system/ConnectorName/__ACCOUNT__/user',
+          content: {
+            testProp1: 'Ignored',
+            testProp2: 'Ignored',
+            ignored: 'I should be ignored',
+          },
+        },
+      ];
+      await wrapper.vm.formatLinkedApplications(apps);
+      expect(wrapper.vm.linkedApplications[0].data.length).toBeFalsy();
+    });
   });
 });

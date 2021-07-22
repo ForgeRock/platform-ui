@@ -257,6 +257,7 @@
   "pages": {
     "access": {
       "addPrivileges": "Add Privileges",
+      "applications": "Applications",
       "editPrivilege": "Edit Privilege",
       "password": "Password",
       "noFields": "No Fields Available",
@@ -480,6 +481,10 @@
         "subtitle": "Control how your data is shared with third parties.",
         "title": "Personal Data Sharing"
       }
+    },
+    "linkedApplications": {
+      "noLinkedApplicationsFound": "No Linked Applications found.",
+      "errorRetrievingLinkedApplications": "There was an error retrieving linked applications."
     },
     "notFound": {
       "pageNotFound": "Page Not Found",
