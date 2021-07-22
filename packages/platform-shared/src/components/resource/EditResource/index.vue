@@ -133,6 +133,9 @@ of the MIT license. See the LICENSE file for details. -->
             :resource-path="`${resourceType}/${resourceName}/${id}`"
             :revision="revision"
             @refresh-data="refreshData" />
+          <LinkedApplicationsTab
+            v-if="isOpenidmAdmin"
+            :linked-applications="linkedApplications" />
           <FrJsonTab
             v-if="isOpenidmAdmin && jsonString"
             :json-string="jsonString" />
@@ -229,6 +232,8 @@ import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import { clearSessions, getSessionInfo } from '@forgerock/platform-shared/src/api/SessionsApi';
 import ClearResourceSessions from '@forgerock/platform-shared/src/components/resource/ClearResourceSessions';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import { getLinkedApplications } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
+import LinkedApplicationsTab from '@forgerock/platform-shared/src/components/resource/EditResource/CustomTabs/LinkedApplicationsTab';
 import FrObjectTypeEditor from './ObjectTypeEditor';
 import FrSettingsTab from './CustomTabs/SettingsTab';
 import FrPrivilegesTab from './CustomTabs/PrivilegesTab';
@@ -262,6 +267,7 @@ export default {
     BCard,
     BModal,
     FrClearResourceSessions: ClearResourceSessions,
+    LinkedApplicationsTab,
   },
   mixins: [
     ResourceMixin,
@@ -306,6 +312,18 @@ export default {
       hasActiveSessions: false,
       showClearSessionsModal: false,
       clearSessionsName: '',
+      linkedApplications: [],
+      linkedAppImgMap: {
+        default: 'database.svg',
+        'org.forgerock.openicf.csvfile.CSVFileConnector': 'csv.svg',
+        'org.forgerock.openicf.connectors.kerberos.KerberosConnector': 'kerberos.svg',
+        'org.identityconnectors.ldap.LdapConnector': 'ldap.svg',
+        'org.forgerock.openicf.connectors.salesforce.SalesforceConnector': 'salesforce.svg',
+        'org.forgerock.openicf.connectors.scim.ScimConnector': 'scim.svg',
+        'org.forgerock.openicf.connectors.scriptedrest.ScriptedRESTConnector': 'scripted.svg',
+        'org.forgerock.openicf.connectors.scriptedsql.ScriptedSQLConnector': 'scripted.svg',
+        'org.forgerock.openicf.connectors.ssh.SSHConnector': 'ssh.svg',
+      },
     };
   },
   mounted() {
@@ -348,10 +366,75 @@ export default {
         }).catch((error) => {
           this.displayNotification('IDMMessages', 'error', error.response.data.message);
         });
+
+        this.loadLinkedApplicationsData();
       }))
         .catch((error) => {
           this.displayNotification('IDMMessages', 'error', error.response.data.message);
         });
+    },
+    loadLinkedApplicationsData() {
+      // Only get linked applications for users with openidm-admin permissions
+      if (this.isOpenidmAdmin) {
+        return getLinkedApplications(this.resourceName, this.id).then((result) => {
+          this.formatLinkedApplications(result.data);
+        })
+          .catch((error) => {
+            this.showErrorMessage(error, this.$t('errors.errorRetrievingLinkedApplications'));
+          });
+      }
+      return Promise.resolve();
+    },
+    formatLinkedApplications(applications) {
+      this.linkedApplications = [];
+      const promises = [];
+      applications.forEach((app) => {
+        promises.push(getSchema(app.resourceName));
+      });
+
+      return Promise.all(promises).then((responses) => {
+        responses.forEach((result, index) => {
+          const app = applications[index];
+          // app.resourceName looks like system/ConnectorName/__ACCOUNT__/user.
+          // Get the connectors name from between the first and second '/'.
+          app.name = app.resourceName.split('/')[1]; // eslint-disable-line
+          app.schema = result.data.properties;
+          const ref = result.data.connectorRef;
+          // Name here refers to the connectors type, not it's name.
+          // Display name is nicely formatted but it doesn't exist on all
+          // connectors so fall back to using connectorName
+          if (ref.displayName) {
+            app.connectorType = ref.displayName;
+          } else if (ref.connectorName) {
+            const split = ref.connectorName.split('.');
+            app.connectorType = split[split.length - 1];
+          }
+          app.image = this.getLinkedAppImg(ref.connectorName);
+          // Build an array of the connectors data by combining each of it's
+          // properties names, types and values from app.content and app.schema.
+          app.data = [];
+          Object.keys(app.content).forEach((key) => {
+            if (app.schema[key] && app.schema[key].nativeName
+                && app.content[key] && app.schema[key].type) {
+              const prop = {};
+              prop.name = app.schema[key].nativeName;
+              prop.value = app.content[key];
+              prop.type = app.schema[key].type;
+              prop.itemsType = app.schema[key].items ? app.schema[key].items.type : null;
+              // VuePrismEditor expects a json string so if the property is an
+              // object stringify it before passing it along
+              if (prop.type === 'object' || (prop.type === 'array' && prop.itemsType === 'object')) {
+                prop.value = JSON.stringify(prop.value, null, 2);
+              }
+              app.data.push(prop);
+            }
+          });
+          this.linkedApplications.push(app);
+        });
+      });
+    },
+    getLinkedAppImg(connectorType) {
+      return this.linkedAppImgMap[connectorType] ? this.linkedAppImgMap[connectorType] : this.linkedAppImgMap.default;
     },
     buildResourceUrl() {
       let url = `${this.resourceType}/${this.resourceName}/${this.id}?_fields=*`;
