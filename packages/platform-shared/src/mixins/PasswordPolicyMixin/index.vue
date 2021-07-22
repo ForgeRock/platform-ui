@@ -5,9 +5,13 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { getConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
+import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 
 export default {
   name: 'PasswordPolicyMixin',
+  mixins: [
+    TranslationMixin,
+  ],
   data() {
     return {
       lowerSet: 'abcdefghijklmnopqrstuvwxyz',
