@@ -1,10 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="row text-left mb-2">
     <div class="col-1">
@@ -25,15 +22,20 @@ of the MIT license. See the LICENSE file for details.
       <label
         class="ml-2"
         :for="'boolean_callback_' + index">
-        {{ callback.getPrompt() }}
+        {{ getTranslation(callback.getPrompt()) }}
       </label>
     </div>
   </div>
 </template>
 
 <script>
+import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
+
 export default {
   name: 'BooleanAttributeInputCallback',
+  mixins: [
+    TranslationMixin,
+  ],
   props: {
     callback: {
       type: Object,
