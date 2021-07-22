@@ -15,12 +15,16 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 <script>
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 
 export default {
   name: 'ChoiceCallback',
   components: {
     FrField,
   },
+  mixins: [
+    TranslationMixin,
+  ],
   props: {
     callback: {
       type: Object,
@@ -32,7 +36,7 @@ export default {
     },
   },
   mounted() {
-    const choices = this.callback.getChoices();
+    const choices = this.getTranslation(this.callback.getChoices());
     this.selected.options = choices.map((item, itemIndex) => ({
       text: item,
       value: itemIndex,
@@ -42,7 +46,7 @@ export default {
     return {
       selected: {
         name: `callback_${this.index}`,
-        label: this.callback.getPrompt(),
+        label: this.getTranslation(this.callback.getPrompt()),
         value: this.callback.getDefaultChoice(),
         options: [],
       },

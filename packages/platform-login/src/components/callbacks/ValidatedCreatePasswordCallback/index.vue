@@ -23,6 +23,7 @@ import { FRAuth, CallbackType } from '@forgerock/javascript-sdk';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import PolicyPanel from '@forgerock/platform-shared/src/components/PolicyPanel';
 import PasswordPolicyMixin from '@forgerock/platform-shared/src/mixins/PasswordPolicyMixin';
+import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import {
   cloneDeep,
   debounce,
@@ -42,6 +43,7 @@ export default {
   },
   mixins: [
     PasswordPolicyMixin,
+    TranslationMixin,
   ],
   props: {
     /**
@@ -79,7 +81,7 @@ export default {
       failuresForField: [],
       failuresForPanel: [],
       password: {
-        label: this.callback.getPrompt(),
+        label: this.getTranslation(this.callback.getPrompt()),
         value: '',
       },
       policies: [],
