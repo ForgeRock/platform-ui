@@ -21,10 +21,22 @@ function generateTheme() {
   return variableLoad;
 }
 
+const SUBFOLDER = './';
 module.exports = {
-  publicPath: './',
+  publicPath: SUBFOLDER,
   runtimeCompiler: true,
   devServer: {
+    before: (app) => {
+      if (SUBFOLDER !== './') {
+        app.get(SUBFOLDER.replace(/\/$/, '$'), (req, res) => {
+          res.redirect(SUBFOLDER);
+        });
+      } else {
+        app.all((req, res, next) => {
+          next();
+        });
+      }
+    },
     disableHostCheck: true,
     host: process.env.HOST || '0.0.0.0',
     port: process.env.DEV_PORT || 8083,
