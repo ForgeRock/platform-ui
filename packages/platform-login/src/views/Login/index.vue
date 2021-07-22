@@ -41,7 +41,7 @@ of the MIT license. See the LICENSE file for details. -->
                 :dismissible="false"
                 variant="error"
                 class="p-3 text-left">
-                {{ errorMessage }}
+                {{ getTranslation(errorMessage) }}
               </FrAlert>
               <div id="body-append-el">
                 <!-- for backend scripts -->
@@ -141,7 +141,7 @@ of the MIT license. See the LICENSE file for details. -->
               :dismissible="false"
               variant="error"
               class="p-3 text-left">
-              {{ errorMessage }}
+              {{ getTranslation(errorMessage) }}
             </FrAlert>
             <div id="body-append-el">
               <!-- for backend scripts -->
@@ -242,6 +242,7 @@ import FrAlert from '@forgerock/platform-shared/src/components/Alert';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 
 const FrCallbackType = {
   ...CallbackType,
@@ -334,6 +335,7 @@ export default {
     NotificationMixin,
     RestMixin,
     LoginMixin,
+    TranslationMixin,
   ],
   data() {
     return {

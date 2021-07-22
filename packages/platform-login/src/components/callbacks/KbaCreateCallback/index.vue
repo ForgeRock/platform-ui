@@ -65,6 +65,7 @@ import {
 import { BFormSelect } from 'bootstrap-vue';
 import { ValidationObserver } from 'vee-validate';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 
 export default {
   name: 'KbaCreateCallback',
@@ -73,6 +74,9 @@ export default {
     ValidationObserver,
     FrField,
   },
+  mixins: [
+    TranslationMixin,
+  ],
   props: {
     callback: {
       type: Object,
@@ -111,7 +115,7 @@ export default {
     loadOptions() {
       const placeholder = { value: null, text: this.callback.getPrompt(), disabled: true };
       const customQuestionOption = { value: 'custom', text: this.$t('login.kba.custom'), disabled: false };
-      const predefinedQuestions = this.callback.getPredefinedQuestions();
+      const predefinedQuestions = this.getTranslation(this.callback.getPredefinedQuestions());
       // Add the placeholder to the first element in the question options
       // then add any predefined question
       // then add custom question option to the list of questions
