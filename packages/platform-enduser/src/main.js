@@ -224,11 +224,11 @@ const addAppAuth = () => {
         opUrl: commonSettings.authorizationEndpoint,
         subject: claims.sub,
         invalidSessionHandler() {
-          window.logout(false);
+          window.logout(false, true);
         },
         sessionClaimsHandler(newClaims) {
           if (claims.auth_time !== newClaims.auth_time || claims.realm !== newClaims.realm) {
-            this.invalidSessionHandler();
+            window.logout(false);
           }
           /**
            * Check that the originalLoginRealm session variable is set.
@@ -269,7 +269,7 @@ const addAppAuth = () => {
   );
 
   // trigger logout from anywhere in the SPA by calling this global function
-  window.logout = (clearHash = true) => {
+  window.logout = (clearHash = true, invalidSession = false) => {
     const loginRealm = sessionStorage.getItem('originalLoginRealm');
     /**
      * If there is an originalLoginRealm and that realm is different from the current realm
@@ -283,7 +283,12 @@ const addAppAuth = () => {
     if (clearHash) window.location.hash = '';
 
     AppAuthHelper.logout().then(() => {
-      if (postLogoutUrlClaim) {
+      /**
+       * If there is a postLogoutUrlClaim and the logout button was clicked (clearHash === true)
+       * or this is an invalid session (invalidSession === true) redirect to postLogoutUrlClaim.
+       * Otherwise reload the page.
+       */
+      if (postLogoutUrlClaim && (clearHash || invalidSession)) {
         window.location.href = postLogoutUrlClaim;
       } else {
         window.location.reload();
