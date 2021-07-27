@@ -166,15 +166,16 @@ export default {
     }),
   },
   mounted() {
-    this.getAllSocialAccounts();
-    this.getSocialJourney();
+    this.getSocialJourney().then(() => {
+      this.getAllSocialAccounts();
+    });
   },
   methods: {
     /**
      * Get the name of the journey used to connect social accounts
      */
     getSocialJourney() {
-      this.getRequestService({ context: 'AM' }).get('/selfservice/trees').then((res) => {
+      return this.getRequestService({ context: 'AM' }).get('/selfservice/trees').then((res) => {
         this.connectSocialTree = res.data.mapping.connectSocial;
       }, (error) => {
         this.showErrorMessage(error, this.$t('pages.profile.social.journeyServiceError'));
