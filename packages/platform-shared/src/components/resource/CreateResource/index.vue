@@ -94,54 +94,34 @@ of the MIT license. See the LICENSE file for details. -->
         </BRow>
 
         <template v-slot:modal-footer>
-          <div
-            v-if="steps.length"
-            class="w-100">
-            <div class="float-left w-50 text-left">
-              <BButton
-                v-if="stepIndex >= 0"
-                @click="loadPreviousStep"
-                variant="link">
-                {{ $t('common.previous') }}
-              </BButton>
-            </div>
-            <div class="float-right w-50 text-right">
-              <BButton
-                variant="link"
-                @click="hideModal">
-                {{ $t('common.cancel') }}
-              </BButton>
-              <BButton
-                v-if="!isLastStep"
-                @click="loadNextStep"
-                variant="primary"
-                :disabled="invalid">
-                {{ $t('common.next') }}
-              </BButton>
-              <FrButtonWithSpinner
-                v-if="isLastStep"
-                :button-text="$t('common.save')"
-                :disabled="formFields.length === 0 || invalid || isSaving"
-                :show-spinner="isSaving"
-                :spinner-text="$t('common.saving')"
-                type="submit"
-                @click="saveForm" />
-            </div>
-          </div>
-          <div v-else>
+          <div class="flex-grow-1">
             <BButton
-              variant="link"
-              @click="hideModal">
-              {{ $t('common.cancel') }}
+              v-if="stepIndex >= 0"
+              @click="loadPreviousStep"
+              variant="link">
+              {{ $t('common.previous') }}
             </BButton>
-            <FrButtonWithSpinner
-              :button-text="$t('common.save')"
-              :disabled="formFields.length === 0 || invalid || (passwordValue !== '' && !passwordValid) || isSaving"
-              :show-spinner="isSaving"
-              :spinner-text="$t('common.saving')"
-              type="submit"
-              @click="saveForm" />
           </div>
+          <BButton
+            variant="link"
+            @click="hideModal">
+            {{ $t('common.cancel') }}
+          </BButton>
+          <BButton
+            v-if="!isLastStep"
+            @click="loadNextStep"
+            variant="primary"
+            :disabled="invalid">
+            {{ $t('common.next') }}
+          </BButton>
+          <FrButtonWithSpinner
+            v-if="isLastStep || !steps.length"
+            :button-text="$t('common.save')"
+            :disabled="formFields.length === 0 || invalid || (passwordValue !== '' && !passwordValid) || isSaving"
+            :show-spinner="isSaving"
+            :spinner-text="$t('common.saving')"
+            type="submit"
+            @click="saveForm" />
         </template>
       </BModal>
     </slot>
