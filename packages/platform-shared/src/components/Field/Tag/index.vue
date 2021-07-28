@@ -12,6 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
     :validation="validation"
     :validation-immediate="validationImmediate">
     <BFormTags
+      @click.native="$refs.input.focus()"
       v-model="inputValue"
       v-on="$listeners"
       add-on-change
@@ -21,20 +22,14 @@ of the MIT license. See the LICENSE file for details. -->
       :id="id">
       <template v-slot="{ tags, inputAttrs, inputHandlers, removeTag }">
         <ul
-          class="overflow-hidden pl-0"
-          @click="$refs.input.focus()"
+          class="overflow-hidden pl-0 mb-0"
           :id="`fr-tags-list_${id}`">
-          <label
-            v-if="inputValue.length"
-            class="text-secondary w-100"
-          >
-            {{ fieldName }}
-          </label>
           <Draggable
             v-model="inputValue"
             class="d-flex flex-wrap w-100"
             ghost-class="ghost-tag">
             <div
+              v-b-tooltip="{ title: tag, delay: { show: 1500, hide: 0 } }"
               v-for="tag in tags"
               body-class="py-1 pr-2 text-nowrap"
               class="fr-tag"
@@ -69,7 +64,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import { cloneDeep, isEqual } from 'lodash';
-import { BFormTags } from 'bootstrap-vue';
+import { BFormTags, VBTooltip } from 'bootstrap-vue';
 import Draggable from 'vuedraggable';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
@@ -83,6 +78,9 @@ export default {
     BFormTags,
     Draggable,
     FrInputLayout,
+  },
+  directives: {
+    'b-tooltip': VBTooltip,
   },
   data() {
     return {
@@ -179,10 +177,6 @@ export default {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-
-    &:hover {
-      overflow: auto;
-    }
   }
 }
 </style>
