@@ -42,7 +42,7 @@ Vue.component('ValidationObserver', ValidationObserver);
 
 VueSanitize.defaults.allowedAttributes['*'] = ['class', 'style', 'data-testid'];
 VueSanitize.defaults.allowedAttributes.img.push('height');
-VueSanitize.defaults.allowedTags = [...VueSanitize.defaults.allowedTags, 'style', 'img'];
+VueSanitize.defaults.allowedTags = [...VueSanitize.defaults.allowedTags, 'img'];
 Vue.use(VueSanitize);
 
 setInteractionMode('passive');
