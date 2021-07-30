@@ -30,7 +30,6 @@ of the MIT license. See the LICENSE file for details. -->
                 </h1>
                 <p
                   v-if="description"
-                  class="text-center mb-0"
                   v-html="description" />
               </div>
             </template>
@@ -105,7 +104,7 @@ of the MIT license. See the LICENSE file for details. -->
         </BCol>
         <BCol
           v-if="journeyLayout !== 'card' && journeyJustifiedContentEnabled"
-          class="d-none d-lg-block"
+          class="d-none d-lg-block p-0"
           lg="6">
           <div
             v-html="sanitizedContent"
@@ -137,61 +136,75 @@ of the MIT license. See the LICENSE file for details. -->
           </div>
         </div>
         <div class="px-4 px-md-5 d-flex align-items-center w-100 flex-grow-1">
-          <div class="w-100">
-            <FrAlert
-              :show="loginFailure"
-              :dismissible="false"
-              variant="error"
-              class="p-3 text-left">
-              {{ getTranslation(errorMessage) }}
-            </FrAlert>
-            <div id="body-append-el">
-              <!-- for backend scripts -->
-              <form
-                @submit.prevent="nextStep"
-                id="wrapper">
-                <!-- needed for GetAuthenticationApp, RecoveryCodeDisplay-->
-                <template v-if="showScriptElms">
-                  <div>
-                    <fieldset />
-                  </div>
-                  <div id="callback_0" />
-                </template>
-                <template
-                  v-for="(component) in componentList ">
-                  <Component
-                    class="callback-component"
-                    :callback="component.callback"
-                    :index="component.index"
-                    :is="component.type"
-                    :key="component.key"
-                    :step="step"
-                    v-bind="{...component.callbackSpecificProps}"
-                    v-on="{
-                      'next-step': (event, preventClear) => {
-                        nextStep(event, preventClear);
-                      },
-                      ...component.listeners}"
-                  />
-                </template>
-                <BButton
-                  v-if="nextButtonVisible"
-                  class="btn-block mt-3"
-                  type="submit"
-                  variant="primary"
-                  :disabled="nextButtonDisabled"
-                  @click="nextStep">
-                  {{ buttonTextLocalized }}
-                </BButton>
-                <input
-                  v-if="showScriptElms"
-                  id="loginButton_0"
-                  role="button"
-                  type="submit"
-                  @click.prevent="backendScriptsHandler"
-                  hidden>
-              </form>
-            </div>
+          <div class="w-100 max-width-600">
+            <BRow class="m-0">
+              <BCol xl="9">
+                <div v-if="!loading">
+                  <h1
+                    v-if="header"
+                    class="display-4 mb-5">
+                    {{ header }}
+                  </h1>
+                  <p
+                    v-if="description"
+                    v-html="description" />
+                </div>
+                <FrAlert
+                  :show="loginFailure"
+                  :dismissible="false"
+                  variant="error"
+                  class="p-3 text-left">
+                  {{ getTranslation(errorMessage) }}
+                </FrAlert>
+                <div id="body-append-el">
+                  <!-- for backend scripts -->
+                  <form
+                    @submit.prevent="nextStep"
+                    id="wrapper">
+                    <!-- needed for GetAuthenticationApp, RecoveryCodeDisplay-->
+                    <template v-if="showScriptElms">
+                      <div>
+                        <fieldset />
+                      </div>
+                      <div id="callback_0" />
+                    </template>
+                    <template
+                      v-for="(component) in componentList ">
+                      <Component
+                        class="callback-component"
+                        :callback="component.callback"
+                        :index="component.index"
+                        :is="component.type"
+                        :key="component.key"
+                        :step="step"
+                        v-bind="{...component.callbackSpecificProps}"
+                        v-on="{
+                          'next-step': (event, preventClear) => {
+                            nextStep(event, preventClear);
+                          },
+                          ...component.listeners}"
+                      />
+                    </template>
+                    <BButton
+                      v-if="nextButtonVisible"
+                      class="btn-block mt-3"
+                      type="submit"
+                      variant="primary"
+                      :disabled="nextButtonDisabled"
+                      @click="nextStep">
+                      {{ buttonTextLocalized }}
+                    </BButton>
+                    <input
+                      v-if="showScriptElms"
+                      id="loginButton_0"
+                      role="button"
+                      type="submit"
+                      @click.prevent="backendScriptsHandler"
+                      hidden>
+                  </form>
+                </div>
+              </BCol>
+            </BRow>
           </div>
         </div>
         <div
@@ -1042,6 +1055,10 @@ export default {
 
   .hide-polling-spinner ~ .polling-spinner-container {
     display: none;
+  }
+
+  .max-width-600 {
+    max-width: 600px;
   }
 }
 
