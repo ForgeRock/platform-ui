@@ -8,6 +8,22 @@
 import axios from 'axios';
 import { merge } from 'lodash';
 
+export function setLocales(i18n, localeString) {
+  if (!localeString.length || !i18n) {
+    return;
+  }
+
+  const locales = localeString.split(',');
+  // first locale is the primary locale
+  i18n.locale = locales.shift();
+
+  if (locales.length) {
+    // fallback locale must at least have en
+    if (i18n.locale !== 'en' && !locales.includes('en')) locales.push('en');
+    i18n.fallbackLocale = locales;
+  }
+}
+
 /**
  * Merge message overrides into the provided i18n instance
  *

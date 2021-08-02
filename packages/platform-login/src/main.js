@@ -18,7 +18,7 @@ import {
 import { setInteractionMode } from 'vee-validate';
 import axios from 'axios';
 import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
-import overrideTranslations from '@forgerock/platform-shared/src/utils/overrideTranslations';
+import overrideTranslations, { setLocales } from '@forgerock/platform-shared/src/utils/overrideTranslations';
 import VueSanitize from 'vue-sanitize';
 import i18n from './i18n';
 import router from './router';
@@ -69,8 +69,26 @@ const startApp = () => {
     headers: {},
   });
 
+  // check for locale query parameter
+  const urlSearchParams = new URLSearchParams(window.location.search);
+  const localeString = urlSearchParams.get('locale');
+  if (localeString) {
+    setLocales(i18n, localeString);
+
+    // set request header for requests made by sdk
+    const languageMiddleware = (req, action, next) => {
+      req.init.headers['accept-language'] = localeString;
+      next();
+    };
+
+    // add middleware to existing sdk config
+    Config.set(Config.get({
+      middleware: [languageMiddleware],
+    }));
+  }
+
   idmInstance.get('/info/uiconfig').then((uiConfig) => {
-    if (uiConfig.data.configuration.lang) {
+    if (uiConfig.data.configuration.lang && !i18n.locale) {
       i18n.locale = uiConfig.data.configuration.lang;
     }
   })
