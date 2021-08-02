@@ -120,12 +120,13 @@
     "profile": "Profile"
   },
   "pageTitles": {
+    "Dashboard": "Dashboard",
+    "EditResource": "Edit Resource",
+    "Forbidden": "Forbidden",
+    "ListResource": "List Resource",
+    "NotFound": "Not Found",
     "pageTitle": "Platform Enduser - {page}",
     "Profile": "Profile",
-    "ListResource": "List Resource",
-    "EditResource": "Edit Resource",
-    "Dashboard": "Dashboard",
-    "Sharing": "Sharing",
-    "Forbidden": "Forbidden"
+    "Sharing": "Sharing"
   } 
 }

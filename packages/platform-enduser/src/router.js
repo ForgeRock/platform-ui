@@ -91,6 +91,7 @@ const router = new Router({
     },
     {
       path: '*',
+      name: 'NotFound',
       component: () => import('@forgerock/platform-shared/src/views/NotFound'),
       meta: { hideToolbar: true },
     },
