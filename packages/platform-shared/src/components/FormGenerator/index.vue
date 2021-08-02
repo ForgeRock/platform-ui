@@ -27,7 +27,6 @@ import {
   get,
   isArray,
   isEmpty,
-  isObject,
   isString,
   isNumber,
   isBoolean,
@@ -88,43 +87,32 @@ export default {
         const modelIsArrayElement = formField.model.endsWith('[0]');
         const modelName = modelIsArrayElement ? formField.model.substring(0, formField.model.length - 3) : formField.model;
         const schemaObj = assign(get(clonedSchema, modelName), formField);
-        const modelObj = isObject(get(clonedModel, modelName)) ? assign(get(clonedModel, modelName), formField) : get(clonedModel, modelName);
+        const modelObj = get(clonedModel, modelName);
+        const modelValue = isString(modelObj) ? modelObj : modelObj?.value;
 
         if (schemaObj.required) {
           formField.required = schemaObj.required;
         }
 
-        if (modelObj) {
-          // make sure all formField have render types
-          if (!has(formField, 'type')) {
-            formField.type = schemaObj.type || 'string';
-          }
+        // make sure all formField have render types
+        if (!has(formField, 'type')) {
+          formField.type = schemaObj.type || 'string';
+        }
 
-          // assign current values
-          if (formField.type === 'array') {
-            formField.arrayType = schemaObj.arrayType;
+        // assign current values
+        formField.value = this.getFieldValue(modelValue, formField.type, modelIsArrayElement);
 
-            if (schemaObj.arrayType === 'addMany') {
-              formField.value = modelObj.value;
-              formField.options = modelObj.value;
-            } else if (schemaObj.arrayType === 'selectOne' || schemaObj.arrayType === 'selectMany') {
-              formField.value = modelObj.value;
-              formField.options = schemaObj.options;
-            }
-          } else if (formField.type === 'boolean') {
-            formField.value = modelObj.value || false;
-          } else if (formField.type === 'integer') {
-            formField.value = modelObj.value || 0;
-          } else if (formField.type === 'radio') {
+        // set options for array and radio fields
+        if (formField.type === 'array') {
+          formField.arrayType = schemaObj.arrayType;
+
+          if (schemaObj.arrayType === 'addMany') {
+            formField.options = modelValue;
+          } else if (schemaObj.arrayType === 'selectOne' || schemaObj.arrayType === 'selectMany') {
             formField.options = schemaObj.options;
-            formField.value = modelObj.value;
-          } else if (modelIsArrayElement) {
-            formField.value = modelObj.value && modelObj.value.length ? modelObj.value[0] : '';
-          } else if (isString(modelObj)) {
-            formField.value = modelObj;
-          } else {
-            formField.value = modelObj.value || '';
           }
+        } else if (formField.type === 'radio') {
+          formField.options = schemaObj.options;
         }
         return formField;
       });
@@ -132,7 +120,7 @@ export default {
   },
   methods: {
     /**
-     * Preforms a case insensitive check of values
+     * Performs a case insensitive check of values
      * @param model - Current field model
      */
     safeCompare(model) {
@@ -185,6 +173,27 @@ export default {
         return componentNames[display.type] ? componentNames[display.type] : null;
       }
       return null;
+    },
+    /**
+     * Obtains the initial value for a field
+     * @param {String|Boolean|Number|Array} modelValue the raw value indicated by the model for the field
+     * @param {String} fieldType the type of field
+     * @param {Boolean} modelIsArrayElement if the model indicates that the field is an array element
+     */
+    getFieldValue(modelValue, fieldType, modelIsArrayElement) {
+      if (fieldType === 'array' || fieldType === 'radio') {
+        return modelValue;
+      }
+      if (fieldType === 'boolean') {
+        return modelValue || false;
+      }
+      if (fieldType === 'integer') {
+        return modelValue || 0;
+      }
+      if (modelIsArrayElement) {
+        return modelValue && modelValue.length ? modelValue[0] : '';
+      }
+      return modelValue || '';
     },
   },
 };
