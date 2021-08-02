@@ -8,7 +8,7 @@
 import axios from 'axios';
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
-import overrideTranslations from './overrideTranslations';
+import overrideTranslations, { setLocales } from './overrideTranslations';
 
 Vue.use(VueI18n);
 jest.mock('axios');
@@ -264,5 +264,34 @@ describe('overrides multiple fallback locale translations properly', () => {
     expect(i18n.messages.en.testMessage).toBe('en override');
     expect(i18n.messages.es.testMessage).toBe('es override');
     expect(i18n.messages.fr.testMessage).toBe('fr override');
+  });
+});
+
+describe('setLocales()', () => {
+  let i18n;
+
+  beforeEach(() => {
+    i18n = new VueI18n();
+  });
+
+  it('sets primary locale', () => {
+    setLocales(i18n, 'en');
+    expect(i18n.locale === 'en');
+  });
+
+  it('sets fallback locale', () => {
+    setLocales(i18n, 'en,es');
+    expect(i18n.fallbackLocale.includes('es')).toBe(true);
+  });
+
+  it('sets multiple fallback locales', () => {
+    setLocales(i18n, 'en,es,fr');
+    expect(i18n.fallbackLocale[0]).toBe('es');
+    expect(i18n.fallbackLocale[1]).toBe('fr');
+  });
+
+  it('adds en as final fallback locale if not present in locale string', () => {
+    setLocales(i18n, 'es,fr,de');
+    expect(i18n.fallbackLocale[2]).toBe('en');
   });
 });
