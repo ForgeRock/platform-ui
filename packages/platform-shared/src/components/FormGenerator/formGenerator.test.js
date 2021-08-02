@@ -244,4 +244,35 @@ describe('Form Generator', () => {
       expect(wrapper.vm.getDisplayComponent(nullTest)).toBeNull();
     });
   });
+
+  describe('getFieldValue method', () => {
+    it('returns the modelValue for array field types', () => {
+      expect(wrapper.vm.getFieldValue('blah', 'array', false)).toBe('blah');
+    });
+
+    it('returns the modelValue for radio field types', () => {
+      expect(wrapper.vm.getFieldValue('I am a radio', 'radio', false)).toBe('I am a radio');
+    });
+
+    it('returns the modelValue or a default of false for boolean field types', () => {
+      expect(wrapper.vm.getFieldValue(true, 'boolean', false)).toBe(true);
+      expect(wrapper.vm.getFieldValue(undefined, 'boolean', false)).toBe(false);
+    });
+
+    it('returns the modelValue or a default of 0 for integer field types', () => {
+      expect(wrapper.vm.getFieldValue(7, 'integer', false)).toBe(7);
+      expect(wrapper.vm.getFieldValue(undefined, 'integer', false)).toBe(0);
+    });
+
+    it('returns the first element of the modelValue array or an empty string if modelIsArrayElement is true', () => {
+      expect(wrapper.vm.getFieldValue(['blah'], 'stuff', true)).toBe('blah');
+      expect(wrapper.vm.getFieldValue([], 'stuff', true)).toBe('');
+      expect(wrapper.vm.getFieldValue(undefined, 'stuff', true)).toBe('');
+    });
+
+    it('returns the modelValue or an empty string for unhandled types which are not array elements', () => {
+      expect(wrapper.vm.getFieldValue('meh', 'banana', false)).toBe('meh');
+      expect(wrapper.vm.getFieldValue(undefined, 'banana', false)).toBe('');
+    });
+  });
 });
