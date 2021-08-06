@@ -88,7 +88,7 @@ const startApp = () => {
   }
 
   idmInstance.get('/info/uiconfig').then((uiConfig) => {
-    if (uiConfig.data.configuration.lang && !i18n.locale) {
+    if (uiConfig.data.configuration.lang && !localeString) {
       i18n.locale = uiConfig.data.configuration.lang;
     }
   })
