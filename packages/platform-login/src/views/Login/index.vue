@@ -735,7 +735,7 @@ export default {
         }
       }
       return {
-        label,
+        label: this.getTranslation(label),
         fieldType,
         name: `callback_${index}`,
         value: callback.getInputValue(),
