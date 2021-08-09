@@ -1,10 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BContainer>
     <BRow>
@@ -20,7 +17,7 @@ of the MIT license. See the LICENSE file for details.
               type="text"
               :readonly="true"
               :plaintext="true"
-              :value="field" />
+              :value="field.toString()" />
           </BFormGroup>
         </template>
 
@@ -128,18 +125,19 @@ export default {
     const tempFormFields = [];
     const tempFormValues = {};
     const tempVariables = omit(clone(this.variables), ['approverId', 'initiatorId', 'openidmObjectId']);
+    const _this = this;
 
     // Generate list of possible editable/none editable properties with values
     each(this.taskFields.formPropertyHandlers, (field) => {
       const tempField = {
         key: field._id,
         name: field.name,
-        value: this.variables[field._id],
+        value: _this.variables[field._id],
         type: field.type.name,
         readOnly: !field.writable,
       };
 
-      // Handel dropdown use case
+      // Handle dropdown use case
       if (field.type.name === 'enum') {
         tempField.options = field.type.values;
 
