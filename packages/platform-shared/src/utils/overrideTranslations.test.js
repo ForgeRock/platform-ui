@@ -291,7 +291,22 @@ describe('setLocales()', () => {
   });
 
   it('adds en as final fallback locale if not present in locale string', () => {
-    setLocales(i18n, 'es,fr,de');
+    setLocales(i18n, 'es,fr,de', 'en');
+    expect(i18n.fallbackLocale[2]).toBe('en');
+  });
+
+  it('does not add en as final fallback locale if present in locale string', () => {
+    setLocales(i18n, 'es,en,de', 'en');
+    expect(i18n.fallbackLocale.length).toBe(2);
+    expect(i18n.fallbackLocale[0]).toBe('en');
+    expect(i18n.fallbackLocale[1]).toBe('de');
+  });
+
+  it('adds general locales as fallbacks to specific locales', () => {
+    setLocales(i18n, 'fr-ca,en-us');
+    expect(i18n.locale).toBe('fr-ca');
+    expect(i18n.fallbackLocale[0]).toBe('fr');
+    expect(i18n.fallbackLocale[1]).toBe('en-us');
     expect(i18n.fallbackLocale[2]).toBe('en');
   });
 });
