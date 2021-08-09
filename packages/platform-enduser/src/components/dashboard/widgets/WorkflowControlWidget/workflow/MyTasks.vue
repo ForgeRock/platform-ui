@@ -22,12 +22,6 @@ of the MIT license. See the LICENSE file for details. -->
               <div class="media-body align-self-center">
                 <h6>{{ task.name }}</h6>
               </div>
-              <div
-                v-if="!isEmpty(task.task.candidates.candidateGroups)"
-                class="btn btn-sm btn-link float-right"
-                @click.stop="requeue(id)">
-                {{ $t('pages.workflow.requeue') }}
-              </div>
               <div class="d-flex flex-row ml-2 align-self-center">
                 <BButton
                   v-if="!isEmpty(task.task.candidates.candidateGroups)"
@@ -49,7 +43,7 @@ of the MIT license. See the LICENSE file for details. -->
                   variant="link"
                   size="sm"
                   class="btn-edit">
-                  {{ $t('common.form.edit' ) }}
+                  {{ $t('common.edit' ) }}
                 </BButton>
               </div>
             </div>

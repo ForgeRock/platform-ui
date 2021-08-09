@@ -1,10 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <Transition
     name="fade"
@@ -16,8 +13,8 @@ of the MIT license. See the LICENSE file for details.
       @submit="submit"
       @cancel="cancel"
       :process-definition="processDefinition"
-      :task-definition="task"
-      :variables="variables" />
+      :task-definition="taskInstance.task"
+      :variables="taskInstance.task.variables" />
     <GenericTask
       v-else-if="processDefinition !== null"
       :variables="taskInstance.task.variables"
@@ -35,16 +32,11 @@ of the MIT license. See the LICENSE file for details.
 <script>
 /* eslint-disable no-underscore-dangle */
 import styles from '@forgerock/platform-shared/src/scss/main.scss';
+import axios from 'axios';
 import { ClipLoader } from 'vue-spinner/dist/vue-spinner.min';
 import GenericTask from './GenericTask';
 
 /**
-* @description Dashboard widget that displays the specific details of a task
-*
-* */
-
-/**
-* @description Dashboard widget that displays the specific details of a task
 * @description Dashboard widget that displays the specific details of a task
 *
 * */
@@ -70,16 +62,18 @@ export default {
     return {
       loadingColor: styles.baseColor,
       processDefinition: temporaryProcessInstance,
+      task: null,
+      variables: null,
     };
   },
   components: {
-    'clip-loader': ClipLoader,
     GenericTask,
+    ClipLoader,
   },
   computed: {
     taskForm() {
       const { formGenerationTemplate } = this.taskInstance.task.taskDefinition;
-                    const initializeForm = formGenerationTemplate ? Function(`return ${formGenerationTemplate}`) : null // eslint-disable-line
+      const initializeForm = formGenerationTemplate ? Function(`return ${formGenerationTemplate}`) : null // eslint-disable-line
 
       if (initializeForm !== null) {
         return initializeForm();
@@ -98,7 +92,12 @@ export default {
   watch: {
     shown(val) {
       if (val && this.processDefinition === null) {
-        this.getRequestService().get(`/workflow/processdefinition/${this.taskInstance.task.processDefinitionId}`).then((processDetails) => {
+        const workflowInstance = axios.create({
+          baseURL: process.env.VUE_APP_IDM_URL,
+          timeout: 5000,
+          headers: {},
+        });
+        workflowInstance.get(`/workflow/processdefinition/${this.taskInstance.task.processDefinitionId}`).then((processDetails) => {
           this.processDefinition = processDetails.data;
         });
       }

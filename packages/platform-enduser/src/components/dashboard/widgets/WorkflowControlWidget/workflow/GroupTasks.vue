@@ -74,7 +74,7 @@ import {
 } from 'lodash';
 import FrListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
 import FrListItem from '@forgerock/platform-shared/src/components/ListItem/';
-import AssignTask from './AssignTask';
+import FrAssignTask from './AssignTask';
 
 /**
  * @description Dashboard widget that lists available group tasks that can be assigned
@@ -94,7 +94,7 @@ export default {
   components: {
     FrListGroup,
     FrListItem,
-    FrAssignTask: AssignTask,
+    FrAssignTask,
   },
   methods: {
     isEmpty,

@@ -32,12 +32,12 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
         <div class="form-group row">
           <div class="col-sm-2 col-form-label">
-            {{ $t('pages.workflow.details') }}}
+            {{ $t('pages.workflow.details') }}
           </div>
           <div class="col-sm-10">
             <BCard>
               <dl class="row m-0">
-                <template v-for="(detail, index) in taskDetails">
+                <template v-for="(detail, index) in taskDetailsList">
                   <dt
                     :key="`taskname-${index}-${uniqueId}`"
                     class="col-6">
@@ -61,6 +61,7 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 /* eslint-disable no-underscore-dangle */
 import { isEmpty } from 'lodash';
+import axios from 'axios';
 
 /**
 * @description Dashboard widget that allows a user to assign a task
@@ -81,7 +82,6 @@ export default {
   data() {
     return {
       taskDetailsList: [],
-      workflowService: null,
       selected: this.$store.state.UserStore.userName,
       uniqueId: null,
     };
@@ -105,7 +105,7 @@ export default {
   },
   methods: {
     assignTask() {
-      this.$emit('assignTask', { id: this.taskDefinition.task._id, assignee: this.selected });
+      this.$emit('assignTask', { id: this.taskDefinition.task._id, assignee: this.$store.state.UserStore.userId });
     },
     generateDisplayDetails(formProperties, variables) {
       return formProperties.reduce((acc, property) => acc.concat({ _id: property._id, name: property.name, value: variables[property._id] }), []);
@@ -116,7 +116,12 @@ export default {
       if (val
                 && (this.taskDefinition.process.processDefinition === null || this.taskDefinition.process.processDefinition === undefined)
                 && this.taskDetailsList.length === 0) {
-        this.getRequestService().get(`/workflow/processdefinition/${this.taskDefinition.task.processDefinitionId}`).then((processDetails) => {
+        const workflowInstance = axios.create({
+          baseURL: process.env.VUE_APP_IDM_URL,
+          timeout: 5000,
+          headers: {},
+        });
+        workflowInstance.get(`/workflow/processdefinition/${this.taskDefinition.task.processDefinitionId}`).then((processDetails) => {
           this.taskDetailsList = this.generateDisplayDetails(processDetails.data.formProperties, this.taskDefinition.task.variables);
         });
       } else if (this.taskDetailsList.length === 0) {
