@@ -69,27 +69,26 @@ const startApp = () => {
     headers: {},
   });
 
-  // check for locale query parameter
-  const urlSearchParams = new URLSearchParams(window.location.search);
-  const localeString = urlSearchParams.get('locale');
-  if (localeString) {
-    setLocales(i18n, localeString);
-
-    // set request header for requests made by sdk
-    const languageMiddleware = (req, action, next) => {
-      req.init.headers['accept-language'] = localeString;
-      next();
-    };
-
-    // add middleware to existing sdk config
-    Config.set(Config.get({
-      middleware: [languageMiddleware],
-    }));
-  }
-
   idmInstance.get('/info/uiconfig').then((uiConfig) => {
-    if (uiConfig.data.configuration.lang && !localeString) {
-      i18n.locale = uiConfig.data.configuration.lang;
+    // check for locale query parameter
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const localeString = urlSearchParams.get('locale');
+    if (localeString) {
+      setLocales(i18n, localeString, uiConfig.data.configuration.defaultLocale || 'en');
+
+      // set request header for requests made by sdk
+      const languageMiddleware = (req, action, next) => {
+        req.init.headers['accept-language'] = localeString;
+        next();
+      };
+
+      // add middleware to existing sdk config
+      Config.set(Config.get({
+        middleware: [languageMiddleware],
+      }));
+    } else if (uiConfig.data.configuration.lang) {
+      // if no query param, use the primary browser language
+      setLocales(i18n, uiConfig.data.configuration.lang, uiConfig.data.configuration.defaultLocale || 'en');
     }
   })
     .then(() => overrideTranslations(idmContext, i18n, 'login'))
