@@ -27,7 +27,7 @@ import AppAuthHelper from 'appauthhelper/appAuthHelperCompat';
 import SessionCheck from 'oidcsessioncheck';
 import VueSanitize from 'vue-sanitize';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
-import overrideTranslations from '@forgerock/platform-shared/src/utils/overrideTranslations';
+import overrideTranslations, { setLocales } from '@forgerock/platform-shared/src/utils/overrideTranslations';
 import store from '@/store';
 import router from './router';
 import i18n from './i18n';
@@ -153,7 +153,7 @@ const startApp = () => {
     idmInstance.get('/info/uiconfig'),
     idmInstance.get('info/features?_queryFilter=true')]).then(axios.spread((uiConfig, availability) => {
     if (uiConfig.data.configuration.lang) {
-      i18n.locale = uiConfig.data.configuration.lang;
+      setLocales(i18n, uiConfig.data.configuration.lang, uiConfig.data.configuration.defaultLocale || 'en');
       document.getElementsByTagName('html')[0].setAttribute('lang', uiConfig.data.configuration.lang);
     }
     store.commit('SharedStore/setUiConfig', uiConfig.data);

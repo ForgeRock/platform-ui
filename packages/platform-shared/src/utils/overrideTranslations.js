@@ -8,18 +8,50 @@
 import axios from 'axios';
 import { merge } from 'lodash';
 
-export function setLocales(i18n, localeString) {
+/**
+ * Given an array of locales, return an array with those locales and fallbacks
+ * e.g. ['fr-ca' ,'en-us'] will return ['fr-ca', 'fr', 'en-us', 'en']
+ *
+ * @param {String[]} locales array of locales in order of importance
+ * @returns {String[]} languages array with general fallbacks inserted in order
+ */
+function getFallbacks(locales) {
+  const fallbackArray = [];
+
+  // add spefic locales as well as general versions
+  locales.forEach((locale) => {
+    fallbackArray.push(locale);
+    const splitLocale = locale.split('-');
+    if (splitLocale.length > 1) {
+      fallbackArray.push(splitLocale[0]);
+    }
+  });
+  return fallbackArray;
+}
+
+/**
+ * Set locale and fallback locale for a given i18n instance. This function accounts
+ * for general fallbacks for specific locales as well as a finalFallback locale which will
+ * be set as the final fallback if not present elsewhere
+ *
+ * @param {Object} i18n i18n instance
+ * @param {String} localeString comma separated string representing all locales
+ * @param {String} finalFallback a final fallback locale to be added if not present in localeString
+ */
+export function setLocales(i18n, localeString, finalFallback) {
   if (!localeString.length || !i18n) {
     return;
   }
 
-  const locales = localeString.split(',');
+  let locales = localeString.split(',');
+  locales = getFallbacks(locales);
+
   // first locale is the primary locale
   i18n.locale = locales.shift();
 
   if (locales.length) {
-    // fallback locale must at least have en
-    if (i18n.locale !== 'en' && !locales.includes('en')) locales.push('en');
+    // fallback locale must contain a default
+    if (finalFallback && i18n.locale !== finalFallback && !locales.includes(finalFallback)) locales.push(finalFallback);
     i18n.fallbackLocale = locales;
   }
 }
