@@ -16,6 +16,11 @@
   /* stylelint-enable */
 }
 
+html,
+body {
+  background-color: $gray-100;
+}
+
 #app {
   transition: all 0.2s ease;
   height: 100%;
