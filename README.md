@@ -128,7 +128,7 @@ Running `yarn build` creates a distribution file in the `dist` folder of that sp
 
 The following theming tools are installed when you install the project dependencies:
 
-- [SCSS](https://sass-lang.com/) - CSS enhancmenet library
+- [SCSS](https://sass-lang.com/) - CSS enhancement library
 - [Bootstrap 4.0](https://getbootstrap.com) - CSS Styling framework
 
 Theming makes use of two concepts:
