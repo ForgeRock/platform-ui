@@ -19,7 +19,7 @@
     "BulkImport": "Bulk Import",
     "ConfigureManaged": "Configure Managed",
     "Connect": "Connect",
-    "Consent": "Consent",
+    "Consent": "Terms & Conditions",
     "Cors": "CORS",
     "Dashboard": "Dashboard",
     "EditApplication": "Edit Application",
@@ -1123,7 +1123,7 @@
     }
   },
   "consent": {
-    "title": "Consent",
+    "title": "Terms & Conditions",
     "subTitle": "Configure versioned terms & conditions to track and manage user consent.",
     "newVersion": "New Version",
     "getTermsFail": "Unable to retrieve terms & conditions",
@@ -1140,7 +1140,7 @@
       "fieldHelp": "Unique version name used to monitor user consent."
     },
     "editTermsAndConditions": {
-      "consent": "Consent",
+      "consent": "Terms & Conditions",
       "testModalHeader": "Terms & Conditions",
       "locale": "Locale",
       "addLocale": "Add locale",
