@@ -34,10 +34,10 @@ of the MIT license. See the LICENSE file for details. -->
       :disabled="disabled"
       :id="id"
       :name="name"
-      :placeholder="label"
+      :placeholder="getTranslation(label)"
       :readonly="readonly"
       :type="fieldType"
-      :aria-label="label"
+      :aria-label="getTranslation(label)"
       @input="evt=>inputValue=evt.target.value"
       @animationstart="animationStart">
     <template #defaultButtons>
@@ -89,6 +89,7 @@ import { delay } from 'lodash';
 /* eslint-disable import/no-extraneous-dependencies */
 import * as clipboard from 'clipboard-polyfill/text';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
+import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
@@ -104,6 +105,7 @@ export default {
   mixins: [
     InputMixin,
     NotificationMixin,
+    TranslationMixin,
   ],
   components: {
     BButton,
