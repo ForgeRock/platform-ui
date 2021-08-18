@@ -7,7 +7,7 @@
 
 describe('Login View', () => {
   const userName = Cypress.env('AM_USERNAME');
-  const password = Cypress.env('AM_PASSWORD');
+
   beforeEach(() => {
     cy.visit(`${Cypress.config().baseUrl}/am/XUI/?realm=/#/`);
   });
@@ -39,13 +39,7 @@ describe('Login View', () => {
   });
 
   it('should succeed login with valid credentials', () => {
-    cy.findByPlaceholderText('User Name:')
-      .type(userName)
-      .should('have.value', userName);
-    cy.findByPlaceholderText('Password:')
-      .type(password, { force: true })
-      .should('have.value', password);
-    cy.findByRole('button', { name: 'Next' }).click();
+    cy.login();
     cy.location().should((location) => {
       expect(location.href).to.not.eq(`${Cypress.config().baseUrl}/am/XUI/?realm=/#/`);
     });
