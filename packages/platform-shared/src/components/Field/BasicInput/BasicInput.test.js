@@ -36,6 +36,9 @@ describe('BasicInput', () => {
         ...defaultMixinProps,
         ...defaultProps,
       },
+      mocks: {
+        $t: (text) => (text),
+      },
     });
 
     wrapper.vm.$refs = {
@@ -54,6 +57,9 @@ describe('BasicInput', () => {
         ...defaultMixinProps,
         ...defaultProps,
         label: 'test',
+      },
+      mocks: {
+        $t: (text) => (text),
       },
     });
 
@@ -78,6 +84,9 @@ describe('BasicInput', () => {
         ...defaultProps,
         type: 'password',
       },
+      mocks: {
+        $t: (text) => (text),
+      },
     });
     const button = wrapper.find('button');
     const input = wrapper.find('input');
@@ -99,6 +108,9 @@ describe('BasicInput', () => {
       propsData: {
         ...defaultMixinProps,
         ...defaultProps,
+      },
+      mocks: {
+        $t: (text) => (text),
       },
       slots: {
         prepend: '<span class="test_prepend">prepend</span>',
