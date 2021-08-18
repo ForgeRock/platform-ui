@@ -663,4 +663,8 @@ export default {
   }
 }
 
+/deep/ .fr-tag {
+  max-width: 230px;
+}
+
 </style>
