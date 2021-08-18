@@ -230,7 +230,6 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import {
-  cloneDeep,
   each,
   find,
   has,
@@ -366,7 +365,6 @@ export default {
       errorMessage: '',
       header: '',
       hiddenValueCallbacksRefs: [],
-      initalStep: undefined,
       loading: true,
       loginFailure: false,
       nextButtonDisabledArray: [],
@@ -801,7 +799,9 @@ export default {
       const authIndexValue = sessionStorage.getItem('authIndexValue');
       const realm = sessionStorage.getItem('realm');
       if (step !== null && authIndexValue !== null && realm !== null) {
-        sessionStorage.clear();
+        sessionStorage.removeItem('step');
+        sessionStorage.removeItem('authIndexValue');
+        sessionStorage.removeItem('realm');
         return { step: JSON.parse(step), authIndexValue, realm };
       }
       return { step: undefined, authIndexValue: undefined, realm: undefined };
@@ -905,8 +905,18 @@ export default {
 
       FRAuth.next(this.step, stepParams)
         .then((step) => {
-          if (!this.initalStep) {
-            this.initalStep = cloneDeep(step);
+          let initialStep;
+          const realmAndTreeInitialStep = JSON.parse(sessionStorage.getItem('initialStep'));
+          const realmAndTreeKey = `${stepParams.realmPath}/${stepParams.tree || ''}`;
+          if (realmAndTreeInitialStep && realmAndTreeInitialStep.key === realmAndTreeKey) {
+            initialStep = new FRStep(realmAndTreeInitialStep.step.payload);
+          } else {
+            sessionStorage.setItem('initialStep', JSON.stringify(
+              {
+                key: realmAndTreeKey,
+                step,
+              },
+            ));
           }
           const previousStep = this.step;
           this.step = step;
@@ -921,6 +931,7 @@ export default {
           switch (step.type) {
             case 'LoginSuccess':
               // If we have a session token, get user information
+              sessionStorage.removeItem('initialStep');
               this.getIdFromSession()
                 .then(this.getUserInfo)
                 .then((userObj) => {
@@ -951,7 +962,7 @@ export default {
               } else {
                 this.errorMessage = step.payload.message || this.$t('login.loginFailure');
                 this.redirectToFailure(step);
-                this.step = cloneDeep(this.initalStep);
+                this.step = initialStep;
                 this.retry = true;
                 if (this.step.callbacks) {
                   this.componentList = [];
