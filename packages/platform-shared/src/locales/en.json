@@ -239,7 +239,8 @@
     "couldNotRetrieveVersion": "There was an error retrieving version information.",
     "idInUse": "That ID is already in use, please choose a different ID",
     "errorRetrievingRelationships": "There was an error retrieving relationships.",
-    "themeSaveError": "There was an error saving theme"
+    "themeSaveError": "There was an error saving theme",
+    "themeSetError": "There was an error setting theme"
   },
   "navbar": {
     "helpSupport": "Help & Support",

@@ -297,6 +297,56 @@ a.card {
   }
 }
 
+.pagination-material-buttons {
+  li {
+    .page-link {
+      &:hover::after {
+        background-color: $gray-100;
+      }
+
+      &::after {
+        visibility: visible;
+        position: absolute;
+        padding: 0.4rem 0.75rem;
+        top: 0;
+        font-size: 1.125rem;
+      }
+    }
+
+    &:first-of-type .page-link,
+    &:nth-of-type(2) .page-link,
+    &:nth-last-of-type(2) .page-link,
+    &:last-of-type .page-link {
+      font-family: 'Material Icons Outlined', Serif;
+      visibility: hidden;
+    }
+
+    &:first-of-type .page-link::after {
+      content: 'first_page';
+      right: 1rem;
+    }
+
+    &:nth-of-type(2) .page-link::after {
+      content: 'keyboard_arrow_left';
+      right: 0;
+    }
+
+    &:nth-last-of-type(2) .page-link::after {
+      content: 'keyboard_arrow_right';
+      right: -0.75rem;
+    }
+
+    &:last-of-type .page-link::after {
+      content: 'last_page';
+      right: -1.75rem;
+    }
+
+    &[role='separator'] {
+      display: none;
+    }
+  }
+}
+
 .media {
   .fr-realm-stamp {
     font-size: 1rem;
