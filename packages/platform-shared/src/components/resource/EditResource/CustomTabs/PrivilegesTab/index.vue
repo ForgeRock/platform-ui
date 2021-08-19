@@ -37,67 +37,31 @@ of the MIT license. See the LICENSE file for details. -->
         :items="privileges"
         :no-local-sorting="true"
         @row-clicked="showEditModal">
-        <template v-slot:cell(path)="data">
-          <slot
-            name="path"
-            :item="data">
-            <span class="overflow-hidden">
-              <div>
-                {{ data.item.name }}
-              </div>
-              <div class="text-muted">
-                {{ data.item.path }}
-              </div>
-            </span>
-          </slot>
-        </template>
-        <template v-slot:cell(permissions)="data">
-          <slot
-            name="permissions"
-            :item="data">
-            <span
-              v-for="permission in data.item.permissions"
-              :key="permission"
-              class="bagde badge-light mr-1 p-1">
-              <small>
-                {{ capitalizePermission(permission) }}
-              </small>
-            </span>
-          </slot>
-        </template>
-        <template v-slot:cell(actions)="data">
-          <slot
-            name="actions"
-            :item="data">
-            <div class="text-right">
-              <BDropdown
-                v-if="!disabled"
-                variant="link"
-                no-caret
-                right
-                toggle-class="text-decoration-none p-0">
-                <template v-slot:button-content>
-                  <i class="material-icons-outlined text-muted md-24">
-                    more_horiz
-                  </i>
-                </template>
-                <BDropdownItem @click="showEditModal(data.item, data.index)">
-                  <i
-                    class="material-icons-outlined mr-3"
-                    aria-hidden="true">
-                    edit
-                  </i> {{ $t('common.edit') }}
-                </BDropdownItem>
-                <BDropdownItem @click="confirmRemovePrivilege(data.index)">
-                  <i
-                    class="material-icons-outlined mr-3"
-                    aria-hidden="true">
-                    delete
-                  </i> {{ $t('common.delete') }}
-                </BDropdownItem>
-              </BDropdown>
+        <template #cell(path)="{ item }">
+          <span class="overflow-hidden">
+            <div>
+              {{ item.name }}
             </div>
-          </slot>
+            <div class="text-muted">
+              {{ item.path }}
+            </div>
+          </span>
+        </template>
+        <template #cell(permissions)="{ item }">
+          <BBadge
+            v-for="permission in item.permissions"
+            :key="permission"
+            class="mr-1 p-1"
+            variant="light">
+            <small>
+              {{ capitalizePermission(permission) }}
+            </small>
+          </BBadge>
+        </template>
+        <template #cell(actions)="{ index, item }">
+          <FrActionsCell
+            @delete-clicked="confirmRemovePrivilege(index)"
+            @edit-clicked="showEditModal(item, index)" />
         </template>
       </BTable>
     </div>
@@ -191,10 +155,9 @@ import {
   has,
 } from 'lodash';
 import {
+  BBadge,
   BButton,
   BCol,
-  BDropdown,
-  BDropdownItem,
   BModal,
   BRow,
   BTab,
@@ -202,8 +165,8 @@ import {
 } from 'bootstrap-vue';
 import axios from 'axios';
 import { ValidationObserver } from 'vee-validate';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
+import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
@@ -214,16 +177,16 @@ import FrAddPrivileges from './AddPrivileges';
 export default {
   name: 'PrivilegesTab',
   components: {
-    FrPrivilegeEditor,
-    FrAddPrivileges,
+    BBadge,
     BButton,
     BCol,
-    BDropdown,
-    BDropdownItem,
     BModal,
     BRow,
     BTab,
     BTable,
+    FrActionsCell,
+    FrAddPrivileges,
+    FrPrivilegeEditor,
     ValidationObserver,
   },
   data() {

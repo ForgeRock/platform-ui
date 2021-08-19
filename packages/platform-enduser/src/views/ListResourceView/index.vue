@@ -13,6 +13,7 @@ of the MIT license. See the LICENSE file for details. -->
         class="card-tabs-vertical">
         <FrListResource
           v-if="routerParameters"
+          :current-page="currentPage"
           :router-parameters="routerParameters"
           :resource-title="displayName"
           :table-data="tableData"
@@ -102,6 +103,7 @@ export default {
   },
   data() {
     return {
+      currentPage: 1,
       displayName: capitalize(this.$route.params.resourceName),
       tableData: [],
       lastPage: true,
@@ -201,9 +203,9 @@ export default {
       this.showWheel = true;
       this.currentTableParams = tableParams;
       if (this.routerParameters.resourceType === 'managed') {
-        resourceFunction = getManagedResourceList(this.routerParameters.resourceName, this.buildUrlParams(filter, fields, sortField, page));
+        resourceFunction = getManagedResourceList(this.routerParameters.resourceName, this.buildUrlParams(filter, fields, sortField, page - 1));
       } else {
-        resourceFunction = getInternalResourceList(this.routerParameters.resourceName, this.buildUrlParams(filter, fields, sortField, page));
+        resourceFunction = getInternalResourceList(this.routerParameters.resourceName, this.buildUrlParams(filter, fields, sortField, page - 1));
       }
       resourceFunction.then((resourceData) => {
         // set noData prop for ListResource
@@ -215,6 +217,7 @@ export default {
           this.lastPage = true;
         }
 
+        this.currentPage = page;
         this.showWheel = false;
         this.tableData = resourceData.data.result;
       }, (error) => {
@@ -250,6 +253,9 @@ export default {
           );
         })
         .finally(() => {
+          if (this.tableData.length === 1 && this.lastPage) {
+            this.currentTableParams.page -= 1;
+          }
           this.getTableData(this.currentTableParams);
         });
     },
