@@ -211,7 +211,7 @@ describe('Delegated Admin', () => {
 
     // Ensure that only action available is edit, and no New button exists
     cy.findByRole('searchbox', { name: 'Search' }).type(`${internalRoleName}{enter}`);
-    cy.findByRole('row', { name: `${internalRoleName} more_horiz` }).within(() => {
+    cy.findByRole('row', { name: `${internalRoleName}` }).within(() => {
       cy.findByRole('button').click();
       cy.findAllByRole('menuitem').should('have.length', 1);
       cy.findByRole('menuitem', { name: 'Edit' });
@@ -221,7 +221,7 @@ describe('Delegated Admin', () => {
     // navigate to user list to ensure we have add, delete, and edit access
     openDelegatedAdminManagedPage('managed', 'user');
     cy.findByRole('searchbox', { name: 'Search' }).type(`${userName}{enter}`);
-    cy.findByRole('row', { name: `${userName} First Last forgerockdemo@example.com more_horiz` }).within(() => {
+    cy.findByRole('row', { name: `${userName} First Last forgerockdemo@example.com` }).within(() => {
       cy.findByRole('button').click();
       cy.findAllByRole('menuitem').should('have.length', 2);
       cy.findByRole('menuitem', { name: 'Edit' });
@@ -247,7 +247,7 @@ describe('Delegated Admin', () => {
     openDelegatedAdminManagedPage('managed', 'user');
     cy.findByRole('searchbox', { name: 'Search' }).type('Last{enter}');
     cy.findAllByRole('row').should('have.length', 2);
-    cy.findByRole('row', { name: `${userName}2 First ${testUserLastName} forgerockdemo@example.com more_horiz` });
+    cy.findByRole('row', { name: `${userName}2 First ${testUserLastName} forgerockdemo@example.com` });
   });
 
   it('can edit resource & see (not edit) read fields, edit read/write fields, & not see none fields', () => {

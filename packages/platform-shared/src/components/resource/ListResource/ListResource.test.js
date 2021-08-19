@@ -140,7 +140,7 @@ describe('ListResource Component', () => {
       sortBy: 'test',
     });
 
-    expect(wrapper.vm.currentPage).toBe(0);
+    expect(wrapper.vm.currentPage).toBe(1);
   });
 
   it('Empty search entered', () => {
@@ -148,7 +148,7 @@ describe('ListResource Component', () => {
     wrapper.vm.search();
 
     expect(wrapper.vm.sortBy).toBeNull();
-    expect(wrapper.vm.currentPage).toBe(0);
+    expect(wrapper.vm.currentPage).toBe(1);
   });
 
   it('New search entered with queryThreshold enabled', () => {
@@ -177,7 +177,7 @@ describe('ListResource Component', () => {
     wrapper.vm.clear();
 
     expect(wrapper.vm.sortBy).toBeNull();
-    expect(wrapper.vm.currentPage).toBe(0);
+    expect(wrapper.vm.currentPage).toBe(1);
   });
 
   it('Sets help text from search field length', () => {
@@ -281,8 +281,10 @@ describe('ListResource Component', () => {
 
   it('Pagination change works', () => {
     wrapper.setMethods({ loadTable: () => { } });
-    wrapper.vm.paginationChange(2);
 
-    expect(wrapper.vm.currentPage).toBe(2);
+    const paginationChangeSpy = jest.spyOn(wrapper.vm, 'loadData');
+    wrapper.vm.paginationChange();
+
+    expect(paginationChangeSpy).toHaveBeenCalled();
   });
 });

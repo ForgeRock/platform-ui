@@ -1,10 +1,10 @@
 /**
- * Copyright 2020-2021 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
+
 import { shallowMount } from '@vue/test-utils';
 import RelationshipArray from './index';
 
@@ -184,14 +184,9 @@ describe('RelationshipArray', () => {
     expect(wrapper.vm.gridData[0].givenName).toEqual('Mitzie');
   });
 
-  it('Correctly sets current page upon paginationChange', () => {
-    wrapper.vm.paginationChange(1);
-    expect(wrapper.vm.currentPage).toEqual(1);
-  });
-
   it('Correctly handles sorting change and clearing', () => {
     wrapper.vm.sortingChanged({ sortBy: 'sn', sortDesc: true });
-    expect(wrapper.vm.currentPage).toEqual(0);
+    expect(wrapper.vm.currentPage).toEqual(1);
     expect(wrapper.vm.sortBy).toEqual('sn');
     expect(wrapper.vm.sortDesc).toEqual(true);
 
