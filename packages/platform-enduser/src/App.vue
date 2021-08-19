@@ -93,6 +93,8 @@ export default {
       if (this.favicon) {
         document.getElementById('favicon').href = this.favicon;
       }
+    }).catch((error) => {
+      this.showErrorMessage(error, this.$t('errors.themeSetError'));
     });
   },
   mounted() {
