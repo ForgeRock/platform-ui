@@ -89,6 +89,8 @@
       "nth-last-child",
       "first-of-type",
       "last-of-type",
+      "nth-of-type",
+      "nth-last-of-type",
       "active",
       "export",
       "checked",
