@@ -39,14 +39,14 @@ of the MIT license. See the LICENSE file for details. -->
     </div>
 
     <BTable
-      show-empty
+      hover
       ref="relationshipArrayGrid"
-      table-responsive
+      responsive
+      show-empty
       stacked="lg"
       :fields="columns"
       :items="gridData"
       :per-page="0"
-      :hover="tableHover"
       :no-local-sorting="true"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
@@ -104,11 +104,15 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
       </template>
     </BTable>
-    <FrPagination
+    <BPagination
       v-if="gridData.length && gridData.length === gridPageSize || currentPage > 0"
-      :current-page="currentPage"
-      :last-page="lastPage"
-      @pagination-change="paginationChange" />
+      v-model="currentPage"
+      class="pt-3 justify-content-center pagination-material-buttons border-top"
+      last-class="d-none"
+      page-class="d-none"
+      per-page="10"
+      :total-rows="totalRows"
+      @input="loadGrid(currentPage)" />
 
     <BModal
       :id="createModalId"
@@ -186,6 +190,7 @@ import {
   BTable,
   BFormCheckbox,
   BModal,
+  BPagination,
 } from 'bootstrap-vue';
 import dayjs from 'dayjs';
 import pluralize from 'pluralize';
@@ -193,7 +198,6 @@ import RelationshipEdit from '@forgerock/platform-shared/src/components/resource
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
-import FrPagination from '@forgerock/platform-shared/src/components/DataTable/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 
@@ -201,13 +205,13 @@ export default {
   name: 'RelationshipArray',
   components: {
     FrRelationshipEdit: RelationshipEdit,
-    FrPagination,
     BRow,
     BCol,
     BButton,
     BTable,
     BFormCheckbox,
     BModal,
+    BPagination,
     FrSearchInput,
   },
   mixins: [
@@ -237,10 +241,9 @@ export default {
     return {
       gridPageSize: 10,
       allRowsSelected: false,
-      tableHover: true,
       gridData: [],
       columns: [],
-      currentPage: 0,
+      currentPage: 1,
       sortBy: null,
       sortDesc: false,
       filter: '',
@@ -257,7 +260,7 @@ export default {
     };
   },
   mounted() {
-    this.loadGrid(0);
+    this.loadGrid(1);
   },
   watch: {
     gridData() {
@@ -270,10 +273,19 @@ export default {
       });
     },
   },
+  computed: {
+    totalRows() {
+      if (this.lastPage) {
+        return this.currentPage * 10;
+      }
+      return this.currentPage * 10 + 1;
+    },
+  },
   methods: {
     loadGrid(page) {
+      this.currentPage = page;
       const doLoad = (resourceCollectionSchema) => {
-        this.getRequestService().get(this.buildGridUrl(page, resourceCollectionSchema)).then((resourceData) => {
+        this.getRequestService().get(this.buildGridUrl(page - 1, resourceCollectionSchema)).then((resourceData) => {
           if (resourceData.data.pagedResultsCookie) {
             this.lastPage = false;
           } else {
@@ -441,10 +453,6 @@ export default {
 
       return resourceUrl;
     },
-    paginationChange(page) {
-      this.currentPage = page;
-      this.loadGrid(page);
-    },
     resourceClicked(item, index, event) {
       if (!event || !event.target.classList.value || event.target.classList.value.indexOf('checkbox') === -1) {
         this.$router.push({
@@ -521,7 +529,7 @@ export default {
       });
       const loadAndCloseModal = () => {
         const modal = operation === 'remove' ? this.removeModalId : this.createModalId;
-        this.loadGrid(0);
+        this.loadGrid(1);
         this.$refs[modal].hide();
       };
 
@@ -546,11 +554,10 @@ export default {
      * @param {object} sort - Required object containing sort metadata
      */
     sortingChanged(sort) {
-      this.currentPage = 0;
       this.sortBy = sort.sortBy;
       this.sortDesc = sort.sortDesc;
 
-      this.loadGrid(0);
+      this.loadGrid(1);
     },
     /**
      * Reloads data after search box filter text is cleared
@@ -559,9 +566,8 @@ export default {
       this.filter = '';
       this.sortBy = null;
       this.sortDesc = false;
-      this.currentPage = 0;
 
-      this.loadGrid(0);
+      this.loadGrid(1);
     },
     /**
      * Repulls data based on input search box text
@@ -573,9 +579,8 @@ export default {
       }
       this.sortBy = null;
       this.sortDesc = false;
-      this.currentPage = 0;
 
-      this.loadGrid(0);
+      this.loadGrid(1);
     },
   },
 };

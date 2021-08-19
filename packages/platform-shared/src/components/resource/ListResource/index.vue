@@ -47,7 +47,7 @@ of the MIT license. See the LICENSE file for details. -->
       <div
         class="text-center mt-2 mb-5 py-5">
         <FrIcon
-          class="fr-no-data-icon material-icons material-icons-outlined md-48 text-secondary opacity-20 mt-4 mb-2"
+          class="fr-no-data-icon md-48 text-secondary opacity-20 mt-4 mb-2"
           :name="managedIcon"
           aria-hidden="true" />
         <h5>{{ $t('listResource.noManaged', { capitalizedResourceName }) }}</h5>
@@ -60,84 +60,57 @@ of the MIT license. See the LICENSE file for details. -->
     <BTable
       v-show="tableData.length && !isLoading"
       class="mb-0"
+      hover
+      responsive
       show-empty
       :fields="columns"
-      :hover="tableHover"
       :items="tableData"
       :no-local-sorting="true"
-      :per-page="0"
-      :responsive="true"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
       :sort-direction="sortDirection"
       @row-clicked="$emit('row-clicked', $event)"
       @sort-changed="sortingChanged">
-      <template v-slot:cell(actions)="data">
-        <slot
-          name="actions"
-          :item="data">
-          <div
-            class="text-right"
-            v-if="editAccess || deleteAccess || hasClearSessionAccess(data)">
-            <BDropdown
-              variant="link"
-              no-caret
-              boundary="window"
-              right
-              toggle-class="text-decoration-none p-0">
-              <template v-slot:button-content>
-                <i class="material-icons-outlined text-muted md-24">
-                  more_horiz
-                </i>
-              </template>
-              <BDropdownItem
-                v-if="editAccess"
-                @click="$emit('row-clicked', data.item)">
-                <i
-                  class="material-icons-outlined mr-3"
-                  aria-hidden="true">
-                  edit
-                </i> {{ $t('common.edit') }}
-              </BDropdownItem>
-              <BDropdownItem
-                v-if="hasClearSessionAccess(data)"
-                @click="setResourceToClearSessionsFor(data.item)">
-                <i
-                  class="material-icons-outlined mr-3"
-                  aria-hidden="true">
-                  clear_all
-                </i> {{ $t('common.endSessions') }}
-              </BDropdownItem>
-              <template v-if="deleteAccess">
-                <template v-if="editAccess || hasClearSessionAccess(data)">
-                  <BDropdownDivider />
-                </template>
-                <BDropdownItem @click="confirmDeleteResource(data.item._id)">
-                  <i
-                    class="material-icons-outlined mr-3"
-                    aria-hidden="true">
-                    delete
-                  </i> {{ $t('common.delete') }}
-                </BDropdownItem>
-              </template>
-            </BDropdown>
-          </div>
-        </slot>
+      <template
+        v-if="editAccess || deleteAccess || hasClearSessionAccess(data)"
+        #cell(actions)="data">
+        <FrActionsCell
+          :delete-option="deleteAccess"
+          :divider="editAccess || hasClearSessionAccess(data)"
+          :edit-option="editAccess"
+          @delete-clicked="confirmDeleteResource(data.item._id)"
+          @edit-clicked="$emit('row-clicked', data.item)">
+          <template
+            v-if="hasClearSessionAccess(data)"
+            #custom-top-actions>
+            <BDropdownItem @click="setResourceToClearSessionsFor(data.item)">
+              <i
+                class="material-icons-outlined mr-3"
+                aria-hidden="true">
+                clear_all
+              </i> {{ $t('common.endSessions') }}
+            </BDropdownItem>
+          </template>
+        </FrActionsCell>
       </template>
       <template
         v-for="(key, slotName) in $scopedSlots"
         v-slot:[slotName]="slotData">
-        <!-- @slot Custom cell slot. -->
+        <!-- @slot Custom cell slot -->
         <slot
           :name="slotName"
           v-bind="slotData" />
       </template>
     </BTable>
-    <FrPagination
+    <BPagination
       v-if="tableData && tableData.length > 0 && !isLoading"
-      :current-page="currentPage"
-      :last-page="lastPage"
-      @pagination-change="paginationChange" />
+      v-model="paginationPage"
+      class="pt-3 justify-content-center pagination-material-buttons border-top"
+      last-class="d-none"
+      page-class="d-none"
+      per-page="10"
+      :total-rows="totalRows"
+      @input="paginationChange" />
 
     <slot name="deleteResourceModal">
       <FrDeleteResource
@@ -164,18 +137,17 @@ import {
   isUndefined,
 } from 'lodash';
 import {
-  BDropdown,
-  BDropdownDivider,
   BDropdownItem,
   BInputGroupText,
+  BPagination,
   BTable,
   VBModal,
 } from 'bootstrap-vue';
 import pluralize from 'pluralize';
 import Vue from 'vue';
+import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
-import FrPagination from '@forgerock/platform-shared/src/components/DataTable/Pagination';
 import PluralizeFilter from '@forgerock/platform-shared/src/filters/PluralizeFilter';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
@@ -197,13 +169,12 @@ export default {
     ResourceMixin,
   ],
   components: {
-    BDropdown,
-    BDropdownDivider,
     BDropdownItem,
     BInputGroupText,
+    BPagination,
     BTable,
+    FrActionsCell,
     FrIcon,
-    FrPagination,
     FrSearchInput,
     FrSpinner,
     FrClearResourceSessions,
@@ -213,6 +184,10 @@ export default {
     'b-modal': VBModal,
   },
   props: {
+    currentPage: {
+      type: Number,
+      default: 1,
+    },
     deleteAccess: {
       type: Boolean,
       default: true,
@@ -270,13 +245,12 @@ export default {
     return {
       resourceName: this.routerParameters.resourceName,
       isRowSelected: false,
-      tableHover: true,
       columns: [],
       displayFields: [],
-      currentPage: 0,
       sortBy: null,
       sortDesc: false,
       filter: '',
+      paginationPage: 1,
       resourceToDeleteId: '',
       sortDirection: 'asc',
       showClearSessionsModal: false,
@@ -300,6 +274,12 @@ export default {
     capitalizedResourceName() {
       return pluralize(capitalize(this.resourceTitle || this.resourceName));
     },
+    totalRows() {
+      if (this.lastPage) {
+        return this.paginationPage * 10;
+      }
+      return this.paginationPage * 10 + 1;
+    },
   },
   filters: {
     PluralizeFilter,
@@ -318,9 +298,12 @@ export default {
     } else {
       this.loadTableDefs();
     }
-    this.loadData('true', this.displayFields, this.defaultSort, 0);
+    this.loadData('true', this.displayFields, this.defaultSort, 1);
   },
   watch: {
+    currentPage(value) {
+      this.paginationPage = value;
+    },
     tableData() {
       // if there is a queryThreshold and there is a filter we want to allow sorting
       this.columns = this.columns.map((col) => {
@@ -364,10 +347,10 @@ export default {
       this.filter = '';
       this.sortBy = null;
       this.sortDesc = false;
-      this.currentPage = 0;
+      this.paginationPage = 1;
 
       this.$emit('clear-table');
-      this.loadData('true', this.displayFields, this.defaultSort, this.currentPage);
+      this.loadData('true', this.displayFields, this.defaultSort, this.paginationPage);
     },
     /**
      * Emits out request to obtain data based on current query parameters
@@ -423,12 +406,9 @@ export default {
     },
     /**
      * Repulls data based on new table page
-     *
-     * @param {number} page - Required integer number specifying which table page we are viewing
      */
-    paginationChange(page) {
-      this.currentPage = page;
-      this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.calculateSort(this.sortDesc, this.sortBy), page);
+    paginationChange() {
+      this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.calculateSort(this.sortDesc, this.sortBy), this.paginationPage);
     },
     cancelDelete() {
       this.resourceToDeleteId = '';
@@ -451,11 +431,11 @@ export default {
       }
       this.sortBy = null;
       this.sortDesc = false;
-      this.currentPage = 0;
+      this.paginationPage = 1;
 
       if (this.filter.length >= this.queryThreshold) {
         this.submitBeforeLengthValid = false;
-        this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.defaultSort, this.currentPage);
+        this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.defaultSort, this.paginationPage);
       } else {
         this.submitBeforeLengthValid = true;
       }
@@ -466,9 +446,9 @@ export default {
      * @param {object} sort - Required object containing sort metadata
      */
     sortingChanged(sort) {
-      this.currentPage = 0;
+      this.paginationPage = 1;
 
-      this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.calculateSort(sort.sortDesc, sort.sortBy), this.currentPage);
+      this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.calculateSort(sort.sortDesc, sort.sortBy), this.paginationPage);
     },
     hasClearSessionAccess(rowData) {
       return this.canClearSessions && rowData.item.hasActiveSessions === true;
@@ -498,7 +478,7 @@ export default {
     clearSessionsAndCloseModal() {
       this.$emit('clear-resource-sessions', this.resourceToClearSessionsForId);
       this.closeClearSessionsModal();
-      this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.defaultSort, this.currentPage);
+      this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.defaultSort, this.paginationPage);
     },
     /**
      * Change help text based on query threshold value and the current search text length
