@@ -469,7 +469,7 @@ export default {
       }
     },
     onCheckboxClicked(row) {
-      if (!row.rowSelected) {
+      if (row.rowSelected) {
         this.$refs.relationshipArrayGrid.selectRow(row.index);
       } else {
         this.$refs.relationshipArrayGrid.unselectRow(row.index);
