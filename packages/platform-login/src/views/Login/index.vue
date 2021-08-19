@@ -216,8 +216,9 @@ of the MIT license. See the LICENSE file for details. -->
       </div>
       <div class="overflow-hidden w-md-50 d-none d-md-flex">
         <div
+          v-if="journeyJustifiedContentEnabled"
           v-html="journeyJustifiedContent"
-          class="d-flex w-100 justify-content-center align-self-center" />
+          class="d-flex h-100 w-100 justify-content-center align-self-center" />
       </div>
     </div>
     <template
