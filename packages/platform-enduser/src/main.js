@@ -305,4 +305,6 @@ const addAppAuth = () => {
 
 store.commit('setEnvironment', process.env);
 store.commit('SharedStore/setBaseURLs', process.env);
+store.commit('SharedStore/setCurrentPackage', 'enduser');
+
 addAppAuth();
