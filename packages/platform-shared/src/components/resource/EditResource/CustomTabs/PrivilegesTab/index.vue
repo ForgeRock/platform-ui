@@ -302,7 +302,7 @@ export default {
     */
     savePrivilege() {
       if (this.privilegeToEdit.accessFlags.length === 0) {
-        this.displayNotification('IDMMessages', 'error', this.$t('pages.access.mustHaveOneAttributeWithRead'));
+        this.showErrorMessage('', this.$t('pages.access.mustHaveOneAttributeWithRead'));
       } else {
         this.privilegesField.value[this.editIndex] = this.privilegeToEdit;
 
@@ -322,7 +322,7 @@ export default {
 
         if (newPrivilege.accessFlags.length === 0) {
           doSave = false;
-          this.displayNotification('IDMMessages', 'error', this.$t('pages.access.mustHaveOneAttributeWithRead'));
+          this.showErrorMessage('', this.$t('pages.access.mustHaveOneAttributeWithRead'));
         } else {
           this.privilegesField.value.push(newPrivilege);
         }
@@ -350,9 +350,8 @@ export default {
 
       const patch = [{ operation: 'add', field: '/privileges', value: this.privilegesField.value }];
 
-      idmInstance.patch(this.resourcePath, patch).then((response) => response.data).then(() => {
+      idmInstance.patch(this.resourcePath, patch).then(() => {
         this.displayNotification('IDMMessages', 'success', this.$t('pages.access.successEdited', { resource: capitalize(this.resourceName) }));
-        this.$refs.privilegesGrid.refresh();
         this.$refs.editPrivilegeModal.hide();
         this.newPrivileges = [];
         this.$refs.addPrivilegesModal.hide();
@@ -361,9 +360,9 @@ export default {
       }).catch((error) => {
         if (has(error, 'response.data.detail.failedPolicyRequirements[0].policyRequirements[0].params.invalidArrayItems[0].failedPolicyRequirements[0].policyRequirements[0].policyRequirement')) {
           const policyFailure = error.response.data.detail.failedPolicyRequirements[0].policyRequirements[0].params.invalidArrayItems[0].failedPolicyRequirements[0].policyRequirements[0];
-          this.displayNotification('IDMMessages', 'error', this.$t(`common.policyValidationMessages.${policyFailure.policyRequirement}`, policyFailure.params));
+          this.showErrorMessage('', this.$t(`common.policyValidationMessages.${policyFailure.policyRequirement}`, policyFailure.params));
         } else {
-          this.displayNotification('IDMMessages', 'error', this.$t('pages.access.invalidEdit'));
+          this.showErrorMessage('', this.$t('pages.access.invalidEdit'));
         }
       });
     },
@@ -390,7 +389,7 @@ export default {
           this.loading = false;
         },
         () => {
-          this.displayNotification('IDMMessages', 'error', this.$t('pages.access.errorGettingSchema'));
+          this.showErrorMessage('', this.$t('pages.access.errorGettingSchema'));
         },
       );
     } else {
@@ -407,11 +406,11 @@ export default {
 
             this.loading = false;
           }), () => {
-            this.displayNotification('IDMMessages', 'error', this.$t('pages.access.errorGettingSchema'));
+            this.showErrorMessage('', this.$t('pages.access.errorGettingSchema'));
           });
         },
         () => {
-          this.displayNotification('IDMMessages', 'error', this.$t('pages.access.errorGettingSchema'));
+          this.showErrorMessage('', this.$t('pages.access.errorGettingSchema'));
         },
       );
     }
