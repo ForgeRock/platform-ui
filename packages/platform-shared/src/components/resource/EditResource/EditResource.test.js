@@ -5,7 +5,6 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-/* eslint-disable import/no-extraneous-dependencies */
 import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
 import * as SessionsApi from '@/api/SessionsApi';
@@ -18,16 +17,17 @@ localVue.use(BootstrapVue);
 describe('EditResource.vue', () => {
   const $route = {
     path: '/test',
-    meta: {},
+    meta: {
+      listRoute: 'test',
+    },
     params: {
-      resourceName: 'test',
-      resourceType: 'test',
-      resourceId: 'test',
+      resourceName: 'resourceName',
+      resourceType: 'resourceType',
+      resourceId: 'resourceId',
     },
   };
 
   let wrapper;
-
   beforeEach(() => {
     jest.spyOn(EditResource, 'mounted')
       .mockImplementation(() => { });
@@ -44,12 +44,95 @@ describe('EditResource.vue', () => {
           state: {
             userId: 'foo',
             UserStore: {
-              adminUser: false,
+              adminUser: true,
             },
           },
         },
+        $router: {
+          push: jest.fn(),
+        },
+      },
+      propsData: {
+        canClearSessions: true,
       },
     });
+    jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => (
+      {
+        get: () => Promise.resolve({
+          data: {
+            DELETE: {
+              allowed: true,
+              properties: [
+                'test',
+              ],
+            },
+            VIEW: {
+              allowed: true,
+              properties: [
+                'test',
+              ],
+            },
+            UPDATE: {
+              allowed: true,
+              properties: [
+              ],
+            },
+          },
+        }),
+        delete: () => Promise.resolve({}),
+      }
+    ));
+    jest.spyOn(SchemaApi, 'getSchema').mockImplementation(() => Promise.resolve({
+      data: {
+        result: [{
+          resourceCollection: 'test',
+          properties: {
+            test: 'testProperties',
+          },
+          _id: 'testId',
+        }],
+        order: [
+          'test',
+          'test2',
+        ],
+        title: 'testTitle',
+        properties: {
+          test: {
+            value: 'test',
+            viewable: true,
+            type: 'object',
+            title: 'testTitle',
+            propName: 'testPropName',
+            order: [
+              'innerTest',
+            ],
+            properties: {
+              innerTest: {},
+            },
+            isTemporalConstraint: true,
+          },
+          test2: {
+            value: 'test2',
+            type: 'string',
+            title: 'test2Title',
+            propName: 'test2PropName',
+            viewable: true,
+            isTemporalConstraint: false,
+            isConditional: true,
+          },
+        },
+      },
+    }));
+
+    wrapper.setData({
+      id: 'id',
+      resourceName: 'resourceName',
+      resourceType: 'resourceType',
+    });
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('EditResource page loaded', () => {
@@ -135,7 +218,7 @@ describe('EditResource.vue', () => {
         viewable: true,
       },
     });
-    expect(wrapper.vm.buildResourceUrl()).toEqual('test/test/test?_fields=*,manager/*');
+    expect(wrapper.vm.buildResourceUrl()).toEqual('resourceType/resourceName/id?_fields=*,manager/*');
   });
 
   describe('clearing sessions', () => {
@@ -164,5 +247,74 @@ describe('EditResource.vue', () => {
       expect(showErrorSpy).toHaveBeenCalled();
       expect(refreshDataSpy).toHaveBeenCalled();
     });
+  });
+
+  it('loads data when can clear sessions', async () => {
+    jest.spyOn(SessionsApi, 'getSessionInfo').mockImplementation(() => Promise.resolve({
+      data: {
+        resultCount: 1,
+      },
+    }));
+    wrapper.setProps({
+      canClearSessions: true,
+    });
+    wrapper.vm.isOpenidmAdmin = false;
+    await wrapper.vm.refreshData();
+    expect(wrapper.vm.resourcePrivilege).toBe(null);
+    expect(wrapper.vm.clearSessionsName).toBe('');
+  });
+
+  it('loads data when can not clear sessions', async () => {
+    jest.spyOn(SessionsApi, 'getSessionInfo').mockImplementation(() => Promise.resolve({
+      data: {
+        resultCount: 1,
+      },
+    }));
+    wrapper.setProps({
+      canClearSessions: false,
+    });
+    expect(wrapper.vm.clearSessionsName).toBe('');
+
+    await wrapper.vm.loadData();
+    expect(wrapper.vm.resourcePrivilege).toBe(null);
+  });
+
+  it('gets object type property display properties', () => {
+    wrapper.vm.isOpenidmAdmin = false;
+    expect(wrapper.vm.getObjectTypeProperyDisplayProperties({
+      order: [
+        'test1',
+      ],
+      properties: {
+        test1: {
+          key: 'test1',
+          value: 'test1Value',
+          readOnly: true,
+        },
+        test2: {
+          key: 'test2',
+          value: 'test2Value',
+          readOnly: false,
+        },
+      },
+    })).toStrictEqual([{
+      disabled: false,
+      key: 'test1',
+      readOnly: true,
+      value: null,
+    }]);
+  });
+
+  it('deletes resource', async () => {
+    wrapper.vm.$refs = {
+      deleteModal: {
+        hide: () => {},
+      },
+    };
+    const hideSpy = jest.spyOn(wrapper.vm.$refs.deleteModal, 'hide');
+    const notificationSpy = jest.spyOn(wrapper.vm, 'displayNotification');
+    await wrapper.vm.deleteResource();
+    expect(hideSpy).toHaveBeenCalled();
+    expect(notificationSpy).toHaveBeenCalledWith('IDMMessages', 'success', undefined);
   });
 });
