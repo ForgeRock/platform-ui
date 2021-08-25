@@ -542,11 +542,10 @@ export default {
         loadAndCloseModal();
         this.displayNotification('IDMMessages', 'success', this.$t(translation, { resource: this.relationshipArrayProperty.title }));
         this.$emit('refresh-data');
-      })
-        .catch((error) => {
-          loadAndCloseModal();
-          this.displayNotification('IDMMessages', 'error', error.response.data.message);
-        });
+      }).catch((error) => {
+        loadAndCloseModal();
+        this.showErrorMessage(error, this.$t('errors.errorRetrievingRelationships'));
+      });
     },
     /**
      * Repulls data based on new sort, and returns table to first page
