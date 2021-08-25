@@ -7,6 +7,7 @@
 
 import { shallowMount } from '@vue/test-utils';
 import RelationshipArray from './index';
+import * as SchemaApi from '@/api/SchemaApi';
 
 RelationshipArray.mounted = jest.fn();
 
@@ -87,7 +88,7 @@ describe('RelationshipArray', () => {
   beforeEach(() => {
     wrapper = shallowMount(RelationshipArray, {
       mocks: {
-        $t: () => {},
+        $t: (key) => key,
         $store: {
           state: {
             userId: 'foo',
@@ -138,7 +139,69 @@ describe('RelationshipArray', () => {
       },
       mounted: () => {},
     });
-    wrapper.vm.loadGrid = () => { wrapper.vm.gridLoaded = true; };
+    jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => (
+      {
+        get: () => Promise.resolve({
+          data: {
+            pagedResultsCookie: true,
+          },
+        }),
+        patch: () => Promise.resolve({}),
+      }
+    ));
+
+    jest.spyOn(SchemaApi, 'getSchema').mockImplementation(() => Promise.resolve({
+      data: {
+        resourceCollection: 'managed/user',
+        _id: 'testId',
+        order: [
+          'test',
+          'test2',
+        ],
+        title: 'testTitle',
+        properties: {
+          test: {
+            value: 'test',
+            viewable: true,
+            type: 'object',
+            title: 'testTitle',
+            propName: 'testPropName',
+            order: [
+              'innerTest',
+            ],
+            properties: {
+              innerTest: {},
+            },
+            isTemporalConstraint: true,
+          },
+          test2: {
+            value: 'test2',
+            type: 'string',
+            title: 'test2Title',
+            propName: 'test2PropName',
+            viewable: true,
+            isTemporalConstraint: false,
+            isConditional: true,
+          },
+        },
+      },
+    }));
+    wrapper.vm.createModalId = 'testId';
+    wrapper.vm.removeModalId = 'testId';
+    wrapper.vm.$refs = {
+      testId: {
+        show: () => {},
+        hide: () => {},
+      },
+      relationshipArrayGrid: {
+        clearSelected: () => {
+          wrapper.vm.allRowsSelected = false;
+        },
+        selectAllRows: () => {
+          wrapper.vm.allRowsSelected = true;
+        },
+      },
+    };
   });
 
   it('RelationshipArray successfully loaded', () => {
@@ -182,6 +245,8 @@ describe('RelationshipArray', () => {
     wrapper.vm.setGridData(sampleRelationshipsData, wrapper.vm.relationshipArrayProperty);
     expect(wrapper.vm.gridData.length).toEqual(4);
     expect(wrapper.vm.gridData[0].givenName).toEqual('Mitzie');
+    wrapper.vm.disableSortAndSearch = true;
+    wrapper.vm.setGridData(sampleRelationshipsData, wrapper.vm.relationshipArrayProperty);
   });
 
   it('Correctly handles sorting change and clearing', () => {
@@ -198,15 +263,11 @@ describe('RelationshipArray', () => {
 
   it('Correctly handles search', () => {
     wrapper.vm.sortBy = 'userName';
-    wrapper.vm.gridLoaded = false;
     wrapper.vm.search();
     expect(wrapper.vm.sortBy).toEqual(null);
-    expect(wrapper.vm.gridLoaded).toEqual(true);
     wrapper.vm.filter = 'Mitzie';
-    wrapper.vm.gridLoaded = false;
     wrapper.vm.sortDesc = true;
     wrapper.vm.search();
-    expect(wrapper.vm.gridLoaded).toEqual(true);
     expect(wrapper.vm.sortDesc).toEqual(false);
   });
 
@@ -220,6 +281,10 @@ describe('RelationshipArray', () => {
     wrapper.vm.onRowSelected([1, 2, 3, 4]);
     expect(wrapper.vm.selected[0]).toEqual(1);
     expect(wrapper.vm.allRowsSelected).toEqual(true);
+    wrapper.vm.toggleSelectAll();
+    expect(wrapper.vm.allRowsSelected).toEqual(false);
+    wrapper.vm.toggleSelectAll();
+    expect(wrapper.vm.allRowsSelected).toEqual(true);
   });
 
   it('Correctly sets disableSortAndSearch', () => {
@@ -232,5 +297,56 @@ describe('RelationshipArray', () => {
     wrapper.vm.relationshipArrayProperty.items.resourceCollection[0].path = 'internal/role';
     wrapper.vm.setDisableSortAndSearch(wrapper.vm.relationshipArrayProperty.items.resourceCollection[0]);
     expect(wrapper.vm.disableSortAndSearch).toEqual(true);
+  });
+
+  it('loads grid', async () => {
+    await wrapper.vm.loadGrid(0);
+    expect(wrapper.vm.gridData).toStrictEqual([]);
+    expect(wrapper.vm.lastPage).toBe(false);
+
+    jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => (
+      {
+        get: () => Promise.resolve({
+          data: {
+            pagedResultsCookie: false,
+          },
+        }),
+      }
+    ));
+    await wrapper.vm.loadGrid(0);
+    expect(wrapper.vm.lastPage).toBe(false);
+  });
+
+  it('opens create modal', () => {
+    wrapper.vm.newRelationships = ['relationship'];
+    const showTestIdSpy = jest.spyOn(wrapper.vm.$refs.testId, 'show');
+    expect(wrapper.vm.newRelationships).toStrictEqual(['relationship']);
+    wrapper.vm.openCreateModal();
+    expect(showTestIdSpy).toHaveBeenCalled();
+    expect(wrapper.vm.newRelationships).toStrictEqual([]);
+  });
+
+  it('removes relationships', async () => {
+    const notificationSpy = jest.spyOn(wrapper.vm, 'displayNotification');
+    const hideTestIdSpy = jest.spyOn(wrapper.vm.$refs.testId, 'hide');
+    wrapper.vm.gridData = [1, 2, 3, 4];
+    wrapper.vm.onRowSelected([1, 2, 3, 4]);
+    expect(wrapper.vm.selected[0]).toEqual(1);
+    await wrapper.vm.removeRelationships();
+    expect(notificationSpy).toHaveBeenCalledWith('IDMMessages', 'success', 'pages.access.successRemoved');
+
+    const error400 = { response: { status: 400 } };
+    jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => (
+      {
+        get: () => Promise.resolve({
+          data: {
+            pagedResultsCookie: true,
+          },
+        }),
+        patch: () => Promise.reject(error400),
+      }
+    ));
+    await wrapper.vm.removeRelationships();
+    expect(hideTestIdSpy).toHaveBeenCalled();
   });
 });
