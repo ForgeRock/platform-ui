@@ -23,7 +23,7 @@ of the MIT license. See the LICENSE file for details. -->
                 <BMediaAside>
                   <div
                     :class="`letter-${getFirstLetter(false)}`"
-                    class="fr-realm-stamp mr-3 rounded-circle p-2 d-flex align-items-center justify-content-center">
+                    class="fr-realm-stamp rounded-circle p-2 d-flex align-items-center justify-content-center">
                     <i
                       class="material-icons-outlined text-white d-none"
                       aria-hidden="true">
@@ -62,7 +62,7 @@ of the MIT license. See the LICENSE file for details. -->
                   <BMediaAside>
                     <div
                       :class="`letter-${getFirstLetter(false)}`"
-                      class="fr-realm-stamp mr-3 rounded-circle p-2 d-flex align-items-center justify-content-center">
+                      class="fr-realm-stamp rounded-circle p-2 d-flex align-items-center justify-content-center">
                       <i
                         class="material-icons-outlined text-white d-none"
                         aria-hidden="true">
