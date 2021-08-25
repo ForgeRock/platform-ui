@@ -415,7 +415,7 @@ export default {
           if (isArray(this.formFields[key]) && this.formFields[key].length > 0) {
             property.value = this.formFields[key][0].duration;
           }
-        } else if (this.isConditional) {
+        } else if (property.isConditional) {
           property.disabled = !privilege.UPDATE.properties.includes(key) && !this.isOpenidmAdmin;
           property.value = this.formFields[key];
         }

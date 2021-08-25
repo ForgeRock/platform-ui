@@ -45,4 +45,13 @@ describe('Delete Resource', () => {
 
     expect(wrapper.emitted()['delete-resource']).toBeTruthy();
   });
+
+  it('shows and hides modal', () => {
+    const showModalSpy = jest.spyOn(wrapper.vm.$refs.resourceDeleteModal, 'show');
+    const hideModalSpy = jest.spyOn(wrapper.vm.$refs.resourceDeleteModal, 'hide');
+    wrapper.setProps({ resourceToDeleteId: true });
+    expect(showModalSpy).toHaveBeenCalled();
+    wrapper.setProps({ resourceToDeleteId: false });
+    expect(hideModalSpy).toHaveBeenCalled();
+  });
 });
