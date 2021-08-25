@@ -44,4 +44,23 @@ describe('Clear Resource Sessions', () => {
 
     expect(wrapper.emitted()['clear-sessions']).toBeTruthy();
   });
+
+  it('shows and hides modal', () => {
+    wrapper.vm.$refs = {
+      clearSessionsModal: {
+        show: () => {},
+        hide: () => {},
+      },
+    };
+    const showSpy = jest.spyOn(wrapper.vm.$refs.clearSessionsModal, 'show');
+    wrapper.setProps({
+      show: true,
+    });
+    expect(showSpy).toHaveBeenCalled();
+    const hideSpy = jest.spyOn(wrapper.vm.$refs.clearSessionsModal, 'hide');
+    wrapper.setProps({
+      show: false,
+    });
+    expect(hideSpy).toHaveBeenCalled();
+  });
 });
