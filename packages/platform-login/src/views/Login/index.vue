@@ -721,7 +721,20 @@ export default {
      */
     getField(callback, index) {
       const callbackType = callback.getType();
-      const fieldType = callbackType === FrCallbackType.PasswordCallback || callbackType === FrCallbackType.ValidatedCreatePasswordCallback ? 'password' : 'string';
+      let fieldType;
+
+      switch (callbackType) {
+        case FrCallbackType.PasswordCallback:
+        case FrCallbackType.ValidatedCreatePasswordCallback:
+          fieldType = 'password';
+          break;
+        case FrCallbackType.NumberAttributeInputCallback:
+          fieldType = 'number';
+          break;
+        default:
+          fieldType = 'string';
+          break;
+      }
 
       let label = '';
       if (callback.getPrompt) {
