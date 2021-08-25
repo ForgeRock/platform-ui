@@ -1,5 +1,8 @@
 {
   "extends": "stylelint-config-standard",
+  "ignoreFiles": [
+      "./**/coverage/**/*.{html,css}"
+  ],
   "rules": {
     "at-rule-no-vendor-prefix": true,
     "at-rule-whitelist": [

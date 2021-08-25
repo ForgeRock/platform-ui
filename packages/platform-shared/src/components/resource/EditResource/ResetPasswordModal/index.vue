@@ -107,7 +107,7 @@ export default {
       (error) => {
         const err = this.findPolicyError(error.response).map((message) => message.msg);
         if (err.length) this.failures = err;
-        this.displayNotification('AdminMessage', 'error', this.$t('pages.access.failedSavePassword'));
+        this.showErrorMessage(error, this.$t('pages.access.failedSavePassword'));
       });
     },
   },
