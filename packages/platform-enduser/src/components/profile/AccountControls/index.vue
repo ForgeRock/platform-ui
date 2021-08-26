@@ -30,11 +30,10 @@ of the MIT license. See the LICENSE file for details. -->
           block
           :variant="slotData.buttonVariant"
           @click="slotData.buttonMethod">
-          <i
-            class="material-icons-outlined mr-2"
-            aria-hidden="true">
-            {{ slotData.buttonIcon }}
-          </i>
+          <FrIcon
+            class="mr-2"
+            :name="slotData.buttonIcon"
+          />
           {{ slotData.buttonText }}
         </BButton>
       </template>
@@ -75,6 +74,7 @@ import Accordion from '@forgerock/platform-shared/src/components/Accordion';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 
 /* eslint-disable no-underscore-dangle */
 export default {
@@ -86,6 +86,7 @@ export default {
   ],
   components: {
     FrAccordion: Accordion,
+    FrIcon,
   },
   data() {
     return {

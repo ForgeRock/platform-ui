@@ -15,12 +15,11 @@ of the MIT license. See the LICENSE file for details. -->
         :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"
         fluid
         :alt="$t('common.avatar')" />
-      <i
+      <FrIcon
         v-else
-        class="material-icons-outlined mr-4 md-48"
-        aria-hidden="true">
-        {{ setIcon }}
-      </i>
+        class="mr-4 md-48"
+        :name="setIcon"
+      />
       <div class="media-body align-self-center">
         <h5 class="text-muted">
           {{ resourceTitle }}
@@ -41,11 +40,10 @@ of the MIT license. See the LICENSE file for details. -->
       class="mb-4"
       variant="outline-secondary"
       v-b-modal.resetModal>
-      <i
-        class="material-icons-outlined mr-md-2 text-nowrap"
-        aria-hidden="true">
-        cached
-      </i>
+      <FrIcon
+        class="mr-md-2 text-nowrap"
+        name="cached"
+      />
       {{ $t('pages.access.resetPassword') }}
     </BButton>
     <BButton
@@ -53,11 +51,10 @@ of the MIT license. See the LICENSE file for details. -->
       class="mb-4"
       variant="outline-secondary"
       @click="showClearSessionsModal = true">
-      <i
-        class="material-icons-outlined mr-md-2 text-nowrap"
-        aria-hidden="true">
-        clear_all
-      </i>
+      <FrIcon
+        class="mr-md-2 text-nowrap"
+        name="clear_all"
+      />
       {{ $t('common.endSessions') }}
     </BButton>
     <slot
@@ -231,6 +228,7 @@ import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import { clearSessions, getSessionInfo } from '@forgerock/platform-shared/src/api/SessionsApi';
 import ClearResourceSessions from '@forgerock/platform-shared/src/components/resource/ClearResourceSessions';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrObjectTypeEditor from './ObjectTypeEditor';
 import FrSettingsTab from './CustomTabs/SettingsTab';
 import FrPrivilegesTab from './CustomTabs/PrivilegesTab';
@@ -255,6 +253,7 @@ export default {
     FrSettingsTab,
     FrPrivilegesTab,
     FrJsonTab,
+    FrIcon,
     BButton,
     BImg,
     BContainer,

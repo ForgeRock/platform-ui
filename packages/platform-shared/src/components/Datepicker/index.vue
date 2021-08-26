@@ -14,34 +14,34 @@ of the MIT license. See the LICENSE file for details. -->
     :placeholder="placeholder"
     :value="value">
     <template #button-content>
-      <i class="material-icons-outlined">
-        calendar_today
-      </i>
+      <FrIcon
+        name="calendar_today"
+      />
     </template>
     <template #nav-prev-year>
-      <i class="material-icons-outlined">
-        first_page
-      </i>
+      <FrIcon
+        name="first_page"
+      />
     </template>
     <template #nav-prev-month>
-      <i class="material-icons-outlined">
-        chevron_left
-      </i>
+      <FrIcon
+        name="chevron_left"
+      />
     </template>
     <template #nav-this-month>
-      <i class="material-icons-outlined">
-        calendar_today
-      </i>
+      <FrIcon
+        name="calendar_today"
+      />
     </template>
     <template #nav-next-month>
-      <i class="material-icons-outlined">
-        chevron_right
-      </i>
+      <FrIcon
+        name="chevron_right"
+      />
     </template>
     <template #nav-next-year>
-      <i class="material-icons-outlined">
-        last_page
-      </i>
+      <FrIcon
+        name="last_page"
+      />
     </template>
   </BFormDatepicker>
 </template>
@@ -51,6 +51,7 @@ import {
   BFormDatepicker,
 } from 'bootstrap-vue';
 
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 /**
  * Bootstrap datepicker with custom icons, default values set.
  */
@@ -58,6 +59,7 @@ export default {
   name: 'Datepicker',
   components: {
     BFormDatepicker,
+    FrIcon,
   },
   props: {
     /**

@@ -46,7 +46,7 @@ describe('utils/FallbackImage.vue', () => {
     wrapper.setData({ imageFound: false });
 
     localVue.nextTick(() => {
-      expect(wrapper.findAll('i.text-dark').isVisible()).toBe(true);
+      expect(wrapper.findAll('.text-dark').isVisible()).toBe(true);
       expect(wrapper.find('img').exists()).toBe(false);
     });
   });

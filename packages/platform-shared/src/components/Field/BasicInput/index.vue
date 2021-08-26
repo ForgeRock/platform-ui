@@ -50,16 +50,9 @@ of the MIT license. See the LICENSE file for details. -->
           name="revealButton"
           :aria-label="showPassword ? 'visibility_off' : 'visibility'"
           @keyup.enter="$emit('enter')">
-          <i
-            aria-hidden="true"
-            class="material-icons-outlined">
-            <template v-if="showPassword">
-              visibility_off
-            </template>
-            <template v-else>
-              visibility
-            </template>
-          </i>
+          <FrIcon
+            :name="showPassword ? 'visibility_off' : 'visibility'"
+          />
         </BButton>
       </BInputGroupAppend>
       <BInputGroupAppend
@@ -69,9 +62,9 @@ of the MIT license. See the LICENSE file for details. -->
           class="btn btn-outline-secondary"
           name="copyButton"
           @click.prevent="copyValueToClipboard(value)">
-          <i class="material-icons-outlined">
-            copy
-          </i>
+          <FrIcon
+            name="copy"
+          />
         </button>
       </BInputGroupAppend>
     </template>
@@ -96,6 +89,7 @@ import { delay } from 'lodash';
 /* eslint-disable import/no-extraneous-dependencies */
 import * as clipboard from 'clipboard-polyfill/text';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
 
@@ -114,6 +108,7 @@ export default {
   components: {
     BButton,
     BInputGroupAppend,
+    FrIcon,
     FrInputLayout,
   },
   props: {
