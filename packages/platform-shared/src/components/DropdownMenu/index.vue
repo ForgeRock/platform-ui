@@ -53,11 +53,10 @@ of the MIT license. See the LICENSE file for details. -->
       v-if="enableLogout"
       class="mb-2"
       @click="logoutUser()">
-      <i
-        aria-hidden="true"
-        class="material-icons material-icons-outlined mr-2">
-        exit_to_app
-      </i>
+      <FrIcon
+        class="mr-2"
+        name="exit_to_app"
+      />
       {{ $t('sideMenu.signOut') }}
     </BDropdownItem>
   </BDropdown>
@@ -72,6 +71,7 @@ import {
 } from 'bootstrap-vue';
 import MenuItem from '@forgerock/platform-shared/src/components/MenuItem';
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 
 /**
  * Bootstrap dropdown menu used in navbar and sidemenu
@@ -84,6 +84,7 @@ export default {
     BDropdownItem,
     BMedia,
     FrMenuItem: MenuItem,
+    FrIcon,
   },
   mixins: [
     LoginMixin,
@@ -162,7 +163,7 @@ export default {
 
   .dropdown-item {
     h5,
-    span {
+    span:not(.material-icons-outlined) {
       font-size: 0.875rem;
     }
   }

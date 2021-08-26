@@ -14,11 +14,11 @@ of the MIT license. See the LICENSE file for details. -->
             class="mr-1"
             @click="openCreateModal"
             :id="'add_' + relationshipArrayProperty.key">
-            <i
-              class="material-icons mr-2"
-              aria-hidden="true">
-              add
-            </i>
+            <FrIcon
+              class="mr-2"
+              :outlined="false"
+              name="add"
+            />
             {{ $t("common.addObject", {object: relationshipArrayProperty.title}) }}
           </BButton>
           <BButton
@@ -199,6 +199,7 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 
 export default {
@@ -213,6 +214,7 @@ export default {
     BModal,
     BPagination,
     FrSearchInput,
+    FrIcon,
   },
   mixins: [
     NotificationMixin,

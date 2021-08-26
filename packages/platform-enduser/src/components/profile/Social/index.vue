@@ -35,19 +35,19 @@ of the MIT license. See the LICENSE file for details. -->
               <BCol md="6">
                 <span>
                   <template v-if="slotData.connected">
-                    <i
-                      class="material-icons mr-2 text-success"
-                      aria-hidden="true">
-                      check_circle
-                    </i>
+                    <FrIcon
+                      class="mr-2 text-success"
+                      :outlined="false"
+                      name="check_circle"
+                    />
                     {{ $t("common.connected") }}
                   </template>
                   <template v-else>
-                    <i
-                      class="material-icons mr-2 text-muted"
-                      aria-hidden="true">
-                      remove_circle
-                    </i>
+                    <FrIcon
+                      class="mr-2 text-muted"
+                      :outlined="false"
+                      name="remove_circle"
+                    />
                     {{ $t('pages.profile.social.notConnected') }}
                   </template>
                 </span>
@@ -67,11 +67,10 @@ of the MIT license. See the LICENSE file for details. -->
                 v-for="scope in slotData.scopes"
                 :key="slotData.provider + scope"
                 class="mt-2">
-                <i
-                  class="material-icons-outlined mr-2 text-success"
-                  aria-hidden="true">
-                  check
-                </i>
+                <FrIcon
+                  class="mr-2 text-success"
+                  name="check"
+                />
                 <span class="text-dark">
                   {{ scope }}
                 </span>
@@ -82,11 +81,10 @@ of the MIT license. See the LICENSE file for details. -->
             @click="showModal(slotData.provider)"
             variant="outline-danger"
             block>
-            <i
-              class="material-icons-outlined mr-2"
-              aria-hidden="true">
-              block
-            </i>
+            <FrIcon
+              class="mr-2"
+              name="block"
+            />
             {{ $t('pages.profile.social.disconnect') }}
           </BButton>
         </template>
@@ -136,6 +134,7 @@ import {
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import Accordion from '@forgerock/platform-shared/src/components/Accordion';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import store from '@/store';
 
 export default {
@@ -146,6 +145,7 @@ export default {
     BImg,
     BModal,
     BRow,
+    FrIcon,
     FrAccordion: Accordion,
   },
   mixins: [

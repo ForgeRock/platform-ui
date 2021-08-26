@@ -20,9 +20,9 @@ of the MIT license. See the LICENSE file for details. -->
           <template #prepend>
             <BInputGroupPrepend>
               <div :class="[{'disabled': $attrs.disabled}, 'input-group-text inset']">
-                <i class="material-icons-outlined">
-                  location_on
-                </i>
+                <FrIcon
+                  name="location_on"
+                />
               </div>
             </BInputGroupPrepend>
           </template>
@@ -68,6 +68,7 @@ import {
   BLink,
 } from 'bootstrap-vue';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 
 /**
  * Input that allows user to select a timezone offset. Uses BInput with type range.
@@ -81,6 +82,7 @@ export default {
     BFormInput,
     BInputGroupPrepend,
     FrField,
+    FrIcon,
     BLink,
   },
   props: {

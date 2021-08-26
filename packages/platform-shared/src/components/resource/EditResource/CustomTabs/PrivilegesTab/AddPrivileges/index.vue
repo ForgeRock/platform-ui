@@ -28,22 +28,20 @@ of the MIT license. See the LICENSE file for details. -->
             :label="$t('pages.access.chooseIdentityObject')"
             :options="identityObjectField.options">
             <template v-slot:option="{ option }">
-              <i
-                class="material-icons-outlined mr-3"
-                aria-hidden="true">
-                {{ option.icon || 'settings_system_daydream' }}
-              </i>
+              <FrIcon
+                class="mr-3"
+                :name="option.icon || 'settings_system_daydream'"
+              />
               {{ (option.text ? (option.text) : '') | PluralizeFilter }}
               <small class="text-monospace text-muted ml-1">
                 {{ option.value }}
               </small>
             </template>
             <template v-slot:singleLabel="{ option }">
-              <i
-                class="material-icons-outlined mr-3"
-                aria-hidden="true">
-                {{ option.icon || 'settings_system_daydream' }}
-              </i>
+              <FrIcon
+                class="mr-3"
+                :name="option.icon || 'settings_system_daydream'"
+              />
               {{ (option.text ? (option.text) : '') | PluralizeFilter }}
               <small class="text-monospace text-muted ml-1">
                 {{ option.value }}
@@ -56,11 +54,11 @@ of the MIT license. See the LICENSE file for details. -->
           class="w-25"
           @click="addNewPrivilege"
           id="add_new_privilege">
-          <i
-            class="material-icons-outlined mr-2"
-            aria-hidden="true">
-            add
-          </i>{{ $t("common.add") }}
+          <FrIcon
+            class="mr-2"
+            name="add"
+          />
+          {{ $t("common.add") }}
         </BButton>
       </div>
     </div>
@@ -79,12 +77,14 @@ import FrField from '@forgerock/platform-shared/src/components/Field';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import PluralizeFilter from '@forgerock/platform-shared/src/filters/PluralizeFilter';
 import IsFraasFilterMixin from '@forgerock/platform-shared/src/mixins/IsFraasFilterMixin';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import PrivilegeEditor from '../PrivilegeEditor';
 
 export default {
   name: 'AddPrivileges',
   components: {
     FrField,
+    FrIcon,
     FrPrivilegeEditor: PrivilegeEditor,
     BButton,
   },

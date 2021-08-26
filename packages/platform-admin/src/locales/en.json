@@ -503,7 +503,9 @@
     },
     "toolbar": {
       "autoLayout": "Auto Layout",
-      "fullscreen": "Toggle Fullscreen"
+      "fullscreen": "Toggle Fullscreen",
+      "zoomIn": "Zoom In",
+      "zoomOut": "Zoom Out"
     }
   },
   "components": {

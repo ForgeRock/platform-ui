@@ -44,12 +44,14 @@ of the MIT license. See the LICENSE file for details. -->
           <div
             class="caret ml-2 my-auto list-group-item-action"
             v-if="mapping.consented">
-            <i class="material-icons-outlined font-weight-bolder md-24 mb-1 pr-0 caret-down align-self-center">
-              keyboard_arrow_down
-            </i>
-            <i class="material-icons-outlined font-weight-bolder md-24 mb-1 pr-0 caret-up align-self-center">
-              keyboard_arrow_up
-            </i>
+            <FrIcon
+              class="font-weight-bolder md-24 mb-1 pr-0 caret-down align-self-center"
+              name="keyboard_arrow_down"
+            />
+            <FrIcon
+              class="font-weight-bolder md-24 mb-1 pr-0 caret-up align-self-center"
+              name="keyboard_arrow_up"
+            />
           </div>
         </div>
 
@@ -68,9 +70,10 @@ of the MIT license. See the LICENSE file for details. -->
                 aria-label="Close"
                 class="close"
                 @click.stop.prevent="hideModal(mapping.name)">
-                <i class="material-icons-outlined font-weight-bolder md-24 mb-1">
-                  close
-                </i>
+                <FrIcon
+                  class="font-weight-bolder md-24 mb-1"
+                  name="close"
+                />
               </button>
             </div>
           </template>
@@ -122,6 +125,7 @@ import ListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
 import ListItem from '@forgerock/platform-shared/src/components/ListItem/';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import AccessLevel from '@/components/profile/AccessLevel';
 import FallbackImage from '@/components/utils/FallbackImage';
 
@@ -144,6 +148,7 @@ export default {
     FrListItem: ListItem,
     FrAccessLevel: AccessLevel,
     FrFallbackImage: FallbackImage,
+    FrIcon,
   },
   props: {
     consentedMappings: {

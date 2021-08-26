@@ -19,9 +19,9 @@ of the MIT license. See the LICENSE file for details. -->
             <button
               class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
               @click.prevent="addElementToList(-1)">
-              <i class="material-icons-outlined">
-                add
-              </i>
+              <FrIcon
+                name="add"
+              />
             </button>
           </div>
           <div
@@ -51,17 +51,17 @@ of the MIT license. See the LICENSE file for details. -->
                   type="button"
                   class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
                   @click.prevent="removeElementFromList(index)">
-                  <i class="material-icons-outlined">
-                    remove
-                  </i>
+                  <FrIcon
+                    name="remove"
+                  />
                 </button>
                 <button
                   type="button"
                   class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
                   @click.prevent="addElementToList(index)">
-                  <i class="material-icons-outlined">
-                    add
-                  </i>
+                  <FrIcon
+                    name="add"
+                  />
                 </button>
               </div>
             </div>
@@ -90,6 +90,7 @@ import {
   BCardBody,
 } from 'bootstrap-vue';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrInlineJsonEditor from '@forgerock/platform-shared/src/components/InlineJsonEditor';
 import ListsMixin from '@forgerock/platform-shared/src/mixins/ListsMixin';
 
@@ -104,6 +105,7 @@ export default {
   components: {
     BCardBody,
     FrField,
+    FrIcon,
     FrInlineJsonEditor,
   },
   mixins: [

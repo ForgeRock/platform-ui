@@ -23,12 +23,11 @@ of the MIT license. See the LICENSE file for details. -->
                 <BMediaAside>
                   <div
                     :class="`letter-${getFirstLetter(false)}`"
-                    class="fr-realm-stamp rounded-circle p-2 d-flex align-items-center justify-content-center">
-                    <i
-                      class="material-icons-outlined text-white d-none"
-                      aria-hidden="true">
-                      cloud
-                    </i>
+                    class="fr-realm-stamp mr-3 rounded-circle p-2 d-flex align-items-center justify-content-center">
+                    <FrIcon
+                      class="text-white d-none"
+                      name="cloud"
+                    />
                     <span
                       class="text-white"
                       style="font-size: 1rem;">
@@ -62,12 +61,11 @@ of the MIT license. See the LICENSE file for details. -->
                   <BMediaAside>
                     <div
                       :class="`letter-${getFirstLetter(false)}`"
-                      class="fr-realm-stamp rounded-circle p-2 d-flex align-items-center justify-content-center">
-                      <i
-                        class="material-icons-outlined text-white d-none"
-                        aria-hidden="true">
-                        cloud
-                      </i>
+                      class="fr-realm-stamp mr-3 rounded-circle p-2 d-flex align-items-center justify-content-center">
+                      <FrIcon
+                        class="text-white d-none"
+                        name="cloud"
+                      />
                       <span
                         class="text-white"
                         style="font-size: 1rem;">
@@ -112,11 +110,10 @@ of the MIT license. See the LICENSE file for details. -->
               <button
                 @click="toggleMenu"
                 class="d-flex align-items-center">
-                <i
-                  class="material-icons material-icons-outlined icon-flipped mr-3"
-                  aria-hidden="true">
-                  chrome_reader_mode
-                </i>
+                <FrIcon
+                  class="icon-flipped mr-3"
+                  name="chrome_reader_mode"
+                />
                 <span class="sidebar-item-text">
                   {{ $t('sideMenu.toggleSidebar') }}
                 </span>
@@ -141,6 +138,7 @@ import {
 } from 'bootstrap-vue';
 import FrDropdownMenu from '@forgerock/platform-shared/src/components/DropdownMenu';
 import FrMenuItem from '@forgerock/platform-shared/src/components/MenuItem';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import {
   capitalize,
   lowerCase,
@@ -161,6 +159,7 @@ export default {
     BMediaBody,
     FrDropdownMenu,
     FrMenuItem,
+    FrIcon,
   },
   props: {
     /**

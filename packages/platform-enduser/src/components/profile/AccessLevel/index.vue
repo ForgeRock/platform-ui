@@ -13,14 +13,23 @@ of the MIT license. See the LICENSE file for details. -->
           class="py-1"
           v-for="field in props.fields"
           :key="field.name">
-          <i
-            class="material-icons-outlined md-16 text-success font-weight-bolder mr-2"
-            aria-hidden="true">
-            check
-          </i>
+          <FrIcon
+            class="md-16 text-success font-weight-bolder mr-2"
+            name="check"
+          />
           {{ field.title }}
         </li>
       </ul>
     </dd>
   </dl>
 </template>
+
+<script>
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+
+export default {
+  components: {
+    FrIcon,
+  },
+};
+</script>

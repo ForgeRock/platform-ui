@@ -8,11 +8,10 @@ of the MIT license. See the LICENSE file for details. -->
       <BButton
         variant="outline-primary"
         @click="copyValueToClipboard(jsonString)">
-        <i
-          class="material-icons-outlined mr-2"
-          aria-hidden="true">
-          file_copy
-        </i>
+        <FrIcon
+          class="mr-2"
+          name="file_copy"
+        />
         {{ $t('common.json.copyJson') }}
       </BButton>
     </div>
@@ -32,6 +31,7 @@ import {
 import VuePrismEditor from 'vue-prism-editor';
 import * as clipboard from 'clipboard-polyfill/text';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 
 export default {
   name: 'JsonTab',
@@ -39,6 +39,7 @@ export default {
     BButton,
     BTab,
     VuePrismEditor,
+    FrIcon,
   },
   mixins: [
     NotificationMixin,

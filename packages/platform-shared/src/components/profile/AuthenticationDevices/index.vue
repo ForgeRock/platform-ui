@@ -26,11 +26,10 @@ of the MIT license. See the LICENSE file for details. -->
                   class="card-body border-bottom">
                   <BRow class="px-4">
                     <div class="w-100 media align-items-center">
-                      <i
-                        class="material-icons-outlined md-24 mr-3"
-                        aria-hidden="true">
-                        stay_primary_portrait
-                      </i>
+                      <FrIcon
+                        class="md-24 mr-3"
+                        name="stay_primary_portrait"
+                      />
                       <div class="media-body">
                         <h5 class="m-0">
                           {{ device.deviceName }}
@@ -42,9 +41,10 @@ of the MIT license. See the LICENSE file for details. -->
                         right
                         toggle-class="pr-0 text-decoration-none">
                         <template #button-content>
-                          <i class="material-icons-outlined text-muted">
-                            more_horiz
-                          </i>
+                          <FrIcon
+                            class="text-muted"
+                            name="more_horiz"
+                          />
                         </template>
                         <template
                           v-for="(button, index) in device.dropdown">
@@ -52,11 +52,10 @@ of the MIT license. See the LICENSE file for details. -->
                             :key="button.text">
                             <BDropdownDivider v-if="index > 0" />
                             <BDropdownItemButton @click="button.action">
-                              <i
-                                class="material-icons-outlined text-muted mr-2"
-                                aria-hidden="true">
-                                {{ button.icon }}
-                              </i>
+                              <FrIcon
+                                class="text-muted mr-2"
+                                :name="button.icon"
+                              />
                               {{ button.text }}
                             </BDropdownItemButton>
                           </div>
@@ -86,9 +85,10 @@ of the MIT license. See the LICENSE file for details. -->
               aria-label="Close"
               class="close"
               @click="close()">
-              <i class="material-icons-outlined font-weight-bolder md-24 mb-1">
-                close
-              </i>
+              <FrIcon
+                class="font-weight-bolder md-24 mb-1"
+                name="close"
+              />
             </button>
           </div>
         </template>
@@ -139,6 +139,7 @@ import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 
 /**
  * @description If fullstack (AM/IDM) is configured will work with authorized devices endpoiint (AM) and display a list of currently of authorized devices for the current
@@ -164,6 +165,7 @@ export default {
     BModal,
     BRow,
     FrField,
+    FrIcon,
   },
   props: {
     forceRoot: {

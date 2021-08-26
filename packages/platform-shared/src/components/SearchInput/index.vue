@@ -5,21 +5,19 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
     class="fr-icon-input-holder">
-    <i
-      aria-hidden="true"
-      class="fr-icon-input-left material-icons-outlined">
-      {{ prependIcon }}
-    </i>
+    <FrIcon
+      class="fr-icon fr-icon-input-left"
+      :name="prependIcon"
+    />
     <a
       tabindex="0"
       v-if="value.length > 0"
       @click.prevent="clearSearch()"
       href="#">
-      <i
-        aria-hidden="true"
-        class="fr-icon-input-right material-icons-outlined">
-        {{ appendIcon }}
-      </i>
+      <FrIcon
+        class="fr-icon fr-icon-input-right"
+        :name="appendIcon"
+      />
     </a>
     <!--
       Emitted when pressing enter key to search
@@ -47,6 +45,7 @@ import {
   BFormInput,
   BInputGroup,
 } from 'bootstrap-vue';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 
 /**
  * Component that provides a left and right icon for a text input.
@@ -56,6 +55,7 @@ export default {
   components: {
     BFormInput,
     BInputGroup,
+    FrIcon,
   },
   props: {
     /**
@@ -125,7 +125,7 @@ export default {
     }
   }
 
-  .material-icons-outlined {
+  .fr-icon {
     position: absolute;
     z-index: 1000;
     margin-top: 16px;

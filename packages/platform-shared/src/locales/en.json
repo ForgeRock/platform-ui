@@ -110,7 +110,7 @@
       "emailAddress": "Email address",
       "password": "Password",
       "retypePassword": "Retype Password",
-      "timeZoneOffset": "Time Zone Offest",
+      "timeZoneOffset": "Time Zone Offset",
       "username": "Username",
       "relationshipLabel": "{relationshipName} Type",
       "typeToSearchFor": "Type to search for {item}",
@@ -305,6 +305,7 @@
         "noNotifications": "No notifications available",
         "title": "Notifications",
         "clearAll": "Clear All",
+        "remove": "Remove notification",
         "removedAll": "Removed all notifications",
         "removed": "Removed notification",
         "failedToRemove": "Failed to remove notification",
@@ -334,6 +335,7 @@
       "assignmentSyncDescription": "This assignment is applied when {source} are synced to {target}",
       "assignmentDetails": "Assignment Details",
       "assignmentOperation": "Assignement Operation",
+      "attributeSettings": "Assignment Attribute Settings",
       "targetSystemAttribute": "Target system attribute",
       "onAssignment": "On Assignment",
       "onUnassignment": "On Unassignment",
@@ -491,7 +493,9 @@
     "basicEditorHeadline": "Assign user based on if query evaluates to true:",
     "groupOperatorText1": "Assign to {resourceName} if",
     "groupOperatorText2": "conditions are met",
-    "properties": "{propertyName} properties"
+    "properties": "{propertyName} properties",
+    "queryFilterAddDropDown": "Add Rule from Dropdown",
+    "queryFilterRemoveButton": "Remove Rule"
   },
   "routeNames": {
     "Applications": "Applications",

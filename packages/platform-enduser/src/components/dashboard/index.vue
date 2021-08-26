@@ -24,11 +24,10 @@ of the MIT license. See the LICENSE file for details. -->
         v-else
         class="mt-4 text-center">
         <div class="d-flex justify-content-center mt-3">
-          <i
-            class="material-icons-outlined mr-4 md-64"
-            aria-hidden="true">
-            donut_large
-          </i>
+          <FrIcon
+            class="mr-4 md-64"
+            name="donut_large"
+          />
           <div class="flex-fow-1">
             <h2>{{ $t('pages.dashboard.noWidget') }}</h2>
             <p v-html="$t('pages.dashboard.noWidgetSubText')" />
@@ -64,6 +63,7 @@ import { mapState } from 'vuex';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import ListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrMyApplicationsListItem from '@/components/dashboard/applications/MyApplicationsListItem';
 import Welcome from './widgets/WelcomeWidget';
 import Workflow from './widgets/WorkflowControlWidget';
@@ -83,6 +83,7 @@ export default {
     Welcome,
     ListGroup,
     Workflow,
+    FrIcon,
   },
   data() {
     return {

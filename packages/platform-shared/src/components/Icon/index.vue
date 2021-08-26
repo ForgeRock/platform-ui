@@ -3,11 +3,11 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <i
+  <span
     aria-hidden="true"
     :class="outlined ? `material-icons-outlined` : `material-icons`">
     {{ name }}
-  </i>
+  </span>
 </template>
 
 <script>

@@ -39,12 +39,12 @@ of the MIT license. See the LICENSE file for details. -->
                 {{ tag }}
               </span>
               <span @click="removeTag(tag)">
-                <i
+                <FrIcon
                   :aria-controls="`fr-tags-tag_${tag.replace(/\s/g, '_')}`"
-                  class="material-icons-outlined pl-2"
-                  style="font-size: 12px; font-weight: 900;">
-                  close
-                </i>
+                  class="close-icon pl-2"
+                  style="font-size: 12px; font-weight: 900;"
+                  name="close"
+                />
               </span>
             </div>
           </Draggable>
@@ -66,6 +66,7 @@ of the MIT license. See the LICENSE file for details. -->
 import { cloneDeep, isEqual } from 'lodash';
 import { BFormTags, VBTooltip } from 'bootstrap-vue';
 import Draggable from 'vuedraggable';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
 
@@ -78,6 +79,7 @@ export default {
     BFormTags,
     Draggable,
     FrInputLayout,
+    FrIcon,
   },
   directives: {
     'b-tooltip': VBTooltip,
@@ -145,7 +147,7 @@ export default {
     white-space: nowrap;
     overflow: hidden;
 
-    .material-icons-outlined {
+    .close-icon {
       cursor: pointer;
     }
   }

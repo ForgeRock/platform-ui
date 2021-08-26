@@ -20,11 +20,10 @@ of the MIT license. See the LICENSE file for details. -->
           <div
             class="py-2 d-flex fixed-width-title-cell"
             @click="showAdvanced = !showAdvanced">
-            <i
-              :class="[{ 'color-red': error}, 'material-icons-outlined mr-3 align-self-center cursor-pointer']"
-              aria-hidden="true">
-              {{ error ? 'info' : identityObjectSchema['mat-icon'] || 'settings_system_daydream' }}
-            </i>
+            <FrIcon
+              :class="[{ 'color-red': error}, ' mr-3 align-self-center cursor-pointer']"
+              :name="error ? 'info' : identityObjectSchema['mat-icon'] || 'settings_system_daydream'"
+            />
             <span class="mw-100">
               <div class="text-truncate">
                 {{ privilege.name }}
@@ -96,12 +95,14 @@ of the MIT license. See the LICENSE file for details. -->
               </BButton>
               <BButton
                 v-if="showDelete"
+                :aria-label="$t('common.delete')"
                 variant="none"
                 class="p-0"
                 @click="$emit('remove-privilege', index)">
-                <i class="material-icons-outlined text-muted">
-                  delete
-                </i>
+                <FrIcon
+                  class="text-muted"
+                  name="delete"
+                />
               </BButton>
             </small>
           </div>
@@ -232,6 +233,7 @@ import {
 // eslint-disable-next-line import/no-extraneous-dependencies
 import PluralizeFilter from '@forgerock/platform-shared/src/filters/PluralizeFilter';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrQueryFilterBuilder from '@forgerock/platform-shared/src/components/QueryFilterBuilder';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 
@@ -245,6 +247,7 @@ export default {
     BFormCheckbox,
     BTable,
     FrField,
+    FrIcon,
     FrQueryFilterBuilder,
   },
   filters: {

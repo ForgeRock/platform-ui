@@ -127,7 +127,7 @@ describe('KeyValueList', () => {
       keyValues: {},
       currentKey: null,
     });
-    wrapper.find('.fr-link').trigger('click');
+    wrapper.find('.mr-1.mb-1').trigger('click');
     const emptyTextElement = wrapper.find('.fr-key-value-panel.text-center.py-3');
     expect(emptyTextElement.exists()).toBe(false);
   });

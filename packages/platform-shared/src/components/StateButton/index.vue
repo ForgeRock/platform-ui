@@ -8,11 +8,11 @@ of the MIT license. See the LICENSE file for details. -->
     <template
       v-if="active"
       v-slot:button-content>
-      <i
-        class="material-icons-outlined mr-md-2 text-success"
-        aria-hidden="true">
-        check_circle
-      </i>
+      <FrIcon
+        class="mr-md-2 text-success"
+        name="check_circle"
+      />
+
       <span>{{ $t('common.active') }}</span>
     </template>
     <template
@@ -26,11 +26,10 @@ of the MIT license. See the LICENSE file for details. -->
       <BDropdownItem
         @click="changeState(false)"
       >
-        <i
-          class="material-icons-outlined mr-md-2"
-          aria-hidden="true">
-          power_settings_new
-        </i>
+        <FrIcon
+          class="mr-md-2"
+          name="power_settings_new"
+        />
         <span>{{ $t('common.deactivate') }}</span>
       </BDropdownItem>
     </template>
@@ -39,11 +38,10 @@ of the MIT license. See the LICENSE file for details. -->
       <BDropdownItem
         @click="changeState(true)"
       >
-        <i
-          class="material-icons-outlined mr-md-2 text-success"
-          aria-hidden="true">
-          check_circle
-        </i>
+        <FrIcon
+          class="mr-md-2 text-success"
+          name="check_circle"
+        />
         <span>{{ $t('common.activate') }}</span>
       </BDropdownItem>
     </template>
@@ -55,6 +53,7 @@ import {
   BDropdown,
   BDropdownItem,
 } from 'bootstrap-vue';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 
 /**
  * A button with a dropdown used to toggle between active and inactive states
@@ -66,6 +65,7 @@ export default {
   components: {
     BDropdown,
     BDropdownItem,
+    FrIcon,
   },
   props: {
     /**

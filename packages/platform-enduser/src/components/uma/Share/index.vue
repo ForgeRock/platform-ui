@@ -1,10 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <!-- eslint-disable no-underscore-dangle -->
 <template>
   <BModal
@@ -48,9 +45,10 @@ of the MIT license. See the LICENSE file for details.
           aria-label="Close"
           class="close"
           @click="hideModal">
-          <i class="material-icons-outlined font-weight-bolder md-24 mb-1">
-            close
-          </i>
+          <FrIcon
+            class="font-weight-bolder md-24 mb-1"
+            name="close"
+          />
         </button>
       </div>
     </template>
@@ -195,6 +193,7 @@ import {
   cloneDeep, filter, findIndex, each, keys, map, pickBy,
 } from 'lodash';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FallbackImage from '@/components/utils/FallbackImage';
 
 /**
@@ -208,6 +207,7 @@ export default {
   ],
   components: {
     FrFallbackImage: FallbackImage,
+    FrIcon,
   },
   props: {
     resource: {

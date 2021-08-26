@@ -70,7 +70,8 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
       <template
         v-slot:tag="{ option, remove }">
-        <div class="multiselect__tag">
+        <div
+          class="multiselect__tag">
           <div>
             <span
               v-for="(displayField, idx) in option.displayFields"
@@ -79,11 +80,16 @@ of the MIT license. See the LICENSE file for details. -->
               class="pr-1 font-weight-bold">
               {{ option.resource[displayField] }}
             </span>
-            <i
-              class="material-icons-outlined md-14 multiselect__tag-icon"
+            <BButton
+              variant="link"
+              :aria-label="$t('common.remove')"
+              class="p-0 close-button float-right"
               @click="remove(option)">
-              close
-            </i>
+              <FrIcon
+                class="md-14 multiselect__tag-icon"
+                name="close"
+              />
+            </BButton>
           </div>
           {{ option.resource[option.displayFields[0]] }}
         </div>
@@ -133,10 +139,11 @@ import {
   has,
   map,
 } from 'lodash';
-import { BFormGroup } from 'bootstrap-vue';
+import { BFormGroup, BButton } from 'bootstrap-vue';
 import VueMultiSelect from 'vue-multiselect';
 import TimeConstraint from '@forgerock/platform-shared/src/components/TimeConstraint';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
@@ -147,7 +154,9 @@ export default {
   components: {
     VueMultiSelect,
     BFormGroup,
+    BButton,
     FrField,
+    FrIcon,
     FrTimeConstraint: TimeConstraint,
   },
   mixins: [
@@ -356,5 +365,10 @@ export default {
   background-color: $gray-100;
   padding: 0.125rem 0.25rem;
   border-radius: 5px;
+}
+
+.close-button {
+  border: none;
+  outline: none;
 }
 </style>

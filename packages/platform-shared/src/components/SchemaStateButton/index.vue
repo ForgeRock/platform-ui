@@ -7,12 +7,11 @@ of the MIT license. See the LICENSE file for details. -->
     variant="outline-secondary">
     <template
       #button-content>
-      <i
+      <FrIcon
         v-if="value === $t('common.active')"
-        class="material-icons-outlined mr-md-2 text-success"
-        aria-hidden="true">
-        check_circle
-      </i>
+        class="mr-md-2 text-success"
+        name="check_circle"
+      />
       <span>{{ value }}</span>
     </template>
 
@@ -20,12 +19,11 @@ of the MIT license. See the LICENSE file for details. -->
       v-for="item in dropdownOptions"
       @click="changeState(item.value)"
       :key="item.value">
-      <i
+      <FrIcon
         v-if="item.icon"
-        :class="`material-icons-outlined mr-md-2 ${item.textClass}`"
-        aria-hidden="true">
-        {{ item.icon }}
-      </i>
+        :class="`mr-md-2 ${item.textClass}`"
+        :name="item.icon"
+      />
       <span>{{ item.text }}</span>
     </BDropdownItem>
   </BDropdown>
@@ -39,6 +37,7 @@ import {
 import {
   get,
 } from 'lodash';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 
 /**
  * A component for switching json schema defined items (applications, Agent/gateway config etc) between active and inactive states (and others).
@@ -49,6 +48,7 @@ export default {
   components: {
     BDropdown,
     BDropdownItem,
+    FrIcon,
   },
   props: {
     /**

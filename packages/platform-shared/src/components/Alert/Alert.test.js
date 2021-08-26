@@ -1,10 +1,10 @@
 /**
- * Copyright 2019-2020 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2019-2021 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
+
 import { shallowMount } from '@vue/test-utils';
 import Alert from './index';
 
@@ -28,7 +28,7 @@ describe('Alert Component', () => {
   it('primary variant is the default variant', () => {
     wrapper = shallowMount(Alert);
     expect(wrapper.vm.variant).toBe('primary');
-    expect(wrapper.find('.material-icons-outlined').text()).toBe('info');
+    expect(wrapper.vm.alertIcon).toBe('info');
   });
 
   it('warning variant will have a warning icon', () => {
@@ -37,6 +37,6 @@ describe('Alert Component', () => {
         variant: 'warning',
       },
     });
-    expect(wrapper.find('.material-icons-outlined').text()).toBe('warning');
+    expect(wrapper.vm.alertIcon).toBe('warning');
   });
 });

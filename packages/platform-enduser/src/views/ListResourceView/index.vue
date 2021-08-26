@@ -34,11 +34,10 @@ of the MIT license. See the LICENSE file for details. -->
               v-b-modal.createResourceModal
               type="button"
               variant="primary">
-              <i
-                class="material-icons-outlined mr-2"
-                aria-hidden="true">
-                add
-              </i>
+              <FrIcon
+                class="mr-2"
+                name="add"
+              />
               {{ $t("common.newObject", {object: displayName}) }}
             </BButton>
           </template>
@@ -74,6 +73,7 @@ import {
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 import FrListResource from '@forgerock/platform-shared/src/components/resource/ListResource';
 import FrCreateResource from '@forgerock/platform-shared/src/components/resource/CreateResource';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { getManagedResourceList, deleteManagedResource } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { getInternalResourceList, deleteInternalResource } from '@forgerock/platform-shared/src/api/InternalResourceApi';
 import { getConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
@@ -96,6 +96,7 @@ export default {
     BContainer,
     FrCreateResource,
     FrHeader,
+    FrIcon,
     FrListResource,
   },
   directives: {

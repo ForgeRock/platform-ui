@@ -57,21 +57,19 @@ of the MIT license. See the LICENSE file for details. -->
                   <div
                     class="allow text-success"
                     v-if="request.allowed">
-                    <i
-                      class="material-icons-outlined font-weight-bolder md-16 mb-1"
-                      aria-hidden="true">
-                      check
-                    </i>
+                    <FrIcon
+                      class="font-weight-bolder md-16 mb-1"
+                      name="check"
+                    />
                     {{ $t('pages.uma.requests.allowed') }}
                   </div>
                   <div
                     class="deny text-danger"
                     v-if="!request.allowed">
-                    <i
-                      class="material-icons-outlined font-weight-bolder md-16 mb-1"
-                      aria-hidden="true">
-                      block
-                    </i>
+                    <FrIcon
+                      class="font-weight-bolder md-16 mb-1"
+                      name="block"
+                    />
                     {{ $t('pages.uma.requests.denied') }}
                   </div>
                 </div>
@@ -88,6 +86,7 @@ of the MIT license. See the LICENSE file for details. -->
 import dayjs from 'dayjs';
 import LocalizedFormat from 'dayjs/plugin/localizedFormat';
 import DateMixin from '@forgerock/platform-shared/src/mixins/DateMixin/';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FallbackImage from '@/components/utils/FallbackImage';
 
 dayjs.extend(LocalizedFormat);
@@ -99,6 +98,7 @@ export default {
   name: 'Requests',
   components: {
     FrFallbackImage: FallbackImage,
+    FrIcon,
   },
   mixins: [
     DateMixin,

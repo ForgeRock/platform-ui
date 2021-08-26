@@ -48,11 +48,11 @@ of the MIT license. See the LICENSE file for details. -->
               </BCol>
               <BCol md="6">
                 <span v-if="slotData.isCurrent">
-                  <i
-                    class="material-icons mr-2 text-success"
-                    aria-hidden="true">
-                    check_circle
-                  </i>
+                  <FrIcon
+                    class="mr-2 text-success"
+                    :outlined="false"
+                    name="check_circle"
+                  />
                   {{ $t('pages.profile.trustedDevices.currentDevice') }}
                 </span>
                 <span v-else>
@@ -78,11 +78,10 @@ of the MIT license. See the LICENSE file for details. -->
                 class="mb-3 w-100"
                 :src="slotData.map">
               <div class="media">
-                <i
-                  class="material-icons-outlined mr-2 mt-1 text-muted"
-                  aria-hidden="true">
-                  place
-                </i>
+                <FrIcon
+                  class="mr-2 mt-1 text-muted"
+                  name="place"
+                />
                 <div class="media-body">
                   <div class="bold">
                     {{ slotData.formattedAddress }}
@@ -135,11 +134,11 @@ of the MIT license. See the LICENSE file for details. -->
             class="w-100"
             v-b-modal.trusted-devices-modal
             @click="setModalData('remove', slotData)">
-            <i
-              class="material-icons-outlined mr-2"
-              aria-hidden="true">
-              block
-            </i> {{ $t('pages.profile.trustedDevices.remove') }}
+            <FrIcon
+              class="mr-2"
+              name="block"
+            />
+            {{ $t('pages.profile.trustedDevices.remove') }}
           </BButton>
         </div>
       </template>
@@ -188,6 +187,7 @@ import {
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import Accordion from '@forgerock/platform-shared/src/components/Accordion';
 import MapMixin from '@forgerock/platform-shared/src/mixins/MapMixin';
 
@@ -213,6 +213,7 @@ export default {
     BRow,
     FrAccordion: Accordion,
     FrField,
+    FrIcon,
   },
   directives: {
     'b-modal': VBModal,

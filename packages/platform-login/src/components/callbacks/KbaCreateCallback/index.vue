@@ -11,9 +11,9 @@ of the MIT license. See the LICENSE file for details. -->
         <hr>
       </div>
       <div class="col-auto pt-1">
-        <i class="material-icons-outlined">
-          lock
-        </i>
+        <FrIcon
+          name="lock"
+        />
       </div>
       <div class="col pl-0">
         <hr>
@@ -65,6 +65,7 @@ import {
 import { BFormSelect } from 'bootstrap-vue';
 import { ValidationObserver } from 'vee-validate';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 
 export default {
@@ -73,6 +74,7 @@ export default {
     BFormSelect,
     ValidationObserver,
     FrField,
+    FrIcon,
   },
   mixins: [
     TranslationMixin,
