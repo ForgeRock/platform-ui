@@ -13,9 +13,9 @@ of the MIT license. See the LICENSE file for details. -->
     :placeholder="placeholder"
     :value="value">
     <template #button-content>
-      <i class="material-icons-outlined">
-        access_time
-      </i>
+      <FrIcon
+        name="access_time"
+      />
     </template>
   </BFormTimepicker>
 </template>
@@ -24,6 +24,7 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   BFormTimepicker,
 } from 'bootstrap-vue';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 
 /**
  * Bootstrap timepicker with custom icons, default values set.
@@ -32,6 +33,7 @@ export default {
   name: 'Timepicker',
   components: {
     BFormTimepicker,
+    FrIcon,
   },
   props: {
     /**

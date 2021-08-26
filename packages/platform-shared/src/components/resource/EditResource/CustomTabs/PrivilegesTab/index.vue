@@ -16,11 +16,11 @@ of the MIT license. See the LICENSE file for details. -->
             class="mr-1"
             @click="$refs.addPrivilegesModal.show()"
             id="add_privilege">
-            <i
-              class="material-icons mr-2"
-              aria-hidden="true">
-              add
-            </i>
+            <FrIcon
+              class="mr-2"
+              :outlined="false"
+              name="add"
+            />
             {{ $t("pages.access.addPrivileges") }}
           </BButton>
         </BCol>
@@ -171,6 +171,7 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrPrivilegeEditor from './PrivilegeEditor';
 import FrAddPrivileges from './AddPrivileges';
 
@@ -178,6 +179,9 @@ export default {
   name: 'PrivilegesTab',
   components: {
     BBadge,
+    FrPrivilegeEditor,
+    FrAddPrivileges,
+    FrIcon,
     BButton,
     BCol,
     BModal,
@@ -185,8 +189,6 @@ export default {
     BTab,
     BTable,
     FrActionsCell,
-    FrAddPrivileges,
-    FrPrivilegeEditor,
     ValidationObserver,
   },
   data() {
