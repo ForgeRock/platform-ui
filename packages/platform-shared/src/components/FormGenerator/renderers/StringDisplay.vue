@@ -27,9 +27,9 @@ of the MIT license. See the LICENSE file for details. -->
             {{ uiSchema.append.split(':')[1] }}
           </template>
           <template v-else>
-            <i class="material-icons material-icons-outlined">
-              {{ uiSchema.append }}
-            </i>
+            <FrIcon
+              :name="uiSchema.append"
+            />
           </template>
         </button>
         <BTooltip
@@ -46,6 +46,7 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import { BTooltip } from 'bootstrap-vue';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 /* eslint-disable import/no-extraneous-dependencies */
 import * as clipboard from 'clipboard-polyfill/text';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
@@ -54,6 +55,7 @@ export default {
   name: 'StringDisplay',
   components: {
     FrField,
+    FrIcon,
     BTooltip,
   },
   mixins: [

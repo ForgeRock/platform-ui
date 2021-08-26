@@ -44,11 +44,10 @@ of the MIT license. See the LICENSE file for details. -->
               <template v-for="(scope, i) in slotData.scopes">
                 <dd :key="i">
                   <div class="media">
-                    <i
-                      class="material-icons-outlined mr-2 mt-1 text-success"
-                      aria-hidden="true">
-                      check
-                    </i>
+                    <FrIcon
+                      class="mr-2 mt-1 text-success"
+                      name="check"
+                    />
                     <div class="media-body">
                       <div class="media-item">
                         {{ scope }}
@@ -66,11 +65,10 @@ of the MIT license. See the LICENSE file for details. -->
               </dt>
               <dd>
                 <div class="media">
-                  <i
-                    class="material-icons-outlined mr-2 mt-1 text-muted"
-                    aria-hidden="true">
-                    access_time
-                  </i>
+                  <FrIcon
+                    class="mr-2 mt-1 text-muted"
+                    name="access_time"
+                  />
                   <div class="media-body">
                     <div class="media-item">
                       {{ formateExpiryDate(slotData.expiryDateTime) }}
@@ -88,12 +86,11 @@ of the MIT license. See the LICENSE file for details. -->
             type="button"
             variant="outline-danger"
           >
-            <i
-              class="material-icons-outlined mr-2"
-              aria-hidden="true">
-              block
-            </i
-            >{{ $t('pages.profile.oauthApplications.revokeAccess') }}
+            <FrIcon
+              class="mr-2"
+              name="block"
+            />
+            {{ $t('pages.profile.oauthApplications.revokeAccess') }}
           </BButton>
         </div>
       </template>
@@ -124,6 +121,7 @@ of the MIT license. See the LICENSE file for details. -->
 /* eslint-disable no-underscore-dangle */
 import { mapState } from 'vuex';
 import FrAccordion from '@forgerock/platform-shared/src/components/Accordion';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import defaultAppImg from '@forgerock/platform-shared/src/assets/images/default-app.svg';
@@ -133,6 +131,7 @@ export default {
   mixins: [RestMixin, NotificationMixin],
   components: {
     FrAccordion,
+    FrIcon,
   },
   data() {
     return {

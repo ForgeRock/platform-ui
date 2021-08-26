@@ -23,9 +23,9 @@ of the MIT license. See the LICENSE file for details. -->
             aria-label="Close"
             class="close"
             @click="hideModal">
-            <i class="material-icons-outlined font-weight-bolder md-24">
-              close
-            </i>
+            <FrIcon
+              class="font-weight-bolder md-24"
+              name="close" />
           </button>
         </div>
       </template>
@@ -107,6 +107,7 @@ import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrListField from '@forgerock/platform-shared/src/components/ListField';
 import ListsMixin from '@forgerock/platform-shared/src/mixins/ListsMixin';
 
@@ -130,6 +131,7 @@ export default {
     BModal,
     BRow,
     FrField,
+    FrIcon,
     FrListField,
     ValidationObserver,
   },
