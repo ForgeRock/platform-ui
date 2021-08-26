@@ -24,23 +24,33 @@ of the MIT license. See the LICENSE file for details. -->
             <h5 class="text-truncate">
               {{ key }}
             </h5>
-            <i
+            <BButton
               v-if="!disabled"
+              :aria-label="$t('common.delete')"
+              variant="link"
               @click="deleteItem(key)"
-              class="material-icons-outlined fr-key-value-icon noselect">
-              delete
-            </i>
+              class="p-0 text-decoration-none d-flex align-items-start">
+              <FrIcon
+                class="fr-key-value-icon noselect"
+                name="delete"
+              />
+            </BButton>
           </div>
           <p class="d-flex">
             <span class="flex-fill overflow-auto">
               {{ text }}
             </span>
-            <i
-              v-if="!disabled"
+            <BButton
+              :aria-label="$t('common.edit')"
+              variant="link"
               @click="editItem(key)"
-              class="material-icons-outlined fr-key-value-icon noselect d-none">
-              edit
-            </i>
+              class="p-0 text-decoration-none d-flex align-items-start">
+              <FrIcon
+                v-if="!disabled"
+                class="fr-key-value-icon noselect d-none"
+                name="edit"
+              />
+            </BButton>
           </p>
           <FrKeyValuePanel
             v-if="currentKey === key"
@@ -70,16 +80,16 @@ of the MIT license. See the LICENSE file for details. -->
       <div
         v-else-if="!disabled"
         class="mt-3">
-        <span
-          class="fr-link"
+        <BButton
+          variant="link"
+          class="p-0 text-decoration-none"
           @click="showAdd()">
-          <i
-            class="material-icons-outlined mr-1 mb-1"
-            aria-hidden="true">
-            add
-          </i>
+          <FrIcon
+            class="mr-1 mb-1"
+            name="add"
+          />
           {{ $t('common.add') }}
-        </span>
+        </BButton>
       </div>
       <FrValidationError
         class="error-messages"
@@ -90,9 +100,11 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import { BButton } from 'bootstrap-vue';
 import { isEmpty, cloneDeep } from 'lodash';
 import { ValidationProvider } from 'vee-validate';
 import FrValidationError from '@forgerock/platform-shared/src/components/ValidationErrorList';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrKeyValuePanel from './KeyValuePanel';
 import InputMixin from '../Wrapper/InputMixin';
 
@@ -105,8 +117,10 @@ export default {
     InputMixin,
   ],
   components: {
+    BButton,
     FrKeyValuePanel,
     FrValidationError,
+    FrIcon,
     ValidationProvider,
   },
   data() {
@@ -196,15 +210,6 @@ export default {
   background-color: $gray-100;
 }
 
-.fr-link {
-  color: $blue;
-
-  &:hover {
-    cursor: pointer;
-    color: $hover-blue;
-  }
-}
-
 .fr-key-value-list {
   .fr-key-value-list-item {
     border-bottom: 1px solid $gray-200;
@@ -233,4 +238,9 @@ export default {
   border: 1px solid $danger;
   border-radius: 4px;
 }
+
+.button-padding {
+  padding: 0;
+}
+
 </style>

@@ -7,15 +7,15 @@ of the MIT license. See the LICENSE file for details. -->
     class="fr-alert"
     v-bind="$props">
     <template v-slot:dismiss>
-      <i class="fr-alert-dismiss material-icons">
-        close
-      </i>
+      <FrIcon
+        class="fr-alert-dismiss"
+        :outlined="false"
+        name="close" />
     </template>
-    <i
-      class="material-icons-outlined mr-2"
-      aria-hidden="true">
-      {{ alertIcon }}
-    </i>
+    <FrIcon
+      class="mr-2"
+      :name="alertIcon"
+    />
     <!-- @slot Text that the alert will contain -->
     <slot />
   </BAlert>
@@ -23,7 +23,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import { BAlert } from 'bootstrap-vue';
-
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 /**
  * Extends Bootstrap alert to provide alternative icon and styling
  */
@@ -31,6 +31,7 @@ export default {
   name: 'Alert',
   components: {
     BAlert,
+    FrIcon,
   },
   props: {
     /**
