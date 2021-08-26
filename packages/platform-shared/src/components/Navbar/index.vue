@@ -16,11 +16,10 @@ of the MIT license. See the LICENSE file for details. -->
       aria-controls="#fr-sidebar-nav"
       :aria-expanded="(menuIsExpanded).toString()"
       :aria-label="$t('sideMenu.toggleSidebar')">
-      <span
-        aria-hidden="true"
-        class="material-icons-outlined md-24 m-0">
-        menu
-      </span>
+      <FrIcon
+        class="md-24 m-0"
+        name="menu"
+      />
     </button>
     <BNavbarNav class="flex-row align-items-center justify-content-between flex-grow-1">
       <div>
@@ -31,11 +30,12 @@ of the MIT license. See the LICENSE file for details. -->
           v-show="getBreadcrumbRoute().length > 0"
           :to="getBreadcrumbRoute()">
           <h4 class="text-truncate">
-            <i
-              class="material-icons material-icons-outlined md-24 mr-3"
-              aria-hidden="true">
-              arrow_back
-            </i><span>{{ getBreadcrumbRouteText() }}</span>
+            <FrIcon
+              class="md-24 mr-3"
+              :outlined="false"
+              name="arrow_back"
+            />
+            <span>{{ getBreadcrumbRouteText() }}</span>
           </h4>
         </RouterLink>
       </div>
@@ -131,6 +131,7 @@ import {
 } from 'bootstrap-vue';
 import DropdownMenu from '@forgerock/platform-shared/src/components/DropdownMenu';
 import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import ToolbarNotification from '../ToolbarNotification';
 
 /**
@@ -145,6 +146,7 @@ export default {
   components: {
     FrNotification: ToolbarNotification,
     FrDropdownMenu: DropdownMenu,
+    FrIcon,
     BDropdownDivider,
     BDropdownHeader,
     BMedia,

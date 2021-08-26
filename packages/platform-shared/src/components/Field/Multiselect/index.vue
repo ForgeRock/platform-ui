@@ -50,7 +50,7 @@ of the MIT license. See the LICENSE file for details. -->
               @mousedown="setSelectedForCopy(option)">
               {{ option && option.text }}
             </span>
-            <i
+            <span
               @click.prevent="remove(option)"
               aria-hidden="true"
               tabindex="1"

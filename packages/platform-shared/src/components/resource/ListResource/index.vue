@@ -49,7 +49,7 @@ of the MIT license. See the LICENSE file for details. -->
         <FrIcon
           class="fr-no-data-icon md-48 text-secondary opacity-20 mt-4 mb-2"
           :name="managedIcon"
-          aria-hidden="true" />
+        />
         <h5>{{ $t('listResource.noManaged', { capitalizedResourceName }) }}</h5>
         <p class="mb-4">
           {{ $t('listResource.noResultsHelp') }}
@@ -84,11 +84,11 @@ of the MIT license. See the LICENSE file for details. -->
             v-if="hasClearSessionAccess(data)"
             #custom-top-actions>
             <BDropdownItem @click="setResourceToClearSessionsFor(data.item)">
-              <i
-                class="material-icons-outlined mr-3"
-                aria-hidden="true">
-                clear_all
-              </i> {{ $t('common.endSessions') }}
+              <FrIcon
+                class="mr-3"
+                name="clear_all"
+              />
+              {{ $t('common.endSessions') }}
             </BDropdownItem>
           </template>
         </FrActionsCell>

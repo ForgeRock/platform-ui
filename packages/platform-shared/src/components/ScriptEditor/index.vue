@@ -49,11 +49,9 @@ of the MIT license. See the LICENSE file for details. -->
         v-if="selectedVariables.length === 0 && !jsonEditToggle"
         variant="link"
         @click="addVariable('', '', 0)">
-        <i
-          class="material-icons-outlined"
-          aria-hidden="true">
-          add
-        </i>
+        <FrIcon
+          name="add"
+        />
         {{ $t('common.addObject', {object: $t('scriptEditor.variables')}) }}
       </BButton>
       <template v-else>
@@ -108,17 +106,17 @@ of the MIT license. See the LICENSE file for details. -->
                   variant="outline-secondary mr-1"
                   class="max-height-50"
                   @click="removeVariable(index)">
-                  <i class="material-icons-outlined">
-                    remove
-                  </i>
+                  <FrIcon
+                    name="remove"
+                  />
                 </BButton>
                 <BButton
                   variant="outline-secondary mr-1"
                   class="max-height-50"
                   @click="addVariable('', '', index + 1)">
-                  <i class="material-icons-outlined">
-                    add
-                  </i>
+                  <FrIcon
+                    name="add"
+                  />
                 </BButton>
               </div>
             </div>
@@ -140,6 +138,7 @@ import {
 import { debounce } from 'lodash';
 import { ValidationObserver } from 'vee-validate';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import 'prismjs';
 import 'prismjs/components/prism-groovy';
 import 'prismjs/components/prism-json';
@@ -158,6 +157,7 @@ export default {
     BFormFile,
     VuePrismEditor,
     FrField,
+    FrIcon,
     ValidationObserver,
   },
   props: {

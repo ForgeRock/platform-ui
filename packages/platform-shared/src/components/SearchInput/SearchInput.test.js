@@ -16,7 +16,8 @@ describe('SearchInput Component', () => {
 
   it('It has correct prepend icon and placeholder text on load', () => {
     const wrapper = shallowMount(SearchInput);
-    expect(wrapper.find('.fr-icon-input-left').text()).toBe('search');
+    expect(wrapper.vm.prependIcon).toBe('search');
+    expect(wrapper.find('.fr-icon-input-left').attributes().name).toBe('search');
     expect(wrapper.find('.fr-icon-input-right').exists()).toBe(false);
     expect(wrapper.find('.fr-icon-input').attributes().placeholder).toBe('Search');
   });
@@ -28,7 +29,7 @@ describe('SearchInput Component', () => {
         placeholder: 'this is a test',
       },
     });
-    expect(wrapper.find('.fr-icon-input-left').text()).toBe('settings');
+    expect(wrapper.find('.fr-icon-input-left').attributes().name).toBe('settings');
     expect(wrapper.find('.fr-icon-input').attributes().placeholder).toBe('this is a test');
   });
 
@@ -37,7 +38,7 @@ describe('SearchInput Component', () => {
     wrapper.setData({ value: 'Hello' });
     expect(wrapper.find('.fr-icon-input').attributes().value).toBe('Hello');
     expect(wrapper.find('.fr-icon-input-right').exists()).toBe(true);
-    expect(wrapper.find('.fr-icon-input-right').text()).toBe('close');
+    expect(wrapper.find('.fr-icon-input-right').attributes().name).toBe('close');
   });
 
   it('clicking the close icon will clear the input value and remove the icon', () => {

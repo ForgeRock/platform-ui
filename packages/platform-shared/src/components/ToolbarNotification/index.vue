@@ -5,13 +5,15 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <BNavItemDropdown
     class="fr-notification-icon align-self-center mr-4"
+    :id="$t('pages.app.notifications.title')"
     right>
-    <template v-slot:button-content>
-      <i
-        class="material-icons-outlined mr-2 md-24"
-        aria-hidden="true">
-        notifications
-      </i>
+    <template
+      v-slot:button-content
+    >
+      <FrIcon
+        class="mr-2 md-24"
+        name="notifications"
+      />
       <span
         v-if="notifications.length > 0"
         class="badge badge-pill badge-danger">
@@ -52,12 +54,14 @@ of the MIT license. See the LICENSE file for details. -->
               </small>
             </div>
             <BButton
+              :aria-label="$t('pages.app.notifications.remove')"
               @click.prevent="clearOne(index)"
               variant="sm"
               class="btn btn-link my-auto">
-              <i class="material-icons-outlined text-muted md-24">
-                delete
-              </i>
+              <FrIcon
+                class="text-muted md-24"
+                name="delete"
+              />
             </BButton>
           </div>
         </div>
@@ -92,6 +96,7 @@ import utc from 'dayjs/plugin/utc';
 import { mapState } from 'vuex';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 
 dayjs.extend(utc);
 
@@ -113,6 +118,7 @@ export default {
   components: {
     BNavItemDropdown,
     BDropdownHeader,
+    FrIcon,
   },
   mixins: [
     NotificationMixin,
