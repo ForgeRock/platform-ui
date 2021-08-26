@@ -21,11 +21,10 @@ of the MIT license. See the LICENSE file for details. -->
             class="fr-edit-icon"
             size="2em"
             variant="dark">
-            <i
-              aria-hidden="true"
-              class="material-icons-outlined md-18">
-              camera_alt
-            </i>
+            <FrIcon
+              class="md-18"
+              name="camera_alt"
+            />
           </BAvatar>
         </div>
       </div>
@@ -66,6 +65,7 @@ import {
   BCard,
 } from 'bootstrap-vue';
 import EditPersonalInfo from '@forgerock/platform-shared/src/components/profile/EditPersonalInfo';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import ImageModal from './ImageModal';
 
 /**
@@ -77,6 +77,7 @@ export default {
     BAvatar,
     BButton,
     BCard,
+    FrIcon,
     FrEditPersonalInfo: EditPersonalInfo,
     FrImageModal: ImageModal,
   },

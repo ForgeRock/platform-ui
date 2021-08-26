@@ -1,10 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BModal
     id="unshareModal"
@@ -21,9 +18,9 @@ of the MIT license. See the LICENSE file for details.
           aria-label="Close"
           class="close"
           @click="hideModal">
-          <i class="material-icons-outlined font-weight-bolder md-24 mb-1">
-            close
-          </i>
+          <FrIcon
+            class="font-weight-bolder md-24 mb-1"
+            name="close" />
         </button>
       </div>
     </template>
@@ -44,13 +41,16 @@ of the MIT license. See the LICENSE file for details.
 </template>
 
 <script>
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 /**
  * @description Dialog for warning a user and confirming they want to stop sharing a resource
  *
  * */
 export default {
   name: 'Unshare',
-  components: {},
+  components: {
+    FrIcon,
+  },
   data() {
     return {};
   },

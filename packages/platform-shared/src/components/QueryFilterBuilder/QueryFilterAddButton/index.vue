@@ -7,12 +7,13 @@ of the MIT license. See the LICENSE file for details. -->
     no-caret
     variant="outline-secondary"
     :disabled="disabled">
-    <i
-      class="material-icons-outlined"
+    <span class="sr-only">
+      {{ $t('queryFilterBuilder.queryFilterAddDropDown') }}
+    </span>
+    <FrIcon
       slot="button-content"
-      aria-hidden="true">
-      add
-    </i>
+      name="add"
+    />
     <BDropdownItem @click="$emit('add-rule', 'row')">
       {{ $t('queryFilterBuilder.addRuleButton') }}
     </BDropdownItem>
@@ -26,12 +27,14 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import { BDropdown, BDropdownItem } from 'bootstrap-vue';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 
 export default {
   name: 'AddButton',
   components: {
     BDropdown,
     BDropdownItem,
+    FrIcon,
   },
   props: {
     hideGroup: {

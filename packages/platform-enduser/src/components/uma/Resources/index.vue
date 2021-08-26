@@ -1,10 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <template>
@@ -15,9 +12,10 @@ of the MIT license. See the LICENSE file for details.
         <div class="input-group col-sm-4">
           <div class="input-group-prepend">
             <div class="input-group-text">
-              <i class="material-icons-outlined md-24">
-                search
-              </i>
+              <FrIcon
+                class="md-24"
+                name="search"
+              />
             </div>
           </div>
           <input
@@ -35,16 +33,10 @@ of the MIT license. See the LICENSE file for details.
             class="float-right text-muted">
             <template v-slot:button-content>
               <span class="text-muted">
-                <i
-                  v-if="!this.viewgrid"
-                  class="material-icons-outlined md-24 mb-1">
-                  format_list_bulleted
-                </i>
-                <i
-                  v-if="this.viewgrid"
-                  class="material-icons-outlined md-24 mb-1">
-                  apps
-                </i>
+                <FrIcon
+                  class="md-24 mb-1"
+                  :name="!this.viewgrid ? 'format_list_bulleted' : 'apps'"
+                />
               </span>
             </template>
             <BDropdownHeader>{{ $t('pages.uma.resources.viewAs') }}</BDropdownHeader>
@@ -55,19 +47,19 @@ of the MIT license. See the LICENSE file for details.
                 <div
                   class="d-flex align-self-center text-center"
                   style="min-width: 1.5rem;">
-                  <i
-                    class="material-icons-outlined md-16 font-weight-bolder text-success"
-                    v-if="!this.viewgrid">
-                    check
-                  </i>
+                  <FrIcon
+                    class="md-16 font-weight-bolder text-success"
+                    v-if="!this.viewgrid"
+                    name="check" />
                 </div>
                 <div class="media-body">
                   {{ $t('pages.uma.resources.list') }}
                 </div>
                 <div class="d-flex ml-3 align-self-center text-muted">
-                  <i class="material-icons-outlined md-24">
-                    format_list_bulleted
-                  </i>
+                  <FrIcon
+                    class="md-24"
+                    name="format_list_bulleted"
+                  />
                 </div>
               </div>
             </BDropdownItem>
@@ -78,19 +70,20 @@ of the MIT license. See the LICENSE file for details.
                 <div
                   class="d-flex align-self-center text-center"
                   style="min-width: 1.5rem;">
-                  <i
-                    class="material-icons-outlined md-16 font-weight-bolder text-success"
-                    v-if="this.viewgrid">
-                    check
-                  </i>
+                  <FrIcon
+                    class="md-16 font-weight-bolder text-success"
+                    v-if="this.viewgrid"
+                    name="check"
+                  />
                 </div>
                 <div class="media-body">
                   {{ $t('pages.uma.resources.grid') }}
                 </div>
                 <div class="d-flex ml-3 align-self-center text-muted">
-                  <i class="material-icons-outlined md-24">
-                    apps
-                  </i>
+                  <FrIcon
+                    class="md-24"
+                    name="apps"
+                  />
                 </div>
               </div>
             </BDropdownItem>
@@ -193,9 +186,10 @@ of the MIT license. See the LICENSE file for details.
                   no-caret>
                   <template v-slot:button-content>
                     <span class="text-muted">
-                      <i class="material-icons-outlined md-24">
-                        more_horiz
-                      </i>
+                      <FrIcon
+                        class="md-24"
+                        name="more_horiz"
+                      />
                     </span>
                   </template>
                   <BDropdownItem
@@ -249,6 +243,7 @@ of the MIT license. See the LICENSE file for details.
 
 <script>
 import { filter } from 'lodash';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FallbackImage from '@/components/utils/FallbackImage';
 
 /**
@@ -259,6 +254,7 @@ export default {
   name: 'Resources',
   components: {
     FrFallbackImage: FallbackImage,
+    FrIcon,
   },
   data() {
     return {

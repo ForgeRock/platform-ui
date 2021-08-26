@@ -15,12 +15,11 @@ of the MIT license. See the LICENSE file for details. -->
           :variant="imageError ? 'light' : ''"
           :src="imageURL.length > 0 ? imageURL : require('@forgerock/platform-shared/src/assets/images/avatar.png')"
           @img-error="imageError = true">
-          <i
+          <FrIcon
             v-if="imageError"
-            aria-hidden="true"
-            class="material-icons-outlined md-72 opacity-30">
-            camera_alt
-          </i>
+            class="md-72 opacity-30"
+            name="camera_alt"
+          />
         </BAvatar>
       </div>
       <BFormGroup
@@ -45,9 +44,10 @@ of the MIT license. See the LICENSE file for details. -->
           <BCol lg="6">
             <BMedia>
               <template #aside>
-                <i class="material-icons-outlined md-24">
-                  fullscreen
-                </i>
+                <FrIcon
+                  class="md-24"
+                  name="fullscreen"
+                />
               </template>
               <small class="form-text">
                 {{ $t('pages.profile.editProfile.profileImageModal.imageHelp') }}
@@ -57,9 +57,10 @@ of the MIT license. See the LICENSE file for details. -->
           <BCol lg="6">
             <BMedia>
               <template #aside>
-                <i class="material-icons-outlined md-24">
-                  aspect_ratio
-                </i>
+                <FrIcon
+                  class="md-24"
+                  name="aspect_ratio"
+                />
               </template>
               <small class="form-text">
                 {{ $t('pages.profile.editProfile.profileImageModal.aspectHelp') }}
@@ -98,6 +99,7 @@ import {
   BRow,
 } from 'bootstrap-vue';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 
 export default {
   name: 'ImageModal',
@@ -110,6 +112,7 @@ export default {
     BModal,
     BRow,
     FrField,
+    FrIcon,
   },
   props: {
     profileImage: {
