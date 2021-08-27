@@ -202,7 +202,7 @@ export default {
         idmInstance.patch(this.resourcePath, saveData).then(() => {
           const resourceName = this.resourceTitle ? this.resourceTitle : this.resourcePath.split('/')[1];
           this.oldFormFields = cloneDeep(this.formFields);
-          this.$emit('refreshData');
+          this.$emit('refresh-data');
           this.displayNotification('IDMMessages', 'success', this.$t('pages.access.successEdited', { resource: resourceName }));
         },
         (error) => {
