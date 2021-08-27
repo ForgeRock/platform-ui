@@ -480,7 +480,7 @@ export default {
             if (tempProp.validation && tempProp.validation.length) {
               tempProp.validation += '|email';
             } else {
-              tempProp.validation += 'email';
+              tempProp.validation = 'email';
             }
           }
 
