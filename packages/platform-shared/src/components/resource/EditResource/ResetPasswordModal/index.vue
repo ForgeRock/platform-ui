@@ -101,6 +101,7 @@ export default {
       const saveData = [{ operation: 'add', field: '/password', value: this.password }];
       idmInstance.patch(`${this.resourceType}/${this.resourceName}/${this.resourceId}`, saveData).then(() => {
         this.displayNotification('AdminMessage', 'success', this.$t('pages.access.successSavePassword'));
+        this.$emit('refresh-data');
         ok();
       },
       (error) => {

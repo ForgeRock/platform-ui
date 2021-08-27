@@ -394,7 +394,7 @@ export default {
         this.newPrivileges = [];
         this.$refs.addPrivilegesModal.hide();
         this.existingNames = this.privileges.map((privilege) => privilege.name);
-        this.$emit('refreshData');
+        this.$emit('refresh-data');
       }).catch((error) => {
         if (has(error, 'response.data.detail.failedPolicyRequirements[0].policyRequirements[0].params.invalidArrayItems[0].failedPolicyRequirements[0].policyRequirements[0].policyRequirement')) {
           const policyFailure = error.response.data.detail.failedPolicyRequirements[0].policyRequirements[0].params.invalidArrayItems[0].failedPolicyRequirements[0].policyRequirements[0];

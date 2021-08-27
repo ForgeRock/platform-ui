@@ -191,7 +191,7 @@ export default {
       idmInstance.patch(this.resourcePath, patch).then(() => {
         this.displayNotification('IDMMessages', 'success', this.$t('pages.access.successEdited', { resource: capitalize(this.resourceName) }));
         this.hideModal();
-        this.$emit('refreshData');
+        this.$emit('refresh-data');
       },
       () => {
         this.displayNotification('IDMMessages', 'error', this.$t('pages.access.invalidEdit'));
