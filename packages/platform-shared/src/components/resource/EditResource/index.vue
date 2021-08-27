@@ -79,7 +79,7 @@ of the MIT license. See the LICENSE file for details. -->
             :title="this.$t('pages.access.details')">
             <FrObjectTypeEditor
               v-if="displayProperties.length > 0"
-              @refreshData="refreshData"
+              @refresh-data="refreshData"
               :revision="revision"
               :form-fields="formFields"
               :display-properties="displayProperties"
@@ -97,7 +97,7 @@ of the MIT license. See the LICENSE file for details. -->
               :title="objectTypeProperty.title"
               :key="`${objectTypeProperty.propName}_tab`">
               <FrObjectTypeEditor
-                @refreshData="refreshData"
+                @refresh-data="refreshData"
                 :revision="revision"
                 :form-fields="formFields[objectTypeProperty.propName] || {}"
                 :sub-property-name="objectTypeProperty.propName"
@@ -114,7 +114,7 @@ of the MIT license. See the LICENSE file for details. -->
             :resource-path="`${resourceType}/${resourceName}/${id}`"
             :resource-name="resourceName"
             :revision="revision"
-            @refreshData="refreshData" />
+            @refresh-data="refreshData" />
           <!-- Add a tab for each viewable/editable relationship array property -->
           <template v-for="(relationshipProperty) in relationshipProperties">
             <BTab
@@ -126,7 +126,7 @@ of the MIT license. See the LICENSE file for details. -->
                 :parent-id="id"
                 :relationship-array-property="relationshipProperty"
                 :revision="revision"
-                @refreshData="refreshData" />
+                @refresh-data="refreshData" />
             </BTab>
           </template>
           <FrSettingsTab
@@ -135,7 +135,7 @@ of the MIT license. See the LICENSE file for details. -->
             :resource-name="resourceName"
             :resource-path="`${resourceType}/${resourceName}/${id}`"
             :revision="revision"
-            @refreshData="refreshData" />
+            @refresh-data="refreshData" />
           <FrJsonTab
             v-if="isOpenidmAdmin && jsonString"
             :json-string="jsonString" />
@@ -188,7 +188,8 @@ of the MIT license. See the LICENSE file for details. -->
       id="resetModal"
       :resource-type="resourceType"
       :resource-name="resourceName"
-      :resource-id="id" />
+      :resource-id="id"
+      @refresh-data="refreshData" />
     <FrClearResourceSessions
       :show="showClearSessionsModal"
       :resource-name="clearSessionsName"
