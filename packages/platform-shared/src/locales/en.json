@@ -125,6 +125,7 @@
       "MUST_CONTAIN_SPECIAL_CHARACTERS": "Must have at least {minItems} of these characters: {requiredChars}",
       "IS_NUMBER": "Must be a number greater than or equal to zero.",
       "IS_NUMBER_GREATER_ZERO": "Must be a number greater than or equal to 1.",
+      "LOWERCASE_PERIOD_REQUIRED": "Must be lowercase alphanumeric and contain at least one period in format domain.com",
       "REQUIRED": "Please provide a value",
       "VALID_DATE": "Must be a valid date",
       "VALID_TYPE": "Must be one of the following types: {validTypes}. Cannot be {invalidType}",
