@@ -21,26 +21,6 @@ export function getRules(i18n) {
     message: i18n.t('common.policyValidationMessages.alphaNumericDashOnly'),
   };
 
-  const alpha_num = {
-    ...rules.alpha_num,
-    message: i18n.t('common.policyValidationMessages.alphaNumericOnly'),
-  };
-
-  const numeric = {
-    ...rules.numeric,
-    message: i18n.t('common.policyValidationMessages.VALID_INT'),
-  };
-
-  const oneOf = {
-    ...rules.oneOf,
-    message: i18n.t('common.policyValidationMessages.VALID_BOOLEAN'),
-  };
-
-  const required = {
-    ...rules.required,
-    message: i18n.t('common.policyValidationMessages.REQUIRED'),
-  };
-
   // Alphanumeric Dash Spaces rule
   // errors if input value contains characters not of alpha, numeric, dashes, or spaces
   const alpha_dash_spaces = {
@@ -49,6 +29,11 @@ export function getRules(i18n) {
       return regex.test(value);
     },
     message: i18n.t('common.policyValidationMessages.ALPHA_DASH'),
+  };
+
+  const alpha_num = {
+    ...rules.alpha_num,
+    message: i18n.t('common.policyValidationMessages.alphaNumericOnly'),
   };
 
   // Alphanumeric lowercase rule
@@ -61,6 +46,59 @@ export function getRules(i18n) {
     message: i18n.t('common.policyValidationMessages.alphaNumericLowerCaseOnly'),
   };
 
+  // Date rule
+  // added for workflow
+  const date_format = {
+    validate(value) {
+      return value.match(/^\d{2}[.//]\d{2}[.//]\d{4}$/);
+    },
+    message: i18n.t('common.policyValidationMessages.dateFormat'),
+  };
+
+  // Email rule
+  // Errors if not valid email. Checks for array of emails and array of objects with value: email
+  const email = {
+    validate(value) {
+      return customValidators.validEmail(value);
+    },
+    message: i18n.t('common.policyValidationMessages.VALID_EMAIL_ADDRESS_FORMAT'),
+  };
+
+  /**
+   * GCP managed certificate API rule
+   * errors if input value does not contain a period, does not have alphanumeric as first char,
+   * contains an uppercase character, or does not have alphanumeric after any period
+   */
+  const google_cloud_platform_certificate_validation = {
+    validate(value) {
+      const regex = /^(([a-z0-9]+|[a-z0-9][-a-z0-9]*[a-z0-9])\.)+[a-z][-a-z0-9]*[a-z0-9]$/g;
+      return regex.test(value);
+    },
+    message: i18n.t('common.policyValidationMessages.LOWERCASE_PERIOD_REQUIRED'),
+  };
+
+  // Minimum required rule
+  // errors if input value's length is less than the input minimum number
+  const minimumRequired = {
+    params: ['minItems'],
+    validate(value, { minItems }) {
+      return customValidators.minimumItems(value, { minItems });
+    },
+    message(message, { minItems }) {
+      return i18n.t('common.policyValidationMessages.MIN_ITEMS', { minItems });
+    },
+  };
+
+  const numeric = {
+    ...rules.numeric,
+    message: i18n.t('common.policyValidationMessages.VALID_INT'),
+  };
+
+  const oneOf = {
+    ...rules.oneOf,
+    message: i18n.t('common.policyValidationMessages.VALID_BOOLEAN'),
+  };
+
   // Period required rule
   // errors if input value does not contain a period
   const period_required = {
@@ -69,6 +107,11 @@ export function getRules(i18n) {
       return regex.test(value);
     },
     message: i18n.t('common.policyValidationMessages.PERIOD_REQUIRED'),
+  };
+
+  const required = {
+    ...rules.required,
+    message: i18n.t('common.policyValidationMessages.REQUIRED'),
   };
 
   // Start end space rule
@@ -91,33 +134,11 @@ export function getRules(i18n) {
     message: i18n.t('common.policyValidationMessages.UNIQUE'),
   };
 
-  // Date rule
-  // added for workflow
-  const date_format = {
+  // URL with path rule
+  // Errors if not valid url or url does not have path
+  const url_with_path = {
     validate(value) {
-      return value.match(/^\d{2}[.//]\d{2}[.//]\d{4}$/);
-    },
-    message: i18n.t('common.policyValidationMessages.dateFormat'),
-  };
-
-  // Email rule
-  // Errors if not valid email. Checks for array of emails and array of objects with value: email
-  const email = {
-    validate(value) {
-      return customValidators.validEmail(value);
-    },
-    message: i18n.t('common.policyValidationMessages.VALID_EMAIL_ADDRESS_FORMAT'),
-  };
-
-  // Minimum required rule
-  // errors if input value's length is less than the input minimum number
-  const minimumRequired = {
-    params: ['minItems'],
-    validate(value, { minItems }) {
-      return customValidators.minimumItems(value, { minItems });
-    },
-    message(message, { minItems }) {
-      return i18n.t('common.policyValidationMessages.MIN_ITEMS', { minItems });
+      return customValidators.urlWithPath(value, i18n);
     },
   };
 
@@ -129,14 +150,6 @@ export function getRules(i18n) {
     },
   };
 
-  // URL with path rule
-  // Errors if not valid url or url does not have path
-  const url_with_path = {
-    validate(value) {
-      return customValidators.urlWithPath(value, i18n);
-    },
-  };
-
   const validationRules = {
     alpha,
     alpha_dash,
@@ -145,6 +158,7 @@ export function getRules(i18n) {
     alpha_num_lower,
     date_format,
     email,
+    google_cloud_platform_certificate_validation,
     minimumRequired,
     numeric,
     oneOf,
