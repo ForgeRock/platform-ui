@@ -253,6 +253,7 @@ export default {
       isOpenidmAdmin: this.$store.state.UserStore.adminUser,
       showFilter: false,
       disableSortAndSearch: false,
+      requiredProps: ['_ref', '_refResourceCollection', '_refResourceId', '_refProperties'],
     };
   },
   mounted() {
@@ -416,7 +417,7 @@ export default {
       }
 
       if (!this.disableSortAndSearch && currentResourceCollection) {
-        resourceUrl = `${resourceUrl}&_fields=${currentResourceCollection.query.fields.join(',')}`;
+        resourceUrl = `${resourceUrl}&_fields=${this.requiredProps.join(',')},${currentResourceCollection.query.fields.join(',')}`;
       }
 
       if (page > 0) {
@@ -494,11 +495,10 @@ export default {
     },
     removeRelationships() {
       const relationshipsToRemove = [];
-      const requiredProps = ['_ref', '_refResourceCollection', '_refResourceId', '_refProperties'];
 
       this.selected.forEach((relationship) => {
         if (relationship) {
-          relationshipsToRemove.push(pick(relationship, requiredProps));
+          relationshipsToRemove.push(pick(relationship, this.requiredProps));
         }
       });
 
