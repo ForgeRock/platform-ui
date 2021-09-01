@@ -1,6 +1,5 @@
 /**
- * @license
- * Copyright (c) 2020 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -19,6 +18,7 @@ describe('KbaCreateCallback.vue', () => {
         callback: {
           getPredefinedQuestions: () => (['Favorite color?', 'Favorite planet?']),
           getPrompt: () => 'Prompt',
+          setQuestion: jest.fn(),
         },
         index: 5,
         showHeader: true,
@@ -69,5 +69,13 @@ describe('KbaCreateCallback.vue', () => {
     wrapper.vm.setSubmitButton();
     await wrapper.vm.$nextTick();
     expect(wrapper.emitted()['disable-next-button'].pop()).toEqual([true, 5]);
+  });
+
+  it('sets custom question value properly', () => {
+    wrapper.vm.$refs.observer.validate = () => Promise.resolve(false);
+    wrapper.vm.$data.selected = 'custom';
+    wrapper.vm.$data.questionModel.value = 'test question';
+    wrapper.vm.validateQuestion();
+    expect(wrapper.vm.$props.callback.setQuestion).toHaveBeenCalledWith('test question');
   });
 });

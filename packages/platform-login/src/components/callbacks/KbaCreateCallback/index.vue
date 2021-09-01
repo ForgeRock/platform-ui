@@ -151,7 +151,9 @@ export default {
       const otherQuestions = map(otherQuestionInputs, (question) => question.value);
 
       this.questionModel.validation = { required: true, unique: otherQuestions };
-      this.callback.setQuestion(this.selected);
+
+      if (this.selected === 'custom') this.callback.setQuestion(this.questionModel.value);
+      else this.callback.setQuestion(this.selected);
 
       this.setSubmitButton();
     },
