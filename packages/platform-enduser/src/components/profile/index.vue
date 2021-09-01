@@ -146,7 +146,7 @@ export default {
     },
     updateKBA(payload, config) {
       this.processingRequest = true;
-      this.makeUpdateRequest('selfservice/user', payload, config);
+      this.makeUpdateRequest(this.managedResource, payload, config);
     },
     makeUpdateRequest(endpoint, payload, config = {}) {
       const successMsg = config.successMsg || this.$t('user.profile.updateSuccess');
