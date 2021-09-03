@@ -208,6 +208,7 @@ export default {
               title: this.$t('pages.profile.accountSecurity.twoStepVerification'),
               text: this.$t('common.on'),
               iconType: 'ON',
+              key: 'twoStepVerification',
               linkText: this.$t('common.change'),
               linkPath: '/auth-devices',
             };
