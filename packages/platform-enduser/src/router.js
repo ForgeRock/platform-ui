@@ -15,7 +15,7 @@ Vue.use(Router);
 
 /**
  * Available toolbar configuration
- * hideToolbar - Will hide main toolbar when route accessed
+ * hideSideMenu - Will hide main toolbar when route accessed
  */
 const router = new Router({
   routes: [
@@ -26,12 +26,12 @@ const router = new Router({
     {
       path: '/handleOAuth/:amData',
       component: () => import('@/components/OAuthReturn'),
-      meta: { hideToolbar: true, bodyClass: 'fr-body-image' },
+      meta: { hideSideMenu: true, bodyClass: 'fr-body-image' },
     },
     {
       path: '/oauthReturn',
       component: () => import('@/components/OAuthReturn'),
-      meta: { hideToolbar: true, bodyClass: 'fr-body-image' },
+      meta: { hideSideMenu: true, bodyClass: 'fr-body-image' },
     },
     {
       path: '/profile',
@@ -80,20 +80,18 @@ const router = new Router({
       component: () => import('@forgerock/platform-shared/src/components/profile/AuthenticationDevices'),
       meta: {
         authenticate: true,
-        hideToolbar: true,
+        hideSideMenu: true,
       },
     },
     {
       path: '/forbidden',
       name: 'Forbidden',
       component: () => import(/* webpackChunkName: "forbidden" */ '@/components/forbidden'),
-      meta: { hideNav: true, hideToolbar: true },
     },
     {
       path: '*',
       name: 'NotFound',
       component: () => import('@forgerock/platform-shared/src/views/NotFound'),
-      meta: { hideToolbar: true },
     },
   ],
 });

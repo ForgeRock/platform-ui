@@ -7,9 +7,9 @@ of the MIT license. See the LICENSE file for details. -->
     id="app"
     :class="[{
       'fr-menu-mobile': useMobileStyleMenu,
-      'fr-menu-expanded': menuExpanded === true && !hideNav,
-      'fr-menu-collapsed': menuExpanded === false,
-      'fr-navbar-hidden': hideNav,
+      'fr-menu-expanded': menuExpanded === true && !hideSideMenu,
+      'fr-menu-collapsed': menuExpanded === false && !hideSideMenu,
+      'fr-menu-hidden': hideSideMenu,
     }, 'h-100']">
     <FrSideMenu
       @toggle-menu="toggleMenu"
@@ -18,7 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
       :realm="realm"
       :realm-aliases="realmAliases"
       :user-details="userDetails"
-      v-show="!hideNav" />
+      v-show="!hideSideMenu" />
     <div class="content">
       <FrNavBar
         @toggle-menu="toggleMenu"
@@ -31,10 +31,10 @@ of the MIT license. See the LICENSE file for details. -->
         :user-details="userDetails"
         :docs-link="docsLink"
         help-url="https://backstage.forgerock.com/"
-        v-show="!hideNav" />
+        v-show="!hideNavBar" />
       <div
         id="appContent"
-        :class="{'show-navbar': !hideNav}">
+        :class="{'show-navbar': !hideNavBar}">
         <Transition
           name="fade"
           mode="out-in">
@@ -61,7 +61,7 @@ of the MIT license. See the LICENSE file for details. -->
       </div>
       <div
         v-if="showFooter"
-        id="appFooter">
+        class="app-footer">
         <div
           v-if="footer"
           v-html="footer" />
@@ -199,12 +199,14 @@ export default {
       currentYear: new Date().getFullYear(),
       menuExpanded: true,
       useMobileStyleMenu: false,
-      hideNav: true,
+      hideNavBar: false,
+      hideSideMenu: false,
     };
   },
   watch: {
     $route(to) {
-      this.hideNav = to.meta.hideNav;
+      this.hideNavBar = to.meta.hideNavBar;
+      this.hideSideMenu = to.meta.hideSideMenu;
     },
   },
   computed: {
@@ -237,7 +239,7 @@ export default {
       };
     },
     showFooter() {
-      return !this.hideNav && (!this.isEnduser || (this.isEnduser && this.footer));
+      return !this.hideNavBar && (!this.isEnduser || (this.isEnduser && this.footer));
     },
   },
   mounted() {
@@ -308,10 +310,14 @@ export default {
   }
 }
 
-#app.fr-navbar-hidden {
+#app.fr-menu-hidden {
   .content {
     padding-left: 0;
     height: 100%;
+  }
+
+  .app-footer {
+    width: 100%;
   }
 }
 
@@ -358,7 +364,7 @@ export default {
   }
 }
 
-#appFooter {
+.app-footer {
   position: absolute;
   bottom: 0;
   width: 100%;
@@ -366,11 +372,11 @@ export default {
 }
 
 @media (min-width: 768px) {
-  #appFooter {
+  .app-footer {
     width: calc(100% - 4em);
   }
 
-  .fr-menu-expanded #appFooter {
+  .fr-menu-expanded .app-footer {
     width: calc(100% - 15.25em);
   }
 }

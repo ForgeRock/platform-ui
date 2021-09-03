@@ -12,7 +12,6 @@ import Login from './index';
 describe('Login.vue', () => {
   let wrapper;
   const $route = {
-    meta: { hideToolbar: true },
     params: {
       tree: undefined,
     },

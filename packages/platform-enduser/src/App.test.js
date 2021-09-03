@@ -33,7 +33,7 @@ describe('App.vue', () => {
 
   beforeEach(() => {
     $route = {
-      meta: { hideToolbar: true },
+      meta: { hideSideMenu: true },
     };
 
     wrapper = shallowMount(App, {

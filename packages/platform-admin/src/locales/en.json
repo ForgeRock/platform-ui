@@ -1,17 +1,26 @@
 {
   "routeNames": {
+    "Applications": "Applications",
     "BulkImport": "Import",
+    "ConfigureManaged": "Configure Managed",
     "Connect": "Connect",
     "Consent": "Consent",
     "EditApplication": "Edit Application",
     "EditConnectorServer": "Edit Connector Server",
+    "EditEmailTemplate": "Edit Email Template",
+    "EditResource": "Edit Resource",
     "EditServerCluster": "Edit Server Cluster",
     "EditServerClusterServers": "Edit Server Cluster Servers",
+    "EmailProvider": "Email Provider",
+    "EmailTemplates": "Email Templates",
+    "EmailTemplatePreview": "Email Template Preview",
     "HostedPages": "Hosted Pages",
     "Journeys": "Journeys",
     "JourneyTree": "Journey Tree",
-    "ManagedIdentity": "Manage Identity",
+    "ManagedIdentities": "Manage Identities",
+    "ManagedObjectSettings": "Managed Object Settings",
     "PasswordPolicy": "Password Policy",
+    "Profile": "Profile",
     "Realm": "Realm Settings"
   },
   "pageTitles": {
