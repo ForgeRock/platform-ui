@@ -507,6 +507,7 @@
     "Applications": "Applications",
     "Dashboard": "Dashboard",
     "EditResource": "Edit Resource",
+    "ListResource": "List Resource",
     "Login": "Login",
     "Profile": "Profile"
   },
