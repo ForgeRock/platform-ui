@@ -28,6 +28,7 @@ import SessionCheck from 'oidcsessioncheck';
 import VueSanitize from 'vue-sanitize';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import overrideTranslations, { setLocales } from '@forgerock/platform-shared/src/utils/overrideTranslations';
+import { sanitizeUrl } from '@braintree/sanitize-url';
 import store from '@/store';
 import router from './router';
 import i18n from './i18n';
@@ -291,10 +292,10 @@ const addAppAuth = () => {
     AppAuthHelper.logout().then(() => {
       /**
        * If there is a postLogoutUrlClaim and the logout button was clicked (clearHash === true)
-       * or this is an invalid session (invalidSession === true) redirect to postLogoutUrlClaim.
+       * or this is an invalid session (invalidSession === true) redirect to the sanitized postLogoutUrlClaim.
        * Otherwise reload the page.
        */
-      if (postLogoutUrlClaim && (clearHash || invalidSession)) {
+      if (postLogoutUrlClaim && sanitizeUrl(postLogoutUrlClaim) !== 'about:blank' && (clearHash || invalidSession)) {
         window.location.href = postLogoutUrlClaim;
       } else {
         window.location.reload();
