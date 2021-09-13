@@ -332,8 +332,8 @@ export default {
           this.revision = resourceDetails.data._rev;
           this.resourceDetails = resourceDetails.data;
 
-          if (this.canClearSessions) {
-            // only get session info if canClearSessions
+          if (this.canClearSessions && this.$store.state.SharedStore.hasAmUrl) {
+            // only get session info if canClearSessions and am url is present
             getSessionInfo(this.id).then((sessionInfo) => {
               this.hasActiveSessions = sessionInfo.data.resultCount > 0;
               this.clearSessionsName = `${this.resourceDetails.givenName} ${this.resourceDetails.sn}`;
