@@ -161,7 +161,7 @@ export default {
      * Get HTML from markdown
      */
     parseHtml() {
-      const converter = new showdown.Converter({ completeHTMLDocument: false });
+      const converter = new showdown.Converter({ completeHTMLDocument: false, tables: true });
       const html = converter.makeHtml(this.markdownField);
       this.htmlField = html;
       this.parsedHtml = `<style>${this.stylesField}</style>${this.wrapContent(html)}`;
