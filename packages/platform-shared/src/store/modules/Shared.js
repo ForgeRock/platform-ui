@@ -16,11 +16,13 @@ const defaultState = {
   returnRoute: '',
   returnRouteText: '',
   uiConfig: null,
+  hasAmUrl: false,
 };
 
 const mutations = {
   setBaseURLs(state, env) {
-    if (env.VUE_APP_AM_URL) {
+    if (env.VUE_APP_AM_URL && env.VUE_APP_AM_URL.length > 0) {
+      state.hasAmUrl = true;
       state.amBaseURL = getFQDN(env.VUE_APP_AM_URL);
     }
 
