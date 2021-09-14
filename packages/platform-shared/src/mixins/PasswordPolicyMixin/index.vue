@@ -109,7 +109,10 @@ export default {
             }
             return policy;
           case 'CHARACTER_SET':
-            return this.getPoliciesFromCharacterSet(policy.params['character-sets']);
+            if (policy.params['character-sets']) {
+              return this.getPoliciesFromCharacterSet(policy.params['character-sets']);
+            }
+            return policy;
           case 'ATTRIBUTE_VALUE':
             policy.params['match-attributes'].forEach((attribute) => {
               // translate attribute names if possible
