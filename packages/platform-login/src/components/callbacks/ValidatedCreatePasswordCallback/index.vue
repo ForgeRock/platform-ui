@@ -197,6 +197,12 @@ export default {
      * Sends input to backend to be validated and updates the failing policies.
      */
     validatePassword() {
+      // reset to initial state when input is empty IAM-1409
+      if (!this.callback.getInputValue().length) {
+        this.setFailingPolicies(this.policies);
+        return;
+      }
+
       const stepParams = {
         realmPath: this.realm,
       };
