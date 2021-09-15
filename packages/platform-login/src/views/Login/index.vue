@@ -17,12 +17,11 @@ of the MIT license. See the LICENSE file for details. -->
         <BCol :lg="journeyLayout !== 'card' ? 6 : 12">
           <FrCenterCard
             :logo-alt-text="logoAltText"
-            :logo-enabled="logoEnabled"
+            :logo-enabled="logoEnabled && !themeLoading"
             :logo-height="logoHeight"
-            :logo-path="logoPath"
-            :show-logo="true">
+            :logo-path="logoPath">
             <template #center-card-header>
-              <div v-if="!loading">
+              <div v-if="!loading && !themeLoading">
                 <h1
                   v-if="header"
                   class="h2">
@@ -36,7 +35,7 @@ of the MIT license. See the LICENSE file for details. -->
 
             <template #center-card-body>
               <BCardBody
-                v-show="!loading"
+                v-show="!loading && !themeLoading"
                 id="callbacksPanel">
                 <FrAlert
                   :show="loginFailure"
@@ -92,7 +91,7 @@ of the MIT license. See the LICENSE file for details. -->
                   </form>
                 </div>
               </BCardBody>
-              <BCardBody v-show="loading">
+              <BCardBody v-show="loading || themeLoading">
                 <div class="h-100 d-flex">
                   <div class="fr-center-card">
                     <Spinner class="mb-4" />
@@ -350,6 +349,10 @@ export default {
     logoPath: {
       type: String,
       default: '',
+    },
+    themeLoading: {
+      type: Boolean,
+      default: false,
     },
   },
   mixins: [

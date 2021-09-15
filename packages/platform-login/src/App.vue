@@ -27,6 +27,7 @@ of the MIT license. See the LICENSE file for details. -->
           :logo-height="logoHeight"
           :logo-path="logo"
           :key="$route.fullPath"
+          :theme-loading="theme === null"
           @set-theme="setupTheme" />
       </Transition>
     </div>
