@@ -100,9 +100,11 @@ export default {
     this.contentField = this.prettify(this.value);
   },
   watch: {
-    content(val) {
-      this.contentField = this.prettify(val);
-      this.shouldReset = false;
+    value(val, prevVal) {
+      if (!prevVal) {
+        this.contentField = this.prettify(val);
+        this.shouldReset = false;
+      }
     },
     reset(val) {
       if (val) {
