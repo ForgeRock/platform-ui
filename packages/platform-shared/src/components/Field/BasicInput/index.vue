@@ -17,7 +17,7 @@ of the MIT license. See the LICENSE file for details. -->
       v-model.number="inputValue"
       ref="input"
       type="number"
-      :class="[{'polyfill-placeholder': floatLabels, 'is-invalid': errorMessages && errorMessages.length }, 'form-control']"
+      :class="[{'polyfill-placeholder': floatLabels, 'is-invalid': errorMessages && errorMessages.length, 'text-truncate' : $attrs.copy }, 'form-control']"
       :data-vv-as="label"
       :disabled="disabled"
       :id="id"
@@ -29,7 +29,7 @@ of the MIT license. See the LICENSE file for details. -->
       v-else
       v-model="inputValue"
       ref="input"
-      :class="[{'polyfill-placeholder': floatLabels, 'is-invalid': errorMessages && errorMessages.length }, 'form-control']"
+      :class="[{'polyfill-placeholder': floatLabels, 'is-invalid': errorMessages && errorMessages.length, 'text-truncate' : $attrs.copy }, 'form-control']"
       :data-vv-as="label"
       :disabled="disabled"
       :id="id"
