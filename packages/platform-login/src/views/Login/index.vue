@@ -924,7 +924,7 @@ export default {
           const realmAndTreeKey = `${stepParams.realmPath}/${stepParams.tree || ''}`;
           if (realmAndTreeInitialStep && realmAndTreeInitialStep.key === realmAndTreeKey) {
             initialStep = new FRStep(realmAndTreeInitialStep.step.payload);
-          } else {
+          } else if (step.type !== 'LoginFailure') {
             sessionStorage.setItem('initialStep', JSON.stringify(
               {
                 key: realmAndTreeKey,
@@ -978,7 +978,7 @@ export default {
                 this.redirectToFailure(step);
                 this.step = initialStep;
                 this.retry = true;
-                if (this.step.callbacks) {
+                if (this.step && this.step.callbacks) {
                   this.componentList = [];
                   this.buildTreeForm();
                 }
