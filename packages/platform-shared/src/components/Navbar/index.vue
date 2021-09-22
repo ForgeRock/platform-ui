@@ -22,13 +22,13 @@ of the MIT license. See the LICENSE file for details. -->
       />
     </button>
     <BNavbarNav class="flex-row align-items-center justify-content-between flex-grow-1">
-      <div>
+      <div @click="$emit('clicked')">
         <RouterLink
           aria-label="Breadcrumb"
           class="fr-back-link overflow-hidden nav-link"
           role="navigation"
           v-show="getBreadcrumbRoute().length > 0"
-          :to="getBreadcrumbRoute()">
+          :to="!checkChangesOnNavigate ? getBreadcrumbRoute() : ''">
           <h4 class="text-truncate">
             <FrIcon
               class="md-24 mr-3"
@@ -45,7 +45,6 @@ of the MIT license. See the LICENSE file for details. -->
       </div>
       <div class="flex-row d-flex">
         <FrNotification v-if="showNotifications" />
-        <!--TODO: This html list is invalid when rendered - wont fix today-->
         <li
           v-if="showHelpLink"
           class="mr-4 d-none d-sm-block nav-item">
@@ -159,6 +158,13 @@ export default {
      */
     menuIsExpanded: {
       default: () => false,
+      type: Boolean,
+    },
+    /**
+     * Allows view using this component to check for changes and prevents navigation
+     */
+    checkChangesOnNavigate: {
+      default: false,
       type: Boolean,
     },
     /**

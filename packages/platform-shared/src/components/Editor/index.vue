@@ -49,6 +49,15 @@ export default {
       type: String,
     },
     /**
+     * Allows value to be set externally
+     * (Warning if using for code input, cursor will
+     * behave poorly with this setting)
+     */
+    reactive: {
+      default: false,
+      type: Boolean,
+    },
+    /**
      * Reset editor to initial state
      */
     reset: {
@@ -100,11 +109,14 @@ export default {
     this.contentField = this.prettify(this.value);
   },
   watch: {
-    value(val, prevVal) {
-      if (!prevVal) {
-        this.contentField = this.prettify(val);
-        this.shouldReset = false;
-      }
+    value: {
+      handler(val, prevVal) {
+        if (!prevVal || this.reactive) {
+          this.contentField = this.prettify(val);
+          this.shouldReset = false;
+        }
+      },
+      immediate: true,
     },
     reset(val) {
       if (val) {

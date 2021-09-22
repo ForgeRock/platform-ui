@@ -46,6 +46,9 @@ describe('EditResource.vue', () => {
             UserStore: {
               adminUser: true,
             },
+            SharedStore: {
+              hasAmUrl: true,
+            },
           },
         },
         $router: {

@@ -6,6 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import { putConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
 import uuid from 'uuid/v4';
+import { sortBy } from 'lodash';
 
 export default {
   name: 'ThemeMixin',
@@ -42,7 +43,6 @@ export default {
         logoProfileAltText: 'Logo',
         logoProfileCollapsed: 'https://cdn.forgerock.com/platform/themes/starter/logo-starter.svg',
         logoProfileCollapsedAltText: 'Logo',
-        logoProfileCollapsedHeight: '24',
         logoProfileHeight: '24',
         primaryColor: '#324054',
         primaryOffColor: '#242E3C',
@@ -64,7 +64,6 @@ export default {
       journeyLayout: 'card',
       logoHeight: '40',
       logoProfileHeight: '40',
-      logoProfileCollapsedHeight: '40',
       logo: '',
       logoAltText: '',
       logoEnabled: true,
@@ -136,7 +135,6 @@ export default {
           this.logoEnabled = theme.logoEnabled;
           this.logoHeight = theme.logoHeight;
           this.logoProfileHeight = theme.logoProfileHeight;
-          this.logoProfileCollapsedHeight = theme.logoProfileCollapsedHeight;
         } else {
           this.theme = {};
           this.logo = `${process.env.BASE_URL}images/vertical-logo.svg`;
@@ -190,6 +188,19 @@ export default {
           return theme.linkedTrees.includes(treeId);
         }
         return false;
+      });
+    },
+    /**
+     * Save a theme if it doesn't exist or update an existing theme
+     * @param {Object} themesConfig - config metadata of themes
+     */
+    saveTheme(themesConfig) {
+      themesConfig.realm[this.realm] = sortBy(themesConfig.realm[this.realm], 'name');
+      return putConfig('ui/themerealm', themesConfig).then(({ data }) => {
+        this.setThemeData(data, this.realm);
+        this.displayNotification('AdminMessage', 'success', this.$t('hostedPages.successSave'));
+      }).catch((error) => {
+        this.showErrorMessage(error, this.$t('hostedPages.errorSavingTheme'));
       });
     },
     setThemeData(themesConfig, realm) {
