@@ -173,6 +173,7 @@ yarn unit
 ## Browser support
 
 - Internet Explorer 11 or higher
+- Latest Edge
 - Latest Firefox
 - Latest Safari
 - Latest Chrome
