@@ -3,38 +3,45 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div class="color-picker d-flex align-items-stretch">
-    <BButton
-      class="w-100 p-0"
-      href="#"
-      variant="outline-secondary"
-      :id="`color-picker-${id}`">
-      <div class="d-flex align-items-stretch">
-        <div class="color-swatch d-flex align-items-center justify-content-center">
-          <div class="swatch">
-            <span
-              :style="{backgroundColor: pickerColor.hex}"
-              class="swatch-color" />
+  <div>
+    <div class="color-picker d-flex align-items-stretch">
+      <BButton
+        class="w-100 p-0"
+        href="#"
+        variant="outline-secondary"
+        :id="`color-picker-${id}`">
+        <div class="d-flex align-items-stretch">
+          <div class="color-swatch d-flex align-items-center justify-content-center">
+            <div class="swatch">
+              <span
+                :style="{backgroundColor: pickerColor.hex}"
+                class="swatch-color" />
+            </div>
+          </div>
+          <div class="color-input pl-3 flex-grow-1">
+            <label class="color-label mb-0 p-0 text-secondary">
+              {{ label }}
+            </label>
+            <div class="color-value">
+              {{ pickerColor.hex }}
+            </div>
           </div>
         </div>
-        <div class="color-input pl-3 flex-grow-1">
-          <label class="color-label mb-0 p-0 text-secondary">
-            {{ label }}
-          </label>
-          <div class="color-value">
-            {{ pickerColor.hex }}
-          </div>
-        </div>
-      </div>
-    </BButton>
-    <BPopover
-      :container="container"
-      triggers="focus"
-      boundary="window"
-      placement="left"
-      :target="`color-picker-${id}`">
-      <ChromePicker v-model="pickerColor" />
-    </BPopover>
+      </BButton>
+      <BPopover
+        :container="container"
+        triggers="focus"
+        boundary="window"
+        placement="left"
+        :target="`color-picker-${id}`">
+        <ChromePicker v-model="pickerColor" />
+      </BPopover>
+    </div>
+    <small
+      v-if="description"
+      class="form-text">
+      {{ description }}
+    </small>
   </div>
 </template>
 
@@ -74,6 +81,10 @@ export default {
      * Container element to append the rendered popover to when visible
      */
     container: {
+      type: String,
+      default: '',
+    },
+    description: {
       type: String,
       default: '',
     },

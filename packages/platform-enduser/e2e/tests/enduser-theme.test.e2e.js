@@ -41,11 +41,14 @@ describe('Enduser Theming', () => {
 
     changeColour(/^Link Color/, '16FF96');
     changeColour(/^Link Hover Color/, '123123');
-    changeColour(/^Enduser Background Color/, 'FFFFFF');
-    changeColour(/^Menu Active Color/, '123123');
-    changeColour(/^Menu Active Text Color/, '16FF96');
+    cy.findByRole('tab', { name: 'Account Pages' }).click();
+    cy.findByRole('heading', { name: 'Page Styles' }).click();
+    changeColour(/^Page Background Color/, 'FFFFFF');
+    cy.findByRole('heading', { name: 'Navigation' }).click();
+    changeColour(/^Navigation Active Color/, '123123');
+    changeColour(/^Navigation Active Text Color/, '16FF96');
 
-    cy.get('button.btn-primary:visible').contains('Save').scrollIntoView().click();
+    cy.findByRole('button', { name: 'Save' }).click();
     cy.logout();
     cy.login(enduserUserName);
     cy.visit(`${Cypress.config().baseUrl}/enduser/?realm=root#/profile`);
@@ -64,17 +67,18 @@ describe('Enduser Theming', () => {
     });
     cy.visit(locationUrl);
     cy.findByRole('cell', { name: 'Starter Theme' }).click();
-    cy.findByRole('tab', { name: 'Logos' }).click();
-    cy.findAllByPlaceholderText('Logo URL')
-      .eq(1)
+    cy.findByRole('tab', { name: 'Account Pages' }).click();
+    cy.findByRole('tab', { name: 'Logo' }).click();
+    cy.findAllByRole('img', { name: 'Logo' }).eq(1).click();
+    cy.findByPlaceholderText('Logo URL')
       .clear()
       .type('h');
     cy.findByTestId('in-situ-logo-preview')
       .should('have.attr', 'src')
       .should('include', 'h');
-    cy.findAllByPlaceholderText('Logo URL')
-      .eq(1)
+    cy.findByPlaceholderText('Logo URL')
       .type('ttps://www.logosurfer.com/wp-content/uploads/2018/03/quicken-loans-logo_0.png');
+    cy.findByRole('button', { name: 'Update' }).click();
     cy.findAllByPlaceholderText('Alt Text')
       .eq(1)
       .clear()
@@ -96,8 +100,8 @@ describe('Enduser Theming', () => {
     });
     cy.visit(locationUrl);
     cy.findByRole('cell', { name: 'Starter Theme' }).click();
+    cy.findByRole('tab', { name: 'Account Pages' }).click();
     cy.findByRole('tab', { name: 'Layout' }).click();
-    cy.findByRole('button', { name: 'Account Page' }).click();
     cy.findByRole('checkbox', { name: 'Password' }).click({ force: true });
     cy.findByRole('checkbox', { name: '2-Step Verification' }).click({ force: true });
     cy.findByRole('button', { name: 'Save' }).click();
@@ -126,15 +130,17 @@ describe('Enduser Theming', () => {
 
     cy.visit(locationUrl);
     cy.findByRole('cell', { name: 'Starter Theme' }).click();
-    cy.findByRole('tab', { name: 'Logos' }).click();
-    cy.findByPlaceholderText('Favicon')
+    cy.findByRole('tab', { name: 'Favicon' }).click();
+    cy.findByRole('button', { name: 'Logo' }).click();
+    cy.findByPlaceholderText('Favicon URL')
       .clear()
       .type('h');
     cy.findByTestId('favicon-preview')
       .should('have.attr', 'src')
       .should('include', 'h');
-    cy.findByPlaceholderText('Favicon')
+    cy.findByPlaceholderText('Favicon URL')
       .type('ttps://www.forgerock.com//themes/custom/forgerock/favicon.ico');
+    cy.findByRole('button', { name: 'Update' }).click();
     cy.findByRole('button', { name: 'Save' }).click();
     cy.logout();
     cy.visit(locationUrl);
