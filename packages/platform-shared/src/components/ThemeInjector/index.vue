@@ -134,7 +134,7 @@ of the MIT license. See the LICENSE file for details. -->
       v-if="isEnduser">
       .fr-logo.fr-logo-vertical {
       background-image: url("{{ theme.logoProfileCollapsed ? theme.logoProfileCollapsed : require('@forgerock/platform-shared/src/assets/images/placeholder.svg') }}");
-      height: {{ theme.logoProfileCollapsed ? theme.logoProfileCollapsedHeight : theme.logoHeight }}px;
+      height: {{ theme.logoProfileCollapsed ? theme.logoProfileHeight : theme.logoHeight }}px;
       }
 
       .fr-logo.fr-logo-horizontal {
