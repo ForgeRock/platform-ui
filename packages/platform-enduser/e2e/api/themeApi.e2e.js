@@ -57,7 +57,6 @@ export function setBaseTheme(accessToken = Cypress.env('ACCESS_TOKEN').access_to
             logoProfileAltText: 'test',
             logoProfileCollapsed: 'test',
             logoProfileCollapsedAltText: 'test',
-            logoProfileCollapsedHeight: '40',
             logoProfileHeight: '40',
             primaryColor: '#109cf1',
             primaryOffColor: '#0c85cf',
