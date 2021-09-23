@@ -100,7 +100,7 @@ export default {
         }
 
         // assign current values
-        formField.value = this.getFieldValue(modelValue, formField.type, modelIsArrayElement);
+        formField.value = formField.value ? formField.value : this.getFieldValue(modelValue, formField.type, modelIsArrayElement);
 
         // set options for array and radio fields
         if (formField.type === 'array') {
