@@ -9,6 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
       class="mb-4"
       :disabled="uiSchema.disabled"
       :description="uiSchema.description"
+      :isHtml="uiSchema.isHtml"
       :label="uiSchema.label"
       :validation="uiSchema.required ? 'required' : ''"
       @input="valueChange">

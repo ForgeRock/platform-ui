@@ -734,6 +734,7 @@
     "clientCredentials": {
       "cardTitle": "Client Credentials",
       "discoveryURILabel": "Discovery URI",
+      "discoveryURIDescription": "Use to retrieve the OpenID Provider information for this realm from within the application. If using a custom domain remove the <code>/am/oauth2</code> and structure the call as follows: <code>https://{yourdomain}/.well-known/openid-configuration</code>.",
       "clientIDLabel": "Client ID",
       "userpasswordLabel": "Client Secret"
     },
