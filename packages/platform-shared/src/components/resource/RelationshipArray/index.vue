@@ -115,35 +115,19 @@ of the MIT license. See the LICENSE file for details. -->
       @input="loadGrid(currentPage)" />
 
     <BModal
+      cancel-variant="link"
       :id="createModalId"
+      :ok-disabled="newRelationships.length === 0"
+      :ok-title="$t('common.save')"
       :ref="createModalId"
       :title="'Add ' + relationshipArrayProperty.title"
-      size="lg">
+      size="lg"
+      @ok="saveNewRelationships">
       <FrRelationshipEdit
         :parent-resource="parentResource"
         :relationship-property="relationshipArrayProperty"
         :index="0"
         @setValue="addNewRelationship" />
-
-      <div
-        slot="modal-footer"
-        class="w-100">
-        <div class="float-right">
-          <BButton
-            variant="link"
-            class="text-danger"
-            @click="$refs[createModalId].hide()">
-            {{ $t('common.cancel') }}
-          </BButton>
-          <BButton
-            variant="primary"
-            :id="`save_new_${relationshipArrayProperty.key}`"
-            @click="saveNewRelationships"
-            :disabled="newRelationships.length === 0">
-            {{ $t('common.save') }}
-          </BButton>
-        </div>
-      </div>
     </BModal>
 
     <BModal

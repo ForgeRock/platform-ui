@@ -22,7 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
     </template>
     <template v-if="showProfileLink">
-      <BDropdownDivider v-if="enableLogout" />
+      <BDropdownDivider v-if="enableLogout && dropdownItems.length" />
       <BDropdownItem>
         <RouterLink :to="{ name: 'Profile' }">
           <BMedia class="text-left">

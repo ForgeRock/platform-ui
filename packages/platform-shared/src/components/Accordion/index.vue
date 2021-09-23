@@ -6,50 +6,51 @@ of the MIT license. See the LICENSE file for details. -->
   <div
     class="accordion"
     role="tablist">
-    <BCard
-      no-body>
-      <!-- @slot Accordion header -->
-      <slot name="accordionHeader" />
-    </BCard>
-    <template v-for="(data, key) in items">
-      <!--
-        triggered on click
-        @event section-expanded
-        @property {string} key item index
-        @property {object} data item data
-       -->
-      <BCard
-        :class="padding(key, data.open$)"
-        :key="key"
-        no-body
-        @click="$emit('section-expanded', {key, data})">
-        <BCardHeader
-          class="pr-4 border-0 position-relative"
-          role="tab"
-          v-b-toggle="`accordion-${accordionGroup}-${key}`">
-          <!-- @slot item header (shown while collapsed and expanded) -->
-          <slot
-            name="header"
-            v-bind="{...data, index$:key}" />
-        </BCardHeader>
-        <BCollapse
-          :id="`accordion-${accordionGroup}-${key}`"
-          :accordion="accordionGroup"
-          v-model="data.open$"
-          v-on="$listeners"
-          @show="emitAccordionState"
-          @hide="emitAccordionState"
-          role="tabpanel">
-          <BCardBody
-            class="pt-0">
-            <!-- @slot item body (shown while expanded) -->
+    <BCard no-body>
+      <header>
+        <!-- @slot Accordion header -->
+        <slot name="accordionHeader" />
+      </header>
+      <template v-for="(data, key) in items">
+        <!--
+          triggered on click
+          @event section-expanded
+          @property {string} key item index
+          @property {object} data item data
+        -->
+        <div
+          class="border-top"
+          :key="key"
+          no-body
+          @click="$emit('section-expanded', {key, data})">
+          <BCardHeader
+            class="pr-4 border-0 position-relative cursor-pointer"
+            role="tab"
+            v-b-toggle="`accordion-${accordionGroup}-${key}`">
+            <!-- @slot item header (shown while collapsed and expanded) -->
             <slot
-              name="body"
+              name="header"
               v-bind="{...data, index$:key}" />
-          </BCardBody>
-        </BCollapse>
-      </BCard>
-    </template>
+          </BCardHeader>
+          <BCollapse
+            :id="`accordion-${accordionGroup}-${key}`"
+            :accordion="accordionGroup"
+            v-model="data.open$"
+            v-on="$listeners"
+            @show="emitAccordionState"
+            @hide="emitAccordionState"
+            role="tabpanel">
+            <BCardBody
+              class="pt-0">
+              <!-- @slot item body (shown while expanded) -->
+              <slot
+                name="body"
+                v-bind="{...data, index$:key}" />
+            </BCardBody>
+          </BCollapse>
+        </div>
+      </template>
+    </BCard>
   </div>
 </template>
 

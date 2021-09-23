@@ -127,3 +127,9 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+  code {
+    background: #f6f8fa;
+    border-radius: 3px;
+  }
+</style>

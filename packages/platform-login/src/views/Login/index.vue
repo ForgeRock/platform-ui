@@ -115,7 +115,7 @@ of the MIT license. See the LICENSE file for details. -->
       v-else
       id="callbacksPanel"
       :class="[{'flex-row-reverse': journeyLayout === 'justified-right'}, 'd-flex w-100 flex-grow-1']">
-      <div class="w-md-50 w-100 d-flex align-items-start flex-column bg-white">
+      <div class="journey-card w-md-50 w-100 d-flex align-items-start flex-column">
         <div
           class="pb-4 px-4 px-md-5 w-100"
           data-testid="in-situ-logo-preview">
@@ -141,7 +141,7 @@ of the MIT license. See the LICENSE file for details. -->
                 <div v-if="!loading">
                   <h1
                     v-if="header"
-                    class="display-4 mb-5">
+                    class="display-4 mb-5 h2">
                     {{ header }}
                   </h1>
                   <p
@@ -1091,6 +1091,10 @@ export default {
 
   .max-width-600 {
     max-width: 600px;
+  }
+
+  .journey-card {
+    background-color: $white;
   }
 }
 

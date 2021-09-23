@@ -73,16 +73,17 @@ describe('Enduser Theming', () => {
     cy.findByPlaceholderText('Logo URL')
       .clear()
       .type('h');
-    cy.findByTestId('in-situ-logo-preview')
+    cy.findAllByTestId('in-situ-logo-preview')
+      .eq(0)
       .should('have.attr', 'src')
       .should('include', 'h');
     cy.findByPlaceholderText('Logo URL')
       .type('ttps://www.logosurfer.com/wp-content/uploads/2018/03/quicken-loans-logo_0.png');
-    cy.findByRole('button', { name: 'Update' }).click();
     cy.findAllByPlaceholderText('Alt Text')
-      .eq(1)
+      .eq(0)
       .clear()
       .type('alt');
+    cy.findByRole('button', { name: 'Update' }).click();
     cy.findByRole('button', { name: 'Save' }).click();
     cy.logout();
     cy.login(enduserUserName);
@@ -139,18 +140,17 @@ describe('Enduser Theming', () => {
       .should('have.attr', 'src')
       .should('include', 'h');
     cy.findByPlaceholderText('Favicon URL')
-      .type('ttps://www.forgerock.com//themes/custom/forgerock/favicon.ico');
+      .type('ttps://www.forgerock.com/themes/custom/forgerock/favicon.ico');
     cy.findByRole('button', { name: 'Update' }).click();
     cy.findByRole('button', { name: 'Save' }).click();
     cy.logout();
-    cy.visit(locationUrl);
     // ensure login has proper favicon
     cy.visit(`${Cypress.config().baseUrl}/enduser/`);
-    cy.findByTestId('favicon').should('have.attr', 'href').should('include', 'https://www.forgerock.com//themes/custom/forgerock/favicon.ico');
+    cy.findByTestId('favicon').should('have.attr', 'href').and('include', 'https://www.forgerock.com/themes/custom/forgerock/favicon.ico');
 
     // ensure enduser has proper favicon
     cy.login(enduserUserName);
-    cy.findByTestId('favicon').should('have.attr', 'href').should('include', 'https://www.forgerock.com//themes/custom/forgerock/favicon.ico');
+    cy.findByTestId('favicon').should('have.attr', 'href').and('include', 'https://www.forgerock.com/themes/custom/forgerock/favicon.ico');
   });
 
   it('should delete test user', () => {

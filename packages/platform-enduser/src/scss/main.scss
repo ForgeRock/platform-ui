@@ -199,6 +199,8 @@ label {
   Paginator Styles
  */
 .pagination {
+  border-radius: 0;
+
   .page-link {
     border-radius: $pagination-border-radius;
     margin-left: 4px;
