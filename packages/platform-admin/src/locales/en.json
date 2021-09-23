@@ -421,13 +421,14 @@
       "title": "Delete Server?"
     },
     "newServerModal": {
+      "alphaNumDashOnly": "Must only contain letters, numbers, hyphens and underscores",
       "clientIdInUse": "That Client ID is already in use, please choose a different ID",
       "connectorServerApp": "for the connector server application.",
       "connectorServerRegistered": "Connector server registered!",
       "downloadRemote": "<a href='{url}' target='_blank'>Download a connector server</a> based on your needs.",
       "editConnectorServer": "Edit Connector Server",
       "errorUpdatingAuth": "Error adding the user mapping to the Authentication config",
-      "lowerAlphaNumOnly": "<ul class='pl-4'><li>Cannot contain spaces</li><li>Can only contain lower case alphanumeric characters</li></ul>",
+      "lowerAlphaNumOnly": "Must only contain lowercase letters and numbers",
       "newConnectorServer": "New Connector Server",
       "nextSteps": "Next Steps",
       "registerConnectorServer": "Register your connector server by providing a name and connection settings.",
