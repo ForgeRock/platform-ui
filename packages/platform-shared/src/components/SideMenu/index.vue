@@ -111,7 +111,7 @@ of the MIT license. See the LICENSE file for details. -->
                 @click="toggleMenu"
                 class="d-flex align-items-center">
                 <FrIcon
-                  class="icon-flipped mr-3"
+                  class="icon-flipped mr-3 toggle-side-menu"
                   name="chrome_reader_mode"
                 />
                 <span class="sidebar-item-text">
@@ -227,4 +227,8 @@ export default {
 
 <style lang="scss" scoped>
 @import './SideMenu.scss';
+
+.toggle-side-menu {
+  line-height: 1.4rem;
+}
 </style>
