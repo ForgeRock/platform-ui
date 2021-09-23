@@ -4,14 +4,14 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BNavbar
-    class="fr-main-navbar"
+    class="fr-main-navbar align-content-center"
     data-testid="fr-main-navbar"
     sticky
     toggleable>
     <button
       v-show="!hideToggle"
       @click="toggleMenu"
-      class="navbar-toggler expand-sidebar mt-2"
+      class="navbar-toggler expand-sidebar"
       type="button"
       aria-controls="#fr-sidebar-nav"
       :aria-expanded="(menuIsExpanded).toString()"
@@ -25,17 +25,18 @@ of the MIT license. See the LICENSE file for details. -->
       <div @click="$emit('clicked')">
         <RouterLink
           aria-label="Breadcrumb"
-          class="fr-back-link overflow-hidden nav-link"
+          class="fr-back-link overflow-hidden p-1 pl-4 pl-lg-0 mt-1"
           role="navigation"
           v-show="getBreadcrumbRoute().length > 0"
           :to="!checkChangesOnNavigate ? getBreadcrumbRoute() : ''">
           <h4 class="text-truncate">
             <FrIcon
               class="md-24 mr-3"
-              :outlined="false"
               name="arrow_back"
             />
-            <span>{{ getBreadcrumbRouteText() }}</span>
+            <span class="align-middle">
+              {{ getBreadcrumbRouteText() }}
+            </span>
           </h4>
         </RouterLink>
       </div>
@@ -287,7 +288,6 @@ export default {
     padding: 0;
     border-width: 0;
     position: relative;
-    bottom: 10px;
 
     &:focus {
       outline: 0;
