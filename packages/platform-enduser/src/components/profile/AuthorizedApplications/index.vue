@@ -203,12 +203,3 @@ export default {
   },
 };
 </script>
-<style lang="scss" scoped>
-/deep/ {
-  .oauth-applications {
-    .media-item {
-      color: $gray-900;
-    }
-  }
-}
-</style>

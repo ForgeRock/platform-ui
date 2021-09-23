@@ -3,7 +3,9 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <BCard no-body>
+  <BCard
+    class="account-card"
+    no-body>
     <BCardHeader class="p-4">
       <h4>{{ $t('pages.profile.preferences.title') }}</h4>
       <p class="m-0">
@@ -11,8 +13,8 @@ of the MIT license. See the LICENSE file for details. -->
       </p>
     </BCardHeader>
     <BCardBody
-      v-for="(obj, preference) in preferences"
-      class="border-bottom"
+      v-for="(obj, preference, index) in preferences"
+      :class="{ 'border-bottom': index !== preferencesLength }"
       :key="preference"
       :collapsible="false"
       :panel-shown="false">
@@ -72,6 +74,9 @@ export default {
       currentPreferences: (state) => state.UserStore.preferences,
       properties: (state) => state.UserStore.schema.properties.preferences.properties,
     }),
+    preferencesLength() {
+      return Object.keys(this.preferences).length - 1;
+    },
   },
   methods: {
     loadData() {
