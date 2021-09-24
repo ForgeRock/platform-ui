@@ -12,6 +12,10 @@ of the MIT license. See the LICENSE file for details. -->
       background-color: {{ backgroundColor }};
       }
 
+      #app {
+      font-family: {{ theme.fontFamily }}, sans-serif;
+      }
+
       .fr-body-image {
       background-image: url('{{ theme.backgroundImage }}');
       background-size: cover;
@@ -151,6 +155,7 @@ Theme properties examples:
 
 backgroundColor: "#312E2E"
 buttonRounded: "15"
+fontFamily: "Open Sans"
 linkActiveColor: "#B20710"
 linkColor: "#E50914"
 logo: "URL"
