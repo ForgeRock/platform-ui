@@ -47,6 +47,7 @@ export function setBaseTheme(accessToken = Cypress.env('ACCESS_TOKEN').access_to
             backgroundColor: '#f6f8fa',
             backgroundImage: '',
             buttonRounded: 5,
+            fontFamily: 'Open Sans',
             linkActiveColor: '#0c85cf',
             linkColor: '#109cf1',
             logo: '',

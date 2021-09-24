@@ -23,6 +23,7 @@ export default {
         backgroundImage: '',
         buttonRounded: 5,
         favicon: 'https://cdn.forgerock.com/platform/themes/starter/logo-starter.svg',
+        fontFamily: 'Open Sans',
         journeyFooter: `<div class="d-flex justify-content-center py-4 w-100"><span class="pr-1">© ${new Date().getFullYear()}</span>
 <a href="#" target="_blank" class="text-body">My Company, Inc</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Privacy Policy</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Terms & Conditions</a></div>`,
         journeyFooterEnabled: false,
