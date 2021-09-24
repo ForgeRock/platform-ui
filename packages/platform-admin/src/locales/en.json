@@ -154,6 +154,8 @@
         "faviconModalTitle": "Update Favicon Image",
         "faviconModalLabel": "Favicon URL",
         "faviconModalDescription": "Enter a URL where your favicon is hosted (eg. http://mysite.com/img/profile.jpg). Should be either png or jpg format.",
+        "fontFamily": "Font Family",
+        "fontFamilyDescription": "Font applied to all journeys and customer-facing pages.",
         "linkActiveColor": "Link Hover Color",
         "linkColor": "Link Color",
         "links": "Links",
@@ -166,7 +168,8 @@
         "textColor": "Button Text Color",
         "themeName": "Theme Name",
         "themeNameDescription": "Name for this theme.",
-        "title": "Global Settings"
+        "title": "Global Settings",
+        "typography": "Typography"
       },
       "accountTab": {
         "accountControls": "Account Controls",
