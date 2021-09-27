@@ -5,13 +5,15 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <slot name="input">
-      <FrField
-        v-bind="$attrs"
-        type="password"
-        :errors="failuresOnSubmit"
-        :label="$t('common.placeholders.password')"
-        :validation="validation"
-        @input="checkPassword($event); $emit('input', $event)" />
+      <BForm>
+        <FrField
+          v-bind="$attrs"
+          type="password"
+          :errors="failuresOnSubmit"
+          :label="$t('common.placeholders.password')"
+          :validation="validation"
+          @input="checkPassword($event); $emit('input', $event)" />
+      </BForm>
     </slot>
     <slot name="policy-panel">
       <FrPolicyPanel
@@ -25,6 +27,9 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import {
+  BForm,
+} from 'bootstrap-vue';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrPolicyPanel from '@forgerock/platform-shared/src/components/PolicyPanel';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
@@ -50,6 +55,7 @@ export default {
     RestMixin,
   ],
   components: {
+    BForm,
     FrField,
     FrPolicyPanel,
   },
