@@ -230,8 +230,12 @@ const addAppAuth = () => {
         clientId: commonSettings.clientId,
         opUrl: commonSettings.authorizationEndpoint,
         subject: claims.sub,
-        invalidSessionHandler() {
-          window.logout(false, true);
+        invalidSessionHandler(reason) {
+          /**
+          * If the reason for the invalid session is a subject_mismatch we always want to
+          * reload the page after logout whether there is a post_logout_url claim or not.
+          */
+          window.logout(false, reason !== 'subject_mismatch');
         },
         sessionClaimsHandler(newClaims) {
           if (claims.auth_time !== newClaims.auth_time || claims.realm !== newClaims.realm) {
