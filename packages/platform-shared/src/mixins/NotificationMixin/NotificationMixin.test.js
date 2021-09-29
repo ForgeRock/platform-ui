@@ -16,7 +16,10 @@ describe('NotificationMixin', () => {
     wrapper = shallowMount({}, {
       render() {},
       mixins: [NotificationMixin],
-      mocks: { $t: (id) => id },
+      mocks: {
+        $t: (id) => id,
+        getTranslation: (id) => id,
+      },
     });
   });
 
