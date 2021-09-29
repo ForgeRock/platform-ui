@@ -34,6 +34,7 @@ import {
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import ThemeMixin from '@forgerock/platform-shared/src/mixins/ThemeMixin';
+import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import FrLayout from '@forgerock/platform-shared/src/components/Layout';
 import { getIdmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
@@ -47,6 +48,7 @@ export default {
     NotificationMixin,
     RestMixin,
     ThemeMixin,
+    TranslationMixin,
   ],
   components: {
     FrLayout,
@@ -125,7 +127,7 @@ export default {
       accessObj.forEach((obj) => {
         const splitObj = obj.privilegePath.split('/');
         this.menuItems.push({
-          displayName: capitalize(obj.title),
+          displayName: this.getTranslation(capitalize(obj.title)),
           icon: this.accessIcon(obj),
           routeTo: {
             name: 'ListResource',

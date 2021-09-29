@@ -1,13 +1,13 @@
-<!-- Copyright 2019-2020 ForgeRock AS. All Rights Reserved
+<!-- Copyright (c) 2019-2021 ForgeRock. All rights reserved.
 
-Use of this code requires a commercial software license with ForgeRock AS.
-or with one of its affiliates. All use shall be exclusively subject
-to such license between the licensee and ForgeRock AS. -->
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <script>
 import Notifications from 'vue-notification';
 import velocity from 'velocity-animate';
 import Vue from 'vue';
 import { has } from 'lodash';
+import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 
 Vue.use(Notifications, { velocity });
 
@@ -17,6 +17,9 @@ Vue.use(Notifications, { velocity });
  */
 export default {
   name: 'NotificationMixin',
+  mixins: [
+    TranslationMixin,
+  ],
   methods: {
     // Display an application notification
     displayNotification(notificationGroup, notificationType, message) {
@@ -28,7 +31,7 @@ export default {
 
       this.$notify({
         type,
-        text: message,
+        text: this.getTranslation(message),
       });
     },
     showErrorMessage(error, defaultMessage) {
@@ -41,7 +44,7 @@ export default {
         errorMessage = errorTextElement.innerText;
       }
 
-      this.displayNotification('AdminMessage', 'danger', errorMessage);
+      this.displayNotification('AdminMessage', 'danger', this.getTranslation(errorMessage));
     },
   },
 };

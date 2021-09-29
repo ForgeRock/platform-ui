@@ -29,7 +29,7 @@ of the MIT license. See the LICENSE file for details. -->
             v-else-if="label"
             :for="id"
             class="pe-none overflow-hidden text-nowrap">
-            {{ label }}
+            {{ getTranslation(label) }}
           </label>
         </div>
         <slot name="defaultButtons" />
@@ -51,7 +51,7 @@ of the MIT license. See the LICENSE file for details. -->
           v-else
           :id="`${id}_helpText`"
           class="form-text text-muted">
-          {{ description }}
+          {{ getTranslation(description) }}
         </small>
       </template>
     </div>
@@ -60,11 +60,15 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import { ValidationProvider } from 'vee-validate';
 import FrValidationError from '@forgerock/platform-shared/src/components/ValidationErrorList';
+import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 /**
  * Input with a floating label in the center, this will move when a user types into the input (example can be found on the default login page).
  */
 export default {
   name: 'InputLayout',
+  mixins: [
+    TranslationMixin,
+  ],
   components: {
     FrValidationError,
     ValidationProvider,
