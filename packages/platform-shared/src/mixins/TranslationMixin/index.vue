@@ -38,6 +38,10 @@ export default {
      * @returns {String|String[]} translated text if found, original text if not
      */
     getTranslation(text) {
+      if (!text) {
+        return text;
+      }
+
       // handle an array of strings
       if (Array.isArray(text)) {
         return text.map((x) => (this.getTranslation(x)));

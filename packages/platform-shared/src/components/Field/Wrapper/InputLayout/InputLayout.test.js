@@ -35,6 +35,7 @@ describe('InputLayout', () => {
   it('InputLayout component renders help text and label', () => {
     const wrapper = mount(InputLayout, {
       localVue,
+      mocks: { $t: (id) => id },
       propsData: {
         ...defaultProps,
         description: 'Help text',
