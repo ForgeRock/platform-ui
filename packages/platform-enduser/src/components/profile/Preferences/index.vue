@@ -20,7 +20,7 @@ of the MIT license. See the LICENSE file for details. -->
       :panel-shown="false">
       <div class="d-inline-flex w-100">
         <h5 class="align-self-center m-0">
-          {{ obj.description }}
+          {{ getTranslation(obj.description) }}
         </h5>
         <div class="ml-auto">
           <FrField
@@ -48,6 +48,7 @@ import {
 } from 'bootstrap-vue';
 import { mapState } from 'vuex';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 
 /**
  * @description Displays available user preferences, these are typically true/false values associated with a managed resource
@@ -61,6 +62,9 @@ export default {
     BCardHeader,
     FrField,
   },
+  mixins: [
+    TranslationMixin,
+  ],
   data() {
     return {
       preferences: {},

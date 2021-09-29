@@ -46,7 +46,7 @@ export default {
     return {
       selected: {
         name: `callback_${this.index}`,
-        label: this.getTranslation(this.callback.getPrompt()),
+        label: this.callback.getPrompt(),
         value: this.callback.getDefaultChoice(),
         options: [],
       },
