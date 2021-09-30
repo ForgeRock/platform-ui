@@ -21,25 +21,50 @@ export default {
     };
   },
   methods: {
-    getPoliciesFromCharacterSet(sets) {
+    getSetTranslations(sets, isMinSet) {
+      const setsType = isMinSet ? 'minSets' : 'sets';
       const translatedSets = [];
+
       sets.forEach((set) => {
-        // if a set starts with 0, it is not required, so it doesn't need to be included
-        // required sets start with 1. (ex: 1:abc... vs 0:abc...)
-        if (set.includes(this.lowerSet) && set.charAt(0) !== '0') translatedSets.push(this.$t('common.policyValidationMessages.sets.lowercase'));
-        if (set.includes(this.upperSet) && set.charAt(0) !== '0') translatedSets.push(this.$t('common.policyValidationMessages.sets.uppercase'));
-        if (set.includes(this.numberSet) && set.charAt(0) !== '0') translatedSets.push(this.$t('common.policyValidationMessages.sets.number'));
-        if (set.includes(this.symbolSet) && set.charAt(0) !== '0') translatedSets.push(this.$t('common.policyValidationMessages.sets.symbol'));
+        if (set.includes(this.lowerSet)) translatedSets.push(this.$t(`common.policyValidationMessages.${setsType}.lowercase`));
+        if (set.includes(this.upperSet)) translatedSets.push(this.$t(`common.policyValidationMessages.${setsType}.uppercase`));
+        if (set.includes(this.numberSet)) translatedSets.push(this.$t(`common.policyValidationMessages.${setsType}.number`));
+        if (set.includes(this.symbolSet)) translatedSets.push(this.$t(`common.policyValidationMessages.${setsType}.symbol`));
       });
-      const policy = {
-        policyRequirement: 'CHARACTER_SET',
-        params: {},
+      return translatedSets;
+    },
+    getMinCharacterSetPolicy(sets, minSets) {
+      if (!sets.length) return null;
+
+      const translatedSets = this.getSetTranslations(sets, true);
+
+      return {
+        policyRequirement: 'MIN_CHARACTER_SETS',
+        params: {
+          sets: translatedSets.join(', '),
+          minSets,
+        },
       };
-      // no sets means no set is required
+    },
+    getCharacterSetPolicy(sets) {
+      // if a set starts with 0, it is not required, so it doesn't need to be included
+      // required sets start with 1. (ex: 1:abc... vs 0:abc...)
+      const translatedSets = this.getSetTranslations(sets.filter((set) => set.charAt(0) !== '0'), false);
+
       if (!translatedSets.length) return null;
 
-      policy.params.sets = translatedSets.join(', ');
-      return policy;
+      return {
+        policyRequirement: 'CHARACTER_SET',
+        params: {
+          sets: translatedSets.join(', '),
+        },
+      };
+    },
+    getPoliciesFromCharacterSet(sets, minSets) {
+      if (minSets) {
+        return this.getMinCharacterSetPolicy(sets, minSets);
+      }
+      return this.getCharacterSetPolicy(sets);
     },
     getValidatorIdForType(resourceName, type) {
       return `${resourceName}PasswordPolicy-${type}-password-validator`;
@@ -73,7 +98,9 @@ export default {
                   policies.push({ policyRequirement: 'DICTIONARY' });
                   break;
                 case this.getValidatorIdForType(resourceName, 'character-set'):
-                  if (this.getPoliciesFromCharacterSet(validator.characterSet)) policies.push(this.getPoliciesFromCharacterSet(validator.characterSet));
+                  if (this.getPoliciesFromCharacterSet(validator.characterSet, validator.minCharacterSets)) {
+                    policies.push(this.getPoliciesFromCharacterSet(validator.characterSet, validator.minCharacterSets));
+                  }
                   break;
                 default:
                   break;
@@ -110,7 +137,7 @@ export default {
             return policy;
           case 'CHARACTER_SET':
             if (policy.params['character-sets']) {
-              return this.getPoliciesFromCharacterSet(policy.params['character-sets']);
+              return this.getPoliciesFromCharacterSet(policy.params['character-sets'], policy.params['min-character-sets']);
             }
             return policy;
           case 'ATTRIBUTE_VALUE':
