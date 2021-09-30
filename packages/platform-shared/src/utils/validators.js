@@ -20,7 +20,7 @@ export const urlWithoutPath = (value, i18n) => {
 
     return true;
   } catch (e) {
-    return i18n.t('common.policyValidationMessages.url');
+    return i18n.t('common.policyValidationMessages.urlWithoutPath');
   }
 };
 
@@ -34,7 +34,7 @@ export const urlWithPath = (value, i18n) => {
 
     return true;
   } catch (e) {
-    return i18n.t('common.policyValidationMessages.REQUIRED');
+    return i18n.t('common.policyValidationMessages.urlWithPath');
   }
 };
 
