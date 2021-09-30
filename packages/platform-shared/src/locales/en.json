@@ -198,8 +198,8 @@
       "dateFormat": "Invalid date format",
       "noSpace": "Cannot start or end with the space character",
       "url": "Must be a valid URL",
-      "urlWithPath": "URL must have a path",
-      "urlWithoutPath": "URL must not have a path"
+      "urlWithPath": "Please provide a valid URL that contains a path",
+      "urlWithoutPath": "Please provide a valid URL that does not contain a path"
     },
     "user": {
       "username": "Username",
