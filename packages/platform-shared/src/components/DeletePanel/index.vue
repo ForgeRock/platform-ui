@@ -8,7 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
       class="mb-5"
       data-testid="delete-panel">
       <h5 class="card-title">
-        {{ $t('deletePanel.header', {type: translatedItemType}) }}
+        {{ $t('deletePanel.deleteType', {type: translatedItemType}) }}
       </h5>
       <p class="text-danger">
         {{ $t('common.cannotBeUndone') }}
@@ -16,11 +16,11 @@ of the MIT license. See the LICENSE file for details. -->
       <BButton
         variant="danger"
         @click="showModal">
-        {{ $t('deletePanel.header', {type: translatedItemType}) }}
+        {{ $t('deletePanel.deleteType', {type: translatedItemType}) }}
       </BButton>
     </BCard>
     <FrDeleteModal
-      :item-name="itemName"
+      :custom-message="customModalMessage"
       :translated-item-type="translatedItemType"
       @delete-item="deleteItem" />
   </div>
@@ -46,11 +46,11 @@ export default {
   },
   props: {
     /**
-     * Name of item being deleted. Displayed in modal body
+     * Custom message to show in modal body
      */
-    itemName: {
+    customModalMessage: {
       type: String,
-      default: '',
+      default: null,
     },
     /**
      * Type of item being deleted. Displayed in card header, button text, and modal title

@@ -142,47 +142,11 @@ of the MIT license. See the LICENSE file for details. -->
         </BTabs>
       </BCard>
     </slot>
-
-    <BCard
-      class="mb-5"
-      data-testid="delete-panel"
-      v-if="canDelete">
-      <h5 class="card-title">
-        {{ $t('deletePanel.header', {type: resourceTitle}) }}
-      </h5>
-      <p class="text-danger">
-        {{ $t('common.cannotBeUndone') }}
-      </p>
-      <BButton
-        variant="danger"
-        v-b-modal.deleteModal>
-        {{ $t('deletePanel.header', {type: resourceTitle}) }}
-      </BButton>
-    </BCard>
-
-    <BModal
+    <FrDeletePanel
       v-if="canDelete"
-      id="deleteModal"
-      ref="deleteModal"
-      :title="this.$t('pages.access.deleteModalTitle')">
-      <div>
-        {{ $t('pages.access.deleteConfirm', {entity: this.resourceName}) }}
-      </div>
-
-      <template v-slot:modal-footer="{ cancel }">
-        <BButton
-          variant="link"
-          class="text-danger"
-          @click="cancel()">
-          {{ $t('common.cancel') }}
-        </BButton>
-        <BButton
-          variant="danger"
-          @click="deleteResource">
-          {{ $t('common.delete') }}
-        </BButton>
-      </template>
-    </BModal>
+      class="mb-5"
+      :translated-item-type="resourceTitle"
+      @delete-item="deleteResource" />
     <FrResetPasswordModal
       v-if="canChangePassword"
       id="resetModal"
@@ -216,7 +180,6 @@ import {
   BCard,
   BContainer,
   BImg,
-  BModal,
   BTab,
   BTabs,
   VBModal,
@@ -227,6 +190,7 @@ import FrRelationshipArray from '@forgerock/platform-shared/src/components/resou
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import FrDeletePanel from '@forgerock/platform-shared/src/components/DeletePanel';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import { clearSessions, getSessionInfo } from '@forgerock/platform-shared/src/api/SessionsApi';
@@ -252,6 +216,7 @@ import FrJsonTab from './CustomTabs/JsonTab';
 export default {
   name: 'EditResource',
   components: {
+    FrDeletePanel,
     FrObjectTypeEditor,
     FrResetPasswordModal,
     FrRelationshipArray,
@@ -265,7 +230,6 @@ export default {
     BTabs,
     BTab,
     BCard,
-    BModal,
     FrClearResourceSessions: ClearResourceSessions,
     LinkedApplicationsTab,
   },
@@ -610,8 +574,6 @@ export default {
     },
     deleteResource() {
       const idmInstance = this.getRequestService();
-
-      this.$refs.deleteModal.hide();
 
       idmInstance.delete(`${this.resourceType}/${this.resourceName}/${this.id}`).then(() => {
         this.displayNotification('IDMMessages', 'success', this.$t('pages.access.deleteResource', { resource: this.resourceName }));
