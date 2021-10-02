@@ -347,7 +347,7 @@ describe('Delegated Admin', () => {
 
       // open delete modal and delete user
       cy.findByRole('button', { name: 'Delete User' }).click();
-      cy.findByRole('dialog', { name: 'Confirm Deletion' }).within(() => {
+      cy.findByRole('dialog', { name: 'Delete User?' }).within(() => {
         cy.findByRole('button', { name: 'Delete' }).click();
       });
       expectNotification('Successfully deleted user');

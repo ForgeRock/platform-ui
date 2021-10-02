@@ -310,15 +310,8 @@ describe('EditResource.vue', () => {
   });
 
   it('deletes resource', async () => {
-    wrapper.vm.$refs = {
-      deleteModal: {
-        hide: () => {},
-      },
-    };
-    const hideSpy = jest.spyOn(wrapper.vm.$refs.deleteModal, 'hide');
     const notificationSpy = jest.spyOn(wrapper.vm, 'displayNotification');
     await wrapper.vm.deleteResource();
-    expect(hideSpy).toHaveBeenCalled();
     expect(notificationSpy).toHaveBeenCalledWith('IDMMessages', 'success', undefined);
   });
 

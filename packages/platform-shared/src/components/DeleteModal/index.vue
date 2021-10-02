@@ -7,9 +7,12 @@ of the MIT license. See the LICENSE file for details. -->
     id="deleteModal"
     ref="deleteModal"
     @hidden="$emit('hidden')"
-    :title="$t('deletePanel.header', { type: translatedItemType })">
-    <div>
-      {{ $t('deletePanel.body', { itemName }) }}
+    :title="$t('deletePanel.deleteTypeQuestion', { type: translatedItemType })">
+    <div
+      v-if="customMessage"
+      v-html="customMessage" />
+    <div v-else>
+      {{ $t('deletePanel.body', { type: translatedItemType.toLowerCase() }) }}
     </div>
     <template v-slot:modal-footer="{ cancel }">
       <BButton
@@ -46,11 +49,11 @@ export default {
   },
   props: {
     /**
-     * Name of item being deleted. Displayed in modal body
+     * Custom message to show in modal body
      */
-    itemName: {
+    customMessage: {
       type: String,
-      default: '',
+      default: null,
     },
     /**
      * Type of item being deleted. Displayed in modal title

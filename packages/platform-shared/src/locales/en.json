@@ -537,8 +537,9 @@
     "linkText": "Time zones chart"
   },
   "deletePanel": {
-    "header": "Delete {type}",
-    "body": "Are you sure you want to delete {itemName}?"
+    "deleteTypeQuestion": "Delete {type}?",
+    "body": "Are you sure you want to delete this {type}?",
+    "deleteType": "Delete {type}"
   },
   "schemaResetSecret": {
     "title": "Reset {field}",

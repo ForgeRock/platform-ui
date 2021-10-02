@@ -113,11 +113,9 @@ of the MIT license. See the LICENSE file for details. -->
       @input="paginationChange" />
 
     <slot name="deleteResourceModal">
-      <FrDeleteResource
-        :resource-to-delete-id="resourceToDeleteId"
-        :resource-display-name="resourceTitle || resourceName"
-        @delete-resource="deleteResource"
-        @cancel-resource-deletion="cancelDelete" />
+      <FrDeleteModal
+        :translated-item-type="resourceTitle || resourceName"
+        @delete-item="deleteResource" />
     </slot>
 
     <slot name="clearSessionsModal">
@@ -146,13 +144,13 @@ import {
 import pluralize from 'pluralize';
 import Vue from 'vue';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
+import FrDeleteModal from '@forgerock/platform-shared/src/components/DeleteModal';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import PluralizeFilter from '@forgerock/platform-shared/src/filters/PluralizeFilter';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
-import FrDeleteResource from '../DeleteResource';
 import FrClearResourceSessions from '../ClearResourceSessions';
 
 Vue.directive('b-modal', VBModal);
@@ -174,11 +172,11 @@ export default {
     BPagination,
     BTable,
     FrActionsCell,
+    FrDeleteModal,
     FrIcon,
     FrSearchInput,
     FrSpinner,
     FrClearResourceSessions,
-    FrDeleteResource,
   },
   directives: {
     'b-modal': VBModal,
@@ -415,6 +413,7 @@ export default {
     },
     confirmDeleteResource(id) {
       this.resourceToDeleteId = id;
+      this.$root.$emit('bv::show::modal', 'deleteModal');
     },
     deleteResource() {
       this.$emit('delete-resource', this.resourceToDeleteId);
