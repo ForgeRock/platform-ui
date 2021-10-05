@@ -222,4 +222,14 @@ describe('Field Component', () => {
     await flush();
     expect(wrapper.vm.$attrs.value).toBe(true);
   });
+
+  it('uses spinbutton component for spinbutton type', async () => {
+    wrapper.setProps({
+      type: 'spinbutton',
+      name: 'testField',
+      value: true,
+    });
+    await flush();
+    expect(wrapper.find('.b-form-spinbutton')).toBeTruthy();
+  });
 });
