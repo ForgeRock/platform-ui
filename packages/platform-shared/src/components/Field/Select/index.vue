@@ -31,7 +31,8 @@ of the MIT license. See the LICENSE file for details. -->
       @search-change="$emit('search-change', $event)"
       @open="openHandler"
       @close="closeDropDown(inputValue)"
-      @input="$emit('input', inputValue ? inputValue.value : '')">
+      @input="$emit('input', inputValue ? inputValue.value : '')"
+      @tag="$emit('tag', $event)">
       <slot name="noResult">
         {{ $t('common.noResult') }}
       </slot>
