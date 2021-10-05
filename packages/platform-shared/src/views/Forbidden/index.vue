@@ -23,7 +23,7 @@ of the MIT license. See the LICENSE file for details. -->
         <BButton
           v-if="showDashboard"
           variant="link"
-          @click="$router.push({ name: 'Dashboard' })">
+          @click="redirectToDashboard">
           {{ $t('pages.forbidden.returnToDashboard') }}
         </BButton>
       </div>
@@ -61,6 +61,16 @@ export default {
     BButton,
     BContainer,
     BImg,
+  },
+  methods: {
+    redirectToDashboard() {
+      // When a user selects to go 'back to Dashboard' they are directed/redirected to the correct 'package' Dashboard, according to what type of user they are.
+      if ((this.$store.state.SharedStore.currentPackage === 'admin') && (!this.$store.state.UserStore.amAdmin && !this.$store.state.UserStore.realmAdmin)) {
+        window.location.href = this.$store.state.enduserURL;
+      } else {
+        this.$router.push({ name: 'Dashboard' });
+      }
+    },
   },
   mixins: [LoginMixin],
   beforeRouteLeave(to, from, next) {
