@@ -32,6 +32,7 @@ import FrKeyValueList from '@forgerock/platform-shared/src/components/Field/KeyV
 import FrMultiselect from '@forgerock/platform-shared/src/components/Field/Multiselect';
 import FrSelect from '@forgerock/platform-shared/src/components/Field/Select';
 import FrSelectWithActions from '@forgerock/platform-shared/src/components/Field/SelectWithActions';
+import FrSpinButton from '@forgerock/platform-shared/src/components/Field/SpinButton';
 import FrSwitch from '@forgerock/platform-shared/src/components/Field/Switch';
 import FrTag from '@forgerock/platform-shared/src/components/Field/Tag';
 import FrTextArea from '@forgerock/platform-shared/src/components/Field/TextArea';
@@ -46,6 +47,7 @@ export default {
     FrMultiselect,
     FrSelect,
     FrSelectWithActions,
+    FrSpinButton,
     FrSwitch,
     FrTag,
     FrTextArea,
@@ -82,6 +84,7 @@ export default {
         password: 'FrBasicInput',
         select: 'FrSelect',
         selectWithActions: 'FrSelectWithActions',
+        spinbutton: 'FrSpinButton',
         string: 'FrBasicInput',
         tag: 'FrTag',
         textarea: 'FrTextArea',

@@ -5,23 +5,15 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import KeyValueList from './index';
 
 describe('KeyValueList', () => {
   let wrapper;
   beforeEach(() => {
-    wrapper = mount(KeyValueList, {
+    wrapper = shallowMount(KeyValueList, {
       mocks: {
-        $t: (key) => {
-          const translationMap = {
-            'trees.editPanel.none': 'none',
-            'trees.editPanel.key': 'key',
-            'trees.editPanel.value': 'value',
-          };
-          return translationMap[key];
-        },
-        setValidationRules: () => ({}),
+        $t: (key) => (key),
       },
       propsData: {
         value: '',
@@ -61,7 +53,6 @@ describe('KeyValueList', () => {
       keyValues: {
         en: 'value',
       },
-      currentKey: '',
     });
 
     wrapper.vm.deleteItem('en');
@@ -73,6 +64,19 @@ describe('KeyValueList', () => {
         ],
       ],
     });
+  });
+
+  it('does not delete item if currently editing an item', () => {
+    wrapper.setData({
+      keyValues: {
+        en: 'value',
+      },
+      currentKey: '',
+    });
+
+    wrapper.vm.deleteItem('en');
+
+    expect(wrapper.emitted()).toEqual({});
   });
 
   it('Edits existing value when key is left the same', () => {
@@ -101,35 +105,15 @@ describe('KeyValueList', () => {
       keyValues: {
         en: 'value',
       },
-      currentKey: 'en',
+      currentKey: null,
     });
 
     expect(wrapper.vm.keyValueObject.value).toBe('');
     expect(wrapper.vm.keyValueObject.key).toBe('');
-    expect(wrapper.vm.currentKey).toBe('en');
+    expect(wrapper.vm.currentKey).toBeNull();
     wrapper.vm.editItem('en');
     expect(wrapper.vm.keyValueObject.value).toBe('value');
     expect(wrapper.vm.keyValueObject.key).toBe('en');
-  });
-
-  it('Displays text indicating when it is empty', () => {
-    wrapper.setData({
-      keyValues: {},
-      currentKey: null,
-    });
-    const emptyTextElement = wrapper.find('.fr-key-value-panel.text-center.py-3');
-    expect(emptyTextElement.exists()).toBe(true);
-    expect(emptyTextElement.text()).toBe('(none)');
-  });
-
-  it('Hides the text indicating it is empty when adding a first value', () => {
-    wrapper.setData({
-      keyValues: {},
-      currentKey: null,
-    });
-    wrapper.find('.mr-1.mb-1').trigger('click');
-    const emptyTextElement = wrapper.find('.fr-key-value-panel.text-center.py-3');
-    expect(emptyTextElement.exists()).toBe(false);
   });
 
   it('Hides the text indicating it is empty when it has saved values', () => {
