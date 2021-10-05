@@ -129,7 +129,7 @@ export default {
       const { locale, fallbackLocale } = this.$i18n;
 
       // create select options
-      this.selectOptions = map(this.questions, (question, index) => ({ value: index, text: question[locale] || question[fallbackLocale], $isDisabled: false }));
+      this.selectOptions = map(this.questions, (question, index) => ({ value: index, text: question[locale] || question[fallbackLocale] || Object.values(question)[0], $isDisabled: false }));
       this.customIndex = this.selectOptions.length;
       this.selectOptions.push({ value: this.customIndex, text: this.$t('user.kba.custom'), $isDisabled: false });
 

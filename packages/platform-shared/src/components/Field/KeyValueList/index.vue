@@ -3,107 +3,101 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <ValidationProvider
-    v-slot="validationObject"
-    mode="aggressive"
-    :bails="false"
-    :immediate="validationImmediate"
-    :name="name"
-    :ref="name"
-    :rules="validation"
-    :vid="name">
-    <div :class="[{'fr-field-error': errors.concat(validationObject.errors).length}, 'mt-3']">
-      <div
-        v-if="!isEmpty(keyValues)"
-        class="fr-key-value-list">
+  <div>
+    <BListGroup
+      v-if="!isEmpty(keyValues) || currentKey === ''"
+      class="border-top border-bottom"
+      flush>
+      <BListGroupItem
+        v-for="(value, key) in keyValues"
+        @click="editItem(key)"
+        :key="`${id}_keyvalue-${key}`"
+        :active="currentKey === key"
+        :style="{ cursor: currentKey ? 'default' : 'pointer' }">
+        <FrKeyValuePanel
+          v-if="currentKey === key"
+          v-model="keyValueObject"
+          :key-options="availableKeyOptions"
+          :tag-placeholder="tagLabel"
+          :validation-rules="validationRules"
+          @cancel="currentKey = null"
+          @save-key-value="saveKeyValue"
+          @key-added="addCustomKey($event)" />
         <div
-          v-for="(text, key) in keyValues"
-          :key="`${id}_keyvalue-${key}`"
-          class="fr-key-value-list-item">
-          <div class="fr-key-value-list-header mt-3">
-            <h5 class="text-truncate">
+          v-else
+          class="d-flex justify-content-between align-items-center">
+          <BRow class="w-100">
+            <BCol class="font-weight-bold col-md-2 text-truncate">
               {{ key }}
-            </h5>
-            <BButton
-              v-if="!disabled"
-              :aria-label="$t('common.delete')"
-              variant="link"
-              @click="deleteItem(key)"
-              class="p-0 text-decoration-none d-flex align-items-start">
-              <FrIcon
-                class="fr-key-value-icon noselect"
-                name="delete"
-              />
-            </BButton>
-          </div>
-          <p class="d-flex">
-            <span class="flex-fill overflow-auto">
-              {{ text }}
-            </span>
-            <BButton
-              :aria-label="$t('common.edit')"
-              variant="link"
-              @click="editItem(key)"
-              class="p-0 text-decoration-none d-flex align-items-start">
-              <FrIcon
-                v-if="!disabled"
-                class="fr-key-value-icon noselect d-none"
-                name="edit"
-              />
-            </BButton>
-          </p>
-          <FrKeyValuePanel
-            v-if="currentKey === key"
-            v-model="keyValueObject"
-            autofocus
-            class="fr-key-value-panel py-3"
-            :validation-rules="validationRules"
-            @cancel="currentKey = null"
-            @save-key-value="saveKeyValue" />
+            </BCol>
+            <BCol class="font-italic col-md-8 text-truncate">
+              {{ value }}
+            </BCol>
+            <BCol md="2">
+              <BButtonGroup>
+                <BButton
+                  :style="{ cursor: currentKey ? 'default' : 'pointer' }"
+                  variant="none"
+                  class="py-0"
+                  @click.stop="deleteItem(key)">
+                  <FrIcon name="delete" />
+                </BButton>
+                <BButton
+                  :style="{ cursor: currentKey ? 'default' : 'pointer' }"
+                  variant="none"
+                  class="py-0"
+                  @click.stop="editItem(key)">
+                  <FrIcon name="edit" />
+                </BButton>
+              </BButtonGroup>
+            </BCol>
+          </BRow>
         </div>
-      </div>
-      <div
-        v-else-if="isEmpty(keyValues) && currentKey === null"
-        class="fr-key-value-panel text-center py-3">
-        <span class="text-secondary">
-          ({{ $t('trees.editPanel.none') }})
-        </span>
-      </div>
-      <FrKeyValuePanel
+      </BListGroupItem>
+      <BListGroupItem
         v-if="currentKey === ''"
-        v-model="keyValueObject"
-        autofocus
-        class="fr-key-value-panel py-3"
-        :validation-rules="validationRules"
-        @cancel="currentKey = null"
-        @save-key-value="saveKeyValue" />
-      <div
-        v-else-if="!disabled"
-        class="mt-3">
-        <BButton
-          variant="link"
-          class="p-0 text-decoration-none"
-          @click="showAdd()">
-          <FrIcon
-            class="mr-1 mb-1"
-            name="add"
-          />
-          {{ $t('common.add') }}
-        </BButton>
-      </div>
-      <FrValidationError
-        class="error-messages"
-        :validator-errors="errors.concat(validationObject.errors)"
-        :field-name="name" />
+        active>
+        <FrKeyValuePanel
+          v-model="keyValueObject"
+          :all-key-options="[...keyOptions, ...addedKeys]"
+          :key-options="availableKeyOptions"
+          :tag-placeholder="tagLabel"
+          :validation-rules="validationRules"
+          @cancel="currentKey = null"
+          @save-key-value="saveKeyValue"
+          @key-added="addCustomKey($event)" />
+      </BListGroupItem>
+    </BListGroup>
+    <div
+      v-if="!disabled && currentKey === null"
+      class="mt-3">
+      <BButton
+        variant="link"
+        class="p-0 text-decoration-none"
+        @click="showAdd()">
+        <FrIcon
+          class="mr-2"
+          name="add" />
+        {{ addLabel || $t('common.add') }}
+      </BButton>
     </div>
-  </ValidationProvider>
+  </div>
 </template>
 
 <script>
-import { BButton } from 'bootstrap-vue';
-import { isEmpty, cloneDeep } from 'lodash';
-import { ValidationProvider } from 'vee-validate';
-import FrValidationError from '@forgerock/platform-shared/src/components/ValidationErrorList';
+import {
+  BButton,
+  BButtonGroup,
+  BCol,
+  BListGroup,
+  BListGroupItem,
+  BRow,
+} from 'bootstrap-vue';
+import {
+  isEmpty,
+  cloneDeep,
+  xor,
+} from 'lodash';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrKeyValuePanel from './KeyValuePanel';
 import InputMixin from '../Wrapper/InputMixin';
@@ -118,10 +112,64 @@ export default {
   ],
   components: {
     BButton,
-    FrKeyValuePanel,
-    FrValidationError,
+    BButtonGroup,
+    BCol,
+    BListGroup,
+    BListGroupItem,
+    BRow,
     FrIcon,
-    ValidationProvider,
+    FrKeyValuePanel,
+  },
+  props: {
+    /**
+     * Custom text to display to add another key/value
+     */
+    addLabel: {
+      type: String,
+      default: '',
+    },
+    /**
+     * Label for key input
+     */
+    keyLabel: {
+      type: String,
+      default: '',
+    },
+    /**
+     * Label for tagging a new key
+     */
+    tagLabel: {
+      type: String,
+      default: '',
+    },
+    /**
+     * Label for value input
+     */
+    valueLabel: {
+      type: String,
+      default: '',
+    },
+    /**
+     * Show panel to add new key/value on mount
+     */
+    showInitialAdd: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * Optional array of keys to select from
+     */
+    keyOptions: {
+      type: Array,
+      default: () => [],
+    },
+  },
+  computed: {
+    availableKeyOptions() {
+      return this.keyOptions.length
+        ? xor([...this.addedKeys, ...this.keyOptions], Object.keys(this.keyValues))
+        : [];
+    },
   },
   data() {
     let keyValues;
@@ -134,24 +182,49 @@ export default {
 
     return {
       id: null,
+      addedKeys: [],
       currentKey: null,
       keyValues,
       validationRules: {},
-      keyValueObject: { key: '', value: '' },
+      keyValueObject: {
+        key: '',
+        keyLabel: this.keyLabel,
+        value: '',
+        valueLabel: this.valueLabel,
+      },
     };
   },
   mounted() {
     // eslint-disable-next-line no-underscore-dangle
     this.id = this._uid;
+    if (this.showInitialAdd) {
+      this.showAdd();
+    }
   },
   methods: {
+    /**
+     * Adds a custom key to the list of available key options.
+     * Used when KeyValuePanel uses a select input for key.
+     *
+     * @param {String} key new key to add
+     */
+    addCustomKey(key) {
+      this.addedKeys.push(key);
+      this.keyValueObject.key = key;
+    },
     /**
       * Removes an item from the key value list
       *
       * @param {String} key key for the object property to be deleted
       */
     deleteItem(key) {
+      // do not allow delete if already editing an item
+      if (this.currentKey !== null) return;
+
+      const index = this.addedKeys.indexOf(key);
+      if (index > -1) this.addedKeys.splice(index, 1);
       this.$delete(this.keyValues, key);
+      this.setValidationRules(this.keyValues);
       this.$emit('input', this.keyValues);
     },
     /**
@@ -160,6 +233,9 @@ export default {
      * @param {String} key key for the object property to be edited
      */
     editItem(key) {
+      // do not allow edit if already editing an item
+      if (this.currentKey !== null) return;
+
       const paredDownKeyValues = cloneDeep(this.keyValues);
       this.$delete(paredDownKeyValues, key);
       this.setValidationRules(paredDownKeyValues);
@@ -181,8 +257,15 @@ export default {
     saveKeyValue(keyValueObject) {
       if (keyValueObject.key !== this.currentKey && this.currentKey !== '') {
         this.$delete(this.keyValues, this.currentKey);
+        const index = this.addedKeys.indexOf(this.currentKey);
+        if (index > -1) this.addedKeys.splice(index, 1);
       }
-      this.keyValues[keyValueObject.key] = keyValueObject.value;
+
+      if (this.keyOptions.indexOf(keyValueObject.key) === -1 && this.addedKeys.indexOf(keyValueObject.key) === -1) {
+        this.addedKeys.push(keyValueObject.key);
+      }
+
+      this.$set(this.keyValues, keyValueObject.key, keyValueObject.value);
       this.$emit('input', this.keyValues);
       this.currentKey = null;
     },
@@ -190,7 +273,9 @@ export default {
      * Sets which values should be considered in unique check
      */
     setValidationRules(keyValues) {
-      const rulesObject = { unique: Object.keys(keyValues) };
+      const rulesObject = this.availableKeyOptions.length
+        ? { uniqueValue: Object.keys(keyValues) }
+        : { unique: Object.keys(keyValues) };
       this.validationRules = { ...rulesObject, required: true };
     },
     /**
@@ -205,42 +290,3 @@ export default {
   },
 };
 </script>
-<style lang="scss" scoped>
-.fr-key-value-panel {
-  background-color: $gray-100;
-}
-
-.fr-key-value-list {
-  .fr-key-value-list-item {
-    border-bottom: 1px solid $gray-200;
-
-    &:hover .d-none {
-      display: block !important;
-    }
-
-    .fr-key-value-list-header {
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .fr-key-value-icon {
-      cursor: pointer;
-      color: $gray-500;
-
-      &:hover {
-        color: $gray-900;
-      }
-    }
-  }
-}
-
-.fr-field-error {
-  border: 1px solid $danger;
-  border-radius: 4px;
-}
-
-.button-padding {
-  padding: 0;
-}
-
-</style>

@@ -139,6 +139,15 @@ export function getRules(i18n) {
     message: i18n.t('common.policyValidationMessages.UNIQUE'),
   };
 
+  const uniqueValue = {
+    params: ['otherValues'],
+    validate(value, { otherValues }) {
+      if (!value || !value.value) return true;
+      return customValidators.testUniqueness(value.value, { otherValues });
+    },
+    message: i18n.t('common.policyValidationMessages.UNIQUE'),
+  };
+
   // URL with path rule
   // Errors if not valid url or url does not have path
   const url_with_path = {
@@ -195,6 +204,7 @@ export function getRules(i18n) {
     required,
     start_end_space,
     unique,
+    uniqueValue,
     url_with_path,
     url_without_path,
     lower_case_alpha_numeric_underscore_hyphen_only,
