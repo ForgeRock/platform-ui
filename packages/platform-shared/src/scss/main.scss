@@ -615,6 +615,13 @@ a.card {
   width: 100%;
 }
 
+.fr-realm-stamp {
+  align-items: center;
+  border-radius: 50%;
+  justify-content: center;
+  display: flex;
+}
+
 .vh-60 {
   height: 60vh !important;
 }

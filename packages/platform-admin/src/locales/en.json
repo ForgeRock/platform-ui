@@ -445,6 +445,18 @@
     }
   },
   "dashboard": {
+    "cardCount": {
+      "applications": "Applications",
+      "applicationsRequestError": "Unable to retrieve applications count",
+      "applicationsTooltip": "Total number of applications in this realm",
+      "organizations": "Organizations",
+      "organizationsRequestError": "Unable to retrieve organizations count",
+      "organizationsTooltip": "Total number of organizations in this realm",
+      "realmOverview": "Realm Overview",
+      "totalUsers": "Total Users",
+      "totalUsersRequestError": "Unable to retrieve total number of users count",
+      "totalUsersTooltip": "Total number of users in this realm"
+    },
     "createApplication": {
       "title": "Add a New Application",
       "altText": "Application Icon",
