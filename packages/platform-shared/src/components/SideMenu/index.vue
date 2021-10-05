@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -22,8 +22,8 @@ of the MIT license. See the LICENSE file for details. -->
                 class="text-left fr-dropdown-button">
                 <BMediaAside>
                   <div
-                    :class="`letter-${getFirstLetter(false)}`"
-                    class="fr-realm-stamp rounded-circle p-2 d-flex align-items-center justify-content-center">
+                    :class="`letter-${realmInitial}`"
+                    class="fr-realm-stamp">
                     <FrIcon
                       class="text-white d-none"
                       name="cloud"
@@ -31,7 +31,7 @@ of the MIT license. See the LICENSE file for details. -->
                     <span
                       class="text-white"
                       style="font-size: 1rem;">
-                      {{ getFirstLetter(true) }}
+                      {{ realmInitial.toUpperCase() }}
                     </span>
                   </div>
                 </BMediaAside>
@@ -39,7 +39,7 @@ of the MIT license. See the LICENSE file for details. -->
                   <h5
                     class="my-0 text-truncate"
                     data-testid="realm-name">
-                    {{ realm }}
+                    {{ realmFormalName }}
                   </h5>
                   <div class="text-truncate">
                     <small class="text-muted">
@@ -60,8 +60,8 @@ of the MIT license. See the LICENSE file for details. -->
                   class="text-left">
                   <BMediaAside>
                     <div
-                      :class="`letter-${getFirstLetter(false)}`"
-                      class="fr-realm-stamp rounded-circle p-2 d-flex align-items-center justify-content-center">
+                      :class="`letter-${realmInitial}`"
+                      class="fr-realm-stamp">
                       <FrIcon
                         class="text-white d-none"
                         name="cloud"
@@ -69,7 +69,7 @@ of the MIT license. See the LICENSE file for details. -->
                       <span
                         class="text-white"
                         style="font-size: 1rem;">
-                        {{ getFirstLetter(true) }}
+                        {{ realmInitial.toUpperCase() }}
                       </span>
                     </div>
                   </BMediaAside>
@@ -139,10 +139,7 @@ import {
 import FrDropdownMenu from '@forgerock/platform-shared/src/components/DropdownMenu';
 import FrMenuItem from '@forgerock/platform-shared/src/components/MenuItem';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import {
-  capitalize,
-  lowerCase,
-} from 'lodash';
+import RealmMixin from '@forgerock/platform-shared/src/mixins/RealmMixin';
 
 /**
  * SideMenu is an expandable menu which contains navigation icons to navigate to different routes.
@@ -161,6 +158,9 @@ export default {
     FrMenuItem,
     FrIcon,
   },
+  mixins: [
+    RealmMixin,
+  ],
   props: {
     /**
      * Items contained in dropdown when clicking on user details.
@@ -205,15 +205,6 @@ export default {
     },
   },
   methods: {
-    /**
-     * Get first letter of realm and either capitalize or lowercase it
-     * @param {Boolean} isCaps capitalize the letter
-     * @returns {String} first letter of the realm
-     */
-    getFirstLetter(isCaps) {
-      const firstLetter = this.realm[0];
-      return isCaps ? capitalize(firstLetter) : lowerCase(firstLetter);
-    },
     /**
      * Toggles the menu
      */
