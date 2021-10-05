@@ -59,6 +59,7 @@
     "Profile": "Profile",
     "Realm": "Realm",
     "Scripts": "Scripts",
+    "SecurityQuestions": "Security Questions",
     "TenantAdmins": "Tenant Admins",
     "TenantSettings": "Tenant Settings",
     "TermsAndConditions": "Terms & Conditions"
@@ -79,11 +80,12 @@
     "journeys": "Journeys",
     "managed": "Manage",
     "nativeConsoles": "Native Consoles",
-    "policy": "Policy",
     "provider": "Provider",
+    "security": "Security",
     "scripts": "Scripts",
     "provisioningRole": "External Role",
     "selectIcon": "Please select icon in admin (Managed Object) settings",
+    "securityQuestions": "Security Questions",
     "settings": "Settings",
     "signOut": "Sign Out",
     "templates": "Templates",
@@ -558,8 +560,6 @@
     "configurationRequired": "Requires Configuration",
     "editPanel": {
       "name": "Name",
-      "key": "Key",
-      "value": "Value",
       "none": "none",
       "minimumRequired": "At Least {minItems} Value(s) Required",
       "theme": "Theme",
@@ -567,6 +567,10 @@
     },
     "pageNode": {
       "dragHere": "Drag nodes here"
+    },
+    "kbaCreateNode": {
+      "title": "Questions",
+      "description": "Localized questions from which the user can pick when defining security questions." 
     },
     "nodeTypeList": {
       "failedNodeTypeList": "Failed to get available node types",
@@ -1379,5 +1383,36 @@
       "confirmStageAfterLink": " to your environment?",
       "updateWarning": "Changes may take up to 10 minutes to propagate, during which time you will not be able to make further updates."
     }
+  },
+  "securityQuestions": {
+    "subtitle": "Define security questions to use for verification purposes.",
+    "title": "Security Questions",
+    "questionDeleteSuccess": "Security question successfully deleted",
+    "questionUpdateSuccess": "Security questions successfully updated",
+    "settingsSaveSuccess": "Security question settings successfully saved",
+    "errorLoading": "Error retrieving security question configuration",
+    "errorSaving": "Error saving security questions"
+  },
+  "securityQuestionsQuestions": {
+    "title": "Questions",
+    "addQuestion": "Add Question",
+    "noQuestions": "You haven't defined any security questions",
+    "modalDescription": "Define localized messages for this security question.",
+    "addLocale": "Add Locale",
+    "locale": "Locale",
+    "locales": "Locales",
+    "addNewLocale": "Add this as new locale",
+    "question": "Question",
+    "editModalTitle": "Edit Security Question",
+    "addModalTitle": "Add a Security Question"
+  },
+  "securityQuestionsSettings": {
+    "title": "Settings",
+    "mustDefine": "Must define",
+    "mustAnswer": "Must answer",
+    "setUpAtLeast": "Users must set up at least",
+    "questionsRegistration": "questions during registration.",
+    "usersMustAnswer": "Users must answer",
+    "questionsSignIn": "questions on sign in"
   }
 }
