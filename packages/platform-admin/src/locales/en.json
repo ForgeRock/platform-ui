@@ -569,7 +569,7 @@
     "reqUpper": "Upper case letter (English)",
     "reqLower": "Lower case letter (English)",
     "reqNumber": "Number (0-9)",
-    "reqSymbol": "Symbol (e.g., !@#$%^&*)",
+    "reqSymbol": "Special character (e.g., !@#$%^&*)",
     "ofTheFollowing": "of the following:",
     "showAdvanced": "Show advanced options",
     "showBasic": "Show basic options",

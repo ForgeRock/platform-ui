@@ -57,7 +57,7 @@ describe('PasswordPolicyMixin', () => {
       const expectedPolicy = {
         policyRequirement: 'CHARACTER_SET',
         params: {
-          sets: 'common.policyValidationMessages.sets.lowercase, common.policyValidationMessages.sets.uppercase',
+          sets: 'Common.policyValidationMessages.sets.lowercase, common.policyValidationMessages.sets.uppercase',
         },
       };
       // the preceding 1/0 is the on/off switch- in this example, both lower and
@@ -74,7 +74,7 @@ describe('PasswordPolicyMixin', () => {
       const expectedPolicy = {
         policyRequirement: 'CHARACTER_SET',
         params: {
-          sets: 'common.policyValidationMessages.sets.number, common.policyValidationMessages.sets.symbol',
+          sets: 'Common.policyValidationMessages.sets.number, common.policyValidationMessages.sets.symbol',
         },
       };
       // num and special characters are required, upper alpha are not

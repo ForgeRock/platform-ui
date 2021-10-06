@@ -21,22 +21,41 @@ export default {
     };
   },
   methods: {
-    getSetTranslations(sets, isMinSet) {
-      const setsType = isMinSet ? 'minSets' : 'sets';
+    getSetTranslations(sets) {
       const translatedSets = [];
-
       sets.forEach((set) => {
-        if (set.includes(this.lowerSet)) translatedSets.push(this.$t(`common.policyValidationMessages.${setsType}.lowercase`));
-        if (set.includes(this.upperSet)) translatedSets.push(this.$t(`common.policyValidationMessages.${setsType}.uppercase`));
-        if (set.includes(this.numberSet)) translatedSets.push(this.$t(`common.policyValidationMessages.${setsType}.number`));
-        if (set.includes(this.symbolSet)) translatedSets.push(this.$t(`common.policyValidationMessages.${setsType}.symbol`));
+        if (set.includes(this.lowerSet)) translatedSets.push(this.$t('common.policyValidationMessages.sets.lowercase'));
+        if (set.includes(this.upperSet)) translatedSets.push(this.$t('common.policyValidationMessages.sets.uppercase'));
+        if (set.includes(this.numberSet)) translatedSets.push(this.$t('common.policyValidationMessages.sets.number'));
+        if (set.includes(this.symbolSet)) translatedSets.push(this.$t('common.policyValidationMessages.sets.symbol'));
       });
+
+      // force the ordering of the sets
+      const order = [
+        this.$t('common.policyValidationMessages.sets.lowercase'),
+        this.$t('common.policyValidationMessages.sets.uppercase'),
+        this.$t('common.policyValidationMessages.sets.number'),
+        this.$t('common.policyValidationMessages.sets.symbol'),
+      ];
+      translatedSets.sort((a, b) => (order.indexOf(a) - order.indexOf(b)));
+      if (translatedSets.length) translatedSets[0] = translatedSets[0].charAt(0).toUpperCase() + translatedSets[0].slice(1);
+
       return translatedSets;
     },
     getMinCharacterSetPolicy(sets, minSets) {
       if (!sets.length) return null;
 
-      const translatedSets = this.getSetTranslations(sets, true);
+      const translatedSets = this.getSetTranslations(sets);
+
+      // when all of the sets are required, need a different policy message
+      if (sets.length === minSets) {
+        return {
+          policyRequirement: 'CHARACTER_SET',
+          params: {
+            sets: translatedSets.join(', '),
+          },
+        };
+      }
 
       return {
         policyRequirement: 'MIN_CHARACTER_SETS',
@@ -49,7 +68,7 @@ export default {
     getCharacterSetPolicy(sets) {
       // if a set starts with 0, it is not required, so it doesn't need to be included
       // required sets start with 1. (ex: 1:abc... vs 0:abc...)
-      const translatedSets = this.getSetTranslations(sets.filter((set) => set.charAt(0) !== '0'), false);
+      const translatedSets = this.getSetTranslations(sets.filter((set) => set.charAt(0) !== '0'));
 
       if (!translatedSets.length) return null;
 
