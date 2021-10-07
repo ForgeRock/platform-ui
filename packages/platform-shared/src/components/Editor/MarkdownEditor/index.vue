@@ -4,6 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
+    v-if="!isPublished"
     class="d-flex"
     :class="{ 'fr-spacer h-100 position-relative': wideNavbar}">
     <div class="bg-light border-right w-50 overflow-hidden position-relative">
@@ -45,6 +46,22 @@ of the MIT license. See the LICENSE file for details. -->
               :srcdoc="parsedHtml" />
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+  <div
+    v-else
+    class="d-flex h-100 position-relative justify-content-center"
+    style="padding-top: 9.625rem;"
+  >
+    <div class="d-flex">
+      <div class="h-100 vw-100 overflow-auto bg-white p-5">
+        <article class="row justify-content-center">
+          <div
+            v-html="parsedHtml"
+            class="col-md-10 col-lg-8 col-xl-6"
+          />
+        </article>
       </div>
     </div>
   </div>
@@ -118,6 +135,10 @@ export default {
       default: false,
       required: false,
       type: Boolean,
+    },
+    isPublished: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {
