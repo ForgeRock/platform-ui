@@ -1,7 +1,6 @@
 {
   "pluginsFile": "e2e/plugins/index.js",
   "chromeWebSecurity": false,
-  "retries": 3,
   "reporter": "../../node_modules/mochawesome",
   "reporterOptions": {
     "overwrite": false,
