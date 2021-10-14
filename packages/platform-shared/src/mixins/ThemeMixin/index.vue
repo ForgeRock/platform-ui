@@ -126,24 +126,33 @@ export default {
 
         let theme = themeResults[cleanRealm];
         if (theme && !theme.backgroundColor) {
+          // themeOptions.tree tells us this invocation is coming from the login ui
           if (themeOptions.tree) {
+            // see if there is a theme linked to themeOptions.tree
             const treeTheme = theme.find((realmTheme) => (realmTheme.linkedTrees && realmTheme.linkedTrees.includes(themeOptions.tree)));
+            // If there is a tree theme use that theme as the current theme for display and
+            // set localStorage theme-id to override the default theme on any subsequent request
+            // on the user's browser until explicitly changed by another tree.
             if (treeTheme) {
               theme = treeTheme;
+              localStorage.setItem('theme-id', theme._id);
             } else if (themeOptions.themeId) {
+              // In this case there is a theme-id already set in localStorage. Find by _id or name and use it here.
               theme = theme.find((realmTheme) => realmTheme._id === themeOptions.themeId || realmTheme.name === themeOptions.themeId);
             } else {
+              // Always use the default theme here.
               theme = theme.find((realmTheme) => realmTheme.isDefault);
             }
           } else if (themeOptions.themeId) {
+            // In this case there is a theme-id already set in localStorage. Find by _id or name and use it here.
             theme = theme.find((realmTheme) => realmTheme._id === themeOptions.themeId || realmTheme.name === themeOptions.themeId);
           } else {
+            // Always use the default theme here.
             theme = theme.find((realmTheme) => realmTheme.isDefault);
           }
           if (!theme) {
             theme = themeResults[cleanRealm].find((realmTheme) => realmTheme.isDefault);
           }
-          localStorage.setItem('theme-id', theme._id);
         }
         // Set all realm related theming here
         if (theme) {
