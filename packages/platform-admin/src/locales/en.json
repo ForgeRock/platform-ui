@@ -626,7 +626,6 @@
       "deleteAppFail": "Unable to delete application",
       "noDataTitle": "You haven't added any applications yet",
       "noDataSubtitle": "Set up an application to use ForgeRock authentication."
-
     },
     "nativeApp": {
       "alt": "Native App",
@@ -640,6 +639,10 @@
     "serviceApp": {
       "alt": "Service App",
       "super": "Service Application"
+    },
+    "customApp": {
+      "alt": "Custom App",
+      "super": "Custom Application"
     },
     "accessTab": {
       "title": "Access",
