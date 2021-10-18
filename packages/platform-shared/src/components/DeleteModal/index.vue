@@ -21,11 +21,13 @@ of the MIT license. See the LICENSE file for details. -->
         @click="cancel()">
         {{ $t('common.cancel') }}
       </BButton>
-      <BButton
+      <FrButtonWithSpinner
+        :button-text="$t('common.delete')"
+        :disabled="isDeleting"
+        :show-spinner="isDeleting"
+        :spinner-text="$t('common.deleting')"
         variant="danger"
-        @click="deleteItem">
-        {{ $t('common.delete') }}
-      </BButton>
+        @click="$emit('delete-item')" />
     </template>
   </BModal>
 </template>
@@ -35,25 +37,35 @@ import {
   BButton,
   BModal,
 } from 'bootstrap-vue';
+import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
 
 /**
- * Generic delete panel shown in a Bootstrap card.
- * Shows a BModal for confirmation and emits an event deleteItem on delete.
- * Takes the name of the item being deleted and a translation of the item's type for use in text.
+ * Generic delete modal emits an event deleteItem on delete.
+ * Shows a spinner if isDeleting attribute provided
+ * Expects to be closed by method deleting the item
+ * Takes the translation of the item's type for use in text and optionally a custom message for modal body
  */
 export default {
   name: 'DeleteModal',
   components: {
     BButton,
     BModal,
+    FrButtonWithSpinner,
   },
   props: {
     /**
-     * Custom message to show in modal body
+     * Optional custom message to show in modal body-otherwise, type is used
      */
     customMessage: {
       type: String,
       default: null,
+    },
+    /**
+     * Variable to determine when to show spinner in button
+     */
+    isDeleting: {
+      type: Boolean,
+      default: false,
     },
     /**
      * Type of item being deleted. Displayed in modal title
@@ -61,18 +73,6 @@ export default {
     translatedItemType: {
       type: String,
       default: '',
-    },
-  },
-  methods: {
-    /**
-     * Hide modal and emit delete-item event
-     */
-    deleteItem() {
-      this.$refs.deleteModal.hide();
-      /**
-        * triggered when delete confirmation button is clicked
-        */
-      this.$emit('delete-item');
     },
   },
 };

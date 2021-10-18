@@ -145,6 +145,7 @@ of the MIT license. See the LICENSE file for details. -->
     <FrDeletePanel
       v-if="canDelete"
       class="mb-5"
+      :is-deleting="isDeleting"
       :translated-item-type="resourceTitle"
       @delete-item="deleteResource" />
     <FrResetPasswordModal
@@ -269,6 +270,7 @@ export default {
       relationshipProperties: {},
       settingsProperties: {},
       isLoading: true,
+      isDeleting: false,
       passwordField: {},
       jsonString: '',
       revision: '',
@@ -576,17 +578,21 @@ export default {
       this.$emit('loading-state-change', this.isLoading);
     },
     deleteResource() {
+      this.isDeleting = true;
       const idmInstance = this.getRequestService();
 
-      idmInstance.delete(`${this.resourceType}/${this.resourceName}/${this.id}`).then(() => {
-        this.displayNotification('IDMMessages', 'success', this.$t('pages.access.deleteResource', { resource: this.resourceName }));
+      idmInstance.delete(`${this.resourceType}/${this.resourceName}/${this.id}`)
+        .then(() => {
+          this.displayNotification('IDMMessages', 'success', this.$t('pages.access.deleteResource', { resource: this.resourceName }));
 
-        this.$router.push({
-          path: `/${this.$route.meta.listRoute}/${this.resourceType}/${this.resourceName}`,
-        });
-      })
-        .catch((error) => {
+          this.$router.push({
+            path: `/${this.$route.meta.listRoute}/${this.resourceType}/${this.resourceName}`,
+          });
+        }).catch((error) => {
           this.displayNotification('IDMMessages', 'error', error.response.data.message);
+        }).finally(() => {
+          this.isDeleting = false;
+          this.$root.$emit('bv::hide::modal', 'deleteModal');
         });
     },
     mergePrivilegeProperties(privilege, schema) {

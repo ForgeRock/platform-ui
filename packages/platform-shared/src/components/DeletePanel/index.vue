@@ -21,6 +21,7 @@ of the MIT license. See the LICENSE file for details. -->
     </BCard>
     <FrDeleteModal
       :custom-message="customModalMessage"
+      :is-deleting="isDeleting"
       :translated-item-type="translatedItemType"
       @delete-item="deleteItem" />
   </div>
@@ -51,6 +52,13 @@ export default {
     customModalMessage: {
       type: String,
       default: null,
+    },
+    /**
+     * Variable to determine when to show spinner in button in modal
+     */
+    isDeleting: {
+      type: Boolean,
+      default: false,
     },
     /**
      * Type of item being deleted. Displayed in card header, button text, and modal title

@@ -417,6 +417,7 @@ export default {
     },
     deleteResource() {
       this.$emit('delete-resource', this.resourceToDeleteId);
+      this.$root.$emit('bv::hide::modal', 'deleteModal');
       this.resourceToDeleteId = '';
     },
     /**
