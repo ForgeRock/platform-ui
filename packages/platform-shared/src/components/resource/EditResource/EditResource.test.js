@@ -315,6 +315,21 @@ describe('EditResource.vue', () => {
     expect(notificationSpy).toHaveBeenCalledWith('IDMMessages', 'success', undefined);
   });
 
+  it('populates the mobile dropdown menu property', () => {
+    const payload = [
+      { title: 'Tab 1 Name' },
+      { title: 'Tab 2 Name' },
+      { title: 'Tab 3 Name' },
+    ];
+
+    wrapper.vm.populateMobileDropdownTabs(payload);
+    expect(wrapper.vm.mobileDropdownTabs).toEqual([
+      'Tab 1 Name',
+      'Tab 2 Name',
+      'Tab 3 Name',
+    ]);
+  });
+
   describe('linked applications', () => {
     it('Only loads linked applications for openidm-admins', async () => {
       const linkedSpy = jest.spyOn(ManagedResourceApi, 'getLinkedApplications').mockImplementation(() => Promise.resolve());

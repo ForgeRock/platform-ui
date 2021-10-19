@@ -5,7 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <BTab
     v-if="linkedApplications.length"
-    :title="this.$t('pages.access.applications')">
+    :title="$t('pages.access.applications')">
     <template>
       <div>
         <BCardHeader class="p-0">
