@@ -9,7 +9,7 @@
     <a href="https://backstage.forgerock.com/docs/"><strong>Explore ForgeRock docs »</strong></a>
   </p>
   <p align="center">
-    The purpose of this readme is to help users explore the ForgeRock UI monorepo. Which contains a variety of UI parts such as views, styles and componentes utilized for different 
+    The purpose of this readme is to help users explore the ForgeRock UI monorepo. Which contains a variety of UI parts such as views, styles and components utilized for different 
     ForgeRock UIs.
   </p>
 </p>
@@ -28,21 +28,13 @@
 - [Browser support](#browser-support)
 
 <a name="quick-start"></a>
-## Quick start
+## Development Quick start
 
 - [Download and install the latest node](https://nodejs.org/en/download/) or verify your node version `node -v`
-- Make sure you have yarn installed `brew install yarn`
-- Clone or download the repo: `https://stash.forgerock.org/projects/UI/repos/platform-ui/browse` or `https://github.com/ForgeRock/platform-ui`
-- Navigate to your `platform-ui` directory and install dependencies with yarn: `yarn`
-- Depending on what project you wish to utilize. Update `proxyTable:target` in `vue.config.js` to point to your target 
-- Start up target project (default startup is based on project, this information can be found in `vue.config.js`)
-- Start development server with yarn: `yarn dev`
-
-### Optional Help
-
-Vue provides a CLI to help with managing clients if you wish to make use of it you can do the following
-- Run command `yarn install -g @vue/cli` to install the Vue Client
-- Then to open the management UI use `vue ui`
+- Make sure you have [yarn installed](https://yarnpkg.com/getting-started/install)
+- Clone or download the repo
+- Navigate to newly cloned `platform-ui` directory, and install dependencies with yarn command: `yarn install`. Since this project uses [Yarn workspaces](https://yarnpkg.com/features/workspaces), this will install package requirements in all project folders under `packages`
+- To start the development server, navigate to target project by changing directory to specific package inside the `platform-ui/packages` directory, and enter the command: `yarn dev`
 
 <a name="build-tools"></a>
 ## Build Tools
@@ -53,6 +45,21 @@ Vue provides a CLI to help with managing clients if you wish to make use of it y
 
 <a name="testing"></a>
 ## Testing
+
+#### Unit tests
+
+Testing is achieved with the [Jest Testing Framework](https://jestjs.io/) and configured globally inside: `jest.config.base.js` and locally to each project inside: `jest.config.js`
+
+- To run unit tests **across all workspaces**, in the root `platform-ui` directory, run the command: `yarn unit` or `yarn unit:watch`
+- To run unit tests on a **specific workspace**, `cd` to the specific directory, and run command `yarn unit`
+
+
+#### End to End tests (E2E)
+
+[Cypress](https://www.cypress.io/) is leveraged for all End to End tests
+
+- To run E2E tests, `cd` to the specific directory where you want to run the tests, and run `test:e2e`, or `test:e2e:open`
+- E2E tests are written to work against a UI hosted at https://default.iam.example.com, which is part of a full platform deployment.
 
 <a name="testing-tools"></a>
 ## Testing tools
@@ -119,8 +126,6 @@ For example:
 <a name="deployment"></a>
 ## Deployment
 
-- To deploy the application, run: `yarn build`
-
 Running `yarn build` creates a distribution file in the `dist` folder of that specific project. Each deployment use case is different.
 
 <a name="theming"></a>
@@ -129,11 +134,11 @@ Running `yarn build` creates a distribution file in the `dist` folder of that sp
 The following theming tools are installed when you install the project dependencies:
 
 - [SCSS](https://sass-lang.com/) - CSS enhancement library
-- [Bootstrap 4.0](https://getbootstrap.com) - CSS Styling framework
+- [Bootstrap 4](https://getbootstrap.com/docs/4.6/getting-started/introduction/) - CSS Styling framework
 
 Theming makes use of two concepts:
 
-- Theming follows the basic [Bootstrap theming guidelines](https://getbootstrap.com/docs/4.0/getting-started/theming/) and relies on SCSS variable overrides.
+- Theming follows the basic [Bootstrap theming guidelines](https://getbootstrap.com/docs/4.6/getting-started/theming/) and relies on SCSS variable overrides.
 - The theme file is loaded with an optional flag when running the dev server or distribution build. For example, `yarn dev --theme=red` or `yarn build --theme=red`.
 
 When you include the theme flag, the `node` build scripts attempt to locate a corresponding file in `src/scss`. The file must also contain a `-theme.scss` moniker, for example, `red-theme.scss`.
