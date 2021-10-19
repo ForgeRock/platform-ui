@@ -64,14 +64,30 @@ of the MIT license. See the LICENSE file for details. -->
       :refreshData="refreshData"
       :resourceDetails="resourceDetails">
       <BCard class="card-tabs-vertical mb-5">
+        <BDropdown
+          v-if="mobileDropdownTabs.length && !hideNav"
+          :text="mobileDropdownTabs[currentTab]"
+          variant="white"
+          block
+          menu-class="w-100"
+          class="d-md-none border-bottom mobile-dropdown-menu">
+          <BDropdownItem
+            v-for="(item, index) in mobileDropdownTabs"
+            :key="index"
+            :active="index === currentTab"
+            @click="currentTab = index">
+            {{ item }}
+          </BDropdownItem>
+        </BDropdown>
         <BTabs
+          ref="resourceTabs"
+          v-model="currentTab"
+          @changed="populateMobileDropdownTabs"
+          :nav-wrapper-class="hideNav ? 'd-none': 'd-none d-md-block'"
           flex-column
           flex-sm-row
           vertical
-          pills
-          :class="[{ 'fr-hide-nav' : hideNav }]"
-          ref="resourceTabs"
-          v-model="currentTab">
+          pills>
           <BTab
             :title="this.$t('pages.access.details')">
             <FrObjectTypeEditor
@@ -180,6 +196,8 @@ import {
   BButton,
   BCard,
   BContainer,
+  BDropdown,
+  BDropdownItem,
   BImg,
   BTab,
   BTabs,
@@ -231,6 +249,8 @@ export default {
     BTabs,
     BTab,
     BCard,
+    BDropdown,
+    BDropdownItem,
     FrClearResourceSessions: ClearResourceSessions,
     LinkedApplicationsTab,
   },
@@ -275,6 +295,7 @@ export default {
       jsonString: '',
       revision: '',
       currentTab: 0,
+      mobileDropdownTabs: [],
       hasActiveSessions: false,
       showClearSessionsModal: false,
       clearSessionsName: '',
@@ -646,6 +667,22 @@ export default {
           this.refreshData();
         });
     },
+    /**
+     * Populate tabs dropdown for mobile sizes.
+     *
+     * @param {Array} tabs array of objects received by BTabs component on load.
+     */
+    populateMobileDropdownTabs(tabs) {
+      const tabTitles = [];
+
+      if (tabs.length) {
+        each(tabs, (tab) => {
+          tabTitles.push(tab.title);
+        });
+      }
+
+      this.mobileDropdownTabs = tabTitles;
+    },
   },
   computed: {
     secondaryTitle() {
@@ -708,10 +745,6 @@ export default {
     padding: 0;
   }
 
-  .fr-hide-nav .nav {
-    display: none;
-  }
-
   .tab-content.col {
     padding: 0;
   }
@@ -721,4 +754,26 @@ export default {
   max-width: 230px;
 }
 
+// search icon in content was overlaying
+// on dropdown, increased z-index.
+.mobile-dropdown-menu {
+  z-index: 1020;
+}
+
+/deep/ .dropdown-item.active {
+  position: relative;
+
+  &::after {
+    border: none;
+    content: 'check';
+    position: absolute;
+    right: 10px;
+    top: 14px;
+    font-family: 'Material Icons Outlined', Serif;
+    font-size: 1rem;
+    line-height: 1;
+    color: $green;
+    vertical-align: middle;
+  }
+}
 </style>
