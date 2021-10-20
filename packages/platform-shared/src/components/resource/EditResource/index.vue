@@ -378,8 +378,11 @@ export default {
           // properties names, types and values from app.content and app.schema.
           app.data = [];
           Object.keys(app.content).forEach((key) => {
-            if (app.schema[key] && app.schema[key].nativeName
-                && app.content[key] && app.schema[key].type) {
+            if (app.schema[key]
+                && app.schema[key].nativeName
+                && app.content[key]
+                && (app.content[key].length !== 0)
+                && app.schema[key].type) {
               const prop = {};
               prop.name = app.schema[key].nativeName;
               prop.value = app.content[key];
