@@ -411,7 +411,6 @@ export default {
       .then(this.checkNewSession)
       .then(() => {
         this.evaluateUrlParams();
-        this.$emit('set-theme', this.realm, this.themeTree);
         this.nextStep();
       })
       .catch(() => {
@@ -595,12 +594,11 @@ export default {
       });
     },
     checkNodeForThemeOverride(stageText) {
-      const regexp = /themeId=(\s*)(.*)(\s*)/g;
+      const regexp = /theme[Ii]d=\s*(.[^\s,]*).*/g;
       const match = regexp.exec(stageText);
-      if (match && match[2]) {
-        localStorage.setItem('theme-id', match[2]);
+      if (match && match[1]) {
+        localStorage.setItem('theme-id', match[1]);
       }
-      this.$emit('set-theme', this.realm, this.themeTree);
     },
     /**
      * @description clears and sets the reentry cookie to be deleted
@@ -1008,6 +1006,7 @@ export default {
               this.loading = false;
               break;
           }
+          this.$emit('set-theme', this.realm, this.themeTree);
         },
         () => {
           this.errorMessage = this.$t('login.issueConnecting');
