@@ -252,7 +252,7 @@ export default {
         }
       });
       this.themesConfig = themesConfig;
-      this.realmThemeNames = themesConfig.realm[realm].map((theme) => ({ text: theme.name, value: theme._id }));
+      this.realmThemeNames = themesConfig.realm[realm].map((theme) => ({ text: theme.name, value: theme._id, logo: theme.logoProfileCollapsed }));
     },
   },
 };

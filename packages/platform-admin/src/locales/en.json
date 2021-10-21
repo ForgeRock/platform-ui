@@ -546,7 +546,9 @@
       "key": "Key",
       "value": "Value",
       "none": "none",
-      "minimumRequired": "At Least {minItems} Value(s) Required"
+      "minimumRequired": "At Least {minItems} Value(s) Required",
+      "theme": "Theme",
+      "themeDescription": "If using hosted pages, specify a theme to override this journey's UI theme."
     },
     "pageNode": {
       "dragHere": "Drag nodes here"
