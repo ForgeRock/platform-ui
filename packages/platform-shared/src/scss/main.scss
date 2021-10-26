@@ -100,6 +100,23 @@ body {
   }
 }
 
+.dropdown-item.active {
+  position: relative;
+
+  &::after {
+    border: none;
+    content: 'check';
+    position: absolute;
+    right: 10px;
+    top: 14px;
+    font-family: 'Material Icons Outlined', Serif;
+    font-size: 1rem;
+    line-height: 1;
+    color: $green;
+    vertical-align: middle;
+  }
+}
+
 .dropdown-toggle {
   &::after {
     border: none;
