@@ -72,6 +72,13 @@ export default {
       type: Boolean,
       default: false,
     },
+    /**
+     * Numerical position on tree node
+     */
+    index: {
+      type: Number,
+      default: 0,
+    },
   },
   data() {
     return {
