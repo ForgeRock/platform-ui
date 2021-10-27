@@ -52,6 +52,10 @@ export default {
     this.name = `callback_${this.index}`;
     this.terms = this.$sanitize(this.callback.getTerms(), {
       allowedTags: false,
+      allowedAttributes: {
+        '*': ['id'],
+        a: ['href'],
+      },
     });
     this.callback.setInputValue(true);
   },
