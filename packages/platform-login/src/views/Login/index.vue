@@ -423,9 +423,9 @@ export default {
     /**
      * @description handler for scripts clicking on loginButton_0
      * if a script clicks on loginButton_0 we want to make sure that the
-     * the hiddenValue elements values are added to the callback data structure since \
+     * the hiddenValue elements values are added to the callback data structure since
      * that is what will be sent with the request
-     * this function itterates through the hiddenValue dom refs to accomplish that
+     * this function iterates through the hiddenValue dom refs to accomplish that
      */
     backendScriptsHandler() {
       this.hiddenValueCallbacksRefs.forEach((ref) => {
@@ -438,7 +438,7 @@ export default {
       });
       this.nextStep();
     },
-    backendScriptsIdsConatins(matcher) {
+    backendScriptsIdsContains(matcher) {
       const typeArr = this.step.getCallbacksOfType(FrCallbackType.HiddenValueCallback)
         .map((callback) => callback.getOutputByName('id', ''));
       return typeArr.indexOf(matcher) >= 0;
@@ -447,7 +447,7 @@ export default {
       this.header = this.step.getHeader() || '';
       this.description = this.$sanitize(this.step.getDescription() || '');
       this.nextButtonVisible = true;
-      this.nextButtonDisabledArray = [];
+      this.nextButtonDisabledArray = [false];
 
       this.checkNodeForThemeOverride(this.step.getStage());
 
@@ -469,7 +469,7 @@ export default {
       this.step.callbacks.forEach((callback, i) => {
         // index 0 is reserved for callback_0 used in backend scripts
         const index = i + 1;
-        this.nextButtonDisabledArray.push(false);
+        this.nextButtonDisabledArray.push(this.isCallbackRequired(callback));
         const existsInComponentList = (type) => find(componentList, (component) => component.type === `Fr${type}`);
         let type = callback.getType();
 
@@ -528,7 +528,7 @@ export default {
               listeners: ['disable-next-button', 'has-scripts', 'hide-next-button', 'next-step-callback'],
             }),
             ValidatedCreatePasswordCallback: () => ({
-              callbackSpecificProps: { overrideInitialPolicies: true, realm: this.realm },
+              callbackSpecificProps: { overrideInitialPolicies: true, realm: this.realm, index },
               listeners: ['disable-next-button'],
             }),
             WebAuthnComponent: () => {
@@ -756,8 +756,8 @@ export default {
     },
     /**
      * @description Used to get listeners for callback components
-     * @param {Object} properties object of any properties needed to have listners context
-     * @param {Array} listenerArray array of string names to populate component listners
+     * @param {Object} properties object of any properties needed to have listeners context
+     * @param {Array} listenerArray array of string names to populate component listeners
      * @returns {Object} returns object populated with specified listener functions
      */
     getListeners({ callback }, listenerArray = []) {
@@ -780,7 +780,7 @@ export default {
           });
           observer.observe(document.body, { childList: true });
           // only hide next button if we know it should be hidden (webAuthn, deviceId)
-          if (this.backendScriptsIdsConatins('clientScriptOutputData')) {
+          if (this.backendScriptsIdsContains('clientScriptOutputData')) {
             this.nextButtonVisible = false;
           }
           setTimeout(() => {
@@ -800,6 +800,11 @@ export default {
         input: (value) => {
           if (callback && callback.setInputValue) {
             callback.setInputValue(value);
+            if (value) {
+              this.nextButtonDisabledArray.splice(callback.payload._id + 1, 1, false);
+            } else if (this.isCallbackRequired(callback)) {
+              this.nextButtonDisabledArray.splice(callback.payload._id + 1, 1, true);
+            }
           }
         },
       };
@@ -875,6 +880,25 @@ export default {
       return !!document.cookie
         .split('; ')
         .find((row) => row.startsWith('reentry='));
+    },
+    /**
+     * @description Determines if passed in callback is set to required or has a required policy
+     * @param {Object} callback - callback to check if required
+     * @returns {Boolean} True if passed in callback is required
+     */
+    isCallbackRequired(callback) {
+      const requiredOutput = callback.getOutputByName('required');
+      if (requiredOutput === true && callback.getType() !== 'BooleanAttributeInputCallback') {
+        return true;
+      }
+      const policyOutput = callback.getOutputByName('policies');
+      if (has(policyOutput, 'policies')) {
+        const requiredPolicy = policyOutput.policies.find((policy) => policy.policyId === 'required');
+        if (has(requiredPolicy, 'policyRequirements') && requiredPolicy.policyRequirements.includes('REQUIRED')) {
+          return true;
+        }
+      }
+      return false;
     },
     /**
      * @description Returns boolean true if payload has session timeout error code
