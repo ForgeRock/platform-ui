@@ -28,7 +28,7 @@ Vue.config.productionTip = false;
 
 Vue.use(Notifications);
 VueSanitize.defaults.allowedAttributes['*'] = ['class', 'style', 'data-testid'];
-VueSanitize.defaults.allowedAttributes.img.push('height');
+VueSanitize.defaults.allowedAttributes.img.push(...['height', 'alt']);
 VueSanitize.defaults.allowedTags = [...VueSanitize.defaults.allowedTags, 'img'];
 Vue.use(VueSanitize);
 
