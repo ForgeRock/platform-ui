@@ -822,9 +822,14 @@ export default {
       return { step: undefined, authIndexValue: undefined, realm: undefined };
     },
     getStepParams() {
+      const paramString = this.getCurrentQueryString();
+      const paramsObj = this.parseParameters(paramString);
+      if (paramsObj.authIndexValue) {
+        paramsObj.authIndexValue = decodeURI(paramsObj.authIndexValue);
+      }
       const stepParams = {
         query: {},
-        tree: this.authIndexValue || this.$route.params.tree || undefined,
+        tree: this.authIndexValue || this.$route.params.tree || paramsObj.authIndexValue || undefined,
         realmPath: this.realm,
       };
       // remove tree from stepParams when undefined
@@ -835,13 +840,6 @@ export default {
       if (this.suspendedId) {
         stepParams.query.suspendedId = this.suspendedId;
       } else {
-        const paramString = this.getCurrentQueryString();
-        const paramsObj = this.parseParameters(paramString);
-        const authIndexValue = find(paramsObj, (paramObject, key) => key === 'authIndexValue');
-        if (authIndexValue) {
-          paramsObj.authIndexValue = decodeURI(paramsObj.authIndexValue);
-        }
-
         stepParams.query = paramsObj;
         stepParams.query.code = this.code ? this.code : undefined;
         stepParams.query.state = this.state ? this.state : undefined;
