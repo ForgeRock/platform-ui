@@ -191,7 +191,7 @@ export default {
       this.$emit('updateKBA', payload, config);
     },
     loadAuthenicationDevices() {
-      const query = '_queryId=*';
+      const query = '_queryId=*&_fields=_id';
       const configOptions = this.forceRoot ? { context: 'AM', realm: 'root' } : { context: 'AM' };
       const selfServiceInstance = this.getRequestService(configOptions);
       const authTypes = ['oath', 'push', 'webauthn'];
