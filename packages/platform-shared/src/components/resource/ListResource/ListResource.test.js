@@ -226,6 +226,13 @@ describe('ListResource Component', () => {
     expect(wrapper.vm.columns[0].sortable).toEqual(true);
     expect(wrapper.vm.defaultSort).toEqual('userName');
 
+    wrapper.vm.filter = 'foo';
+    wrapper.setProps({
+      queryThreshold: 0,
+      tableData: ['sortAgainWithAFilter'],
+    });
+    expect(wrapper.vm.columns[0].sortable).toEqual(true);
+
     wrapper.vm.filter = '';
     wrapper.setProps({
       queryThreshold: 3,
@@ -233,13 +240,6 @@ describe('ListResource Component', () => {
     });
     expect(wrapper.vm.columns[0].sortable).toEqual(false);
     expect(wrapper.vm.defaultSort).toEqual('');
-
-    wrapper.vm.filter = 'foo';
-    wrapper.setProps({
-      queryThreshold: 0,
-      tableData: ['sortAgainWithAFilter'],
-    });
-    expect(wrapper.vm.columns[0].sortable).toEqual(true);
 
     wrapper.vm.filter = 'fo';
     wrapper.setProps({
