@@ -4,15 +4,15 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
-    <FrListGroup :title="this.$t('pages.workflow.myTasks')">
+    <FrListGroup :title="this.$t('pages.workflow.unassignedTasks')">
       <template v-if="!isEmpty(tasks)">
         <TransitionGroup
           name="fade"
           mode="out-in">
           <FrListItem
             :collapsible="true"
-            v-for="(task, id) in tasks"
-            :key="`myTask_${id}`"
+            v-for="(taskDefinition, id) in tasks"
+            :key="`groupTask_${id}`"
             :ref="`collapse-${id}`"
             @shown="setShown(id)"
             @hidden="setHidden(id)">
@@ -20,43 +20,39 @@ of the MIT license. See the LICENSE file for details. -->
               slot="list-item-header"
               class="d-inline-flex w-100 media">
               <div class="media-body align-self-center">
-                <h6>{{ task.name }}</h6>
+                <h6 class="mb-1 mt-0">
+                  {{ taskDefinition.name }}
+                </h6>
+                <small class="text-muted d-block mb-2">
+                  {{ $t('pages.workflow.notAssigned') }}
+                </small>
               </div>
-              <div class="d-flex flex-row ml-2 align-self-center">
-                <BButton
-                  v-if="!isEmpty(task.task.candidates.candidateGroups)"
-                  variant="link"
-                  size="sm"
-                  @click.stop="requeue(id)">
-                  {{ $t('pages.workflow.requeue') }}
-                </BButton>
+              <div class="d-flex mb-3 ml-3 align-self-center">
                 <BButton
                   v-if="panelShown[id] === true"
                   variant="link"
                   size="sm"
-                  :ref="`cancel-${id}`"
-                  class="btn-edit pb-2">
-                  {{ $t('common.cancel' ) }}
+                  class="btn-cancel mb-2"
+                  :ref="`cancel-${id}`">
+                  {{ $t('common.cancel') }}
                 </BButton>
                 <BButton
                   v-else
                   variant="link"
                   size="sm"
                   class="btn-edit">
-                  {{ $t('common.edit' ) }}
+                  {{ $t('pages.workflow.assign') }}
                 </BButton>
               </div>
             </div>
             <div
               slot="list-item-collapse-body"
               class="d-inline-flex w-100">
-              <FrTask
-                :task-instance="task"
+              <FrAssignTask
                 :shown="panelShown[id]"
-                :ref="id"
+                :task-definition="taskDefinition"
                 @loadProcess="(process) => $emit('loadProcess', process)"
-                @cancel="cancel"
-                @completeTask="completeTask" />
+                @assignTask="assignTask" />
             </div>
           </FrListItem>
         </TransitionGroup>
@@ -65,7 +61,7 @@ of the MIT license. See the LICENSE file for details. -->
         <div
           slot="list-item-header"
           class="text-muted text-center w-100">
-          {{ $t('pages.workflow.noAssignedTasks') }}
+          {{ $t('pages.workflow.noGroupTasks') }}
         </div>
       </FrListItem>
     </FrListGroup>
@@ -74,18 +70,18 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import {
-  isFunction, isEmpty, keys, difference, first, isUndefined, forEach,
+  isFunction, isEmpty, keys, difference, first, isUndefined,
 } from 'lodash';
 import FrListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
 import FrListItem from '@forgerock/platform-shared/src/components/ListItem/';
-import Task from './Task';
+import FrAssignTask from '../AssignTask';
 
 /**
-* @description Dashboard widget that lists tasks currently assigned to the logged in user
-*
-* */
+ * @description Dashboard widget that lists available group tasks that can be assigned
+ *
+ * */
 export default {
-  name: 'MyTasks',
+  name: 'GroupTasks',
   props: {
     tasks: {
       type: Object,
@@ -93,21 +89,12 @@ export default {
     },
   },
   data() {
-    const panelShown = {};
-
-    forEach(this.tasks, (value, id) => {
-      panelShown[id] = false;
-    });
-
-    return {
-      panelShown,
-      onHidden: null,
-    };
+    return { panelShown: {}, onHidden: null };
   },
   components: {
     FrListGroup,
     FrListItem,
-    FrTask: Task,
+    FrAssignTask,
   },
   methods: {
     isEmpty,
@@ -126,27 +113,14 @@ export default {
     cancel(id) {
       first(this.$refs[`cancel-${id}`]).click();
     },
-    requeue(id) {
+    assignTask({ id, assignee }) {
       const { task } = this.tasks[id];
-      const action = 'updateAssignment';
-      const payload = { id, task, assignee: null };
 
-      this.update(id, action, payload);
-    },
-    completeTask(payload) {
-      this.update(payload.id, 'completeTask', payload);
-    },
-    update(id, action, payload) {
-      const update = () => {
-        this.$emit(action, payload);
+      this.onHidden = () => {
+        this.$emit('updateAssignment', { assignee, id, task });
       };
 
-      if (this.panelShown[id]) {
-        this.onHidden = update;
-        this.cancel(id);
-      } else {
-        update();
-      }
+      this.cancel(id);
     },
   },
   watch: {
@@ -169,6 +143,5 @@ export default {
       deep: true,
     },
   },
-
 };
 </script>

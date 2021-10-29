@@ -62,7 +62,7 @@ import {
 import styles from '@forgerock/platform-shared/src/scss/main.scss';
 import FrListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
 import FrListItem from '@forgerock/platform-shared/src/components/ListItem/';
-import Process from './Process';
+import Process from '../Process';
 
 /**
 * @description Dashboard widget that displays a list of available processes that can be started

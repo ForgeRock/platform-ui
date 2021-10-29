@@ -35,14 +35,14 @@ of the MIT license. See the LICENSE file for details.
 <script>
 import { ClipLoader } from 'vue-spinner/dist/vue-spinner.min';
 import styles from '@forgerock/platform-shared/src/scss/main.scss';
-import GenericProcess from './GenericProcess';
+import GenericProcess from '../GenericProcess';
 
 /**
 * @description Dashboard widget that displays the details of a specific process
 *
 * */
 export default {
-  name: 'WorkflowProcess',
+  name: 'Process',
   components: {
     ClipLoader,
     GenericProcess,
