@@ -34,7 +34,7 @@ of the MIT license. See the LICENSE file for details. -->
 import styles from '@forgerock/platform-shared/src/scss/main.scss';
 import axios from 'axios';
 import { ClipLoader } from 'vue-spinner/dist/vue-spinner.min';
-import GenericTask from './GenericTask';
+import GenericTask from '../GenericTask';
 
 /**
 * @description Dashboard widget that displays the specific details of a task

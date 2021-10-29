@@ -19,10 +19,12 @@ describe('Dashboard.vue', () => {
       localVue,
       i18n,
       propsData: {
-        dashboardDisplayName: 'Google',
-        dashboardLogin: 'https://www.google.com',
-        dashboardIcon: 'google.png',
-        brandLogoAltText: 'Google logo',
+        applicationDetails: {
+          dashboardDisplayName: 'Google',
+          dashboardLogin: 'https://www.google.com',
+          dashboardIcon: 'google.png',
+          brandLogoAltText: 'Google logo',
+        },
       },
     });
 
