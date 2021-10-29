@@ -6,14 +6,16 @@
  */
 
 import BootstrapVue from 'bootstrap-vue';
+import Vuex from 'vuex';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
 import i18n from '@/i18n';
 import WelcomeWidget from '@/components/dashboard/widgets/WelcomeWidget';
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue);
+localVue.use(Vuex);
 
-describe('Dashboard.vue', () => {
+describe('WelcomeWidget.vue', () => {
   it('Welcome widget loaded', () => {
     const wrapper = shallowMount(WelcomeWidget, {
       localVue,
@@ -138,5 +140,60 @@ describe('Dashboard.vue', () => {
     wrapper.vm.getTimeOfDay(currentHour);
 
     expect(wrapper.vm.timeOfDay).toBe('Evening');
+  });
+
+  it('correctly returns a full name on the fullName computed property', () => {
+    const wrapper = shallowMount(WelcomeWidget, {
+      localVue,
+      propsData: {
+        userDetails: {
+          givenName: 'John',
+          sn: 'Doe',
+        },
+      },
+    });
+
+    expect(wrapper.vm.fullName).toBe('John Doe');
+
+    // returns userId if no first or last name provided
+    wrapper.setProps({
+      userDetails: {
+        userId: 44,
+        givenName: '',
+        sn: '',
+      },
+    });
+    expect(wrapper.vm.fullName).toBe(44);
+  });
+
+  it('returns an avatar source in the avatarSource computed property', () => {
+    const wrapper = shallowMount(WelcomeWidget, {
+      localVue,
+      mocks: {
+        $router: { push: jest.fn() },
+      },
+      store: new Vuex.Store({
+        state: {
+          UserStore: {
+            profileImage: 'my-avatar.jpg',
+          },
+        },
+      }),
+    });
+
+    expect(wrapper.vm.avatarSource).toBe('my-avatar.jpg');
+  });
+
+  it('updates route to Profile after clicking on the edit profile button', () => {
+    const wrapper = shallowMount(WelcomeWidget, {
+      localVue,
+      mocks: {
+        $router: { push: jest.fn() },
+      },
+    });
+    const routerPushSpy = jest.spyOn(wrapper.vm.$router, 'push');
+
+    wrapper.vm.openProfile();
+    expect(routerPushSpy).toHaveBeenCalledWith({ name: 'Profile' });
   });
 });
