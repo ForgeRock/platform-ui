@@ -305,8 +305,8 @@ export default {
     tableData() {
       // if there is a queryThreshold and there is a filter we want to allow sorting
       this.columns = this.columns.map((col) => {
-        if (col.key !== 'actions') {
-          col.sortable = !this.queryThreshold || (this.filter.length >= this.queryThreshold);
+        if (col.key !== 'actions' && this.queryThreshold) {
+          col.sortable = this.filter.length >= this.queryThreshold;
         }
 
         return col;
