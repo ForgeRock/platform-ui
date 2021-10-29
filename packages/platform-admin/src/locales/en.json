@@ -1092,7 +1092,9 @@
     "admins": {
       "title": "Admins",
       "invite": "Invite Admins",
-      "resendInvite": "Resend Email Invite"
+      "resendInvite": "Resend Email Invite",
+      "multifactorAuthentication": "MFA",
+      "user": "User"
     },
     "globalSettings": {
       "title": "Global Settings",

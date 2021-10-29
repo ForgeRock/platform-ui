@@ -24,7 +24,7 @@ export default {
   },
   props: {
     step: {
-      type: FRStep,
+      type: [FRStep, Object],
       required: true,
     },
     webAuthnPromise: {
