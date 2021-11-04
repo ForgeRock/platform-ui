@@ -7,6 +7,28 @@ of the MIT license. See the LICENSE file for details. -->
     :right="right"
     variant="link"
     toggle-class="text-decoration-none p-0">
+    <BDropdownHeader
+      v-if="$store.state.isFraas && $store.state.tenantInfo"
+      id="tenant-dropdown-header-label">
+      <h6 class="text-muted">
+        {{ $t('tenantSettings.details.tenant') }}
+      </h6>
+      <BMedia
+        class="text-left">
+        <template #aside>
+          <img
+            v-if="tenantRegionInfo"
+            :src="tenantRegionInfo.flag && require(`@forgerock/platform-admin/src/assets/images/flags/${tenantRegionInfo.flag}.svg`)"
+            :alt="$t('tenantSettings.details.flagAltText')"
+            class="mr-0"
+            width="18"
+            height="21">
+        </template>
+        <small class="text-muted my-auto">
+          {{ $store.state.tenantInfo.region }}
+        </small>
+      </BMedia>
+    </BDropdownHeader>
     <template #button-content>
       <!-- @slot Button content -->
       <slot name="button-content" />
@@ -63,6 +85,7 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import {
   BDropdown,
+  BDropdownHeader,
   BDropdownItem,
   BDropdownDivider,
   BMedia,
@@ -70,6 +93,7 @@ import {
 import MenuItem from '@forgerock/platform-shared/src/components/MenuItem';
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import { mapGetters } from 'vuex';
 
 /**
  * Bootstrap dropdown menu used in navbar and sidemenu
@@ -78,6 +102,7 @@ export default {
   name: 'DropdownMenu',
   components: {
     BDropdown,
+    BDropdownHeader,
     BDropdownDivider,
     BDropdownItem,
     BMedia,
@@ -87,6 +112,11 @@ export default {
   mixins: [
     LoginMixin,
   ],
+  computed: {
+    ...mapGetters({
+      tenantRegionInfo: 'tenantRegionInfo',
+    }),
+  },
   props: {
     /**
      * Items contained in dropdown.
