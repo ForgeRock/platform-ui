@@ -1097,7 +1097,11 @@
     "details": {
       "title": "Tenant Details",
       "organizationName": "Organization Name",
-      "tenantName": "Tenant Name"
+      "tenantName": "Tenant Name",
+      "tenantRegion": "Region",
+      "tenant": "TENANT",
+      "flagAltText": "Flag",
+      "errorRetrievingTenantRegion": "Error retrieving tenant region information."
     },
     "admins": {
       "title": "Admins",
@@ -1110,6 +1114,25 @@
       "title": "Global Settings",
       "getDataFail": "Unable to retrieve global settings data",
       "cookie": "Cookie"
+    },
+    "locationNames": {
+      "singapore": "Singapore",
+      "jakarta": "Jakarta",
+      "sydney": "Sydney",
+      "finland": "Finland",
+      "belgium": "Belgium",
+      "london": "London",
+      "frankfurt": "Frankfurt",
+      "netherlands": "Netherlands",
+      "zurich": "Zurich",
+      "montreal": "Montréal",
+      "saoPaulo": "São Paulo",
+      "iowa": "Iowa",
+      "southCarolina": "South Carolina",
+      "northVirginia": "North Virginia",
+      "oregon": "Oregon",
+      "losAngeles": "Los Angeles",
+      "hongKong": "Hong Kong"
     }
   },
   "gatewaysAndAgents": {
