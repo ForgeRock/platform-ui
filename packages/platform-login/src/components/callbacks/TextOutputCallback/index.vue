@@ -9,21 +9,21 @@ of the MIT license. See the LICENSE file for details. -->
     <div
       v-if="messageType === 'INFORMATION'"
       class="text-center text-muted w-100">
-      {{ message }}
+      {{ getTranslation(message) }}
     </div>
     <BAlert
       v-if="messageType === 'WARNING'"
       variant="warning"
       class="w-100"
       show>
-      {{ message }}
+      {{ getTranslation(message) }}
     </BAlert>
     <BAlert
       v-if="messageType === 'ERROR'"
       variant="danger"
       class="w-100"
       show>
-      {{ message }}
+      {{ getTranslation(message) }}
     </BAlert>
     <div
       v-if="messageType === 'SCRIPT'"
@@ -47,6 +47,7 @@ of the MIT license. See the LICENSE file for details. -->
 import { BAlert, BButton } from 'bootstrap-vue';
 import QRCodeGenerator from 'qrcode-generator';
 import { CallbackType } from '@forgerock/javascript-sdk';
+import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 
 export default {
   name: 'TextOutputCallback',
@@ -54,6 +55,9 @@ export default {
     BAlert,
     BButton,
   },
+  mixins: [
+    TranslationMixin,
+  ],
   props: {
     callback: {
       type: Object,
