@@ -994,8 +994,8 @@
       "errorSaving": "Error saving email template",
       "errorDeleting": "Error deleting email template",
       "errorCreating": "Error creating email template",
-      "successDelete":"Successfully deleted email template.",
-      "successSaving":"Successfully saved email template.",
+      "successDelete": "Successfully deleted email template.",
+      "successSaving": "Successfully saved email template.",
       "createModal": {
         "title": "New Template",
         "name": "Template Name",
@@ -1062,7 +1062,7 @@
       "confirm": "Delete template",
       "noTemplatesTitle": "You haven't added any email templates yet"
     },
-    "addLocale":{
+    "addLocale": {
       "description": "Enter the ISO 639-1 code for the language you are adding.",
       "title": "Add a Locale"
     },
