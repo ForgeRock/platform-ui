@@ -29,8 +29,7 @@ export default {
         accountCardTabActiveColor: '#e4f4fd',
         accountCardTabActiveBorderColor: '#109cf1',
         accountCardTextColor: '#5e6d82',
-        accountFooter: `<div class="d-flex justify-content-center py-4 w-100"><span class="pr-1">© ${new Date().getFullYear()}</span>
-<a href="#" target="_blank" class="text-body">My Company, Inc</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Privacy Policy</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Terms & Conditions</a></div>`,
+        accountFooter: `<div class="d-flex justify-content-center py-4 w-100"><span class="pr-1">© ${new Date().getFullYear()}</span>\n<a href="#" target="_blank" class="text-body">My Company, Inc</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Privacy Policy</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Terms & Conditions</a></div>`,
         accountFooterEnabled: false,
         accountNavigationBackgroundColor: '#ffffff',
         accountNavigationTextColor: '#455469',
@@ -45,8 +44,7 @@ export default {
         journeyCardShadow: 3,
         journeyCardTextColor: '#5e6d82',
         journeyCardTitleColor: '#23282e',
-        journeyFooter: `<div class="d-flex justify-content-center py-4 w-100"><span class="pr-1">© ${new Date().getFullYear()}</span>
-<a href="#" target="_blank" class="text-body">My Company, Inc</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Privacy Policy</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Terms & Conditions</a></div>`,
+        journeyFooter: `<div class="d-flex justify-content-center py-4 w-100"><span class="pr-1">© ${new Date().getFullYear()}</span>\n<a href="#" target="_blank" class="text-body">My Company, Inc</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Privacy Policy</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Terms & Conditions</a></div>`,
         journeyFooterEnabled: false,
         journeyHeader: '<div class="d-flex justify-content-center py-4 flex-grow-1">Header Content</div>',
         journeyHeaderEnabled: false,
@@ -106,8 +104,8 @@ export default {
   methods: {
     /**
      * Sets up the current theme based on whether we are using tree, org, existing tree etc.
-     * @param {String} realm - The current realm
-     * @param {Object} themeOptions - the tree/themeId/org/etc data we are using to find the correct theme
+     * @param {string} realm - The current realm
+     * @param {object} themeOptions - the tree/themeId/org/etc data we are using to find the correct theme
      */
     setTheme(realm, themeOptions) {
       const idmRequestService = this.getRequestService({
@@ -232,7 +230,7 @@ export default {
     },
     /**
      * Save a theme if it doesn't exist or update an existing theme
-     * @param {Object} themesConfig - config metadata of themes
+     * @param {object} themesConfig - config metadata of themes
      */
     saveTheme(themesConfig) {
       themesConfig.realm[this.realm] = sortBy(themesConfig.realm[this.realm], 'name');
@@ -264,6 +262,47 @@ export default {
       });
       this.themesConfig = themesConfig;
       this.realmThemeNames = themesConfig.realm[realm].map((theme) => ({ text: theme.name, value: theme._id, logo: theme.logoProfileCollapsed }));
+    },
+    /**
+      * Get the string value from the default locale for the localized hosted pages object
+      * @param {string|object} data object containing locale codes or just a string
+      * @param {string} locale i18n stored default locale string
+      * @param {string|string[]} fallbackLocale i18n stored fallback string or array of strings
+      * @returns {string} localized string
+      */
+    getLocalizedString(data, locale, fallbackLocale) {
+      if (!data) {
+        return '';
+      }
+
+      // No localization
+      if (typeof data === 'string') {
+        return data;
+      }
+
+      // We have a locale and the locale is part of the object
+      if (locale && Object.keys(data).includes(locale)) {
+        return data[locale];
+      }
+
+      // We have a fallbackLocale and that locale is a string, and is part of the object
+      if (fallbackLocale
+        && !Array.isArray(fallbackLocale)
+        && Object.keys(data).includes(fallbackLocale)) {
+        return data[fallbackLocale];
+      }
+
+      // We have a fallbackLocale and that locale is an array, and is part of the object
+      if (fallbackLocale
+        && Array.isArray(fallbackLocale)) {
+        const arrayLocale = fallbackLocale.find((item) => Object.keys(data).includes(item));
+        if (arrayLocale) {
+          return data[arrayLocale];
+        }
+      }
+
+      // Finally... just use the first index
+      return data[Object.keys(data)[0]];
     },
   },
 };

@@ -5,7 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <FrLayout
-      :footer="accountFooter"
+      :footer="getLocalizedString(accountFooter, i18n.locale, i18n.fallbackLocale)"
       :is-enduser="true"
       :is-fraas="$store.state.isFraas"
       :menu-items="menuItems"
@@ -40,7 +40,7 @@ import ValidationRules from '@forgerock/platform-shared/src/utils/validationRule
 import FrLayout from '@forgerock/platform-shared/src/components/Layout';
 import { getIdmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
 import ThemeInjector from '@forgerock/platform-shared/src/components/ThemeInjector/';
-import i18n from './i18n';
+import i18n from '@/i18n';
 import './scss/main.scss';
 
 export default {
@@ -71,6 +71,7 @@ export default {
   },
   data() {
     return {
+      i18n,
       menuItems: [
         {
           routeTo: { name: 'Dashboard' },
