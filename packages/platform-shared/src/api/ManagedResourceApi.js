@@ -51,9 +51,9 @@ export function getManagedResourceList(resourceName, params) {
   return generateIdmApi().get(resourceUrl);
 }
 
-export function postManagedResource(resourceName, data) {
+export function postManagedResource(resourceName, data, routeToForbidden = true) {
   const resourceUrl = `/managed/${resourceName}?_action=create`;
-  return generateIdmApi().post(resourceUrl, data);
+  return generateIdmApi(null, routeToForbidden).post(resourceUrl, data);
 }
 
 export function getLinkedApplications(resourceName, userId) {
