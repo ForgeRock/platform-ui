@@ -18,6 +18,7 @@ const defaultState = {
   returnRouteText: '',
   uiConfig: null,
   hasAmUrl: false,
+  showEsvUi: false,
 };
 
 const mutations = {
@@ -61,6 +62,14 @@ const mutations = {
 
   setCurrentPackage(state, newValue) {
     state.currentPackage = newValue;
+  },
+
+  setFeatureFlags(state, env) {
+    if (env.VUE_APP_FRAAS === 'true') {
+      if (env.VUE_APP_SHOW_ESV_UI) {
+        state.showEsvUi = env.VUE_APP_SHOW_ESV_UI === 'true' || env.VUE_APP_SHOW_ESV_UI === true;
+      }
+    }
   },
 };
 
