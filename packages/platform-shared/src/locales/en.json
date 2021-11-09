@@ -214,6 +214,7 @@
       "alphaNumericLowerCaseOnly": "Can only contain lower case alphanumeric characters",
       "alphaNumericDashOnly": "Can only contain alphanumeric characters, dashes or underscores",
       "dateFormat": "Invalid date format",
+      "excluded": "This {_field_} already exists.",
       "noSpace": "Cannot start or end with the space character",
       "url": "Must be a valid URL",
       "urlWithPath": "Please provide a valid URL that contains a path",
@@ -287,6 +288,7 @@
   },
   "locale": {
     "addLocale": "Add Locale",
+    "specifyLocale": "Specify a Locale",
     "localeTitle": "Locale"
   },
   "navbar": {
@@ -573,7 +575,7 @@
   "centerCard": {
     "logoAltText": "ForgeRock logo"
   },
-  "dataTable" : {
+  "dataTable": {
     "dropdownMenuOptions": "Dropdown Menu Options"
   },
   "sideMenu": {
@@ -608,7 +610,7 @@
     "successClearingSessions": "Sessions ended"
   },
   "listResource": {
-    "noManaged":  "No {capitalizedResourceName} Found",
+    "noManaged": "No {capitalizedResourceName} Found",
     "searchHelp": "Use the search box above to find a {resourceName}.",
     "searchInProgressText": "Type at least {queryThreshold} characters",
     "searchActiveText": "Press Enter",

@@ -64,6 +64,13 @@ export function getRules(i18n) {
     message: i18n.t('common.policyValidationMessages.VALID_EMAIL_ADDRESS_FORMAT'),
   };
 
+  // Excluded rule
+  // errors if input value matches the array of excluded strings
+  const excluded = {
+    ...rules.excluded,
+    message: i18n.t('common.policyValidationMessages.excluded'),
+  };
+
   /**
    * GCP managed certificate API rule
    * errors if input value does not contain a period, does not have alphanumeric as first char,
@@ -203,6 +210,7 @@ export function getRules(i18n) {
     alpha_num_lower,
     date_format,
     email,
+    excluded,
     google_cloud_platform_certificate_validation,
     json,
     max,
