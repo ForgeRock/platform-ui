@@ -16,7 +16,7 @@ import getFQDN from '../utils/getFQDN';
   *
   * @returns {AxiosInstance}
   */
-export function generateIdmApi(requestOverride = {}) {
+export function generateIdmApi(requestOverride = {}, routeToForbidden = true) {
   const requestDetails = {
     baseURL: store.state.SharedStore.idmBaseURL,
     timeout: 5000,
@@ -38,7 +38,7 @@ export function generateIdmApi(requestOverride = {}) {
     // in that scenario. This check should be removed when a workaround has been found.
     const resUrl = new URL(getFQDN(error.response.config.url));
     if (resUrl.pathname !== '/openidm/config/managed' && window.location.hash !== '#/journeys' && store.state.SharedStore.currentPackage !== 'enduser') {
-      if (error.response.status === 403) {
+      if (routeToForbidden && error.response.status === 403) {
         window.location.hash = '#/forbidden';
         window.location.replace(window.location);
       }
