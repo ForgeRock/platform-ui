@@ -127,11 +127,12 @@ of the MIT license. See the LICENSE file for details. -->
       color: {{ theme.journeyInputTextColor || '#23282e' }} !important;
       }
 
-      button span {
+      <!-- Styling for buttons within form label group inputs -->
+      .form-label-group button span {
       color: {{ theme.journeyInputTextColor || '#23282e' }} !important;
       }
 
-      label {
+      .form-label-group label {
       color: {{ theme.journeyInputLabelColor || '#5e6d82' }} !important;
       }
     </Component>
