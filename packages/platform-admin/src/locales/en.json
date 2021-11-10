@@ -4,7 +4,6 @@
     "BulkImport": "Import",
     "ConfigureManaged": "Configure Managed",
     "Connect": "Connect",
-    "Consent": "Consent",
     "EditApplication": "Edit Application",
     "EditConnectorServer": "Edit Connector Server",
     "EditEmailTemplate": "Edit Email Template",
@@ -22,14 +21,14 @@
     "ManagedObjectSettings": "Managed Object Settings",
     "PasswordPolicy": "Password Policy",
     "Profile": "Profile",
-    "Realm": "Realm Settings"
+    "Realm": "Realm Settings",
+    "TermsAndConditions": "Terms & Conditions"
   },
   "pageTitles": {
     "Applications": "Applications",
     "BulkImport": "Bulk Import",
     "ConfigureManaged": "Configure Managed",
     "Connect": "Connect",
-    "Consent": "Terms & Conditions",
     "Cors": "CORS",
     "Dashboard": "Dashboard",
     "EditApplication": "Edit Application",
@@ -61,7 +60,8 @@
     "Realm": "Realm",
     "Scripts": "Scripts",
     "TenantAdmins": "Tenant Admins",
-    "TenantSettings": "Tenant Settings"
+    "TenantSettings": "Tenant Settings",
+    "TermsAndConditions": "Terms & Conditions"
   },
   "sideMenu": {
     "accessManagement": "Access Management",
@@ -1194,7 +1194,7 @@
       }
     }
   },
-  "consent": {
+  "termsAndCondtions": {
     "title": "Terms & Conditions",
     "subTitle": "Configure versioned terms & conditions to track and manage user consent.",
     "newVersion": "New Version",
