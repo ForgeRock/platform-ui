@@ -28,6 +28,7 @@ import SessionCheck from 'oidcsessioncheck';
 import VueSanitize from 'vue-sanitize';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import overrideTranslations, { setLocales } from '@forgerock/platform-shared/src/utils/overrideTranslations';
+import parseSub from '@forgerock/platform-shared/src/utils/OIDC';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import store from '@/store';
 import router from './router';
@@ -223,7 +224,8 @@ const addAppAuth = () => {
       [store.state.SharedStore.idmBaseURL]: 'fr:idm:*',
     },
     tokensAvailableHandler(claims) {
-      store.commit('UserStore/setUserSearchAttribute', claims.sub);
+      const sub = parseSub(claims);
+      store.commit('UserStore/setUserSearchAttribute', sub);
       // if there is a post_logout_url claim set postLogoutUrlClaim here for use in window.logout()
       postLogoutUrlClaim = claims.post_logout_url;
       const sessionCheck = new SessionCheck({
