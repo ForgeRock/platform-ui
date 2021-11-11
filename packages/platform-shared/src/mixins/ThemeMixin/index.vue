@@ -236,7 +236,7 @@ export default {
       themesConfig.realm[this.realm] = sortBy(themesConfig.realm[this.realm], 'name');
       return putConfig('ui/themerealm', themesConfig).then(({ data }) => {
         this.setThemeData(data, this.realm);
-        this.displayNotification('AdminMessage', 'success', this.$t('hostedPages.successSave'));
+        this.displayNotification('AdminMessage', 'success', this.$t('hostedPages.theme.successSave'));
       }).catch((error) => {
         this.showErrorMessage(error, this.$t('hostedPages.errorSavingTheme'));
       });

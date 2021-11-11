@@ -118,22 +118,9 @@
     }
   },
   "hostedPages": {
-    "configurationLoadingFail": "Configuration Not Found",
-    "copyOfTheme": "Copy of {themeName}",
-    "createModalDescription": "Name for this theme.",
-    "duplicateThemeTitle": "Duplicate Theme",
-    "description": "Create custom-branded themes to apply to customer authentication journeys and account management pages.",
-    "defaultRealm": "Realm Default",
-    "errorDeletingTheme": "There was an error deleting a theme",
-    "errorRetrievingList": "There was an error retrieving the list of themes.",
-    "errorSavingTheme": "There was an error saving a theme",
-    "modalThemeName": "Name",
-    "newTheme": "New Theme",
-    "noHostedPagesText": "There are no themes matching the search term.",
-    "setAsRealmDefault": "Set as Realm Default",
-    "successDelete": "Theme successfully deleted",
-    "successSave": "Theme successfully saved",
-    "themeName": "Theme Name",
+    "settings": {
+      "description": "Activate or deactivate hosted account and delegated administration pages."
+    },
     "title": "Hosted Pages",
     "theme": {
       "accountPages": "Account Pages",
@@ -195,11 +182,19 @@
         "userCompany": "Company",
         "username": "Username"
       },
+      "configurationLoadingFail": "Configuration Not Found",
       "confirmResetModal": {
         "title": "Reset Theme",
         "confirmation": "Are you sure you want to reset your theme?"
       },
+      "copyOfTheme": "Copy of {themeName}",
+      "createModalDescription": "Name for this theme.",
+      "description": "Create custom-branded themes to apply to customer authentication journeys and account management pages.",
+      "duplicateThemeTitle": "Duplicate Theme",
       "editCode": "Edit Code",
+      "errorDeletingTheme": "There was an error deleting a theme",
+      "errorRetrievingList": "There was an error retrieving the list of themes.",
+      "errorSavingTheme": "There was an error saving a theme",
       "footer": "Footer",
       "global": {
         "brandColor": "Brand Colors",
@@ -286,6 +281,9 @@
         "managedObjectSubtitle": "username",
         "resetManagedObject": "Reset Password"
       },
+      "modalThemeName": "Name",
+      "newTheme": "New Theme",
+      "noHostedPagesText": "There are no themes matching the search term.",
       "profilePage": {
         "mockEmail": "bjensen@example.com",
         "mockName": "Barbara Jensen",
@@ -295,13 +293,17 @@
         "trustedDevicesPlaceholder": "(Trusted devices will appear here)",
         "socialPlaceholder": "(Social identity providers will appear here)"
       },
+      "realmDefault": "Realm Default",
       "saveBeforeLeavingModal": {
         "leaveWithoutSaving": "Leave Without Saving",
         "content": "There are unsaved changes. Would you like to save these before leaving?",
         "reallyLeave": "Really Leave?",
         "saveAndLeave": "Save and Leave"
       },
-      "styles": "Styles"
+      "setAsRealmDefault": "Set as Realm Default",
+      "styles": "Styles",
+      "successDelete": "Theme successfully deleted",
+      "successSave": "Theme successfully saved"
     }
   },
   "journey": {
@@ -428,6 +430,7 @@
       "getTableDataFail": "Failed to load identity profiless"
     },
     "managedObjectSettings": {
+      "configurationLoadingFail": "Configuration Not Found",
       "minimumCharacters": "Minimum Characters",
       "minimumFilter": "minimumFilter",
       "minimumFilterDescription": "Minimum number of characters required to search.",
