@@ -110,4 +110,26 @@ describe('Login.vue', () => {
       expect(await wrapper.vm.verifyGotoUrlAndRedirect(successURL, realm)).toEqual(goto);
     });
   });
+
+  it('Sets page title if url hash includes "service" or authIndexType && authIndexValue params', () => {
+    const windowHash = '#/service/ResetPassword';
+    const windowHashWithParams = '#/service/Login?goto=https%3A%2F%2Fdefault.iam.example.com';
+    const windowSearch = '&authIndexType=service&authIndexValue=Registration';
+    const URLSearchParams = {
+      get: (param) => {
+        if (param === 'authIndexType') return 'service';
+        if (param === 'authIndexValue') return 'Registration';
+        return null;
+      },
+    };
+
+    wrapper.vm.setPageTitle(windowSearch, URLSearchParams);
+    expect(document.title).toEqual('Registration');
+
+    wrapper.vm.setPageTitle(windowHash);
+    expect(document.title).toEqual('ResetPassword');
+
+    wrapper.vm.setPageTitle(windowHashWithParams);
+    expect(document.title).toEqual('Login');
+  });
 });
