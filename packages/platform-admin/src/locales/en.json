@@ -330,6 +330,7 @@
     "journeyEditSuccess": "\"{treeId}\" journey successfully updated.",
     "defaultJourneyUpdated": "\"{treeId}\" successfully set as Default Journey.",
     "noJourney": "You haven't created any journeys",
+    "noJourneySearchResults": "There are no journeys matching the search term.",
     "noJourneySubtitle": "Configure journeys to allow users to sign in, register and perform self-service functions like reset their password or recover their username.",
     "noAuthServicesMessage": "Sign in users to your application by creating journeys",
     "overrideThemeCheckboxTitle": "Override theme",
