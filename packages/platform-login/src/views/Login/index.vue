@@ -648,6 +648,8 @@ export default {
         return `${ampersand}${stringParams}`;
       };
 
+      this.setPageTitle(hash, params);
+
       if (realm) params.delete('realm');
       // arg query parameter handled in checkNewSession method
       if (params.get('arg') === 'newsession') params.delete('arg');
@@ -1097,6 +1099,39 @@ export default {
     },
     setRealm(config) {
       this.realm = config ? config.data.realm : '/';
+    },
+    /**
+     * Sets page title depending on the journey service type
+     *
+     * @param {String} hash - window.location.hash
+     * @param {Oject} params - params.get(string)
+     *
+     */
+    setPageTitle(hash, params) {
+      // For the following registration url params:
+      // &authIndexType=service&authIndexValue=Registration
+      if (params && params.get('authIndexType') === 'service' && params.get('authIndexValue')) {
+        document.title = params.get('authIndexValue');
+
+      // For the following registration url:
+      // #/service/Registration
+      } else if (hash.includes('service')) {
+        const hashSplit = hash.split('/');
+        const serviceIndex = hashSplit.indexOf('service');
+        // makes sure that the hashSplit array has at least one more element after 'service'
+        const serviceValueExists = (serviceIndex + 2) >= hashSplit.length;
+
+        if (serviceIndex !== -1 && serviceValueExists) {
+          const title = hashSplit[serviceIndex + 1];
+          // in the event that the remaining url contains query params
+          if (title.includes('?')) {
+            const titleSplitByParam = title.split('?')[0];
+            document.title = titleSplitByParam;
+          } else {
+            document.title = title;
+          }
+        }
+      }
     },
   },
 };
