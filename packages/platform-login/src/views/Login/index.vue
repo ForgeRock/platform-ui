@@ -834,9 +834,15 @@ export default {
       }
       const stepParams = {
         query: {},
-        tree: this.authIndexValue || this.$route.params.tree || paramsObj.authIndexValue || undefined,
+        tree: this.authIndexValue || this.$route.params.tree || undefined,
         realmPath: this.realm,
       };
+
+      // Set the SDK tree property from the URL if a tree is being accessed and none of the other local variables have defined one
+      if (paramsObj.authIndexType === 'service' && paramsObj.authIndexValue && typeof stepParams.tree === 'undefined') {
+        stepParams.tree = paramsObj.authIndexValue;
+      }
+
       // remove tree from stepParams when undefined
       if (stepParams.tree === undefined || stepParams.tree === 'undefined') {
         delete stepParams.tree;
