@@ -14,9 +14,11 @@ function fillOutRegistrationForm(fieldData) {
       .type(field.text);
   });
 
-  cy.findAllByRole('listbox').first().select('What\'s your favorite color?');
+  cy.findAllByRole('listbox').first().click();
+  cy.findAllByText('What\'s your favorite color?').first().click();
   cy.findAllByPlaceholderText('Answer').first().clear().type('orange');
-  cy.findAllByRole('listbox').last().select('Who was your first employer?');
+  cy.findAllByRole('listbox').last().click();
+  cy.findAllByText('Who was your first employer?').last().click();
   cy.findAllByPlaceholderText('Answer').last().clear().type('ForgeRock');
 }
 
