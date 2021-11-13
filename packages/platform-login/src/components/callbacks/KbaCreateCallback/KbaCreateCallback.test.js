@@ -36,8 +36,8 @@ describe('KbaCreateCallback.vue', () => {
     const customQuestionOption = { value: 'custom', text: 'Provide your own:', disabled: false };
     expect(wrapper.vm.$data.options).toEqual([
       placeholder,
-      'Favorite color?',
-      'Favorite planet?',
+      { value: 'Favorite color?', text: 'Favorite color?' },
+      { value: 'Favorite planet?', text: 'Favorite planet?' },
       customQuestionOption,
     ]);
   });

@@ -27,14 +27,15 @@ of the MIT license. See the LICENSE file for details. -->
     </p>
 
     <ValidationObserver ref="observer">
-      <BFormSelect
-        :aria-label="callback.getPrompt()"
+      <FrField
         v-model="selected"
         class="mb-2 kbaQuestionSelect"
         role="listbox"
+        type="select"
+        :name="callback.getPrompt()"
         :id="questionModel.key + '_selector'"
         :options="options"
-        @change="onQuestionSelectionChange()" />
+        @input="onQuestionSelectionChange()" />
       <FrField
         v-if="showCustom"
         v-model="questionModel.value"
@@ -62,7 +63,6 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   map,
 } from 'lodash';
-import { BFormSelect } from 'bootstrap-vue';
 import { ValidationObserver } from 'vee-validate';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
@@ -71,7 +71,6 @@ import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationM
 export default {
   name: 'KbaCreateCallback',
   components: {
-    BFormSelect,
     ValidationObserver,
     FrField,
     FrIcon,
@@ -123,7 +122,7 @@ export default {
       // then add custom question option to the list of questions
       this.options = [
         placeholder,
-        ...predefinedQuestions,
+        ...predefinedQuestions.map((question) => ({ text: question, value: question })),
         customQuestionOption,
       ];
     },
