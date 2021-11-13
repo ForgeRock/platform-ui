@@ -109,6 +109,7 @@ of the MIT license. See the LICENSE file for details. -->
     <Component
       :is="'style'"
       v-if="!isEnduser">
+      <!-- login card themes -->
       .card,
       .journey-card {
       background-color: {{ theme.journeyCardBackgroundColor || '#ffffff' }} !important;
@@ -116,19 +117,41 @@ of the MIT license. See the LICENSE file for details. -->
       box-shadow: rgb(0 0 0 / 13%) 0px 1px {{ theme.journeyCardShadow !== undefined ? theme.journeyCardShadow : 3 }}px;
       }
 
+      <!-- login card title -->
       .card .h2,
       .journey-card .h2 {
       color: {{ theme.journeyCardTitleColor || '#23282e' }};
       }
 
-      input {
+      <!-- login input and select fields -->
+      input,
+      .multiselect .multiselect__tags,
+      .multiselect .multiselect__select,
+      .multiselect .multiselect__select::before {
       background-color: {{ theme.journeyInputBackgroundColor || '#ffffff' }} !important;
       border-color: {{ theme.journeyInputBorderColor || '#c0c9d5' }} !important;
       color: {{ theme.journeyInputTextColor || '#23282e' }} !important;
       }
 
+      .multiselect .multiselect__element {
+      background-color: {{ theme.journeyInputBackgroundColor || '#ffffff' }} !important;
+      color: {{ theme.journeyInputTextColor || '#23282e' }} !important;
+      }
+
+      .multiselect .multiselect__content-wrapper {
+      border-color: {{ theme.journeyInputBorderColor || '#c0c9d5' }} !important;
+      }
+
+      .multiselect .multiselect__option--highlight,
+      .multiselect .multiselect__option--selected {
+      background-color: {{ theme.primaryOffColor }} !important;
+      }
+
       <!-- Styling for buttons within form label group inputs -->
-      .form-label-group button span {
+      .form-label-group button span,
+      .form-label-group input::placeholder,
+      .multiselect__placeholder,
+      .multiselect__single {
       color: {{ theme.journeyInputTextColor || '#23282e' }} !important;
       }
 
@@ -171,6 +194,7 @@ of the MIT license. See the LICENSE file for details. -->
       background-color: inherit;
       color: inherit;
       }
+
       .fr-logo.fr-logo-vertical {
       background-image: url("{{ theme.logoProfileCollapsed ? theme.logoProfileCollapsed : require('@forgerock/platform-shared/src/assets/images/placeholder.svg') }}");
       height: {{ theme.logoProfileCollapsed ? theme.logoProfileHeight : theme.logoHeight }}px;
