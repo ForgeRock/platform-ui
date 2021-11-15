@@ -38,6 +38,7 @@ of the MIT license. See the LICENSE file for details. -->
       :readonly="readonly"
       :type="fieldType"
       :aria-label="getTranslation(label)"
+      :autocomplete="$attrs.autocomplete"
       @input="evt=>inputValue=evt.target.value"
       @animationstart="animationStart">
     <template #defaultButtons>
