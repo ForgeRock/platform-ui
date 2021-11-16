@@ -562,7 +562,7 @@ export default {
           index,
           // if the app isn't loading update existing component props
           key: this.loading ? keyFromDate += 1 : this.componentList[i].key,
-          listeners: this.getListeners({ callback }, listeners),
+          listeners: this.getListeners({ callback, index }, listeners),
           type: this.$options.components[`Fr${type}`]
             ? `Fr${type}`
             : 'FrField',
@@ -576,7 +576,7 @@ export default {
           component.callbackSpecificProps = {
             errors, label, name, type: fieldType, value,
           };
-          component.listeners = this.getListeners({ callback }, ['input']);
+          component.listeners = this.getListeners({ callback, index }, ['input']);
         }
 
         const hideNextButtonCallbacks = [
@@ -783,12 +783,12 @@ export default {
      * @param {Array} listenerArray array of string names to populate component listeners
      * @returns {Object} returns object populated with specified listener functions
      */
-    getListeners({ callback }, listenerArray = []) {
+    getListeners({ callback, index }, listenerArray = []) {
       const listeners = {
         'did-consent': (consent) => {
           this.step.callbacks.forEach((callbackItem) => { callbackItem.setInputValue(consent); });
         },
-        'disable-next-button': (bool, index) => {
+        'disable-next-button': (bool) => {
           this.nextButtonDisabledArray.splice(index, 1, bool);
         },
         'has-scripts': (appendScript) => {
@@ -824,9 +824,9 @@ export default {
           if (callback && callback.setInputValue) {
             callback.setInputValue(value);
             if (value) {
-              this.nextButtonDisabledArray.splice(callback.payload._id + 1, 1, false);
+              this.nextButtonDisabledArray.splice(index, 1, false);
             } else if (this.isCallbackRequired(callback)) {
-              this.nextButtonDisabledArray.splice(callback.payload._id + 1, 1, true);
+              this.nextButtonDisabledArray.splice(index, 1, true);
             }
           }
         },
