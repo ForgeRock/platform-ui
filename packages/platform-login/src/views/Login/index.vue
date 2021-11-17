@@ -44,6 +44,12 @@ of the MIT license. See the LICENSE file for details. -->
                   class="p-3 text-left">
                   {{ getTranslation(errorMessage) }}
                 </FrAlert>
+                <div
+                  v-if="loginFailure && linkToTreeStart">
+                  <a :href="linkToTreeStart">
+                    {{ $t('login.sessionTimeoutLink') }}
+                  </a>
+                </div>
                 <div id="body-append-el">
                   <!-- for backend scripts -->
                   <form
@@ -155,6 +161,12 @@ of the MIT license. See the LICENSE file for details. -->
                   class="p-3 text-left">
                   {{ getTranslation(errorMessage) }}
                 </FrAlert>
+                <div
+                  v-if="loginFailure && linkToTreeStart">
+                  <a :href="linkToTreeStart">
+                    {{ $t('login.sessionTimeoutLink') }}
+                  </a>
+                </div>
                 <div id="body-append-el">
                   <!-- for backend scripts -->
                   <form
@@ -369,6 +381,7 @@ export default {
       errorMessage: '',
       header: '',
       hiddenValueCallbacksRefs: [],
+      linkToTreeStart: '',
       loading: true,
       loginFailure: false,
       nextButtonDisabledArray: [],
@@ -757,6 +770,14 @@ export default {
       };
     },
     /**
+     * @description Used to get link to start of tree from stepParams
+     * @param {Object} stepParams desctuctured object containing tree, realmPath strings
+     * @returns {string} returns string url
+     */
+    getLinkToTreeStart({ tree, realmPath }) {
+      return `/am/XUI/?realm=${realmPath}&authIndexType=service&authIndexValue=${tree}`;
+    },
+    /**
      * @description Used to get listeners for callback components
      * @param {Object} properties object of any properties needed to have listeners context
      * @param {Array} listenerArray array of string names to populate component listeners
@@ -914,7 +935,10 @@ export default {
      * @returns {Boolean}
      */
     isSessionTimedOut(payload) {
-      return payload.detail && payload.detail.errorCode === '110';
+      return (
+        (payload.detail && payload.detail.errorCode === '110')
+        || (this.suspendedId && payload.code.toString() === '401')
+      );
     },
     /**
      * @description Gets callbacks needed for authentication when this.step is undefined, and submits callback values when
@@ -931,6 +955,7 @@ export default {
         this.hiddenValueCallbacksRefs = [];
       }
       this.loginFailure = false;
+      this.linkToTreeStart = '';
 
       // invoke callbacks before nextStep
       this.nextStepCallbacks.forEach((cb) => { cb(); });
@@ -1004,6 +1029,10 @@ export default {
               if (this.retry && this.isSessionTimedOut(step.payload)) {
                 this.retry = false;
                 this.retryWithNewAuthId(previousStep, stepParams);
+              } else if (this.suspendedId && this.isSessionTimedOut(step.payload)) {
+                this.errorMessage = step.payload.message || this.$t('login.loginFailure');
+                this.linkToTreeStart = this.getLinkToTreeStart(stepParams);
+                this.loading = false;
               } else {
                 this.errorMessage = step.payload.message || this.$t('login.loginFailure');
                 this.redirectToFailure(step);
