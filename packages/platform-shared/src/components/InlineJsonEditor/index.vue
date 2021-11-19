@@ -61,14 +61,23 @@ export default {
     VuePrismEditor,
   },
   props: {
+    /**
+     * JSON value to edit
+     */
     value: {
       type: Array,
       default: () => '',
     },
+    /**
+     * Number of lines of JSON
+     */
     lineCount: {
       type: Number,
       default: () => 1,
     },
+    /**
+     * Disables editing
+     */
     readOnly: {
       type: Boolean,
       default: () => true,
@@ -96,6 +105,9 @@ export default {
   },
   methods: {
     blurOnEscape,
+    /**
+     * Input handler. Validates JSON and enables save button accordingly.
+     */
     validateCurrentJson(newValue) {
       try {
         const field = JSON.parse(newValue);

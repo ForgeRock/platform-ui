@@ -102,6 +102,9 @@ export default {
     FrIcon: Icon,
   },
   props: {
+    /**
+     * Text displayed for option to add
+     */
     addRowText: {
       type: String,
       default() {
@@ -109,6 +112,9 @@ export default {
       },
       required: false,
     },
+    /**
+     * Add button label
+     */
     addLabel: {
       type: String,
       default() {
@@ -116,6 +122,9 @@ export default {
       },
       required: false,
     },
+    /**
+     * Edit button label
+     */
     editLabel: {
       type: String,
       default() {
@@ -123,6 +132,9 @@ export default {
       },
       required: false,
     },
+    /**
+     * Show edit button when dropdown is closed
+     */
     showCollapsedEdit: {
       type: Boolean,
       default: false,

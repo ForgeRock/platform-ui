@@ -63,12 +63,18 @@ export default {
     NotificationMixin,
   ],
   props: {
+    /**
+     * Schema for field
+     */
     uiSchema: {
       type: Object,
       default() {
         return {};
       },
     },
+    /**
+     * Path to property in model
+     */
     path: {
       type: String,
       default: '',
