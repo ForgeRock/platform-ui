@@ -64,9 +64,9 @@ import {
   BButton,
   BCard,
 } from 'bootstrap-vue';
-import EditPersonalInfo from '@forgerock/platform-shared/src/components/profile/EditPersonalInfo';
+import FrEditPersonalInfo from '@forgerock/platform-shared/src/components/profile/EditPersonalInfo';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import ImageModal from './ImageModal';
+import FrImageModal from './ImageModal';
 
 /**
  * Edit profile card that handles image updating and profile management based on proper configuration
@@ -77,42 +77,60 @@ export default {
     BAvatar,
     BButton,
     BCard,
+    FrEditPersonalInfo,
     FrIcon,
-    FrEditPersonalInfo: EditPersonalInfo,
-    FrImageModal: ImageModal,
+    FrImageModal,
   },
   props: {
+    /**
+     * Main header below profile image
+     */
     header: {
       type: String,
       default: '',
     },
+    /**
+     * Profile information
+     */
     profile: {
       type: Object,
       default: () => {},
     },
+    /**
+     * Schema data for profile
+     */
     schema: {
       type: Object,
       default: () => {},
     },
+    /**
+     * Secondary header below profile image
+     */
     secondaryHeader: {
       type: String,
       default: '',
     },
+    /**
+     * Show button that opens modal to edit profile information
+     */
     showEdit: {
       type: Boolean,
       default: true,
     },
+    /**
+     * Show button to upload profile image
+     */
     showImageUpload: {
       type: Boolean,
       default: false,
     },
+    /**
+     * Profile image source
+     */
     profileImage: {
       type: String,
       default: '',
     },
-  },
-  data() {
-    return {};
   },
   methods: {
     updateProfile(payload, config = {}) {

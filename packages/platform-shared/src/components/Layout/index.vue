@@ -119,6 +119,9 @@ export default {
       type: String,
       default: '',
     },
+    /**
+     * Is this component being used in enduser
+     */
     isEnduser: {
       type: Boolean,
       default: false,
