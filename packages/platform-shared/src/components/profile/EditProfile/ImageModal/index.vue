@@ -101,6 +101,10 @@ import {
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 
+/**
+ * A modal which shows the current profile picture and provides an input to update or remove the image
+ * Also contains tips on the suggested aspect ratio
+ */
 export default {
   name: 'ImageModal',
   components: {
@@ -115,6 +119,9 @@ export default {
     FrIcon,
   },
   props: {
+    /**
+     * URL of profile image
+     */
     profileImage: {
       type: String,
       default: '',
@@ -128,6 +135,9 @@ export default {
     };
   },
   methods: {
+    /**
+     * Update or remove a profile image
+     */
     saveProfileImage() {
       if (this.imageURL.length === 0) {
         this.$emit('updateProfileImage', [{
@@ -144,6 +154,9 @@ export default {
 
       this.hideModal();
     },
+    /**
+     * Hide profile image modal
+     */
     hideModal() {
       this.$refs.profileImageModal.hide();
     },

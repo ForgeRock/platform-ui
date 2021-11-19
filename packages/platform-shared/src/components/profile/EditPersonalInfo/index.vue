@@ -143,18 +143,19 @@ export default {
     }),
   },
   props: {
+    /**
+     * Schema data for profile
+     */
     schema: {
       type: Object,
       required: true,
     },
+    /**
+     * Profile data
+     */
     profile: {
       type: Object,
       required: true,
-    },
-    autoOpen: {
-      type: Boolean,
-      required: false,
-      default: false,
     },
   },
   data() {
@@ -164,12 +165,12 @@ export default {
       title: this.$t('pages.profile.editProfile.userDetailsTitle'),
     };
   },
-  mounted() {
-    if (this.autoOpen) {
-      this.$root.$emit('bv::show::modal', 'userDetailsModal');
-    }
-  },
   methods: {
+    /**
+     * Get form fields from schema and profile data
+     *
+     * @returns {Object} profile fields
+     */
     generateFormFields() {
       const { order, properties, required } = this.schema;
       const filteredOrder = filter(order, (propName) => properties[propName].userEditable
@@ -188,15 +189,25 @@ export default {
 
       return formFields;
     },
+    /**
+     * Hide the modal
+     */
     hideModal() {
       this.$refs.fsModal.hide();
     },
+    /**
+     * Set the form fields for the modal. Maintain the original values for patch
+     */
     setModal() {
       const formFields = this.generateFormFields();
 
       this.formFields = formFields;
       this.originalFormFields = cloneDeep(formFields);
     },
+    /**
+     * Save the updated profile information via patch.
+     * Values are validated by backend before saving.
+     */
     async saveForm() {
       const isValid = await this.$refs.observer.validate();
       if (isValid) {
@@ -242,6 +253,12 @@ export default {
         });
       }
     },
+    /**
+     * Update form data model with a new value. Used for editing a list field
+     *
+     * @param {Number} index index of form field
+     * @param {Array} newValue new value of form field
+     */
     updateField(index, newValue) {
       this.formFields[index].value = newValue;
       this.$forceUpdate();
