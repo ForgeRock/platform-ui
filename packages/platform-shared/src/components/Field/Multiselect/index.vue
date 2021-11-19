@@ -105,6 +105,9 @@ export default {
     VueMultiSelect,
   },
   props: {
+    /**
+     * Placeholder text
+     */
     placeholder: {
       type: String,
       default: '',
@@ -116,14 +119,23 @@ export default {
       type: [Array, Object],
       default: () => [],
     },
+    /**
+     * Allow searching
+     */
     searchable: {
       type: Boolean,
       default: true,
     },
+    /**
+     * Allow tagging
+     */
     taggable: {
       type: Boolean,
       default: false,
     },
+    /**
+     * CSS class for selected values
+     */
     valueClass: {
       type: String,
       default: '',
@@ -172,6 +184,9 @@ export default {
     },
   },
   methods: {
+    /**
+     * Handler for when a tag is being added to the value
+     */
     addTag() {
       if (this.taggable && this.searchValue.length > 0) {
         this.searchValue.split(',').forEach((untrimmedVal) => {
@@ -189,6 +204,10 @@ export default {
         });
       }
     },
+    /**
+     * Handler for when the multiselect dropdown is closed.
+     * Tracks values for copying
+     */
     close() {
       const selected = this.options.map((option) => option.copySelect);
       this.addTag();
@@ -199,6 +218,9 @@ export default {
       });
       this.inputValueHandler(this.inputValue);
     },
+    /**
+     * Copy the selected options to the clipboard
+     */
     copyOptions() {
       const selectedOptions = this.inputValue
         .filter((option) => option.copySelect)
@@ -215,6 +237,11 @@ export default {
     inputValueHandler(inputValue) {
       this.floatLabels = (inputValue.length || document.activeElement === this.$refs.vms.$el.querySelector('input')) > 0 && this.label;
     },
+    /**
+     * Generate a unique id for a tag
+     *
+     * @returns tag id
+     */
     generateTagId() {
       const { nextIdTag } = this;
       this.nextIdTag += 1;
@@ -228,10 +255,23 @@ export default {
       this.$refs.vms.$el.querySelector('input').focus();
       this.floatLabels = true;
     },
+    /**
+     * Handler for when the user types in the search input.
+     * Track the value and bubble the event up.
+     *
+     * @param {String} value search text
+     */
     searchChange(value) {
       this.searchValue = value;
       this.$emit('search-change', value);
     },
+    /**
+     * Handler for when input value is updated
+     * Checks for the option in the select options and to see if new value is actually new
+     *
+     * @param {Object} newVal new input value
+     * @returns {Object} input value
+     */
     setInputValue(newVal) {
       let newInputValue = newVal;
       if (!has(newInputValue[0], 'value')) {

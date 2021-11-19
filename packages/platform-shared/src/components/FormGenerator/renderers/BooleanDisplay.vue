@@ -32,12 +32,18 @@ of the MIT license. See the LICENSE file for details. -->
 export default {
   name: 'BooleanDisplay',
   props: {
+    /**
+     * Schema for field
+     */
     uiSchema: {
       type: Object,
       default() {
         return {};
       },
     },
+    /**
+     * Path to property in model
+     */
     path: {
       type: String,
       default: '',

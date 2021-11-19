@@ -180,12 +180,14 @@ export default {
     /**
      * Validates form input, then sends event to update KBA and collapses component if successful
      */
-
     validate() {
       const valid = this.$refs.observer.validate();
       return valid;
     },
-
+    /**
+     * Handler for clicking the save button.
+     * Emits an event for patching the kba information
+     */
     onSaveKBA() {
       return this.validate()
         .then((valid) => {
