@@ -90,6 +90,9 @@ export default {
       type: Boolean,
       default: false,
     },
+    /**
+     * Use CSS styling to indicate item is clickable
+     */
     clickable: {
       type: Boolean,
       default: true,

@@ -190,6 +190,9 @@ export default {
       type: String,
       default: '',
     },
+    /**
+     * User details
+     */
     userDetails: {
       type: Object,
       default: () => ({

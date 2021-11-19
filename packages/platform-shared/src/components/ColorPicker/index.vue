@@ -84,6 +84,9 @@ export default {
       type: String,
       default: '',
     },
+    /**
+     * Text displayed under input
+     */
     description: {
       type: String,
       default: '',

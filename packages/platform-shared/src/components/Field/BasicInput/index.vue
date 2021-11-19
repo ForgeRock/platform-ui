@@ -87,7 +87,6 @@ import {
   BInputGroupAppend,
 } from 'bootstrap-vue';
 import { delay } from 'lodash';
-/* eslint-disable import/no-extraneous-dependencies */
 import * as clipboard from 'clipboard-polyfill/text';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
@@ -147,11 +146,17 @@ export default {
     },
   },
   methods: {
+    /**
+     * Toggles the display of text for a password
+     */
     revealText() {
       if (!this.disabled) {
         this.showPassword = !this.showPassword;
       }
     },
+    /**
+     * Start animation for floating labels
+     */
     animationStart() {
       const node = this.$refs.input;
       const nativeMatches = node.matches || node.msMatchesSelector;
@@ -159,9 +164,14 @@ export default {
         this.floatLabels = true;
       }
     },
+    /**
+     * Copy field value to clipboard
+     *
+     * @param {String} payload string to copy
+     */
     copyValueToClipboard(payload) {
       clipboard.writeText(payload).then(() => {
-        this.displayNotification('IDMMessages', 'success', this.$t('common.copySuccess'));
+        this.displayNotification('AdminMessage', 'success', this.$t('common.copySuccess'));
       }, (error) => {
         this.showErrorMessage(error, this.$t('common.copyFail'));
       });

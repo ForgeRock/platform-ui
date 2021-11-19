@@ -95,14 +95,23 @@ export default {
     RestMixin,
   ],
   props: {
+    /**
+     * Force api calls to go to root realm
+     */
     forceRoot: {
       type: Boolean,
       default: false,
     },
+    /**
+     * Is processing request to update KBA information
+     */
     processingRequest: {
       type: Boolean,
       default: false,
     },
+    /**
+     * Enables and disables sections of profile based on theme config
+     */
     themeSections: {
       type: Object,
       default: () => ({}),
@@ -171,6 +180,9 @@ export default {
     },
   },
   methods: {
+    /**
+     * Get journeys for updating username and password.
+     */
     setUpdateJourneys() {
       const configOptions = this.forceRoot ? { context: 'AM', realm: 'root' } : { context: 'AM' };
       this.getRequestService(configOptions).get('/selfservice/trees').then((res) => {
@@ -190,6 +202,9 @@ export default {
     sendUpdateKBA(payload, config) {
       this.$emit('updateKBA', payload, config);
     },
+    /**
+     * Get authentication device information used for mfa
+     */
     loadAuthenicationDevices() {
       const query = '_queryId=*&_fields=_id';
       const configOptions = this.forceRoot ? { context: 'AM', realm: 'root' } : { context: 'AM' };

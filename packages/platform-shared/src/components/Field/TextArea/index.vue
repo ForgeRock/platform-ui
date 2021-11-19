@@ -80,6 +80,9 @@ export default {
     },
   },
   methods: {
+    /**
+     * Handler for clicking the text area. Floats the label if possible
+     */
     onClick() {
       if (this.label && !this.readonly) {
         this.floatLabels = true;

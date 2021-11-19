@@ -168,6 +168,9 @@ export default {
     FrIcon,
   },
   props: {
+    /**
+     * Force api calls to go to root realm
+     */
     forceRoot: {
       type: Boolean,
       default: false,
@@ -188,6 +191,12 @@ export default {
     }),
   },
   methods: {
+    /**
+     * Add relevant dropdown objects for each authentication device
+     *
+     * @param {Object[]} items authentication devices
+     * @returns {Object[]} authentication devices with dropdown information for each device
+     */
     addDropdown(items) {
       return items.map((item) => {
         const dropdownEdit = {
@@ -207,9 +216,18 @@ export default {
         };
       });
     },
+    /**
+     * Get URL for managing 2FA
+     *
+     * @param {String} authType 'oauth', 'push', or 'webauthn'
+     * @returns {String} 2FA url
+     */
     get2faUrl(authType) {
       return `/users/${this.userId}/devices/2fa/${authType}`;
     },
+    /**
+     * Get all authentication devices for all types for a user
+     */
     loadAuthenicationDevices() {
       const query = '_queryId=*';
       const configOptions = this.forceRoot ? { context: 'AM', realm: 'root' } : { context: 'AM' };
@@ -231,6 +249,12 @@ export default {
           this.authenticationDevicesArray = this.addDropdown(flattenedArray);
         });
     },
+    /**
+     * Delete an authentication device from a user
+     *
+     * @param {String} authType 'oauth', 'push', or 'webauthn'
+     * @param {String} id device id to remove
+     */
     deleteDevice(authType, id) {
       const configOptions = this.forceRoot ? { context: 'AM', realm: 'root' } : { context: 'AM' };
       const selfServiceInstance = this.getRequestService(configOptions);
@@ -250,6 +274,13 @@ export default {
           }
         });
     },
+    /**
+     * Update a device with a new name
+     *
+     * @param {String} authType 'oauth', 'push', or 'webauthn'
+     * @param {String} id device id to update
+     * @param {String} newName new device name
+     */
     updateDeviceName(authType, id, newName) {
       const configOptions = this.forceRoot ? { context: 'AM', realm: 'root' } : { context: 'AM' };
       const selfServiceInstance = this.getRequestService(configOptions);
@@ -270,6 +301,14 @@ export default {
           }
         });
     },
+    /**
+     * Set data for modal based on modal type and device data
+     * Shows the modal after setting the data.
+     *
+     * @param {String} type modal type
+     * @param {Object} data device data
+     * @param {String} data.alias device name
+     */
     setModalData(type, data) {
       this.modalType = type;
       this.modalItem = { ...data };
@@ -306,6 +345,11 @@ export default {
       }
       this.$refs.fsModal.show();
     },
+    /**
+     * Handler for the primary modal button. Functionality changes based on modal type
+     *
+     * @param {type} type modal type
+     */
     handleModalPrimaryButton(type) {
       const { uuid, authType } = this.modalItem;
       const newName = this.deviceName;

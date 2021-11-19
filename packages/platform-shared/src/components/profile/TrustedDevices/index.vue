@@ -219,6 +219,9 @@ export default {
     'b-modal': VBModal,
   },
   props: {
+    /**
+     * Force api calls to go to root realm
+     */
     forceRoot: {
       type: Boolean,
       default: false,
@@ -241,6 +244,12 @@ export default {
     this.loadData();
   },
   methods: {
+    /**
+     * Parse device data to get relevent properties
+     *
+     * @param {Object} deviceData device information
+     * @returns {Object} relevant device information
+     */
     parseDevice(deviceData) {
       const ua = get(deviceData, 'metadata.browser.userAgent', '');
       const { browser, os } = ua ? UAParser(ua) : { browser: {}, os: {} };
@@ -257,6 +266,14 @@ export default {
         deviceType: get(os, 'name', '').replace(/ /g, '').toLowerCase(),
       };
     },
+    /**
+     * Parse device location to get formatted address, locality, and map
+     *
+     * @param {Object} obj
+     * @param {String} obj.latitude - location latitude
+     * @param {String} obj.longitude - location longitude
+     * @returns {Promise} Location object
+     */
     parseLocation({ latitude, longitude }) {
       return new Promise((resolve) => {
         if (latitude && longitude) {
@@ -282,9 +299,22 @@ export default {
         }
       });
     },
+    /**
+     * Sort devices by lastSelected date beginning with the most recent
+     *
+     * @param {Object[]} devices array of device objects
+     * @returns {Object[]} array of device objects sorted by lastSelectedDate
+     */
     sortDevicesByDate(devices) {
       return devices.sort((cur, next) => next.lastSelectedDate - cur.lastSelectedDate);
     },
+    /**
+     * Set modal title, button text, and data.
+     * Called when opening or closing a modal.
+     *
+     * @param {String} type set modal data according to type.
+     * @param {Object} obj.alias device alias
+     */
     setModalData(type, data) {
       this.modalType = type;
       this.modalDevice = {
@@ -309,6 +339,12 @@ export default {
           break;
       }
     },
+    /**
+     * Primary button function based on modal type
+     * 'edit' will update device name. 'remove' will remove the device
+     *
+     * @param {String} type type of modal. 'edit' or 'remove'
+     */
     handleModalPrimaryButton(type) {
       const { id, index } = this.modalDevice;
       const newAlias = this.editModal;
@@ -318,6 +354,9 @@ export default {
         this.removeDevice(id);
       }
     },
+    /**
+     * Get devices for a user
+     */
     loadData() {
       const query = '?_queryFilter=true';
       const configOptions = this.forceRoot ? { context: 'AM', realm: 'root' } : { context: 'AM' };
@@ -341,6 +380,13 @@ export default {
           this.displayNotification('IDMMessages', 'error', error.response.data.message);
         });
     },
+    /**
+     * Update a device with a new alias
+     *
+     * @param {String} id device id
+     * @param {String} newAlias new device alias
+     * @param {String} index index of device in local devices array
+     */
     updateDeviceAlias(id, newAlias, index) {
       const configOptions = this.forceRoot ? { context: 'AM', realm: 'root' } : { context: 'AM' };
       const selfServiceInstance = this.getRequestService(configOptions);
@@ -357,7 +403,11 @@ export default {
           this.displayNotification('IDMMessages', 'error', error.response.data.message);
         });
     },
-
+    /**
+     * Remove a device from a user
+     *
+     * @param {String} id device id
+     */
     removeDevice(id) {
       const configOptions = this.forceRoot ? { context: 'AM', realm: 'root' } : { context: 'AM' };
       const selfServiceInstance = this.getRequestService(configOptions);

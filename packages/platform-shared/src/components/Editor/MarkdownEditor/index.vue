@@ -121,26 +121,41 @@ export default {
       required: true,
       type: String,
     },
+    /**
+     * Display markdown editor. CSS if not.
+     */
     isMarkdown: {
       default: true,
       required: false,
       type: Boolean,
     },
+    /**
+     * Show header
+     */
     showHeader: {
       default: false,
       required: false,
       type: Boolean,
     },
+    /**
+     * Applies correct css for a wider navbar
+     */
     wideNavbar: {
       default: false,
       required: false,
       type: Boolean,
     },
+    /**
+     * Disable the editors
+     */
     disabled: {
       default: false,
       required: false,
       type: Boolean,
     },
+    /**
+     * If content is published
+     */
     isPublished: {
       type: Boolean,
       default: false,
