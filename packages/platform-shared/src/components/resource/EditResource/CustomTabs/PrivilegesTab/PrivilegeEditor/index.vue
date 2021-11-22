@@ -3,7 +3,7 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div>
+  <div class="overflow-auto">
     <BTable
       class="p-0 mb-0"
       no-border
@@ -42,6 +42,7 @@ of the MIT license. See the LICENSE file for details. -->
           <div class="fixed-width-checkbox-cell">
             <BFormCheckbox
               v-model="data.item.view"
+              :aria-label="data.field.label"
               :disabled="disabled"
               @change="togglePermission('view')" />
           </div>
@@ -54,6 +55,7 @@ of the MIT license. See the LICENSE file for details. -->
           <div class="fixed-width-checkbox-cell">
             <BFormCheckbox
               v-model="data.item.create"
+              :aria-label="data.field.label"
               :disabled="disabled"
               @change="togglePermission('create')" />
           </div>
@@ -66,6 +68,7 @@ of the MIT license. See the LICENSE file for details. -->
           <div class="fixed-width-checkbox-cell">
             <BFormCheckbox
               v-model="data.item.update"
+              :aria-label="data.field.label"
               :disabled="disabled"
               @change="togglePermission('update')" />
           </div>
@@ -78,6 +81,7 @@ of the MIT license. See the LICENSE file for details. -->
           <div class="fixed-width-checkbox-cell">
             <BFormCheckbox
               v-model="data.item.delete"
+              :aria-label="data.field.label"
               :disabled="disabled"
               @change="togglePermission('delete')" />
           </div>

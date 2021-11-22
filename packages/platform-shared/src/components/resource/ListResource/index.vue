@@ -61,6 +61,7 @@ of the MIT license. See the LICENSE file for details. -->
       v-show="tableData.length && !isLoading"
       class="mb-0"
       hover
+      id="list-resource-table"
       responsive
       show-empty
       :fields="columns"
@@ -71,27 +72,27 @@ of the MIT license. See the LICENSE file for details. -->
       :sort-direction="sortDirection"
       @row-clicked="$emit('row-clicked', $event)"
       @sort-changed="sortingChanged">
-      <template
-        v-if="editAccess || deleteAccess || hasClearSessionAccess(data)"
-        #cell(actions)="data">
-        <FrActionsCell
-          :delete-option="deleteAccess"
-          :divider="editAccess || hasClearSessionAccess(data)"
-          :edit-option="editAccess"
-          @delete-clicked="confirmDeleteResource(data.item._id)"
-          @edit-clicked="$emit('row-clicked', data.item)">
-          <template
-            v-if="hasClearSessionAccess(data)"
-            #custom-top-actions>
-            <BDropdownItem @click="setResourceToClearSessionsFor(data.item)">
-              <FrIcon
-                class="mr-3"
-                name="clear_all"
-              />
-              {{ $t('common.endSessions') }}
-            </BDropdownItem>
-          </template>
-        </FrActionsCell>
+      <template #cell(actions)="data">
+        <template v-if="editAccess || deleteAccess || hasClearSessionAccess(data)">
+          <FrActionsCell
+            :delete-option="deleteAccess"
+            :divider="editAccess || hasClearSessionAccess(data)"
+            :edit-option="editAccess"
+            @delete-clicked="confirmDeleteResource(data.item._id)"
+            @edit-clicked="$emit('row-clicked', data.item)">
+            <template
+              v-if="hasClearSessionAccess(data)"
+              #custom-top-actions>
+              <BDropdownItem @click="setResourceToClearSessionsFor(data.item)">
+                <FrIcon
+                  class="mr-3"
+                  name="clear_all"
+                />
+                {{ $t('common.endSessions') }}
+              </BDropdownItem>
+            </template>
+          </FrActionsCell>
+        </template>
       </template>
       <template
         v-for="(key, slotName) in $scopedSlots"
@@ -105,9 +106,11 @@ of the MIT license. See the LICENSE file for details. -->
     <BPagination
       v-if="tableData && tableData.length > 0 && !isLoading"
       v-model="paginationPage"
+      aria-controls="list-resource-table"
       class="pt-3 justify-content-center pagination-material-buttons border-top"
       last-class="d-none"
-      page-class="d-none"
+      :next-class="{'show-ellipsis': !lastPage}"
+      :page-class="{'hide-last-number': !lastPage}"
       per-page="10"
       :total-rows="totalRows"
       @input="paginationChange" />

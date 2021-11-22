@@ -71,6 +71,7 @@ of the MIT license. See the LICENSE file for details. -->
       <BModal
         id="editPrivilegeModal"
         ref="editPrivilegeModal"
+        :no-close-on-esc="true"
         :title="$t('pages.access.editPrivilege')"
         body-class="p-0"
         size="xl">
@@ -99,6 +100,7 @@ of the MIT license. See the LICENSE file for details. -->
       <BModal
         id="addPrivilegesModal"
         ref="addPrivilegesModal"
+        :no-close-on-esc="true"
         :title="$t('pages.access.addPrivileges')"
         body-class="p-0"
         size="xl">
