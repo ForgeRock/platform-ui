@@ -69,7 +69,8 @@ of the MIT license. See the LICENSE file for details. -->
           :total-rows="totalRows"
           :per-page="perPage"
           last-class="d-none"
-          page-class="d-none"
+          :next-class="{'show-ellipsis': !lastPage}"
+          :page-class="{'hide-last-number': !lastPage}"
           aria-controls="linked-apps-table" />
       </div>
     </template>

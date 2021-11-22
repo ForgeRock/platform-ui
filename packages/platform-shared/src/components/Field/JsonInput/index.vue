@@ -14,12 +14,14 @@ of the MIT license. See the LICENSE file for details. -->
     :validation-immediate="validationImmediate">
     <VuePrismEditor
       v-model="inputValue"
+      :aria-label="$t('editor.accessibilityHelp')"
       :disabled="disabled"
       :readonly="readonly"
       language="json"
       :line-numbers="true"
       :highlight="highlighter"
-      @change="$emit('input', $event)" />
+      @change="$emit('input', $event)"
+      @keydown="blurOnEscape" />
   </FrInputLayout>
 </template>
 
@@ -30,6 +32,7 @@ import 'prismjs';
 import 'prismjs/components/prism-json';
 import 'prismjs/themes/prism.css';
 import 'vue-prism-editor/dist/VuePrismEditor.css';
+import blurOnEscape from '@forgerock/platform-shared/src/utils/codeEditor';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
 
@@ -47,6 +50,7 @@ export default {
     VuePrismEditor,
   },
   methods: {
+    blurOnEscape,
     /**
      * Highlight code
      *

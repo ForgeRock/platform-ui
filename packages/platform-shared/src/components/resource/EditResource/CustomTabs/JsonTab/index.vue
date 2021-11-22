@@ -19,7 +19,9 @@ of the MIT license. See the LICENSE file for details. -->
       readonly
       language="json"
       line-numbers
-      v-model="jsonString" />
+      v-model="jsonString"
+      :aria-label="$t('editor.accessibilityHelp')"
+      @keydown="blurOnEscape" />
   </BTab>
 </template>
 
@@ -32,6 +34,7 @@ import VuePrismEditor from 'vue-prism-editor';
 import * as clipboard from 'clipboard-polyfill/text';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import blurOnEscape from '@forgerock/platform-shared/src/utils/codeEditor';
 
 export default {
   name: 'JsonTab',
@@ -51,6 +54,7 @@ export default {
     },
   },
   methods: {
+    blurOnEscape,
     copyValueToClipboard(value) {
       clipboard.writeText(value).then(() => {
         this.displayNotification('IDMMessages', 'success', this.$t('common.copySuccess'));
