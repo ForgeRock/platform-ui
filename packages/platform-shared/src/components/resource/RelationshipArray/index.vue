@@ -109,7 +109,8 @@ of the MIT license. See the LICENSE file for details. -->
       v-model="currentPage"
       class="pt-3 justify-content-center pagination-material-buttons border-top"
       last-class="d-none"
-      page-class="d-none"
+      :next-class="{'show-ellipsis': !lastPage}"
+      :page-class="{'hide-last-number': !lastPage}"
       per-page="10"
       :total-rows="totalRows"
       @input="loadGrid(currentPage)" />

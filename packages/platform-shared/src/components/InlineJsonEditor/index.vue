@@ -15,9 +15,11 @@ of the MIT license. See the LICENSE file for details. -->
       <VuePrismEditor
         language="json"
         v-model="stringifiedValue"
+        :aria-label="$t('editor.accessibilityHelp')"
         :line-numbers="true"
         :readonly="readOnly"
         @input="validateCurrentJson($event.target.innerText)"
+        @keydown="blurOnEscape"
       />
       <div class="d-flex justify-content-center w-100 position-absolute py-2 code-editor-expander pe-none">
         <button
@@ -48,6 +50,7 @@ import 'prismjs';
 import 'prismjs/components/prism-json';
 import 'prismjs/themes/prism.css';
 import 'vue-prism-editor/dist/VuePrismEditor.css';
+import blurOnEscape from '@forgerock/platform-shared/src/utils/codeEditor';
 
 /**
  * JSON editor. Code editor used when data is too complex to edit with various inputs.
@@ -92,6 +95,7 @@ export default {
     },
   },
   methods: {
+    blurOnEscape,
     validateCurrentJson(newValue) {
       try {
         const field = JSON.parse(newValue);

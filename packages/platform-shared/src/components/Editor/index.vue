@@ -6,9 +6,11 @@ of the MIT license. See the LICENSE file for details. -->
   <VuePrismEditor
     v-if="editorCanRender"
     v-model="contentField"
+    :aria-label="$t('editor.accessibilityHelp')"
     :language="language"
     :line-numbers="true"
-    @input="$emit('input', $event.target.innerText)" />
+    @input="$emit('input', $event.target.innerText)"
+    @keydown="blurOnEscape" />
 </template>
 
 <script>
@@ -19,6 +21,7 @@ import 'prismjs';
 import 'prismjs/components/prism-css';
 import 'prismjs/themes/prism.css';
 import 'vue-prism-editor/dist/VuePrismEditor.css';
+import blurOnEscape from '@forgerock/platform-shared/src/utils/codeEditor';
 
 /**
  * Code editor.
@@ -72,6 +75,7 @@ export default {
     };
   },
   methods: {
+    blurOnEscape,
     /**
      * Highlight code
      *
@@ -129,7 +133,7 @@ export default {
 </script>
 <style lang="scss" scoped>
   code {
-    background: #f6f8fa;
+    background: $gray-100;
     border-radius: 3px;
   }
 </style>
