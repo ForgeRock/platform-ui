@@ -11,6 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
         id="createResourceModal"
         size="lg"
         cancel-variant="outline-secondary"
+        :no-close-on-esc="true"
         @hide="hideModal"
         @hidden="stepIndex = -1"
         @show="initialiseData"
