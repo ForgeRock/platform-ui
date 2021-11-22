@@ -210,8 +210,8 @@
     }
 
     &.multiselect__option--selected .btn {
-      border-color: #109cf1;
-      background-color: #109cf1;
+      border-color: $blue;
+      background-color: $blue;
       color: white;
 
       &:hover {

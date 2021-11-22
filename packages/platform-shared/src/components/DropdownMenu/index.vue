@@ -23,29 +23,27 @@ of the MIT license. See the LICENSE file for details. -->
     </template>
     <template v-if="showProfileLink">
       <BDropdownDivider v-if="enableLogout && dropdownItems.length" />
-      <BDropdownItem>
-        <RouterLink :to="{ name: 'Profile' }">
-          <BMedia class="text-left">
-            <template #aside>
-              <img
-                :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"
-                alt="Avatar"
-                width="34"
-                height="34">
+      <BDropdownItem @click="$router.push({ name: 'Profile' })">
+        <BMedia class="text-left">
+          <template #aside>
+            <img
+              :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"
+              alt="Avatar"
+              width="34"
+              height="34">
+          </template>
+          <h5 class="my-0 text-truncate">
+            {{ userDetails.name }}
+          </h5>
+          <div class="text-muted text-truncate">
+            <template v-if="userDetails.email.length === 0">
+              {{ $t('common.notAvailable') }}
             </template>
-            <h5 class="my-0 text-truncate">
-              {{ userDetails.name }}
-            </h5>
-            <div class="text-muted text-truncate">
-              <template v-if="userDetails.email.length === 0">
-                n/a
-              </template>
-              <template v-else>
-                {{ userDetails.email }}
-              </template>
-            </div>
-          </BMedia>
-        </RouterLink>
+            <template v-else>
+              {{ userDetails.email }}
+            </template>
+          </div>
+        </BMedia>
       </BDropdownItem>
       <BDropdownDivider v-if="enableLogout" />
     </template>
@@ -57,7 +55,7 @@ of the MIT license. See the LICENSE file for details. -->
         class="mr-2"
         name="exit_to_app"
       />
-      {{ $t('sideMenu.signOut') }}
+      {{ $t('common.signOut') }}
     </BDropdownItem>
   </BDropdown>
 </template>
