@@ -31,7 +31,7 @@ of the MIT license. See the LICENSE file for details. -->
         <BButton
           variant="link"
           @click="logoutUser">
-          {{ $t('pages.forbidden.signOut') }}
+          {{ $t('common.signOut') }}
         </BButton>
       </div>
     </div>
