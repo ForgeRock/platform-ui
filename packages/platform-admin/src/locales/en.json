@@ -72,7 +72,6 @@
     "bulkImport": "Import",
     "configureManaged": "Configure",
     "connect": "Connect",
-    "dashboard": "Dashboard",
     "email": "Email",
     "hostedPages": "Hosted Pages",
     "identities": "Identities",
@@ -84,12 +83,9 @@
     "security": "Security",
     "scripts": "Scripts",
     "provisioningRole": "External Role",
-    "selectIcon": "Please select icon in admin (Managed Object) settings",
     "securityQuestions": "Security Questions",
     "settings": "Settings",
-    "signOut": "Sign Out",
-    "templates": "Templates",
-    "toggleSidebar": "Toggle sidebar"
+    "templates": "Templates"
   },
   "connect": {
     "connectIdentities": "Connect Identities",

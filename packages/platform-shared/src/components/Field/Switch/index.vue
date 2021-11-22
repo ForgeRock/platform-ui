@@ -9,7 +9,6 @@ of the MIT license. See the LICENSE file for details. -->
       :class="[{'mt-2': size !== 'sm'}, 'mb-0 text-secondary w-100']">
       <span
         :id="`helppopover-${name}`"
-        tabindex="0"
         class="fr-label-text">
         {{ switchLabel }}
       </span>

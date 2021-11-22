@@ -1,3 +1,7 @@
+<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <label class="my-3">
@@ -6,13 +10,16 @@
     <VuePrismEditor
       language="javascript"
       v-model="queryFilterString"
+      :aria-label="$t('editor.accessibilityHelp')"
       :readonly="disabled"
-      @input="$emit('input', $event.target.innerText)" />
+      @input="$emit('input', $event.target.innerText)"
+      @keydown="blurOnEscape($event.code)" />
   </div>
 </template>
 
 <script>
 import VuePrismEditor from 'vue-prism-editor';
+import blurOnEscape from '@forgerock/platform-shared/src/utils/codeEditor';
 
 export default {
   name: 'QueryFilterAdvanced',
@@ -33,6 +40,9 @@ export default {
       required: true,
       type: [String, Boolean],
     },
+  },
+  methods: {
+    blurOnEscape,
   },
 };
 </script>

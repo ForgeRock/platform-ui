@@ -64,7 +64,9 @@ of the MIT license. See the LICENSE file for details. -->
               readonly
               language="json"
               line-numbers
-              v-model="item.value" />
+              v-model="item.value"
+              :aria-label="$t('editor.accessibilityHelp')"
+              @keydown="blurOnEscape" />
           </div>
         </li>
       </ul>
@@ -81,6 +83,7 @@ import {
 
 import VuePrismEditor from 'vue-prism-editor';
 import 'vue-prism-editor/dist/VuePrismEditor.css';
+import blurOnEscape from '@forgerock/platform-shared/src/utils/codeEditor';
 
 export default {
   name: 'LinkedApplicationModal',
@@ -96,6 +99,9 @@ export default {
       default: null,
     },
   },
+  methods: {
+    blurOnEscape,
+  },
 };
 </script>
 
@@ -109,7 +115,7 @@ export default {
   }
 
   li p {
-    color: #23282e;
+    color: $gray-900;
     word-break: break-all;
   }
 

@@ -71,6 +71,7 @@
     "no": "No",
     "none": "None",
     "noResult": "No Results",
+    "notAvailable": "n/a",
     "objectCopy": "{object} copy",
     "off": "Off",
     "okay": "Okay",
@@ -100,7 +101,7 @@
     "send": "Send",
     "settings": "Settings",
     "showAdvanced": "Show advanced settings",
-    "signOut": "Sign Out",
+    "signOut": "Sign out",
     "signIn": "Sign In",
     "signUp": "Sign Up",
     "start": "Start",
@@ -259,6 +260,9 @@
     "minuteAgo": "a minute ago",
     "secondsAgo": "a few seconds ago"
   },
+  "editor": {
+    "accessibilityHelp": "Press ESC for keyboard navigation out of editor"
+  },
   "errors": {
     "errorSaving": "Error saving list",
     "errorCreating": "Error creating file",
@@ -396,7 +400,6 @@
       "unableToDeleteModalText": "Unable to delete this device. Please sign in with this device in order to delete it."
     },
     "forbidden": {
-      "signOut": "Sign out",
       "returnToDashboard": "Return to Dashboard",
       "notAuthorized": "You are not authorized to view this site. Please sign out and try again"
     },
@@ -562,7 +565,6 @@
   "sideMenu": {
     "dashboard": "Dashboard",
     "selectIcon": "Please select icon in admin (Managed Object) settings",
-    "signOut": "Sign out",
     "toggleSidebar": "Toggle sidebar"
   },
   "timezone": {

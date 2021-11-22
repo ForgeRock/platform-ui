@@ -197,7 +197,6 @@ export default {
     .polyfill-placeholder {
       padding-top: $input-btn-padding-y + $input-btn-padding-y * (2 / 3);
       padding-bottom: $input-btn-padding-y / 3;
-      color: $input-color;
 
       ~ label {
         padding-top: $input-btn-padding-y / 3;
@@ -285,6 +284,10 @@ export default {
   .input-group-append:not(:last-child) > * {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
+  }
+
+  .input-group-prepend ~ .form-label-group-input input {
+    border-left: none;
   }
 }
 

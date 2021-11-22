@@ -20,18 +20,22 @@ of the MIT license. See the LICENSE file for details. -->
           v-if="isMarkdown"
           role="textbox"
           language="html"
+          :aria-label="$t('editor.accessibilityHelp')"
           :line-numbers="true"
           v-model="markdownField"
           :readonly="disabled"
-          :class="{ 'pt-4': wideNavbar}" />
+          :class="{ 'pt-4': wideNavbar}"
+          @keydown="blurOnEscape" />
         <VuePrismEditor
           v-else
           role="textbox"
           language="css"
+          :aria-label="$t('editor.accessibilityHelp')"
           :line-numbers="true"
           v-model="stylesField"
           :readonly="disabled"
-          :class="{ 'pt-4': wideNavbar}" />
+          :class="{ 'pt-4': wideNavbar}"
+          @keydown="blurOnEscape" />
       </div>
     </div>
     <div class="w-50">
@@ -75,6 +79,7 @@ import 'prismjs/themes/prism.css';
 import 'vue-prism-editor/dist/VuePrismEditor.css';
 import showdown from 'showdown';
 import { pd } from 'pretty-data';
+import blurOnEscape from '@forgerock/platform-shared/src/utils/codeEditor';
 
 /**
  * Markdown editor.
@@ -142,6 +147,7 @@ export default {
     },
   },
   methods: {
+    blurOnEscape,
     /**
      * Checks if content is wrapped in a div, and if not, wraps it
      */

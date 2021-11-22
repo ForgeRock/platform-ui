@@ -90,8 +90,9 @@ of the MIT license. See the LICENSE file for details. -->
       align-self: center;
       }
 
-      textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus {
-      border-color: {{ theme.primaryColor }};
+      textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus,
+      .form-control:focus-within .multiselect__tags {
+      border-color: {{ theme.primaryColor }} !important;
       -webkit-box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }};
       box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }};
       outline: 0 none;
@@ -149,7 +150,6 @@ of the MIT license. See the LICENSE file for details. -->
 
       <!-- Styling for buttons within form label group inputs -->
       .form-label-group button span,
-      .form-label-group input::placeholder,
       .multiselect__placeholder,
       .multiselect__single {
       color: {{ theme.journeyInputTextColor || '#23282e' }} !important;
@@ -215,6 +215,7 @@ of the MIT license. See the LICENSE file for details. -->
 
       #app .card,
       .modal-content,
+      .modal-content .card,
       #app .dropdown-menu {
       background-color: {{ theme.accountCardBackgroundColor || '#ffffff' }};
       border: 1px solid {{ theme.accountCardOuterBorderColor || '#e7eef4' }};
@@ -259,12 +260,22 @@ of the MIT license. See the LICENSE file for details. -->
       }
 
       #app .card input,
+      #app .card .form-label-group .form-label-group-input input,
       #app .card .form-label-group .form-label-group-input .form-control,
-      .multiselect .multiselect__tags,
-      .modal-content input {
+      .form-label-group .form-label-group-input .multiselect .multiselect__tags,
+      .form-label-group .form-label-group-input .multiselect .multiselect__element,
+      .modal-content input,
+      .modal-content .form-control,
+      .modal-content .form-control .dropdown-menu ,
+      .modal-content .b-dropdown .dropdown-menu {
       background-color: {{ theme.accountCardInputBackgroundColor || '#ffffff' }} !important;
-      border-color: {{ theme.accountCardInputBorderColor || '#c0c9d5' }} !important;
-      color: {{ theme.accountCardInputTextColor || '#23282e' }} !important;
+      border-color: {{ theme.accountCardInputBorderColor || '#c0c9d5' }};
+      color: {{ theme.accountCardInputTextColor || '#23282e' }};
+      }
+
+      .modal-content .input-group-text {
+      border-color: {{ theme.accountCardInputBorderColor || '#c0c9d5' }};
+      background-color: {{ theme.accountCardInputBackgroundColor || '#ffffff' }} !important;
       }
 
       #app .card .fr-tag-input {
@@ -272,14 +283,18 @@ of the MIT license. See the LICENSE file for details. -->
       }
 
       #app .card .input-group-text,
-      .multiselect .multiselect__select,
+      .form-label-group .form-label-group-input .multiselect .multiselect__select,
       .form-label-group .form-label-group-input .form-control {
       background-color: {{ theme.accountCardInputBackgroundColor || '#ffffff' }} !important;
       color: {{ theme.accountCardInputTextColor || '#23282e' }};
       }
 
       #app .multiselect .multiselect__select::before,
-      #app input::placeholder {
+      #app .multiselect .multiselect__single,
+      #app input::placeholder,
+      .modal-content .multiselect .multiselect__input,
+      .modal-content .multiselect .multiselect__input::placeholder,
+      .modal-content label.form-control {
       color: {{ theme.accountCardInputTextColor || '#23282e' }};
       }
 
@@ -289,11 +304,14 @@ of the MIT license. See the LICENSE file for details. -->
       }
 
       #app .card label,
-      .modal-content label,
+      .modal-content .fr-field label,
+      .modal-content .form-control label .sr-only,
+      .modal-content .form-label-group .form-label-group-input label,
       #app .card .input-group-text .text-muted,
       #app .card .fr-icon-input-holder .fr-icon,
-      .form-label-group .material-icons-outlined {
-      color: {{ theme.accountCardInputLabelColor || '#5e6d82' }} !important;
+      .form-label-group .material-icons-outlined,
+      .form-control .material-icons-outlined {
+      color: {{ theme.accountCardInputLabelColor || '#5e6d82' }};
       }
 
       #app .card .nav-pills .nav-link.active {

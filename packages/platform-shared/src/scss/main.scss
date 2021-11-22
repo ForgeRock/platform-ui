@@ -314,14 +314,54 @@ a.card {
 }
 
 .pagination-material-buttons {
-  li {
+  .page-item {
+    &.active .page-link {
+      background-color: $gray-100;
+    }
+
+    button[role=menuitem]:focus-visible {
+      outline: none !important;
+    }
+
+    &.hide-last-number:nth-last-of-type(3) .page-link {
+      pointer-events: none;
+    }
+
+    &.show-ellipsis {
+      z-index: 3;
+
+      .page-link::before {
+        content: '...';
+        position: absolute;
+        color: $gray-500;
+        margin-left: -2.95rem;
+        margin-top: -0.7rem;
+        pointer-events: none;
+        cursor: default;
+        background-color: white;
+        padding: 0.7rem 0.75rem;
+      }
+    }
+
     .page-link {
+      background-color: transparent;
+
+      &:focus,
+      &:focus-visible {
+        box-shadow: none;
+
+        &::after {
+          outline: 2px solid $black;
+        }
+      }
+
+      &:hover,
       &:hover::after {
         background-color: $gray-100;
       }
 
       &::after {
-        visibility: visible;
+        color: $gray-500;
         position: absolute;
         padding: 0.4rem 0.75rem;
         top: 0;
@@ -334,7 +374,7 @@ a.card {
     &:nth-last-of-type(2) .page-link,
     &:last-of-type .page-link {
       font-family: 'Material Icons Outlined', Serif;
-      visibility: hidden;
+      color: transparent;
     }
 
     &:first-of-type .page-link::after {
@@ -357,7 +397,7 @@ a.card {
       right: -1.75rem;
     }
 
-    &[role='separator'] {
+    &[role=separator] {
       display: none;
     }
   }
@@ -388,13 +428,17 @@ a.card {
   user-select: none;
   padding-left: 2rem;
 
+  .custom-control-input:focus-visible ~ .custom-control-label::before {
+    outline: 2px solid $black;
+  }
+
   .custom-control-label {
     cursor: pointer;
     color: white;
     z-index: 0;
 
     &::before {
-      background-color: #c0c9d5;
+      background-color: $gray-400;
       border: none;
       z-index: -1;
     }
@@ -408,10 +452,6 @@ a.card {
     ~ .custom-control-label {
       cursor: initial;
     }
-  }
-
-  .custom-control-input:focus ~ .custom-control-label::before {
-    box-shadow: none;
   }
 
   .custom-control-input:checked {
@@ -489,6 +529,15 @@ a.card {
       }
     }
   }
+}
+
+.custom-control-input:focus ~ .custom-control-label::before {
+  box-shadow: none;
+}
+
+.custom-control-input:focus-visible ~ .custom-control-label::before {
+  box-shadow: 0 0 0 0.0625rem $black;
+  border-color: $black;
 }
 
 // Letters & Colors
@@ -592,7 +641,7 @@ a:focus-visible {
   background: transparent;
 }
 
-button:focus-visible {
+button:not(.fr-sidebar-menuitems button):focus-visible {
   outline-offset: 2px;
 }
 
@@ -620,5 +669,5 @@ button:focus-visible {
 }
 
 dd {
-  color: #23282e;
+  color: $gray-900;
 }

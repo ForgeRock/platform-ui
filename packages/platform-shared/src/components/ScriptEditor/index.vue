@@ -29,9 +29,11 @@ of the MIT license. See the LICENSE file for details. -->
     <VuePrismEditor
       v-if="uploadFileToggle === false"
       v-model="code"
+      :aria-label="$t('editor.accessibilityHelp')"
       :language="scriptType.value"
       :line-numbers="true"
-      @input="emitScriptValue" />
+      @input="emitScriptValue"
+      @keydown="blurOnEscape" />
     <BFormFile
       v-show="uploadFileToggle === true"
       @change="onFileChange"
@@ -76,8 +78,10 @@ of the MIT license. See the LICENSE file for details. -->
           <VuePrismEditor
             v-model="variablesJsonCode"
             language="json"
+            :aria-label="$t('editor.accessibilityHelp')"
             :line-numbers="true"
-            @input="checkIfCodeIsParsable($event.target.innerText)" />
+            @input="checkIfCodeIsParsable($event.target.innerText)"
+            @keydown="blurOnEscape" />
         </template>
         <template v-else>
           <ValidationObserver ref="validationObserver">
@@ -139,6 +143,7 @@ import { debounce } from 'lodash';
 import { ValidationObserver } from 'vee-validate';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import blurOnEscape from '@forgerock/platform-shared/src/utils/codeEditor';
 import 'prismjs';
 import 'prismjs/components/prism-groovy';
 import 'prismjs/components/prism-json';
@@ -250,6 +255,7 @@ export default {
         }
       }, 0);
     },
+    blurOnEscape,
     /**
      * Checks if variables are filled in properly and calls emit if so
      */

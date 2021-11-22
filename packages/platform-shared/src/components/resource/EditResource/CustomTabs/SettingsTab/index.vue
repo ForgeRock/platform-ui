@@ -29,9 +29,10 @@ of the MIT license. See the LICENSE file for details. -->
     <BModal
       id="settingsModal"
       ref="settingsModal"
+      size="lg"
+      :no-close-on-esc="true"
       :title="editProperty.title"
-      @hidden="disableSave = false"
-      size="lg">
+      @hidden="disableSave = false">
       <div>
         <FrField
           v-model="showForm"
