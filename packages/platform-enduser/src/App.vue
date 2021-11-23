@@ -10,7 +10,8 @@ of the MIT license. See the LICENSE file for details. -->
       :is-fraas="$store.state.isFraas"
       :menu-items="menuItems"
       :user-details="userDetails"
-      :version="version">
+      :version="version"
+      :class="{invisible: theme === null}">
       <RouterView
         :key="$route.fullPath"
         :theme="theme" />
