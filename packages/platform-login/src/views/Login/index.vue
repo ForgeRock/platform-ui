@@ -415,6 +415,7 @@ export default {
   },
   mounted() {
     const urlParams = new URLSearchParams(window.location.search);
+    this.$emit('component-ready');
     this.realm = urlParams.get('realm') || '/';
 
     this.getConfigurationInfo(this.realm)
@@ -1068,6 +1069,7 @@ export default {
           this.$emit('set-theme', this.realm, this.themeTree);
         },
         () => {
+          this.$emit('component-ready', 'error');
           this.errorMessage = this.$t('login.issueConnecting');
           this.redirectToFailure(this.step);
           this.loading = false;

@@ -3,7 +3,9 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div id="app">
+  <div
+    id="app"
+    :class="{ invisible: hideAppOnTransition }">
     <ThemeInjector
       :theme="theme"
       v-if="theme !== null" />
@@ -28,7 +30,8 @@ of the MIT license. See the LICENSE file for details. -->
           :logo-path="logo"
           :key="$route.fullPath"
           :theme-loading="theme === null"
-          @set-theme="setupTheme" />
+          @set-theme="setupTheme"
+          @component-ready="themeTransitionHandler" />
       </Transition>
     </div>
     <!-- Application View -->
@@ -68,6 +71,11 @@ export default {
     RestMixin,
     ThemeMixin,
   ],
+  data() {
+    return {
+      hideAppOnTransition: false,
+    };
+  },
   created() {
     // add vee-validate rules
     const rules = ValidationRules.getRules(i18n);
@@ -82,6 +90,18 @@ export default {
           document.getElementById('favicon').href = this.favicon;
         }
       });
+    },
+    themeTransitionHandler(val) {
+      if (val === 'error') {
+        this.hideAppOnTransition = false;
+        return;
+      }
+      this.hideAppOnTransition = true;
+    },
+  },
+  watch: {
+    theme() {
+      this.hideAppOnTransition = false;
     },
   },
 };
