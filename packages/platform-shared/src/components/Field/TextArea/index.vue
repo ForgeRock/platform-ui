@@ -11,7 +11,10 @@ of the MIT license. See the LICENSE file for details. -->
     :is-html="isHtml"
     :label="label"
     :validation="validation"
-    :validation-immediate="validationImmediate">
+    :validation-immediate="validationImmediate"
+    :show-length-count="showLengthCount"
+    :current-length="inputValue.length"
+    :max-length="maxLength">
     <textarea
       v-model="inputValue"
       :autofocus="autofocus"
@@ -60,6 +63,20 @@ export default {
     cols: {
       type: Number,
       default: 10,
+    },
+    /**
+     * Specifies whether to show an input length count under the text area
+     */
+    showLengthCount: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * Specifies the max length to show in the input count
+     */
+    maxLength: {
+      type: Number,
+      default: 500,
     },
   },
   methods: {
