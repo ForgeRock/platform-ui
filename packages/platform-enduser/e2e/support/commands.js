@@ -12,9 +12,12 @@ Cypress.Commands.add('login', (userName, password = 'Welcome1', loginUrl = `${Cy
   indexedDB.deleteDatabase('appAuth');
   cy.visit(loginUrl);
   cy.wait('@getThemes');
-  cy.get('[placeholder="User Name:"]').type(userName);
-  cy.get('[placeholder="Password:"]').type(password, { force: true });
+  cy.findByPlaceholderText(/User Name/i).type(userName);
+  cy.findByPlaceholderText(/Password/i).type(password, { force: true });
   cy.get('.btn-primary').click();
+  if (Cypress.env('IS_FRAAS')) {
+    cy.findByRole('button', { name: /Skip for now/i }).click();
+  }
   cy.get('h1', { timeout: 20000 });
 });
 
