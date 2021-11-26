@@ -13,9 +13,12 @@ Cypress.Commands.add('login', () => {
   const adminPassword = Cypress.env('AM_PASSWORD');
   indexedDB.deleteDatabase('appAuth');
   cy.visit(loginUrl);
-  cy.get('[placeholder="User Name:"]').type(adminUserName);
-  cy.get('[placeholder="Password:"]').type(adminPassword, { force: true });
+  cy.findByPlaceholderText(/User Name/i).type(adminUserName);
+  cy.findByPlaceholderText(/Password/i).type(adminPassword, { force: true });
   cy.get('.btn-primary').click();
+  if (Cypress.env('IS_FRAAS')) {
+    cy.findByRole('button', { name: /Skip for now/i }).click();
+  }
   cy.get('h1', { timeout: 20000 });
 });
 
