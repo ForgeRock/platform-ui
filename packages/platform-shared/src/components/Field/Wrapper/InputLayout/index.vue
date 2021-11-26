@@ -36,8 +36,21 @@ of the MIT license. See the LICENSE file for details. -->
         <!-- slot appends buttons or elements to the input -->
         <slot name="append" />
       </div>
+      <div
+        v-if="showLengthCount"
+        class="d-flex">
+        <!-- slot shows validation errors related to input -->
+        <FrValidationError
+          class="error-messages flex-grow-1"
+          :validator-errors="errors.concat(validationObject.errors)"
+          :field-name="name" />
+        <small :class="[{'text-danger': currentLength > maxLength}, 'form-text float-right']">
+          {{ `${currentLength} / ${maxLength}` }}
+        </small>
+      </div>
       <!-- slot shows validation errors related to input -->
       <FrValidationError
+        v-else
         class="error-messages"
         :validator-errors="errors.concat(validationObject.errors)"
         :field-name="name" />
@@ -126,6 +139,27 @@ export default {
     validationImmediate: {
       type: Boolean,
       default: false,
+    },
+    /**
+     * Specifies whether to show an input length count under the input
+     */
+    showLengthCount: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * Specifies the current length to show in the input count
+     */
+    currentLength: {
+      type: Number,
+      default: 0,
+    },
+    /**
+     * Specifies the max length to show in the input count
+     */
+    maxLength: {
+      type: Number,
+      default: 500,
     },
   },
 };
