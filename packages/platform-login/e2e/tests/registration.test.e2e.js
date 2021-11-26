@@ -6,6 +6,7 @@
  */
 
 import { random } from 'lodash';
+import filterTests from '../../../../e2e/filter_tests';
 
 function fillOutRegistrationForm(fieldData) {
   fieldData.forEach((field) => {
@@ -22,86 +23,88 @@ function fillOutRegistrationForm(fieldData) {
   cy.findAllByPlaceholderText('Answer').last().clear().type('ForgeRock');
 }
 
-describe('Registration form', () => {
-  const locationUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=/&authIndexType=service&authIndexValue=Registration#/`;
-  const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
-  const fieldData = [
-    {
-      placeholder: 'Username',
-      text: userName,
-    },
-    {
-      placeholder: 'First Name',
-      text: 'newTest',
-    },
-    {
-      placeholder: 'Last Name',
-      text: 'User1',
-    },
-    {
-      placeholder: 'Email Address',
-      text: 'newTestUser1@test.com',
-    },
-  ];
-
-  beforeEach(() => {
-    cy.visit(locationUrl);
-  });
-
-  it('incorrect credentials should show error', () => {
-    fillOutRegistrationForm(fieldData);
-    // set short and long passwords - check policy
-    cy.findByPlaceholderText('Password')
-      .type('2short');
-
-    cy.get('li:contains("Must be at least 8 characters long")')
-      .should('not.have.class', 'fr-valid');
-
-    cy.findByPlaceholderText('Password')
-      .type('longenoughtopass');
-
-    cy.get('li:contains("Must be at least 8 characters long")')
-      .should('have.class', 'fr-valid');
-  });
-
-  it('creates new user and logs in', () => {
-    fillOutRegistrationForm(fieldData);
-    // set valid password - submit form
-    cy.findByPlaceholderText('Password')
-      .type('Welcome1')
-      .get('[type="submit"]')
-      .click();
-
-    cy.location().should((location) => {
-      expect(location.pathname).to.eq('/enduser/');
-    });
-  });
-
-  it('next button is disabled until all required fields are filled in', () => {
-    const onlyUserName = [
+filterTests(['forgeops'], () => {
+  describe('Registration form', () => {
+    const locationUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=/&authIndexType=service&authIndexValue=Registration#/`;
+    const userName = `testUser${random(Number.MAX_SAFE_INTEGER)}`;
+    const fieldData = [
       {
         placeholder: 'Username',
         text: userName,
       },
+      {
+        placeholder: 'First Name',
+        text: 'newTest',
+      },
+      {
+        placeholder: 'Last Name',
+        text: 'User1',
+      },
+      {
+        placeholder: 'Email Address',
+        text: 'newTestUser1@test.com',
+      },
     ];
-    cy.findByRole('button', { name: 'Next' })
-      .should('be.disabled');
-    fillOutRegistrationForm(onlyUserName);
-    cy.findByRole('button', { name: 'Next' })
-      .should('be.disabled');
-    fillOutRegistrationForm(fieldData);
-    cy.findByPlaceholderText('Username')
-      .type('1');
-    cy.findByRole('button', { name: 'Next' })
-      .should('be.disabled');
-    cy.findByPlaceholderText('Password')
-      .type('Welcome1');
-    cy.findByRole('button', { name: 'Next' })
-      .should('be.enabled')
-      .click();
 
-    cy.location().should((location) => {
-      expect(location.pathname).to.eq('/enduser/');
+    beforeEach(() => {
+      cy.visit(locationUrl);
+    });
+
+    it('incorrect credentials should show error', () => {
+      fillOutRegistrationForm(fieldData);
+      // set short and long passwords - check policy
+      cy.findByPlaceholderText('Password')
+        .type('2short');
+
+      cy.get('li:contains("Must be at least 8 characters long")')
+        .should('not.have.class', 'fr-valid');
+
+      cy.findByPlaceholderText('Password')
+        .type('longenoughtopass');
+
+      cy.get('li:contains("Must be at least 8 characters long")')
+        .should('have.class', 'fr-valid');
+    });
+
+    it('creates new user and logs in', () => {
+      fillOutRegistrationForm(fieldData);
+      // set valid password - submit form
+      cy.findByPlaceholderText('Password')
+        .type('Welcome1')
+        .get('[type="submit"]')
+        .click();
+
+      cy.location().should((location) => {
+        expect(location.pathname).to.eq('/enduser/');
+      });
+    });
+
+    it('next button is disabled until all required fields are filled in', () => {
+      const onlyUserName = [
+        {
+          placeholder: 'Username',
+          text: userName,
+        },
+      ];
+      cy.findByRole('button', { name: 'Next' })
+        .should('be.disabled');
+      fillOutRegistrationForm(onlyUserName);
+      cy.findByRole('button', { name: 'Next' })
+        .should('be.disabled');
+      fillOutRegistrationForm(fieldData);
+      cy.findByPlaceholderText('Username')
+        .type('1');
+      cy.findByRole('button', { name: 'Next' })
+        .should('be.disabled');
+      cy.findByPlaceholderText('Password')
+        .type('Welcome1');
+      cy.findByRole('button', { name: 'Next' })
+        .should('be.enabled')
+        .click();
+
+      cy.location().should((location) => {
+        expect(location.pathname).to.eq('/enduser/');
+      });
     });
   });
 });
