@@ -366,7 +366,7 @@ export default {
         this.$emit('get-table-data', {
           filter,
           fields,
-          sortField: sortField !== '-' ? sortField : fields[0],
+          sortField: (sortField && sortField !== '-') ? sortField : fields[0],
           page,
         });
       }
