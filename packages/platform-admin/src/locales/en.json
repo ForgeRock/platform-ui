@@ -343,15 +343,18 @@
     "noJourneySubtitle": "Configure journeys to allow users to sign in, register and perform self-service functions like reset their password or recover their username.",
     "noAuthServicesMessage": "Sign in users to your application by creating journeys",
     "overrideThemeCheckboxTitle": "Override theme",
+    "errorRetrievingJourney": "Error retrieving journey",
     "errorRetrievingJourneys": "Error retrieving journeys",
     "errorRetrievingDefaultJourneys": "Error retrieving default journey information",
     "errorCreatingJourney": "Error creating journey",
     "errorDuplicatingJourney": "Error duplicating journey",
     "errorUpdatingJourney": "Error updating journey",
     "errorDeletingJourney": "Error deleting journey",
+    "errorRetrievingDebugTemplate": "Error retrieving debug node template",
     "errorRetrievingJourneyTemplate": "Error retrieving journey template",
     "errorRetrievingTableData": "Error retrieving journey data",
     "errorSettingDefault": "Error setting journey as default",
+    "errorLoadingThemeDetails": "Error loading theme details",
     "unableToEditResource": "Unable to edit {resource}",
     "unableToDeleteResource": "Unable to delete {resource}",
     "filterNodes": "Filter nodes",
@@ -582,6 +585,15 @@
       "minimumRequired": "At Least {minItems} Value(s) Required",
       "theme": "Theme",
       "themeDescription": "If using hosted pages, specify a theme to override this journey's UI theme."
+    },
+    "debugWarningTitle": "Debug warning",
+    "debugWarning": "<b>Debug mode is active.</b> Make sure you deactivate before promoting your environment configuration.",
+    "debugPanel": {
+      "name": "Debug",
+      "description": "Activate debug mode to output journey data to debug logs. Optionally, enable the debug popup to display debug logs as you traverse the nodes in your journey.",
+      "debugEnabledLabel": "Debug mode",
+      "popupEnabledLabel": "Enable Debug Popup",
+      "popupEnabledHelp": "If enabled, a popup window will display debug logs as you step through the login journey"
     },
     "pageNode": {
       "dragHere": "Drag nodes here"
