@@ -82,6 +82,15 @@ export function getRules(i18n) {
     message: i18n.t('common.policyValidationMessages.maxLength'),
   };
 
+  const max_value = {
+    ...rules.max_value,
+    params: ['max', 'message'],
+    message(field, params) {
+      if (params.message) return params.message;
+      return i18n.t('common.policyValidationMessages.MAX_VALUE', { max: params.max });
+    },
+  };
+
   // Minimum required rule
   // errors if input value's length is less than the input minimum number
   const minimumRequired = {
@@ -197,6 +206,7 @@ export function getRules(i18n) {
     google_cloud_platform_certificate_validation,
     json,
     max,
+    max_value,
     minimumRequired,
     numeric,
     oneOf,
