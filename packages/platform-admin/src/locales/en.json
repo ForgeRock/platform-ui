@@ -948,6 +948,11 @@
     },
     "deleteCorsConfigModal": {
       "successDeleting": "Successfully deleted CORS Configuration"
+    },
+    "updateCorsServiceModal": {
+      "activateService": "Activate CORS Service?",
+      "configAdded": "You've added a CORS configuration but the CORS service is currently deactivated. Do you want to activate the CORS service now?",
+      "skipThis": "Skip this"
     }
   },
   "email": {
