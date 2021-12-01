@@ -1414,6 +1414,7 @@
     "setUpAtLeast": "Users must set up at least",
     "questionsRegistration": "questions during registration.",
     "usersMustAnswer": "Users must answer",
-    "questionsSignIn": "questions on sign in"
+    "questionsSignIn": "questions on sign in",
+    "answersGreaterThanDefined": "Cannot require more questions to answer than questions to define"
   }
 }
