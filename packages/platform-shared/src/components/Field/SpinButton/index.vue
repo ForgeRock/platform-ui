@@ -10,7 +10,8 @@ of the MIT license. See the LICENSE file for details. -->
     :aria-label="switchLabel"
     :disabled="disabled"
     :name="name"
-    :min="min" />
+    :min="min"
+    :max="max" />
 </template>
 
 <script>
@@ -32,9 +33,19 @@ export default {
     BFormSpinbutton,
   },
   props: {
+    /**
+     * Minimum value allowed
+     */
     min: {
       type: Number,
       default: 0,
+    },
+    /**
+     * Maximum value allowed
+     */
+    max: {
+      type: Number,
+      default: 100,
     },
   },
   computed: {
