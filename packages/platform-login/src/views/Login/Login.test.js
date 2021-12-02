@@ -54,7 +54,7 @@ describe('Login.vue', () => {
     wrapper.setData({
       realm: 'test',
       suspendedId: 'test',
-      authIndexValue: 'undefined',
+      treeId: 'undefined',
     });
 
     expect(wrapper.vm.getStepParams()).toEqual(expectedStepParams);
