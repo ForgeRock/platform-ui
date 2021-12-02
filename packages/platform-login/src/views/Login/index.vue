@@ -375,7 +375,6 @@ export default {
   ],
   data() {
     return {
-      authIndexValue: undefined,
       componentList: [],
       description: '',
       errorMessage: '',
@@ -392,7 +391,7 @@ export default {
       showScriptElms: false,
       step: undefined,
       suspendedId: undefined,
-      themeTree: undefined,
+      treeId: undefined,
     };
   },
   computed: {
@@ -491,7 +490,7 @@ export default {
           this.nextButtonVisible = false;
           if (callback.getOutputByName('trackingCookie')) {
             // save current step information for later resumption of tree.
-            sessionStorage.setItem('authIndexValue', this.authIndexValue || this.$route.params.tree);
+            sessionStorage.setItem('authIndexValue', this.treeId || this.$route.params.tree);
             sessionStorage.setItem('step', JSON.stringify(this.step));
             sessionStorage.setItem('realm', this.realm);
           }
@@ -634,7 +633,7 @@ export default {
       return FRWebAuthn.register(this.step);
     },
     /**
-     * @description Look at the url and see if we are returning to a tree from an Email Suspend Node or Redirect Callback.
+     * @description Look at the url and see if we are returning to a tree from an Email Suspend Node, Redirect Callback, or SAML.
      * Must be default route and contain the strings "suspendedId=" and "authIndexValue=" for Email Suspend Node.
      * Must contain the strings "state=" and "code=" and "scope=" for redirect callback.
      * Must contain reentry cookie for SAML redirect.
@@ -654,7 +653,6 @@ export default {
           }
           if (key === 'authIndexValue' && urlParams.get('authIndexType') === 'service') {
             stringParams += `${key}=${value}`;
-            this.themeTree = value;
           } else {
             stringParams += `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
           }
@@ -668,8 +666,7 @@ export default {
       // arg query parameter handled in checkNewSession method
       if (params.get('arg') === 'newsession') params.delete('arg');
       if (this.$route.name === 'login' && paramString.includes('suspendedId=') && paramString.includes('authIndexValue=')) {
-        this.authIndexValue = params.get('authIndexValue');
-        this.themeTree = params.get('authIndexValue');
+        this.treeId = params.get('authIndexValue');
         this.suspendedId = params.get('suspendedId');
 
         this.removeUrlParams();
@@ -683,8 +680,7 @@ export default {
 
         // session storage is used to resume a tree after returning from a redirect
         const { authIndexValue, step, realm: stepRealm } = this.getStepFromStorage();
-        this.authIndexValue = authIndexValue;
-        this.themeTree = authIndexValue;
+        this.treeId = authIndexValue;
         this.step = new FRStep(step.payload);
         this.realm = stepRealm;
 
@@ -694,8 +690,7 @@ export default {
       } else if (this.hasReentryToken()) {
         const { authIndexValue, step, realm: stepRealm } = this.getStepFromStorage();
         if (authIndexValue && step && step.payload) {
-          this.authIndexValue = authIndexValue;
-          this.themeTree = authIndexValue;
+          this.treeId = authIndexValue;
           this.step = new FRStep(step.payload);
           this.realm = stepRealm;
         }
@@ -721,12 +716,14 @@ export default {
           }
         });
 
-        const stringParams = createParamString(params);
-        this.removeUrlParams();
-        if (!this.themeTree && this.$route.params.tree) {
-          this.themeTree = this.$route.params.tree;
+        if (this.$route.params.tree) {
+          this.treeId = this.$route.params.tree;
+        } else if (params.get('authIndexValue') && params.get('authIndexType') === 'service') {
+          this.treeId = params.get('authIndexValue');
         }
 
+        this.removeUrlParams();
+        const stringParams = createParamString(params);
         window.history.replaceState(null, null, `?realm=${this.realm}${stringParams}${hash}`);
       }
     },
@@ -858,7 +855,7 @@ export default {
       }
       const stepParams = {
         query: {},
-        tree: this.authIndexValue || this.$route.params.tree || undefined,
+        tree: this.treeId || this.$route.params.tree || undefined,
         realmPath: this.realm,
       };
 
@@ -1066,7 +1063,7 @@ export default {
               this.loading = false;
               break;
           }
-          this.$emit('set-theme', this.realm, this.themeTree);
+          this.$emit('set-theme', this.realm, this.treeId);
         },
         () => {
           this.$emit('component-ready', 'error');
@@ -1105,8 +1102,8 @@ export default {
       // remove query params from the url
       window.history.replaceState(null, null, window.location.pathname);
       // if a tree is defined reset the hash to the proper tree
-      if (this.authIndexValue) {
-        window.location.hash = `service/${this.authIndexValue}`;
+      if (this.treeId) {
+        window.location.hash = `service/${this.treeId}`;
       }
     },
     /**
