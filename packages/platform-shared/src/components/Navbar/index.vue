@@ -81,7 +81,7 @@ of the MIT license. See the LICENSE file for details. -->
                   class="text-left">
                   <template #aside>
                     <img
-                      :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"
+                      :src="profileImage ? profileImage : require('@forgerock/platform-shared/src/assets/images/avatar.png')"
                       alt="Avatar"
                       width="34"
                       height="34">
@@ -124,6 +124,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import {
   BDropdownDivider,
   BDropdownHeader,
@@ -245,6 +246,15 @@ export default {
         adminUser: false,
         adminURL: 'wwwfakecom',
       }),
+    },
+  },
+  computed: {
+    ...mapState({
+      userStore: (state) => state.UserStore,
+    }),
+    profileImage() {
+      const { profileImage } = this.userStore;
+      return profileImage && profileImage.length ? profileImage : null;
     },
   },
   methods: {
