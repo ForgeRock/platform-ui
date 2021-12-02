@@ -5,6 +5,9 @@
  * or with one of its affiliates. All use shall be exclusively subject
  * to such license between the licensee and ForgeRock AS.
  */
+$material-icons-font-path: '~material-icons/iconfont/';
+
+@import '~material-icons/iconfont/material-icons.scss';
 @import '~bootstrap/scss/bootstrap';
 @import '~bootstrap-vue/dist/bootstrap-vue.css';
 @import '~vue-multiselect/dist/vue-multiselect.min.css';
