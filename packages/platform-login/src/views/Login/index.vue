@@ -666,10 +666,16 @@ export default {
       // arg query parameter handled in checkNewSession method
       if (params.get('arg') === 'newsession') params.delete('arg');
       if (this.$route.name === 'login' && paramString.includes('suspendedId=') && paramString.includes('authIndexValue=')) {
+        // setting params in vue data then deleting to remove redundant params from URL
         this.treeId = params.get('authIndexValue');
+        params.delete('authIndexValue');
+        params.delete('authIndexType');
         this.suspendedId = params.get('suspendedId');
+        params.delete('suspendedId');
 
+        const stringParams = createParamString(params);
         this.removeUrlParams();
+        window.history.replaceState(null, null, `?realm=${this.realm}${stringParams}`);
       } else if (paramString.includes('state=') || paramString.includes('code=') || paramString.includes('scope=')) {
         this.state = params.get('state');
         params.delete('state');
@@ -772,8 +778,9 @@ export default {
      * @param {Object} stepParams desctuctured object containing tree, realmPath strings
      * @returns {string} returns string url
      */
-    getLinkToTreeStart({ tree, realmPath }) {
-      return `/am/XUI/?realm=${realmPath}&authIndexType=service&authIndexValue=${tree}`;
+    getLinkToTreeStart({ tree, realmPath, query: { goto, gotoOnFail } }) {
+      const gotosString = `${goto ? `&goto=${goto}` : ''}${gotoOnFail ? `&gotoOnFail=${gotoOnFail}` : ''}`;
+      return `/am/XUI/?realm=${realmPath}&authIndexType=service&authIndexValue=${tree}${gotosString}`;
     },
     /**
      * @description Used to get listeners for callback components
@@ -871,6 +878,8 @@ export default {
 
       if (this.suspendedId) {
         stepParams.query.suspendedId = this.suspendedId;
+        stepParams.query.goto = (paramsObj.goto) ? decodeURIComponent(paramsObj.goto) : undefined;
+        stepParams.query.gotoOnFail = (paramsObj.gotoOnFail) ? decodeURIComponent(paramsObj.gotoOnFail) : undefined;
       } else {
         stepParams.query = paramsObj;
         stepParams.query.code = this.code ? this.code : undefined;
