@@ -145,7 +145,7 @@ of the MIT license. See the LICENSE file for details. -->
 
       .multiselect .multiselect__option--highlight,
       .multiselect .multiselect__option--selected {
-      background-color: {{ theme.primaryOffColor }} !important;
+      background-color: {{ theme.journeyInputSelectColor || '#e4f4fd' }} !important;
       }
 
       <!-- Styling for buttons within form label group inputs -->
@@ -273,6 +273,11 @@ of the MIT license. See the LICENSE file for details. -->
       color: {{ theme.accountCardInputTextColor || '#23282e' }};
       }
 
+      .form-label-group .form-label-group-input .multiselect .multiselect__option--highlight,
+      .form-label-group .form-label-group-input .multiselect .multiselect__option--selected {
+      background-color: {{ theme.accountCardInputSelectColor || '#e4f4fd' }} !important;
+      }
+
       .modal-content .input-group-text {
       border-color: {{ theme.accountCardInputBorderColor || '#c0c9d5' }};
       background-color: {{ theme.accountCardInputBackgroundColor || '#ffffff' }} !important;
@@ -355,6 +360,7 @@ accountCardInnerBorderColor: "#e7eef4",
 accountCardInputBackgroundColor: '#ffffff',
 accountCardInputBorderColor: '#c0c9d5',
 accountCardInputLabelColor: '#5e6d82',
+accountCardInputSelectColor: "#e4f4fd",
 accountCardInputTextColor: '#23282e',
 accountCardOuterBorderColor: "#e7eef4",
 accountCardShadow: 3,
@@ -375,6 +381,7 @@ journeyCardTitleColor: "#23282e"
 journeyInputBackgroundColor: "#ffffff"
 journeyInputBorderColor: "#c0c9d5"
 journeyInputLabelColor: "#5e6d82",
+journeyInputSelectColor: "#e4f4fd",
 journeyInputTextColor: "#23282e",
 linkActiveColor: "#B20710"
 linkColor: "#E50914"
