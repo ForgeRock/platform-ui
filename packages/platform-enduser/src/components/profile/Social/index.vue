@@ -26,7 +26,7 @@ of the MIT license. See the LICENSE file for details. -->
                   :width="24"
                   class="mr-4"
                   v-if="slotData.uiConfig.buttonImage"
-                  alt=""
+                  :alt="slotData.uiConfig.buttonDisplayName"
                   :src="slotData.uiConfig.buttonImage" />
                 <h5 class="mb-0 d-inline">
                   {{ slotData.uiConfig.buttonDisplayName }}
