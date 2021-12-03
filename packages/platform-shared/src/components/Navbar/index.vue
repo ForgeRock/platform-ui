@@ -24,7 +24,7 @@ of the MIT license. See the LICENSE file for details. -->
     <BNavbarNav class="flex-row align-items-center justify-content-between flex-grow-1">
       <div @click="$emit('clicked')">
         <RouterLink
-          aria-label="Breadcrumb"
+          :aria-label="$t('common.breadcrumb')"
           class="fr-back-link overflow-hidden p-1 pl-4 pl-lg-0 mt-1"
           role="navigation"
           v-show="getBreadcrumbRoute().length > 0"
@@ -82,7 +82,7 @@ of the MIT license. See the LICENSE file for details. -->
                   <template #aside>
                     <img
                       :src="profileImage ? profileImage : require('@forgerock/platform-shared/src/assets/images/avatar.png')"
-                      alt="Avatar"
+                      :alt="$t('common.avatar')"
                       width="34"
                       height="34">
                   </template>
