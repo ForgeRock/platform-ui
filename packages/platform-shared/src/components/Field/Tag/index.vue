@@ -40,6 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
               </span>
               <span @click="removeTag(tag)">
                 <FrIcon
+                  :aria-label="$t('common.close')"
                   :aria-controls="`fr-tags-tag_${tag.replace(/\s/g, '_')}`"
                   class="close-icon pl-2"
                   style="font-size: 12px; font-weight: 900;"

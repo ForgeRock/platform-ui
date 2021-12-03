@@ -56,8 +56,7 @@ of the MIT license. See the LICENSE file for details. -->
           />
         </BButton>
       </BInputGroupAppend>
-      <BInputGroupAppend
-        v-if="$attrs.copy">
+      <BInputGroupAppend v-if="copy">
         <button
           :id="`copyButton-${value}`"
           class="btn btn-outline-secondary"
@@ -114,6 +113,13 @@ export default {
     FrInputLayout,
   },
   props: {
+    /**
+     * Determines if copy button should be appended to field
+     */
+    copy: {
+      type: Boolean,
+      default: false,
+    },
     /**
      * Input type password|text
      */

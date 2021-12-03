@@ -424,8 +424,10 @@
   },
   "configure": {
     "managedListView": {
+      "id": "Id",
       "title": "Configure Identities",
       "description": "Configure the properties and settings for each identity profile",
+      "profile": "Profile",
       "tableEmpty": "No identity profiles created",
       "getTableDataFail": "Failed to load identity profiless"
     },
@@ -571,6 +573,7 @@
       "description": "Localized questions from which the user can pick when defining security questions." 
     },
     "nodeTypeList": {
+      "addNodes": "Add Nodes",
       "failedNodeTypeList": "Failed to get available node types",
       "title": "Nodes",
       "toggleNodeList": "Toggle Node List",
@@ -655,6 +658,7 @@
       "name": "Name"
     },
     "addAppModal": {
+      "appAltText": "{appType} App",
       "appClientId": "Client ID",
       "chooseAppType": "Choose an application type",
       "enterprise": "Enterprise",
@@ -800,7 +804,6 @@
       "userpasswordLabel": "Client Secret"
     },
     "generalSettings": {
-      "showAdvanced": "{stateText} advanced settings",
       "footerButtonText": "Try it out",
       "cardTitle": "General Settings",
       "clientNameLabel": "Name",

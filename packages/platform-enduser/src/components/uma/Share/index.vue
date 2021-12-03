@@ -42,7 +42,7 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
         <button
           type="button"
-          aria-label="Close"
+          :aria-label="$t('common.close')"
           class="close"
           @click="hideModal">
           <FrIcon
@@ -103,7 +103,7 @@ of the MIT license. See the LICENSE file for details. -->
             rounded="circle"
             width="34"
             height="34"
-            alt="avatar"
+            :alt="$t('common.avatar')"
             class="mr-3" />
           <div class="media-body">
             <h6 class="mt-2">
@@ -121,7 +121,7 @@ of the MIT license. See the LICENSE file for details. -->
               <template v-slot:button-content>
                 <span class="dropdown-toggle">
                   <span class="d-none d-sm-inline">
-                    Can {{ permission.scopes.join(", ") }}
+                    {{ $t('pages.uma.resources.permissions', { permissionScopes: permission.scopes.join(", ") }) }}
                   </span>
                 </span>
               </template>
@@ -251,7 +251,6 @@ export default {
       const permissions = this.resource.policy.permissions.filter((obj) => obj.subject !== subject);
 
       const payload = {
-        /* eslint no-underscore-dangle: ["error", { "allow": ["_id"] }] */
         policyId: this.resource._id,
         permissions,
       };

@@ -20,7 +20,7 @@ of the MIT license. See the LICENSE file for details. -->
           </h5>
           <button
             type="button"
-            aria-label="Close"
+            :aria-label="$t('common.close')"
             class="close"
             @click="hideModal">
             <FrIcon

@@ -28,7 +28,7 @@ of the MIT license. See the LICENSE file for details. -->
           <template #aside>
             <img
               :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"
-              alt="Avatar"
+              :alt="$t('common.avatar')"
               width="34"
               height="34">
           </template>

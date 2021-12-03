@@ -154,7 +154,7 @@ export default {
   },
   methods: {
     formateExpiryDate(date) {
-      if (date === null) return 'Never';
+      if (date === null) return this.$t('user.profile.authorizedApplications.never');
 
       const expiry = new Date(date);
       const month = expiry.toLocaleString('default', { month: 'long' });

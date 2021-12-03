@@ -14,6 +14,7 @@
     "avatar": "Avatar",
     "back": "Back",
     "blocked": "Blocked",
+    "breadcrumb": "Breadcrumb",
     "browse": "Browse",
     "buildNumber": "Build {buildNumber} ({buildDateTime})",
     "cancel": "Cancel",
@@ -355,6 +356,9 @@
       "title": "Assignment",
       "attributes": "Attributes",
       "attribute": "attribute",
+      "attributeErrorBoolean": "Must be true or false",
+      "attributeErrorJSON": "Must be valid JSON",
+      "attributeErrorNumber": "Must be a number",
       "addAnAttribute": "Add an attribute",
       "attributesDescription": "Optionally, define attributes to be mapped to the target system on sync.",
       "errorGettingMappings": "Error getting mappings",
@@ -401,6 +405,7 @@
       "unableToDeleteModalText": "Unable to delete this device. Please sign in with this device in order to delete it."
     },
     "forbidden": {
+      "forbidden": "forbidden",
       "returnToDashboard": "Return to Dashboard",
       "notAuthorized": "You are not authorized to view this site. Please sign out and try again"
     },
@@ -545,7 +550,8 @@
     "EditResource": "Edit Resource",
     "ListResource": "List Resource",
     "Login": "Login",
-    "Profile": "Profile"
+    "Profile": "Profile",
+    "Configure": "Configure Identities"
   },
   "scriptEditor": {
     "title": "Script",

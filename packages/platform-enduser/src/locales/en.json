@@ -1,6 +1,9 @@
 {
   "user": {
     "profile": {
+      "authorizedApplications": {
+        "never": "Never"
+      },
       "updateSuccess": "Updated your profile."
     },
     "sharing": {
@@ -61,11 +64,11 @@
       },
       "resources": {
         "noDataState": "You haven't shared anything yet.",
-        "search": "Search...",
         "viewAs": "View as",
         "list": "List",
         "grid": "Grid",
         "cancel": "Cancel",
+        "permissions": "Can {permissionScopes}",
         "share": "Share",
         "unshare": "Unshare",
         "unshareAll": "Unshare all",
@@ -73,6 +76,7 @@
         "resourceNotShared": "Resource not shared",
         "sharedWithPeople": "Shared with {numberOf} people",
         "sharedWithPerson": "Shared with 1 person",
+        "toolbarWithButtons": "Toolbar with button groups",
         "warningMessage": "Sharing disabled. You'll still keep a copy.",
         "unshareResource": "Unshare '{resourceName}' ?",
         "sameShareError": "Cannot reshare resource with {requestingParty}.  Unshare with requesting party before changing permissions",

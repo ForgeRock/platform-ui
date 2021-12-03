@@ -9,6 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
     <template v-slot:dismiss>
       <FrIcon
         class="fr-alert-dismiss"
+        :aria-label="$t('common.close')"
         :outlined="false"
         name="close" />
     </template>

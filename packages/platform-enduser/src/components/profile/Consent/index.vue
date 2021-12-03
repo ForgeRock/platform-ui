@@ -14,13 +14,13 @@ of the MIT license. See the LICENSE file for details. -->
       :panel-shown="false">
       <template
         v-slot:list-item-header
-        class="overflow:hidden;">
+        class="overflow-hidden">
         <FrFallbackImage
           :src="mapping.icon"
           class="mr-3"
           width="24"
           height="24"
-          alt=""
+          :alt="mapping.displayName"
           fallback="settings_applications" />
         <div
           class="media-body"
@@ -67,7 +67,7 @@ of the MIT license. See the LICENSE file for details. -->
               </h5>
               <button
                 type="button"
-                aria-label="Close"
+                :aria-label="$t('common.close')"
                 class="close"
                 @click.stop.prevent="hideModal(mapping.name)">
                 <FrIcon

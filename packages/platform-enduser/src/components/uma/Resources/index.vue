@@ -8,7 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
       <div
         class="btn-toolbar row mb-4"
         role="toolbar"
-        aria-label="Toolbar with button groups">
+        :aria-label="$t('pages.uma.resources.toolbarWithButtons')">
         <div class="input-group col-sm-4">
           <div class="input-group-prepend">
             <div class="input-group-text">
@@ -21,9 +21,9 @@ of the MIT license. See the LICENSE file for details. -->
           <input
             type="text"
             class="form-control"
-            aria-label="Search"
+            :aria-label="$t('common.search')"
             aria-describedby="btnGroupAddon"
-            :placeholder="$t('pages.uma.resources.search')"
+            :placeholder="$t('common.search')"
             v-model="resourceFilter">
         </div>
         <div class="col">

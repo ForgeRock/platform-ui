@@ -13,7 +13,7 @@ of the MIT license. See the LICENSE file for details. -->
         :src="require('@forgerock/platform-shared/src/assets/images/locked.svg')"
         width="112"
         height="112"
-        alt="img"
+        :alt="$t('pages.forbidden.forbidden')"
         class="mb-2" />
       <p class="lead text-center font-weight-light text-muted mb-5">
         {{ $t("pages.forbidden.notAuthorized") }}

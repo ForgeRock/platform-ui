@@ -6,7 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <BContainer>
     <div style="margin-top: 40%;">
-      <Forbidden :show-dashboard="false" />
+      <FrForbidden :show-dashboard="false" />
     </div>
   </BContainer>
 </template>
@@ -15,12 +15,12 @@ of the MIT license. See the LICENSE file for details. -->
  * @description Card container that will stay horizontally and vertically center on the screen (example can be found on the default login page)
  *
  * */
-import Forbidden from '@forgerock/platform-shared/src/views/Forbidden';
+import FrForbidden from '@forgerock/platform-shared/src/views/Forbidden';
 
 export default {
   name: 'ForbiddenWrapper',
   components: {
-    Forbidden,
+    FrForbidden,
   },
   props: {
     showLogo: {
