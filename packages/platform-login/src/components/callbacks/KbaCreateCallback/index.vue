@@ -32,6 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
         class="mb-2 kbaQuestionSelect"
         role="listbox"
         type="select"
+        :label="questionModel.title"
         :name="callback.getPrompt()"
         :id="questionModel.key + '_selector'"
         :options="options"
