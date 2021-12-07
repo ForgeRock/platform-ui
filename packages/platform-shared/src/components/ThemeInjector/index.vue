@@ -155,6 +155,10 @@ of the MIT license. See the LICENSE file for details. -->
       color: {{ theme.journeyInputTextColor || '#23282e' }} !important;
       }
 
+      .form-label-group .form-label-group-input .white-label-background ~ label {
+      background-color: {{ theme.journeyInputBackgroundColor || '#ffffff' }} !important;
+      }
+
       .form-label-group label {
       color: {{ theme.journeyInputLabelColor || '#5e6d82' }} !important;
       }

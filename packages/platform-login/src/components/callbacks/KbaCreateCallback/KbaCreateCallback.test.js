@@ -18,6 +18,7 @@ describe('KbaCreateCallback.vue', () => {
         callback: {
           getPredefinedQuestions: () => (['Favorite color?', 'Favorite planet?']),
           getPrompt: () => 'Prompt',
+          getType: () => 'KbaCreateCallback',
           setQuestion: jest.fn(),
         },
         index: 5,
@@ -32,10 +33,8 @@ describe('KbaCreateCallback.vue', () => {
 
   it('Emits disable-next-button and sets options', () => {
     expect(wrapper.emitted()['disable-next-button'].pop()).toEqual([true, 5]);
-    const placeholder = { value: null, text: 'Prompt', disabled: true };
-    const customQuestionOption = { value: 'custom', text: 'Provide your own:', disabled: false };
+    const customQuestionOption = { value: 'custom', text: 'Provide your own:' };
     expect(wrapper.vm.$data.options).toEqual([
-      placeholder,
       { value: 'Favorite color?', text: 'Favorite color?' },
       { value: 'Favorite planet?', text: 'Favorite planet?' },
       customQuestionOption,

@@ -162,6 +162,8 @@ export default {
      * Also scrolls the selected option into view if showSelectedOptionOnOpen is true
      */
     openHandler() {
+      this.$emit('open');
+
       if (this.searchable) {
         this.$refs.vms.$el.querySelector('input').focus();
       }

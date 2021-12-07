@@ -32,20 +32,24 @@ of the MIT license. See the LICENSE file for details. -->
         class="mb-2 kbaQuestionSelect"
         role="listbox"
         type="select"
+        :searchable="false"
         :label="callback.getPrompt()"
         :name="callback.getPrompt()"
+        :placeholder="callback.getPrompt()"
         :id="questionModel.key + '_selector'"
         :options="options"
-        @input="onQuestionSelectionChange()" />
+        :validation="questionSelectValidation"
+        @input="onQuestionSelectionChange()"
+        @open="loadOptions()" />
       <FrField
         v-if="showCustom"
         v-model="questionModel.value"
         class="mb-3"
         :label="questionModel.title"
         :name="questionModel.key"
-        :validation="questionModel.validation"
+        :validation="questionTextInputValidation"
         :validation-immediate="true"
-        @input="validateQuestion" />
+        @input="onQuestionSelectionChange()" />
       <FrField
         v-model="answerModel"
         class="mb-3"
@@ -61,9 +65,6 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import {
-  map,
-} from 'lodash';
 import { ValidationObserver } from 'vee-validate';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
@@ -102,8 +103,9 @@ export default {
         key: `callback_${this.index}_question_field`,
         title: this.$t('login.kba.question'),
         value: '',
-        validation: { required: true },
       },
+      questionSelectValidation: {},
+      questionTextInputValidation: { required: true },
       options: [],
       selected: null,
       showCustom: false,
@@ -114,58 +116,84 @@ export default {
     this.loadOptions();
   },
   methods: {
+    /**
+     * Get all other KBA callback components
+     *
+     * @param {Number} index callback index
+     * @returns {Object[]} callback vue components
+     */
+    getOtherKbaCallbacks(index) {
+      return this.$parent.$children.filter((x) => (x.callback && x.callback.getType() === 'KbaCreateCallback' && x.index !== index));
+    },
+    /**
+     * Get question input values for all other KBA callback components
+     *
+     * @param {Number} index callback index
+     * @returns {String[]} question values
+     */
+    getOtherQuestionValues(index) {
+      return this.getOtherKbaCallbacks(index).map((x) => (x.callback.getInputValue()));
+    },
     loadOptions() {
-      const placeholder = { value: null, text: this.callback.getPrompt(), disabled: true };
-      const customQuestionOption = { value: 'custom', text: this.$t('login.kba.custom'), disabled: false };
+      const customQuestionOption = { value: 'custom', text: this.$t('login.kba.custom') };
       const predefinedQuestions = this.getTranslation(this.callback.getPredefinedQuestions());
-      // Add the placeholder to the first element in the question options
-      // then add any predefined question
-      // then add custom question option to the list of questions
-      this.options = [
-        placeholder,
+
+      // Add any predefined question
+      const options = [
         ...predefinedQuestions.map((question) => ({ text: question, value: question })),
         customQuestionOption,
       ];
+
+      // remove questions that are selected in other KBA callbacks
+      const otherValues = this.getOtherQuestionValues(this.index);
+      this.options = options.filter((question) => (otherValues.indexOf(question.value) === -1));
     },
-    // This function sets the value of the question's hidden input and disbables the question value from other kba question selection options on the dom
+    /**
+     * This function sets validation for the question and sets validation
+     * for other KBACreateCallback components on the page
+     */
     onQuestionSelectionChange() {
-      // get a list of values from other .kbaQuestionSelect's
-      const questionValues = map(document.querySelectorAll('select.kbaQuestionSelect'), (question) => question.value);
-
-      // disable the ability to select the same question more than once from the other .kbaQuestionSelect's
-      document.querySelectorAll(`select.kbaQuestionSelect:not(#${this.questionModel.key}_selector)`).forEach((selector) => {
-        selector.forEach((option, index) => {
-          if (index > 0 && option.value !== 'custom') {
-            option.disabled = !!(questionValues.includes(option.value) && option.value !== selector.value);
-          }
-        });
-      });
-
       // if "Provide your own" is selected, show the custom question input
       this.showCustom = this.selected === 'custom';
 
       this.validateQuestion();
+
+      // trigger validation on other KBA callbacks
+      this.getOtherKbaCallbacks(this.index).map((x) => {
+        if (x.callback.getInputValue()) x.validateQuestion();
+        return true;
+      });
     },
-    // This function looks to make sure the question is both non-empty and unique
+    /**
+     * This function looks to make sure the question is both non-empty and unique
+     */
     validateQuestion() {
-      // Find all the other questions on the dom to ensure uniqueness
-      const otherQuestionInputs = document.querySelectorAll(`input[placeholder=${this.questionModel.title}]:not([name=${this.questionModel.key}])`);
-      const otherQuestions = map(otherQuestionInputs, (question) => question.value);
+      // Find all the other KbaCreateCallbacks question values to ensure uniqueness
+      const otherValues = this.getOtherQuestionValues(this.index);
 
-      this.questionModel.validation = { required: true, unique: otherQuestions };
-
-      if (this.selected === 'custom') this.callback.setQuestion(this.questionModel.value);
-      else this.callback.setQuestion(this.selected);
+      if (this.selected === 'custom') {
+        this.questionSelectValidation = {};
+        this.questionTextInputValidation = { required: true, unique: otherValues };
+        this.callback.setQuestion(this.questionModel.value);
+      } else {
+        this.questionSelectValidation = { required: true, uniqueValue: otherValues };
+        this.questionTextInputValidation = {};
+        this.callback.setQuestion(this.selected);
+      }
 
       this.setSubmitButton();
     },
-    // This function looks at the question's answer to make sure it is not empty
+    /**
+     * This function looks at the question's answer to make sure it is not empty
+     */
     validateAnswer() {
       this.callback.setAnswer(this.answerModel);
 
       this.setSubmitButton();
     },
-    // This function disables/enables the callback form's submit button
+    /**
+     * This function disables/enables the callback form's submit button
+     */
     setSubmitButton() {
       // A delay is needed here so the .error-message class can be added to the field component in the case of invalid data
       this.$nextTick(() => {
