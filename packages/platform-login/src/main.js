@@ -65,7 +65,7 @@ const loadApp = () => {
 const startApp = () => {
   const idmInstance = axios.create({
     baseURL: idmContext,
-    timeout: 5000,
+    timeout: 15000,
     headers: {},
   });
 

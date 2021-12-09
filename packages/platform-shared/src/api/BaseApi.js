@@ -19,7 +19,7 @@ import getFQDN from '../utils/getFQDN';
 export function generateIdmApi(requestOverride = {}, routeToForbidden = true) {
   const requestDetails = {
     baseURL: store.state.SharedStore.idmBaseURL,
-    timeout: 5000,
+    timeout: 15000,
     headers: {},
     ...requestOverride,
   };
@@ -71,7 +71,7 @@ export function generateAmApi(resource, requestOverride = {}) {
 
   const requestDetails = {
     baseURL: `${store.state.SharedStore.amBaseURL}/json/${resource.path}`,
-    timeout: 5000,
+    timeout: 15000,
     ...requestOverride,
     headers,
   };
@@ -98,7 +98,7 @@ export function generateAmApi(resource, requestOverride = {}) {
 export function generateFraasLoggingApi(requestOverride = {}) {
   const requestDetails = {
     baseURL: store.state.SharedStore.fraasLoggingKeyURL,
-    timeout: 5000,
+    timeout: 15000,
     headers: {},
     ...requestOverride,
   };
@@ -115,7 +115,7 @@ export function generateFraasLoggingApi(requestOverride = {}) {
 export function generateFraasEnvironmentApi(requestOverride = {}) {
   const requestDetails = {
     baseURL: store.state.SharedStore.fraasEnvironmentUrl,
-    timeout: 5000,
+    timeout: 15000,
     headers: {},
     ...requestOverride,
   };

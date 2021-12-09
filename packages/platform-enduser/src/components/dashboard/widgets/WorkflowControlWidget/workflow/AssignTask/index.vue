@@ -118,7 +118,7 @@ export default {
                 && this.taskDetailsList.length === 0) {
         const workflowInstance = axios.create({
           baseURL: process.env.VUE_APP_IDM_URL,
-          timeout: 5000,
+          timeout: 15000,
           headers: {},
         });
         workflowInstance.get(`/workflow/processdefinition/${this.taskDefinition.task.processDefinitionId}`).then((processDetails) => {
