@@ -82,7 +82,7 @@ function getTranslationOverridesForLocale(idmContext, locale, packageName) {
   return new Promise((resolve) => {
     const idmInstance = axios.create({
       baseURL: idmContext,
-      timeout: 5000,
+      timeout: 15000,
       headers: {},
     });
 

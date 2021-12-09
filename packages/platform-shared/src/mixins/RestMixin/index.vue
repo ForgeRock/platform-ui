@@ -23,7 +23,7 @@ export default {
     // Generated an axios ajax request service for consistent use of calls to IDM or AM
     getRequestService(config) {
       let baseURL = idmContext;
-      let timeout = 5000;
+      let timeout = 15000;
       let headers = {
         'content-type': 'application/json',
         'x-requested-with': 'XMLHttpRequest',
