@@ -67,7 +67,7 @@ router.beforeEach((to, from, next) => {
     if (isNull(store.state.UserStore.userId)) {
       const authInstance = axios.create({
         baseURL: idmContext,
-        timeout: 5000,
+        timeout: 15000,
         headers: store.state.authHeaders,
       });
 
@@ -147,7 +147,7 @@ const loadApp = () => {
 const startApp = () => {
   const idmInstance = axios.create({
     baseURL: idmContext,
-    timeout: 5000,
+    timeout: 15000,
     headers: {},
   });
 
