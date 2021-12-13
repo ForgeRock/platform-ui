@@ -63,14 +63,11 @@ of the MIT license. See the LICENSE file for details. -->
         </BTable>
 
         <BPagination
-          v-if="filteredApplications.length"
+          v-if="filteredApplications.length > 10"
           class="pt-3 justify-content-center pagination-material-buttons border-top"
           v-model="currentPage"
           :total-rows="totalRows"
           :per-page="perPage"
-          last-class="d-none"
-          :next-class="{'show-ellipsis': !lastPage}"
-          :page-class="{'hide-last-number': !lastPage}"
           aria-controls="linked-apps-table" />
       </div>
     </template>
