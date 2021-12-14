@@ -779,7 +779,7 @@ export default {
      * @returns {string} returns string url
      */
     getLinkToTreeStart({ tree, realmPath, query: { goto, gotoOnFail } }) {
-      const gotosString = `${goto ? `&goto=${goto}` : ''}${gotoOnFail ? `&gotoOnFail=${gotoOnFail}` : ''}`;
+      const gotosString = `${goto ? `&goto=${encodeURIComponent(goto)}` : ''}${gotoOnFail ? `&gotoOnFail=${encodeURIComponent(gotoOnFail)}` : ''}`;
       return `/am/XUI/?realm=${realmPath}&authIndexType=service&authIndexValue=${tree}${gotosString}`;
     },
     /**
