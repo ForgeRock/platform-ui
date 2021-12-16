@@ -38,6 +38,7 @@ import FrSpinButton from '@forgerock/platform-shared/src/components/Field/SpinBu
 import FrSwitch from '@forgerock/platform-shared/src/components/Field/Switch';
 import FrTag from '@forgerock/platform-shared/src/components/Field/Tag';
 import FrTextArea from '@forgerock/platform-shared/src/components/Field/TextArea';
+import FrTimeInput from '@forgerock/platform-shared/src/components/Field/TimeInput';
 import FrJsonInput from '@forgerock/platform-shared/src/components/Field/JsonInput';
 
 export default {
@@ -56,6 +57,7 @@ export default {
     FrSwitch,
     FrTag,
     FrTextArea,
+    FrTimeInput,
   },
   props: {
     name: {
@@ -95,6 +97,7 @@ export default {
         string: 'FrBasicInput',
         tag: 'FrTag',
         textarea: 'FrTextArea',
+        time: 'FrTimeInput',
       };
       return componentMap[this.fieldType];
     },
