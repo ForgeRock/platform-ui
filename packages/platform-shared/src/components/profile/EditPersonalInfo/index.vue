@@ -44,7 +44,7 @@ of the MIT license. See the LICENSE file for details. -->
                   v-model="field.value"
                   :label="field.title"
                   :name="field.name"
-                  :type="field.type"
+                  :type="field.format ? field.format : field.type"
                   :validation="field.validation" />
               </BFormGroup>
               <FrListField
