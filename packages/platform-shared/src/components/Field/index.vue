@@ -28,6 +28,7 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import FrBasicInput from '@forgerock/platform-shared/src/components/Field/BasicInput';
 import FrCheckbox from '@forgerock/platform-shared/src/components/Field/Checkbox';
+import FrDateInput from '@forgerock/platform-shared/src/components/Field/DateInput';
 import FrKeyValueList from '@forgerock/platform-shared/src/components/Field/KeyValueList';
 import FrMultiselect from '@forgerock/platform-shared/src/components/Field/Multiselect';
 import FrSelect from '@forgerock/platform-shared/src/components/Field/Select';
@@ -43,6 +44,8 @@ export default {
   components: {
     FrBasicInput,
     FrCheckbox,
+    FrDateInput,
+    FrJsonInput,
     FrKeyValueList,
     FrMultiselect,
     FrSelect,
@@ -51,7 +54,6 @@ export default {
     FrSwitch,
     FrTag,
     FrTextArea,
-    FrJsonInput,
   },
   props: {
     name: {
@@ -78,6 +80,8 @@ export default {
       const componentMap = {
         boolean: 'FrSwitch',
         checkbox: 'FrCheckbox',
+        date: 'FrDateInput',
+        json: 'FrJsonInput',
         multiselect: 'FrMultiselect',
         number: 'FrBasicInput',
         object: 'FrKeyValueList',
@@ -88,7 +92,6 @@ export default {
         string: 'FrBasicInput',
         tag: 'FrTag',
         textarea: 'FrTextArea',
-        json: 'FrJsonInput',
       };
       return componentMap[this.fieldType];
     },

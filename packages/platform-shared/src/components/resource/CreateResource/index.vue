@@ -36,7 +36,7 @@ of the MIT license. See the LICENSE file for details. -->
                     :label="field.title"
                     :name="field.key"
                     :options="field.options"
-                    :type="field.type"
+                    :type="field.format ? field.format : field.type"
                     :validation="field.validation" />
                 </BFormGroup>
                 <BFormGroup
