@@ -1,51 +1,25 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div
-    id="captchaBody"
-    class="mb-4 d-inline">
-    <input
-      type="hidden"
-      :name="name"
-      :ref="name"
-      :value="value">
-    <div class="recaptcha-wrapper">
-      <div
-        class="recaptcha-bound">
-        <div id="recaptchaContainer">
-          <VueRecaptcha
-            ref="tmpRecaptcha"
-            v-if="recaptchaSiteKey"
-            @verify="handleCaptchaCallback"
-            @expired="handleCaptchaError"
-            @error="handleCaptchaError"
-            :sitekey="recaptchaSiteKey" />
-        </div>
-      </div>
-    </div>
-  </div>
+  <span>
+    <Component
+      :is="reCaptchaComponentVersion"
+      :callback="callback"
+      :index="index"
+      v-on="$listeners"
+    />
+  </span>
 </template>
 
 <script>
-/**
- * @description Selfservice stage for multiple selfservice flows, displays a google captcha
- *
- * */
-import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import VueRecaptcha from 'vue-recaptcha';
 
 export default {
   name: 'ReCaptchaCallback',
-  mixins: [
-    NotificationMixin,
-  ],
   components: {
-    VueRecaptcha,
+    ReCaptchaV2: () => import('@/components/callbacks/ReCaptchaCallback/ReCaptchaV2'),
+    ReCaptchaV3: () => import('@/components/callbacks/ReCaptchaCallback/ReCaptchaV3'),
   },
   props: {
     callback: {
@@ -59,46 +33,11 @@ export default {
   },
   data() {
     return {
-      recaptchaSiteKey: '',
-      name: '',
-      value: '',
+      reCaptchaComponentVersion: undefined,
     };
   },
   created() {
-    this.injectRecaptchaHeadScript();
-    this.recaptchaSiteKey = this.callback.getSiteKey();
-  },
-  mounted() {
-    this.name = `callback_${this.index}`;
-  },
-  methods: {
-    injectRecaptchaHeadScript() {
-      const scriptSrc = 'https://www.google.com/recaptcha/api.js?onload=vueRecaptchaApiLoaded&render=explicit';
-      if (!document.querySelector(`script[src='${scriptSrc}']`)) {
-        const recaptchaScript = document.createElement('script');
-        recaptchaScript.setAttribute('src', scriptSrc);
-        recaptchaScript.setAttribute('async', '');
-        recaptchaScript.setAttribute('defer', '');
-        document.head.appendChild(recaptchaScript);
-      }
-    },
-    handleCaptchaError() {
-      this.displayNotification('IDMMessages', 'error', this.$t('pages.selfservice.captchaError'));
-    },
-    handleCaptchaCallback(response) {
-      this.value = response;
-      this.callback.setInputValue(this.value);
-    },
+    this.reCaptchaComponentVersion = this.callback.getOutputByName('reCaptchaV3') ? 'ReCaptchaV3' : 'ReCaptchaV2';
   },
 };
 </script>
-
-<style>
-#recaptchaContainer > div {
-  margin: auto;
-}
-
-#recaptchaContainer > div > div {
-  display: inline-block;
-}
-</style>
