@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -95,6 +95,7 @@ export default {
   mounted() {
     // need to set validateOnly flag to true so that tree does not advance when validating input
     this.callback.setValidateOnly(true);
+    this.$emit('next-step-callback', () => { this.callback.setValidateOnly(false); });
 
     if (this.overrideInitialPolicies) {
       this.setPoliciesFromFailures(this.step);

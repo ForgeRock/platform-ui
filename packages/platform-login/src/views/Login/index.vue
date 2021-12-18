@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -533,6 +533,9 @@ export default {
               callbackSpecificProps: { showHeader: !existsInComponentList(FrCallbackType.KbaCreateCallback) },
               listeners: ['disable-next-button'],
             }),
+            ReCaptchaCallback: () => ({
+              listeners: ['next-step-callback'],
+            }),
             SelectIdPCallback: () => ({
               callbackSpecificProps: { isOnlyCallback: this.step.callbacks.length === 1 },
               listeners: ['hide-next-button', 'disable-next-button'],
@@ -542,7 +545,7 @@ export default {
             }),
             ValidatedCreatePasswordCallback: () => ({
               callbackSpecificProps: { overrideInitialPolicies: true, realm: this.realm, index },
-              listeners: ['disable-next-button'],
+              listeners: ['disable-next-button', 'next-step-callback'],
             }),
             WebAuthnComponent: () => {
               const webAuthnType = FRWebAuthn.getWebAuthnStepType(this.step);
@@ -965,21 +968,24 @@ export default {
       this.linkToTreeStart = '';
 
       // invoke callbacks before nextStep
-      this.nextStepCallbacks.forEach((cb) => { cb(); });
-      this.nextStepCallbacks = [];
-
-      const stepParams = this.getStepParams();
-
-      // need to set validateOnly input to false for some callbacks in order to be able to advance the tree
-      if (this.step) {
-        const pwCallbacks = this.step.getCallbacksOfType('ValidatedCreatePasswordCallback');
-        if (pwCallbacks.length) {
-          pwCallbacks.forEach((cb) => {
-            cb.setInputValue(false, 1);
-          });
+      // if a callback returns a promise, the promise is pushed to an array
+      const callbackPromises = [];
+      while (this.nextStepCallbacks.length) {
+        const cb = this.nextStepCallbacks.shift();
+        const returnPromise = cb();
+        if (returnPromise && typeof returnPromise === 'object' && typeof returnPromise.then === 'function') {
+          callbackPromises.push(returnPromise);
         }
       }
+      // the array of promises is waited on to continue execution until all have resolved
+      if (callbackPromises.length) {
+        Promise.all(callbackPromises).finally(
+          () => this.nextStep(event, preventClear),
+        );
+        return;
+      }
 
+      const stepParams = this.getStepParams();
       FRAuth.next(this.step, stepParams)
         .then((step) => {
           let initialStep;
