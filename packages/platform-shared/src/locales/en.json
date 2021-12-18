@@ -250,17 +250,24 @@
     }
   },
   "date": {
-    "yearsAgo": "{elapsed} years ago",
-    "yearAgo": "a year ago",
-    "monthsAgo": "{elapsed} months ago",
     "monthAgo": "a month ago",
-    "daysAgo": "{elapsed} days ago",
+    "months": "months",
+    "monthsAgo": "{elapsed} months ago",
     "dayAgo": "a day ago",
-    "hoursAgo": "{elapsed} hours ago",
+    "days": "days",
+    "daysAgo": "{elapsed} days ago",
     "hourAgo": "an hour ago",
-    "minutesAgo": "{elapsed} minutes ago",
+    "hours": "hours",
+    "hoursAgo": "{elapsed} hours ago",
     "minuteAgo": "a minute ago",
-    "secondsAgo": "a few seconds ago"
+    "minutes": "minutes",
+    "minutesAgo": "{elapsed} minutes ago",
+    "weeks": "weeks",
+    "seconds": "seconds",
+    "secondsAgo": "a few seconds ago",
+    "years": "years",
+    "yearAgo": "a year ago",
+    "yearsAgo": "{elapsed} years ago"
   },
   "editor": {
     "accessibilityHelp": "Press ESC for keyboard navigation out of editor"
