@@ -29,7 +29,9 @@ of the MIT license. See the LICENSE file for details. -->
 import FrBasicInput from '@forgerock/platform-shared/src/components/Field/BasicInput';
 import FrCheckbox from '@forgerock/platform-shared/src/components/Field/Checkbox';
 import FrDateInput from '@forgerock/platform-shared/src/components/Field/DateInput';
+import FrDateTimeInput from '@forgerock/platform-shared/src/components/Field/DateTimeInput';
 import FrDurationInput from '@forgerock/platform-shared/src/components/Field/DurationInput';
+import FrJsonInput from '@forgerock/platform-shared/src/components/Field/JsonInput';
 import FrKeyValueList from '@forgerock/platform-shared/src/components/Field/KeyValueList';
 import FrMultiselect from '@forgerock/platform-shared/src/components/Field/Multiselect';
 import FrSelect from '@forgerock/platform-shared/src/components/Field/Select';
@@ -39,7 +41,6 @@ import FrSwitch from '@forgerock/platform-shared/src/components/Field/Switch';
 import FrTag from '@forgerock/platform-shared/src/components/Field/Tag';
 import FrTextArea from '@forgerock/platform-shared/src/components/Field/TextArea';
 import FrTimeInput from '@forgerock/platform-shared/src/components/Field/TimeInput';
-import FrJsonInput from '@forgerock/platform-shared/src/components/Field/JsonInput';
 
 export default {
   name: 'FrField',
@@ -47,6 +48,7 @@ export default {
     FrBasicInput,
     FrCheckbox,
     FrDateInput,
+    FrDateTimeInput,
     FrDurationInput,
     FrJsonInput,
     FrKeyValueList,
@@ -85,6 +87,7 @@ export default {
         boolean: 'FrSwitch',
         checkbox: 'FrCheckbox',
         date: 'FrDateInput',
+        datetime: 'FrDateTimeInput',
         duration: 'FrDurationInput',
         json: 'FrJsonInput',
         multiselect: 'FrMultiselect',
