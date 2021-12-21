@@ -50,7 +50,7 @@ import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
 
 /**
- * Input for time (HH:mm:ss.mmmZ) with a floating label in the center, this will move when a user types into the input.
+ * Input for time (HH:mm:ss) with a floating label in the center, this will move when a user types into the input.
  */
 export default {
   name: 'TimeInput',
