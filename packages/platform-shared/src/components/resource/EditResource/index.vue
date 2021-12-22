@@ -9,7 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
     <div
       class="mb-4 media">
       <BImg
-        v-if="resourceName === 'user'"
+        v-if="resourceIsUser"
         class="mr-4"
         width="104"
         :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"
@@ -273,6 +273,7 @@ export default {
       resourceTitle: '',
       resourceName: this.$route.params.resourceName,
       resourceType: this.$route.params.resourceType,
+      resourceIsUser: this.$route.params.resourceName && this.$route.params.resourceName.endsWith('user'),
       resourceDetails: null,
       resourceSchema: null,
       resourcePrivilege: null,
@@ -697,7 +698,7 @@ export default {
     displayName() {
       let tempDisplayName = this.id;
 
-      if (this.resourceName === 'user' && this.formFields.givenName && this.formFields.sn) {
+      if (this.resourceIsUser && this.formFields.givenName && this.formFields.sn) {
         tempDisplayName = `${this.formFields.givenName} ${this.formFields.sn}`;
       } else if (this.displayNameField.length > 0) {
         tempDisplayName = this.formFields[this.displayNameField];
