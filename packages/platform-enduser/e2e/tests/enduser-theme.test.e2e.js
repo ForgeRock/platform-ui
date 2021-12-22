@@ -1,12 +1,12 @@
 /**
- * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import filterTests from '../../../../e2e/filter_tests';
-import { createIDMUser } from '../api/managedApi.e2e';
+import { createIDMUser, deleteIDMUser } from '../api/managedApi.e2e';
 import { setBaseTheme } from '../api/themeApi.e2e';
 
 function changeColour(name, value) {
@@ -16,31 +16,42 @@ function changeColour(name, value) {
   cy.findByRole('tooltip').should('not.exist', { timeout: 15000 });
 }
 
-filterTests(['forgeops'], () => {
-  describe('Enduser Theming', () => {
-    const platformLoginUrl = `${Cypress.config().baseUrl}/platform/`;
-    const locationUrl = `${Cypress.config().baseUrl}/platform/?realm=root#/hosted-pages`;
-    let enduserUserName = '';
-    const adminUserName = Cypress.env('AM_USERNAME');
-    const adminPassword = Cypress.env('AM_PASSWORD');
+const enduserRealm = Cypress.env('IS_FRAAS') ? 'alpha' : 'root';
 
-    before(() => {
-      createIDMUser().then((results) => {
-        enduserUserName = results.body.userName;
+filterTests(['forgeops', 'cloud'], () => {
+  describe('Enduser Theming', () => {
+    let enduserUserName;
+    let enduserUserId;
+
+    beforeEach(() => {
+      // Log in to the admin console to get an admin access token
+      cy.loginAsAdmin().then(() => {
+        // Create the user for the test
+        createIDMUser().then(({ body: { userName, _id } }) => {
+          enduserUserName = userName;
+          enduserUserId = _id;
+
+          // Set the base theme to alter during the test
+          setBaseTheme().then(() => {
+            // Visit the edit page for the theme used in the test
+            cy.visit(`${Cypress.config().baseUrl}/platform/?realm=${enduserRealm}#/hosted-pages/Starter%20Theme`);
+            cy.findByRole('heading', { name: 'Starter Theme' }).should('exist');
+          });
+        });
       });
     });
 
-    it('should change enduser colors', () => {
-      cy.intercept('POST', '/am/oauth2/access_token').as('getAccessToken');
-      cy.login(adminUserName, adminPassword, platformLoginUrl).then(() => {
-        cy.wait('@getAccessToken').then(({ response }) => {
-          const accessToken = response.body.access_token;
-          setBaseTheme(accessToken);
-        });
-      });
-      cy.visit(locationUrl);
-      cy.findByRole('cell', { name: 'Starter Theme' }).click();
+    afterEach(() => {
+      // Clean up the test user
+      cy.logout();
+      deleteIDMUser(enduserUserId);
 
+      // Reset the theme to the base theme
+      setBaseTheme();
+    });
+
+    it('should change enduser colors', () => {
+      // Set the theme data for the test
       changeColour(/^Link Color/, '16FF96');
       changeColour(/^Link Hover Color/, '123123');
       cy.findByRole('tab', { name: 'Account Pages' }).click();
@@ -51,24 +62,18 @@ filterTests(['forgeops'], () => {
       changeColour(/^Navigation Active Text Color/, '16FF96');
 
       cy.findByRole('button', { name: 'Save' }).click();
+
+      // Log in to the enduser UI and check that the theme has been applied
       cy.logout();
-      cy.login(enduserUserName);
-      cy.visit(`${Cypress.config().baseUrl}/enduser/?realm=root#/profile`);
+      cy.loginAsEnduser(enduserUserName);
+      cy.visit(`${Cypress.config().baseUrl}/enduser/?realm=${enduserRealm}#/profile`);
       cy.get('body').should('have.css', 'background-color', 'rgb(255, 255, 255)');
       cy.findByRole('link', { name: 'Reset Security Questions' }).should('have.css', 'color', 'rgb(22, 255, 150)');
       cy.get('#app .router-link-active').should('have.css', 'background-color', 'rgb(18, 49, 35)');
     });
 
     it('should change profile page logo', () => {
-      cy.intercept('POST', '/am/oauth2/access_token').as('getAccessToken');
-      cy.login(adminUserName, adminPassword, platformLoginUrl).then(() => {
-        cy.wait('@getAccessToken').then(({ response }) => {
-          const accessToken = response.body.access_token;
-          setBaseTheme(accessToken);
-        });
-      });
-      cy.visit(locationUrl);
-      cy.findByRole('cell', { name: 'Starter Theme' }).click();
+      // Set the theme data for the test
       cy.findByRole('tab', { name: 'Account Pages' }).click();
       cy.findByRole('tab', { name: 'Logo' }).click();
       cy.findAllByRole('img', { name: 'Logo' }).eq(1).click();
@@ -87,30 +92,26 @@ filterTests(['forgeops'], () => {
         .type('alt');
       cy.findByRole('button', { name: 'Update' }).click();
       cy.findByRole('button', { name: 'Save' }).click();
+
+      // Log in to the enduser UI and check that the theme has been applied
       cy.logout();
-      cy.login(enduserUserName);
+      cy.loginAsEnduser(enduserUserName);
       cy.get('div.fr-logo:visible')
         .should('have.css', 'background-image', 'url("https://www.logosurfer.com/wp-content/uploads/2018/03/quicken-loans-logo_0.png")');
     });
 
     it('should toggle profile pieces', () => {
-      cy.intercept('POST', '/am/oauth2/access_token').as('getAccessToken');
-      cy.login(adminUserName, adminPassword, platformLoginUrl).then(() => {
-        cy.wait('@getAccessToken').then(({ response }) => {
-          const accessToken = response.body.access_token;
-          setBaseTheme(accessToken);
-        });
-      });
-      cy.visit(locationUrl);
-      cy.findByRole('cell', { name: 'Starter Theme' }).click();
+      // Set the theme data for the test
       cy.findByRole('tab', { name: 'Account Pages' }).click();
       cy.findByRole('tab', { name: 'Layout' }).click();
       cy.findByRole('checkbox', { name: 'Password' }).click({ force: true });
       cy.findByRole('checkbox', { name: '2-Step Verification' }).click({ force: true });
       cy.findByRole('button', { name: 'Save' }).click();
+
+      // Log in to the enduser UI and check that the theme has been applied
       cy.logout();
-      cy.login(enduserUserName);
-      cy.visit(`${Cypress.config().baseUrl}/enduser/?realm=root#/profile`);
+      cy.loginAsEnduser(enduserUserName);
+      cy.visit(`${Cypress.config().baseUrl}/enduser/?realm=${enduserRealm}#/profile`);
       // verify personal information, password row, and 2-step verification row do not appear
       cy.findByRole('heading', { name: 'Sign-in & Security' }).should('exist');
       cy.findByRole('heading', { name: 'Password' }).should('not.exist');
@@ -118,21 +119,10 @@ filterTests(['forgeops'], () => {
       // verify username and Security Questions rows do appear
       cy.findByRole('heading', { name: 'Username' }).should('exist');
       cy.findByRole('heading', { name: 'Security Questions' }).should('exist');
-      // reset theme to keep environment clean
-      cy.logout();
-      cy.login(adminUserName, adminPassword, platformLoginUrl).then(() => {
-        cy.wait('@getAccessToken').then(({ response }) => {
-          const accessToken = response.body.access_token;
-          setBaseTheme(accessToken);
-        });
-      });
     });
 
     it('should change login/profile favicon', () => {
-      cy.login(adminUserName, adminPassword, platformLoginUrl);
-
-      cy.visit(locationUrl);
-      cy.findByRole('cell', { name: 'Starter Theme' }).click();
+      // Set the theme data for the test
       cy.findByRole('tab', { name: 'Favicon' }).click();
       cy.findByRole('button', { name: 'Logo' }).click();
       cy.findByPlaceholderText('Favicon URL')
@@ -145,34 +135,15 @@ filterTests(['forgeops'], () => {
         .type('ttps://www.forgerock.com/themes/custom/forgerock/favicon.ico');
       cy.findByRole('button', { name: 'Update' }).click();
       cy.findByRole('button', { name: 'Save' }).click();
+
+      // Log in to the enduser UI and check that the theme has been applied
       cy.logout();
-      // ensure login has proper favicon
-      cy.visit(`${Cypress.config().baseUrl}/enduser/`);
+      cy.visit(Cypress.env('IS_FRAAS') ? `${Cypress.config().baseUrl}/am/XUI/?realm=/alpha#/` : `${Cypress.config().baseUrl}/enduser/`);
       cy.findByTestId('favicon').should('have.attr', 'href').and('include', 'https://www.forgerock.com/themes/custom/forgerock/favicon.ico');
 
       // ensure enduser has proper favicon
-      cy.login(enduserUserName);
+      cy.loginAsEnduser(enduserUserName);
       cy.findByTestId('favicon').should('have.attr', 'href').and('include', 'https://www.forgerock.com/themes/custom/forgerock/favicon.ico');
-    });
-
-    it('should delete test user', () => {
-      cy.login(enduserUserName);
-      const permanentlyDeleteMessage = 'Are you sure you want to permanently delete your account data?';
-      cy.get('[href="#/profile"]:first').click();
-      cy.get('h5.mb-0:last')
-        .should('exist')
-        .should('contain', 'Delete Account')
-        .click();
-      cy.get('button.btn-danger:last')
-        .should('exist')
-        .click();
-      cy.get('div.modal-body').should('contain', permanentlyDeleteMessage);
-      cy.get('footer.modal-footer').within(() => {
-        cy.get('button.btn-danger')
-          .should('be.enabled')
-          .should('contain', 'Delete Account')
-          .click();
-      });
     });
   });
 });
