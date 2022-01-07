@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -126,32 +126,27 @@ export default {
 
         let theme = themeResults[cleanRealm];
         if (theme && !theme.backgroundColor) {
-          // themeOptions.tree tells us this invocation is coming from the login ui
-          if (themeOptions.tree) {
-            // see if there is a theme linked to themeOptions.tree
-            const treeTheme = theme.find((realmTheme) => (realmTheme.linkedTrees && realmTheme.linkedTrees.includes(themeOptions.tree)));
-            // If there is a tree theme use that theme as the current theme for display and
-            // set localStorage theme-id to override the default theme on any subsequent request
-            // on the user's browser until explicitly changed by another tree.
+          if (themeOptions.nodeThemeId) {
+            // Prioritize node themes over tree themes
+            themeOptions.themeId = themeOptions.nodeThemeId;
+            localStorage.setItem('theme-id', themeOptions.nodeThemeId);
+          } else if (themeOptions.treeId) {
+            // treeId tells us this invocation is coming from the login ui
+            const treeTheme = theme.find((realmTheme) => (realmTheme.linkedTrees && realmTheme.linkedTrees.includes(themeOptions.treeId)));
             if (treeTheme) {
-              theme = treeTheme;
-              localStorage.setItem('theme-id', theme._id);
-            } else if (themeOptions.themeId) {
-              // In this case there is a theme-id already set in localStorage. Find by _id or name and use it here.
-              theme = theme.find((realmTheme) => realmTheme._id === themeOptions.themeId || realmTheme.name === themeOptions.themeId);
-            } else {
-              // Always use the default theme here.
-              theme = theme.find((realmTheme) => realmTheme.isDefault);
+              // If there is a tree theme use that theme as the current theme for display and
+              // set localStorage theme-id to override the default theme on any subsequent request
+              // on the user's browser until explicitly changed by another node or tree.
+              themeOptions.themeId = treeTheme._id;
+              localStorage.setItem('theme-id', treeTheme._id);
             }
-          } else if (themeOptions.themeId) {
-            // In this case there is a theme-id already set in localStorage. Find by _id or name and use it here.
+          }
+          if (themeOptions.themeId) {
+            // themeId can come from node, journey, or a saved localStorage value. Find by _id or name and use it here.
             theme = theme.find((realmTheme) => realmTheme._id === themeOptions.themeId || realmTheme.name === themeOptions.themeId);
           } else {
-            // Always use the default theme here.
+            // Use the default theme
             theme = theme.find((realmTheme) => realmTheme.isDefault);
-          }
-          if (!theme) {
-            theme = themeResults[cleanRealm].find((realmTheme) => realmTheme.isDefault);
           }
         }
         // Set all realm related theming here
