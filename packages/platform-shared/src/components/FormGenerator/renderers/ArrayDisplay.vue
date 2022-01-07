@@ -1,19 +1,18 @@
-<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div>
-    <FrField
-      v-model="uiSchema.value"
-      class="pb-4"
-      :description="uiSchema.description"
-      :label="uiSchema.label"
-      :options="arrayOptions"
-      :type="arrayType"
-      :validation="uiSchema.required ? 'required' : ''"
-      @input="updateValue" />
-  </div>
+  <FrField
+    v-model="uiSchema.value"
+    class="mb-4"
+    :description="uiSchema.description"
+    :disabled="uiSchema.disabled"
+    :label="uiSchema.label"
+    :options="arrayOptions"
+    :type="arrayType"
+    :validation="uiSchema.validation"
+    @input="updateValue" />
 </template>
 <script>
 import FrField from '@forgerock/platform-shared/src/components/Field';
@@ -29,9 +28,7 @@ export default {
      */
     uiSchema: {
       type: Object,
-      default() {
-        return {};
-      },
+      default: () => ({}),
     },
     /**
      * Path to property in model

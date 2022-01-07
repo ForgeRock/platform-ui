@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -7,15 +7,22 @@ of the MIT license. See the LICENSE file for details. -->
     <form
       v-if="schema && model && populatedUISchema.length"
       class="fr-generated-schema-body">
-      <template v-for="(display, index) in populatedUISchema">
-        <Component
-          v-if="getDisplayComponent(display)"
-          @update:model="$emit('update:model', $event)"
-          :is="getDisplayComponent(display)"
-          :key="`${display.model}_${index}`"
-          :ui-schema="display"
-          :path="display.model" />
-      </template>
+      <BRow
+        v-for="(row, index) in populatedUISchema"
+        :key="`row_${index}`">
+        <BCol
+          v-for="(column, rowIndex) in row"
+          :key="`${column.model}_${rowIndex}`"
+          :lg="column.columns">
+          <Component
+            v-if="!column.isCustomComponent"
+            @update:model="$emit('update:model', $event)"
+            :is="getDisplayComponent(column)"
+            :ui-schema="column"
+            :path="column.model" />
+          <slot v-else />
+        </BCol>
+      </BRow>
     </form>
   </div>
 </template>
@@ -32,6 +39,10 @@ import {
   isBoolean,
   cloneDeep,
 } from 'lodash';
+import {
+  BCol,
+  BRow,
+} from 'bootstrap-vue';
 import FrArrayDisplay from './renderers/ArrayDisplay';
 import FrBooleanDisplay from './renderers/BooleanDisplay';
 import FrNumberDisplay from './renderers/NumberDisplay';
@@ -42,6 +53,8 @@ import FrStringDisplay from './renderers/StringDisplay';
 export default {
   name: 'FormGenerator',
   components: {
+    BCol,
+    BRow,
     FrArrayDisplay,
     FrBooleanDisplay,
     FrNumberDisplay,
@@ -81,41 +94,49 @@ export default {
         return [];
       }
 
-      return this.uiSchema.map((formField) => {
-        const clonedSchema = cloneDeep(this.schema);
-        const clonedModel = cloneDeep(this.model);
-        const modelIsArrayElement = formField.model.endsWith('[0]');
-        const modelName = modelIsArrayElement ? formField.model.substring(0, formField.model.length - 3) : formField.model;
-        const schemaObj = assign(get(clonedSchema, modelName), formField);
-        const modelObj = get(clonedModel, modelName);
-        const modelValue = isString(modelObj) ? modelObj : modelObj?.value;
+      return this.uiSchema.map((row) => row
+        .map((formField) => {
+          const clonedSchema = cloneDeep(this.schema);
+          const clonedModel = cloneDeep(this.model);
+          const modelIsArrayElement = formField.model.endsWith('[0]');
+          const modelName = modelIsArrayElement ? formField.model.substring(0, formField.model.length - 3) : formField.model;
+          const schemaObj = assign(get(clonedSchema, modelName), formField);
+          const modelObj = get(clonedModel, modelName);
+          const modelValue = isString(modelObj) ? modelObj : modelObj?.value;
 
-        if (schemaObj.required) {
-          formField.required = schemaObj.required;
-        }
+          if (formField.validation === undefined) {
+            formField.validation = {};
+          }
+          if (schemaObj.required) {
+            formField.validation.required = true;
+          }
+          if (schemaObj.type === 'integer') {
+            formField.validation.numeric = true;
+          }
 
-        // make sure all formField have render types
-        if (!has(formField, 'type')) {
-          formField.type = schemaObj.type || 'string';
-        }
+          // make sure all formField have render types
+          if (!has(formField, 'type')) {
+            formField.type = schemaObj.type || 'string';
+          }
 
-        // assign current values
-        formField.value = formField.value ? formField.value : this.getFieldValue(modelValue, formField.type, modelIsArrayElement);
+          // assign current values
+          formField.value = formField.value ? formField.value : this.getFieldValue(modelValue, formField.type, modelIsArrayElement);
 
-        // set options for array and radio fields
-        if (formField.type === 'array') {
-          formField.arrayType = schemaObj.arrayType;
+          // set options for array and radio fields
+          if (formField.type === 'array') {
+            formField.arrayType = schemaObj.arrayType;
 
-          if (schemaObj.arrayType === 'addMany') {
-            formField.options = modelValue;
-          } else if (schemaObj.arrayType === 'selectOne' || schemaObj.arrayType === 'selectMany') {
+            if (schemaObj.arrayType === 'addMany') {
+              formField.options = modelValue;
+            } else if (schemaObj.arrayType === 'selectOne' || schemaObj.arrayType === 'selectMany') {
+              formField.options = schemaObj.options;
+            }
+          } else if (formField.type === 'radio') {
             formField.options = schemaObj.options;
           }
-        } else if (formField.type === 'radio') {
-          formField.options = schemaObj.options;
-        }
-        return formField;
-      });
+          return formField;
+        })
+        .filter((formField) => this.getDisplayComponent(formField) || formField.isCustomComponent));
     },
   },
   methods: {
