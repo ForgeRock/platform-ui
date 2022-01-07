@@ -144,7 +144,7 @@ export default {
         failures = uniqWith(failures, isEqual);
         this.policies = this.normalizePolicies(failures);
         this.setFailingPolicies(failures);
-      });
+      }).catch(() => {});
     },
     /**
      * Sets required policies for PolicyPanel component
