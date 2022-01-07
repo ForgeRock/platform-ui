@@ -960,7 +960,6 @@ export default {
       if (event) {
         event.preventDefault();
       }
-      this.$emit('set-theme', this.realm, this.treeId);
       // for when no change is expected between steps (stops a flash of white from rerender)
       if (!preventClear) {
         this.loading = true;
@@ -1081,6 +1080,7 @@ export default {
               this.loading = false;
               break;
           }
+          this.$emit('set-theme', this.realm, this.treeId, this.nodeThemeId);
         },
         () => {
           this.$emit('component-ready', 'error');
