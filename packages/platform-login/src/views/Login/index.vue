@@ -386,6 +386,7 @@ export default {
       nextButtonDisabledArray: [],
       nextButtonVisible: false,
       nextStepCallbacks: [],
+      nodeThemeId: undefined,
       realm: '/',
       retry: undefined,
       showScriptElms: false,
@@ -613,7 +614,8 @@ export default {
       const regexp = /theme[Ii]d=\s*(.[^\s,]*).*/g;
       const match = regexp.exec(stageText);
       if (match && match[1]) {
-        localStorage.setItem('theme-id', match[1]);
+        // eslint-disable-next-line prefer-destructuring
+        this.nodeThemeId = match[1];
       }
     },
     /**
