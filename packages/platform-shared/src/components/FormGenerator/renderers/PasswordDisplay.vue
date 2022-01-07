@@ -1,15 +1,16 @@
-<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <FrField
-    v-model="field"
+    v-model="uiSchema.value"
     class="mb-4"
     type="password"
     :disabled="uiSchema.disabled"
     :description="uiSchema.description"
-    :label="uiSchema.label" />
+    :label="uiSchema.label"
+    @input="valueChange" />
 </template>
 
 <script>
@@ -26,9 +27,7 @@ export default {
      */
     uiSchema: {
       type: Object,
-      default() {
-        return {};
-      },
+      default: () => ({}),
     },
     /**
      * Path to property in model
@@ -38,17 +37,14 @@ export default {
       default: '',
     },
   },
-  computed: {
-    field: {
-      get() {
-        return this.uiSchema.value || '';
-      },
-      set(newValue) {
+  methods: {
+    valueChange(value) {
+      if (!this.uiSchema.disabled) {
         this.$emit('update:model', {
           path: this.path,
-          value: newValue,
+          value,
         });
-      },
+      }
     },
   },
 };
