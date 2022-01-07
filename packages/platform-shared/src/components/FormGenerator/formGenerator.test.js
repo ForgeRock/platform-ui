@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -10,36 +10,46 @@ import { cloneDeep } from 'lodash';
 import FormGenerator from './index';
 
 const uiSchema = [
-  {
-    label: 'StringLabel',
-    type: 'string',
-    model: 'core.testString',
-  },
-  {
-    label: 'ArrayLabel',
-    type: 'array',
-    model: 'core.testArray',
-  },
-  {
-    label: 'BooleanLabel',
-    type: 'boolean',
-    model: 'core.testBoolean',
-  },
-  {
-    label: 'NumberLabel',
-    type: 'integer',
-    model: 'core.testNumber',
-  },
-  {
-    label: 'RadioLabel',
-    type: 'radio',
-    model: 'core.testRadio',
-  },
-  {
-    label: 'PasswordLabel',
-    type: 'password',
-    model: 'core.testPassword',
-  },
+  [
+    {
+      columns: 6,
+      label: 'StringLabel',
+      type: 'string',
+      model: 'core.testString',
+    },
+    {
+      columns: 6,
+      label: 'ArrayLabel',
+      type: 'array',
+      model: 'core.testArray',
+    },
+  ],
+  [
+    {
+      label: 'BooleanLabel',
+      type: 'boolean',
+      model: 'core.testBoolean',
+    },
+  ],
+  [
+    {
+      label: 'NumberLabel',
+      type: 'integer',
+      model: 'core.testNumber',
+    },
+    {
+      label: 'RadioLabel',
+      type: 'radio',
+      model: 'core.testRadio',
+    },
+  ],
+  [
+    {
+      label: 'PasswordLabel',
+      type: 'password',
+      model: 'core.testPassword',
+    },
+  ],
 ];
 
 const schema = {
@@ -193,10 +203,10 @@ describe('Form Generator', () => {
     it('returns null if showField returns false', async () => {
       // show of field is based on core.testBoolean, which is false
       const newUiSchema = cloneDeep(uiSchema);
-      newUiSchema[0].show = 'core.testBoolean';
+      newUiSchema[0][0].show = 'core.testBoolean';
       await wrapper.setProps({ uiSchema: newUiSchema, schema, model });
 
-      expect(wrapper.vm.getDisplayComponent(newUiSchema[0])).toBe(null);
+      expect(wrapper.vm.getDisplayComponent(newUiSchema[0][0])).toBe(null);
     });
 
     it('returns the correct component name for each type', async () => {

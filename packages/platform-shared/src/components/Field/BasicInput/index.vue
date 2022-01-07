@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -66,6 +66,11 @@ of the MIT license. See the LICENSE file for details. -->
             name="copy"
           />
         </button>
+        <BTooltip
+          :target="`copyButton-${value}`"
+          placement="top"
+          triggers="hover"
+          :title="$t('common.copy')" />
       </BInputGroupAppend>
     </template>
 
@@ -84,6 +89,7 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   BButton,
   BInputGroupAppend,
+  BTooltip,
 } from 'bootstrap-vue';
 import { delay } from 'lodash';
 import * as clipboard from 'clipboard-polyfill/text';
@@ -109,6 +115,7 @@ export default {
   components: {
     BButton,
     BInputGroupAppend,
+    BTooltip,
     FrIcon,
     FrInputLayout,
   },

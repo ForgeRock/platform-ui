@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -10,7 +10,7 @@ of the MIT license. See the LICENSE file for details. -->
     :disabled="uiSchema.disabled"
     :description="uiSchema.description"
     :label="uiSchema.label"
-    :validation="validation"
+    :validation="uiSchema.validation"
     @input="updateValue" />
 </template>
 <script>
@@ -27,9 +27,7 @@ export default {
      */
     uiSchema: {
       type: Object,
-      default() {
-        return {};
-      },
+      default: () => ({}),
     },
     /**
      * Path to property in model
@@ -37,11 +35,6 @@ export default {
     path: {
       type: String,
       default: '',
-    },
-  },
-  computed: {
-    validation() {
-      return `numeric${this.uiSchema.required ? '|required' : ''}`;
     },
   },
   methods: {
