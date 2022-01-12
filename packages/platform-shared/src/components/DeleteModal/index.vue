@@ -1,11 +1,11 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BModal
-    id="deleteModal"
-    ref="deleteModal"
+    :id="id"
+    :ref="id"
     @hidden="$emit('hidden')"
     :title="$t('deletePanel.deleteTypeQuestion', { type: translatedItemType })">
     <div
@@ -53,6 +53,10 @@ export default {
     FrButtonWithSpinner,
   },
   props: {
+    id: {
+      type: String,
+      default: 'deleteModal',
+    },
     /**
      * Optional custom message to show in modal body-otherwise, type is used
      */
