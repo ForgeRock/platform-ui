@@ -1456,5 +1456,21 @@
     "usersMustAnswer": "Users must answer",
     "questionsSignIn": "questions on sign in",
     "answersGreaterThanDefined": "Cannot require more questions to answer than questions to define"
+  },
+  "objectTypeEditor": {
+    "addObjectType": "Add Object Type",
+    "addProperty": "Add Property",
+    "details": "Details",
+    "editProperty": "Edit Property",
+    "id": "ID",
+    "multiValued": "Multi-valued",
+    "nativeType": "Native Type",
+    "noPropertiesDefined": "No properties defined",
+    "objectType": "Object type",
+    "objectTypes": "Object Types",
+    "properties": "Properties",
+    "property": "property",
+    "userSpecific": "User-specific",
+    "userSpecificHelpText": "Property is specific to individual users and not applicable to roles."
   }
 }
