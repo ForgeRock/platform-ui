@@ -144,9 +144,6 @@ export default {
         failures = uniqWith(failures, isEqual);
         this.policies = this.normalizePolicies(failures);
         this.setFailingPolicies(failures);
-      }).catch(() => {
-        // it's possible to timeout while in the tree so have to start from beginning if that happens
-        window.location.reload();
       });
     },
     /**
