@@ -8,7 +8,7 @@ import store from '@/store';
  * @description Rest API call mixin for global use
  */
 export default {
-  name: 'RealMixin',
+  name: 'RealmMixin',
   computed: {
     /**
       * Gives the first initial of the current realm name
