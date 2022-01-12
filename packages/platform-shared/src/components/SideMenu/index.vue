@@ -22,8 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
                 class="text-left fr-dropdown-button">
                 <BMediaAside>
                   <div
-                    :class="`letter-${realmInitial}`"
-                    class="fr-realm-stamp">
+                    :class="`letter-${realmInitial} fr-realm-stamp`">
                     <FrIcon
                       class="text-white d-none"
                       name="cloud"
@@ -60,8 +59,7 @@ of the MIT license. See the LICENSE file for details. -->
                   class="text-left">
                   <BMediaAside>
                     <div
-                      :class="`letter-${realmInitial}`"
-                      class="fr-realm-stamp">
+                      :class="`letter-${realmInitial} fr-realm-stamp`">
                       <FrIcon
                         class="text-white d-none"
                         name="cloud"

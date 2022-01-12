@@ -8,17 +8,16 @@ of the MIT license. See the LICENSE file for details. -->
       <h5 class="mb-0">
         {{ title }}
       </h5>
-      <a
+      <div
         :id="`link-button-${tooltipId}`"
         class="tooltip-button"
-        href="#"
         tabindex="0"
       >
         <FrIcon
-          class="count-card-info-icon ml-1 mt-1"
+          class="ml-1 mt-1"
           name="info"
         />
-      </a>
+      </div>
     </div>
     <FrSpinner
       v-if="loading"
@@ -36,9 +35,7 @@ of the MIT license. See the LICENSE file for details. -->
       <BTooltip
         no-fade
         placement="top"
-        :target="`link-button-${tooltipId}`"
-        triggers="hover"
-      >
+        :target="`link-button-${tooltipId}`">
         {{ tooltip }}
       </BTooltip>
     </div>
@@ -109,5 +106,10 @@ export default {
 
   .tooltip-button {
     color: $gray-800;
+    cursor: default;
+  }
+
+  .b-tooltip:not([style*='transform']) {
+    top: 0;
   }
 </style>
