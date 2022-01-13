@@ -1,9 +1,11 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <script>
 import {
+  assign,
+  get,
   mapKeys,
   omit,
   has,
@@ -11,12 +13,27 @@ import {
   endsWith,
   set,
 } from 'lodash';
+
 /**
  * @description Schema mixin used for filtering and mapping json schema information to be consumed by schema driven components such as FormGenerator.
  */
 export default {
   name: 'SchemaMixin',
   methods: {
+    /**
+     * Combines two given schemas
+     * @param {apiSchema} apiSchema schema obtained from backend
+     * @param {uiSchema} uiSchema schema defined on frontend
+     */
+    combineSchemas(apiSchema, uiSchema) {
+      return uiSchema.map((row) => row
+        .map((formField) => {
+          const clonedSchema = cloneDeep(apiSchema);
+          const modelIsArrayElement = formField.model.endsWith('[0]');
+          const modelName = modelIsArrayElement ? formField.model.substring(0, formField.model.length - 3) : formField.model;
+          return assign(get(clonedSchema, modelName), formField);
+        }));
+    },
     /**
      * Takes current schema object and calculates all render types and collects all options for populating arrays
      * @param schema - current schema defined by AM
