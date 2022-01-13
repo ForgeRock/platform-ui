@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -41,6 +41,173 @@ const exampleApplicationSchema = {
     },
   },
 };
+
+const uiSchemaExample = [
+  [
+    {
+      columns: 6,
+      model: 'advancedOAuth2ClientConfig.isConsentImplied',
+      label: 'oauth.generalSettings.clientNameLabel',
+      type: 'string',
+    },
+    {
+      columns: 6,
+      model: 'advancedOAuth2ClientConfig.mixUpMitigation',
+      label: 'oauth.generalSettings.logoUriLabel',
+      description: 'oauth.generalSettings.logoUriHelp',
+      type: 'string',
+    },
+  ],
+  [
+    {
+      columns: 6,
+      model: 'advancedOAuth2ClientConfig.name',
+      label: 'oauth.generalSettings.descriptionsLabel',
+      description: '',
+      type: 'string',
+    },
+    {
+      columns: 6,
+      customSlot: 'default',
+      model: 'custom',
+    },
+  ],
+  [
+    {
+      columns: 6,
+      model: 'advancedOAuth2ClientConfig.requestUris',
+      label: 'oauth.generalSettings.redirectionUrisLabel',
+      description: 'oauth.generalSettings.redirectionUrisHelp',
+    },
+  ],
+  [
+    {
+      columns: 6,
+      model: 'advancedOAuth2ClientConfig.subjectType',
+      label: 'oauth.generalSettings.postLogoutRedirectUriLabel',
+      description: 'oauth.generalSettings.postLogoutRedirectUriHelp',
+    },
+  ],
+  [
+    {
+      columns: 6,
+      model: 'advancedOAuth2ClientConfig.tokenEndpointAuthMethod',
+      label: 'oauth.generalSettings.grantTypesLabel',
+      description: 'oauth.generalSettings.grantTypesHelp',
+    },
+  ],
+  [
+    {
+      columns: 6,
+      model: 'advancedOAuth2ClientConfig.updateAccessToken',
+      label: 'oauth.generalSettings.scopesLabel',
+      description: 'oauth.generalSettings.scopesHelp',
+    },
+  ],
+];
+
+const expectedCombinedSchema = [
+  [
+    {
+      columns: 6,
+      description: 'blah',
+      label: 'oauth.generalSettings.clientNameLabel',
+      model: 'advancedOAuth2ClientConfig.isConsentImplied',
+      required: true,
+      title: 'Implied consent',
+      type: 'string',
+    },
+    {
+      columns: 6,
+      model: 'advancedOAuth2ClientConfig.mixUpMitigation',
+      label: 'oauth.generalSettings.logoUriLabel',
+      description: 'oauth.generalSettings.logoUriHelp',
+      required: true,
+      title: 'OAuth 2.0 Mix-Up Mitigation enabled',
+      type: 'string',
+    },
+  ],
+  [
+    {
+      columns: 6,
+      model: 'advancedOAuth2ClientConfig.name',
+      label: 'oauth.generalSettings.descriptionsLabel',
+      description: '',
+      type: 'string',
+      arrayType: 'addMany',
+      options: [],
+      title: 'Display name',
+    },
+    {
+      columns: 6,
+      customSlot: 'default',
+      model: 'custom',
+    },
+  ],
+  [
+    {
+      columns: 6,
+      model: 'advancedOAuth2ClientConfig.requestUris',
+      label: 'oauth.generalSettings.redirectionUrisLabel',
+      description: 'oauth.generalSettings.redirectionUrisHelp',
+      arrayType: 'addMany',
+      options: [],
+      title: 'Request uris',
+      type: 'array',
+    },
+  ],
+  [
+    {
+      columns: 6,
+      model: 'advancedOAuth2ClientConfig.subjectType',
+      label: 'oauth.generalSettings.postLogoutRedirectUriLabel',
+      description: 'oauth.generalSettings.postLogoutRedirectUriHelp',
+      options: [
+        {
+          text: 'pairwise',
+          value: 'pairwise',
+        },
+        {
+          text: 'public',
+          value: 'public',
+        },
+      ],
+      required: true,
+      title: 'Subject Type',
+      type: 'radio',
+    },
+  ],
+  [
+    {
+      columns: 6,
+      model: 'advancedOAuth2ClientConfig.tokenEndpointAuthMethod',
+      label: 'oauth.generalSettings.grantTypesLabel',
+      description: 'oauth.generalSettings.grantTypesHelp',
+      arrayType: 'selectOne',
+      options: [
+        { value: 'client_secret_post', text: 'client_secret_post' },
+        { value: 'client_secret_basic', text: 'client_secret_basic' },
+        { value: 'private_key_jwt', text: 'private_key_jwt' },
+        { value: 'tls_client_auth', text: 'tls_client_auth' },
+        { value: 'self_signed_tls_client_auth', text: 'self_signed_tls_client_auth' },
+        { value: 'none', text: 'none' },
+      ],
+      required: true,
+      title: 'Token Endpoint Authentication Method',
+      type: 'array',
+    },
+  ],
+  [
+    {
+      columns: 6,
+      model: 'advancedOAuth2ClientConfig.updateAccessToken',
+      label: 'oauth.generalSettings.scopesLabel',
+      description: 'oauth.generalSettings.scopesHelp',
+      title: 'Access Token',
+      type: 'string',
+    },
+  ],
+];
 
 const expectedMappedApplicationSchema = {
   advancedOAuth2ClientConfig: {
@@ -219,6 +386,12 @@ describe('Schema mixin', () => {
           },
         },
       )).toBe(false);
+    });
+  });
+
+  describe('combining backend and frontend schemas', () => {
+    it('combines two schemas', () => {
+      expect(wrapper.vm.combineSchemas(expectedMappedApplicationSchema, uiSchemaExample)).toEqual(expectedCombinedSchema);
     });
   });
 
