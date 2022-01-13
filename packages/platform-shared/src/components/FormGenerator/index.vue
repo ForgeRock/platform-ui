@@ -14,12 +14,14 @@ of the MIT license. See the LICENSE file for details. -->
           v-for="(column, rowIndex) in row"
           :key="`${column.model}_${rowIndex}`"
           :lg="column.columns">
-          <Component
-            v-if="!column.customSlot"
-            @update:model="$emit('update:model', $event)"
-            :is="getDisplayComponent(column)"
-            :ui-schema="column"
-            :path="column.model" />
+          <template v-if="!column.customSlot">
+            <Component
+              v-if="getDisplayComponent(column)"
+              @update:model="$emit('update:model', $event)"
+              :is="getDisplayComponent(column)"
+              :ui-schema="column"
+              :path="column.model" />
+          </template>
           <slot
             v-else
             :column="column"
@@ -32,7 +34,6 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import {
-  assign,
   has,
   get,
   isArray,
@@ -67,13 +68,6 @@ export default {
   },
   props: {
     /**
-     * Contains objects with information for displaying the correct field, in order.
-     */
-    uiSchema: {
-      type: Array,
-      default: () => [],
-    },
-    /**
      * Model data.
      */
     model: {
@@ -81,11 +75,11 @@ export default {
       default: () => {},
     },
     /**
-     * Schema data.
+     * Contains objects with information for displaying the correct field, in order.
      */
     schema: {
-      type: Object,
-      default: () => {},
+      type: Array,
+      default: () => [],
     },
   },
   computed: {
@@ -97,49 +91,38 @@ export default {
         return [];
       }
 
-      return this.uiSchema.map((row) => row
+      return this.schema.map((row) => row
         .map((formField) => {
-          const clonedSchema = cloneDeep(this.schema);
           const clonedModel = cloneDeep(this.model);
           const modelIsArrayElement = formField.model.endsWith('[0]');
           const modelName = modelIsArrayElement ? formField.model.substring(0, formField.model.length - 3) : formField.model;
-          const schemaObj = assign(get(clonedSchema, modelName), formField);
           const modelObj = get(clonedModel, modelName);
           const modelValue = isString(modelObj) ? modelObj : modelObj?.value;
 
           if (formField.validation === undefined) {
             formField.validation = {};
           }
-          if (schemaObj.required) {
+          if (formField.required) {
             formField.validation.required = true;
           }
-          if (schemaObj.type === 'integer') {
+          if (formField.type === 'integer') {
             formField.validation.numeric = true;
           }
 
           // make sure all formField have render types
           if (!has(formField, 'type')) {
-            formField.type = schemaObj.type || 'string';
+            formField.type = 'string';
           }
 
           // assign current values
           formField.value = formField.value ? formField.value : this.getFieldValue(modelValue, formField.type, modelIsArrayElement);
 
           // set options for array and radio fields
-          if (formField.type === 'array') {
-            formField.arrayType = schemaObj.arrayType;
-
-            if (schemaObj.arrayType === 'addMany') {
-              formField.options = modelValue;
-            } else if (schemaObj.arrayType === 'selectOne' || schemaObj.arrayType === 'selectMany') {
-              formField.options = schemaObj.options;
-            }
-          } else if (formField.type === 'radio') {
-            formField.options = schemaObj.options;
+          if (formField.type === 'array' && formField.arrayType === 'addMany') {
+            formField.options = modelValue;
           }
           return formField;
-        })
-        .filter((formField) => this.getDisplayComponent(formField) || formField.customSlot));
+        }));
     },
   },
   methods: {

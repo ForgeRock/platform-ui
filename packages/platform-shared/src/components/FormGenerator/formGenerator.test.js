@@ -6,9 +6,28 @@
  */
 
 import { shallowMount } from '@vue/test-utils';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, assign, get } from 'lodash';
 import FormGenerator from './index';
+// import SchemaMixin from '@/mixins/SchemaMixin';
 
+const SchemaMixin = {
+  methods: {
+    // combineSchemas: () => Promise.resolve({
+    //   getAddressComponent() {
+    //     return {
+    //       long_name: 'Austin',
+    //     };
+    //   },
+    // }),
+    combineSchemas: (apiSchema, uiSchema) => uiSchema.map((row) => row
+      .map((formField) => {
+        const clonedSchema = cloneDeep(apiSchema);
+        const modelIsArrayElement = formField.model.endsWith('[0]');
+        const modelName = modelIsArrayElement ? formField.model.substring(0, formField.model.length - 3) : formField.model;
+        return assign(get(clonedSchema, modelName), formField);
+      })),
+  },
+};
 const uiSchema = [
   [
     {
@@ -119,12 +138,14 @@ beforeEach(() => {
     mocks: {
       $t: () => {},
     },
+    mixins: [SchemaMixin],
   });
 });
 
 describe('Form Generator', () => {
   it('Renders each of the sub components', async () => {
-    await wrapper.setProps({ uiSchema, schema, model });
+    const combinedSchema = wrapper.vm.combineSchemas(schema, uiSchema);
+    await wrapper.setProps({ schema: combinedSchema, model });
     expect(wrapper.name()).toEqual('FormGenerator');
     expect(wrapper.find('frstringdisplay-stub').exists()).toBe(true);
     expect(wrapper.find('frarraydisplay-stub').exists()).toBe(true);
@@ -170,7 +191,8 @@ describe('Form Generator', () => {
     });
 
     it('returns value if show property maps to a value', async () => {
-      await wrapper.setProps({ uiSchema, schema, model });
+      const combinedSchema = wrapper.vm.combineSchemas(schema, uiSchema);
+      await wrapper.setProps({ schema: combinedSchema, model });
       const test = {
         type: 'string',
         value: '',
@@ -180,7 +202,8 @@ describe('Form Generator', () => {
     });
 
     it('returns false if show property maps to a false value', async () => {
-      await wrapper.setProps({ uiSchema, schema, model });
+      const combinedSchema = wrapper.vm.combineSchemas(schema, uiSchema);
+      await wrapper.setProps({ schema: combinedSchema, model });
       const test = {
         type: 'string',
         value: '',
@@ -204,13 +227,15 @@ describe('Form Generator', () => {
       // show of field is based on core.testBoolean, which is false
       const newUiSchema = cloneDeep(uiSchema);
       newUiSchema[0][0].show = 'core.testBoolean';
-      await wrapper.setProps({ uiSchema: newUiSchema, schema, model });
+      const combinedSchema = wrapper.vm.combineSchemas(schema, newUiSchema);
+      await wrapper.setProps({ schema: combinedSchema, model });
 
       expect(wrapper.vm.getDisplayComponent(newUiSchema[0][0])).toBe(null);
     });
 
     it('returns the correct component name for each type', async () => {
-      await wrapper.setProps({ uiSchema, schema, model });
+      const combinedSchema = wrapper.vm.combineSchemas(schema, uiSchema);
+      await wrapper.setProps({ schema: combinedSchema, model });
 
       const stringTest = {
         type: 'string',
