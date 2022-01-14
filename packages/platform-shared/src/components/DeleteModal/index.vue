@@ -27,6 +27,7 @@ of the MIT license. See the LICENSE file for details. -->
         :show-spinner="isDeleting"
         :spinner-text="$t('common.deleting')"
         variant="danger"
+        :data-testid="testid"
         @click="$emit('delete-item')" />
     </template>
   </BModal>
@@ -75,6 +76,10 @@ export default {
      * Type of item being deleted. Displayed in modal title
      */
     translatedItemType: {
+      type: String,
+      default: '',
+    },
+    testid: {
       type: String,
       default: '',
     },
