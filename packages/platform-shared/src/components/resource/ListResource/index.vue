@@ -35,7 +35,9 @@ of the MIT license. See the LICENSE file for details. -->
         </template>
       </FrSearchInput>
     </div>
-    <div v-if="isLoading">
+    <div
+      v-if="isLoading"
+      data-testid="loading-resources-spinner">
       <FrSpinner class="py-5" />
       <div class="text-center pb-4">
         Loading {{ this.resourceTitle || resourceName | pluralizeFilter }}...
@@ -43,7 +45,8 @@ of the MIT license. See the LICENSE file for details. -->
     </div>
     <div
       v-else-if="!tableData.length & !(queryThreshold > 0 && !noData && !tableData.length)"
-      class="col-lg-8 offset-lg-2">
+      class="col-lg-8 offset-lg-2"
+      data-testid="no-resources-found">
       <div
         class="text-center mt-2 mb-5 py-5">
         <FrIcon
@@ -70,6 +73,7 @@ of the MIT license. See the LICENSE file for details. -->
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
       :sort-direction="sortDirection"
+      :data-testid="testid"
       @row-clicked="$emit('row-clicked', $event)"
       @sort-changed="sortingChanged">
       <template #cell(actions)="data">
@@ -243,6 +247,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    testid: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
@@ -321,7 +329,7 @@ export default {
   methods: {
     getResourceName(resourceName) {
       if (isUndefined(resourceName)) {
-        return this.$route.params.resourceName;
+        return this.$route?.params?.resourceName;
       }
       return resourceName;
     },
