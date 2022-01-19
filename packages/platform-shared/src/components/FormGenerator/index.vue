@@ -15,12 +15,15 @@ of the MIT license. See the LICENSE file for details. -->
           :key="`${column.model}_${rowIndex}`"
           :lg="column.columns">
           <Component
-            v-if="!column.isCustomComponent"
+            v-if="!column.customSlot"
             @update:model="$emit('update:model', $event)"
             :is="getDisplayComponent(column)"
             :ui-schema="column"
             :path="column.model" />
-          <slot v-else />
+          <slot
+            v-else
+            :column="column"
+            :name="column.customSlot" />
         </BCol>
       </BRow>
     </form>
@@ -136,7 +139,7 @@ export default {
           }
           return formField;
         })
-        .filter((formField) => this.getDisplayComponent(formField) || formField.isCustomComponent));
+        .filter((formField) => this.getDisplayComponent(formField) || formField.customSlot));
     },
   },
   methods: {
