@@ -52,9 +52,6 @@ export default {
       }, this.callback.getWaitTime());
     },
   },
-  beforeUpdate() {
-    clearTimeout(this.timeout);
-  },
   beforeDestroy() {
     clearTimeout(this.timeout);
   },
