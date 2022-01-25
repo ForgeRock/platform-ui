@@ -30,6 +30,7 @@
     "got": "11.8.0",
     "husky": "5.0.4",
     "jest-circus": "26.6.3",
+    "jest-css-modules": "2.1.0",
     "jest-environment-node": "26.6.2",
     "jest-runner-eslint": "0.10.0",
     "jest-runner-stylelint": "2.3.7",
