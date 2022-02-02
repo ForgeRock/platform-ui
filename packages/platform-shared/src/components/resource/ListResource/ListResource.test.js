@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -89,6 +89,10 @@ describe('ListResource Component', () => {
         ],
       },
     });
+
+    wrapper.setData({
+      columns: [{}, {}],
+    });
   });
 
   it('Component successfully loaded', () => {
@@ -113,8 +117,55 @@ describe('ListResource Component', () => {
     wrapper.vm.loadData({}, ['field1'], 'field1', '');
     const result = await generateIDMAPI.get();
     expect(result.data.result[0]).toEqual('test');
-    // TODO: ensure we can test within return value
-    // expect(wrapper.vm.tableData).toEqual('test');
+  });
+
+  it('Ensures emitted get-table-data only includes sortField if one is specified', () => {
+    wrapper.vm.loadData('', ['field1'], '', '');
+    expect(wrapper.emitted()['get-table-data'][0][0]).toEqual({
+      fields: ['field1'],
+      filter: '',
+      page: '',
+      sortField: 'field1',
+    });
+    wrapper.vm.loadData('', ['field1'], 'sortField', '');
+    expect(wrapper.emitted()['get-table-data'][1][0]).toEqual({
+      fields: ['field1'],
+      filter: '',
+      page: '',
+      sortField: 'sortField',
+    });
+  });
+
+  it('emits get-table-data without sortField if queryThreshold is specified, but with sortField if search filter & sort field are both specified', () => {
+    wrapper.setProps({ queryThreshold: 3 });
+    wrapper.vm.loadData('', ['field1'], '', '');
+    expect(wrapper.emitted()['get-table-data'][0][0]).toEqual({
+      fields: ['field1'],
+      filter: '',
+      page: '',
+    });
+    wrapper.vm.loadData('true', ['field1'], 'sortField', '');
+    expect(wrapper.emitted()['get-table-data'][1][0]).toEqual({
+      fields: ['field1'],
+      filter: 'true',
+      page: '',
+      sortField: 'sortField',
+    });
+    wrapper.vm.clear();
+    expect(wrapper.emitted()['get-table-data'][2][0]).toEqual({
+      fields: [],
+      filter: 'true',
+      page: 1,
+    });
+    wrapper.setProps({ queryThreshold: 0 });
+    wrapper.vm.displayFields = ['userName'];
+    wrapper.vm.clear();
+    expect(wrapper.emitted()['get-table-data'][3][0]).toEqual({
+      fields: ['userName'],
+      filter: 'true',
+      page: 1,
+      sortField: 'userName',
+    });
   });
 
   beforeEach(() => {

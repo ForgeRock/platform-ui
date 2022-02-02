@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -363,12 +363,15 @@ export default {
     loadData(filter, fields, sortField, page) {
       // only emit `get-table-data` event when either there is not queryThreshold or the filter has met the threshold
       if (!this.queryThreshold || (this.queryThreshold && this.filter === '') || (this.queryThreshold && this.filter.length >= this.queryThreshold)) {
-        this.$emit('get-table-data', {
+        const params = {
           filter,
           fields,
-          sortField: (sortField && sortField !== '-') ? sortField : fields[0],
           page,
-        });
+        };
+        if (!this.queryThreshold || sortField) {
+          params.sortField = (sortField && sortField !== '-') ? sortField : fields[0];
+        }
+        this.$emit('get-table-data', params);
       }
     },
     /**
