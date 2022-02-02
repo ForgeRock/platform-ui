@@ -247,6 +247,7 @@ import {
   has,
   noop,
 } from 'lodash';
+import axios from 'axios';
 import {
   BButton,
   BCardBody,
@@ -495,7 +496,20 @@ export default {
             sessionStorage.setItem('step', JSON.stringify(this.step));
             sessionStorage.setItem('realm', this.realm);
           }
-          window.location.href = callback.getOutputByName('redirectUrl');
+          const redirectUrl = callback.getOutputByName('redirectUrl');
+          if (callback.getOutputByName('redirectMethod') === 'POST') {
+            const redirectData = callback.getOutputByName('redirectData');
+            const bodyFormData = new FormData();
+            Object.entries(redirectData).forEach(([key, value]) => {
+              bodyFormData.append(key, value);
+            });
+
+            axios.post(redirectUrl, bodyFormData, {
+              headers: { 'Content-Type': 'multipart/form-data' },
+            });
+          } else {
+            window.location.href = redirectUrl;
+          }
           return;
         }
 
@@ -545,7 +559,7 @@ export default {
               listeners: ['disable-next-button', 'has-scripts', 'hide-next-button', 'next-step-callback'],
             }),
             ValidatedCreatePasswordCallback: () => ({
-              callbackSpecificProps: { overrideInitialPolicies: true, realm: this.realm, index },
+              callbackSpecificProps: { overrideInitialPolicies: true, realm: this.realm },
               listeners: ['disable-next-button', 'next-step-callback'],
             }),
             WebAuthnComponent: () => {

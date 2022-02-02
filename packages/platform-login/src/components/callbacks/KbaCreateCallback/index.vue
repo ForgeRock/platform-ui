@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -112,7 +112,7 @@ export default {
     };
   },
   mounted() {
-    this.$emit('disable-next-button', true, this.index);
+    this.$emit('disable-next-button', true);
     this.loadOptions();
   },
   methods: {
@@ -200,7 +200,7 @@ export default {
         // Let vee-validate determine if the form is valid for each field
         // Disable if there is an error shown locally or in the other KbaCreateCallbacks
         this.$refs.observer.validate().then((isValid) => {
-          this.$emit('disable-next-button', !isValid, this.index);
+          this.$emit('disable-next-button', !isValid);
         });
       });
     },

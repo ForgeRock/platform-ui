@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -32,7 +32,7 @@ describe('KbaCreateCallback.vue', () => {
   });
 
   it('Emits disable-next-button and sets options', () => {
-    expect(wrapper.emitted()['disable-next-button'].pop()).toEqual([true, 5]);
+    expect(wrapper.emitted()['disable-next-button'].pop()).toEqual([true]);
     const customQuestionOption = { value: 'custom', text: 'Provide your own:' };
     expect(wrapper.vm.$data.options).toEqual([
       { value: 'Favorite color?', text: 'Favorite color?' },
@@ -60,14 +60,14 @@ describe('KbaCreateCallback.vue', () => {
     wrapper.vm.$refs.observer.validate = () => Promise.resolve(true);
     wrapper.vm.setSubmitButton();
     await wrapper.vm.$nextTick();
-    expect(wrapper.emitted()['disable-next-button'].pop()).toEqual([false, 5]);
+    expect(wrapper.emitted()['disable-next-button'].pop()).toEqual([false]);
   });
 
   it('setSubmitButton emits disable-next-button true if validation fails', async () => {
     wrapper.vm.$refs.observer.validate = () => Promise.resolve(false);
     wrapper.vm.setSubmitButton();
     await wrapper.vm.$nextTick();
-    expect(wrapper.emitted()['disable-next-button'].pop()).toEqual([true, 5]);
+    expect(wrapper.emitted()['disable-next-button'].pop()).toEqual([true]);
   });
 
   it('sets custom question value properly', () => {

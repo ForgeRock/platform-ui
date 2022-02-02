@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -43,7 +43,7 @@ describe('ConsentMappingCallback', () => {
   it('Sets options data and emits "disable-next-button"', () => {
     expect(wrapper.vm.$data.isRequired).toBe(true);
     expect(wrapper.vm.$data.checked).toBe(false);
-    expect(wrapper.emitted()['disable-next-button'].pop()).toEqual([true, 0]);
+    expect(wrapper.emitted()['disable-next-button'].pop()).toEqual([true]);
   });
 
   it('Responds to consent click', async () => {
@@ -54,7 +54,7 @@ describe('ConsentMappingCallback', () => {
     await wrapper.vm.$nextTick();
 
     expect(wrapper.vm.$data.checked).toBe(true);
-    expect(wrapper.emitted()['disable-next-button'].pop()).toEqual([false, 0]);
+    expect(wrapper.emitted()['disable-next-button'].pop()).toEqual([false]);
     expect(wrapper.emitted()['did-consent'].pop()).toEqual([true]);
   });
 });
