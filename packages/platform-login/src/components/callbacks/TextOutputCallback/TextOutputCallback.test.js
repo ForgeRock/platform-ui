@@ -1,6 +1,5 @@
 /**
- * @license
- * Copyright (c) 2020 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -103,7 +102,7 @@ describe('TextOutputCallback.vue', () => {
 
     expect(window.APIs.loginHelpers.disableNextButton).toBeDefined();
     expect(window.APIs.loginHelpers.disableNextButton(true)).toBeUndefined();
-    expect(wrapper.emitted()['disable-next-button'].pop()).toEqual([true, 5]);
+    expect(wrapper.emitted()['disable-next-button'].pop()).toEqual([true]);
 
     expect(window.APIs.loginHelpers.hideNextButton).toBeDefined();
     expect(window.APIs.loginHelpers.hideNextButton(true)).toBeUndefined();

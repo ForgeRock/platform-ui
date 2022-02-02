@@ -1,10 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <ul
     v-if="index === 0"
@@ -63,14 +60,14 @@ export default {
     onCheckboxChange(isChecked) {
       const consentResponse = isChecked;
       const disableNextButton = this.isRequired && !isChecked;
-      this.$emit('disable-next-button', disableNextButton, this.index);
+      this.$emit('disable-next-button', disableNextButton);
       this.$emit('did-consent', consentResponse);
     },
   },
   mounted() {
     if (this.index === 0) {
       this.isRequired = this.callbacks[0].getOutputByName('isRequired');
-      this.$emit('disable-next-button', this.isRequired, this.index);
+      this.$emit('disable-next-button', this.isRequired);
     }
   },
 };

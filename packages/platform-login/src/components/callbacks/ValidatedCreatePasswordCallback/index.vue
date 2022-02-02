@@ -72,13 +72,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    /**
-     * Numerical position on tree node
-     */
-    index: {
-      type: Number,
-      default: 0,
-    },
   },
   data() {
     return {
@@ -185,7 +178,7 @@ export default {
         .filter((x) => this.showInPanel(x))
         .map((x) => x.policyRequirement);
 
-      this.$emit('disable-next-button', failingPolicies.length !== 0, this.index);
+      this.$emit('disable-next-button', failingPolicies.length !== 0);
       this.$emit('on-validated', this.password.value, failingPolicies.length === 0);
     },
     /**
