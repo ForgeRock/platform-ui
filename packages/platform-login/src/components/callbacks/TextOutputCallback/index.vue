@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -63,10 +63,6 @@ export default {
       type: Object,
       required: true,
     },
-    index: {
-      type: Number,
-      required: true,
-    },
     step: {
       type: Object,
       required: true,
@@ -103,7 +99,7 @@ export default {
   methods: {
     invokeScriptWithHelpers() {
       const loginHelpers = {
-        disableNextButton: (bool) => { this.$emit('disable-next-button', bool, this.index); },
+        disableNextButton: (bool) => { this.$emit('disable-next-button', bool); },
         hideNextButton: (bool) => { this.$emit('hide-next-button', bool); },
         nextStep: () => { this.$emit('next-step'); },
         nextStepCallback: (cb) => { this.$emit('next-step-callback', cb); },
