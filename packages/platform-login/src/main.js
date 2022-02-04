@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -18,8 +18,10 @@ import {
 import { setInteractionMode } from 'vee-validate';
 import axios from 'axios';
 import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
+import isWebStorageAvailable from '@forgerock/platform-shared/src/utils/webStorageTest';
 import overrideTranslations, { setLocales } from '@forgerock/platform-shared/src/utils/overrideTranslations';
 import VueSanitize from 'vue-sanitize';
+import store from '@forgerock/platform-shared/src/store';
 import i18n from './i18n';
 import router from './router';
 import App from './App';
@@ -35,6 +37,8 @@ Vue.use(VueSanitize);
 setInteractionMode('passive');
 
 const idmContext = process.env.VUE_APP_IDM_URL;
+
+store.commit('SharedStore/setWebStorageAvailable', isWebStorageAvailable());
 
 Config.set({
   serverConfig: { baseUrl: getFQDN(`${process.env.VUE_APP_AM_URL}/`) },
@@ -53,6 +57,7 @@ const loadApp = () => {
   new Vue({
     router,
     i18n,
+    store,
     render: (h) => h(App),
   }).$mount('#app');
 };
