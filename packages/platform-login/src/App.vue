@@ -84,7 +84,11 @@ export default {
   },
   methods: {
     setupTheme(realm, treeId, nodeThemeId) {
-      const themeId = localStorage.getItem('theme-id');
+      // Check if web storage exists before trying to use it. This allows
+      // theming to gracefully fail in the case it doesn't exist - see
+      // IAM-1873
+      const { webStorageAvailable } = this.$store.state.SharedStore;
+      const themeId = webStorageAvailable ? localStorage.getItem('theme-id') : null;
       const themeOpts = { treeId, themeId, nodeThemeId };
       this.setTheme(realm, themeOpts).then(() => {
         if (this.favicon) {

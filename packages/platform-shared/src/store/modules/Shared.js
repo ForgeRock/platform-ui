@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -19,6 +19,7 @@ const defaultState = {
   uiConfig: null,
   hasAmUrl: false,
   showEsvUi: false,
+  webStorageAvailable: true,
 };
 
 const mutations = {
@@ -70,6 +71,9 @@ const mutations = {
         state.showEsvUi = env.VUE_APP_SHOW_ESV_UI === 'true' || env.VUE_APP_SHOW_ESV_UI === true;
       }
     }
+  },
+  setWebStorageAvailable(state, val) {
+    state.webStorageAvailable = val;
   },
 };
 
