@@ -7,6 +7,7 @@ import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import { putConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
 import uuid from 'uuid/v4';
 import { sortBy } from 'lodash';
+import store from '@forgerock/platform-shared/src/store';
 
 export default {
   name: 'ThemeMixin',
@@ -129,7 +130,12 @@ export default {
           if (themeOptions.nodeThemeId) {
             // Prioritize node themes over tree themes
             themeOptions.themeId = themeOptions.nodeThemeId;
-            localStorage.setItem('theme-id', themeOptions.nodeThemeId);
+            // Check if web storage exists before trying to use it. This allows
+            // theming to gracefully fail in the case it doesn't exist - see
+            // IAM-1873
+            if (store.state.SharedStore.webStorageAvailable) {
+              localStorage.setItem('theme-id', themeOptions.nodeThemeId);
+            }
           } else if (themeOptions.treeId) {
             // treeId tells us this invocation is coming from the login ui
             const treeTheme = theme.find((realmTheme) => (realmTheme.linkedTrees && realmTheme.linkedTrees.includes(themeOptions.treeId)));
@@ -138,7 +144,12 @@ export default {
               // set localStorage theme-id to override the default theme on any subsequent request
               // on the user's browser until explicitly changed by another node or tree.
               themeOptions.themeId = treeTheme._id;
-              localStorage.setItem('theme-id', treeTheme._id);
+              // Check if web storage exists before trying to use it. This allows
+              // theming to gracefully fail in the case it doesn't exist - see
+              // IAM-1873
+              if (store.state.SharedStore.webStorageAvailable) {
+                localStorage.setItem('theme-id', treeTheme._id);
+              }
             }
           }
           if (themeOptions.themeId) {
