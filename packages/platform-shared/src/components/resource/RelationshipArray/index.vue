@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -19,7 +19,7 @@ of the MIT license. See the LICENSE file for details. -->
               :outlined="false"
               name="add"
             />
-            {{ $t("common.addObject", {object: relationshipArrayProperty.title}) }}
+            {{ $t("common.addObject", {object: getTranslation(relationshipArrayProperty.title)}) }}
           </BButton>
           <BButton
             v-show="selected.length > 0"
@@ -183,6 +183,7 @@ import RelationshipEdit from '@forgerock/platform-shared/src/components/resource
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
@@ -205,6 +206,7 @@ export default {
     NotificationMixin,
     RestMixin,
     ResourceMixin,
+    TranslationMixin,
   ],
   props: {
     revision: {
@@ -323,7 +325,7 @@ export default {
         this.relationshipArrayProperty.items.resourceCollection[0].query.fields.forEach((fieldName) => {
           this.columns.push({
             key: fieldName,
-            label: resourceCollectionSchema.properties[fieldName].title || pluralize.singular(fieldName),
+            label: this.getTranslation(resourceCollectionSchema.properties[fieldName].title || pluralize.singular(fieldName)),
             sortable: true,
             sortDirection: 'desc',
           });

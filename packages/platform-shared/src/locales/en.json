@@ -324,7 +324,7 @@
       "removeConfirm": "Are you sure you want to remove the selected",
       "removeModalTitle": "Confirm Removal",
       "onePermissionRequired": "At least one permission is required",
-      "list": "List",
+      "list": "{resource} List",
       "setUp": "Set up",
       "privilege": "Privilege",
       "privilegeName": "Display Name",

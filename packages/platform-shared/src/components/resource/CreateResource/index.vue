@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -158,6 +158,7 @@ import PasswordPolicyMixin from '@forgerock/platform-shared/src/mixins/PasswordP
 import FrPolicyPasswordInput from '@forgerock/platform-shared/src/components/PolicyPasswordInput';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import FrListField from '@forgerock/platform-shared/src/components/ListField';
 import ListsMixin from '@forgerock/platform-shared/src/mixins/ListsMixin';
 import CustomStep from './CustomStep/index';
@@ -197,6 +198,7 @@ export default {
     NotificationMixin,
     PasswordPolicyMixin,
     ListsMixin,
+    TranslationMixin,
   ],
   props: {
     createProperties: {
@@ -269,7 +271,7 @@ export default {
           return this.$t('pages.access.timeConstraint', { object: name });
         }
       }
-      return this.$t('common.newObject', { object: name });
+      return this.$t('common.newObject', { object: this.getTranslation(name) });
     },
   },
   methods: {

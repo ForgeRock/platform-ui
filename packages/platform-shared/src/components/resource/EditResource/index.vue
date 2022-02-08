@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -22,7 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
       />
       <div class="media-body align-self-center">
         <h5 class="text-muted">
-          {{ resourceTitle }}
+          {{ getTranslation(resourceTitle) }}
         </h5>
         <h1>{{ displayName }}</h1>
         <span
@@ -107,7 +107,7 @@ of the MIT license. See the LICENSE file for details. -->
           <!-- Add a tab for each viewable/editable object type property -->
           <template v-for="(objectTypeProperty) in objectTypeProperties">
             <BTab
-              :title="objectTypeProperty.title"
+              :title="getTranslation(objectTypeProperty.title)"
               :key="`${objectTypeProperty.propName}_tab`">
               <FrObjectTypeEditor
                 @refresh-data="refreshData"
@@ -132,7 +132,7 @@ of the MIT license. See the LICENSE file for details. -->
           <template v-for="(relationshipProperty) in relationshipProperties">
             <BTab
               v-if="relationshipProperty.type === 'array'"
-              :title="relationshipProperty.title"
+              :title="getTranslation(relationshipProperty.title)"
               :key="`${relationshipProperty.propName}_tab`">
               <FrRelationshipArray
                 :parent-resource="`${resourceType}/${resourceName}`"
@@ -162,7 +162,7 @@ of the MIT license. See the LICENSE file for details. -->
       v-if="canDelete"
       class="mb-5"
       :is-deleting="isDeleting"
-      :translated-item-type="resourceTitle"
+      :translated-item-type="getTranslation(resourceTitle)"
       @delete-item="deleteResource" />
     <FrResetPasswordModal
       v-if="canChangePassword"
@@ -209,6 +209,7 @@ import FrRelationshipArray from '@forgerock/platform-shared/src/components/resou
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import FrDeletePanel from '@forgerock/platform-shared/src/components/DeletePanel';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
@@ -258,6 +259,7 @@ export default {
     ResourceMixin,
     RestMixin,
     NotificationMixin,
+    TranslationMixin,
   ],
   directives: {
     'b-modal': VBModal,
@@ -328,7 +330,7 @@ export default {
         this.resourceSchema = schema.data;
         this.resourcePrivilege = privilege.data;
 
-        this.$emit('breadcrumb-data-changed', { route: `/${this.$route.meta.listRoute}/${this.resourceType}/${this.resourceName}`, routeName: `${this.resourceTitle} ${this.$t('pages.access.list')}` });
+        this.$emit('breadcrumb-data-changed', { route: `/${this.$route.meta.listRoute}/${this.resourceType}/${this.resourceName}`, routeName: this.$t('pages.access.list', { resource: this.getTranslation(this.resourceTitle) }) });
 
         this.objectTypeProperties = this.getObjectTypeProperties(schema.data, privilege.data);
         this.relationshipProperties = this.getRelationshipProperties(schema.data, privilege.data);
