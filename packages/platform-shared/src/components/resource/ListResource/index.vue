@@ -50,7 +50,7 @@ of the MIT license. See the LICENSE file for details. -->
           class="fr-no-data-icon md-48 text-secondary opacity-20 mt-4 mb-2"
           :name="managedIcon"
         />
-        <h5>{{ $t('listResource.noManaged', { capitalizedResourceName }) }}</h5>
+        <h5>{{ $t('listResource.noManaged', { capitalizedResourceName: getTranslation(capitalizedResourceName) }) }}</h5>
         <p class="mb-4">
           {{ $t('listResource.noResultsHelp') }}
         </p>
@@ -117,7 +117,7 @@ of the MIT license. See the LICENSE file for details. -->
 
     <slot name="deleteResourceModal">
       <FrDeleteModal
-        :translated-item-type="resourceTitle || resourceName"
+        :translated-item-type="getTranslation(resourceTitle || resourceName)"
         @delete-item="deleteResource" />
     </slot>
 
@@ -150,6 +150,7 @@ import FrActionsCell from '@forgerock/platform-shared/src/components/cells/Actio
 import FrDeleteModal from '@forgerock/platform-shared/src/components/DeleteModal';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
+import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import PluralizeFilter from '@forgerock/platform-shared/src/filters/PluralizeFilter';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
@@ -168,6 +169,7 @@ export default {
   mixins: [
     NotificationMixin,
     ResourceMixin,
+    TranslationMixin,
   ],
   components: {
     BDropdownItem,
@@ -391,7 +393,7 @@ export default {
             this.displayFields.push(columnName);
             this.columns.push({
               key: columnName,
-              label: column.title,
+              label: this.getTranslation(column.title),
               sortable: true,
               sortDirection: 'desc',
             });

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -6,7 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <BContainer>
     <div class="mt-5">
       <FrHeader
-        :title="displayName"
+        :title="getTranslation(displayName)"
         :subtitle="$t('pages.identities.subTitle')" />
       <BCard
         no-body
@@ -38,7 +38,7 @@ of the MIT license. See the LICENSE file for details. -->
                 class="mr-2"
                 name="add"
               />
-              {{ $t("common.newObject", {object: displayName}) }}
+              {{ $t("common.newObject", {object: getTranslation(displayName)}) }}
             </BButton>
           </template>
         </FrListResource>
@@ -79,6 +79,7 @@ import { getInternalResourceList, deleteInternalResource } from '@forgerock/plat
 import { getConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 
 /**
@@ -90,6 +91,7 @@ export default {
   mixins: [
     NotificationMixin,
     RestMixin,
+    TranslationMixin,
   ],
   components: {
     BCard,
