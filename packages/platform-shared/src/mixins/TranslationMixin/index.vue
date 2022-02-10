@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -38,22 +38,26 @@ export default {
      * @returns {String|String[]} translated text if found, original text if not
      */
     getTranslation(text) {
-      if (!text) {
+      try {
+        if (!text) {
+          return text;
+        }
+
+        // handle an array of strings
+        if (Array.isArray(text)) {
+          return text.map((x) => (this.getTranslation(x)));
+        }
+
+        // append the translationPrefix because overrides are not stored at the root level
+        const key = `${overridePrefix}.${this.toTranslationKey(text)}`;
+        if (this.translationExists(key)) {
+          return this.$t(key);
+        }
+        // return the unaltered text parameter if no translation is found
+        return text;
+      } catch (e) {
         return text;
       }
-
-      // handle an array of strings
-      if (Array.isArray(text)) {
-        return text.map((x) => (this.getTranslation(x)));
-      }
-
-      // append the translationPrefix because overrides are not stored at the root level
-      const key = `${overridePrefix}.${this.toTranslationKey(text)}`;
-      if (this.translationExists(key)) {
-        return this.$t(key);
-      }
-      // return the unaltered text parameter if no translation is found
-      return text;
     },
   },
 };
