@@ -247,7 +247,6 @@ import {
   has,
   noop,
 } from 'lodash';
-import axios from 'axios';
 import {
   BButton,
   BCardBody,
@@ -499,14 +498,21 @@ export default {
           const redirectUrl = callback.getOutputByName('redirectUrl');
           if (callback.getOutputByName('redirectMethod') === 'POST') {
             const redirectData = callback.getOutputByName('redirectData');
-            const bodyFormData = new FormData();
+            const form = document.createElement('form');
+            form.method = 'post';
+            form.action = redirectUrl;
+
             Object.entries(redirectData).forEach(([key, value]) => {
-              bodyFormData.append(key, value);
+              const hiddenField = document.createElement('input');
+              hiddenField.type = 'hidden';
+              hiddenField.name = key;
+              hiddenField.value = value;
+
+              form.appendChild(hiddenField);
             });
 
-            axios.post(redirectUrl, bodyFormData, {
-              headers: { 'Content-Type': 'multipart/form-data' },
-            });
+            document.body.appendChild(form);
+            form.submit();
           } else {
             window.location.href = redirectUrl;
           }
