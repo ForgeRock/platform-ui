@@ -30,6 +30,7 @@
     "ConfigureManaged": "Configure Managed",
     "Connect": "Connect",
     "Cors": "CORS",
+    "CustomEndpoints": "Custom Endpoints",
     "Dashboard": "Dashboard",
     "EditApplication": "Edit Application",
     "EditConnectorServer": "Edit Connector Server",
@@ -85,7 +86,9 @@
     "provisioningRole": "External Role",
     "securityQuestions": "Security Questions",
     "settings": "Settings",
-    "templates": "Templates"
+    "templates": "Templates",
+    "authScripts": "Auth Scripts",
+    "customEndpoints": "Custom Endpoints"
   },
   "connect": {
     "connectIdentities": "Connect Identities",
@@ -582,7 +585,7 @@
     },
     "kbaCreateNode": {
       "title": "Questions",
-      "description": "Localized questions from which the user can pick when defining security questions." 
+      "description": "Localized questions from which the user can pick when defining security questions."
     },
     "nodeTypeList": {
       "addNodes": "Add Nodes",
@@ -1362,6 +1365,56 @@
     "languages": {
       "GROOVY": "Groovy",
       "JAVASCRIPT": "JavaScript"
+    }
+  },
+  "endpoints": {
+    "title": "Custom Endpoints",
+    "listView": {
+      "addEndpoint": "New Endpoint",
+      "noDataTitle": "You haven't added any custom endpoint scripts yet",
+      "subTitle": "Use custom endpoints to extend functionality.",
+      "defaultTableTab": "All Endpoints"
+    },
+    "getListDataFail": "Unable to retrieve endpoint script data",
+    "deleteFail": "Unable to delete endpoint script",
+    "editorModal": {
+      "selectTypeTitle": "New Script",
+      "editTitle": {
+        "create": "New {typeName} Script",
+        "edit": "Edit {typeName} Script",
+        "duplicate": "Duplicate {typeName} Script",
+        "endpoint": "Endpoint"
+      },
+      "endpointHelp": "Specifies the path that the script can be accessed at.  An endpoint with the name <strong>\"example\"</strong> is addressable over REST at the URL <code>https://{yourdomain}/openidm/endpoint/example</code> or by using a script such as <code>openidm.read('endpoint/example')</code>.",
+      "chooseType": "Choose allowed methods to create a customized template to start with in constructing this endpoint.",
+      "errorSaving": "Error saving script",
+      "errorLoading": "Error loading script data",
+      "methodsLabel": "Allowed Methods",
+      "globalsHelpText": "The variables passed into this script are namespaced with the \"globals\" object.",
+      "testResults": "Test Results",
+      "test": "Test",
+      "newEndpoint": "New Endpoint",
+      "editEndpoint": "Edit Endpoint",
+      "compileSuccess": "script compiled",
+      "compileFail": "script compilation failed: ",
+      "type": "Type:",
+      "curlRequest": "cURL Request",
+      "curlHelpText": "Generate a cURL request to call your endpoint.",
+      "method": "Method",
+      "body": "Body",
+      "generate": "Generate",
+      "viewDocs": "View docs",
+      "docsHelpText": "Custom endpoint scripts must return a JSON object. The structure of the return object depends on the method in the request.",
+      "curl": "cURL",
+      "curlTooltip": "Copy cURL"
+    },
+    "deleteModal": {
+      "deleteTitle": "Custom Endpoint",
+      "deleteMessage": "Are you sure you want to delete this endpoint script?"
+    },
+    "languages": {
+      "groovy": "Groovy",
+      "javascript": "JavaScript"
     }
   },
   "esv": {
