@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -18,7 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
     <textarea
       v-model="inputValue"
       :autofocus="autofocus"
-      :class="[{'polyfill-placeholder': floatLabels }, 'form-control']"
+      :class="[{'polyfill-placeholder': floatLabels }, 'form-control', addClass]"
       :cols="cols"
       :data-vv-as="label"
       :disabled="disabled"
@@ -26,6 +26,7 @@ of the MIT license. See the LICENSE file for details. -->
       :name="name"
       :placeholder="label"
       :rows="rows"
+      :max-rows="maxRows"
       :readonly="readonly"
       @input="$emit('input', inputValue)"
       @click="onClick"
@@ -77,6 +78,17 @@ export default {
     maxLength: {
       type: Number,
       default: 500,
+    },
+    addClass: {
+      type: String,
+      default: '',
+    },
+    /**
+     * Specifies the maximum number of rows the textarea will grow to in order to fit content
+     */
+    maxRows: {
+      type: Number,
+      default: null,
     },
   },
   methods: {
