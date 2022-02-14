@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -32,7 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
                       />
                       <div class="media-body">
                         <h5 class="m-0">
-                          {{ device.deviceName }}
+                          {{ getTranslation(device.deviceName) }}
                         </h5>
                       </div>
                       <BDropdown
@@ -138,6 +138,7 @@ import { mapState } from 'vuex';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
+import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 
@@ -154,6 +155,7 @@ export default {
   mixins: [
     RestMixin,
     NotificationMixin,
+    TranslationMixin,
     BreadcrumbMixin,
   ],
   components: {
