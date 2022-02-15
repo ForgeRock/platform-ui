@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -162,6 +162,8 @@ export default {
     clearAll() {
       this.notifications = [];
 
+      // If we start using notifications again, we need to look into whether the new static role naming convention
+      // should be used here e.g. 'openidm-admin' instead of 'internal/user/openidm-admin'
       const target = this.internalUser ? 'internal/user/openidm-admin' : `${this.managedResource}/${this.userId}`;
 
       this.resetPolling();
