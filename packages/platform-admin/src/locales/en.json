@@ -310,6 +310,8 @@
     }
   },
   "journey": {
+    "allJourneysCategory": "All Journeys",
+    "inputFieldCategoryLabel": "Tags (optional)",
     "title": "Journeys",
     "journey": "Journey",
     "journeyName": "Journey Name",
@@ -355,6 +357,7 @@
     "filterNodes": "Filter nodes",
     "theme": "Theme",
     "editModal": {
+      "treeCategoryDescription": "Use tags to allow categorization and enhance searchability.",
       "treeNameDescription": "Human-friendly name for this user flow.",
       "treeManagedIdentityDescription": "Managed identity to authenticate using this journey.",
       "treeDescriptionDescription": "Provide consumers of your flow a brief description of this flow.",
