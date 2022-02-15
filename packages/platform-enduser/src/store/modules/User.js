@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -90,7 +90,7 @@ const mutations = {
   setRoles(state, roles) {
     state.roles = clone(roles);
 
-    if (includes(state.roles, 'internal/role/openidm-admin')) {
+    if (includes(state.roles, 'internal/role/openidm-admin') || includes(state.roles, 'openidm-admin')) {
       state.adminUser = true;
     }
   },
