@@ -245,6 +245,7 @@ import {
   each,
   find,
   has,
+  isString,
   noop,
 } from 'lodash';
 import {
@@ -270,6 +271,7 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
+import { getThemeIdFromStageString } from '@forgerock/platform-shared/src/utils/stage';
 
 const FrCallbackType = {
   ...CallbackType,
@@ -412,6 +414,16 @@ export default {
     sanitizedHeader() {
       return this.$sanitize(this.journeyHeader);
     },
+    stage() {
+      try {
+        return JSON.parse(this.step.getStage());
+      } catch (e) {
+        if (this.step.getStage() !== undefined) {
+          return this.step.getStage();
+        }
+        return '';
+      }
+    },
   },
   mounted() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -463,7 +475,7 @@ export default {
       this.nextButtonVisible = true;
       this.nextButtonDisabledArray = [false];
 
-      this.checkNodeForThemeOverride(this.step.getStage());
+      this.checkNodeForThemeOverride(this.stage);
 
       // Ensure that Social Buttons appear at top of Page Node
       const pullToTop = FrCallbackType.SelectIdPCallback;
@@ -630,12 +642,11 @@ export default {
         }
       });
     },
-    checkNodeForThemeOverride(stageText) {
-      const regexp = /theme[Ii]d=\s*(.[^\s,]*).*/g;
-      const match = regexp.exec(stageText);
-      if (match && match[1]) {
-        // eslint-disable-next-line prefer-destructuring
-        this.nodeThemeId = match[1];
+    checkNodeForThemeOverride(stage) {
+      if (isString(stage)) {
+        this.nodeThemeId = getThemeIdFromStageString(stage);
+      } else if (stage.themeId) {
+        this.nodeThemeId = stage.themeId;
       }
     },
     /**
