@@ -1,12 +1,12 @@
 /**
- * Copyright 2020 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2022 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
+
 import { mount } from '@vue/test-utils';
-import QueryFilterRow from './index';
+import FilterBuilderRow from './index';
 
 const mountProps = {
   mocks: {
@@ -49,15 +49,15 @@ const mountProps = {
   },
 };
 
-describe('QueryFilterRow', () => {
+describe('FilterBuilderRow', () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = mount(QueryFilterRow, mountProps);
+    wrapper = mount(FilterBuilderRow, mountProps);
   });
 
-  it('QueryFilterRow successfully loaded', () => {
-    expect(wrapper.name()).toEqual('QueryFilterRow');
+  it('FilterBuilderRow successfully loaded', () => {
+    expect(wrapper.name()).toEqual('FilterBuilderRow');
   });
 
   it('Initial rule renders the correct values', () => {
@@ -124,7 +124,7 @@ describe('QueryFilterRow', () => {
   });
 
   it('Initial rule renders without a value', () => {
-    const presentWrapper = mount(QueryFilterRow, {
+    const presentWrapper = mount(FilterBuilderRow, {
       ...mountProps,
       propsData: {
         ...mountProps.propsData,
