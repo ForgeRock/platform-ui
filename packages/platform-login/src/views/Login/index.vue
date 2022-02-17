@@ -3,7 +3,7 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div class="min-vh-100 d-flex flex-column">
+  <div class="min-vh-100 d-flex flex-column fr-fullscreen-mobile">
     <template
       v-if="journeyHeaderEnabled && journeyHeader && (journeyLayout === 'card' || !journeyTheaterMode)"
       id="appHeader">
@@ -1228,6 +1228,17 @@ export default {
 @media (min-width: 768px) {
   .w-md-50 {
     width: 50% !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .fr-fullscreen-mobile {
+    .container,
+    .col-lg-12 {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+    }
   }
 }
 </style>

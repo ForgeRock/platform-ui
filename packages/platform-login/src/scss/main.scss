@@ -89,3 +89,10 @@ body {
     opacity: 1;
   }
 }
+
+// Override for vue-multiselects which allow options to span multiple lines
+.multiselect__single,
+.multiselect__option span {
+  white-space: normal !important;
+  line-height: 1.5rem !important;
+}
