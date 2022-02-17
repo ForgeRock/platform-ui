@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -238,7 +238,7 @@ import {
 import PluralizeFilter from '@forgerock/platform-shared/src/filters/PluralizeFilter';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import FrQueryFilterBuilder from '@forgerock/platform-shared/src/components/QueryFilterBuilder';
+import FrQueryFilterBuilder from '@forgerock/platform-shared/src/components/filterBuilder/QueryFilterBuilder';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 
 export default {
