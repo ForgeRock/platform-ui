@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -89,13 +89,13 @@ export function generateAmApi(resource, requestOverride = {}) {
   return request;
 }
 /**
- * Generates a FRaaS Logging API Axios instance
+ * Generates a FRaaS Log API key API Axios instance
  * @param {object} requestOverride Takes an object of AXIOS parameters that can be used to either add
  * on extra information or override default properties https://github.com/axios/axios#request-config
  *
  * @returns {AxiosInstance}
  */
-export function generateFraasLoggingApi(requestOverride = {}) {
+export function generateFraasLogApiKeyApi(requestOverride = {}) {
   const requestDetails = {
     baseURL: store.state.SharedStore.fraasLoggingKeyURL,
     timeout: 15000,
@@ -116,6 +116,23 @@ export function generateFraasEnvironmentApi(requestOverride = {}) {
   const requestDetails = {
     baseURL: store.state.SharedStore.fraasEnvironmentUrl,
     timeout: 15000,
+    headers: {},
+    ...requestOverride,
+  };
+
+  return axios.create(requestDetails);
+}
+/**
+ * Generates a FRaaS monitoring API Axios instance
+ * @param {object} requestOverride Takes an object of AXIOS parameters that can be used to either add
+ * on extra information or override default properties https://github.com/axios/axios#request-config
+ *
+ * @returns {AxiosInstance}
+ */
+export function generateFraasMonitoringApi(requestOverride = {}) {
+  const requestDetails = {
+    baseURL: store.state.SharedStore.fraasMonitoringURL,
+    timeout: 25000,
     headers: {},
     ...requestOverride,
   };
