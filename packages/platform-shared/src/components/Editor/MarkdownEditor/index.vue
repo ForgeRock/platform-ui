@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -92,8 +92,8 @@ export default {
   data() {
     return {
       htmlField: '',
-      markdownField: '',
-      stylesField: '',
+      markdownField: null,
+      stylesField: null,
       parsedHtml: '',
     };
   },
@@ -197,7 +197,7 @@ export default {
       const content = this.getContentChildren(this.markup);
       const converter = new showdown.Converter();
       const markdown = converter.makeMarkdown(content);
-      this.markdownField = markdown;
+      this.markdownField = markdown ?? '';
     },
     /**
      * Get HTML from markdown
@@ -218,15 +218,21 @@ export default {
       this.$emit('styles-change', this.stylesField);
       this.parseHtml();
     },
-    markup() {
-      this.parseMarkdown();
+    markup: {
+      handler() {
+        this.parseMarkdown();
+      },
+      immediate: true,
     },
     markdownField() {
       this.parseHtml();
     },
-    styles() {
-      this.stylesField = this.styles;
-      this.parseHtml();
+    styles: {
+      handler() {
+        this.stylesField = this.styles;
+        this.parseHtml();
+      },
+      immediate: true,
     },
   },
 };
