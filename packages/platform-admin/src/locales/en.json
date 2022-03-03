@@ -1345,6 +1345,10 @@
         "name": "Journey Decision Node",
         "description": "Script to be included in an authentication journey node and executed on the server during authentication."
       },
+      "CONFIG_PROVIDER_NODE": {
+        "name": "Configuration Provider Node",
+        "description": "Default global script for Config Provider."
+      },
       "OAUTH2_ACCESS_TOKEN_MODIFICATION": {
         "name": "OAuth2 Access Token Modification",
         "description": "Script to modify OAuth2 authentication tokens when they are passed from the server to the client."
