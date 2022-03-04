@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -62,6 +62,17 @@ export function getRules(i18n) {
       return customValidators.validEmail(value);
     },
     message: i18n.t('common.policyValidationMessages.VALID_EMAIL_ADDRESS_FORMAT'),
+  };
+
+  // Email from field rule
+  // errors if input value contains characters not of
+  // alpha, numeric, dashes, spaces, periods, single/double quotes
+  const email_from = {
+    validate(value) {
+      const regex = /^([A-Z]|[0-9]| |_|-|'|"|\.)+$/ig;
+      return regex.test(value);
+    },
+    message: i18n.t('common.policyValidationMessages.VALID_EMAIL_FROM_FORMAT'),
   };
 
   // Excluded rule
@@ -210,6 +221,7 @@ export function getRules(i18n) {
     alpha_num_lower,
     date_format,
     email,
+    email_from,
     excluded,
     google_cloud_platform_certificate_validation,
     json,
