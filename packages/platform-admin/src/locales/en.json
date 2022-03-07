@@ -1334,7 +1334,8 @@
       },
       "chooseType": "Choose the type of script to create.",
       "errorSaving": "Error saving script",
-      "errorLoading": "Error loading script data"
+      "errorLoading": "Error loading script data",
+      "saveSuccess": "Script saved"
     },
     "deleteModal": {
       "thisScript": "this script"
