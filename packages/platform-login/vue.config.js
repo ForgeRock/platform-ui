@@ -1,9 +1,11 @@
 /**
- * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
+
+const path = require('path');
 
 function generateTheme() {
   let variableLoad = `
@@ -51,7 +53,20 @@ module.exports = {
       }));
   },
   configureWebpack: {
-    devtool: 'source-map',
+    devtool: process.env.NODE_ENV === 'development' ? 'eval-source-map' : 'source-map',
+    output: {
+      devtoolModuleFilenameTemplate: (info) => {
+        const resPath = path.normalize(info.resourcePath);
+        const isVue = resPath.match(/\.vue$/);
+        const isGenerated = info.allLoaders;
+
+        const generated = `webpack-generated:///${resPath}?${info.hash}`;
+        const vuesource = `vue-source:///${resPath}`;
+
+        return isVue && isGenerated ? generated : vuesource;
+      },
+      devtoolFallbackModuleFilenameTemplate: 'webpack:///[resource-path]?[hash]',
+    },
   },
   css: {
     loaderOptions: {
