@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -23,39 +23,39 @@ of the MIT license. See the LICENSE file for details. -->
       background-attachment: fixed;
       }
 
-      .btn {
+      <template v-if="mock">.fr-enduser-theme-preview</template> .btn {
       border-radius: {{ theme.buttonRounded }}px !important;
       }
 
-      .btn-primary {
+      <template v-if="mock">.fr-enduser-theme-preview</template> .btn-primary {
       background-color: {{ theme.primaryColor }} !important;
       outline-color: {{ theme.primaryColor }} !important;
       border-color: {{ theme.primaryColor }} !important;
       color: {{ theme.textColor }};
       }
 
-      .btn-primary:disabled {
+      <template v-if="mock">.fr-enduser-theme-preview</template> .btn-primary:disabled {
       background-color: {{ theme.primaryOffColor }} !important;
       }
 
-      .btn-primary:hover {
+      <template v-if="mock">.fr-enduser-theme-preview</template> .btn-primary:hover {
       background-color: {{ theme.primaryOffColor }} !important;
       }
 
-      a {
+      <template v-if="mock">.fr-enduser-theme-preview</template> a {
       color: {{ theme.linkColor }};
       }
 
-      a:hover {
+      <template v-if="mock">.fr-enduser-theme-preview</template> a:hover {
       color: {{ theme.linkActiveColor }};
       }
 
-      .btn-link,
+      <template v-if="mock">.fr-enduser-theme-preview</template>  .btn-link,
       .nav-link {
       color: {{ theme.linkColor }};
       }
 
-      .btn-link:hover,
+      <template v-if="mock">.fr-enduser-theme-preview</template>  .btn-link:hover,
       .nav-link:hover {
       color: {{ theme.linkActiveColor }};
       }
@@ -68,11 +68,11 @@ of the MIT license. See the LICENSE file for details. -->
       color: {{ theme.bodyText }} !important;
       }
 
-      .text-muted {
+      <template v-if="mock">.fr-enduser-theme-preview</template> .text-muted {
       color: {{ theme.secondaryColor }} !important;
       }
 
-      .text-danger {
+      <template v-if="mock">.fr-enduser-theme-preview</template> .text-danger {
       color: {{ theme.dangerColor }} !important;
       }
 
@@ -90,8 +90,11 @@ of the MIT license. See the LICENSE file for details. -->
       align-self: center;
       }
 
-      textarea:focus, input:focus, input[type]:focus, .uneditable-input:focus,
-      .form-control:focus-within .multiselect__tags {
+      textarea:focus,
+      <template v-if="mock">.fr-enduser-theme-preview</template> input:focus,
+      <template v-if="mock">.fr-enduser-theme-preview</template> input[type]:focus,
+      .uneditable-input:focus,
+      <template v-if="mock">.fr-enduser-theme-preview</template> .form-control:focus-within .multiselect__tags {
       border-color: {{ theme.primaryColor }} !important;
       -webkit-box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }};
       box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }};
@@ -419,6 +422,13 @@ export default {
      * Is this component being used in enduser
      */
     isEnduser: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * Is this component being used in the Hosted Pages theme editor section
+     */
+    mock: {
       type: Boolean,
       default: false,
     },
