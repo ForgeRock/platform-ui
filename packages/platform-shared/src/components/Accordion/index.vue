@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -19,8 +19,9 @@ of the MIT license. See the LICENSE file for details. -->
           @property {object} data item data
         -->
         <div
-          class="border-top"
+          :class="`border-top ${data.accordionItemClass ? data.accordionItemClass : ''}`"
           :key="key"
+          data-testid="accordion-item-wrapper"
           no-body
           @click="$emit('section-expanded', {key, data})">
           <BCardHeader
