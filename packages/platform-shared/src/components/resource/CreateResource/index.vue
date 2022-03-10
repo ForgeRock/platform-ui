@@ -22,9 +22,8 @@ of the MIT license. See the LICENSE file for details. -->
             <!-- Creating resource currently only supports Array, String, Number, Boolean, and singleton relationships -->
             <BForm
               v-if="clonedCreateProperties.length"
-              @keyup.enter="saveForm"
+              @submit.prevent
               class="mb-3"
-              @submit="saveForm"
               name="edit-personal-form">
               <template v-for="(field, index) in clonedCreateProperties">
                 <BFormGroup
@@ -121,7 +120,6 @@ of the MIT license. See the LICENSE file for details. -->
             :disabled="formFields.length === 0 || invalid || (passwordValue !== '' && !passwordValid) || isSaving"
             :show-spinner="isSaving"
             :spinner-text="$t('common.saving')"
-            type="submit"
             @click="saveForm" />
         </template>
       </BModal>
