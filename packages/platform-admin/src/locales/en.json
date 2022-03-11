@@ -1337,6 +1337,7 @@
       "errorLoading": "Error loading script data"
     },
     "deleteModal": {
+      "body": "Are you sure you want to delete script {resource}?",
       "thisScript": "this script"
     },
     "typeOptions": {
