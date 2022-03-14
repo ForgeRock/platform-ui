@@ -44,6 +44,7 @@
     "EmailTemplates": "Email Templates",
     "EmailTemplatePreview": "Email Template Preview",
     "ESV": "Environment Secrets & Variables",
+    "Events": "Event Hooks",
     "Forbidden": "Forbidden",
     "GatewaysAndAgents": "Gateways And Agents",
     "HostedPages": "Hosted Pages",
@@ -1416,6 +1417,45 @@
     "languages": {
       "GROOVY": "Groovy",
       "JAVASCRIPT": "JavaScript"
+    }
+  },
+  "events": {
+    "title": "Event Hooks",
+    "event": "Event",
+    "getListDataFail": "Unable to retrieve events data",
+    "deleteFail": "Unable to delete event",
+    "saveEventSuccess": "\"{eventName}\" event hook successfully updated.",
+    "createEventSuccess": "\"{eventName}\" event hook successfully created.",
+    "eventTypes": {
+      "onCreate": "is created (onCreate)",
+      "postCreate": "after creation (postCreate)",
+      "onRead": "is read (onRead)",
+      "onUpdate": "is updated (onUpdate)",
+      "postUpdate": "after update (postUpdate)",
+      "onDelete": "is deleted (onDelete)",
+      "postDelete": "after delete (postDelete)",
+      "onValidate": "is validated (onValidate)",
+      "onRetrieve": "is retrieved (onRetrieve)",
+      "onStore": "is stored (onStore)",
+      "onSync": "is synced (onSync)"
+    },
+    "listView": {
+      "addEvent": "New Event Hook",
+      "noDataTitle": "No event hooks found",
+      "subTitle": "Trigger scripts based on system events.",
+      "defaultTableTab": "All Endpoints",
+      "objectName": "Object Name"
+    },
+    "deleteModal": {
+      "deleteTitle": "Event Hook",
+      "deleteMessage": "Are you sure you want to delete the \"{eventName}\" event hook?"
+    },
+    "editorModal": {
+      "editEvent": "Edit Event Hook",
+      "newEvent": "New Event Hook",
+      "condition": "Condition",
+      "objectName": "Object Name",
+      "saveError": "Invalid script : {errorMessage}"
     }
   },
   "endpoints": {
