@@ -10,3 +10,13 @@
     }
   }
 }
+
+.modal-fullscreen {
+  .modal-dialog {
+    .modal-content {
+      border-radius: 0;
+      box-shadow: none;
+      border: none;
+    }
+  }
+}
