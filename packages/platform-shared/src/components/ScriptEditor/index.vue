@@ -9,10 +9,11 @@ of the MIT license. See the LICENSE file for details. -->
         {{ $t('scriptEditor.title') }}
       </label>
       <div class="d-flex align-items-center">
-        <label class="mr-1 mb-0">
+        <label v-show="showScriptType" class="mr-1 mb-0">
           {{ $t('scriptEditor.type') }}
         </label>
         <FrField
+          v-show="showScriptType"
           v-model="scriptType.value"
           name="scriptType"
           type="select"
@@ -30,8 +31,8 @@ of the MIT license. See the LICENSE file for details. -->
       v-if="uploadFileToggle === false"
       v-model="code"
       :aria-label="$t('editor.accessibilityHelp')"
-      :language="scriptType.value"
-      :line-numbers="true"
+      :language="scriptType.value.split('/')[1]"
+      :line-numbers="showLineNumbers"
       @input="emitScriptValue"
       @keydown="blurOnEscape" />
     <BFormFile
@@ -172,7 +173,7 @@ export default {
     value: {
       type: Object,
       default: () => ({
-        type: 'javascript',
+        type: 'text/javascript',
         globals: {},
         source: '',
       }),
@@ -188,20 +189,32 @@ export default {
       jsonEditToggle: false,
       variablesJsonCode: '',
       scriptType: {
-        value: 'javascript',
+        value: 'text/javascript',
         options: [
-          { text: 'Javascript', value: 'javascript' },
-          { text: 'Groovy', value: 'groovy' },
+          { text: 'Javascript', value: 'text/javascript' },
+          { text: 'Groovy', value: 'text/groovy' },
         ],
       },
       selectedVariables: [],
       uniqueVariables: 0,
       uploadFileToggle: false,
+      showScriptType: true,
     };
   },
+  computed: {
+    showLineNumbers() {
+      return this.code.length > 0;
+    },
+  },
   mounted() {
-    this.setPropValues(this.value);
-    this.emitScriptValue = debounce(this.emitScriptValue, 100);
+    if (this.value) {
+      this.setPropValues(this.value);
+      this.emitScriptValue = debounce(this.emitScriptValue, 100);
+    }
+    // Hide script type option in the cloud
+    if (this.$store.state.isFraas) {
+      this.showScriptType = false;
+    }
   },
   methods: {
     /**
@@ -219,12 +232,13 @@ export default {
       this.selectedVariables.splice(index, 0, {
         name,
         value: {
-          value: value !== '' ? JSON.stringify(value, null, 2) : value,
+          value,
           type,
         },
         index: this.uniqueVariables,
       });
       this.uniqueVariables += 1;
+      this.$emit('disableSave', true);
     },
     /**
      * Validates code string can be parsed back if desired
@@ -265,14 +279,18 @@ export default {
           if (isValid) {
             const globals = {};
             this.selectedVariables.forEach((variable) => {
-              globals[variable.name.value] = this.tryParse(variable.value.value);
+              globals[variable.name] = this.tryParse(variable.value.value);
             });
+            this.$emit('disableSave', false);
             this.sendEmit(this.scriptType.value, globals);
+          } else {
+            this.$emit('disableSave', true);
           }
         });
       } else if (this.jsonEditToggle) {
         this.checkIfCodeIsParsable(this.currentJSONCode);
       } else {
+        this.$emit('disableSave', false);
         this.sendEmit(this.scriptType.value, {});
       }
     },
@@ -318,9 +336,9 @@ export default {
       const file = event.target.files[0];
       const fileComponents = file.name.split('.');
       if (fileComponents[fileComponents.length - 1] === 'js') {
-        this.scriptType.value = 'javascript';
-      } else if (fileComponents[fileComponents.length - 1] === 'groovy') {
-        this.scriptType.value = 'groovy';
+        this.scriptType.value = 'text/javascript';
+      } else if (fileComponents[fileComponents.length - 1] === 'text/groovy') {
+        this.scriptType.value = 'text/groovy';
       }
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -342,7 +360,7 @@ export default {
         type,
         globals,
       };
-      if (this.value.file) {
+      if (this.value && this.value.file) {
         scriptObject.file = this.value.file;
       } else {
         scriptObject.source = this.code;
@@ -367,9 +385,10 @@ export default {
     setPropValues(newValue) {
       this.selectedVariables.length = 0;
       if (newValue.type) {
-        this.scriptType.value = newValue.type;
+        // If the script type is not 'text/javascript' or 'text/groovy' prepend it with 'text/'
+        this.scriptType.value = !newValue.type.startsWith('text/') ? `text/${newValue.type}` : newValue.type;
       }
-      Object.keys(newValue.globals).forEach((name, index) => {
+      Object.keys(newValue.globals || {}).forEach((name, index) => {
         const globalValue = newValue.globals[name];
         this.addVariable(name, globalValue, index + 1);
       });
@@ -403,6 +422,9 @@ export default {
       if (this.currentJSONCode !== code) {
         this.checkIfCodeIsParsable(code);
       }
+    },
+    code() {
+      this.emitScriptValue();
     },
   },
 };
