@@ -101,6 +101,7 @@
       "disabled",
       "only-child",
       "focus-visible",
+      "placeholder-shown"
     ],
     "selector-pseudo-class-no-unknown": [
       true,

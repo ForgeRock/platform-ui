@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -194,7 +194,9 @@ export default {
     width: 100%;
     min-width: 80px;
 
-    .polyfill-placeholder {
+    .polyfill-placeholder,
+    input:focus,
+    input:not(:placeholder-shown) {
       padding-top: $input-btn-padding-y + $input-btn-padding-y * (2 / 3);
       padding-bottom: $input-btn-padding-y / 3;
 

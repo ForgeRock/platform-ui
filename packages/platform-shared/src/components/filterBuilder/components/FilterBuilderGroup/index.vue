@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -29,12 +29,13 @@ of the MIT license. See the LICENSE file for details. -->
         </template>
       </div>
       <template v-if="!isBaseGroup">
-        <FrRemoveButton
+        <FrFilterBuilderRemoveButton
           v-if="hasSiblings"
           class="mr-1"
           :disabled="disabled"
           @click="removeRule" />
-        <FrAddButton
+        <FrFilterBuilderAddButton
+          v-if="!rules.disableAdd"
           class="mr-1"
           :disabled="disabled"
           :hide-group="isMaxDepth"
@@ -42,7 +43,7 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
     </div>
     <template v-for="(subfilter, i) in rules.subfilters">
-      <FrQueryFilterRow
+      <FrFilterBuilderRow
         v-if="isRow(subfilter)"
         :disabled="disabled"
         :rule="subfilter"
@@ -50,6 +51,7 @@ of the MIT license. See the LICENSE file for details. -->
         :depth="depth"
         :has-siblings="rules.subfilters.length > 1"
         :index="i"
+        :is-ldap="isLdap"
         :key="subfilter.uniqueIndex"
         :max-depth="maxDepth"
         :path="`${path}`"
@@ -57,7 +59,7 @@ of the MIT license. See the LICENSE file for details. -->
         @add-rule="addRule"
         @remove-rule="removeRule"
         @rule-change="ruleChange" />
-      <QueryFilterGroup
+      <FilterBuilderGroup
         v-else
         :disabled="disabled"
         :rules="subfilter"
@@ -65,6 +67,7 @@ of the MIT license. See the LICENSE file for details. -->
         :depth="depth + 1"
         :has-siblings="rules.subfilters.length > 1"
         :index="i"
+        :is-ldap="isLdap"
         :key="subfilter.uniqueIndex"
         :max-depth="maxDepth"
         :path="`${path}:${i}`"
@@ -80,19 +83,20 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import { BCard } from 'bootstrap-vue';
 import FrField from '@forgerock/platform-shared/src/components/Field';
-import FrQueryFilterRow from '../QueryFilterRow';
-import FrAddButton from '../QueryFilterAddButton';
-import FrRemoveButton from '../QueryFilterRemoveButton';
-import filterOperators from '../QueryFilterDefaults';
+import FrFilterBuilderRow from '../FilterBuilderRow';
+import FrFilterBuilderAddButton from '../FilterBuilderAddButton';
+import FrFilterBuilderRemoveButton from '../FilterBuilderRemoveButton';
+import { operatorOptions } from '../../utils/QueryFilterDefaults';
+import { ldapOperatorOptions } from '../../utils/LdapFilterDefaults';
 
 export default {
-  name: 'QueryFilterGroup',
+  name: 'FilterBuilderGroup',
   components: {
     BCard,
-    FrAddButton,
     FrField,
-    FrRemoveButton,
-    FrQueryFilterRow,
+    FrFilterBuilderAddButton,
+    FrFilterBuilderRemoveButton,
+    FrFilterBuilderRow,
   },
   computed: {
     groupCardClass() {
@@ -111,16 +115,20 @@ export default {
     isBaseGroup() {
       return this.depth === 0;
     },
-  },
-  data() {
-    return {
-      defaultOperatorOptions: {
-        options: Object.values(filterOperators).map(
+    defaultOperatorOptions() {
+      const operators = this.isLdap ? ldapOperatorOptions : operatorOptions;
+      return {
+        options: Object.values(operators).map(
           (prop) => ({ text: prop.label, value: prop.delimeter }),
         ),
         value: this.rules.operator,
-      },
-      filterOperators,
+      };
+    },
+  },
+  data() {
+    return {
+      ldapOperatorOptions,
+      operatorOptions,
     };
   },
   props: {
@@ -137,8 +145,8 @@ export default {
       type: Object,
     },
     resourceName: {
-      required: true,
       type: String,
+      default: '',
     },
     depth: {
       required: true,
@@ -147,6 +155,10 @@ export default {
     index: {
       required: true,
       type: Number,
+    },
+    isLdap: {
+      type: Boolean,
+      default: false,
     },
     maxDepth: {
       required: true,

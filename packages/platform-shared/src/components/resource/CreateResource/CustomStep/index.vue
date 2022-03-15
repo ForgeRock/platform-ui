@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -48,7 +48,7 @@ import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrTimeConstraint from '@forgerock/platform-shared/src/components/TimeConstraint';
 import FrAddPrivileges from '@forgerock/platform-shared/src/components/resource/EditResource/CustomTabs/PrivilegesTab/AddPrivileges';
-import FrQueryFilterBuilder from '@forgerock/platform-shared/src/components/QueryFilterBuilder';
+import FrQueryFilterBuilder from '@forgerock/platform-shared/src/components/filterBuilder/QueryFilterBuilder';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
 
