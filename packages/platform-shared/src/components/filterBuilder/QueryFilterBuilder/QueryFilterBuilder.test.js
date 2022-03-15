@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,7 +7,7 @@
 
 import { shallowMount } from '@vue/test-utils';
 import QueryFilterBuilder from './index';
-import * as QFD from './QueryFilterDefaults';
+import * as QFD from '../utils/QueryFilterDefaults';
 
 // Various test values
 // this.editProperty.value = true;
@@ -43,9 +43,6 @@ const subFilters4 = {
 };
 const subFilterAccount = {
   operator: 'eq', field: '/accountStatus', value: 'active', uniqueIndex: 1,
-};
-const subFilterUserName = {
-  operator: 'co', field: '/userName', value: 'test', uniqueIndex: 2,
 };
 
 describe('QueryFilterBuilder', () => {
@@ -83,11 +80,6 @@ describe('QueryFilterBuilder', () => {
   it('Creates unique index', () => {
     wrapper.vm.uniqueIndex = 0;
     expect(wrapper.vm.getUniqueIndex()).toEqual(1);
-  });
-
-  it('Checks if filter string is greater than 3 layers deep', () => {
-    expect(wrapper.vm.checkIfWithinThreeLayers('/sn eq ""')).toEqual(true);
-    expect(wrapper.vm.checkIfWithinThreeLayers('(((((/sn eq "")))))')).toEqual(false);
   });
 
   it('converts filter object to string', () => {
@@ -166,29 +158,6 @@ describe('QueryFilterBuilder', () => {
       wrapper.setData({ queryFilter: qfBefore });
       wrapper.vm.updateFilter('remove-rule', removeRule);
       expect(wrapper.vm.queryFilter).toEqual(resp);
-    });
-  });
-
-  describe('Find Group', () => {
-    it('Returns filter if only 1 group', () => {
-      const filter = { subfilters: [subFilters3Not], operator: 'or' };
-      const groups = wrapper.vm.findGroup(filter, ['0'], 0, 0);
-      expect(groups).toEqual(filter);
-    });
-
-    it('Returns correct group if there are multiple', () => {
-      const filter = {
-        subfilters: [
-          subFilters3Not,
-          subFilterAccount,
-          { subfilters: [subFilterUserName], operator: 'or', uniqueIndex: 3 },
-        ],
-        operator: 'or',
-      };
-      const resp = { operator: 'or', subfilters: [subFilterUserName], uniqueIndex: 3 };
-
-      const groups = wrapper.vm.findGroup(filter, ['0', '2'], 1, 1);
-      expect(groups).toEqual(resp);
     });
   });
 
