@@ -1,12 +1,12 @@
 /**
- * Copyright (c) 2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { mount } from '@vue/test-utils';
-import QueryFilterGroup from './index';
+import FilterBuilderGroup from './index';
 
 const mountProps = {
   mocks: {
@@ -53,15 +53,15 @@ const newRule = {
   depth: -1, index: 0, path: '0', type: 'foo',
 };
 
-describe('QueryFilterRow', () => {
+describe('FilterBuilderGroup', () => {
   let wrapper;
 
   beforeEach(() => {
-    wrapper = mount(QueryFilterGroup, mountProps);
+    wrapper = mount(FilterBuilderGroup, mountProps);
   });
 
-  it('QueryFilterGroup successfully loaded', () => {
-    expect(wrapper.name()).toEqual('QueryFilterGroup');
+  it('FilterBuilderGroup successfully loaded', () => {
+    expect(wrapper.name()).toEqual('FilterBuilderGroup');
   });
 
   it('Creates object to add a rule', () => {
