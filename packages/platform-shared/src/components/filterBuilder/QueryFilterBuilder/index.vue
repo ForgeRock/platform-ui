@@ -1,11 +1,11 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BCard body-class="p-3 p-sm-4">
     <template v-if="isBasic && allowBasicMode">
-      <FrQueryFilterGroup
+      <FrFilterBuilderGroup
         path="0"
         :disabled="disabled"
         :rules="queryFilter"
@@ -26,7 +26,7 @@ of the MIT license. See the LICENSE file for details. -->
       </BButton>
     </template>
     <template v-else-if="isBasic === false">
-      <FrQueryFilterAdvanced
+      <FrFilterBuilderAdvanced
         :disabled="disabled"
         v-model="filterString"
         @input="checkFilterString" />
@@ -45,19 +45,20 @@ of the MIT license. See the LICENSE file for details. -->
 import { BButton, BCard } from 'bootstrap-vue';
 import { cloneDeep } from 'lodash';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
-import FrQueryFilterAdvanced from './QueryFilterAdvanced';
-import FrQueryFilterGroup from './QueryFilterGroup';
-import filterOperators, { getTypeFromValue } from './QueryFilterDefaults';
+import FrFilterBuilderAdvanced from '../components/FilterBuilderAdvanced';
+import FrFilterBuilderGroup from '../components/FilterBuilderGroup';
+import { operatorOptions, getTypeFromValue } from '../utils/QueryFilterDefaults';
+import { findGroup, checkIfWithinThreeLayers } from '../utils/filterBuilderUtils';
 
-const defaultFilterOperator = filterOperators.Any.delimeter;
+const defaultFilterOperator = operatorOptions.Any.delimeter;
 
 export default {
   name: 'QueryFilterBuilder',
   components: {
     BButton,
     BCard,
-    FrQueryFilterAdvanced,
-    FrQueryFilterGroup,
+    FrFilterBuilderAdvanced,
+    FrFilterBuilderGroup,
   },
   mixins: [RestMixin],
   computed: {
@@ -143,40 +144,6 @@ export default {
       return this.uniqueIndex;
     },
     /**
-     * Determines if current filter string has a depth greater than our max allowed
-     * depth for the basic editor. We also ignore 'not' parenthesis.
-     * NOTE: Need to use basic for loop, as forEach is not available for strings
-     *
-     * @property {string} queryFilterString - stringified query filter
-     *
-     * @returns {Boolean} Whether current query filter is three layers of depth or less
-     */
-    checkIfWithinThreeLayers(queryFilterString) {
-      const testString = queryFilterString.replace(/\\"/g, '').replace(/"[^"]*"/g, '');
-      let depth = 0;
-      let ignoreNots = 0;
-      let withinThreeLayers = true;
-      for (let index = 0; index < testString.length; index += 1) {
-        if (testString[index] === '(') {
-          if (index > 0 && testString.charAt(index - 1) === '!') {
-            ignoreNots += 1;
-          } else {
-            depth += 1;
-            if (depth > this.maxDepth) {
-              withinThreeLayers = false;
-            }
-          }
-        } else if (testString.charAt(index) === ')') {
-          if (ignoreNots) {
-            ignoreNots -= 1;
-          } else {
-            depth -= 1;
-          }
-        }
-      }
-      return withinThreeLayers;
-    },
-    /**
      * Builds updated filter with newly changed rules
      *
      * @property {string} eventName - name of emitted event to determine exactly what to update
@@ -189,7 +156,7 @@ export default {
 
       const tempFilter = cloneDeep(this.queryFilter);
       const paths = path.split(':');
-      const group = this.findGroup(tempFilter, paths, 0, depth);
+      const group = findGroup(tempFilter, paths, 0, depth);
 
       switch (eventName) {
         case 'add-rule':
@@ -213,25 +180,6 @@ export default {
           break;
       }
       this.$set(this.$data, 'queryFilter', tempFilter);
-    },
-    /**
-     * Locates group within path to add or update
-     *
-     * @property {Object} filter - Current layer of query filter
-     * @property {String} paths - Path of current filter in relation to entire query filter
-     * @property {number} pathIndex - How far into group we have searched
-     * @property {Boolean} depth - How deep the query filter is
-     *
-     * @returns {Object} Group within query filter that path points to
-     */
-    findGroup(filter, paths, pathIndex, depth) {
-      if (depth === 0) return filter;
-      if (pathIndex === 0) return this.findGroup(filter, paths, pathIndex + 1, depth);
-
-      const subfilter = filter.subfilters[paths[pathIndex]];
-
-      if (pathIndex === depth) return subfilter;
-      return this.findGroup(subfilter, paths, pathIndex + 1, depth);
     },
     /**
      * Converts filter from object form to string form
@@ -442,7 +390,7 @@ export default {
             } else {
               this.$emit('change', strippedString);
             }
-            if (this.checkIfWithinThreeLayers(strippedString)
+            if (checkIfWithinThreeLayers(strippedString, this.maxDepth)
               && !this.hasAdvancedProperty(validatedQueryFilter, false)) {
               this.allowBasicMode = true;
             }
@@ -467,7 +415,7 @@ export default {
   },
   created() {
     this.validateFilter(this.queryFilterString).then((validatedQueryFilter) => {
-      if (!this.checkIfWithinThreeLayers(this.queryFilterString)
+      if (!checkIfWithinThreeLayers(this.queryFilterString, this.maxDepth)
         || this.hasAdvancedProperty(validatedQueryFilter, false)) {
         this.toggleMode(false);
       } else if (validatedQueryFilter) {

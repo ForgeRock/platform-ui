@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -13,12 +13,19 @@ of the MIT license. See the LICENSE file for details. -->
             md="5"
             class="rule-property-col mb-2 mb-md-0">
             <FrField
+              v-if="properties.length"
               v-model="selectPropOptions.value"
               name="selectPropOptions"
               type="select"
               :disabled="disabled"
               :options="selectPropOptions.options"
               :placeholder="propertyPlaceholder"
+              @input="ruleChange({ field: $event })" />
+            <FrField
+              v-else
+              v-model="customPropValue"
+              name="Custom"
+              type="string"
               @input="ruleChange({ field: $event })" />
           </BCol>
           <BCol
@@ -47,12 +54,12 @@ of the MIT license. See the LICENSE file for details. -->
           </BCol>
         </BFormRow>
       </div>
-      <FrRemoveButton
+      <FrFilterBuilderRemoveButton
         v-if="hasSiblings"
         class="mr-1"
         :disabled="disabled"
         @click="removeRule" />
-      <FrAddButton
+      <FrFilterBuilderAddButton
         class="add-button"
         :disabled="disabled"
         :hide-group="isMaxDepth"
@@ -67,24 +74,39 @@ import {
 } from 'bootstrap-vue';
 import { capitalize } from 'lodash';
 import FrField from '@forgerock/platform-shared/src/components/Field';
-import AddButton from '../QueryFilterAddButton';
-import RemoveButton from '../QueryFilterRemoveButton';
-import { defaultConditionOptions, getTypeFromValue } from '../QueryFilterDefaults';
+import FrFilterBuilderAddButton from '../FilterBuilderAddButton';
+import FrFilterBuilderRemoveButton from '../FilterBuilderRemoveButton';
+import { defaultConditionOptions, getTypeFromValue } from '../../utils/QueryFilterDefaults';
+import { ldapDefaultConditionOptions } from '../../utils/LdapFilterDefaults';
 
 export default {
-  name: 'QueryFilterRow',
+  name: 'FilterBuilderRow',
   components: {
     BCard,
     BCol,
     BFormRow,
-    FrAddButton: AddButton,
     FrField,
-    FrRemoveButton: RemoveButton,
+    FrFilterBuilderAddButton,
+    FrFilterBuilderRemoveButton,
   },
   computed: {
     selectConditionOptions() {
+      let options;
+
+      if (this.isLdap) {
+        options = Object.values(ldapDefaultConditionOptions).map(
+          (prop) => ({ text: prop.label, value: prop.value }),
+        );
+        return {
+          options,
+          value: options.filter((option) => option.value === this.rule.operator).length > 0
+            ? this.rule.operator
+            : options.shift().value,
+        };
+      }
+
       const propType = getTypeFromValue(this.rule.field, this.properties);
-      const options = this.conditionOptionsByType(propType);
+      options = this.conditionOptionsByType(propType);
       const value = options.filter((option) => option.value === this.rule.operator).length > 0
         ? this.rule.operator
         : options.shift().value;
@@ -113,6 +135,7 @@ export default {
       defaultConditionOptions,
       inputValue: this.parseType(this.rule.field, this.rule.value),
       value: '',
+      customPropValue: this.rule.field,
     };
   },
   props: {
@@ -131,6 +154,10 @@ export default {
     index: {
       required: true,
       type: Number,
+    },
+    isLdap: {
+      type: Boolean,
+      default: false,
     },
     hasSiblings: {
       required: true,
