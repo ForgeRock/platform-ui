@@ -196,8 +196,7 @@ export default {
 
     .polyfill-placeholder,
     input:focus,
-    input:not(:placeholder-shown)
-     {
+    input:not(:placeholder-shown) {
       padding-top: $input-btn-padding-y + $input-btn-padding-y * (2 / 3);
       padding-bottom: $input-btn-padding-y / 3;
 
