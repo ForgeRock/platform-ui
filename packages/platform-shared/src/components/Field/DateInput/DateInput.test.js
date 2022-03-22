@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -61,8 +61,8 @@ describe('DateInput', () => {
     expect(wrapper.vm.buildFormattedDate('00200-0002-002')).toBe('0200-02-02');
     wrapper.vm.setInputValue('0300-03-03');
     expect(wrapper.vm.inputValue).toBe('0300-03-03');
-    wrapper.vm.emitDateValue('4000-4-4');
-    expect(wrapper.emitted().input[0][0]).toBe('4000-04-04');
+    wrapper.vm.emitDateValue('4000-1-1');
+    expect(wrapper.emitted().input[0][0]).toBe('4000-01-01');
     wrapper.vm.emitDateValue('');
     expect(wrapper.emitted().input[1][0]).toBe('');
   });

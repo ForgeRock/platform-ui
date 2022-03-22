@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -12,7 +12,8 @@ of the MIT license. See the LICENSE file for details. -->
       v-on="$listeners"
       :is="component"
       :name="fieldName"
-      :type="fieldType">
+      :type="fieldType"
+      :testid="testid">
       <template
         v-for="(key, slotName) in $scopedSlots"
         v-slot:[slotName]="slotData">
@@ -73,6 +74,10 @@ export default {
     type: {
       type: String,
       default: 'string',
+    },
+    testid: {
+      type: String,
+      default: '',
     },
   },
   computed: {

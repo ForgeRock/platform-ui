@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -12,7 +12,8 @@ of the MIT license. See the LICENSE file for details. -->
       inline
       :aria-label="switchLabel"
       :disabled="disabled"
-      :name="name" />
+      :name="name"
+      :data-testid="testid" />
     <label class="mb-1 text-secondary">
       {{ switchLabel }}
     </label>
@@ -36,6 +37,12 @@ export default {
   ],
   components: {
     BFormCheckbox,
+  },
+  props: {
+    testid: {
+      type: String,
+      default: '',
+    },
   },
   computed: {
     switchLabel() {

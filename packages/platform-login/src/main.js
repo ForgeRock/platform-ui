@@ -22,6 +22,7 @@ import isWebStorageAvailable from '@forgerock/platform-shared/src/utils/webStora
 import overrideTranslations, { setLocales } from '@forgerock/platform-shared/src/utils/overrideTranslations';
 import VueSanitize from 'vue-sanitize';
 import store from '@forgerock/platform-shared/src/store';
+import uuid from 'uuid/v4';
 import i18n from './i18n';
 import router from './router';
 import App from './App';
@@ -40,8 +41,31 @@ const idmContext = process.env.VUE_APP_IDM_URL;
 
 store.commit('SharedStore/setWebStorageAvailable', isWebStorageAvailable());
 
+/**
+ * Gets the root part of the transactionId to use in auth requests for this session.
+ * This is taken from the transactionId query parameter (if one is present), otherwise a uuid is returned.
+ * @returns {String} the root part of the transactionId
+ */
+function getRootTransactionId() {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get('transactionId') ? urlParams.get('transactionId') : uuid();
+}
+
+const rootTransactionId = getRootTransactionId();
+let authRequestNumber = 0;
+
 Config.set({
   serverConfig: { baseUrl: getFQDN(`${process.env.VUE_APP_AM_URL}/`) },
+  middleware: [
+    (req, action, next) => {
+      // increment the request number
+      authRequestNumber += 1;
+
+      // Set a transaction ID that should identify this request of this auth session of this tree in logs
+      req.init.headers['x-forgerock-transactionid'] = `${rootTransactionId}-request-${authRequestNumber}`;
+      next();
+    },
+  ],
 });
 
 router.beforeEach((to, _from, next) => {

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -7,7 +7,8 @@ of the MIT license. See the LICENSE file for details. -->
     class="text-center">
     <div
       :class="[{ 'spinner-large': size === 'lg' }, { 'spinner-medium': size === 'md' }, { 'spinner-small': size === 'sm' }, 'spinner-border', { 'text-primary': !buttonSpinner }]"
-      role="status">
+      role="status"
+      :data-testid="testid">
       <span class="sr-only">
         {{ $t('common.loadingEtc') }}
       </span>
@@ -37,6 +38,10 @@ export default {
     buttonSpinner: {
       type: Boolean,
       default: false,
+    },
+    testid: {
+      type: String,
+      default: '',
     },
   },
 };

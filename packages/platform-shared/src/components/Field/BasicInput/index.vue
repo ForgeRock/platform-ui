@@ -31,7 +31,8 @@ of the MIT license. See the LICENSE file for details. -->
       :name="name"
       :placeholder="label"
       :readonly="readonly"
-      @animationstart="animationStart">
+      @animationstart="animationStart"
+      :data-testid="testid">
     <input
       v-else
       v-model="inputValue"
@@ -54,7 +55,8 @@ of the MIT license. See the LICENSE file for details. -->
       :aria-label="getTranslation(label)"
       :autocomplete="$attrs.autocomplete"
       @input="evt=>inputValue=evt.target.value"
-      @animationstart="animationStart">
+      @animationstart="animationStart"
+      :data-testid="testid">
     <template #defaultButtons>
       <BInputGroupAppend
         class="fr-hide-input"
@@ -73,6 +75,7 @@ of the MIT license. See the LICENSE file for details. -->
       <BInputGroupAppend v-if="copy">
         <button
           :id="`copyButton-${value}`"
+          :data-test-id="`button-copy-${value}`"
           class="btn btn-outline-secondary"
           name="copyButton"
           @click.prevent="copyValueToClipboard(value)">
@@ -145,6 +148,10 @@ export default {
      * Input type password|text
      */
     type: {
+      type: String,
+      default: '',
+    },
+    testid: {
       type: String,
       default: '',
     },
