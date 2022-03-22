@@ -18,7 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
           name="identityObject"
           :item="data">
           <div
-            class="py-2 d-flex fixed-width-title-cell"
+            class="py-2 d-flex"
             @click="showAdvanced = !showAdvanced">
             <FrIcon
               :class="[{ 'color-red': error}, ' mr-3 align-self-center cursor-pointer']"
@@ -39,7 +39,7 @@ of the MIT license. See the LICENSE file for details. -->
         <slot
           name="view"
           :item="data">
-          <div class="fixed-width-checkbox-cell">
+          <div>
             <BFormCheckbox
               v-model="data.item.view"
               :aria-label="data.field.label"
@@ -52,7 +52,7 @@ of the MIT license. See the LICENSE file for details. -->
         <slot
           name="create"
           :item="data">
-          <div class="fixed-width-checkbox-cell">
+          <div>
             <BFormCheckbox
               v-model="data.item.create"
               :aria-label="data.field.label"
@@ -65,7 +65,7 @@ of the MIT license. See the LICENSE file for details. -->
         <slot
           name="update"
           :item="data">
-          <div class="fixed-width-checkbox-cell">
+          <div>
             <BFormCheckbox
               v-model="data.item.update"
               :aria-label="data.field.label"
@@ -78,7 +78,7 @@ of the MIT license. See the LICENSE file for details. -->
         <slot
           name="delete"
           :item="data">
-          <div class="fixed-width-checkbox-cell">
+          <div>
             <BFormCheckbox
               v-model="data.item.delete"
               :aria-label="data.field.label"
@@ -89,8 +89,8 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
       <template v-slot:cell(actions)>
         <slot name="actions">
-          <div class="fixed-width-actions-cell">
-            <small>
+          <div class="actions">
+            <small class="text-nowrap">
               <BButton
                 variant="link"
                 class="p-0 mr-3"
@@ -306,18 +306,22 @@ export default {
         {
           key: 'view',
           label: this.$t('common.view'),
+          class: 'privilege-column',
         },
         {
           key: 'create',
           label: this.$t('common.create'),
+          class: 'privilege-column',
         },
         {
           key: 'update',
           label: this.$t('common.update'),
+          class: 'privilege-column',
         },
         {
           key: 'delete',
           label: this.$t('common.delete'),
+          class: 'privilege-column',
         },
         {
           key: 'actions',
@@ -533,21 +537,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
+.actions {
+  text-align: right;
+}
+
 /deep/ {
   #attributePermissionsContainer {
     max-height: 270px;
   }
 
-  .fixed-width-title-cell {
-    width: 150px;
-  }
-
-  .fixed-width-actions-cell {
-    width: 160px;
-  }
-
-  .fixed-width-checkbox-cell {
-    width: 49px;
+  .privilege-column {
+    width: 70px;
   }
 
   .table.b-table > tbody > .b-table-details > td {
