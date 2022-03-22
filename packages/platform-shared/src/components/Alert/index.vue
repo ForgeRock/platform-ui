@@ -1,11 +1,12 @@
-<!-- Copyright (c) 2019-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BAlert
     class="fr-alert"
-    v-bind="$props">
+    v-bind="$props"
+    :data-testid="testId">
     <template v-slot:dismiss>
       <FrIcon
         class="fr-alert-dismiss"
@@ -78,6 +79,10 @@ export default {
     showIcon: {
       type: Boolean,
       default: true,
+    },
+    testId: {
+      type: String,
+      default: 'FrAlert',
     },
   },
   computed: {
