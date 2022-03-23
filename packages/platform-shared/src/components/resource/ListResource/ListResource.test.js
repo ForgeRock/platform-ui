@@ -190,7 +190,8 @@ describe('ListResource Component', () => {
       sortDesc: false,
       sortBy: 'test',
     });
-
+    expect(wrapper.emitted().sort).toBeTruthy();
+    expect(wrapper.emitted().sort[0]).toEqual(['-test']);
     expect(wrapper.vm.currentPage).toBe(1);
   });
 
