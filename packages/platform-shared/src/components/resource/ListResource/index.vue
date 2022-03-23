@@ -445,13 +445,11 @@ export default {
         this.clear();
         return;
       }
-      this.sortBy = null;
-      this.sortDesc = false;
       this.paginationPage = 1;
 
       if (this.filter.length >= this.queryThreshold) {
         this.submitBeforeLengthValid = false;
-        this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.defaultSort, this.paginationPage);
+        this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.calculateSort(this.sortDesc, this.sortBy), this.paginationPage);
       } else {
         this.submitBeforeLengthValid = true;
       }
@@ -463,8 +461,10 @@ export default {
      */
     sortingChanged(sort) {
       this.paginationPage = 1;
+      const sortUrl = this.calculateSort(sort.sortDesc, sort.sortBy);
+      this.$emit('sort', sortUrl);
 
-      this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.calculateSort(sort.sortDesc, sort.sortBy), this.paginationPage);
+      this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, sortUrl, this.paginationPage);
     },
     hasClearSessionAccess(rowData) {
       return this.canClearSessions && rowData.item.hasActiveSessions === true;
