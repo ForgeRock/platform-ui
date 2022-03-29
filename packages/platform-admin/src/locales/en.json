@@ -454,6 +454,36 @@
     }
   },
   "dashboard": {
+    "analytics": {
+      "beta": "Beta",
+      "compareLastPeriodLabel": "Compare to last period",
+      "dateRangeLast7Days": "Last 7 Days",
+      "dateRangeLast30Days": "Last 30 Days",
+      "dateRangeToday": "Today",
+      "dateRangeYesterday": "Yesterday",
+      "description": "Trend data is updated every 2-3 hours. All times are UTC.",
+      "title": "Trends",
+      "charts": {
+        "chartLegendFail": "Fail",
+        "chartLegendSuccess": "Success",
+        "filterJourneysDescription": "Add filters to narrow journeys shown.",
+        "filterJourneysLabel": "Filter Journeys",
+        "loadUsersError": "Error retrieving {error}",
+        "journeysActiveTitle": "Journeys",
+        "journeysActiveDescription": "Successful or failed journey outcomes (timeout are not currently shown) in this realm for a given time period.",
+        "journeysFilterButtonTitle": "View:",
+        "journeysModalSelected": "{count} filters applied",
+        "journeysModalSelectedNone": "No filters applied",
+        "journeysModalDescription": "Clear filters and show all journeys",
+        "journeysModalTitle": "Filter Journeys",
+        "userActiveTitle": "Total Users Trend",
+        "userActiveDescription": "Trend of total number of users in this realm for the given time period",
+        "userEngagementTitle": "User Engagement",
+        "userEngagementDescription": "Users with a sign-in, set or update password, or token activity in this realm for a given time period",
+        "userNewTitle": "Sign Ups",
+        "userNewDescription": "Trend of new user sign-ups in this realm for a given time period"
+      }
+    },
     "cardCount": {
       "applications": "Applications",
       "applicationsRequestError": "Unable to retrieve applications count",

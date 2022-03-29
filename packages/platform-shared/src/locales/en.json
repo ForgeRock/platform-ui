@@ -11,6 +11,7 @@
     "admin": "Admin",
     "advancedOptions": "advanced options",
     "agree": "I Agree",
+    "apply": "Apply",
     "avatar": "Avatar",
     "back": "Back",
     "beta": "Beta",
@@ -131,6 +132,29 @@
     "view": "View",
     "viewDetails": "View Details",
     "yes": "Yes",
+    "daysOfWeek": {
+      "sundayShort": "Sun",
+      "mondayShort": "Mon",
+      "tuesdayShort": "Tues",
+      "wednesdayShort": "Wed",
+      "thursdayShort": "Thu",
+      "fridayShort": "Fri",
+      "saturdayShort": "Sat"
+    },
+    "months": {
+      "january": "January",
+      "february": "February",
+      "march": "March",
+      "april": "April",
+      "may": "May",
+      "june": "June",
+      "july": "July",
+      "august": "August",
+      "september": "September",
+      "october": "October",
+      "november": "November",
+      "december": "December"
+    },
     "helpText": {
       "timeConstraint": "Assign role only during a selected time period.",
       "resetPassword": "Reset this user password."
@@ -623,5 +647,13 @@
     "searchInProgressText": "Type at least {queryThreshold} characters",
     "searchActiveText": "Press Enter",
     "noResultsHelp": "Try a new search in the seach box above."
+  },
+  "dashboardAnalytics": {
+    "dateRangePicker": {
+      "today": "Today",
+      "this_week": "This Week",
+      "this_month": "This Month",
+      "custom": "Custom"
+    }
   }
 }

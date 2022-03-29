@@ -9,6 +9,7 @@ import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 
 const defaultState = {
   amBaseURL: '',
+  analyticsURL: '',
   idmBaseURL: '',
   currentPackage: '',
   fraasLoggingKeyURL: null,
@@ -32,6 +33,10 @@ const mutations = {
 
     if (env.VUE_APP_IDM_URL) {
       state.idmBaseURL = getFQDN(env.VUE_APP_IDM_URL);
+    }
+
+    if (env.VUE_APP_ANALYTICS_API_URL) {
+      state.analyticsURL = env.VUE_APP_ANALYTICS_API_URL;
     }
 
     if (env.VUE_APP_FRAAS === 'true') {

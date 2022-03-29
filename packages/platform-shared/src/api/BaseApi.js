@@ -139,3 +139,21 @@ export function generateFraasMonitoringApi(requestOverride = {}) {
 
   return axios.create(requestDetails);
 }
+
+/**
+ * Generates an Analytics API Axios instance
+ * @param {object} requestOverride Takes an object of AXIOS parameters that can be used to either add
+ * on extra information or override default properties https://github.com/axios/axios#request-config
+ *
+ * @returns {AxiosInstance}
+ */
+export function generateAnalyticsApi(requestOverride = {}) {
+  const requestDetails = {
+    baseURL: '/dashboard',
+    timeout: 15000,
+    headers: {},
+    ...requestOverride,
+  };
+
+  return axios.create(requestDetails);
+}
