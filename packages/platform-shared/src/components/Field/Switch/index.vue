@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -16,7 +16,7 @@ of the MIT license. See the LICENSE file for details. -->
     <BFormCheckbox
       v-model="inputValue"
       v-on="$listeners"
-      class="d-inline-flex fr-toggle-primary mb-1"
+      class="d-inline-flex fr-toggle-primary"
       role="switch"
       switch
       :name="name"
