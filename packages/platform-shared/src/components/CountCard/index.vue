@@ -29,7 +29,7 @@ of the MIT license. See the LICENSE file for details. -->
         name="fade">
         <h1
           class="mb-0">
-          {{ count }}
+          {{ countFormatted }}
         </h1>
       </Transition>
       <BTooltip
@@ -49,6 +49,7 @@ import {
 } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
+import i18n from '@/i18n';
 
 /**
  * Card container that contains a title and a number count of results with tooltip
@@ -62,6 +63,9 @@ export default {
     FrSpinner,
   },
   computed: {
+    countFormatted() {
+      return parseInt(this.count, 10).toLocaleString(i18n.locale);
+    },
     tooltipId() {
       return this.title.replace(/\W/g, '_');
     },
