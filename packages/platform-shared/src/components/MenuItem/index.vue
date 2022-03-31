@@ -76,12 +76,6 @@ of the MIT license. See the LICENSE file for details. -->
           <span class="menu-item-text">
             {{ $t(subItem.displayName) }}
           </span>
-          <BBadge
-            v-if="subItem.displayName === 'sideMenu.customEndpoints'"
-            pill
-            variant="primary">
-            {{ $t('common.beta') }}
-          </BBadge>
         </Component>
       </template>
     </BCollapse>
@@ -90,7 +84,6 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import {
-  BBadge,
   BButton,
   BCollapse,
   BNavItem,
@@ -110,7 +103,6 @@ Vue.directive('b-toggle', VBToggle);
 export default {
   name: 'MenuItem',
   components: {
-    BBadge,
     BButton,
     BCollapse,
     BNavItem,
