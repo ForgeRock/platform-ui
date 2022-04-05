@@ -42,9 +42,9 @@ of the MIT license. See the LICENSE file for details. -->
           :disabled="disabled"
           :id="`${id}-time`"
           :name="name"
-          :validation="validation"
           :validation-immediate="validationImmediate"
-          @input="emitDateTimeValue" />
+          @input="emitDateTimeValue"
+          @utc-input="emitDateTimeValue" />
       </BCol>
     </BRow>
   </div>
@@ -52,6 +52,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import { BCol, BRow } from 'bootstrap-vue';
+import dayjs from 'dayjs';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import InputMixin from '../Wrapper/InputMixin';
 import FrDateInput from '../DateInput';
@@ -92,7 +93,22 @@ export default {
      */
     emitDateTimeValue() {
       if (this.dateValue !== '' && this.dateValue !== null && this.timeValue !== '' && this.timeValue !== null) {
-        this.$emit('input', `${this.dateValue}T${this.timeValue}`);
+        const emitTime = new Date(this.dateValue);
+        const timezoneOffset = emitTime.getTimezoneOffset();
+        const hours = dayjs(`${this.dateValue}T${this.timeValue}`).utc().hour();
+        const minutes = dayjs(`${this.dateValue}T${this.timeValue}`).utc().minute();
+        const totalMinutes = (hours * 60) + minutes;
+
+        if (timezoneOffset > totalMinutes) {
+          emitTime.setDate(emitTime.getDate() + 1);
+        } else if (timezoneOffset < 0 && (totalMinutes - timezoneOffset >= 1440)) {
+          emitTime.setDate(emitTime.getDate() - 1);
+        }
+        this.$emit('input', `${dayjs(emitTime).utc().format('YYYY-MM-DD')}T${this.timeValue}`);
+      } else if (this.dateValue !== '' && this.dateValue !== null) {
+        const emitTime = new Date(this.dateValue);
+        emitTime.setHours(24, 0, 0, 0);
+        this.$emit('input', `${dayjs(emitTime).utc().format('YYYY-MM-DDTHH:mm:ss')}Z`);
       } else {
         this.$emit('input', '');
       }
@@ -103,10 +119,13 @@ export default {
      * @param {String} newVal formatted duration value
      */
     setInputValue(newVal) {
-      const regexp = /([\d-]{10})T([\d:+]{8}).*/g;
+      const regexp = /([\d-]{10})T([\d:+]{8}.*)/g;
       const match = regexp.exec(newVal);
       if (match) {
         [, this.dateValue, this.timeValue] = match;
+        if (this.timeValue.includes('Z')) {
+          this.dateValue = dayjs(newVal).format('YYYY-MM-DD');
+        }
       }
     },
   },
