@@ -378,8 +378,15 @@ export default {
       const $axis = d3.select(this.$refs.axis_y);
       const containerHeight = this.$refs['line-chart-svg'].clientHeight;
       const ticks = containerHeight > 150 ? 5 : 2;
+      const tickFormat = (d) => {
+        if (d % 1 !== 0) {
+          return null;
+        }
+        return (d >= 1000 ? `${new Intl.NumberFormat().format(d / 1000)}k` : d);
+      };
+
       const yAxis = d3.axisLeft(scale.y.nice()).ticks(ticks)
-        .tickFormat((d) => (d >= 1000 ? `${new Intl.NumberFormat().format(d / 1000)}k` : d));
+        .tickFormat(tickFormat);
       $axis.style('transform', `translate(${padding + yAxisWidth}px, 0)`)
         .call(yAxis)
         .call((g) => {
