@@ -97,6 +97,7 @@ of the MIT license. See the LICENSE file for details. -->
               :form-fields="formFields"
               :display-properties="displayProperties"
               :resource-path="`${resourceType}/${resourceName}/${id}`"
+              :resource-title="getTranslation(resourceTitle)"
               :is-openidm-admin="isOpenidmAdmin"
               :disable-save-button="disableSaveButton"
               @disable-save-button="disableSaveButton = $event" />
@@ -117,6 +118,7 @@ of the MIT license. See the LICENSE file for details. -->
                 :display-properties="getObjectTypeProperyDisplayProperties(objectTypeProperty)"
                 :disable-save-button="objectTypeProperty.readOnly"
                 :resource-path="`${resourceType}/${resourceName}/${id}`"
+                :resource-title="getTranslation(resourceTitle)"
                 :is-openidm-admin="isOpenidmAdmin" />
             </BTab>
           </template>
