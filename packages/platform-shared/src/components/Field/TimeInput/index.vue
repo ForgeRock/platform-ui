@@ -23,7 +23,7 @@ of the MIT license. See the LICENSE file for details. -->
         :id="id"
         :name="name"
         :readonly="readonly"
-        @input="emitValidTime">
+        @input="debounceEmitValidTime(inputValue)">
     </FrInputLayout>
     <BFormTimepicker
       v-model="inputValue"
@@ -38,16 +38,25 @@ of the MIT license. See the LICENSE file for details. -->
       :id="id"
       :name="name"
       :aria-label="getTranslation(label)"
-      @context="emitValidTime" />
+      @context="debounceEmitValidTime" />
   </div>
 </template>
 
 <script>
-import { has, isEqual, cloneDeep } from 'lodash';
+import {
+  cloneDeep,
+  debounce,
+  isEqual,
+} from 'lodash';
+import dayjs from 'dayjs';
 import { BFormTimepicker } from 'bootstrap-vue';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
+
+const utc = require('dayjs/plugin/utc');
+
+dayjs.extend(utc);
 
 /**
  * Input for time (HH:mm:ss) with a floating label in the center, this will move when a user types into the input.
@@ -68,17 +77,41 @@ export default {
       type: Boolean,
     },
   },
+  data() {
+    return {
+      debounceEmitValidTime: debounce(this.emitValidTime, 100),
+    };
+  },
   methods: {
     /**
-     * Emits out a formatted time in the form of HH:mm:ss or an empty string if time is invalid
+     * Emits out a formatted time in the form of HH:mm:ss.SSSZ or an empty string if time is invalid
      *
      * @param {String} selectedTime - The current time value selected
      * @emits {String} The fully formatted time string
      */
     emitValidTime(selectedTime) {
-      const emitTime = has(selectedTime, 'value') ? selectedTime.value : selectedTime;
-      if (emitTime) {
-        this.$emit('input', `${`${emitTime}:00`.substring(0, 8)}.000`);
+      let selectedHour = selectedTime.hours;
+      let selectedMinute = selectedTime.minutes;
+      let selectedSecond = selectedTime.seconds;
+      if (typeof selectedTime === 'string') {
+        if (selectedHour === undefined) {
+          selectedHour = selectedTime.substring(0, 2);
+        }
+        if (selectedMinute === undefined) {
+          selectedMinute = selectedTime.substring(3, 5);
+        }
+        if (selectedSecond === undefined) {
+          selectedSecond = selectedTime.substring(6, 8);
+        }
+      }
+      if ((selectedTime.hours !== null && selectedTime.minutes !== null) || typeof selectedTime === 'string') {
+        const hours = selectedHour || 0;
+        const minutes = selectedMinute || 0;
+        const seconds = selectedSecond || 0;
+        const emitTime = new Date();
+        emitTime.setHours(hours, minutes, seconds);
+        const emitTimeString = `${dayjs(emitTime).utc().format('HH:mm:ss')}Z`;
+        this.$emit('input', emitTimeString);
       } else {
         this.$emit('input', '');
       }
@@ -96,7 +129,24 @@ export default {
     */
     setInputValue(newVal) {
       if (newVal !== undefined && newVal !== null && !isEqual(this.oldValue, newVal)) {
-        this.inputValue = newVal.substring(0, 8);
+        if (newVal.includes('Z')) {
+          const localeTime = new Date();
+          const timezoneOffset = localeTime.getTimezoneOffset();
+          let timezoneHours;
+          if (timezoneOffset >= 0) {
+            timezoneHours = Math.floor(timezoneOffset / 60);
+          } else {
+            timezoneHours = Math.ceil(timezoneOffset / 60);
+          }
+          const timezoneMinutes = timezoneOffset - (timezoneHours * 60);
+          localeTime.setHours(parseInt(newVal.substring(0, 2), 10) - timezoneHours, parseInt(newVal.substring(3, 5), 10) - timezoneMinutes, newVal.substring(6, 8));
+          const hours = (`0${localeTime.getHours()}`).slice(-2);
+          const minutes = (`0${localeTime.getMinutes()}`).slice(-2);
+          const seconds = (`0${localeTime.getSeconds()}`).slice(-2);
+          this.inputValue = `${hours}:${minutes}:${seconds}`;
+        } else {
+          this.inputValue = newVal.substring(0, 8);
+        }
         this.oldValue = cloneDeep(newVal);
       }
     },
