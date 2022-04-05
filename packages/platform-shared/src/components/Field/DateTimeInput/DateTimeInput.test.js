@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -62,9 +62,9 @@ describe('DateTimeInput', () => {
     wrapper.vm.setInputValue('0200-02-02T02:02:02');
     expect(wrapper.vm.dateValue).toBe('0200-02-02');
     expect(wrapper.vm.timeValue).toBe('02:02:02');
-    wrapper.vm.setInputValue('0300-03-03T03:03:03+00:00');
-    expect(wrapper.vm.dateValue).toBe('0300-03-03');
-    expect(wrapper.vm.timeValue).toBe('03:03:03');
+    wrapper.vm.setInputValue('2023-03-03T03:03:03+00:00');
+    expect(wrapper.vm.dateValue).toContain('2023-03-0');
+    expect(wrapper.vm.timeValue).toContain(':03:03');
   });
 
   it('builds a formatted datetime', () => {
@@ -92,13 +92,13 @@ describe('DateTimeInput', () => {
       timeValue: '',
     });
     wrapper.vm.emitDateTimeValue();
-    expect(wrapper.emitted().input[1][0]).toBe('');
+    expect(wrapper.emitted().input[1][0]).toContain('100-01-0');
 
     wrapper.setData({
       dateValue: '0100-01-01',
-      timeValue: '01:01:01',
+      timeValue: '01:01:01Z',
     });
     wrapper.vm.emitDateTimeValue();
-    expect(wrapper.emitted().input[2][0]).toBe('0100-01-01T01:01:01');
+    expect(wrapper.emitted().input[2][0]).toContain('T01:01:01Z');
   });
 });
