@@ -291,6 +291,10 @@ export default {
 </script>
 
 <style lang="scss">
+body {
+  overflow-x: hidden;
+}
+
 #app.fr-menu-collapsed {
   @media (any-hover: hover), all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
     @include media-breakpoint-up(sm) {
