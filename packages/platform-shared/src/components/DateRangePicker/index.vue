@@ -69,7 +69,7 @@ export default {
           this.$t('common.months.september'),
           this.$t('common.months.october'),
           this.$t('common.months.november'),
-          this.$t('common.months.january'),
+          this.$t('common.months.december'),
         ],
         firstDay: 1,
       },
