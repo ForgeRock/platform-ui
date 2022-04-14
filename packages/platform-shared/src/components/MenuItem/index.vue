@@ -24,10 +24,10 @@ of the MIT license. See the LICENSE file for details. -->
     </BButton>
   </li>
   <!-- Item will change route or open a new tab -->
+  <!-- :[linkClassAttributeName]="'d-flex align-items-center'" -->
   <Component
     v-else-if="(url || routeTo && routeTo.name) && showItemForUser"
     :is="bootstrapComponent"
-    :[linkClassAttributeName]="'d-flex align-items-center'"
     :href="url"
     :target="url ? '_blank' : ''"
     :to="routeTo">

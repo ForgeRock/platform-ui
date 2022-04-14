@@ -26,6 +26,10 @@
   },
   "pageTitles": {
     "Applications": "Applications",
+    "AutoAccessRisk": "Risk",
+    "AutoAccessPipelines": "Pipelines",
+    "AutoAccessRiskConfig": "RiskConfig",
+    "AutoAccessDataSources": "Data Sources",
     "BulkImport": "Bulk Import",
     "ConfigureManaged": "Configure Managed",
     "Connect": "Connect",
@@ -74,6 +78,7 @@
     "bulkImport": "Import",
     "configureManaged": "Configure",
     "connect": "Connect",
+    "dataSources": "Data Sources",
     "email": "Email",
     "hostedPages": "Hosted Pages",
     "identities": "Identities",
@@ -82,6 +87,9 @@
     "managed": "Manage",
     "nativeConsoles": "Native Consoles",
     "provider": "Provider",
+    "pipelines": "Pipelines",
+    "riskAdministration": "Risk Administration",
+    "riskConfig": "Risk Config",
     "security": "Security",
     "scripts": "Scripts",
     "provisioningRole": "External Role",
@@ -89,7 +97,9 @@
     "settings": "Settings",
     "templates": "Templates",
     "authScripts": "Auth Scripts",
-    "customEndpoints": "Custom Endpoints"
+    "customEndpoints": "Custom Endpoints",
+    "realmOverview": "Realm Overview",
+    "risk": "Risk"
   },
   "connect": {
     "connectIdentities": "Connect Identities",
@@ -376,6 +386,7 @@
       "body": "Set this journey as the default for identities authenticating to this realm?"
     },
     "tag": {
+      "autonomousAccess": "Autonomous Access",
       "basicAuthentication": "Basic Authentication",
       "mfa": "Multi Factor Auth",
       "risk": "Risk",

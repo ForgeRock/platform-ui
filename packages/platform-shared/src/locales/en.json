@@ -54,6 +54,7 @@
     "error": "Error",
     "exitFullscreen": "Exit Fullscreen",
     "expires": "Expires",
+    "filters": "Filters",
     "fullscreen": "Fullscreen",
     "help": "Help",
     "hide": "Hide",
@@ -76,6 +77,7 @@
     "next": "Next",
     "no": "No",
     "none": "None",
+    "noRecords": "No Records",
     "noResult": "No Results",
     "notAvailable": "n/a",
     "objectCopy": "{object} copy",
@@ -256,6 +258,7 @@
       "maxLength": "{length} characters maximum"
     },
     "user": {
+      "user": "User",
       "username": "Username",
       "firstName": "First Name",
       "lastName": "Last Name",
@@ -612,6 +615,12 @@
   },
   "sideMenu": {
     "dashboard": "Dashboard",
+    "dataSources": "Data Sources",
+    "pipelines": "Pipelines",
+    "risk": "Risk",
+    "riskConfig": "Risk Config",
+    "riskAdministration": "Risk Administration",
+    "riskDashboard": "Risk Dashboard",
     "selectIcon": "Please select icon in admin (Managed Object) settings",
     "toggleSidebar": "Toggle sidebar"
   },
@@ -654,6 +663,222 @@
       "this_week": "This Week",
       "this_month": "This Month",
       "custom": "Custom"
+    }
+  },
+  "autoAccess": {
+    "access": {
+      "activity": {
+        "header": "Activity",
+        "riskScore": "Risk Score",
+        "eventTime": "Event Time",
+        "time": "Time",
+        "user": "User",
+        "device": "Device",
+        "userAgent": "User Agent",
+        "result": "Result",
+        "location": "Location",
+        "transactionId": "Transaction ID",
+        "eventId": "Event ID",
+        "detailModal": {
+          "header": "Activity Detail",
+          "doneBtn": "Done",
+          "previousAuthentications": "User's Previous Risky Authentication Attempts"
+        },
+        "apply": "Apply"
+      },
+      "heuristics": {
+        "is_automated_user_agent": "Automated User Agent",
+        "is_brute_force": "Brute Force",
+        "is_credential_stuffing": "Credential Stuffing",
+        "is_impossible_travel": "Impossible Travel",
+        "is_suspicious_ip": "Suspicious IP"
+      },
+      "dataSources": {
+        "title": "Data Sources",
+        "subtitle": "Define mappings to auto access features",
+        "buttons": {
+          "addDataSource": "Add Data Source"
+        },
+        "table": {
+          "dropdown": {
+            "delete": "Delete",
+            "edit": "Edit",
+            "createMapping": "Create or Edit Mapping",
+            "viewMapping": "View Mapping"
+          }
+        },
+        "addDataSourceModal": {
+          "header": "Add Data Source",
+          "buttons": {
+            "cancel": "Cancel",
+            "back": "Back",
+            "save": "Save",
+            "define": "Define Data Source"
+          },
+          "helpText": "Select bucket, object, or use prefix.",
+          "helpTextDefine": "Enter name that will be associated with data source.",
+          "helpTextPreview": "Preview first object in JSONL file.",
+          "table": {
+            "headers": {
+              "name": "Object",
+              "size": "Size",
+              "created": "Created",
+              "updated": "Updated"
+            },
+            "dropdown": {
+              "preview": "Preview",
+              "define": "Define Data Source"
+            }
+          }
+        },
+        "createMappingModal": {
+          "header": "Data Source Mapping",
+          "helpText": "Define mapping between data source and auto access features"
+        },
+        "editDataSourceModal": {
+          "header": "Edit Data Source",
+          "helpText": "Update data source"
+        },
+        "errorMessages": {
+          "invalidJSONL": "Invalid JSONL. Cannot be used as Data Source."
+        },
+        "emptyTable": "No Data Sources",
+        "emptyTableObjects": "No Objects"
+      },
+      "pipelines": {
+        "title": "Pipelines",
+        "subtitle": "Define pipelines for auto access",
+        "emptyTable": "No Pipelines",
+        "buttons": {
+          "addPipeline": "Add Pipeline",
+          "selectType": "Select Type"
+        },
+        "types": {
+          "Training": "Training",
+          "Prediction": "Prediction"
+        },
+        "addPipelineModal": {
+          "header": "Add Pipeline",
+          "buttons": {
+            "cancel": "Cancel",
+            "save": "Save"
+          },
+          "helpTextDefault": "Define training or prediction pipeline.",
+          "helpTextTraining": "Update training pipeline parameters.",
+          "helpTextPrediction": "Update prediction pipeline parameters"
+        }
+      },
+      "userDetails": {
+        "riskScoreChart": "Risk Score"
+      },
+      "filters": {
+        "predictionResult.features.browserData.userAgentType": "User Agent",
+        "predictionResult.features.browserData.osVersion": "OS Version",
+        "predictionResult.features.geoData.country": "Country",
+        "predictionResult.features.browserData.deviceType": "Device Type",
+        "predictionResult.features.geoData.city": "City",
+        "predictionResult.features.browserData.os": "OS",
+        "predictionResult.features.browserData.device": "Device",
+        "predictionResult.features.dayparting": "Time of Day",
+        "predictionResult.features.userId": "User ID",
+        "predictionResult.features.weekday": "Day of Week",
+        "sections": {
+          "riskReason": "Risk Reason",
+          "attribute": "Attribute Filters"
+        }
+      },
+      "sideMenu": {
+        "entityDefinitions": "Entity Definitions",
+        "dashboard": "Dashboard",
+        "devConsole": "Dev Console",
+        "administration": "Administration",
+        "dataSources": "Data Sources",
+        "pipelines": "Pipelines",
+        "featureExploration": "Feature Exploration",
+        "models": "Models",
+        "settings": "Settings",
+        "activity": "Activity",
+        "riskConfig": "Risk Config"
+      },
+      "settings": {
+        "title": "Settings",
+        "subTitle": "Manage auto access settings",
+        "loadbaseline": "Load Baseline Datasets",
+        "saveIngestSuccess": "Baseline Ingest successfully started",
+        "saveIngestError": "Baseline Ingest failed"
+      },
+      "models": {
+        "title": "Training results",
+        "optionTitle": "Select a model",
+        "riskConfigSuccess": "Risk threshold of {value} saved for {model}"
+      },
+      "riskConfig": {
+        "title": "Risk Configuration",
+        "subtitle": "Adjust YAML processes for training and prediction pipelines",
+        "riskConfigPreviewModal": {
+          "header": "Preview Risk Evaluation",
+          "helpText": "Select bucket, object, or use prefix to preview risk evaluation.",
+          "table": {
+            "dropdown": {
+              "preview": "Preview Object",
+              "previewConfiguration": "Preview Risk Evaluation"
+            }
+          },
+          "buttons": {
+            "define": "Preview Risk Evaluation"
+          }
+        }
+      },
+      "date_range_picker": {
+        "custom": "Custom",
+        "this_week": "This Week",
+        "this_month": "This Month",
+        "today": "Today"
+      },
+      "dashboard": {
+        "title": "Autonomous Access Dashboard",
+        "clientAccess": "Client Access Location",
+        "clientAccessInfo": "Showing high risk events of {model} with risk threshold between {low} and {high}. Click {here} to configure risk thresholds.",
+        "transactionId": "Transaction ID",
+        "accessScore": "Access Score",
+        "addLabel": "Add Label",
+        "modelOptions": "Select Model",
+        "fullLog": "Full Log Details",
+        "filters": "Filters",
+        "timeRange": "Time Range",
+        "oneHour": "Last one hour",
+        "6hour": "Last 6 hours",
+        "week": "Last 1 week",
+        "range": "Date Range",
+        "startDate": "Start Date",
+        "endDate": "End Date",
+        "startTime": "Start Time",
+        "endTime": "End Time",
+        "risk": "Risk",
+        "riskRange": "Risk Range",
+        "riskModel": "Risk Model",
+        "anonymous": "Allow anonymous locations",
+        "selectLabels": "Select Labels",
+        "subtitle": "Here's a look at what's going on.",
+        "riskyAccessHeader": "Risky Access Attempts",
+        "normalAccessHeader": "Normal Access Attempts",
+        "riskiestUsersHeader": "Riskiest Users",
+        "bruteForce": "brute force",
+        "unusualBehavior": "unusual behavior",
+        "impossibleTravel": "impossible travel"
+      },
+      "identities": {
+        "analysis": "Analysis",
+        "features": "Features",
+        "selectCause": "Select a Cause",
+        "frequency": "Frequency",
+        "eventLog": "Event Log",
+        "causeFrequency": "Cause Frequency",
+        "count": "Count"
+      },
+      "info": {
+        "professionalUseOnly": "This view is intended to help ForgeRock Professional Services to understand the ability of the tool to detect anomalies and help tune AI/ML Models. It is based on test data and intended for context only."
+      }
     }
   }
 }

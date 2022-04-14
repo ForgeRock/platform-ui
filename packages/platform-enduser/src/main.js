@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -213,6 +213,15 @@ const addAppAuth = () => {
     authorizationEndpoint: `${AM_URL}/oauth2/${realmPath}authorize`,
   };
 
+  const resourceServers = {
+    [store.state.SharedStore.idmBaseURL]: 'fr:idm:*',
+  };
+
+  if (store.state.SharedStore.autoAccessEnabled) {
+    resourceServers[store.state.SharedStore.autoAccessJasUrl] = 'fr:autoaccess:*';
+    resourceServers[store.state.SharedStore.autoAccessApiUrl] = 'fr:autoaccess:*';
+  }
+
   AppAuthHelper.init({
     clientId: commonSettings.clientId,
     authorizationEndpoint: commonSettings.authorizationEndpoint,
@@ -220,9 +229,7 @@ const addAppAuth = () => {
     revocationEndpoint: `${AM_URL}/oauth2/${realmPath}token/revoke`,
     endSessionEndpoint: `${AM_URL}/oauth2/${realmPath}connect/endSession`,
     identityProxyPreference: 'XHR',
-    resourceServers: {
-      [store.state.SharedStore.idmBaseURL]: 'fr:idm:*',
-    },
+    resourceServers,
     tokensAvailableHandler(claims) {
       const sub = parseSub(claims);
       store.commit('UserStore/setUserSearchAttribute', sub);

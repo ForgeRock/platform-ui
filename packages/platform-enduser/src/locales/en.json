@@ -124,6 +124,10 @@
     "profile": "Profile"
   },
   "pageTitles": {
+    "AutoAccessRiskDashboard": "Risk Dashboard",
+    "AutoAccessPipelines": "Pipelines",
+    "AutoAccessRiskConfig": "RiskConfig",
+    "AutoAccessDataSources": "Data Sources",
     "Dashboard": "Dashboard",
     "EditResource": "Edit Resource",
     "Forbidden": "Forbidden",
@@ -132,5 +136,5 @@
     "pageTitle": "Platform Enduser - {page}",
     "Profile": "Profile",
     "Sharing": "Sharing"
-  } 
+  }
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -8,6 +8,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import Shared from '@forgerock/platform-shared/src/store/modules/Shared';
+import AutoAccess from '@forgerock/platform-shared/src/store/modules/AutoAccess';
 import User from './modules/User';
 
 Vue.use(Vuex);
@@ -67,6 +68,7 @@ export default new Vuex.Store({
     },
   },
   modules: {
+    ...AutoAccess,
     UserStore: {
       namespaced: true,
       getters: User.getters,
