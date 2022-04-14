@@ -10,6 +10,9 @@ import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 const defaultState = {
   amBaseURL: '',
   analyticsURL: '',
+  autoAccessEnabled: false,
+  autoAccessJasUrl: null,
+  autoAccessApiUrl: null,
   idmBaseURL: '',
   currentPackage: '',
   fraasLoggingKeyURL: null,
@@ -48,6 +51,16 @@ const mutations = {
       }
       if (env.VUE_APP_FRAAS_MONITORING_URL) {
         state.fraasMonitoringURL = env.VUE_APP_FRAAS_MONITORING_URL;
+      }
+
+      if (env.VUE_APP_ENABLE_AUTO_ACCESS === 'true') {
+        state.autoAccessEnabled = true;
+        if (env.VUE_APP_AUTO_ACCESS_API_URL) {
+          state.autoAccessApiUrl = env.VUE_APP_AUTO_ACCESS_API_URL;
+        }
+        if (env.VUE_APP_AUTO_ACCESS_JAS_URL) {
+          state.autoAccessJasUrl = env.VUE_APP_AUTO_ACCESS_JAS_URL;
+        }
       }
     }
 

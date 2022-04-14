@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -22,6 +22,26 @@ const router = new Router({
     {
       path: '/',
       redirect: '/dashboard',
+    },
+    {
+      path: '/risk-dashboard',
+      name: 'RiskDashboard',
+      component: () => import('@forgerock/platform-shared/src/views/AutoAccess/Activity'),
+    },
+    {
+      path: '/autoaccess/data-sources',
+      name: 'AutoAccessDataSources',
+      component: () => import('@forgerock/platform-shared/src/views/AutoAccess/DataSources'),
+    },
+    {
+      path: '/autoaccess/pipelines',
+      name: 'AutoAccessPipelines',
+      component: () => import('@forgerock/platform-shared/src/views/AutoAccess/Pipelines'),
+    },
+    {
+      path: '/autoaccess/risk-config',
+      name: 'AutoAccessRiskConfig',
+      component: () => import('@forgerock/platform-shared/src/views/AutoAccess/RiskConfig'),
     },
     {
       path: '/handleOAuth/:amData',
