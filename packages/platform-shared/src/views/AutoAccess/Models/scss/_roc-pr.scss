@@ -1,0 +1,84 @@
+.roc-pr {
+  background: var(--white);
+  margin-top: 1rem;
+
+  &-chart {
+    &-noSkill {
+      stroke: var(--gray);
+      stroke-dasharray: 5 4;
+    }
+
+    &-point {
+      cursor: crosshair;
+
+      &-dot {
+        fill: var(--blue);
+      }
+
+      &-touchpoint {
+        fill: transparent;
+      }
+    }
+
+    &-crosshair {
+      stroke: var(--gray);
+    }
+
+    &-selectedCrosshair {
+      stroke: var(--blue);
+    }
+
+    &-detail {
+      &-button {
+        cursor: pointer;
+
+        rect {
+          fill: var(--primary);
+
+          &:hover {
+            fill: var(--primary);
+          }
+        }
+
+        text {
+          fill: var(--white);
+          text-anchor: middle;
+          pointer-events: none;
+        }
+      }
+    }
+
+    &-title {
+      text-anchor: middle;
+      font-size: 18px;
+    }
+
+    &-steps-g {
+      path {
+        stroke: var(--dark);
+        pointer-events: none;
+        fill: none;
+      }
+    }
+
+    &-axis-x,
+    &-axis-y {
+      .tick {
+        text {
+          font-size: 0.875rem;
+        }
+      }
+    }
+  }
+}
+
+.caption-text,
+caption-text,
+p.caption {
+  display: block;
+  font-size: 1rem;
+  font-weight: 400;
+  // letter-spacing: 0.7px;
+  // text-transform: uppercase;
+  color: var(--body);
+}

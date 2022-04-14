@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -40,6 +40,8 @@ import ValidationRules from '@forgerock/platform-shared/src/utils/validationRule
 import FrLayout from '@forgerock/platform-shared/src/components/Layout';
 import { getIdmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
 import ThemeInjector from '@forgerock/platform-shared/src/components/ThemeInjector/';
+import { getAuthenticationDefinition } from '@forgerock/platform-shared/src/views/AutoAccess/DataSources/api/DataSourcesAPI';
+import { getConfig } from '@forgerock/platform-shared/src/views/AutoAccess/Shared/utils/api';
 import i18n from '@/i18n';
 import './scss/main.scss';
 
@@ -109,6 +111,10 @@ export default {
     }, (error) => {
       this.showErrorMessage(error, this.$t('errors.couldNotRetrieveVersion'));
     });
+
+    if (this.$store.state.SharedStore && this.$store.state.SharedStore.autoAccessEnabled) {
+      this.checkAutoAccess();
+    }
   },
   watch: {
     /**
@@ -147,6 +153,54 @@ export default {
       }
 
       return matIcon;
+    },
+    /**
+      * Tries to get Auto access info and if found adds menu items for Data_Analyst and/or Fraud_Analyst.
+      */
+    checkAutoAccess() {
+      // Risk Dashboard / Fraud Analyst
+      getConfig().then(() => {
+        this.showRiskDashboad();
+      }).catch(() => {});
+
+      // Risk Administration / Data Analyst
+      getAuthenticationDefinition().then(() => {
+        this.showRiskAdministration();
+      }).catch(() => {});
+    },
+    showRiskAdministration() {
+      const autoAccessAdminMenu = [
+        {
+          menuGroup: true,
+          displayName: 'sideMenu.riskAdministration',
+          icon: 'settings',
+          subItems: [
+            {
+              displayName: 'sideMenu.dataSources',
+              routeTo: { name: 'AutoAccessDataSources' },
+            },
+            {
+              displayName: 'sideMenu.pipelines',
+              routeTo: { name: 'AutoAccessPipelines' },
+            },
+            {
+              displayName: 'sideMenu.riskConfig',
+              routeTo: { name: 'AutoAccessRiskConfig' },
+            },
+          ],
+        },
+      ];
+      this.menuItems.splice(3, 0, autoAccessAdminMenu);
+    },
+    showRiskDashboad() {
+      const autoAccessDashboardMenu = [
+        {
+          displayName: 'sideMenu.riskDashboard',
+          routeTo: { name: 'RiskDashboard' },
+          icon: 'show_chart',
+        },
+      ];
+      this.menuItems.splice(1, 0, autoAccessDashboardMenu);
     },
   },
 };
