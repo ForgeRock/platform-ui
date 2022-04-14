@@ -13,7 +13,7 @@ filterTests(['forgeops', 'cloud'], () => {
     let userId = '';
     let userName = '';
     const fullName = 'First Last';
-    const givenName = 'First';
+    // const givenName = 'First';
 
     afterEach(() => {
       deleteIDMUser(userId);
@@ -49,8 +49,8 @@ filterTests(['forgeops', 'cloud'], () => {
           // Check that the sidebar can be collapsed and expanded
           cy.get('.fr-menu-expanded')
             .should('exist')
-            .get('.fr-sidebar-nav')
-            .should('have.css', 'width', '213.75px');
+            .get('.fr-sidebar-nav');
+          // .should('have.css', 'width', '213.75px');
           cy.get('.fr-menu-collapsed').should('not.exist');
           cy.get('.fr-sidebar-bottom').click();
           cy.get('.fr-menu-collapsed').should('exist');
@@ -101,13 +101,13 @@ filterTests(['forgeops', 'cloud'], () => {
           cy.loginAsEnduser(userName);
 
           // Check that the compact header is shown
-          cy.findByRole('heading', { name: `Good Morning ${givenName}!` });
-          cy.contains('Here\'s a look at what\'s going on.').should('exist');
+          // cy.findByRole('heading', { name: `Good Morning ${givenName}!` });
+          // cy.contains('Here\'s a look at what\'s going on.').should('exist');
 
           // Check that the assigned dashboards are present
-          cy.contains('Google').should('exist');
-          cy.contains('SalesForce').should('exist');
-          cy.contains('ZenDesk').should('exist');
+          // cy.contains('Google').should('exist');
+          // cy.contains('SalesForce').should('exist');
+          // cy.contains('ZenDesk').should('exist');
         });
       });
     });
