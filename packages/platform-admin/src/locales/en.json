@@ -1043,6 +1043,7 @@
       "errorUnique": "This person already exists in your tenant."
     },
     "templates": {
+      "duplicateTemplate": "Duplicate Template",
       "emailTemplate": "Email Template",
       "emailTemplates": "Email Templates",
       "subTitle": "Customize email templates for welcome, password reset, and account verification.",
@@ -1055,8 +1056,10 @@
       "errorSaving": "Error saving email template",
       "errorDeleting": "Error deleting email template",
       "errorCreating": "Error creating email template",
+      "errorDuplicating": "Error duplicating email template",
       "successDelete": "Successfully deleted email template.",
       "successSaving": "Successfully saved email template.",
+      "successDuplicating": "Successfully duplicated email template.",
       "createModal": {
         "title": "New Template",
         "name": "Template Name",
