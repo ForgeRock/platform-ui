@@ -54,10 +54,12 @@ then
   export CYPRESS_MENUS_FILE="menus.platform"
   export CYPRESS_ROUTES_FILE="routes.platform"
   export CYPRESS_IS_FRAAS="false"
+  export CYPRESS_TAGS="forgeops"
 else
   export CYPRESS_MENUS_FILE="menus.idcloud"
   export CYPRESS_ROUTES_FILE="routes.idcloud"
   export CYPRESS_IS_FRAAS="true"
+  export CYPRESS_TAGS="cloud"
 fi
 
 $@

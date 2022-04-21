@@ -47,31 +47,24 @@ yarn build
 yarn unit
 ```
 
-### Run your e2e tests
+### Run your e2e tests against the local UI backed by a platform deployment
 
-```sh
-yarn test:e2e
+```
+yarn e2e
 ```
 
 Ensure localhost 8083 is not currently reserved under a separate terminal
+
+### Run your e2e tests against a remote UI that's part of a platform or ID cloud environment
+
+```
+yarn e2e:remote
+```
 
 ### Lints and fixes files
 
 ```sh
 yarn lint
-```
-
-### Build (Development) Docker Image
-
-```sh
-yarn docker:build
-# Image is tagged `platform-login:development`
-```
-
-### Run (Development) Docker Container
-
-```sh
-yarn docker:run
 ```
 
 ## Environment variables
