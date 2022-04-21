@@ -58,8 +58,8 @@ Testing is achieved with the [Jest Testing Framework](https://jestjs.io/) and co
 
 [Cypress](https://www.cypress.io/) is leveraged for all End to End tests
 
-- To run E2E tests, `cd` to the specific directory where you want to run the tests, and run `test:e2e`, or `test:e2e:open`
-- E2E tests are written to work against a UI hosted at https://default.iam.example.com, which is part of a full platform deployment.
+- To run E2E tests, `cd` to the specific directory where you want to run the tests, and run `e2e`, or `e2e:open`
+- By default, the E2E test suite is configured to run against a UI hosted at https://default.iam.example.com, which is part of a full platform deployment. However, the tests may also be run against a remote platform or Forgerock Identity cloud deploymeny using the tasks `e2e:remote` or `e2e:remote:open`.
 
 <a name="testing-tools"></a>
 ## Testing tools
