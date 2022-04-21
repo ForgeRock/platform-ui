@@ -175,6 +175,16 @@ export function getRules(i18n) {
     message: i18n.t('common.policyValidationMessages.UNIQUE'),
   };
 
+  // error if the name or id of the email template matches an existing one
+  const unique_email_template_name_and_id = {
+    params: ['otherNames', 'otherIds', 'id'],
+    validate(value, { otherNames, otherIds, id }) {
+      return customValidators.testUniqueness(value, { otherValues: otherNames })
+        && customValidators.testUniqueness(id, { otherValues: otherIds });
+    },
+    message: i18n.t('common.policyValidationMessages.UNIQUE'),
+  };
+
   // URL with path rule
   // Errors if not valid url or url does not have path
   const url_with_path = {
@@ -234,6 +244,7 @@ export function getRules(i18n) {
     required,
     start_end_space,
     unique,
+    unique_email_template_name_and_id,
     uniqueValue,
     url_with_path,
     url_without_path,
