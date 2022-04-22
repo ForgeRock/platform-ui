@@ -407,7 +407,6 @@ export default {
 
         // Special logic for password
         if (prop.key === 'password') {
-          prop.validation = 'required';
           prop.type = 'password';
         }
       });
