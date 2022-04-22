@@ -59,6 +59,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import { omit } from 'lodash';
 import { mapState } from 'vuex';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
@@ -111,12 +112,12 @@ export default {
     loadMyApplications() {
       this.getRequestService({
         context: 'AM',
-        apiVersion: 'protocol=1.1,resource=1.0',
       })
         .get(`realms/root/realms/${this.realm}/dashboard/assigned`, { withCredentials: true })
         .then(({ data }) => {
+          const apps = omit(data, ['_id', '_rev']);
           // Alpha sorted by name
-          this.myApplications = Object.values(data).sort((a, b) => a.dashboardDisplayName[0].localeCompare(b.dashboardDisplayName[0]));
+          this.myApplications = Object.values(apps).sort((a, b) => a.dashboardDisplayName[0].localeCompare(b.dashboardDisplayName[0]));
         })
         .catch((error) => {
           this.showErrorMessage(error, this.$t('pages.dashboard.errorGetApplications'));
