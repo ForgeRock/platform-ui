@@ -225,3 +225,23 @@ export function generateAutoAccessJas(requestOverride = {}) {
 
 //   return axios.create(requestDetails);
 // }
+
+/**
+ * Generates a FRaaS promotion API Axios instance
+ * @param {object} requestOverride Takes an object of AXIOS parameters that can be used to either add
+ * on extra information or override default properties https://github.com/axios/axios#request-config
+ *
+ * @returns {AxiosInstance}
+ */
+export function generateFraasPromotionApi(requestOverride = {}) {
+  const requestDetails = {
+    baseURL: store.state.SharedStore.fraasPromotionUrl,
+    timeout: 10000,
+    headers: {
+      'accept-api-version': 'protocol=1.0,resource=1.0',
+    },
+    ...requestOverride,
+  };
+
+  return axios.create(requestDetails);
+}

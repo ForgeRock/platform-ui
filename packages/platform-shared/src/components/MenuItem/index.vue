@@ -25,7 +25,7 @@ of the MIT license. See the LICENSE file for details. -->
   </li>
   <!-- Item will change route or open a new tab -->
   <Component
-    v-else-if="(url || routeTo && routeTo.name) && showItemForUser"
+    v-else-if="(url || routeTo && routeTo.name) && showItemForUser && showItemForStoreValues"
     :is="bootstrapComponent"
     :href="url"
     :link-class="'d-flex align-items-center'"
@@ -38,6 +38,11 @@ of the MIT license. See the LICENSE file for details. -->
       :name="icon" />
     <span class="menu-item-text">
       {{ $t(displayName) }}
+    </span>
+    <span
+      v-if="showBadgeWithContentFromStore && badgeContent"
+      class="badge badge-pill badge-danger ml-3">
+      {{ badgeContent }}
     </span>
   </Component>
   <!-- Item is an expandable menu with a submenu -->
@@ -94,6 +99,7 @@ import {
 } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import Vue from 'vue';
+import { get } from 'lodash';
 
 Vue.directive('b-toggle', VBToggle);
 
@@ -132,6 +138,13 @@ export default {
      * The list of roles for which this item should be displayed.
      */
     showForRoles: {
+      type: Array,
+      default: () => [],
+    },
+    /**
+     * The list of store-values for which this item should be displayed.
+     */
+    showForStoreValues: {
       type: Array,
       default: () => [],
     },
@@ -184,6 +197,13 @@ export default {
       type: Boolean,
       default: false,
     },
+    /**
+     * Shows a badge next to the dropdown option text which displays content from the store
+     */
+    showBadgeWithContentFromStore: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
@@ -195,6 +215,13 @@ export default {
     // If the item is restricted by roles, only display it to users who have at least one of the required roles
     showItemForUser() {
       return !this.showForRoles.length || this.userRoles.some((userRole) => this.showForRoles.includes(userRole));
+    },
+    badgeContent() {
+      return this.showBadgeWithContentFromStore ? this.$store.state[this.showBadgeWithContentFromStore] : '';
+    },
+    // If the item is restricted by store values, only display it when all of those exist and are truthy
+    showItemForStoreValues() {
+      return !this.showForStoreValues.length || this.showForStoreValues.every((storeValue) => !!get(this.$store.state, storeValue, false));
     },
   },
   watch: {
