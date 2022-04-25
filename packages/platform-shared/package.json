@@ -8,8 +8,9 @@
     "coverage": "jest --verbose --coverage --noStackTrace --no-cache"
   },
   "dependencies": {
+    "@forgerock/javascript-sdk": "3.0.0",
     "@forgerock/platform-shared": "1.0.0",
-    "appauthhelper": "0.5.0",
+    "appauthhelper": "1.0.0-alpha.0",
     "axios": "0.26.1",
     "bootstrap": "4.6.1",
     "bootstrap-vue": "2.22.0",

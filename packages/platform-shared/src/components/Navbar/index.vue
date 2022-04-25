@@ -22,7 +22,27 @@ of the MIT license. See the LICENSE file for details. -->
         />
       </button>
       <BNavbarNav class="flex-row align-items-center justify-content-between flex-grow-1">
-        <div @click="$emit('clicked')">
+        <div
+          v-if="tenantLockedMode"
+          class="d-flex align-items-center px-3">
+          <FrIcon
+            class="locked-icon md-24 mr-2"
+            name="locked" />
+          <p class="mb-0">
+            {{ $t('promotions.tenantLocked') }}
+          </p>
+          <BLink
+            href="#"
+            id="infopopover-promotion"
+            class="text-body ml-2"
+            :title="$t('promotions.tenantLockedPopover')"
+            v-b-tooltip.hover.focus>
+            <FrIcon name="info" />
+          </BLink>
+        </div>
+        <div
+          v-else
+          @click="$emit('clicked')">
           <RouterLink
             :aria-label="$t('common.breadcrumb')"
             class="fr-back-link overflow-hidden p-1 pl-4 pl-lg-0 mt-1"
@@ -82,14 +102,14 @@ of the MIT license. See the LICENSE file for details. -->
                     <h6 class="text-muted">
                       {{ $t('tenantSettings.details.tenant') }}
                     </h6>
-                    <BMedia
-                      class="text-left">
-                      <template #aside>
+                    <BMedia>
+                      <FrTenantTierBadge :tenant-tier="$store.state.promotionTenantInfo.currentTier" />
+                      <template>
                         <img
                           v-if="tenantRegionInfo"
                           :src="tenantRegionInfo.flag && require(`@forgerock/platform-admin/src/assets/images/flags/${tenantRegionInfo.flag}.svg`)"
                           :alt="$t('tenantSettings.details.flagAltText')"
-                          class="mr-0"
+                          class="mr-2"
                           width="18"
                           height="21">
                       </template>
@@ -153,14 +173,17 @@ import { mapState, mapGetters } from 'vuex';
 import {
   BDropdownDivider,
   BDropdownHeader,
+  BLink,
   BMedia,
   BNavbar,
   BNavbarNav,
+  VBTooltip,
 } from 'bootstrap-vue';
 import DropdownMenu from '@forgerock/platform-shared/src/components/DropdownMenu';
 import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import startCase from '@forgerock/platform-shared/src/utils/stringUtils';
+import FrTenantTierBadge from '@forgerock/platform-shared/src/components/TenantTierBadge';
 import ToolbarNotification from '../ToolbarNotification';
 
 /**
@@ -178,9 +201,14 @@ export default {
     FrIcon,
     BDropdownDivider,
     BDropdownHeader,
+    BLink,
     BMedia,
     BNavbar,
     BNavbarNav,
+    FrTenantTierBadge,
+  },
+  directives: {
+    'b-tooltip': VBTooltip,
   },
   props: {
     /**
@@ -254,6 +282,13 @@ export default {
       default: true,
     },
     /**
+     * Whether to show the navbar as it should appear when locked for promotion
+     */
+    tenantLockedMode: {
+      type: Boolean,
+      default: false,
+    },
+    /**
      * Menu items displayed in dropdown
      */
     tenantMenuItems: {
@@ -322,6 +357,11 @@ export default {
       font-weight: 400;
       font-size: 1rem;
     }
+  }
+
+  .locked-icon {
+    max-width: 24px;
+    width: 100%
   }
 
   .navbar-nav .nav-link {
