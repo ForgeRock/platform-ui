@@ -17,7 +17,7 @@
   "dependencies": {
     "@braintree/sanitize-url": "6.0.0",
     "@forgerock/platform-shared": "1.0.0",
-    "appauthhelper": "0.5.0",
+    "appauthhelper": "1.0.0-alpha.0",
     "axios": "0.26.1",
     "bootstrap": "4.6.1",
     "bootstrap-vue": "2.22.0",
@@ -25,7 +25,7 @@
     "dayjs": "1.8.20",
     "es6-promise": "4.2.4",
     "lodash": "4.17.21",
-    "oidcsessioncheck": "1.1.0",
+    "oidcsessioncheck": "2.0.0-alpha.0",
     "vee-validate": "3.2.2",
     "vue": "2.6.11",
     "vue-i18n": "8.17.0",

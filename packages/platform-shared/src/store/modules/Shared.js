@@ -18,6 +18,9 @@ const defaultState = {
   fraasLoggingKeyURL: null,
   fraasEnvironmentUrl: null,
   fraasMonitoringURL: null,
+  fraasPromotionUrl: null,
+  fraasPromotionIngressUrl: null,
+  fraasPromotionEgressUrl: null,
   googleMapsApiKey: '',
   returnRoute: '',
   returnRouteText: '',
@@ -53,7 +56,6 @@ const mutations = {
       if (env.VUE_APP_FRAAS_MONITORING_URL) {
         state.fraasMonitoringURL = env.VUE_APP_FRAAS_MONITORING_URL;
       }
-
       if (env.VUE_APP_ENABLE_AUTO_ACCESS === 'true') {
         state.autoAccessEnabled = true;
         if (env.VUE_APP_AUTO_ACCESS_API_URL) {
@@ -62,6 +64,15 @@ const mutations = {
         if (env.VUE_APP_AUTO_ACCESS_JAS_URL) {
           state.autoAccessJasUrl = env.VUE_APP_AUTO_ACCESS_JAS_URL;
         }
+      }
+      if (env.VUE_APP_FRAAS_PROMOTION_URL) {
+        state.fraasPromotionUrl = env.VUE_APP_FRAAS_PROMOTION_URL;
+      }
+      if (env.VUE_APP_FRAAS_PROMOTION_CONFIG_INGRESS_URL) {
+        state.fraasPromotionIngressUrl = env.VUE_APP_FRAAS_PROMOTION_CONFIG_INGRESS_URL;
+      }
+      if (env.VUE_APP_FRAAS_PROMOTION_CONFIG_EGRESS_URL) {
+        state.fraasPromotionEgressUrl = env.VUE_APP_FRAAS_PROMOTION_CONFIG_EGRESS_URL;
       }
     }
 

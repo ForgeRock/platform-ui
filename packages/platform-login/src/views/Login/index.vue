@@ -281,7 +281,6 @@ import {
   find,
   has,
   isString,
-  noop,
 } from 'lodash';
 import {
   BButton,
@@ -292,7 +291,6 @@ import {
   BRow,
 } from 'bootstrap-vue';
 import {
-  CallbackType,
   FRAuth,
   FRRecoveryCodes,
   FRStep,
@@ -310,15 +308,6 @@ import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationM
 import { getThemeIdFromStageString } from '@forgerock/platform-shared/src/utils/stage';
 import { svgShapesSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 import i18n from '@/i18n';
-
-const FrCallbackType = {
-  ...CallbackType,
-  RecoveryCodesComponent: 'RecoveryCodesComponent',
-  RedirectCallback: 'RedirectCallback',
-  SelectIdPCallback: 'SelectIdPCallback',
-  SuspendedTextOutputCallback: 'SuspendedTextOutputCallback',
-  WebAuthnComponent: 'WebAuthnComponent',
-};
 
 export default {
   name: 'Login',
@@ -521,16 +510,11 @@ export default {
         const refId = ref.id;
         const refValue = ref.value;
         this.step
-          .getCallbacksOfType(FrCallbackType.HiddenValueCallback)
+          .getCallbacksOfType(this.FrCallbackType.HiddenValueCallback)
           .find((x) => x.getOutputByName('id', '') === refId)
           .setInputValue(refValue);
       });
       this.nextStep();
-    },
-    backendScriptsIdsContains(matcher) {
-      const typeArr = this.step.getCallbacksOfType(FrCallbackType.HiddenValueCallback)
-        .map((callback) => callback.getOutputByName('id', ''));
-      return typeArr.indexOf(matcher) >= 0;
     },
     buildTreeForm() {
       this.header = this.step.getHeader() || '';
@@ -541,7 +525,7 @@ export default {
       this.checkNodeForThemeOverride(this.stage);
 
       // Ensure that Social Buttons appear at top of Page Node
-      const pullToTop = FrCallbackType.SelectIdPCallback;
+      const pullToTop = this.FrCallbackType.SelectIdPCallback;
       this.step.callbacks.sort((currentCallback, otherCallback) => {
         if (currentCallback.payload.type === pullToTop) {
           return -1;
@@ -562,7 +546,7 @@ export default {
         const existsInComponentList = (type) => find(componentList, (component) => component.type === `Fr${type}`);
         let type = callback.getType();
 
-        if (type === FrCallbackType.RedirectCallback) {
+        if (type === this.FrCallbackType.RedirectCallback) {
           this.nextButtonVisible = false;
           if (callback.getOutputByName('trackingCookie')) {
             // save current step information for later resumption of tree.
@@ -596,87 +580,24 @@ export default {
 
         // Use SDK to handle backend scripts that SDK can parse
         // Reasign type to use specific component
-        if (type === FrCallbackType.TextOutputCallback || type === FrCallbackType.MetadataCallback) {
+        if (type === this.FrCallbackType.TextOutputCallback || type === this.FrCallbackType.MetadataCallback) {
           const isWebAuthnStep = FRWebAuthn.getWebAuthnStepType(this.step) !== WebAuthnStepType.None;
           const isRecovertCodeStep = FRRecoveryCodes.isDisplayStep(this.step);
           if (isWebAuthnStep) {
             // dont call the sdk twice on the same webAuthn step
-            const onlyOneWebAuthn = !existsInComponentList(FrCallbackType.WebAuthnComponent);
+            const onlyOneWebAuthn = !existsInComponentList(this.FrCallbackType.WebAuthnComponent);
             if (onlyOneWebAuthn) {
-              type = FrCallbackType.WebAuthnComponent;
+              type = this.FrCallbackType.WebAuthnComponent;
             } else {
               return;
             }
           } else if (isRecovertCodeStep) {
-            type = FrCallbackType.RecoveryCodesComponent;
+            type = this.FrCallbackType.RecoveryCodesComponent;
           }
         }
 
         // Only components that need extra props or events
-        const getcomponentPropsAndEvents = (componentType) => {
-          const componentPropsAndEvents = {
-            ChoiceCallback: () => {
-              let stage;
-              if (this.stage.ChoiceCallback) {
-                stage = this.stage.ChoiceCallback.shift();
-              }
-              return { callbackSpecificProps: { stage } };
-            },
-            ConfirmationCallback: () => {
-              let stage;
-              if (this.stage.ConfirmationCallback) {
-                stage = this.stage.ConfirmationCallback.shift();
-              }
-              return { callbackSpecificProps: { stage, variant: existsInComponentList(FrCallbackType.WebAuthnComponent) ? 'link' : 'primary' } };
-            },
-            ConsentMappingCallback: () => ({
-              callbackSpecificProps: { callbacks: this.step.callbacks },
-              listeners: ['disable-next-button', 'did-consent'],
-            }),
-            HiddenValueCallback: () => ({
-              listeners: ['hidden-value-callback-ref'],
-            }),
-            KbaCreateCallback: () => ({
-              callbackSpecificProps: { showHeader: !existsInComponentList(FrCallbackType.KbaCreateCallback) },
-              listeners: ['disable-next-button'],
-            }),
-            ReCaptchaCallback: () => ({
-              listeners: ['next-step-callback'],
-            }),
-            SelectIdPCallback: () => ({
-              callbackSpecificProps: { isOnlyCallback: this.step.callbacks.length === 1 },
-              listeners: ['hide-next-button', 'disable-next-button'],
-            }),
-            TextOutputCallback: () => ({
-              listeners: ['disable-next-button', 'has-scripts', 'hide-next-button', 'next-step-callback'],
-            }),
-            ValidatedCreatePasswordCallback: () => {
-              let stage;
-              if (this.stage.ValidatedCreatePasswordCallback) {
-                stage = this.stage.ValidatedCreatePasswordCallback.shift();
-              }
-              return {
-                callbackSpecificProps: {
-                  index,
-                  overrideInitialPolicies: true,
-                  realm: this.realm,
-                  stage,
-                },
-                listeners: ['disable-next-button', 'next-step-callback', 'update-auth-id'],
-              };
-            },
-            WebAuthnComponent: () => {
-              const webAuthnType = FRWebAuthn.getWebAuthnStepType(this.step);
-              const webAuthnPromise = this.createWebAuthnCallbackPromise(webAuthnType);
-              return {
-                callbackSpecificProps: { webAuthnType, webAuthnPromise },
-              };
-            },
-          };
-          return componentPropsAndEvents[componentType] ? componentPropsAndEvents[componentType]() : {};
-        };
-
-        const { callbackSpecificProps = {}, listeners = [] } = getcomponentPropsAndEvents(type);
+        const { callbackSpecificProps = {}, listeners = [] } = this.getComponentPropsAndEvents(type, index, componentList, this.stage, this.step, this.realm);
         const component = {
           callback,
           callbackSpecificProps,
@@ -693,7 +614,7 @@ export default {
           const {
             fieldType, label, name, value,
           } = this.getField(callback, index);
-          const errors = this.getTranslatePolicyFailures(callback);
+          const errors = this.getTranslatedPolicyFailures(callback);
           component.callbackSpecificProps = {
             errors, label, name, type: fieldType, value,
           };
@@ -701,12 +622,12 @@ export default {
         }
 
         const hideNextButtonCallbacks = [
-          FrCallbackType.ConfirmationCallback,
-          FrCallbackType.DeviceProfileCallback,
-          FrCallbackType.PollingWaitCallback,
-          FrCallbackType.RecoveryCodesComponent,
-          FrCallbackType.SuspendedTextOutputCallback,
-          FrCallbackType.WebAuthnComponent,
+          this.FrCallbackType.ConfirmationCallback,
+          this.FrCallbackType.DeviceProfileCallback,
+          this.FrCallbackType.PollingWaitCallback,
+          this.FrCallbackType.RecoveryCodesComponent,
+          this.FrCallbackType.SuspendedTextOutputCallback,
+          this.FrCallbackType.WebAuthnComponent,
         ];
         this.nextButtonVisible = hideNextButtonCallbacks.indexOf(type) > -1 ? false : this.nextButtonVisible;
 
@@ -741,17 +662,6 @@ export default {
       const date = new Date();
       date.setTime(date.getTime() + (-1 * 24 * 60 * 60 * 1000));
       document.cookie = `reentry="";expires="${date.toGMTString()}";path=/`;
-    },
-    /**
-     * @description  Invokes WebAuthn registration or authentication
-     * @param {Number} type enum number that represents WebAuthn type WebAuthnStepType.Authentication or WebAuthnStepType.Registration
-     * @returns {Promise} SDK WebAuthn promise resolved when WebAuthn is completed
-     */
-    createWebAuthnCallbackPromise(type) {
-      if (type === WebAuthnStepType.Authentication) {
-        return FRWebAuthn.authenticate(this.step);
-      }
-      return FRWebAuthn.register(this.step);
     },
     /**
      * @description Look at the url and see if we are returning to a tree from an Email Suspend Node, Redirect Callback, or SAML.
@@ -855,46 +765,6 @@ export default {
       }
     },
     /**
-     * @description gets field information
-     * @param {Object} callback specific step callback
-     * @param {Object} index callback index
-     * @returns {Object} field props needed for Field component
-     */
-    getField(callback, index) {
-      const callbackType = callback.getType();
-      let fieldType;
-
-      switch (callbackType) {
-        case FrCallbackType.PasswordCallback:
-        case FrCallbackType.ValidatedCreatePasswordCallback:
-          fieldType = 'password';
-          break;
-        case FrCallbackType.NumberAttributeInputCallback:
-          fieldType = 'number';
-          break;
-        default:
-          fieldType = 'string';
-          break;
-      }
-
-      let label = '';
-      if (callback.getPrompt) {
-        label = callback.getPrompt();
-      } else if (callback.getOutputByName) {
-        try {
-          label = callback.getOutputByName('prompt').value;
-        } catch (e) {
-          noop();
-        }
-      }
-      return {
-        label,
-        fieldType,
-        name: `callback_${index}`,
-        value: callback.getInputValue(),
-      };
-    },
-    /**
      * @description Used to get link to start of tree from stepParams
      * @param {Object} stepParams desctuctured object containing tree, realmPath strings
      * @returns {string} returns string url
@@ -919,7 +789,7 @@ export default {
         },
         'has-scripts': (appendScript) => {
           this.showScriptElms = true;
-          // listen on body.appendchild and append to #body-append-el insted
+          // listen on body.appendchild and append to #body-append-el instead
           const observer = new MutationObserver((records) => {
             const nodeList = records[records.length - 1].addedNodes || [];
             Array.prototype.forEach.call(nodeList, (node) => {
@@ -929,7 +799,7 @@ export default {
           });
           observer.observe(document.body, { childList: true });
           // only hide next button if we know it should be hidden (webAuthn, deviceId)
-          if (this.backendScriptsIdsContains('clientScriptOutputData')) {
+          if (this.backendScriptsIdsContains('clientScriptOutputData', this.step)) {
             this.nextButtonVisible = false;
           }
           setTimeout(() => {
@@ -1023,15 +893,6 @@ export default {
       delete stepParams.query.locale;
       return stepParams;
     },
-    getTranslatePolicyFailures(callback) {
-      const failedPolicies = callback.getFailedPolicies
-        ? callback.getFailedPolicies()
-        : [];
-      return failedPolicies.map((policy) => {
-        const parsedPolicy = JSON.parse(policy);
-        return this.$t(`common.policyValidationMessages.${parsedPolicy.policyRequirement}`, parsedPolicy.params);
-      });
-    },
     /**
      * @description Returns boolean true if reentry cookie is set
      * @returns {Boolean}
@@ -1040,25 +901,6 @@ export default {
       return !!document.cookie
         .split('; ')
         .find((row) => row.startsWith('reentry='));
-    },
-    /**
-     * @description Determines if passed in callback is set to required or has a required policy
-     * @param {Object} callback - callback to check if required
-     * @returns {Boolean} True if passed in callback is required
-     */
-    isCallbackRequired(callback) {
-      const requiredOutput = callback.getOutputByName('required');
-      if (requiredOutput === true && callback.getType() !== 'BooleanAttributeInputCallback') {
-        return true;
-      }
-      const policyOutput = callback.getOutputByName('policies');
-      if (has(policyOutput, 'policies')) {
-        const requiredPolicy = policyOutput.policies.find((policy) => policy.policyId === 'required');
-        if (has(requiredPolicy, 'policyRequirements') && requiredPolicy.policyRequirements.includes('REQUIRED')) {
-          return true;
-        }
-      }
-      return false;
     },
     /**
      * @description Returns boolean true if payload has session timeout error code
@@ -1310,7 +1152,7 @@ export default {
      */
     setNonRequiredEmptyStringsToNull() {
       this.step.payload.callbacks.forEach((callback) => {
-        if (callback.type === FrCallbackType.StringAttributeInputCallback) {
+        if (callback.type === this.FrCallbackType.StringAttributeInputCallback) {
           const required = find(callback.output, { name: 'required' });
 
           if (required && !required.value && callback.input[0].value === '') {

@@ -226,6 +226,18 @@ legend {
   color: $cyan;
 }
 
+.bg-lightblue {
+  background-color: $light-blue;
+}
+
+.bg-lightyellow {
+  background-color: $light-yellow;
+}
+
+.bg-lightgreen {
+  background-color: $light-green;
+}
+
 /* opacity */
 .opacity-20 {
   opacity: 0.2 !important;
@@ -429,6 +441,12 @@ a.card {
   width: 75px;
   height: 75px;
   text-align: center;
+}
+
+.fr-resource-circle-small {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
 }
 
 .fr-toggle-primary.custom-switch {

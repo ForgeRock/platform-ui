@@ -4,10 +4,22 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <script>
 import {
-  fromPairs, isEmpty, map, last,
+  fromPairs, isEmpty, map, last, has, noop,
 } from 'lodash';
+import {
+  CallbackType, FRWebAuthn, WebAuthnStepType,
+} from '@forgerock/javascript-sdk';
 import createRealmPath from '../../utils/createRealmPath';
 import NotificationMixin from '../NotificationMixin';
+
+export const FrCallbackType = {
+  ...CallbackType,
+  RecoveryCodesComponent: 'RecoveryCodesComponent',
+  RedirectCallback: 'RedirectCallback',
+  SelectIdPCallback: 'SelectIdPCallback',
+  SuspendedTextOutputCallback: 'SuspendedTextOutputCallback',
+  WebAuthnComponent: 'WebAuthnComponent',
+};
 
 export function getIdFromSession() {
   return this.getRequestService({
@@ -128,9 +140,188 @@ export function parseParameters(paramString) {
   return object;
 }
 
+/**
+ * @description Determines if passed in callback is set to required or has a required policy
+ * @param {Object} callback - callback to check if required
+ * @returns {Boolean} True if passed in callback is required
+ */
+export function isCallbackRequired(callback) {
+  const requiredOutput = callback.getOutputByName('required');
+  if (requiredOutput === true && callback.getType() !== 'BooleanAttributeInputCallback') {
+    return true;
+  }
+  const policyOutput = callback.getOutputByName('policies');
+  if (has(policyOutput, 'policies')) {
+    const requiredPolicy = policyOutput.policies.find((policy) => policy.policyId === 'required');
+    if (has(requiredPolicy, 'policyRequirements') && requiredPolicy.policyRequirements.includes('REQUIRED')) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * @description provides translated policy errors for a callback
+ * @param {Object} callback - callback to translate policy validation errors for
+ * @returns {Array} an array of translated policty validation error messages
+ */
+export function getTranslatedPolicyFailures(callback) {
+  const failedPolicies = callback.getFailedPolicies
+    ? callback.getFailedPolicies()
+    : [];
+  return failedPolicies.map((policy) => {
+    const parsedPolicy = JSON.parse(policy);
+    return this.$t(`common.policyValidationMessages.${parsedPolicy.policyRequirement}`, parsedPolicy.params);
+  });
+}
+
+/**
+ * @description gets field information to show when rendering login forms
+ * @param {Object} callback specific step callback
+ * @param {Object} index callback index
+ * @returns {Object} field props needed for Field component
+ */
+export function getField(callback, index) {
+  const callbackType = callback.getType();
+  let fieldType;
+
+  switch (callbackType) {
+    case FrCallbackType.PasswordCallback:
+    case FrCallbackType.ValidatedCreatePasswordCallback:
+      fieldType = 'password';
+      break;
+    case FrCallbackType.NumberAttributeInputCallback:
+      fieldType = 'number';
+      break;
+    default:
+      fieldType = 'string';
+      break;
+  }
+
+  let label = '';
+  if (callback.getPrompt) {
+    label = callback.getPrompt();
+  } else if (callback.getOutputByName) {
+    try {
+      label = callback.getOutputByName('prompt').value;
+    } catch (e) {
+      noop();
+    }
+  }
+  return {
+    label,
+    fieldType,
+    name: `callback_${index}`,
+    value: callback.getInputValue(),
+  };
+}
+
+/**
+ * @description determine if any backend scripts in the given SDK step have id's which contain a passed string
+ * @param {String} matcher the string to check against script ids
+ * @param {Object} step the SDK step to check within
+ * @returns {Boolean} whether any backend scripts within the given step contain the passed matcher string
+ */
+export function backendScriptsIdsContains(matcher, step) {
+  const typeArr = step.getCallbacksOfType(FrCallbackType.HiddenValueCallback)
+    .map((callback) => callback.getOutputByName('id', ''));
+  return typeArr.indexOf(matcher) >= 0;
+}
+
+/**
+ * @description  Invokes WebAuthn registration or authentication
+ * @param {Number} type enum number that represents WebAuthn type WebAuthnStepType.Authentication or WebAuthnStepType.Registration
+ * @param {Object} step the current SDK step
+ * @returns {Promise} SDK WebAuthn promise resolved when WebAuthn is completed
+ */
+export function createWebAuthnCallbackPromise(type, step) {
+  if (type === WebAuthnStepType.Authentication) {
+    return FRWebAuthn.authenticate(step);
+  }
+  return FRWebAuthn.register(step);
+}
+
+/**
+ * @description provides mappings for props and listeners associated with specific callbacks required for a UI showing callbacks
+ * @param {String} componentType the type of component to provide props and listeners for
+ * @param {Number} index the index of the current callback in the callback list
+ * @param {Array} componentList the list of current callback components
+ * @param {Object} currentStage the stage property for the current SDK step
+ * @param {Object} currentStep the current SDK step
+ * @param {String} realm the realm to validate password requirements against
+ */
+export function getComponentPropsAndEvents(componentType, callBackIndex, componentList, currentStage, currentStep, realm) {
+  const existsInComponentList = (type) => componentList.find((component) => component.type === `Fr${type}`);
+  const componentPropsAndEvents = {
+    ChoiceCallback: () => {
+      let stage;
+      if (currentStage.ChoiceCallback) {
+        stage = currentStage.ChoiceCallback.shift();
+      }
+      return { callbackSpecificProps: { stage } };
+    },
+    ConfirmationCallback: () => {
+      let stage;
+      if (currentStage.ConfirmationCallback) {
+        stage = currentStage.ConfirmationCallback.shift();
+      }
+      return { callbackSpecificProps: { stage, variant: existsInComponentList(FrCallbackType.WebAuthnComponent) ? 'link' : 'primary' } };
+    },
+    ConsentMappingCallback: () => ({
+      callbackSpecificProps: { callbacks: currentStep.callbacks },
+      listeners: ['disable-next-button', 'did-consent'],
+    }),
+    HiddenValueCallback: () => ({
+      listeners: ['hidden-value-callback-ref'],
+    }),
+    KbaCreateCallback: () => ({
+      callbackSpecificProps: { showHeader: !existsInComponentList(FrCallbackType.KbaCreateCallback) },
+      listeners: ['disable-next-button'],
+    }),
+    ReCaptchaCallback: () => ({
+      listeners: ['next-step-callback'],
+    }),
+    SelectIdPCallback: () => ({
+      callbackSpecificProps: { isOnlyCallback: currentStep.callbacks.length === 1 },
+      listeners: ['hide-next-button', 'disable-next-button'],
+    }),
+    TextOutputCallback: () => ({
+      listeners: ['disable-next-button', 'has-scripts', 'hide-next-button', 'next-step-callback'],
+    }),
+    ValidatedCreatePasswordCallback: () => {
+      let stage;
+      if (currentStage.ValidatedCreatePasswordCallback) {
+        stage = currentStage.ValidatedCreatePasswordCallback.shift();
+      }
+      return {
+        callbackSpecificProps: {
+          callBackIndex,
+          overrideInitialPolicies: true,
+          realm,
+          stage,
+        },
+        listeners: ['disable-next-button', 'next-step-callback', 'update-auth-id'],
+      };
+    },
+    WebAuthnComponent: () => {
+      const webAuthnType = FRWebAuthn.getWebAuthnStepType(currentStep);
+      const webAuthnPromise = createWebAuthnCallbackPromise(webAuthnType, currentStep);
+      return {
+        callbackSpecificProps: { webAuthnType, webAuthnPromise },
+      };
+    },
+  };
+  return componentPropsAndEvents[componentType] ? componentPropsAndEvents[componentType]() : {};
+}
+
 export default {
   name: 'LoginMixin',
   mixins: [NotificationMixin],
+  data() {
+    return {
+      FrCallbackType,
+    };
+  },
   methods: {
     logoutUser() {
       window.logout();
@@ -143,6 +334,11 @@ export default {
     verifyGotoUrlAndRedirect,
     getCurrentQueryString,
     parseParameters,
+    isCallbackRequired,
+    getTranslatedPolicyFailures,
+    getField,
+    backendScriptsIdsContains,
+    getComponentPropsAndEvents,
   },
 };
 </script>
