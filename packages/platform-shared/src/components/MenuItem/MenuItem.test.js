@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -49,6 +49,52 @@ describe('MenuItem Component', () => {
       });
 
       expect(wrapper.vm.showItemForUser).toBe(true);
+    });
+  });
+
+  describe('showing items based on store values', () => {
+    it('Determines not to show an item to the user when the store values passed to the component are not all found to be truthy in the store, even when those properties are in nested structures', () => {
+      mountComponent({
+        displayName: 'bob',
+        showForRoles: ['superAdmin'],
+        userRoles: ['plainOldAdmin'],
+        showForStoreValues: ['isFraas', 'promotionsEnabled', 'SharedStore.hasAmUrl'],
+      },
+      {
+        $store: {
+          state: {
+            isFraas: true,
+            promotionsEnabled: true,
+            SharedStore: {
+              hasAmUrl: null,
+            },
+          },
+        },
+        $route: { name: 'little-bob-2' },
+      });
+      expect(wrapper.vm.showItemForStoreValues).toBe(false);
+    });
+
+    it('Determines to show an item to the user when the store values passed to the component are all found to be truthy in the store, even if they are found in nested structures', () => {
+      mountComponent({
+        displayName: 'bob',
+        showForRoles: ['superAdmin'],
+        userRoles: ['plainOldAdmin'],
+        showForStoreValues: ['isFraas', 'promotionsEnabled', 'SharedStore.hasAmUrl'],
+      },
+      {
+        $store: {
+          state: {
+            isFraas: true,
+            promotionsEnabled: true,
+            SharedStore: {
+              hasAmUrl: true,
+            },
+          },
+        },
+        $route: { name: 'little-bob-2' },
+      });
+      expect(wrapper.vm.showItemForStoreValues).toBe(true);
     });
   });
 

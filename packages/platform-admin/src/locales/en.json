@@ -17,10 +17,13 @@
     "HostedPages": "Hosted Pages",
     "Journeys": "Journeys",
     "JourneyTree": "Journey Tree",
+    "LockTenant": "Lock Tenant",
     "ManagedIdentities": "Manage Identities",
     "ManagedObjectSettings": "Managed Object Settings",
     "PasswordPolicy": "Password Policy",
     "Profile": "Profile",
+    "Promotion": "Promotion",
+    "PromotionHistory" : "Promotion History",
     "Realm": "Realm Settings",
     "TermsAndConditions": "Terms & Conditions"
   },
@@ -56,6 +59,7 @@
     "hostedPagesSettings": "Hosted Pages Settings",
     "Journeys": "Journeys",
     "JourneyTree": "Journey Tree",
+    "LockTenant": "Lock Tenant",
     "LogApiKeys": "Log API Keys",
     "ManagedIdentities": "Managed Identities",
     "ManagedObjectSettings": "Managed Object Settings",
@@ -63,13 +67,17 @@
     "pageTitle": "Platform Admin - {page}",
     "PasswordPolicy": "Password Policy",
     "Profile": "Profile",
+    "Promotion": "Promotion",
+    "PromotionAuthentication": "Promotion Authentication",
+    "PromotionHistory": "Promotion History",
     "Realm": "Realm",
     "Scripts": "Scripts",
     "SecurityQuestions": "Security Questions",
     "ServiceAccounts": "Service Accounts",
     "TenantAdmins": "Tenant Admins",
     "TenantSettings": "Tenant Settings",
-    "TermsAndConditions": "Terms & Conditions"
+    "TermsAndConditions": "Terms & Conditions",
+    "TenantUpdates": "Tenant Updates"
   },
   "sideMenu": {
     "accessManagement": "Access Management",
@@ -1357,6 +1365,12 @@
       }
     }
   },
+  "tenantTierAbbreviation": {
+    "dev": "Dev",
+    "staging": "Staging",
+    "prod": "Prod",
+    "other": "Other"
+  },
   "tenantSettings": {
     "title": "Tenant Settings",
     "dropdownTitle": "Tenant settings",
@@ -1370,6 +1384,7 @@
       "organizationName": "Organization Name",
       "tenantName": "Tenant Name",
       "tenantRegion": "Region",
+      "tenantTier": "Environment Tag",
       "tenant": "TENANT",
       "flagAltText": "Flag",
       "errorRetrievingTenantRegion": "Error retrieving tenant region information."
@@ -1829,5 +1844,68 @@
     "property": "property",
     "userSpecific": "User-specific",
     "userSpecificHelpText": "Property is specific to individual users and not applicable to roles."
+  },
+  "promotions": {
+    "downloadReport": "Download Report",
+    "errorLoadingHistory": "Error loading promotion history",
+    "errorLoadingReport": "Error loading promotion information",
+    "errorLoadingUpdateReportDetails": "Error loading update details",
+    "errorLoadingUpdates": "Error loading promotion updates",
+    "loadingReportsInProgress": "Loading reports...",
+    "locked": {
+      "title": "Tenant locked for promotion",
+      "description": "Tenant will be locked until promotion has completed. Sign in to the {upper} tenant to view details.",
+      "signInButtonText": "Sign in to {upper}"
+    },
+    "lockTenants": {
+      "errorLoadingLockState": "Error loading tenant lock state.",
+      "errorLocking": "Error locking environments.",
+      "errorUnlocking": "Error unlocking environments.",
+      "lockAndContinue" : "Lock And Continue",
+      "lockDescription": "In order to ensure a reliable promotion, both <b>{current} and {upper} tenants will be locked and inaccessible</b> for the duration of the promotion process.",
+      "lockInProgress": "Locking tenants...",
+      "title": "Lock Tenants?",
+      "unlockInProgress": "Unlocking tenants..."
+    },
+    "noChangesSubtitle": "When you make changes to configuration they will appear here.",
+    "noChangesTitle": "No changes to promote",
+    "noReportsSubtitle": "When there are promotion reports to display they will appear here.",
+    "noReportsTitle": "No reports to show",
+    "nPendingChanges": "{count} Pending Change | {count} Pending Changes",
+    "promote": {
+      "blockingErrorDescription": "An error occurred during promotion and your tenant is locked. Please <a target=\"_blank\" href=\"https://backstage.forgerock.com/support/tickets\">contact support</a> to resolve the issue.",
+      "encryptedSecrets": "Encrypted secrets",
+      "errorDescription": "You need to cancel this promotion and add the following missing required configuration to your {upper} tenant before proceeding.",
+      "errorStarting": "Error initiating promotion",
+      "errorTitle": "Promotion Failed",
+      "inProgress": "Promotion in-progress",
+      "secretsAndVariables": "Secrets and variables",
+      "success": "Promotion successful!",
+      "unexpectedStatus": "Unexpected promotion status encountered",
+      "viewReport": "View report"
+    },
+    "promoteNChanges": "Promote {count} Change | Promote {count} Changes",
+    "promotionHistory": "Promotion History",
+    "promotionUpdates": "Tenant Updates",
+    "review": {
+      "cancelPromotion": "Cancel Promotion",
+      "cancelAndUnlock": "Cancel and Unlock Tenants",
+      "promotionWarning": "Both <b>{current} and {upper}</b> tenants will remain locked and inaccessible for the duration of the promotion.",
+      "startPromotion": "Start Promotion",
+      "startPromotionQuestion": "Start Promotion?",
+      "subTitle": "Confirm changes to be promoted.",
+      "title": "Review Promotion"
+    },
+    "showAllChanges": "All changes",
+    "signinPopover": "To promote configuration changes you first need to authenticate to your {upper} tenant",
+    "tenantLocked": "Tenant Locked",
+    "tenantLockedPopover": "Tenants remain locked during a promotion",
+    "tiers": {
+      "dev": "Dev",
+      "staging": "Staging",
+      "prod": "Production"
+    },
+    "viewHistory": "View promotion history",
+    "viewUpdates": "View updates"
   }
 }
