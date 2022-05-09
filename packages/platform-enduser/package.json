@@ -24,7 +24,7 @@
     "core-js": "3.6.5",
     "dayjs": "1.8.20",
     "es6-promise": "4.2.4",
-    "lodash": "4.17.19",
+    "lodash": "4.17.21",
     "oidcsessioncheck": "1.1.0",
     "vee-validate": "3.2.2",
     "vue": "2.6.11",
