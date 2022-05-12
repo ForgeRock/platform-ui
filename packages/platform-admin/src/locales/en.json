@@ -200,6 +200,7 @@
       "errorSavingTheme": "There was an error saving a theme",
       "footer": "Footer",
       "global": {
+        "boldLinks": "Bold Links",
         "brandColor": "Brand Colors",
         "buttonRounded": "Button Radius: {radius}px",
         "buttons": "Buttons",
