@@ -108,6 +108,10 @@ of the MIT license. See the LICENSE file for details. -->
       .fr-toggle-primary.custom-switch.b-custom-control-lg .custom-control-input:checked ~ .custom-control-label::before {
       background-color: {{ theme.primaryColor }};
       }
+
+      .spinner-primary {
+        color: {{ theme.primaryColor }};
+      }
     </Component>
 
     <Component
