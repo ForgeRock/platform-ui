@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -34,7 +34,7 @@ describe('Spinner Component', () => {
   });
 
   it('Has the text-primary class by default', () => {
-    expect(wrapper.find('.text-primary').exists()).toBe(true);
+    expect(wrapper.find('.spinner-primary').exists()).toBe(true);
   });
 
   it('Does not have the text-primary class when it is a buttonSpinner', () => {
