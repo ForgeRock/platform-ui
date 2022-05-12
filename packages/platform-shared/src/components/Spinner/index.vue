@@ -6,7 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <div
     class="text-center">
     <div
-      :class="[{ 'spinner-large': size === 'lg' }, { 'spinner-medium': size === 'md' }, { 'spinner-small': size === 'sm' }, 'spinner-border', { 'text-primary': !buttonSpinner }]"
+      :class="[{ 'spinner-large': size === 'lg' }, { 'spinner-medium': size === 'md' }, { 'spinner-small': size === 'sm' }, 'spinner-border', { 'spinner-primary': !buttonSpinner }]"
       role="status"
       :data-testid="testid">
       <span class="sr-only">
@@ -21,6 +21,7 @@ of the MIT license. See the LICENSE file for details. -->
 /**
  * Spinners are loading indicators that should be shown when retrieving data or performing slow computations.
  */
+
 export default {
   name: 'Spinner',
   props: {
@@ -62,5 +63,9 @@ export default {
   width: 1rem !important;
   height: 1rem !important;
   border-width: 0.2em !important;
+}
+
+.spinner-primary {
+  color: $primary;
 }
 </style>
