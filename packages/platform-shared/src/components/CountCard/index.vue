@@ -28,6 +28,7 @@ of the MIT license. See the LICENSE file for details. -->
         appear
         name="fade">
         <h1
+          :data-testid="`counter-${counterId}`"
           class="mb-0">
           {{ countFormatted }}
         </h1>
@@ -68,6 +69,9 @@ export default {
     },
     tooltipId() {
       return this.title.replace(/\W/g, '_');
+    },
+    counterId() {
+      return this.title.replace(/\W/g, '_').toLowerCase();
     },
   },
   props: {
