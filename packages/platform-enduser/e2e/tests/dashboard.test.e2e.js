@@ -80,7 +80,7 @@ filterTests(['forgeops', 'cloud'], () => {
       });
     });
 
-    it('should show compact header on enduser login with applications dashboard enabled', () => {
+    it.skip('should show compact header on enduser login with applications dashboard enabled', () => {
       const dashboards = ['Google', 'Zendesk', 'salesforce'];
 
       // Get an admin access token and use it to create the test user
