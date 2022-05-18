@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,7 +7,7 @@
 
 import Vue from 'vue';
 import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, mount, shallowMount } from '@vue/test-utils';
+import { createLocalVue, mount } from '@vue/test-utils';
 import * as clipboard from 'clipboard-polyfill/text';
 import MultiSelect from './index';
 
@@ -29,7 +29,7 @@ const defaultProps = {
 
 describe('MultiSelect input', () => {
   it('MultiSelect input component loaded', () => {
-    const wrapper = shallowMount(MultiSelect, {
+    const wrapper = mount(MultiSelect, {
       localVue,
       mocks: {
         $t: () => {},
@@ -44,7 +44,7 @@ describe('MultiSelect input', () => {
   });
 
   it('MultiSelect input sets default options', () => {
-    const wrapper = shallowMount(MultiSelect, {
+    const wrapper = mount(MultiSelect, {
       localVue,
       mocks: {
         $t: () => {},
@@ -58,7 +58,7 @@ describe('MultiSelect input', () => {
   });
 
   it('MultiSelect input adds tags', () => {
-    const wrapper = shallowMount(MultiSelect, {
+    const wrapper = mount(MultiSelect, {
       localVue,
       mocks: {
         $t: () => {},
@@ -95,7 +95,7 @@ describe('MultiSelect input', () => {
   });
 
   it('MultiSelect input sets copySelect on options when input closed', () => {
-    const wrapper = shallowMount(MultiSelect, {
+    const wrapper = mount(MultiSelect, {
       localVue,
       mocks: {
         $t: () => {},
@@ -377,7 +377,7 @@ describe('MultiSelect input', () => {
       text: 'selectOption',
     };
     const existingValue = { value: 'existingValue' };
-    const wrapper = shallowMount(MultiSelect, {
+    const wrapper = mount(MultiSelect, {
       localVue,
       mocks: {
         $t: () => {},
