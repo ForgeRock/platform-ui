@@ -23,22 +23,38 @@ export const trainingTypes = [
   },
 ];
 
-export const defaultParameterSettings = () => (
-  {
-    batch_size: 512,
-    epochs: 300,
-    learning_rate: 0.001,
-    window: 5,
+export const defaultParameters = (key) => {
+  switch (key) {
+    case 'Model C':
+      return {
+        "min_number_of_clusters": 4,
+        "max_number_of_clusters": 45,
+      }
+    case 'embeddings':
+      return {
+        "embedding_dimension": 20,
+        "learning_rate": 1e-3,
+        "window": 5
+      }
+    case 'Model A':
+    case 'Model B':
+    default:
+      return {
+        "batch_size": 512,
+        "epochs": 1000,
+        "learning_rate": 1e-3
+      }
   }
-);
+}
 
-export const defaultPipelineParameters = () => ({
-  autoencoder: defaultParameterSettings(),
-  embeddings: defaultParameterSettings(),
-  vectorizer: defaultParameterSettings(),
-  clustering: defaultParameterSettings(),
-  variational_autoencoder: defaultParameterSettings(),
-});
+export const defaultPipelineParameters = () => {
+  const param = {};
+  ['Model A', 'Model B', 'Model C', 'embeddings'].forEach(key => {
+    param[key] = defaultParameters(key)
+  })
+
+  return param
+}
 
 export const getPipelineDefinition = () => new Promise((resolve, reject) => {
   // getData('jas/entityDefinitions/autoaccess/api/pipeline_definition?latest=true')
