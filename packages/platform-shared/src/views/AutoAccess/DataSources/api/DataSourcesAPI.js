@@ -57,7 +57,7 @@ export const getFirstFile = (bucket, prefix) => new Promise((resolve, reject) =>
 
 export const searchBuckets = (prefix, max) => new Promise((resolve, reject) => {
   // postDataToken('/autoaccess/api/datasources/search/buckets', { prefix, max })
-  generateAutoAccessJas().post('/entity/search/autoaccess/risk_explainability?latest=true', { prefix, max })
+  generateAutoAccessApi().post('/datasources/search/buckets', { prefix, max })
     .then(({ data: result }) => {
       resolve(result);
     })
