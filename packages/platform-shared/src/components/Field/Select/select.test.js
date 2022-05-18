@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,7 +7,7 @@
 
 import Vue from 'vue';
 import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, mount, shallowMount } from '@vue/test-utils';
+import { createLocalVue, mount } from '@vue/test-utils';
 import Select from './index';
 
 const localVue = createLocalVue();
@@ -28,7 +28,7 @@ const defaultProps = {
 
 describe('Select input', () => {
   it('Select input component loaded', () => {
-    const wrapper = shallowMount(Select, {
+    const wrapper = mount(Select, {
       localVue,
       mocks: {
         $t: () => {},
@@ -107,7 +107,7 @@ describe('Select input', () => {
   });
 
   it('Select input component Closes Dropdown', () => {
-    const wrapper = shallowMount(Select, {
+    const wrapper = mount(Select, {
       localVue,
       mocks: {
         $t: () => {},
