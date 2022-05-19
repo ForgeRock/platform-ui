@@ -55,7 +55,6 @@ export const apiToInternalEvent = (data) => {
     timezone: features.geoData ? features.geoData.timeZone : 'GMT',
     risk: Math.round(risk_score_data.risk_score),
     risk_score_data,
-    result: raw_event_data.response.status === 'SUCCESSFUL' ? 'success' : 'failure',
     transactionId: raw_event_data.transactionId,
     heuristics: risk_score_data.heuristic_agg_result.raw_results,
     ueba_signal,
@@ -138,7 +137,6 @@ export const getFeatures = () => {
     // postData(`/autoaccess/jas/entity/search${entityPath}`, param)
     generateAutoAccessJas().post(entitySearch, param)
       .then(({ data }) => {
-        console.log('data:', data);
         resolve(Object.keys(data.aggregations).map((key) => {
           const cached = data.aggregations[key].buckets.length <= 50;
           return {
@@ -248,17 +246,16 @@ export const getUEBAClusteringExplainability = () => new Promise((resolve, rejec
       size: 0,
     },
   };
-  postData(entitySearch, param)
-    .then((data) => {
+  generateAutoAccessJas().post(entitySearch, param)
+    .then(({ data }) => {
       const reason = [..._.get(data, 'aggregations.ueba_reason.buckets', []), ..._.get(data, 'aggregations.clustering_reason.buckets', [])];
       const keys = _.uniq(reason.map((reason) => reason.key))
         .sort((a, b) => (causeMap[a] || a).localeCompare(causeMap[b] || b));
 
-      console.log(keys);
-
       resolve(keys);
     })
     .catch((e) => {
+      console.log('error:', e);
       reject(e);
     });
 });

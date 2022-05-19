@@ -317,7 +317,7 @@ export default {
           action: () => {
             this.toggleShowModal('edit', true, dataSource);
           },
-          text: this.$t('access.dataSources.table.dropdown.edit'),
+          text: this.$t('autoAccess.access.dataSources.table.dropdown.edit'),
           icon: 'edit',
         },
         dataSource.is_ootb
@@ -325,14 +325,14 @@ export default {
             action: () => {
               this.toggleShowModal('mapping', true, dataSource);
             },
-            text: this.$t('access.dataSources.table.dropdown.viewMapping'),
+            text: this.$t('autoAccess.access.dataSources.table.dropdown.viewMapping'),
             icon: 'edit_off',
           }
           : {
             action: () => {
               this.toggleShowModal('mapping', true, dataSource);
             },
-            text: this.$t('access.dataSources.table.dropdown.createMapping'),
+            text: this.$t('autoAccess.access.dataSources.table.dropdown.createMapping'),
             icon: 'multiple_stop',
           },
         this.hasValidMapping(dataSource)

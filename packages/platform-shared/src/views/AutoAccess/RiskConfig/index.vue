@@ -121,8 +121,7 @@ export default {
 
     this.loading = true;
     getDefaultProcess().then((process) => {
-      this.processID = process.process_id;
-      this.processYAML = this.jsonToYaml(process.yaml_obj);
+      this.processYAML = this.jsonToYaml(process);
       this.initialProcessYAML = this.processYAML;
 
       editor.setValue(this.processYAML);

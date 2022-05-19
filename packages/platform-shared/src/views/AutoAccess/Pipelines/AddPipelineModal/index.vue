@@ -120,7 +120,7 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   BModal, BButton, BDropdown, BDropdownItem,
 } from 'bootstrap-vue';
-import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrField from '../../Shared/Field';
 import dayjs from 'dayjs';
 import _ from 'lodash';
 import FrBasicInput from '../../Shared/Field/Basic';

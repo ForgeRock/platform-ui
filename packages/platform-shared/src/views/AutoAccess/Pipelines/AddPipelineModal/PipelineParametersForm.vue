@@ -13,7 +13,7 @@ of the MIT license. See the LICENSE file for details. -->
         <BButton
           variant="link"
           class="d-flex flex-row justify-content-between w-100 text-body p-4 text-decoration-none pipeline-parameter-form-section-btn"
-          v-b-toggle="`collapse-${parameter.key}-${id}`">
+          v-b-toggle="`collapse-${parameter.key.replace(' ', '-')}-${id}`">
           <div>
             <span class="text-capitalize font-weight-bold text-dark">
               {{ parameter.label }}
@@ -34,7 +34,7 @@ of the MIT license. See the LICENSE file for details. -->
           </span>
         </BButton>
         <BCollapse
-          :id="`collapse-${parameter.key}-${id}`"
+          :id="`collapse-${parameter.key.replace(' ', '-')}-${id}`"
           class="px-4 pb-4"
         >
           <div
