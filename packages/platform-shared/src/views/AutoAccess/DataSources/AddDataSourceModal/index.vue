@@ -429,7 +429,7 @@ export default {
       this.error = false;
 
       if (this.type === 'risk-config') {
-        saveRiskConfig({ yaml_obj: this.processJSON, process_id: this.processID })
+        saveRiskConfig(this.processJSON)
           .then((response) => {
             this.$emit('saved');
           })
