@@ -133,9 +133,10 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
       </div>
 
-      <!-- <FrPagination :currentPage="page"  -->
-      <!--   :lastPage="lastPage"  -->
-      <!--   @pagination-change="paginationChange" /> -->
+      <FrPagination
+        :current-page="page"
+        :last-page="lastPage"
+        @pagination-change="paginationChange" />
     </div>
     <EventDetail
       :data="detail"
@@ -152,7 +153,7 @@ import FrSelect from '@forgerock/platform-shared/src/components/Field/Select';
 import FrTextArea from '@forgerock/platform-shared/src/components/Field/TextArea';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import { getEventLogs, apiToInternalEvent } from '../api/ActivityAPI';
-// import FrPagination from "@forgerock/platform-shared/src/components/DataTable/Pagination";
+import FrPagination from '../../Shared/DataTable/Pagination';
 import FrTreeselect from '../../Shared/TreeSelect';
 import RiskScore from '../../Shared/RiskScore';
 import EventDetail from '../EventDetail';
@@ -176,7 +177,7 @@ export default {
     FrSelect,
     BModal,
     FrTextArea,
-    // FrPagination,
+    FrPagination,
     FrTreeselect,
     FrSpinner,
     RiskScore,
@@ -204,7 +205,6 @@ export default {
       sortColumn: 'risk',
       page: 0,
       labelValue: [],
-      labelOptions,
       selectedRow: null,
       isLoading: true,
       detail: null,
@@ -297,8 +297,10 @@ export default {
       this.error = false;
       getEventLogs(this.getQuery())
         .then(({ data }) => {
-          this.eventLogData = data.hits.hits.map((row) => apiToInternalEvent(row));
-
+          this.eventLogData = data.hits.hits.map((row) => {
+            const ev = apiToInternalEvent(row);
+            return ev;
+          });
           this.totalRecords = data.hits.total.value;
           if (data.hits.total.value > 0) {
             const myPageMeta = [...pageMeta];
