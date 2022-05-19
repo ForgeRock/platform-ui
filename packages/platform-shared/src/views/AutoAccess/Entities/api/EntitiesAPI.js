@@ -75,15 +75,13 @@ export const saveEntityInstances = (entity, data, flag, tags, context, branch) =
 
     const operation = flag === 'create' ? 'persist' : 'upsert';
     // const axiosOp = flag === 'create' ? postData : patchData;
-    const axiosOp = flag === 'create' ? generateAutoAccessApi().post : generateAutoAccessApi().patch;
+    const axiosOp = flag === 'create' ? generateAutoAccessJas().post : generateAutoAccessJas().patch;
 
     axiosOp(`entity/${operation}/${entityPath}/${entity.version}`, payload)
       .then(({ data: result }) => {
-        console.log('succ:', result);
         resolve(result);
       })
       .catch((error) => {
-        console.log('error:', error);
         reject(error);
       });
   });
@@ -100,7 +98,7 @@ export const deleteEntityInstance = (data, entity) => new Promise((resolve, reje
   };
 
   // deletData(`/jas/entity/delete/${entity.namespace}/${entity.name}/${entity.version}`, payload)
-  generateAutoAccessApi().delete(`/entity/delete/${entity.namespace}/${entity.name}/${entity.version}`, payload)
+  generateAutoAccessJas().delete(`/entity/delete/${entity.namespace}/${entity.name}/${entity.version}`, { data: payload })
     .then(({ data: result }) => {
       resolve(result);
     })
