@@ -571,6 +571,13 @@ export default {
         // Only components that need extra props or events
         const getcomponentPropsAndEvents = (componentType) => {
           const componentPropsAndEvents = {
+            ChoiceCallback: () => {
+              let stage;
+              if (this.stage.ChoiceCallback) {
+                stage = this.stage.ChoiceCallback.shift();
+              }
+              return { callbackSpecificProps: { stage } };
+            },
             ConfirmationCallback: () => {
               let stage;
               if (this.stage.ConfirmationCallback) {
