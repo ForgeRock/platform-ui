@@ -623,6 +623,8 @@
     "failedToUpdateNodeOutcomes": "Failed to update node type outcomes",
     "configurationRequired": "Requires Configuration",
     "editPanel": {
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordDescription": "User must enter identical password in second field to validate.",
       "name": "Name",
       "none": "none",
       "minimumRequired": "At Least {minItems} Value(s) Required",
