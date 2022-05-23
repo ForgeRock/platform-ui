@@ -492,7 +492,7 @@
         "userActiveTitle": "Total Users Trend",
         "userActiveDescription": "Trend of total number of users in this realm for the given time period",
         "userEngagementTitle": "User Engagement",
-        "userEngagementDescription": "Users with a sign-in, set or update password, or token activity in this realm for a given time period",
+        "userEngagementDescription": "Unique user count with at least one activity like sign-in, set or update password, or token issuance/validation/refresh performed in this realm for a given time period.",
         "userNewTitle": "Sign Ups",
         "userNewDescription": "Trend of new user sign-ups in this realm for a given time period"
       }
