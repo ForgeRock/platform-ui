@@ -1,9 +1,16 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div>
+  <BButton
+    v-if="showOnlyPositiveAnswer"
+    class="btn-block mt-3"
+    :variant="variant"
+    @click="setValue(0)">
+    {{ options[0] }}
+  </BButton>
+  <div v-else>
     <BButton
       v-for="(option, index) in options"
       :key="index"
@@ -28,6 +35,13 @@ export default {
       type: Object,
       required: true,
     },
+    /**
+     * Stage info
+     */
+    stage: {
+      type: Object,
+      default: null,
+    },
     variant: {
       type: String,
       default: 'primary',
@@ -40,6 +54,15 @@ export default {
     return {
       options: [],
     };
+  },
+  computed: {
+    showOnlyPositiveAnswer() {
+      try {
+        return this.stage.showOnlyPositiveAnswer;
+      } catch (e) {
+        return false;
+      }
+    },
   },
   methods: {
     setValue(value) {
