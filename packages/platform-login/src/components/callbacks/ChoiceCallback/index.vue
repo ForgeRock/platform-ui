@@ -1,19 +1,34 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div>
-    <FrField
+  <BFormGroup
+    v-if="displayType === 'radio'"
+    class="text-left"
+    :label="selected.label">
+    <BFormRadioGroup
       v-model="selected.value"
-      type="select"
-      :label="selected.label"
-      :name="selected.name"
       :options="selected.options"
+      text-field="text"
+      stacked
       @input="callback.setInputValue(selected.value)" />
-  </div>
+  </BFormGroup>
+  <FrField
+    v-else
+    v-model="selected.value"
+    type="select"
+    :label="selected.label"
+    :name="selected.name"
+    :options="selected.options"
+    @input="callback.setInputValue(selected.value)" />
 </template>
+
 <script>
+import {
+  BFormGroup,
+  BFormRadioGroup,
+} from 'bootstrap-vue';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 
@@ -21,6 +36,8 @@ export default {
   name: 'ChoiceCallback',
   components: {
     FrField,
+    BFormGroup,
+    BFormRadioGroup,
   },
   mixins: [
     TranslationMixin,
@@ -33,6 +50,13 @@ export default {
     index: {
       type: Number,
       default: 0,
+    },
+    /**
+     * Stage info
+     */
+    stage: {
+      type: Object,
+      default: null,
     },
   },
   mounted() {
@@ -51,6 +75,15 @@ export default {
         options: [],
       },
     };
+  },
+  computed: {
+    displayType() {
+      try {
+        return this.stage.displayType;
+      } catch (e) {
+        return 'select';
+      }
+    },
   },
 };
 </script>
