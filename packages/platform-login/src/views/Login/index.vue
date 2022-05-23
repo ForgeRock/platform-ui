@@ -571,9 +571,13 @@ export default {
         // Only components that need extra props or events
         const getcomponentPropsAndEvents = (componentType) => {
           const componentPropsAndEvents = {
-            ConfirmationCallback: () => ({
-              callbackSpecificProps: { variant: existsInComponentList(FrCallbackType.WebAuthnComponent) ? 'link' : 'primary' },
-            }),
+            ConfirmationCallback: () => {
+              let stage;
+              if (this.stage.ConfirmationCallback) {
+                stage = this.stage.ConfirmationCallback.shift();
+              }
+              return { callbackSpecificProps: { stage, variant: existsInComponentList(FrCallbackType.WebAuthnComponent) ? 'link' : 'primary' } };
+            },
             ConsentMappingCallback: () => ({
               callbackSpecificProps: { callbacks: this.step.callbacks },
               listeners: ['disable-next-button', 'did-consent'],
