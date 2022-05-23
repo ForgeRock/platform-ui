@@ -15,6 +15,13 @@ of the MIT license. See the LICENSE file for details. -->
       :num-columns="1"
       :policies="policies"
       :policy-failures="failuresForPanel" />
+    <FrField
+      v-if="confirmPassword"
+      v-model="confirmPasswordText"
+      type="password"
+      :errors="confirmPasswordFailures"
+      label="Confirm Password"
+      @input="checkConfirmPasswordMatch" />
   </div>
 </template>
 
@@ -52,6 +59,13 @@ export default {
       required: true,
     },
     /**
+     * Numerical position on tree node
+     */
+    index: {
+      type: Number,
+      default: 0,
+    },
+    /**
      * The current step in the auth tree. Needed to submit to tree.
      */
     step: {
@@ -72,9 +86,18 @@ export default {
       type: Boolean,
       default: false,
     },
+    /**
+     * Stage info
+     */
+    stage: {
+      type: Object,
+      default: null,
+    },
   },
   data() {
     return {
+      confirmPasswordFailures: [],
+      confirmPasswordText: '',
       debounceValidatePassword: debounce(this.validatePassword, 200),
       failuresForField: [],
       failuresForPanel: [],
@@ -84,6 +107,15 @@ export default {
       },
       policies: [],
     };
+  },
+  computed: {
+    confirmPassword() {
+      try {
+        return this.stage.confirmPassword;
+      } catch (e) {
+        return false;
+      }
+    },
   },
   mounted() {
     // need to set validateOnly flag to true so that tree does not advance when validating input
@@ -180,6 +212,10 @@ export default {
 
       this.$emit('disable-next-button', failingPolicies.length !== 0);
       this.$emit('on-validated', this.password.value, failingPolicies.length === 0);
+
+      if (this.confirmPassword) {
+        this.checkConfirmPasswordMatch();
+      }
     },
     /**
      * Triggered off of input event of field. Sets callback value and validates.
@@ -212,6 +248,14 @@ export default {
           // it's possible to timeout while in the tree so have to start from beginning if that happens
           window.location.reload();
         });
+    },
+    checkConfirmPasswordMatch() {
+      const passwordsMatch = this.password.value.length > 0
+        && this.confirmPasswordText.length > 0
+        && (this.password.value === this.confirmPasswordText);
+      const disableNextButton = this.failuresForField.length !== 0 || this.failuresForPanel.length !== 0 || !passwordsMatch;
+      this.confirmPasswordFailures = (disableNextButton && this.confirmPasswordText.length > 0 && !passwordsMatch) ? ['Passwords do not match'] : [];
+      this.$emit('disable-next-button', disableNextButton, this.index);
     },
   },
 };
