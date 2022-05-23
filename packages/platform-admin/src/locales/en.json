@@ -628,6 +628,8 @@
       "name": "Name",
       "none": "none",
       "minimumRequired": "At Least {minItems} Value(s) Required",
+      "showOnlyPositiveAnswer": "Only Positive Answer",
+      "showOnlyPositiveAnswerDescription": "Only show one the positive answer button on node.",
       "submitButtonText": "Submit Button Text",
       "submitButtonTextDescription": "Text to show within node's submit button.",
       "theme": "Theme",
