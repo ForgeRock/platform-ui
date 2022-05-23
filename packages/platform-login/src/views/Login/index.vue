@@ -595,10 +595,21 @@ export default {
             TextOutputCallback: () => ({
               listeners: ['disable-next-button', 'has-scripts', 'hide-next-button', 'next-step-callback'],
             }),
-            ValidatedCreatePasswordCallback: () => ({
-              callbackSpecificProps: { overrideInitialPolicies: true, realm: this.realm },
-              listeners: ['disable-next-button', 'next-step-callback'],
-            }),
+            ValidatedCreatePasswordCallback: () => {
+              let stage;
+              if (this.stage.ValidatedCreatePasswordCallback) {
+                stage = this.stage.ValidatedCreatePasswordCallback.shift();
+              }
+              return {
+                callbackSpecificProps: {
+                  index,
+                  overrideInitialPolicies: true,
+                  realm: this.realm,
+                  stage,
+                },
+                listeners: ['disable-next-button', 'next-step-callback'],
+              };
+            },
             WebAuthnComponent: () => {
               const webAuthnType = FRWebAuthn.getWebAuthnStepType(this.step);
               const webAuthnPromise = this.createWebAuthnCallbackPromise(webAuthnType);
