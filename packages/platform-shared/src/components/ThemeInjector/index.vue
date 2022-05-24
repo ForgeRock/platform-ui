@@ -191,13 +191,13 @@ of the MIT license. See the LICENSE file for details. -->
       color: {{ theme.profileMenuHoverTextColor }};
       }
 
-      #app .router-link-active {
+      #app <template v-if="mock">.fr-enduser-theme-preview</template> .router-link-active {
       background-color: {{ theme.profileMenuHighlightColor }};
       color: {{ theme.profileMenuTextHighlightColor }};
       border-left-color: {{ theme.primaryColor }};
       }
 
-      #app .router-link-active:hover {
+      #app <template v-if="mock">.fr-enduser-theme-preview</template> .router-link-active:hover {
       background-color: {{ theme.profileMenuHoverColor }};
       color: {{ theme.profileMenuHoverTextColor }};
       }
