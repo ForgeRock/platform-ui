@@ -57,6 +57,7 @@ import Alert from '@forgerock/platform-shared/src/components/Alert/';
 import ThemeInjector from '@forgerock/platform-shared/src/components/ThemeInjector/';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import ThemeMixin from '@forgerock/platform-shared/src/mixins/ThemeMixin';
+import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import i18n from './i18n';
 import './scss/main.scss';
@@ -70,6 +71,7 @@ export default {
   mixins: [
     RestMixin,
     ThemeMixin,
+    TranslationMixin,
   ],
   data() {
     return {

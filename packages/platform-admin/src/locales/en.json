@@ -626,6 +626,8 @@
       "name": "Name",
       "none": "none",
       "minimumRequired": "At Least {minItems} Value(s) Required",
+      "submitButtonText": "Submit Button Text",
+      "submitButtonTextDescription": "Text to show within node's submit button.",
       "theme": "Theme",
       "themeDescription": "If using hosted pages, specify a theme to override this journey's UI theme."
     },

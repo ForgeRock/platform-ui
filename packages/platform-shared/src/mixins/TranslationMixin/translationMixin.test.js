@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -79,6 +79,33 @@ describe('TranslationMixin', () => {
       ];
 
       expect(wrapper.vm.getTranslation(testArray)).toEqual(expectedArray);
+    });
+  });
+
+  describe('getLocalizedString method', () => {
+    it('returns empty string when no data is passed in', () => {
+      expect(wrapper.vm.getLocalizedString('')).toBe('');
+      expect(wrapper.vm.getLocalizedString(null)).toBe('');
+    });
+
+    it('returns original data if passed in data is a string', () => {
+      expect(wrapper.vm.getLocalizedString('stringTest')).toBe('stringTest');
+    });
+
+    it('returns localized string when object has this locale', () => {
+      expect(wrapper.vm.getLocalizedString({ en: 'object' }, 'en')).toBe('object');
+    });
+
+    it('returns fallback localized string when no matching locale in object, but there is a fallback', () => {
+      expect(wrapper.vm.getLocalizedString({ en: 'enObject', de: 'deObject' }, 'fr', 'de')).toBe('deObject');
+    });
+
+    it('returns fallback localized string when no matching locale in object, but there is an array of fallbacks', () => {
+      expect(wrapper.vm.getLocalizedString({ en: 'enObject', de: 'deObject' }, 'fr', ['es', 'de'])).toBe('deObject');
+    });
+
+    it('returns first string in object if none of the locales match', () => {
+      expect(wrapper.vm.getLocalizedString({ en: 'enObject', de: 'deObject' }, 'fr', ['es', 'ds'])).toBe('enObject');
     });
   });
 });

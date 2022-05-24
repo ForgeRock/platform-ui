@@ -24,11 +24,12 @@ of the MIT license. See the LICENSE file for details. -->
     </BButton>
   </li>
   <!-- Item will change route or open a new tab -->
-  <!-- :[linkClassAttributeName]="'d-flex align-items-center'" -->
   <Component
     v-else-if="(url || routeTo && routeTo.name) && showItemForUser"
     :is="bootstrapComponent"
     :href="url"
+    :link-class="'d-flex align-items-center'"
+    :link-classes="'d-flex align-items-center'"
     :target="url ? '_blank' : ''"
     :to="routeTo">
     <FrIcon
@@ -187,7 +188,6 @@ export default {
   data() {
     return {
       bootstrapComponent: this.isNav ? BNavItem : BDropdownItem,
-      linkClassAttributeName: this.isNav ? 'link-classes' : 'link-class',
       isExpanded: this.shouldBeExpanded(this.$route.name),
     };
   },

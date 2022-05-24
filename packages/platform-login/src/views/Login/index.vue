@@ -283,6 +283,7 @@ import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import { getThemeIdFromStageString } from '@forgerock/platform-shared/src/utils/stage';
+import i18n from '@/i18n';
 
 const FrCallbackType = {
   ...CallbackType,
@@ -409,12 +410,19 @@ export default {
     };
   },
   computed: {
+    buttonTextLocalized() {
+      let submitButtonTextOverride = null;
+      try {
+        submitButtonTextOverride = this.getLocalizedString(this.stage.submitButtonText, i18n.locale);
+      } catch (e) {
+        return this.buttonText || this.$t('login.next');
+      }
+
+      return submitButtonTextOverride || this.buttonText || this.$t('login.next');
+    },
     nextButtonDisabled() {
       // checks if there are any true bool values in array
       return this.nextButtonDisabledArray.some((bool) => bool);
-    },
-    buttonTextLocalized() {
-      return this.buttonText || this.$t('login.next');
     },
     sanitizedContent() {
       return this.$sanitize(this.journeyJustifiedContent);
