@@ -6,7 +6,8 @@ of the MIT license. See the LICENSE file for details. -->
   <BAlert
     class="fr-alert"
     v-bind="$props"
-    :data-testid="testId">
+    :data-testid="testId"
+    aria-live="assertive">
     <template v-slot:dismiss>
       <FrIcon
         class="fr-alert-dismiss"

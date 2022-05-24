@@ -1,126 +1,128 @@
-<!-- Copyright (c) 2019-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <BNavbar
-    class="fr-main-navbar align-content-center"
-    data-testid="fr-main-navbar"
-    sticky
-    toggleable>
-    <button
-      v-show="!hideToggle"
-      @click="toggleMenu"
-      class="navbar-toggler expand-sidebar"
-      type="button"
-      aria-controls="#fr-sidebar-nav"
-      :aria-expanded="(menuIsExpanded).toString()"
-      :aria-label="$t('sideMenu.toggleSidebar')">
-      <FrIcon
-        class="md-24 m-0"
-        name="menu"
-      />
-    </button>
-    <BNavbarNav class="flex-row align-items-center justify-content-between flex-grow-1">
-      <div @click="$emit('clicked')">
-        <RouterLink
-          :aria-label="$t('common.breadcrumb')"
-          class="fr-back-link overflow-hidden p-1 pl-4 pl-lg-0 mt-1"
-          role="navigation"
-          v-show="getBreadcrumbRoute().length > 0"
-          :to="!checkChangesOnNavigate ? getBreadcrumbRoute() : ''">
-          <h4 class="text-truncate">
-            <FrIcon
-              class="md-24 mr-3"
-              name="arrow_back"
-            />
-            <span class="align-middle">
-              {{ getBreadcrumbRouteText() }}
-            </span>
-          </h4>
-        </RouterLink>
-      </div>
-      <div>
-        <!-- Content displayed in center of navbar -->
-        <slot name="center-content" />
-      </div>
-      <div class="flex-row d-flex">
-        <slot name="right-content">
-          <FrNotification v-if="showNotifications" />
-          <li
-            v-if="showHelpLink"
-            class="mr-4 d-none d-sm-block nav-item">
-            <a
-              class="nav-link text-dark"
-              :href="helpUrl"
-              target="_blank">
-              {{ $t('navbar.helpSupport') }}
-            </a>
-          </li>
-          <li
-            v-if="showDocsLink"
-            class="d-none d-sm-block nav-item">
-            <a
-              class="nav-link text-dark"
-              :href="docsLink"
-              target="_blank">
-              {{ $t('navbar.docs') }}
-            </a>
-          </li>
-          <li v-if="!hideDropdown">
-            <FrDropdownMenu
-              :user-details="userDetails"
-              :dropdown-items="tenantMenuItems"
-              :show-profile-link="showProfileLink"
-              enable-logout
-              right
-              class="pl-sm-4">
-              <template #button-content>
-                <BMedia
-                  vertical-align="center"
-                  class="text-left">
-                  <template #aside>
-                    <img
-                      :src="profileImage ? profileImage : require('@forgerock/platform-shared/src/assets/images/avatar.png')"
-                      :alt="$t('common.avatar')"
-                      width="34"
-                      height="34">
-                  </template>
-                  <div class="d-none d-lg-block sidebar-item-text fr-dropdown-button-content">
-                    <h5 class="my-0 text-truncate">
-                      {{ userDetails.company || userDetails.name }}
-                    </h5>
-                    <div class="text-muted text-truncate">
-                      {{ userDetails.company ? userDetails.name : userDetails.email }}
+  <header>
+    <BNavbar
+      class="fr-main-navbar align-content-center"
+      data-testid="fr-main-navbar"
+      sticky
+      toggleable>
+      <button
+        v-show="!hideToggle"
+        @click="toggleMenu"
+        class="navbar-toggler expand-sidebar"
+        type="button"
+        aria-controls="#fr-sidebar-nav"
+        :aria-expanded="(menuIsExpanded).toString()"
+        :aria-label="$t('sideMenu.toggleSidebar')">
+        <FrIcon
+          class="md-24 m-0"
+          name="menu"
+        />
+      </button>
+      <BNavbarNav class="flex-row align-items-center justify-content-between flex-grow-1">
+        <div @click="$emit('clicked')">
+          <RouterLink
+            :aria-label="$t('common.breadcrumb')"
+            class="fr-back-link overflow-hidden p-1 pl-4 pl-lg-0 mt-1"
+            role="navigation"
+            v-show="getBreadcrumbRoute().length > 0"
+            :to="!checkChangesOnNavigate ? getBreadcrumbRoute() : ''">
+            <h4 class="text-truncate">
+              <FrIcon
+                class="md-24 mr-3"
+                name="arrow_back"
+              />
+              <span class="align-middle">
+                {{ getBreadcrumbRouteText() }}
+              </span>
+            </h4>
+          </RouterLink>
+        </div>
+        <div>
+          <!-- Content displayed in center of navbar -->
+          <slot name="center-content" />
+        </div>
+        <div class="flex-row d-flex">
+          <slot name="right-content">
+            <FrNotification v-if="showNotifications" />
+            <li
+              v-if="showHelpLink"
+              class="mr-4 d-none d-sm-block nav-item">
+              <a
+                class="nav-link text-dark"
+                :href="helpUrl"
+                target="_blank">
+                {{ $t('navbar.helpSupport') }}
+              </a>
+            </li>
+            <li
+              v-if="showDocsLink"
+              class="d-none d-sm-block nav-item">
+              <a
+                class="nav-link text-dark"
+                :href="docsLink"
+                target="_blank">
+                {{ $t('navbar.docs') }}
+              </a>
+            </li>
+            <li v-if="!hideDropdown">
+              <FrDropdownMenu
+                :user-details="userDetails"
+                :dropdown-items="tenantMenuItems"
+                :show-profile-link="showProfileLink"
+                enable-logout
+                right
+                class="pl-sm-4">
+                <template #button-content>
+                  <BMedia
+                    vertical-align="center"
+                    class="text-left">
+                    <template #aside>
+                      <img
+                        :src="profileImage ? profileImage : require('@forgerock/platform-shared/src/assets/images/avatar.png')"
+                        :alt="$t('common.avatar')"
+                        width="34"
+                        height="34">
+                    </template>
+                    <div class="d-none d-lg-block sidebar-item-text fr-dropdown-button-content">
+                      <h5 class="my-0 text-truncate">
+                        {{ userDetails.company || userDetails.name }}
+                      </h5>
+                      <div class="text-muted text-truncate">
+                        {{ userDetails.company ? userDetails.name : userDetails.email }}
+                      </div>
                     </div>
-                  </div>
-                </BMedia>
-              </template>
-              <template
-                #dropdown-header
-                v-if="userDetails.company || userDetails.subscription">
-                <BDropdownHeader
-                  class="py-1 fr-dropdown-header">
-                  <div class="mt-1">
-                    <h6 v-if="tenantMenuItems.length">
-                      {{ $t('common.tenant').toUpperCase() }}
-                    </h6>
-                    <h5 class="my-0">
-                      {{ userDetails.company }}
-                    </h5>
-                    <span class="text-muted">
-                      {{ userDetails.subscription }}
-                    </span>
-                  </div>
-                </BDropdownHeader>
-                <BDropdownDivider />
-              </template>
-            </FrDropdownMenu>
-          </li>
-        </slot>
-      </div>
-    </BNavbarNav>
-  </BNavbar>
+                  </BMedia>
+                </template>
+                <template
+                  #dropdown-header
+                  v-if="userDetails.company || userDetails.subscription">
+                  <BDropdownHeader
+                    class="py-1 fr-dropdown-header">
+                    <div class="mt-1">
+                      <h6 v-if="tenantMenuItems.length">
+                        {{ $t('common.tenant').toUpperCase() }}
+                      </h6>
+                      <h5 class="my-0">
+                        {{ userDetails.company }}
+                      </h5>
+                      <span class="text-muted">
+                        {{ userDetails.subscription }}
+                      </span>
+                    </div>
+                  </BDropdownHeader>
+                  <BDropdownDivider />
+                </template>
+              </FrDropdownMenu>
+            </li>
+          </slot>
+        </div>
+      </BNavbarNav>
+    </BNavbar>
+  </header>
 </template>
 
 <script>

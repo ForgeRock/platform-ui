@@ -7,117 +7,128 @@ of the MIT license. See the LICENSE file for details. -->
     <template
       v-if="journeyHeaderEnabled && journeyHeader && (journeyLayout === 'card' || !journeyTheaterMode)"
       id="appHeader">
-      <div v-html="sanitizedHeader" />
+      <header v-html="sanitizedHeader" />
     </template>
-    <BContainer
-      class="flex-grow-1 d-flex"
-      v-if="!journeyLayout || journeyLayout === 'card' || !journeyTheaterMode">
-      <BRow
-        :class="[{'flex-row-reverse': journeyLayout === 'justified-right'}, 'align-items-center m-0 flex-grow-1']">
-        <BCol :lg="journeyLayout !== 'card' ? 6 : 12">
-          <FrCenterCard
-            :logo-alt-text="logoAltText"
-            :logo-enabled="logoEnabled && !themeLoading"
-            :logo-height="logoHeight"
-            :logo-path="logoPath">
-            <template #center-card-header>
-              <div v-if="!loading && !themeLoading">
-                <h1
-                  v-if="header"
-                  class="h2">
-                  {{ header }}
-                </h1>
-                <p
-                  v-if="description"
-                  v-html="description" />
-              </div>
-            </template>
-
-            <template #center-card-body>
-              <BCardBody
-                v-show="!loading && !themeLoading"
-                id="callbacksPanel">
-                <FrAlert
-                  :show="loginFailure"
-                  :dismissible="false"
-                  variant="error"
-                  class="p-3 text-left">
-                  {{ getTranslation(errorMessage) }}
-                </FrAlert>
-                <div
-                  v-if="loginFailure && linkToTreeStart">
-                  <a :href="linkToTreeStart">
-                    {{ $t('login.sessionTimeoutLink') }}
-                  </a>
-                </div>
-                <div id="body-append-el">
-                  <!-- for backend scripts -->
-                  <form
-                    @submit.prevent="nextStep"
-                    id="wrapper">
-                    <!-- needed for GetAuthenticationApp, RecoveryCodeDisplay-->
-                    <template v-if="showScriptElms">
-                      <div>
-                        <fieldset />
-                      </div>
-                      <div id="callback_0" />
-                    </template>
-                    <template
-                      v-for="(component) in componentList ">
-                      <Component
-                        class="callback-component"
-                        :callback="component.callback"
-                        :index="component.index"
-                        :is="component.type"
-                        :key="component.key"
-                        :step="step"
-                        v-bind="{...component.callbackSpecificProps}"
-                        v-on="{
-                          'next-step': (event, preventClear) => {
-                            nextStep(event, preventClear);
-                          },
-                          ...component.listeners}" />
-                    </template>
-                    <BButton
-                      v-if="nextButtonVisible"
-                      class="btn-block mt-3"
-                      type="submit"
-                      variant="primary"
-                      :disabled="nextButtonDisabled"
-                      @click="nextStep">
-                      {{ buttonTextLocalized }}
-                    </BButton>
-                    <input
-                      v-if="showScriptElms"
-                      id="loginButton_0"
-                      role="button"
-                      type="submit"
-                      @click.prevent="backendScriptsHandler"
-                      hidden>
-                  </form>
-                </div>
-              </BCardBody>
-              <BCardBody v-show="loading || themeLoading">
-                <div class="h-100 d-flex">
-                  <div class="fr-center-card">
-                    <Spinner class="mb-4" />
+    <main
+      v-if="!journeyLayout || journeyLayout === 'card' || !journeyTheaterMode"
+      class="px-0 flex-grow-1 d-flex container">
+      <BContainer
+        class="flex-grow-1 d-flex"
+      >
+        <BRow
+          :class="[{'flex-row-reverse': journeyLayout === 'justified-right'}, 'align-items-center m-0 flex-grow-1']">
+          <BCol :lg="journeyLayout !== 'card' ? 6 : 12">
+            <section>
+              <FrCenterCard
+                :logo-alt-text="logoAltText || 'Logo'"
+                :logo-enabled="logoEnabled && !themeLoading"
+                :logo-height="logoHeight"
+                :logo-path="logoPath">
+                <template #center-card-header>
+                  <div v-if="!loading && !themeLoading">
+                    <h1
+                      v-if="header"
+                      class="h2"
+                      tabindex="1">
+                      {{ header }}
+                    </h1>
+                    <p
+                      v-if="description"
+                      v-html="description" />
                   </div>
-                </div>
-              </BCardBody>
-            </template>
-          </FrCenterCard>
-        </BCol>
-        <BCol
-          v-if="journeyLayout !== 'card' && journeyJustifiedContentEnabled"
-          class="d-none d-lg-block p-0"
-          lg="6">
-          <div
-            v-html="sanitizedContent"
-            class="d-flex justify-content-center" />
-        </BCol>
-      </BRow>
-    </BContainer>
-    <div
+                </template>
+
+                <template #center-card-body>
+                  <BCardBody
+                    v-show="!loading && !themeLoading"
+                    id="callbacksPanel">
+                    <FrAlert
+                      :show="loginFailure"
+                      :dismissible="false"
+                      variant="error"
+                      class="p-3 text-left">
+                      {{ getTranslation(errorMessage) }}
+                    </FrAlert>
+                    <div
+                      v-if="loginFailure && linkToTreeStart">
+                      <a :href="linkToTreeStart">
+                        {{ $t('login.sessionTimeoutLink') }}
+                      </a>
+                    </div>
+                    <div id="body-append-el">
+                      <!-- for backend scripts -->
+                      <form
+                        @submit.prevent="nextStep"
+                        id="wrapper">
+                        <!-- needed for GetAuthenticationApp, RecoveryCodeDisplay-->
+                        <template v-if="showScriptElms">
+                          <div>
+                            <fieldset />
+                          </div>
+                          <div id="callback_0" />
+                        </template>
+                        <template
+                          v-for="(component) in componentList ">
+                          <Component
+                            class="callback-component"
+                            :callback="component.callback"
+                            :index="component.index"
+                            :is="component.type"
+                            :key="component.key"
+                            :step="step"
+                            v-bind="{...component.callbackSpecificProps}"
+                            v-on="{
+                              'next-step': (event, preventClear) => {
+                                nextStep(event, preventClear);
+                              },
+                              ...component.listeners}" />
+                        </template>
+                        <BButton
+                          v-if="nextButtonVisible"
+                          class="btn-block mt-3"
+                          type="submit"
+                          variant="primary"
+                          :disabled="nextButtonDisabled"
+                          @click="nextStep">
+                          {{ buttonTextLocalized }}
+                        </BButton>
+                        <input
+                          v-if="showScriptElms"
+                          id="loginButton_0"
+                          role="button"
+                          type="submit"
+                          @click.prevent="backendScriptsHandler"
+                          hidden>
+                      </form>
+                    </div>
+                  </BCardBody>
+                  <BCardBody v-show="loading || themeLoading">
+                    <div
+                      class="h-100 d-flex"
+                      role="alert"
+                      aria-busy="true"
+                      aria-label="Loading">
+                      <div class="fr-center-card">
+                        <Spinner class="mb-4" />
+                      </div>
+                    </div>
+                  </BCardBody>
+                </template>
+              </FrCenterCard>
+            </section>
+          </BCol>
+          <BCol
+            v-if="journeyLayout !== 'card' && journeyJustifiedContentEnabled"
+            class="d-none d-lg-block p-0"
+            lg="6">
+            <section
+              v-html="sanitizedContent"
+              class="d-flex justify-content-center" />
+          </BCol>
+        </BRow>
+      </BContainer>
+    </main>
+    <main
       v-else
       id="callbacksPanel"
       :class="[{'flex-row-reverse': journeyLayout === 'justified-right'}, 'd-flex w-100 flex-grow-1']">
@@ -136,7 +147,7 @@ of the MIT license. See the LICENSE file for details. -->
               v-if="journeyHeaderEnabled"
               class="flex-grow-1"
               id="appHeader">
-              <div v-html="sanitizedHeader" />
+              <header v-html="sanitizedHeader" />
             </div>
           </div>
         </div>
@@ -222,7 +233,7 @@ of the MIT license. See the LICENSE file for details. -->
           v-if="journeyFooterEnabled && journeyFooter"
           class="w-100"
           id="appFooter">
-          <div v-html="sanitizedFooter" />
+          <footer v-html="sanitizedFooter" />
         </div>
       </div>
       <div class="overflow-hidden w-md-50 d-none d-md-flex">
@@ -231,11 +242,11 @@ of the MIT license. See the LICENSE file for details. -->
           v-html="journeyJustifiedContent"
           class="d-flex h-100 w-100 justify-content-center align-self-center" />
       </div>
-    </div>
+    </main>
     <template
       v-if="journeyFooterEnabled && journeyFooter && (journeyLayout === 'card' || !journeyTheaterMode)"
       id="appFooter">
-      <div v-html="sanitizedFooter" />
+      <footer v-html="sanitizedFooter" />
     </template>
   </div>
 </template>

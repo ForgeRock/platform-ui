@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -74,6 +74,8 @@ filterTests(['forgeops', 'cloud'], () => {
     it('should override the text of the login failure message', () => {
       cy.visit(`${loginBaseUrl}#/`);
       cy.findByRole('button', { name: 'Next Test' }).should('exist').click();
+      cy.intercept('/openidm/config/ui/themerealm').as('themeRealConfig');
+      cy.wait('@themeRealConfig');
       cy.findAllByRole('alert').contains('Login Failure Override');
     });
 

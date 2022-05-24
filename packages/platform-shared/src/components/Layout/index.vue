@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -59,7 +59,7 @@ of the MIT license. See the LICENSE file for details. -->
           </template>
         </notifications>
       </div>
-      <div
+      <footer
         v-if="showFooter"
         class="app-footer">
         <div
@@ -89,7 +89,7 @@ of the MIT license. See the LICENSE file for details. -->
             {{ $t('common.buildNumber', {buildNumber, buildDateTime: $d(buildDateTime, 'buildDateTime')}) }}
           </div>
         </div>
-      </div>
+      </footer>
     </div>
   </div>
 </template>
