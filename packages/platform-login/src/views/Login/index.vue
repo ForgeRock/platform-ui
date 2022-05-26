@@ -313,6 +313,7 @@ export default {
     FrField: () => import('@forgerock/platform-shared/src/components/Field'),
     FrHiddenValueCallback: () => import('@/components/callbacks/HiddenValueCallback'),
     FrKbaCreateCallback: () => import('@/components/callbacks/KbaCreateCallback'),
+    FrPasswordCallback: () => import('@/components/callbacks/PasswordCallback'),
     FrPollingWaitCallback: () => import('@/components/callbacks/PollingWaitCallback'),
     FrReCaptchaCallback: () => import('@/components/callbacks/ReCaptchaCallback'),
     FrRecoveryCodesComponent: () => import('@/components/display/RecoveryCodes'),
@@ -645,7 +646,7 @@ export default {
             : 'FrField',
         };
 
-        if (component.type === 'FrField') {
+        if (component.type === 'FrField' || component.type === 'FrPasswordCallback') {
           const {
             fieldType, label, name, value,
           } = this.getField(callback, index);
