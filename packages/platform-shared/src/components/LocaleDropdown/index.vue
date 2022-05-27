@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -12,8 +12,17 @@ of the MIT license. See the LICENSE file for details. -->
     >
       <template #button-content>
         {{ title || $t('locale.localeTitle') }}:
-        <span class="font-weight-bold">
-          {{ currentLanguage }}
+        <span data-test-id="selected-language"
+          class="font-weight-bold">
+          <span data-test-id="selected-language-text">
+            {{ currentLanguage }}
+          </span>
+          <div
+            v-if="currentLanguage === defaultLocale"
+            data-test-id="selected-language-badge"
+            class="ml-1 badge badge-white font-weight-normal border border-darkened">
+            Default
+          </div>
         </span>
       </template>
       <BDropdownItem
@@ -21,9 +30,27 @@ of the MIT license. See the LICENSE file for details. -->
         :active="obj.active"
         :key="key"
         class="dropdown-locale-item"
-        @click="selectLocale(obj.locale)"
+        :class="{'is-editable': showEdit }"
+        @click.prevent="selectLocale(obj.locale)"
       >
-        {{ obj.locale }}
+        <div class="d-flex align-items-center justify-content-between w-100 pr-2">
+          <div class="text-truncate pl-3 pr-2 py-2 label">
+            {{ obj.locale }}
+            <div
+              v-if="obj.locale === defaultLocale"
+              class="ml-1 badge badge-white font-weight-normal border border-darkened">
+              Default
+            </div>
+          </div>
+          <BButton
+            type="button"
+            class="btn-sm btn-edit"
+            variant="primary"
+            @click.stop.prevent="editLocale(obj.locale)">
+            <FrIcon
+              name="edit" />
+          </BButton>
+        </div>
       </BDropdownItem>
       <BDropdownDivider
         v-if="showAdd"
@@ -45,6 +72,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import {
+  BButton,
   BDropdown,
   BDropdownDivider,
   BDropdownItem,
@@ -54,6 +82,7 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 export default {
   name: 'LocaleDropdown',
   components: {
+    BButton,
     BDropdown,
     BDropdownDivider,
     BDropdownItem,
@@ -78,6 +107,14 @@ export default {
       default: '',
       type: String,
     },
+    defaultLocale: {
+      default: '',
+      type: String,
+    },
+    showEdit: {
+      default: false,
+      type: Boolean,
+    },
   },
   methods: {
     addLocale() {
@@ -86,6 +123,33 @@ export default {
     selectLocale(locale) {
       this.$emit('select-locale', locale);
     },
+    editLocale(locale) {
+      this.$emit('edit-locale', locale);
+    },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.btn-edit {
+  display: none;
+}
+
+.dropdown-locale-item {
+  width: 200px;
+
+  &:hover.is-editable {
+    .btn-edit {
+      display: block;
+    }
+
+    /deep/ .dropdown-item::after {
+      display: none;
+    }
+  }
+
+  /deep/ .dropdown-item {
+    padding: 0;
+  }
+}
+</style>
