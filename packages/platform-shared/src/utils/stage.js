@@ -92,7 +92,11 @@ export function setStageValue(pageNode, id, key, value) {
     }
   // We are setting values on the page node
   } else if (value) {
-    stage[key] = value;
+    if (typeof value === 'object' && !Object.keys(value).length) {
+      delete stage[key];
+    } else {
+      stage[key] = value;
+    }
   } else {
     delete stage[key];
   }
