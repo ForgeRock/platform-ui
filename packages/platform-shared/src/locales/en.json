@@ -634,6 +634,10 @@
     "body": "Are you sure you want to delete this {type}?",
     "deleteType": "Delete {type}"
   },
+  "statePanel": {
+    "title": "{futureState} {type}?",
+    "body": "Are you sure you want to {futureState} this {type}?"
+  },
   "schemaResetSecret": {
     "title": "Reset {field}",
     "modalBody": "Choose a new {field}.",

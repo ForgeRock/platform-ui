@@ -1072,6 +1072,10 @@
       "noTemplatesTitle": "You haven't added any email templates yet",
       "newTemplate": "New Template",
       "template": "Template",
+      "list": {
+        "displayName": "Name",
+        "description": "Description"
+      },
       "errorRetrievingList": "Error retrieving email template list.",
       "errorRetrievingTemplate": "Error retrieving email template.",
       "errorRetrievingProviderConfig": "Error retrieving email provider config. You may need to set this up.",
@@ -1083,28 +1087,7 @@
       "successSaving": "Successfully saved email template.",
       "successDuplicating": "Successfully duplicated email template.",
       "createModal": {
-        "title": "New Template",
-        "name": "Template Name",
-        "description": "Human-readable name for this email template.",
-        "id": "Template ID"
-      }
-    },
-    "preview": {
-      "errorRetrievingTemplate": "Error retrieving email template.",
-      "title": "Email Template",
-      "sendTestEmail": "Send Test Email",
-      "template": "Template",
-      "preview": "Preview",
-      "noSubjectInformation": "No Subject Information",
-      "noFromInformation": "No From Information",
-      "noMessageInformation": "No Message Information",
-      "defaultLocale": "en",
-      "sendTestEmailModal": {
-        "title": "Send Test Email",
-        "testEmailAddressDescription": "Email address to send test email to.",
-        "emailSent": "Email sent!",
-        "emailSentDescription": "If you don't receive an email within the next hour, please check logs for \"Failed Sending Notification\" events and review your configuration according to Email Provider. If the problem persists, please contact support.",
-        "errorTestEmail": "Test email not sent"
+        "title": "New Template"
       }
     },
     "provider": {
@@ -1153,22 +1136,60 @@
       "title": "Add a Locale"
     },
     "edit": {
-      "addLocale": "Add a locale",
-      "defaultLocale": "Default Locale",
-      "editTemplate": "Edit Template",
+      "advancedEditorOption": "Advanced Editor",
+      "contentOption": "Content",
+      "descriptionFieldDescription": "Provide a brief description of this template.",
       "fromAddressFieldTitle": "From Address",
       "fromAddressFieldDescription": "Enter an email address for the group or individual sending the email.",
       "fromNameFieldTitle": "From Name",
       "fromNameFieldDescription": "Name of sending organization (eg. 'Organization Name').",
       "locale": "Locale",
+      "localeModal": {
+        "addLocaleTitle": "Add Locale",
+        "editLocaleTitle": "Edit Locale",
+        "deleteLocale": "Delete Locale",
+        "localeLabel": "Code",
+        "localeDescription": "Enter the <a href=\"https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes\" target=\"_blank\">ISO 639-1 code</a> for the default locale (eg. <code>en</code>).",
+        "makeDefault": "Make Default"
+      },
       "markdown": "Markdown",
-      "message": "Message",
-      "messageDescription": "Use <a href=\"https://daringfireball.net/projects/markdown/syntax\" target=\"_blank\">markdown</a> to format your email content and use <a href=\"#\" onclick=\"event.preventDefault(); window.showAvailablePropertiesModal()\" target=\"blank\">available variables</a> in your body text eg. <code>{{object.givenName}}</code>",
-      "resetStyles": "Reset styles",
-      "setAsDefaultLocale": "Set as Default Locale",
+      "resetStyles": "Reset to Default",
+      "saveSuccess": {
+        "whenSaving": "Template saved",
+        "whenActivating": "Template activated",
+        "whenDeactivating": "Template deactivated",
+        "whenSavingDetails": "Template details saved",
+        "whenDuplicating": "Template duplicated",
+        "whenDeleting": "Template deleted",
+        "whenLocaleSaved": "Locale saved",
+        "whenLocaleDeleted": "Locale deleted"
+      },
+      "saveError": {
+        "whenSaving": "Error saving template",
+        "whenActivating": "Error activating template",
+        "whenDeactivating": "Error deactivating template",
+        "whenSavingDetails": "Error saving details",
+        "whenDuplicating": "Error duplicating template",
+        "whenDeleting": "Error deleting template",
+        "whenLocaleSaved": "Error saving locale",
+        "whenLocaleDeleted": "Error deleting locale"
+      },
+      "sendTestEmail": "Send Test Email",
+      "sendTestEmailModal": {
+        "title": "Send Test Email",
+        "testEmailAddressDescription": "Email address to send test email to.",
+        "emailSent": "Email sent!",
+        "emailSentDescription": "If you don't receive an email within the next hour, please check logs for \"Failed Sending Notification\" events and review your configuration according to Email Provider. If the problem persists, please contact support.",
+        "errorTestEmail": "Test email not sent"
+      },
+      "settingsOption": "Settings",
+      "settingsTitle": "Template Settings",
       "subject": "Subject",
-      "stylesHeader": "Styles",
-      "stylesHelpMessage": "Edit inline styles to customize the look and feel of your email.",
+      "stylesOption": "Styles",
+      "switchToAdvanced": "Switch to Advanced",
+      "switchToAdvancedTitle": "Switch to Advanced Editor?",
+      "switchToAdvancedDescription": "Are you sure you want to switch to the advanced editor? Your current markdown will be converted to raw HTML, and you won’t be able to switch back to the markdown editor.",
+      "variablesOption": "Variables",
       "displayNameFieldTitle": "Template Name"
     }
   },
