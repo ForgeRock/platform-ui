@@ -5,7 +5,7 @@
  * or with one of its affiliates. All use shall be exclusively subject
  * to such license between the licensee and ForgeRock AS.
  */
-/deep/ .multiselect {
+::v-deep .multiselect {
   cursor: pointer;
   box-sizing: border-box;
   min-height: 48px;

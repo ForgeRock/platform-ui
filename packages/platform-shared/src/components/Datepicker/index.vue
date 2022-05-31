@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -83,7 +83,7 @@ export default {
 <style lang="scss" scoped>
 // floating label support
 .input-has-value {
-  /deep/ label {
+  ::v-deep label {
     padding-top: 1.25rem;
     padding-bottom: 0.25rem;
     position: relative;
@@ -106,14 +106,14 @@ export default {
 
 // remove blue border of calendar grid
 .b-form-datepicker {
-  /deep/ .form-control {
+  ::v-deep .form-control {
     border: none;
     box-shadow: none;
     overflow: hidden;
   }
 }
 
-/deep/ .b-calendar-grid-help {
+::v-deep .b-calendar-grid-help {
   border-top: none !important;
 }
 

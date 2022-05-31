@@ -24,7 +24,7 @@
       font-weight: 500;
 
       & + p {
-        margin-top: ($spacer/4);
+        margin-top: calc($spacer / 4);
       }
     }
 

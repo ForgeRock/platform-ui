@@ -42,15 +42,15 @@
 @mixin fr-menu-collapsed {
   width: $fr-sidemenu-width-sm;
 
-  /deep/ {
+  ::v-deep {
     .dropdown-toggle::after {
       opacity: 0;
     }
   }
 
   .sidebar-item-text,
-  /deep/ .menu-item-text,
-  /deep/ .fr-menu-item-submenuitems,
+  ::v-deep .menu-item-text,
+  ::v-deep .fr-menu-item-submenuitems,
   .fr-logo-horizontal {
     display: none;
   }
@@ -63,14 +63,14 @@
     width: $fr-sidemenu-width-lg;
 
     .fr-sidebar-nav {
-      /deep/ {
+      ::v-deep {
         .dropdown-toggle::after {
           opacity: 1;
         }
       }
 
       > li > ul,
-      /deep/ .fr-menu-item-submenuitems {
+      ::v-deep .fr-menu-item-submenuitems {
         display: block;
       }
 
@@ -83,7 +83,7 @@
       }
     }
 
-    /deep/ .menu-item-text,
+    ::v-deep .menu-item-text,
     .sidebar-item-text {
       display: inline;
     }
@@ -240,7 +240,7 @@
         background-color: $fr-sidemenu-hover;
       }
 
-      /deep/ {
+      ::v-deep {
         .b-dropdown {
           width: 100%;
 

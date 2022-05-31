@@ -17,7 +17,8 @@
       "else",
       "while",
       "mixin",
-      "supports"
+      "supports",
+      "use"
     ],
     "at-rule-no-unknown": null,
     "color-named": "always-where-possible",
@@ -51,7 +52,8 @@
       "skew",
       "str-replace",
       "theme-color",
-      "url"
+      "url",
+      "math.div"
     ],
     "function-url-quotes": "always",
     "media-feature-name-no-vendor-prefix": true,
@@ -119,6 +121,14 @@
           "deep",
           "global",
           "export"
+        ]
+      }
+    ],
+    "selector-pseudo-element-no-unknown": [
+      true,
+      {
+        "ignorePseudoElements": [
+          "v-deep"
         ]
       }
     ],

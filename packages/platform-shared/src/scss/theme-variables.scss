@@ -59,7 +59,7 @@ $theme-colors: (
 $text-muted: $gray-500;
 
 /* Spacing
-  
+
    Control the default styling of most Bootstrap elements by modifying these
    variables. Mostly focused on spacing.
    You can add more entries to the $spacers map, should you need more variation. */
@@ -158,7 +158,7 @@ $input-focus-border-color: $component-active-bg;
 $input-btn-focus-color: $component-active-bg;
 
 /* Headers styles and sizes */
-$headings-margin-bottom: ($spacer / 2);
+$headings-margin-bottom: calc($spacer / 2);
 $headings-font-family: inherit;
 $headings-font-weight: $font-weight-light;
 $headings-line-height: 1.2;

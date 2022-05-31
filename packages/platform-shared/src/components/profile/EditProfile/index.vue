@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -141,7 +141,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/deep/ {
+::v-deep {
   .fr-profile-image {
     .fr-edit-icon {
       position: absolute;

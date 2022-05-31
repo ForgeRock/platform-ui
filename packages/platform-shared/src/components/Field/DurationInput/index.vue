@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -182,7 +182,7 @@ export default {
     background-image: none;
   }
 
-  /deep/ .form-label-group {
+  ::v-deep .form-label-group {
     .form-label-group-input input {
       border-top-right-radius: 0;
       border-bottom-right-radius: 0;

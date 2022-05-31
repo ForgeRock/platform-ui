@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -142,17 +142,17 @@ export default {
 </script>
 <style lang="scss" scoped>
 .timezone-dropdown {
-  /deep/ .dropdown-menu.show {
+  ::v-deep .dropdown-menu.show {
     min-width: 300px;
     padding: 0.5rem;
   }
 }
 
 .timezone-field {
-  /deep/ .form-label-group-input {
+  ::v-deep .form-label-group-input {
     margin-left: -10px;
 
-    /deep/ input {
+    ::v-deep input {
       border-left: none !important;
     }
   }

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -524,7 +524,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-  /deep/ .table tr:not(.b-table-empty-row) td {
+  ::v-deep .table tr:not(.b-table-empty-row) td {
     cursor: pointer;
   }
 

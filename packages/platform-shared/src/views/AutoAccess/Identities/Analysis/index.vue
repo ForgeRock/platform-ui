@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -734,11 +734,11 @@ export default {
   width: 20%;
 }
 
-/deep/ .accordion .card {
+::v-deep .accordion .card {
   overflow: visible;
 }
 
-/deep/ .card-header {
+::v-deep .card-header {
   padding: 10px;
 }
 

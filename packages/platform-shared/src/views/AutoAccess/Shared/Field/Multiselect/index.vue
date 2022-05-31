@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -273,7 +273,7 @@ export default {
 <style lang="scss" scoped>
 @import '~@forgerock/platform-shared/src/components/Field/assets/vue-multiselect.scss';
 
-/deep/ .multiselect:focus-within {
+::v-deep .multiselect:focus-within {
   border-color: $blue;
   box-shadow: 0 0 0 0.0625rem $blue;
 }

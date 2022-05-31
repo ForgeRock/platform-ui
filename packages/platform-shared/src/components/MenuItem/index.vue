@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -230,7 +230,7 @@ li {
   }
 }
 
-/deep/ a.nav-link,
+::v-deep a.nav-link,
 button.btn.btn-secondary.nav-link,
 button.btn.btn-secondary.dropdown-toggle {
   color: $fr-sidemenu-font-color;
@@ -274,7 +274,7 @@ button.btn.btn-secondary.dropdown-toggle {
     padding: 15px 60px 15px 19px;
   }
 
-  /deep/ a {
+  ::v-deep a {
     padding: 10px 5px 10px 49px;
     height: 41px;
   }
