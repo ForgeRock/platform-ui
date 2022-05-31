@@ -459,7 +459,7 @@ export default {
 <style lang="scss" scoped>
   /* stylelint-disable */
   .add-data-source-modal {
-    /deep/ {
+    ::v-deep {
       .fr-datatable {
         td {
           &:nth-child(2) {
@@ -496,7 +496,7 @@ export default {
       }
     }
 
-    /deep/
+    ::v-deep
     &-define-form {
       .data-source-preview-container {
         max-height: calc(100vh - 42rem);

@@ -103,7 +103,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  /deep/
+  ::v-deep
   .create-mapping-modal-mapping {
     .list-group-item-action {
       display: block;

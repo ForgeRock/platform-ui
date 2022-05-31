@@ -49,7 +49,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/deep/ code {
+::v-deep code {
   white-space: pre-wrap !important;
 }
 </style>

@@ -268,7 +268,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/deep/ {
+::v-deep {
   li {
     text-align: left;
   }

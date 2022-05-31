@@ -114,7 +114,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  /deep/
+  ::v-deep
   .edit-data-source-modal {
     .data-source-preview-container {
       max-height: calc(100vh - 42rem);
