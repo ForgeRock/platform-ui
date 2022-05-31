@@ -734,11 +734,11 @@ export default {
   width: 20%;
 }
 
-/deep/ .accordion .card {
+::v-deep .accordion .card {
   overflow: visible;
 }
 
-/deep/ .card-header {
+::v-deep .card-header {
   padding: 10px;
 }
 

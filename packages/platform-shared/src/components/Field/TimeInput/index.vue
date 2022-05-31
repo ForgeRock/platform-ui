@@ -162,13 +162,13 @@ export default {
     top: 1px;
     height: calc(100% - 2px);
 
-    /deep/ button {
+    ::v-deep button {
       background-color: initial;
       color: $gray-500;
       padding: 0.85rem 0.5rem;
     }
 
-    /deep/ &.show > .btn-secondary.dropdown-toggle {
+    ::v-deep &.show > .btn-secondary.dropdown-toggle {
       background-color: initial;
       color: $gray-500;
     }
