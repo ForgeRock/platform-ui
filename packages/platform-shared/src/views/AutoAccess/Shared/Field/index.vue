@@ -410,7 +410,7 @@ export default {
   margin-bottom: 0 !important;
   border: none !important;
 
-  /deep/ {
+  ::v-deep {
     input:not(.multiselect__input),
     textarea {
       border: 1px solid $danger;

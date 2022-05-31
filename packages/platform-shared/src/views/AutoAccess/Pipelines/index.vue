@@ -499,7 +499,7 @@ export default {
 </script>
 <style lang="scss" scoped>
     .pipelines {
-      /deep/ {
+      ::v-deep {
         .fr-datatable {
           .table-responsive {
             overflow: visible;

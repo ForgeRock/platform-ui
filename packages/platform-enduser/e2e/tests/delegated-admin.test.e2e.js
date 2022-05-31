@@ -222,8 +222,8 @@ filterTests(['forgeops', 'cloud'], () => {
 
         // Navigate to Role list view and ensure that columns do/don't appear based on permissions set on role
         openDelegatedAdminManagedPage('internal', 'role');
-        cy.findByRole('columnheader', { name: 'Name (Click to sort Ascending)' });
-        cy.findByRole('columnheader', { name: 'Description (Click to sort Ascending)' }).should('not.exist');
+        cy.findByRole('columnheader', { name: 'Name (Click to sort ascending)' });
+        cy.findByRole('columnheader', { name: 'Description (Click to sort ascending)' }).should('not.exist');
 
         // Ensure that only action available is edit, and no New button exists
         cy.findByRole('searchbox', { name: 'Search' }).type(`${internalRoleName}{enter}`);

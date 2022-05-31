@@ -745,7 +745,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/deep/ .card-tabs-vertical {
+::v-deep .card-tabs-vertical {
   .card-body {
     padding: 0;
   }
@@ -755,7 +755,7 @@ export default {
   }
 }
 
-/deep/ .fr-tag {
+::v-deep .fr-tag {
   max-width: 230px;
 }
 
@@ -765,7 +765,7 @@ export default {
   z-index: 1020;
 }
 
-/deep/ .dropdown-item.active {
+::v-deep .dropdown-item.active {
   position: relative;
 
   &::after {
