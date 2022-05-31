@@ -112,7 +112,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/deep/ input[placeholder] { text-overflow: ellipsis; }
+::v-deep input[placeholder] { text-overflow: ellipsis; }
 input[placeholder] { text-overflow: ellipsis; }
 
 .form-label-group {
@@ -209,12 +209,12 @@ input[placeholder] { text-overflow: ellipsis; }
 }
 
 .form-label-group .polyfill-placeholder {
-  padding-top: $input-btn-padding-y + $input-btn-padding-y * (2 / 3);
-  padding-bottom: $input-btn-padding-y / 3;
+  padding-top: $input-btn-padding-y + $input-btn-padding-y * calc(2 / 3);
+  padding-bottom: calc($input-btn-padding-y / 3);
   color: $input-color;
 
   ~ label {
-    padding-top: $input-btn-padding-y / 3;
+    padding-top: calc($input-btn-padding-y / 3);
     padding-bottom: 0;
     font-size: 12px;
     color: $label-color;

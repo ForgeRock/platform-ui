@@ -238,14 +238,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  /deep/ {
+  ::v-deep {
     .table {
       table-layout: auto !important;
     }
   }
 
   .fr-datatable {
-    /deep/ {
+    ::v-deep {
       .table-responsive {
         margin-bottom: 0;
 

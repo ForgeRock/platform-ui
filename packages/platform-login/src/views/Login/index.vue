@@ -1259,7 +1259,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#callbacksPanel /deep/ {
+#callbacksPanel ::v-deep {
   span.material-icons {
     line-height: 22px;
   }
