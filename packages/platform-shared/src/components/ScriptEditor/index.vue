@@ -437,7 +437,7 @@ export default {
   max-height: 50px;
 }
 
-/deep/ {
+::v-deep {
   .file-import-floating-label {
     margin: -13px;
   }

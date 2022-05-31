@@ -182,7 +182,7 @@ export default {
     background-image: none;
   }
 
-  /deep/ .form-label-group {
+  ::v-deep .form-label-group {
     .form-label-group-input input {
       border-top-right-radius: 0;
       border-bottom-right-radius: 0;
