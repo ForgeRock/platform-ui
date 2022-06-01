@@ -51,7 +51,7 @@
       "minmax",
       "linear-gradient",
       "change-color",
-      "cubic-bezier",
+      "cubic-bezier"
     ],
     "media-feature-name-no-vendor-prefix": true,
     "no-descending-specificity": null,
