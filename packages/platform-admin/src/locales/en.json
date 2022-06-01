@@ -2874,6 +2874,7 @@
       "enableDefaultCertifierDescription": "Certifier to be used if a review has no certifiers.",
       "enableEscalation": "Enable escalation",
       "enableEscalationDescription": "Enable certification escalation.",
+      "enableReassignment": "Enable line-item reassignment",
       "enableReassignmentDelegation": "Enable line-item reassignment and delegation",
       "enableReassignmentDelegationDescription": "Allow the certifier to reassign or forward the line item to another user.",
       "enableReassignmentDelegationPermissions": "Choose the actions a certifier can perform on a reassigned item",
@@ -2908,6 +2909,7 @@
       "owner": "Owner",
       "ownersAdministrators": "Owners and administrators",
       "processRemediation": "Process remediation",
+      "processRemediationWorkFlow": "Process remediation workflow",
       "processRemediationDescription": "Specify a remediation workflow to invoke after access has been revoked by the certifier.",
       "reassign": "Reassign",
       "reassignForward": "Reassign/Forward",
@@ -2988,7 +2990,8 @@
       "months": "month(s)",
       "years": "year(s)",
       "immediately": "immediately",
-      "afterADuration": "after a duration"
+      "afterADuration": "after a duration",
+      "allowExceptionFor": "For {exceptionDuration} {exceptionTimespan}"
     }
   }
 }
