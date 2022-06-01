@@ -6,6 +6,10 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <Component :is="'style'">
+      <template v-if="googleFontUrl">
+        @import url('{{ googleFontUrl }}');
+      </template>
+
       /**
       Shared styles
       */
@@ -13,8 +17,8 @@ of the MIT license. See the LICENSE file for details. -->
       background-color: {{ backgroundColor }};
       }
 
-      #app {
-      font-family: {{ theme.fontFamily }}, sans-serif;
+      #app <template v-if="!mock">.fr-theme-preview</template> {
+        font-family: {{ fontFamily }}, sans-serif;
       }
 
       .fr-body-image {
@@ -480,11 +484,47 @@ export default {
 
       return tempBackground;
     },
+    fontFamily() {
+      const { fontFamily } = this.theme;
+      if (fontFamily) {
+        return typeof fontFamily === 'string' ? fontFamily : fontFamily.family;
+      }
+      return '';
+    },
     logoProfile() {
       return this.getLocalizedString(this.theme.logoProfile, i18n.locale, i18n.fallbackLocale);
     },
     logoProfileCollapsed() {
       return this.getLocalizedString(this.theme.logoProfileCollapsed, i18n.locale, i18n.fallbackLocale);
+    },
+    googleFontUrl() {
+      const apiUrl = [];
+      const themeFont = this.theme?.fontFamily;
+
+      if (typeof themeFont === 'object') {
+        apiUrl.push('https://fonts.googleapis.com/css?family=');
+        apiUrl.push(themeFont.family.replace(/ /g, '+'));
+
+        // Includes all possible font variants (weights).
+        // Pushes each variant weight separated by a comma.
+        themeFont.variants.forEach((elm, index) => {
+          if (index === 0) {
+            apiUrl.push(':');
+          }
+          apiUrl.push(elm);
+          // To avoid adding in an unnecessary last comma
+          if (index < themeFont.variants.length - 1) {
+            apiUrl.push(',');
+          }
+        });
+
+        // Adds &display=swap param at end of url to ensure that the
+        // fallback font is used before the google font loads
+        apiUrl.push('&display=swap');
+      }
+      // Creates one solid string to inject in the theme via import
+      // (e.g. https://fonts.googleapis.com/css?family=Open+Sans:200,300,regular&display=swap)
+      return apiUrl.length ? apiUrl.join('') : null;
     },
   },
 };

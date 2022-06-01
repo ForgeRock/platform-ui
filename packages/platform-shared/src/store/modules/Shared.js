@@ -23,6 +23,7 @@ const defaultState = {
   fraasPromotionUrl: null,
   fraasPromotionIngressUrl: null,
   fraasPromotionEgressUrl: null,
+  googleFontsApiKey: '',
   googleMapsApiKey: '',
   governanceEnabled: false,
   governanceEnabledV2: false,
@@ -88,6 +89,10 @@ const mutations = {
       if (env.VUE_APP_FRAAS_PROMOTION_CONFIG_EGRESS_URL) {
         state.fraasPromotionEgressUrl = env.VUE_APP_FRAAS_PROMOTION_CONFIG_EGRESS_URL;
       }
+    }
+
+    if (env.VUE_APP_GOOGLE_FONTS_API_KEY) {
+      state.googleFontsApiKey = env.VUE_APP_GOOGLE_FONTS_API_KEY;
     }
 
     if (env.VUE_APP_GOOGLE_MAPS_API_KEY) {
