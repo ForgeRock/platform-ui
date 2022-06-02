@@ -236,13 +236,16 @@ export default {
     },
     /**
      * Save a theme if it doesn't exist or update an existing theme
-     * @param {object} themesConfig - config metadata of themes
+     * @param {Object} themesConfig - config metadata of themes
+     * @param {Boolean} suppressSuccessMessage - suppress the success messeage
      */
-    saveTheme(themesConfig) {
+    saveTheme(themesConfig, suppressSuccessMessage) {
       themesConfig.realm[this.realm] = sortBy(themesConfig.realm[this.realm], 'name');
       return putConfig('ui/themerealm', themesConfig).then(({ data }) => {
         this.setThemeData(data, this.realm);
-        this.displayNotification('AdminMessage', 'success', this.$t('hostedPages.theme.successSave'));
+        if (!suppressSuccessMessage) {
+          this.displayNotification('AdminMessage', 'success', this.$t('hostedPages.theme.successSave'));
+        }
       }).catch((error) => {
         this.showErrorMessage(error, this.$t('hostedPages.errorSavingTheme'));
       });

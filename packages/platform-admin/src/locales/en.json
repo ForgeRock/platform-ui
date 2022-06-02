@@ -338,6 +338,10 @@
     "editJourney": "Edit Journey",
     "service": "Service",
     "duplicate": "Duplicate",
+    "deleteSelectedJourneys": "Are you sure you want to delete the selected journeys?",
+    "deleteJourneys": "Delete Journeys",
+    "journeysSuccessfullyDeleted": "Journeys successfully deleted",
+    "deletingJourneys": "Deleting journeys",
     "editDetails": "Edit Details",
     "copyOf": "Copy of {treeId}",
     "preview": "Preview",
@@ -345,6 +349,10 @@
     "adminDefault": "Admin Default",
     "setAsAdminDefault": "Set as Admin Default",
     "setAsDefault": "Set as Default",
+    "export": "Export",
+    "exportJourneys": "Export Journeys",
+    "importJourneys": "Import Journeys",
+    "import": "Import",
     "defaultCheckboxTitle": "Default journey for end users",
     "defaultAdminCheckboxTitle": "Default journey for admins",
     "journeyDeleteSuccess": "\"{treeId}\" journey successfully deleted.",
@@ -396,6 +404,89 @@
       "identityManagement": "Identity Management",
       "utilities": "Utilities",
       "uncategorized": "Uncategorized"
+    },
+    "treeImportExport": {
+      "dependencies": "Dependencies",
+      "dependencyTypes": {
+        "trees": "Journeys",
+        "scripts": "Scripts",
+        "emailTemplates": "Email Templates",
+        "socialIdentityProviders": "Social Identity Providers",
+        "themes": "Themes",
+        "saml2Entities": "SAML2 Entities",
+        "circlesOfTrust": "Circles of Trust"
+      },
+      "components": {
+        "conflictsView": {
+          "keepExisting": "Keep Existing",
+          "replace": "Replace",
+          "selectAll": "Select all"
+        },
+        "exportDetails": {
+          "gatheringData": "Gathering export data...",
+          "requiredDependenciesDescription": "In addition to the journeys themselves, the following required dependencies will be exported.",
+          "optionalDependencies": "Optional Dependencies",
+          "optionalDependenciesDescription": "These dependencies are also required for the exported journeys to function, but can be omitted from this export if the importing environment already contains matching configurations.",
+          "journeyWillFail": "Note: Journey import will fail if any nested journeys do not exist.",
+          "nestedJourneys": "Nested Journeys"
+        },
+        "previewList": {
+          "renamed": "Renamed",
+          "replace": "Replace"
+        }
+      },
+      "import": {
+        "importing": "Importing",
+        "imported": "Imported",
+        "journey": "journey",
+        "journeys": "journeys",
+        "skipBackupConfirm": "Are you sure you want to skip backup? There will be no way to restore after import without it.",
+        "chooseFile": "Choose a JSON file containing the journey configurations to import.",
+        "invalidImportFile": "Invalid import file",
+        "missingEsvs": "Import cannot be processed. Import file contains environment specific variable and/or secret replacement strings (ESV's) which are missing corresponding definitions in this tenant. The following ESV's are undefined: ",
+        "identityResourceDescription": "Managed identity to use for all journeys being imported.",
+        "overwriteAll": "Overwrite all conflicts (default)",
+        "manuallyPick": "Manually pick conflict resolution",
+        "treeConflictsDescription": "You are trying to import the following journeys that already exist in this realm. Choose whether to keep the existing journeys or overwrite with the imported versions.",
+        "dependencyConflictsDescription": "The following items already exist in this realm. What would you like to do?",
+        "noJourneysSelected": "You haven't selected any journeys to import",
+        "backToPrevious": "Go back to previous screen and choose at least one journey to import to continue.",
+        "importComplete": "Import Complete",
+        "treesWithErrors": "The following trees had one or more errors during import:",
+        "gatheringBackupData": "Gathering backup data...",
+        "skipBackup": "Skip Backup",
+        "downloadBackup": "Download Backup",
+        "next": "Next",
+        "tryAgain": "Try Again",
+        "done": "Done",
+        "startImport": "Start Import",
+        "processing": "Processing",
+        "importInProgress": "Import in progress. Do not close this window until import is complete.",
+        "importSummary": "Import Summary",
+        "importFailed": "Import Failed",
+        "resolveJourneyConflicts": "Resolve Journey Conflicts",
+        "noJourneys": "No Journeys to Import",
+        "resolveDependencyConflicts": "Resolve Dependency Conflicts",
+        "conflictResolution": "Conflict Resolution",
+        "steps": {
+          "backupTrees": {
+            "description": "This process will import journeys and any required dependencies and can overwrite existing configuration if you choose to do so. As such, before importing any journeys, you must first download a backup of your existing journeys to restore in case of errors or unexpected behaviors during or after import.",
+            "important": "Important",
+            "notice": "Make sure you keep this backup as there will be no way to restore after import without it.",
+            "hide": "Hide",
+            "show": "Show",
+            "backupSummary": "backup summary"
+          },
+          "missingInnerTrees": {
+            "importFailed": "Import Failed",
+            "failureReason": "This import failed because the following nested journeys are missing from both the import file and currently existing journeys.",
+            "importAgain": "Re-export with the missing journeys and then try import again."
+          },
+          "previewImport": {
+            "inAddition": "In addition to journeys, the following dependencies will be imported."
+          }
+        }
+      }
     }
   },
   "bulkImport": {
