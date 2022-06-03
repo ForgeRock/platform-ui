@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -22,17 +22,22 @@ of the MIT license. See the LICENSE file for details. -->
           <BCol cols="10">
             <BRow>
               <BCol md="6">
-                <BImg
-                  :width="24"
-                  class="mr-4"
+                <span
                   v-if="slotData.uiConfig.buttonImage"
-                  :alt="slotData.uiConfig.buttonDisplayName"
-                  :src="slotData.uiConfig.buttonImage" />
+                  class="btn mr-4 p-2"
+                  :style="slotData.uiConfig.buttonCustomStyle">
+                  <BImg
+                    :width="21"
+                    :alt="slotData.uiConfig.buttonDisplayName"
+                    :src="slotData.uiConfig.buttonImage" />
+                </span>
                 <h5 class="mb-0 d-inline">
                   {{ slotData.uiConfig.buttonDisplayName }}
                 </h5>
               </BCol>
-              <BCol md="6">
+              <BCol
+                md="6"
+                class="p-2">
                 <span>
                   <template v-if="slotData.connected">
                     <FrIcon
