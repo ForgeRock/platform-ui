@@ -577,7 +577,7 @@
         "journeysActiveTitle": "Journeys",
         "journeysActiveDescription": "Successful or failed journey outcomes (timeout are not currently shown) in this realm for a given time period.",
         "journeysFilterButtonTitle": "View:",
-        "journeysModalSelected": "{count} filters applied",
+        "journeysModalSelected": "Show {count} journeys",
         "journeysModalSelectedNone": "No filters applied",
         "journeysModalDescription": "Clear filters and show all journeys",
         "journeysModalTitle": "Filter Journeys",
