@@ -88,6 +88,7 @@ export default {
   computed: {
     flatData() {
       let arr = [];
+      const { modelData, modelId } = this;
       if (modelData) {
         try {
           const source = modelData[modelId];
@@ -114,7 +115,6 @@ export default {
           this.error = 'No data available.';
         }
       }
-      const { modelData, modelId } = this;
       return arr;
     },
     centroidData() {
