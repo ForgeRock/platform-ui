@@ -12,7 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
           info
         </i>
         <div class="ml-2">
-          {{ $t('access.info.professionalUseOnly') }}
+          {{ $t('autoAccess.access.info.professionalUseOnly') }}
         </div>
       </div>
     </BAlert>
@@ -34,9 +34,9 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
-import FrField from '@forgerock/platform-shared/src/components/Field';
 import { BCard, BAlert } from 'bootstrap-vue';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
+import FrField from '../Shared/Field';
 import RocPR from './RocPR';
 
 export default {

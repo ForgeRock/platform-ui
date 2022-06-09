@@ -36,7 +36,7 @@ of the MIT license. See the LICENSE file for details. -->
     </div>
     <TableExecutionDetails
       v-else
-      :pipeline_executions="executions"
+      :pipeline-executions="executions"
       :pending-status="pendingStatus"
       :is-training="pipeline ? pipeline.pipeline_type === 'Training' : false"
       @viewLogs="setLogs"

@@ -3,42 +3,39 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div>
-    <FrTable
-      :fields="fields"
-      :items="rows"
-      fixed
-      :class="`border pipelines-table-execution-details ${showPipelineName ? &quot;has-name-col&quot; : &quot;&quot;}`"
-      v-if="pipeline_executions.length > 0"
-    >
-      <template #cell(status)="data">
-        <TableExecutionStatusBadge
-          :execution="data.item"
-          :loading="pendingStatus.indexOf(data.item.execution_id) > -1"
-        />
-      </template>
-      <template #cell(start_time)="data">
-        <RelativeTime
-          :timestamp="fromUnix(data.item.start_time)"
-          :include-ago="true"
-          :max-seconds="604800"
-          :include-absolute="true"
-        />
-      </template>
-      <template #cell(end_time)="data">
-        <RelativeTime
-          :timestamp="fromUnix(data.item.end_time)"
-          v-if="data.item.end_time"
-          :include-ago="true"
-          :max-seconds="604800"
-          :include-absolute="true"
-        />
-      </template>
-    </FrTable>
-    <div v-else>
-      No existing runs
-    </div>
-    <div>table exec</div>
+  <FrTable
+    :fields="fields"
+    :items="rows"
+    fixed
+    :class="`border pipelines-table-execution-details ${showPipelineName ? &quot;has-name-col&quot; : &quot;&quot;}`"
+    v-if="pipelineExecutions.length > 0"
+  >
+    <template #cell(status)="data">
+      <TableExecutionStatusBadge
+        :execution="data.item"
+        :loading="pendingStatus.indexOf(data.item.execution_id) > -1"
+      />
+    </template>
+    <template #cell(start_time)="data">
+      <RelativeTime
+        :timestamp="fromUnix(data.item.start_time)"
+        :include-ago="true"
+        :max-seconds="604800"
+        :include-absolute="true"
+      />
+    </template>
+    <template #cell(end_time)="data">
+      <RelativeTime
+        :timestamp="fromUnix(data.item.end_time)"
+        v-if="data.item.end_time"
+        :include-ago="true"
+        :max-seconds="604800"
+        :include-absolute="true"
+      />
+    </template>
+  </FrTable>
+  <div v-else>
+    No existing runs
   </div>
 </template>
 <script>
@@ -106,7 +103,7 @@ export default {
       ].filter((field) => !!field);
     },
     rows() {
-      return this.pipeline_executions.map((execution) => ({
+      return this.pipelineExecutions.map((execution) => ({
         ...execution,
         dropdown: [
           (this.isTraining && execution.status === 'SUCCEEDED'
@@ -172,22 +169,18 @@ export default {
 };
 </script>
 <style lang="scss">
-  .pipelines-table-execution-details {
-    .table-responsive {
-      overflow: visible;
+    .pipelines-table-execution-details {
+        .table-responsive {
+            overflow: visible;
+        }
+        td, th {
+            padding-right: 0;
+            &:nth-last-child(2) {
+                width: 160px;
+            }
+            &:last-child {
+                width: 100px;
+            }
+        }
     }
-
-    td,
-    th {
-      padding-right: 0;
-
-      &:nth-last-child(2) {
-        width: 160px;
-      }
-
-      &:last-child {
-        width: 100px;
-      }
-    }
-  }
 </style>
