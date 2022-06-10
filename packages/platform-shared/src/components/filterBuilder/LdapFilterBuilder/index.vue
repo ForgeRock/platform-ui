@@ -16,7 +16,7 @@ of the MIT license. See the LICENSE file for details. -->
         @add-rule="updateFilter('add-rule', $event)"
         @remove-rule="updateFilter('remove-rule', $event)"
         @rule-change="updateFilter('rule-change', $event)"
-        @operator-change="updateFilter('operator-change', $event)"/>
+        @operator-change="updateFilter('operator-change', $event)" />
       <BButton
         class="px-0 pt-4 pb-0"
         variant="link"
