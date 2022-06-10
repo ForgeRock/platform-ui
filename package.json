@@ -51,6 +51,9 @@
     "vue-template-compiler": "2.6.11"
   },
   "resolutions": {
+    "mocha/yargs/y18n": "4.0.1",
+    "node-sass/sass-graph/yargs/y18n": "3.2.2",
+    "**/**/cypress-lighthouse/lighthouse/yargs/y18n": "3.2.2",
     "**/**/minimist": "1.2.5",
     "**/**/with/acorn": "4.0.13",
     "**/**/copy-webpack-plugin/serialize-javascript": "2.1.2"
