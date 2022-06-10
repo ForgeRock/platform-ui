@@ -52,8 +52,10 @@
   },
   "resolutions": {
     "mocha/yargs/y18n": "4.0.1",
-    "node-sass/sass-graph/yargs/y18n": "3.2.2",
     "node-sass/request/http-signature/jsprim/json-schema": "0.4.0",
+    "node-sass/sass-graph/yargs/y18n": "3.2.2",
+    "node-gyp": "5.0.4",
+    "node-pre-gyp": "0.17.0",
     "**/css-select/nth-check": "2.0.1",
     "**/**/cypress-lighthouse/lighthouse/yargs/y18n": "3.2.2",
     "**/**/with/acorn": "4.0.13",
