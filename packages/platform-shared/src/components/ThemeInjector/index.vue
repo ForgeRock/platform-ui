@@ -43,7 +43,7 @@ of the MIT license. See the LICENSE file for details. -->
       }
 
       <template v-if="mock">.fr-enduser-theme-preview</template> a {
-      font-weight: {{theme.boldLinks ? 700 : 400}};
+      font-weight: {{ theme.boldLinks ? 700 : 400 }};
       color: {{ theme.linkColor }};
       }
 
@@ -111,7 +111,7 @@ of the MIT license. See the LICENSE file for details. -->
       }
 
       .spinner-primary {
-        color: {{ theme.primaryColor }};
+      color: {{ theme.primaryColor }};
       }
     </Component>
 

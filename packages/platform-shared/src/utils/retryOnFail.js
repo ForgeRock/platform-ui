@@ -15,12 +15,14 @@ export default function retryOnFail(request, waitTimeMs = 1000, maxRetries = 5) 
       .then(resolve)
       .catch((e) => {
         if (maxRetries > 0) {
+          // eslint-disable-next-line no-console
           console.log(`RETRYING FAILED REQUEST (${maxRetries - 1} retries left)`);
           return delay(waitTimeMs)
             .then(retryOnFail.bind(null, request, waitTimeMs, maxRetries - 1))
             .then(resolve)
             .catch(reject);
         }
+        // eslint-disable-next-line no-console
         console.log('RETRY FAILURE', request.toString());
         return reject(e);
       });
