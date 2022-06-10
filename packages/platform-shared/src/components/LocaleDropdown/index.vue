@@ -12,7 +12,8 @@ of the MIT license. See the LICENSE file for details. -->
     >
       <template #button-content>
         {{ title || $t('locale.localeTitle') }}:
-        <span data-test-id="selected-language"
+        <span
+          data-test-id="selected-language"
           class="font-weight-bold">
           <span data-test-id="selected-language-text">
             {{ currentLanguage }}

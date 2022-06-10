@@ -9,7 +9,9 @@ of the MIT license. See the LICENSE file for details. -->
         {{ $t('scriptEditor.title') }}
       </label>
       <div class="d-flex align-items-center">
-        <label v-show="showScriptType" class="mr-1 mb-0">
+        <label
+          v-show="showScriptType"
+          class="mr-1 mb-0">
           {{ $t('scriptEditor.type') }}
         </label>
         <FrField
