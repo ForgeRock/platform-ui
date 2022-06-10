@@ -51,7 +51,7 @@ of the MIT license. See the LICENSE file for details. -->
           <div
             v-if="userId"
             class="text-muted"
-            style="flex-basis: 100px;">
+            style="flex-basis: 100px">
             <RelativeTime
               :timestamp="row.timestamp"
             />
@@ -243,7 +243,7 @@ export default {
         this.page = 0;
         this.pageMeta = [];
 
-        // this.fetchData();
+        this.fetchData();
       },
     },
   },
