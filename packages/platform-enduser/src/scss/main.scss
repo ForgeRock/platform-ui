@@ -5,12 +5,12 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-// General custom form adjustments (radio, checkbox, etc...)
+/* General custom form adjustments (radio, checkbox, etc...) */
 @import 'custom-form';
 @import 'devices';
 @import '~@forgerock/platform-shared/src/scss/main.scss';
 
-// Export colors to make them available in JS
+/* Export colors to make them available in JS */
 :export {
   /* stylelint-disable */
   basecolor: $primary;
@@ -38,7 +38,7 @@
   vertical-align: middle;
 }
 
-//Circle and icon
+/* Circle and icon */
 .fr-resource-circle {
   width: 75px;
   height: 75px;
@@ -53,8 +53,8 @@
   opacity: 0.5;
 }
 
-// Application adjustments (not related to themes
-// Center spinner
+/* Application adjustments (not related to themes
+   Center spinner */
 .v-spinner {
   .v-bounce1 {
     margin-left: auto;
@@ -79,13 +79,13 @@ h2 {
   font-weight: 400;
 }
 
-// Base application styles
+/* Base application styles */
 
 .cursor-pointer {
   cursor: pointer;
 }
 
-// Jumbotron
+/* Jumbotron */
 .fr-header-jumbotron {
   background-color: transparent;
 
@@ -99,7 +99,7 @@ h2 {
   }
 }
 
-// Input Group Button styles
+/* Input Group Button styles */
 .input-group .input-group-append {
   > .btn {
     border-color: $input-border-color;
@@ -110,13 +110,13 @@ label {
   color: $label-color;
 }
 
-// Basic Form
+/* Basic Form */
 .b-form-group .input-group .form-control {
   border-bottom-right-radius: 0.25rem;
   border-top-right-radius: 0.25rem;
 }
 
-// General page transition
+/* General page transition */
 .fade-enter-active,
 .fade-leave-active {
   transition-property: opacity;
@@ -132,20 +132,20 @@ label {
   opacity: 0;
 }
 
-// Base page headers
+/* Base page headers */
 .fr-page-header {
   margin-top: 15px;
   margin-bottom: 15px;
 }
 
-// Back bar
+/* Back bar */
 .fr-backbar {
   a:hover {
     text-decoration: none;
   }
 }
 
-// Form Break
+/* Form Break */
 .fr-form-break {
   display: flex;
   width: 100%;
@@ -273,13 +273,13 @@ table td.select {
   }
 }
 
-// Override for vue-multiselects which allow options to span multiple lines
+/* Override for vue-multiselects which allow options to span multiple lines */
 .multiselect__single,
 .multiselect__option span {
   white-space: normal !important;
   line-height: 1.5rem !important;
 }
 
-// Additional component level theme overrides must come after if you want access to bootstrap variables
-// These should also come last so they can override anything in the application
+/* Additional component level theme overrides must come after if you want access to bootstrap variables
+   These should also come last so they can override anything in the application */
 @import 'theme-components';

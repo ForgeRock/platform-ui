@@ -5,11 +5,11 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-// More complex component theming
+/* More complex component theming */
 #app {
   font-family: $fr-typeface;
 
-  //Alert Styling
+  /* Alert Styling */
   .alert {
     color: $fr-alert-text-color;
     background: lighten($info, 50.5%);

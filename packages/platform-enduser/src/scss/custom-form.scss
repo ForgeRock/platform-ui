@@ -5,9 +5,10 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-// Custom control indicators
-//
-// Build the custom controls out of psuedo-elements.
+/**
+ * Custom control indicators
+ * Build the custom controls out of psuedo-elements.
+ */
 
 .form-control {
   height: 50px;
@@ -16,7 +17,7 @@
 .custom-control-label {
   margin-bottom: 0;
 
-  // Background-color and (when enabled) gradient
+  /* Background-color and (when enabled) gradient */
   &::before {
     position: absolute;
     top: (($line-height-base - $custom-control-indicator-size) / 2);
@@ -32,7 +33,7 @@
     @include box-shadow($custom-control-indicator-box-shadow);
   }
 
-  // Foreground (icon)
+  /* Foreground (icon) */
   &::after {
     position: absolute;
     top: (($line-height-base - $custom-control-indicator-size) / 2);
@@ -47,9 +48,10 @@
   }
 }
 
-// Checkboxes
-//
-// Tweak just a few things for checkboxes.
+/**
+ * Checkboxes
+ * Tweak just a few things for checkboxes.
+ */
 .custom-checkbox {
   text-align: left;
 
@@ -98,9 +100,9 @@
   }
 }
 
-// Radios
-//
-// Tweak just a few things for radios.
+/* Radios
+ * Tweak just a few things for radios.
+ */
 .custom-radio {
   .custom-control-label::before {
     border-radius: $custom-radio-indicator-border-radius;
@@ -124,11 +126,11 @@
   }
 }
 
-// Select
-//
-// Replaces the browser default select with a custom one, mostly pulled from
-// http://primercss.io.
-//
+/**
+ * Select
+ * Replaces the browser default select with a custom one, mostly pulled from
+ * http:/*primercss.io.
+ */
 select.custom-select {
   display: inline-block;
   width: 100%;
@@ -156,11 +158,11 @@ select.custom-select {
     box-shadow: $custom-select-focus-box-shadow;
 
     &::-ms-value {
-      // For visual consistency with other platforms/browsers,
-      // suppress the default white text on blue background highlight given to
-      // the selected option text when the (still closed) <select> receives focus
-      // in IE and (under certain conditions) Edge.
-      // See https://github.com/twbs/bootstrap/issues/19398.
+      /* For visual consistency with other platforms/browsers,
+        suppress the default white text on blue background highlight given to
+        the selected option text when the (still closed) <select> receives focus
+        in IE and (under certain conditions) Edge.
+        See https:/*github.com/twbs/bootstrap/issues/19398. */
       color: $input-color;
       background-color: $input-bg;
     }
@@ -184,7 +186,7 @@ select.custom-select {
     background-image: none;
   }
 
-  // Hides the default caret in IE11
+  /* Hides the default caret in IE11 */
   &::-ms-expand {
     opacity: 0;
   }
@@ -204,7 +206,7 @@ select.custom-select {
   font-size: $custom-select-font-size-lg;
 }
 
-// Nav tabs
+/* Nav tabs */
 .nav-tabs {
   margin-bottom: 1.875rem;
 }
