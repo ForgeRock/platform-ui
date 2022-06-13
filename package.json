@@ -53,12 +53,12 @@
   "resolutions": {
     "mocha/yargs/y18n": "4.0.1",
     "node-sass/sass-graph/yargs/y18n": "3.2.2",
+    "node-sass/request/http-signature/jsprim/json-schema": "0.4.0",
     "**/**/cypress-lighthouse/lighthouse/yargs/y18n": "3.2.2",
-    "**/**/minimist": "1.2.5",
-    "**/**/with/acorn": "4.0.13",
-    "**/**/copy-webpack-plugin/serialize-javascript": "2.1.2",
     "**/**/ramda": "0.27.1",
-    "**/**/minimist": "1.2.6"
+    "**/**/minimist": "1.2.6",
+    "**/**/with/acorn": "4.0.13",
+    "**/**/copy-webpack-plugin/serialize-javascript": "2.1.2"
   },
   "workspaces": {
     "packages": [
