@@ -18,7 +18,7 @@
     "@braintree/sanitize-url": "5.0.2",
     "@forgerock/platform-shared": "1.0.0",
     "appauthhelper": "0.5.0",
-    "axios": "0.19.0",
+    "axios": "0.26.1",
     "bootstrap": "4.6.0",
     "bootstrap-vue": "2.21.2",
     "core-js": "3.6.5",
