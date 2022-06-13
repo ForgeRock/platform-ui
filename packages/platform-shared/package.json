@@ -10,7 +10,7 @@
   "dependencies": {
     "@forgerock/platform-shared": "1.0.0",
     "appauthhelper": "0.5.0",
-    "axios": "0.19.0",
+    "axios": "0.26.1",
     "bootstrap": "4.6.0",
     "bootstrap-vue": "2.21.2",
     "clipboard-polyfill": "3.0.1",
