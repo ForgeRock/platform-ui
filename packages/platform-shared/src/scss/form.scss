@@ -5,7 +5,8 @@
  * or with one of its affiliates. All use shall be exclusively subject
  * to such license between the licensee and ForgeRock AS.
  */
-// inline form controls
+ 
+/* inline form controls */
 .form-control-inline,
 .form-control-inline-sm {
   display: inline-block;
@@ -22,7 +23,7 @@
   width: 15rem;
 }
 
-// file input error handling
+/* file input error handling */
 .b-form-file {
   &.fr-error {
     margin-bottom: 0 !important;
