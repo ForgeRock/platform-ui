@@ -6,8 +6,8 @@
  * to such license between the licensee and ForgeRock AS.
  */
 
-// Application wide variables can be overridden here
-// Forgerock based styles start with fr
+/* Application wide variables can be overridden here
+   Forgerock based styles start with fr */
 $theme: 'default';
 $white: white;
 $gray-100: #f6f8fa;
@@ -44,7 +44,7 @@ $danger: $red;
 $light: $gray-100;
 $dark: $gray-800;
 
-//Base
+/* Base */
 $theme-colors: (
   'primary': $primary,
   'secondary': $secondary,
@@ -58,11 +58,11 @@ $theme-colors: (
 
 $text-muted: $gray-500;
 
-// Spacing
-//
-// Control the default styling of most Bootstrap elements by modifying these
-// variables. Mostly focused on spacing.
-// You can add more entries to the $spacers map, should you need more variation.
+/* Spacing
+  
+   Control the default styling of most Bootstrap elements by modifying these
+   variables. Mostly focused on spacing.
+   You can add more entries to the $spacers map, should you need more variation. */
 $spacer: 1rem;
 $spacers: ();
 $spacers: map-merge(
@@ -85,13 +85,13 @@ $spacers: map-merge(
   $spacers
 );
 
-// Global Variables
+/* Global Variables */
 $enable-shadows: false;
 $enable-rounded: true;
 $border-width: 1px;
 $border-color: $gray-200;
 
-//General
+/* General */
 $body-bg: $gray-100;
 $body-color: $gray-600;
 $headings-color: $gray-900;
@@ -109,12 +109,10 @@ $fr-typeface: 'Open Sans', sans-serif;
 $fr-background-image: none;
 $fr-background-size: none;
 
-// Custom form controls
+/* Custom form controls */
 $custom-control-gutter: 1rem;
 $custom-control-indicator-bg: $white;
 $custom-select-height: 3rem;
-
-// Custom form controls// Custom form controls
 $component-active-color: $white;
 $component-active-bg: $primary;
 $custom-control-indicator-size: 1rem;
@@ -140,7 +138,7 @@ $fr-custom-control-indicator-switch-border-color: $gray-400;
 $fr-custom-control-indicator-switch-background-color: $gray-400;
 $fr-custom-control-indicator-switch-checked-disabled-border-color: $custom-control-indicator-checked-disabled-bg;
 
-// Input
+/* Input */
 $input-padding-y: 0.75rem;
 $input-placeholder-color: $gray-500;
 $input-btn-padding-x: 0.75rem;
@@ -159,7 +157,7 @@ $input-btn-focus-width: 0.0625rem;
 $input-focus-border-color: $component-active-bg;
 $input-btn-focus-color: $component-active-bg;
 
-// Headers styles and sizes
+/* Headers styles and sizes */
 $headings-margin-bottom: ($spacer / 2);
 $headings-font-family: inherit;
 $headings-font-weight: $font-weight-light;
@@ -190,12 +188,12 @@ $display4-weight: 300;
 
 $lead-font-weight: 400;
 
-// Alert
+/* Alert */
 $alert-padding-y: 1.25rem;
 $alert-padding-x: 1.25rem;
 $alert-border-width: 0;
 
-// Forgerock specific alert variables
+/* Forgerock specific alert variables */
 $fr-alert-text-color: $gray-700;
 $fr-alert-dark-text-color: $gray-100;
 $fr-alert-primary-bg-color: lighten($primary, 40%);
@@ -208,7 +206,7 @@ $fr-alert-light-bg-color: $white;
 $fr-alert-dark-bg-color: darken($dark, 8%);
 $fr-alert-box-shadow: transparent;
 
-//Button
+/* Button */
 $btn-padding-x: 1.25rem;
 $btn-padding-y: $input-btn-padding-y;
 $btn-padding-y-lg: $input-btn-padding-y-lg;
@@ -217,7 +215,7 @@ $btn-box-shadow: none;
 $btn-focus-box-shadow: none;
 $btn-active-box-shadow: none;
 
-// Cards
+/* Cards */
 $card-spacer-y: 1.5rem;
 $card-spacer-x: 1.5rem;
 $card-cap-bg: transparent;
@@ -229,13 +227,14 @@ $fr-card-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.13);
 $fr-card-border: $border-width solid $gray-200;
 $fr-center-card-logo-height: 43px;
 $fr-center-card-logo-width: 43px;
-// Close
+
+/* Close */
 $close-font-size: $font-size-base * 2.25;
 $close-font-weight: $font-weight-light;
 $close-color: $black;
 $close-text-shadow: none;
 
-//Dropdown
+/* Dropdown */
 $dropdown-border-color: $gray-300;
 $dropdown-link-active-color: $gray-900;
 $dropdown-link-active-bg: lighten($primary, 44%);
@@ -245,14 +244,14 @@ $dropdown-padding-y: 0.25rem;
 $dropdown-item-padding-y: 0.675rem;
 $dropdown-link-color: $gray-700;
 
-// Forms
+/* Forms */
 $form-group-margin-bottom: 1.875rem;
 $enable-validation-icons: false;
 
-//Jumbotron
+/* Jumbotron */
 $jumbotron-bg: transparent;
 
-// List group
+/* List group */
 $list-group-item-padding-y: 1.25rem;
 $list-group-item-padding-x: 1.5rem;
 $list-group-border-color: $gray-200;
@@ -260,7 +259,7 @@ $list-group-hover-bg: $white;
 $list-group-active-bg: $white;
 $fr-hover-list-color: $list-group-active-bg;
 
-// Modal
+/* Modal */
 $modal-transition: transform 0.3s ease-out;
 $modal-content-bg: $white;
 $modal-header-border-color: $border-color;
@@ -271,14 +270,14 @@ $modal-header-padding: $modal-header-padding-y $modal-header-padding-x;
 $fr-modal-title-font-size: 1.25rem;
 $fr-modal-title-line-height: 2.25rem;
 
-// Forgerock specific modal variables
+/* Forgerock specific modal variables */
 $fr-modal-header-bg: $modal-content-bg;
 $fr-modal-footer-bg: $fr-modal-header-bg;
 $fr-modal-footer-border-color: $border-color;
 $fr-modal-footer-padding-y: 1rem;
 $fr-modal-footer-padding-x: 1.5rem;
 
-// Navbar
+/* Navbar */
 $nav-highlight-color: $primary;
 $navbar-default-bg: $white;
 $navbar-default-border: $gray-200;
@@ -286,17 +285,17 @@ $navbar-padding-y: 1.125rem;
 $navbar-padding-x: 1.5rem;
 $navbar-height: 4.5rem;
 $navbar-toggler-padding-x: 0;
-$navbar-dark-toggler-icon-bg: url('data:image/svg+xml;utf-8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>');
+$navbar-dark-toggler-icon-bg: url('data:image/svg+xml;utf-8,<svg xmlns="http:/*www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>');
 $navbar-dark-toggler-border-color: transparent;
 $navbar-light-color: $gray-800;
 
-// Nav tabs
+/* Nav tabs */
 $nav-tabs-border-color: $gray-300;
 $nav-tabs-link-color: inherit;
 $nav-tabs-link-active-color: $primary;
 $nav-highlight-color: inherit !default;
 
-//Pagination
+/* Pagination */
 $pagination-color: $gray-500;
 $pagination-border-color: transparent;
 $pagination-disabled-border-color: transparent;
@@ -308,7 +307,7 @@ $pagination-active-bg: $gray-100;
 $pagination-active-border-color: transparent;
 $pagination-disabled-border-color: transparent;
 
-//Table
+/* Table */
 $table-bg: transparent;
 $table-accent-bg: $gray-100;
 $table-hover-bg: $gray-100;
@@ -317,19 +316,19 @@ $table-cell-padding-sm: 0.5rem;
 $table-color: $gray-900;
 $table-border-color: $gray-200;
 
-// Forgerock specific table variables
+/* Forgerock specific table variables */
 $fr-table-head-weight: 600;
 $fr-table-head-border: 1px;
 
-// Forgerock specific Toolbar / Navbar
+/* Forgerock specific Toolbar / Navbar */
 $fr-toolbar-background: $white;
 $fr-application-text-color: $gray-900;
 $fr-toolbar-color: $gray-900;
 $fr-toolbar-dropdown-color: rgba(0, 0, 0, 0.5);
 
-// Custom ForgeRock UI Components
+/* Custom ForgeRock UI Components */
 
-// Navbar Sidebar
+/* Navbar Sidebar */
 $fr-navbar-bg: $navbar-default-bg;
 $fr-navbar-border: $navbar-default-border;
 $fr-navbar-sidebar-fontsize: 0.8125rem;
@@ -343,7 +342,7 @@ $fr-sidebar-nav-link-border-color: transparent;
 $fr-sidebar-nav-link-active-border-color: transparent;
 $fr-sidebar-nav-link-active-color: $gray-800;
 
-// Sidemenu
+/* Sidemenu */
 $fr-sidemenu-toggler-background-color: $white;
 $fr-sidemenu-toggler-border-color: transparent;
 $fr-sidemenu-background-color: $white;
@@ -361,12 +360,12 @@ $fr-sidemenu-icon-fontsize: 1.125rem;
 $fr-sidemenu-bottom-color: $gray-200;
 $fr-sidemenu-bottom-background-color: $white;
 
-// Sign up form
+/* Sign up form */
 $fr-signup-header-wrapper-height: 5.25rem;
 
-// Switches
+/* Switches */
 $fr-switch-bg: $gray-400;
 $fr-switch-toggled-bg: $primary;
 
-// Tree
+/* Tree */
 $fr-tree-accent: lighten($primary, 25%);
