@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -56,9 +56,18 @@ export function isSamlURL(url) {
   */
 export function verifyGotoUrlAndRedirect(url, realm, isAdmin = false, isGotoOnFail = false) {
   const urlParams = new URLSearchParams(window.location.search);
-  const gotoUrl = !isGotoOnFail
-    ? JSON.stringify({ goto: urlParams.get('goto') || url })
-    : JSON.stringify({ goto: urlParams.get('gotoOnFail') });
+  let gotoUrl;
+
+  // This aligns the goto parameter order to match what was used in AM and what is documented in the Docs
+  if (process.env.VUE_APP_ALIGN_GOTO_PRECEDENCE === 'true') {
+    gotoUrl = !isGotoOnFail
+      ? JSON.stringify({ goto: url })
+      : JSON.stringify({ goto: urlParams.get('gotoOnFail') });
+  } else {
+    gotoUrl = !isGotoOnFail
+      ? JSON.stringify({ goto: urlParams.get('goto') || url })
+      : JSON.stringify({ goto: urlParams.get('gotoOnFail') });
+  }
 
   urlParams.delete('goto');
   urlParams.delete('gotoOnFail');
