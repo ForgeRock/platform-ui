@@ -1,12 +1,14 @@
 {
-  "extends": "stylelint-config-standard",
+  "extends": [
+    "stylelint-config-html"
+  ],
   "ignoreFiles": [
-      "./**/coverage/**/*.{html,css}",
-      "./packages/platform-shared/src/views/AutoAccess/**/*"
+    "./**/coverage/**/*.{html,css}",
+    "./packages/platform-shared/src/views/AutoAccess/**/*"
   ],
   "rules": {
     "at-rule-no-vendor-prefix": true,
-    "at-rule-whitelist": [
+    "at-rule-allowed-list": [
       "import",
       "media",
       "keyframes",
@@ -14,17 +16,17 @@
       "if",
       "else",
       "while",
-      "mixin"
+      "mixin",
+      "supports"
     ],
     "at-rule-no-unknown": null,
     "color-named": "always-where-possible",
     "custom-media-pattern": "^([a-z]+-?)*([a-z]+)$",
     "custom-property-pattern": "^([a-z]+-?)*([a-z]+)$",
-    "declaration-block-no-duplicate-properties": true,
+		"declaration-block-no-duplicate-properties": true,
     "font-family-name-quotes": "always-where-recommended",
     "font-weight-notation": "numeric",
-    "function-url-quotes": "always",
-    "function-whitelist": [
+    "function-allowed-list": [
       "color",
       "counter",
       "hsla",
@@ -53,10 +55,12 @@
       "change-color",
       "cubic-bezier"
     ],
+    "function-url-quotes": "always",
     "media-feature-name-no-vendor-prefix": true,
     "no-descending-specificity": null,
     "no-duplicate-selectors": true,
-    "property-blacklist": [
+    "no-eol-whitespace": null,
+    "property-disallowed-list": [
       "float"
     ],
     "property-no-unknown": [
@@ -80,7 +84,7 @@
     "selector-max-type": 3,
     "selector-max-universal": 1,
     "selector-no-vendor-prefix": true,
-    "selector-pseudo-class-whitelist": [
+    "selector-pseudo-class-allowed-list": [
       "hover",
       "focus",
       "global",
@@ -104,18 +108,26 @@
       "focus-visible",
       "placeholder-shown"
     ],
+    "value-keyword-case": [
+      "lower",
+      {
+          "ignoreFunctions": ["v-bind"]
+      }
+    ],
     "selector-pseudo-class-no-unknown": [
       true,
       {
         "ignorePseudoClasses": [
+          "deep",
           "global",
           "export"
         ]
       }
     ],
     "string-quotes": "single",
-    "unit-whitelist": [
+    "unit-allowed-list": [
       "%",
+      "dpcm",
       "px",
       "em",
       "vh",
