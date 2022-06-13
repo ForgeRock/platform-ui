@@ -15,7 +15,7 @@
     "test:lighthouse": "../../e2e/passwords.sh cypress run --spec e2e/tests/lighthouse.suite.js --config ignoreTestFiles=''"
   },
   "dependencies": {
-    "@braintree/sanitize-url": "5.0.2",
+    "@braintree/sanitize-url": "6.0.0",
     "@forgerock/platform-shared": "1.0.0",
     "appauthhelper": "0.5.0",
     "axios": "0.26.1",
