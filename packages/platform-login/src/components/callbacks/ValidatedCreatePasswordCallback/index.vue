@@ -152,7 +152,8 @@ export default {
     },
     /**
      * Sends two sample strings which combined will fail all ds policy
-     * Then use the response to populate initial list of policy
+     * Then use the response to populate initial list of policy. Must be
+     * two separate requests if whitelisting is enabled for authentication trees
      * @param {Object} step current auth step
      */
     setPoliciesFromFailures(step) {
@@ -161,14 +162,19 @@ export default {
       // should fail dictionary and repeated characters
       const testString2 = 'aaa';
 
-      // test both values and set policies and failed policies based on results
-      Promise.all([this.testInputValue(step, testString1), this.testInputValue(step, testString2)]).then((res) => {
-        const failures1 = res[0].getCallbackOfType(CallbackType.ValidatedCreatePasswordCallback).getFailedPolicies();
-        const failures2 = res[1].getCallbackOfType(CallbackType.ValidatedCreatePasswordCallback).getFailedPolicies();
-        let failures = [...failures1.map((pol) => (JSON.parse(pol))), ...failures2.map((pol) => (JSON.parse(pol)))];
-        failures = uniqWith(failures, isEqual);
-        this.policies = this.normalizePolicies(failures);
-        this.setFailingPolicies(failures);
+      this.testInputValue(step, testString1).then((step1) => {
+        const failures1 = step1.getCallbackOfType(CallbackType.ValidatedCreatePasswordCallback).getFailedPolicies();
+
+        this.testInputValue(step1, testString2).then((step2) => {
+          const failures2 = step2.getCallbackOfType(CallbackType.ValidatedCreatePasswordCallback).getFailedPolicies();
+
+          let failures = [...failures1.map((pol) => (JSON.parse(pol))), ...failures2.map((pol) => (JSON.parse(pol)))];
+          failures = uniqWith(failures, isEqual);
+          this.policies = this.normalizePolicies(failures);
+          this.setFailingPolicies(failures);
+
+          this.$emit('update-auth-id', step2.payload.authId);
+        }).catch(() => {});
       }).catch(() => {});
     },
     /**
@@ -223,27 +229,27 @@ export default {
      */
     updateCallback(value) {
       this.callback.setPassword(value);
+
+      // reset to initial state when input is empty IAM-1409
+      if (!value) {
+        this.setFailingPolicies(this.policies);
+        return;
+      }
       this.debounceValidatePassword();
     },
     /**
      * Sends input to backend to be validated and updates the failing policies.
      */
     validatePassword() {
-      // reset to initial state when input is empty IAM-1409
-      if (!this.callback.getInputValue().length) {
-        this.setFailingPolicies(this.policies);
-        return;
-      }
-
-      const stepParams = {
-        realmPath: this.realm,
-      };
       // call tree without advancing to next node
-      FRAuth.next(this.step, stepParams)
+      FRAuth.next(this.step, { realmPath: this.realm })
         .then((step) => {
           const callback = step.getCallbackOfType(CallbackType.ValidatedCreatePasswordCallback);
           const policies = callback.getFailedPolicies().map((x) => JSON.parse(x));
           this.setFailingPolicies(policies);
+
+          // update auth id in the event of authentication tree whitelisting
+          this.$emit('update-auth-id', step.payload.authId);
         }).catch(() => {
           // it's possible to timeout while in the tree so have to start from beginning if that happens
           window.location.reload();

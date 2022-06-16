@@ -619,7 +619,7 @@ export default {
                   realm: this.realm,
                   stage,
                 },
-                listeners: ['disable-next-button', 'next-step-callback'],
+                listeners: ['disable-next-button', 'next-step-callback', 'update-auth-id'],
               };
             },
             WebAuthnComponent: () => {
@@ -901,6 +901,9 @@ export default {
         },
         'next-step-callback': (cb) => {
           this.nextStepCallbacks.push(cb);
+        },
+        'update-auth-id': (authId) => {
+          this.step.payload.authId = authId;
         },
         // event emited from FrField
         input: (value) => {
