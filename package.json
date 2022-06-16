@@ -57,6 +57,7 @@
     "mocha/yargs/y18n": "4.0.1",
     "node-gyp": "5.0.4",
     "node-pre-gyp": "0.17.0",
+    "node-pre-gyp/rc/ini": "1.3.6",
     "node-sass/request/http-signature/jsprim/json-schema": "0.4.0",
     "node-sass/sass-graph/yargs/y18n": "3.2.2",
     "normalize-url": "4.5.1",
