@@ -27,7 +27,7 @@ of the MIT license. See the LICENSE file for details. -->
 
       <div v-if="activePredictions.length > 0">
         <TableExecutionDetails
-          :pipeline_executions="activePredictions"
+          :pipelineExecutions="activePredictions"
           :pending-status="pendingStatus"
           :show-pipeline-name="true"
           @evaluate="$emit('evaluate', execution)"
@@ -45,7 +45,7 @@ of the MIT license. See the LICENSE file for details. -->
       </BAlert>
       <span v-if="pipeline">
         <TableExecutionDetails
-          :pipeline_executions="activeExecution"
+          :pipelineExecutions="activeExecution"
           :pending-status="pendingStatus"
           @refresh="(execution_id) => $emit('refresh', pipeline, execution_id)" />
       </span>

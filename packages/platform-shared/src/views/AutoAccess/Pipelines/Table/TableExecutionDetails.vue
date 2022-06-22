@@ -8,7 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
     :items="rows"
     fixed
     :class="`border pipelines-table-execution-details ${showPipelineName ? &quot;has-name-col&quot; : &quot;&quot;}`"
-    v-if="pipelineExecutions.length > 0"
+    v-if="pipelineExecutions && pipelineExecutions.length > 0"
   >
     <template #cell(status)="data">
       <TableExecutionStatusBadge
