@@ -63,10 +63,12 @@ export default {
   },
   methods: {
     getRiskColor(score) {
-      if (score >= store.state.Dashboard.config.thresholds.high) {
-        return 'var(--danger)';
-      } if (score >= store.state.Dashboard.config.thresholds.medium) {
-        return 'var(--warning)';
+      if (store.state.Dashboard.config.thresholds && store.state.Dashboard.config.thresholds.high && store.state.Dashboard.config.thresholds.medium) {
+        if (score >= store.state.Dashboard.config.thresholds.high) {
+          return 'var(--danger)';
+        } if (score >= store.state.Dashboard.config.thresholds.medium) {
+          return 'var(--warning)';
+        }
       }
       return 'var(--success)';
     },
