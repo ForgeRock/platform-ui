@@ -78,8 +78,7 @@ export default {
     const loader = new Loader({
       apiKey: process.env.VUE_APP_GOOGLE_MAPS_API_KEY,
     });
-    loader.load().then((google) => {
-      this.google = google;
+    loader.load().then(() => {
       const map = new google.maps.Map(document.getElementById('risk-google-map'), {
         center: { lat: 33.8616427, lng: 7.3176288 },
         zoom: MIN_ZOOM,
@@ -114,10 +113,6 @@ export default {
       return `<div class="info-content font-weight-normal">${sum} Risky Event${sum !== 1 ? 's' : ''}<div>Average Score ${Math.round(avg)}</div></div>`;
     },
     handleMapChanged(recenter = false) {
-      if (!this.mapObject) {
-        return;
-      }
-
       const bounds = this.mapObject.getZoom() > MIN_ZOOM ? this.mapObject.getBounds().toJSON() : {};
       const query = {
         size: 0,
@@ -162,14 +157,11 @@ export default {
 
           const infoWindow = new google.maps.InfoWindow({
             content: '',
+            // disableAutoPan: true,
           });
           const bounds = new google.maps.LatLngBounds();
 
-          if (!data.aggregations) {
-            return;
-          }
-
-          const markers = data.aggregations.lat_lon_data.lat_lon_locations.buckets.map((bucket) => {
+          const markers = data.aggregations.lat_lon_data.lat_lon_locations.buckets.map((bucket, i) => {
             const sum = bucket.doc_count;
             const marker = new google.maps.Marker({
               ...markerStyle(new google.maps.LatLng(bucket.key[0], bucket.key[1]), sum),
@@ -192,8 +184,11 @@ export default {
           });
 
           const renderer = {
-            render(cluster) {
-              const { position } = cluster;
+            render(
+              cluster,
+              stats,
+            ) {
+              const { position, markers } = cluster;
               const { sum } = getMarkersStats(markers);
 
               return new google.maps.Marker(markerStyle(position, sum));

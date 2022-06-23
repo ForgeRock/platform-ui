@@ -71,7 +71,7 @@ export default {
         }
       },
       initializeConfig: ({ commit }) => {
-        commit('setConfig', {});
+        commit('setConfig', { thresholds: { high: 0, medium: 0 } });
         getConfig().then((res) => {
           commit('setConfig', res);
         })
