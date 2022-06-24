@@ -43,6 +43,7 @@ export default {
         fontFamily: 'Open Sans',
         journeyCardBackgroundColor: '#ffffff',
         journeyCardShadow: 3,
+        journeyCardBorderRadius: 4,
         journeyCardTextColor: '#5e6d82',
         journeyCardTitleColor: '#23282e',
         journeyFooter: `<div class="d-flex justify-content-center py-4 w-100"><span class="pr-1">© ${new Date().getFullYear()}</span>\n<a href="#" target="_blank" class="text-body">My Company, Inc</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Privacy Policy</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Terms & Conditions</a></div>`,
