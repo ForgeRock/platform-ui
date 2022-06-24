@@ -32,7 +32,7 @@ export const causeMap = {
   model: 'Device',
   os: 'OS',
   os_version: 'OS Version',
-  user_agent: 'User Agent',
+  user_agent: 'Browser Family',
   component: 'Component',
   browser: 'Browser',
   osWithVersion: 'OS Version',
