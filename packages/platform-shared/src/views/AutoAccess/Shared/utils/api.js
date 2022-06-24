@@ -102,11 +102,12 @@ export function getQueryFilters(dateRange, filterObject, userId) {
 
   if (filterObject.reasons.length > 0) {
     const reasons = [];
+    const hueristicsReasons = [];
     const heuristics = filterObject.reasons.filter((el) => el.indexOf('is_') === 0);
     const ueba = filterObject.reasons.filter((el) => el.indexOf('is_') === -1);
 
     if (heuristics.length > 0) {
-      reasons.push({
+      hueristicsReasons.push({
         bool: {
           should: heuristics.map((heurisic) => ({
             term: {
@@ -116,6 +117,19 @@ export function getQueryFilters(dateRange, filterObject, userId) {
           minimum_should_match: 1,
         },
       });
+
+      bool.must.push(
+        {
+          nested: {
+            path: 'predictionResult.risk_score_data.heuristic_agg_result.raw_results',
+            query: {
+              bool: {
+                should: hueristicsReasons,
+              },
+            },
+          },
+        },
+      );
     }
 
     if (ueba.length > 0) {
@@ -146,16 +160,16 @@ export function getQueryFilters(dateRange, filterObject, userId) {
           ],
         },
       });
-    }
 
-    bool.must.push(
-      {
-        bool: {
-          should: reasons,
-          minimum_should_match: 1,
+      bool.must.push(
+        {
+          bool: {
+            should: reasons,
+            minimum_should_match: 1,
+          },
         },
-      },
-    );
+      );
+    }
   }
 
   return bool;
@@ -173,7 +187,6 @@ export const getConfig = () => new Promise((resolve, reject) => {
       size: 1,
     },
   };
-  // postData("/jas/entity/search/", param)
   generateAutoAccessJas().post('/entity/search/', param)
     .then((data) => {
       resolve({
