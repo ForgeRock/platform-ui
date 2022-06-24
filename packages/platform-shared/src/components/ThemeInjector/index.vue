@@ -119,6 +119,10 @@ of the MIT license. See the LICENSE file for details. -->
       :is="'style'"
       v-if="!isEnduser">
       <!-- login card themes -->
+      .card {
+      border-radius: {{ theme.journeyCardBorderRadius || 4 }}px !important;
+      }
+
       .card,
       .journey-card {
       background-color: {{ theme.journeyCardBackgroundColor || '#ffffff' }} !important;
@@ -388,6 +392,7 @@ buttonRounded: "15"
 fontFamily: "Open Sans"
 journeyCardBackgroundColor: "#ffffff"
 journeyCardShadow: 3
+journeyCardBorderRadius: 4
 journeyCardTextColor: "#5e6d82"
 journeyCardTitleColor: "#23282e"
 journeyInputBackgroundColor: "#ffffff"
