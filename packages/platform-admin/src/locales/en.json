@@ -1438,9 +1438,12 @@
     "setActive": "Set to Active Version",
     "setActiveError": "Unable to set Version to 'Active'",
     "setActiveSuccess": "Successfully set version to 'Active'",
+    "deleteVersionError": "Unable to delete version {version}",
+    "deleteVersionSuccess": "Successfully removed version {version}",
     "copyOf": "Copy of {version}",
     "termsTimeStamp": "{date} at {time}",
     "draft": "draft",
+    "tcVersion": "Version",
     "newVersionModal": {
       "title": "New Version",
       "fieldHelp": "Unique version name used to monitor user consent."
