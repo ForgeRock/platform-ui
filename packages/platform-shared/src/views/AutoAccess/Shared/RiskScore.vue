@@ -70,7 +70,7 @@ export default {
           return 'var(--warning)';
         }
       }
-      return 'var(--success)';
+      return 'var(--danger)';
     },
   },
 };
