@@ -679,7 +679,7 @@
         "time": "Time",
         "user": "User",
         "device": "Device",
-        "userAgent": "User Agent",
+        "userAgent": "Browser Family",
         "result": "Result",
         "location": "Location",
         "transactionId": "Transaction ID",

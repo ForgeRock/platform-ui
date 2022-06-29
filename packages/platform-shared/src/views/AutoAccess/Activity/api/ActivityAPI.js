@@ -36,7 +36,7 @@ export const causeMap = {
   component: 'Component',
   browser: 'Browser',
   osWithVersion: 'OS Version',
-  userAgentType: 'User Agent',
+  userAgentType: 'Browser Family',
   deviceType: 'Device Type',
 };
 
