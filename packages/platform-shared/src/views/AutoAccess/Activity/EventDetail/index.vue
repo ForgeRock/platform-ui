@@ -40,7 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
                   height="34">
                 <div class="ml-3">
                   <div>
-                    {{ data.userId }}
+                    {{ data.raw.username }}
                   </div>
                 </div>
               </div>
