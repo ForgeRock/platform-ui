@@ -211,9 +211,8 @@ export const getAvailableFilters = (key, searchTerm) => new Promise((resolve, re
     param.query.query.bool.minimum_should_match = 1;
   }
 
-  // postData(`/autoaccess/jas/entity/search${entityPath}`, param)
   generateAutoAccessJas().post(entitySearch, param)
-    .then((data) => {
+    .then(({ data }) => {
       resolve(
         data.aggregations[key].buckets.map((value) => value.key),
       );
