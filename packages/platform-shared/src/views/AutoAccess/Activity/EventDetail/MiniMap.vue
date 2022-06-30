@@ -55,7 +55,7 @@ export default {
           const activity = this.authentications[0];
 
           const loader = new Loader({
-            apiKey: process.env.VUE_APP_GOOGLE_API_KEY,
+            apiKey: process.env.VUE_APP_GOOGLE_MAPS_API_KEY,
           });
           loader.load().then(() => {
             const map = new google.maps.Map(document.getElementById('event-detail-mini-map'), {

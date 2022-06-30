@@ -335,7 +335,7 @@ export default {
       };
       getEventLogs(param)
         .then((response) => {
-          this.previousAuths = response.hits.hits.map((data) => apiToInternalEvent(data));
+          this.previousAuths = response.data.hits.hits.map((data) => apiToInternalEvent(data));
 
           this.isLoading = false;
         })
