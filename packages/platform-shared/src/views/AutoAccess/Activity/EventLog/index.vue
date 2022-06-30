@@ -63,7 +63,7 @@ of the MIT license. See the LICENSE file for details. -->
               <div>
                 <span>
                   <span class="text-dark mr-2 font-weight-bold">
-                    {{ row.userId }}
+                    {{ row.raw.username }}
                   </span>
                   <span class="mx-2">
                     &middot;
