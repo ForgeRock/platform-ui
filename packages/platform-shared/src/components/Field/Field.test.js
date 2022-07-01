@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,7 +7,7 @@
 
 import BootstrapVue from 'bootstrap-vue';
 import {
-  createLocalVue, mount,
+  createLocalVue, mount, shallowMount,
 } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
 import { extend, ValidationObserver, ValidationProvider } from 'vee-validate';
@@ -231,5 +231,79 @@ describe('Field Component', () => {
     });
     await flush();
     expect(wrapper.find('.b-form-spinbutton')).toBeTruthy();
+  });
+  it('checks if the input received an object with placeholder value', () => {
+    wrapper = shallowMount(FrField, {
+      sync: false,
+      mocks: {
+        $t: () => {},
+      },
+      propsData: {
+        type: 'object',
+        name: 'testField',
+        value: { $placeholderField: '&{forgerock.test.string}' },
+      },
+      stubs,
+      methods: {
+        created: () => {
+          wrapper.vm.PLACEHOLDER_REGEX = new RegExp(/^([\w '"",.:/$£@]+)?(&{(([\w])+(.[\w]+)*)})([\w '"",.:/$£@]+)?$/);
+          wrapper.vm.hasPlaceholder();
+        },
+      },
+    });
+    expect(wrapper.vm.containsPlaceholder).toBeTruthy();
+    expect(wrapper.vm.placeholderValue).toEqual('&{forgerock.test.string}');
+  });
+  it('checks if the input received an object without placeholder value', () => {
+    wrapper = shallowMount(FrField, {
+      sync: false,
+      mocks: {
+        $t: () => {},
+      },
+      propsData: {
+        type: 'object',
+        name: 'testField',
+        value: { id: 2, value: 'noPlaceholder' },
+      },
+      stubs,
+      methods: {
+        created: () => {
+          wrapper.vm.PLACEHOLDER_REGEX = new RegExp(/^([\w '"",.:/$£@]+)?(&{(([\w])+(.[\w]+)*)})([\w '"",.:/$£@]+)?$/);
+          wrapper.vm.hasPlaceholder();
+        },
+      },
+    });
+    expect(wrapper.vm.containsPlaceholder).toBeFalsy();
+    expect(wrapper.vm.placeholderValue).toEqual({ id: 2, value: 'noPlaceholder' });
+  });
+  it('checks if the input received a non object with placeholder value', async () => {
+    wrapper = shallowMount(FrField, {
+      sync: false,
+      mocks: {
+        $t: () => {},
+      },
+      propsData: {
+        name: 'testField',
+        value: '&{forgerock.test.string}',
+      },
+      stubs,
+    });
+    await flush();
+    expect(wrapper.vm.containsPlaceholder).toBeTruthy();
+  });
+  it('checks if the input received a non object without placeholder value', async () => {
+    wrapper = shallowMount(FrField, {
+      sync: false,
+      mocks: {
+        $t: () => {},
+      },
+      propsData: {
+        name: 'testField',
+        value: 'testString',
+      },
+      stubs,
+    });
+    await flush();
+    expect(wrapper.vm.containsPlaceholder).toBeFalsy();
   });
 });

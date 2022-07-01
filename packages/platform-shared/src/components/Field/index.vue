@@ -4,6 +4,22 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
+    v-if="containsPlaceholder"
+    class="fr-field"
+    :id="fieldName">
+    <slot name="label" />
+    <slot name="appendLabel" />
+    <FrBasicInput
+      v-bind="attrs"
+      :name="fieldName"
+      type="string"
+      :testid="testid"
+      :value="placeholderValue"
+      readonly
+    />
+  </div>
+  <div
+    v-else
     :class="[{'d-flex': booleanOrCheckbox}, 'fr-field']"
     :id="fieldName">
     <slot name="label" />
@@ -127,6 +143,39 @@ export default {
         return typeMap[this.type];
       }
       return this.type;
+    },
+  },
+  updated() {
+    this.hasPlaceholder();
+  },
+  created() {
+    /**
+     * RegExp to determine if a property is a placeholder
+     * must be a string with numbers/letters/fullstops and enclosed by &{}
+     */
+    this.PLACEHOLDER_REGEX = new RegExp(/^([\w '"",.:/$£@]+)?(&{(([\w])+(.[\w]+)*)})([\w '"",.:/$£@]+)?$/);
+    this.hasPlaceholder();
+  },
+  methods: {
+    hasPlaceholder() {
+      this.containsPlaceholder = false;
+      this.placeholderValue = this.attrs.value;
+      if (this?.attrs?.value) {
+        if (typeof this.attrs.value === 'object' && Object.values(this.attrs.value)[0]) {
+          this.containsPlaceholder = Object.values(this.attrs.value).some((value) => this.PLACEHOLDER_REGEX.test(value));
+          this.getPlaceHolderValue();
+        }
+
+        if (typeof this.attrs.value !== 'object') {
+          this.containsPlaceholder = this.PLACEHOLDER_REGEX.test(this.attrs.value);
+        }
+      }
+      return this.containsPlaceholder;
+    },
+    getPlaceHolderValue() {
+      if (this.containsPlaceholder) {
+        this.placeholderValue = Object.values(this.attrs.value)[0]?.toString();
+      }
     },
   },
 };
