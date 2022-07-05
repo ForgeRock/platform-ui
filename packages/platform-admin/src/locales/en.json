@@ -990,6 +990,7 @@
       "cardTitle": "Client Credentials",
       "discoveryURILabel": "Discovery URI",
       "discoveryURIDescription": "Use to retrieve the OpenID Provider information for this realm from within the application. If using a custom domain remove the <code>/am/oauth2</code> and structure the call as follows: <code>https://{yourdomain}/.well-known/openid-configuration</code>.",
+      "clientIDDescription": "Use in your app with the <a href='https://sdks.forgerock.com/' target='_blank'>ForgeRock SDKs</a> or when calling the REST APIs.",
       "clientIDLabel": "Client ID",
       "userpasswordLabel": "Client Secret"
     },
