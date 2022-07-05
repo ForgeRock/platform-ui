@@ -28,6 +28,7 @@ of the MIT license. See the LICENSE file for details. -->
       -->
       <BDropdownItem
         v-if="editOption"
+        :data-testid="`dropdown-edit-${testId}`"
         @click="$emit('edit-clicked')">
         <FrIcon
           class="mr-2"
@@ -40,6 +41,7 @@ of the MIT license. See the LICENSE file for details. -->
       -->
       <BDropdownItem
         v-if="duplicateOption"
+        :data-testid="`dropdown-duplicate-${testId}`"
         @click="$emit('duplicate-clicked')">
         <FrIcon
           class="mr-2"
@@ -52,6 +54,7 @@ of the MIT license. See the LICENSE file for details. -->
       -->
       <BDropdownItem
         v-if="showActiveToggle"
+        :data-testid="`dropdown-active-toggle-${testId}`"
         @click="$emit('toggle-clicked')">
         <FrIcon
           class="mr-2"
@@ -70,7 +73,7 @@ of the MIT license. See the LICENSE file for details. -->
       <BDropdownItem
         v-if="deleteOption"
         @click="$emit('delete-clicked')"
-        :data-testid="deleteTestid">
+        :data-testid="`dropdown-delete-${testId}`">
         <FrIcon
           class="mr-2"
           name="delete" />
@@ -107,10 +110,6 @@ export default {
     deleteOption: {
       default: true,
       type: Boolean,
-    },
-    deleteTestid: {
-      type: String,
-      default: '',
     },
     /**
      * Enables a divider to appear above the delete option
@@ -151,6 +150,10 @@ export default {
      * A class to use for the wrapping component of the cell
      */
     wrapperClass: {
+      type: String,
+      default: '',
+    },
+    testId: {
       type: String,
       default: '',
     },

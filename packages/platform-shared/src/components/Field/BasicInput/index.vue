@@ -86,7 +86,7 @@ of the MIT license. See the LICENSE file for details. -->
       <BInputGroupAppend v-if="copy">
         <button
           :id="`copyButton-${value}`"
-          :data-test-id="`button-copy-${value}`"
+          :data-testid="`btn-copy-${testid}`"
           class="btn btn-outline-secondary"
           name="copyButton"
           @click.prevent="copyValueToClipboard(value)">

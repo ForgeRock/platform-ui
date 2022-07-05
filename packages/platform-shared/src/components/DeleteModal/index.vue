@@ -6,15 +6,19 @@ of the MIT license. See the LICENSE file for details. -->
   <BModal
     :id="id"
     :ref="id"
+    :static="isTesting"
     @hidden="$emit('hidden')"
     :hide-header-close="isDeleting"
     no-close-on-backdrop
     no-close-on-esc
     :title="$t('deletePanel.deleteTypeQuestion', { type: translatedItemType })">
     <div
+      data-testid="delete-modal-custom-message"
       v-if="customMessage"
       v-html="customMessage" />
-    <div v-else>
+    <div
+      data-testid="deletePanel-body"
+      v-else>
       {{ $t('deletePanel.body', { type: translatedItemType.toLowerCase() }) }}
     </div>
     <template v-slot:modal-footer="{ cancel }">
@@ -85,6 +89,10 @@ export default {
     testid: {
       type: String,
       default: '',
+    },
+    isTesting: {
+      type: Boolean,
+      default: false,
     },
   },
 };

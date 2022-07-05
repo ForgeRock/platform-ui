@@ -1,10 +1,10 @@
 /**
- * Copyright 2020 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
+
 import { shallowMount } from '@vue/test-utils';
 import RelationshipEdit from './index';
 import * as schemaApi from '@/api/SchemaApi';
@@ -31,7 +31,7 @@ describe('RelationshipEdit', () => {
   beforeEach(() => {
     wrapper = shallowMount(RelationshipEdit, {
       mocks: {
-        $t: () => {},
+        $t: () => { },
         $store: {
           state: {
             SharedStore: {
@@ -92,7 +92,7 @@ describe('RelationshipEdit', () => {
         },
         parentResource: '',
         index: 0,
-        setValue: () => {},
+        setValue: () => { },
       },
     });
   });
@@ -116,7 +116,7 @@ describe('RelationshipEdit', () => {
     expect(wrapper.vm.relationshipField.value).toEqual('');
     expect(wrapper.vm.resourceCollection).toEqual(wrapper.vm.relationshipField.resourceCollection[0]);
     wrapper.vm.setOptions('a');
-    expect(optionsSearchRequestSpy).toHaveBeenCalledTimes(0);
+    expect(optionsSearchRequestSpy).not.toHaveBeenCalled();
     wrapper.vm.setOptions('ab');
     expect(optionsSearchRequestSpy).toHaveBeenCalledTimes(1);
   });

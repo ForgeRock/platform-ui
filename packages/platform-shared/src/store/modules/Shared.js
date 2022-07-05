@@ -24,6 +24,7 @@ const defaultState = {
   uiConfig: null,
   hasAmUrl: false,
   showEsvUi: false,
+  showServiceAccountUi: false,
   webStorageAvailable: true,
 };
 
@@ -91,6 +92,9 @@ const mutations = {
     if (env.VUE_APP_FRAAS === 'true') {
       if (env.VUE_APP_SHOW_ESV_UI) {
         state.showEsvUi = env.VUE_APP_SHOW_ESV_UI === 'true' || env.VUE_APP_SHOW_ESV_UI === true;
+      }
+      if (env.VUE_APP_SHOW_SERVICE_ACCOUNT_UI) {
+        state.showServiceAccountUi = env.VUE_APP_SHOW_SERVICE_ACCOUNT_UI === 'true' || env.VUE_APP_SHOW_SERVICE_ACCOUNT_UI === true;
       }
     }
   },
