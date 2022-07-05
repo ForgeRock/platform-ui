@@ -28,6 +28,7 @@ of the MIT license. See the LICENSE file for details. -->
       :rows="rows"
       :max-rows="maxRows"
       :readonly="readonly"
+      :data-testid="testid"
       @input="$emit('input', inputValue)"
       @click="onClick"
       @blur="inputValueHandler(inputValue)" />
@@ -89,6 +90,10 @@ export default {
     maxRows: {
       type: Number,
       default: null,
+    },
+    testid: {
+      type: String,
+      default: '',
     },
   },
   methods: {

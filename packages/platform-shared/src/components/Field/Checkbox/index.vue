@@ -13,7 +13,9 @@ of the MIT license. See the LICENSE file for details. -->
       :aria-label="switchLabel"
       :disabled="disabled"
       :name="name"
-      :data-testid="testid" />
+      :data-testid="testid"
+      :value="$attrs.cbcheckedvalue"
+      :unchecked-value="$attrs.cbuncheckedvalue" />
     <label class="mb-1 text-secondary">
       {{ switchLabel }}
     </label>
