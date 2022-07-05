@@ -23,4 +23,22 @@ export function findByTestId(wrapper, testId) {
   return wrapper.find(`[data-testid=${testId}]`);
 }
 
-export default { findByTestId };
+/**
+ * vue-test-utils helper function for getting an element by role
+ * @param {*} wrapper the component wrapper
+ * @param {*} testId the role
+ * @returns a wrapper containing the found element
+ */
+export function findByRole(wrapper, role) {
+  if (!wrapper) {
+    throw new Error('Please provide a wrapper');
+  }
+
+  if (typeof role !== 'string') {
+    throw new Error('Please provide a valid role');
+  }
+
+  return wrapper.find(`[role=${role}]`);
+}
+
+export default { findByTestId, findByRole };
