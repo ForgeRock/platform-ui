@@ -7,7 +7,7 @@
 
 /* eslint-disable indent */
 import { mount } from '@vue/test-utils';
-import { findByTestId } from './testHelpers';
+import { findByRole, findByTestId } from './testHelpers';
 import FrCheckbox from '../components/Field/Checkbox';
 
 describe('testHelpers', () => {
@@ -57,6 +57,55 @@ describe('testHelpers', () => {
         const checkbox = findByTestId(wrapper, 'stub-test-id');
         expect(checkbox.exists()).toBe(true);
         expect(checkbox.element.name).toBe('stub-name');
+      });
+    });
+  });
+
+  describe('findByRole', () => {
+    describe('should throw error', () => {
+      describe('when wrapper is falsy', () => {
+        it.each`
+          name                    | invalidWrapper
+          ${'given false'}        | ${false}
+          ${'given zero'}         | ${0}
+          ${'given empty string'} | ${''}
+          ${'given null'}         | ${null}
+          ${'given undefined'}    | ${undefined}
+          `('$name', ({ invalidWrapper }) => {
+          expect(() => findByRole(invalidWrapper, 'given_role')).toThrow(Error('Please provide a wrapper'));
+        });
+      });
+
+      describe('when role is not a string', () => {
+        const stubWrapper = mount(FrCheckbox, {
+          propsData: {
+            name: 'stub-name',
+          },
+        });
+        it.each`
+          name                 | role
+          ${'given false'}     | ${false}
+          ${'given zero'}      | ${0}
+          ${'given null'}      | ${null}
+          ${'given NaN'}       | ${NaN}
+          ${'given undefined'} | ${undefined}
+          `('$name', ({ role }) => {
+          expect(() => findByRole(stubWrapper, role)).toThrow(Error('Please provide a valid role'));
+        });
+      });
+    });
+
+    describe('should return element', () => {
+      it('when given valid role', () => {
+        const wrapper = mount(FrCheckbox, {
+          propsData: {
+            name: 'stub-name',
+          },
+        });
+
+        const checkboxInpur = findByRole(wrapper, 'checkbox');
+        expect(checkboxInpur.exists()).toBe(true);
+        expect(checkboxInpur.element.name).toBe('stub-name');
       });
     });
   });

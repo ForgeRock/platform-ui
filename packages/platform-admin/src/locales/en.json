@@ -66,6 +66,7 @@
     "Realm": "Realm",
     "Scripts": "Scripts",
     "SecurityQuestions": "Security Questions",
+    "ServiceAccounts": "Service Accounts",
     "TenantAdmins": "Tenant Admins",
     "TenantSettings": "Tenant Settings",
     "TermsAndConditions": "Terms & Conditions"
@@ -1303,6 +1304,57 @@
       "switchToAdvancedDescription": "Are you sure you want to switch to the advanced editor? Your current markdown will be converted to raw HTML, and you won’t be able to switch back to the markdown editor.",
       "variablesOption": "Variables",
       "displayNameFieldTitle": "Template Name"
+    }
+  },
+  "serviceAccounts": {
+    "serviceAccount": "Service Account",
+    "noServiceAccounts": "You haven't added any service accounts yet",
+    "createServiceAccountsInfo": "Create service accounts to use for automated access to ForgeRock APIs.",
+    "createNewServiceAccount": "New Service Account",
+    "serviceAccountsTitle": "Service Accounts",
+    "failedToLoad": "Failed to Load Service Accounts. Please try again.",
+    "table": {
+      "nameHeader": "Name",
+      "clientIdHeader": "Client ID",
+      "actions": {
+        "regenerateKey": "Regenerate Key"
+      }
+    },
+    "addServiceAccountModal": {
+      "title": "New Service Account",
+      "nameInputInfo": "Human-readable name for your service account.",
+      "descriptionLabel": "Description (optional)",
+      "scopes": "Scopes",
+      "chooseScopes": "Choose scopes to grant to the service application.",
+      "autoAccessRead": "fr:autoaccess:read",
+      "autoAccessReadInfo": "Read autoaccess events",
+      "autoAccessWrite": "fr:autoaccess:write",
+      "autoAccessWriteInfo": "Write autoaccess events",
+      "userRead": "fr:user:read",
+      "userReadInfo": "View end user basic profile information",
+      "cancel": "Cancel",
+      "save": "Save",
+      "success": "Service account successfully created!",
+      "downloadKeyInfo": "Make sure you download the public key below as it won’t be available again.",
+      "clientIDLabel": "Client ID",
+      "download": "Download Key",
+      "done": "Done",
+      "errorSaving": "Error saving Service Account"
+    },
+    "deleteServiceAccountModal": {
+      "areYouSure": "Are you sure you want to delete this service account?",
+      "cancel": "Cancel",
+      "confirm": "Delete Service Account",
+      "fail": "Failed to delete Service Account"
+    },
+    "regenerateKeyModal": {
+      "title": "Regenerate Key",
+      "areYouSure": "Are you sure you want to regenerate key?",
+      "additionalInfo": "Anything using this service account will need to be updated with the new key to maintain API access.",
+      "actions": {
+        "cancel": "Cancel",
+        "confirm": "Regenerate Key"
+      }
     }
   },
   "tenantSettings": {

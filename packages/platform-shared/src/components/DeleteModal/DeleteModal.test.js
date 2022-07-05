@@ -1,21 +1,79 @@
 /**
- * Copyright 2020 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
-import { shallowMount } from '@vue/test-utils';
+
+import { mount } from '@vue/test-utils';
+import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import i18n from '@/i18n';
 import DeleteModal from './index';
 
 describe('DeleteModal', () => {
-  it('DeleteModal successfully loaded', () => {
-    const wrapper = shallowMount(DeleteModal, {
-      mocks: {
-        $t: () => {},
+  const stubPropsData = {
+    isTesting: true,
+  };
+
+  function setup(props) {
+    return mount(DeleteModal, {
+      i18n,
+      propsData: {
+        ...stubPropsData,
+        ...props,
       },
     });
+  }
 
-    expect(wrapper.name()).toEqual('DeleteModal');
+  it('with custom message', () => {
+    const wrapper = setup({
+      customMessage: 'stub custom message',
+    });
+
+    const customMessageElement = findByTestId(wrapper, 'delete-modal-custom-message');
+    expect(customMessageElement.text()).toBe('stub custom message');
+  });
+
+  it('with type', () => {
+    const wrapper = setup({
+      translatedItemType: 'Service Account',
+    });
+
+    const bodyWithType = findByTestId(wrapper, 'deletePanel-body');
+    expect(bodyWithType.text()).toBe('Are you sure you want to delete this service account?');
+  });
+
+  it('delete button should not be disabled when not deleting', () => {
+    const wrapper = setup({
+      isDeleting: false,
+      testid: 'delete-btn',
+    });
+
+    const deleteButton = findByTestId(wrapper, 'delete-btn');
+    expect(deleteButton.attributes('disabled')).toBeFalsy();
+  });
+
+  it('delete button should be disabled when deleting', () => {
+    const wrapper = setup({
+      isDeleting: true,
+      testid: 'delete-btn',
+    });
+
+    const deleteButton = findByTestId(wrapper, 'delete-btn');
+    expect(deleteButton.attributes('disabled')).toBeTruthy();
+  });
+
+  describe('@actions', () => {
+    it('should emit delete-item event', () => {
+      const wrapper = setup({
+        testid: 'delete-btn',
+      });
+      expect(wrapper.emitted()['delete-item']).toBeFalsy();
+
+      const deleteButton = findByTestId(wrapper, 'delete-btn');
+      deleteButton.trigger('click');
+
+      expect(wrapper.emitted()['delete-item']).toBeTruthy();
+    });
   });
 });
