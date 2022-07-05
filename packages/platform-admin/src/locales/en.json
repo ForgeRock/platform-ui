@@ -1117,9 +1117,10 @@
     "successSaving": "Successfully saved CORS Configuration",
     "successSavingService": "Successfully saved CORS Service status",
     "corsConfigModal": {
-      "chooseTemplate": "Choose a template for your new CORS Configuration.",
+      "chooseTemplate": "Choose a template for your new CORS Configuration",
       "sdk": "ForgeRock SDK",
-      "sdkDescription": "Defaults for the JavaScript sample app",
+      "sdkDescription": "Defaults for JS SDK sample apps",
+      "sdkLink": "Learn more about the <a target='_blank' href='https://sdks.forgerock.com/'>ForgeRock SDKs</a> and <a target='_blank' href='https://github.com/ForgeRock/forgerock-javascript-sdk/tree/master/samples'>sample apps</a>",
       "custom": "Custom",
       "customDescription": "Start with a blank slate",
       "editCorsConfig": "Edit CORS Configuration {id}",
