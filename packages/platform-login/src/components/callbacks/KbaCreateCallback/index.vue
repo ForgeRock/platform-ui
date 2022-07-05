@@ -141,8 +141,11 @@ export default {
       // Add any predefined question
       const options = [
         ...predefinedQuestions.map((question) => ({ text: question, value: question })),
-        customQuestionOption,
       ];
+
+      if (this.callback.getOutputByName('allowUserDefinedQuestions', true) !== false) {
+        options.push(customQuestionOption);
+      }
 
       // remove questions that are selected in other KBA callbacks
       const otherValues = this.getOtherQuestionValues(this.index);
