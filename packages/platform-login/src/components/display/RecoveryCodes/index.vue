@@ -1,12 +1,12 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
-    <h2>
+    <h1 class="h2">
       {{ $t('login.recoveryCodes.header') }}
-    </h2>
+    </h1>
     <p class="mb-0">
       {{ $t('login.recoveryCodes.subheader') }}
     </p>

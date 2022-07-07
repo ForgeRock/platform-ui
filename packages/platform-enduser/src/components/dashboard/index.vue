@@ -29,7 +29,9 @@ of the MIT license. See the LICENSE file for details. -->
             name="donut_large"
           />
           <div class="flex-fow-1">
-            <h2>{{ $t('pages.dashboard.noWidget') }}</h2>
+            <h1 class="h2">
+              {{ $t('pages.dashboard.noWidget') }}
+            </h1>
             <p v-html="$t('pages.dashboard.noWidgetSubText')" />
           </div>
         </div>

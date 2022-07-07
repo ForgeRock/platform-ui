@@ -7,11 +7,11 @@ of the MIT license. See the LICENSE file for details. -->
     <div
       class="d-flex flex-row align-items-center justify-content-between px-4"
       :class="{'activity-filters': !userId}">
-      <h3
+      <h1
         v-if="!userId"
-        class="m-0 font-weight-normal">
+        class="m-0 font-weight-normal h3">
         {{ $t("autoAccess.access.activity.header") }}
-      </h3>
+      </h1>
       <div :class="{'d-flex': true, 'flex-row': true, 'activity-filters-user-detail': !!userId, 'position-absolute': !!userId}">
         <div class="ml-3">
           <DateRangePicker

@@ -9,9 +9,9 @@ of the MIT license. See the LICENSE file for details. -->
       :items="socialProviders">
       <template #accordionHeader>
         <div class="p-4">
-          <h4>
+          <h1 class="h4">
             {{ $t('pages.profile.social.title') }}
-          </h4>
+          </h1>
           <p class="m-0">
             {{ $t('pages.profile.social.subtitle') }}
           </p>

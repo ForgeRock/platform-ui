@@ -6,9 +6,9 @@ of the MIT license. See the LICENSE file for details. -->
   <div class="container-fluid">
     <div class="my-5">
       <div class="d-flex align-items-center">
-        <h4 class="text-left w-50">
+        <h1 class="text-left w-50 h4">
           {{ userId }}
-        </h4>
+        </h1>
         <div class="w-50 d-flex justify-content-end">
           <FrDatepicker
             class="mr-2 date-field"

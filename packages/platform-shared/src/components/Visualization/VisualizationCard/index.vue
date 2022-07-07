@@ -42,11 +42,11 @@ of the MIT license. See the LICENSE file for details. -->
               <slot name="menu" />
             </div>
           </div>
-          <h3
+          <h1
             v-if="count"
-            class="display-4 mb-3">
+            class="display-4 mb-3 h3">
             {{ localeCount }}
-          </h3>
+          </h1>
           <div>
             <Transition
               appear
