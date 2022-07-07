@@ -29,7 +29,7 @@ of the MIT license. See the LICENSE file for details. -->
             role="navigation"
             v-show="getBreadcrumbRoute().length > 0"
             :to="!checkChangesOnNavigate ? getBreadcrumbRoute() : ''">
-            <h4 class="text-truncate">
+            <h1 class="text-truncate h4">
               <FrIcon
                 class="md-24 mr-3"
                 name="arrow_back"
@@ -37,7 +37,7 @@ of the MIT license. See the LICENSE file for details. -->
               <span class="align-middle">
                 {{ getBreadcrumbRouteText() }}
               </span>
-            </h4>
+            </h1>
           </RouterLink>
         </div>
         <div>

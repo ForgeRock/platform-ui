@@ -13,11 +13,11 @@ of the MIT license. See the LICENSE file for details. -->
         class="text-dark">
         {{ score }}
       </span>
-      <h4
+      <h1
         v-else
-        class="m-0">
+        class="m-0 h4">
         {{ score }}
-      </h4>
+      </h1>
     </div>
     <span v-if="!isNaN(change) && isFinite(change)">
       <RiskScoreChange

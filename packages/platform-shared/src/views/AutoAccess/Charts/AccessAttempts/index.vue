@@ -15,9 +15,9 @@ of the MIT license. See the LICENSE file for details. -->
     >
       <div class="d-flex flex-row mb-4">
         <div class="flex-fill">
-          <h2>
+          <h1 class="h2">
             {{ new Intl.NumberFormat().format(sumOfAttempts()) }}
-          </h2>
+          </h1>
           <div>
             <p
               class="m-0 align-self-end"

@@ -62,11 +62,11 @@ of the MIT license. See the LICENSE file for details. -->
                 @input="updateField(index, $event)" />
             </template>
           </template>
-          <h3
+          <h1
             v-else
-            class="text-center">
+            class="text-center h3">
             {{ $t('profile.editProfile.noFields') }}
-          </h3>
+          </h1>
         </BRow>
       </BContainer>
       <template #modal-footer="{ cancel }">
