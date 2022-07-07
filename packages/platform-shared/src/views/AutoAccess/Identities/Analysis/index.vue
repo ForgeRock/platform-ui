@@ -25,9 +25,9 @@ of the MIT license. See the LICENSE file for details. -->
       <div
         id="event_log"
         class="mx-1 p-1">
-        <h4 class="mb-2">
+        <h1 class="mb-2 h-4">
           {{ $t("access.identities.eventLog") }}
-        </h4>
+        </h1>
         <FrAccordion
           :key="`event-accordion-${eventLogPage}`"
           accordion-group="event-logs"
@@ -199,9 +199,9 @@ of the MIT license. See the LICENSE file for details. -->
       <div
         id="cause_freq"
         class="mx-1 p-1">
-        <h4 class="mb-2">
+        <h1 class="mb-2 h4">
           {{ $t("access.identities.causeFrequency") }}
-        </h4>
+        </h1>
         <BTableSimple
           hover
           small>

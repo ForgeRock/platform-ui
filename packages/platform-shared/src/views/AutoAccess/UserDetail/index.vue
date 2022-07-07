@@ -15,9 +15,9 @@ of the MIT license. See the LICENSE file for details. -->
           </i>
         </BButton>
       </div>
-      <h3 class="m-0 font-weight-normal text-center">
+      <h1 class="m-0 font-weight-normal text-center h3">
         User Detail
-      </h3>
+      </h1>
       <div>
         <BButton
           variant="link"
@@ -38,9 +38,9 @@ of the MIT license. See the LICENSE file for details. -->
             width="60"
             height="60">
 
-          <h2 class="mt-4 mb-1">
+          <h1 class="mt-4 mb-1 h2">
             Carl Smith
-          </h2>
+          </h1>
           <p class="text-muted mb-4">
             carl.smith
           </p>
