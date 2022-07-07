@@ -28,9 +28,9 @@ of the MIT license. See the LICENSE file for details. -->
           </BAvatar>
         </div>
       </div>
-      <h4 class="text-truncate">
+      <h1 class="text-truncate h4">
         {{ header }}
-      </h4>
+      </h1>
       <div class="text-muted text-truncate">
         {{ secondaryHeader }}
       </div>

@@ -76,9 +76,9 @@ of the MIT license. See the LICENSE file for details. -->
               </template>
             </BForm>
             <template v-else>
-              <h3 class="text-center">
+              <h1 class="text-center h3">
                 {{ $t('pages.access.noRequiredFields') }}
-              </h3>
+              </h1>
             </template>
           </BCol>
           <BCol

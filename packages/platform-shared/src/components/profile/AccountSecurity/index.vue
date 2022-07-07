@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -6,7 +6,9 @@ of the MIT license. See the LICENSE file for details. -->
   <div>
     <BCard no-body>
       <BCardHeader class="p-4">
-        <h4>{{ $t('pages.profile.accountSecurity.title') }}</h4>
+        <h1 class="h4">
+          {{ $t('pages.profile.accountSecurity.title') }}
+        </h1>
         <p class="m-0">
           {{ $t('pages.profile.accountSecurity.subtitle') }}
         </p>
