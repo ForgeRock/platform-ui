@@ -46,6 +46,8 @@ export const apiToInternalEvent = (data) => {
     raw_event_data, features, risk_score_data, ueba_signal,
   } = _source.predictionResult;
 
+  const heuristics = risk_score_data.heuristic_agg_result;
+
   const obj = {
     raw: _source,
     userId: features.userId,
@@ -56,13 +58,14 @@ export const apiToInternalEvent = (data) => {
     risk: Math.round(risk_score_data.risk_score),
     risk_score_data,
     transactionId: raw_event_data.transactionId,
-    heuristics: risk_score_data.heuristic_agg_result.raw_results,
+    heuristics: heuristics ? heuristics.raw_results : [],
     ueba_signal,
     geo_data: features.geoData,
     dayparting: features.dayparting,
     weekday: features.weekday,
     ...features.browserData,
   };
+
   return obj;
 };
 
