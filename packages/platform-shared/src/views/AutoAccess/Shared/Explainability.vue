@@ -89,7 +89,11 @@ export default {
       return feature;
     },
     heuristics() {
-      return this.riskScoreData.heuristic_agg_result.raw_results.map((h) => {
+      const heuristics = this.riskScoreData.heuristic_agg_result;
+      if (!heuristics) {
+        return [];
+      }
+      return heuristics.raw_results.map((h) => {
         const heuristicKey = Object.keys(h).find((propName) => propName.indexOf('is_') === 0);
         return {
           key: heuristicKey,
