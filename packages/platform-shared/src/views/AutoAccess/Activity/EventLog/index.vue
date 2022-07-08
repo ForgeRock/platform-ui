@@ -295,7 +295,8 @@ export default {
       const { pageMeta, page } = this;
       this.isLoading = true;
       this.error = false;
-      getEventLogs(this.getQuery())
+      const query = this.getQuery();
+      getEventLogs(query)
         .then(({ data }) => {
           this.eventLogData = data.hits.hits.map((row) => {
             const ev = apiToInternalEvent(row);
