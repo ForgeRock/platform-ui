@@ -360,9 +360,8 @@ export const getExecutionModels = (pipelineId) => new Promise((resolve, reject) 
 });
 
 export const getPipelineExecutionLogs = (pipelineId) => new Promise((resolve, reject) => {
-  // getData(`/api/pipeline/${pipelineId}/logs`);
-  generateAutoAccessApi().get(`/api/pipeline/${pipelineId}/logs`)
-    .then((result) => {
+  generateAutoAccessApi().get(`/pipeline/${pipelineId}/logs`)
+    .then(({ data: result }) => {
       resolve(result);
     })
     .catch((err) => {
