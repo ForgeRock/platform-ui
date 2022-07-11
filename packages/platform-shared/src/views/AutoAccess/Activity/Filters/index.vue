@@ -45,7 +45,7 @@ of the MIT license. See the LICENSE file for details. -->
     </div>
     <div class="mt-3">
       <ReasonFilter
-        :selected="tempReasons"
+        v-model="tempReasons"
         @update="updateReasons"
       />
     </div>
