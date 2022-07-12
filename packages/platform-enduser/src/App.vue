@@ -40,7 +40,7 @@ import ValidationRules from '@forgerock/platform-shared/src/utils/validationRule
 import FrLayout from '@forgerock/platform-shared/src/components/Layout';
 import { getIdmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
 import ThemeInjector from '@forgerock/platform-shared/src/components/ThemeInjector/';
-import { getAuthenticationDefinition } from '@forgerock/platform-shared/src/views/AutoAccess/DataSources/api/DataSourcesAPI';
+import { getDefaultProcess } from '@forgerock/platform-shared/src/views/AutoAccess/RiskConfig/api/RiskConfigAPI';
 import { getConfig } from '@forgerock/platform-shared/src/views/AutoAccess/Shared/utils/api';
 import i18n from '@/i18n';
 import './scss/main.scss';
@@ -162,9 +162,8 @@ export default {
       getConfig().then(() => {
         this.showRiskDashboad();
       }).catch(() => {});
-
       // Risk Administration / Data Analyst
-      getAuthenticationDefinition().then(() => {
+      getDefaultProcess().then(() => {
         this.showRiskAdministration();
       }).catch(() => {});
     },
