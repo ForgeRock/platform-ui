@@ -20,7 +20,7 @@ of the MIT license. See the LICENSE file for details. -->
       v-model="confirmPasswordText"
       type="password"
       :errors="confirmPasswordFailures"
-      label="Confirm Password"
+      :label="$t('login.password.confirmPassword')"
       @input="checkConfirmPasswordMatch" />
   </div>
 </template>

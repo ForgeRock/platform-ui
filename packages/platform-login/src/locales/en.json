@@ -25,6 +25,9 @@
       "answer": "Answer",
       "notUnique": "Custom questions cannot be duplicates"
     },
+    "password": {
+      "confirmPassword": "Confirm Password"
+    },
     "recoveryCodes": {
       "header": "Device sign-in is enabled",
       "subheader": "Now you can use your device as a second step when signing in to your account.",
