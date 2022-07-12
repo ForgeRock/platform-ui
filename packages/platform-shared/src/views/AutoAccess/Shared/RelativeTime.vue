@@ -45,7 +45,8 @@ export default {
     secondsPast() {
       const { timestamp } = this;
       const then = new Date(timestamp);
-      const now = new Date();
+      const utcOffset = dayjs().utcOffset() 
+      const now = dayjs().add(-utcOffset, 'minutes').toDate();
 
       return (now.getTime() - then.getTime()) / 1000;
     },
