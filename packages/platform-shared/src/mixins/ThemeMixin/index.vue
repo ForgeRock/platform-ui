@@ -42,6 +42,7 @@ export default {
         favicon: 'https://cdn.forgerock.com/platform/themes/starter/logo-starter.svg',
         fontFamily: 'Open Sans',
         journeyCardBackgroundColor: '#ffffff',
+        journeyCardHeaderBackgroundColor: '#ffffff',
         journeyCardShadow: 3,
         journeyCardBorderRadius: 4,
         journeyCardTextColor: '#5e6d82',
