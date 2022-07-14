@@ -7,10 +7,10 @@ of the MIT license. See the LICENSE file for details. -->
     <div class="fr-m-auto fr-center-card align-self-center">
       <BCard
         no-body
-        class="border-xs-0 border-sm d-flex fr-stretch-card"
+        class="overflow-hidden border-xs-0 border-sm d-flex fr-stretch-card"
         header-tag="header"
         footer-tag="footer">
-        <BCardHeader class="d-flex align-items-center flex-fill">
+        <BCardHeader :class="headerClassList">
           <div class="d-flex flex-fill flex-column justify-content-center">
             <template v-if="logoEnabled">
               <div
@@ -58,6 +58,13 @@ export default {
   },
   props: {
     /**
+     * List of classes to apply to the header of the card
+     */
+    headerClasses: {
+      type: Array,
+      default: () => [],
+    },
+    /**
      * Height of logo
      */
     logoHeight: {
@@ -84,6 +91,11 @@ export default {
     logoEnabled: {
       type: Boolean,
       default: true,
+    },
+  },
+  computed: {
+    headerClassList() {
+      return ['d-flex', 'align-items-center', 'flex-fill', ...this.headerClasses];
     },
   },
 };

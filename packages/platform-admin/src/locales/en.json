@@ -262,6 +262,7 @@
         "header": "Header",
         "headerDescription": "Place a header above the sign-in card.",
         "journeyCardBackgroundColor": "Card Background Color",
+        "journeyCardHeaderBackgroundColor": "Card Header Background Color",
         "journeyCardShadow": "Card Shadow: {pixelValue}px",
         "journeyCardBorderRadius": "Border Radius: {pixelValue}px",
         "journeyCardTextColor": "Card Text Color",
