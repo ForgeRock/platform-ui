@@ -23,7 +23,8 @@ of the MIT license. See the LICENSE file for details. -->
                 :logo-alt-text="logoAltText || 'Logo'"
                 :logo-enabled="logoEnabled && !themeLoading"
                 :logo-height="logoHeight"
-                :logo-path="logoPath">
+                :logo-path="logoPath"
+                :header-classes="['login-header']">
                 <template #center-card-header>
                   <div v-if="!loading && !themeLoading">
                     <h1
@@ -134,40 +135,47 @@ of the MIT license. See the LICENSE file for details. -->
       id="callbacksPanel"
       :class="[{'flex-row-reverse': journeyLayout === 'justified-right'}, 'd-flex w-100 flex-grow-1']">
       <div class="journey-card w-md-50 w-100 d-flex align-items-start flex-column">
-        <div
-          class="pb-4 px-4 px-md-5 w-100"
-          data-testid="in-situ-logo-preview">
-          <div class="d-flex">
-            <img
-              v-if="logoEnabled"
-              class="fr-logo mt-4"
-              :alt="logoAltText"
-              :style="{ height: `${logoHeight}px` }"
-              :src="logoPath">
-            <div
-              v-if="journeyHeaderEnabled"
-              class="flex-grow-1"
-              id="appHeader">
-              <header v-html="sanitizedHeader" />
+        <div class="login-header w-100 d-flex flex-column flex-grow-1 justify-content-between">
+          <div
+            class="pb-4 px-4 px-md-5 w-100"
+            data-testid="in-situ-logo-preview">
+            <div class="d-flex">
+              <img
+                v-if="logoEnabled"
+                class="fr-logo mt-4"
+                :alt="logoAltText"
+                :style="{ height: `${logoHeight}px` }"
+                :src="logoPath">
+              <div
+                v-if="journeyHeaderEnabled"
+                class="flex-grow-1"
+                id="appHeader">
+                <header v-html="sanitizedHeader" />
+              </div>
             </div>
           </div>
+
+          <div class="px-4 px-md-5">
+            <BRow class="m-0">
+              <BCol xl="9">
+                <h1
+                  v-if="header"
+                  class="display-4 mb-5 h2">
+                  {{ header }}
+                </h1>
+                <p
+                  v-if="description"
+                  v-html="description" />
+              </BCol>
+            </BRow>
+          </div>
         </div>
-        <div class="px-4 px-md-5 d-flex align-items-center w-100 flex-grow-1">
+        <div class="mt-1 px-4 px-md-5 d-flex w-100 flex-grow-1">
           <div class="w-100 max-width-600">
             <BRow
               v-if="!loading && !themeLoading"
               class="m-0">
               <BCol xl="9">
-                <div>
-                  <h1
-                    v-if="header"
-                    class="display-4 mb-5 h2">
-                    {{ header }}
-                  </h1>
-                  <p
-                    v-if="description"
-                    v-html="description" />
-                </div>
                 <FrAlert
                   :show="loginFailure"
                   :dismissible="false"
