@@ -130,6 +130,10 @@ of the MIT license. See the LICENSE file for details. -->
       box-shadow: rgb(0 0 0 / 13%) 0px 1px {{ theme.journeyCardShadow !== undefined ? theme.journeyCardShadow : 3 }}px;
       }
 
+      .login-header {
+      background-color: {{ theme.journeyCardHeaderBackgroundColor || '#ffffff' }} !important;
+      }
+
       <!-- login card title -->
       .card .h2,
       .journey-card .h2 {
@@ -394,6 +398,7 @@ backgroundColor: "#312E2E"
 buttonRounded: "15"
 fontFamily: "Open Sans"
 journeyCardBackgroundColor: "#ffffff"
+journeyCardHeaderBackgroundColor: "#ffffff"
 journeyCardShadow: 3
 journeyCardBorderRadius: 4
 journeyCardTextColor: "#5e6d82"
