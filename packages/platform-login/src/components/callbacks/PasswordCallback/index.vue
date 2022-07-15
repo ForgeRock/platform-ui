@@ -13,7 +13,7 @@ of the MIT license. See the LICENSE file for details. -->
         data-test-id="aboveFieldLabel"
         ref="aboveFieldLabel"
         :aria-hidden="!showLabelOverField"
-        :class="{'invisible position-absolute text-nowrap': !showLabelOverField}">
+        :class="[{'invisible position-absolute text-nowrap': !showLabelOverField}, 'text-left']">
         {{ $attrs.label }}
       </label>
     </template>
