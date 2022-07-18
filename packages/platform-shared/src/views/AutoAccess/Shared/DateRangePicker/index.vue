@@ -157,12 +157,10 @@ export default {
       } else if (d.isBefore(dates[1], 'day')) {
         dates[0] = d.format();
       } else {
-        dates[1] = d.format();
+        dates[1] = d.endOf('day').format();
       }
 
       dates.sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
-
-      // this.$emit('handleDateChange', {key: newKey, dates: dates})
 
       this.tempDateRange = dates;
     },
