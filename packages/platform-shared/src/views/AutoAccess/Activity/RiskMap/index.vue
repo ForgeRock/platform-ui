@@ -47,7 +47,7 @@ export default {
   },
   computed: {
     dateRange() {
-      return store.state.Dashboard.dates;
+      return store.state.Dashboard.utcDates;
     },
   },
   data() {
