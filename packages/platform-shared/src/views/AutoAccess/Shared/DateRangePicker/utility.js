@@ -20,35 +20,49 @@ export const getInterval = (dates) => {
 
 export const dateRangeoOptions = () => {
   const utcOffset = dayjs().utcOffset()
-  const now = dayjs().add(-utcOffset, 'minutes');
-
   return [
     {
       key: 'today',
       dates: [
-        dayjs().startOf('day').add(-utcOffset, 'm').format(),
-        now.format(),
+        dayjs().startOf('day').format(),
+        dayjs().endOf('day').format(),
       ],
+      utcDates: [
+        dayjs().startOf('day').add(-utcOffset, 'm').format(),
+        dayjs().endOf('day').add(-utcOffset, 'm').format(),
+      ]
     },
     {
       key: 'this_week',
       dates: [
-        dayjs().subtract(6, 'day').startOf('day').add(-utcOffset, 'm').format(),
-        now.format(),
+        dayjs().subtract(6, 'day').startOf('day').format(),
+        dayjs().endOf('day').format(),
       ],
+      utcDates: [
+        dayjs().subtract(6, 'day').startOf('day').add(-utcOffset, 'm').format(),
+        dayjs().endOf('day').add(-utcOffset, 'm').format(),
+      ]
     },
     {
       key: 'this_month',
       dates: [
         dayjs().startOf('month').add(-utcOffset, 'm').format(),
-        now.format(),
+        dayjs().add(-utcOffset, 'm').format(),
+      ],
+      utcDates: [
+        dayjs().startOf('month').add(-utcOffset, 'm').format(),
+        dayjs().endOf('day').add(-utcOffset, 'm').format(),
       ],
     },
     {
       key: 'custom',
       dates: [
         dayjs().subtract(7, 'day').startOf('day').add(-utcOffset, 'm').format(),
-        now.format(),
+        dayjs().add(-utcOffset, 'm').format(),
+      ],
+      utcDates: [
+        dayjs().subtract(7, 'day').startOf('day').add(-utcOffset, 'm').format(),
+        dayjs().endOf('day').add(-utcOffset, 'm').format(),
       ],
     },
   ]
