@@ -50,6 +50,7 @@ export default {
     namespaced: true,
     state: {
       dates: defaultDateRange().dates,
+      utcDates: defaultDateRange().utcDates,
       features: [],
       uebaClusteringReasons: [],
       config: {
@@ -83,6 +84,7 @@ export default {
     mutations: {
       dateChange(state, payload) {
         state.dates = payload.dates;
+        state.utcDates = payload.utcDates;
       },
       setFeatures: (state, payload) => {
         state.features = payload;

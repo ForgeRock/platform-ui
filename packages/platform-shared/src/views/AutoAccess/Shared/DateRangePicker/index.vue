@@ -36,7 +36,7 @@ of the MIT license. See the LICENSE file for details. -->
                 v-for="option in options"
                 :key="option.key"
                 role="button"
-                @click="selectOption(option.dates)"
+                @click="selectOption(option)"
                 :class="{'selected': dateRangeKey === option.key}"
               >
                 <span class="text-dark">
@@ -87,6 +87,7 @@ export default {
     return {
       dateRangePickerId: `date-range-${Math.random() * 1000000}`,
       tempDateRange: null,
+      tempUtcDateRange: null,
     };
   },
   props: {
@@ -144,8 +145,10 @@ export default {
     },
   },
   methods: {
-    selectOption(dates) {
+    selectOption(options) {
+      const { dates, utcDates } = options;
       this.tempDateRange = dates;
+      this.tempUtcDateRange = utcDates;
     },
     handleDateChange(date) {
       const d = dayjs(date);
@@ -157,21 +160,29 @@ export default {
       } else if (d.isBefore(dates[1], 'day')) {
         dates[0] = d.format();
       } else {
-        dates[1] = d.endOf('day').format();
+        dates[1] = d.format();
       }
 
       dates.sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
+      const utcOffset = dayjs().utcOffset()
+      const utcDates = [
+        dayjs(dates[0]).add(-utcOffset, 'm').format(),
+        dayjs(dates[1]).endOf('d').add(-utcOffset, 'm').format()
+      ];
+
       this.tempDateRange = dates;
+      this.tempUtcDateRange = utcDates;
     },
     closePopover() {
       this.$refs.popover.$emit('close');
     },
     commitChange() {
       if (this.tempDateRange) {
-        store.commit('Dashboard/dateChange', { dates: this.tempDateRange });
+        store.commit('Dashboard/dateChange', { dates: this.tempDateRange, utcDates: this.tempUtcDateRange });
       }
       this.tempDateRange = null;
+      this.tempUtcDateRange = null;
       this.closePopover();
     },
   },
