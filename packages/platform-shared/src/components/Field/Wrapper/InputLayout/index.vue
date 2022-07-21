@@ -196,9 +196,7 @@ export default {
     min-width: 80px;
 
     /* stylelint-disable */
-    .polyfill-placeholder,
-    input:focus,
-    input:not(:placeholder-shown) {
+    .polyfill-placeholder {
       padding-top: $input-btn-padding-y + $input-btn-padding-y * calc(2 / 3);
       padding-bottom: calc($input-btn-padding-y / 3);
 
