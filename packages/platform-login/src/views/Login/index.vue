@@ -103,11 +103,7 @@ of the MIT license. See the LICENSE file for details. -->
                     </div>
                   </BCardBody>
                   <BCardBody v-show="loading || themeLoading">
-                    <div
-                      class="h-100 d-flex"
-                      role="alert"
-                      aria-busy="true"
-                      aria-label="Loading">
+                    <div class="h-100 d-flex">
                       <div class="fr-center-card">
                         <Spinner class="mb-4" />
                       </div>
@@ -153,9 +149,11 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
         <div class="px-4 px-md-5 d-flex align-items-center w-100 flex-grow-1">
           <div class="w-100 max-width-600">
-            <BRow class="m-0">
+            <BRow
+              v-if="!loading && !themeLoading"
+              class="m-0">
               <BCol xl="9">
-                <div v-if="!loading">
+                <div>
                   <h1
                     v-if="header"
                     class="display-4 mb-5 h2">
@@ -226,6 +224,13 @@ of the MIT license. See the LICENSE file for details. -->
                   </form>
                 </div>
               </BCol>
+            </BRow>
+            <BRow
+              v-else
+              class="justify-content-center">
+              <div class="fr-center-card">
+                <Spinner class="mb-4" />
+              </div>
             </BRow>
           </div>
         </div>
@@ -1284,6 +1289,18 @@ export default {
 
   .journey-card {
     background-color: $white;
+  }
+}
+
+input:focus,
+input:not(:placeholder-shown) {
+  padding-top: $input-btn-padding-y + $input-btn-padding-y * calc(2 / 3);
+  padding-bottom: calc($input-btn-padding-y / 3);
+
+  ~ label {
+    padding-top: calc($input-btn-padding-y / 3);
+    padding-bottom: 0;
+    font-size: 12px;
   }
 }
 
