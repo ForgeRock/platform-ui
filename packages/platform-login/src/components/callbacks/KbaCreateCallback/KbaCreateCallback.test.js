@@ -11,16 +11,19 @@ import i18n from '@/i18n';
 
 describe('KbaCreateCallback.vue', () => {
   let wrapper;
+  const callbackProp = {
+    getPredefinedQuestions: () => (['Favorite color?', 'Favorite planet?']),
+    getPrompt: () => 'Prompt',
+    getType: () => 'KbaCreateCallback',
+    setQuestion: jest.fn(),
+    getOutputByName: () => true,
+  };
+
   beforeEach(() => {
     wrapper = shallowMount(KbaCreateCallback, {
       i18n,
       propsData: {
-        callback: {
-          getPredefinedQuestions: () => (['Favorite color?', 'Favorite planet?']),
-          getPrompt: () => 'Prompt',
-          getType: () => 'KbaCreateCallback',
-          setQuestion: jest.fn(),
-        },
+        callback: callbackProp,
         index: 5,
         showHeader: true,
       },
@@ -39,6 +42,27 @@ describe('KbaCreateCallback.vue', () => {
       { value: 'Favorite planet?', text: 'Favorite planet?' },
       customQuestionOption,
     ]);
+  });
+
+  describe('Custom Question Enabled scenarios', () => {
+    it('Shows customQuestionOption when callback is not present', () => {
+      wrapper.setProps({ callback: { ...callbackProp, getOutputByName: () => undefined } }); // i.e. version of AM that doesn't send value in callback
+      wrapper.vm.loadOptions();
+      const customQuestionOption = { value: 'custom', text: 'Provide your own:' };
+      expect(wrapper.vm.$data.options).toContainEqual(customQuestionOption);
+    });
+    it('Shows customQuestionOption when callback is true', () => {
+      wrapper.setProps({ callback: { ...callbackProp, getOutputByName: () => true } });
+      wrapper.vm.loadOptions();
+      const customQuestionOption = { value: 'custom', text: 'Provide your own:' };
+      expect(wrapper.vm.$data.options).toContainEqual(customQuestionOption);
+    });
+    it('Hides customQuestionOption when callback is false', () => {
+      wrapper.setProps({ callback: { ...callbackProp, getOutputByName: () => false } });
+      wrapper.vm.loadOptions();
+      const customQuestionOption = { value: 'custom', text: 'Provide your own:' };
+      expect(wrapper.vm.$data.options).not.toContainEqual(customQuestionOption);
+    });
   });
 
   it('Shows header', () => {
