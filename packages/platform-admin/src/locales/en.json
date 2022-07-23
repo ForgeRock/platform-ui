@@ -252,6 +252,11 @@
       "journeyTab": {
         "backgroundColor": "Page Background Color",
         "backgroundUrlHelp": "URL to optionally display a background image on sign-in pages.",
+        "buttonPosition": "Button Position",
+        "buttonPositionFullWidth": "Button Full-width",
+        "buttonPositionLeft": "Button Left",
+        "buttonPositionCenter": "Button Centered",
+        "buttonPositionRight": "Button Right",
         "centeredCard": "Centered Card",
         "globalStyles": "Global Styles",
         "header": "Header",

@@ -83,15 +83,15 @@ of the MIT license. See the LICENSE file for details. -->
                               },
                               ...component.listeners}" />
                         </template>
-                        <BButton
+                        <FrButtonWithAlignment
                           v-if="nextButtonVisible"
-                          class="btn-block mt-3"
+                          class="mt-3"
                           type="submit"
                           variant="primary"
                           :disabled="nextButtonDisabled"
-                          @click="nextStep">
+                          :button-position="journeySignInButtonPosition">
                           {{ buttonTextLocalized }}
-                        </BButton>
+                        </FrButtonWithAlignment>
                         <input
                           v-if="showScriptElms"
                           id="loginButton_0"
@@ -207,15 +207,15 @@ of the MIT license. See the LICENSE file for details. -->
                           ...component.listeners}"
                       />
                     </template>
-                    <BButton
+                    <FrButtonWithAlignment
                       v-if="nextButtonVisible"
-                      class="btn-block mt-3"
+                      class="mt-3"
                       type="submit"
                       variant="primary"
                       :disabled="nextButtonDisabled"
-                      @click="nextStep">
+                      :button-position="journeySignInButtonPosition">
                       {{ buttonTextLocalized }}
-                    </BButton>
+                    </FrButtonWithAlignment>
                     <input
                       v-if="showScriptElms"
                       id="loginButton_0"
@@ -283,6 +283,7 @@ import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import { getThemeIdFromStageString } from '@forgerock/platform-shared/src/utils/stage';
+import FrButtonWithAlignment from '@forgerock/platform-shared/src/components/ButtonWithAlignment';
 import i18n from '@/i18n';
 
 const FrCallbackType = {
@@ -303,6 +304,7 @@ export default {
     BContainer,
     BRow,
     FrAlert,
+    FrButtonWithAlignment,
     FrCenterCard,
     Spinner,
     FrBooleanAttributeInputCallback: () => import('@/components/callbacks/BooleanAttributeInputCallback'),
@@ -360,6 +362,10 @@ export default {
     journeyLayout: {
       type: String,
       default: 'card',
+    },
+    journeySignInButtonPosition: {
+      type: String,
+      default: 'button-full-width',
     },
     logoAltText: {
       type: String,

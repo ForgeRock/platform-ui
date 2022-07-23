@@ -59,6 +59,7 @@ export default {
         journeyJustifiedContent: '',
         journeyJustifiedContentEnabled: false,
         journeyLayout: 'card',
+        journeySignInButtonPosition: 'button-full-width',
         linkActiveColor: '#004067',
         linkColor: '#0070b3',
         linkedTrees: [],
@@ -93,6 +94,7 @@ export default {
       journeyJustifiedContent: '',
       journeyJustifiedContentEnabled: false,
       journeyLayout: 'card',
+      journeySignInButtonPosition: 'button-full-width',
       logoHeight: '40',
       logoProfileHeight: '40',
       logo: '',
@@ -175,6 +177,7 @@ export default {
           this.journeyJustifiedContent = theme.journeyJustifiedContent;
           this.journeyJustifiedContentEnabled = theme.journeyJustifiedContentEnabled;
           this.journeyLayout = theme.journeyLayout;
+          this.journeySignInButtonPosition = theme.journeySignInButtonPosition;
           this.logo = theme.logo || placeholderImage;
           this.logoAltText = theme.logoAltText;
           this.logoEnabled = theme.logoEnabled;
