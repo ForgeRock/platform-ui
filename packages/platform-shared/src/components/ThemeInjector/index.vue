@@ -229,7 +229,7 @@ of the MIT license. See the LICENSE file for details. -->
       border-top-color: {{ theme.accountNavigationToggleBorderColor || '#e7eef4' }} !important;
       }
 
-      #app .card,
+      <template v-if="mock">.fr-enduser-theme-preview</template> #app .card,
       .modal-content,
       .modal-content .card,
       #app .dropdown-menu {
