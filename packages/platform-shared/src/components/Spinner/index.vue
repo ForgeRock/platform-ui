@@ -7,8 +7,9 @@ of the MIT license. See the LICENSE file for details. -->
     class="text-center">
     <div
       :class="[{ 'spinner-large': size === 'lg' }, { 'spinner-medium': size === 'md' }, { 'spinner-small': size === 'sm' }, 'spinner-border', { 'spinner-primary': !buttonSpinner }]"
-      role="status"
-      :data-testid="testid">
+      :data-testid="testid"
+      aria-busy="true"
+      role="status">
       <span class="sr-only">
         {{ $t('common.loadingEtc') }}
       </span>

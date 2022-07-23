@@ -18,33 +18,52 @@ export const getInterval = (dates) => {
   return 'day';
 };
 
-export const dateRangeoOptions = () => [
-  {
-    key: 'today',
-    dates: [
-      dayjs().startOf('day').format(),
-      dayjs().endOf('day').format(),
-    ],
-  },
-  {
-    key: 'this_week',
-    dates: [
-      dayjs().subtract(6, 'day').startOf('day').format(),
-      dayjs().endOf('day').format(),
-    ],
-  },
-  {
-    key: 'this_month',
-    dates: [
-      dayjs().startOf('month').format(),
-      dayjs().format(),
-    ],
-  },
-  {
-    key: 'custom',
-    dates: [
-      dayjs().subtract(7, 'day').startOf('day').format(),
-      dayjs().format(),
-    ],
-  },
-];
+export const dateRangeoOptions = () => {
+  const utcOffset = dayjs().utcOffset()
+  return [
+    {
+      key: 'today',
+      dates: [
+        dayjs().startOf('day').format(),
+        dayjs().endOf('day').format(),
+      ],
+      utcDates: [
+        dayjs().startOf('day').add(-utcOffset, 'm').format(),
+        dayjs().endOf('day').add(-utcOffset, 'm').format(),
+      ]
+    },
+    {
+      key: 'this_week',
+      dates: [
+        dayjs().subtract(6, 'day').startOf('day').format(),
+        dayjs().endOf('day').format(),
+      ],
+      utcDates: [
+        dayjs().subtract(6, 'day').startOf('day').add(-utcOffset, 'm').format(),
+        dayjs().endOf('day').add(-utcOffset, 'm').format(),
+      ]
+    },
+    {
+      key: 'this_month',
+      dates: [
+        dayjs().startOf('month').add(-utcOffset, 'm').format(),
+        dayjs().add(-utcOffset, 'm').format(),
+      ],
+      utcDates: [
+        dayjs().startOf('month').add(-utcOffset, 'm').format(),
+        dayjs().endOf('day').add(-utcOffset, 'm').format(),
+      ],
+    },
+    {
+      key: 'custom',
+      dates: [
+        dayjs().subtract(7, 'day').startOf('day').add(-utcOffset, 'm').format(),
+        dayjs().add(-utcOffset, 'm').format(),
+      ],
+      utcDates: [
+        dayjs().subtract(7, 'day').startOf('day').add(-utcOffset, 'm').format(),
+        dayjs().endOf('day').add(-utcOffset, 'm').format(),
+      ],
+    },
+  ]
+};
