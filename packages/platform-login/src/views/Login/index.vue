@@ -40,7 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
 
                 <template #center-card-body>
                   <BCardBody
-                    v-show="!loading && !themeLoading"
+                    v-if="!loading && !themeLoading"
                     id="callbacksPanel">
                     <FrAlert
                       :show="loginFailure"
@@ -102,7 +102,7 @@ of the MIT license. See the LICENSE file for details. -->
                       </form>
                     </div>
                   </BCardBody>
-                  <BCardBody v-show="loading || themeLoading">
+                  <BCardBody v-else>
                     <div class="h-100 d-flex">
                       <div class="fr-center-card">
                         <Spinner class="mb-4" />
