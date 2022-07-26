@@ -7,9 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     :class="['d-flex', buttonPositionClass]"
   >
     <BButton
-      :type="type"
-      :variant="variant"
-      :disabled="disabled"
+      v-bind="$attrs"
       @click="$emit('click')">
       <slot />
     </BButton>
@@ -25,10 +23,13 @@ import { BButton } from 'bootstrap-vue';
  * If you are using this component inside a form with a submit listener use type=submit
  * property instead v-on:click for emit the submit event or use v-on:click with type=button
  * property otherwise this can create a double event emition.
+ * This component can received the same attributes of vue bootstrap button component:
+ * https://bootstrap-vue.org/docs/components/button
  */
 export default {
   name: 'ButtonWithAlignment',
   components: { BButton },
+  inheritAttrs: false,
   props: {
     /**
      * Button Position button-full-width|button-left|button-center|button-right
@@ -37,30 +38,6 @@ export default {
     buttonPosition: {
       type: String,
       default: 'button-full-width',
-    },
-    /**
-     * Disable button
-     * false by default
-     */
-    disabled: {
-      type: Boolean,
-      default: false,
-    },
-    /**
-     * Button type button|submit|reset
-     * button by default
-     */
-    type: {
-      type: String,
-      default: 'button',
-    },
-    /**
-     * Bootstrap variant
-     * primary by default
-     */
-    variant: {
-      type: String,
-      default: 'primary',
     },
   },
   computed: {

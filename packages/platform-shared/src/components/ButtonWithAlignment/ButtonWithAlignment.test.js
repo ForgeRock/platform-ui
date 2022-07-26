@@ -23,9 +23,6 @@ describe('ButtonWithAlignment', () => {
     expect(wrapper.html()).toContain('button content');
     // default props
     expect(wrapper.props().buttonPosition).toBe('button-full-width');
-    expect(wrapper.props().disabled).toBe(false);
-    expect(wrapper.props().type).toBe('button');
-    expect(wrapper.props().variant).toBe('primary');
     // defult button position class exists
     expect(wrapper.find('.flex-column').exists()).toBe(true);
   });
