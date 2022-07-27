@@ -19,7 +19,7 @@ of the MIT license. See the LICENSE file for details. -->
           />
         </div>
         <div class="ml-3">
-          <RiskRangeSlider
+          <RiskRangeSliderButton
             :value="filterObject.riskRange"
             @change="handleRiskRangeChange"
           />
@@ -88,7 +88,7 @@ import {
 import RiskMap from './RiskMap';
 import EventLog from './EventLog';
 import DateRangePicker from '../Shared/DateRangePicker';
-import RiskRangeSlider from '../Shared/RiskScoreSlider';
+import RiskRangeSliderButton from '../Shared/RiskScoreSliderButton';
 import AccessResults from '../Charts/AccessResults';
 import Filters from './Filters';
 import store from '@/store';
@@ -101,7 +101,7 @@ export default {
     RiskMap,
     EventLog,
     DateRangePicker,
-    RiskRangeSlider,
+    RiskRangeSliderButton,
     AccessResults,
     Filters,
   },
