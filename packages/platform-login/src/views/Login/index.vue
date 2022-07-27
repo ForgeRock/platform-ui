@@ -83,15 +83,17 @@ of the MIT license. See the LICENSE file for details. -->
                               },
                               ...component.listeners}" />
                         </template>
-                        <FrButtonWithAlignment
-                          v-if="nextButtonVisible"
-                          class="mt-3"
-                          type="submit"
-                          variant="primary"
-                          :disabled="nextButtonDisabled"
-                          :button-position="journeySignInButtonPosition">
-                          {{ buttonTextLocalized }}
-                        </FrButtonWithAlignment>
+                        <div
+                          :class="['d-flex mt-3', journeySignInButtonPosition]"
+                        >
+                          <BButton
+                            v-if="nextButtonVisible"
+                            type="submit"
+                            variant="primary"
+                            :disabled="nextButtonDisabled">
+                            {{ buttonTextLocalized }}
+                          </BButton>
+                        </div>
                         <input
                           v-if="showScriptElms"
                           id="loginButton_0"
@@ -205,15 +207,17 @@ of the MIT license. See the LICENSE file for details. -->
                           ...component.listeners}"
                       />
                     </template>
-                    <FrButtonWithAlignment
-                      v-if="nextButtonVisible"
-                      class="mt-3"
-                      type="submit"
-                      variant="primary"
-                      :disabled="nextButtonDisabled"
-                      :button-position="journeySignInButtonPosition">
-                      {{ buttonTextLocalized }}
-                    </FrButtonWithAlignment>
+                    <div
+                      :class="['d-flex mt-3', journeySignInButtonPosition]"
+                    >
+                      <BButton
+                        v-if="nextButtonVisible"
+                        type="submit"
+                        variant="primary"
+                        :disabled="nextButtonDisabled">
+                        {{ buttonTextLocalized }}
+                      </BButton>
+                    </div>
                     <input
                       v-if="showScriptElms"
                       id="loginButton_0"
@@ -288,7 +292,6 @@ import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import { getThemeIdFromStageString } from '@forgerock/platform-shared/src/utils/stage';
-import FrButtonWithAlignment from '@forgerock/platform-shared/src/components/ButtonWithAlignment';
 import i18n from '@/i18n';
 
 const FrCallbackType = {
@@ -309,7 +312,6 @@ export default {
     BContainer,
     BRow,
     FrAlert,
-    FrButtonWithAlignment,
     FrCenterCard,
     Spinner,
     FrBooleanAttributeInputCallback: () => import('@/components/callbacks/BooleanAttributeInputCallback'),
