@@ -372,7 +372,7 @@ export default {
     },
     journeySignInButtonPosition: {
       type: String,
-      default: 'button-full-width',
+      default: 'flex-column',
     },
     logoAltText: {
       type: String,
