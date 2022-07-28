@@ -72,9 +72,9 @@ filterTests(['forgeops', 'cloud'], () => {
     });
 
     it('should override the text of the login failure message', () => {
+      cy.intercept('/openidm/config/ui/themerealm').as('themeRealConfig');
       cy.visit(`${loginBaseUrl}#/`);
       cy.findByRole('button', { name: 'Next Test' }).should('exist').click();
-      cy.intercept('/openidm/config/ui/themerealm').as('themeRealConfig');
       cy.wait('@themeRealConfig');
       cy.findAllByRole('alert').contains('Login Failure Override');
     });
