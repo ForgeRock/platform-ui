@@ -84,10 +84,10 @@ of the MIT license. See the LICENSE file for details. -->
                               ...component.listeners}" />
                         </template>
                         <div
+                          v-if="nextButtonVisible"
                           :class="['d-flex mt-3', journeySignInButtonPosition]"
                         >
                           <BButton
-                            v-if="nextButtonVisible"
                             type="submit"
                             variant="primary"
                             :disabled="nextButtonDisabled">
@@ -208,10 +208,10 @@ of the MIT license. See the LICENSE file for details. -->
                       />
                     </template>
                     <div
+                      v-if="nextButtonVisible"
                       :class="['d-flex mt-3', journeySignInButtonPosition]"
                     >
                       <BButton
-                        v-if="nextButtonVisible"
                         type="submit"
                         variant="primary"
                         :disabled="nextButtonDisabled">
