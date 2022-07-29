@@ -7,6 +7,11 @@
 
 import { isObject } from 'lodash';
 
+/**
+ * Parses theme id within string version of stage field in the form of stageId=<id> or stageid=<id>
+ * @param {string} stage A string containing a theme id definition
+ * @returns {string} Returns the found theme id
+ */
 export function getThemeIdFromStageString(stage) {
   const regexp = /theme[Ii]d=\s*(.[^\s,]*).*/g;
   const match = regexp.exec(stage);
