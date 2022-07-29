@@ -733,6 +733,10 @@
       "showOnlyPositiveAnswerDescription": "Only show one the positive answer button on node.",
       "submitButtonText": "Submit Button Text",
       "submitButtonTextDescription": "Text to show within node's submit button.",
+      "pageHeaderInfo": "Localized header to display on the page node (first locale will be used as fallback)",
+      "pageDescriptionInfo": "Localized description to display on the page node (first locale will be used as fallback)",
+      "pageFooterTitle": "Page Footer",
+      "pageFooterInfo": "Localized footer to display on the page node (first locale will be used as fallback)",
       "theme": "Theme",
       "themeDescription": "If using hosted pages, specify a theme to override this journey's UI theme."
     },

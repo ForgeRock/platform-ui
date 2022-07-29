@@ -40,7 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
 
                 <template #center-card-body>
                   <BCardBody
-                    v-show="!loading && !themeLoading"
+                    v-if="!loading && !themeLoading"
                     id="callbacksPanel">
                     <FrAlert
                       :show="loginFailure"
@@ -104,13 +104,16 @@ of the MIT license. See the LICENSE file for details. -->
                       </form>
                     </div>
                   </BCardBody>
-                  <BCardBody v-show="loading || themeLoading">
+                  <BCardBody v-else>
                     <div class="h-100 d-flex">
                       <div class="fr-center-card">
                         <Spinner class="mb-4" />
                       </div>
                     </div>
                   </BCardBody>
+                  <BCardFooter
+                    v-if="pageFooterLocalized"
+                    v-html="pageFooterLocalized" />
                 </template>
               </FrCenterCard>
             </section>
@@ -225,6 +228,10 @@ of the MIT license. See the LICENSE file for details. -->
                       type="submit"
                       @click.prevent="backendScriptsHandler"
                       hidden>
+                    <div
+                      v-if="pageFooterLocalized"
+                      class="page-footer"
+                      v-html="pageFooterLocalized" />
                   </form>
                 </div>
               </BCol>
@@ -271,6 +278,7 @@ import {
 import {
   BButton,
   BCardBody,
+  BCardFooter,
   BCol,
   BContainer,
   BRow,
@@ -308,6 +316,7 @@ export default {
   components: {
     BButton,
     BCardBody,
+    BCardFooter,
     BCol,
     BContainer,
     BRow,
@@ -434,6 +443,13 @@ export default {
 
       return submitButtonTextOverride || this.buttonText || this.$t('login.next');
     },
+    pageFooterLocalized() {
+      try {
+        return this.$sanitize(this.getLocalizedString(this.stage.pageFooter, i18n.locale));
+      } catch (e) {
+        return null;
+      }
+    },
     nextButtonDisabled() {
       // checks if there are any true bool values in array
       return this.nextButtonDisabledArray.some((bool) => bool);
@@ -451,7 +467,7 @@ export default {
       try {
         return JSON.parse(this.step.getStage());
       } catch (e) {
-        if (this.step.getStage() !== undefined) {
+        if (this.step?.getStage() !== undefined) {
           return this.step.getStage();
         }
         return '';
@@ -1292,6 +1308,11 @@ export default {
   .journey-card {
     background-color: $white;
   }
+}
+
+.card-footer {
+  border: 0;
+  padding: 0;
 }
 
 input:focus,
