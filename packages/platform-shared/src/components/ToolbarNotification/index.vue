@@ -171,14 +171,14 @@ export default {
       this.getRequestService()
         .post(`/notification?_action=deleteNotificationsForTarget&target=${target}`)
         .then(() => {
-          this.displayNotification('IDMMessages', 'success', this.$t('pages.app.notifications.removedAll'));
+          this.displayNotification('success', this.$t('pages.app.notifications.removedAll'));
 
           if (isNull(this.timeoutId)) {
             this.startPolling();
           }
         })
         .catch(() => {
-          this.displayNotification('IDMMessages', 'error', this.$t('pages.app.notifications.failedToClear'));
+          this.displayNotification('error', this.$t('pages.app.notifications.failedToClear'));
         });
     },
     clearOne(index) {
@@ -189,14 +189,14 @@ export default {
       this.getRequestService()
         .delete(`/internal/notification/${notificationId}`)
         .then(() => {
-          this.displayNotification('IDMMessages', 'success', this.$t('pages.app.notifications.removed'));
+          this.displayNotification('success', this.$t('pages.app.notifications.removed'));
 
           if (isNull(this.timeoutId)) {
             this.startPolling();
           }
         })
         .catch(() => {
-          this.displayNotification('IDMMessages', 'error', this.$t('pages.app.notifications.failedToRemove'));
+          this.displayNotification('error', this.$t('pages.app.notifications.failedToRemove'));
         });
     },
     loadData() {

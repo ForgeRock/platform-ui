@@ -377,7 +377,7 @@ export default {
             });
         })
         .catch((error) => {
-          this.displayNotification('IDMMessages', 'error', error.response.data.message);
+          this.displayNotification('error', error.response.data.message);
         });
     },
     /**
@@ -395,12 +395,12 @@ export default {
 
       selfServiceInstance.put(url, payload, { withCredentials: true })
         .then((response) => {
-          this.displayNotification('IDMMessages', 'success', this.$t('pages.profile.trustedDevices.editSuccess'));
+          this.displayNotification('success', this.$t('pages.profile.trustedDevices.editSuccess'));
           this.$set(this.devices, index, { ...this.devices[index], ...this.parseDevice(response.data) });
           this.$refs.fsModal.hide();
         })
         .catch((error) => {
-          this.displayNotification('IDMMessages', 'error', error.response.data.message);
+          this.displayNotification('error', error.response.data.message);
         });
     },
     /**
@@ -415,12 +415,12 @@ export default {
 
       selfServiceInstance.delete(url, { withCredentials: true })
         .then(() => {
-          this.displayNotification('IDMMessages', 'success', this.$t('pages.profile.trustedDevices.removeSuccess'));
+          this.displayNotification('success', this.$t('pages.profile.trustedDevices.removeSuccess'));
           this.loadData();
           this.$refs.fsModal.hide();
         })
         .catch((error) => {
-          this.displayNotification('IDMMessages', 'error', error.response.data.message);
+          this.displayNotification('error', error.response.data.message);
         });
     },
   },

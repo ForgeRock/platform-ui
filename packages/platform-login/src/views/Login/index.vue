@@ -1223,7 +1223,7 @@ export default {
             }
           })
           .catch((error) => {
-            this.displayNotification('IDMMessages', 'error', error.response.data.message);
+            this.displayNotification('error', error.response.data.message);
           });
       } else if (has(step, 'payload.detail.failureUrl') && step.payload.detail.failureUrl.length) {
         window.location.href = step.payload.detail.failureUrl;

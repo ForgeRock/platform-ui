@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -273,7 +273,7 @@ export default {
         this.setOptions();
       })
         .catch((error) => {
-          this.displayNotification('IDMMessages', 'error', error.response.data.message);
+          this.displayNotification('error', error.response.data.message);
         });
     },
     setSearchPlaceholder(numChars) {
@@ -329,7 +329,7 @@ export default {
           });
         })
           .catch((error) => {
-            this.displayNotification('IDMMessages', 'error', error.response.data.message);
+            this.displayNotification('error', error.response.data.message);
           });
       }
     },

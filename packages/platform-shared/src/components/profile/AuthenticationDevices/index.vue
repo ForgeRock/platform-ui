@@ -264,7 +264,7 @@ export default {
 
       selfServiceInstance.delete(url, { withCredentials: true })
         .then(() => {
-          this.displayNotification('IDMMessages', 'success', this.$t('pages.authenticationDevices.deleteSuccess'));
+          this.displayNotification('success', this.$t('pages.authenticationDevices.deleteSuccess'));
           this.loadAuthenicationDevices();
           this.$refs.fsModal.hide();
         })
@@ -272,7 +272,7 @@ export default {
           if (error.response.data.message.toUpperCase() === 'USER NOT PERMITTED.') {
             this.setModalData('errorDelete', {});
           } else {
-            this.displayNotification('IDMMessages', 'error', error.response.data.message);
+            this.displayNotification('error', error.response.data.message);
           }
         });
     },
@@ -291,7 +291,7 @@ export default {
 
       selfServiceInstance.put(url, payload, { withCredentials: true })
         .then(() => {
-          this.displayNotification('IDMMessages', 'success', this.$t('pages.authenticationDevices.editSuccess'));
+          this.displayNotification('success', this.$t('pages.authenticationDevices.editSuccess'));
           this.loadAuthenicationDevices();
           this.$refs.fsModal.hide();
         })
@@ -299,7 +299,7 @@ export default {
           if (error.response.data.message.toUpperCase() === 'USER NOT PERMITTED.') {
             this.setModalData('errorEdit', {});
           } else {
-            this.displayNotification('IDMMessages', 'error', error.response.data.message);
+            this.displayNotification('error', error.response.data.message);
           }
         });
     },

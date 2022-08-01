@@ -139,7 +139,7 @@ export default {
     handleBaselineIngest() {
       saveRemoteIngest(JSON.parse(this.baselineObj))
         .then((data) => {
-          this.displayNotification('IDMMessages', 'success', this.$t('access.settings.saveIngestSuccess'));
+          this.displayNotification('success', this.$t('access.settings.saveIngestSuccess'));
         })
         .catch((e) => {
           this.showErrorMessage(e, this.$t('access.settings.saveIngestError'));

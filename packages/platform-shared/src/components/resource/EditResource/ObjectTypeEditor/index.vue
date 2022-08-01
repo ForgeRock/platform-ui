@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -203,7 +203,7 @@ export default {
           const resourceName = this.resourceTitle ? this.resourceTitle : this.resourcePath.split('/')[1];
           this.oldFormFields = cloneDeep(this.formFields);
           this.$emit('refresh-data');
-          this.displayNotification('IDMMessages', 'success', this.$t('pages.access.successEdited', { resource: resourceName }));
+          this.displayNotification('success', this.$t('pages.access.successEdited', { resource: resourceName }));
         },
         (error) => {
           const generatedErrors = this.findPolicyError(error.response, this.displayProperties);
@@ -223,7 +223,7 @@ export default {
           this.showErrorMessage(error, this.$t('pages.access.invalidEdit'));
         });
       } else {
-        this.displayNotification('IDMMessages', 'error', this.$t('pages.access.invalidEdit'));
+        this.displayNotification('error', this.$t('pages.access.invalidEdit'));
       }
     },
     updateField(index, newValue) {

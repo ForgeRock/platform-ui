@@ -248,7 +248,7 @@ export default {
                 }
               });
             } else {
-              this.displayNotification('IDMMessages', 'error', this.$t('pages.profile.failedProfileSave'));
+              this.displayNotification('error', this.$t('pages.profile.failedProfileSave'));
             }
           }
         });

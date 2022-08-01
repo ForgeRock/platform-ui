@@ -143,7 +143,7 @@ export default {
           }
         })
         .catch((error) => {
-          this.displayNotification('IDMMessages', 'error', error.response.data.message);
+          this.displayNotification('error', error.response.data.message);
         });
     },
   },

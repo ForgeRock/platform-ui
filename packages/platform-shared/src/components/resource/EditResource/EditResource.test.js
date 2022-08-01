@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -40,7 +40,7 @@ describe('EditResource.vue', () => {
       },
       mocks: {
         $route,
-        $t: () => {},
+        $t: () => { },
         $store: {
           state: {
             userId: 'foo',
@@ -229,7 +229,7 @@ describe('EditResource.vue', () => {
     it('calls the API clearSessions method and displays a notification when clearing sessions is successful', async () => {
       const displayNotificationSpy = jest.spyOn(wrapper.vm, 'displayNotification');
       const clearSpy = jest.spyOn(SessionsApi, 'clearSessions').mockImplementation(() => Promise.resolve());
-      const refreshDataSpy = jest.spyOn(wrapper.vm, 'refreshData').mockImplementation(() => {});
+      const refreshDataSpy = jest.spyOn(wrapper.vm, 'refreshData').mockImplementation(() => { });
       jest.spyOn(SchemaApi, 'getSchema').mockImplementation(() => Promise.resolve());
 
       await wrapper.vm.clearSessionsAndCloseModal();
@@ -242,7 +242,7 @@ describe('EditResource.vue', () => {
     it('calls the API clearSessions method and displays an error notification when clearing sessions is not successful', async () => {
       const showErrorSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
       const clearSpy = jest.spyOn(SessionsApi, 'clearSessions').mockImplementation(() => Promise.reject());
-      const refreshDataSpy = jest.spyOn(wrapper.vm, 'refreshData').mockImplementation(() => {});
+      const refreshDataSpy = jest.spyOn(wrapper.vm, 'refreshData').mockImplementation(() => { });
       jest.spyOn(SchemaApi, 'getSchema').mockImplementation(() => Promise.resolve());
 
       await wrapper.vm.clearSessionsAndCloseModal();
@@ -312,7 +312,7 @@ describe('EditResource.vue', () => {
   it('deletes resource', async () => {
     const notificationSpy = jest.spyOn(wrapper.vm, 'displayNotification');
     await wrapper.vm.deleteResource();
-    expect(notificationSpy).toHaveBeenCalledWith('IDMMessages', 'success', undefined);
+    expect(notificationSpy).toHaveBeenCalledWith('success', undefined);
   });
 
   it('populates the mobile dropdown menu property', () => {

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -57,7 +57,7 @@ export default {
     blurOnEscape,
     copyValueToClipboard(value) {
       clipboard.writeText(value).then(() => {
-        this.displayNotification('IDMMessages', 'success', this.$t('common.copySuccess'));
+        this.displayNotification('success', this.$t('common.copySuccess'));
       }, (error) => {
         this.showErrorMessage(error, this.$t('common.copyFail'));
       });

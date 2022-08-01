@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -137,7 +137,7 @@ describe('RelationshipArray', () => {
           },
         },
       },
-      mounted: () => {},
+      mounted: () => { },
     });
     jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => (
       {
@@ -190,8 +190,8 @@ describe('RelationshipArray', () => {
     wrapper.vm.removeModalId = 'testId';
     wrapper.vm.$refs = {
       testId: {
-        show: () => {},
-        hide: () => {},
+        show: () => { },
+        hide: () => { },
       },
       relationshipArrayGrid: {
         clearSelected: () => {
@@ -333,7 +333,7 @@ describe('RelationshipArray', () => {
     wrapper.vm.onRowSelected([1, 2, 3, 4]);
     expect(wrapper.vm.selected[0]).toEqual(1);
     await wrapper.vm.removeRelationships();
-    expect(notificationSpy).toHaveBeenCalledWith('IDMMessages', 'success', 'pages.access.successRemoved');
+    expect(notificationSpy).toHaveBeenCalledWith('success', 'pages.access.successRemoved');
 
     const error400 = { response: { status: 400 } };
     jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => (

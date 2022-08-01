@@ -190,12 +190,12 @@ export default {
       }
 
       idmInstance.patch(this.resourcePath, patch).then(() => {
-        this.displayNotification('IDMMessages', 'success', this.$t('pages.access.successEdited', { resource: capitalize(this.resourceName) }));
+        this.displayNotification('success', this.$t('pages.access.successEdited', { resource: capitalize(this.resourceName) }));
         this.hideModal();
         this.$emit('refresh-data');
       },
       () => {
-        this.displayNotification('IDMMessages', 'error', this.$t('pages.access.invalidEdit'));
+        this.displayNotification('error', this.$t('pages.access.invalidEdit'));
       });
     },
     setConditionOptions() {
@@ -238,7 +238,7 @@ export default {
         });
       },
       () => {
-        this.displayNotification('IDMMessages', 'error', this.$t('pages.access.invalidEdit'));
+        this.displayNotification('error', this.$t('pages.access.invalidEdit'));
       });
     },
   },

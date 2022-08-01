@@ -529,7 +529,7 @@ export default {
       }).patch(`${this.parentResource}/${this.parentId}`, patchArray).then(() => {
         const translation = operation === 'remove' ? 'pages.access.successRemoved' : 'pages.access.successAdded';
         loadAndCloseModal();
-        this.displayNotification('IDMMessages', 'success', this.$t(translation, { resource: this.relationshipArrayProperty.title }));
+        this.displayNotification('success', this.$t(translation, { resource: this.relationshipArrayProperty.title }));
         this.$emit('refresh-data');
       }).catch((error) => {
         loadAndCloseModal();

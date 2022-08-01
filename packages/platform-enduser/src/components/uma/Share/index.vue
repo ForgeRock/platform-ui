@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -271,11 +271,11 @@ export default {
           if (this.newShare) {
             this.shareResource();
           } else {
-            this.displayNotification('IDMMessages', 'error', this.$t('pages.uma.resources.noRequestingParty'));
+            this.displayNotification('error', this.$t('pages.uma.resources.noRequestingParty'));
           }
           // attempting to share with user who already has access to resource
         } else {
-          this.displayNotification('IDMMessages', 'error', this.$t('pages.uma.resources.sameShareError', { requestingParty: this.newShare }));
+          this.displayNotification('error', this.$t('pages.uma.resources.sameShareError', { requestingParty: this.newShare }));
           this.resetModal();
         }
         // shared for first time

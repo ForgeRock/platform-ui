@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -161,9 +161,9 @@ export default {
           this.requestsLoaded = true;
 
           if (error.response) {
-            this.displayNotification('IDMMessages', 'error', error.response.data.message);
+            this.displayNotification('error', error.response.data.message);
           } else {
-            this.displayNotification('IDMMessages', 'error', error.message);
+            this.displayNotification('error', error.message);
           }
         });
     },
@@ -179,9 +179,9 @@ export default {
         .catch((error) => {
           this.activity = [];
           if (error.response) {
-            this.displayNotification('IDMMessages', 'error', error.response.data.message);
+            this.displayNotification('error', error.response.data.message);
           } else {
-            this.displayNotification('IDMMessages', 'error', error.message);
+            this.displayNotification('error', error.message);
           }
         });
     },
@@ -214,9 +214,9 @@ export default {
           this.requests = {};
 
           if (error.response) {
-            this.displayNotification('IDMMessages', 'error', error.response.data.message);
+            this.displayNotification('error', error.response.data.message);
           } else {
-            this.displayNotification('IDMMessages', 'error', error.message);
+            this.displayNotification('error', error.message);
           }
         });
     },
@@ -243,11 +243,11 @@ export default {
         if (config.onSuccess) {
           config.onSuccess();
         }
-        this.displayNotification('IDMMessages', 'success', successMsg);
+        this.displayNotification('success', successMsg);
         this.loadData();
       })
         .catch((error) => {
-          this.displayNotification('IDMMessages', 'error', error.response.data.message);
+          this.displayNotification('error', error.response.data.message);
         });
     },
     unshareResource(resourceId) {
@@ -257,11 +257,11 @@ export default {
       const url = `${resourceId}`; // this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.resourceSet + query;
 
       selfServiceInstance.delete(url, { withCredentials: true }).then(() => {
-        this.displayNotification('IDMMessages', 'success', successMsg);
+        this.displayNotification('success', successMsg);
         this.loadData();
       })
         .catch((error) => {
-          this.displayNotification('IDMMessages', 'error', error.response.data.message);
+          this.displayNotification('error', error.response.data.message);
         });
     },
     modifyResource(resourceId, payload, config = {}) {
@@ -277,11 +277,11 @@ export default {
             config.onSuccess();
           }
 
-          this.displayNotification('IDMMessages', 'success', successMsg);
+          this.displayNotification('success', successMsg);
           this.loadData();
         })
         .catch((error) => {
-          this.displayNotification('IDMMessages', 'error', error.response.data.message);
+          this.displayNotification('error', error.response.data.message);
         });
     },
     finalizeResourceAccess(id, action, config = {}) {
@@ -297,10 +297,10 @@ export default {
         }
 
         this.delayedUpdate = true;
-        this.displayNotification('IDMMessages', 'success', successMsg);
+        this.displayNotification('success', successMsg);
       })
         .catch((error) => {
-          this.displayNotification('IDMMessages', 'error', error.response.data.message);
+          this.displayNotification('error', error.response.data.message);
         });
     },
     testForReload() {

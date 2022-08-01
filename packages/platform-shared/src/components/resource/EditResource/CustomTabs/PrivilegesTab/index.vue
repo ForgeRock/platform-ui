@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -355,7 +355,7 @@ export default {
       const patch = [{ operation: 'add', field: '/privileges', value: this.privilegesField.value }];
 
       idmInstance.patch(this.resourcePath, patch).then(() => {
-        this.displayNotification('IDMMessages', 'success', this.$t('pages.access.successEdited', { resource: capitalize(this.resourceName) }));
+        this.displayNotification('success', this.$t('pages.access.successEdited', { resource: capitalize(this.resourceName) }));
         this.$refs.editPrivilegeModal.hide();
         this.newPrivileges = [];
         this.$refs.addPrivilegesModal.hide();

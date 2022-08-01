@@ -249,7 +249,7 @@ export default {
         this.$set(removed, 'connected', false);
         this.closeModal();
         this.collapseAccordion(this.socialProviders);
-        this.displayNotification('', 'success', this.$t('pages.profile.social.disconnectSuccess', { providerName: provider }));
+        this.displayNotification('success', this.$t('pages.profile.social.disconnectSuccess', { providerName: provider }));
       }, () => {
         this.showErrorMessage('', this.$t('pages.profile.social.disconnectError', { providerName: provider }));
       });
