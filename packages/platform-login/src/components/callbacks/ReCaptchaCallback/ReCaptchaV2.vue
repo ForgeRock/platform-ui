@@ -80,7 +80,7 @@ export default {
       }
     },
     handleCaptchaError() {
-      this.displayNotification('IDMMessages', 'error', this.$t('pages.selfservice.captchaError'));
+      this.displayNotification('error', this.$t('pages.selfservice.captchaError'));
     },
     handleCaptchaCallback(response) {
       this.value = response;

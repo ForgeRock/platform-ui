@@ -171,7 +171,7 @@ export default {
 
       selfServiceInstance.delete(`/${this.managedResource}/${this.userId}`).then(() => {
         this.$bvModal.hide('deleteModal');
-        this.displayNotification('IDMMessages', 'success', this.$t('pages.profile.accountControls.deleteAccountSuccessful'));
+        this.displayNotification('success', this.$t('pages.profile.accountControls.deleteAccountSuccessful'));
         this.logoutUser();
       });
     },

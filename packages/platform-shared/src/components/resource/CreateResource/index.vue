@@ -297,7 +297,7 @@ export default {
             this.$emit('showDetails', newObjectResponse.data);
             this.hideModal();
 
-            this.displayNotification('IDMMessages', 'success', this.$t('pages.access.successCreate', { resource: this.resourceTitle || capitalize(this.resourceName) }));
+            this.displayNotification('success', this.$t('pages.access.successCreate', { resource: this.resourceTitle || capitalize(this.resourceName) }));
           },
           (error) => {
             this.setErrors(error.response);
@@ -306,7 +306,7 @@ export default {
           });
         } else {
           this.isSaving = false;
-          this.displayNotification('IDMMessages', 'error', this.$t('pages.access.invalidCreate'));
+          this.displayNotification('error', this.$t('pages.access.invalidCreate'));
         }
       })
         .catch(() => { this.isSaving = false; });

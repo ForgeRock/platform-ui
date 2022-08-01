@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -22,7 +22,7 @@ export default {
   ],
   methods: {
     // Display an application notification
-    displayNotification(notificationGroup, notificationType, message) {
+    displayNotification(notificationType, message) {
       let type = notificationType;
 
       if (type === 'error') {
@@ -44,7 +44,7 @@ export default {
         errorMessage = errorTextElement.innerText;
       }
 
-      this.displayNotification('AdminMessage', 'danger', this.getTranslation(errorMessage));
+      this.displayNotification('danger', this.getTranslation(errorMessage));
     },
   },
 };

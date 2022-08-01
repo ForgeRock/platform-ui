@@ -144,7 +144,7 @@ export default {
 
       this.setPrivileges(privilege, schema);
     }), (error) => {
-      this.displayNotification('IDMMessages', 'error', error.response.data.message);
+      this.displayNotification('error', error.response.data.message);
     });
   },
   methods: {

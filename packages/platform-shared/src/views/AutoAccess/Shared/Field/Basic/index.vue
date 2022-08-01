@@ -164,7 +164,7 @@ export default {
     },
     copyValueToClipboard(payload) {
       clipboard.writeText(payload).then(() => {
-        this.displayNotification('IDMMessages', 'success', this.$t('common.copySuccess'));
+        this.displayNotification('success', this.$t('common.copySuccess'));
       }, (error) => {
         this.showErrorMessage(error, this.$t('common.copyFail'));
       });
