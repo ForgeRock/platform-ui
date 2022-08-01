@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -138,7 +138,7 @@ export default {
           this.profile = results.data;
         })
         .catch((error) => {
-          this.displayNotification('IDMMessages', 'error', error.response.data.message);
+          this.displayNotification('error', error.response.data.message);
         });
     },
     updateProfile(payload, config) {
@@ -156,7 +156,7 @@ export default {
 
       selfServiceInstance.patch(`${endpoint}/${this.userId}`, payload).then((response) => {
         this.$store.commit('UserStore/setProfile', response.data);
-        this.displayNotification('IDMMessages', 'success', successMsg);
+        this.displayNotification('success', successMsg);
         this.profile = response.data;
 
         if (config.onSuccess) {
@@ -164,7 +164,7 @@ export default {
         }
       }).catch((error) => {
         const errorMsg = config.errorMsg || error.response.data.message;
-        this.displayNotification('IDMMessages', 'error', errorMsg);
+        this.displayNotification('error', errorMsg);
 
         if (config.onError) {
           config.onError(error);

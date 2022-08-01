@@ -349,20 +349,20 @@ export default {
               this.generateDisplay();
               this.settingsProperties = this.getSettingsProperties(schema.data, privilege.data);
             }).catch((error) => {
-              this.displayNotification('IDMMessages', 'error', error.response.data.message);
+              this.displayNotification('error', error.response.data.message);
             });
           } else {
             this.generateDisplay();
             this.settingsProperties = this.getSettingsProperties(schema.data, privilege.data);
           }
         }).catch((error) => {
-          this.displayNotification('IDMMessages', 'error', error.response.data.message);
+          this.displayNotification('error', error.response.data.message);
         });
 
         this.loadLinkedApplicationsData();
       }))
         .catch((error) => {
-          this.displayNotification('IDMMessages', 'error', error.response.data.message);
+          this.displayNotification('error', error.response.data.message);
         });
     },
     loadLinkedApplicationsData() {
@@ -609,13 +609,13 @@ export default {
 
       idmInstance.delete(`${this.resourceType}/${this.resourceName}/${this.id}`)
         .then(() => {
-          this.displayNotification('IDMMessages', 'success', this.$t('pages.access.deleteResource', { resource: this.resourceName }));
+          this.displayNotification('success', this.$t('pages.access.deleteResource', { resource: this.resourceName }));
 
           this.$router.push({
             path: `/${this.$route.meta.listRoute}/${this.resourceType}/${this.resourceName}`,
           });
         }).catch((error) => {
-          this.displayNotification('IDMMessages', 'error', error.response.data.message);
+          this.displayNotification('error', error.response.data.message);
         }).finally(() => {
           this.isDeleting = false;
           this.$root.$emit('bv::hide::modal', 'deleteModal');
@@ -660,7 +660,7 @@ export default {
     clearSessionsAndCloseModal() {
       return clearSessions(this.id)
         .then(() => {
-          this.displayNotification('AdminMessage', 'success', this.$t('clearSessionsModal.successClearingSessions'));
+          this.displayNotification('success', this.$t('clearSessionsModal.successClearingSessions'));
         }, (err) => {
           this.showErrorMessage(
             err,

@@ -251,7 +251,7 @@ export default {
       return putConfig('ui/themerealm', themesConfig).then(({ data }) => {
         this.setThemeData(data, this.realm);
         if (!suppressSuccessMessage) {
-          this.displayNotification('AdminMessage', 'success', this.$t('hostedPages.theme.successSave'));
+          this.displayNotification('success', this.$t('hostedPages.theme.successSave'));
         }
       }).catch((error) => {
         this.showErrorMessage(error, this.$t('hostedPages.errorSavingTheme'));

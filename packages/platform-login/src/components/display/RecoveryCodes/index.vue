@@ -107,7 +107,7 @@ export default {
   methods: {
     copyRecoveryCodesToClipboard() {
       writeText(this.recoveryCodes).then(() => {
-        this.displayNotification('', 'success', this.$t('common.copySuccess'));
+        this.displayNotification('success', this.$t('common.copySuccess'));
       }, (error) => {
         this.showErrorMessage(error, this.$t('common.copyFail'));
       });
