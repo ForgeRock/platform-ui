@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -84,24 +84,24 @@ export default {
         headers: { Accept: 'application/json, text/javascript, */*; q=0.01' },
       })
         .then(() => {
-          this.displayNotification('', 'success', this.$t('pages.workflow.taskSuccessfullyCompleted'));
+          this.displayNotification('success', this.$t('pages.workflow.taskSuccessfullyCompleted'));
           this.$delete(this.assignedTasks, id);
         })
         .then(this.loadData)
         .catch((error) => {
           if (error.response.data.code === 403) {
-            this.displayNotification('', 'error', this.$t('pages.workflow.taskNoLongerAvailable', { taskName: this.assignedTasks[id].name }));
+            this.displayNotification('error', this.$t('pages.workflow.taskNoLongerAvailable', { taskName: this.assignedTasks[id].name }));
             this.$delete(this.assignedTasks, id);
             this.loadTasks();
           } else {
-            this.displayNotification('', 'error', error.response.data.message);
+            this.displayNotification('error', error.response.data.message);
           }
         });
     },
     updateAssignment({ id, task, assignee }) {
       return this.workflowService.put(`/workflow/taskinstance/${task._id}`, { assignee }, { headers: { 'If-Match': '"*"' } })
         .then(() => {
-          this.displayNotification('', 'success', this.$t('pages.workflow.assignmentSuccess', { taskName: task.name, assignee }));
+          this.displayNotification('success', this.$t('pages.workflow.assignmentSuccess', { taskName: task.name, assignee }));
           // Use $delete to remove the task from the list to get the proper transition
           this.$delete(this.assignedTasks, id);
           this.$delete(this.availableTasks, id);
@@ -109,23 +109,23 @@ export default {
         .then(this.loadData)
         .catch((error) => {
           if (error.response.data.code === 403) {
-            this.displayNotification('', 'error', this.$t('pages.workflow.taskNoLongerAvailable', { taskName: this.availableTasks[id].name }));
+            this.displayNotification('error', this.$t('pages.workflow.taskNoLongerAvailable', { taskName: this.availableTasks[id].name }));
             this.$delete(this.availableTasks, id);
             this.loadTasks();
           } else {
-            this.displayNotification('', 'error', error.response.data.message);
+            this.displayNotification('error', error.response.data.message);
           }
         });
     },
     startProcess(payload) {
       return this.workflowService.post('/workflow/processinstance/?_action=create', payload)
         .then(() => {
-          this.displayNotification('', 'success', this.$t('pages.workflow.processStartSuccessMessage'));
+          this.displayNotification('success', this.$t('pages.workflow.processStartSuccessMessage'));
           this.$refs.processes.cancel(payload._processDefinitionId);
         })
         .then(this.loadData)
         .catch((error) => {
-          this.displayNotification('', 'error', error.response.data.message);
+          this.displayNotification('error', error.response.data.message);
         });
     },
     loadProcessDefinition(process) {
@@ -134,7 +134,7 @@ export default {
           this.$set(process, 'processDefinition', data);
         })
         .catch((error) => {
-          this.displayNotification('', 'error', error.reponse.data.message);
+          this.displayNotification('error', error.reponse.data.message);
         });
     },
     loadProcesses() {
@@ -200,7 +200,7 @@ export default {
       this.loadProcesses() // Need to load processes first so process definitions are available to tasks when loaded
         .then(() => axios.all([this.loadTasks({ groupName: 'assignedTasks' }), this.loadTasks({ groupName: 'availableTasks' })]))
         .catch((error) => {
-          this.displayNotification('', 'error', error.response.data.message);
+          this.displayNotification('error', error.response.data.message);
         });
     },
   },

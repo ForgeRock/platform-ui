@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -100,7 +100,7 @@ export default {
       const idmInstance = this.getRequestService();
       const saveData = [{ operation: 'add', field: '/password', value: this.password }];
       idmInstance.patch(`${this.resourceType}/${this.resourceName}/${this.resourceId}`, saveData).then(() => {
-        this.displayNotification('AdminMessage', 'success', this.$t('pages.access.successSavePassword'));
+        this.displayNotification('success', this.$t('pages.access.successSavePassword'));
         this.$emit('refresh-data');
         ok();
       },

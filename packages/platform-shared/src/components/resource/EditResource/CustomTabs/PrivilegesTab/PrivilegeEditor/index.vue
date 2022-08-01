@@ -440,7 +440,7 @@ export default {
       // must always have at least "view" permissionss
       if (this.privilege.permissions.length === 0) {
         this.$nextTick(() => this.privilege.permissions.push('VIEW'));
-        this.displayNotification('AdminMessage', 'warning', this.$t('pages.access.onePermissionRequired'));
+        this.displayNotification('warning', this.$t('pages.access.onePermissionRequired'));
       }
       this.setDefaultAccessFlags();
     },
