@@ -59,7 +59,8 @@ export function verifyGotoUrlAndRedirect(url, realm, isAdmin = false, isGotoOnFa
   let gotoUrl;
 
   // This aligns the goto parameter order to match what was used in AM and what is documented in the Docs
-  if (process.env.VUE_APP_ALIGN_GOTO_PRECEDENCE === 'true') {
+  const alignGotoPrecedence = process.env.VUE_APP_ALIGN_GOTO_PRECEDENCE;
+  if (alignGotoPrecedence === 'true') {
     gotoUrl = !isGotoOnFail
       ? JSON.stringify({ goto: url })
       : JSON.stringify({ goto: urlParams.get('gotoOnFail') });
