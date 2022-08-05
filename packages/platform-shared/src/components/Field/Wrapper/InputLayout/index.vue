@@ -21,16 +21,18 @@ of the MIT license. See the LICENSE file for details. -->
         <div
           v-if="floatingLabel"
           class="form-label-group-input">
-          <slot />
+          <slot :label-height="labelHeight" />
           <label
             v-if="label && isHtml"
             v-html="label"
+            ref="inputLabel"
             :for="id"
-            class="pe-none overflow-hidden text-nowrap full-width" />
+            :class="['pe-none full-width', {'overflow-hidden text-nowrap': labelTextOverflowHidden}]" />
           <label
             v-else-if="label"
+            ref="inputLabel"
             :for="id"
-            class="pe-none overflow-hidden text-nowrap">
+            :class="['pe-none', {'overflow-hidden text-nowrap': labelTextOverflowHidden}]">
             {{ getTranslation(label) }}
           </label>
         </div>
@@ -41,17 +43,17 @@ of the MIT license. See the LICENSE file for details. -->
             v-if="label && isHtml"
             v-html="label"
             :for="id"
-            class="pe-none overflow-hidden text-nowrap full-width" />
+            class="pe-none full-width" />
           <label
             v-else-if="label"
             :for="id"
-            class="pe-none overflow-hidden text-nowrap">
+            class="pe-none">
             {{ getTranslation(label) }}
           </label>
           <slot />
         </div>
         <slot name="defaultButtons" />
-        <!-- slot appends buttons or elements to the input -->
+        <!-- slot appends  buttons or elements to the input -->
         <slot name="append" />
       </div>
       <div
@@ -187,6 +189,18 @@ export default {
       default: 500,
     },
   },
+  data() {
+    return {
+      labelHeight: 0, // stores the label height
+      labelTextOverflowHidden: false, // verifies if the label text is overflow hidden
+    };
+  },
+  mounted() {
+    // get the input label height and update data
+    const label = this.$refs.inputLabel;
+    this.labelHeight = label ? label.clientHeight : 0;
+    this.labelTextOverflowHidden = !this.labelHeight;
+  },
 };
 </script>
 
@@ -217,7 +231,6 @@ export default {
   &.floating-label {
     label {
       padding: $input-btn-padding-y;
-      max-height: calc(100% - 2px);
       position: absolute;
       top: 0;
       left: 0;

@@ -47,6 +47,7 @@
 
   ~ label {
     width: calc(100% - 40px);
+    max-height: calc(100% - 2px);
   }
 
   .multiselect__content-wrapper {

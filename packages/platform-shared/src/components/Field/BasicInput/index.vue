@@ -13,50 +13,61 @@ of the MIT license. See the LICENSE file for details. -->
     :label="label"
     :validation="validation"
     :validation-immediate="validationImmediate">
-    <input
-      v-if="fieldType === 'number'"
-      v-model.number="inputValue"
-      ref="input"
-      type="number"
-      :class="[
-        'form-control',
-        {
-          'polyfill-placeholder': floatLabels,
-          'is-invalid': errorMessages && errorMessages.length,
-          'text-truncate' : copy,
-        }
-      ]"
-      :data-vv-as="label"
-      :disabled="disabled"
-      :id="id"
-      :name="name"
-      :placeholder="floatingLabel ? label : placeholder"
-      :readonly="readonly"
-      @animationstart="floatingLabel && animationStart"
-      :data-testid="testid">
-    <input
-      v-else
-      v-model="inputValue"
-      ref="input"
-      :class="[
-        'form-control',
-        {
-          'polyfill-placeholder': floatLabels,
-          'is-invalid': errorMessages && errorMessages.length,
-          'text-truncate' : copy,
-        }
-      ]"
-      :data-vv-as="label"
-      :disabled="disabled"
-      :id="id"
-      :name="name"
-      :placeholder="floatingLabel ? getTranslation(label) : placeholder"
-      :readonly="readonly"
-      :type="fieldType"
-      :autocomplete="$attrs.autocomplete"
-      @input="evt=>inputValue=evt.target.value"
-      @animationstart="floatingLabel && animationStart"
-      :data-testid="testid">
+    <template v-slot="{ labelHeight }">
+      <!--
+        slot scoped variable labelHeight is used to change the height of the input as follows:
+        - the label height is calculated as labelHeight + 2px (border of label)
+        - padding top is calculated depends on label position,
+          if the label is floating then padding top is equal to labelHeight - 27px (size of label text with floating label)
+          else padding top is equal to labelHeight - 35px (size of label text without floating label or empty input)
+      -->
+      <input
+        v-if="fieldType === 'number'"
+        v-model.number="inputValue"
+        ref="input"
+        type="number"
+        :class="[
+          'form-control',
+          {
+            'polyfill-placeholder': floatLabels,
+            'is-invalid': errorMessages && errorMessages.length,
+            'text-truncate' : copy,
+          }
+        ]"
+        :data-vv-as="label"
+        :disabled="disabled"
+        :id="id"
+        :name="name"
+        :placeholder="floatingLabel ? label : placeholder"
+        :readonly="readonly"
+        :style="labelHeight && {height: (labelHeight + 2) + 'px', 'padding-top': floatLabels ? (labelHeight - 27) + 'px' : (labelHeight - 35) + 'px'}"
+        @animationstart="floatingLabel && animationStart"
+        :data-testid="testid">
+      <input
+        v-else
+        v-model="inputValue"
+        ref="input"
+        :class="[
+          'form-control',
+          {
+            'polyfill-placeholder': floatLabels,
+            'is-invalid': errorMessages && errorMessages.length,
+            'text-truncate' : copy,
+          }
+        ]"
+        :data-vv-as="label"
+        :disabled="disabled"
+        :id="id"
+        :name="name"
+        :placeholder="floatingLabel ? getTranslation(label) : placeholder"
+        :readonly="readonly"
+        :type="fieldType"
+        :autocomplete="$attrs.autocomplete"
+        :style="labelHeight && {height: (labelHeight + 2) + 'px', 'padding-top': floatLabels ? (labelHeight - 27) + 'px' : (labelHeight - 35) + 'px'}"
+        @input="evt=>inputValue=evt.target.value"
+        @animationstart="floatingLabel && animationStart"
+        :data-testid="testid">
+    </template>
     <template #defaultButtons>
       <BInputGroupAppend
         class="fr-hide-input"
