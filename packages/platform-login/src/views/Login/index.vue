@@ -76,7 +76,7 @@ of the MIT license. See the LICENSE file for details. -->
                             :is="component.type"
                             :key="component.key"
                             :step="step"
-                            v-bind="{...component.callbackSpecificProps}"
+                            v-bind="{...component.callbackSpecificProps, floatingLabel: journeyFloatingLabels}"
                             v-on="{
                               'next-step': (event, preventClear) => {
                                 nextStep(event, preventClear);
@@ -202,7 +202,7 @@ of the MIT license. See the LICENSE file for details. -->
                         :is="component.type"
                         :key="component.key"
                         :step="step"
-                        v-bind="{...component.callbackSpecificProps}"
+                        v-bind="{...component.callbackSpecificProps, floatingLabel: journeyFloatingLabels}"
                         v-on="{
                           'next-step': (event, preventClear) => {
                             nextStep(event, preventClear);
@@ -346,6 +346,10 @@ export default {
     buttonText: {
       type: String,
       default: '',
+    },
+    journeyFloatingLabels: {
+      type: Boolean,
+      default: true,
     },
     journeyFooter: {
       type: String,
