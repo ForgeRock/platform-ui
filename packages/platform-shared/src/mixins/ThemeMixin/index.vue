@@ -46,6 +46,7 @@ export default {
         journeyCardBorderRadius: 4,
         journeyCardTextColor: '#5e6d82',
         journeyCardTitleColor: '#23282e',
+        journeyFloatingLabels: true,
         journeyFooter: `<div class="d-flex justify-content-center py-4 w-100"><span class="pr-1">© ${new Date().getFullYear()}</span>\n<a href="#" target="_blank" class="text-body">My Company, Inc</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Privacy Policy</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Terms & Conditions</a></div>`,
         journeyFooterEnabled: false,
         journeyHeader: '<div class="d-flex justify-content-center py-4 flex-grow-1">Header Content</div>',
@@ -86,6 +87,7 @@ export default {
         topBarTextColor: '#69788b',
       },
       favicon: '',
+      journeyFloatingLabels: true,
       journeyFooter: '',
       journeyFooterEnabled: false,
       journeyHeader: '',
@@ -169,6 +171,7 @@ export default {
           const placeholderImage = require('@forgerock/platform-shared/src/assets/images/placeholder.svg');
           this.theme = theme;
           this.favicon = theme.favicon;
+          this.journeyFloatingLabels = theme.journeyFloatingLabels;
           this.journeyFooter = theme.journeyFooter;
           this.journeyFooterEnabled = theme.journeyFooterEnabled;
           this.journeyHeader = theme.journeyHeader;

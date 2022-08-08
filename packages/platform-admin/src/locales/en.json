@@ -268,6 +268,7 @@
         "journeyCardTextColorDescription": "Color used for body text across all pages.",
         "journeyCardTitleColor": "Card Title Color",
         "journeyCardTitleColorDescription": "Color used for page title text.",
+        "journeyFloatingLabels": "Floating labels",
         "journeyFooterDescription": "Place a footer below the sign-in card.",
         "journeyInputBackgroundColor": "Sign-in Input Background Color",
         "journeyInputBorderColor": "Sign-in Input Border Color",

@@ -14,11 +14,13 @@ of the MIT license. See the LICENSE file for details. -->
     :vid="name">
     <div class="w-100">
       <div
-        :class="[{'fr-field-error': errors.concat(validationObject.errors).length}, 'form-label-group']"
+        :class="[{'fr-field-error': errors.concat(validationObject.errors).length, 'floating-label': floatingLabel}, 'form-label-group']"
         ref="floatingLabelGroup">
         <!-- @slot Prepend buttons or elements to the input. -->
         <slot name="prepend" />
-        <div class="form-label-group-input">
+        <div
+          v-if="floatingLabel"
+          class="form-label-group-input">
           <slot />
           <label
             v-if="label && isHtml"
@@ -31,6 +33,22 @@ of the MIT license. See the LICENSE file for details. -->
             class="pe-none overflow-hidden text-nowrap">
             {{ getTranslation(label) }}
           </label>
+        </div>
+        <div
+          v-else
+          class="form-label-group-input">
+          <label
+            v-if="label && isHtml"
+            v-html="label"
+            :for="id"
+            class="pe-none overflow-hidden text-nowrap full-width" />
+          <label
+            v-else-if="label"
+            :for="id"
+            class="pe-none overflow-hidden text-nowrap">
+            {{ getTranslation(label) }}
+          </label>
+          <slot />
         </div>
         <slot name="defaultButtons" />
         <!-- slot appends buttons or elements to the input -->
@@ -113,6 +131,13 @@ export default {
       default: '',
     },
     /**
+     * Boolean to show a floating label or above label on controls
+     */
+    floatingLabel: {
+      type: Boolean,
+      default: true,
+    },
+    /**
      * Boolean to render label and help text as html.
      */
     isHtml: {
@@ -189,6 +214,31 @@ export default {
     }
   }
 
+  &.floating-label {
+    label {
+      padding: $input-btn-padding-y;
+      max-height: calc(100% - 2px);
+      position: absolute;
+      top: 0;
+      left: 0;
+      margin-bottom: 0; /* Override default `<label>` margin */
+      border: 1px solid transparent;
+      border-radius: 0.25rem;
+      pointer-events: none;
+      transition: all 0.1s ease-in-out;
+      width: calc(100% - 40px);
+
+      .pe-none {
+        pointer-events: none;
+      }
+    }
+
+    textarea::placeholder,
+    input::placeholder {
+      color: transparent;
+    }
+  }
+
   .form-label-group-input {
     position: relative;
     flex: 1 1 auto;
@@ -209,25 +259,10 @@ export default {
     /* stylelint-enable */
 
     label {
-      padding: $input-btn-padding-y;
-      max-height: calc(100% - 2px);
       text-align: left;
-      position: absolute;
-      top: 0;
-      left: 0;
       display: block;
-      margin-bottom: 0; /* Override default `<label>` margin */
       line-height: 1.5;
       color: $label-color;
-      border: 1px solid transparent;
-      pointer-events: none;
-      border-radius: 0.25rem;
-      transition: all 0.1s ease-in-out;
-      width: calc(100% - 40px);
-
-      .pe-none {
-        pointer-events: none;
-      }
     }
 
     .white-label-background ~ label {
@@ -258,11 +293,6 @@ export default {
     .material-icons {
       vertical-align: middle;
     }
-  }
-
-  textarea::placeholder,
-  input::placeholder {
-    color: transparent;
   }
 
   .multiselect--active input::placeholder {

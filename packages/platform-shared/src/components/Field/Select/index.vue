@@ -10,6 +10,7 @@ of the MIT license. See the LICENSE file for details. -->
     :errors="errors"
     :is-html="isHtml"
     :label="label"
+    :floating-label="floatingLabel"
     :validation="validation"
     :validation-immediate="validationImmediate">
     <VueMultiSelect
@@ -17,7 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
       ref="vms"
       v-model="inputValue"
       v-bind="$attrs"
-      class="h-100 text-nowrap"
+      class="text-nowrap"
       label="text"
       track-by="value"
       :name="name"
@@ -26,11 +27,11 @@ of the MIT license. See the LICENSE file for details. -->
       :searchable="searchable"
       :show-labels="false"
       :allow-empty="allowEmpty"
-      :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control p-0', {'no-multiselect-label': !this.label }]"
+      :class="[{'polyfill-placeholder': floatLabels, 'h-100': floatingLabel}, 'white-label-background form-control p-0', {'no-multiselect-label': !this.label }]"
       :placeholder="placeholder"
       @search-change="$emit('search-change', $event)"
       @open="openHandler"
-      @close="closeDropDown(inputValue)"
+      @close="floatingLabel && closeDropDown(inputValue)"
       @input="$emit('input', inputValue ? inputValue.value : '')"
       @tag="$emit('tag', $event)">
       <slot name="noResult">
@@ -154,7 +155,7 @@ export default {
       }
     },
     inputValueHandler(inputValue) {
-      this.floatLabels = inputValue && inputValue.value !== null && inputValue.value.toString().length > 0 && !!this.label;
+      this.floatLabels = this.floatingLabel && inputValue && inputValue.value !== null && inputValue.value.toString().length > 0 && !!this.label;
     },
     setInputValue(newVal) {
       if (newVal !== undefined && newVal !== null) {
@@ -171,7 +172,7 @@ export default {
       if (this.searchable) {
         this.$refs.vms.$el.querySelector('input').focus();
       }
-      this.floatLabels = true;
+      this.floatLabels = this.floatingLabel;
 
       // Scroll the select list to show the selected option
       if (this.showSelectedOptionOnOpen && this.value) {
@@ -186,7 +187,7 @@ export default {
       handler(value) {
         this.setInputValue(value);
 
-        if (value === '') {
+        if (this.floatingLabel && value === '') {
           this.floatLabels = false;
         }
       },
