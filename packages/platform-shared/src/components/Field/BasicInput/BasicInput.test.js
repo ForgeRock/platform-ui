@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -21,6 +21,7 @@ const defaultMixinProps = {
   label: '',
   readonly: false,
   autofocus: true,
+  floatingLabel: true,
 };
 
 const defaultProps = {
@@ -48,6 +49,7 @@ describe('BasicInput', () => {
     };
 
     expect(wrapper.name()).toBe('BasicInput');
+    expect(wrapper.vm.floatLabels).toBe(false);
   });
 
   it('starts animation', () => {
@@ -120,5 +122,44 @@ describe('BasicInput', () => {
 
     expect(wrapper.contains('.test_prepend')).toBe(true);
     expect(wrapper.contains('.test_append')).toBe(true);
+  });
+
+  it('BasicInput without floating label', () => {
+    const wrapper = mount(BasicInput, {
+      localVue,
+      propsData: {
+        ...defaultMixinProps,
+        ...defaultProps,
+        floatingLabel: false,
+      },
+      mocks: {
+        $t: (text) => (text),
+      },
+    });
+
+    expect(wrapper.vm.floatLabels).toBe(false);
+  });
+
+  it('BasicInput without floating label must not call animationstart event method', async () => {
+    const animationStart = jest.fn();
+    const wrapper = mount(BasicInput, {
+      localVue,
+      propsData: {
+        ...defaultMixinProps,
+        ...defaultProps,
+        floatingLabel: false,
+      },
+      mocks: {
+        $t: (text) => (text),
+      },
+      methods: {
+        animationStart,
+      },
+    });
+
+    expect(wrapper.vm.floatLabels).toBe(false);
+    await wrapper.find('input').trigger('animationstart');
+    expect(animationStart).not.toHaveBeenCalled();
+    expect(wrapper.vm.floatLabels).toBe(false);
   });
 });

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -49,6 +49,13 @@ export default {
       default: '',
     },
     /**
+     * Boolean to show a floating label or above label on controls
+     */
+    floatingLabel: {
+      type: Boolean,
+      default: true,
+    },
+    /**
      * Boolean to render label and help text as html.
      */
     isHtml: {
@@ -56,9 +63,16 @@ export default {
       default: false,
     },
     /**
-     * Placeholder value.
+     * Label value that is show as placeholder value on floating labels or static label above control in other case.
      */
     label: {
+      type: String,
+      default: '',
+    },
+    /**
+     * Placeholder value only applies when the control is non floating labels
+     */
+    placeholder: {
       type: String,
       default: '',
     },
@@ -105,25 +119,27 @@ export default {
     this.id = `floatingLabelInput${this._uid}`;
   },
   mounted() {
-    delay(() => {
-      if (navigator.userAgent.includes('Edge')) {
-        const element = document.getElementById(`${this.id}`);
-        if (element && element.value.length && !!this.label) {
-          this.floatLabels = !!this.label;
-          this.inputValue = element.value;
-        }
-      } else if (navigator.userAgent.includes('Chrome')) {
-        const node = this.$refs.input;
-        try {
-          const nativeMatches = node.matches || node.msMatchesSelector;
-          if (nativeMatches.call(node, ':-webkit-autofill') && !!this.label) {
+    if (this.floatingLabel) {
+      delay(() => {
+        if (navigator.userAgent.includes('Edge')) {
+          const element = document.getElementById(`${this.id}`);
+          if (element && element.value.length && !!this.label) {
             this.floatLabels = !!this.label;
+            this.inputValue = element.value;
           }
-        } catch (e) {
-          noop();
+        } else if (navigator.userAgent.includes('Chrome')) {
+          const node = this.$refs.input;
+          try {
+            const nativeMatches = node.matches || node.msMatchesSelector;
+            if (nativeMatches.call(node, ':-webkit-autofill') && !!this.label) {
+              this.floatLabels = !!this.label;
+            }
+          } catch (e) {
+            noop();
+          }
         }
-      }
-    }, 500, this);
+      }, 500, this);
+    }
 
     this.setInputValue(this.value);
   },

@@ -9,6 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
       type="password"
       :errors="failuresForField"
       :label="password.label"
+      :floating-label="floatingLabel"
       @input="updateCallback" />
     <FrPolicyPanel
       class="mt-2"
@@ -21,6 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
       type="password"
       :errors="confirmPasswordFailures"
       :label="$t('login.password.confirmPassword')"
+      :floating-label="floatingLabel"
       @input="checkConfirmPasswordMatch" />
   </div>
 </template>
@@ -57,6 +59,10 @@ export default {
     callback: {
       type: Object,
       required: true,
+    },
+    floatingLabel: {
+      type: Boolean,
+      default: true,
     },
     /**
      * Numerical position on tree node

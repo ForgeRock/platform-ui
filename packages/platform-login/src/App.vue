@@ -16,6 +16,7 @@ of the MIT license. See the LICENSE file for details. -->
         name="fade"
         mode="out-in">
         <RouterView
+          :journey-floating-labels="journeyFloatingLabels"
           :journey-footer="getLocalizedString(journeyFooter, i18n.locale, i18n.fallbackLocale)"
           :journey-footer-enabled="journeyFooterEnabled"
           :journey-header="getLocalizedString(journeyHeader, i18n.locale, i18n.fallbackLocale)"

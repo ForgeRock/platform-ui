@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -30,6 +30,19 @@ describe('InputLayout', () => {
     });
 
     expect(wrapper.name()).toBe('InputLayout');
+  });
+
+  it('InputLayout component loaded no floating label', () => {
+    const wrapper = shallowMount(InputLayout, {
+      localVue,
+      propsData: {
+        ...defaultProps,
+        floatingLabel: false,
+      },
+    });
+
+    expect(wrapper.name()).toBe('InputLayout');
+    expect(wrapper.contains('.floating-label')).toBe(false);
   });
 
   it('InputLayout component renders help text and label', () => {
@@ -67,5 +80,34 @@ describe('InputLayout', () => {
     expect(wrapper.contains('.test_default')).toBe(true);
     expect(wrapper.contains('.test_prepend')).toBe(true);
     expect(wrapper.contains('.test_append')).toBe(true);
+  });
+
+  it('InputLayout must contains floting-label class by default', () => {
+    const wrapper = mount(InputLayout, {
+      localVue,
+      propsData: {
+        ...defaultProps,
+      },
+      mocks: {
+        $t: (text) => (text),
+      },
+    });
+
+    expect(wrapper.contains('.floating-label')).toBe(true);
+  });
+
+  it('InputLayout without floating labels must not contains floting-label', () => {
+    const wrapper = mount(InputLayout, {
+      localVue,
+      propsData: {
+        ...defaultProps,
+        floatingLabel: false,
+      },
+      mocks: {
+        $t: (text) => (text),
+      },
+    });
+
+    expect(wrapper.contains('.floating-label')).toBe(false);
   });
 });

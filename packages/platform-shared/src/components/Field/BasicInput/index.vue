@@ -8,6 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
     :name="name"
     :description="description"
     :errors="errors"
+    :floating-label="floatingLabel"
     :is-html="isHtml"
     :label="label"
     :validation="validation"
@@ -29,9 +30,9 @@ of the MIT license. See the LICENSE file for details. -->
       :disabled="disabled"
       :id="id"
       :name="name"
-      :placeholder="label"
+      :placeholder="floatingLabel ? label : placeholder"
       :readonly="readonly"
-      @animationstart="animationStart"
+      @animationstart="floatingLabel && animationStart"
       :data-testid="testid">
     <input
       v-else
@@ -49,12 +50,12 @@ of the MIT license. See the LICENSE file for details. -->
       :disabled="disabled"
       :id="id"
       :name="name"
-      :placeholder="getTranslation(label)"
+      :placeholder="floatingLabel ? getTranslation(label) : placeholder"
       :readonly="readonly"
       :type="fieldType"
       :autocomplete="$attrs.autocomplete"
       @input="evt=>inputValue=evt.target.value"
-      @animationstart="animationStart"
+      @animationstart="floatingLabel && animationStart"
       :data-testid="testid">
     <template #defaultButtons>
       <BInputGroupAppend
@@ -215,7 +216,7 @@ export default {
     * @param {Array|Object|Number|String} newVal value to be set for internal model
     */
     inputValueHandler(newVal) {
-      if (newVal !== null) {
+      if (this.floatingLabel && newVal !== null) {
         this.floatLabels = newVal.toString().length > 0 && !!this.label;
       }
       this.$emit('input', newVal);
@@ -232,6 +233,7 @@ export default {
   .fr-hide-input {
     position: absolute;
     right: 0;
+    bottom: 0;
 
     .btn {
       background-color: transparent !important;

@@ -18,6 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
     v-else
     v-model="selected.value"
     type="select"
+    :floating-label="floatingLabel"
     :label="selected.label"
     :name="selected.name"
     :options="selected.options"
@@ -46,6 +47,10 @@ export default {
     callback: {
       type: Object,
       required: true,
+    },
+    floatingLabel: {
+      type: Boolean,
+      default: true,
     },
     index: {
       type: Number,
