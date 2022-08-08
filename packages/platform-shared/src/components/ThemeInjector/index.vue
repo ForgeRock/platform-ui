@@ -221,8 +221,11 @@ of the MIT license. See the LICENSE file for details. -->
       height: {{ theme.logoProfileHeight ? theme.logoProfileHeight : theme.logoHeight }}px;
       }
 
-      .fr-sidebar-nav {
-      background-color: {{ theme.accountNavigationBackgroundColor || '#ffffff' }};
+      <template v-if="mock">
+        .fr-enduser-theme-preview
+      </template>
+      .fr-sidebar-nav{
+      background-color: {{ theme.accountNavigationBackgroundColor|| '#ffffff' }};
       }
 
       .fr-sidebar-wrapper .fr-sidebar-bottom {
