@@ -40,6 +40,7 @@ describe('Select input', () => {
     });
 
     expect(wrapper.name()).toBe('Select');
+    expect(wrapper.vm.floatLabels).toBe(false);
   });
 
   it('Select input component process options prop from array', () => {
@@ -126,6 +127,31 @@ describe('Select input', () => {
     expect(wrapper.vm.floatLabels).toBe(false);
     wrapper.vm.closeDropDown('test');
     expect(wrapper.vm.floatLabels).toBe(true);
+  });
+
+  it('Select input component Closes Dropdown without floating label', async () => {
+    const closeDropDown = jest.fn();
+    const wrapper = mount(Select, {
+      localVue,
+      mocks: {
+        $t: () => {},
+      },
+      propsData: {
+        ...defaultMixinProps,
+        ...defaultProps,
+        options: ['a', 'b', 'c'],
+        label: 'testLabel',
+        floatingLabel: false,
+      },
+      methods: {
+        closeDropDown,
+      },
+    });
+
+    expect(wrapper.vm.floatLabels).toBe(false);
+    await wrapper.vm.$refs.vms.$emit('close');
+    expect(closeDropDown).not.toHaveBeenCalled();
+    expect(wrapper.vm.floatLabels).toBe(false);
   });
 
   it('Select input component allows single selections', () => {
@@ -224,6 +250,28 @@ describe('Select input', () => {
 
     wrapper.setProps({ value: 'sdf' });
     expect(wrapper.vm.floatLabels).toBe(true);
+    wrapper.setProps({ value: '', options: [] });
+    expect(wrapper.vm.floatLabels).toBe(false);
+  });
+
+  it('Select removes float for blank values without floating label', () => {
+    const wrapper = mount(Select, {
+      localVue,
+      mocks: {
+        $t: () => {},
+      },
+      propsData: {
+        ...defaultMixinProps,
+        options: [
+          { text: 'ayy', value: 'a' },
+          { text: 'bee', value: 'b' },
+        ],
+        floatingLabel: false,
+      },
+    });
+
+    wrapper.setProps({ value: 'sdf' });
+    expect(wrapper.vm.floatLabels).toBe(false);
     wrapper.setProps({ value: '', options: [] });
     expect(wrapper.vm.floatLabels).toBe(false);
   });

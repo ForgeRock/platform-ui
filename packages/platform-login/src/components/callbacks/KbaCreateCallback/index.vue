@@ -39,6 +39,7 @@ of the MIT license. See the LICENSE file for details. -->
         :id="questionModel.key + '_selector'"
         :options="options"
         :validation="questionSelectValidation"
+        :floating-label="floatingLabel"
         @input="onQuestionSelectionChange()"
         @open="loadOptions()" />
       <FrField
@@ -49,6 +50,7 @@ of the MIT license. See the LICENSE file for details. -->
         :name="questionModel.key"
         :validation="questionTextInputValidation"
         :validation-immediate="true"
+        :floating-label="floatingLabel"
         @input="onQuestionSelectionChange()" />
       <FrField
         v-model="answerModel"
@@ -58,6 +60,7 @@ of the MIT license. See the LICENSE file for details. -->
         :label="$t('login.kba.answer')"
         :name="`callback_${index}_answer_field`"
         :disabled="selected === null"
+        :floating-label="floatingLabel"
         @input="validateAnswer" />
     </ValidationObserver>
     <hr>
@@ -84,6 +87,10 @@ export default {
     callback: {
       type: Object,
       required: true,
+    },
+    floatingLabel: {
+      type: Boolean,
+      default: true,
     },
     index: {
       type: Number,
