@@ -7,6 +7,9 @@ of the MIT license. See the LICENSE file for details. -->
     :id="id"
     :ref="id"
     @hidden="$emit('hidden')"
+    :hide-header-close="isDeleting"
+    no-close-on-backdrop
+    no-close-on-esc
     :title="$t('deletePanel.deleteTypeQuestion', { type: translatedItemType })">
     <div
       v-if="customMessage"
