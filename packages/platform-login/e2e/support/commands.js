@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -17,6 +17,8 @@ Cypress.Commands.add('login', () => {
   cy.findByPlaceholderText(/Password/i).type(adminPassword, { force: true });
   cy.get('.btn-primary').click();
   if (Cypress.env('IS_FRAAS')) {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(300);
     cy.findByRole('button', { name: /Skip for now/i }).click();
   }
   cy.get('h1', { timeout: 20000 });
