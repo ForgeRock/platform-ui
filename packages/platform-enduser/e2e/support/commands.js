@@ -32,6 +32,8 @@ Cypress.Commands.add('loginAsAdmin', () => {
   cy.findByPlaceholderText(/Password/i).type(Cypress.env('AM_PASSWORD'), { force: true });
   cy.get('.btn-primary').click();
   if (Cypress.env('IS_FRAAS')) {
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(300);
     cy.findByRole('button', { name: /Skip for now/i }).click();
   }
   cy.wait('@getAccessToken').then(({ response }) => {
