@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -131,5 +131,49 @@ describe('Login.vue', () => {
 
     wrapper.vm.setPageTitle(windowHashWithParams);
     expect(document.title).toEqual('Login');
+  });
+
+  it('keeps params like noSession when is a link from an Email URL', () => {
+    const getCurrentQueryString = () => 'noSession=true&param1=test';
+
+    const expectedStepParams = {
+      query: {
+        suspendedId: 'test',
+        noSession: 'true',
+        param1: 'test',
+      },
+      realmPath: 'test',
+    };
+    // test undefined tree
+    wrapper.setData({
+      realm: 'test',
+      suspendedId: 'test',
+    });
+    wrapper.setMethods({ getCurrentQueryString });
+    expect(wrapper.vm.getStepParams()).toEqual(expectedStepParams);
+  });
+
+  it('keeps params like noSession when is a redirect from a callback ', () => {
+    const getCurrentQueryString = () => 'noSession=true&param1=test';
+
+    const expectedStepParams = {
+      query: {
+        noSession: 'true',
+        param1: 'test',
+        code: 'test',
+        state: 'test',
+        scope: 'test',
+      },
+      realmPath: 'test',
+    };
+    // test undefined tree
+    wrapper.setData({
+      realm: 'test',
+    });
+    wrapper.vm.code = 'test';
+    wrapper.vm.state = 'test';
+    wrapper.vm.scope = 'test';
+    wrapper.setMethods({ getCurrentQueryString });
+    expect(wrapper.vm.getStepParams()).toEqual(expectedStepParams);
   });
 });

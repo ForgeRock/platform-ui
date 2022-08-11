@@ -975,7 +975,7 @@ export default {
         paramsObj.authIndexValue = decodeURI(paramsObj.authIndexValue);
       }
       const stepParams = {
-        query: {},
+        query: paramsObj, // add all params in the route to step query params by default e.g. "noSession"
         tree: this.treeId || this.$route.params.tree || undefined,
         realmPath: this.realm,
       };
@@ -990,18 +990,18 @@ export default {
         delete stepParams.tree;
       }
 
+      // decode goTo and goToOnFail params and add ti step query params in any case
+      stepParams.query.goto = (paramsObj.goto) ? decodeURIComponent(paramsObj.goto) : undefined;
+      stepParams.query.gotoOnFail = (paramsObj.gotoOnFail) ? decodeURIComponent(paramsObj.gotoOnFail) : undefined;
+      // add the "suspendId" for email redirects or "code", "state" and "scope" in other case to step query params
       if (this.suspendedId) {
         stepParams.query.suspendedId = this.suspendedId;
-        stepParams.query.goto = (paramsObj.goto) ? decodeURIComponent(paramsObj.goto) : undefined;
-        stepParams.query.gotoOnFail = (paramsObj.gotoOnFail) ? decodeURIComponent(paramsObj.gotoOnFail) : undefined;
       } else {
-        stepParams.query = paramsObj;
         stepParams.query.code = this.code ? this.code : undefined;
         stepParams.query.state = this.state ? this.state : undefined;
         stepParams.query.scope = this.scope ? this.scope : undefined;
-        stepParams.query.goto = (paramsObj.goto) ? decodeURIComponent(paramsObj.goto) : undefined;
-        stepParams.query.gotoOnFail = (paramsObj.gotoOnFail) ? decodeURIComponent(paramsObj.gotoOnFail) : undefined;
       }
+
       // stepParams.query.realm never needs to be included. We are already sending stepParams.realmPath which is what the
       // sdk uses to build the authenticate url ('/am/json/realms/root/realms/alpha/authenticate').
       // When realm is included ('/am/json/realms/root/realms/alpha/authenticate?realm=/alpha') this can confuse
