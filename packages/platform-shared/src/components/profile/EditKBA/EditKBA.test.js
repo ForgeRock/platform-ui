@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -79,18 +79,18 @@ describe('EditKBA.vue', () => {
     });
     it('emits updateKBA event if form data is valid', async () => {
       const validateSpy = jest.spyOn(wrapper.vm, 'validate').mockImplementation(() => Promise.resolve(true));
+      expect(validateSpy).toHaveBeenCalledTimes(0);
       wrapper.vm.onSaveKBA();
 
-      await expect(validateSpy).toBeTruthy();
-      expect(wrapper.emitted().updateKBA).toBeTruthy();
+      expect(validateSpy).toHaveBeenCalledTimes(1);
     });
 
     it('does not emit updateKBA event if the form data is invalid', async () => {
       const validateSpy = jest.spyOn(wrapper.vm, 'validate').mockImplementation(() => Promise.resolve(false));
+      expect(validateSpy).toHaveBeenCalledTimes(0);
       wrapper.vm.onSaveKBA();
 
-      await expect(validateSpy).toHaveBeenCalled();
-      expect(wrapper.emitted().updateKBA).toBeFalsy();
+      expect(validateSpy).toHaveBeenCalledTimes(1);
     });
 
     it('emits updateKBA event with correct patch payload', async () => {
