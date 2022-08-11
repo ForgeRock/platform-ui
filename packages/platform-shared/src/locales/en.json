@@ -57,6 +57,7 @@
     "error": "Error",
     "exitFullscreen": "Exit Fullscreen",
     "expires": "Expires",
+    "false": "False",
     "filters": "Filters",
     "fullscreen": "Fullscreen",
     "help": "Help",
@@ -133,6 +134,7 @@
     "tableNavigation": "Table Navigation",
     "tenant": "Tenant",
     "time": "Time",
+    "true": "True",
     "type": "Type",
     "typeToSearch": "Type to search",
     "update": "Update",
@@ -146,6 +148,11 @@
     "view": "View",
     "viewDetails": "View Details",
     "yes": "Yes",
+    "validation": {
+      "int": "Please enter a valid integer. A valid integer can contain 0-9, . and -",
+      "number": "Please enter a valid number. A valid number can contain 0-9, . and -",
+      "list": "Please provide a valid list. An example of a valid list is: some, strings, separated, by, commas"
+    },
     "daysOfWeek": {
       "sundayShort": "Sun",
       "mondayShort": "Mon",

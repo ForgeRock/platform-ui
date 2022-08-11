@@ -1755,6 +1755,7 @@
     "createModal": {
       "addVariable": "Add a Variable",
       "addSecret": "Add a Secret",
+      "type": "Type",
       "variableDescription": "Add a variable to create a non-sensitive configuration value that is specific to this environment. Variables are simple key/value pairs.",
       "secretDescription": "Add a secret to create a sensitive configuration value that is specific to this environment. Secrets have multiple secret versions, each containing their own encrypted value. By design, the value of a secret version cannot be read after it has been created."
     },

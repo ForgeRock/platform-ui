@@ -27,12 +27,12 @@ of the MIT license. See the LICENSE file for details. -->
             v-html="label"
             ref="inputLabel"
             :for="id"
-            :class="['pe-none full-width', {'overflow-hidden text-nowrap': labelTextOverflowHidden}]" />
+            :class="['pe-none full-width', {'overflow-hidden text-nowrap': labelTextOverflowHidden, 'readonly-label': readonlyLabel}]" />
           <label
             v-else-if="label"
             ref="inputLabel"
             :for="id"
-            :class="['pe-none', {'overflow-hidden text-nowrap': labelTextOverflowHidden}]">
+            :class="['pe-none', {'overflow-hidden text-nowrap': labelTextOverflowHidden, 'readonly-label': readonlyLabel}]">
             {{ getTranslation(label) }}
           </label>
         </div>
@@ -43,11 +43,11 @@ of the MIT license. See the LICENSE file for details. -->
             v-if="label && isHtml"
             v-html="label"
             :for="id"
-            class="pe-none full-width" />
+            class="pe-none overflow-hidden text-nowrap full-width" />
           <label
             v-else-if="label"
             :for="id"
-            class="pe-none">
+            class="pe-none overflow-hidden text-nowrap">
             {{ getTranslation(label) }}
           </label>
           <slot />
@@ -152,6 +152,13 @@ export default {
     label: {
       type: String,
       default: '',
+    },
+    /**
+     * Boolean to apply readonly styles to labels.
+     */
+    readonlyLabel: {
+      type: Boolean,
+      default: false,
     },
     /**
      * Vee-validate validation types to check against
@@ -347,5 +354,9 @@ export default {
     color: $input-btn-color;
     pointer-events: none;
   }
+}
+
+.readonly-label {
+  background: #f6f8fa !important;
 }
 </style>

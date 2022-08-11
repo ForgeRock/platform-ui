@@ -95,6 +95,24 @@ export function getRules(i18n) {
     message: i18n.t('common.policyValidationMessages.LOWERCASE_PERIOD_REQUIRED'),
   };
 
+  const isInteger = {
+    ...rules.regex,
+    message: i18n.t('common.validation.int'),
+    validate: (value) => /^[0-9-.]*$/.test(value),
+  };
+
+  const isList = {
+    ...rules.regex,
+    message: i18n.t('common.validation.list'),
+    validate: (value) => /^[-\w\s]+(?:,[-\w\s]*)*$/.test(value),
+  };
+
+  const isNumber = {
+    ...rules.regex,
+    message: i18n.t('common.validation.number'),
+    validate: (value) => /^[0-9-.]*$/.test(value),
+  };
+
   const max = {
     ...rules.max,
     message: i18n.t('common.policyValidationMessages.maxLength'),
@@ -233,6 +251,9 @@ export function getRules(i18n) {
     email_from,
     excluded,
     google_cloud_platform_certificate_validation,
+    isInteger,
+    isList,
+    isNumber,
     json,
     max,
     max_value,
