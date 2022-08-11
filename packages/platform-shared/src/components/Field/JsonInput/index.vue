@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -11,7 +11,8 @@ of the MIT license. See the LICENSE file for details. -->
     :is-html="isHtml"
     :label="label"
     :validation="validation"
-    :validation-immediate="validationImmediate">
+    :validation-immediate="validationImmediate"
+    :data-testid="testid">
     <VuePrismEditor
       v-model="inputValue"
       :aria-label="$t('editor.accessibilityHelp')"
@@ -48,6 +49,12 @@ export default {
   components: {
     FrInputLayout,
     VuePrismEditor,
+  },
+  props: {
+    testid: {
+      type: String,
+      default: '',
+    },
   },
   methods: {
     blurOnEscape,

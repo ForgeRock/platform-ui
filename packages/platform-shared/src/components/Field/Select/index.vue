@@ -12,7 +12,8 @@ of the MIT license. See the LICENSE file for details. -->
     :label="label"
     :floating-label="floatingLabel"
     :validation="validation"
-    :validation-immediate="validationImmediate">
+    :validation-immediate="validationImmediate"
+    :readonly-label="disabled">
     <VueMultiSelect
       :id="id"
       ref="vms"
@@ -29,6 +30,7 @@ of the MIT license. See the LICENSE file for details. -->
       :allow-empty="allowEmpty"
       :class="[{'polyfill-placeholder': floatLabels, 'h-100': floatingLabel}, 'white-label-background form-control p-0', {'no-multiselect-label': !this.label }]"
       :placeholder="placeholder"
+      :data-testid="testid"
       @search-change="$emit('search-change', $event)"
       @open="openHandler"
       @close="floatingLabel && closeDropDown(inputValue)"
@@ -113,6 +115,10 @@ export default {
     showSelectedOptionOnOpen: {
       type: Boolean,
       default: false,
+    },
+    testid: {
+      type: String,
+      default: '',
     },
   },
   mounted() {
