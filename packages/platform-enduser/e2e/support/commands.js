@@ -19,7 +19,7 @@ Cypress.Commands.add(
     cy.findByPlaceholderText(/User Name/i).type(userName);
     cy.findByPlaceholderText(/Password/i).type(password, { force: true });
     cy.get('.btn-primary').click();
-    cy.get('[data-test-id="dashboard-welcome-greeting"]', { timeout: 20000 });
+    cy.findByTestId('dashboard-welcome-greeting', { timeout: 20000 });
   },
 );
 
@@ -43,7 +43,7 @@ Cypress.Commands.add('loginAsAdmin', () => {
     Cypress.env('ACCESS_TOKEN', response.body);
   });
 
-  cy.get('[data-test-id="dashboard-welcome-title"]', { timeout: 20000 });
+  cy.findAllByTestId('dashboard-welcome-title', { timeout: 20000 });
 });
 
 Cypress.Commands.add('logout', () => {

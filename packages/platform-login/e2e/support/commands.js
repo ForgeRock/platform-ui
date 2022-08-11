@@ -21,7 +21,7 @@ Cypress.Commands.add('login', () => {
     cy.wait(300);
     cy.findByRole('button', { name: /Skip for now/i }).click();
   }
-  cy.get('h1', { timeout: 20000 });
+  cy.findAllByTestId('dashboard-welcome-title', { timeout: 20000 });
 });
 
 Cypress.Commands.add('logout', () => {
