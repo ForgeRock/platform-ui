@@ -106,6 +106,9 @@ export default {
         value: '',
       },
       policies: [],
+      curPass: '',
+      lastPass: '',
+      isValidating: false,
     };
   },
   computed: {
@@ -235,25 +238,36 @@ export default {
         this.setFailingPolicies(this.policies);
         return;
       }
-      this.debounceValidatePassword();
+      this.debounceValidatePassword(value);
     },
     /**
      * Sends input to backend to be validated and updates the failing policies.
      */
-    validatePassword() {
-      // call tree without advancing to next node
-      FRAuth.next(this.step, { realmPath: this.realm })
-        .then((step) => {
-          const callback = step.getCallbackOfType(CallbackType.ValidatedCreatePasswordCallback);
-          const policies = callback.getFailedPolicies().map((x) => JSON.parse(x));
-          this.setFailingPolicies(policies);
+    validatePassword(password) {
+      this.curPass = password;
 
-          // update auth id in the event of authentication tree whitelisting
-          this.$emit('update-auth-id', step.payload.authId);
-        }).catch(() => {
-          // it's possible to timeout while in the tree so have to start from beginning if that happens
-          window.location.reload();
-        });
+      // prevents multiple requests from happening simultaneously
+      // while ensuring the all relevant passwords are checked
+      if (!this.isValidating && this.curPass !== this.lastPass) {
+        this.isValidating = true;
+        this.lastPass = password;
+
+        // call tree without advancing to next node
+        FRAuth.next(this.step, { realmPath: this.realm })
+          .then((step) => {
+            const callback = step.getCallbackOfType(CallbackType.ValidatedCreatePasswordCallback);
+            const policies = callback.getFailedPolicies().map((x) => JSON.parse(x));
+            this.setFailingPolicies(policies);
+
+            // update auth id in the event of authentication tree whitelisting
+            this.$emit('update-auth-id', step.payload.authId);
+            this.isValidating = false;
+            this.validatePassword(this.curPass);
+          }).catch(() => {
+            // it's possible to timeout while in the tree so have to start from beginning if that happens
+            window.location.reload();
+          });
+      }
     },
     checkConfirmPasswordMatch() {
       const passwordsMatch = this.password.value.length > 0
