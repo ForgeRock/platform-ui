@@ -253,7 +253,7 @@ export const getUEBAClusteringExplainability = () => new Promise((resolve, rejec
     .then(({ data }) => {
       const reason = [..._.get(data, 'aggregations.ueba_reason.buckets', []), ..._.get(data, 'aggregations.clustering_reason.buckets', [])];
       const keys = _.uniq(reason.map((reason) => reason.key))
-        .sort((a, b) => (causeMap[a] || a).localeCompare(causeMap[b] || b));
+        .sort((a, b) => (causeMap[a] || a).localeCompare(causeMap[b] || b)).filter((key) => key !== 'failed' && key !== 'unknown');
 
       resolve(keys);
     })
