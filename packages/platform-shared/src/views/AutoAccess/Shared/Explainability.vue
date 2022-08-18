@@ -86,6 +86,10 @@ export default {
     feature() {
       const feature = this.uebaSignal.explainable_features || null;
 
+      if (feature === 'failed' || feature === 'unknown') {
+        return null;
+      }
+
       return feature;
     },
     heuristics() {
