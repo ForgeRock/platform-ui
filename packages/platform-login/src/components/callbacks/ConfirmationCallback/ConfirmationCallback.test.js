@@ -1,6 +1,5 @@
 /**
- * @license
- * Copyright (c) 2020 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -45,5 +44,21 @@ describe('ConfirmationCallback', () => {
 
     expect(wrapper.vm.$props.callback.setInputValue).toHaveBeenLastCalledWith(2);
     expect(wrapper.emitted()['next-step'].pop()).toBeTruthy();
+  });
+
+  it('Show buttons (variant: button) by default', () => {
+    const button = wrapper.find('button');
+    expect(button.classes()).toContain('btn-primary');
+  });
+
+  it('Show buttons as links (variant: link) when variable showButtonsAsLinks is true', async () => {
+    await wrapper.setProps({
+      stage: {
+        showButtonsAsLinks: true,
+      },
+    });
+
+    const button = wrapper.find('button');
+    expect(button.classes()).toContain('btn-link');
   });
 });

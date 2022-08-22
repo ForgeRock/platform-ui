@@ -6,16 +6,19 @@ of the MIT license. See the LICENSE file for details. -->
   <BButton
     v-if="showOnlyPositiveAnswer"
     class="btn-block mt-3"
-    :variant="variant"
+    :variant="showButtonsAsLinks ? 'link' : variant"
     @click="setValue(0)">
     {{ options[0] }}
   </BButton>
-  <div v-else>
+  <div
+    v-else
+    :class="[{ 'd-flex': showButtonsAsLinks }]"
+  >
     <BButton
       v-for="(option, index) in options"
       :key="index"
       class="btn-block mt-3"
-      :variant="variant"
+      :variant="showButtonsAsLinks ? 'link' : variant"
       @click="setValue(index)">
       {{ option }}
     </BButton>
@@ -62,6 +65,9 @@ export default {
       } catch (e) {
         return false;
       }
+    },
+    showButtonsAsLinks() {
+      return this.stage && this.stage.showButtonsAsLinks;
     },
   },
   methods: {
