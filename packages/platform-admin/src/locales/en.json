@@ -736,6 +736,8 @@
       "name": "Name",
       "none": "none",
       "minimumRequired": "At Least {minItems} Value(s) Required",
+      "showButtonsAsLinks": "Show buttons as links",
+      "showButtonsAsLinksDescription": "Show the buttons as links on node.",
       "showOnlyPositiveAnswer": "Only Positive Answer",
       "showOnlyPositiveAnswerDescription": "Only show one the positive answer button on node.",
       "submitButtonText": "Submit Button Text",
