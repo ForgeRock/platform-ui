@@ -1117,6 +1117,7 @@ export default {
           const realmAndTreeKey = `${stepParams.realmPath}/${stepParams.tree || ''}`;
           if (realmAndTreeInitialStep && realmAndTreeInitialStep.key === realmAndTreeKey) {
             initialStep = new FRStep(realmAndTreeInitialStep.step.payload);
+            initialStep.payload.stage = this.step?.payload?.stage;
           } else if (step.type !== 'LoginFailure') {
             sessionStorage.setItem('initialStep', JSON.stringify(
               {
