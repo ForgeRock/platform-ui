@@ -18,3 +18,11 @@ export default {
   },
 };
 </script>
+<style lang="scss">
+.password-field {
+  input[type='text'],
+  input[type='password'] {
+    padding-right: 60px;
+  }
+}
+</style>
