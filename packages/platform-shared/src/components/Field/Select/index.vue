@@ -36,9 +36,9 @@ of the MIT license. See the LICENSE file for details. -->
       @close="floatingLabel && closeDropDown(inputValue)"
       @input="$emit('input', inputValue ? inputValue.value : '')"
       @tag="$emit('tag', $event)">
-      <slot name="noResult">
+      <template #noResult>
         {{ $t('common.noResult') }}
-      </slot>
+      </template>
       <template
         v-for="(key, slotName) in $scopedSlots"
         v-slot:[slotName]="slotData">
