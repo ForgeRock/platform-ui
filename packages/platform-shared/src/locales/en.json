@@ -84,7 +84,7 @@
     "no": "No",
     "none": "None",
     "noRecords": "No Records",
-    "noResult": "No Results",
+    "noResult": "No elements found. Consider changing the search query.",
     "notAvailable": "n/a",
     "objectCopy": "{object} copy",
     "off": "Off",

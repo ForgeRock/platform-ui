@@ -40,9 +40,9 @@ of the MIT license. See the LICENSE file for details. -->
         @open="openHandler"
         @search-change="searchChange"
         @tag="addTag">
-        <slot name="noResult">
+        <template #noResult>
           {{ $t('common.noResult') }}
-        </slot>
+        </template>
         <template #tag="{option, remove}">
           <span :class="['multiselect__tag', {'multiselect__tag-selected': option.copySelect}, valueClass]">
             <span
