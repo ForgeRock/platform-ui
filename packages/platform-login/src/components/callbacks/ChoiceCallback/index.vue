@@ -6,7 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <BFormGroup
     v-if="displayType === 'radio'"
     class="text-left"
-    :label="selected.label">
+    :label="getTranslation(selected.label)">
     <BFormRadioGroup
       v-model="selected.value"
       :options="selected.options"
