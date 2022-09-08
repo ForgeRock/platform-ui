@@ -141,7 +141,7 @@ of the MIT license. See the LICENSE file for details. -->
       </div>
     </div>
     <div
-      class="mt-1"
+      class="mt-1 overflow-auto"
       style="margin-bottom: -1rem;">
       <div class="text-dark font-weight-bold border-bottom py-2">
         {{ $t("autoAccess.access.activity.detailModal.previousAuthentications") }}
