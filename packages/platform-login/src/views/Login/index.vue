@@ -308,6 +308,7 @@ import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import { getThemeIdFromStageString } from '@forgerock/platform-shared/src/utils/stage';
+import { svgShapesSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 import i18n from '@/i18n';
 
 const FrCallbackType = {
@@ -442,6 +443,7 @@ export default {
       step: undefined,
       suspendedId: undefined,
       treeId: undefined,
+      svgShapesSanitizerConfig,
     };
   },
   computed: {
@@ -470,10 +472,10 @@ export default {
       return this.$sanitize(this.journeyJustifiedContent);
     },
     sanitizedFooter() {
-      return this.$sanitize(this.journeyFooter);
+      return this.$sanitize(this.journeyFooter, svgShapesSanitizerConfig);
     },
     sanitizedHeader() {
-      return this.$sanitize(this.journeyHeader);
+      return this.$sanitize(this.journeyHeader, svgShapesSanitizerConfig);
     },
     stage() {
       try {
