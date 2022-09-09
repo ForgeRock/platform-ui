@@ -6,7 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <BModal
     :title="$t('common.filters')"
     v-model="show"
-    @hidden="$emit('hidden')"
+    @hidden="modalHidden"
     @ok="() => saveFilters()"
     size="lg"
     centered
@@ -88,6 +88,7 @@ export default {
       type: Boolean,
     },
     filterObject: {
+      default: () => {},
       type: Object,
     },
   },
@@ -105,11 +106,17 @@ export default {
         this.show = newValue;
         if (newValue) {
           this.tempFilters = this.getInitialFilters();
+          this.tempReasons = this.filterObject.reasons;
         }
       },
     },
   },
   methods: {
+    modalHidden() {
+      this.tempReasons = [];
+      this.tempFilters = [];
+      this.$emit('hidden');
+    },
     getInitialFilters() {
       const filters = _.cloneDeep(this.filterObject.features)
         .filter((f) => f.key && f.value.length > 0);
