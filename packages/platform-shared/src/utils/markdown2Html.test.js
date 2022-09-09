@@ -5,7 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import sanitizeHtml from './sanitizer';
+import sanitizeHtml from 'sanitize-html';
+import { markdownPanelSanitizerConfig } from './sanitizerConfig';
 
 describe('sanitizeHtml', () => {
   it('remove javascript from email html template', () => {
@@ -25,7 +26,7 @@ describe('sanitizeHtml', () => {
       </body>
     </html>
     `;
-    const sanitizedHtml = sanitizeHtml(html);
+    const sanitizedHtml = sanitizeHtml(html, markdownPanelSanitizerConfig);
 
     expect(sanitizedHtml).toBe(`
     <html>
