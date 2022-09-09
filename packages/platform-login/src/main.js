@@ -23,6 +23,7 @@ import overrideTranslations, { setLocales } from '@forgerock/platform-shared/src
 import VueSanitize from 'vue-sanitize';
 import store from '@forgerock/platform-shared/src/store';
 import uuid from 'uuid/v4';
+import { defaultSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 import i18n from './i18n';
 import router from './router';
 import App from './App';
@@ -30,10 +31,7 @@ import App from './App';
 Vue.config.productionTip = false;
 
 Vue.use(Notifications);
-VueSanitize.defaults.allowedAttributes['*'] = ['class', 'style', 'data-testid'];
-VueSanitize.defaults.allowedAttributes.img.push(...['height', 'alt']);
-VueSanitize.defaults.allowedTags = [...VueSanitize.defaults.allowedTags, 'img'];
-Vue.use(VueSanitize);
+Vue.use(VueSanitize, defaultSanitizerConfig);
 
 setInteractionMode('passive');
 
