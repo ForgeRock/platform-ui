@@ -51,8 +51,8 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import { startCase } from 'lodash';
 import { mapState } from 'vuex';
+import startCase from '@forgerock/platform-shared/src/utils/stringUtils';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import AccountSecurity from '@forgerock/platform-shared/src/components/profile/AccountSecurity';
