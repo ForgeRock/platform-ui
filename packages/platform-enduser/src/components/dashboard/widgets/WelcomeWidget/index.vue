@@ -52,6 +52,8 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import startCase from '@forgerock/platform-shared/src/utils/stringUtils';
+
 /**
  * @description Widget that provides a welcome message for the managed resource, also provides a button to directly access editing the resources profile.
  *
@@ -99,7 +101,7 @@ export default {
       let fullName = '';
 
       if (this.userDetails.givenName.length > 0 || this.userDetails.sn.length > 0) {
-        fullName = `${this.userDetails.givenName} ${this.userDetails.sn}`;
+        fullName = startCase(`${this.userDetails.givenName} ${this.userDetails.sn}`);
       } else {
         fullName = this.userDetails.userId;
       }
