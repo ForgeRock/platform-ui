@@ -112,10 +112,10 @@ of the MIT license. See the LICENSE file for details. -->
                     </template>
                     <div class="d-none d-lg-block sidebar-item-text fr-dropdown-button-content">
                       <h5 class="my-0 text-truncate">
-                        {{ userDetails.company || userDetails.name }}
+                        {{ userDetails.company || userDetailsName }}
                       </h5>
                       <div class="text-muted text-truncate">
-                        {{ userDetails.company ? userDetails.name : userDetails.email }}
+                        {{ userDetails.company ? userDetailsName : userDetails.email }}
                       </div>
                     </div>
                   </BMedia>
@@ -160,6 +160,7 @@ import {
 import DropdownMenu from '@forgerock/platform-shared/src/components/DropdownMenu';
 import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import startCase from '@forgerock/platform-shared/src/utils/stringUtils';
 import ToolbarNotification from '../ToolbarNotification';
 
 /**
@@ -283,6 +284,9 @@ export default {
     profileImage() {
       const { profileImage } = this.userStore;
       return profileImage && profileImage.length ? profileImage : null;
+    },
+    userDetailsName() {
+      return startCase(this.userDetails.name);
     },
   },
   methods: {
