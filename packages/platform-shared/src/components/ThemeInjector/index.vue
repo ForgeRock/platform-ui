@@ -354,19 +354,19 @@ of the MIT license. See the LICENSE file for details. -->
       background-color: {{ theme.accountTableRowHoverColor || '#f6f8fa' }} !important;
       }
 
-      #app .fr-main-navbar {
+      #app .fr-main-navbar<template v-if="mock">-mock</template> {
       background-color: {{ theme.topBarBackgroundColor || '#ffffff' }};
       border-bottom-color: {{ theme.topBarBorderColor || '#e7eef4' }};
       }
 
-      #app .fr-main-navbar .material-icons-outlined,
-      #app .fr-main-navbar .fr-back-link h4,
-      #app .fr-main-navbar .fr-dropdown-button-content div,
-      #app .fr-main-navbar .dropdown-toggle::after {
+      #app .fr-main-navbar<template v-if="mock">-mock</template> .material-icons-outlined,
+      #app .fr-main-navbar<template v-if="mock">-mock</template> .fr-back-link h4,
+      #app .fr-main-navbar<template v-if="mock">-mock</template> .fr-dropdown-button-content div,
+      #app .fr-main-navbar<template v-if="mock">-mock</template> .dropdown-toggle::after {
       color: {{ theme.topBarTextColor || '#324054' }} !important;
       }
 
-      #app .fr-main-navbar .fr-dropdown-button-content h5 {
+      #app .fr-main-navbar<template v-if="mock">-mock</template> .fr-dropdown-button-content h5 {
       color: {{ theme.topBarHeaderColor || '#23282e' }};
       }
     </Component>
