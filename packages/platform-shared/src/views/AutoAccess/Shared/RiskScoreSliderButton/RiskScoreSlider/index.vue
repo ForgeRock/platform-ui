@@ -37,24 +37,24 @@ of the MIT license. See the LICENSE file for details. -->
         100
       </div>
     </VueSlider>
-    <div class="vue-slider-legend d-flex flex-row justify-content-around px-4 mt-4">
-      <div
-        class="low"
-        :style="{ width: `${thresholds.medium}%` }">
-        {{ $t("autoAccess.access.risk.low") }}
-      </div>
-      <div
-        class="medium"
-        :style="{ width: `${thresholds.high - thresholds.medium}%` }"
-      >
-        {{ $t("autoAccess.access.risk.medium") }}
-      </div>
-      <div
-        class="high"
-        :style="{ width: `${100 - thresholds.high}%` }">
-        {{ $t("autoAccess.access.risk.high") }}
-      </div>
-    </div>
+    <!-- <div class="vue-slider-legend d-flex flex-row justify-content-around px-4 mt-4"> -->
+    <!--   <div -->
+    <!--     class="low" -->
+    <!--     :style="{ width: `${thresholds.medium}%` }"> -->
+    <!--     {{ $t("autoAccess.access.risk.low") }} -->
+    <!--   </div> -->
+    <!--   <div -->
+    <!--     class="medium" -->
+    <!--     :style="{ width: `${thresholds.high - thresholds.medium}%` }" -->
+    <!--   > -->
+    <!--     {{ $t("autoAccess.access.risk.medium") }} -->
+    <!--   </div> -->
+    <!--   <div -->
+    <!--     class="high" -->
+    <!--     :style="{ width: `${100 - thresholds.high}%` }"> -->
+    <!--     {{ $t("autoAccess.access.risk.high") }} -->
+    <!--   </div> -->
+    <!-- </div> -->
   </div>
 </template>
 
