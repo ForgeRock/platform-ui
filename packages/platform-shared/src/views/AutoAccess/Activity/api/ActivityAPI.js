@@ -112,7 +112,8 @@ export const getFeatures = () => {
     'predictionResult.features.browserData.device',
     'predictionResult.features.browserData.deviceType',
     'predictionResult.features.dayparting',
-    'predictionResult.features.userId',
+    // 'predictionResult.features.userId',
+    'predictionResult.features.rawUserId',
   ];
 
   return new Promise((resolve, reject) => {
