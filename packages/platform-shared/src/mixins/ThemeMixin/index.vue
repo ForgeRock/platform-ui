@@ -190,6 +190,7 @@ export default {
         } else {
           this.theme = {};
           this.logo = `${process.env.BASE_URL}images/vertical-logo.svg`;
+          this.favicon = 'favicon.ico';
         }
       }).catch(() => {
         this.theme = {};
