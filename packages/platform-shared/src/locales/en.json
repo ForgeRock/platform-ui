@@ -787,6 +787,7 @@
         "predictionResult.features.browserData.device": "Device",
         "predictionResult.features.dayparting": "Time of Day",
         "predictionResult.features.userId": "User ID",
+        "predictionResult.features.rawUserId": "User ID",
         "predictionResult.features.weekday": "Day of Week",
         "sections": {
           "riskReason": "Risk Reason",
