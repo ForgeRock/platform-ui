@@ -10,7 +10,13 @@ of the MIT license. See the LICENSE file for details. -->
       'fr-menu-expanded': menuExpanded === true && !hideSideMenu,
       'fr-menu-collapsed': menuExpanded === false && !hideSideMenu,
       'fr-menu-hidden': hideSideMenu,
+      'fr-system-notification-active': systemNotificationActive,
     }, 'h-100']">
+    <FrSystemNotification
+      v-if="systemNotification"
+      :data="systemNotification"
+      :active="systemNotificationActive"
+      @hide-system-notification="$emit('hide-system-notification')" />
     <FrSideMenu
       @toggle-menu="toggleMenu"
       :menu-items="menuItems"
@@ -98,6 +104,7 @@ of the MIT license. See the LICENSE file for details. -->
 import Alert from '@forgerock/platform-shared/src/components/Alert/';
 import Navbar from '@forgerock/platform-shared/src/components/Navbar/';
 import SideMenu from '@forgerock/platform-shared/src/components/SideMenu/';
+import SystemNotification from '@forgerock/platform-shared/src/components/SystemNotification/';
 import MediaMixin from '@forgerock/platform-shared/src/mixins/MediaMixin';
 
 /**
@@ -109,6 +116,7 @@ export default {
     FrNavBar: Navbar,
     FrSideMenu: SideMenu,
     FrAlert: Alert,
+    FrSystemNotification: SystemNotification,
   },
   mixins: [MediaMixin],
   props: {
@@ -195,6 +203,14 @@ export default {
     buildDateTime: {
       type: Date,
       default: () => new Date(0),
+    },
+    systemNotification: {
+      type: Object,
+      default: () => {},
+    },
+    systemNotificationActive: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -391,5 +407,17 @@ body {
 .fr-logo-container {
   width: 21px;
   height: 21px;
+}
+
+.fr-system-notification-active #appContent {
+  padding-top: $fr-system-notification-height;
+}
+
+.fr-system-notification-active .fr-main-navbar{
+  top: $fr-system-notification-height;
+}
+
+.fr-system-notification-active .fr-sidebar-wrapper {
+  top: $fr-system-notification-height !important;
 }
 </style>
