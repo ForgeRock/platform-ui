@@ -17,7 +17,7 @@
     "core-js": "3.6.5",
     "d3": "6.7.0",
     "d3-interpolate-path": "2.2.3",
-    "dayjs": "1.8.20",
+    "dayjs": "1.10.7",
     "google-maps-api-loader": "1.1.1",
     "jose": "4.8.3",
     "ldap-filter": "0.3.3",
