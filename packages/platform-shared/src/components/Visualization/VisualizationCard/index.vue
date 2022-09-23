@@ -4,67 +4,105 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BCard no-body>
-    <BCardBody ref="card-body">
-      <BSkeletonWrapper :loading="loading">
+    <BCardBody
+      ref="cardBody"
+      class="d-flex flex-column">
+      <BSkeletonWrapper
+        class="flex-grow-1"
+        :loading="loading">
         <template #loading>
-          <BSkeleton
-            class="mb-2"
-            width="35%"
-          />
-          <BSkeleton
-            v-if="count"
-            class="mb-2"
-            width="60%"
-            height="45px"
-            no-aspect
-          />
-          <BSkeletonImg width="100%" />
+          <BSkeletonImg
+            height="100%"
+            width="100%"
+            no-aspect />
         </template>
 
         <template #default>
-          <div :class="[{'mb-4': !count}, 'd-flex align-items-start justify-content-between' ]">
-            <div class="d-flex align-items-center justify-content-start pb-2">
-              <h5 class="mb-0">
-                {{ title }}
-              </h5>
+          <div
+            class="cardHeader"
+            ref="cardHeader">
+            <!-- <div -->
+            <!--   :class="[{'mb-4': !count}, 'd-flex justify-content-between']" -->
+            <!--   ref="cardTitle" -->
+            <!-- > -->
+            <div
+              :class="[{'mb-4': !count}, 'position-relative']"
+              ref="cardTitle"
+            >
               <div
-                :id="`link-button-${tooltipId}`"
-                class="tooltip-button"
-                tabindex="0"
+                class="d-flex align-items-center justify-content-start"
+                v-if="title.length"
               >
-                <FrIcon
-                  class="ml-1 mt-1"
-                  name="info"
-                />
+                <h5 class="mb-0">
+                  {{ title }}
+                </h5>
+                <div
+                  :id="`link-button-${tooltipId}`"
+                  class="tooltip-button"
+                  tabindex="0"
+                  v-if="tooltip.length"
+                >
+                  <FrIcon
+                    class="ml-1 mt-1"
+                    name="info" />
+                </div>
+              </div>
+
+              <!--MENU SLOT -->
+              <div
+                ref="menu"
+                class="menu">
+                <slot name="menu" />
               </div>
             </div>
-            <div>
-              <slot name="menu" />
+
+            <!--COUNT -->
+            <div
+              :class="[{'mb-3': count}]"
+              ref="count">
+              <h2
+                v-if="count && !error"
+                class="display-4h3">
+                {{ localeCount }}
+              </h2>
             </div>
+
+            <!--LEGEND SLOT -->
+            <slot name="legend" />
           </div>
-          <h1
-            v-if="count"
-            class="display-4 mb-3 h3">
-            {{ localeCount }}
-          </h1>
-          <div>
-            <Transition
-              appear
-              name="fade">
-              <div>
-                <slot name="legend" />
-                <slot
-                  name="chart"
-                  :cardWidth="cardWidth" />
+          <Transition
+            appear
+            name="fade">
+            <div
+              class="d-flex flex-column flex-grow-1"
+              style="position: relative;">
+              <slot
+                v-if="!error"
+                name="chart"
+                :svgWidth="svgWidth"
+                :svgHeight="svgHeight" />
+              <div
+                v-if="error"
+                class="d-flex flex-grow-1 align-items-center text-center">
+                <div class="flex-grow-1">
+                  <FrIcon
+                    class="error-icon text-danger"
+                    name="error_outline" />
+                  <div class="mt-3">
+                    Failed to load data
+                  </div>
+                </div>
               </div>
-            </Transition>
-            <BTooltip
-              no-fade
-              placement="top"
-              :target="`link-button-${tooltipId}`">
-              {{ tooltip }}
-            </BTooltip>
-          </div>
+            </div>
+          </Transition>
+          <BTooltip
+            no-fade
+            placement="top"
+            v-if="tooltipId.length"
+            :target="`link-button-${tooltipId}`"
+          >
+            {{ tooltip }}
+          </BTooltip>
         </template>
       </BSkeletonWrapper>
     </BCardBody>
@@ -75,7 +113,6 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   BCard,
   BCardBody,
-  BSkeleton,
   BSkeletonImg,
   BSkeletonWrapper,
   BTooltip,
@@ -83,15 +120,11 @@ import {
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import i18n from '@/i18n';
 
-/**
- *
- */
 export default {
   name: 'VisualizationCard',
   components: {
     BCard,
     BCardBody,
-    BSkeleton,
     BSkeletonImg,
     BSkeletonWrapper,
     BTooltip,
@@ -99,7 +132,8 @@ export default {
   },
   data() {
     return {
-      cardWidth: 0,
+      svgWidth: 100,
+      svgHeight: 100,
     };
   },
   props: {
@@ -110,8 +144,12 @@ export default {
       default: null,
       type: String,
     },
+    error: {
+      default: false,
+      type: Boolean,
+    },
     /**
-     * Show loading spinner or not
+     * Show loading skeleton or not
      */
     loading: {
       default: false,
@@ -119,26 +157,28 @@ export default {
     },
     /**
      * String to be used as tooltip  content
+     * @type {boolean}
      */
     tooltip: {
-      required: true,
+      default: '',
       type: String,
     },
     /**
      * String to be used as main title of card
      */
     title: {
-      required: true,
+      default: '',
       type: String,
     },
   },
   methods: {
     /**
-      * Sets the cardWidth value based on responsive resizing
+      * Sets the svgWidth value based on responsive resizing
       */
     onResize() {
-      const cardBodyCompStyle = getComputedStyle(this.$refs['card-body']);
-      this.cardWidth = this.$refs['card-body'].offsetWidth - (parseInt(cardBodyCompStyle.paddingLeft, 10) * 2);
+      const cardBodyPaddingTop = parseInt(getComputedStyle(this.$refs.cardBody).paddingTop, 10);
+      this.svgWidth = this.$refs.cardHeader.offsetWidth;
+      this.svgHeight = this.$refs.cardBody.offsetHeight - (cardBodyPaddingTop * 2) - this.$refs.cardHeader?.offsetHeight;
     },
   },
   computed: {
@@ -159,12 +199,23 @@ export default {
       * @returns {string} tooltip with removed whitespace characters
       */
     tooltipId() {
-      return this.title.replace(/\W/g, '');
+      return this.title.replace(/\W/g, '') || '';
+    },
+    isEmpty() {
+      return this.title === '' && this.tooltip === '';
     },
   },
   mounted() {
     window.addEventListener('resize', this.onResize);
-    this.onResize();
+    const observer = new MutationObserver((() => {
+      if (document.contains(this.$refs.cardHeader)) {
+        this.onResize();
+        observer.disconnect();
+      }
+    }));
+    observer.observe(document, {
+      attributes: false, childList: true, characterData: false, subtree: true,
+    });
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.onResize);
@@ -172,17 +223,25 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-  .card-body {
-    min-height: 87px;
-  }
+.card-title {
+  height: 55px;
+}
 
-  .tooltip-button {
-    color: $gray-800;
-    cursor: default;
-  }
+.card-title-secondary {
+  height: 100px;
+}
 
-  .b-tooltip:not([style*='transform']) {
-    top: 0;
-  }
+.error-icon {
+  font-size: 3rem;
+}
+
+.tooltip-button {
+  color: $gray-800;
+  cursor: default;
+}
+
+.b-tooltip:not([style*='transform']) {
+  top: 0;
+}
 </style>
 >
