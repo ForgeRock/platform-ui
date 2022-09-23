@@ -1,0 +1,19 @@
+.chart-tooltip {
+  background-color: $black;
+  border-radius: 4px;
+  color: $white;
+  font-size: 15px;
+  padding: 11px;
+  width: 185px;
+
+  &-title {
+    color: $gray-400;
+  }
+  &-pct {
+    font-weight: 700;
+  }
+}
+
+.chart-container {
+  border-top: solid $gray-200 1px;
+}

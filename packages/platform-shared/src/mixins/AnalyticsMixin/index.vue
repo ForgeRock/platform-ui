@@ -8,6 +8,7 @@ import advancedFormat from 'dayjs/plugin/advancedFormat';
 import {
   getAnalyticsData,
 } from '@forgerock/platform-shared/src/api/AnalyticsApi';
+import * as d3 from 'd3';
 
 /**
  * @description Analytics mixin used for global analytics functionality
@@ -120,15 +121,18 @@ export default {
       * @returns {array} formatted data
       */
     getChartData(dateRange, eventType, persist) {
+      // TODO: ignore as this is for testing error states
+      // const intervalType = eventType === 'userTotal' ? 'foo' : this.selectedIntervalType;
+      // return getAnalyticsData(eventType, dateRange, intervalType)
+      //   .then(({ data }) => {
+      //     const formattedData = this.formatApiData(data, eventType, dateRange, persist);
+      //     return Promise.resolve(formattedData);
+      //   });
       return getAnalyticsData(eventType, dateRange, this.selectedIntervalType)
         .then(({ data }) => {
-          // TODO: ignore as this is for testing error states
-          // if (eventType === 'alpharMarch4Journey') {
-          //   data = undefined;
-          // }
           const formattedData = this.formatApiData(data, eventType, dateRange, persist);
-          return formattedData;
-        });
+          return Promise.resolve(formattedData);
+        }).catch((error) => Promise.reject(error));
     },
     /**
       * Find the total value for the active dataset
@@ -191,6 +195,40 @@ export default {
         diff, diffInterval, endDate, foundFormat, startDate,
       };
     },
+    svgTextTruncate(dotText) {
+      dotText.each(function dotme() {
+        const text = d3.select(this);
+        const words = text.text().split(/\s+/);
+        text.attr('title', words);
+
+        const ellipsis = text.text('').append('tspan').attr('class', 'elip').text('...');
+        const width = parseFloat(text.attr('width')) - ellipsis.node().getComputedTextLength();
+        const numWords = words.length;
+
+        const tspan = text.insert('tspan', ':first-child').text(words.join(' '));
+        text.insert('title').text(words);
+
+        // Try the whole line
+        // While it's too long, and we have words left, keep removing words
+
+        while (tspan.node().getComputedTextLength() > width && words.length > 1) {
+          words.pop();
+          tspan.text(words.join(' '));
+        }
+
+        if (words.length === 1 && tspan.node().getComputedTextLength() > width) {
+          let shortWord = words.pop();
+          while (shortWord.length && tspan.node().getComputedTextLength() > width) {
+            shortWord = shortWord.substring(0, shortWord.length - 1);
+            tspan.text(shortWord);
+          }
+        }
+
+        if (words.length === numWords) {
+          ellipsis.remove();
+        }
+      });
+    },
   },
   computed: {
     /**
@@ -222,6 +260,11 @@ export default {
         'Last 7 Days': [last7DaysStart, now],
         'Last 30 Days': [last30DaysStart, now],
       };
+    },
+  },
+  filters: {
+    percent(value) {
+      return `${Math.round(100 * value)}%`;
     },
   },
 };

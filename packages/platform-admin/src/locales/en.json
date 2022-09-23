@@ -23,7 +23,7 @@
     "PasswordPolicy": "Password Policy",
     "Profile": "Profile",
     "Promotion": "Promotion",
-    "PromotionHistory" : "Promotion History",
+    "PromotionHistory": "Promotion History",
     "Realm": "Realm Settings",
     "TermsAndConditions": "Terms & Conditions"
   },
@@ -603,13 +603,37 @@
         "journeysModalTitle": "Filter Journeys",
         "journeysSelectedAll": "All Journeys",
         "journeysSelected": "{count} Journey | {count} Journeys",
+        "journeysTopFive": "Top Five Journeys by Outcome",
+        "journeysTopFiveTooltip": "Top success and fail for the date range selected above",
+        "journeysUsage": "Top Five Journeys by Usage",
+        "journeysUsageTooltip": "Most and least used for the date range selected above",
+        "least": "Least",
+        "most": "Most",
         "userActiveTitle": "Total Users Trend",
         "userActiveDescription": "Trend of total number of users in this realm for the given time period",
         "userEngagementTitle": "User Engagement",
         "userEngagementDescription": "Unique user count with at least one activity like sign-in, set or update password, or token issuance/validation/refresh performed in this realm for a given time period.",
         "userNewTitle": "Sign Ups",
-        "userNewDescription": "Trend of new user sign-ups in this realm for a given time period"
-      }
+        "userNewDescription": "Trend of new user sign-ups in this realm for a given time period",
+        "viewDetail": "View Detail",
+        "breakdown": {
+          "number": "Number",
+          "percentage": "Percentage",
+          "subtitle-number": "Ranked based on the number of failures per journey",
+          "subtitle-percentage": "Ranked based on the percentage of failures per journey",
+          "title": "Metric Breakdown"
+        },
+        "tooltips": {
+          "percentageBreakdown": "Percentage Breakdown",
+          "failRate": "fail rate",
+          "successRate": "success rate",
+          "usageRate": "usage rate"
+        }
+      },
+      "errors": {
+        "receivingJourneys": "Error receiving journeys"
+      },
+      "realmOverview": "Realm Overview"
     },
     "cardCount": {
       "applications": "Applications",
@@ -1871,7 +1895,7 @@
       "errorLoadingLockState": "Error loading tenant lock state.",
       "errorLocking": "Error locking environments.",
       "errorUnlocking": "Error unlocking environments.",
-      "lockAndContinue" : "Lock And Continue",
+      "lockAndContinue": "Lock And Continue",
       "lockDescription": "In order to ensure a reliable promotion, both <b>{current} and {upper} tenants will be locked and inaccessible</b> for the duration of the promotion process.",
       "lockInProgress": "Locking tenants...",
       "title": "Lock Tenants?",
