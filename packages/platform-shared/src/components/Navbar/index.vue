@@ -107,7 +107,7 @@ of the MIT license. See the LICENSE file for details. -->
                       <template>
                         <img
                           v-if="tenantRegionInfo"
-                          :src="tenantRegionInfo.flag && require(`@forgerock/platform-admin/src/assets/images/flags/${tenantRegionInfo.flag}.svg`)"
+                          :src="tenantRegionInfo.flag && require(`@forgerock/platform-shared/src/assets/images/flags/${tenantRegionInfo.flag}.svg`)"
                           :alt="$t('tenantSettings.details.flagAltText')"
                           class="mr-2"
                           width="18"
