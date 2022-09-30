@@ -149,7 +149,7 @@ export function generateFraasMonitoringApi(requestOverride = {}) {
  */
 export function generateAnalyticsApi(requestOverride = {}) {
   const requestDetails = {
-    baseURL: '/dashboard',
+    baseURL: store.state.SharedStore.analyticsURL,
     timeout: 15000,
     headers: {},
     ...requestOverride,

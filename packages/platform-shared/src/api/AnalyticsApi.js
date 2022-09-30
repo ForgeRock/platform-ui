@@ -14,5 +14,5 @@ export function getAnalyticsData(eventType, dateRange, intervalType) {
   const endDateTimeStr = endDate ? `&endDateTime=${endDate}` : '';
   const params = `&startDateTime=${startDate}&intervalType=${intervalType}${endDateTimeStr}`;
 
-  return generateAnalyticsApi().get(`users/metrics?eventType=${eventType}&realm=${store.state.realm}${params}`);
+  return generateAnalyticsApi().get(`?eventType=${eventType}&realm=${store.state.realm}${params}`);
 }
