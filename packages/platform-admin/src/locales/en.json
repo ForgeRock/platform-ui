@@ -1887,6 +1887,7 @@
     },
     "promoteNChanges": "Promote {count} Change | Promote {count} Changes",
     "promotionHistory": "Promotion History",
+    "promotionNotAvailable": "Promotion is currently unavailable as this tenant is locked.",
     "promotionUpdates": "Tenant Updates",
     "review": {
       "cancelPromotion": "Cancel Promotion",
