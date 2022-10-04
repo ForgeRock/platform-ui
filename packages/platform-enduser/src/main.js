@@ -29,6 +29,7 @@ import VueSanitize from 'vue-sanitize';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import overrideTranslations, { setLocales } from '@forgerock/platform-shared/src/utils/overrideTranslations';
 import parseSub from '@forgerock/platform-shared/src/utils/OIDC';
+import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import { defaultSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 import store from '@/store';
@@ -51,7 +52,7 @@ PromisePoly.polyfill();
 
 // Ready translated locale messages
 // IDM Context default
-const idmContext = process.env.VUE_APP_IDM_URL;
+const idmContext = getFQDN(process.env.VUE_APP_IDM_URL);
 
 // Router guard to check authenticated routes
 router.beforeEach((to, from, next) => {

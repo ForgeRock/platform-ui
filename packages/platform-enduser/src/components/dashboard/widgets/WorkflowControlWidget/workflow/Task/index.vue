@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -32,6 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 /* eslint-disable no-underscore-dangle */
 import styles from '@forgerock/platform-shared/src/scss/main.scss';
+import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 import axios from 'axios';
 import { ClipLoader } from 'vue-spinner/dist/vue-spinner.min';
 import GenericTask from '../GenericTask';
@@ -93,7 +94,7 @@ export default {
     shown(val) {
       if (val && this.processDefinition === null) {
         const workflowInstance = axios.create({
-          baseURL: process.env.VUE_APP_IDM_URL,
+          baseURL: getFQDN(process.env.VUE_APP_IDM_URL),
           timeout: 15000,
           headers: {},
         });
