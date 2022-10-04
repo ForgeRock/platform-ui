@@ -35,7 +35,7 @@ Vue.use(VueSanitize, defaultSanitizerConfig);
 
 setInteractionMode('passive');
 
-const idmContext = process.env.VUE_APP_IDM_URL;
+const idmContext = getFQDN(process.env.VUE_APP_IDM_URL);
 
 store.commit('SharedStore/setWebStorageAvailable', isWebStorageAvailable());
 
