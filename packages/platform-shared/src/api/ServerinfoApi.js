@@ -1,18 +1,19 @@
 /**
- * Copyright 2020 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
+
 import { generateAmApi, generateIdmApi } from './BaseApi';
+import getFQDN from '../utils/getFQDN';
 
 const amInfoApi = {
   path: '',
   apiVersion: 'protocol=2.1,resource=1.0',
 };
 const idmInfoApi = {
-  baseURL: process.env.VUE_APP_IDM_URL,
+  baseURL: getFQDN(process.env.VUE_APP_IDM_URL),
 };
 
 /**

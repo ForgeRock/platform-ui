@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -61,6 +61,7 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 /* eslint-disable no-underscore-dangle */
 import { isEmpty } from 'lodash';
+import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 import axios from 'axios';
 
 /**
@@ -117,7 +118,7 @@ export default {
                 && (this.taskDefinition.process.processDefinition === null || this.taskDefinition.process.processDefinition === undefined)
                 && this.taskDetailsList.length === 0) {
         const workflowInstance = axios.create({
-          baseURL: process.env.VUE_APP_IDM_URL,
+          baseURL: getFQDN(process.env.VUE_APP_IDM_URL),
           timeout: 15000,
           headers: {},
         });
