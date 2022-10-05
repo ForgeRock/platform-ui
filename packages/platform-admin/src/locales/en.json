@@ -420,7 +420,8 @@
       "federation": "Federation",
       "identityManagement": "Identity Management",
       "utilities": "Utilities",
-      "uncategorized": "Uncategorized"
+      "uncategorized": "Uncategorized",
+      "marketplace": "Marketplace"
     },
     "treeImportExport": {
       "dependencies": "Dependencies",
