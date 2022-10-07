@@ -950,10 +950,6 @@ export default {
 
       const stepParams = this.getStepParams();
 
-      if (this.step) {
-        this.setNonRequiredEmptyStringsToNull();
-      }
-
       FRAuth.next(this.step, stepParams)
         .then((step) => {
           let initialStep;
@@ -1144,22 +1140,6 @@ export default {
           }
         }
       }
-    },
-    /**
-     * Called before sending this.step to the server. Looks through step.payload.callbacks
-     * for non-required StringAttributeInputCallback's with empty string values and sets those
-     * values to null.
-     */
-    setNonRequiredEmptyStringsToNull() {
-      this.step.payload.callbacks.forEach((callback) => {
-        if (callback.type === this.FrCallbackType.StringAttributeInputCallback) {
-          const required = find(callback.output, { name: 'required' });
-
-          if (required && !required.value && callback.input[0].value === '') {
-            callback.input[0].value = null;
-          }
-        }
-      });
     },
   },
 };
