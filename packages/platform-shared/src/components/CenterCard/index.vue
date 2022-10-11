@@ -7,7 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     <div class="fr-m-auto fr-center-card align-self-center">
       <BCard
         no-body
-        class="overflow-hidden border-xs-0 border-sm d-flex fr-stretch-card"
+        class="border-xs-0 border-sm d-flex fr-stretch-card"
         header-tag="header"
         footer-tag="footer">
         <BCardHeader :class="headerClassList">
