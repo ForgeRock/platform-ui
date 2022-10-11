@@ -123,6 +123,10 @@ of the MIT license. See the LICENSE file for details. -->
       border-radius: {{ theme.journeyCardBorderRadius || 4 }}px !important;
       }
 
+      .card .login-header {
+      border-radius: {{ theme.journeyCardBorderRadius || 4 }}px {{ theme.journeyCardBorderRadius || 4 }}px 0 0 !important;
+      }
+
       .card,
       .journey-card {
       background-color: {{ theme.journeyCardBackgroundColor || '#ffffff' }} !important;
