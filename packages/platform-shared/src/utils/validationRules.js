@@ -104,7 +104,7 @@ export function getRules(i18n) {
   const isList = {
     ...rules.regex,
     message: i18n.t('common.validation.list'),
-    validate: (value) => /^[-\w\s]+(?:,[-\w\s]*)*$/.test(value),
+    validate: (value) => /^[-\w\S\D]+(?:,[-\w\S\D]*)*$/.test(value),
   };
 
   const isNumber = {
