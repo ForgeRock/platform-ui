@@ -1516,16 +1516,16 @@
         },
         "nextSteps": "Next Steps",
         "gateway": {
-          "download": "<a href='https://backstage.forgerock.com/downloads/browse/ig/featured'>Download Identity Gateway</a>.",
-          "instructions": "Follow the <a href='https://backstage.forgerock.com/docs/idcloud/latest/gateways-agents.html'>step-by-step instructions</a> to install and configure Identity Gateway using the following values:"
+          "download": "<a href='https://backstage.forgerock.com/downloads/browse/ig/featured' target='_blank' rel='noopener'>Download Identity Gateway</a>.",
+          "instructions": "Follow the <a href='https://backstage.forgerock.com/docs/idcloud/latest/gateways-agents.html' target='_blank' rel='noopener'>step-by-step instructions</a> to install and configure Identity Gateway using the following values:"
         },
         "web-agent": {
-          "download": "<a href='https://backstage.forgerock.com/downloads/browse/am/featured/web-agents'>Download a web agent</a> based on your needs.",
-          "instructions": "Follow the <a href='https://backstage.forgerock.com/docs/idcloud/latest/gateways-agents.html'>step-by-step instructions</a> to install and configure the agent using the following values:"
+          "download": "<a href='https://backstage.forgerock.com/downloads/browse/am/featured/web-agents' target='_blank' rel='noopener' >Download a web agent</a> based on your needs.",
+          "instructions": "Follow the <a href='https://backstage.forgerock.com/docs/idcloud/latest/gateways-agents.html' target='_blank' rel='noopener'>step-by-step instructions</a> to install and configure the agent using the following values:"
         },
         "java-agent": {
-          "download": "<a href='https://backstage.forgerock.com/downloads/browse/am/featured/java-agents'>Download a java agent</a> based on your needs.",
-          "instructions": "Follow the <a href='https://backstage.forgerock.com/docs/idcloud/latest/gateways-agents.html'>step-by-step instructions</a> to install and configure the agent using the following values:"
+          "download": "<a href='https://backstage.forgerock.com/downloads/browse/am/featured/java-agents' target='_blank' rel='noopener'>Download a java agent</a> based on your needs.",
+          "instructions": "Follow the <a href='https://backstage.forgerock.com/docs/idcloud/latest/gateways-agents.html' target='_blank' rel='noopener'>step-by-step instructions</a> to install and configure the agent using the following values:"
         }
       },
       "errorCreating": "Could not create {type}",
