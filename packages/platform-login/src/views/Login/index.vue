@@ -1218,18 +1218,6 @@ export default {
   padding: 0;
 }
 
-input:focus,
-input:not(:placeholder-shown) {
-  padding-top: $input-btn-padding-y + $input-btn-padding-y * calc(2 / 3);
-  padding-bottom: calc($input-btn-padding-y / 3);
-
-  ~ label {
-    padding-top: calc($input-btn-padding-y / 3);
-    padding-bottom: 0;
-    font-size: 12px;
-  }
-}
-
 @media (min-width: 768px) {
   .w-md-50 {
     width: 50% !important;
