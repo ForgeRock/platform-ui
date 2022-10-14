@@ -36,27 +36,27 @@ function getPlugins() {
 
   plugins.push(new CopyWebpackPlugin([
     {
-      from: '../../node_modules/appauthhelper/appAuthHelperRedirect.html',
+      from: '../../node_modules/appauthhelper-enduser/appAuthHelperRedirect.html',
       to: 'appAuthHelperRedirect.html',
       toType: 'file',
     },
     {
-      from: '../../node_modules/appauthhelper/appAuthServiceWorker.js',
+      from: '../../node_modules/appauthhelper-enduser/appAuthServiceWorker.js',
       to: 'appAuthServiceWorker.js',
       toType: 'file',
     },
     {
-      from: '../../node_modules/appauthhelper/appAuthHelperFetchTokensBundle.js',
+      from: '../../node_modules/appauthhelper-enduser/appAuthHelperFetchTokensBundle.js',
       to: 'appAuthHelperFetchTokensBundle.js',
       toType: 'file',
     },
     {
-      from: '../../node_modules/oidcsessioncheck/sessionCheck.html',
+      from: '../../node_modules/oidcsessioncheck-enduser/sessionCheck.html',
       to: 'sessionCheck.html',
       toType: 'file',
     },
     {
-      from: '../../node_modules/oidcsessioncheck/sessionCheckFrame.js',
+      from: '../../node_modules/oidcsessioncheck-enduser/sessionCheckFrame.js',
       to: 'sessionCheckFrame.js',
       toType: 'file',
     },

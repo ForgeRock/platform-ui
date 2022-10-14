@@ -2780,6 +2780,17 @@ anymatch@~3.1.2:
     normalize-path "^3.0.0"
     picomatch "^2.0.4"
 
+"appauthhelper-enduser@npm:appauthhelper@0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/appauthhelper/-/appauthhelper-0.5.0.tgz#370e97cb38f43d07158e28d7cca4b17b54b8922a"
+  integrity sha512-me8YxEImQz3esohaJYfBJLVhoLcZCovBdJrHilWFiseiSzmjN9lnhZhNNWXJr0CVc+eI+182/2VLalenUT9IkA==
+  dependencies:
+    "@openid/appauth" "^1.2.8"
+    promise-polyfill "8.1.3"
+    url-polyfill "^1.1.10"
+    webcrypto-shim "^0.1.6"
+    whatwg-fetch "^3.2.0"
+
 appauthhelper@1.0.0-alpha.0:
   version "1.0.0-alpha.0"
   resolved "https://registry.yarnpkg.com/appauthhelper/-/appauthhelper-1.0.0-alpha.0.tgz#81182354bc424e0409a8aa85b210278d6c307c8f"
@@ -11746,6 +11757,11 @@ obuf@^1.0.0, obuf@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/obuf/-/obuf-1.1.2.tgz"
   integrity sha512-PX1wu0AmAdPqOL1mWhqmlOd8kOIZQwGZw6rh7uby9fTc5lhaOWFLX3I6R1hrF9k3zUY40e6igsLGkDXK92LJNg==
+
+"oidcsessioncheck-enduser@npm:oidcsessioncheck@1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/oidcsessioncheck/-/oidcsessioncheck-1.1.0.tgz#969b618098deac33b62189e704a5d26750580183"
+  integrity sha512-V7KkpZfc+T8j4wHj6B3H1SkOhdDkd/aphwdCqfMaEbI4ZwmLa6jPfBeXuwMTwRQa+r+mMOlOHbHl83yxdSpZsQ==
 
 oidcsessioncheck@2.0.0-alpha.0:
   version "2.0.0-alpha.0"
