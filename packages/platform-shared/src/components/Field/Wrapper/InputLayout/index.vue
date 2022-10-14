@@ -266,14 +266,23 @@ export default {
     min-width: 80px;
 
     /* stylelint-disable */
-    .polyfill-placeholder {
-      padding-top: $input-btn-padding-y + $input-btn-padding-y * calc(2 / 3);
-      padding-bottom: calc($input-btn-padding-y / 3);
+    .polyfill-placeholder,
+    input:focus,
+    input:not(:placeholder-shown) {
 
-      ~ label {
-        padding-top: calc($input-btn-padding-y / 3);
-        padding-bottom: 0;
-        font-size: 12px;
+      /*
+       * if there is no placeholder, we do not need to apply padding to move
+       * the users input below the placeholder/label
+      */
+      &:not([placeholder=""]) {
+        padding-top: $input-btn-padding-y + $input-btn-padding-y * calc(2 / 3);
+        padding-bottom: calc($input-btn-padding-y / 3);
+
+        ~ label {
+          padding-top: calc($input-btn-padding-y / 3);
+          padding-bottom: 0;
+          font-size: 12px;
+        }
       }
     }
     /* stylelint-enable */

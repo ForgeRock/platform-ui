@@ -17,9 +17,7 @@ of the MIT license. See the LICENSE file for details. -->
       <!--
         slot scoped variable labelHeight is used to change the height of the input as follows:
         - the label height is calculated as labelHeight + 2px (border of label)
-        - padding top is calculated depends on label position,
-          if the label is floating then padding top is equal to labelHeight - 27px (size of label text with floating label)
-          else padding top is equal to labelHeight - 35px (size of label text without floating label or empty input)
+        - padding top is calculated as labelHeight - 27px (size of label text with floating label)
       -->
       <input
         v-if="fieldType === 'number'"
@@ -41,7 +39,7 @@ of the MIT license. See the LICENSE file for details. -->
         :min="$attrs.min"
         :placeholder="floatingLabel ? label : placeholder"
         :readonly="readonly"
-        :style="labelHeight && {height: (labelHeight + 2) + 'px', 'padding-top': floatLabels ? (labelHeight - 27) + 'px' : (labelHeight - 35) + 'px'}"
+        :style="labelHeight && {height: `${labelHeight + 2}px`, 'padding-top': `${labelHeight - 27}px`}"
         @animationstart="floatingLabel && animationStart"
         @blur="$emit('blur', $event)"
         :data-testid="testid">
@@ -65,7 +63,7 @@ of the MIT license. See the LICENSE file for details. -->
         :readonly="readonly"
         :type="fieldType"
         :autocomplete="$attrs.autocomplete"
-        :style="labelHeight && {height: (labelHeight + 2) + 'px', 'padding-top': floatLabels ? (labelHeight - 27) + 'px' : (labelHeight - 35) + 'px'}"
+        :style="labelHeight && {height: `${labelHeight + 2}px`, 'padding-top': `${labelHeight - 27}px`}"
         @input="evt=>inputValue=evt.target.value"
         @animationstart="floatingLabel && animationStart"
         :data-testid="testid">
