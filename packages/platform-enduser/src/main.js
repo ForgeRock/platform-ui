@@ -23,8 +23,8 @@ import {
   ValidationProvider,
 } from 'vee-validate';
 import Vue from 'vue';
-import AppAuthHelper from 'appauthhelper/appAuthHelperCompat';
-import SessionCheck from 'oidcsessioncheck';
+import AppAuthHelper from 'appauthhelper-enduser/appAuthHelperCompat';
+import SessionCheck from 'oidcsessioncheck-enduser';
 import VueSanitize from 'vue-sanitize';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import overrideTranslations, { setLocales } from '@forgerock/platform-shared/src/utils/overrideTranslations';
