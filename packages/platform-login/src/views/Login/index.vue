@@ -1020,7 +1020,13 @@ export default {
                   this.componentList = [];
                   this.buildTreeForm();
                 }
-                this.loading = false;
+                // if the login fails get a new authId for the step (initial step in this case) to restart the journey
+                // with a new one, this for avoid the use of an invalid auth id when the allow listing is enable
+                this.getAuthId()
+                  .then((authId) => {
+                    this.step.payload.authId = authId;
+                    this.loading = false;
+                  });
               }
               this.loginFailure = true;
               break;
@@ -1087,6 +1093,13 @@ export default {
       }
     },
     /**
+     * Get a new Authorization ID for SDK. The new authId is acquired by calling FRAuth.next with no step
+     */
+    async getAuthId(stepParams) {
+      const step = await FRAuth.next(undefined, stepParams);
+      return step.payload?.authId;
+    },
+    /**
      * Retry a previously failed step with a new authId. The new authId is acquired by calling FRAuth.next with no step.
      * Then a this.nextStep is called with the previously failed step and new authId
      *
@@ -1095,9 +1108,8 @@ export default {
      *
      */
     retryWithNewAuthId(previousStep, stepParams) {
-      FRAuth.next(undefined, stepParams)
-        .then((step) => {
-          const { authId } = step.payload;
+      this.getAuthId(stepParams)
+        .then((authId) => {
           this.step = previousStep;
           if (has(this.step, 'payload')) {
             this.step.payload.authId = authId;
