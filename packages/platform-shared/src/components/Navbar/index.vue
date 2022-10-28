@@ -35,7 +35,7 @@ of the MIT license. See the LICENSE file for details. -->
             href="#"
             id="infopopover-promotion"
             class="text-body ml-2"
-            :title="$t('promotions.tenantLockedPopover')"
+            :title="lockedPopoverMessage"
             v-b-tooltip.hover.focus>
             <FrIcon name="info" />
           </BLink>
@@ -251,6 +251,13 @@ export default {
     hideToggle: {
       type: Boolean,
       default: false,
+    },
+    /**
+     * Show this message in the tenant-locked popover.
+     */
+    lockedPopoverMessage: {
+      type: String,
+      default: '',
     },
     /**
      * Show link to Docs
