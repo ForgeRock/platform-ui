@@ -75,6 +75,7 @@
     "SecurityQuestions": "Security Questions",
     "ServiceAccounts": "Service Accounts",
     "TenantAdmins": "Tenant Admins",
+    "TenantMigration": "Tenant Migration",
     "TenantSettings": "Tenant Settings",
     "TermsAndConditions": "Terms & Conditions",
     "TenantUpdates": "Tenant Updates"
@@ -1900,6 +1901,18 @@
       "lockInProgress": "Locking tenants...",
       "title": "Lock Tenants?",
       "unlockInProgress": "Unlocking tenants..."
+    },
+    "migration": {
+      "chooseManagementOfConfigurationTitle": "Choose how you manage your configuration",
+      "downloadConfigurationConfirmation": "I confirm I have downloaded my configuration",
+      "errorUpdatingMigrationAcknowledgement": "Error updating confirmation of configuration management",
+      "externalConfigurationOption": "Configuration is managed externally",
+      "fogerockManagesConfigurationOption": "Forgerock manages configuration",
+      "goodToGoConfigurationMessage": "If you don’t manage your configuration externally you are set and good to go.",
+      "inProgressPopover": "Tenant is locked during tenant migration",
+      "tenantMigratedInfo": "Your tenant has been enabled to support self-managed promotions. To learn more about this capability <a href=\"https://backstage.forgerock.com/docs/idcloud/latest/tenants/self-service-promotions-migration-faq.html\" target=\"_blank\" rel=\"noopener\">view the docs</a>",
+      "tenantMigratedTitle": "Your tenant has been migrated",
+      "updateAndDownloadConfigurationMessage": "If you manage your configuration externally, you’ll need to download and update your repo with the new configuration before proceeding."
     },
     "noChangesSubtitle": "When you make changes to configuration they will appear here.",
     "noChangesTitle": "No changes to promote",
