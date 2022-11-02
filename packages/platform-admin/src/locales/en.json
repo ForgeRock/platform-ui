@@ -434,6 +434,7 @@
     "errorLoadingThemeDetails": "Error loading theme details",
     "unableToEditResource": "Unable to edit {resource}",
     "unableToDeleteResource": "Unable to delete {resource}",
+    "uncategorizedJourneys": "Uncategorized",
     "filterNodes": "Filter nodes",
     "theme": "Theme",
     "editModal": {
