@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -42,7 +42,7 @@ of the MIT license. See the LICENSE file for details. -->
         :style="labelHeight && {height: `${labelHeight + 2}px`, 'padding-top': `${labelHeight - 27}px`}"
         @animationstart="floatingLabel && animationStart"
         @blur="$emit('blur', $event)"
-        :data-testid="testid">
+        :data-testid="`input-${testid}`">
       <input
         v-else
         v-model="inputValue"
@@ -66,7 +66,7 @@ of the MIT license. See the LICENSE file for details. -->
         :style="labelHeight && {height: `${labelHeight + 2}px`, 'padding-top': `${labelHeight - 27}px`}"
         @input="evt=>inputValue=evt.target.value"
         @animationstart="floatingLabel && animationStart"
-        :data-testid="testid">
+        :data-testid="`input-${testid}`">
     </template>
     <template #defaultButtons>
       <BInputGroupAppend

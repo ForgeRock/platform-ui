@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -8,35 +8,35 @@ of the MIT license. See the LICENSE file for details. -->
     :ref="id"
     :static="isTesting"
     @hidden="$emit('hidden')"
-    :hide-header-close="isDeleting"
+    :hide-header-close="isUndeploying"
     no-close-on-backdrop
     no-close-on-esc
-    :title="$t('deletePanel.deleteTypeQuestion', { type: translatedItemType })">
+    :title="$t('undeployPanel.undeployTypeQuestion', { type: translatedItemType })"
+    data-testid="modal-undeploy">
     <div
-      data-testid="delete-modal-custom-message"
+      data-testid="undeploy-modal-custom-message"
       v-if="customMessage"
       v-html="customMessage" />
     <div
-      data-testid="deletePanel-body"
+      data-testid="undeployPanel-body"
       v-else>
-      {{ $t('deletePanel.body', { type: translatedItemType.toLowerCase() }) }}
+      {{ $t('undeployPanel.body', { type: translatedItemType.toLowerCase() }) }}
     </div>
     <template v-slot:modal-footer="{ cancel }">
       <BButton
+        data-testid="btn-undeploy-cancel"
         variant="link"
-        class="text-danger"
-        :data-testid="`btn-cancel-${testid}`"
         @click="cancel()">
         {{ $t('common.cancel') }}
       </BButton>
       <FrButtonWithSpinner
-        :button-text="$t('common.delete')"
-        :disabled="isDeleting"
-        :show-spinner="isDeleting"
-        :spinner-text="$t('common.deleting')"
-        variant="danger"
-        :data-testid="`btn-confirm-${testid}`"
-        @click="$emit('delete-item')" />
+        :button-text="$t('common.undeploy')"
+        :disabled="isUndeploying"
+        :show-spinner="isUndeploying"
+        :spinner-text="$t('common.undeploying')"
+        variant="warning"
+        :data-testid="`btn-undeploy-${translatedItemType.toLowerCase()}-okay`"
+        @click="$emit('undeploy-item')" />
     </template>
   </BModal>
 </template>
@@ -49,13 +49,13 @@ import {
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
 
 /**
- * Generic delete modal emits an event deleteItem on delete.
- * Shows a spinner if isDeleting attribute provided
- * Expects to be closed by method deleting the item
+ * Generic undeploy modal emits an event undeployItem on undeploy.
+ * Shows a spinner if isUndeploying attribute provided
+ * Expects to be closed by method undeploying the item
  * Takes the translation of the item's type for use in text and optionally a custom message for modal body
  */
 export default {
-  name: 'DeleteModal',
+  name: 'UndeployModal',
   components: {
     BButton,
     BModal,
@@ -64,7 +64,7 @@ export default {
   props: {
     id: {
       type: String,
-      default: 'deleteModal',
+      default: 'undeployModal',
     },
     /**
      * Optional custom message to show in modal body-otherwise, type is used
@@ -76,12 +76,12 @@ export default {
     /**
      * Variable to determine when to show spinner in button
      */
-    isDeleting: {
+    isUndeploying: {
       type: Boolean,
       default: false,
     },
     /**
-     * Type of item being deleted. Displayed in modal title
+     * Type of item being undeployed. Displayed in modal title
      */
     translatedItemType: {
       type: String,
@@ -89,7 +89,7 @@ export default {
     },
     testid: {
       type: String,
-      default: '',
+      default: 'btn-undeploy',
     },
     isTesting: {
       type: Boolean,

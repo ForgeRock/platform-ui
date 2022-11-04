@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -46,31 +46,31 @@ describe('DeleteModal', () => {
   it('delete button should not be disabled when not deleting', () => {
     const wrapper = setup({
       isDeleting: false,
-      testid: 'delete-btn',
+      testid: 'delete-modal',
     });
 
-    const deleteButton = findByTestId(wrapper, 'delete-btn');
+    const deleteButton = findByTestId(wrapper, 'btn-confirm-delete-modal');
     expect(deleteButton.attributes('disabled')).toBeFalsy();
   });
 
   it('delete button should be disabled when deleting', () => {
     const wrapper = setup({
       isDeleting: true,
-      testid: 'delete-btn',
+      testid: 'delete-modal',
     });
 
-    const deleteButton = findByTestId(wrapper, 'delete-btn');
+    const deleteButton = findByTestId(wrapper, 'btn-confirm-delete-modal');
     expect(deleteButton.attributes('disabled')).toBeTruthy();
   });
 
   describe('@actions', () => {
     it('should emit delete-item event', () => {
       const wrapper = setup({
-        testid: 'delete-btn',
+        testid: 'delete-modal',
       });
       expect(wrapper.emitted()['delete-item']).toBeFalsy();
 
-      const deleteButton = findByTestId(wrapper, 'delete-btn');
+      const deleteButton = findByTestId(wrapper, 'btn-confirm-delete-modal');
       deleteButton.trigger('click');
 
       expect(wrapper.emitted()['delete-item']).toBeTruthy();
