@@ -644,9 +644,17 @@
     }
   },
   "pagination": {
+    "dropdown": {
+      "text": "{pageMin}-{pageMax} of {totalRows}",
+      "textUnknownTotalRows": "{pageMin}-{pageMax}",
+      "pageSize": "{pageSize} per page"
+    },
     "gotoFirstPage": "Go to first page",
+    "gotoLastPage": "Go to last page",
     "gotoNextPage": "Go to next page",
-    "gotoPreviousPage": "Go to previous page"
+    "gotoPage": "Go to page",
+    "gotoPreviousPage": "Go to previous page",
+    "label": "Pagination"
   },
   "queryFilterBuilder": {
     "addGroupButton": "Add Group",

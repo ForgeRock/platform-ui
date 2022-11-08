@@ -1,198 +1,382 @@
-<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
-    v-if="shouldPaginate"
-    class="card-footer py-2">
-    <nav :aria-label="$t('common.tableNavigation')">
-      <ul class="pagination justify-content-center mb-0">
-        <li
-          :disabled="currentPage === 0"
-          :class="[{ disabled: currentPage === 0 }, 'page-item', 'first-page']">
-          <a
-            @click.prevent="gotoPage(0)"
-            aria-label="$t('pagination.gotoFirstPage')"
-            class="page-link"
-            href="#">
-            <FrIcon name="first_page" />
-          </a>
-        </li>
-        <li
-          :disabled="currentPage === 0"
-          :class="[{ disabled: currentPage === 0 }, 'page-item', 'prev-page']">
-          <a
-            @click.prevent="previousPage"
-            aria-label="$t('pagination.gotoPreviousPage')"
-            class="page-link"
-            href="#">
-            <FrIcon name="keyboard_arrow_left" />
-          </a>
-        </li>
-        <li
-          :disabled="isLastPage"
-          :class="[{ disabled: isLastPage }, 'page-item', 'next-page']">
-          <a
-            @click.prevent="nextPage"
-            aria-label="$t('pagination.gotoNextPage')"
-            class="page-link"
-            href="#">
-            <FrIcon name="keyboard_arrow_right" />
-          </a>
-        </li>
-      </ul>
-    </nav>
+    :class="`d-flex align-items-center px-4 py-3 border-top ${alignClasses[datasetSize === DatasetSize.SMALL ? Position.CENTER : align]}`"
+  >
+    <!-- Dropdown -->
+    <BDropdown
+      v-if="datasetSize !== DatasetSize.SMALL && !hidePageSizeSelector"
+      class="mr-1 pagination-dropdown"
+      id="dropdown"
+      toggle-class="btn btn-link text-dark border-0 toggle-dropdown-button"
+      :text="totalRows > 0 ? $t('pagination.dropdown.text', { pageMin, pageMax, totalRows }) : $t('pagination.dropdown.textUnknownTotalRows', { pageMin, pageMax })"
+    >
+      <BDropdownItem
+        v-for="(pageSize, index) in pageSizes"
+        :key="index"
+        :active="pageSize === perPage"
+        @click="pageSizeChanged(pageSize)"
+      >
+        {{ $t('pagination.dropdown.pageSize', { pageSize }) }}
+      </BDropdownItem>
+    </BDropdown>
+    <!-- Pagination -->
+    <BPagination
+      class="m-0 pagination-buttons"
+      id="pagination"
+      tabindex="0"
+      :aria-label="ariaLabel"
+      :ellipsis-class="['d-flex align-items-center', ellipsisClass]"
+      :first-class="datasetSize === DatasetSize.SMALL || datasetSize === DatasetSize.LARGE || hideGoToFirstPageButton ? 'd-none': firstClass"
+      :hide-ellipsis="datasetSize === DatasetSize.LARGE || hidePageNumbers || hideEllipsis"
+      :label-first-page="labelFirstPage"
+      :label-last-page="labelLastPage"
+      :label-next-page="labelNextPage"
+      :label-page="labelPage"
+      :label-prev-page="labelPrevPage"
+      :last-class="totalRows <= 0 || datasetSize === DatasetSize.SMALL || datasetSize === DatasetSize.LARGE || hideGoToLastPageButton ? 'd-none': lastClass"
+      :limit="limit"
+      :page-class="pageClasses"
+      :per-page="perPage"
+      :total-rows="totalRows > 0 ? totalRows : totalRowsOnDemand"
+      :value="value"
+      @input="$emit('input', $event)"
+    >
+      <template #first-text>
+        <FrIcon
+          class="md-24"
+          name="first_page"
+          outlined
+        />
+      </template>
+      <template #prev-text>
+        <FrIcon
+          class="md-24"
+          name="chevron_left"
+          outlined
+        />
+      </template>
+      <template #next-text>
+        <FrIcon
+          class="md-24"
+          name="chevron_right"
+          outlined
+        />
+      </template>
+      <template #last-text>
+        <FrIcon
+          class="md-24"
+          name="last_page"
+          outlined
+        />
+      </template>
+    </BPagination>
   </div>
 </template>
 
 <script>
-import FrIcon from '../Icon';
+import { BDropdown, BDropdownItem, BPagination } from 'bootstrap-vue';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import { Position, DatasetSize } from './types';
 
 /**
-  * Pagination component, mostly for tabled list content, but usable by anything with paged content
-  */
+ * @description pagination component used to interact with data tables, it is composed by a dropdown menu with a list
+ * of allowed page sizes for the table [10, 20, 50, 100] by default, when the pages size is changed the component
+ * emits an on-page-size-change event with the new page size. Also is composed by the left and right arrows to change
+ * the current page, when the page is changed the component emits an input event with the value of the new page.
+ * The component supports all the properties for b-pagination component from Bootstrap Vue library
+ * @tutorial https://bootstrap-vue.org/docs/components/pagination#component-reference
+ *
+ * @param {string}    align                     alignment to position the component, it could be left, center or right,
+ *                                              right by default
+ * @param {string}    ariaLabel                 Value to place in the 'aria-label' attribute of the pagination control,
+ *                                              $t('pagination.label') by default
+ * @param {string}    datasetSize               Changes the look and feel of the component for small or large datasets,
+ *                                              posible values 'sm' for small and 'lg' for large, 'sm' by default
+ * @param {string}    ellipsisClass             Class to apply to the 'ellipsis' placeholders, null by default
+ * @param {string}    firstClass                Class to apply to the 'Go to first page' button, null by default
+ * @param {boolean}   hideEllipsis              Do not show ellipsis buttons, false by default
+ * @param {boolean}   hideGoToFirstPageButton   hides the go to first page button, hidden by default
+ * @param {boolean}   hideGoToLastPageButton    hides the go to last page button, hidden by default
+ * @param {boolean}   hidePageNumbers           hides go to page buttons, visible by default
+ * @param {boolean}   hidePageSizeSelector      hides the page sizes dropdown, hidden by default
+ * @param {string}    labelFirstPage            Value to place in the 'aria-label' attribute of the goto first page
+ *                                              button, $t('pagination.gotoFirstPage') by default
+ * @param {string}    labelLastPage             Value to place in the 'aria-label' attribute of the goto last page
+ *                                              button, $t('pagination.gotoLastPage') by default
+ * @param {string}    labelNextPage             Value to place in the 'aria-label' attribute of the goto next page
+ *                                              button, $t('pagination.gotoNextPage') by default
+ * @param {string}    labelPage                 Value to place in the 'aria-label' attribute of the goto page button.
+ *                                              Page number will be prepended automatically, $t('pagination.gotoPage')
+ *                                              by default
+ * @param {string}    labelPrevPage             Value to place in the 'aria-label' attribute of the goto previous page
+ *                                              button, $t('pagination.gotoPreviousPage') by default
+ * @param {string}    lastClass                 Class to apply to the 'Go to last page' button, null by default
+ * @param {boolean}   lastPage                  specifies if the current page (value) is the last page. It is mandatory
+ *                                              to hide the ellipsis on the last page when is an on demand pagination
+ *                                              that means the total number of rows is unknown
+ * @param {number}    limit                     Maximum number of buttons to show (including ellipsis if shown, but
+ *                                              excluding the bookend buttons)
+ * @param {string}    pageClass                 Class to apply to the 'Go to page #' buttons, null by default
+ * @param {array}     pageSizes                 allowed page sizes, [10, 20, 50, 100] by default
+ * @param {number}    perPage                   number of displayed items on the page, 10 by default
+ * @param {number}    totalRows                 number of total items in the data table, 0 by default
+ * @param {number}    value                     actual page index, 1 by default
+ *
+ * @fires input
+ * @fires on-page-size-change
+ */
 export default {
   name: 'Pagination',
   components: {
+    BDropdown,
+    BDropdownItem,
+    BPagination,
     FrIcon,
-  },
-  computed: {
-    /**
-     * Determines if the page results are the last page of data
-     * @returns {Boolean}
-     */
-    isLastPage() {
-      // Paged results cookie
-      if (this.remainingPagedResults === -1 && this.totalPagedResults === -1) {
-        return this.pagedResultsCookie !== null;
-      }
-
-      // Remaining paged results
-      if (this.remainingPagedResults > 0) {
-        return this.remainingPagedResults <= this.pageSize;
-      }
-
-      // Total paged results
-      if (this.totalPagedResults > 0) {
-        const { currentPage, pageSize, totalPagedResults } = this;
-        const currentTotalResults = (currentPage + 1) * pageSize;
-        return currentTotalResults >= totalPagedResults;
-      }
-
-      return true;
-    },
-    /**
-     * Determines if the page results should allow the component to paginate
-     * @returns {Boolean}
-     */
-    shouldPaginate() {
-      // Paged results cookie
-      if (this.remainingPagedResults === -1 && this.totalPagedResults === -1) {
-        return this.pagedResultsCookie !== null;
-      }
-
-      // Remaining paged results
-      if (this.remainingPagedResults > 0) {
-        return this.currentPage > 0 || this.remainingPagedResults > this.pageSize;
-      }
-
-      // Total paged results
-      if (this.totalPagedResults > 0) {
-        const { resultCount, totalPagedResults } = this;
-        return totalPagedResults > resultCount;
-      }
-
-      return false;
-    },
   },
   data() {
     return {
-      currentPage: 0,
+      alignClasses: {
+        right: 'justify-content-end',
+        center: 'justify-content-center',
+        left: 'justify-content-start',
+      },
+      DatasetSize,
+      Position,
     };
   },
-  /**
-    * When pagintion data is provided by the backend, that data should be passed into this component, and the component will correctly render the pagination controls.
-    * When there is no provided pagination data, the following props must be provided:
-    * pageSize - Amount of items to be shown on a page.
-    * totalPagedResults - Total amount of pages existing for the dataset.
-    *
-    * TODO: Give more examples when page numbers are integrated into component.
-    */
   props: {
-    /**
-     * Cookie @string provided by IDM/AM backend.
-     * Should only be used when provided by the backend, and never created statically.
-     */
-    pagedResultsCookie: {
+    align: {
+      type: String,
+      validator(value) {
+        return Object.values(Position).includes(value);
+      },
+      default: Position.RIGHT,
+    },
+    ariaLabel: {
+      type: String,
+      default: () => this?.$t('pagination.label'),
+    },
+    datasetSize: {
+      type: String,
+      validator(value) {
+        return Object.values(DatasetSize).includes(value);
+      },
+      default: DatasetSize.SMALL,
+    },
+    ellipsisClass: {
       type: String,
       default: null,
     },
-    /**
-     * Number of rows to be returned on a single page of items.
-     */
-    pageSize: {
-      required: true,
-      type: Number,
+    firstClass: {
+      type: String,
+      default: null,
     },
-    /**
-     * Number of total results left based on the how many items per page (pageSize) and the current page (currentPage).
-     */
-    remainingPagedResults: {
-      type: Number,
-      default: -1,
+    hideEllipsis: {
+      type: Boolean,
+      default: false,
     },
-    /**
-     * Number of total results of items to be shown in the list.
-     */
-    resultCount: {
+    hideGoToFirstPageButton: {
+      type: Boolean,
+      default: false,
+    },
+    hideGoToLastPageButton: {
+      type: Boolean,
+      default: false,
+    },
+    hidePageNumbers: {
+      type: Boolean,
+      default: false,
+    },
+    hidePageSizeSelector: {
+      type: Boolean,
+      default: false,
+    },
+    labelFirstPage: {
+      type: String,
+      default: () => this?.$t('pagination.gotoFirstPage'),
+    },
+    labelLastPage: {
+      type: String,
+      default: () => this?.$t('pagination.gotoLastPage'),
+    },
+    labelNextPage: {
+      type: String,
+      default: () => this?.$t('pagination.gotoNextPage'),
+    },
+    labelPage: {
+      type: String,
+      default: () => this?.$t('pagination.gotoPage'),
+    },
+    labelPrevPage: {
+      type: String,
+      default: () => this?.$t('pagination.gotoPreviousPage'),
+    },
+    lastClass: {
+      type: String,
+      default: null,
+    },
+    lastPage: {
+      type: Boolean,
+      default: true,
+    },
+    limit: {
+      type: Number,
+      default: 4,
+    },
+    pageClass: {
+      type: String,
+      default: null,
+    },
+    pageSizes: {
+      type: Array,
+      default: () => [10, 20, 50, 100],
+    },
+    perPage: {
+      type: Number,
+      default: 10,
+    },
+    totalRows: {
       type: Number,
       default: 0,
     },
-    /**
-     * Number of total pages based on total results (resultCount) and and amount of items per page (pageSize).
-     */
-    totalPagedResults: {
+    value: {
       type: Number,
-      default: -1,
+      default: 1,
     },
   },
   methods: {
-    /**
-     * Gets called when the user clicks on the next page icon
+    pageSizeChanged(pageSize) {
+      /**
+       * Emited to change the page size
+       *
+       * @event on-page-size-change
+       * @type {object}
+       * @property {number} pageSize - Indicates the new page size.
      */
-    nextPage() {
-      if (!this.isLastPage) {
-        this.gotoPage(this.currentPage + 1);
-      }
-    },
-    /**
-     * Function to set the page to the value in param
-     * @param {Number} page number to go to
-     */
-    gotoPage(pageNum) {
-      this.currentPage = pageNum;
-    },
-    /**
-     * Gets called when the user clicks on the previous page icon
-     */
-    previousPage() {
-      if (this.currentPage > 0) {
-        this.gotoPage(this.currentPage - 1);
-      }
+      this.$emit('on-page-size-change', pageSize);
     },
   },
-  watch: {
-    currentPage(newVal) {
-      /**
-       * Pagination change event
-       * @event pagination-change
-       * @property {Number} pagedResultsOffset number of results from first to current page
-       * @property {Number} newVal the page number from currentPage
-       */
-      const pagedResultsOffset = newVal * this.pageSize;
-      this.$emit('pagination-change', pagedResultsOffset, newVal);
+  computed: {
+    /**
+     * @description Calculates the page class to show or hide the page number buttons
+     */
+    pageClasses() {
+      if (this.datasetSize === DatasetSize.LARGE || this.hidePageNumbers) {
+        return 'd-none';
+      }
+
+      let pageOnDemandClass = '';
+      if (this.totalRows <= 0 && !this.lastPage) {
+        pageOnDemandClass = 'last-page-on-demand';
+      }
+
+      return ['d-flex align-items-center', this.pageClass, pageOnDemandClass];
+    },
+    /**
+     * @description Calculates the min index row on page as the last item of previous page + 1
+     */
+    pageMin() {
+      return (this.value - 1) * this.perPage + 1;
+    },
+    /**
+     * @description Calculates the max index row on page as the multiplication of the current page by the page size,
+     * if the total rows is less than or equal to page rows it returns the total rows instead.
+     */
+    pageMax() {
+      const pageRows = this.value * this.perPage;
+      if (this.totalRows > 0 && pageRows >= this.totalRows) {
+        return this.totalRows;
+      }
+      return pageRows;
+    },
+    /**
+     * @descrition Calculates the total of rows for page when is an on demand pagination, just adds 1 to the current
+     * page size to always keep a next page active, it returns the real value of total rows when is the last page.
+     */
+    totalRowsOnDemand() {
+      const itemsPerPage = this.value * this.perPage;
+      if (this.lastPage) {
+        return itemsPerPage;
+      }
+      return itemsPerPage + 1;
     },
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.pagination-dropdown::v-deep {
+  .toggle-dropdown-button {
+    background-color: transparent;
+
+    &:active {
+      background-color: transparent;
+    }
+
+    &:focus,
+    &:focus-visible {
+      box-shadow: none;
+      outline: 2px solid $black;
+    }
+  }
+
+  .dropdown-menu li a {
+    &:hover {
+      background-color: $gray-100;
+    }
+    &.active:hover {
+      background-color: $dropdown-link-hover-bg;
+    }
+  }
+}
+
+.pagination-buttons {
+  &:focus,
+  &:focus-visible {
+    outline: 2px solid $black;
+  }
+
+  &::v-deep .page-item {
+    &.active .page-link {
+      background-color: $gray-100;
+    }
+
+    .page-link {
+      background-color: transparent;
+
+      &:focus,
+      &:focus-visible {
+        box-shadow: none;
+        outline: 2px solid $black;
+      }
+
+      &:hover {
+        background-color: $gray-100;
+        color: $gray-500;
+      }
+    }
+
+    &.last-page-on-demand:nth-last-of-type(3) .page-link {
+      color: transparent;
+      pointer-events: none;
+      position: relative;
+
+      &::before {
+        content: '...';
+        position: absolute;
+        left: 0;
+        color: $gray-500;
+        margin-top: -0.7rem;
+        pointer-events: none;
+        cursor: default;
+        background-color: white;
+        padding: 0.7rem 0.75rem;
+      }
+    }
+  }
+}
+</style>
