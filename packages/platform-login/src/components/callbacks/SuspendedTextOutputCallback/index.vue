@@ -1,15 +1,14 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
     class="row ml-1 mb-2"
     ref="textOutputPanel">
-    <div class="text-center text-muted w-100">
+    <div
+      data-testid="suspend-text-output"
+      class="text-center text-muted w-100 white-space-pre-wrap">
       {{ message }}
     </div>
   </div>
@@ -31,3 +30,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+
+.white-space-pre-wrap {
+  white-space: pre-wrap;
+}
+
+</style>
