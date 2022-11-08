@@ -9,6 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
     <!-- Dropdown -->
     <BDropdown
       v-if="datasetSize !== DatasetSize.SMALL && !hidePageSizeSelector"
+      boundary="window"
       class="mr-1 pagination-dropdown"
       id="dropdown"
       toggle-class="btn btn-link text-dark border-0 toggle-dropdown-button"
@@ -18,6 +19,7 @@ of the MIT license. See the LICENSE file for details. -->
         v-for="(pageSize, index) in pageSizes"
         :key="index"
         :active="pageSize === perPage"
+        :disabled="pageSize === perPage"
         @click="pageSizeChanged(pageSize)"
       >
         {{ $t('pagination.dropdown.pageSize', { pageSize }) }}
@@ -165,7 +167,7 @@ export default {
       validator(value) {
         return Object.values(DatasetSize).includes(value);
       },
-      default: DatasetSize.SMALL,
+      default: DatasetSize.LARGE,
     },
     ellipsisClass: {
       type: String,
@@ -311,10 +313,10 @@ export default {
 <style lang="scss" scoped>
 .pagination-dropdown::v-deep {
   .toggle-dropdown-button {
-    background-color: transparent;
+    background-color: transparent !important;
 
     &:active {
-      background-color: transparent;
+      background-color: transparent !important;
     }
 
     &:focus,
@@ -328,8 +330,13 @@ export default {
     &:hover {
       background-color: $gray-100;
     }
-    &.active:hover {
-      background-color: $dropdown-link-hover-bg;
+    &.active {
+      color: $dropdown-link-color;
+      background-color: $dropdown-link-active-bg;
+
+      &:hover {
+        background-color: $dropdown-link-hover-bg;
+      }
     }
   }
 }
@@ -343,6 +350,8 @@ export default {
   &::v-deep .page-item {
     &.active .page-link {
       background-color: $gray-100;
+      pointer-events: none;
+      cursor: default;
     }
 
     .page-link {

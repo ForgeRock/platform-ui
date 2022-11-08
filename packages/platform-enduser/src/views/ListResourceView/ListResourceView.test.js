@@ -1,9 +1,10 @@
 /**
- * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
+
 import { keys, map } from 'lodash';
 import BootstrapVue from 'bootstrap-vue';
 import flushPromises from 'flush-promises';
@@ -53,6 +54,7 @@ describe('ListResource.vue', () => {
         fields: [''],
         sortField: 'sn',
         page: 0,
+        pageSize: 10,
       },
       routerParameters: {
         resourceName: 'test',
@@ -67,7 +69,7 @@ describe('ListResource.vue', () => {
 
   it('Builds URL Parameters', () => {
     // with a queryFilter
-    expect(wrapper.vm.buildUrlParams('name+sw+"test"+OR+description+sw+"test"', ['name', 'description'], 'name', 0)).toEqual({
+    expect(wrapper.vm.buildUrlParams('name+sw+"test"+OR+description+sw+"test"', ['name', 'description'], 'name', 0, 10)).toEqual({
       fields: 'name,description',
       pageSize: 10,
       queryFilter: 'name+sw+"test"+OR+description+sw+"test"',
@@ -75,7 +77,7 @@ describe('ListResource.vue', () => {
       totalPagedResultsPolicy: 'EXACT',
     });
     // with queryFilter = true
-    expect(wrapper.vm.buildUrlParams('true', ['name', 'description'], '', 0)).toEqual({
+    expect(wrapper.vm.buildUrlParams('true', ['name', 'description'], '', 0, 10)).toEqual({
       fields: 'name,description',
       pageSize: 10,
       queryFilter: 'true',
@@ -84,7 +86,7 @@ describe('ListResource.vue', () => {
     });
     // with a queryThreshold and queryFilter = true
     wrapper.vm.queryThreshold = 2;
-    expect(wrapper.vm.buildUrlParams('true', ['name', 'description'], '', 0)).toEqual({
+    expect(wrapper.vm.buildUrlParams('true', ['name', 'description'], '', 0, 10)).toEqual({
       fields: 'name,description',
       pageSize: 10,
       queryFilter: 'true',
@@ -98,11 +100,13 @@ describe('ListResource.vue', () => {
       fields: ['name', 'description'],
       filter: 'name+sw+"test"+OR+description+sw+"test"',
       page: 1,
+      pageSize: 10,
       sortField: '',
     });
     await flush();
 
     expect(wrapper.vm.tableData).toStrictEqual([]);
+    expect(wrapper.vm.tableDataTotalRows).toBe(0);
   });
 
   describe('Deleting resources', () => {

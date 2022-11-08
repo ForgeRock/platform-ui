@@ -7,6 +7,7 @@
 
 import { shallowMount, createLocalVue } from '@vue/test-utils';
 import BootstrapVue from 'bootstrap-vue';
+import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import generateIDMAPI from './__mocks__/generateIDMAPI';
 import ListResource from './index';
 
@@ -138,17 +139,19 @@ describe('ListResource Component', () => {
 
   it('emits get-table-data without sortField if queryThreshold is specified, but with sortField if search filter & sort field are both specified', () => {
     wrapper.setProps({ queryThreshold: 3 });
-    wrapper.vm.loadData('', ['field1'], '', '');
+    wrapper.vm.loadData('', ['field1'], '', '', 20);
     expect(wrapper.emitted()['get-table-data'][0][0]).toEqual({
       fields: ['field1'],
       filter: '',
       page: '',
+      pageSize: 20,
     });
-    wrapper.vm.loadData('true', ['field1'], 'sortField', '');
+    wrapper.vm.loadData('true', ['field1'], 'sortField', '', 20);
     expect(wrapper.emitted()['get-table-data'][1][0]).toEqual({
       fields: ['field1'],
       filter: 'true',
       page: '',
+      pageSize: 20,
       sortField: 'sortField',
     });
     wrapper.vm.clear();
@@ -156,6 +159,7 @@ describe('ListResource Component', () => {
       fields: [],
       filter: 'true',
       page: 1,
+      pageSize: 10,
     });
     wrapper.setProps({ queryThreshold: 0 });
     wrapper.vm.displayFields = ['userName'];
@@ -164,6 +168,7 @@ describe('ListResource Component', () => {
       fields: ['userName'],
       filter: 'true',
       page: 1,
+      pageSize: 10,
       sortField: 'userName',
     });
   });
@@ -373,5 +378,44 @@ describe('ListResource Component', () => {
         sortDirection: 'desc',
       },
     ]);
+  });
+
+  it('Pagination change page size should load data table', () => {
+    wrapper.setMethods({ paginationChange: () => { } });
+
+    const paginationChangeSpy = jest.spyOn(wrapper.vm, 'paginationChange');
+    wrapper.vm.pageSizeChange(2);
+
+    expect(paginationChangeSpy).toHaveBeenCalled();
+    expect(wrapper.vm.paginationPage).toBe(1);
+    expect(wrapper.vm.paginationPageSize).toBe(2);
+  });
+
+  describe('Pagination attributes verification', () => {
+    it('hide pagination when data table is empty', () => {
+      expect(wrapper.find(FrPagination).exists()).toBe(false);
+    });
+
+    it('show pagination when data table have data', () => {
+      wrapper.setProps({ tableData: [{}, {}] });
+
+      expect(wrapper.find(FrPagination).exists()).toBe(true);
+    });
+
+    it('hide pagination when data table have data and is loading', () => {
+      wrapper.setProps({ tableData: [{}, {}], isLoading: true });
+
+      expect(wrapper.find(FrPagination).exists()).toBe(false);
+    });
+
+    it('pagination page should be equal to current page prop', () => {
+      wrapper.setProps({ currentPage: 2 });
+
+      expect(wrapper.vm.paginationPage).toBe(2);
+
+      wrapper.setProps({ currentPage: 3 });
+
+      expect(wrapper.vm.paginationPage).toBe(3);
+    });
   });
 });
