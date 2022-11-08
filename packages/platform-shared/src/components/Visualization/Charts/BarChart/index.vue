@@ -21,12 +21,11 @@ of the MIT license. See the LICENSE file for details. -->
       />
     </div>
 
-    <BPagination
+    <FrPagination
       v-if="chartData.length > 10"
       v-model="currentPage"
-      align="center"
-      class="mt-4"
-      per-page="10"
+      :dataset-size="DatasetSize.SMALL"
+      :per-page="10"
       :total-rows="chartData.length"
       @input="paginationChange"
     />
@@ -36,19 +35,19 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 
 import * as d3 from 'd3';
-import {
-  BPagination,
-} from 'bootstrap-vue';
+import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
+import { DatasetSize } from '@forgerock/platform-shared/src/components/Pagination/types';
 import AnalyticsMixin from '@forgerock/platform-shared/src/mixins/AnalyticsMixin';
 
 export default {
   name: 'BarChart',
   components: {
-    BPagination,
+    FrPagination,
   },
   data() {
     return {
       currentPage: 0,
+      DatasetSize,
       displayData: [],
       mouseOffset: [],
       tooltipData: {},

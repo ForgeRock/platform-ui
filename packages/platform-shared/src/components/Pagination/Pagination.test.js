@@ -96,11 +96,11 @@ describe('Pagination Component', () => {
     expect(buttons.at(2).classes('disabled')).toBe(false);
   });
 
-  it('Should have center alignment by default', () => {
+  it('Should have right alignment by default', () => {
     const wrapper = mountPagination();
     const paginationWrapperDiv = wrapper.find('div');
     expect(paginationWrapperDiv.exists()).toBe(true);
-    expect(paginationWrapperDiv.classes('justify-content-center')).toBe(true);
+    expect(paginationWrapperDiv.classes('justify-content-end')).toBe(true);
   });
 
   it('Should emit input event when next button clicked', () => {
@@ -186,12 +186,52 @@ describe('Pagination Component', () => {
   });
 
   describe('pagination SMALL type verification', () => {
+    function mountPaginationSmall(setup = {}) {
+      return mountPagination(setup, DatasetSize.SMALL);
+    }
+
     it('Pagination displays page links', () => {
-      const wrapper = mountPagination();
+      const wrapper = mountPaginationSmall();
       const pagination = wrapper.find('#pagination');
       expect(pagination.exists()).toBe(true);
       const buttons = pagination.findAll('.page-item');
       expect(buttons.at(2).classes('d-none')).toBe(false);
+    });
+
+    it('Pagination does not display first page button', () => {
+      const wrapper = mountPaginationSmall();
+      const pagination = wrapper.find('#pagination');
+      expect(pagination.exists()).toBe(true);
+      const buttons = pagination.findAll('.page-item');
+      expect(buttons.at(0).classes('d-none')).toBe(true);
+    });
+
+    it('Pagination does not display last page button when total rows greater than 0', () => {
+      const wrapper = mountPaginationSmall({
+        propsData: {
+          totalRows: 10,
+        },
+      });
+      const pagination = wrapper.find('#pagination');
+      expect(pagination.exists()).toBe(true);
+      const buttons = pagination.findAll('.page-item');
+      expect(buttons.at(4).classes('d-none')).toBe(true);
+    });
+
+    it('Pagination does not display page sizes dropdown', () => {
+      const wrapper = mountPaginationSmall();
+      const dropdown = wrapper.find('#dropdown');
+      expect(dropdown.exists()).toBe(false);
+    });
+  });
+
+  describe('pagination LARGE type verification', () => {
+    it('Pagination does not display page links', () => {
+      const wrapper = mountPagination();
+      const pagination = wrapper.find('#pagination');
+      expect(pagination.exists()).toBe(true);
+      const buttons = pagination.findAll('.page-item');
+      expect(buttons.at(2).classes('d-none')).toBe(true);
     });
 
     it('Pagination does not display first page button', () => {
@@ -214,54 +254,14 @@ describe('Pagination Component', () => {
       expect(buttons.at(4).classes('d-none')).toBe(true);
     });
 
-    it('Pagination does not display page sizes dropdown', () => {
-      const wrapper = mountPagination();
-      const dropdown = wrapper.find('#dropdown');
-      expect(dropdown.exists()).toBe(false);
-    });
-  });
-
-  describe('pagination LARGE type verification', () => {
-    function mountPaginationLarge(setup = {}) {
-      return mountPagination(setup, DatasetSize.LARGE);
-    }
-
-    it('Pagination does not display page links', () => {
-      const wrapper = mountPaginationLarge();
-      const pagination = wrapper.find('#pagination');
-      expect(pagination.exists()).toBe(true);
-      const buttons = pagination.findAll('.page-item');
-      expect(buttons.at(2).classes('d-none')).toBe(true);
-    });
-
-    it('Pagination does not display first page button', () => {
-      const wrapper = mountPaginationLarge();
-      const pagination = wrapper.find('#pagination');
-      expect(pagination.exists()).toBe(true);
-      const buttons = pagination.findAll('.page-item');
-      expect(buttons.at(0).classes('d-none')).toBe(true);
-    });
-
-    it('Pagination does not display last page button when total rows greater than 0', () => {
-      const wrapper = mountPaginationLarge({
-        propsData: {
-          totalRows: 10,
-        },
-      });
-      const pagination = wrapper.find('#pagination');
-      expect(pagination.exists()).toBe(true);
-      const buttons = pagination.findAll('.page-item');
-      expect(buttons.at(4).classes('d-none')).toBe(true);
-    });
-
     it('Pagination displays page sizes dropdown', () => {
-      const wrapper = mountPaginationLarge();
+      const wrapper = mountPagination();
       const dropdown = wrapper.find('#dropdown');
       expect(dropdown.exists()).toBe(true);
     });
 
     it('Should have right alignment', () => {
-      const wrapper = mountPaginationLarge();
+      const wrapper = mountPagination();
       const paginationWrapperDiv = wrapper.find('div');
       expect(paginationWrapperDiv.exists()).toBe(true);
       expect(paginationWrapperDiv.classes('justify-content-end')).toBe(true);

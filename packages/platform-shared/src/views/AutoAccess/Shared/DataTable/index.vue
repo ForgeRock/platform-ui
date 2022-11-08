@@ -91,32 +91,13 @@ of the MIT license. See the LICENSE file for details. -->
       v-if="pagination && multiplePages"
       class="border-top pt-3">
       <div class="pagination justify-content-center">
-        <BPagination
+        <FrPagination
           v-model="currentPage"
           :total-rows="totalRows"
           :per-page="perPage"
-          aria-controls="my-table">
-          <template v-slot:first-text>
-            <i class="material-icons material-icons-outlined md-24">
-              first_page
-            </i>
-          </template>
-          <template v-slot:prev-text>
-            <i class="material-icons material-icons-outlined md-24">
-              chevron_left
-            </i>
-          </template>
-          <template v-slot:next-text>
-            <i class="material-icons material-icons-outlined md-24">
-              chevron_right
-            </i>
-          </template>
-          <template v-slot:last-text>
-            <i class="material-icons material-icons-outlined md-24">
-              last_page
-            </i>
-          </template>
-        </BPagination>
+          aria-controls="my-table"
+          @on-page-size-change="pageSizeChange"
+        />
       </div>
     </div>
   </div>
@@ -127,9 +108,9 @@ import {
   BDropdown,
   BDropdownItem,
   BFormCheckbox,
-  BPagination,
   BTable,
 } from 'bootstrap-vue';
+import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 
 /**
  * Extends out vue's inbuilt data table. Adds toolbar, pagination, custom cells, and html cells.
@@ -140,8 +121,8 @@ export default {
     BDropdown,
     BDropdownItem,
     BFormCheckbox,
-    BPagination,
     BTable,
+    FrPagination,
   },
   props: {
     /**
@@ -203,6 +184,13 @@ export default {
     },
   },
   methods: {
+    /*
+     * @description listener of the on-page-size-change event emmited by the pagination component when the size of
+     * results is changed
+     */
+    pageSizeChange(pageSize) {
+      this.perPage = pageSize;
+    },
     emitSelected() {
       const start = (this.currentPage - 1) * this.perPage;
       const selectedArray = this.selected.map((tableIndex) => ({ ...this.items[+tableIndex + start], tableIndex: +tableIndex }));

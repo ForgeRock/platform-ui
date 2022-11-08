@@ -6,6 +6,7 @@
  */
 
 import { shallowMount } from '@vue/test-utils';
+import flushPromises from 'flush-promises';
 import RelationshipArray from './index';
 import * as SchemaApi from '@/api/SchemaApi';
 
@@ -333,12 +334,14 @@ describe('RelationshipArray', () => {
         get: () => Promise.resolve({
           data: {
             pagedResultsCookie: false,
+            totalPagedResults: 15,
           },
         }),
       }
     ));
     await wrapper.vm.loadGrid(0);
-    expect(wrapper.vm.lastPage).toBe(false);
+    await flushPromises();
+    expect(wrapper.vm.lastPage).toBe(true);
   });
 
   it('opens create modal', () => {

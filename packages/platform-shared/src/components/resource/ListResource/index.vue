@@ -108,17 +108,18 @@ of the MIT license. See the LICENSE file for details. -->
           v-bind="slotData" />
       </template>
     </BTable>
-    <BPagination
+
+    <FrPagination
       v-if="tableData && tableData.length > 0 && !isLoading"
       v-model="paginationPage"
       aria-controls="list-resource-table"
-      class="pt-3 justify-content-center pagination-material-buttons border-top"
-      last-class="d-none"
-      :next-class="{'show-ellipsis': !lastPage}"
-      :page-class="{'hide-last-number': !lastPage}"
-      per-page="10"
-      :total-rows="totalRows"
-      @input="paginationChange" />
+      :per-page="paginationPageSize"
+      :last-page="lastPage"
+      :total-rows="tableDataTotalRows"
+      :dataset-size="datasetSize"
+      @input="paginationChange"
+      @on-page-size-change="pageSizeChange"
+    />
 
     <slot name="deleteResourceModal">
       <FrDeleteModal
@@ -145,7 +146,6 @@ import {
 import {
   BDropdownItem,
   BInputGroupText,
-  BPagination,
   BTable,
   VBModal,
 } from 'bootstrap-vue';
@@ -158,8 +158,10 @@ import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import PluralizeFilter from '@forgerock/platform-shared/src/filters/PluralizeFilter';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
+import { DatasetSize } from '@forgerock/platform-shared/src/components/Pagination/types';
 import FrClearResourceSessions from '../ClearResourceSessions';
 
 Vue.directive('b-modal', VBModal);
@@ -179,7 +181,6 @@ export default {
   components: {
     BDropdownItem,
     BInputGroupText,
-    BPagination,
     BTable,
     FrActionsCell,
     FrDeleteModal,
@@ -187,6 +188,7 @@ export default {
     FrSearchInput,
     FrSpinner,
     FrClearResourceSessions,
+    FrPagination,
   },
   directives: {
     'b-modal': VBModal,
@@ -199,6 +201,14 @@ export default {
     currentPage: {
       type: Number,
       default: 1,
+    },
+    /**
+     * Determines the size of the dataset to change the pagination style, small by default, posible values
+     * 'sm' for small, 'lg' for large, 'cm' for custom. See {@link @forgerock/platform-shared/src/components/Pagination}
+     */
+    datasetSize: {
+      type: String,
+      default: DatasetSize.LARGE,
     },
     deleteAccess: {
       type: Boolean,
@@ -219,6 +229,14 @@ export default {
     tableData: {
       type: Array,
       default: () => [],
+    },
+    /*
+     * specifies the total number of rows of the list resource, 0 by default, this value determines how
+     * the pagination component is displayed, if falsey loads the on demand pagination
+     */
+    tableDataTotalRows: {
+      type: Number,
+      default: 0,
     },
     propColumns: {
       type: Array,
@@ -275,6 +293,7 @@ export default {
       sortDesc: false,
       filter: '',
       paginationPage: 1,
+      paginationPageSize: 10,
       resourceToDeleteId: '',
       sortDirection: 'asc',
       showClearSessionsModal: false,
@@ -298,12 +317,6 @@ export default {
     capitalizedResourceName() {
       return pluralize(capitalize(this.resourceTitle || this.resourceName));
     },
-    totalRows() {
-      if (this.lastPage) {
-        return this.paginationPage * 10;
-      }
-      return this.paginationPage * 10 + 1;
-    },
   },
   filters: {
     PluralizeFilter,
@@ -326,7 +339,7 @@ export default {
         label: '',
       });
     }
-    this.loadData('true', this.displayFields, this.defaultSort, 1);
+    this.loadData('true', this.displayFields, this.defaultSort, 1, this.paginationPageSize);
   },
   watch: {
     currentPage(value) {
@@ -388,9 +401,10 @@ export default {
       this.sortBy = null;
       this.sortDesc = false;
       this.paginationPage = 1;
+      this.paginationPageSize = 10;
 
       this.$emit('clear-table');
-      this.loadData('true', this.displayFields, this.defaultSort, this.paginationPage);
+      this.loadData('true', this.displayFields, this.defaultSort, this.paginationPage, this.paginationPageSize);
     },
     /**
      * Emits out request to obtain data based on current query parameters
@@ -398,14 +412,16 @@ export default {
      * @param {array} fields List of fields to query for
      * @param {string} sortField field to sort results on
      * @param {number} page The current table page for results offset
+     * @param {number} pageSize The current page size for limit the number of results
      */
-    loadData(filter, fields, sortField, page) {
+    loadData(filter, fields, sortField, page, pageSize) {
       // only emit `get-table-data` event when either there is not queryThreshold or the filter has met the threshold
       if (!this.queryThreshold || (this.queryThreshold && this.filter === '') || (this.queryThreshold && this.filter.length >= this.queryThreshold)) {
         const params = {
           filter,
           fields,
           page,
+          pageSize,
         };
         if (!this.queryThreshold || sortField) {
           params.sortField = (sortField && sortField !== '-') ? sortField : fields[0];
@@ -438,11 +454,20 @@ export default {
         });
       }
     },
+    /*
+     * @description listener of the on-page-size-change event emmited by the pagination component when the size of
+     * results is changed
+     */
+    pageSizeChange(pageSize) {
+      this.paginationPage = 1;
+      this.paginationPageSize = pageSize;
+      this.paginationChange();
+    },
     /**
      * Repulls data based on new table page
      */
     paginationChange() {
-      this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.calculateSort(this.sortDesc, this.sortBy), this.paginationPage);
+      this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.calculateSort(this.sortDesc, this.sortBy), this.paginationPage, this.paginationPageSize);
     },
     cancelDelete() {
       this.resourceToDeleteId = '';
@@ -469,7 +494,7 @@ export default {
 
       if (this.filter.length >= this.queryThreshold) {
         this.submitBeforeLengthValid = false;
-        this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.calculateSort(this.sortDesc, this.sortBy), this.paginationPage);
+        this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.calculateSort(this.sortDesc, this.sortBy), this.paginationPage, this.paginationPageSize);
       } else {
         this.submitBeforeLengthValid = true;
       }
@@ -484,7 +509,7 @@ export default {
       const sortUrl = this.calculateSort(sort.sortDesc, sort.sortBy);
       this.$emit('sort', sortUrl);
 
-      this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, sortUrl, this.paginationPage);
+      this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, sortUrl, this.paginationPage, this.paginationPageSize);
     },
     hasClearSessionAccess(item) {
       return this.canClearSessions && item.hasActiveSessions === true;
@@ -514,7 +539,7 @@ export default {
     clearSessionsAndCloseModal() {
       this.$emit('clear-resource-sessions', this.resourceToClearSessionsForId);
       this.closeClearSessionsModal();
-      this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.defaultSort, this.paginationPage);
+      this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.defaultSort, this.paginationPage, this.paginationPageSize);
     },
     /**
      * Change help text based on query threshold value and the current search text length
