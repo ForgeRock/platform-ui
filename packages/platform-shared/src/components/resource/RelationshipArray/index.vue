@@ -113,16 +113,15 @@ of the MIT license. See the LICENSE file for details. -->
           :on-relationship-delete="onRelationshipDelete" />
       </template>
     </BTable>
-    <BPagination
+    <FrPagination
       v-if="gridData.length && gridData.length === gridPageSize || currentPage > 0"
       v-model="currentPage"
-      class="pt-3 justify-content-center pagination-material-buttons border-top"
-      last-class="d-none"
-      :next-class="{'show-ellipsis': !lastPage}"
-      :page-class="{'hide-last-number': !lastPage}"
-      per-page="10"
-      :total-rows="totalRows"
-      @input="loadGrid(currentPage)" />
+      align="center"
+      hide-page-size-selector
+      :dataset-size="DatasetSize.CUSTOM"
+      :last-page="lastPage"
+      @input="loadGrid(currentPage)"
+    />
 
     <BModal
       cancel-variant="link"
@@ -201,7 +200,6 @@ import {
   BTable,
   BFormCheckbox,
   BModal,
-  BPagination,
 } from 'bootstrap-vue';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 
@@ -216,6 +214,8 @@ import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
+import { DatasetSize } from '@forgerock/platform-shared/src/components/Pagination/types';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 
 export default {
@@ -227,9 +227,9 @@ export default {
     BTable,
     BFormCheckbox,
     BModal,
-    BPagination,
     FrButtonWithSpinner,
     FrIcon,
+    FrPagination,
     FrRelationshipEdit: RelationshipEdit,
     FrSearchInput,
   },
@@ -329,6 +329,7 @@ export default {
         '_refResourceId',
         '_refProperties',
       ],
+      DatasetSize,
     };
   },
   mounted() {
@@ -343,14 +344,6 @@ export default {
 
         return col;
       });
-    },
-  },
-  computed: {
-    totalRows() {
-      if (this.lastPage) {
-        return this.currentPage * 10;
-      }
-      return this.currentPage * 10 + 1;
     },
   },
   methods: {

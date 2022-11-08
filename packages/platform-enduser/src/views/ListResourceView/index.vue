@@ -17,6 +17,7 @@ of the MIT license. See the LICENSE file for details. -->
           :router-parameters="routerParameters"
           :resource-title="displayName"
           :table-data="tableData"
+          :table-data-total-rows="tableDataTotalRows"
           :last-page="lastPage"
           :edit-access="hasUpdateAccess"
           :delete-access="hasDeleteAccess"
@@ -109,6 +110,7 @@ export default {
       currentPage: 1,
       displayName: capitalize(this.$route.params.resourceName),
       tableData: [],
+      tableDataTotalRows: 0,
       lastPage: true,
       currentTableParams: {},
       routerParameters: null,
@@ -156,10 +158,10 @@ export default {
      * @param {string} sortField - Required field name that is sorted initially
      * @param {number} page - Required number of page of table where we are viewing
      */
-    buildUrlParams(filter, fields, sortField, page) {
+    buildUrlParams(filter, fields, sortField, page, pageSize) {
       const managedResourceParams = {
         queryFilter: filter,
-        pageSize: 10,
+        pageSize,
         totalPagedResultsPolicy: 'EXACT',
       };
       let sortKeys = sortField;
@@ -178,7 +180,7 @@ export default {
       }
 
       if (page > 0) {
-        const offsetCalc = page * 10;
+        const offsetCalc = page * pageSize;
         managedResourceParams.pagedResultsOffset = offsetCalc;
       }
 
@@ -200,15 +202,16 @@ export default {
         fields,
         sortField,
         page,
+        pageSize,
       } = tableParams;
       let resourceFunction;
 
       this.showWheel = true;
       this.currentTableParams = tableParams;
       if (this.routerParameters.resourceType === 'managed') {
-        resourceFunction = getManagedResourceList(this.routerParameters.resourceName, this.buildUrlParams(filter, fields, sortField, page - 1));
+        resourceFunction = getManagedResourceList(this.routerParameters.resourceName, this.buildUrlParams(filter, fields, sortField, page - 1, pageSize));
       } else {
-        resourceFunction = getInternalResourceList(this.routerParameters.resourceName, this.buildUrlParams(filter, fields, sortField, page - 1));
+        resourceFunction = getInternalResourceList(this.routerParameters.resourceName, this.buildUrlParams(filter, fields, sortField, page - 1, pageSize));
       }
       resourceFunction.then((resourceData) => {
         // set noData prop for ListResource
@@ -223,6 +226,7 @@ export default {
         this.currentPage = page;
         this.showWheel = false;
         this.tableData = resourceData.data.result;
+        this.tableDataTotalRows = resourceData.data.totalPagedResults;
       }, (error) => {
         this.showWheel = false;
         this.showErrorMessage(error, this.$t('authentication.errorRetrievingTableData'));
@@ -264,6 +268,7 @@ export default {
     },
     resetTableData() {
       this.tableData = [];
+      this.tableDataTotalRows = 0;
     },
     setPrivileges(privilege, schema) {
       const properties = {};

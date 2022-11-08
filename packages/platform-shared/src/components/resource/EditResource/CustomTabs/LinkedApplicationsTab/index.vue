@@ -62,13 +62,14 @@ of the MIT license. See the LICENSE file for details. -->
           </template>
         </BTable>
 
-        <BPagination
+        <FrPagination
           v-if="filteredApplications.length > 10"
-          class="pt-3 justify-content-center pagination-material-buttons border-top"
           v-model="currentPage"
           :total-rows="totalRows"
           :per-page="perPage"
-          aria-controls="linked-apps-table" />
+          aria-controls="linked-apps-table"
+          @on-page-size-change="pageSizeChange"
+        />
       </div>
     </template>
     <LinkedApplicationModal :application-data="modalData" />
@@ -82,8 +83,8 @@ import {
   BMedia,
   BTab,
   BTable,
-  BPagination,
 } from 'bootstrap-vue';
+import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import LinkedApplicationModal from '@forgerock/platform-shared/src/components/resource/EditResource/CustomTabs/LinkedApplicationsTab/LinkedApplicationModal';
 
@@ -94,8 +95,8 @@ export default {
     BMedia,
     BCardHeader,
     BTab,
-    BPagination,
     BTable,
+    FrPagination,
     FrSearchInput,
     LinkedApplicationModal,
   },
@@ -134,6 +135,13 @@ export default {
       } else {
         this.filteredApplications = this.linkedApplications.filter((item) => item.name.toLowerCase().includes(this.searchQuery.toLowerCase()));
       }
+    },
+    /*
+     * @description listener of the on-page-size-change event emmited by the pagination component when the size of
+     * results is changed
+     */
+    pageSizeChange(pageSize) {
+      this.perPage = pageSize;
     },
   },
   mounted() {
