@@ -36,8 +36,14 @@ export default {
     FrSpinner,
   },
   props: {
-    previewJSON: Object,
-    mapping: Object,
+    previewJSON: {
+      type: Object,
+      default: () => ({}),
+    },
+    mapping: {
+      type: Object,
+      default: () => ({}),
+    },
     label: {
       required: false,
       default: 'Feature Mapping Preview',

@@ -18,7 +18,8 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
-import { getLogAttributesForUser, logAttributes } from '../../Dashboard/api/DashboardAPI';
+import { getLogAttributesForUser } from '../../Dashboard/api/DashboardAPI';
+import { logAttributes } from '../../Activity/api/ActivityAPI';
 import FeatureCard from './feature-card';
 
 export default {
@@ -30,22 +31,24 @@ export default {
   props: {
     id: {
       type: String,
+      default: '',
     },
     dateRange: {
       type: Object,
+      default: () => ({}),
     },
   },
   watch: {
     dateRange: {
       immediate: true,
-      handler(newDateRange) {
+      handler() {
         this.isLoading = true;
         getLogAttributesForUser(this.id, this.dateRange)
           .then((data) => {
             this.featuresData = data.aggregations.log_attributes;
             this.isLoading = false;
           })
-          .catch((e) => {
+          .catch(() => {
             this.isLoading = false;
           });
       },

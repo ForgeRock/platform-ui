@@ -130,12 +130,9 @@ of the MIT license. See the LICENSE file for details. -->
   </div>
 </template>
 <script>
-import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
-import {
-  BBadge, BCard, BCardHeader, BButton,
-} from 'bootstrap-vue';
+import { BBadge, BButton } from 'bootstrap-vue';
 import FrPagination from '../Shared/DataTable/Pagination';
 import FrTable from '../Shared/DataTable';
 import AddDataSourceModal from './AddDataSourceModal/index';
@@ -151,18 +148,14 @@ export default {
   components: {
     AddDataSourceModal,
     BBadge,
-    BCard,
-    BCardHeader,
     BButton,
     CreateMappingModal,
     EditDataSourceModal,
-    FrIcon,
     FrPagination,
     FrSearchInput,
     FrSpinner,
     FrTable,
     DeleteDataSourceModal,
-    // FrPagination,
   },
   data: () => ({
     init: false,
@@ -340,7 +333,7 @@ export default {
             action: () => {
               this.pendingActivate = dataSource.datasource_id;
               updateDataSource({ ...dataSource, isActive: !dataSource.isActive })
-                .then((response) => {
+                .then(() => {
                   this.setDataSources();
                 });
             },
@@ -407,5 +400,3 @@ export default {
         }
     }
 </style>
-
-Comments can only be added within 10 lines of a change

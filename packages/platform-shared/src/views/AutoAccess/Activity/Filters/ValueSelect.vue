@@ -23,9 +23,11 @@ export default {
   props: {
     value: {
       type: Array,
+      default: () => [],
     },
     feature: {
       type: String,
+      default: '',
     },
   },
   data() {

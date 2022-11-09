@@ -23,7 +23,10 @@ export default {
     BBadge,
   },
   props: {
-    result: String,
+    result: {
+      type: String,
+      default: '',
+    },
   },
 };
 </script>

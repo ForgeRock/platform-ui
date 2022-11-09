@@ -7,4 +7,5 @@
 
 import { getExecutionModels } from '../../Pipelines/api/PipelineApi';
 
-export const fetchModelsData = (pipelineId) => getExecutionModels(pipelineId);
+const fetchModelsData = (pipelineId) => getExecutionModels(pipelineId);
+export default fetchModelsData;

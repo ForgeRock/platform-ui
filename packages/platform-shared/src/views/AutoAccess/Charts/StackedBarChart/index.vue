@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -65,9 +65,11 @@ export default {
   props: {
     chartData: {
       type: Array,
+      default: () => [],
     },
     viewBox: {
       type: Array,
+      default: () => [],
     },
   },
   data() {
@@ -95,7 +97,7 @@ export default {
   watch: {
     chartData: {
       deep: true,
-      handler(val, oldVal) {
+      handler() {
         this.drawXAxis();
         this.drawYAxis();
         this.drawChart();
@@ -153,7 +155,7 @@ export default {
         .transition()
         .duration(300)
         .style('transform', (d) => `translate(${scale.x(d.timestamp)}px, 0)`)
-        .each(function (d) {
+        .each((d) => {
           d3.select(this)
             .select("rect[data-type='success']")
             .transition()
@@ -175,7 +177,7 @@ export default {
             .attr('width', barwidth);
         });
     },
-    drawHoverState(selection) {
+    drawHoverState() {
       // const { width, padding, yAxisWidth, chartData, previousData, scale, updateTooltip } = this;
       // const groupWidth = (width - (padding*2) - yAxisWidth)/(Math.max(1, chartData.length - 1));
 
@@ -231,7 +233,7 @@ export default {
     drawXAxis() {
       const { chartData, scale, interval } = this;
       const $axis = d3.select(this.$refs.axis_x);
-      const x_axis = d3.axisBottom(scale.x)
+      const xAxis = d3.axisBottom(scale.x)
         .ticks(Math.min(10, chartData.length))
         .tickFormat((d) => {
           let label = '';
@@ -258,7 +260,7 @@ export default {
       $axis.style('transform', `translate(0, ${this.height - this.xAxisHeight - this.padding + 10}px)`)
         .transition()
         .duration(300)
-        .call(x_axis)
+        .call(xAxis)
         .select('path')
         .style('transform', 'translate(0,-5px)')
         .attr('d', () => `M${this.range.x[0]},0L${this.range.x[1]},0`);
@@ -268,21 +270,21 @@ export default {
         padding, scale, yAxisWidth, range,
       } = this;
       const $axis = d3.select(this.$refs.axis_y);
-      const y_axis = d3.axisLeft(scale.yAxis)
+      const yAxis = d3.axisLeft(scale.yAxis)
         .tickValues(scale.yAxis.ticks(5)
           .filter((tick) => Number.isInteger(tick)))
-        .tickFormat((d) => (d >= 1000 ? `${formatNumber(d / 1000, "en-US")}k` : d));
+        .tickFormat((d) => (d >= 1000 ? `${formatNumber(d / 1000, 'en-US')}k` : d));
       $axis.style('transform', `translate(${padding + yAxisWidth}px, ${padding - 1}px)`)
         .transition()
         .duration(300)
-        .call(y_axis)
+        .call(yAxis)
         .call((g) => {
           g.selectAll('.tick line')
             .attr('x1', 0)
             .attr('x2', range.x[1] - padding);
         });
     },
-    updateTooltip(d, i) {
+    updateTooltip() {
       // const tooltip = d3.select(this.$refs.tooltip);
       // const prev = this.previousData[i];
       // const { scale, interval } = this;

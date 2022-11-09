@@ -8,9 +8,6 @@
 import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
 import { generateAutoAccessApi, generateAutoAccessJas } from '@forgerock/platform-shared/src/api/BaseApi';
-import {
-  postData, postDataToken, getData, getDataToken,
-} from '../../Shared/utils/axios-utils';
 import { deleteEntityInstance, saveEntityInstances } from '../../Entities/api/EntitiesAPI';
 import { formatBytes } from '../../Shared/utils/util-functions';
 import store from '@/store';
@@ -20,8 +17,29 @@ const utc = require('dayjs/plugin/utc');
 dayjs.extend(utc);
 
 export const getAuthenticationDefinition = () => new Promise((resolve, reject) => {
-  // getData('/autoaccess/jas/entityDefinitions/autoaccess/base/authentication?latest=true')
   generateAutoAccessJas().get('/entityDefinitions/autoaccess/base/authentication?latest=true')
+    .then(({ data: result }) => {
+      resolve(result);
+    })
+    .catch((err) => {
+      reject(err);
+    });
+});
+
+export const searchBuckets = (prefix, max) => new Promise((resolve, reject) => {
+  generateAutoAccessApi().post('/datasources/search/buckets', { prefix, max })
+    .then(({ data: result }) => {
+      resolve(result);
+    })
+    .catch((err) => {
+      reject(err);
+    });
+});
+
+export const searchObjects = (bucket, prefix, start) => new Promise((resolve, reject) => {
+  generateAutoAccessApi().post('/datasources/search/objects', {
+    bucket, prefix, start, pageSize: 6,
+  })
     .then(({ data: result }) => {
       resolve(result);
     })
@@ -36,7 +54,6 @@ export const getFirstFile = (bucket, prefix) => new Promise((resolve, reject) =>
   } else {
     searchBuckets(bucket).then((response) => {
       const b = response.buckets.find((x) => x.name === bucket);
-      console.log(bucket, response, b);
 
       if (b) {
         searchObjects(b.name, prefix.replace('*', '')).then((objects) => {
@@ -45,40 +62,18 @@ export const getFirstFile = (bucket, prefix) => new Promise((resolve, reject) =>
           if (firstJSON) {
             resolve(firstJSON);
           } else {
-            reject('file not found');
+            reject(
+              new Error(this.$t('autoAccess.access.dataSources.dataSourcesAPI.fileError')),
+            );
           }
         });
       } else {
-        reject('bucket not found');
+        reject(
+          new Error(this.$t('autoAccess.access.dataSources.dataSourcesAPI.bucketError')),
+        );
       }
     });
   }
-});
-
-export const searchBuckets = (prefix, max) => new Promise((resolve, reject) => {
-  // postDataToken('/autoaccess/api/datasources/search/buckets', { prefix, max })
-  generateAutoAccessApi().post('/datasources/search/buckets', { prefix, max })
-    .then(({ data: result }) => {
-      resolve(result);
-    })
-    .catch((err) => {
-      reject(err);
-    });
-});
-
-export const searchObjects = (bucket, prefix, start) => new Promise((resolve, reject) => {
-  // postDataToken('/autoaccess/api/datasources/search/objects', {
-  //   bucket, prefix, start, pageSize: 6,
-  // })
-  generateAutoAccessApi().post('/datasources/search/objects', {
-    bucket, prefix, start, pageSize: 6,
-  })
-    .then(({ data: result }) => {
-      resolve(result);
-    })
-    .catch((err) => {
-      reject(err);
-    });
 });
 
 export const getBucketAndPrefixFromLocation = (location = '') => {
@@ -93,34 +88,34 @@ export const getBucketAndPrefixFromLocation = (location = '') => {
 };
 
 export const getFilePreview = (bucket, filePath) => new Promise((resolve, reject) => {
-  // getDataToken(`/autoaccess/api/datasources/preview?bucket=${bucket}&filePath=${filePath}`)
   generateAutoAccessApi().get(`/datasources/preview?bucket=${bucket}&filePath=${filePath}`)
     .then(({ data: result }) => {
       resolve(result);
     })
-    .catch((err) => {
-      reject('Invalid JSONL. Cannot be used as Data Source.');
+    .catch(() => {
+      reject(
+        new Error(this.$t('autoAccess.access.dataSources.dataSourcesAPI.errorInvalidJSON')),
+      );
     });
 });
 
 export const getJSLTPreview = (preview, mapping) => new Promise((resolve, reject) => {
-  // postData('/autoaccess/jas/jslt/preview', { data: preview, feature_mapping: mapping })
   generateAutoAccessJas().post('/jslt/preview', { data: preview, feature_mapping: mapping })
     .then(({ data: result }) => {
-      console.log('result:', result);
       resolve(result);
     })
     .catch((err) => reject(err));
 });
 
 export const getDataSourceDefinition = () => new Promise((resolve, reject) => {
-  // getData('/autoaccess/jas/entityDefinitions/autoaccess/datasources?latest=true')
   generateAutoAccessJas().get('/entityDefinitions/autoaccess/datasources?latest=true')
     .then(({ data: result }) => {
       resolve(result);
     })
-    .catch((err) => {
-      reject('An error occured when fetching data source definition.');
+    .catch(() => {
+      reject(
+        new Error(this.$t('autoAccess.access.dataSources.dataSourcesAPI.errorFetchData')),
+      );
     });
 });
 
@@ -215,7 +210,6 @@ export const getDataSources = (sort, search, searchAfter = [], activeOnly = fals
     });
   }
   return new Promise((resolve, reject) => {
-    // postData(`/autoaccess/jas/entity/search${def.namespace}/${def.name}/${def.version}`, { query })
     generateAutoAccessJas().post(`/entity/search${def.namespace}/${def.name}/${def.version}`, { query })
       .then(({ data }) => {
         const items = data.hits.hits.map((item) => (
@@ -226,8 +220,10 @@ export const getDataSources = (sort, search, searchAfter = [], activeOnly = fals
         ));
         resolve({ items, total: data.hits.total.value });
       })
-      .catch((err) => {
-        reject('An error occured when fetching data sources.');
+      .catch(() => {
+        reject(
+          new Error(this.$t('autoAccess.access.dataSources.dataSourcesAPI.errorFetchDataSources')),
+        );
       });
   });
 };
@@ -242,7 +238,6 @@ export const getDataSourceById = (id) => {
     },
   };
   return new Promise((resolve, reject) => {
-    // postData(`/autoaccess/jas/entity/search${def.namespace}/${def.name}/${def.version}`, { query })
     generateAutoAccessJas().post(`/entity/search${def.namespace}/${def.name}/${def.version}`, { query })
       .then(({ data: result }) => {
         const items = result.hits.hits.map((item) => (
@@ -253,8 +248,10 @@ export const getDataSourceById = (id) => {
         ));
         resolve({ items, total: result.hits.total.value });
       })
-      .catch((err) => {
-        reject('An error occured when fetching data sources.');
+      .catch(() => {
+        reject(
+          new Error(this.$t('autoAccess.access.dataSources.dataSourcesAPI.errorFetchDataSources')),
+        );
       });
   });
 };
@@ -297,7 +294,7 @@ export const saveDataSource = (payload) => {
 
   return new Promise((resolve, reject) => {
     saveEntityInstances(store.state.DataSources.ds_definition, [dataSource], 'create')
-      .then((response) => {
+      .then(() => {
         resolve(true);
       })
       .catch((error) => {
@@ -311,7 +308,7 @@ export const updateDataSource = (payload) => {
 
   return new Promise((resolve, reject) => {
     saveEntityInstances(store.state.DataSources.ds_definition, [dataSource], 'edit')
-      .then((response) => {
+      .then(() => {
         resolve(true);
       })
       .catch((error) => {
@@ -325,7 +322,7 @@ export const deleteDataSource = (payload) => {
 
   return new Promise((resolve, reject) => {
     deleteEntityInstance([dataSource], store.state.DataSources.ds_definition)
-      .then((response) => {
+      .then(() => {
         resolve(true);
       })
       .catch((error) => {
@@ -336,11 +333,11 @@ export const deleteDataSource = (payload) => {
 
 export const isValidFile = (bucket, filePath) => new Promise((resolve, reject) => {
   getFilePreview(bucket, filePath)
-    .then((result) => {
+    .then(() => {
       resolve(true);
     })
-    .catch((err) => {
-      reject(false);
+    .catch(() => {
+      reject(new Error(false));
     });
 });
 

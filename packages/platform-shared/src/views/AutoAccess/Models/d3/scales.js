@@ -19,7 +19,7 @@ class Scales {
 
   yMin;
 
-  constructor(key, data) {
+  constructor(key) {
     if (key === ChartKey.PR) {
       this.yMin = 0;
       // this.yMin = d3.min(data, (d: ROCDataPoint) => d.ppv) * 0.9;

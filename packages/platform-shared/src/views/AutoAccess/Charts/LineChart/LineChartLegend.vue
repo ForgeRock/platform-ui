@@ -25,9 +25,11 @@ export default {
   props: {
     colors: {
       type: Array,
+      default: () => [],
     },
     items: {
       type: Array,
+      default: () => [],
     },
   },
 };

@@ -70,7 +70,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 <script>
 import { BModal, BButton } from 'bootstrap-vue';
-import _ from 'lodash';
+import { cloneDeep } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import FilterRow from './FilterRow';
 import ReasonFilter from './ReasonFilter';
@@ -118,7 +118,7 @@ export default {
       this.$emit('hidden');
     },
     getInitialFilters() {
-      const filters = _.cloneDeep(this.filterObject.features)
+      const filters = cloneDeep(this.filterObject.features)
         .filter((f) => f.key && f.value.length > 0);
 
       if (filters.length === 0) {
@@ -150,10 +150,11 @@ export default {
     updateFilter(filter) {
       this.tempFilters.find((f, i, arr) => {
         if (f.id === filter.id) {
-          if (filter.value.findIndex((f) => !f) === -1) {
+          if (filter.value.findIndex((filterValue) => !filterValue) === -1) {
             arr[i] = filter;
           }
         }
+        return arr;
       });
     },
     updateReasons(value) {
