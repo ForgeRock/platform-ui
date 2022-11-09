@@ -7,7 +7,7 @@
 
 import { v4 as uuidv4 } from 'uuid';
 
-import { materialIconNames } from './icon-options';
+import materialIconNames from './icon-options';
 
 export const defaultEntity = {
   id: uuidv4(),
@@ -51,7 +51,7 @@ export const defaultAttribute = {
 export const getPrimaryKeyIfExistsOrFirstColumn = (entity) => {
   let primaryKey = null;
 
-  Object.keys(entity.schemas._meta.properties ? entity.schemas._meta.properties : {}).map((attributeName, index) => {
+  Object.keys(entity.schemas._meta.properties ? entity.schemas._meta.properties : {}).forEach((attributeName) => {
     if (entity.schemas._meta.properties) {
       const attribute = entity.schemas._meta.properties[attributeName];
       if (attribute.isPrimaryKey && !primaryKey) {
@@ -70,7 +70,7 @@ export const getPrimaryKeyIfExistsOrFirstColumn = (entity) => {
 export const isPrimaryKeyPresent = (entity) => {
   let isPresent = false;
 
-  Object.keys(entity.schemas._meta.properties ? entity.schemas._meta.properties : {}).map((attributeName, index) => {
+  Object.keys(entity.schemas._meta.properties ? entity.schemas._meta.properties : {}).forEach((attributeName) => {
     if (entity.schemas._meta.properties[attributeName].isPrimaryKey) {
       isPresent = true;
     }
@@ -82,7 +82,7 @@ export const isPrimaryKeyPresent = (entity) => {
 export const getPrimaryKey = (entity) => {
   let primaryKey = null;
 
-  Object.keys(entity.schemas._meta.properties ? entity.schemas._meta.properties : {}).map((attributeName, index) => {
+  Object.keys(entity.schemas._meta.properties ? entity.schemas._meta.properties : {}).forEach((attributeName) => {
     if (entity.schemas._meta.properties) {
       const attribute = entity.schemas._meta.properties[attributeName];
       if (attribute.isPrimaryKey && !primaryKey) {
@@ -112,7 +112,7 @@ export const cleanUpEntityDefinition = (entity) => {
         displayName: '',
         properties: {},
       };
-      Object.keys(entity.schemas.properties).map((attributeName) => {
+      Object.keys(entity.schemas.properties).forEach((attributeName) => {
         entity.schemas._meta.properties[attributeName] = { ...defaultAttribute };
       });
     }
@@ -137,7 +137,7 @@ export const cleanUpEntityDefinition = (entity) => {
       entity.schemas.properties = {};
     }
 
-    Object.keys(entity.schemas._meta.properties).map((attributeName) => {
+    Object.keys(entity.schemas._meta.properties).forEach((attributeName) => {
       const attribute = entity.schemas._meta.properties[attributeName];
       attribute.display = { ...defaultAttribute.display, ...attribute.display };
       attribute.ml = { ...defaultAttribute.ml, ...attribute.ml };

@@ -73,7 +73,10 @@ export default {
     BButton,
   },
   props: {
-    centroidData: Object,
+    centroidData: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   data() {
     return {

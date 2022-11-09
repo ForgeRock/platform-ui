@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -146,54 +146,42 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import {
-  BButton, BBadge, BLink, BDropdown, BDropdownItem, BModal,
-} from 'bootstrap-vue';
-import FrSelect from '@forgerock/platform-shared/src/components/Field/Select';
-import FrTextArea from '@forgerock/platform-shared/src/components/Field/TextArea';
+/* eslint-disable import/no-extraneous-dependencies */
+import { BDropdown, BDropdownItem } from 'bootstrap-vue';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import { getEventLogs, apiToInternalEvent } from '../api/ActivityAPI';
 import FrPagination from '../../Shared/DataTable/Pagination';
-import FrTreeselect from '../../Shared/TreeSelect';
 import RiskScore from '../../Shared/RiskScore';
 import EventDetail from '../EventDetail';
 import RelativeTime from '../../Shared/RelativeTime';
-import ResultBadge from '../../Shared/ResultBadge';
 import Explainability from '../../Shared/Explainability';
 import { getQueryFilters } from '../../Shared/utils/api';
 import store from '@/store';
 import formatNumber from '../../../../utils/formatNumber';
 
-const ace = require('brace');
+require('brace');
 require('brace/mode/json');
 
 export default {
   name: 'EventLog',
   components: {
-    BButton,
-    BBadge,
-    BLink,
     BDropdown,
     BDropdownItem,
-    FrSelect,
-    BModal,
-    FrTextArea,
     FrPagination,
-    FrTreeselect,
     FrSpinner,
     RiskScore,
     EventDetail,
     RelativeTime,
-    ResultBadge,
     Explainability,
   },
   props: {
     filterObject: {
       type: Object,
+      default: () => ({}),
     },
     userId: {
       type: String,
-      required: false,
+      default: '',
     },
   },
   data() {
@@ -213,14 +201,14 @@ export default {
     };
   },
   computed: {
-    currentPageRecords(){
-      return formatNumber(1 + (this.page * this.pageSize),"en-US");
+    currentPageRecords() {
+      return formatNumber(1 + (this.page * this.pageSize), 'en-US');
     },
-    totalPageRecords(){
-      return formatNumber(Math.min(this.totalRecords, (this.page + 1) * this.pageSize), "en-US");
+    totalPageRecords() {
+      return formatNumber(Math.min(this.totalRecords, (this.page + 1) * this.pageSize), 'en-US');
     },
-    totalAllRecords(){
-      return formatNumber(this.totalRecords, "en-US");
+    totalAllRecords() {
+      return formatNumber(this.totalRecords, 'en-US');
     },
     lastPage() {
       if (this.pageSize * this.page + this.pageSize < this.totalRecords) {
@@ -249,7 +237,7 @@ export default {
     filterObject: {
       immediate: false,
       deep: true,
-      handler(newFilter) {
+      handler() {
         this.page = 0;
         this.pageMeta = [];
 
@@ -381,6 +369,7 @@ export default {
           timestampSort,
         ];
       }
+      return [];
     },
   },
 };

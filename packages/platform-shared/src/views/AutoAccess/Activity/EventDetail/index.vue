@@ -265,7 +265,7 @@ export default {
   props: {
     data: {
       type: Object,
-      required: false,
+      default: () => ({}),
     },
   },
   data() {
@@ -336,9 +336,8 @@ export default {
       getEventLogs(param)
         .then((response) => {
           this.previousAuths = response.data.hits.hits.map((data) => apiToInternalEvent(data)).filter((ev) => this.data.id !== ev.id);
-          this.isLoading = false;
         })
-        .catch((e) => {
+        .finally(() => {
           this.isLoading = false;
         });
     },

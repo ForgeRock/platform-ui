@@ -52,9 +52,11 @@ export default {
   props: {
     userId: {
       type: String,
+      default: '',
     },
     dateRange: {
       type: Array,
+      default: () => [],
     },
   },
   data() {

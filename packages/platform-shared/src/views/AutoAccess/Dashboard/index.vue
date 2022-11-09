@@ -122,12 +122,11 @@ import { mapGetters } from 'vuex';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 import {
-  BListGroup, BListGroupItem, BCard, BButton, BLink, BSpinner,
+  BListGroup, BCard, BSpinner,
 } from 'bootstrap-vue';
 import dayjs from 'dayjs';
 import { riskiestUsersQuery } from './api/DashboardAPI';
 import { getEventLogs } from '../Activity/api/ActivityAPI';
-// import FrPagination from "@forgerock/platform-shared/src/components/DataTable/Pagination";
 import RiskScore from '../Shared/RiskScore';
 import AccessAttempts from '../Charts/AccessAttempts';
 import DateRangePicker from '../Shared/DateRangePicker';
@@ -139,11 +138,7 @@ export default {
   components: {
     FrHeader,
     BListGroup,
-    BListGroupItem,
-    // FrPagination,
     BCard,
-    BButton,
-    BLink,
     RiskScore,
     AccessAttempts,
     DateRangePicker,
@@ -152,7 +147,6 @@ export default {
   mixins: [NotificationMixin],
   data() {
     return {
-      // MODELS: MODELS,
       riskyUsers: [],
       loading: {
         normalAccess: true,

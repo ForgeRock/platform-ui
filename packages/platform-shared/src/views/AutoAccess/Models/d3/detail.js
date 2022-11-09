@@ -18,7 +18,6 @@ export const ModelConstants = {
 const hypotheticalHeight = 330;
 
 const initDetail = (svg) => {
-  const detailHeight = dim.height;
   const detail = svg
     .append('g')
     .attr('id', 'roc-pr-chart-detail')
@@ -30,11 +29,6 @@ const initDetail = (svg) => {
     .attr('height', `${hypotheticalHeight}px`)
     .attr('width', `${dim.detailWidth}px`)
     .style('fill', 'var(--light)');
-
-  const content = hypothetical
-    .append('g')
-    .attr('class', 'roc-pr-chart-detail-content')
-    .style('transform', 'translate(16px, 32px)');
 
   detail
     .append('g')
@@ -80,7 +74,7 @@ const appendConfusionMatrix = (node, d) => {
     .data(['tp', 'fp', 'fn', 'tn'])
     .enter()
     .append('g')
-    .style('transform', (d, i) => `translate(${i % 2 === 1 ? quadrantW : 0}px, ${i > 1 ? quadrantH : 0}px)`);
+    .style('transform', (i) => `translate(${i % 2 === 1 ? quadrantW : 0}px, ${i > 1 ? quadrantH : 0}px)`);
 
   quadrants
     .append('rect')
@@ -160,9 +154,9 @@ const appendPRLabels = (node, d) => {
     label.append('text')
       .style('transform', 'translate(38px, 0)')
       .attr('class', 'caption-text')
-      .text(!isNaN(d[key]) ? `${d[key].toFixed(3)}` : '—');
+      .text(!Number.isNaN(d[key]) ? `${d[key].toFixed(3)}` : '—');
 
-    if (!isNaN(d[key])) {
+    if (!Number.isNaN(d[key])) {
       g.append('rect').style('fill', 'var(--white)');
 
       g.append('rect')

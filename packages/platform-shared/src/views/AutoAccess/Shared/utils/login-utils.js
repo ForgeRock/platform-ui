@@ -9,19 +9,8 @@ import axios from 'axios';
 import _ from 'lodash';
 import store from '@/store';
 
-export const initServices = () => new Promise((resolve, reject) => {
+export const initServices = () => new Promise((resolve) => {
   const { token } = store.state.Authz;
-  const myHeaders = {
-    headers: {
-      'X-TENANT-ID': 'autonomous-iam',
-      'Content-Type': 'application/json',
-      Authorization: 'Basic Y29uZmlnYWRtaW46V2VsY29tZTEyMw==',
-    },
-  };
-  axios;
-  // .get("/conf/api/configuration/deployer_config_vars", myHeaders)
-  // .then((deployResponse) => {
-  //   const deployConfig = deployResponse.data;
   const newHeaders = {
     headers: {
       'X-TENANT-ID': 'autonomous-iam',
@@ -33,13 +22,10 @@ export const initServices = () => new Promise((resolve, reject) => {
     .get('/jas/tenants', newHeaders)
     .then((tenantResponse) => {
       const tenants = tenantResponse.data;
+      // eslint-disable-next-line no-undef
       resolve({ token, deployConfig, tenants });
     })
-    .catch((error) => resolve([]));
-  // })
-  // .catch((error) => {
-  //   reject(error);
-  // });
+    .catch(() => resolve([]));
 });
 
 export const checkSession = () => {
@@ -67,7 +53,7 @@ export const storeUserInfo = (data) => {
   const { token } = data;
   const { exp, iat } = JSON.parse(atob(token?.split('.')[1]));
   const {
-    dn, displayName, uid, _groups,
+    dn, displayName, _groups,
   } = data.user;
   store.commit('Authz/setToken', token);
   const userGroups = Array.isArray(_groups) ? _groups.filter((g) => !`${g}`.toLowerCase().includes('user')) : [];

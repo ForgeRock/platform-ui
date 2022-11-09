@@ -9,7 +9,6 @@ of the MIT license. See the LICENSE file for details. -->
     :date-info-fn="dateClass"
     :max="max"
     hide-header
-    @context="handleUpdate"
     @selected="handleClick"
   >
     <template #nav-prev-year>
@@ -51,9 +50,11 @@ export default {
   props: {
     value: {
       type: String,
+      default: '',
     },
     dates: {
       type: Array,
+      default: () => [],
     },
   },
   computed: {
@@ -64,11 +65,6 @@ export default {
   methods: {
     handleClick(date) {
       this.$emit('handleUpdate', date);
-    },
-    handleUpdate(context) {
-      // if (!this.dates.find(date => dayjs(date).isSame(context.selectedDate, 'day'))) {
-      //     this.$emit('handleUpdate', context.selectedDate)
-      // }
     },
     dateClass(ymd, date) {
       let classes = '';

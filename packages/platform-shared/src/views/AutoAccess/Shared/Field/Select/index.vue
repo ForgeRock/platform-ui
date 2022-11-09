@@ -86,7 +86,7 @@ export default {
      * Default search value
      */
     value: {
-      type: Array|Object|Number|String,
+      type: [Array, Object, Number, String],
       default: '',
     },
     allowEmpty: {

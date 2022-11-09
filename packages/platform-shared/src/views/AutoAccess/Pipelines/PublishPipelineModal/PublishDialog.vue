@@ -24,9 +24,11 @@ export default {
   props: {
     pipeline: {
       type: Object,
+      default: () => ({}),
     },
     publishedPipeline: {
       type: Object,
+      default: () => ({}),
     },
   },
   computed: {

@@ -113,19 +113,21 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import { BButton, BTabs, BTab } from 'bootstrap-vue';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
-import dayjs from 'dayjs';
 import RiskScore from '../Shared/RiskScore';
 import { getEventLogs } from '../Activity/api/ActivityAPI';
 import UserDetailTrends from '../UserDetailTrends';
 import Activity from '../Activity';
 import { defaultDateRange } from '../Shared/DateRangePicker/utility';
-import { averageRiskScoreQuery } from './api/UserDetailAPI';
+import averageRiskScoreQuery from './api/UserDetailAPI';
 
 export default {
   name: 'UserDetail',
-  props: [
-    'id',
-  ],
+  props: {
+    id: {
+      type: String,
+      default: 'id',
+    },
+  },
   data() {
     return {
       isLoading: true,
@@ -260,7 +262,7 @@ export default {
 
           this.averageRiskScore = response.aggregations?.avg_risk_score?.value;
         })
-        .catch((e) => {
+        .catch(() => {
           // TODO
         });
     },

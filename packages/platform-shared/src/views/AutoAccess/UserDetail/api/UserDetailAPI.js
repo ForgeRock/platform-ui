@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-export const averageRiskScoreQuery = (userId, dates) => ({
+const averageRiskScoreQuery = (userId) => ({
   size: 0,
   query: {
     bool: {
@@ -15,14 +15,6 @@ export const averageRiskScoreQuery = (userId, dates) => ({
             'userId.keyword': userId,
           },
         },
-        // {
-        //     range: {
-        //         timestamp: {
-        //             gte: dates[0],
-        //             lte: dates[1],
-        //         },
-        //     },
-        // },
       ],
     },
   },
@@ -34,3 +26,5 @@ export const averageRiskScoreQuery = (userId, dates) => ({
     },
   },
 });
+
+export default averageRiskScoreQuery;

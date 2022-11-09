@@ -19,6 +19,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+/* eslint-disable import/no-extraneous-dependencies */
 import Treeselect from '@riophae/vue-treeselect';
 import '@riophae/vue-treeselect/dist/vue-treeselect.css';
 
@@ -30,9 +31,11 @@ export default {
   props: {
     options: {
       type: Array,
+      default: () => [],
     },
     value: {
       type: Array,
+      default: () => [],
     },
   },
   watch: {

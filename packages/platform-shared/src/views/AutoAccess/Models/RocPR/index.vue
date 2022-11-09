@@ -36,7 +36,7 @@ of the MIT license. See the LICENSE file for details. -->
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 import { BAlert } from 'bootstrap-vue';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
-import { fetchModelsData } from '../api/ModelsAPI';
+import fetchModelsData from '../api/ModelsAPI';
 import Centroids from '../Centroids';
 import '../scss/_roc-pr.scss';
 import * as ROCPRChart from '../d3/_roc-pr-chart';
@@ -60,15 +60,17 @@ export default {
   props: {
     modelId: {
       type: String,
+      default: '',
     },
     pipelineId: {
       type: String,
+      default: '',
     },
   },
   watch: {
     modelId: {
       immediate: true,
-      handler(newValue) {
+      handler() {
         if (!this.modelData) {
           this.getData();
         }
@@ -97,7 +99,7 @@ export default {
           const fprData = source.fpr;
           const { precision } = source;
           const { recall } = source;
-          const { confusion_matrix } = source;
+          const { confusionMatrix } = source;
           arr = scoreThreshhold.map((threshold, index) => (
             {
               tpr: tprData[index],
@@ -105,14 +107,14 @@ export default {
               t: threshold,
               ppv: precision[index],
               rc: recall[index],
-              tn: confusion_matrix[index].tn,
-              tp: confusion_matrix[index].tp,
-              fn: confusion_matrix[index].fn,
-              fp: confusion_matrix[index].fp,
+              tn: confusionMatrix[index].tn,
+              tp: confusionMatrix[index].tp,
+              fn: confusionMatrix[index].fn,
+              fp: confusionMatrix[index].fp,
             }
           ));
         } catch (e) {
-          this.error = 'No data available.';
+          this.setError(this.$t('autoaccess.access.models.noDataError'));
         }
       }
       return arr;
@@ -129,12 +131,15 @@ export default {
         this.modelData = data;
         this.$emit('update', data);
       })
-        .catch((err) => {
-          this.error = 'An error occured fetching model data.';
+        .catch(() => {
+          this.setError(this.$t('autoaccess.access.models.fetchDataError'));
         })
         .finally(() => {
           this.isLoading = false;
         });
+    },
+    setError(err) {
+      this.error = err;
     },
   },
 };

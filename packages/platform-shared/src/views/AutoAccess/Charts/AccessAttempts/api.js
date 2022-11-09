@@ -36,7 +36,6 @@ export const histogramQuery = (flagRisky, dates, interval = 'day', userId) => {
     ],
     size: 10,
     query: {
-      // match_all: {}
       bool: {
         must: [
           {

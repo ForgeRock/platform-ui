@@ -48,8 +48,6 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 <script>
 import { BModal, BButton, BAlert } from 'bootstrap-vue';
-// import FrBasicInput from '@forgerock/platform-shared/src/components/Field/Basic';
-import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import LoadingButton from '../../Shared/LoadingButton';
 import DefineDataSourceForm from '../AddDataSourceModal/DefineDataSourceForm';
 import { getBucketAndPrefixFromLocation, updateDataSource } from '../api/DataSourcesAPI';
@@ -60,14 +58,13 @@ export default {
     BModal,
     BButton,
     BAlert,
-    // FrBasicInput,
-    FrSpinner,
     DefineDataSourceForm,
     LoadingButton,
   },
   props: {
     dataSource: {
       type: Object,
+      default: () => {},
     },
     showModal: {
       type: Boolean,
@@ -100,7 +97,7 @@ export default {
       this.loading = true;
       this.error = false;
       updateDataSource({ ...this.dataSource, name: this.name })
-        .then((response) => {
+        .then(() => {
           this.loading = false;
           this.$emit('saved');
         })

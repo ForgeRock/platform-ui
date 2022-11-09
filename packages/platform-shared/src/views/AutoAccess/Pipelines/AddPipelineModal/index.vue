@@ -120,9 +120,9 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   BModal, BButton, BDropdown, BDropdownItem,
 } from 'bootstrap-vue';
-import FrField from '../../Shared/Field';
 import dayjs from 'dayjs';
 import _ from 'lodash';
+import FrField from '../../Shared/Field';
 import FrBasicInput from '../../Shared/Field/Basic';
 import LoadingButton from '../../Shared/LoadingButton';
 import { defaultPipelineParameters, savePipeline, trainingTypes } from '../api/PipelineApi';
@@ -150,6 +150,7 @@ export default {
     },
     initialPipeline: {
       type: Object,
+      default: () => ({}),
     },
   },
   data() {
@@ -197,7 +198,7 @@ export default {
     parameters: {
       deep: true,
       immediate: true,
-      handler(val) {
+      handler() {
         const v = {
           total: 0,
         };
@@ -266,6 +267,7 @@ export default {
     },
     save() {
       const {
+        // eslint-disable-next-line camelcase
         pipeline_name, type, parameters, datasourceId, trainingId, executions,
       } = this;
       const pipelineType = type.name;
@@ -273,7 +275,6 @@ export default {
       const trainingParameters = pipelineType === 'Training' ? parameters : {};
       const id = this.initialPipeline ? this.initialPipeline.pipeline_definition_id : null;
       const uebaRiskThreshold = pipelineType === 'Prediction' ? this.uebaRiskThreshold : null;
-
       this.loading = true;
       savePipeline({
         pipeline_definition_id: id,
@@ -292,7 +293,7 @@ export default {
           this.$emit('saved', result);
           this.loading = false;
         })
-        .catch((err) => {
+        .catch(() => {
           // todo error handling
           this.loading = true;
         });

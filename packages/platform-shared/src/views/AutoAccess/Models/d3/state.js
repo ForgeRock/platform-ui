@@ -5,6 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+// eslint-disable-next-line import/no-cycle
 import { updateHypothetical } from './update';
 
 const state = {
