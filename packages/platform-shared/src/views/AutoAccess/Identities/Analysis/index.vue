@@ -266,16 +266,18 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+/* eslint-disable import/no-extraneous-dependencies, import/named */
 import FrSelect from '@forgerock/platform-shared/src/components/Field/Select';
-import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import FrAccordion from '@forgerock/platform-shared/src/components/Accordion';
 import {
-  BTableSimple, BTbody, BThead, BTr, BTh, BTd, BLink, BDropdown, BDropdownItem, BModal, BCard, BTooltip,
+  BTableSimple, BTbody, BThead, BTr, BTh, BTd, BLink, BModal, BCard, BTooltip,
 } from 'bootstrap-vue';
 import * as d3 from 'd3';
 import dayjs from 'dayjs';
 import { v4 as uuidv4 } from 'uuid';
-import _ from 'lodash';
+import {
+  cloneDeep, find, chunk, orderBy,
+} from 'lodash';
 import FrPagination from '../../Shared/DataTable/Pagination';
 import {
   getRiskHistogramForUser, getEventForTimeAndRisk, getCauseFrequency, MODELS,
@@ -288,7 +290,6 @@ export default {
   name: 'Analysis',
   components: {
     FrSelect,
-    FrSpinner,
     BTableSimple,
     BTbody,
     BThead,
@@ -298,8 +299,6 @@ export default {
     FrPagination,
     FrAccordion,
     BLink,
-    BDropdown,
-    BDropdownItem,
     BModal,
     BCard,
     BTooltip,
@@ -307,12 +306,15 @@ export default {
   props: {
     id: {
       type: String,
+      default: '',
     },
     dateRange: {
       type: Array,
+      default: () => [],
     },
     score: {
       type: Object,
+      default: () => ({}),
     },
   },
   computed: {
@@ -380,7 +382,7 @@ export default {
   watch: {
     dateRange: {
       immediate: true,
-      handler(newDateRange) {
+      handler() {
         this.getBarData(this.model);
         this.causeArray = [{ key: 'city' }, { key: 'os' }];
       },
@@ -394,29 +396,26 @@ export default {
           getCauseFrequency(this.id, newArray, this.model, this.dateRange)
             .then((data) => {
               let freqArray = [];
-              data.aggregations[newArray[0].key].buckets.map((row) => {
-                row[newArray[1].key].buckets.map((subRow) => {
-                  let firstCause = row.key;
-                  let secondCause = subRow.key;
+              data.aggregations[newArray[0].key].buckets.forEach((row) => row[newArray[1].key].buckets.forEach((subRow) => {
+                let firstCause = row.key;
+                let secondCause = subRow.key;
 
-                  if (newArray[0].key === 'referer') {
-                    firstCause = decodeURIComponent(row.key.split('goto=')[1] ? row.key.split('goto=')[1] : '');
-                  }
+                if (newArray[0].key === 'referer') {
+                  firstCause = decodeURIComponent(row.key.split('goto=')[1] ? row.key.split('goto=')[1] : '');
+                }
 
-                  if (newArray[1].key === 'referer') {
-                    secondCause = decodeURIComponent(subRow.key.split('goto=')[1] ? subRow.key.split('goto=')[1] : '');
-                  }
-
-                  freqArray.push({ [newArray[0].key]: firstCause, [newArray[1].key]: secondCause, count: subRow.doc_count });
-                });
-              });
-              freqArray = _.orderBy(freqArray, ['count'], ['desc']);
+                if (newArray[1].key === 'referer') {
+                  secondCause = decodeURIComponent(subRow.key.split('goto=')[1] ? subRow.key.split('goto=')[1] : '');
+                }
+                freqArray.push({ [newArray[0].key]: firstCause, [newArray[1].key]: secondCause, count: subRow.doc_count });
+              }));
+              freqArray = orderBy(freqArray, ['count'], ['desc']);
               this.totalCauses = freqArray.length;
-              const chunkArray = _.chunk(freqArray, 10);
+              const chunkArray = chunk(freqArray, 10);
               this.constFreq = chunkArray;
               this.isCauseFreqLoading = false;
             })
-            .catch((e) => {
+            .catch(() => {
               this.isCauseFreqLoading = false;
             });
         }
@@ -464,7 +463,7 @@ export default {
           .enter()
           .append('g')
           .attr('class', 'layer')
-          .style('fill', (d, i) => {
+          .style('fill', (d) => {
             if (d.key === 'highRisk') {
               return 'var(--danger)';
             }
@@ -497,40 +496,40 @@ export default {
             const timeParam = { gte: fromDate, lte: toDate };
 
             const riskParam = { gte: isRisky ? this.score[this.model] : 0, lte: isRisky ? 100 : this.score[this.model] };
-            getEventForTimeAndRisk(this.id, timeParam, riskParam, this.model).then((data) => {
+            getEventForTimeAndRisk(this.id, timeParam, riskParam, this.model).then((everyData) => {
               const tableData = [];
-              data.hits.hits.map((data) => {
+              everyData.hits.hits.forEach((eachData) => {
                 const riskInfo = [];
-                const riskScore = data._source.risk[`${this.model}_model`].score.toFixed(2);
-                Object.keys(data._source.risk).map((key) => {
+                const riskScore = eachData._source.risk[`${this.model}_model`].score.toFixed(2);
+                Object.keys(eachData._source.risk).forEach((key) => {
                   if (key !== 'message') {
                     if (key.split('_')[0] === this.model) {
-                      riskInfo.push({ model: key.split('_')[0], cause: data._source.risk[key].cause, selected: true });
+                      riskInfo.push({ model: key.split('_')[0], cause: eachData._source.risk[key].cause, selected: true });
                     } else {
-                      riskInfo.push({ model: key.split('_')[0], cause: data._source.risk[key].cause, selected: false });
+                      riskInfo.push({ model: key.split('_')[0], cause: eachData._source.risk[key].cause, selected: false });
                     }
                   }
                 });
                 tableData.push({
                   id: uuidv4(),
-                  user: data._source.userId,
-                  app: data._source.http.request.headers['user-agent'].user_agent,
-                  time: new Date(data._source.timestamp).toLocaleString(),
+                  user: eachData._source.userId,
+                  app: eachData._source.http.request.headers['user-agent'].user_agent,
+                  time: new Date(eachData._source.timestamp).toLocaleString(),
                   risk: riskScore,
-                  labels: { showAll: false, data: data._source.userLabels ? data._source.userLabels : [] },
+                  labels: { showAll: false, data: eachData._source.userLabels ? eachData._source.userLabels : [] },
                   riskInfo,
-                  transactionId: data._source.transactionId,
-                  eventId: data._source._eventId,
-                  rawData: data._source,
+                  transactionId: eachData._source.transactionId,
+                  eventId: eachData._source._eventId,
+                  rawData: eachData._source,
                   isRisky,
                   open$: true,
                 });
               });
-              const chunks = _.chunk(tableData);
+              const chunks = chunk(tableData);
               this.totalEventLogs = tableData.length;
               this.eventLogData = chunks;
               const causeArray = [];
-              _.find(chunks[0][0].riskInfo, (row) => row.selected).cause.map((row) => Object.keys(row).forEach((key) => (key !== 'score' ? causeArray.push({ key, value: row[key] }) : console.log)));
+              find(chunks[0][0].riskInfo, (row) => row.selected).cause.map((row) => Object.keys(row).forEach((key) => (key !== 'score' ? causeArray.push({ key, value: row[key] }) : null)));
               if (causeArray.length > 0) this.causeArray = causeArray;
             });
           });
@@ -598,9 +597,7 @@ export default {
   },
   mounted() {
     const myOptions = [];
-    Object.keys(MODELS).map((model) => {
-      myOptions.push({ text: MODELS[model], value: model });
-    });
+    Object.keys(MODELS).forEach((model) => myOptions.push({ text: MODELS[model], value: model }));
     this.options = myOptions;
   },
   methods: {
@@ -611,20 +608,18 @@ export default {
       getRiskHistogramForUser(this.id, this.score, model, this.dateRange)
         .then((data) => {
           const histData = [];
-          data.aggregations.user_event_count.monthly.buckets.map((riskData) => {
-            histData.push({
-              id: riskData.key,
-              date: new Date(riskData.key),
-              highRisk: riskData.high_risk.doc_count,
-              lowRisk: riskData.doc_count - riskData.high_risk.doc_count,
-              total: riskData.doc_count,
-            });
-          });
+          data.aggregations.user_event_count.monthly.buckets.forEach((riskData) => histData.push({
+            id: riskData.key,
+            date: new Date(riskData.key),
+            highRisk: riskData.high_risk.doc_count,
+            lowRisk: riskData.doc_count - riskData.high_risk.doc_count,
+            total: riskData.doc_count,
+          }));
 
           this.barData = histData;
           this.isHistLoading = false;
         })
-        .catch((e) => {
+        .catch(() => {
           this.isHistLoading = false;
         });
     },
@@ -659,7 +654,7 @@ export default {
     getModelSelected(row) {
       let expandModel = '';
 
-      row.riskInfo.map((data) => {
+      row.riskInfo.forEach((data) => {
         if (data.selected) {
           expandModel = data.model;
         }
@@ -668,28 +663,28 @@ export default {
       return expandModel;
     },
     getExpandModelCause(row) {
-      const myRow = _.cloneDeep(row);
+      const myRow = cloneDeep(row);
       let expandModelCause = [];
 
-      myRow.riskInfo.map((data) => {
+      myRow.riskInfo.forEach((data) => {
         if (data.selected) {
           expandModelCause = [...data.cause];
         }
       });
 
-      const sortedModelCauses = _.orderBy(expandModelCause, ['score'], ['desc']);
-      sortedModelCauses.map((cause) => {
+      const sortedModelCauses = orderBy(expandModelCause, ['score'], ['desc']);
+      sortedModelCauses.forEach((cause) => {
         cause.id = uuidv4();
       });
 
       return sortedModelCauses;
     },
-    handleModelValueChange(value, id, row) {
+    handleModelValueChange(value, row) {
       let myData = [...this.eventLogData];
       myData = myData[this.eventLogPage];
       const myRow = myData.filter((data) => data.id === row.id)[0];
 
-      myRow.riskInfo.map((data) => {
+      myRow.riskInfo.forEach((data) => {
         if (data.model === value) data.selected = true;
         else data.selected = false;
         data.expanded = true;

@@ -18,22 +18,20 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import _ from 'lodash';
+
+/* eslint-disable import/no-extraneous-dependencies, no-undef */
 import { Loader } from '@googlemaps/js-api-loader';
 import { MarkerClusterer } from '@googlemaps/markerclusterer';
 import { BSpinner } from 'bootstrap-vue';
-import {
-  mapStyles, markerStyle, MIN_ZOOM, MAX_ZOOM,
-} from '../RiskMap/util';
+import { mapStyles, MIN_ZOOM, MAX_ZOOM } from '../RiskMap/util';
 import store from '@/store';
-// import { getMarkersStats, mapStyles, markerStyle, MAX_ZOOM, MIN_ZOOM } from "./util";
-// import { getQueryFilters } from '../../../util/api';
-// import { getEventLogs } from '../api/ActivityAPI';
+
 export default {
   name: 'MiniMap',
   props: {
     authentications: {
       type: Array,
+      default: () => [],
     },
   },
   components: {
@@ -109,27 +107,15 @@ export default {
             position: new google.maps.LatLng(auth.geo_data.lat, auth.geo_data.longitude),
             icon,
           });
-
           bounds.extend(marker.position);
-
-          // marker.addListener("click", () => {
-          //     infoWindow.close();
-          //     infoWindow.setOptions({
-          //       shouldFocus: false,
-          //       content: infoWindowContent(sum, bucket.avg_score.value),
-          //       anchor: marker,
-          //     })
-          //     infoWindow.open(mapObject, marker);
-          // });
-
           return marker;
         });
 
         const renderer = {
           render(
             cluster,
-            stats,
           ) {
+            // eslint-disable-next-line no-shadow
             const { position, markers } = cluster;
 
             return new google.maps.Marker({
@@ -145,23 +131,9 @@ export default {
           },
         };
 
-        const onClusterClick = function (e, cluster, map) {
-          // //   const { markers, marker } = cluster;
-          // //   let { sum, avg } = getMarkersStats(markers);
-
-          // //   infoWindow.close();
-          // //   infoWindow.open(map);
-          // //   infoWindow.setOptions({
-          // //     // pixelOffset: new google.maps.Size(0, -marker.icon.scale),
-          // //     // position: marker.position,
-          // //     shouldFocus: false,
-          // //     content: infoWindowContent(sum, avg),
-          // //     anchor: marker,
-          // //   })
-        };
-
+        // eslint-disable-next-line no-new
         new MarkerClusterer({
-          map: mapObject, markers, renderer, onClusterClick,
+          map: mapObject, markers, renderer,
         });
       });
 

@@ -28,7 +28,10 @@ export default {
     FrField,
   },
   props: {
-    datasourceId: String,
+    datasourceId: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -84,24 +84,30 @@ export default {
   props: {
     chartData: {
       type: Array,
+      default: () => [],
     },
     previousData: {
       type: Array,
+      default: () => [],
     },
     colors: {
       type: Array,
+      default: () => [],
     },
     type: {
       type: String,
+      default: '',
       validator(value) {
         return value === 'normal' || value === 'risky' || value === 'risk-score';
       },
     },
     interval: {
       type: String,
+      default: '',
     },
     viewBox: {
       type: Array,
+      default: () => [],
     },
     loading: {
       type: Boolean,
@@ -120,7 +126,7 @@ export default {
   watch: {
     chartData: {
       deep: true,
-      handler(val, oldVal) {
+      handler() {
         this.drawXAxis();
         this.drawYAxis();
         this.drawChart();
@@ -178,7 +184,7 @@ export default {
 
             groups.append('rect')
               .style('fill', 'rgba(0,0,0,0)')
-              .style('transform', (d) => `translate(0,${this.padding}px)`)
+              .style('transform', () => `translate(0,${this.padding}px)`)
               .attr('height', this.height - (this.padding * 2) - this.xAxisHeight);
 
             groups.append('path')
@@ -210,8 +216,8 @@ export default {
       } = this;
       const groupWidth = (width - (padding * 2) - yAxisWidth) / (Math.max(1, chartData.length - 1));
 
-      const groups = selection.style('transform', (d, i) => `translate(${scale.x(i) - groupWidth / 2}px,0)`)
-        .on('mouseenter', function (e, d) {
+      const groups = selection.style('transform', (_d, i) => `translate(${scale.x(i) - groupWidth / 2}px,0)`)
+        .on('mouseenter', (_e, d) => {
           const totalLength = d3.select(this).select('path').node().getTotalLength();
           const i = groups.nodes().indexOf(this);
           d3.select(this)
@@ -232,7 +238,7 @@ export default {
 
           updateTooltip(d, i);
         })
-        .on('mouseleave', function (e, d) {
+        .on('mouseleave', () => {
           d3.select(this)
             .selectAll('circle, path')
             .style('opacity', 0)
@@ -243,7 +249,7 @@ export default {
 
       groups.select('.line-chart-hover-line')
         .style('opacity', 0)
-        .attr('d', (d, i) => `M${groupWidth / 2},${scale.y(0)}L${groupWidth / 2},${scale.y(d3.max([chartData[i].value, previousData[i].value]))}`);
+        .attr('d', (_d, i) => `M${groupWidth / 2},${scale.y(0)}L${groupWidth / 2},${scale.y(d3.max([chartData[i].value, previousData[i].value]))}`);
 
       groups.select('circle.line-chart-value')
         .style('opacity', 0)
@@ -254,13 +260,13 @@ export default {
       groups.select('circle.line-chart-prev')
         .style('opacity', 0)
         .attr('r', 0)
-        .attr('cy', (d, i) => scale.y(previousData[i].value))
+        .attr('cy', (_d, i) => scale.y(previousData[i].value))
         .attr('cx', groupWidth / 2);
     },
     drawXAxis() {
       const { interval, chartData, scale } = this;
       const $axis = d3.select(this.$refs.axis_x);
-      const x_axis = d3.axisBottom(scale.x)
+      const xAxis = d3.axisBottom(scale.x)
         .ticks(interval === 'hour' ? 6 : Math.min(10, chartData.length))
         .tickFormat((d) => {
           let label = '';
@@ -290,7 +296,7 @@ export default {
       $axis.style('transform', `translate(0, ${this.height - this.xAxisHeight - this.padding + 5}px)`)
         .transition()
         .duration(300)
-        .call(x_axis)
+        .call(xAxis)
         .select('path')
         .style('transform', 'translate(0,-5px)')
         .attr('d', () => `M${this.range.x[0]},0L${this.range.x[1]},0`);
@@ -300,14 +306,14 @@ export default {
         padding, scale, yAxisWidth, range,
       } = this;
       const $axis = d3.select(this.$refs.axis_y);
-      const y_axis = d3.axisLeft(scale.y)
+      const yAxis = d3.axisLeft(scale.y)
         .tickValues(scale.y.ticks(5)
           .filter((tick) => Number.isInteger(tick)))
-        .tickFormat((d) => (d >= 1000 ? `${formatNumber(d / 1000, "en-US")}k` : d));
+        .tickFormat((d) => (d >= 1000 ? `${formatNumber(d / 1000, 'en-US')}k` : d));
       $axis.style('transform', `translate(${padding + yAxisWidth}px, 0)`)
         .transition()
         .duration(300)
-        .call(y_axis)
+        .call(yAxis)
         .call((g) => {
           g.selectAll('.tick line')
             .attr('x1', 0)
@@ -327,9 +333,9 @@ export default {
       const changeVal = Math.round(((d.value - prev.value) / prev.value) * 100);
       const change = tooltip.select('.line-chart-tooltip-change')
         .text(() => {
-          if (!isFinite(changeVal)) {
+          if (!Number.isFinite(changeVal)) {
             return '';
-          } if (isNaN(changeVal)) {
+          } if (Number.isNaN(changeVal)) {
             return '0%';
           }
           return `${(changeVal <= 0 ? '' : '+') + changeVal}%`;
@@ -343,12 +349,12 @@ export default {
         })
         .style('text-anchor', 'end');
       tooltip.select('.line-chart-tooltip-value')
-        .text(formatNumber(parseFloat(d.value, 10).toFixed(1),"en-US"))
+        .text(formatNumber(parseFloat(d.value, 10).toFixed(1), 'en-US'))
         .style('transform', `translate(${width - change.node().getBBox().width - 6}px, 0)`)
         .style('text-anchor', 'end');
 
       tooltip.select('.line-chart-tooltip-prev-value')
-        .text(formatNumber(parseFloat(prev.value, 10).toFixed(1),"en-US"))
+        .text(formatNumber(parseFloat(prev.value, 10).toFixed(1), 'en-US'))
         .style('text-anchor', 'end')
         .style('transform', `translate(${width}px, 0)`);
 
@@ -368,7 +374,8 @@ export default {
         y: scale.y(Math.max(prev.value, d.value)) - bbox.height - 20,
       };
       if (transform.x < 0) {
-        transform.x = this.range.x[0];
+        const [x] = this.range.x;
+        transform.x = x;
       } else if (transform.x + bbox.width > this.width) {
         transform.x = this.range.x[1] - bbox.width;
       }
@@ -396,7 +403,7 @@ export default {
         d3.select(ref)
           .transition()
           .duration(500)
-          .attrTween('d', function () {
+          .attrTween('d', () => {
             const previous = d3.select(this).attr('d');
             const current = pathStr;
             return interpolatePath(previous, current);
@@ -415,7 +422,7 @@ export default {
       return {
         x: d3.scaleLinear()
           .range(this.range.x)
-          .domain(d3.extent(this.chartData, (d, i) => i)),
+          .domain(d3.extent(this.chartData, (_d, i) => i)),
         y: d3.scaleLinear()
           .range(this.range.y)
           .domain([
@@ -426,7 +433,7 @@ export default {
     },
     path() {
       return d3.line()
-        .x((d, i) => this.scale.x(i))
+        .x((_d, i) => this.scale.x(i))
         .y((d) => this.scale.y(d.value));
     },
     gradientNames() {
@@ -469,16 +476,6 @@ export default {
           font-size: 0.75rem;
           font-family: $fr-typeface;
         }
-        // &:nth-child(2) {
-        //     text {
-        //         text-anchor: start;
-        //     }
-        // }
-        // &:last-child {
-        //     text {
-        //         text-anchor: end;
-        //     }
-        // }
       }
 
       &.x-axis {

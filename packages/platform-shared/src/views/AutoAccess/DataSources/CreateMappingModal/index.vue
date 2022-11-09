@@ -90,7 +90,7 @@ of the MIT license. See the LICENSE file for details. -->
             size="md"
             v-if="view === 'previewJSLT'"
             variant="primary"
-            :label="$t(&quot;common.save&quot;)"
+            :label="$t('common.save')"
             :loading="loading"
             @click="save" />
           <BButton
@@ -140,6 +140,7 @@ export default {
   props: {
     dataSource: {
       type: Object,
+      default: () => ({}),
     },
     showModal: {
       type: Boolean,
@@ -193,7 +194,7 @@ export default {
               this.mapFeatures();
             }
           })
-          .catch((err) => {
+          .catch(() => {
             // no file in bucket; streaming data source
             this.readOnly = true;
 
@@ -253,7 +254,7 @@ export default {
           this.loading = false;
           this.$emit('saved', {});
         })
-        .catch((err) => {
+        .catch(() => {
           this.loading = false;
           this.error = 'An error occured saving mapping.';
         });

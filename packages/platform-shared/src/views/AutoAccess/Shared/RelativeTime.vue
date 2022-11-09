@@ -22,6 +22,7 @@ export default {
   props: {
     timestamp: {
       type: String,
+      default: '',
     },
     /*  Maximum amount of relative time, after which full date is shown
             86400 is 24 hours
@@ -45,7 +46,7 @@ export default {
     secondsPast() {
       const { timestamp } = this;
       const then = new Date(timestamp);
-      const utcOffset = dayjs().utcOffset() 
+      const utcOffset = dayjs().utcOffset();
       const now = dayjs().add(-utcOffset, 'minutes').toDate();
 
       return (now.getTime() - then.getTime()) / 1000;
@@ -68,7 +69,7 @@ export default {
         }
         day = then.getDate();
         month = then.toDateString().match(/ [a-zA-Z]*/)[0].replace(' ', '');
-        year = then.getFullYear() == now.getFullYear() ? '' : ` ${then.getFullYear()}`;
+        year = then.getFullYear() === now.getFullYear() ? '' : ` ${then.getFullYear()}`;
         return `${day} ${month}${year}`;
       }
 
@@ -76,14 +77,14 @@ export default {
         return 'Just now';
       }
       if (secondsPast < 3600) {
-        return `${parseInt(secondsPast / 60)} min${includeAgo ? ' ago' : ''}`;
+        return `${parseInt((secondsPast / 60), 10)} min${includeAgo ? ' ago' : ''}`;
       }
       if (secondsPast <= 86400) {
-        const hours = parseInt(secondsPast / 3600);
+        const hours = parseInt((secondsPast / 3600), 10);
         return hours + (hours !== 1 ? ' hours' : ' hour') + (includeAgo ? ' ago' : '');
       }
       if (secondsPast <= 18144000) {
-        const days = parseInt(secondsPast / 3600 / 24);
+        const days = parseInt((secondsPast / 3600 / 24), 10);
         return days + (days !== 1 ? ' days' : ' day') + (includeAgo ? ' ago' : '');
       }
 

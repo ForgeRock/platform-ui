@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -50,7 +50,7 @@ of the MIT license. See the LICENSE file for details. -->
   </span>
 </template>
 <script>
-import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
+
 import dayjs from 'dayjs';
 import { BOverlay } from 'bootstrap-vue';
 import { getEventLogs } from '../../Activity/api/ActivityAPI';
@@ -59,7 +59,7 @@ import LineChartLegend from '../LineChart/LineChartLegend';
 import { histogramQuery, defaultData } from './api';
 import { getInterval } from '../../Shared/DateRangePicker/utility';
 import RiskScoreChange from '../../Shared/RiskScoreChange';
-import { getPrevDateRange } from '../../../util/util-functions';
+import { getPrevDateRange } from '../../Shared/utils/util-functions';
 import formatNumber from '../../../../utils/formatNumber';
 
 export default {
@@ -67,19 +67,20 @@ export default {
   components: {
     LineChart,
     LineChartLegend,
-    FrSpinner,
     BOverlay,
     RiskScoreChange,
   },
   props: {
     dateRange: {
       type: Array,
+      default: () => [],
     },
     type: {
       type: String,
       validator(value) {
         return value === 'normal' || value === 'risky' || value === 'risk-score';
       },
+      default: '',
     },
     disabled: {
       type: Boolean,
@@ -88,6 +89,7 @@ export default {
     userId: {
       type: String,
       required: false,
+      default: '',
     },
   },
   data() {
@@ -166,10 +168,11 @@ export default {
       if (this.prevSumOfAttempts === 0) {
         return '—';
       }
+      return '';
     },
-    totalSumOfAttempts(){
-        return formatNumber(sumOfAttempts(), "en-US");
-    }
+    totalSumOfAttempts() {
+      return formatNumber(this.sumOfAttempts(), 'en-US');
+    },
   },
   methods: {
     numSegments() {
@@ -179,10 +182,11 @@ export default {
       return dayjs(this.dateRange[1]).diff(this.dateRange[0], this.interval) + 1;
     },
     sumOfAttempts() {
+      const summedChartData = this.chartData.reduce((prev, current) => { let valuePrev = prev; valuePrev += parseInt(current.value, 10); return valuePrev; }, 0);
       if (this.type === 'risk-score') {
-        return this.chartData.reduce((prev, current) => prev += parseInt(current.value), 0) / this.chartData.length;
+        return summedChartData / this.chartData.length;
       }
-      return this.chartData.reduce((prev, current) => prev += parseInt(current.value), 0);
+      return summedChartData;
     },
     fetchData() {
       const numSegments = this.numSegments();
@@ -218,30 +222,33 @@ export default {
         .then((responses) => {
           responses.forEach((response, i) => {
             const placeholder = i === 0 ? [...placeholderChart] : [...placeholderPrev];
-                        response.aggregations?.histogram?.buckets.forEach((bucket) => {
-                          const val = {
-                            value: type === 'risk-score' ? bucket.avg_value.value || 0 : bucket.doc_count,
-                            id: bucket.key,
-                            timestamp: bucket.key_as_string,
-                          };
-                          const index = placeholder.findIndex((d) => dayjs(d.timestamp).isSame(val.timestamp, interval));
+            const responseBucket = response.aggregations?.histogram?.buckets.forEach((bucket) => {
+              const val = {
+                value: type === 'risk-score' ? bucket.avg_value.value || 0 : bucket.doc_count,
+                id: bucket.key,
+                timestamp: bucket.key_as_string,
+              };
+              const index = placeholder.findIndex((d) => dayjs(d.timestamp).isSame(val.timestamp, interval));
+              placeholder[index] = val;
+            });
 
-                          placeholder[index] = val;
-                        });
-
-                        if (i === 0) {
-                          this.chartData = placeholder;
-                        } else {
-                          this.previousData = placeholder;
-                          this.prevSumOfAttempts = placeholder.reduce((prev, current) => prev += current.value, 0);
-                        }
+            if (i === 0) {
+              this.chartData = placeholder;
+            } else {
+              this.previousData = placeholder;
+              this.prevSumOfAttempts = placeholder.reduce((prev, current) => {
+                let valuePrev = prev;
+                valuePrev += current.value;
+                return valuePrev;
+              }, 0);
+            }
+            return responseBucket;
           });
 
           this.$emit('loading', false);
           this.loading = false;
         })
-        .catch((e) => {
-          // TODO
+        .catch(() => {
           this.$emit('loading', false);
           this.loading = false;
         });

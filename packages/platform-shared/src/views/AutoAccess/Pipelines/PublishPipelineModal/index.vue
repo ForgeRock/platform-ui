@@ -84,12 +84,14 @@ export default {
   props: {
     pipeline: {
       type: Object,
+      default: () => ({}),
     },
     showModal: {
       type: Boolean,
     },
     publishedPipeline: {
       type: Object,
+      default: () => ({}),
     },
   },
   data() {

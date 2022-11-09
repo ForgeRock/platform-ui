@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -20,6 +20,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+/* eslint-disable import/no-extraneous-dependencies, no-undef */
 import { Loader } from '@googlemaps/js-api-loader';
 import { MarkerClusterer } from '@googlemaps/markerclusterer';
 import { BSpinner } from 'bootstrap-vue';
@@ -111,7 +112,7 @@ export default {
       }
     },
     infoWindowContent(sum, avg) {
-      const formatSum = formatNumber(sum, "en-US");
+      const formatSum = formatNumber(sum, 'en-US');
       return `<div class="info-content font-weight-normal">${formatSum} Risky Event${sum !== 1 ? 's' : ''}<div>Average Score ${Math.round(avg)}</div></div>`;
     },
     /*
@@ -163,16 +164,16 @@ export default {
           const infoWindow = new google.maps.InfoWindow({
             content: '',
           });
-          const bounds = new google.maps.LatLngBounds();
+          const allBounds = new google.maps.LatLngBounds();
 
-          const markers = data.aggregations.lat_lon_data.lat_lon_locations.buckets.map((bucket, i) => {
+          const markers = data.aggregations.lat_lon_data.lat_lon_locations.buckets.map((bucket) => {
             const sum = bucket.doc_count;
             const marker = new google.maps.Marker({
-              ...markerStyle(new google.maps.LatLng(bucket.key[0], bucket.key[1]), sum,formatNumber(sum,"en-US")),
+              ...markerStyle(new google.maps.LatLng(bucket.key[0], bucket.key[1]), sum, formatNumber(sum, 'en-US')),
               getData: () => bucket,
             });
 
-            bounds.extend(marker.position);
+            allBounds.extend(marker.position);
 
             marker.addListener('click', () => {
               infoWindow.close();
@@ -190,17 +191,17 @@ export default {
           const renderer = {
             render(
               cluster,
-              stats,
             ) {
+              // eslint-disable-next-line no-shadow
               const { position, markers } = cluster;
               const { sum } = getMarkersStats(markers);
-              return new google.maps.Marker(markerStyle(position,sum, formatNumber(sum, "en-US")));
+              return new google.maps.Marker(markerStyle(position, sum, formatNumber(sum, 'en-US')));
             },
           };
 
-          const onClusterClick = function (e, cluster, map) {
-            const { markers, marker } = cluster;
-            const { sum, avg } = getMarkersStats(markers);
+          const onClusterClick = (cluster, map) => {
+            const { allMarkers, marker } = cluster;
+            const { sum, avg } = getMarkersStats(allMarkers);
 
             infoWindow.close();
             infoWindow.open(map);

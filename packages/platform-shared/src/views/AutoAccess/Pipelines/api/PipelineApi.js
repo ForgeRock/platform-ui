@@ -7,8 +7,7 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import { generateAutoAccessApi, generateAutoAccessJas } from '@forgerock/platform-shared/src/api/BaseApi';
-// import { getData, postData } from '../../Shared/utils/axios-utils';
-import _ from 'lodash';
+import { get, cloneDeep } from 'lodash';
 import store from '@/store';
 import { saveEntityInstances, deleteEntityInstance } from '../../Entities/api/EntitiesAPI';
 
@@ -27,43 +26,42 @@ export const defaultParameters = (key) => {
   switch (key) {
     case 'Model C':
       return {
-        "min_number_of_clusters": 4,
-        "max_number_of_clusters": 45,
-      }
+        min_number_of_clusters: 4,
+        max_number_of_clusters: 45,
+      };
     case 'embeddings':
       return {
-        "embedding_dimension": 20,
-        "learning_rate": 1e-3,
-        "window": 5
-      }
+        embedding_dimension: 20,
+        learning_rate: 1e-3,
+        window: 5,
+      };
     case 'Model A':
     case 'Model B':
     default:
       return {
-        "batch_size": 512,
-        "epochs": 1000,
-        "learning_rate": 1e-3
-      }
+        batch_size: 512,
+        epochs: 1000,
+        learning_rate: 1e-3,
+      };
   }
-}
+};
 
 export const defaultPipelineParameters = () => {
   const param = {};
-  ['Model A', 'Model B', 'Model C', 'embeddings'].forEach(key => {
-    param[key] = defaultParameters(key)
-  })
+  ['Model A', 'Model B', 'Model C', 'embeddings'].forEach((key) => {
+    param[key] = defaultParameters(key);
+  });
 
-  return param
-}
+  return param;
+};
 
 export const getPipelineDefinition = () => new Promise((resolve, reject) => {
-  // getData('jas/entityDefinitions/autoaccess/api/pipeline_definition?latest=true')
   generateAutoAccessJas().get('/entityDefinitions/autoaccess/api/pipeline_definition?latest=true')
     .then(({ data: result }) => {
       resolve(result);
     })
-    .catch((err) => {
-      reject('An error occured when fetching pipelines definition.');
+    .catch(() => {
+      reject(new Error('An error occured when fetching pipelines definition.'));
     });
 });
 
@@ -160,7 +158,6 @@ export const getPipelines = (sort, search, searchAfter = [], filters) => {
   }
 
   return new Promise((resolve, reject) => {
-    // postData(`jas/entity/search${def.namespace}/${def.name}/${def.version}`, { query })
     generateAutoAccessJas().post(`/entity/search${def.namespace}/${def.name}/${def.version}`, { query })
       .then(({ data: result }) => {
         const items = result.hits.hits.map((item) => (
@@ -172,8 +169,8 @@ export const getPipelines = (sort, search, searchAfter = [], filters) => {
         ));
         resolve({ items, total: result.hits.total.value });
       })
-      .catch((err) => {
-        reject('An error occured when fetching pipelines.');
+      .catch(() => {
+        reject(new Error('An error occured when fetching pipelines.'));
       });
   });
 };
@@ -188,7 +185,6 @@ export const getPipelineById = (id) => {
     },
   };
   return new Promise((resolve, reject) => {
-    // postData(`jas/entity/search${def.namespace}/${def.name}/${def.version}`, { query })
     generateAutoAccessJas().post(`/entity/search${def.namespace}/${def.name}/${def.version}`, { query })
       .then(({ data: result }) => {
         const items = result.hits.hits.map((item) => (
@@ -200,8 +196,8 @@ export const getPipelineById = (id) => {
         ));
         resolve({ items, total: result.hits.total.value });
       })
-      .catch((err) => {
-        reject('An error occured when fetching pipelines.');
+      .catch(() => {
+        reject(new Error('An error occured when fetching pipelines.'));
       });
   });
 };
@@ -226,21 +222,21 @@ export const getLatestExecution = (executions) => {
   return executions[0];
 };
 
-export const savePipeline = (pipeline) => new Promise((resolve, reject) => {
+export const savePipeline = (pipeline) => new Promise((resolve) => {
   const saveType = pipeline.pipeline_id ? 'create' : 'upsert';
   const payload = [
     internalToAPIPipeline(pipeline),
   ];
 
   saveEntityInstances(store.state.Pipelines.pipeline_definition, payload, saveType)
-    .then((response) => {
+    .then(() => {
       resolve(true);
     });
 });
 
-export const deletePipeline = (pipeline) => new Promise((resolve, reject) => {
+export const deletePipeline = (pipeline) => new Promise((resolve) => {
   deleteEntityInstance([pipeline], store.state.Pipelines.pipeline_definition)
-    .then((response) => {
+    .then(() => {
       resolve(true);
     });
 });
@@ -250,26 +246,36 @@ export const runPipeline = (pipelineDefinitionId, riskThreshold) => new Promise(
     pipeline_definition_id: pipelineDefinitionId,
     ueba_risk_threshold: riskThreshold,
   };
-  // postData('/api/pipeline', payload)
   generateAutoAccessApi().post('/pipeline', payload)
     .then(({ data: response }) => {
       resolve(response);
     })
-    .catch((err) => {
-      reject('An error occured.');
+    .catch(() => {
+      reject(new Error('An error occured.'));
     });
 });
 
 export const getPipelineStatus = (executionID) => new Promise((resolve, reject) => {
-  // getData(`/api/pipeline?executionID=${encodeURIComponent(executionID)}`)
   generateAutoAccessApi().get(`/pipeline?executionID=${encodeURIComponent(executionID)}`)
     .then(({ data: response }) => {
       resolve(response);
     })
-    .catch((err) => {
-      reject('An error occured.');
+    .catch(() => {
+      reject(new Error('An error occured.'));
     });
 });
+
+const pipelineStatusFromStateAndResult = (state, result) => {
+  let finalResult = result;
+  finalResult = finalResult.replaceAll('\'', '');
+  if (state === 'SUCCEEDED') {
+    if (finalResult === 'FAILURE') {
+      return 'FAILED';
+    }
+    return 'SUCCEEDED';
+  }
+  return state;
+};
 
 export const checkStatusAndUpdate = (executionsToCheck) => {
   const promises = executionsToCheck.map((execution) => new Promise((resolve, reject) => {
@@ -277,17 +283,17 @@ export const checkStatusAndUpdate = (executionsToCheck) => {
       .then((response) => {
         resolve({ response, execution });
       })
-      .catch((err) => {
-        reject('An error occured.');
+      .catch(() => {
+        reject(new Error('An error occured.'));
       });
   }));
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     Promise.all(promises).then((values) => {
       // const toUpdate = values.filter(update => update.response.state !== 'ACTIVE')
 
       const updatePromises = values.map((update) => {
-        const executions = _.cloneDeep(update.execution.pipeline.pipeline_executions);
+        const executions = cloneDeep(update.execution.pipeline.pipeline_executions);
         let updatePipeline = false;
 
         executions.forEach((execution, i) => {
@@ -313,7 +319,7 @@ export const checkStatusAndUpdate = (executionsToCheck) => {
         if (updatePipeline) {
           return savePipeline({ ...update.execution.pipeline, pipeline_executions: executions });
         }
-        return new Promise((resolve, reject) => { resolve(true); });
+        return new Promise((solve) => { solve(true); });
       });
 
       resolve(
@@ -321,17 +327,6 @@ export const checkStatusAndUpdate = (executionsToCheck) => {
       );
     });
   });
-};
-
-const pipelineStatusFromStateAndResult = (state, result) => {
-  result = result.replaceAll('\"', '');
-  if (state === 'SUCCEEDED') {
-    if (result === 'FAILURE') {
-      return 'FAILED';
-    }
-    return 'SUCCEEDED';
-  }
-  return state;
 };
 
 export const getIncompleteExecutions = (pipelines) => {
@@ -349,7 +344,6 @@ export const getIncompleteExecutions = (pipelines) => {
 };
 
 export const getExecutionModels = (pipelineId) => new Promise((resolve, reject) => {
-  // getData(`/api/pipeline/${pipelineId}/models`)
   generateAutoAccessApi().get(`/pipeline/${pipelineId}/models`)
     .then(({ data: result }) => {
       resolve(result);
@@ -373,7 +367,6 @@ export const isPipelineSuccess = (status) => status === 'SUCCEEDED';
 
 export const publishTrainingPipeline = (id) => new Promise((resolve, reject) => {
   const payload = { pipeline_definition_id: id };
-  // postData('/api/pipeline/publish', payload)
   generateAutoAccessApi().post('/pipeline/publish', payload)
     .then(({ data: result }) => {
       resolve(result);
@@ -392,22 +385,21 @@ export const getPublishedTrainingPipeline = () => {
     },
   };
   return new Promise((resolve, reject) => {
-    // postData('jas/entity/search/common/config', { query })
     generateAutoAccessJas().post('/entity/search/common/config', { query })
       .then(({ data: result }) => {
-        const path = _.get(result, 'hits.hits[0]._source.value.common_settings.JSLT_MAPPER_PATH', null);
-        const id = _.get(path.split('/'), '[3]', null);
+        const path = get(result, 'hits.hits[0]._source.value.common_settings.JSLT_MAPPER_PATH', null);
+        const id = get(path.split('/'), '[3]', null);
 
         if (id) {
-          getPipelineById(id).then((result) => {
-            resolve(_.get(result, 'items[0]', {}));
+          getPipelineById(id).then((finalResult) => {
+            resolve(get(finalResult, 'items[0]', {}));
           });
         } else {
           resolve({});
         }
       })
-      .catch((err) => {
-        reject('An error occured while fetching published training pipeline.');
+      .catch(() => {
+        reject(new Error('An error occured while fetching published training pipeline.'));
       });
   });
 };

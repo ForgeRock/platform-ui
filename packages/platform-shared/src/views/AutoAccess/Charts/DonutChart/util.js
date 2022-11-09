@@ -5,6 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+/* eslint-disable no-undef */
 import * as d3 from 'd3';
 
 export const dim = {
@@ -12,22 +13,14 @@ export const dim = {
   height: 168,
 };
 
-// interface PieChartDataPoint {
-//     count: number,
-//     attr: string,
-//     value: string,
-// }
-
 const arc = d3.arc()
-  .innerRadius(dim.width / 2 * 0.905)
+  .innerRadius((dim.width / 2) * 0.905)
   .outerRadius(dim.width / 2);
 
 function arcTween(a) {
   const i = d3.interpolate(this._current, a);
   this._current = i(0);
-  return function (t) {
-    return arc(i(t));
-  };
+  return (t) => arc(i(t));
 }
 
 export const init = (d3Container) => {
@@ -47,12 +40,12 @@ export const init = (d3Container) => {
         .attr('rx', 4);
       tooltip.append('g')
         .attr('class', 'text-group')
-        .call((selection) => {
-          selection.append('text')
+        .call((select) => {
+          select.append('text')
             .attr('class', 'attr')
             .style('fill', '#fff')
             .style('font-size', '0.625rem');
-          selection.append('text')
+          select.append('text')
             .attr('class', 'value')
             .style('fill', '#fff')
             .style('font-size', '0.625rem');
@@ -60,10 +53,7 @@ export const init = (d3Container) => {
     });
 };
 
-export const update = (d3Container, riskInfo) => {
-  // const { drivingFactors, attrCount } = getDrivingFactors(role.justifications, identitySchema);
-  // const data = getFlattenedDrivingFactors(drivingFactors);
-  console.log(riskInfo);
+export const update = (d3Container) => {
   const data = [];
   const svg = d3.select(d3Container).select('g');
 
@@ -73,8 +63,6 @@ export const update = (d3Container, riskInfo) => {
 
   const pie = d3.pie()
     .padAngle(0.02)
-  // .sort((a,b) => attrCount[b.attr] - attrCount[a.attr])
-  // .sort((a,b) => a.attr.localeCompare(b.attr))
     .value((d) => d.count);
 
   const arcs = pie(data);
@@ -109,17 +97,17 @@ export const update = (d3Container, riskInfo) => {
           .style('opacity', 1)
           .duration(200);
       })
-      .on('mouseout', (event, d) => {
+      .on('mouseout', () => {
         const tooltip = d3.select('.driving-factors-donut-chart-tooltip');
 
         tooltip.transition()
           .style('opacity', 0)
           .duration(200);
       }),
-    (update) => update
+    (updateAttr) => updateAttr
       .attr('fill', (d) => color(d.data.attr))
       .attr('d', arc)
-      .call((update) => update
+      .call((updateData) => updateData
         .transition()
         .duration(750)
         .attrTween('d', arcTween)));

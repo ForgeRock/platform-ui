@@ -28,20 +28,16 @@ export default {
   props: {
     segments: {
       type: Array,
+      default: () => [],
     },
   },
   computed: {
   },
-  watch: {
-    segments(newVal) {
-      console.log(newVal);
-    },
-  },
   methods: {
     arc() {
       d3.arc()
-        .innerRadius(dim.width / 2 * 0.905)
-        .outerRadius(dim.width / 2);
+        .innerRadius((this.dim.width / 2) * 0.905)
+        .outerRadius(this.dim.width / 2);
     },
     pie() {
 

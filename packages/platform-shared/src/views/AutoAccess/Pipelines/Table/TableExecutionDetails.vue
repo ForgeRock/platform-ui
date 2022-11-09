@@ -7,7 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     :fields="fields"
     :items="rows"
     fixed
-    :class="`border pipelines-table-execution-details ${showPipelineName ? &quot;has-name-col&quot; : &quot;&quot;}`"
+    :class="`border pipelines-table-execution-details ${showPipelineName ? `has-name-col` : ``}`"
     v-if="pipelineExecutions && pipelineExecutions.length > 0"
   >
     <template #cell(status)="data">
@@ -40,21 +40,16 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 <script>
 import dayjs from 'dayjs';
-import { BButton } from 'bootstrap-vue';
-import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import FrTable from '../../Shared/DataTable';
 import TableExecutionStatusBadge from './TableExecutionStatusBadge';
 import RelativeTime from '../../Shared/RelativeTime';
-import { getLatestExecution } from '../api/PipelineApi';
 
 export default {
   name: 'TableExecutionDetails',
   components: {
-    FrSpinner,
     FrTable,
     TableExecutionStatusBadge,
     RelativeTime,
-    BButton,
   },
   props: {
     pipelineExecutions: {
@@ -145,11 +140,11 @@ export default {
     },
   },
   methods: {
-    getGCPURL(execution_id) {
+    getGCPURL(executionId) {
       try {
-        const location = execution_id.split('/locations/')[1].split('/')[0];
-        const workflow = execution_id.split('/workflows/')[1].split('/')[0];
-        const execution = execution_id.split('/executions/')[1].split('/')[0];
+        const location = executionId.split('/locations/')[1].split('/')[0];
+        const workflow = executionId.split('/workflows/')[1].split('/')[0];
+        const execution = executionId.split('/executions/')[1].split('/')[0];
         return `https://console.cloud.google.com/workflows/workflow/${location}/${workflow}/execution/${execution}`;
       } catch {
         return '';

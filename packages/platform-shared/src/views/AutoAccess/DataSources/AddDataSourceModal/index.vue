@@ -172,7 +172,7 @@ of the MIT license. See the LICENSE file for details. -->
       <LoadingButton
         size="md"
         variant="primary"
-        :label="&quot;Save Config&quot;"
+        :label="$t(`autoAccess.access.dataSources.addDataSourceModal.saveConfig`)"
         :loading="loading"
         v-else-if="previewConfigObj"
         @click="save" />
@@ -301,10 +301,10 @@ export default {
         if (!val.row.isPrefix && !val.row.isFolder) {
           if (!this.errorCache[val.row.id]) {
             isValidFile(val.row.bucket, val.row.prefix)
-              .then((result) => {
+              .then(() => {
                 // do nothing
               })
-              .catch((err) => {
+              .catch(() => {
                 this.setError(val.row.id);
               });
           }
@@ -326,6 +326,7 @@ export default {
         if (!row.isFolder || this.type === 'risk-config') {
           dropdown.push({
             action: () => {
+              // eslint-disable-next-line vue/no-side-effects-in-computed-properties
               this.preview = row;
             },
             text: this.$t(`${this.dictionaryPath}.table.dropdown.preview`),
@@ -350,10 +351,16 @@ export default {
             },
           );
         }
-
+        let materialIcon = 'article';
+        if (this.errorCache[row.id]) {
+          materialIcon = 'error_outline';
+        }
+        if (row.isFolder) {
+          materialIcon = 'folder_open';
+        }
         return {
           ...row,
-          material_icon: this.errorCache[row.id] ? 'error_outline' : row.isFolder ? 'folder_open' : 'article',
+          material_icon: materialIcon,
           dropdown,
         };
       });
@@ -389,7 +396,7 @@ export default {
           this.totalRecords = result.total;
           this.page = page;
         })
-        .catch((err) => {
+        .catch(() => {
           this.loading = false;
         });
     },
@@ -430,10 +437,10 @@ export default {
 
       if (this.type === 'risk-config') {
         saveRiskConfig(this.processJSON)
-          .then((response) => {
+          .then(() => {
             this.$emit('saved');
           })
-          .catch((err) => {
+          .catch(() => {
             this.error = 'An error occured.';
           })
           .finally(() => {
@@ -441,10 +448,10 @@ export default {
           });
       } else {
         saveDataSource(defaultDataSourceFromBucket({ ...this.define }))
-          .then((response) => {
+          .then(() => {
             this.$emit('saved');
           })
-          .catch((err) => {
+          .catch(() => {
             this.error = 'An error occured.';
           })
           .finally(() => {

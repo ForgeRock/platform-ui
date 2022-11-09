@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -59,15 +59,16 @@ export const getMarkersStats = (markers) => {
   return { sum, avg };
 };
 
-export const markerStyle = (position, sum, sum_formatted) => ({
+export const markerStyle = (position, sum, sumFormatted) => ({
   position,
   label: {
-    text: `${sum > 0 ? sum_formatted : ' '}`,
+    text: `${sum > 0 ? sumFormatted : ' '}`,
     color: '#fff',
     fontWeight: 'normal',
     fontSize: '12px',
   },
   icon: {
+    // eslint-disable-next-line no-undef
     path: google.maps.SymbolPath.CIRCLE,
     scale: Math.min(50, Math.max(10, 6 * Math.log(sum))),
     fillColor: '#f7685b',

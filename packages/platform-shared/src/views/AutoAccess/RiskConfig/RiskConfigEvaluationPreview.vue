@@ -55,6 +55,7 @@ of the MIT license. See the LICENSE file for details. -->
   </div>
 </template>
 <script>
+/* eslint-disable import/no-extraneous-dependencies */
 import { BAlert, BButton, BOverlay } from 'bootstrap-vue';
 import { getConfigurationChangesPreview } from './api/RiskConfigAPI';
 
@@ -69,8 +70,14 @@ export default {
     BOverlay,
   },
   props: {
-    dataSource: Object,
-    processJSON: Object,
+    dataSource: {
+      type: Object,
+      default: () => ({}),
+    },
+    processJSON: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   data() {
     return {
@@ -91,7 +98,7 @@ export default {
         this.riskEvaluation = [];
         this.error = 'Risk evaluation unavailable.';
       }
-    }).catch((err) => {
+    }).catch(() => {
       this.error = 'An error occured fetching risk evaluation preview.';
     }).finally(() => {
       this.loading = false;

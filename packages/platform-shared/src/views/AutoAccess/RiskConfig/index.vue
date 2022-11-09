@@ -65,10 +65,10 @@ of the MIT license. See the LICENSE file for details. -->
   </div>
 </template>
 <script>
+/* eslint-disable import/no-extraneous-dependencies */
 import {
-  BAlert, BButton, BOverlay, BFormCheckbox,
+  BAlert, BButton, BOverlay,
 } from 'bootstrap-vue';
-import { edit } from 'brace';
 import AddDataSourceModal from '../DataSources/AddDataSourceModal';
 import { getDefaultProcess } from './api/RiskConfigAPI';
 
@@ -82,7 +82,6 @@ export default {
     BAlert,
     BButton,
     BOverlay,
-    BFormCheckbox,
     AddDataSourceModal,
   },
   data() {

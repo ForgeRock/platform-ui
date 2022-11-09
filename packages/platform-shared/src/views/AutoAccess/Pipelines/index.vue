@@ -385,10 +385,17 @@ export default {
         });
     },
     checkPipelineStatus(item = {}) {
-      const incomplete = item.pipeline
-        ? item.execution_id ? [item]
-          : getIncompleteExecutions([item.pipeline])
-        : getIncompleteExecutions(this.pipelines);
+      let incomplete;
+      if (item.pipeline) {
+        if (item.execution_id) {
+          incomplete = [item];
+        } else {
+          incomplete = getIncompleteExecutions([item.pipeline]);
+        }
+      } else {
+        incomplete = getIncompleteExecutions(this.pipelines);
+      }
+
       this.pendingStatus = incomplete.map((execution) => execution.execution_id);
 
       checkStatusAndUpdate(incomplete.filter((execution) => execution.execution_id !== 'temp_execution'))
@@ -407,7 +414,7 @@ export default {
       } else if (this.pendingStatus.indexOf(id) === -1 && status) {
         this.pendingStatus = [...this.pendingStatus, id];
       } else {
-        this.pendingStatus = [...this.pendingStatus.filter((exec_id) => exec_id !== id)];
+        this.pendingStatus = [...this.pendingStatus.filter((execId) => execId !== id)];
       }
     },
     handleSort(sort) {

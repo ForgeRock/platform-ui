@@ -68,9 +68,11 @@ export default {
   props: {
     dataSource: {
       type: Object,
+      default: () => ({}),
     },
     mapping: {
       type: Object,
+      default: () => ({}),
     },
     readOnly: {
       type: Boolean,

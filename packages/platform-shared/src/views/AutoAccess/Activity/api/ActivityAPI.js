@@ -5,10 +5,9 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import _ from 'lodash';
+import { uniq, get } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { generateAutoAccessJas } from '@forgerock/platform-shared/src/api/BaseApi';
-// import { postData } from '../../Shared/utils/axios-utils';
 
 const entitySearch = '/entity/search/';
 
@@ -43,6 +42,7 @@ export const causeMap = {
 export const apiToInternalEvent = (data) => {
   const { _source } = data;
   const {
+    // eslint-disable-next-line camelcase
     raw_event_data, features, risk_score_data, ueba_signal,
   } = _source.predictionResult;
 
@@ -99,6 +99,7 @@ export const updateEvent = (param) => {
     ...param,
   };
 
+  // eslint-disable-next-line no-undef
   return generateAutoAccessJas().post(`/entity/persist${entityPath}`, queryParam);
 };
 
@@ -112,7 +113,6 @@ export const getFeatures = () => {
     'predictionResult.features.browserData.device',
     'predictionResult.features.browserData.deviceType',
     'predictionResult.features.dayparting',
-    // 'predictionResult.features.userId',
     'predictionResult.features.rawUserId',
   ];
 
@@ -138,7 +138,6 @@ export const getFeatures = () => {
         },
       };
     });
-    // postData(`/autoaccess/jas/entity/search${entityPath}`, param)
     generateAutoAccessJas().post(entitySearch, param)
       .then(({ data }) => {
         resolve(Object.keys(data.aggregations).map((key) => {
@@ -251,14 +250,13 @@ export const getUEBAClusteringExplainability = () => new Promise((resolve, rejec
   };
   generateAutoAccessJas().post(entitySearch, param)
     .then(({ data }) => {
-      const reason = [..._.get(data, 'aggregations.ueba_reason.buckets', []), ..._.get(data, 'aggregations.clustering_reason.buckets', [])];
-      const keys = _.uniq(reason.map((reason) => reason.key))
+      const reasons = [...get(data, 'aggregations.ueba_reason.buckets', []), ...get(data, 'aggregations.clustering_reason.buckets', [])];
+      const keys = uniq(reasons.map((reason) => reason.key))
         .sort((a, b) => (causeMap[a] || a).localeCompare(causeMap[b] || b)).filter((key) => key !== 'failed' && key !== 'unknown');
 
       resolve(keys);
     })
     .catch((e) => {
-      console.log('error:', e);
       reject(e);
     });
 });

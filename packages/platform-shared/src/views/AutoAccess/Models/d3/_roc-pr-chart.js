@@ -8,35 +8,15 @@
 import * as d3 from 'd3';
 
 import { ChartKey, dim } from '../data/meta';
-import { initChart } from './chart';
+import initChart from './chart';
 import { initDetail, appendAUC, removeAUC } from './detail';
 import { setScales } from './scales';
 import { updateSlider } from './slider';
-import {
-  getSelected, setHypothetical, setModelId, setSelected, setRiskConfig, getHypothetical,
-} from './state';
-import { updateChartData, updateHypothetical, updateSelected } from './update';
+import { setHypothetical, setModelId, getHypothetical } from './state';
+import { updateChartData, updateHypothetical } from './update';
 
-const init = (d3Container, data, modelId, auc) => {
-  const svg = d3
-    .select(d3Container)
-    .style('max-width', `${dim.width * 2 + dim.detailMargin.lr * 2 + dim.detailWidth}px`)
-    .attr('viewBox', `0 0 ${dim.width * 2 + dim.detailMargin.lr * 2 + dim.detailWidth} ${dim.height}`);
-
-  const roc = svg.append('g').attr('id', 'roc-chart');
-  initChart(roc, ChartKey.ROC);
-
-  const pr = svg
-    .append('g')
-    .attr('id', 'pr-chart')
-    .style('transform', `translate(${dim.width + dim.detailWidth + dim.detailMargin.lr * 2}px, 0)`);
-  initChart(pr, ChartKey.PR);
-
-  initDetail(svg);
-
-  update(d3Container, data, modelId, auc, true);
-
-  return d3Container;
+const setDefaultValues = (data) => {
+  setHypothetical(data.find((d) => d.t === 85) || data[Math.floor(data.length / 2)]);
 };
 
 const update = (d3Container, data, modelId, auc, isInit = false) => {
@@ -79,8 +59,26 @@ const update = (d3Container, data, modelId, auc, isInit = false) => {
   return d3Container;
 };
 
-const setDefaultValues = (data) => {
-  setHypothetical(data.find((d) => d.t === 85) || data[Math.floor(data.length / 2)]);
+const init = (d3Container, data, modelId, auc) => {
+  const svg = d3
+    .select(d3Container)
+    .style('max-width', `${dim.width * 2 + dim.detailMargin.lr * 2 + dim.detailWidth}px`)
+    .attr('viewBox', `0 0 ${dim.width * 2 + dim.detailMargin.lr * 2 + dim.detailWidth} ${dim.height}`);
+
+  const roc = svg.append('g').attr('id', 'roc-chart');
+  initChart(roc, ChartKey.ROC);
+
+  const pr = svg
+    .append('g')
+    .attr('id', 'pr-chart')
+    .style('transform', `translate(${dim.width + dim.detailWidth + dim.detailMargin.lr * 2}px, 0)`);
+  initChart(pr, ChartKey.PR);
+
+  initDetail(svg);
+
+  update(d3Container, data, modelId, auc, true);
+
+  return d3Container;
 };
 
 export { init, update };

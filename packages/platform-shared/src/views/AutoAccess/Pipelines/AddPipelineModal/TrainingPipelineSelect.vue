@@ -28,7 +28,10 @@ export default {
     FrField,
   },
   props: {
-    trainingPipelineId: String,
+    trainingPipelineId: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {

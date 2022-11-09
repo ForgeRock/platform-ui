@@ -815,7 +815,15 @@
               "preview": "Preview",
               "define": "Define Data Source"
             }
-          }
+          },
+          "saveConfig": "Save Config"
+        },
+        "dataSourcesAPI":{
+          "fileError": "File not found", 
+          "bucketError": "Bucket not found",
+          "errorInvalidJSON": "Invalid JSONL. Cannot be used as Data Source.", 
+          "errorFetchData": "An error occured when fetching data source definition.",
+          "errorFetchDataSources": "An error occured when fetching data sources."
         },
         "createMappingModal": {
           "header": "Data Source Mapping",
@@ -897,7 +905,9 @@
       "models": {
         "title": "Training results",
         "optionTitle": "Select a model",
-        "riskConfigSuccess": "Risk threshold of {value} saved for {model}"
+        "riskConfigSuccess": "Risk threshold of {value} saved for {model}", 
+        "noDataError": "No data available",
+        "fetchDataError": "An error occured fetching model data."
       },
       "riskConfig": {
         "title": "Risk Configuration",

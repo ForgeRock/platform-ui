@@ -5,6 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+import dayjs from 'dayjs';
+
 export const riskiestUsersQuery = (dates) => ({
   size: 10,
   query: {
@@ -533,6 +535,7 @@ export const getRiskHistogramForUser = (userId, riskScore, model, dateRange) => 
   const queryParam = {
     query: param,
   };
+  // eslint-disable-next-line no-undef
   postData(`/jas/entity/search${entityPath}`, queryParam)
     .then((data) => {
       resolve(data);
@@ -686,9 +689,10 @@ export const getLogAttributesForUser = (userId, dateRange) => new Promise((resol
       },
     });
   }
+  /* eslint-disable no-undef */
   const myLogAttributes = [...logAttributes];
   myLogAttributes.push({ label: 'Component', id: 'component' });
-  myLogAttributes.map((attr) => {
+  myLogAttributes.forEach((attr) => {
     aggsParam.aggs.log_attributes.aggs[attr.id] = { terms: { field: `${attr.id}.keyword`, size: 1000 } };
   });
   const param = {

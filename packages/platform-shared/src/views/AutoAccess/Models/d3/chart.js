@@ -11,18 +11,6 @@ import { chartMeta, dim } from '../data/meta';
 import { updateCrosshair, updateCrosshairHover } from './crosshair';
 import { getHypothetical } from './state';
 
-const initChart = (svg, key) => {
-  svg
-    .append('text')
-    .text(chartMeta[key].labels.title)
-    .style('transform', `translate(${dim.width / 2}px, 30px)`)
-    .attr('class', 'roc-pr-chart-title');
-
-  appendAxes(svg, key);
-  appendHoverArea(key, svg);
-  appendChart(svg);
-};
-
 function appendAxes(svg, key) {
   const meta = chartMeta[key];
 
@@ -114,4 +102,16 @@ const appendChart = (svg) => {
   svg.append('g').attr('class', 'roc-pr-chart-points-g');
 };
 
-export { initChart };
+const initChart = (svg, key) => {
+  svg
+    .append('text')
+    .text(chartMeta[key].labels.title)
+    .style('transform', `translate(${dim.width / 2}px, 30px)`)
+    .attr('class', 'roc-pr-chart-title');
+
+  appendAxes(svg, key);
+  appendHoverArea(key, svg);
+  appendChart(svg);
+};
+
+export default { initChart };

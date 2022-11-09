@@ -70,7 +70,7 @@ import {
 } from 'bootstrap-vue';
 import dayjs from 'dayjs';
 import Calendar from './Calendar';
-import { dateRangeoOptions, defaultDateRange } from './utility';
+import { dateRangeoOptions } from './utility';
 import store from '@/store';
 
 export default {
@@ -165,10 +165,10 @@ export default {
 
       dates.sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
-      const utcOffset = dayjs().utcOffset()
+      const utcOffset = dayjs().utcOffset();
       const utcDates = [
         dayjs(dates[0]).add(-utcOffset, 'm').format(),
-        dayjs(dates[1]).endOf('d').add(-utcOffset, 'm').format()
+        dayjs(dates[1]).endOf('d').add(-utcOffset, 'm').format(),
       ];
 
       this.tempDateRange = dates;

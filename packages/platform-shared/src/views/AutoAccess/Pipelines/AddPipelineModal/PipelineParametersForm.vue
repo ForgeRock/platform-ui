@@ -59,7 +59,7 @@ import {
   BListGroup, BListGroupItem, BCollapse, BButton, BBadge,
 } from 'bootstrap-vue';
 import { v4 as uuidv4 } from 'uuid';
-import _ from 'lodash';
+import { capitalize } from 'lodash';
 import FrField from '../../Shared/Field';
 
 export default {
@@ -79,6 +79,7 @@ export default {
     },
     parameterValidation: {
       type: Object,
+      default: () => ({}),
     },
   },
   data() {
@@ -103,7 +104,7 @@ export default {
                 {
                   key: pKey,
                   value: this.parameters[key][pKey],
-                  title: _.capitalize(pKey.replace('_', ' ')),
+                  title: capitalize(pKey.replace('_', ' ')),
                   type: 'number',
                 },
               );

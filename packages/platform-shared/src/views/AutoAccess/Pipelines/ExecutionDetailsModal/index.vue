@@ -130,9 +130,11 @@ export default {
   props: {
     pipeline: {
       type: Object,
+      default: () => ({}),
     },
     pendingStatus: {
       type: Array,
+      default: () => [],
     },
     showModal: {
       type: Boolean,
@@ -142,6 +144,7 @@ export default {
     },
     publishedPipeline: {
       type: Object,
+      default: () => ({}),
     },
   },
   data() {
@@ -174,10 +177,13 @@ export default {
     },
     executions() {
       const { pipeline, evaluateExecution } = this;
-      return pipeline
-        ? evaluateExecution ? [evaluateExecution]
-          : pipeline.pipeline_executions
-        : [];
+      if (pipeline) {
+        if (evaluateExecution) {
+          return [evaluateExecution];
+        }
+        return pipeline.pipeline_executions;
+      }
+      return [];
     },
     isPublished() {
       if (!this.pipeline || !this.publishedPipeline) {

@@ -11,7 +11,7 @@ import store from '@/store';
 
 const TENANT_ID = '21638f94-210e-4463-9ee1-fd4d2e1b0ed0';
 
-export const getData = (url, headers) => new Promise(async (resolve, reject) => {
+export const getData = (url, headers) => new Promise((resolve, reject) => {
   const myHeaders = {
     headers: {
       'Content-Type': 'application/json',
@@ -33,7 +33,7 @@ export const getData = (url, headers) => new Promise(async (resolve, reject) => 
     });
 });
 
-export const getDataToken = (url, headers) => new Promise(async (resolve, reject) => {
+export const getDataToken = (url, headers) => new Promise((resolve, reject) => {
   const { token } = store.state.AutoAccessAuth;
   const myHeaders = {
     headers: {
@@ -56,7 +56,7 @@ export const getDataToken = (url, headers) => new Promise(async (resolve, reject
     });
 });
 
-export const postDataToken = (url, postData, headers) => new Promise(async (resolve, reject) => {
+export const postDataToken = (url, postData, headers) => new Promise((resolve, reject) => {
   const { token } = store.state.AutoAccessAuth;
   const myHeaders = {
     headers: {
@@ -79,7 +79,7 @@ export const postDataToken = (url, postData, headers) => new Promise(async (reso
     });
 });
 
-export const postData = (url, postData, headers) => new Promise(async (resolve, reject) => {
+export const postData = (url, sendData, headers) => new Promise((resolve, reject) => {
   const myHeaders = {
     headers: {
       'Content-Type': 'application/json',
@@ -90,7 +90,7 @@ export const postData = (url, postData, headers) => new Promise(async (resolve, 
     },
   };
   axios
-    .post(url, postData, myHeaders)
+    .post(url, sendData, myHeaders)
     .then((response) => {
       resolve(response.data);
     })
@@ -102,7 +102,7 @@ export const postData = (url, postData, headers) => new Promise(async (resolve, 
     });
 });
 
-export const putData = (url, putData, headers) => new Promise(async (resolve, reject) => {
+export const putData = (url, sendData, headers) => new Promise((resolve, reject) => {
   const { token } = store.state.Authz;
 
   const myHeaders = {
@@ -113,7 +113,7 @@ export const putData = (url, putData, headers) => new Promise(async (resolve, re
     },
   };
   axios
-    .put(url, putData, myHeaders)
+    .put(url, sendData, myHeaders)
     .then((response) => {
       resolve(response.data);
     })
@@ -125,7 +125,7 @@ export const putData = (url, putData, headers) => new Promise(async (resolve, re
     });
 });
 
-export const patchData = (url, patchData, headers) => new Promise(async (resolve, reject) => {
+export const patchData = (url, sendData, headers) => new Promise((resolve, reject) => {
   // const { token } = store.state.AutoAccessAuth;
 
   const myHeaders = {
@@ -138,7 +138,7 @@ export const patchData = (url, patchData, headers) => new Promise(async (resolve
     },
   };
   axios
-    .patch(url, patchData, myHeaders)
+    .patch(url, sendData, myHeaders)
     .then((response) => {
       resolve(response.data);
     })
@@ -150,7 +150,7 @@ export const patchData = (url, patchData, headers) => new Promise(async (resolve
     });
 });
 
-export const deletData = (url, payload, headers) => new Promise(async (resolve, reject) => {
+export const deletData = (url, payload, headers) => new Promise((resolve, reject) => {
   // const { token } = store.state.AutoAccessAuth;
   const myHeaders = {
     headers: {

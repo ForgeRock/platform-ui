@@ -19,18 +19,17 @@ of the MIT license. See the LICENSE file for details. -->
         small
         :items="data[page]"
         :fields="fields" />
-      <!-- <FrPagination :currentPage="page" :lastPage="isLastPage" @pagination-change="pageChange" /> -->
     </BCard>
   </VueDraggableResizable>
 </template>
 
 <script>
+import { chunk } from 'lodash';
+/* eslint-disable import/no-extraneous-dependencies */
 import VueDraggableResizable from 'vue-draggable-resizable';
 import { BCard } from 'bootstrap-vue';
-import FrTable from '@forgerock/platform-shared/src/components/DataTable';
-// import FrPagination from "@forgerock/platform-shared/src/components/DataTable/Pagination";
+import FrTable from '../../Shared/DataTable';
 import 'vue-draggable-resizable/dist/VueDraggableResizable.css';
-import _ from 'lodash';
 
 export default {
   name: 'FeatureCard',
@@ -38,14 +37,15 @@ export default {
     VueDraggableResizable,
     BCard,
     FrTable,
-    // FrPagination,
   },
   props: {
     feature: {
       type: Object,
+      default: () => ({}),
     },
     featureData: {
       type: Array,
+      default: () => [],
     },
   },
   computed: {
@@ -75,7 +75,7 @@ export default {
       handler(newFeatureData) {
         if (newFeatureData && newFeatureData.length > 0) {
           this.totalRecords = newFeatureData.length;
-          const chunks = _.chunk(newFeatureData, 7);
+          const chunks = chunk(newFeatureData, 7);
 
           this.data = chunks;
 

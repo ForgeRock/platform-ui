@@ -6,8 +6,10 @@
  */
 
 import * as d3 from 'd3';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { sliderBottom } from 'd3-simple-slider';
 import { dim } from '../data/meta';
+// eslint-disable-next-line import/no-cycle
 import { setHypothetical } from './state';
 
 let slider = null;

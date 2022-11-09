@@ -20,6 +20,7 @@ export default {
   props: {
     heuristics: {
       type: Array,
+      default: () => [],
     },
   },
   computed: {
@@ -37,8 +38,8 @@ export default {
   methods: {
     arc() {
       d3.arc()
-        .innerRadius(dim.width / 2 * 0.905)
-        .outerRadius(dim.width / 2);
+        .innerRadius((this.dim.width / 2) * 0.905)
+        .outerRadius(this.dim.width / 2);
     },
     pie() {
 

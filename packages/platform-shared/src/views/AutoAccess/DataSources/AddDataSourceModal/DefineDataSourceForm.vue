@@ -54,17 +54,15 @@ of the MIT license. See the LICENSE file for details. -->
   </div>
 </template>
 <script>
-import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
+
 import FrBasicInput from '../../Shared/Field/Basic';
 import InvalidFileAlert from '../InvalidFileAlert';
 import PreviewFileJSON from '../PreviewFileJSON';
-import { getBucketAndPrefixFromLocation } from '../api/DataSourcesAPI';
 
 export default {
   name: 'DefineDataSourceForm',
   components: {
     FrBasicInput,
-    FrSpinner,
     InvalidFileAlert,
     PreviewFileJSON,
   },
@@ -74,12 +72,15 @@ export default {
     },
     dataSource: {
       type: Object,
+      default: () => ({}),
     },
     initialName: {
       type: String,
+      default: '',
     },
     helpText: {
       type: String,
+      default: '',
     },
   },
   data() {
