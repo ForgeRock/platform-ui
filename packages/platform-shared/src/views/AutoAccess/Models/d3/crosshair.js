@@ -9,6 +9,7 @@ import * as d3 from 'd3';
 
 import { ChartKey, chartMeta } from '../data/meta';
 import { getScales } from './scales';
+// eslint-disable-next-line import/no-cycle
 import { setSliderVal } from './slider';
 // import { getSelected } from './state';
 
@@ -68,6 +69,7 @@ export function updateCrosshairHover(key, x, y) {
 export function updateSelectedCrosshair() {
   [ChartKey.ROC, ChartKey.PR].forEach((key) => {
     const scales = getScales(key);
+    // eslint-disable-next-line no-undef
     const selectedVal = getSelected();
 
     const x = scales.scaleX(selectedVal[chartMeta[key].x]);

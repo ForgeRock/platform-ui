@@ -27,7 +27,7 @@ of the MIT license. See the LICENSE file for details. -->
 
       <div v-if="activePredictions.length > 0">
         <TableExecutionDetails
-          :pipelineExecutions="activePredictions"
+          :pipeline-executions="activePredictions"
           :pending-status="pendingStatus"
           :show-pipeline-name="true"
           @evaluate="$emit('evaluate', execution)"
@@ -45,7 +45,7 @@ of the MIT license. See the LICENSE file for details. -->
       </BAlert>
       <span v-if="pipeline">
         <TableExecutionDetails
-          :pipelineExecutions="activeExecution"
+          :pipeline-executions="activeExecution"
           :pending-status="pendingStatus"
           @refresh="(execution_id) => $emit('refresh', pipeline, execution_id)" />
       </span>
@@ -66,7 +66,7 @@ of the MIT license. See the LICENSE file for details. -->
         size="md"
         v-if="!status && !error"
         variant="primary"
-        :label="`${&quot;Run&quot;}`"
+        :label="$t('common.run')"
         :disabled="!init"
         :loading="loading && init"
         @click="handleRun" />
@@ -82,6 +82,7 @@ of the MIT license. See the LICENSE file for details. -->
   </BModal>
 </template>
 <script>
+import { get } from 'lodash';
 import { BModal, BButton, BAlert } from 'bootstrap-vue';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import LoadingButton from '../../Shared/LoadingButton';
@@ -104,9 +105,11 @@ export default {
   props: {
     pipeline: {
       type: Object,
+      default: () => ({}),
     },
     pendingStatus: {
       type: Array,
+      default: () => [],
     },
     showModal: {
       type: Boolean,
@@ -174,7 +177,7 @@ export default {
           this.error = 'Pipeline data source must be active.';
         }
       })
-        .catch((err) => {
+        .catch(() => {
           this.loading = false;
           this.error = 'Pipeline data source must be active.';
         });
@@ -190,7 +193,7 @@ export default {
             }
           });
         } else {
-          reject(false);
+          reject(new Error(false));
         }
       });
     },
@@ -198,19 +201,19 @@ export default {
       return new Promise((resolve, reject) => {
         getPipelineById(this.pipeline.training_pipeline_definition_id)
           .then((result) => {
-            const latestRunStatus = _.get(result.items[0], 'pipeline_executions[0].status', false);
+            const latestRunStatus = get(result.items[0], 'pipeline_executions[0].status', false);
             if (result.items.length === 0) {
               this.error = 'Prediction pipeline must have training pipeline defined.';
-              reject(false);
+              reject(new Error(false));
             } else if (!isPipelineSuccess(latestRunStatus)) {
-              this.error = `Training pipeline <span class="font-weight-bold">${_.get(result.items[0], 'pipeline_name', '')}</span> must complete successfully before prediction can run.`;
-              reject(false);
+              this.error = `Training pipeline <span class="font-weight-bold">${get(result.items[0], 'pipeline_name', '')}</span> must complete successfully before prediction can run.`;
+              reject(new Error(false));
             } else {
               resolve(true);
             }
-          }).catch((err) => {
+          }).catch(() => {
             this.error = 'Prediction pipeline must have training pipeline defined.';
-            reject(false);
+            reject(new Error(false));
           });
       });
     },
@@ -219,7 +222,7 @@ export default {
         if (this.pipeline.training_pipeline_definition_id) {
           this.loading = true;
           this.checkValidTrainingPipeline()
-            .then((result) => {
+            .then(() => {
               const filters = {
                 must: [
                   {
@@ -246,14 +249,14 @@ export default {
                   this.activePredictions = result.items[0].pipeline_executions.map((execution) => ({ ...execution, pipeline_name: result.items[0].pipeline_name }));
                   this.error = `Cannot execute multiple prediction pipelines concurrently. Prediction pipeline <span class="font-weight-bold">${result.items[0].pipeline_name}</span> is in progress.`;
                 }
-              }).catch((err) => {
+              }).catch(() => {
                 // No other predictions running
               }).finally(() => {
                 this.loading = false;
                 this.init = true;
               });
             })
-            .catch((err) => {
+            .catch(() => {
               //
             })
             .finally(() => {
@@ -297,11 +300,11 @@ export default {
             };
 
             getPipelineStatus(response.executionID)
-              .then((response) => {
+              .then((reply) => {
                 const newExecution = {
-                  execution_id: response.name,
-                  status: response.state,
-                  start_time: parseInt(response.startTime.seconds, 10),
+                  execution_id: reply.name,
+                  status: reply.state,
+                  start_time: parseInt(reply.startTime.seconds, 10),
                   end_time: null,
                 };
                 savePipeline({
@@ -311,7 +314,7 @@ export default {
                   this.$emit('updatePipelines');
                 });
               })
-              .catch((err) => {
+              .catch(() => {
                 this.loading = false;
               });
           }

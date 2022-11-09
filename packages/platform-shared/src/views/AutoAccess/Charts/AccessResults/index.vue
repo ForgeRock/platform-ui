@@ -24,9 +24,11 @@ export default {
   props: {
     dateRange: {
       type: Array,
+      default: () => [],
     },
     userId: {
       type: String,
+      default: '',
     },
   },
   data() {
@@ -40,7 +42,7 @@ export default {
   },
   watch: {
     dateRange: {
-      handler(prevVal, newVal) {
+      handler() {
         this.fetchData();
       },
     },
@@ -109,22 +111,18 @@ export default {
       };
 
       getEventLogs(param).then((response) => {
-        console.log(response);
-                response.aggregations?.histogram?.buckets.forEach((d, i) => {
-                  const val = {
-                    raw: d,
-                    timestamp: d.key_as_string,
-                    success: d.outcomes?.buckets?.find((bucket) => bucket.key === 'SUCCESSFUL')?.doc_count || 0,
-                    failure: d.outcomes?.buckets?.find((bucket) => bucket.key !== 'SUCCESSFUL')?.doc_count || 0,
-                  };
-                  const index = placeholder.findIndex((d) => dayjs(d.timestamp).isSame(val.timestamp, interval));
-
-                  placeholder[index] = val;
-                });
-
-                console.log(placeholder);
-
-                this.chartData = placeholder;
+        const eventLogsResponse = response.aggregations?.histogram?.buckets.forEach((d) => {
+          const val = {
+            raw: d,
+            timestamp: d.key_as_string,
+            success: d.outcomes?.buckets?.find((bucket) => bucket.key === 'SUCCESSFUL')?.doc_count || 0,
+            failure: d.outcomes?.buckets?.find((bucket) => bucket.key !== 'SUCCESSFUL')?.doc_count || 0,
+          };
+          const index = placeholder.findIndex((r) => dayjs(r.timestamp).isSame(val.timestamp, interval));
+          placeholder[index] = val;
+        });
+        this.chartData = placeholder;
+        return eventLogsResponse;
       });
     },
   },

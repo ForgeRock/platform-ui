@@ -31,15 +31,13 @@ export default {
   props: {
     change: {
       type: Number,
-      required: false,
+      default: 0,
     },
     invert: {
       type: Boolean,
-      required: false,
     },
     small: {
       type: Boolean,
-      required: false,
     },
   },
 };

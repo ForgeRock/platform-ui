@@ -86,10 +86,11 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+/* eslint-disable import/no-extraneous-dependencies */
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import { BButton, BCard, BCollapse } from 'bootstrap-vue';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
-import { saveRemoteIngest } from './api/SettingsAPI';
+import saveRemoteIngest from './api/SettingsAPI';
 
 const ace = require('brace');
 require('brace/mode/json');
@@ -138,7 +139,7 @@ export default {
   methods: {
     handleBaselineIngest() {
       saveRemoteIngest(JSON.parse(this.baselineObj))
-        .then((data) => {
+        .then(() => {
           this.displayNotification('success', this.$t('access.settings.saveIngestSuccess'));
         })
         .catch((e) => {

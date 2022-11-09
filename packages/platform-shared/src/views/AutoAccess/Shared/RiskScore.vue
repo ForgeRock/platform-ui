@@ -41,19 +41,17 @@ export default {
   props: {
     score: {
       type: Number,
-      required: false,
+      default: 0,
     },
     small: {
       type: Boolean,
-      required: false,
     },
     change: {
       type: Number,
-      required: false,
+      default: undefined,
     },
     invertChange: {
       type: Boolean,
-      required: false,
     },
   },
   computed: {

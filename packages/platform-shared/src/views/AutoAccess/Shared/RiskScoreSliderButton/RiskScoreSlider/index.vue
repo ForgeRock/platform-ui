@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -48,7 +48,7 @@ export default {
   props: {
     initialValue: {
       type: Array,
-      validator: (prop) => prop.every(e => typeof e === 'number'),
+      validator: (prop) => prop.every((e) => typeof e === 'number'),
       default: null,
     },
     thresholds: {
@@ -72,8 +72,8 @@ export default {
     return {
       selectedRange: [
         this.initialValue?.[0] ?? 30,
-        this.initialValue?.[1] ?? 70
-      ]
+        this.initialValue?.[1] ?? 70,
+      ],
     };
   },
   methods: {
@@ -83,22 +83,22 @@ export default {
   },
   computed: {
     lowSliderStyles() {
-      return { width: `${this.selectedRange[0]}%` }
+      return { width: `${this.selectedRange[0]}%` };
     },
-    mediumSliderStyles(){
+    mediumSliderStyles() {
       return {
-          width: `${this.selectedRange[1] - this.selectedRange[0]}%`,
-          left: `${this.selectedRange[0]}%`,
-        }
+        width: `${this.selectedRange[1] - this.selectedRange[0]}%`,
+        left: `${this.selectedRange[0]}%`,
+      };
     },
-    highSliderStyles(){
-      return { width: `${100 - this.selectedRange[1]}%`, right: 0 }
-    }
+    highSliderStyles() {
+      return { width: `${100 - this.selectedRange[1]}%`, right: 0 };
+    },
   },
   watch: {
     initialValue(newValue) {
       this.selectedRange = newValue;
-    }
+    },
   },
 };
 </script>

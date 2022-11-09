@@ -71,7 +71,7 @@ export default {
     handleDelete() {
       this.loading = true;
       deleteDataSource(this.dataSource)
-        .then((response) => {
+        .then(() => {
           this.loading = false;
           this.$emit('deleted');
         });

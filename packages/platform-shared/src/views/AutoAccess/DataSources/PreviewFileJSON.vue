@@ -71,8 +71,14 @@ export default {
     InvalidFileAlert,
   },
   props: {
-    bucket: String,
-    prefix: String,
+    bucket: {
+      type: String,
+      default: '',
+    },
+    prefix: {
+      type: String,
+      default: '',
+    },
     collapsible: Boolean,
     label: {
       required: false,
@@ -129,9 +135,7 @@ export default {
                 this.loading = false;
               });
           })
-          .catch((err) => {
-            console.warn('empty bucket');
-          });
+          .catch((err) => err);
       }
     },
   },

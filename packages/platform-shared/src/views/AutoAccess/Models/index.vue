@@ -33,8 +33,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
-import { BCard, BAlert } from 'bootstrap-vue';
+import { BAlert } from 'bootstrap-vue';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 import FrField from '../Shared/Field';
 import RocPR from './RocPR';
@@ -42,15 +41,14 @@ import RocPR from './RocPR';
 export default {
   name: 'Settings',
   components: {
-    FrHeader,
     FrField,
-    BCard,
     RocPR,
     BAlert,
   },
   props: {
     pipelineId: {
       type: String,
+      default: '',
     },
   },
   mixins: [NotificationMixin],

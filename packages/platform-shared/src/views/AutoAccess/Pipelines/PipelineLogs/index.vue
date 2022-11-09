@@ -25,6 +25,7 @@ of the MIT license. See the LICENSE file for details. -->
   </div>
 </template>
 <script>
+/* eslint-disable import/no-extraneous-dependencies */
 import { BAlert, BOverlay } from 'bootstrap-vue';
 import { getPipelineExecutionLogs } from '../api/PipelineApi';
 
@@ -41,6 +42,7 @@ export default {
   props: {
     pipelineId: {
       type: String,
+      default: '',
     },
   },
   data() {
@@ -68,7 +70,7 @@ export default {
 
         editor.setValue(this.logs);
         editor.clearSelection();
-      }).catch((e) => {
+      }).catch(() => {
         this.error = 'An error occured fetching logs.';
       });
     },

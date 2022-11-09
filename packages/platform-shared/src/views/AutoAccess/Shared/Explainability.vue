@@ -65,7 +65,7 @@ of the MIT license. See the LICENSE file for details. -->
   </div>
 </template>
 <script>
-import _ from 'lodash';
+import { get } from 'lodash';
 import { causeMap } from '../Activity/api/ActivityAPI';
 
 export default {
@@ -73,9 +73,11 @@ export default {
   props: {
     riskScoreData: {
       type: Object,
+      default: () => ({}),
     },
     uebaSignal: {
       type: Object,
+      default: () => ({}),
     },
     showDetail: {
       type: Boolean,
@@ -108,7 +110,7 @@ export default {
         .sort((a, b) => a.key.localeCompare(b.key));
     },
     cluster() {
-      const cluster = _.get(this.riskScoreData, 'clustering_result.top_cluster_explainability', []);
+      const cluster = get(this.riskScoreData, 'clustering_result.top_cluster_explainability', []);
 
       return cluster;
     },

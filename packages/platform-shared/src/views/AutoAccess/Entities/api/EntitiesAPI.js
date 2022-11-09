@@ -6,14 +6,10 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-// import {
-//   getData, postData, putData, deletData, patchData,
-// } from '../../Shared/utils/axios-utils';
 import { generateAutoAccessApi, generateAutoAccessJas } from '@forgerock/platform-shared/src/api/BaseApi';
 import { cleanUpEntityDefinition } from '../../EntityDefinitions/utils/entity-utils';
 
 export const getEntityDefintionByName = (entityPath) => new Promise((resolve, reject) => {
-  // getData(`/jas/entityDefinitions/${entityPath}?latest=true`)
   generateAutoAccessJas().get(`/entityDefinitions/${entityPath}?latest=true`)
     .then(({ data: result }) => {
       let entity = result[0];
@@ -51,7 +47,6 @@ export const getEntityInstances = (entity, { size, searchAfter, sortObj }, filte
     payload.query.sort = sortObj;
   }
 
-  // postData(`/jas/entity/search/${entityPath}/${entity.version}`, payload)
   generateAutoAccessApi().post(`/jas/entity/search/${entityPath}/${entity.version}`, payload)
     .then(({ data: result }) => {
       resolve(result);
@@ -74,7 +69,6 @@ export const saveEntityInstances = (entity, data, flag, tags, context, branch) =
     };
 
     const operation = flag === 'create' ? 'persist' : 'upsert';
-    // const axiosOp = flag === 'create' ? postData : patchData;
     const axiosOp = flag === 'create' ? generateAutoAccessJas().post : generateAutoAccessJas().patch;
 
     axiosOp(`entity/${operation}/${entityPath}/${entity.version}`, payload)
@@ -97,7 +91,6 @@ export const deleteEntityInstance = (data, entity) => new Promise((resolve, reje
     indexInSync: true,
   };
 
-  // deletData(`/jas/entity/delete/${entity.namespace}/${entity.name}/${entity.version}`, payload)
   generateAutoAccessJas().delete(`/entity/delete/${entity.namespace}/${entity.name}/${entity.version}`, { data: payload })
     .then(({ data: result }) => {
       resolve(result);
@@ -135,7 +128,6 @@ export const getTextAttributeValues = (entity, attributeName, attributeValue) =>
     payload.query.aggs.log_attributes.filter.bool.must.push(attributeValue);
   }
 
-  // postData(`/jas/entity/search/${entity.namespace}/${entity.name}/${entity.version}`, payload)
   generateAutoAccessApi().post(`/entity/search/${entity.namespace}/${entity.name}/${entity.version}`, payload)
     .then(({ data: result }) => {
       resolve(result);
@@ -164,7 +156,6 @@ export const getMinMaxValues = (entity, attributeName) => new Promise((resolve, 
     },
   };
 
-  // postData(`/jas/entity/search/${entity.namespace}/${entity.name}/${entity.version}`, payload)
   generateAutoAccessApi().post(`/entity/search/${entity.namespace}/${entity.name}/${entity.version}`, payload)
     .then(({ data: result }) => {
       resolve(result);

@@ -5,11 +5,9 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-// import { postData } from 'auto-shared/src/utils/axios-utils';
 import { generateAutoAccessJas } from '@forgerock/platform-shared/src/api/BaseApi';
 
-export const saveRemoteIngest = (queryParam) => new Promise((resolve, reject) => {
-  // postData('/jas/workflow', queryParam)
+const saveRemoteIngest = (queryParam) => new Promise((resolve, reject) => {
   generateAutoAccessJas().post('/workflow', queryParam)
     .then(({ data }) => {
       resolve(data);
@@ -18,3 +16,5 @@ export const saveRemoteIngest = (queryParam) => new Promise((resolve, reject) =>
       reject(e);
     });
 });
+
+export default saveRemoteIngest;

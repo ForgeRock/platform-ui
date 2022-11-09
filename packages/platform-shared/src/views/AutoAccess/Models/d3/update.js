@@ -5,17 +5,14 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+/* eslint-disable import/no-cycle */
 import * as d3 from 'd3';
 
-import {
-  ROCDataPoint, ChartKey, chartMeta, dim,
-} from '../data/meta';
-import { updateCrosshair, updateSelectedCrosshair } from './crosshair';
+import { ChartKey, chartMeta, dim } from '../data/meta';
+import { updateCrosshair } from './crosshair';
 import { appendThreshold, appendConfusionMatrix, appendPRLabels } from './detail';
 import { getScales } from './scales';
-import {
-  getHypothetical, getSelected, setHypothetical, setSelected,
-} from './state';
+import { getHypothetical, setHypothetical } from './state';
 
 function updateHypothetical() {
   const d = getHypothetical();
@@ -36,11 +33,6 @@ function updateHypothetical() {
   updateCrosshair(ChartKey.ROC, d);
   updateCrosshair(ChartKey.PR, d);
 }
-
-const updateChartData = (svg, key, data, isInit = false) => {
-  updateDataPoints(svg, key, data);
-  updateAxes(svg, key, isInit);
-};
 
 const updateDataPoints = (svg, key, data) => {
   const scales = getScales(key);
@@ -160,21 +152,21 @@ const updateDataPoints = (svg, key, data) => {
 const updateAxes = (svg, key, isInit = false) => {
   const scales = getScales(key);
 
-  const y_axis = d3.axisLeft(scales.scaleY);
+  const yAxisLeft = d3.axisLeft(scales.scaleY);
 
-  const x_axis = d3.axisBottom(scales.scaleX);
+  const xAxisBottom = d3.axisBottom(scales.scaleX);
 
   const xAxis = svg
     .selectAll('.roc-pr-chart-axis-x')
     .transition()
     .duration(isInit ? 0 : 500)
-    .call(x_axis);
+    .call(xAxisBottom);
 
   const yAxis = svg
     .selectAll('.roc-pr-chart-axis-y')
     .transition()
     .duration(isInit ? 0 : 500)
-    .call(y_axis);
+    .call(yAxisLeft);
 
   svg.selectAll('.domain').remove();
 
@@ -193,6 +185,11 @@ const updateAxes = (svg, key, isInit = false) => {
   yAxis.selectAll('text').attr('class', 'caption-text');
 
   xAxis.selectAll('text').attr('class', 'caption-text');
+};
+
+const updateChartData = (svg, key, data, isInit = false) => {
+  updateDataPoints(svg, key, data);
+  updateAxes(svg, key, isInit);
 };
 
 export { updateHypothetical, updateChartData };

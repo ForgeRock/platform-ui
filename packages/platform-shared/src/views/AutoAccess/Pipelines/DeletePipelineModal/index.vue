@@ -45,6 +45,7 @@ export default {
   props: {
     pipeline: {
       type: Object,
+      default: () => ({}),
     },
     showModal: {
       type: Boolean,
@@ -70,7 +71,7 @@ export default {
     handleDelete() {
       this.loading = true;
       deletePipeline(this.pipeline)
-        .then((response) => {
+        .then(() => {
           this.loading = false;
           this.$emit('deleted');
         });
