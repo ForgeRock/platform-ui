@@ -12,6 +12,7 @@ if [ -f $REMOTE_ENVIRONMENT_INFO_FILE ]; then
   read platform_mode <&6
   read remote_environment_admin_username <&6
   read remote_environment_admin_password <&6
+  read workforce_enabled <&6
 
   exec 6<&-
 
@@ -20,6 +21,7 @@ if [ -f $REMOTE_ENVIRONMENT_INFO_FILE ]; then
   echo "Platform mode: $platform_mode"
   echo "Username of the remote environment admin to test with: $remote_environment_admin_username"
   echo "Password of the remote environment admin to test with: $remote_environment_admin_password"
+  echo "Run tests with workforce enabled: $workforce_enabled"
 else
   # Prompt user for remote environment info
   echo "Remote environment info file not found"
@@ -29,6 +31,7 @@ else
   read -p "Platform mode? [Y/n]:" platform_mode
   read -p "Username of the remote environment admin to test with (eg. my.email@forgerock.com): " remote_environment_admin_username
   read -p "Password of the remote environment admin to test with (eg. passw0rd): " remote_environment_admin_password
+  read -p "Run tests with workforce enabled? [Y/n]: " workforce_enabled
 
   # Ask if should save info, writing file if desired
   read -p "Save these inputs in 'e2e/.remote-environment-info.txt' for subsequent test runs? [Y/n]" store_inputs
@@ -41,6 +44,7 @@ else
       echo $platform_mode >> $REMOTE_ENVIRONMENT_INFO_FILE
       echo $remote_environment_admin_username >> $REMOTE_ENVIRONMENT_INFO_FILE
       echo $remote_environment_admin_password >> $REMOTE_ENVIRONMENT_INFO_FILE
+      echo $workforce_enabled >> $REMOTE_ENVIRONMENT_INFO_FILE
   fi
 fi
 
@@ -60,6 +64,13 @@ else
   export CYPRESS_ROUTES_FILE="routes.idcloud"
   export CYPRESS_IS_FRAAS="true"
   export CYPRESS_TAGS="cloud"
+fi
+
+if [[ "$workforce_enabled" =~ ^([yY])$ ]]
+then
+  export CYPRESS_WORKFORCE_ENABLED="true"
+else
+  export CYPRESS_WORKFORCE_ENABLED="false"
 fi
 
 $@
