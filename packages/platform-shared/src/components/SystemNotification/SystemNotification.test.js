@@ -58,7 +58,11 @@ describe('SystemNotification', () => {
       const alert = findByTestId(wrapper, 'system-notification');
       const alertContent = alert.text();
       expect(alert.exists()).toBeTruthy();
-      expect(alertContent).toContain('Scheduled Tenant Migration November 10, 2022 10:29 AM');
+      expect(alertContent).toContain('Scheduled Tenant Migration');
+      // Expect the date placeholder to have been replaced. We cannot check test
+      // for the date here as it gets formatted with the timezone and is therefore
+      // different from machine to machine.
+      expect(alertContent).not.toContain('{{placeholder_management_migration_date}}');
     });
 
     it('should render view details button if modal exists', () => {
