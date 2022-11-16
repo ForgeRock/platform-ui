@@ -34,9 +34,7 @@
     }
   }
 
-  > .custom-file-label {
-    > .fr-field {
-      margin: -0.8125rem;
-    }
+  > .custom-file-label .fr-field {
+    margin: -0.8125rem;
   }
 }

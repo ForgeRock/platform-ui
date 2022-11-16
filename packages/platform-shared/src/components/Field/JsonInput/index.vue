@@ -15,6 +15,7 @@ of the MIT license. See the LICENSE file for details. -->
     :data-testid="testid">
     <VuePrismEditor
       v-model="inputValue"
+      class="polyfill-placeholder"
       :aria-label="$t('editor.accessibilityHelp')"
       :disabled="disabled"
       :readonly="readonly"

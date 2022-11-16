@@ -38,10 +38,12 @@ of the MIT license. See the LICENSE file for details. -->
         :disabled="disabled"
         :id="id"
         :name="name"
+        :min="$attrs.min"
         :placeholder="floatingLabel ? label : placeholder"
         :readonly="readonly"
         :style="labelHeight && {height: (labelHeight + 2) + 'px', 'padding-top': floatLabels ? (labelHeight - 27) + 'px' : (labelHeight - 35) + 'px'}"
         @animationstart="floatingLabel && animationStart"
+        @blur="$emit('blur', $event)"
         :data-testid="testid">
       <input
         v-else

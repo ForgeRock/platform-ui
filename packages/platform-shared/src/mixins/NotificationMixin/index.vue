@@ -37,7 +37,7 @@ export default {
     showErrorMessage(error, defaultMessage) {
       let errorMessage = defaultMessage;
 
-      if (has(error, 'response.data.message')) {
+      if (has(error, 'response.data.message') && error.response.data.message.length > 0) {
         // error message may have html encoding for example &#39; aka single quote
         const errorTextElement = document.createElement('div');
         errorTextElement.innerHTML = error.response.data.message;

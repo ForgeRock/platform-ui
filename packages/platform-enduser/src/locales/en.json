@@ -25,6 +25,10 @@
     }
   },
   "pages": {
+    "applications": {
+      "search": "Search your apps",
+      "title": "My Applications"
+    },
     "dashboard": {
       "applications": {
         "heading": "My Applications",
@@ -121,9 +125,11 @@
     }
   },
   "sideMenu": {
+    "applications": "Applications",
     "profile": "Profile"
   },
   "pageTitles": {
+    "Applications": "Applications",
     "AutoAccessRiskDashboard": "Risk Dashboard",
     "AutoAccessPipelines": "Pipelines",
     "AutoAccessRiskConfig": "RiskConfig",

@@ -309,17 +309,17 @@ describe('ListResource Component', () => {
   });
 
   it('Sets hasClearSessionAccess', () => {
-    let rowData = { item: { hasActiveSessions: true } };
+    let item = { hasActiveSessions: true };
     wrapper.setProps({
       canClearSessions: false,
     });
-    expect(wrapper.vm.hasClearSessionAccess(rowData)).toEqual(false);
+    expect(wrapper.vm.hasClearSessionAccess(item)).toEqual(false);
     wrapper.setProps({
       canClearSessions: true,
     });
-    expect(wrapper.vm.hasClearSessionAccess(rowData)).toEqual(true);
-    rowData = { item: { hasActiveSessions: false } };
-    expect(wrapper.vm.hasClearSessionAccess(rowData)).toEqual(false);
+    expect(wrapper.vm.hasClearSessionAccess(item)).toEqual(true);
+    item = { hasActiveSessions: false };
+    expect(wrapper.vm.hasClearSessionAccess(item)).toEqual(false);
   });
 
   it('Removes help text and focus', () => {
@@ -338,5 +338,40 @@ describe('ListResource Component', () => {
     wrapper.vm.paginationChange();
 
     expect(paginationChangeSpy).toHaveBeenCalled();
+  });
+
+  it('regenerates column list when propColumns are provided', () => {
+    wrapper.setProps({
+      propColumns: [
+        {
+          key: 'userName',
+          label: 'Username',
+          sortable: true,
+          sortDirection: 'desc',
+        },
+        {
+          key: 'description',
+          label: 'Description',
+          sortable: true,
+          sortDirection: 'desc',
+        },
+      ],
+    });
+
+    expect(wrapper.vm.displayFields).toStrictEqual(['userName', 'description']);
+    expect(wrapper.vm.columns).toStrictEqual([
+      {
+        key: 'userName',
+        label: 'Username',
+        sortDirection: 'desc',
+        sortable: true,
+      },
+      {
+        key: 'description',
+        label: 'Description',
+        sortable: true,
+        sortDirection: 'desc',
+      },
+    ]);
   });
 });

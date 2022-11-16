@@ -32,6 +32,7 @@ describe('Dashboard.vue', () => {
       },
       store: new Vuex.Store({
         state: {
+          SharedStore: { workforceEnabled: false },
           UserStore: {
             userId: null,
             managedResource: null,

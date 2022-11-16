@@ -83,13 +83,13 @@ of the MIT license. See the LICENSE file for details. -->
           ref="resourceTabs"
           v-model="currentTab"
           @changed="populateMobileDropdownTabs"
-          :nav-wrapper-class="hideNav ? 'd-none': 'd-none d-md-block'"
+          :nav-wrapper-class="hideNav ? 'd-none' : 'd-none d-md-block'"
           flex-column
           flex-sm-row
           vertical
           pills>
           <BTab
-            :title="this.$t('pages.access.details')">
+            :title="$t('pages.access.details')">
             <FrObjectTypeEditor
               v-if="displayProperties.length > 0"
               @refresh-data="refreshData"
@@ -141,7 +141,8 @@ of the MIT license. See the LICENSE file for details. -->
                 :parent-id="id"
                 :relationship-array-property="relationshipProperty"
                 :revision="revision"
-                @refresh-data="refreshData" />
+                @refresh-data="refreshData"
+                @revision-update="revision = $event" />
             </BTab>
           </template>
           <FrSettingsTab

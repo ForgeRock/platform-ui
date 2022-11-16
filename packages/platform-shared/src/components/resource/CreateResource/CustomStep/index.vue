@@ -159,7 +159,7 @@ export default {
           (response) => {
             const schemas = response.data.result.filter((result) => {
               const resourceName = result.resourceCollection;
-              return resourceName.substring(resourceName.length - 10) !== 'assignment';
+              return !resourceName.endsWith('assignment') && !resourceName.endsWith('application');
             });
 
             schemas.forEach((schema) => {

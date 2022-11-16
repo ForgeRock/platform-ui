@@ -213,14 +213,14 @@ describe('Form Generator', () => {
     });
   });
 
-  describe('getDisplayComponent method', () => {
+  describe('getPropertyComponent method', () => {
     it('returns null if safeCompare returns false', () => {
       // type is string but value is a boolean
       const test = {
         type: 'string',
         value: false,
       };
-      expect(wrapper.vm.getDisplayComponent(test)).toBe(null);
+      expect(wrapper.vm.getPropertyComponent(test)).toBe(null);
     });
 
     it('returns null if showField returns false', async () => {
@@ -230,7 +230,7 @@ describe('Form Generator', () => {
       const combinedSchema = wrapper.vm.combineSchemas(schema, newUiSchema);
       await wrapper.setProps({ schema: combinedSchema, model });
 
-      expect(wrapper.vm.getDisplayComponent(newUiSchema[0][0])).toBe(null);
+      expect(wrapper.vm.getPropertyComponent(newUiSchema[0][0])).toBe(null);
     });
 
     it('returns the correct component name for each type', async () => {
@@ -241,42 +241,42 @@ describe('Form Generator', () => {
         type: 'string',
         value: '',
       };
-      expect(wrapper.vm.getDisplayComponent(stringTest)).toEqual('FrStringDisplay');
+      expect(wrapper.vm.getPropertyComponent(stringTest)).toEqual('FrStringDisplay');
 
       const arrayTest = {
         type: 'array',
         value: ['one', 'two'],
       };
-      expect(wrapper.vm.getDisplayComponent(arrayTest)).toEqual('FrArrayDisplay');
+      expect(wrapper.vm.getPropertyComponent(arrayTest)).toEqual('FrArrayDisplay');
 
       const booleanTest = {
         type: 'boolean',
         value: false,
       };
-      expect(wrapper.vm.getDisplayComponent(booleanTest)).toEqual('FrBooleanDisplay');
+      expect(wrapper.vm.getPropertyComponent(booleanTest)).toEqual('FrBooleanDisplay');
 
       const numberTest = {
         type: 'integer',
         value: 0,
       };
-      expect(wrapper.vm.getDisplayComponent(numberTest)).toEqual('FrNumberDisplay');
+      expect(wrapper.vm.getPropertyComponent(numberTest)).toEqual('FrNumberDisplay');
 
       const radioTest = {
         type: 'radio',
         value: 1,
       };
-      expect(wrapper.vm.getDisplayComponent(radioTest)).toEqual('FrRadioDisplay');
+      expect(wrapper.vm.getPropertyComponent(radioTest)).toEqual('FrRadioDisplay');
 
       const passwordTest = {
         type: 'password',
         value: '',
       };
-      expect(wrapper.vm.getDisplayComponent(passwordTest)).toEqual('FrPasswordDisplay');
+      expect(wrapper.vm.getPropertyComponent(passwordTest)).toEqual('FrPasswordDisplay');
 
       const nullTest = {
         value: '',
       };
-      expect(wrapper.vm.getDisplayComponent(nullTest)).toBeNull();
+      expect(wrapper.vm.getPropertyComponent(nullTest)).toBeNull();
     });
   });
 

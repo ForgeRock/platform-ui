@@ -294,7 +294,7 @@ export default {
           const saveData = this.cleanData(clone(this.formFields));
 
           idmInstance.post(`${this.resourceType}/${this.resourceName}?_action=create`, saveData).then((newObjectResponse) => {
-            this.$emit('showDetails', newObjectResponse.data);
+            this.$emit('show-details', newObjectResponse.data);
             this.hideModal();
 
             this.displayNotification('success', this.$t('pages.access.successCreate', { resource: this.resourceTitle || capitalize(this.resourceName) }));

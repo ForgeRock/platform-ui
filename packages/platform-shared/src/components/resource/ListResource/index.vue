@@ -4,7 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
-    <div class="p-3 d-flex justify-content-between flex-column flex-lg-row card-header">
+    <div :class="['p-3 d-flex justify-content-between flex-column flex-lg-row card-header', { 'flex-lg-row-reverse': reverseToolbar }]">
       <div class="btn-group mb-3 mb-lg-0 mr-lg-1">
         <slot name="listToolbar" />
       </div>
@@ -13,6 +13,7 @@ of the MIT license. See the LICENSE file for details. -->
         class="toolbar-divider mx-lg-3 d-none d-lg-block" />
       <FrSearchInput
         v-model="filter"
+        v-if="searchEnabled"
         :placeholder="$t('common.search')"
         @clear="clear"
         @search="search"
@@ -76,18 +77,18 @@ of the MIT license. See the LICENSE file for details. -->
       :data-testid="testid"
       @row-clicked="$emit('row-clicked', $event)"
       @sort-changed="sortingChanged">
-      <template #cell(actions)="data">
-        <template v-if="editAccess || deleteAccess || hasClearSessionAccess(data)">
+      <template #cell(actions)="{ item }">
+        <template v-if="editAccess || deleteAccess || hasClearSessionAccess(item)">
           <FrActionsCell
             :delete-option="deleteAccess"
-            :divider="editAccess || hasClearSessionAccess(data)"
+            :divider="editAccess || hasClearSessionAccess(item)"
             :edit-option="editAccess"
-            @delete-clicked="confirmDeleteResource(data.item._id)"
-            @edit-clicked="$emit('row-clicked', data.item)">
+            @delete-clicked="showDeleteResourceModal(item._id)"
+            @edit-clicked="$emit('row-clicked', item)">
             <template
-              v-if="hasClearSessionAccess(data)"
+              v-if="hasClearSessionAccess(item)"
               #custom-top-actions>
-              <BDropdownItem @click="setResourceToClearSessionsFor(data.item)">
+              <BDropdownItem @click="setResourceToClearSessionsFor(item)">
                 <FrIcon
                   class="mr-3"
                   name="clear_all"
@@ -191,6 +192,10 @@ export default {
     'b-modal': VBModal,
   },
   props: {
+    actionsEnabled: {
+      default: true,
+      type: Boolean,
+    },
     currentPage: {
       type: Number,
       default: 1,
@@ -247,6 +252,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    reverseToolbar: {
+      type: Boolean,
+      default: false,
+    },
+    searchEnabled: {
+      default: true,
+      type: Boolean,
+    },
     testid: {
       type: String,
       default: '',
@@ -299,15 +312,19 @@ export default {
     this.resourceName = this.getResourceName(this.routerParameters.resourceName);
     if (this.propColumns.length) {
       this.displayFields = this.propColumns.map((obj) => obj.key);
-      this.columns = [
-        ...this.propColumns,
-        {
-          key: 'actions',
-          label: '',
-        },
-      ];
+      this.columns = this.propColumns;
     } else {
       this.loadTableDefs();
+    }
+    if (this.actionsEnabled) {
+      /*
+        * Push a final column for the "actions" menu.
+        * Empty label is intended.
+        */
+      this.columns.push({
+        key: 'actions',
+        label: '',
+      });
     }
     this.loadData('true', this.displayFields, this.defaultSort, 1);
   },
@@ -324,6 +341,18 @@ export default {
 
         return col;
       });
+    },
+    /**
+     * Regenerates which columns are shown and queries data using these fields
+     */
+    propColumns(newVal, oldVal) {
+      if (newVal.length) {
+        this.displayFields = newVal.map((obj) => obj.key);
+        this.columns = newVal;
+        if (oldVal.length) {
+          this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.defaultSort, this.paginationPage);
+        }
+      }
     },
   },
   methods: {
@@ -407,15 +436,6 @@ export default {
             });
           }
         });
-
-        /*
-         * Push a final column for the "actions" menu.
-         * Empty label is intended.
-         */
-        this.columns.push({
-          key: 'actions',
-          label: '',
-        });
       }
     },
     /**
@@ -427,7 +447,7 @@ export default {
     cancelDelete() {
       this.resourceToDeleteId = '';
     },
-    confirmDeleteResource(id) {
+    showDeleteResourceModal(id) {
       this.resourceToDeleteId = id;
       this.$root.$emit('bv::show::modal', 'deleteModal');
     },
@@ -466,8 +486,8 @@ export default {
 
       this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, sortUrl, this.paginationPage);
     },
-    hasClearSessionAccess(rowData) {
-      return this.canClearSessions && rowData.item.hasActiveSessions === true;
+    hasClearSessionAccess(item) {
+      return this.canClearSessions && item.hasActiveSessions === true;
     },
     /**
      * Uses a resource to populate and show the clear sessions modal

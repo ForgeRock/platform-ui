@@ -30,8 +30,9 @@ of the MIT license. See the LICENSE file for details. -->
       v-model="relationshipField.value"
       open-direction="bottom"
       :allow-empty="true"
-      :clear-on-select="false"
+      :close-on-select="closeOnSelect"
       :disabled="disabled"
+      :description="relationshipField.description"
       :id="relationshipProperty.key + index"
       :internal-search="false"
       :label="relationshipField.title"
@@ -48,7 +49,7 @@ of the MIT license. See the LICENSE file for details. -->
       :searchable="true"
       :type="relationshipField.type"
       :validation="relationshipField.validation"
-      :validation-immediade="relationshipField.validation"
+      :validation-immediate="relationshipField.validationImmediate"
       @search-change="debouncedSetOptions"
       @input="emitSelected">
       <template
@@ -168,12 +169,19 @@ export default {
       type: Boolean,
       default: false,
     },
+    /**
+     * Enable/disable closing multiselect after selecting an option
+     */
+    closeOnSelect: {
+      type: Boolean,
+      default: false,
+    },
     relationshipProperty: {
       type: Object,
       required: true,
     },
     value: {
-      type: [Object, String],
+      type: [Object, String, Array],
       default: () => {},
     },
     index: {
@@ -181,6 +189,17 @@ export default {
       required: true,
     },
     newResource: {
+      type: Boolean,
+      required: false,
+    },
+    /**
+     * Extends the query defined in relationship queryFilter request
+     */
+    queryExtension: {
+      type: String,
+      default: '',
+    },
+    singleSelection: {
       type: Boolean,
       required: false,
     },
@@ -202,6 +221,7 @@ export default {
         ...this.relationshipProperty,
         type: has(this.relationshipProperty, 'items') ? 'multiselect' : 'select',
         options: [],
+        value: '',
       },
       debouncedSetOptions: debounce(this.setOptions, 1000),
       searchPlaceholder: '',
@@ -235,6 +255,18 @@ export default {
         this.$emit('setValue', relationships);
       }
     },
+    /**
+     * Replaces drop down value with new value to make it a single
+     * selection if singleSelection prop is true and value is an array
+     */
+    relationshipField: {
+      handler(newField) {
+        if (Array.isArray(newField.value) && newField.value.length > 1 && this.singleSelection) {
+          this.relationshipField.value.shift();
+        }
+      },
+      deep: true,
+    },
   },
   methods: {
     setupEditor() {
@@ -243,7 +275,6 @@ export default {
       this.rescourceCollectionTypes = map(this.allResourceCollections, (prop, index) => ({ value: prop.path, text: prop.label, index }));
 
       if (this.value) {
-        // eslint-disable-next-line no-underscore-dangle
         const currentResourceCollectionType = find(this.rescourceCollectionTypes, { value: this.value._refResourceCollection });
 
         this.setResourceCollectionType(currentResourceCollectionType);
@@ -297,10 +328,13 @@ export default {
       }
 
       if (!query && (!this.relationshipField.value || this.relationshipField.value.length === 0) && this.value) {
-        // eslint-disable-next-line no-underscore-dangle
-        this.relationshipField.options = [{ value: this.value._ref, resource: this.value, displayFields }];
-        // eslint-disable-next-line no-underscore-dangle
-        this.relationshipField.value = this.value._ref;
+        if (Array.isArray(this.value)) {
+          this.relationshipField.options = this.value.map((value) => ({ value: value._ref, resource: value, displayFields }));
+          this.relationshipField.value = this.value.map((value) => value._ref);
+        } else {
+          this.relationshipField.options = [{ value: this.value._ref, resource: this.value, displayFields }];
+          this.relationshipField.value = this.value._ref;
+        }
       }
 
       const urlParams = {
@@ -313,6 +347,11 @@ export default {
         urlParams.queryFilter = map(displayFields, (field) => `/${field} sw "${query}"`).join(' or ');
         // eslint-disable-next-line prefer-destructuring
         urlParams.sortKeys = displayFields[0];
+        if (this.queryExtension) {
+          urlParams.queryFilter = `(${urlParams.queryFilter}) and ${this.queryExtension}`;
+        }
+      } else if (this.queryExtension) {
+        urlParams.queryFilter = this.queryExtension;
       }
 
       if (queryThreshold && query && query.length < queryThreshold) {
@@ -324,7 +363,6 @@ export default {
         idmInstance.get(`${this.resourceCollection.path}${encodeQueryString(urlParams)}`).then((queryResults) => {
           this.relationshipField.options = [];
           each(queryResults.data.result, (resource) => {
-            // eslint-disable-next-line no-underscore-dangle
             this.relationshipField.options.push({ value: `${this.resourceCollection.path}/${resource._id}`, resource, displayFields });
           });
         })
@@ -336,6 +374,11 @@ export default {
     emitSelected(selected) {
       if (selected && Array.isArray(selected)) {
         let emitValues;
+
+        // Replace drop down value with single value if singleSelection prop is true
+        if (this.singleSelection && selected.length > 1) {
+          selected.shift();
+        }
         if (this.relationshipProperty.relationshipGrantTemporalConstraintsEnforced && this.temporalConstraint.length > 0) {
           const refProperties = { temporalConstraints: [{ duration: this.temporalConstraint }] };
           emitValues = selected.map((currentValue) => ({ _ref: currentValue, _refProperties: refProperties }));

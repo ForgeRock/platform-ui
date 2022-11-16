@@ -56,6 +56,16 @@ export function postManagedResource(resourceName, data, routeToForbidden = true)
   return generateIdmApi(null, routeToForbidden).post(resourceUrl, data);
 }
 
+export function patchManagedResource(resourceName, resourceId, data) {
+  const resourceUrl = `/managed/${resourceName}/${resourceId}`;
+  return generateIdmApi().patch(resourceUrl, data);
+}
+
+export function putManagedResource(resourceName, resourceId, data, requestOverrides) {
+  const resourceUrl = `/managed/${resourceName}/${resourceId}`;
+  return generateIdmApi(requestOverrides).put(resourceUrl, data);
+}
+
 export function getLinkedApplications(resourceName, userId) {
   const resourceUrl = `/sync?_action=getLinkedResources&resourceName=managed/${resourceName}/${userId}`;
   return generateIdmApi().post(resourceUrl);

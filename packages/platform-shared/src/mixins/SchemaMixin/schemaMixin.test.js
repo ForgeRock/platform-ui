@@ -405,7 +405,7 @@ describe('Schema mixin', () => {
     });
   });
 
-  describe('setSchemaPropertyValue method', () => {
+  describe('setModelPropertyValue method', () => {
     const model = {
       core: {
         propThatExists: {
@@ -421,23 +421,24 @@ describe('Schema mixin', () => {
     };
 
     it('updates values of existing properties under a nested "value" prop', () => {
-      const newModel = wrapper.vm.setSchemaPropertyValue({ path: 'core.propThatExists', value: 'newValue' }, model);
-      expect(newModel.core.propThatExists.value).toBe('newValue');
+      wrapper.vm.setModelPropertyValue({ path: 'core.propThatExists', value: 'newValue' }, model);
+
+      expect(model.core.propThatExists.value).toBe('newValue');
     });
 
     it('updates values of non-existing properties directly at the specified path', () => {
-      const newModel = wrapper.vm.setSchemaPropertyValue({ path: 'core.propThatDoesntExist', value: 'existingValue' }, model);
-      expect(newModel.core.propThatDoesntExist).toBe('existingValue');
+      wrapper.vm.setModelPropertyValue({ path: 'core.propThatDoesntExist', value: 'existingValue' }, model);
+      expect(model.core.propThatDoesntExist).toBe('existingValue');
     });
 
     it('updates values of "userpassword" properties directly at the specified path', () => {
-      const newModel = wrapper.vm.setSchemaPropertyValue({ path: 'core.userpassword', value: 'newPassword' }, model);
-      expect(newModel.core.userpassword).toBe('newPassword');
+      wrapper.vm.setModelPropertyValue({ path: 'core.userpassword', value: 'newPassword' }, model);
+      expect(model.core.userpassword).toBe('newPassword');
     });
 
     it('updates values with paths ending in "[0]" as single values in an array at the specified path', () => {
-      const newModel = wrapper.vm.setSchemaPropertyValue({ path: 'advanced.propThatIsArray[0]', value: 'newArrayValue' }, model);
-      const newValueArray = newModel.advanced.propThatIsArray.value;
+      wrapper.vm.setModelPropertyValue({ path: 'advanced.propThatIsArray', value: 'newArrayValue' }, model);
+      const newValueArray = model.advanced.propThatIsArray.value;
       expect(newValueArray.length).toBe(1);
       expect(newValueArray[0]).toBe('newArrayValue');
     });

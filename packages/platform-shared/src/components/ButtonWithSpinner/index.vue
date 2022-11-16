@@ -19,7 +19,7 @@ of the MIT license. See the LICENSE file for details. -->
         class="spinner-border-sm mr-2"
         button-spinner />
       <span class="ml-1">
-        {{ spinnerText ? spinnerText : buttonText }}
+        {{ spinnerText }}
       </span>
     </div>
   </BButton>
@@ -61,11 +61,12 @@ export default {
     },
     /**
      * Text to show when spinner is present
-     * buttonText will show if no spinnerText
      */
     spinnerText: {
       type: String,
-      default: null,
+      default() {
+        return this.$t('common.saving');
+      },
     },
     /**
      * Bootstrap variant

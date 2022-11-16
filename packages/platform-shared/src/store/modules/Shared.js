@@ -29,6 +29,7 @@ const defaultState = {
   showEsvUi: false,
   showServiceAccountUi: false,
   webStorageAvailable: true,
+  workforceEnabled: false,
 };
 
 const mutations = {
@@ -107,6 +108,9 @@ const mutations = {
       if (env.VUE_APP_SHOW_SERVICE_ACCOUNT_UI) {
         state.showServiceAccountUi = env.VUE_APP_SHOW_SERVICE_ACCOUNT_UI === 'true' || env.VUE_APP_SHOW_SERVICE_ACCOUNT_UI === true;
       }
+    }
+    if (env.VUE_APP_ENABLE_WORKFORCE) {
+      state.workforceEnabled = env.VUE_APP_ENABLE_WORKFORCE === 'true' || env.VUE_APP_ENABLE_WORKFORCE === true;
     }
   },
   setWebStorageAvailable(state, val) {

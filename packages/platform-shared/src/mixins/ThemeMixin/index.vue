@@ -3,6 +3,7 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <script>
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import { putConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
 import uuid from 'uuid/v4';
@@ -12,6 +13,7 @@ import store from '@forgerock/platform-shared/src/store';
 export default {
   name: 'ThemeMixin',
   mixins: [
+    NotificationMixin,
     RestMixin,
   ],
   data() {
