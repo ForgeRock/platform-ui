@@ -6,7 +6,7 @@
  */
 
 import sanitizeHtml from 'sanitize-html';
-import { markdownPanelSanitizerConfig } from './sanitizerConfig';
+import { baseSanitizerConfig } from './sanitizerConfig';
 
 describe('sanitizeHtml', () => {
   it('remove javascript from email html template', () => {
@@ -26,7 +26,7 @@ describe('sanitizeHtml', () => {
       </body>
     </html>
     `;
-    const sanitizedHtml = sanitizeHtml(html, markdownPanelSanitizerConfig);
+    const sanitizedHtml = sanitizeHtml(html, baseSanitizerConfig);
 
     expect(sanitizedHtml).toBe(`
     <html>
