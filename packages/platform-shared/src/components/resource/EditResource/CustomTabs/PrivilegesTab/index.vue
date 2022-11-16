@@ -131,7 +131,7 @@ of the MIT license. See the LICENSE file for details. -->
       ref="removePrivilege"
       :title="$t('pages.access.removeModalTitle')">
       <div>
-        {{ $t('pages.access.removeConfirm') }} {{ $t('pages.access.privilege') }}?
+        {{ $t('pages.access.removeConfirm', { type: $t('pages.access.privilege') }) }}
       </div>
       <template v-slot:modal-footer="{ cancel }">
         <BButton
@@ -382,7 +382,7 @@ export default {
         (response) => {
           const schemas = response.data.result.filter((result) => {
             const resourceName = result.resourceCollection;
-            return resourceName.substring(resourceName.length - 10) !== 'assignment';
+            return !resourceName.endsWith('assignment') && !resourceName.endsWith('application');
           });
 
           schemas.forEach((schema) => {

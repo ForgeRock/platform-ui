@@ -5,7 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <FrField
     v-model="uiSchema.value"
-    class="mb-4"
+    class="pb-1 mb-4"
     type="password"
     :disabled="uiSchema.disabled"
     :description="uiSchema.description"

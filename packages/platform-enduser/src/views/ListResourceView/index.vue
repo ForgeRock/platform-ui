@@ -44,7 +44,7 @@ of the MIT license. See the LICENSE file for details. -->
         </FrListResource>
         <FrCreateResource
           v-if="routerParameters && createProperties"
-          @showDetails="resourceClicked"
+          @show-details="resourceClicked"
           :resource-title="displayName"
           :resource-name="routerParameters.resourceName"
           :resource-type="routerParameters.resourceType"

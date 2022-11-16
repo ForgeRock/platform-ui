@@ -39,7 +39,7 @@ import FallbackImage from '@/components/utils/FallbackImage';
  * @description Widget that provides a welcome message for the managed resource, also provides a button to directly access editing the resources profile.
  * */
 export default {
-  name: 'MyApplicationsListItem',
+  name: 'ConsumerApplications',
   extends: ListItem,
   props: {
     applicationDetails: {

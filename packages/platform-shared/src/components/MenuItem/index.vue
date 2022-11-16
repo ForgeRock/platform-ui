@@ -45,6 +45,21 @@ of the MIT license. See the LICENSE file for details. -->
       {{ badgeContent }}
     </span>
   </Component>
+  <!-- Basic menu item that just emits event -->
+  <Component
+    v-else-if="event && showItemForUser"
+    :is="bootstrapComponent"
+    :active="active"
+    @click="$emit('item-click', event)"
+    :link-class="'d-flex align-items-center'">
+    <FrIcon
+      v-if="icon"
+      class="mr-3"
+      :name="icon" />
+    <span class="menu-item-text">
+      {{ $t(displayName) }}
+    </span>
+  </Component>
   <!-- Item is an expandable menu with a submenu -->
   <li
     v-else-if="subItems.length && showItemForUser"
@@ -70,6 +85,21 @@ of the MIT license. See the LICENSE file for details. -->
       v-model="isExpanded">
       <template v-for="(subItem, subIndex) in subItems">
         <Component
+          v-if="subItem.event"
+          :active="subItem.active"
+          :key="`menu_item_event_${displayName}_${subIndex}`"
+          :is="bootstrapComponent"
+          @click="$emit('item-click', subItem.event)">
+          <FrIcon
+            v-if="subItem.icon"
+            class="mr-3"
+            :name="subItem.icon" />
+          <span class="menu-item-text">
+            {{ $t(subItem.displayName) }}
+          </span>
+        </Component>
+        <Component
+          v-else
           :key="`menu_item_${displayName}_${subIndex}`"
           :is="bootstrapComponent"
           :href="subItem.url"
@@ -198,6 +228,27 @@ export default {
       default: false,
     },
     /**
+     * Event that item should emit when clicked. Used when menu is not used for routing
+     */
+    event: {
+      type: String,
+      default: '',
+    },
+    /**
+     * Is menu item active
+     */
+    active: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * If menu item is a dropdown, should it be expanded
+     */
+    expand: {
+      type: Boolean,
+      default: false,
+    },
+    /**
      * Shows a badge next to the dropdown option text which displays content from the store
      */
     showBadgeWithContentFromStore: {
@@ -239,7 +290,7 @@ export default {
      * @returns {Boolean} whether or not the current item should be expanded
      */
     shouldBeExpanded(routeName) {
-      return this.subItems?.length && this.subItems.some((subMenuItem) => subMenuItem?.routeTo?.name === routeName);
+      return this.subItems?.length && (this.subItems.some((subMenuItem) => subMenuItem?.routeTo?.name === routeName) || this.expand);
     },
   },
 };

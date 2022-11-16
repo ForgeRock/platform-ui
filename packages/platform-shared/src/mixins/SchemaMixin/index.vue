@@ -6,12 +6,14 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   assign,
   get,
+  isArray,
   mapKeys,
   omit,
   has,
   cloneDeep,
   endsWith,
   set,
+  startsWith,
 } from 'lodash';
 
 /**
@@ -20,6 +22,27 @@ import {
 export default {
   name: 'SchemaMixin',
   methods: {
+    addTranslationsToSchema(schema) {
+      return schema.map((row) => row.map((formField) => {
+        const labelTranslationPath = `applications.edit.labels.${formField.model}`;
+        if (this.$t(labelTranslationPath) !== labelTranslationPath) {
+          formField.label = this.$t(labelTranslationPath);
+        }
+        if (!formField.label) {
+          if (formField.title) {
+            formField.label = formField.title;
+          } else {
+            const splitModel = formField.model.split('.');
+            formField.label = splitModel[splitModel.length - 1];
+          }
+        }
+        const descriptionTranslationPath = `applications.edit.descriptions.${formField.model}`;
+        if (this.$t(descriptionTranslationPath) !== descriptionTranslationPath) {
+          formField.description = this.$t(descriptionTranslationPath);
+        }
+        return formField;
+      }));
+    },
     /**
      * Combines two given schemas
      * @param {apiSchema} apiSchema schema obtained from backend
@@ -144,28 +167,20 @@ export default {
      * @param {Object} model - object representing the current model data
      * @returns {Object} model with updated property values
      */
-    setSchemaPropertyValue(obj, model) {
+    setModelPropertyValue(obj, model) {
       const { value, path } = obj;
-      const saveSchema = cloneDeep(model);
-      let pathName = path;
       let valueToSet = value;
+      const property = get(model, path);
 
-      // A model path ending with [0] indicates the backend is expecting an array
-      // but we have presented a single value input to the user whose value should be stored as a single array entry
-      if (endsWith(path, '[0]')) {
-        // To get the correct location of the property to save we need to remove the '[0]' from the end of model
-        pathName = path.substring(0, path.length - 3);
+      if (property && isArray(property.value) && !isArray(value)) {
         valueToSet = [value];
       }
 
-      const propertyExists = has(saveSchema, pathName);
-
-      if (!propertyExists || endsWith(pathName, 'userpassword')) {
-        set(saveSchema, pathName, valueToSet);
+      if (!property || endsWith(path, 'userpassword') || startsWith(path, 'applicationManagedObject')) {
+        set(model, path, valueToSet);
       } else {
-        set(saveSchema, `${pathName}.value`, valueToSet);
+        set(model, `${path}.value`, valueToSet);
       }
-      return saveSchema;
     },
   },
 };

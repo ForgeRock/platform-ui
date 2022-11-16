@@ -33,6 +33,7 @@ of the MIT license. See the LICENSE file for details. -->
       :data-testid="testid"
       @search-change="$emit('search-change', $event)"
       @open="openHandler"
+      @select="$emit('select', $event)"
       @close="floatingLabel && closeDropDown(inputValue)"
       @input="$emit('input', inputValue ? inputValue.value : '')"
       @tag="$emit('tag', $event)">
@@ -159,6 +160,7 @@ export default {
         const value = typeof newVal === 'object' && Object.hasOwnProperty.call(newVal, 'value') ? newVal.value : newVal;
         this.floatLabels = value !== undefined && value !== null && (value.toString().length > 0 || (this.value !== null && this.value.length > 0)) && !!this.label;
       }
+      this.$emit('close');
     },
     inputValueHandler(inputValue) {
       this.floatLabels = this.floatingLabel && inputValue && inputValue.value !== null && inputValue.value.toString().length > 0 && !!this.label;

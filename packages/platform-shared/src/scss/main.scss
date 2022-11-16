@@ -179,6 +179,13 @@ hr {
   }
 }
 
+code {
+  background: $gray-100;
+  border-radius: 3px;
+  display: inline-block;
+  padding: 0px 5px;
+}
+
 small {
   font-size: $small-font-size;
 }
@@ -252,6 +259,10 @@ legend {
   opacity: 0.7 !important;
 }
 
+.opacity-100 {
+  opacity: 1 !important;
+}
+
 /* Page transition */
 .fade-enter-active,
 .fade-leave-active {
@@ -295,6 +306,10 @@ a.card {
   .material-icons {
     width: 32px;
   }
+}
+
+.opacity-0 {
+  opacity: 0;
 }
 
 .opacity-30 {

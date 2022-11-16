@@ -80,6 +80,13 @@ export default {
           displayName: 'sideMenu.dashboard',
           icon: 'dashboard',
         },
+        (this.$store.state.SharedStore.workforceEnabled === true
+          ? {
+            routeTo: { name: 'Applications' },
+            displayName: 'sideMenu.applications',
+            icon: 'apps',
+          }
+          : {}),
         {
           routeTo: { name: 'Profile' },
           displayName: 'sideMenu.profile',

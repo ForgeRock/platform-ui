@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -33,7 +33,11 @@ export default {
 
       if (isArray(clonedNew)) {
         changes = filter(clonedNew, (field, index) => {
-          if (field.value !== clonedOriginal[index].value) {
+          if (isArray(field.value)) {
+            if (JSON.stringify(field.value) !== JSON.stringify(clonedOriginal[index].value)) {
+              return true;
+            }
+          } else if (field.value !== clonedOriginal[index].value) {
             return true;
           }
           return false;
@@ -106,7 +110,10 @@ export default {
       let filterUrl = '';
 
       if (filterString.length > 0) {
-        each(displayFields, (field, index) => {
+        // remove nested properties
+        const filteredFields = displayFields.filter((field) => (!field.includes('/')));
+
+        each(filteredFields, (field, index) => {
           let type = 'string';
 
           if (!isUndefined(schemaProps) && !isUndefined(schemaProps[field])) {
@@ -116,19 +123,19 @@ export default {
 
           if (type === 'number' && !isNaN(toNumber(filterString))) {
             // Search based on number and proper number value
-            if ((index + 1) < displayFields.length) {
+            if ((index + 1) < filteredFields.length) {
               filterUrl = `${filterUrl}${field} eq ${filterString} OR `;
             } else {
               filterUrl = `${filterUrl}${field} eq ${filterString}`;
             }
           } else if (type === 'boolean' && (filterString === 'true' || filterString === 'false')) {
             // Search based on boolean and proper boolean true/false
-            if ((index + 1) < displayFields.length) {
+            if ((index + 1) < filteredFields.length) {
               filterUrl = `${filterUrl}${field} eq ${filterString} OR `;
             } else {
               filterUrl = `${filterUrl}${field} eq ${filterString}`;
             }
-          } else if ((index + 1) < displayFields.length) {
+          } else if ((index + 1) < filteredFields.length) {
             // Fallback to general string search if all other criteria fails
             // IAM-1003 revealed an issue with some url encoding differences between
             // chrome and IE. Need to use %22 instead of " to avoid the encoding
