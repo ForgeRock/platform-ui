@@ -24,7 +24,7 @@ of the MIT license. See the LICENSE file for details. -->
         ref="vms"
         track-by="multiselectId"
         :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control p-0', {'no-multiselect-label': !label }, {'h-100': floatLabels || !label }]"
-        :close-on-select="false"
+        :close-on-select="closeOnSelect"
         :disabled="disabled"
         :hide-selected="true"
         :multiple="true"
@@ -105,6 +105,13 @@ export default {
     VueMultiSelect,
   },
   props: {
+    /**
+     * Enable/disable closing after selecting an option
+     */
+    closeOnSelect: {
+      type: Boolean,
+      default: false,
+    },
     /**
      * Placeholder text
      */

@@ -59,7 +59,7 @@ export function generateIdmApi(requestOverride = {}, routeToForbidden = true) {
   */
 export function generateAmApi(resource, requestOverride = {}) {
   let headers = {
-    'Content-type': 'application/json',
+    'content-type': 'application/json',
     'accept-api-version': resource.apiVersion,
   };
   if (requestOverride.headers) {

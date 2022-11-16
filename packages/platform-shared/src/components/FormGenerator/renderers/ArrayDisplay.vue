@@ -5,7 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <FrField
     v-model="uiSchema.value"
-    class="mb-4"
+    class="pb-1 mb-4"
     :description="uiSchema.description"
     :disabled="uiSchema.disabled"
     :is-html="uiSchema.isHtml"
@@ -41,10 +41,10 @@ export default {
   },
   computed: {
     arrayType() {
-      if (this.uiSchema.arrayType === 'addMany') {
+      if (this.uiSchema.type === 'array') {
         return 'tag';
       }
-      if (this.uiSchema.arrayType === 'selectOne') {
+      if (this.uiSchema.type === 'select') {
         return 'select';
       }
       return 'multiselect';

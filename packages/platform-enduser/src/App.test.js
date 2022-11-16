@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -18,9 +18,8 @@ localVue.use(BootstrapVue);
 describe('App.vue', () => {
   const store = new Vuex.Store({
     state: {
-      UserStore: {
-        userDetails: {},
-      },
+      SharedStore: { workforceEnabled: false },
+      UserStore: { userDetails: {} },
     },
     getters: {
       'UserStore/userDetails': (state) => state.UserStore.userDetails,

@@ -100,7 +100,7 @@ export default {
           icon = 'error_outline';
           break;
         case 'warning':
-          icon = 'warning';
+          icon = 'warning_amber';
           break;
         case 'success':
           icon = 'check_circle';

@@ -179,7 +179,7 @@ export default {
                             && properties[propName].type !== 'object');
       const formFields = map(filteredOrder, (name) => ({
         name,
-        title: `${properties[name].title} ${required.includes(name) ? '' : this.$t('pages.profile.editProfile.optional')}`,
+        title: `${properties[name].title} ${required.includes(name) ? '' : this.$t('common.optional')}`,
         value: this.profile[name] || null,
         type: properties[name].type,
         description: properties[name].description,

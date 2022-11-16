@@ -154,7 +154,7 @@
   .multiselect__select {
     width: 50px;
     position: absolute;
-    border-radius: 3px;
+    border-radius: 5px;
     padding: 0.75rem 1rem;
     height: 46px;
     transform: none !important;
@@ -227,8 +227,8 @@
 
 ::v-deep .fr-field-error {
   .multiselect__select {
-    right: 0;
-    top: 0;
+    right: 1px;
+    top: 1px;
   }
 
   .multiselect__tags {
