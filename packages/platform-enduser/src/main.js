@@ -31,7 +31,7 @@ import overrideTranslations, { setLocales } from '@forgerock/platform-shared/src
 import parseSub from '@forgerock/platform-shared/src/utils/OIDC';
 import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 import { sanitizeUrl } from '@braintree/sanitize-url';
-import { defaultSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
+import { baseSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 import store from '@/store';
 import router from './router';
 import i18n from './i18n';
@@ -44,7 +44,7 @@ Vue.config.productionTip = false;
 Vue.component('ValidationProvider', ValidationProvider);
 Vue.component('ValidationObserver', ValidationObserver);
 
-Vue.use(VueSanitize, defaultSanitizerConfig);
+Vue.use(VueSanitize, baseSanitizerConfig);
 
 setInteractionMode('passive');
 
