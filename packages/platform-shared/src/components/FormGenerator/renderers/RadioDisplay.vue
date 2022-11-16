@@ -1,15 +1,25 @@
-<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BFormGroup
-    :label="uiSchema.label">
+    :label="uiSchema.label"
+    class="pb-1 mb-4">
     <BFormRadioGroup
+      v-if="uiSchema.format && uiSchema.format === 'buttons'"
+      v-model="value"
+      buttons
+      button-variant="outline-primary"
+      :options="uiSchema.options"
+      size="md"
+      text-field="text" />
+    <BFormRadioGroup
+      v-else
       v-model="value"
       :options="uiSchema.options"
-      text-field="text"
-      stacked />
+      stacked
+      text-field="text" />
     <small
       v-if="uiSchema.isHtml"
       v-html="uiSchema.description"

@@ -6,7 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <div>
     <FrField
       v-model="uiSchema.value"
-      class="mb-4"
+      class="pb-1 mb-4"
       :copy="uiSchema.append"
       :disabled="uiSchema.disabled"
       :description="uiSchema.description"

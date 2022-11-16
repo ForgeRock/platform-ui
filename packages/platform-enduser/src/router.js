@@ -61,6 +61,19 @@ const router = new Router({
       meta: { authenticate: true },
     },
     {
+      path: '/applications',
+      name: 'Applications',
+      component: () => import('@/views/WorkforceApplications'),
+      meta: { authenticate: true },
+      beforeEnter: (to, from, next) => {
+        if (store.state.SharedStore.workforceEnabled === true) {
+          next();
+        } else {
+          next({ name: 'NotFound' });
+        }
+      },
+    },
+    {
       path: '/list/:resourceType/:resourceName',
       name: 'ListResource',
       component: () => import(/* webpackChunkName: "listResource" */ '@/views/ListResourceView'),

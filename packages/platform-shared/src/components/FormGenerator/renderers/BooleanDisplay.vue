@@ -1,10 +1,11 @@
-<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div class="custom-control custom-checkbox pb-3">
+  <div class="custom-control custom-checkbox pb-1 mb-4">
     <input
+      :disabled="uiSchema.disabled"
       :id="`checkbox-${path}`"
       type="checkbox"
       :name="`checkbox-${path}`"

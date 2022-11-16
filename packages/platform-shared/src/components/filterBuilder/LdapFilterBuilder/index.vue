@@ -69,6 +69,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    path: {
+      type: String,
+      default: null,
+    },
     value: {
       type: String,
       default: null,
@@ -90,7 +94,7 @@ export default {
   },
   watch: {
     filterString(value) {
-      this.$emit('input', value);
+      this.$emit('input', { path: this.path, value });
     },
   },
   mounted() {

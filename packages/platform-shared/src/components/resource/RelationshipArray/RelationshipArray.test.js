@@ -89,6 +89,7 @@ describe('RelationshipArray', () => {
     wrapper = shallowMount(RelationshipArray, {
       mocks: {
         $t: (key) => key,
+        $router: { push: jest.fn() },
         $store: {
           state: {
             userId: 'foo',
@@ -156,7 +157,7 @@ describe('RelationshipArray', () => {
         _id: 'testId',
         order: [
           'test',
-          'test2',
+          'userName',
         ],
         title: 'testTitle',
         properties: {
@@ -174,8 +175,8 @@ describe('RelationshipArray', () => {
             },
             isTemporalConstraint: true,
           },
-          test2: {
-            value: 'test2',
+          userName: {
+            value: 'userName',
             type: 'string',
             title: 'test2Title',
             propName: 'test2PropName',
@@ -215,6 +216,29 @@ describe('RelationshipArray', () => {
     expect(wrapper.vm.buildGridUrl(0)).toEqual('user/bjensen/reports?_pageSize=10&_totalPagedResultsPolicy=ESTIMATE&_queryFilter=true&_sortKeys=-userName');
     wrapper.vm.sortDesc = true;
     expect(wrapper.vm.buildGridUrl(0)).toEqual('user/bjensen/reports?_pageSize=10&_totalPagedResultsPolicy=ESTIMATE&_queryFilter=true&_sortKeys=userName');
+
+    wrapper.setProps({
+      filter: 'filterValue',
+      additionalQueryFilter: 'userName=\'test\'',
+      relationshipArrayProperty: {
+        items: {
+          resourceCollection: [{
+            path: 'managed/user',
+            query: {
+              fields: [],
+            },
+          }],
+        },
+      },
+    });
+    const resourceCollectionSchema = {
+      resourceCollection: 'managed/user',
+    };
+    expect(wrapper.vm.buildGridUrl(0, resourceCollectionSchema)).toEqual('user?_pageSize=10&_totalPagedResultsPolicy=ESTIMATE&_queryFilter=userName=\'test\'&_fields=_ref,_refResourceCollection,_refResourceId,_refProperties,&_sortKeys=userName');
+
+    wrapper.vm.$store.state.SharedStore.uiConfig.configuration.platformSettings.managedObjectsSettings.user.disableRelationshipSortAndSearch = false;
+    wrapper.vm.setDisableSortAndSearch(wrapper.vm.relationshipArrayProperty.items.resourceCollection[0]);
+    expect(wrapper.vm.buildGridUrl(0, resourceCollectionSchema)).toEqual('user?_pageSize=10&_totalPagedResultsPolicy=ESTIMATE&_queryFilter=userName=\'test\'&_fields=_ref,_refResourceCollection,_refResourceId,_refProperties,&_sortKeys=userName');
   });
 
   it('Correctly sets columns', () => {
@@ -348,5 +372,38 @@ describe('RelationshipArray', () => {
     ));
     await wrapper.vm.removeRelationships();
     expect(hideTestIdSpy).toHaveBeenCalled();
+  });
+
+  it('removes relationships', () => {
+    const routerPushSpy = jest.spyOn(wrapper.vm.$router, 'push');
+    const item = {
+      _refResourceCollection: '',
+      _refResourceId: '_refResourceId',
+    };
+    const index = {};
+    const event = {
+      target: {
+        classList: {
+          value: [],
+        },
+      },
+    };
+    wrapper.setProps({
+      overrideResourceEvent: true,
+    });
+    wrapper.vm.resourceClicked(item, index, event);
+    expect(wrapper.emitted()['resource-event'][0]).toEqual([item]);
+
+    wrapper.setProps({
+      overrideResourceEvent: false,
+    });
+    wrapper.vm.resourceClicked(item, index, event);
+    expect(routerPushSpy).toHaveBeenCalled();
+  });
+
+  it('removes relationships', () => {
+    const data = 'relationshipToDelete';
+    wrapper.vm.onRelationshipDelete(data);
+    expect(wrapper.vm.relationshipToDelete).toBe('relationshipToDelete');
   });
 });

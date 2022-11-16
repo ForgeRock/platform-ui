@@ -48,7 +48,7 @@ of the MIT license. See the LICENSE file for details. -->
             <ul
               class="list-unstyled ml-4 mr-4 mb-4 my-applications-tiles"
               data-test-id="my-applications-list">
-              <FrMyApplicationsListItem
+              <FrConsumerApplications
                 v-for="application in myApplications"
                 :key="application.dashboardDisplayName[0]"
                 :application-details="application" />
@@ -67,7 +67,7 @@ import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import ListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import FrMyApplicationsListItem from '@/components/dashboard/applications/MyApplicationsListItem';
+import FrConsumerApplications from '@/components/dashboard/ConsumerApplications/';
 import Welcome from './widgets/WelcomeWidget';
 import Workflow from './widgets/WorkflowControlWidget';
 
@@ -82,16 +82,16 @@ export default {
     NotificationMixin,
   ],
   components: {
-    FrMyApplicationsListItem,
-    Welcome,
-    ListGroup,
-    Workflow,
+    FrConsumerApplications,
     FrIcon,
+    ListGroup,
+    Welcome,
+    Workflow,
   },
   data() {
     return {
-      widgets: [],
       myApplications: [],
+      widgets: [],
     };
   },
   computed: {
@@ -103,28 +103,11 @@ export default {
   },
   mounted() {
     this.loadWidgets();
-    this.loadMyApplications();
+    if (this.$store.state.SharedStore.workforceEnabled === false) {
+      this.loadConsumerApplications();
+    }
   },
   methods: {
-    /**
-     * @description Loads a list of permitted applications
-     * @fires GET realms/root/realms/<current-realm>/dashboard/assigned
-     * @return void
-     * */
-    loadMyApplications() {
-      this.getRequestService({
-        context: 'AM',
-      })
-        .get(`realms/root/realms/${this.realm}/dashboard/assigned`, { withCredentials: true })
-        .then(({ data }) => {
-          const apps = omit(data, ['_id', '_rev']);
-          // Alpha sorted by name
-          this.myApplications = Object.values(apps).sort((a, b) => a.dashboardDisplayName[0].localeCompare(b.dashboardDisplayName[0]));
-        })
-        .catch((error) => {
-          this.showErrorMessage(error, this.$t('pages.dashboard.errorGetApplications'));
-        });
-    },
     /**
      * @description Provides a list of Widgets from config file ui-dashboard.json
      * @fires GET config/ui/dashboard
@@ -144,6 +127,25 @@ export default {
         })
         .catch((error) => {
           this.displayNotification('error', error.response.data.message);
+        });
+    },
+    /**
+     * @description Loads a list of permitted applications
+     * @fires GET realms/root/realms/<current-realm>/dashboard/assigned
+     * @return void
+     * */
+    loadConsumerApplications() {
+      this.getRequestService({
+        context: 'AM',
+      })
+        .get(`realms/root/realms/${this.realm}/dashboard/assigned`, { withCredentials: true })
+        .then(({ data }) => {
+          const apps = omit(data, ['_id', '_rev']);
+          // Alpha sorted by name
+          this.myApplications = Object.values(apps).sort((a, b) => a.dashboardDisplayName[0].localeCompare(b.dashboardDisplayName[0]));
+        })
+        .catch((error) => {
+          this.showErrorMessage(error, this.$t('pages.dashboard.errorGetApplications'));
         });
     },
   },

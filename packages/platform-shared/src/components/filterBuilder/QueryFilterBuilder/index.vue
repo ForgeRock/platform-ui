@@ -7,6 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     <template v-if="isBasic && allowBasicMode">
       <FrFilterBuilderGroup
         path="0"
+        :class="{ 'pb-3': hideAdvanced }"
         :disabled="disabled"
         :rules="queryFilter"
         :resource-name="resourceName"
@@ -19,6 +20,7 @@ of the MIT license. See the LICENSE file for details. -->
         @operator-change="updateFilter('operator-change', $event)"
         @rule-change="updateFilter('rule-change', $event)" />
       <BButton
+        v-if="!hideAdvanced"
         class="px-0 pt-4 pb-0"
         variant="link"
         @click="toggleMode(false)">
@@ -96,6 +98,10 @@ export default {
     queryFilterString: {
       default: '/ co ""',
       type: [String, Boolean],
+    },
+    hideAdvanced: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {

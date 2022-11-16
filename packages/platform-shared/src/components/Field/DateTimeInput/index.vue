@@ -119,7 +119,7 @@ export default {
      * @param {String} newVal formatted duration value
      */
     setInputValue(newVal) {
-      const regexp = /([\d-]{10})T([\d:+]{8}.*)/g;
+      const regexp = /([\d-]{10})T([\d:+]{5}.*)/g;
       const match = regexp.exec(newVal);
       if (match) {
         [, this.dateValue, this.timeValue] = match;

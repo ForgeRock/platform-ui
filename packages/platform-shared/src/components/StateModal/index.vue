@@ -25,6 +25,7 @@ of the MIT license. See the LICENSE file for details. -->
         :button-text="futureState"
         :disabled="isChanging"
         :show-spinner="isChanging"
+        :spinner-text="futureState"
         :variant="variant"
         @click="$emit('change-state', !currentState)" />
     </template>

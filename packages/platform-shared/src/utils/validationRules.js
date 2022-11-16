@@ -144,6 +144,11 @@ export function getRules(i18n) {
     message: i18n.t('common.policyValidationMessages.VALID_INT'),
   };
 
+  const integer = {
+    ...rules.integer,
+    message: i18n.t('common.policyValidationMessages.VALID_INT'),
+  };
+
   const oneOf = {
     ...rules.oneOf,
     message: i18n.t('common.policyValidationMessages.VALID_BOOLEAN'),
@@ -251,6 +256,7 @@ export function getRules(i18n) {
     email_from,
     excluded,
     google_cloud_platform_certificate_validation,
+    integer,
     isInteger,
     isList,
     isNumber,
