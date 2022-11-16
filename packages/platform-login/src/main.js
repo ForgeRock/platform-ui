@@ -23,7 +23,7 @@ import overrideTranslations, { setLocales } from '@forgerock/platform-shared/src
 import VueSanitize from 'vue-sanitize';
 import store from '@forgerock/platform-shared/src/store';
 import uuid from 'uuid/v4';
-import { defaultSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
+import { baseSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 import i18n from './i18n';
 import router from './router';
 import App from './App';
@@ -31,7 +31,7 @@ import App from './App';
 Vue.config.productionTip = false;
 
 Vue.use(Notifications);
-Vue.use(VueSanitize, defaultSanitizerConfig);
+Vue.use(VueSanitize, baseSanitizerConfig);
 
 setInteractionMode('passive');
 

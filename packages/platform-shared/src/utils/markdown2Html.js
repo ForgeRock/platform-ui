@@ -7,8 +7,7 @@
 
 import showdown from 'showdown';
 import { pd } from 'pretty-data';
-import sanitizeHtml from 'sanitize-html';
-import { markdownPanelSanitizerConfig } from './sanitizerConfig';
+import { baseSanitizerConfig, sanitize } from './sanitizerConfig';
 
 /**
  * constant used to insert a placeholder in the cleanHtml function
@@ -96,13 +95,14 @@ export function html2Markdown(html) {
 export function markdown2Html(markdown, wrapInDivContent) {
   const converter = new showdown.Converter({ completeHTMLDocument: false, tables: true });
   const html = converter.makeHtml(markdown);
-  const sanitizedHtml = sanitizeHtml(html, markdownPanelSanitizerConfig);
+
+  const sanitizedHtml = sanitize(html, baseSanitizerConfig);
 
   if (wrapInDivContent) {
     return wrapContent(sanitizedHtml);
   }
 
-  return html;
+  return sanitizedHtml;
 }
 
 /**
@@ -114,5 +114,5 @@ export function markdown2Html(markdown, wrapInDivContent) {
 export function markdown2HtmlPreview(markdown, styles) {
   const wrapedHtml = markdown2Html(markdown, true);
   const parsedHtml = `<style>${styles}</style>${wrapedHtml}`;
-  return sanitizeHtml(parsedHtml, markdownPanelSanitizerConfig);
+  return sanitize(parsedHtml, baseSanitizerConfig);
 }

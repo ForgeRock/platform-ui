@@ -7,32 +7,6 @@
 
 import sanitizeHtml from 'sanitize-html';
 
-// default sanitization config for login, admin and enduser apps, it's used in vue-sanitize plugin initialization on main.ls
-export const defaultSanitizerConfig = {
-  ...sanitizeHtml.defaults,
-  allowedTags: [...sanitizeHtml.defaults.allowedTags, 'img'],
-  allowedAttributes: {
-    ...sanitizeHtml.defaults.allowedAttributes,
-    '*': ['class', 'style', 'data-testid'],
-    img: [...sanitizeHtml.defaults.allowedAttributes.img, 'height', 'alt'],
-  },
-};
-
-/**
-  * HTML sanitization config for markdown edit panels,
-  * overrides the defaults and add the needed configuration for email templates for instance
-  * Default config and docs on https://www.npmjs.com/package/sanitize-html
-  */
-export const markdownPanelSanitizerConfig = {
-  ...sanitizeHtml.defaults,
-  allowedAttributes: {
-    ...sanitizeHtml.defaults.allowedAttributes,
-    '*': ['class', 'style', 'id'],
-  },
-  allowedTags: [...sanitizeHtml.defaults.allowedTags, 'html', 'head', 'body', 'style', 'img'],
-  allowVulnerableTags: true, // removes the warnign for style tag please use with caution
-};
-
 // tags to allow svg and basic shapes drawing
 const svgShapeTags = ['svg', 'circle', 'ellipse', 'line', 'path', 'polygon', 'polyline', 'rect', 'image', 'text'];
 // presentation attributes for svg shapes tags
@@ -51,15 +25,31 @@ const svgShapeAttributes = {
   image: ['href', 'height', 'width', 'x', 'y'],
 };
 
-// sanitizer config with basic svg shapes drawing, used in login and enduser apps on custom footer edition
-// allows the drawing of circles, lines, polygon, rects, text... all tags in svgShapeTags variable
-export const svgShapesSanitizerConfig = {
+export const baseSanitizerConfig = {
   ...sanitizeHtml.defaults,
-  allowedTags: [...sanitizeHtml.defaults.allowedTags, ...svgShapeTags, 'img'],
   allowedAttributes: {
     ...sanitizeHtml.defaults.allowedAttributes,
-    ...svgShapeAttributes,
-    '*': ['class', 'style', 'data-testid'],
+    '*': ['class', 'style', 'data-testid', 'id'],
+    a: ['href', 'name', 'target'],
     img: [...sanitizeHtml.defaults.allowedAttributes.img, 'height', 'alt'],
   },
+  allowedTags: [...sanitizeHtml.defaults.allowedTags, 'html', 'head', 'body', 'style', 'img'],
+  allowVulnerableTags: true, // removes the warning for style tag please use with caution
+  allowedSchemesByTag: {
+    ...sanitizeHtml.defaults.allowedSchemesByTag,
+    img: [...sanitizeHtml.defaults.allowedSchemes, 'data'],
+  },
 };
+
+export const svgShapesSanitizerConfig = {
+  ...baseSanitizerConfig,
+  allowedTags: [...baseSanitizerConfig.allowedTags, ...svgShapeTags],
+  allowedAttributes: {
+    ...baseSanitizerConfig.allowedAttributes,
+    ...svgShapeAttributes,
+  },
+};
+
+export function sanitize(content, config = baseSanitizerConfig) {
+  return sanitizeHtml(content, config);
+}
