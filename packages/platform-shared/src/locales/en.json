@@ -724,7 +724,7 @@
         "detailModal": {
           "header": "Activity Detail",
           "doneBtn": "Done",
-          "previousAuthentications": "User's Previous Risky Authentication Attempts"
+          "previousAuthentications": "User's Last 5 Risky Authentication Attempts"
         },
         "apply": "Apply"
       },
