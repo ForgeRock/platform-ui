@@ -923,14 +923,14 @@
         "professionalUseOnly": "This view is intended to help ForgeRock Professional Services to understand the ability of the tool to detect anomalies and help tune AI/ML Models. It is based on test data and intended for context only."
       },
       "risk": {
-        "allRisk": "All Risk Scores",
+        "allRisk": "Risk Score",
         "high": "High",
         "low": "Low",
         "medium": "Medium",
         "riskScore": "Risk Score",
         "riskScoreDefinition": "Risk Score Definition",
         "selectedRisk": "{minSelectedRisk} - {maxSelectedRisk} Risk",
-        "tooltip": "Events with a risk score between {minRisk} and {maxRisk} are classified as risky."
+        "tooltip": "Slide to Filter Events Based on Risk Score"
       }
     }
   }
