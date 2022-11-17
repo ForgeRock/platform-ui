@@ -132,10 +132,7 @@ export default {
       );
     },
     tooltip() {
-      return this.$t('autoAccess.access.risk.tooltip', {
-        minRisk: this.minRisk,
-        maxRisk: this.maxRisk,
-      });
+      return this.$t('autoAccess.access.risk.tooltip');
     },
   },
 };
