@@ -17,7 +17,8 @@
       "notUnique": "Custom questions cannot be duplicates"
     },
     "password": {
-      "confirmPassword": "Confirm Password"
+      "confirmPassword": "Confirm Password",
+      "passwordsDoNotMatch": "Passwords do not match"
     },
     "social": {
       "or": "or",

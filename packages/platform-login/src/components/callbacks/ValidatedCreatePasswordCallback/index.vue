@@ -280,7 +280,7 @@ export default {
         && this.confirmPasswordText.length > 0
         && (this.password.value === this.confirmPasswordText);
       const disableNextButton = this.failuresForField.length !== 0 || this.failuresForPanel.length !== 0 || !passwordsMatch;
-      this.confirmPasswordFailures = (disableNextButton && this.confirmPasswordText.length > 0 && !passwordsMatch) ? ['Passwords do not match'] : [];
+      this.confirmPasswordFailures = (disableNextButton && this.confirmPasswordText.length > 0 && !passwordsMatch) ? [this.$t('login.password.passwordsDoNotMatch')] : [];
       this.$emit('disable-next-button', disableNextButton, this.index);
     },
   },
