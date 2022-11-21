@@ -30,7 +30,7 @@ export const getConfigurationChangesPreview = (dataSource, processJSON) => {
 };
 
 export const getDefaultProcess = () => new Promise((resolve, reject) => {
-  generateAutoAccessApi().get('/riskConfig').then(({ data: res }) => {
+  generateAutoAccessApi().get('/v2/riskConfig/userConfig').then(({ data: res }) => {
     resolve(res);
   })
     .catch((e) => {
