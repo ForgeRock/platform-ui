@@ -177,7 +177,6 @@ yarn unit
 <a name="browser-support"></a>
 ## Browser support
 
-- Internet Explorer 11 or higher
 - Latest Edge
 - Latest Firefox
 - Latest Safari
