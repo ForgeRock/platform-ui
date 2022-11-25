@@ -76,7 +76,8 @@
     "**/**/minimatch": "5.1.0",
     "**/**/minimist": "1.2.6",
     "**/**/ramda": "0.27.1",
-    "**/**/with/acorn": "4.0.13"
+    "**/**/with/acorn": "4.0.13",
+    "raw-loader/loader-utils": "3.2.1"
   },
   "workspaces": {
     "packages": [
