@@ -2446,9 +2446,10 @@
     "noReportsTitle": "No reports to show",
     "nPendingChanges": "{count} Pending Change | {count} Pending Changes",
     "promote": {
-      "blockingErrorDescription": "An error occurred during promotion and your tenant is locked. Please <a target=\"_blank\" href=\"https://backstage.forgerock.com/support/tickets\">contact support</a> to resolve the issue.",
+      "blockingErrorDescription": "An error occurred during promotion and your tenant is locked. Please <a target=\"_blank\" href=\"https://backstage.forgerock.com/support/tickets\" data-testid='contact-support'>contact support</a> to resolve the issue.",
       "encryptedSecrets": "Encrypted secrets",
-      "errorDescription": "You need to cancel this promotion and add the following missing required configuration to your {upper} tenant before proceeding.",
+      "errorDescriptionMissingESV": "You need to cancel this promotion and add the following missing required configuration to your {upper} tenant before proceeding.",
+      "errorDescriptionEncryptedSecrets": "It is recommended that you cancel this promotion and add ESVs for the following encrypted secrets in your configuration before proceeding.",
       "errorStarting": "Error initiating promotion",
       "errorTitle": "Promotion Failed",
       "inProgress": "Promotion in-progress",
@@ -2462,8 +2463,14 @@
     "promotionNotAvailable": "Promotion is currently unavailable as this tenant is locked.",
     "promotionUpdates": "Tenant Updates",
     "review": {
-      "cancelPromotion": "Cancel Promotion",
       "cancelAndUnlock": "Cancel and Unlock Tenants",
+      "cancelPromotion": "Cancel Promotion",
+      "continueWithoutFixing": "Continue without fixing",
+      "continueWithoutFixingModal": {
+        "content": "Continuing without adding ESVs for the encrypted secrets could cause configuration errors in your {upper} tenant.",
+        "title": "Continue Without Fixing?"
+      },
+      "ignoreEncryptedSecrets": "Ignore Encrypted Secrets",
       "promotionWarning": "Both <b>{current} and {upper}</b> tenants will remain locked and inaccessible for the duration of the promotion.",
       "startPromotion": "Start Promotion",
       "startPromotionQuestion": "Start Promotion?",
