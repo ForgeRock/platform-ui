@@ -40,7 +40,7 @@ export const getDefaultProcess = () => new Promise((resolve, reject) => {
 
 export const saveRiskConfig = (payload) => new Promise((resolve, reject) => {
   // postData('/api/riskConfig', payload)
-  generateAutoAccessApi().post('/riskConfig', payload)
+  generateAutoAccessApi().put('/v2/riskConfig/userConfig', payload)
     .then((response) => {
       resolve(true);
     })
