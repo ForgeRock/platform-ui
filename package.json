@@ -52,6 +52,7 @@
     "vue-template-compiler": "2.6.11"
   },
   "resolutions": {
+    "qs": "6.5.3",
     "css-select": "4.0.0",
     "follow-redirects": "1.14.8",
     "mocha/yargs/y18n": "4.0.1",
