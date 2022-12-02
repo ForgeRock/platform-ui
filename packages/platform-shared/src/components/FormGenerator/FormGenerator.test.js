@@ -8,17 +8,9 @@
 import { shallowMount } from '@vue/test-utils';
 import { cloneDeep, assign, get } from 'lodash';
 import FormGenerator from './index';
-// import SchemaMixin from '@/mixins/SchemaMixin';
 
 const SchemaMixin = {
   methods: {
-    // combineSchemas: () => Promise.resolve({
-    //   getAddressComponent() {
-    //     return {
-    //       long_name: 'Austin',
-    //     };
-    //   },
-    // }),
     combineSchemas: (apiSchema, uiSchema) => uiSchema.map((row) => row
       .map((formField) => {
         const clonedSchema = cloneDeep(apiSchema);
