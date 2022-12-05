@@ -1006,23 +1006,26 @@ export default {
               this.loading = true;
               if (this.retry && this.isSessionTimedOut(step.payload)) {
                 this.retry = false;
+                this.loginFailure = true;
                 this.retryWithNewAuthId(previousStep, stepParams);
               } else if (this.suspendedId && this.isSessionTimedOut(step.payload)) {
                 this.errorMessage = step.payload.message || this.$t('login.loginFailure');
                 this.linkToTreeStart = this.getLinkToTreeStart(stepParams);
                 this.loading = false;
+                this.loginFailure = true;
               } else {
-                this.errorMessage = step.payload.message || this.$t('login.loginFailure');
-                this.redirectToFailure(step);
-                this.step = initialStep;
-                this.retry = true;
-                if (this.step && this.step.callbacks) {
-                  this.componentList = [];
-                  this.buildTreeForm();
-                }
-                this.loading = false;
+                this.redirectToFailure(step).then(() => {
+                  this.errorMessage = step.payload.message || this.$t('login.loginFailure');
+                  this.step = initialStep;
+                  this.retry = true;
+                  if (this.step && this.step.callbacks) {
+                    this.componentList = [];
+                    this.buildTreeForm();
+                  }
+                  this.loading = false;
+                  this.loginFailure = true;
+                });
               }
-              this.loginFailure = true;
               break;
             default:
               // retry only when previous was undefined (first step)
@@ -1057,26 +1060,35 @@ export default {
      * Redirect to failureUrl when it exists, and display login failure message if not
      *
      * @param {Object} step - callback metadata containing url of failure
+     *
+     * @returns {Promise}
      */
     redirectToFailure(step) {
       const urlParams = new URLSearchParams(window.location.search);
       const gotoOnFail = urlParams.get('gotoOnFail');
 
-      if (gotoOnFail) {
-        this.verifyGotoUrlAndRedirect(gotoOnFail, this.realm, false, true)
-          .then((res) => {
-            if (res && res.length) {
-              window.location.href = encodeURI(res);
-            } else if (has(step, 'payload.detail.failureUrl') && step.payload.detail.failureUrl.length) {
-              window.location.href = step.payload.detail.failureUrl;
-            }
-          })
-          .catch((error) => {
-            this.displayNotification('error', error.response.data.message);
-          });
-      } else if (has(step, 'payload.detail.failureUrl') && step.payload.detail.failureUrl.length) {
-        window.location.href = step.payload.detail.failureUrl;
-      }
+      return new Promise((resolve) => {
+        if (gotoOnFail) {
+          this.verifyGotoUrlAndRedirect(gotoOnFail, this.realm, false, true)
+            .then((res) => {
+              if (res && res.length) {
+                window.location.href = encodeURI(res);
+              } else if (has(step, 'payload.detail.failureUrl') && step.payload.detail.failureUrl.length) {
+                window.location.href = step.payload.detail.failureUrl;
+              } else {
+                resolve();
+              }
+            })
+            .catch((error) => {
+              this.displayNotification('error', error.response.data.message);
+              resolve();
+            });
+        } else if (has(step, 'payload.detail.failureUrl') && step.payload.detail.failureUrl.length) {
+          window.location.href = step.payload.detail.failureUrl;
+        } else {
+          resolve();
+        }
+      });
     },
     removeUrlParams() {
       // remove query params from the url
