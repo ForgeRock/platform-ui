@@ -54,7 +54,18 @@ it('sets stage value', () => {
   setStageValue(pageNode, id, key, value);
   expect(pageNode.template.stage).toEqual('{"themeId":"zardoz","ValidatedCreatePasswordCallback":[{"id":"subNode1","confirmPassword":true}]}');
 
+  key = 'ValidatedCreatePasswordCallback.policyDisplayCheckmark';
+  value = true;
+  setStageValue(pageNode, id, key, value);
+  expect(pageNode.template.stage).toEqual('{"themeId":"zardoz","ValidatedCreatePasswordCallback":[{"id":"subNode1","confirmPassword":true,"policyDisplayCheckmark":true}]}');
+
+  value = false;
+  setStageValue(pageNode, id, key, value);
+  expect(pageNode.template.stage).toEqual('{"themeId":"zardoz","ValidatedCreatePasswordCallback":[{"id":"subNode1","confirmPassword":true}]}');
+
   id = 'subNode2';
+  key = 'ValidatedCreatePasswordCallback.confirmPassword';
+  value = true;
   setStageValue(pageNode, id, key, value);
   expect(pageNode.template.stage).toEqual('{"themeId":"zardoz","ValidatedCreatePasswordCallback":[{"id":"subNode1","confirmPassword":true},{"id":"subNode2","confirmPassword":true}]}');
 
