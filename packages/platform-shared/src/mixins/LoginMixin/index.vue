@@ -100,6 +100,7 @@ export function verifyGotoUrlAndRedirect(url, realm, isAdmin = false, isGotoOnFa
   return this.getRequestService({
     context: 'AM',
     apiVersion: 'protocol=2.1,resource=3.0',
+    realm,
   })
     .post('/users?_action=validateGoto', gotoUrl, { withCredentials: true })
     .then((res) => {
