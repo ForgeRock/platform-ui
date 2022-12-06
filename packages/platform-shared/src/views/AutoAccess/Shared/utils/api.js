@@ -103,8 +103,8 @@ export function getQueryFilters(dateRange, filterObject, userId) {
   if (filterObject.reasons.length > 0) {
     const reasons = [];
     const hueristicsReasons = [];
-    const heuristics = filterObject.reasons.filter((el) => el.indexOf('is_') === 0);
-    const ueba = filterObject.reasons.filter((el) => el.indexOf('is_') === -1);
+    const heuristics = filterObject.reasons.flat().filter((el) => el.indexOf('is_') === 0);
+    const ueba = filterObject.reasons.flat().filter((el) => el.indexOf('is_') === -1);
 
     if (heuristics.length > 0) {
       hueristicsReasons.push({
