@@ -56,19 +56,9 @@ export default {
   data() {
     return {
       options: [],
+      showButtonsAsLinks: this.stage?.showButtonsAsLinks,
+      showOnlyPositiveAnswer: this.stage?.showOnlyPositiveAnswer,
     };
-  },
-  computed: {
-    showOnlyPositiveAnswer() {
-      try {
-        return this.stage.showOnlyPositiveAnswer;
-      } catch (e) {
-        return false;
-      }
-    },
-    showButtonsAsLinks() {
-      return this.stage && this.stage.showButtonsAsLinks;
-    },
   },
   methods: {
     setValue(value) {

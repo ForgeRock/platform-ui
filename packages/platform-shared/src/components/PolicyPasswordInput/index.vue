@@ -21,7 +21,8 @@ of the MIT license. See the LICENSE file for details. -->
         class="mt-2"
         :num-columns="2"
         :policies="policies"
-        :policy-failures="policyFailures" />
+        :policy-failures="policyFailures"
+        :value-entered="!!$attrs.value" />
     </slot>
   </div>
 </template>
@@ -103,7 +104,9 @@ export default {
   mounted() {
     this.getDsPolicies(this.resourceName).then((res) => {
       this.policies = res.data;
-      this.getIdmPolicies();
+      this.getIdmPolicies().then(() => {
+        this.checkPassword(this.$attrs.value);
+      });
     });
   },
   methods: {
@@ -152,7 +155,7 @@ export default {
       const headers = this.getAnonymousHeaders();
       const policyService = this.getRequestService({ headers });
 
-      policyService.get(this.policyEndpoint).then((res) => {
+      return policyService.get(this.policyEndpoint).then((res) => {
         const passwordPolicies = res.data.properties.find((pol) => (pol.name === 'password')).policies;
         const filteredPolicies = passwordPolicies.filter((pol) => (ignoredPolicies.indexOf(pol.policyRequirements[0]) === -1));
         const policyObjects = filteredPolicies.map((pol) => ({ policyRequirement: pol.policyRequirements[0], params: pol.params }));
