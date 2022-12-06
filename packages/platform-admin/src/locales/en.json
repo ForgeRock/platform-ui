@@ -1280,6 +1280,20 @@
         "scopesLabel": "Scopes",
         "scopesHelp": "Scopes are strings that are presented to the user for approval and included in tokens so that the protected resource may make decisions about what to give access to."
       }
+    },
+    "promotion": {
+      "dynamicDataCategory": "Applications",
+      "modalTitle": "Load Application Dynamic Data",
+      "chooseDataDescription": "<p>This environment has received a promotion containing Application dynamic data. Please select which applications you would like to load the dynamic data for from the list below.</p><strong>Note that any prior customizations to this data on this tenant will be lost in this process.</strong>",
+      "loadSelectedData": "Load Selected Data",
+      "loadingSelectedData": "Loading Selected Data...",
+      "newApps": "New applications",
+      "chooseNewApps": "Choose new applications to load dynamic data for.",
+      "existingApps": "Existing applications",
+      "chooseExistingApps": "Choose existing applications to overwrite dynamic data for.",
+      "errorLoadingApps": "Error loading app data into the environment. Please try again later.",
+      "alphaApplication": "{applicationName} (alpha)",
+      "bravoApplication": "{applicationName} (bravo)"
     }
   },
   "realm": {
