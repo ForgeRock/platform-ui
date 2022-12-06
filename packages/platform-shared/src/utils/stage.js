@@ -81,7 +81,11 @@ export function setStageValue(pageNode, id, key, value) {
         // Modify config if it exists for this node
         if (value) {
           stage[callbackName][callbackIndex][propertyName] = value;
+        } else if (value === false && Object.keys(stage[callbackName][callbackIndex]).length > 2) {
+          // If there is more than one property on the current node, we only want to set value to new value
+          delete stage[callbackName][callbackIndex][propertyName];
         } else {
+          // else we want to completely remove this node in the saved object
           stage[callbackName].splice(callbackIndex, 1);
           if (stage[callbackName].length === 0) {
             delete stage[callbackName];

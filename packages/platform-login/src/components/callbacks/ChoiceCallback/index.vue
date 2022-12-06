@@ -73,6 +73,7 @@ export default {
   },
   data() {
     return {
+      displayType: this.stage?.displayType ? this.stage.displayType : 'select',
       selected: {
         name: `callback_${this.index}`,
         label: this.callback.getPrompt(),
@@ -80,15 +81,6 @@ export default {
         options: [],
       },
     };
-  },
-  computed: {
-    displayType() {
-      try {
-        return this.stage.displayType;
-      } catch (e) {
-        return 'select';
-      }
-    },
   },
 };
 </script>

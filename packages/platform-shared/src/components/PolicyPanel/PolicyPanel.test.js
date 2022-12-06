@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -45,7 +45,7 @@ describe('PolicyPanel.vue', () => {
     });
 
     it('Will show all policies as passing when failedRules is empty', () => {
-      wrapper.setProps({ policyFailures: [] });
+      wrapper.setProps({ policyFailures: [], valueEntered: 'test' });
       wrapper.vm.$nextTick(() => {
         expect(wrapper.classes('.text-muted')).toBe(false);
         const passingPoliciesArray = wrapper.findAll('.fr-valid');

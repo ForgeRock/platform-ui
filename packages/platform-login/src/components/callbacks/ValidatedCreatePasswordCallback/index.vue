@@ -15,7 +15,9 @@ of the MIT license. See the LICENSE file for details. -->
       class="mt-2"
       :num-columns="1"
       :policies="policies"
-      :policy-failures="failuresForPanel" />
+      :policy-display-checkmark="policyDisplayCheckmark"
+      :policy-failures="failuresForPanel"
+      :value-entered="!!password.value" />
     <FrField
       v-if="confirmPassword"
       v-model="confirmPasswordText"
@@ -102,29 +104,22 @@ export default {
   },
   data() {
     return {
+      confirmPassword: this.stage?.confirmPassword,
       confirmPasswordFailures: [],
       confirmPasswordText: '',
+      curPass: '',
       debounceValidatePassword: debounce(this.validatePassword, 200),
       failuresForField: [],
       failuresForPanel: [],
+      isValidating: false,
+      lastPass: '',
       password: {
         label: this.callback.getPrompt(),
         value: '',
       },
       policies: [],
-      curPass: '',
-      lastPass: '',
-      isValidating: false,
+      policyDisplayCheckmark: this.stage?.policyDisplayCheckmark,
     };
-  },
-  computed: {
-    confirmPassword() {
-      try {
-        return this.stage.confirmPassword;
-      } catch (e) {
-        return false;
-      }
-    },
   },
   mounted() {
     // need to set validateOnly flag to true so that tree does not advance when validating input

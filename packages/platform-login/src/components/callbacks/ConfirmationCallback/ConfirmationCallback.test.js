@@ -51,14 +51,23 @@ describe('ConfirmationCallback', () => {
     expect(button.classes()).toContain('btn-primary');
   });
 
-  it('Show buttons as links (variant: link) when variable showButtonsAsLinks is true', async () => {
-    await wrapper.setProps({
-      stage: {
-        showButtonsAsLinks: true,
+  it('Show buttons as links (variant: link) when variable showButtonsAsLinks is true', () => {
+    let button = wrapper.find('button');
+    expect(button.classes()).not.toContain('btn-link');
+    wrapper = mount(ConfirmationCallback, {
+      i18n,
+      propsData: {
+        callback: {
+          getOptions: () => ['a', 'b', 'c', 'd'],
+          setInputValue: jest.fn(),
+        },
+        stage: {
+          showButtonsAsLinks: true,
+        },
       },
     });
 
-    const button = wrapper.find('button');
+    button = wrapper.find('button');
     expect(button.classes()).toContain('btn-link');
   });
 });
