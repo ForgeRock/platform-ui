@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -8,11 +8,23 @@ of the MIT license. See the LICENSE file for details. -->
       v-for="i in numColumns"
       :key="`password_policy_${i}`">
       <small>
-        <ul class="pl-4">
+        <ul :class="policyDisplayCheckmark && initialValueEntered ? 'pl-check' : 'pl-4'">
           <li
             v-for="(policy) in policyColumns[i-1]"
+            class="text-muted fr-policy-list-item"
             :key="policy.policyId"
-            :class="[{'fr-valid': isPolicyMet(policy)}, 'text-muted fr-policy-list-item']">
+            :class="{
+              'fr-valid': isPolicyMet(policy),
+              'checkmark list-unstyled opacity-100': policyDisplayCheckmark && initialValueEntered,
+            }">
+            <FrIcon
+              v-if="policyDisplayCheckmark && initialValueEntered && isPolicyMet(policy)"
+              class="text-success"
+              name="check" />
+            <FrIcon
+              v-else-if="policyDisplayCheckmark && initialValueEntered && !isPolicyMet(policy)"
+              class="text-danger"
+              name="close" />
             {{ getPolicyDescription(policy) }}
           </li>
         </ul>
@@ -29,6 +41,7 @@ import {
   BCol,
   BRow,
 } from 'bootstrap-vue';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 
 /**
  * Part of the password policy component that displays the list of policy items required.
@@ -39,6 +52,7 @@ export default {
   components: {
     BCol,
     BRow,
+    FrIcon,
   },
   props: {
     /**
@@ -56,22 +70,32 @@ export default {
       default: () => [],
     },
     /**
+     * Whether policy items should be displayed as ✔/X
+     */
+    policyDisplayCheckmark: {
+      default: false,
+      type: Boolean,
+    },
+    /**
      * Array of failing policies. Must match a value for name in policies array. ['FAILED1', 'FAILED2', ...]
      */
     policyFailures: {
       type: Array,
       default: () => [],
     },
+    /**
+     * Whether a value has been entered in the field tied to this policy panel
+     */
+    valueEntered: {
+      default: false,
+      type: Boolean,
+    },
   },
   data() {
     return {
       policyColumns: [],
+      initialValueEntered: false,
     };
-  },
-  computed: {
-    numPolicies() {
-      return this.policies.length;
-    },
   },
   methods: {
     includes,
@@ -80,7 +104,7 @@ export default {
      * @param {Object} policy required policy object to evaluate
      */
     isPolicyMet(policy) {
-      return !includes(this.policyFailures, policy.policyRequirement);
+      return this.initialValueEntered && !includes(this.policyFailures, policy.policyRequirement);
     },
     /**
      * Given an array of policies and a number of columns, distribute policies evenly.
@@ -123,6 +147,11 @@ export default {
       },
       immediate: true,
     },
+    valueEntered(value) {
+      if (value) {
+        this.initialValueEntered = true;
+      }
+    },
   },
 };
 </script>
@@ -130,5 +159,23 @@ export default {
 <style lang="scss" scoped>
 .fr-valid {
   opacity: 0.5;
+}
+
+ul {
+  &.pl-check {
+    padding-left: 0.15rem;
+  }
+
+  li.checkmark {
+    color: $red !important;
+
+    &.fr-valid {
+      color: $green !important;
+    }
+  }
+}
+
+::v-deep .material-icons-outlined {
+  line-height: 1.13rem;
 }
 </style>

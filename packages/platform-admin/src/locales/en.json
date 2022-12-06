@@ -810,6 +810,8 @@
       "name": "Name",
       "none": "none",
       "minimumRequired": "At Least {minItems} Value(s) Required",
+      "policyDisplayCheckmark": "Checkmark Policy Display",
+      "policyDisplayCheckmarkDescription": "Successful policy list items will be denoted with a checkmark instead of faded bullet-points.",
       "showButtonsAsLinks": "Show buttons as links",
       "showButtonsAsLinksDescription": "Show the buttons as links on node.",
       "showOnlyPositiveAnswer": "Only Positive Answer",
