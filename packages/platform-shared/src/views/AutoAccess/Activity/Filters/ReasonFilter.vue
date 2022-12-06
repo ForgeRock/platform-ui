@@ -39,17 +39,32 @@ export default {
     },
     reasonOptions() {
       const defaultOptions = ['is_automated_user_agent', 'is_brute_force', 'is_credential_stuffing', 'is_impossible_travel', 'is_suspicious_ip'];
-      const uebaOptions = store.state.Dashboard.uebaClusteringReasons.map((reason) => (
+      const uebaList = store.state.Dashboard.uebaClusteringReasons.map((reason) => (
         {
           text: `Unusual ${causeMap[reason]}`,
           value: reason,
         }
       ));
+      const uebaOptions = [];
+      uebaList.forEach((item) => {
+        if (!uebaOptions.some((option) => option.text === item.text)) {
+          const list = [];
+          uebaList.forEach((reason) => {
+            if (reason.text === item.text) {
+              list.push(reason.value);
+            }
+          });
+          uebaOptions.push({
+            text: item.text,
+            value: list,
+          });
+        }
+      });
       return [
-        ...defaultOptions.map((heuristic) => ({ text: this.$t(`autoAccess.access.heuristics["${heuristic}"]`), value: heuristic })),
+        ...defaultOptions.map((heuristic) => ({ text: this.$t(`autoAccess.access.heuristics["${heuristic}"]`), value: [heuristic] })),
         ...uebaOptions,
       ];
     },
   },
 };
-</script>/script>
+</script>
