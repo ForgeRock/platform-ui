@@ -17,6 +17,7 @@
   "dependencies": {
     "@forgerock/javascript-sdk": "3.0.0",
     "@forgerock/platform-shared": "1.0.0",
+    "@hcaptcha/vue-hcaptcha": "0.3.2",
     "axios": "0.26.1",
     "bootstrap": "4.6.1",
     "bootstrap-vue": "2.22.0",
