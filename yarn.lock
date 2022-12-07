@@ -1029,6 +1029,11 @@
   dependencies:
     "@hapi/hoek" "^8.3.0"
 
+"@hcaptcha/vue-hcaptcha@0.3.2":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@hcaptcha/vue-hcaptcha/-/vue-hcaptcha-0.3.2.tgz#0f77d6fc19bc47eadb6b2181eee5fc132441a942"
+  integrity sha512-JiJsAJh+fSe+uf9N3ek7CKzX/r79+hx+rMPch+e2/h9+Ei3VyJtb2Dgk1DhG/dyUdrooPIzkNMr6gfo75Cn22g==
+
 "@intervolga/optimize-cssnano-plugin@^1.0.5":
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/@intervolga/optimize-cssnano-plugin/-/optimize-cssnano-plugin-1.0.6.tgz"
