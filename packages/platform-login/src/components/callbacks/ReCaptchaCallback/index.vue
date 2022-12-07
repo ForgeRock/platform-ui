@@ -18,6 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
 export default {
   name: 'ReCaptchaCallback',
   components: {
+    HCaptchaV1: () => import('@/components/callbacks/ReCaptchaCallback/HCaptchaV1'),
     ReCaptchaV2: () => import('@/components/callbacks/ReCaptchaCallback/ReCaptchaV2'),
     ReCaptchaV3: () => import('@/components/callbacks/ReCaptchaCallback/ReCaptchaV3'),
   },
@@ -33,11 +34,21 @@ export default {
   },
   data() {
     return {
+      captchaTypes: {
+        hCaptcha: 'hcaptcha.com',
+        reCaptcha: 'google.com',
+      },
       reCaptchaComponentVersion: undefined,
     };
   },
   created() {
-    this.reCaptchaComponentVersion = this.callback.getOutputByName('reCaptchaV3') ? 'ReCaptchaV3' : 'ReCaptchaV2';
+    const url = new URL(this.callback.getOutputByName('captchaApiUri'));
+    const domain = url.hostname.replace('www.', '');
+    if (domain === this.captchaTypes.hCaptcha) {
+      this.reCaptchaComponentVersion = 'HCaptchaV1';
+    } else if (domain === this.captchaTypes.reCaptcha) {
+      this.reCaptchaComponentVersion = this.callback.getOutputByName('reCaptchaV3') ? 'ReCaptchaV3' : 'ReCaptchaV2';
+    }
   },
 };
 </script>
