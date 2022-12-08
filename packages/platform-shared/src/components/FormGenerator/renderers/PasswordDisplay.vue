@@ -10,6 +10,7 @@ of the MIT license. See the LICENSE file for details. -->
     :disabled="uiSchema.disabled"
     :description="uiSchema.description"
     :label="uiSchema.label"
+    :validation="uiSchema.validation"
     @input="valueChange" />
 </template>
 
