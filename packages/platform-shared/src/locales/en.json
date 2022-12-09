@@ -735,6 +735,7 @@
     "successClearingSessions": "Sessions ended"
   },
   "listResource": {
+    "loadingResource": "Loading {resourceName}...",
     "noManaged": "No {capitalizedResourceName} Found",
     "searchHelp": "Use the search box above to find a {resourceName}.",
     "searchInProgressText": "Type at least {queryThreshold} characters",
