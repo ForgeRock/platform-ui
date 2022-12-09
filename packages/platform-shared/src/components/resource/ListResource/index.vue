@@ -41,7 +41,7 @@ of the MIT license. See the LICENSE file for details. -->
       data-testid="loading-resources-spinner">
       <FrSpinner class="py-5" />
       <div class="text-center pb-4">
-        Loading {{ this.resourceTitle || resourceName | pluralizeFilter }}...
+        {{ $t('listResource.loadingResource', { resourceName: this.resourceTitle || resourceName | pluralizeFilter }) }}
       </div>
     </div>
     <div
