@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -8,6 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
     v-model="contentField"
     :aria-label="$t('editor.accessibilityHelp')"
     :language="language"
+    :readonly="readonly"
     :line-numbers="true"
     @input="$emit('input', $event.target.innerText)"
     @keydown="blurOnEscape" />
@@ -43,6 +44,13 @@ export default {
     language: {
       default: '',
       type: String,
+    },
+    /**
+     * Disables user interaction
+     */
+    readonly: {
+      default: false,
+      type: Boolean,
     },
     /**
      * Code to be displayed in editor
