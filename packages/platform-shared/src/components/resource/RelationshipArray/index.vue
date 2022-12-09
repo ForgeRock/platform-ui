@@ -21,6 +21,7 @@ of the MIT license. See the LICENSE file for details. -->
             />{{ addButtonText }}
           </BButton>
           <BButton
+            v-show="selected.length > 0"
             variant="outline-primary"
             @click="$refs[removeModalId].show()"
             :id="'delete_' + relationshipArrayProperty.key">
