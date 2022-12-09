@@ -10,10 +10,10 @@ of the MIT license. See the LICENSE file for details. -->
       'fr-menu-expanded': menuExpanded === true && !hideSideMenu,
       'fr-menu-collapsed': menuExpanded === false && !hideSideMenu,
       'fr-menu-hidden': hideSideMenu,
-      'fr-system-notification-active': systemNotificationActive,
+      'fr-system-notification-active': systemNotificationActive && !hideNavBar,
     }, 'h-100']">
     <FrSystemNotification
-      v-if="systemNotification"
+      v-if="(systemNotification && !hideNavBar)"
       :data="systemNotification"
       :active="systemNotificationActive"
       @hide-system-notification="$emit('hide-system-notification')" />
