@@ -77,6 +77,7 @@ of the MIT license. See the LICENSE file for details. -->
 import * as d3 from 'd3';
 import { interpolatePath } from 'd3-interpolate-path';
 import dayjs from 'dayjs';
+import formatNumber from '../../../../utils/formatNumber';
 
 export default {
   name: 'LineChart',
@@ -302,7 +303,7 @@ export default {
       const y_axis = d3.axisLeft(scale.y)
         .tickValues(scale.y.ticks(5)
           .filter((tick) => Number.isInteger(tick)))
-        .tickFormat((d) => (d >= 1000 ? `${new Intl.NumberFormat().format(d / 1000)}k` : d));
+        .tickFormat((d) => (d >= 1000 ? `${formatNumber(d / 1000, "en-US")}k` : d));
       $axis.style('transform', `translate(${padding + yAxisWidth}px, 0)`)
         .transition()
         .duration(300)
@@ -342,12 +343,12 @@ export default {
         })
         .style('text-anchor', 'end');
       tooltip.select('.line-chart-tooltip-value')
-        .text(new Intl.NumberFormat().format(parseFloat(d.value, 10).toFixed(1)))
+        .text(formatNumber(parseFloat(d.value, 10).toFixed(1),"en-US"))
         .style('transform', `translate(${width - change.node().getBBox().width - 6}px, 0)`)
         .style('text-anchor', 'end');
 
       tooltip.select('.line-chart-tooltip-prev-value')
-        .text(new Intl.NumberFormat().format(parseFloat(prev.value, 10).toFixed(1)))
+        .text(formatNumber(parseFloat(prev.value, 10).toFixed(1),"en-US"))
         .style('text-anchor', 'end')
         .style('transform', `translate(${width}px, 0)`);
 

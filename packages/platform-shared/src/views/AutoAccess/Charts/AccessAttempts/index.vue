@@ -16,7 +16,7 @@ of the MIT license. See the LICENSE file for details. -->
       <div class="d-flex flex-row mb-4">
         <div class="flex-fill">
           <h1 class="h2">
-            {{ new Intl.NumberFormat().format(sumOfAttempts()) }}
+            {{ totalSumOfAttempts }}
           </h1>
           <div>
             <p
@@ -60,6 +60,7 @@ import { histogramQuery, defaultData } from './api';
 import { getInterval } from '../../Shared/DateRangePicker/utility';
 import RiskScoreChange from '../../Shared/RiskScoreChange';
 import { getPrevDateRange } from '../../../util/util-functions';
+import formatNumber from '../../../../utils/formatNumber';
 
 export default {
   name: 'AccessAttempts',
@@ -166,6 +167,9 @@ export default {
         return '—';
       }
     },
+    totalSumOfAttempts(){
+        return formatNumber(sumOfAttempts(), "en-US");
+    }
   },
   methods: {
     numSegments() {

@@ -59,10 +59,10 @@ export const getMarkersStats = (markers) => {
   return { sum, avg };
 };
 
-export const markerStyle = (position, sum) => ({
+export const markerStyle = (position, sum, sum_formatted) => ({
   position,
   label: {
-    text: `${sum > 0 ? sum : ' '}`,
+    text: `${sum > 0 ? sum_formatted : ' '}`,
     color: '#fff',
     fontWeight: 'normal',
     fontSize: '12px',

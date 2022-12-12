@@ -29,6 +29,7 @@ import {
 } from './util';
 import { getQueryFilters } from '../../Shared/utils/api';
 import { getEventLogs } from '../api/ActivityAPI';
+import formatNumber from '../../../../utils/formatNumber';
 
 export default {
   name: 'RiskMap',
@@ -110,7 +111,8 @@ export default {
       }
     },
     infoWindowContent(sum, avg) {
-      return `<div class="info-content font-weight-normal">${sum} Risky Event${sum !== 1 ? 's' : ''}<div>Average Score ${Math.round(avg)}</div></div>`;
+      const formatSum = formatNumber(sum, "en-US");
+      return `<div class="info-content font-weight-normal">${formatSum} Risky Event${sum !== 1 ? 's' : ''}<div>Average Score ${Math.round(avg)}</div></div>`;
     },
     handleMapChanged(recenter = false) {
       const bounds = this.mapObject.getZoom() > MIN_ZOOM ? this.mapObject.getBounds().toJSON() : {};
@@ -164,7 +166,7 @@ export default {
           const markers = data.aggregations.lat_lon_data.lat_lon_locations.buckets.map((bucket, i) => {
             const sum = bucket.doc_count;
             const marker = new google.maps.Marker({
-              ...markerStyle(new google.maps.LatLng(bucket.key[0], bucket.key[1]), sum),
+              ...markerStyle(new google.maps.LatLng(bucket.key[0], bucket.key[1]), sum,formatNumber(sum,"en-US")),
               getData: () => bucket,
             });
 
@@ -190,8 +192,7 @@ export default {
             ) {
               const { position, markers } = cluster;
               const { sum } = getMarkersStats(markers);
-
-              return new google.maps.Marker(markerStyle(position, sum));
+              return new google.maps.Marker(markerStyle(position,sum, formatNumber(sum, "en-US")));
             },
           };
 
