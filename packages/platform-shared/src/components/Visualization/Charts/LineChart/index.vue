@@ -73,6 +73,7 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import * as d3 from 'd3';
 import dayjs from 'dayjs';
+import formatNumber from '../../../../utils/formatNumber';
 
 export default {
   name: 'LineChart',
@@ -510,7 +511,7 @@ export default {
         if (d % 1 !== 0) {
           return null;
         }
-        return (d >= 1000 ? `${new Intl.NumberFormat().format(d / 1000)}k` : d);
+        return (d >= 1000 ? `${formatNumber(d / 1000, 'en-US')}k` : d);
       };
 
       const yAxis = d3.axisLeft(scale.y.nice()).ticks(ticks)
