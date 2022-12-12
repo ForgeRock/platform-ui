@@ -13,16 +13,44 @@ describe('Risk Config API', () => {
     let expectedPath;
     let expectedPayload;
     // Mock the function generateAutoAcessApi
-    const generateAutoAccessApiSpy = jest.spyOn(BaseApi, 'generateAutoAccessApi').mockImplementation(() => ({
-      put: (path, payload) => {
-        expectedPath = path;
-        expectedPayload = payload;
-        return Promise.resolve();
-      },
-    }));
+    const generateAutoAccessApiSpy = jest
+      .spyOn(BaseApi, 'generateAutoAccessApi')
+      .mockImplementation(() => ({
+        put: (path, payload) => {
+          expectedPath = path;
+          expectedPayload = payload;
+          return Promise.resolve();
+        },
+      }));
     await RiskConfigAPI.saveRiskConfig({ processJSON: 'processJSON' });
     expect(generateAutoAccessApiSpy).toHaveBeenCalled();
     expect(expectedPath).toEqual('/v2/riskConfig/userConfig');
     expect(expectedPayload).toEqual({ processJSON: 'processJSON' });
+  });
+  it('Function to submit config changes to prev¡ew recieves an specific value', () => {
+    let expectedPath;
+    let expectedPayload;
+    // Mock the function generateAutoAcessApi
+    const generateAutoAccessApiSpy = jest
+      .spyOn(BaseApi, 'generateAutoAccessApi')
+      .mockImplementation(() => ({
+        post: (path, payload) => {
+          expectedPath = path;
+          expectedPayload = payload;
+          return Promise.resolve();
+        },
+      }));
+    RiskConfigAPI.getConfigurationChangesPreview(
+      { name: '', bucket: '' },
+      { processJSON: 'processJSON' },
+    );
+    expect(generateAutoAccessApiSpy).toHaveBeenCalled();
+    expect(expectedPath).toEqual('/processEvaluation/v2/preview');
+    expect(expectedPayload).toEqual({
+      bucket: '',
+      filePath: '',
+      numOfEvents: 10,
+      processJSON: { 'active-user-config': { processJSON: 'processJSON' } },
+    });
   });
 });
