@@ -5,22 +5,17 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import _ from 'lodash';
-// import { postData } from '../../Shared/utils/axios-utils';
-import { generateAutoAccessApi, generateAutoAccessJas } from '@forgerock/platform-shared/src/api/BaseApi';
-
-const processEntity = '/entity/search/common/process';
+import { generateAutoAccessApi } from '@forgerock/platform-shared/src/api/BaseApi';
 
 export const getConfigurationChangesPreview = (dataSource, processJSON) => {
   const payload = {
     filePath: dataSource.name,
     bucket: dataSource.bucket,
-    processJSON,
+    processJSON: { 'active-user-config': processJSON },
     numOfEvents: 10,
   };
   return new Promise((resolve, reject) => {
-    // postData('/api/processEvaluation/preview', payload).then((res) => {
-    generateAutoAccessApi().post('/processEvaluation/preview', payload).then(({ data: res }) => {
+    generateAutoAccessApi().post('/processEvaluation/v2/preview', payload).then(({ data: res }) => {
       resolve(res);
     })
       .catch(() => {
@@ -33,15 +28,14 @@ export const getDefaultProcess = () => new Promise((resolve, reject) => {
   generateAutoAccessApi().get('/v2/riskConfig/userConfig').then(({ data: res }) => {
     resolve(res);
   })
-    .catch((e) => {
+    .catch(() => {
       reject();
     });
 });
 
 export const saveRiskConfig = (payload) => new Promise((resolve, reject) => {
-  // postData('/api/riskConfig', payload)
   generateAutoAccessApi().put('/v2/riskConfig/userConfig', payload)
-    .then((response) => {
+    .then(() => {
       resolve(true);
     })
     .catch((error) => {
