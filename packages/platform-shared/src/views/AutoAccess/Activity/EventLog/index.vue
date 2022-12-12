@@ -13,7 +13,7 @@ of the MIT license. See the LICENSE file for details. -->
             class="d-flex flex-row"
             v-if="totalRecords > 0">
             <span>
-              {{ 1 + (page * pageSize) }}-{{ Math.min(totalRecords, (page + 1) * pageSize) }} of {{ new Intl.NumberFormat().format(totalRecords) }} events
+              {{ currentPageRecords }} of {{ totalPageRecords }} events
             </span>
             <span
               class="ml-2"
@@ -162,6 +162,7 @@ import ResultBadge from '../../Shared/ResultBadge';
 import Explainability from '../../Shared/Explainability';
 import { getQueryFilters } from '../../Shared/utils/api';
 import store from '@/store';
+import formatNumber from '../../../../utils/formatNumber';
 
 const ace = require('brace');
 require('brace/mode/json');
@@ -212,6 +213,12 @@ export default {
     };
   },
   computed: {
+    currentPageRecords(){
+      return formatNumber(1 + (this.page * this.pageSize), "en-US") - formatNumber(Math.min(this.totalRecords, (this.page + 1) * this.pageSize),"en-US")
+    },
+    totalPageRecords(){
+      return formatNumber(this.totalRecords, "en-US")
+    },
     lastPage() {
       if (this.pageSize * this.page + this.pageSize < this.totalRecords) {
         return false;
