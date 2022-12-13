@@ -144,30 +144,43 @@ body {
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
 }
 
-h1 {
+/**
+ * The class selectors below (.h1, .h2...) fail style lints selector-class-pattern
+ * rule so we are disabling style-lint here temporarily so we can still use
+ * these classes
+ */
+/* stylelint-disable */
+h1,
+.h1 {
   font-weight: $h1-font-weight;
 }
 
-h2 {
+h2,
+.h2 {
   font-weight: $h2-font-weight;
 }
 
-h3 {
+h3,
+.h3 {
   font-weight: $h3-font-weight;
 }
 
-h4 {
+h4,
+.h4 {
   font-weight: $h4-font-weight;
 }
 
-h5 {
+h5,
+.h5 {
   font-weight: $h5-font-weight;
 }
 
-h6 {
+h6,
+.h6 {
   font-weight: $h6-font-weight;
   letter-spacing: 1px;
 }
+/* stylelint-enable */
 
 hr {
   color: $gray-300;
