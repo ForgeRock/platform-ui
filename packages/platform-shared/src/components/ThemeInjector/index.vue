@@ -220,12 +220,12 @@ of the MIT license. See the LICENSE file for details. -->
       }
 
       .fr-logo.fr-logo-vertical {
-      background-image: url("{{ theme.logoProfileCollapsed ? theme.logoProfileCollapsed : require('@forgerock/platform-shared/src/assets/images/placeholder.svg') }}");
-      height: {{ theme.logoProfileCollapsed ? theme.logoProfileHeight : theme.logoHeight }}px;
+      background-image: url("{{ logoProfileCollapsed ? logoProfileCollapsed : require('@forgerock/platform-shared/src/assets/images/placeholder.svg') }}");
+      height: {{ logoProfileCollapsed && theme.logoProfileHeight ? theme.logoProfileHeight : theme.logoHeight }}px;
       }
 
       .fr-logo.fr-logo-horizontal {
-      background-image: url("{{ theme.logoProfile ? theme.logoProfile : require('@forgerock/platform-shared/src/assets/images/horizontal-placeholder.svg') }}");
+      background-image: url("{{ logoProfile ? logoProfile : require('@forgerock/platform-shared/src/assets/images/horizontal-placeholder.svg') }}");
       height: {{ theme.logoProfileHeight ? theme.logoProfileHeight : theme.logoHeight }}px;
       }
 
@@ -378,6 +378,8 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
+import i18n from '@/i18n';
 /**
 Theme properties examples:
 
@@ -439,6 +441,9 @@ topBarTextColor: "#69788b",
  */
 export default {
   name: 'ThemeInjector',
+  mixins: [
+    TranslationMixin,
+  ],
   props: {
     /**
      * Is this component being used in enduser
@@ -473,6 +478,12 @@ export default {
       }
 
       return tempBackground;
+    },
+    logoProfile() {
+      return this.getLocalizedString(this.theme.logoProfile, i18n.locale, i18n.fallbackLocale);
+    },
+    logoProfileCollapsed() {
+      return this.getLocalizedString(this.theme.logoProfileCollapsed, i18n.locale, i18n.fallbackLocale);
     },
   },
 };

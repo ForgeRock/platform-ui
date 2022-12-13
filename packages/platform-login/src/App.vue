@@ -17,19 +17,19 @@ of the MIT license. See the LICENSE file for details. -->
         mode="out-in">
         <RouterView
           :journey-floating-labels="journeyFloatingLabels"
-          :journey-footer="getLocalizedString(journeyFooter, i18n.locale, i18n.fallbackLocale)"
+          :journey-footer="localizedFooter"
           :journey-footer-enabled="journeyFooterEnabled"
-          :journey-header="getLocalizedString(journeyHeader, i18n.locale, i18n.fallbackLocale)"
+          :journey-header="localizedHeader"
           :journey-header-enabled="journeyHeaderEnabled"
           :journey-theater-mode="journeyTheaterMode"
-          :journey-justified-content="getLocalizedString(journeyJustifiedContent, i18n.locale, i18n.fallbackLocale)"
+          :journey-justified-content="localizedJustifiedContent"
           :journey-justified-content-enabled="journeyJustifiedContentEnabled"
           :journey-layout="journeyLayout"
           :journey-sign-in-button-position="journeySignInButtonPosition"
-          :logo-alt-text="logoAltText"
+          :logo-alt-text="localizedLogoAltText"
           :logo-enabled="logoEnabled"
           :logo-height="logoHeight"
-          :logo-path="logo"
+          :logo-path="localizedLogo"
           :key="$route.fullPath"
           :theme-loading="theme === null"
           @set-theme="setupTheme"
@@ -78,7 +78,11 @@ export default {
   data() {
     return {
       hideAppOnTransition: false,
-      i18n,
+      localizedFooter: '',
+      localizedHeader: '',
+      localizedJustifiedContent: '',
+      localizedLogo: '',
+      localizedLogoAltText: '',
     };
   },
   created() {
@@ -109,8 +113,16 @@ export default {
     },
   },
   watch: {
-    theme() {
-      this.hideAppOnTransition = false;
+    theme: {
+      deep: true,
+      handler() {
+        this.hideAppOnTransition = false;
+        this.localizedFooter = this.getLocalizedString(this.journeyFooter, i18n.locale, i18n.fallbackLocale);
+        this.localizedHeader = this.getLocalizedString(this.journeyHeader, i18n.locale, i18n.fallbackLocale);
+        this.localizedJustifiedContent = this.getLocalizedString(this.journeyJustifiedContent, i18n.locale, i18n.fallbackLocale);
+        this.localizedLogo = this.getLocalizedString(this.logo, i18n.locale, i18n.fallbackLocale);
+        this.localizedLogoAltText = this.getLocalizedString(this.logoAltText, i18n.locale, i18n.fallbackLocale);
+      },
     },
   },
 };
