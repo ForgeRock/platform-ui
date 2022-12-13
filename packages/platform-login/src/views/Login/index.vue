@@ -12,15 +12,13 @@ of the MIT license. See the LICENSE file for details. -->
     <main
       v-if="!journeyLayout || journeyLayout === 'card' || !journeyTheaterMode"
       class="px-0 flex-grow-1 d-flex container">
-      <BContainer
-        class="flex-grow-1 d-flex"
-      >
+      <BContainer class="flex-grow-1 d-flex">
         <BRow
           :class="[{'flex-row-reverse': journeyLayout === 'justified-right'}, 'align-items-center m-0 flex-grow-1']">
           <BCol :lg="journeyLayout !== 'card' ? 6 : 12">
             <section>
               <FrCenterCard
-                :logo-alt-text="logoAltText || 'Logo'"
+                :logo-alt-text="logoAltText || $t('common.logo')"
                 :logo-enabled="logoEnabled && !themeLoading"
                 :logo-height="logoHeight"
                 :logo-path="logoPath"
@@ -68,8 +66,7 @@ of the MIT license. See the LICENSE file for details. -->
                           </div>
                           <div id="callback_0" />
                         </template>
-                        <template
-                          v-for="(component) in componentList ">
+                        <template v-for="(component) in componentList ">
                           <Component
                             class="callback-component"
                             :callback="component.callback"
@@ -143,7 +140,7 @@ of the MIT license. See the LICENSE file for details. -->
               <img
                 v-if="logoEnabled"
                 class="fr-logo mt-4"
-                :alt="logoAltText"
+                :alt="logoAltText || $t('common.logo')"
                 :style="{ height: `${logoHeight}px` }"
                 :src="logoPath">
               <div
@@ -183,8 +180,7 @@ of the MIT license. See the LICENSE file for details. -->
                   class="p-3 text-left">
                   {{ getTranslation(errorMessage) }}
                 </FrAlert>
-                <div
-                  v-if="loginFailure && linkToTreeStart">
+                <div v-if="loginFailure && linkToTreeStart">
                   <a :href="linkToTreeStart">
                     {{ $t('login.sessionTimeoutLink') }}
                   </a>
@@ -201,8 +197,7 @@ of the MIT license. See the LICENSE file for details. -->
                       </div>
                       <div id="callback_0" />
                     </template>
-                    <template
-                      v-for="(component) in componentList ">
+                    <template v-for="(component) in componentList ">
                       <Component
                         class="callback-component"
                         :callback="component.callback"
@@ -440,7 +435,7 @@ export default {
     buttonTextLocalized() {
       let submitButtonTextOverride = null;
       try {
-        submitButtonTextOverride = this.getLocalizedString(this.stage.submitButtonText, i18n.locale);
+        submitButtonTextOverride = this.getLocalizedString(this.stage.submitButtonText, i18n.locale, i18n.fallbackLocale);
       } catch (e) {
         return this.buttonText || this.$t('login.next');
       }
@@ -449,7 +444,7 @@ export default {
     },
     pageFooterLocalized() {
       try {
-        return this.$sanitize(this.getLocalizedString(this.stage.pageFooter, i18n.locale));
+        return this.$sanitize(this.getLocalizedString(this.stage.pageFooter, i18n.locale, i18n.fallbackLocale));
       } catch (e) {
         return null;
       }

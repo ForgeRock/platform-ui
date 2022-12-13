@@ -76,7 +76,7 @@ filterTests(['forgeops', 'cloud'], () => {
       // Set the theme data for the test
       cy.findByRole('tab', { name: 'Account Pages' }).click();
       cy.findByRole('tab', { name: 'Logo' }).click();
-      cy.findAllByRole('img', { name: 'Logo' }).eq(1).click();
+      cy.findByTestId('logo-profile-preview').click();
       cy.findByPlaceholderText('Logo URL')
         .clear()
         .type('h');

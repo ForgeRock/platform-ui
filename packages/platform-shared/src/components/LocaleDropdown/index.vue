@@ -22,7 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
             v-if="currentLanguage === defaultLocale"
             data-test-id="selected-language-badge"
             class="ml-1 badge badge-white font-weight-normal border border-darkened">
-            Default
+            {{ $t('common.default') }}
           </div>
         </span>
       </template>
@@ -40,7 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
             <div
               v-if="obj.locale === defaultLocale"
               class="ml-1 badge badge-white font-weight-normal border border-darkened">
-              Default
+              {{ $t('common.default') }}
             </div>
           </div>
           <BButton
@@ -48,25 +48,23 @@ of the MIT license. See the LICENSE file for details. -->
             class="btn-sm btn-edit"
             variant="primary"
             @click.stop.prevent="editLocale(obj.locale)">
-            <FrIcon
-              name="edit" />
+            <FrIcon name="edit" />
           </BButton>
         </div>
       </BDropdownItem>
-      <BDropdownDivider
-        v-if="showAdd"
-      />
-      <BDropdownItem
-        data-test-id="add-locale-button"
-        id="add-button"
-        v-if="showAdd"
-        @click="addLocale"
-      >
-        <FrIcon
-          class="mr-2"
-          name="add" />
-        {{ $t('locale.addLocale') }}
-      </BDropdownItem>
+      <template v-if="showAdd">
+        <BDropdownDivider />
+        <BDropdownItem
+          data-test-id="add-locale-button"
+          id="add-button"
+          @click="addLocale"
+        >
+          <FrIcon
+            class="mr-2"
+            name="add" />
+          {{ $t('locale.addLocale') }}
+        </BDropdownItem>
+      </template>
     </BDropdown>
   </div>
 </template>

@@ -5,7 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <FrLayout
-      :footer="getLocalizedString(accountFooter, i18n.locale, i18n.fallbackLocale)"
+      :footer="accountFooter"
       :is-enduser="true"
       :is-fraas="$store.state.isFraas"
       :menu-items="menuItems"
@@ -60,7 +60,7 @@ export default {
   computed: {
     accountFooter() {
       if (this.theme && this.theme.accountFooterEnabled) {
-        return this.theme.accountFooter;
+        return this.$sanitize(this.getLocalizedString(this.theme.accountFooter, i18n.locale, i18n.fallbackLocale));
       }
       return '';
     },
@@ -73,7 +73,6 @@ export default {
   },
   data() {
     return {
-      i18n,
       menuItems: [
         {
           routeTo: { name: 'Dashboard' },
