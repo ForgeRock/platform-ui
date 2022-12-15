@@ -307,6 +307,7 @@ import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import { getThemeIdFromStageString } from '@forgerock/platform-shared/src/utils/stage';
 import { svgShapesSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
+import { decodeJwt } from 'jose';
 import i18n from '@/i18n';
 
 export default {
@@ -1022,8 +1023,16 @@ export default {
                     this.componentList = [];
                     this.buildTreeForm();
                   }
-                  this.loading = false;
-                  this.loginFailure = true;
+                  if (this.allowListingsEnabled(this.step.payload.authId)) {
+                    this.getNewAuthId(stepParams).then((authId) => {
+                      this.step.payload.authId = authId;
+                      this.loading = false;
+                      this.loginFailure = true;
+                    });
+                  } else {
+                    this.loading = false;
+                    this.loginFailure = true;
+                  }
                 });
               }
               break;
@@ -1099,17 +1108,36 @@ export default {
       }
     },
     /**
-     * Retry a previously failed step with a new authId. The new authId is acquired by calling FRAuth.next with no step.
-     * Then a this.nextStep is called with the previously failed step and new authId
+    * AllowListings is a AM auth tree setting that can be enabled. When it is
+    * enabled an extra whitelist-state parameter is sent in the authId of every
+    * Authentication request to AM. This function determines whether that
+    * setting is enabled or not.
+    * @param {String} authId - the authId to test for AllowListings
+    * @returns {Boolean} - whether AllowListings is enabled or not
+    */
+    allowListingsEnabled(authId) {
+      return !!decodeJwt(authId)['whitelist-state'];
+    },
+    /**
+    * Get a new authId by calling the SDK's FRAuth.next function with no step.
+    * @param {Object} stepParams - step params
+    * @returns {String} the new auth id
+    */
+    getNewAuthId(stepParams) {
+      return FRAuth.next(undefined, stepParams)
+        .then((step) => step.payload.authId);
+    },
+    /**
+     * Retry a previously failed step with a new authId. this.nextStep is
+     * called with the previously failed step and the new authId
      *
      * @param {Object} previousStep - previous step data with prototype intact
      * @param {Object} stepParams - step params
      *
      */
     retryWithNewAuthId(previousStep, stepParams) {
-      FRAuth.next(undefined, stepParams)
-        .then((step) => {
-          const { authId } = step.payload;
+      this.getNewAuthId(stepParams)
+        .then((authId) => {
           this.step = previousStep;
           if (has(this.step, 'payload')) {
             this.step.payload.authId = authId;
