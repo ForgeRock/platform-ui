@@ -915,6 +915,7 @@
     "updateFailed": "Error updating {resourceName} password policy"
   },
   "applications": {
+    "addField": "Add {field}",
     "application": "Application",
     "errorRetrievingApplications": "Error retrieving Applications",
     "listView": {
