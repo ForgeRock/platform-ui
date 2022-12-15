@@ -63,7 +63,7 @@ export default {
     dateRange: {
       immediate: false,
       handler() {
-        this.handleMapChanged();
+        this.handleMapChanged(true);
       },
     },
     filterObject: {
@@ -114,8 +114,11 @@ export default {
       const formatSum = formatNumber(sum, "en-US");
       return `<div class="info-content font-weight-normal">${formatSum} Risky Event${sum !== 1 ? 's' : ''}<div>Average Score ${Math.round(avg)}</div></div>`;
     },
+    /*
+    * @params {Boolean} recenter - used to show the map in the initial center point with initial zoom value
+    */
     handleMapChanged(recenter = false) {
-      const bounds = this.mapObject.getZoom() > MIN_ZOOM ? this.mapObject.getBounds().toJSON() : {};
+      const bounds = !recenter && this.mapObject.getZoom() > MIN_ZOOM ? this.mapObject.getBounds().toJSON() : {};
       const query = {
         size: 0,
         aggs: {
@@ -159,7 +162,6 @@ export default {
 
           const infoWindow = new google.maps.InfoWindow({
             content: '',
-            // disableAutoPan: true,
           });
           const bounds = new google.maps.LatLngBounds();
 
@@ -215,10 +217,9 @@ export default {
 
           this.clusters = markerCluster;
 
-          if (markers.length > 0 && recenter) {
-            if (this.mapObject.getZoom() === MIN_ZOOM) {
-              mapObject.setCenter(bounds.getCenter(), MIN_ZOOM);
-            }
+          if (recenter) {
+            mapObject.setZoom(MIN_ZOOM);
+            mapObject.setCenter(bounds.getCenter());
           }
         });
     },
