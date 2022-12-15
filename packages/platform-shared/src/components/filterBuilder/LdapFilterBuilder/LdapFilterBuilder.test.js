@@ -10,19 +10,23 @@ import LdapFilterBuilder from './index';
 
 const basicFilter = {
   operator: 'or',
+  uniqueIndex: 3,
   subfilters: [{
     operator: '=',
     field: '1',
+    uniqueIndex: 2,
     value: 'one',
   }],
 };
 
 const basicNotFilter = {
   operator: 'or',
+  uniqueIndex: 4,
   subfilters: [
     {
       operator: '!=',
       field: '1',
+      uniqueIndex: 5,
       value: 'one',
     },
   ],
@@ -30,15 +34,18 @@ const basicNotFilter = {
 
 const basicAndFilter = {
   operator: 'and',
+  uniqueIndex: 4,
   subfilters: [
     {
       operator: '=',
       field: '1',
+      uniqueIndex: 5,
       value: 'one',
     },
     {
       operator: '=',
       field: '2',
+      uniqueIndex: 6,
       value: 'two',
     },
   ],
@@ -46,15 +53,18 @@ const basicAndFilter = {
 
 const basicOrFilter = {
   operator: 'or',
+  uniqueIndex: 4,
   subfilters: [
     {
       operator: '=',
       field: '1',
+      uniqueIndex: 5,
       value: 'one',
     },
     {
       operator: '=',
       field: '2',
+      uniqueIndex: 6,
       value: 'two',
     },
   ],
@@ -84,6 +94,8 @@ describe('LdapFilterBuilder', () => {
 
   describe('setFilterObject', () => {
     it('basic filter', () => {
+      basicFilter.uniqueIndex = 6;
+      basicFilter.subfilters[0].uniqueIndex = 5;
       wrapper.vm.setFilterObject('(1=one)');
       expect(wrapper.vm.queryFilter).toEqual(basicFilter);
     });
@@ -122,20 +134,24 @@ describe('LdapFilterBuilder', () => {
         wrapper.vm.setFilterObject(filterString);
         expect(wrapper.vm.queryFilter).toEqual({
           operator: 'and',
+          uniqueIndex: 4,
           subfilters: [
             {
               operator: '=',
               field: 'objectCategory',
+              uniqueIndex: 5,
               value: 'Person',
             },
             {
               field: 'sAMAccountName',
               operator: '=',
+              uniqueIndex: 6,
               value: '*',
             },
             {
               operator: '=',
               field: 'memberOf',
+              uniqueIndex: 7,
               value: 'cn=CaptainPlanet,ou=users,dc=company,dc=com',
             },
           ],
@@ -147,38 +163,46 @@ describe('LdapFilterBuilder', () => {
         wrapper.vm.setFilterObject(filterString);
         expect(wrapper.vm.queryFilter).toEqual({
           operator: 'and',
+          uniqueIndex: 4,
           subfilters: [
             {
               operator: '=',
               field: 'objectCategory',
+              uniqueIndex: 5,
               value: 'Person',
             },
             {
               field: 'sAMAccountName',
               operator: '=',
+              uniqueIndex: 6,
               value: '*',
             },
             {
               operator: 'or',
+              uniqueIndex: 7,
               subfilters: [
                 {
                   operator: '=',
                   field: 'memberOf',
+                  uniqueIndex: 8,
                   value: 'cn=fire,ou=users,dc=company,dc=com',
                 },
                 {
                   operator: '=',
                   field: 'memberOf',
+                  uniqueIndex: 9,
                   value: 'cn=wind,ou=users,dc=company,dc=com',
                 },
                 {
                   operator: '=',
                   field: 'memberOf',
+                  uniqueIndex: 10,
                   value: 'cn=water,ou=users,dc=company,dc=com',
                 },
                 {
                   operator: '=',
                   field: 'memberOf',
+                  uniqueIndex: 11,
                   value: 'cn=heart,ou=users,dc=company,dc=com',
                 },
               ],
@@ -192,43 +216,52 @@ describe('LdapFilterBuilder', () => {
         wrapper.vm.setFilterObject(filterString);
         expect(wrapper.vm.queryFilter).toEqual({
           operator: 'and',
+          uniqueIndex: 4,
           subfilters: [
             {
               operator: '=',
               field: 'objectCategory',
+              uniqueIndex: 5,
               value: 'Person',
             },
             {
               field: 'sAMAccountName',
               operator: '=',
+              uniqueIndex: 6,
               value: '*',
             },
             {
               field: 'mail',
               operator: '=',
+              uniqueIndex: 7,
               value: '*',
             },
             {
               operator: 'or',
+              uniqueIndex: 8,
               subfilters: [
                 {
                   operator: '=',
                   field: 'memberOf',
+                  uniqueIndex: 9,
                   value: 'cn=fire,OU=Atlassian Groups,dc=xxxx,dc=com',
                 },
                 {
                   operator: '=',
                   field: 'memberOf',
+                  uniqueIndex: 10,
                   value: 'cn=wind,OU=Atlassian Groups,dc=xxxx,dc=com',
                 },
                 {
                   operator: '=',
                   field: 'memberOf',
+                  uniqueIndex: 11,
                   value: 'cn=water,OU=Atlassian Groups,dc=xxxx,dc=com',
                 },
                 {
                   operator: '=',
                   field: 'memberOf',
+                  uniqueIndex: 12,
                   value: 'cn=heart,OU=Atlassian Groups,dc=xxxx,dc=xxxx',
                 },
               ],
@@ -325,7 +358,15 @@ describe('LdapFilterBuilder', () => {
       const negated = wrapper.vm.negateFilter(basicNotFilter);
       expect(negated).toEqual({
         operator: 'or',
-        subfilters: [{ operator: '!=', field: '1', value: 'one' }],
+        uniqueIndex: 4,
+        subfilters: [
+          {
+            operator: '!=',
+            field: '1',
+            uniqueIndex: 5,
+            value: 'one',
+          },
+        ],
       });
     });
 
