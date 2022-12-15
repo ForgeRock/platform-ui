@@ -85,6 +85,7 @@ export default {
       isBasic: true,
       maxDepth: 4,
       queryFilter: {},
+      uniqueIndex: 0,
     };
   },
   computed: {
@@ -114,6 +115,7 @@ export default {
       return {
         operator: 'or',
         subfilters: [this.getDefaultRule(operator, field, value)],
+        uniqueIndex: this.getUniqueIndex(),
       };
     },
     /**
@@ -129,7 +131,17 @@ export default {
         operator,
         field,
         value,
+        uniqueIndex: this.getUniqueIndex(),
       };
+    },
+    /**
+     * Ensures our keys in v-if iteration have unique values
+     *
+     * @returns {number} New unique index
+     */
+    getUniqueIndex() {
+      this.uniqueIndex += 1;
+      return this.uniqueIndex;
     },
     /**
      * Get a filter object that matches format needed for FilterBuilderGroup component
@@ -162,6 +174,10 @@ export default {
             newFilter.field = filter.attribute;
             newFilter.value = filter.value;
             break;
+        }
+
+        if (!newFilter.uniqueIndex) {
+          newFilter.uniqueIndex = this.getUniqueIndex();
         }
 
         // recurse through subfilters or single subfilter
