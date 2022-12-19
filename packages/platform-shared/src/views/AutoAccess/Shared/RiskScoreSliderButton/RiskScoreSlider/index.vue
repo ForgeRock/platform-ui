@@ -13,18 +13,15 @@ of the MIT license. See the LICENSE file for details. -->
     >
       <div
         class="vue-slider-process low"
-        :style="{ width: `${thresholds.medium}%` }"
+        :style="lowSliderStyles"
       />
       <div
         class="vue-slider-process medium"
-        :style="{
-          width: `${thresholds.high - thresholds.medium}%`,
-          left: `${thresholds.medium}%`,
-        }"
+        :style="mediumSliderStyles"
       />
       <div
         class="vue-slider-process high"
-        :style="{ width: `${100 - thresholds.high}%`, right: 0 }"
+        :style="highSliderStyles"
       />
       <div
         class="custom-mark"
@@ -37,24 +34,6 @@ of the MIT license. See the LICENSE file for details. -->
         100
       </div>
     </VueSlider>
-    <!-- <div class="vue-slider-legend d-flex flex-row justify-content-around px-4 mt-4"> -->
-    <!--   <div -->
-    <!--     class="low" -->
-    <!--     :style="{ width: `${thresholds.medium}%` }"> -->
-    <!--     {{ $t("autoAccess.access.risk.low") }} -->
-    <!--   </div> -->
-    <!--   <div -->
-    <!--     class="medium" -->
-    <!--     :style="{ width: `${thresholds.high - thresholds.medium}%` }" -->
-    <!--   > -->
-    <!--     {{ $t("autoAccess.access.risk.medium") }} -->
-    <!--   </div> -->
-    <!--   <div -->
-    <!--     class="high" -->
-    <!--     :style="{ width: `${100 - thresholds.high}%` }"> -->
-    <!--     {{ $t("autoAccess.access.risk.high") }} -->
-    <!--   </div> -->
-    <!-- </div> -->
   </div>
 </template>
 
@@ -69,6 +48,7 @@ export default {
   props: {
     initialValue: {
       type: Array,
+      validator: (prop) => prop.every(e => typeof e === 'number'),
       default: null,
     },
     thresholds: {
@@ -90,10 +70,10 @@ export default {
 
   data() {
     return {
-      selectedRange: this.initialValue
-        ? [this.initialValue[0] !== undefined ? this.initialValue[0] : 30,
-          this.initialValue[1] !== undefined ? this.initialValue[1] : 70]
-        : [30, 70],
+      selectedRange: [
+        this.initialValue?.[0] ?? 30,
+        this.initialValue?.[1] ?? 70
+      ]
     };
   },
   methods: {
@@ -101,10 +81,24 @@ export default {
       this.$emit('selected-range-change', $event);
     },
   },
+  computed: {
+    lowSliderStyles() {
+      return { width: `${this.selectedRange[0]}%` }
+    },
+    mediumSliderStyles(){
+      return {
+          width: `${this.selectedRange[1] - this.selectedRange[0]}%`,
+          left: `${this.selectedRange[0]}%`,
+        }
+    },
+    highSliderStyles(){
+      return { width: `${100 - this.selectedRange[1]}%`, right: 0 }
+    }
+  },
   watch: {
     initialValue(newValue) {
       this.selectedRange = newValue;
-    },
+    }
   },
 };
 </script>
