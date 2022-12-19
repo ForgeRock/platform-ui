@@ -192,7 +192,7 @@ export default {
         const componentNames = {
           string: 'FrStringDisplay',
           array: 'FrArrayDisplay',
-          multiselect: 'FrField',
+          multiselect: 'FrArrayDisplay',
           select: 'FrArrayDisplay',
           boolean: 'FrBooleanDisplay',
           integer: 'FrNumberDisplay',
