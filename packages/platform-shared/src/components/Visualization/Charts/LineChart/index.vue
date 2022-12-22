@@ -494,7 +494,8 @@ export default {
         .attr('d', () => `M${range.x[0]},0L${range.x[1]},0`);
 
       if (overLimit) {
-        d3.selectAll(`#line-chart-${this.interval} .tick text`).attr('text-anchor', (i) => (i === 0 ? 'start' : 'end'));
+        d3.selectAll(`#line-chart-${this.interval} .x-axis .tick text`).attr('text-anchor', (i) => (i === 0 ? 'start' : 'end'));
+        d3.selectAll(`#line-chart-${this.interval} .y-axis .tick text`).attr('text-anchor', 'end');
       }
     },
     /*
