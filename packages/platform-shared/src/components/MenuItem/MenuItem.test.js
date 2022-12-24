@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -49,6 +49,24 @@ describe('MenuItem Component', () => {
       });
 
       expect(wrapper.vm.showItemForUser).toBe(true);
+    });
+
+    it('determines to show subItem for user if subitem has proper access called out', () => {
+      mountComponent({
+        displayName: 'subBob',
+        userRoles: ['employee mate'],
+      });
+
+      expect(wrapper.vm.showSubItemForUser(['employee mate'])).toBe(true);
+    });
+
+    it('determines to not show subItem for user if subitem has proper access called out', () => {
+      mountComponent({
+        displayName: 'subBob',
+        userRoles: ['employee mate'],
+      });
+
+      expect(wrapper.vm.showSubItemForUser(['employee boss'])).toBe(false);
     });
   });
 

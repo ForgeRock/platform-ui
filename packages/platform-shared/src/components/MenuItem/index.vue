@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -99,7 +99,7 @@ of the MIT license. See the LICENSE file for details. -->
           </span>
         </Component>
         <Component
-          v-else
+          v-else-if="showSubItemForUser(subItem.showForRoles)"
           :key="`menu_item_${displayName}_${subIndex}`"
           :is="bootstrapComponent"
           :href="subItem.url"
@@ -284,6 +284,10 @@ export default {
     },
   },
   methods: {
+    // If the item is restricted by roles, only display it to users who have at least one of the required roles
+    showSubItemForUser(showForRoles) {
+      return !showForRoles?.length || this.userRoles.some((userRole) => showForRoles.includes(userRole));
+    },
     /**
      * Determine whether or not the current item should be expanded if it is a menu, based on the route name
      * @param {String} routeName the name of the current route
