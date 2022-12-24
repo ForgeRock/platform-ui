@@ -49,7 +49,7 @@
   }
 
   .sidebar-item-text,
-  ::v-deep .menu-item-text,
+  ::v-deep .fr-sidebar-menuitems .menu-item-text,
   ::v-deep .fr-menu-item-submenuitems,
   .fr-logo-horizontal {
     display: none;
