@@ -1,20 +1,23 @@
-<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <script>
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import { putConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
 import uuid from 'uuid/v4';
 import { sortBy } from 'lodash';
 import store from '@forgerock/platform-shared/src/store';
+import i18n from '@/i18n';
 
 export default {
   name: 'ThemeMixin',
   mixins: [
     NotificationMixin,
     RestMixin,
+    TranslationMixin,
   ],
   data() {
     return {
@@ -109,6 +112,11 @@ export default {
       themesConfig: { realm: {} },
       realmThemeNames: [],
     };
+  },
+  computed: {
+    localizedFavicon() {
+      return this.getLocalizedString(this.favicon, i18n.locale, i18n.fallbackLocale);
+    },
   },
   methods: {
     /**
