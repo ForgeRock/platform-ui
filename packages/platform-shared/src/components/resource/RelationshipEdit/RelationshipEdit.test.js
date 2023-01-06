@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -125,10 +125,12 @@ describe('RelationshipEdit', () => {
     wrapper.vm.emitSelected();
     expect(wrapper.vm.relationshipField.value).toEqual(null);
     expect(wrapper.emitted().setValue[0]).toEqual([null]);
-    wrapper.vm.emitSelected(['test']);
+    wrapper.vm.emitSelected(['test', 'test']);
     expect(wrapper.emitted().setValue[1]).toEqual([[{ _ref: 'test', _refProperties: {} }]]);
     wrapper.vm.emitSelected('test');
     expect(wrapper.emitted().setValue[2]).toEqual([{ _ref: 'test', _refProperties: {} }]);
+    wrapper.vm.emitSelected(['test', 'testtwo']);
+    expect(wrapper.emitted().setValue[3]).toEqual([[{ _ref: 'test', _refProperties: {} }, { _ref: 'testtwo', _refProperties: {} }]]);
   });
 
   it('should emitSelected properly with temporalConstraint', () => {
