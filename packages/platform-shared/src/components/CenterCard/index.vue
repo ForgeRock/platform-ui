@@ -1,7 +1,8 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
+<!--AVAILABLE SLOTS: center-card-header, center-card-body, center-card-footer-->
 <template>
   <BContainer class="px-0 flex-grow-1 d-flex">
     <div class="fr-m-auto fr-center-card align-self-center">

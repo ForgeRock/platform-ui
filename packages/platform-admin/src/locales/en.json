@@ -181,7 +181,14 @@
   },
   "hostedPages": {
     "settings": {
-      "description": "Activate or deactivate hosted account and delegated administration pages."
+      "description": "Control access to hosted account and journey pages.",
+      "hostedAccountPagesTitle": "Hosted Account Pages",
+      "hostedJourneyPagesTitle": "Hosted Journey Pages",
+      "activateModalTitle": "Activate {pagesTitle}?",
+      "activateModalDescription": "Are you sure you want to allow access to {pagesTitle}?",
+      "deactivateModalTitle": "Deactivate {pagesTitle}?",
+      "deactivateModalDescription": "Are you sure you want to block access to {pagesTitle}?",
+      "title": "End User UI"
     },
     "title": "Hosted Pages",
     "theme": {

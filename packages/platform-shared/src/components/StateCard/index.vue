@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -6,45 +6,45 @@ of the MIT license. See the LICENSE file for details. -->
   <BCard
     no-body
     class="my-4">
-    <FrListGroup
-      no-margin
-      class="list-group">
+    <FrListGroup no-margin>
       <FrListItem
+        v-for="(listItem, key) in listItems"
+        :key="key"
         :clickable="false">
-        <template v-slot:list-item-header>
+        <template #list-item-header>
           <BRow class="w-100 align-items-center">
             <BCol>
               <h5 class="mb-0">
-                {{ $t('common.status') }}
+                {{ listItem.title }}
               </h5>
             </BCol>
             <BCol class="text-center">
-              <span v-if="enabled">
+              <template v-if="listItem.value">
                 <BBadge variant="success">
-                  {{ $t('common.activated') }}
+                  {{ $t('common.active') }}
                 </BBadge>
-              </span>
-              <span v-else>
-                <BBadge variant="danger">
-                  {{ $t('common.deactivated') }}
+              </template>
+              <template v-else>
+                <BBadge variant="light">
+                  {{ $t('common.inactive') }}
                 </BBadge>
-              </span>
+              </template>
             </BCol>
             <BCol class="text-right">
-              <span v-if="enabled">
+              <template v-if="listItem.value">
                 <BButton
-                  @click="changeState(false)"
+                  @click="changeState(key, false)"
                   variant="link">
                   {{ $t('common.deactivate') }}
                 </BButton>
-              </span>
-              <span v-else>
+              </template>
+              <template v-else>
                 <BButton
-                  @click="changeState(true)"
+                  @click="changeState(key, true)"
                   variant="link">
                   {{ $t('common.activate') }}
                 </BButton>
-              </span>
+              </template>
             </BCol>
           </BRow>
         </template>
@@ -61,13 +61,16 @@ import {
   BCol,
   BRow,
 } from 'bootstrap-vue';
-import FrListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
-import FrListItem from '@forgerock/platform-shared/src/components/ListItem/';
+import FrListGroup from '@forgerock/platform-shared/src/components/ListGroup';
+import FrListItem from '@forgerock/platform-shared/src/components/ListItem';
 
 /**
  * A card with a badge that shows the current state and a link to switch between active and inactive
  * If state is active, link text will be 'deactivate'
  * If inacvtive, link text will be 'activate'
+ *
+ * Multiple states can be provided to this component and will be presented for enable/disable each
+ * flag as list items
  */
 export default {
   name: 'StateCard',
@@ -82,23 +85,31 @@ export default {
   },
   props: {
     /**
-     * The state.
+     * The list of states
+     * e.g., {
+        hostedPages: {
+          title: 'Status',
+          value: true,
+        },
+      }
      */
-    enabled: {
-      type: Boolean,
-      default: false,
+    listItems: {
+      default: () => ({}),
+      type: Object,
     },
   },
   methods: {
     /**
      * Emits the change event with the selected value
+     * @param {String} key the key of the state to change
+     * @param {Boolean} value true or false toggle value
      */
-    changeState(newValue) {
+    changeState(key, value) {
       /**
        * Triggered whenever the link is clicked to change the state
        * @property {Boolean} newValue The new state value
        */
-      this.$emit('change', newValue);
+      this.$emit('change', { key, value });
     },
   },
 };
