@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -16,18 +16,26 @@ of the MIT license. See the LICENSE file for details. -->
         :alt="$t('pages.forbidden.forbidden')"
         class="mb-2" />
       <p class="lead text-center font-weight-light text-muted mb-5">
-        {{ $t("pages.forbidden.notAuthorized") }}
+        <template v-if="showLogout">
+          {{ $t("pages.forbidden.notAuthorized") }}
+        </template>
+        <template v-else>
+          {{ $t("pages.forbidden.notAuthorizedLogin") }}
+        </template>
       </p>
       <hr class="fr-accent">
-      <div class="text-center">
+      <div
+        v-if="showDashboard"
+        class="text-center">
         <BButton
-          v-if="showDashboard"
           variant="link"
           @click="redirectToDashboard">
           {{ $t('pages.forbidden.returnToDashboard') }}
         </BButton>
       </div>
-      <div class="text-center">
+      <div
+        v-if="showLogout"
+        class="text-center">
         <BButton
           variant="link"
           @click="logoutUser">
@@ -53,6 +61,10 @@ export default {
   name: 'Forbidden',
   props: {
     showDashboard: {
+      type: Boolean,
+      default: true,
+    },
+    showLogout: {
       type: Boolean,
       default: true,
     },

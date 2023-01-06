@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -481,6 +481,7 @@ export default {
     this.getConfigurationInfo(this.realm)
       .then((config) => {
         this.setRealm(config);
+        this.redirectIfInactive();
       })
       .then(this.checkNewSession)
       .then(() => {
@@ -494,6 +495,15 @@ export default {
       });
   },
   methods: {
+    /**
+     * Redirects user to forbidden if non-root realm & journey pages have been inactivated for hosted pages
+     */
+    redirectIfInactive() {
+      const rootRealm = this.realm === 'root' || this.realm === '/root' || this.realm === '/';
+      if (!rootRealm && this.$store.state.hostedJourneyPages === false) {
+        window.location.href = `${this.$store.state.SharedStore.amBaseURL}/XUI/#/forbidden`;
+      }
+    },
     /**
      * @description handler for scripts clicking on loginButton_0
      * if a script clicks on loginButton_0 we want to make sure that the

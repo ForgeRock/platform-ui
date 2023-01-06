@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -16,14 +16,14 @@ import {
   SessionManager,
 } from '@forgerock/javascript-sdk';
 import { setInteractionMode } from 'vee-validate';
-import axios from 'axios';
 import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 import isWebStorageAvailable from '@forgerock/platform-shared/src/utils/webStorageTest';
 import overrideTranslations, { setLocales } from '@forgerock/platform-shared/src/utils/overrideTranslations';
 import VueSanitize from 'vue-sanitize';
-import store from '@forgerock/platform-shared/src/store';
 import uuid from 'uuid/v4';
 import { baseSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
+import { getUiConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
+import store from '@/store';
 import i18n from './i18n';
 import router from './router';
 import App from './App';
@@ -35,8 +35,7 @@ Vue.use(VueSanitize, baseSanitizerConfig);
 
 setInteractionMode('passive');
 
-const idmContext = getFQDN(process.env.VUE_APP_IDM_URL);
-
+store.commit('SharedStore/setBaseURLs', process.env);
 store.commit('SharedStore/setWebStorageAvailable', isWebStorageAvailable());
 
 /**
@@ -90,13 +89,7 @@ const loadApp = () => {
  * We will load the application regardless
  */
 const startApp = () => {
-  const idmInstance = axios.create({
-    baseURL: idmContext,
-    timeout: 15000,
-    headers: {},
-  });
-
-  idmInstance.get('/info/uiconfig').then((uiConfig) => {
+  getUiConfig().then((uiConfig) => {
     // check for locale query parameter
     const urlSearchParams = new URLSearchParams(window.location.search);
     const localeString = urlSearchParams.get('locale');
@@ -117,8 +110,12 @@ const startApp = () => {
       // if no query param, use the primary browser language
       setLocales(i18n, uiConfig.data.configuration.lang, uiConfig.data.configuration.defaultLocale || 'en');
     }
+
+    if (uiConfig.data.configuration?.platformSettings?.hostedJourneyPages === false) {
+      store.commit('setHostedJourneyPagesState', false);
+    }
   })
-    .then(() => overrideTranslations(idmContext, i18n, 'login'))
+    .then(() => overrideTranslations(store.state.SharedStore.idmBaseURL, i18n, 'login'))
     .finally(() => loadApp());
 };
 
