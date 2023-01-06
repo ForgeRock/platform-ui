@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -379,11 +379,17 @@ export default {
         if (this.singleSelection && selected.length > 1) {
           selected.shift();
         }
+
+        // Ensure only unique values in array. Search executes a query,
+        // so we can't simply adjust options to exclude selected values
+        const uniqueSelected = selected.filter((val, index, selectedArray) => selectedArray.indexOf(val) === index);
+        this.relationshipField.value = uniqueSelected;
+
         if (this.relationshipProperty.relationshipGrantTemporalConstraintsEnforced && this.temporalConstraint.length > 0) {
           const refProperties = { temporalConstraints: [{ duration: this.temporalConstraint }] };
-          emitValues = selected.map((currentValue) => ({ _ref: currentValue, _refProperties: refProperties }));
+          emitValues = uniqueSelected.map((currentValue) => ({ _ref: currentValue, _refProperties: refProperties }));
         } else {
-          emitValues = selected.map((currentValue) => ({ _ref: currentValue, _refProperties: {} }));
+          emitValues = uniqueSelected.map((currentValue) => ({ _ref: currentValue, _refProperties: {} }));
         }
         this.$emit('setValue', emitValues);
       } else if (selected) {
