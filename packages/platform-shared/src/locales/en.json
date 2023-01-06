@@ -524,7 +524,8 @@
     "forbidden": {
       "forbidden": "forbidden",
       "returnToDashboard": "Return to Dashboard",
-      "notAuthorized": "You are not authorized to view this site. Please sign out and try again"
+      "notAuthorized": "You are not authorized to view this site. Please sign out and try again",
+      "notAuthorizedLogin": "You are not authorized to view this site."
     },
     "profile": {
       "editPersonalInfo": "Edit Personal Info",
