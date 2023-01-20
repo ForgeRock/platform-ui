@@ -156,7 +156,6 @@ import EventDetail from '../EventDetail';
 import RelativeTime from '../../Shared/RelativeTime';
 import Explainability from '../../Shared/Explainability';
 import { getQueryFilters } from '../../Shared/utils/api';
-import store from '@/store';
 import formatNumber from '../../../../utils/formatNumber';
 
 require('brace');
@@ -224,7 +223,7 @@ export default {
       return cols;
     },
     dateRange() {
-      return store.state.Dashboard.utcDates;
+      return this.$store.state.Dashboard.utcDates;
     },
   },
   watch: {
