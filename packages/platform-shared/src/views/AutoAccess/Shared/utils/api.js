@@ -7,7 +7,6 @@
 
 import _ from 'lodash';
 import { generateAutoAccessJas } from '@forgerock/platform-shared/src/api/BaseApi';
-// import { postData } from './axios-utils';
 
 export function getQueryFilters(dateRange, filterObject, userId) {
   const bool = {
@@ -15,8 +14,8 @@ export function getQueryFilters(dateRange, filterObject, userId) {
       {
         range: {
           'predictionResult.features.timestamp': {
-            gte: dateRange[0],
-            lte: dateRange[1],
+            gte: dateRange.startDate,
+            lte: dateRange.endDate,
           },
         },
       },

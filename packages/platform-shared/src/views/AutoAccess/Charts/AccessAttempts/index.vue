@@ -57,7 +57,7 @@ import { getEventLogs } from '../../Activity/api/ActivityAPI';
 import LineChart from '../LineChart';
 import LineChartLegend from '../LineChart/LineChartLegend';
 import { histogramQuery, defaultData } from './api';
-import { getInterval } from '../../Shared/DateRangePicker/utility';
+import { getInterval } from '../../../../components/DateRangePicker/utility';
 import RiskScoreChange from '../../Shared/RiskScoreChange';
 import { getPrevDateRange } from '../../Shared/utils/util-functions';
 import formatNumber from '../../../../utils/formatNumber';
