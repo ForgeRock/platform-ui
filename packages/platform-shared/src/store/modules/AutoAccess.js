@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -16,7 +16,7 @@
 
 import _ from 'lodash';
 import { getConfig } from '../../views/AutoAccess/Shared/utils/api';
-import { defaultDateRange } from '../../views/AutoAccess/Shared/DateRangePicker/utility';
+import { defaultDateRange } from '@forgerock/platform-shared/src/components/DateRangePicker/utility';
 import { getPipelineDefinition } from '../../views/AutoAccess/Pipelines/api/PipelineApi';
 import { getUEBAClusteringExplainability, getFeatures } from '../../views/AutoAccess/Activity/api/ActivityAPI';
 import { getDataSourceDefinition, getAuthenticationDefinition } from '../../views/AutoAccess/DataSources/api/DataSourcesAPI';
