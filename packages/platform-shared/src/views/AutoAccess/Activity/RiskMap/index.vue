@@ -24,7 +24,6 @@ of the MIT license. See the LICENSE file for details. -->
 import { Loader } from '@googlemaps/js-api-loader';
 import { MarkerClusterer } from '@googlemaps/markerclusterer';
 import { BSpinner } from 'bootstrap-vue';
-import store from '@/store';
 import {
   getMarkersStats, mapStyles, markerStyle, MAX_ZOOM, MIN_ZOOM,
 } from './util';
@@ -49,7 +48,7 @@ export default {
   },
   computed: {
     dateRange() {
-      return store.state.Dashboard.utcDates;
+      return this.$store.state.Dashboard.utcDates;
     },
   },
   data() {

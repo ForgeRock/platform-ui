@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -113,11 +113,10 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import { BButton, BTabs, BTab } from 'bootstrap-vue';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
+import { defaultDateRange } from '@forgerock/platform-shared/src/components/DateRangePicker/utility';
 import RiskScore from '../Shared/RiskScore';
 import { getEventLogs } from '../Activity/api/ActivityAPI';
-import UserDetailTrends from '../UserDetailTrends';
 import Activity from '../Activity';
-import { defaultDateRange } from '../Shared/DateRangePicker/utility';
 import averageRiskScoreQuery from './api/UserDetailAPI';
 
 export default {
@@ -145,7 +144,6 @@ export default {
     RiskScore,
     FrSpinner,
     Activity,
-    UserDetailTrends,
   },
   watch: {
     //   dateRange: {

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -23,8 +23,8 @@ export default {
   },
   props: {
     dateRange: {
-      type: Array,
-      default: () => [],
+      type: Object,
+      default: () => ({}),
     },
     userId: {
       type: String,
@@ -50,7 +50,7 @@ export default {
   methods: {
     fetchData() {
       const { userId, dateRange, interval } = this;
-      const placeholder = defaultData(dayjs(dateRange[1]).diff(dateRange[0], interval) + 1, dateRange[0], interval).map((d) => ({ ...d, success: 0, failure: 0 }));
+      const placeholder = defaultData(dayjs(dateRange.endDate).diff(dateRange.startDate, interval) + 1, dateRange.startDate, interval).map((d) => ({ ...d, success: 0, failure: 0 }));
       const param = {
         sort: [
           {
@@ -66,8 +66,8 @@ export default {
               {
                 range: {
                   'features.timestamp': {
-                    gte: dateRange[0],
-                    lte: dateRange[1],
+                    gte: dateRange.startDate,
+                    lte: dateRange.endDate,
                   },
                 },
               },

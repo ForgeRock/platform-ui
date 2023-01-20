@@ -12,10 +12,14 @@ of the MIT license. See the LICENSE file for details. -->
         class="m-0 font-weight-normal h3">
         {{ $t("autoAccess.access.activity.header") }}
       </h1>
-      <div :class="{'d-flex': true, 'flex-row': true, 'activity-filters-user-detail': !!userId, 'position-absolute': !!userId}">
-        <div class="ml-3">
-          <DateRangePicker
-            @change="handleDateChange"
+      <div
+        class="d-flex flex-row activity-buttons-container"
+        :class="{'activity-filters-user-detail': !!userId, 'position-absolute': !!userId}">
+        <div class="date-picker-container ml-3">
+          <FrDateRangePicker
+            v-model="pickerDateRange"
+            :ranges="ranges"
+            opens="left"
           />
         </div>
         <div class="ml-3">
@@ -85,13 +89,15 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import {
   BButton, BBadge,
 } from 'bootstrap-vue';
+import FrDateRangePicker from '@forgerock/platform-shared/src/components/DateRangePicker';
+import AnalyticsMixin from '@forgerock/platform-shared/src/mixins/AnalyticsMixin';
+import DateRangePickerMixin from '@forgerock/platform-shared/src/mixins/DateRangePickerMixin';
+import dayjs from 'dayjs';
 import RiskMap from './RiskMap';
 import EventLog from './EventLog';
-import DateRangePicker from '../Shared/DateRangePicker';
 import RiskRangeSliderButton from '../Shared/RiskScoreSliderButton';
 import AccessResults from '../Charts/AccessResults';
 import Filters from './Filters';
-import store from '@/store';
 
 export default {
   name: 'Activity',
@@ -100,12 +106,12 @@ export default {
     BBadge,
     RiskMap,
     EventLog,
-    DateRangePicker,
+    FrDateRangePicker,
     RiskRangeSliderButton,
     AccessResults,
     Filters,
   },
-  mixins: [NotificationMixin],
+  mixins: [NotificationMixin, AnalyticsMixin, DateRangePickerMixin],
   props: {
     userId: {
       default: '',
@@ -118,16 +124,16 @@ export default {
   },
   computed: {
     dateRange() {
-      return store.state.Dashboard.dates;
+      return this.$store.state.Dashboard.dates;
     },
     filterCount() {
       return this.filterObject.features.length + (this.filterObject.reasons.length > 0 ? 1 : 0);
     },
     features() {
-      return store.state.Dashboard.features;
+      return this.$store.state.Dashboard.features;
     },
     minRisk() {
-      return store.state.Dashboard.config.thresholds && store.state.Dashboard.config.thresholds.high;
+      return this.$store.state.Dashboard.config.thresholds && this.$store.state.Dashboard.config.thresholds.high;
     },
     maxRisk() {
       return 100;
@@ -140,6 +146,7 @@ export default {
     },
   },
   data() {
+    const rangeOfDate = {};
     return {
       filterObject: {
         riskRange: [this.minRisk || 0, 100],
@@ -149,6 +156,7 @@ export default {
         is_risky_event: true,
       },
       geoCoordinates: null,
+      rangeOfDate,
       showFilters: false,
     };
   },
@@ -156,10 +164,21 @@ export default {
     minRisk() {
       this.resetRisk();
     },
+    /**
+     * Handles setting the dateRange state when a picker date is selected
+     */
+    pickerDateRange: {
+      handler(newVal) {
+        this.rangeOfDate = {
+          startDate: dayjs(newVal.startDate).format(), endDate: dayjs(newVal.endDate).format(),
+        };
+      },
+      immediate: true,
+    },
   },
   created() {
-    store.dispatch('Dashboard/initializeFeatures');
-    store.dispatch('Dashboard/initializeConfig');
+    this.$store.dispatch('Dashboard/initializeFeatures');
+    this.$store.dispatch('Dashboard/initializeConfig');
 
     this.resetRisk();
   },
@@ -174,9 +193,6 @@ export default {
       if (!_.isEqual(geometry, this.geoCoordinates)) {
         this.geoCoordinates = geometry;
       }
-    },
-    handleDateChange(newDateRange) {
-      store.commit('dateChange', { dates: newDateRange });
     },
     handleFilterChange(filterObj) {
       this.filterObject = filterObj;
@@ -211,6 +227,18 @@ export default {
 
     .event-log-container {
       max-width: 500px;
+    }
+
+    .date-picker-container {
+      .form-control {
+        padding: 0;
+      }
+    }
+
+    .activity-buttons-container {
+      .btn.btn-outline-primary, .pill-primary {
+        height: 50px;
+      }
     }
   }
 </style>
