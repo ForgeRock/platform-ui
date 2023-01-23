@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -22,7 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
             </i>
           </span>
           <span>
-            {{ $t(`autoAccess.access.heuristics["${h.key}"]`) }}
+            {{ $t(`autoAccess.access.reasons["${h.key}"]`) }}
           </span>
         </div>
       </div>

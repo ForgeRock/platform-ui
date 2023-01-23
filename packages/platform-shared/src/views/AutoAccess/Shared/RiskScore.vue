@@ -1,9 +1,9 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <span class="risk-score">
+  <div class="risk-score">
     <div class="d-flex flex-row align-items-center risk-score-value">
       <div
         class="risk-score-indicator mr-2"
@@ -19,36 +19,25 @@ of the MIT license. See the LICENSE file for details. -->
         {{ score }}
       </h1>
     </div>
-    <span v-if="!isNaN(change) && isFinite(change)">
-      <RiskScoreChange
-        :change="change"
-        :invert="invertChange"
-        :small="true"
-      />
-    </span>
-  </span>
+  </div>
 </template>
 
 <script>
 import store from '@/store';
-import RiskScoreChange from './RiskScoreChange';
 
 export default {
   name: 'RiskScore',
-  components: {
-    RiskScoreChange,
-  },
   props: {
     score: {
-      type: Number,
       default: 0,
+      type: Number,
     },
     small: {
       type: Boolean,
     },
     change: {
+      default: 0,
       type: Number,
-      default: undefined,
     },
     invertChange: {
       type: Boolean,

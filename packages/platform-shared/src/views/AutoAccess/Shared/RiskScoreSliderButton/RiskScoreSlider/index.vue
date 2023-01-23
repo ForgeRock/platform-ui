@@ -46,39 +46,22 @@ export default {
     VueSlider,
   },
   props: {
-    initialValue: {
+    value: {
       type: Array,
       validator: (prop) => prop.every((e) => typeof e === 'number'),
-      default: null,
-    },
-    thresholds: {
-      type: Object,
-      default: () => ({
-        medium: 30,
-        high: 70,
-      }),
-    },
-    minRisk: {
-      type: Number,
-      default: 0,
-    },
-    maxRisk: {
-      type: Number,
-      default: 100,
+      default: () => [0, 100],
     },
   },
-
   data() {
     return {
-      selectedRange: [
-        this.initialValue?.[0] ?? 30,
-        this.initialValue?.[1] ?? 70,
-      ],
+      minRisk: 0,
+      maxRisk: 100,
+      selectedRange: this.value,
     };
   },
   methods: {
     selectedRangeChange($event) {
-      this.$emit('selected-range-change', $event);
+      this.$emit('input', $event);
     },
   },
   computed: {
@@ -96,7 +79,7 @@ export default {
     },
   },
   watch: {
-    initialValue(newValue) {
+    value(newValue) {
       this.selectedRange = newValue;
     },
   },
