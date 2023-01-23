@@ -5,80 +5,56 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-/* eslint-disable */
-/**
- * Copyright 2022 ForgeRock AS. All Rights Reserved
- *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
- */
-
 import _ from 'lodash';
-import { getConfig } from '../../views/AutoAccess/Shared/utils/api';
 import { defaultDateRange } from '@forgerock/platform-shared/src/components/DateRangePicker/utility';
+import { getConfig } from '../../views/AutoAccess/Shared/utils/api';
 import { getPipelineDefinition } from '../../views/AutoAccess/Pipelines/api/PipelineApi';
 import { getUEBAClusteringExplainability, getFeatures } from '../../views/AutoAccess/Activity/api/ActivityAPI';
 import { getDataSourceDefinition, getAuthenticationDefinition } from '../../views/AutoAccess/DataSources/api/DataSourcesAPI';
 
 /* eslint-disable import/prefer-default-export */
 export default {
-  AutoAccessAuth: {
-    namespaced: true,
-    state: {
-      token: '',
-    },
-    mutations: {
-      setToken(state, token) {
-        state.token = token;
-      },
-      setModule(state, module) {
-        state.module = module;
-      },
-      // setTenantId(state, tenantId) {
-      //   state.tenantId = tenantId;
-      // },
-      setLoginTime(state, time) {
-        state.loginTime = time;
-      },
-      setUserTimeout(state, time) {
-        state.userTimeout = time;
-      },
-    },
-  },
   Dashboard: {
     namespaced: true,
     state: {
-      dates: defaultDateRange().dates,
-      utcDates: defaultDateRange().utcDates,
-      features: [],
-      uebaClusteringReasons: [],
+      activeFilters: {
+        features: [],
+        geoCoordinates: {},
+        is_risky_event: true,
+        reasons: [],
+        riskRange: [0, 100],
+        showFilters: false,
+      },
       config: {
         thresholds: {
           high: 0,
         },
       },
+      clusteringReasons: [],
+      dates: defaultDateRange().dates,
+      features: [],
+      ignoreReasons: ['failed', 'unknown'],
+      uebaReasons: [],
+      uebaClusteringReasons: [],
+      utcDates: defaultDateRange().utcDates,
     },
     actions: {
-      initializeFeatures: ({ commit, state }) => {
+      initializeFeatures({ commit, state }) {
         if (state.features.length === 0) {
-          Promise.all([getFeatures(), getUEBAClusteringExplainability()]).then(values => {
+          Promise.all([getFeatures(), getUEBAClusteringExplainability()]).then((values) => {
             commit('setFeatures', values[0]);
             commit('setUEBAClustering', values[1]);
-          })
-            .catch(err => {
-
-            })
+          });
         }
       },
-      initializeConfig: ({ commit }) => {
+      initializeConfig({ commit }) {
         commit('setConfig', { thresholds: { high: 0, medium: 0 } });
         getConfig().then((res) => {
           commit('setConfig', res);
-        })
-          .catch((err) => {
-            console.log(err);
-          });
+        });
+      },
+      setActiveFilters({ commit }) {
+        commit('setActiveFilters', commit);
       },
     },
     mutations: {
@@ -86,13 +62,27 @@ export default {
         state.dates = payload.dates;
         state.utcDates = payload.utcDates;
       },
-      setFeatures: (state, payload) => {
+      setActiveGeoCoordinates(state, payload) {
+        state.activeFilters.geoCoordinates = payload;
+      },
+      setActiveRiskRange(state, payload) {
+        state.activeFilters.riskRange = payload;
+      },
+      setActiveReasonFilters(state, payload) {
+        state.activeFilters.reasons = payload;
+      },
+      setActiveFeatureFilters(state, payload) {
+        state.activeFilters.features = payload;
+      },
+      setFeatures(state, payload) {
         state.features = payload;
       },
-      setUEBAClustering: (state, payload) => {
-        state.uebaClusteringReasons = payload;
+      setUEBAClustering(state, payload) {
+        state.clusteringReasons = payload.clustering;
+        state.uebaReasons = payload.ueba;
+        state.uebaClusteringReasons = payload.keys;
       },
-      setConfig: (state, payload) => {
+      setConfig(state, payload) {
         state.config = payload;
       },
     },
@@ -126,7 +116,7 @@ export default {
       },
     },
     actions: {
-      getDefaultMapping: ({ commit, state }) => {
+      getDefaultMapping: ({ state }) => {
         const mapping = {};
 
         state.auth_properties.forEach((prop) => {
@@ -135,7 +125,7 @@ export default {
 
         return mapping;
       },
-      initializeDataSources: ({ commit, state }) => {
+      initializeDataSources: ({ commit }) => {
         getAuthenticationDefinition().then((res) => {
           commit('setAuthProperties', res[0]);
         });
@@ -167,7 +157,7 @@ export default {
       },
     },
     actions: {
-      initializePipelines: ({ commit, state }) => {
+      initializePipelines: ({ commit }) => {
         getPipelineDefinition().then((res) => {
           if (res.length > 0) {
             commit('setPipelineDefinition', res[0]);

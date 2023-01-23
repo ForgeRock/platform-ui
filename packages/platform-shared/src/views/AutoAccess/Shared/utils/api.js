@@ -7,58 +7,56 @@
 
 import _ from 'lodash';
 import { generateAutoAccessJas } from '@forgerock/platform-shared/src/api/BaseApi';
+import store from '@/store';
 
 export function getQueryFilters(dateRange, filterObject, userId) {
+  // Date Range
   const bool = {
-    must: [
-      {
-        range: {
-          'predictionResult.features.timestamp': {
-            gte: dateRange.startDate,
-            lte: dateRange.endDate,
-          },
+    must: [{
+      range: {
+        'predictionResult.features.timestamp': {
+          gte: dateRange.startDate,
+          lte: dateRange.endDate,
         },
       },
+    },
     ],
   };
 
+  // Risk Range
   if (filterObject.riskRange) {
-    bool.must.push(
-      {
-        range: {
-          'predictionResult.risk_score_data.risk_score': {
-            lte: filterObject.riskRange[1] + 0.49,
-            gte: filterObject.riskRange[0],
-          },
+    bool.must.push({
+      range: {
+        'predictionResult.risk_score_data.risk_score': {
+          lte: filterObject.riskRange[1],
+          gte: filterObject.riskRange[0],
         },
       },
-    );
+    });
   }
 
-  if (filterObject.geoCoordinates) {
-    bool.must.push(
-      {
-        range: {
-          'predictionResult.features.geoData.lat': {
-            lte: filterObject.geoCoordinates.north,
-            gte: filterObject.geoCoordinates.south,
-          },
+  // Geo Coordinates
+  if (Object.keys(filterObject.geoCoordinates).length) {
+    bool.must.push({
+      range: {
+        'predictionResult.features.geoData.lat': {
+          lte: filterObject.geoCoordinates.north,
+          gte: filterObject.geoCoordinates.south,
         },
       },
-    );
-    bool.must.push(
-      {
-        range: {
-          'predictionResult.features.geoData.longitude': {
-            lte: filterObject.geoCoordinates.east,
-            gte: filterObject.geoCoordinates.west,
-          },
+    });
+    bool.must.push({
+      range: {
+        'predictionResult.features.geoData.longitude': {
+          lte: filterObject.geoCoordinates.east,
+          gte: filterObject.geoCoordinates.west,
         },
       },
-    );
+    });
   }
 
-  if (typeof filterObject.is_risky_event === 'boolean') {
+  // Is Risky Event
+  if (filterObject.is_risky_event) {
     bool.must.push({
       term: {
         'predictionResult.risk_score_data.is_risky_event': filterObject.is_risky_event,
@@ -66,6 +64,7 @@ export function getQueryFilters(dateRange, filterObject, userId) {
     });
   }
 
+  // Attribute Filters
   const featureMap = {};
   filterObject.features.forEach((feature) => {
     if (!featureMap[feature.key]) {
@@ -89,86 +88,105 @@ export function getQueryFilters(dateRange, filterObject, userId) {
     });
   });
 
+  // User
   if (userId) {
-    bool.must.push(
-      {
-        term: {
-          'predictionResult.features.userId': this.userId,
-        },
+    bool.must.push({
+      term: {
+        'predictionResult.features.userId': this.userId,
       },
-    );
+    });
   }
 
-  if (filterObject.reasons.length > 0) {
-    const reasons = [];
-    const hueristicsReasons = [];
-    const heuristics = filterObject.reasons.flat().filter((el) => el.indexOf('is_') === 0);
-    const ueba = filterObject.reasons.flat().filter((el) => el.indexOf('is_') === -1);
+  const clusteringReasons = [];
+  const heuristicReasons = [];
+  const uebaReasons = [];
+  filterObject.reasons.forEach((reasons) => {
+    reasons.forEach((reason) => {
+      if (reason.indexOf('is_') === 0) {
+        heuristicReasons.push(reason);
+      }
+      if (store.state.Dashboard.uebaReasons.includes(reason)) {
+        uebaReasons.push(reason);
+      }
+      if (store.state.Dashboard.clusteringReasons.includes(reason)) {
+        clusteringReasons.push(reason);
+      }
+    });
+  });
 
-    if (heuristics.length > 0) {
-      hueristicsReasons.push({
+  // Heuristic, UEBA, Clustering Reason
+  const allQuery = { bool: { should: [], minimum_should_match: 1 } };
+  if (filterObject.reasons.length > 0) {
+    const hueristicsQuery = [];
+
+    // Heuristics
+    if (heuristicReasons.length > 0) {
+      hueristicsQuery.push({
         bool: {
-          should: heuristics.map((heurisic) => ({
+          should: heuristicReasons.map((heuristic) => ({
             term: {
-              [`predictionResult.risk_score_data.heuristic_agg_result.raw_results.${heurisic}`]: true,
+              [`predictionResult.risk_score_data.heuristic_agg_result.raw_results.${heuristic}`]: true,
             },
           })),
           minimum_should_match: 1,
         },
       });
 
-      bool.must.push(
-        {
-          nested: {
-            path: 'predictionResult.risk_score_data.heuristic_agg_result.raw_results',
-            query: {
-              bool: {
-                should: hueristicsReasons,
-              },
+      allQuery.bool.should.push({
+        nested: {
+          path: 'predictionResult.risk_score_data.heuristic_agg_result.raw_results',
+          query: {
+            bool: {
+              should: hueristicsQuery,
             },
           },
         },
-      );
+      });
     }
 
-    if (ueba.length > 0) {
-      const uebaReason = ueba.map((reason) => ({
+    // UEBA
+    if (uebaReasons.length > 0) {
+      const uebaQuery = uebaReasons.map((reason) => ({
         term: {
           'predictionResult.ueba_signal.explainable_features': reason,
         },
       }));
-      const clusterReason = ueba.map((reason) => ({
+
+      allQuery.bool.should.push({
+        bool: {
+          filter: {
+            script: {
+              script: "return doc['predictionResult.risk_score_data.ueba_avg_risk_score'].value > doc['predictionResult.risk_score_data.risk_score_threshhold'].value;",
+            },
+          },
+          should: uebaQuery,
+          minimum_should_match: 1,
+        },
+      });
+    }
+
+    // Clustering
+    if (clusteringReasons.length > 0) {
+      const clusteringQuery = clusteringReasons.map((reason) => ({
         term: {
           'predictionResult.risk_score_data.clustering_result.top_cluster_explainability': reason,
         },
       }));
-      reasons.push({
+
+      allQuery.bool.should.push({
         bool: {
-          must: [
-            {
-              bool: {
-                should: [...uebaReason, ...clusterReason],
-                minimum_should_match: 1,
-              },
+          filter: {
+            script: {
+              script: "return doc['predictionResult.risk_score_data.clustering_model_risk_score'].value > doc['predictionResult.risk_score_data.risk_score_threshhold'].value;",
             },
-            {
-              term: {
-                'predictionResult.risk_score_data.heuristic_risk_score': 0,
-              },
-            },
-          ],
+          },
+          should: clusteringQuery,
+          minimum_should_match: 1,
         },
       });
-
-      bool.must.push(
-        {
-          bool: {
-            should: reasons,
-            minimum_should_match: 1,
-          },
-        },
-      );
     }
+
+    bool.must.push(allQuery);
   }
 
   return bool;

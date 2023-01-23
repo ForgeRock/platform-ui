@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -37,13 +37,8 @@ of the MIT license. See the LICENSE file for details. -->
             {{ tooltip }}
           </BTooltip>
         </div>
-
         <RiskScoreSlider
-          :initial-value="selectedRange"
-          :thresholds="thresholds"
-          :min-risk="minRisk"
-          :max-risk="maxRisk"
-          @selected-range-change="changeSelectedRange($event)"
+          v-model="selectedRange"
         />
       </div>
 
@@ -51,12 +46,12 @@ of the MIT license. See the LICENSE file for details. -->
         <BButton
           variant="link"
           class="pl-0"
-          @click="reset">
+          @click="handleReset">
           {{ $t("common.reset") }}
         </BButton>
         <BButton
           variant="primary"
-          @click="rangeChange">
+          @click="handleRangeChange">
           {{ $t("common.apply") }}
         </BButton>
       </div>
@@ -66,7 +61,6 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import { BButton, BPopover, BTooltip } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import store from '@/store';
 import RiskScoreSlider from './RiskScoreSlider';
 
 export default {
@@ -81,55 +75,34 @@ export default {
   props: {
     value: {
       type: Array,
-      default: null,
+      default: () => [0, 100],
     },
   },
   data() {
     return {
-      selectedRange: [...this.value],
-      maxRisk: 100,
+      selectedRange: this.value,
     };
   },
   methods: {
-    closePopover() {
+    changeActiveRange(selectedRange) {
+      this.selectedRange = selectedRange;
+    },
+    handleRangeChange() {
+      this.$emit('change', this.selectedRange);
       this.$refs.popover.$emit('close');
     },
-    changeSelectedRange($event) {
-      this.selectedRange = $event;
-    },
-    reset() {
-      this.selectedRange = [this.minRisk, this.maxRisk];
-    },
-    rangeChange() {
-      this.$emit('change', this.selectedRange);
-      this.closePopover();
-    },
-  },
-  watch: {
-    minRisk(val) {
-      this.selectedRange = [val, 100];
+    handleReset() {
+      this.selectedRange = this.value;
     },
   },
   computed: {
     buttonLabel() {
-      if (this.selectedRange[0] === 0 && this.selectedRange[1] === 100) {
-        return this.$t('autoAccess.access.risk.allRisk');
-      }
-      return this.$t('autoAccess.access.risk.selectedRisk', {
-        minSelectedRisk: this.selectedRange[0],
-        maxSelectedRisk: this.selectedRange[1],
-      });
-    },
-    thresholds() {
-      return {
-        medium: store.state.Dashboard.config.thresholds.medium,
-        high: store.state.Dashboard.config.thresholds.high,
-      };
-    },
-    minRisk() {
-      return (
-        store.state.Dashboard.config.thresholds?.high
-      );
+      return this.value[0] === 0 && this.value[1] === 100
+        ? this.$t('autoAccess.access.risk.allRisk')
+        : this.$t('autoAccess.access.risk.selectedRisk', {
+          minSelectedRisk: this.value[0],
+          maxSelectedRisk: this.value[1],
+        });
     },
     tooltip() {
       return this.$t('autoAccess.access.risk.tooltip');

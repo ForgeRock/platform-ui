@@ -23,8 +23,8 @@ of the MIT license. See the LICENSE file for details. -->
           />
         </div>
         <div class="ml-3">
-          <RiskRangeSliderButton
-            :value="filterObject.riskRange || []"
+          <RiskScoreSliderButton
+            :value="activeFilters.riskRange"
             @change="handleRiskRangeChange"
           />
         </div>
@@ -67,7 +67,7 @@ of the MIT license. See the LICENSE file for details. -->
           v-if="!userId"
           class="flex-grow-1">
           <RiskMap
-            :filter-object="filterObject"
+            :filter-object="activeFilters"
             @mapBoundChange="handleMapBoundsChanged"
           />
         </div>
@@ -77,6 +77,7 @@ of the MIT license. See the LICENSE file for details. -->
     <Filters
       :show-modal="showFilters"
       :filter-object="filtersAndGeoFilters"
+      :value="activeFilters"
       @hidden="handleToggleFilter(false)"
       @ok="updateFilters"
     />
@@ -89,13 +90,13 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import {
   BButton, BBadge,
 } from 'bootstrap-vue';
+import { mapState } from 'vuex';
 import FrDateRangePicker from '@forgerock/platform-shared/src/components/DateRangePicker';
 import AnalyticsMixin from '@forgerock/platform-shared/src/mixins/AnalyticsMixin';
 import DateRangePickerMixin from '@forgerock/platform-shared/src/mixins/DateRangePickerMixin';
-import dayjs from 'dayjs';
 import RiskMap from './RiskMap';
 import EventLog from './EventLog';
-import RiskRangeSliderButton from '../Shared/RiskScoreSliderButton';
+import RiskScoreSliderButton from '../Shared/RiskScoreSliderButton';
 import AccessResults from '../Charts/AccessResults';
 import Filters from './Filters';
 
@@ -107,7 +108,7 @@ export default {
     RiskMap,
     EventLog,
     FrDateRangePicker,
-    RiskRangeSliderButton,
+    RiskScoreSliderButton,
     AccessResults,
     Filters,
   },
@@ -122,90 +123,53 @@ export default {
       type: Boolean,
     },
   },
+  data() {
+    return {
+      showFilters: false,
+    };
+  },
   computed: {
     dateRange() {
       return this.$store.state.Dashboard.dates;
     },
     filterCount() {
-      return this.filterObject.features.length + (this.filterObject.reasons.length > 0 ? 1 : 0);
+      return this.activeFilters.features.length + (this.activeFilters.reasons.length > 0 ? 1 : 0);
     },
     features() {
       return this.$store.state.Dashboard.features;
-    },
-    minRisk() {
-      return this.$store.state.Dashboard.config.thresholds && this.$store.state.Dashboard.config.thresholds.high;
     },
     maxRisk() {
       return 100;
     },
     filtersAndGeoFilters() {
-      return {
-        ...this.filterObject,
-        geoCoordinates: this.geoCoordinates,
-      };
+      return this.$store.state.Dashboard.activeFilters;
     },
-  },
-  data() {
-    const rangeOfDate = {};
-    return {
-      filterObject: {
-        riskRange: [this.minRisk || 0, 100],
-        reasons: [],
-        labels: [],
-        features: [],
-        is_risky_event: true,
-      },
-      geoCoordinates: null,
-      rangeOfDate,
-      showFilters: false,
-    };
-  },
-  watch: {
-    minRisk() {
-      this.resetRisk();
-    },
-    /**
-     * Handles setting the dateRange state when a picker date is selected
-     */
-    pickerDateRange: {
-      handler(newVal) {
-        this.rangeOfDate = {
-          startDate: dayjs(newVal.startDate).format(), endDate: dayjs(newVal.endDate).format(),
-        };
-      },
-      immediate: true,
-    },
+    ...mapState({
+      activeFilters: (state) => state.Dashboard.activeFilters,
+    }),
   },
   created() {
     this.$store.dispatch('Dashboard/initializeFeatures');
     this.$store.dispatch('Dashboard/initializeConfig');
-
-    this.resetRisk();
   },
   methods: {
-    resetRisk() {
-      const filters = { ...this.filterObject };
-      filters.riskRange = [this.minRisk, this.maxRisk];
-
-      this.filterObject = filters;
-    },
     handleMapBoundsChanged(geometry) {
-      if (!_.isEqual(geometry, this.geoCoordinates)) {
-        this.geoCoordinates = geometry;
+      if (!_.isEqual(geometry, this.activeFilters.geoCoordinates)) {
+        this.$store.commit('Dashboard/setActiveGeoCoordinates', geometry);
       }
     },
-    handleFilterChange(filterObj) {
-      this.filterObject = filterObj;
+    handleDateChange(newDateRange) {
+      this.$store.commit('dateChange', { dates: newDateRange });
     },
     handleToggleFilter(newValue) {
       this.showFilters = newValue;
     },
     handleRiskRangeChange(value) {
-      this.filterObject.riskRange = value;
+      this.$store.commit('Dashboard/setActiveRiskRange', value);
     },
     updateFilters(newFilters, reasons) {
-      this.filterObject.features = _.uniq(newFilters).filter((f) => !!f.key && f.value.length > 0);
-      this.filterObject.reasons = reasons;
+      this.$store.commit('Dashboard/setActiveFeatureFilters', _.uniq(newFilters).filter((f) => !!f.key && f.value.length > 0));
+      this.$store.commit('Dashboard/setActiveReasonFilters', reasons);
     },
   },
 };

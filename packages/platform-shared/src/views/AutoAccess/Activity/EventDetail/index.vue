@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -69,13 +69,13 @@ of the MIT license. See the LICENSE file for details. -->
             </div>
             <div
               class="text-dark text-capitalize"
-              v-if="data.geo_data"
+              v-if="data.geoData"
             >
               <div>
-                {{ data.geo_data.city }}
+                {{ data.geoData.city }}
               </div>
               <div class="mt-1">
-                {{ data.geo_data.country }}
+                {{ data.geoData.country }}
               </div>
             </div>
             <div
@@ -126,11 +126,9 @@ of the MIT license. See the LICENSE file for details. -->
             />
           </div>
 
-          <div v-if="data.risk_score_data.is_risky_event">
+          <div v-if="data.riskScoreData.is_risky_event">
             <Explainability
-              :risk-score-data="data.risk_score_data"
-              :ueba-signal="data.ueba_signal"
-              :show-detail="true"
+              :reasons="explainability"
             />
           </div>
         </div>
@@ -172,9 +170,7 @@ of the MIT license. See the LICENSE file for details. -->
           class="pr-3"
         >
           <Explainability
-            :risk-score-data="auth.risk_score_data"
-            :ueba-signal="auth.ueba_signal"
-            :show-detail="true"
+            :reasons="explainability"
           />
         </div>
         <div
@@ -192,13 +188,13 @@ of the MIT license. See the LICENSE file for details. -->
           class="pr-3">
           <div
             class="text-dark text-capitalize"
-            v-if="auth.geo_data"
+            v-if="auth.geoData"
           >
             <div>
-              {{ auth.geo_data.city }}
+              {{ auth.geoData.city }}
             </div>
             <div class="mt-1">
-              {{ auth.geo_data.country }}
+              {{ auth.geoData.country }}
             </div>
           </div>
           <div
@@ -247,7 +243,7 @@ of the MIT license. See the LICENSE file for details. -->
 import { BModal, BButton } from 'bootstrap-vue';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import RiskScore from '../../Shared/RiskScore';
-import Explainability from '../../Shared/Explainability';
+import Explainability from '../../Explainability';
 import { getEventLogs, apiToInternalEvent } from '../api/ActivityAPI';
 import { getBrowserLocale } from '../../Shared/utils/util-functions';
 import MiniMap from './MiniMap';
@@ -264,8 +260,8 @@ export default {
   },
   props: {
     data: {
-      type: Object,
       default: () => ({}),
+      type: Object,
     },
   },
   data() {
@@ -284,8 +280,15 @@ export default {
     },
   },
   computed: {
+    explainability() {
+      if (!this.data) {
+        return [];
+      }
+      const { heuristicReasons, clusteringReasons, uebaReasons } = this.data;
+      return [...heuristicReasons, ...clusteringReasons, ...uebaReasons];
+    },
     miniMapAuths() {
-      return [this.data, ...this.previousAuths].filter((auth) => auth.geo_data?.lat && auth.geo_data?.longitude);
+      return [this.data, ...this.previousAuths].filter((auth) => auth.geoData?.lat && auth.geoData?.longitude);
     },
   },
   methods: {

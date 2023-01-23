@@ -20,12 +20,12 @@ describe('RiskScoreSlider', () => {
 
   describe('selectedRange', () => {
     it('should assign default values as initial value', () => {
-      expect(wrapper.vm.selectedRange).toEqual([30, 70]);
+      expect(wrapper.vm.selectedRange).toEqual([0, 100]);
     });
 
     it('should use initial values when they are passed ', () => {
       wrapper.setProps({
-        initialValue: [10, 80],
+        value: [10, 80],
       });
 
       expect(wrapper.vm.selectedRange).toEqual([10, 80]);
@@ -35,20 +35,20 @@ describe('RiskScoreSlider', () => {
   describe('Styles', () => {
     it('should return the lowSliderStyles correctly', () => {
       expect(wrapper.vm.lowSliderStyles).toMatchObject({
-        width: '30%',
+        width: '0%',
       });
     });
 
     it('should return the mediumSliderStyles correctly', () => {
       expect(wrapper.vm.mediumSliderStyles).toMatchObject({
-        width: '40%',
-        left: '30%',
+        width: '100%',
+        left: '0%',
       });
     });
 
     it('should return the highSliderStyles correctly', () => {
       expect(wrapper.vm.highSliderStyles).toMatchObject({
-        width: '30%',
+        width: '0%',
         right: 0,
       });
     });
