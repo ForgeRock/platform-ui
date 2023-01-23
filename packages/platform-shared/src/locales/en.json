@@ -823,12 +823,35 @@
         },
         "apply": "Apply"
       },
-      "heuristics": {
+      "errors": {
+        "retrievingActivity": "There was an error retrieving the Activity Log"
+      },
+      "reasons": {
         "is_automated_user_agent": "Automated User Agent",
         "is_brute_force": "Brute Force",
         "is_credential_stuffing": "Credential Stuffing",
         "is_impossible_travel": "Impossible Travel",
-        "is_suspicious_ip": "Suspicious IP"
+        "is_suspicious_ip": "Suspicious IP",
+        "browser": "Browser",
+        "city": "City",
+        "component": "Component",
+        "country": "Country",
+        "day_of_week": "Day of Week",
+        "dayparting": "Time of Day",
+        "device": "Device",
+        "deviceType": "Device Type",
+        "goto": "Goto",
+        "model": "Device",
+        "no_explainable": "No Explainable Reason",
+        "os": "OS",
+        "os_version": "OS Version",
+        "referer": "referer",
+        "origin": "Origin",
+        "osWithVersion": "OS Version",
+        "userAgentType": "Browser Family",
+        "user_agent": "Browser Family",
+        "userId": "User ID",
+        "weekday": "Day of Week"
       },
       "dataSources": {
         "title": "Data Sources",
@@ -854,7 +877,7 @@
           },
           "helpText": "Select bucket, object, or use prefix.",
           "helpTextDefine": "Enter name that will be associated with data source.",
-          "helpTextPreview": "Preview first object in JSONL file.",
+          "helpTextPreview": "Preview first object in JSON file.",
           "table": {
             "headers": {
               "name": "Object",

@@ -21,6 +21,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 /* eslint-disable import/no-extraneous-dependencies, no-undef */
+import { isEqual } from 'lodash';
 import { Loader } from '@googlemaps/js-api-loader';
 import { MarkerClusterer } from '@googlemaps/markerclusterer';
 import { BSpinner } from 'bootstrap-vue';
@@ -35,11 +36,11 @@ export default {
   name: 'RiskMap',
   props: {
     filterObject: {
-      default: () => {},
+      default: () => ({}),
       type: Object,
     },
     geoCoordinates: {
-      default: () => {},
+      default: () => ({}),
       type: Object,
     },
   },
@@ -69,8 +70,8 @@ export default {
     filterObject: {
       immediate: false,
       deep: true,
-      handler() {
-        this.handleMapChanged(true);
+      handler(newVal, prevVal) {
+        this.handleMapChanged(!isEqual(prevVal.geoCoordinates, newVal.geoCoordinates));
       },
     },
   },
@@ -191,9 +192,8 @@ export default {
             render(
               cluster,
             ) {
-              // eslint-disable-next-line no-shadow
-              const { position, markers } = cluster;
-              const { sum } = getMarkersStats(markers);
+              const { position, markers: clusterMarkers } = cluster;
+              const { sum } = getMarkersStats(clusterMarkers);
               return new google.maps.Marker(markerStyle(position, sum, formatNumber(sum, 'en-US')));
             },
           };
@@ -219,7 +219,9 @@ export default {
 
           if (recenter) {
             mapObject.setZoom(MIN_ZOOM);
-            mapObject.setCenter(bounds.getCenter());
+            if (bounds.getCenter) {
+              mapObject.setCenter(bounds.getCenter());
+            }
           }
         });
     },
