@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -28,7 +28,7 @@ of the MIT license. See the LICENSE file for details. -->
     </div>
     <div class="filters-features">
       <div
-        v-for="filter in tempFilters"
+        v-for="filter in tempFeatures"
         :key="filter.id"
       >
         <FilterRow
@@ -91,12 +91,16 @@ export default {
       default: () => {},
       type: Object,
     },
+    value: {
+      default: () => {},
+      type: Object,
+    },
   },
   data() {
     return {
       show: false,
       tempReasons: [],
-      tempFilters: [],
+      tempFeatures: [],
     };
   },
   watch: {
@@ -105,7 +109,7 @@ export default {
       handler(newValue) {
         this.show = newValue;
         if (newValue) {
-          this.tempFilters = this.getInitialFilters();
+          this.tempFeatures = this.getInitialFilters();
           this.tempReasons = this.filterObject.reasons;
         }
       },
@@ -114,11 +118,11 @@ export default {
   methods: {
     modalHidden() {
       this.tempReasons = [];
-      this.tempFilters = [];
+      this.tempFeatures = [];
       this.$emit('hidden');
     },
     getInitialFilters() {
-      const filters = cloneDeep(this.filterObject.features)
+      const filters = cloneDeep(this.value.features)
         .filter((f) => f.key && f.value.length > 0);
 
       if (filters.length === 0) {
@@ -136,21 +140,21 @@ export default {
       };
     },
     addTempFilter() {
-      this.tempFilters.push(this.getTempFilter());
+      this.tempFeatures.push(this.getTempFilter());
     },
     removeTempFilter(id) {
-      const filters = this.tempFilters.filter((f) => f.id !== id);
+      const filters = this.tempFeatures.filter((f) => f.id !== id);
 
-      this.tempFilters = filters;
+      this.tempFeatures = filters;
 
-      if (this.tempFilters.length === 0) {
+      if (this.tempFeatures.length === 0) {
         this.addTempFilter();
       }
     },
     updateFilter(filter) {
-      this.tempFilters.find((f, i, arr) => {
-        if (f.id === filter.id) {
-          if (filter.value.findIndex((filterValue) => !filterValue) === -1) {
+      this.tempFeatures.find((tempFilter, i, arr) => {
+        if (tempFilter.id === filter.id) {
+          if (filter.value.findIndex((f) => !f) === -1) {
             arr[i] = filter;
           }
         }
@@ -161,11 +165,11 @@ export default {
       this.tempReasons = value;
     },
     saveFilters() {
-      this.$emit('ok', this.tempFilters.filter((f) => f.key && f.value.length > 0), this.tempReasons);
+      this.$emit('ok', this.tempFeatures.filter((f) => f.key && f.value.length > 0), this.tempReasons);
     },
     resetFilters() {
       this.tempReasons = [];
-      this.tempFilters = [
+      this.tempFeatures = [
         this.getTempFilter(),
       ];
     },

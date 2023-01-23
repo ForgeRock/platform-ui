@@ -130,7 +130,7 @@ export default {
         this.$emit('update', data);
       })
         .catch(() => {
-          this.setError(this.$t('autoaccess.access.models.fetchDataError'));
+          this.setError(this.$t('autoAccess.access.models.fetchDataError'));
         })
         .finally(() => {
           this.isLoading = false;

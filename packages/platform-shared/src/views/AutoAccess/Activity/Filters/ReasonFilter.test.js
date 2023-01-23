@@ -32,6 +32,7 @@ jest.mock('@/store', () => ({
     },
   },
 }));
+
 describe('Reason Filter', () => {
   let wrapper;
   const expectedOptions = [
@@ -98,7 +99,7 @@ describe('Reason Filter', () => {
       i18n,
     });
   });
-  it('should show all ueba and cluster options', () => {
+  it('Component should render', () => {
     expect(wrapper.vm.reasonOptions).toEqual(expectedOptions);
   });
 });
