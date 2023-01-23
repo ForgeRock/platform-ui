@@ -42,78 +42,14 @@ of the MIT license. See the LICENSE file for details. -->
       </div>
       <div class="flex-grow-1 overflow-auto">
         <div
-          class="p-4 list-group-item d-flex flex-row"
-          v-for="(row, index) in eventLogData"
-          :class="index !== eventLogData.length - 1 ? 'border-bottom' : ''"
+          v-for="row in eventLogData"
           :key="row.id"
-          @click="toggleEventDetailModal(row)"
         >
-          <div
-            v-if="userId"
-            class="text-muted"
-            style="flex-basis: 100px">
-            <RelativeTime
-              :timestamp="row.timestamp"
-            />
-          </div>
-          <div class="flex-grow-1">
-            <div
-              v-if="!userId"
-              class="d-flex flex-row justify-content-between mb-2">
-              <div>
-                <span>
-                  <span class="text-dark mr-2 font-weight-bold">
-                    {{ row.raw.username }}
-                  </span>
-                  <span class="mx-2">
-                    &middot;
-                  </span>
-                  <span>
-                    <RelativeTime
-                      :timestamp="row.timestamp"
-                    />
-                  </span>
-                </span>
-              </div>
-            </div>
-            <div class="mb-2 d-flex flex-row">
-              <RiskScore
-                :score="parseFloat(row.risk)"
-                :small="true"
-              />
-              <div
-                class="ml-2"
-              >
-                <Explainability
-                  :risk-score-data="row.risk_score_data"
-                  :ueba-signal="row.ueba_signal"
-                />
-              </div>
-            </div>
-            <div class="text-muted">
-              <span class="text-capitalize">
-                {{ getCityCountry(row) }}
-              </span>
-              <span v-if="row.os">
-                <span class="mx-2">
-                  &middot;
-                </span>
-                <span>
-                  {{ row.os }} {{ row.osVersion }}
-                </span>
-              </span>
-              <span v-if="row.userAgentType">
-                <span class="mx-2">
-                  &middot;
-                </span>
-                <span>
-                  {{ row.userAgentType }}
-                </span>
-              </span>
-            </div>
-          </div>
+          <EventItem
+            :event-item-data="row"
+            @show-detail="toggleEventDetailModal"
+          />
         </div>
-
         <div
           v-if="isLoading"
           class="d-flex justify-content-center align-items-center">
@@ -146,33 +82,31 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-/* eslint-disable import/no-extraneous-dependencies */
-import { BDropdown, BDropdownItem } from 'bootstrap-vue';
+import {
+  BDropdown, BDropdownItem,
+} from 'bootstrap-vue';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import { getEventLogs, apiToInternalEvent } from '../api/ActivityAPI';
 import FrPagination from '../../Shared/DataTable/Pagination';
-import RiskScore from '../../Shared/RiskScore';
 import EventDetail from '../EventDetail';
-import RelativeTime from '../../Shared/RelativeTime';
-import Explainability from '../../Shared/Explainability';
 import { getQueryFilters } from '../../Shared/utils/api';
 import formatNumber from '../../../../utils/formatNumber';
-
-require('brace');
-require('brace/mode/json');
+import EventItem from './EventItem';
 
 export default {
   name: 'EventLog',
   components: {
     BDropdown,
     BDropdownItem,
+    EventItem,
     FrPagination,
     FrSpinner,
-    RiskScore,
     EventDetail,
-    RelativeTime,
-    Explainability,
   },
+  mixins: [
+    NotificationMixin,
+  ],
   props: {
     filterObject: {
       type: Object,
@@ -210,10 +144,7 @@ export default {
       return formatNumber(this.totalRecords, 'en-US');
     },
     lastPage() {
-      if (this.pageSize * this.page + this.pageSize < this.totalRecords) {
-        return false;
-      }
-      return true;
+      return !(this.pageSize * this.page + this.pageSize < this.totalRecords);
     },
     sortColumns() {
       const cols = ['risk', 'eventTime'];
@@ -297,8 +228,9 @@ export default {
         .then(({ data }) => {
           this.eventLogData = data.hits.hits.map((row) => {
             const ev = apiToInternalEvent(row);
-            return ev;
+            return { ...ev };
           });
+
           this.totalRecords = data.hits.total.value;
           if (data.hits.total.value > 0) {
             const myPageMeta = [...pageMeta];
@@ -309,8 +241,8 @@ export default {
             this.pageMeta = myPageMeta;
           }
         })
-        .catch(() => {
-          this.error = 'An error occured.';
+        .catch((error) => {
+          this.showErrorMessage(error, this.$t('autoAccess.access.errors.retrievingActivity'));
           this.eventLogData = [];
         })
         .finally(() => {

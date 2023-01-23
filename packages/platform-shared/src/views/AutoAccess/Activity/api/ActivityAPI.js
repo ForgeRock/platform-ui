@@ -1,13 +1,13 @@
 /**
- * Copyright (c) 2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { uniq, get } from 'lodash';
-import { v4 as uuidv4 } from 'uuid';
+import { uniq } from 'lodash';
 import { generateAutoAccessJas } from '@forgerock/platform-shared/src/api/BaseApi';
+import store from '@/store';
 
 const entitySearch = '/entity/search/';
 
@@ -40,33 +40,54 @@ export const causeMap = {
 };
 
 export const apiToInternalEvent = (data) => {
-  const { _source } = data;
+  const { predictionResult } = data._source;
   const {
-    // eslint-disable-next-line camelcase
-    raw_event_data, features, risk_score_data, ueba_signal,
-  } = _source.predictionResult;
+    userId, eventId, timestamp, geoData, dayparting, weekday, browserData,
+  } = predictionResult.features;
+  const { raw_event_data: rawEventData, risk_score_data: riskScoreData } = predictionResult;
+  const { heuristic_agg_result: heuristics } = riskScoreData;
+  const { os, osVersion, userAgentType } = browserData;
 
-  const heuristics = risk_score_data.heuristic_agg_result;
+  const heuristicReasons = predictionResult.risk_score_data.heuristic_agg_result.raw_results
+    .filter((result) => result.risk_score === 100)
+    .map((result) => Object.keys(result).find((propName) => propName.indexOf('is_') === 0));
 
-  const obj = {
-    raw: _source,
-    userId: features.userId,
-    eventId: features.eventId,
-    id: features.eventId,
-    timestamp: features.timestamp,
-    timezone: features.geoData ? features.geoData.timeZone : 'GMT',
-    risk: Math.round(risk_score_data.risk_score),
-    risk_score_data,
-    transactionId: raw_event_data.transactionId,
+  let clusteringReasons = [];
+  const uebaReasons = [];
+  if (predictionResult.risk_score_data.risk_score_threshhold < predictionResult.risk_score_data.clustering_model_risk_score) {
+    clusteringReasons = predictionResult.risk_score_data.clustering_result?.top_cluster_explainability;
+  }
+  if (predictionResult.risk_score_data.risk_score_threshhold < predictionResult.risk_score_data.ueba_avg_risk_score) {
+    if (predictionResult.ueba_signal.explainability && predictionResult.ueba_signal.explainability?.response !== 'failed') {
+      uebaReasons.push(predictionResult.ueba_signal.explainability?.response);
+    }
+    if (!predictionResult.ueba_signal.explainability && !clusteringReasons.length && !heuristicReasons.length) {
+      uebaReasons.push('no_explainable');
+    }
+  }
+
+  return {
+    dayparting,
+    eventId,
+    geoData,
     heuristics: heuristics ? heuristics.raw_results : [],
-    ueba_signal,
-    geo_data: features.geoData,
-    dayparting: features.dayparting,
-    weekday: features.weekday,
-    ...features.browserData,
-  };
+    id: eventId,
+    os,
+    osVersion,
+    raw: data._source,
+    risk: Math.round(riskScoreData.risk_score),
+    riskScoreData,
+    timestamp,
+    timezone: geoData ? geoData.timeZone : 'GMT',
+    transactionId: rawEventData.transactionId,
+    userAgentType,
+    userId,
+    weekday,
 
-  return obj;
+    clusteringReasons,
+    heuristicReasons,
+    uebaReasons,
+  };
 };
 
 export const logAttributes = [
@@ -89,18 +110,6 @@ export const getEventLogs = (param) => {
     query: param,
   };
   return generateAutoAccessJas().post(entitySearch, queryParam);
-};
-
-export const updateEvent = (param) => {
-  const queryParam = {
-    contextId: `UI - Added Labels for this event ${uuidv4()}`,
-    indexingRequired: true,
-    indexInSync: true,
-    ...param,
-  };
-
-  // eslint-disable-next-line no-undef
-  return generateAutoAccessJas().post(`/entity/persist${entityPath}`, queryParam);
 };
 
 export const getFeatures = () => {
@@ -250,11 +259,12 @@ export const getUEBAClusteringExplainability = () => new Promise((resolve, rejec
   };
   generateAutoAccessJas().post(entitySearch, param)
     .then(({ data }) => {
-      const reasons = [...get(data, 'aggregations.ueba_reason.buckets', []), ...get(data, 'aggregations.clustering_reason.buckets', [])];
-      const keys = uniq(reasons.map((reason) => reason.key))
+      const clustering = data.aggregations.clustering_reason.buckets;
+      const ueba = data.aggregations.ueba_reason.buckets.filter((type) => !store.state.Dashboard.ignoreReasons.includes(type.key));
+      const reason = [...ueba, ...clustering];
+      const keys = uniq(reason.map(({ key }) => key))
         .sort((a, b) => (causeMap[a] || a).localeCompare(causeMap[b] || b)).filter((key) => key !== 'failed' && key !== 'unknown');
-
-      resolve(keys);
+      resolve({ keys, ueba: ueba.map(({ key }) => key), clustering: clustering.map(({ key }) => key) });
     })
     .catch((e) => {
       reject(e);
