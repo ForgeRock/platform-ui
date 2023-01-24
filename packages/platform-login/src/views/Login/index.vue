@@ -579,6 +579,14 @@ export default {
             document.body.appendChild(form);
             form.submit();
           } else {
+            // If this RedirectCallback is a result of selecting an idp remove the reentry token before doing the redirect.
+            // This keeps the user from getting into a loop where they are continuously sent back to the previously selected
+            // idp if they do not complete the idp login process and just return to the login ui.
+            const selectIdP = this.componentList.find((c) => c.callback?.payload?.type === 'SelectIdPCallback');
+            // Is there a SelectIdPCallback in the componentList and if so was an idp selected?
+            if (selectIdP && selectIdP.callback?.payload?.input[0]?.value !== '') {
+              this.clearReentryToken();
+            }
             window.location.href = redirectUrl;
           }
           return;
