@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -28,7 +28,7 @@ export function getQueryFilters(dateRange, filterObject, userId) {
       {
         range: {
           'predictionResult.risk_score_data.risk_score': {
-            lte: filterObject.riskRange[1],
+            lte: filterObject.riskRange[1] + 0.49,
             gte: filterObject.riskRange[0],
           },
         },
