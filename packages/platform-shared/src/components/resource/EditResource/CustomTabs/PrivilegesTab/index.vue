@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -372,7 +372,8 @@ export default {
     },
   },
   mounted() {
-    // get schema for all internal/role and all managed objects that are not managed/assignment
+    // get schema for all internal/role and all managed objects that are not
+    // managed/assignment or that end in application
     if (this.$store.state.UserStore.adminUser) {
       const urlParams = {
         queryFilter: 'resourceCollection eq "internal/role" or (resourceCollection sw "managed")',
@@ -382,7 +383,16 @@ export default {
         (response) => {
           const schemas = response.data.result.filter((result) => {
             const resourceName = result.resourceCollection;
-            return !resourceName.endsWith('assignment') && !resourceName.endsWith('application');
+
+            // Always filter objects ending in managed/assignment, and when workforce
+            // is enabled also filter out reserved resources
+            const { workforceEnabled } = this.$store.state.SharedStore;
+            const reservedAlways = this.$store.state.isFraas ? ['managed/alpha_assignment', 'managed/bravo_assignment'] : ['managed/assignment'];
+            const reservedWhenWorkforceEnabled = this.$store.state.isFraas ? ['managed/alpha_application', 'managed/bravo_application'] : ['managed/application'];
+            const rejectedAlways = reservedAlways.includes(resourceName);
+            const rejectedWhenWorkforceEnabled = workforceEnabled && reservedWhenWorkforceEnabled.includes(resourceName);
+
+            return !rejectedAlways && !rejectedWhenWorkforceEnabled;
           });
 
           schemas.forEach((schema) => {
