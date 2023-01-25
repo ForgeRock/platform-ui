@@ -1,4 +1,5 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!--  eslint-disable vue/singleline-html-element-content-newline -->
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -23,45 +24,45 @@ of the MIT license. See the LICENSE file for details. -->
       background-attachment: fixed;
       }
 
-      <template v-if="mock">.fr-enduser-theme-preview</template> .btn {
+      <template v-if="mock">.fr-theme-preview</template> .btn {
       border-radius: {{ theme.buttonRounded }}px !important;
       }
 
-      <template v-if="mock">.fr-enduser-theme-preview</template> .btn-primary {
+      <template v-if="mock">.fr-theme-preview</template> .btn-primary {
       background-color: {{ theme.primaryColor }} !important;
       outline-color: {{ theme.primaryColor }} !important;
       border-color: {{ theme.primaryColor }} !important;
       color: {{ theme.textColor }};
       }
 
-      <template v-if="mock">.fr-enduser-theme-preview</template> .btn-primary:disabled {
+      <template v-if="mock">.fr-theme-preview</template> .btn-primary:disabled {
       background-color: {{ theme.primaryOffColor }} !important;
       }
 
-      <template v-if="mock">.fr-enduser-theme-preview</template> .btn-primary:hover {
+      <template v-if="mock">.fr-theme-preview</template> .btn-primary:hover {
       background-color: {{ theme.primaryOffColor }} !important;
       }
 
-      <template v-if="mock">.fr-enduser-theme-preview</template> a {
+      <template v-if="mock">.fr-theme-preview</template> a {
       font-weight: {{ theme.boldLinks ? 700 : 400 }};
       color: {{ theme.linkColor }};
       }
 
-      <template v-if="mock">.fr-enduser-theme-preview</template> a:hover {
+      <template v-if="mock">.fr-theme-preview</template> a:hover {
       color: {{ theme.linkActiveColor }};
       }
 
-      <template v-if="mock">.fr-enduser-theme-preview</template>  .btn-link,
-      .nav-link {
+      <template v-if="mock">.fr-theme-preview</template> .btn-link,
+      <template v-if="mock">.fr-theme-preview</template> .nav-link {
       color: {{ theme.linkColor }};
       }
 
-      <template v-if="mock">.fr-enduser-theme-preview</template>  .btn-link:hover,
+      <template v-if="mock">.fr-theme-preview</template> .btn-link:hover,
       .nav-link:hover {
       color: {{ theme.linkActiveColor }};
       }
 
-      body {
+      <template v-if="mock">.fr-theme-preview</template> body {
       color: {{ theme.bodyText }};
       }
 
@@ -69,11 +70,11 @@ of the MIT license. See the LICENSE file for details. -->
       color: {{ theme.bodyText }} !important;
       }
 
-      <template v-if="mock">.fr-enduser-theme-preview</template> .text-muted {
+      <template v-if="mock">.fr-theme-preview</template> .text-muted {
       color: {{ theme.secondaryColor }} !important;
       }
 
-      <template v-if="mock">.fr-enduser-theme-preview</template> .text-danger {
+      <template v-if="mock">.fr-theme-preview</template> .text-danger {
       color: {{ theme.dangerColor }} !important;
       }
 
@@ -92,10 +93,10 @@ of the MIT license. See the LICENSE file for details. -->
       }
 
       textarea:focus,
-      <template v-if="mock">.fr-enduser-theme-preview</template> input:focus,
-      <template v-if="mock">.fr-enduser-theme-preview</template> input[type]:focus,
+      <template v-if="mock">.fr-theme-preview</template> input:focus,
+      <template v-if="mock">.fr-theme-preview</template> input[type]:focus,
       .uneditable-input:focus,
-      <template v-if="mock">.fr-enduser-theme-preview</template> .form-control:focus-within .multiselect__tags {
+      <template v-if="mock">.fr-theme-preview</template> .form-control:focus-within .multiselect__tags {
       border-color: {{ theme.primaryColor }} !important;
       -webkit-box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }};
       box-shadow: 0 0 0 0.0625rem {{ theme.primaryColor }};
@@ -127,7 +128,7 @@ of the MIT license. See the LICENSE file for details. -->
       border-radius: {{ theme.journeyCardBorderRadius || 4 }}px {{ theme.journeyCardBorderRadius || 4 }}px 0 0 !important;
       }
 
-      .card,
+      <template v-if="mock">.fr-theme-preview.login</template> .card,
       .journey-card {
       background-color: {{ theme.journeyCardBackgroundColor || '#ffffff' }} !important;
       color: {{ theme.journeyCardTextColor || '#5e6d82' }};
@@ -145,41 +146,41 @@ of the MIT license. See the LICENSE file for details. -->
       }
 
       <!-- login input and select fields -->
-      input,
-      .multiselect .multiselect__tags,
-      .multiselect .multiselect__select,
-      .multiselect .multiselect__select::before {
+      <template v-if="mock">.fr-theme-preview.login</template> input,
+      <template v-if="mock">.fr-theme-preview.login</template> .multiselect .multiselect__tags,
+      <template v-if="mock">.fr-theme-preview.login</template> .multiselect .multiselect__select,
+      <template v-if="mock">.fr-theme-preview.login</template> .multiselect .multiselect__select::before {
       background-color: {{ theme.journeyInputBackgroundColor || '#ffffff' }} !important;
       border-color: {{ theme.journeyInputBorderColor || '#c0c9d5' }} !important;
       color: {{ theme.journeyInputTextColor || '#23282e' }} !important;
       }
 
-      .multiselect .multiselect__element {
+      <template v-if="mock">.fr-theme-preview.login</template> .multiselect .multiselect__element {
       background-color: {{ theme.journeyInputBackgroundColor || '#ffffff' }} !important;
       color: {{ theme.journeyInputTextColor || '#23282e' }} !important;
       }
 
-      .multiselect .multiselect__content-wrapper {
+      <template v-if="mock">.fr-theme-preview.login</template> .multiselect .multiselect__content-wrapper {
       border-color: {{ theme.journeyInputBorderColor || '#c0c9d5' }} !important;
       }
 
-      .multiselect .multiselect__option--highlight,
-      .multiselect .multiselect__option--selected {
+      <template v-if="mock">.fr-theme-preview.login</template> .multiselect .multiselect__option--highlight,
+      <template v-if="mock">.fr-theme-preview.login</template> .multiselect .multiselect__option--selected {
       background-color: {{ theme.journeyInputSelectColor || '#e4f4fd' }} !important;
       }
 
       <!-- Styling for buttons within form label group inputs -->
       .form-label-group button span,
       .multiselect__placeholder,
-      .multiselect__single {
+      <template v-if="mock">.fr-theme-preview.login</template> .multiselect__single {
       color: {{ theme.journeyInputTextColor || '#23282e' }} !important;
       }
 
-      .form-label-group .form-label-group-input .white-label-background ~ label {
+      <template v-if="mock">.fr-theme-preview.login</template> .form-label-group .form-label-group-input .white-label-background ~ label {
       background-color: {{ theme.journeyInputBackgroundColor || '#ffffff' }} !important;
       }
 
-      .form-label-group label {
+      <template v-if="mock">.fr-theme-preview.login</template> .form-label-group label {
       color: {{ theme.journeyInputLabelColor || '#5e6d82' }} !important;
       }
     </Component>
@@ -203,13 +204,13 @@ of the MIT license. See the LICENSE file for details. -->
       color: {{ theme.profileMenuHoverTextColor }};
       }
 
-      #app <template v-if="mock">.fr-enduser-theme-preview</template> .router-link-active {
+      #app <template v-if="mock">.fr-theme-preview.enduser</template> .router-link-active {
       background-color: {{ theme.profileMenuHighlightColor }};
       color: {{ theme.profileMenuTextHighlightColor }};
       border-left-color: {{ theme.primaryColor }};
       }
 
-      #app <template v-if="mock">.fr-enduser-theme-preview</template> .router-link-active:hover {
+      #app <template v-if="mock">.fr-theme-preview.enduser</template> .router-link-active:hover {
       background-color: {{ theme.profileMenuHoverColor }};
       color: {{ theme.profileMenuHoverTextColor }};
       }
@@ -229,10 +230,7 @@ of the MIT license. See the LICENSE file for details. -->
       height: {{ theme.logoProfileHeight ? theme.logoProfileHeight : theme.logoHeight }}px;
       }
 
-      <template v-if="mock">
-        .fr-enduser-theme-preview
-      </template>
-      .fr-sidebar-nav{
+      <template v-if="mock">.fr-theme-preview.enduser</template> .fr-sidebar-nav{
       background-color: {{ theme.accountNavigationBackgroundColor|| '#ffffff' }};
       }
 
@@ -240,8 +238,8 @@ of the MIT license. See the LICENSE file for details. -->
       border-top-color: {{ theme.accountNavigationToggleBorderColor || '#e7eef4' }} !important;
       }
 
-      <template v-if="mock">.fr-enduser-theme-preview</template> #app .card,
-      .modal-content,
+      #app <template v-if="mock">.fr-theme-preview.enduser</template> .card,
+      <template v-if="mock">.fr-theme-preview.enduser</template> .modal-content,
       .modal-content .card,
       #app .dropdown-menu {
       background-color: {{ theme.accountCardBackgroundColor || '#ffffff' }};
@@ -272,13 +270,13 @@ of the MIT license. See the LICENSE file for details. -->
       }
 
       #app .card .card-header,
-      #app .card .card-footer,
+      #app <template v-if="mock">.fr-theme-preview.enduser</template> .card .card-footer,
       #app .card .border-bottom,
       #app .card .border-top,
       #app .card .table td,
       #app .card .tabs .col-auto,
-      .modal-content header,
-      .modal-content footer {
+      <template v-if="mock">.fr-theme-preview.enduser</template> .modal-content header,
+      <template v-if="mock">.fr-theme-preview.enduser</template> .modal-content footer {
       border-color: {{ theme.accountCardInnerBorderColor || '#e7eef4' }} !important;
       }
 
@@ -289,19 +287,18 @@ of the MIT license. See the LICENSE file for details. -->
       #app .card input,
       #app .card .form-label-group .form-label-group-input input,
       #app .card .form-label-group .form-label-group-input .form-control,
-      .form-label-group .form-label-group-input .multiselect .multiselect__tags,
-      .form-label-group .form-label-group-input .multiselect .multiselect__element,
-      .modal-content input,
-      .modal-content .form-control,
+      <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__tags,
+      <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__element,
+      <template v-if="mock">.fr-theme-preview.enduser</template> .modal-content input,
+      <template v-if="mock">.fr-theme-preview.enduser</template> .modal-content .form-control,
       .modal-content .form-control .dropdown-menu ,
       .modal-content .b-dropdown .dropdown-menu {
       background-color: {{ theme.accountCardInputBackgroundColor || '#ffffff' }} !important;
       border-color: {{ theme.accountCardInputBorderColor || '#c0c9d5' }};
       color: {{ theme.accountCardInputTextColor || '#23282e' }};
       }
-
-      .form-label-group .form-label-group-input .multiselect .multiselect__option--highlight,
-      .form-label-group .form-label-group-input .multiselect .multiselect__option--selected {
+      <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__option--highlight,
+      <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__option--selected {
       background-color: {{ theme.accountCardInputSelectColor || '#e4f4fd' }} !important;
       }
 
@@ -315,15 +312,15 @@ of the MIT license. See the LICENSE file for details. -->
       }
 
       #app .card .input-group-text,
-      .form-label-group .form-label-group-input .multiselect .multiselect__select,
-      .form-label-group .form-label-group-input .form-control {
+      <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__select,
+      <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .form-control {
       background-color: {{ theme.accountCardInputBackgroundColor || '#ffffff' }} !important;
       color: {{ theme.accountCardInputTextColor || '#23282e' }};
       }
 
-      #app .multiselect .multiselect__select::before,
-      #app .multiselect .multiselect__single,
-      #app input::placeholder,
+      #app <template v-if="mock">.fr-theme-preview.enduser</template> .multiselect .multiselect__select::before,
+      #app <template v-if="mock">.fr-theme-preview.enduser</template> .multiselect .multiselect__single,
+      #app <template v-if="mock">.fr-theme-preview.enduser</template> input::placeholder,
       .modal-content .multiselect .multiselect__input,
       .modal-content .multiselect .multiselect__input::placeholder,
       .modal-content label.form-control {
@@ -335,10 +332,10 @@ of the MIT license. See the LICENSE file for details. -->
       background-color: {{ theme.accountCardInputBackgroundColor || '#ffffff' }} !important;
       }
 
-      #app .card label,
-      .modal-content .fr-field label,
+      #app <template v-if="mock">.fr-theme-preview.enduser</template> .card label,
+      <template v-if="mock">.fr-theme-preview.enduser</template> .modal-content .fr-field label,
       .modal-content .form-control label .sr-only,
-      .modal-content .form-label-group .form-label-group-input label,
+      <template v-if="mock">.fr-theme-preview.enduser</template> .modal-content .form-label-group .form-label-group-input label,
       #app .card .input-group-text .text-muted,
       #app .card .fr-icon-input-holder .fr-icon,
       .form-label-group .material-icons-outlined,
