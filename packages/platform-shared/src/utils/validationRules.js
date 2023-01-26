@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -223,6 +223,13 @@ export function getRules(i18n) {
     },
   };
 
+  // Rule to check whether url is valid
+  const url = {
+    validate(value) {
+      return customValidators.url(value);
+    },
+  };
+
   // Rule to check for compatibility with ESV naming schema
   const lower_case_alpha_numeric_underscore_hyphen_only = {
     validate(value) {
@@ -272,6 +279,7 @@ export function getRules(i18n) {
     unique,
     unique_email_template_id,
     uniqueValue,
+    url,
     url_with_path,
     url_without_path,
     lower_case_alpha_numeric_underscore_hyphen_only,

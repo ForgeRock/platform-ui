@@ -1,10 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div v-if="providers">
     <input
@@ -21,13 +18,17 @@ of the MIT license. See the LICENSE file for details.
       @click="setValue(provider.provider)"
       @mouseover="hover(count, provider.uiConfig.buttonCustomStyleHover)"
       @mouseout="hover(count, provider.uiConfig.buttonCustomStyle)">
-      <img
-        v-if="provider.uiConfig.buttonImage"
-        :src="provider.uiConfig.buttonImage">
-      <!-- TODO No material icons for providers, need alternative or always have image for all icons -->
-      <span class="ml-1">
-        {{ $t('login.social.continueWith', {buttonDisplayName: provider.uiConfig.buttonDisplayName}) }}
-      </span>
+      <div>
+        <img
+          v-if="provider.uiConfig.iconKey"
+          :src="require(`@forgerock/platform-shared/src/assets/images/${provider.uiConfig.iconKey}-logo.svg`)">
+        <img
+          v-else-if="provider.uiConfig.buttonImage"
+          :src="provider.uiConfig.buttonImage">
+        <span class="ml-1">
+          {{ $t('login.social.signInWith', {buttonDisplayName: provider.uiConfig.buttonDisplayName}) }}
+        </span>
+      </div>
     </button>
 
     <FrHorizontalRule

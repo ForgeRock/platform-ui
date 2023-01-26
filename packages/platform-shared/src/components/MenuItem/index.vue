@@ -8,7 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
     v-if="isDivider && showItemForUser" />
   <!-- Item opens a modal -->
   <li
-    v-else-if="modal && showItemForUser"
+    v-else-if="modal && showItemForUser && showItemForPrivileges"
     :role="isNav ? '' : 'presentation'">
     <BButton
       :class="[{ 'nav-link': isNav, 'dropdown-item': !isNav }, 'd-flex align-items-center rounded-0']"
@@ -165,6 +165,13 @@ export default {
       default: '',
     },
     /**
+     * The list of privileges for which this item should be displayed.
+     */
+    showForPrivileges: {
+      type: Array,
+      default: () => [],
+    },
+    /**
      * The list of roles for which this item should be displayed.
      */
     showForRoles: {
@@ -263,12 +270,19 @@ export default {
     };
   },
   computed: {
+    badgeContent() {
+      return this.showBadgeWithContentFromStore ? this.$store.state[this.showBadgeWithContentFromStore] : '';
+    },
+    showItemForPrivileges() {
+      const adminFederationNotEnabled = !this.$store.state.SharedStore.adminFederationEnabled;
+      const emptyShowForPrivilegesProp = !this.showForPrivileges.length;
+      const showForPrivilegesInUserStore = this.showForPrivileges.some((userPrivilege) => !!get(this.$store.state.UserStore.privileges, userPrivilege, false));
+      const isAmAdmin = this.$store.state.UserStore.amAdmin;
+      return adminFederationNotEnabled || emptyShowForPrivilegesProp || showForPrivilegesInUserStore || (!adminFederationNotEnabled && isAmAdmin);
+    },
     // If the item is restricted by roles, only display it to users who have at least one of the required roles
     showItemForUser() {
       return !this.showForRoles.length || this.userRoles.some((userRole) => this.showForRoles.includes(userRole));
-    },
-    badgeContent() {
-      return this.showBadgeWithContentFromStore ? this.$store.state[this.showBadgeWithContentFromStore] : '';
     },
     // If the item is restricted by store values, only display it when all of those exist and are truthy
     showItemForStoreValues() {

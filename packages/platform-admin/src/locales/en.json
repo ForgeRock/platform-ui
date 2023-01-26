@@ -43,6 +43,7 @@
     "EditConnectorServer": "Edit Connector Server",
     "EditEmailTemplate": "Edit Email Template",
     "EditGatewayOrAgent": "Edit Gateway Or Agent",
+    "EditProvider": "Edit Provider",
     "EditResource": "Edit Resource",
     "EditServerCluster": "Edit Server Cluster",
     "EditServerClusterServers": "Edit Server Cluster Servers",
@@ -1456,7 +1457,11 @@
       "invitedMembers": "Invited Members",
       "notInvited": "Not Invited",
       "errorAdminOnboarding": "There was an issue onboarding admin",
-      "errorUnique": "This person already exists in your tenant."
+      "errorUnique": "This person already exists in your tenant.",
+      "groupRadioHelp": "Choose a group to assign to invited admins.",
+      "superAdmin": "Super Admin",
+      "superAdminText": "Has access to all features in the Admin console and can manage every aspect of this tenant.",
+      "tenantAdminText": "Has full access to all administrative features, except the ability to add other administrators."
     },
     "templates": {
       "duplicateTemplate": "Duplicate Template",
@@ -1658,7 +1663,8 @@
     "tabs": {
       "details": "Details",
       "admins": "Admins",
-      "globalSettings": "Global Settings"
+      "globalSettings": "Global Settings",
+      "federation": "Federation"
     },
     "details": {
       "title": "Tenant Details",
@@ -1675,7 +1681,8 @@
       "invite": "Invite Admins",
       "resendInvite": "Resend Email Invite",
       "multifactorAuthentication": "MFA",
-      "user": "User"
+      "user": "User",
+      "socialSignIn": "Social Sign-in"
     },
     "globalSettings": {
       "title": "Global Settings",
@@ -1700,6 +1707,100 @@
       "oregon": "Oregon",
       "losAngeles": "Los Angeles",
       "hongKong": "Hong Kong"
+    },
+    "federation": {
+      "buttonText": "Identity Provider",
+      "previewButtonText": "Sign in with {text}",
+      "azure": "Microsoft Azure",
+      "adfs": "ADFS",
+      "oidc": "OIDC",
+      "enforcement": "Enforcement",
+      "updateProvidersSuccess": "Identity provider settings changed",
+      "updateProvidersError": "Unable to update provider settings",
+      "saveEnforcementSuccess": "Federation settings updated",
+      "saveEnforcementFail": "Unable to update Federation settings",
+      "saveProviderSuccess": "Federation provider saved",
+      "saveProviderFail": "Unable to save Federation provider configuration",
+      "tenantAdmin": "Tenant Admin",
+      "deleteProviderSuccess": "Federation provider deleted",
+      "deleteProviderFail": "Unable to delete Federation provider",
+      "wellKnownEndpointFail": "Unable to connect to well-known endpoint",
+      "getSocialProviderFail": "Unable to get federation provider configuration",
+      "noProvidersTitle": "You haven't set up federation yet",
+      "noProvidersSubtitle": "Add a provider to activate federation for this tenant.",
+      "deactivateMessage": "Are you sure you want to deactivate sign-in with {providerName}? Any admins who sign in using only {providerName} and don't have a username and password will be unable to sign in.",
+      "enforcementCard": {
+        "error": "Could not establish enforcement rules",
+        "forNone": "Optional for All Admins",
+        "forNoneHelp": "Allow all admins to use either their ForgeRock credentials or federation to sign in.",
+        "forNonSuper": "Required for All Admins Except Super Admins",
+        "forNonSuperHelp": "Require all admins who are not super admins to use federation to sign in. Super admins can use their ForgeRock credentials or federation to sign in.",
+        "forAll": "Required for All Admins",
+        "forAllHelp": "Allow all admins to use federation to sign in. This option requires a support ticket to change."
+      },
+      "enforcementModal": {
+        "title": "Edit Tenant Federation Enforcement",
+        "sideTitle": "Federation Enforcement",
+        "sideHelp": "Choose how federation should be enforced in this tenant.",
+        "unlockText": "In order to change federation enforcement you need to <a href=\"#\" target=\"_self\">open a support ticket</a>."
+      },
+      "confirmEnforcementModal": {
+        "title": "Change Federation Enforcement?",
+        "confirmNone": "Are you sure you want to allow tenant admins to use ForgeRock credentials to sign in?",
+        "confirmTenantAdmins": "Are you sure you want to require tenant admins to use federation to sign in?",
+        "confirmAll": "Are you sure you want to require all admins to use federation to sign in?",
+        "alertText": "This will require you to open a support ticket to change.",
+        "note": "Note:",
+        "waitTime": "This change will take approximately 10 minutes to be applied to this tenant."
+      },
+      "deactivateModal": {
+        "modalTitle": "Deactivate {providerName}?",
+        "modalWarning": "Are you sure you want to deactivate sign-in with {providerName}?",
+        "bulletText": "Any admins who sign in using only {providerName} and don't have a username and password will be unable to sign in."
+      },   
+      "settings": {
+        "azure": "Azure",
+        "adfs": "ADFS",
+        "oidc": "OIDC",
+        "portal": "Portal",
+        "superTitle": "Set up {providerName}",
+        "appIdHelp": "<a href='https://backstage.forgerock.com/docs/idcloud/latest/home.html' target='_blank' rel='noopener'>How to obtain an Application ID?</a>",
+        "appSecretHelp": "<a href='https://backstage.forgerock.com/docs/idcloud/latest/home.html' target='_blank' rel='noopener'>How to obtain an Application Secret?</a>",
+        "appId": "application ID",
+        "appSecret": "Application Secret",
+        "wellKnownEndpoint": "Well-known Endpoint",
+        "wellKnownEndpointHelp": "<a href='https://backstage.forgerock.com/docs/idcloud/latest/home.html' target='_blank' rel='noopener'>Where to find your well-known endpoint?</a>",
+        "buttonText": "Button Text",
+        "authIdKey": "Auth ID Key",
+        "authEndpoint": "Authorization Endpoint",
+        "tokenEndpoint": "Token Endpoint",
+        "userInfoEndpoint": "User Info Endpoint",
+        "stage1" : {
+          "title": "Add Sign On Method",
+          "helpText": "Choose an identity provider to use for admin sign-in to this tenant."
+        },
+        "stage2": {
+          "title": "Configure Application",
+          "step1Azure": "To configure single sign-on with Microsoft Azure, follow the <a href='{docsLink}' target='_blank' rel='noopener'>{docsName} <span aria-hidden='true' class='material-icons-outlined'>open_in_new</span></a> to learn how to set up the redirect URI in Microsoft Azure and obtain a client ID and Secret.",
+          "step1ADFS": "To configure single sign-on with ADFS, follow the <a href='{docsLink}' target='_blank' rel='noopener'>{docsName} <span aria-hidden='true' class='material-icons-outlined'>open_in_new</span></a> to learn how to set up the redirect URI in ADFS and obtain a client ID and Secret.",
+          "step1OIDC": "To configure single sign-on with an OIDC provider, follow the <a href='{docsLink}' target='_blank' rel='noopener'>{docsName} <span aria-hidden='true' class='material-icons-outlined'>open_in_new</span></a> to learn how to set up the redirect URI in your OIDC provider and obtain a client ID and Secret.",
+          "redirectLabel": "Redirect URI",
+          "claimLabel": "Email Claim",
+          "forgeRockDocs": "ForgeRock Docs",
+          "step2": "The <code>email or mail</code> claim must be added to your {name} token configuration to ensure that the user who receives the email invite is the user who can claim the account and sign in using {name}.",
+          "step3": "Once you've completed these steps proceed with the SSO configuration."
+        },
+        "stage3": {
+          "title": "Identity Provider Details",
+          "helpText": "Enter provider details to complete set up."
+        }
+      },
+      "edit": {
+        "tenantIdentityProvider": "Tenant Identity Provider",
+        "clientCredentials": "Client Credentials",
+        "appSecret": "Application Secret",
+        "generalSettings": "General Settings"
+      }
     }
   },
   "gatewaysAndAgents": {
@@ -1836,8 +1937,12 @@
   "tenantAdmins": {
     "admin": "Admin",
     "inviteEmail": "Resend Invite Email",
+    "federationAdmin": "Federation Admin",
     "tabs": {
       "profile": "Profile"
+    },
+    "editGroupModal": {
+      "editGroup": "Edit Group"
     },
     "user": {
       "firstName": "First Name",
@@ -1853,7 +1958,11 @@
       "accountStatus": "Successfully updated status to {status}.",
       "errorAccountStatus": "Failed to update admin status.",
       "inviteEmail": "Invite email sent successfully.",
-      "errorInviteEmail": "Error sending invite email."
+      "errorInviteEmail": "Error sending invite email.",
+      "federationToggled": "Federation status updated.",
+      "errorChangingFederation": "Error changing federation status.",
+      "successAddingAdminGroup": "Admin group updated",
+      "errorAddingAdminGroup": "Unable to update admin group"
     }
   },
   "scripts": {
