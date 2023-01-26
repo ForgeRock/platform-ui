@@ -84,6 +84,7 @@ describe('MenuItem Component', () => {
             isFraas: true,
             promotionsEnabled: true,
             SharedStore: {
+              adminFederationEnabled: true,
               hasAmUrl: null,
             },
           },
@@ -106,6 +107,7 @@ describe('MenuItem Component', () => {
             isFraas: true,
             promotionsEnabled: true,
             SharedStore: {
+              adminFederationEnabled: true,
               hasAmUrl: true,
             },
           },
@@ -113,6 +115,53 @@ describe('MenuItem Component', () => {
         $route: { name: 'little-bob-2' },
       });
       expect(wrapper.vm.showItemForStoreValues).toBe(true);
+    });
+
+    it('Determines to show any menu option that relies on a truthy value from the FederationAdmin privilege property in the user store', () => {
+      mountComponent({
+        showForPrivileges: ['FederationAdmin'],
+      },
+      {
+        $store: {
+          state: {
+            UserStore: {
+              privileges: {
+                FederationAdmin: true,
+              },
+            },
+            SharedStore: {
+              adminFederationEnabled: true,
+            },
+          },
+        },
+        $route: { name: 'little-ted' },
+      });
+
+      expect(wrapper.vm.showItemForPrivileges).toBe(true);
+    });
+
+    it('Determines to hide any menu option that relies on a falsy value from the FederationAdmin privilege property in the user store', () => {
+      mountComponent({
+        showForPrivileges: ['FederationAdmin'],
+      },
+      {
+        $store: {
+          state: {
+            UserStore: {
+              amAdmin: false,
+              privileges: {
+                FederationAdmin: false,
+              },
+            },
+            SharedStore: {
+              adminFederationEnabled: true,
+            },
+          },
+        },
+        $route: { name: 'little-ted-2' },
+      });
+
+      expect(wrapper.vm.showItemForPrivileges).toBe(false);
     });
   });
 
