@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -8,6 +8,7 @@
 import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 
 const defaultState = {
+  adminFederationEnabled: false,
   amBaseURL: '',
   analyticsURL: '',
   autoAccessEnabled: false,
@@ -66,6 +67,9 @@ const mutations = {
           state.autoAccessJasUrl = env.VUE_APP_AUTO_ACCESS_JAS_URL;
         }
       }
+      if (env.VUE_APP_FRAAS_FEDERATION_ENFORCEMENT_URL) {
+        state.fraasPromotionUrl = env.VUE_APP_FRAAS_FEDERATION_ENFORCEMENT_URL;
+      }
       if (env.VUE_APP_FRAAS_PROMOTION_URL) {
         state.fraasPromotionUrl = env.VUE_APP_FRAAS_PROMOTION_URL;
       }
@@ -109,6 +113,11 @@ const mutations = {
         state.showServiceAccountUi = env.VUE_APP_SHOW_SERVICE_ACCOUNT_UI === 'true' || env.VUE_APP_SHOW_SERVICE_ACCOUNT_UI === true;
       }
     }
+
+    if (env.VUE_APP_ENABLE_ADMIN_FEDERATION) {
+      state.adminFederationEnabled = env.VUE_APP_ENABLE_ADMIN_FEDERATION === 'true' || env.VUE_APP_ENABLE_ADMIN_FEDERATION === true;
+    }
+
     if (env.VUE_APP_ENABLE_WORKFORCE) {
       state.workforceEnabled = env.VUE_APP_ENABLE_WORKFORCE === 'true' || env.VUE_APP_ENABLE_WORKFORCE === true;
     }

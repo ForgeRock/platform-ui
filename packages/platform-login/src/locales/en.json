@@ -22,13 +22,13 @@
     },
     "social": {
       "or": "or",
-      "continueWith": "Continue with {buttonDisplayName}"
+      "signInWith": "Sign in with {buttonDisplayName}"
     },
     "webAuthn": {
       "authenticate": "Verifying your identity...",
       "authenticateInfo": "Use your device to verify your identity.",
       "failed": "Verification Failed",
-      "failedInfo": "Don’t worry – you can still access your account using a recovery code.",
+      "failedInfo": "Don't worry - you can still access your account using a recovery code.",
       "register": "Registering your device...",
       "registerInfo": "Your device will be used to verify your identity."
     }
