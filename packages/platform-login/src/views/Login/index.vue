@@ -478,6 +478,10 @@ export default {
     this.$emit('component-ready');
     this.realm = urlParams.get('realm') || '/';
 
+    if (localStorage.getItem('originalLoginRealm')) {
+      localStorage.removeItem('originalLoginRealm');
+    }
+
     this.getConfigurationInfo(this.realm)
       .then((config) => {
         this.setRealm(config);

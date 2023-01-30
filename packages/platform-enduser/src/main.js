@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -176,7 +176,7 @@ const startApp = () => {
 const addAppAuth = () => {
   const AM_URL = store.state.SharedStore.amBaseURL;
   const urlParams = new URLSearchParams(window.location.search);
-  const originalLoginRealm = sessionStorage.getItem('originalLoginRealm');
+  const originalLoginRealm = localStorage.getItem('originalLoginRealm');
   const pageLoadUrlRealm = urlParams.get('realm');
   let realm = pageLoadUrlRealm || store.state.realm;
   let postLogoutUrlClaim;
@@ -190,7 +190,7 @@ const addAppAuth = () => {
   */
   if (originalLoginRealm) {
     realm = originalLoginRealm;
-    sessionStorage.removeItem('originalLoginRealm');
+    localStorage.removeItem('originalLoginRealm');
   }
 
   let clickSession;
@@ -253,8 +253,8 @@ const addAppAuth = () => {
            * Check that the originalLoginRealm session variable is set.
            * If not set it so we know what realm to use for logout.
            */
-          if (!sessionStorage.getItem('originalLoginRealm')) {
-            sessionStorage.setItem('originalLoginRealm', realm);
+          if (!localStorage.getItem('originalLoginRealm')) {
+            localStorage.setItem('originalLoginRealm', realm);
           }
         },
         cooldownPeriod: 5,
@@ -289,14 +289,16 @@ const addAppAuth = () => {
 
   // trigger logout from anywhere in the SPA by calling this global function
   window.logout = (clearHash = true, invalidSession = false) => {
-    const loginRealm = sessionStorage.getItem('originalLoginRealm');
+    const loginRealm = localStorage.getItem('originalLoginRealm');
     /**
      * If there is an originalLoginRealm and that realm is different from the current realm
      * we need to set store.state.realm to it's original state so we can log out properly.
      */
-    if (loginRealm && store.state.realm !== loginRealm) {
-      store.commit('setRealm', loginRealm);
-      sessionStorage.removeItem('originalLoginRealm');
+    if (loginRealm) {
+      if (store.state.realm !== loginRealm) {
+        store.commit('setRealm', loginRealm);
+      }
+      localStorage.removeItem('originalLoginRealm');
     }
     // clear hash so user is not directed to previous hash on subsequent logins
     if (clearHash) window.location.hash = '';
