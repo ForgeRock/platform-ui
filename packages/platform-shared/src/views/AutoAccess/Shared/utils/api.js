@@ -88,6 +88,14 @@ export function getQueryFilters(dateRange, filterObject, userId) {
     });
   });
 
+  bool.must.push(
+    {
+      term: {
+        realm: `/${store.state.realm}`,
+      },
+    },
+  );
+
   // User
   if (userId) {
     bool.must.push({
