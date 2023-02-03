@@ -1,10 +1,10 @@
-# Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+# Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 #
 # This software may be modified and distributed under the terms
 # of the MIT license. See the LICENSE file for details.
 
 ARG BASE_TAG
-FROM nginx-unprivileged-headers-more:${BASE_TAG} as production
+FROM gcr.io/forgerock-io/nginx-unprivileged-headers-more:${BASE_TAG} as production
 
 COPY --chown=nginx packages/platform-login/dist /usr/share/nginx/html
 
