@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -16,11 +16,14 @@ of the MIT license. See the LICENSE file for details. -->
         :name="name"
         :data-testid="testid"
         :value="$attrs.cbcheckedvalue"
-        :unchecked-value="$attrs.cbuncheckedvalue" />
-      <label class="mb-1 text-secondary">
-        {{ switchLabel }}
-      </label>
-      <slot name="append" />
+        :unchecked-value="$attrs.cbuncheckedvalue">
+        <template v-if="switchLabel">
+          <div class="mb-1 text-secondary">
+            {{ switchLabel }}
+          </div>
+        </template>
+        <slot name="append" />
+      </BFormCheckbox>
     </div>
     <template v-if="description">
       <small
@@ -46,8 +49,9 @@ import InputMixin from '../Wrapper/InputMixin';
 /**
  * Checkbox with a label to the right
  *
- *  @Mixes InputMixin - default props and methods for inputs
- *  @param {Boolean} value default ''
+ * @Mixes InputMixin - default props and methods for inputs
+ * @param {Boolean} value default ''
+ * @slot append - Checkbox label
  */
 export default {
   name: 'FrCheckbox',

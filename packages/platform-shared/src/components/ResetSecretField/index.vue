@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -7,7 +7,9 @@ of the MIT license. See the LICENSE file for details. -->
     <FrField
       v-model="placeHolderSecretField"
       disabled
-      :label="translatedFieldName">
+      :description="description"
+      :is-html="isHtml"
+      :label="effectiveLabel">
       <template #append>
         <BInputGroupAppend>
           <BButton v-b-modal.resetSecretModal>
@@ -24,26 +26,26 @@ of the MIT license. See the LICENSE file for details. -->
         size="lg"
         id="resetSecretModal"
         ref="resetSecretModal"
-        :title="$t('schemaResetSecret.title', { field: translatedFieldName })"
+        :title="$t('schemaResetSecret.title', { field: effectiveLabel })"
         cancel-variant="link"
         @hidden="newSecret = ''"
         @ok="resetSecret"
         :ok-disabled="invalid"
         :ok-title="$t('common.save')"
         :cancel-title="$t('common.cancel')">
-        <p>{{ $t('schemaResetSecret.modalBody', { field: lowerCaseFieldName }) }}</p>
+        <p>{{ $t('schemaResetSecret.modalBody', { field: effectiveLabel.toLowerCase() }) }}</p>
         <BFormGroup>
           <FrField
             v-model="newSecret"
             type="password"
             validation="required"
-            :label="$t('schemaResetSecret.newSecretText', { field: translatedFieldName })" />
+            :label="$t('schemaResetSecret.newSecretText', { field: effectiveLabel })" />
         </BFormGroup>
         <FrAlert
           show
           variant="warning"
           :dismissible="false">
-          <span>{{ $t('schemaResetSecret.secretResetWarning', { field: lowerCaseFieldName }) }}</span>
+          <span>{{ $t('schemaResetSecret.secretResetWarning', { field: effectiveLabel.toLowerCase() }) }}</span>
         </FrAlert>
       </BModal>
     </ValidationObserver>
@@ -82,20 +84,30 @@ export default {
   },
   props: {
     /**
+     * Description that goes below field
+     */
+    description: {
+      type: String,
+      default: '',
+    },
+    /**
+     * Determines if the description should accept html
+     */
+    isHtml: {
+      type: Boolean,
+      default: false,
+    },
+    /**
      * Label for inputs and title for modal
      */
-    translatedFieldName: {
+    label: {
       type: String,
-      default: 'Password',
-    },
-  },
-  computed: {
-    lowerCaseFieldName() {
-      return this.translatedFieldName.toLowerCase();
+      default: '',
     },
   },
   data() {
     return {
+      effectiveLabel: this.label || this.$t('common.password'),
       placeHolderSecretField: '••••••••••••••••••',
       newSecret: '',
     };

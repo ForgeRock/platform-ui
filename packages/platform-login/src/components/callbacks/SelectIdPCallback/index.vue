@@ -20,9 +20,8 @@ of the MIT license. See the LICENSE file for details. -->
       @mouseout="hover(count, provider.uiConfig.buttonCustomStyle)">
       <div>
         <img
-          v-if="provider.uiConfig.iconKey"
-          :src="require(`@forgerock/platform-shared/src/assets/images/${provider.uiConfig.iconKey}-logo.svg`)"
-          alt="">
+          v-if="provider.uiConfig.providerKey"
+          :src="require(`@forgerock/platform-shared/src/assets/images/${provider.uiConfig.providerKey}-logo.svg`)">
         <img
           v-else-if="provider.uiConfig.buttonImage"
           :src="provider.uiConfig.buttonImage"
