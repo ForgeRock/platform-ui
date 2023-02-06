@@ -996,6 +996,7 @@ export default {
 
           switch (step.type) {
             case 'LoginSuccess':
+              this.checkAndNotifyPromotionParentOfLoginSuccess();
               // If we have a session token, get user information
               sessionStorage.removeItem('initialStep');
               this.getIdFromSession()
@@ -1196,6 +1197,17 @@ export default {
             document.title = title;
           }
         }
+      }
+    },
+    /**
+     * Sends a postMessage to the parent window notifying of login success if this window has been opened
+     * by the promotion ingress environment in the promotion hierarchy.
+     *
+     * @event postMessage
+     */
+    checkAndNotifyPromotionParentOfLoginSuccess() {
+      if (sessionStorage.getItem('parentIsPromotionIngressEnvironment') === 'true') {
+        window.opener.postMessage('loginSuccess', this.$store.state.SharedStore.fraasPromotionIngressUrl);
       }
     },
   },
