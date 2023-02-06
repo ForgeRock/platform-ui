@@ -1475,8 +1475,8 @@
       "errorUnique": "This person already exists in your tenant.",
       "groupRadioHelp": "Choose a group to assign to invited admins.",
       "superAdmin": "Super Admin",
-      "superAdminText": "Has access to all features in the Admin console and can manage every aspect of this tenant.",
-      "tenantAdminText": "Has full access to all administrative features, except the ability to add other administrators."
+      "superAdminsText": "Has access to all features in the Admin console and can manage every aspect of this tenant.",
+      "tenantAdminsText": "Has full access to all administrative features, except the ability to add other administrators."
     },
     "templates": {
       "duplicateTemplate": "Duplicate Template",
@@ -1781,6 +1781,10 @@
         "appSecretHelp": "<a href='https://backstage.forgerock.com/docs/idcloud/latest/home.html' target='_blank' rel='noopener'>How to obtain an Application Secret?</a>",
         "appId": "application ID",
         "appSecret": "Application Secret",
+        "groupsClaim": "Use {applicationName} group membership to allow federated login to ForgeRock",
+        "groupsClaimDescription": "Group claim description",
+        "groupsClaimName": "Group Claim Name",
+        "groupNames": "Group Names",
         "wellKnownEndpoint": "Well-known Endpoint",
         "wellKnownEndpointHelp": "<a href='https://backstage.forgerock.com/docs/idcloud/latest/home.html' target='_blank' rel='noopener'>Where to find your well-known endpoint?</a>",
         "buttonText": "Button Text",

@@ -1,25 +1,56 @@
 /**
- * Copyright (c) 2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { mount } from '@vue/test-utils';
+import i18n from '@/i18n';
 import ResetSecretField from './index';
 
-let wrapper;
+describe('ResetSecretField', () => {
+  it('sets the effectiveLabel property to the label prop if it has a value', () => {
+    const label = 'My Password';
+    const wrapper = mount(ResetSecretField, {
+      i18n,
+      propsData: {
+        label,
+      },
+    });
 
-beforeEach(() => {
-  wrapper = mount(ResetSecretField, {
-    mocks: {
-      $t: () => {},
-    },
+    expect(wrapper.vm.effectiveLabel).toEqual(label);
   });
-});
 
-describe('Reset secret field', () => {
-  it('Reset secret field successfully loaded', () => {
-    expect(wrapper.name()).toEqual('ResetSecretField');
+  it('sets the effectiveLabel property to "Password" if the label prop is empty', () => {
+    const wrapper = mount(ResetSecretField, {
+      i18n,
+    });
+
+    expect(wrapper.vm.effectiveLabel).toEqual('Password');
+  });
+
+  it('displays a label below the input field if description prop has a value', () => {
+    const wrapper = mount(ResetSecretField, {
+      i18n,
+      propsData: {
+        description: 'My Description',
+      },
+    });
+    const description = wrapper.find('[id^=floatingLabel]');
+    expect(description.exists()).toBe(true);
+  });
+
+  it('displays an html label below the input field if description prop has a value and the isHtml prop is true', () => {
+    const descriptionHtml = '<a href="#">html</a>';
+    const wrapper = mount(ResetSecretField, {
+      i18n,
+      propsData: {
+        description: descriptionHtml,
+        isHtml: true,
+      },
+    });
+    const description = wrapper.find('[id^=floatingLabel] > a');
+    expect(description.html()).toBe(descriptionHtml);
   });
 });
