@@ -2614,7 +2614,7 @@
       "title": "Review Promotion"
     },
     "showAllChanges": "All changes",
-    "signinPopover": "To promote configuration changes you first need to authenticate to your {upper} tenant",
+    "signinText": "To access promotion information you first need to authenticate to your {upper} tenant",
     "tenantLocked": "Tenant Locked",
     "tenantLockedPopover": "Tenants remain locked during a promotion",
     "tiers": {
