@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -14,23 +14,36 @@ Cypress.Commands.add(
     password = 'Welcome1!',
     loginUrl = Cypress.env('IS_FRAAS') ? `${Cypress.config().baseUrl}/am/XUI/?realm=/alpha#/` : `${Cypress.config().baseUrl}/enduser/`,
   ) => {
-    indexedDB.deleteDatabase('appAuth');
+    cy.clearAppAuthDatabase();
+    cy.clearSessionStorage();
+
     cy.visit(loginUrl);
     cy.findByPlaceholderText(/User Name/i).type(userName);
     cy.findByPlaceholderText(/Password/i).type(password, { force: true });
-    cy.get('.btn-primary').click();
+    cy.findByRole('button', { name: /Next/i }).click();
     cy.findByTestId('dashboard-welcome-greeting', { timeout: 20000 });
   },
 );
 
+Cypress.Commands.add('clearSessionStorage', () => {
+  cy.window().then((win) => {
+    win.sessionStorage.clear();
+  });
+});
+
+Cypress.Commands.add('clearAppAuthDatabase', () => {
+  indexedDB.deleteDatabase('appAuth');
+});
+
 Cypress.Commands.add('loginAsAdmin', () => {
   cy.intercept('POST', '/am/oauth2/access_token').as('getAccessToken');
-  indexedDB.deleteDatabase('appAuth');
+  cy.clearAppAuthDatabase();
+  cy.clearSessionStorage();
 
   cy.visit(`${Cypress.config().baseUrl}/am/XUI/`);
   cy.findByPlaceholderText(/User Name/i).type(Cypress.env('AM_USERNAME'));
   cy.findByPlaceholderText(/Password/i).type(Cypress.env('AM_PASSWORD'), { force: true });
-  cy.get('.btn-primary').click();
+  cy.findByRole('button', { name: /Next/i }).click();
   if (Cypress.env('IS_FRAAS')) {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(900);
@@ -49,7 +62,5 @@ Cypress.Commands.add('loginAsAdmin', () => {
 Cypress.Commands.add('logout', () => {
   cy.clearCookies();
   cy.clearLocalStorage();
-  cy.window().then((window) => {
-    window.sessionStorage.clear();
-  });
+  cy.clearSessionStorage();
 });

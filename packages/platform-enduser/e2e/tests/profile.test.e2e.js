@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import filterTests from '../../../../e2e/filter_tests';
+import { filterTests, retryableBeforeEach } from '../../../../e2e/util';
 import { createIDMUser } from '../api/managedApi.e2e';
 
 const path = require('path');
@@ -19,7 +19,7 @@ filterTests(['forgeops', 'cloud'], () => {
     const locationUrl = Cypress.env('IS_FRAAS') ? `${Cypress.config().baseUrl}/enduser/?realm=alpha#/profile` : `${Cypress.config().baseUrl}/enduser/?realm=root#/profile`;
     const downloadsFolder = Cypress.config('downloadsFolder');
 
-    beforeEach(() => {
+    retryableBeforeEach(() => {
       // Get an admin access token and use it to create the test user
       cy.loginAsAdmin().then(() => {
         createIDMUser().then(({ body: { userName: responseUserName, _id: responseUserId } }) => {

@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import filterTests from '../../../../e2e/filter_tests';
+import { filterTests, retryableBeforeEach } from '../../../../e2e/util';
 
 const loginFailedErrorMessage = Cypress.env('IS_FRAAS') ? 'Login failure' : 'Authentication Failed';
 
@@ -13,7 +13,7 @@ filterTests(['forgeops', 'cloud'], () => {
   describe('Login View', () => {
     const userName = Cypress.env('AM_USERNAME');
 
-    beforeEach(() => {
+    retryableBeforeEach(() => {
       cy.visit(`${Cypress.config().baseUrl}/am/XUI/?realm=/#/`);
     });
 
