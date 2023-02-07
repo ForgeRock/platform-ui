@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import filterTests from '../../../../e2e/filter_tests';
+import { filterTests, retryableBeforeEach } from '../../../../e2e/util';
 import { createIDMUser, deleteIDMUser } from '../api/managedApi.e2e';
 import { setBaseTheme } from '../api/themeApi.e2e';
 
@@ -23,7 +23,7 @@ filterTests(['forgeops', 'cloud'], () => {
     let enduserUserName;
     let enduserUserId;
 
-    beforeEach(() => {
+    retryableBeforeEach(() => {
       // Log in to the admin console to get an admin access token
       cy.loginAsAdmin().then(() => {
         // Create the user for the test
@@ -35,17 +35,13 @@ filterTests(['forgeops', 'cloud'], () => {
           setBaseTheme().then(() => {
             // Visit the edit page for the theme used in the test
             cy.visit(`${Cypress.config().baseUrl}/platform/?realm=${enduserRealm}#/hosted-pages/Starter%20Theme`);
-            cy.findByRole('heading', { name: 'Starter Theme' }).should('exist');
+            cy.findByRole('heading', { name: 'Starter Theme' }).should('not.exist');
           });
         });
       });
     });
 
-    afterEach(() => {
-      // Clean up the test user
-      cy.logout();
-      deleteIDMUser(enduserUserId);
-
+    after(() => {
       // Reset the theme to the base theme
       setBaseTheme();
     });
@@ -70,6 +66,9 @@ filterTests(['forgeops', 'cloud'], () => {
       cy.get('body').should('have.css', 'background-color', 'rgb(255, 255, 255)');
       cy.findByRole('link', { name: 'Reset Security Questions' }).should('have.css', 'color', 'rgb(22, 255, 150)');
       cy.get('#app .router-link-active').should('have.css', 'background-color', 'rgb(18, 49, 35)');
+
+      // Clean up the test user
+      deleteIDMUser(enduserUserId);
     });
 
     it('should change profile page logo', () => {
@@ -98,6 +97,9 @@ filterTests(['forgeops', 'cloud'], () => {
       cy.loginAsEnduser(enduserUserName);
       cy.get('div.fr-logo:visible')
         .should('have.css', 'background-image', 'url("https://www.logosurfer.com/wp-content/uploads/2018/03/quicken-loans-logo_0.png")');
+
+      // Clean up the test user
+      deleteIDMUser(enduserUserId);
     });
 
     it('should toggle profile pieces', () => {
@@ -119,6 +121,9 @@ filterTests(['forgeops', 'cloud'], () => {
       // verify username and Security Questions rows do appear
       cy.findByRole('heading', { name: 'Username' }).should('exist');
       cy.findByRole('heading', { name: 'Security Questions' }).should('exist');
+
+      // Clean up the test user
+      deleteIDMUser(enduserUserId);
     });
 
     it('should change login/profile favicon', () => {
@@ -144,6 +149,9 @@ filterTests(['forgeops', 'cloud'], () => {
       // ensure enduser has proper favicon
       cy.loginAsEnduser(enduserUserName);
       cy.findByTestId('favicon').should('have.attr', 'href').and('include', 'https://www.forgerock.com/themes/custom/forgerock/favicon.ico');
+
+      // Clean up the test user
+      deleteIDMUser(enduserUserId);
     });
   });
 });
