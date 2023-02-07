@@ -1,12 +1,12 @@
 /**
- * Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { random, capitalize } from 'lodash';
-import filterTests from '../../../../e2e/filter_tests';
+import { filterTests, retryableBeforeEach } from '../../../../e2e/util';
 import {
   addRoleMember,
   createIDMResource,
@@ -197,7 +197,7 @@ filterTests(['forgeops', 'cloud'], () => {
     let userName;
     let userId;
 
-    beforeEach(() => {
+    retryableBeforeEach(() => {
       userName = `e2eTestUser${random(Number.MAX_SAFE_INTEGER)}`;
       // Log in first to admin to allow us to use admin access token to create IDM resources
       cy.loginAsAdmin().then(() => {
