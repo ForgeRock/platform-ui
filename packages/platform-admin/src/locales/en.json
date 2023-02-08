@@ -2241,6 +2241,7 @@
     "objectType": "Object type",
     "objectTypeAdded": "Object type added",
     "objectTypes": "Object Types",
+    "orderTooltip": "Define the order in which fields are displayed in the account form",
     "reconciliation": "Reconciliation",
     "properties": "Properties",
     "property": "property",
