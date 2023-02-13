@@ -22,7 +22,9 @@ import overrideTranslations, { setLocales } from '@forgerock/platform-shared/src
 import VueSanitize from 'vue-sanitize';
 import uuid from 'uuid/v4';
 import { baseSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
+import { generateAmApi } from '@forgerock/platform-shared/src/api/BaseApi';
 import { getUiConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
+import { getAmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
 import store from '@/store';
 import i18n from './i18n';
 import router from './router';
@@ -67,11 +69,50 @@ Config.set({
 
 router.beforeEach((to, _from, next) => {
   if (to.name === 'logout') {
-    SessionManager.logout().then(() => {
-      next('/');
-    });
+    const urlParams = new URLSearchParams(window.location.search);
+    const goto = urlParams.get('goto') || '';
+    const logout = (validatedGoto) => {
+      SessionManager.logout().then(() => {
+        if (validatedGoto) {
+          window.location.href = validatedGoto;
+        } else {
+          next('/');
+        }
+      });
+    };
+    let realm = urlParams.get('realm');
+
+    if (goto) {
+      // validate the goto param before logging out
+      const validateGotoAndLogout = () => {
+        generateAmApi({
+          apiVersion: 'protocol=2.1,resource=3.0',
+          path: `realms/root/realms/${realm}`,
+        }).post('users?_action=validateGoto', { goto: decodeURIComponent(goto) }, { withCredentials: true }).then((res) => {
+          logout(res.data.successURL);
+        }).catch(() => {
+          logout();
+        });
+      };
+
+      if (!realm) {
+        // If no realm defined get it from am server info
+        getAmServerInfo().then((res) => {
+          realm = res.data?.realm === '/' ? 'root' : res.data.realm;
+          validateGotoAndLogout();
+        }).catch(() => {
+          realm = 'root';
+          validateGotoAndLogout();
+        });
+      } else {
+        validateGotoAndLogout();
+      }
+    } else {
+      logout();
+    }
+  } else {
+    next();
   }
-  next();
 });
 
 const loadApp = () => {
