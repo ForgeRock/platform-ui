@@ -1742,13 +1742,11 @@
         "title": "Edit Tenant Federation Enforcement",
         "sideTitle": "Federation Enforcement",
         "sideHelp": "Choose how federation should be enforced in this tenant.",
-        "unlockText": "In order to change federation enforcement you need to <a href=\"#\" target=\"_self\">open a support ticket</a>."
-      },
-      "confirmEnforcementModal": {
-        "title": "Change Federation Enforcement?",
+        "unlockText": "In order to change federation enforcement you need to <a href=\"#\" target=\"_self\">open a support ticket</a>.",
+        "confirmTitle": "Change Federation Enforcement?",
+        "confirmAll": "Are you sure you want to require all admins to use federation to sign in?",
         "confirmNone": "Are you sure you want to allow tenant admins to use ForgeRock credentials to sign in?",
         "confirmTenantAdmins": "Are you sure you want to require tenant admins to use federation to sign in?",
-        "confirmAll": "Are you sure you want to require all admins to use federation to sign in?",
         "alertText": "This will require you to open a support ticket to change.",
         "note": "Note:",
         "waitTime": "This change will take approximately 10 minutes to be applied to this tenant."
