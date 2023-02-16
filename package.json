@@ -52,9 +52,12 @@
     "vue-template-compiler": "2.6.11"
   },
   "resolutions": {
+    "babel-jest/@jest/transform/@babel/core/json5": "2.2.2",
     "qs": "6.5.3",
     "css-select": "4.0.0",
     "follow-redirects": "1.14.8",
+    "http-cache-semantics": "4.1.1",
+    "json5": "1.0.2",
     "mocha/yargs/y18n": "4.0.1",
     "moment": "2.29.2",
     "node-gyp": "5.0.4",
