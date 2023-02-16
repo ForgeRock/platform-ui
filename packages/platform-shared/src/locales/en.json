@@ -7,6 +7,7 @@
     "activate": "Activate",
     "activated": "Activated",
     "add": "Add",
+    "added": "Added",
     "adding": "Adding...",
     "addObject": "Add {object}",
     "addAObject": "Add a {object}",
@@ -166,7 +167,7 @@
     "signingIn": "Signing in...",
     "signUp": "Sign Up",
     "start": "Start",
-    "skipForNow": "Skip for now",
+    "skipThis": "Skip this",
     "status": "Status",
     "submit": "Submit",
     "success": "Success",
@@ -865,9 +866,9 @@
           "saveConfig": "Save Config"
         },
         "dataSourcesAPI":{
-          "fileError": "File not found", 
+          "fileError": "File not found",
           "bucketError": "Bucket not found",
-          "errorInvalidJSON": "Invalid JSONL. Cannot be used as Data Source.", 
+          "errorInvalidJSON": "Invalid JSONL. Cannot be used as Data Source.",
           "errorFetchData": "An error occured when fetching data source definition.",
           "errorFetchDataSources": "An error occured when fetching data sources."
         },
@@ -951,7 +952,7 @@
       "models": {
         "title": "Training results",
         "optionTitle": "Select a model",
-        "riskConfigSuccess": "Risk threshold of {value} saved for {model}", 
+        "riskConfigSuccess": "Risk threshold of {value} saved for {model}",
         "noDataError": "No data available",
         "fetchDataError": "An error occured fetching model data."
       },
