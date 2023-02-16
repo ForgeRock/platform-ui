@@ -1291,16 +1291,20 @@
     "promotion": {
       "dynamicDataCategory": "Applications",
       "modalTitle": "Load Application Dynamic Data",
-      "chooseDataDescription": "<p>This environment has received a promotion containing Application dynamic data. Please select which applications you would like to load the dynamic data for from the list below.</p><strong>Note that any prior customizations to this data on this tenant will be lost in this process.</strong>",
-      "loadSelectedData": "Load Selected Data",
-      "loadingSelectedData": "Loading Selected Data...",
-      "newApps": "New applications",
-      "chooseNewApps": "Choose new applications to load dynamic data for.",
-      "existingApps": "Existing applications",
-      "chooseExistingApps": "Choose existing applications to overwrite dynamic data for.",
+      "chooseDataDescription": "This environment has received a promotion containing dynamic application data. It is recommended that you update application data to prevent configuration issues.",
+      "customizationWarning": "Note that any prior customizations to this data on this tenant will be lost in this process.",
+      "updateApplications": "Update Applications",
+      "updatingApplications": "Updating Applications...",
+      "chooseAppsToUpdate": "Choose Applications to Update",
+      "chooseAppUpdates": "Choose Application Updates",
+      "chooseAppUpdatesDescription": "Choose applications to update with promoted dynamic data.",
       "errorLoadingApps": "Error loading app data into the environment. Please try again later.",
-      "alphaApplication": "{applicationName} (alpha)",
-      "bravoApplication": "{applicationName} (bravo)"
+      "skipUpdate": "Skip Update",
+      "skipConfirm": "Are you sure you want to skip update for now? The next admin to sign in will be able to complete the promotion.",
+      "dontUpdate": "Don't Update",
+      "dontUpdateDescription": "Do not update dynamic application data in this tenant.",
+      "dontUpdateApplicationData": "Don't Update Application Data?",
+      "dontUpdateConfirm": "Are you sure you don't want to update promoted dynamic application data?"
     }
   },
   "realm": {
@@ -1761,7 +1765,7 @@
         "modalTitle": "Deactivate {providerName}?",
         "modalWarning": "Are you sure you want to deactivate sign-in with {providerName}?",
         "bulletText": "Any admins who sign in using only {providerName} and don't have a username and password will be unable to sign in."
-      },   
+      },
       "settings": {
         "azure": "Azure",
         "adfs": "ADFS",
@@ -2312,7 +2316,7 @@
     "propertyMappingUpdated": "Property mapping updated",
     "selectInboundPropertyLabel": "{target} User property to provide a value for when reconciling data from {source} account.",
     "selectOutboundPropertyLabel": "Property to provide a value for when provisioning to {target} account.",
-    "selectPropertyLabel": "Choose {application} property", 
+    "selectPropertyLabel": "Choose {application} property",
     "showScriptEditor": "Show Script Editor",
     "sourceProperty": "source.{prop}",
     "sourceValueDescription": "User property or expression to map to the target property. <code>source</code> represents the ForgeRock user identity profile.",
