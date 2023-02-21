@@ -1,5 +1,6 @@
 {
   "common": {
+    "accounts": "Accounts",
     "action": "Action",
     "actions": "Actions",
     "active": "Active",
@@ -25,6 +26,7 @@
     "buildNumber": "Build {buildNumber} ({buildDateTime})",
     "by": "by",
     "cancel": "Cancel",
+    "canceling": "Canceling",
     "cannotBeUndone": "Warning this cannot be undone!",
     "category": "Category",
     "change": "Change",
@@ -32,6 +34,7 @@
     "close": "Close",
     "columns": "Columns",
     "code": "Code",
+    "comment": "Comment",
     "confirm": "Confirm",
     "confirmDelete": "Confirm Delete",
     "connect": "Connect",
@@ -48,6 +51,7 @@
     "date": "Date",
     "deactivate": "Deactivate",
     "deactivated": "Deactivated",
+    "deadline": "Deadline",
     "deactivating": "Deactivating",
     "debug": "Debug",
     "default": "Default",
@@ -70,6 +74,7 @@
     "end": "End",
     "endSessions": "End Sessions",
     "error": "Error",
+    "every": "Every",
     "exitFullscreen": "Exit Fullscreen",
     "expires": "Expires",
     "fail": "Fail",
@@ -78,6 +83,7 @@
     "false": "False",
     "filters": "Filters",
     "forgeRock": "ForgeRock",
+    "forward": "Forward",
     "fullscreen": "Fullscreen",
     "genericError": "Something went wrong, please try again.",
     "help": "Help",
@@ -104,6 +110,7 @@
     "newObject": "New {object}",
     "next": "Next",
     "no": "No",
+    "noResultsFound": "No results found.",
     "none": "None",
     "noRecords": "No Records",
     "noResult": "No elements found. Consider changing the search query.",
@@ -123,6 +130,7 @@
     "preview": "Preview",
     "previous": "Previous",
     "print": "Print",
+    "progress": "Progress",
     "promote": "Promote",
     "promoteConfiguration": "Promote configuration",
     "promotion": "Promotion",
@@ -175,6 +183,7 @@
     "updated": "Updated",
     "updating": "Updating",
     "updatedObject": "{object} Updated",
+    "users": "Users",
     "value": "Value",
     "variable": "Variable",
     "variables": "Variables",
@@ -313,11 +322,23 @@
       "maxLength": "{length} characters maximum"
     },
     "user": {
+      "accountStatus": "Status",
+      "adminOfOrg": "Admin of organization",
+      "aliasList": "Alias list",
+      "city": "City",
+      "country": "Country",
+      "description": "Description",
+      "givenName": "First Name",
+      "lastSync": "Last sync",
+      "mail": "Email",
+      "manager": "Manager",
+      "postalAddress": "Postal address",
+      "postalCode": "Postal code",
+      "sn": "Last Name",
+      "stateProvince": "State province",
+      "telephoneNumber": "Telephone number",
       "user": "User",
-      "username": "Username",
-      "firstName": "First Name",
-      "lastName": "Last Name",
-      "email": "Email"
+      "userName": "Username"
     },
     "json": {
       "rawJson": "Raw JSON",
@@ -659,6 +680,9 @@
       "pageNotFound": "Page Not Found",
       "returnRoute": "Return to {returnRoute}",
       "couldNotFind": "We couldn't find the page you were looking for."
+    },
+    "loadPage": {
+      "errorLoadingPage": "We couldn't load the information."
     }
   },
   "pagination": {
@@ -1008,6 +1032,198 @@
         "selectedRisk": "{minSelectedRisk} - {maxSelectedRisk} Risk",
         "tooltip": "Slide to Filter Events Based on Risk Score"
       }
+    }
+  },
+  "governance": {
+    "status": {
+      "active": "Active",
+      "cancelled": "Cancelled",
+      "closed": "Completed",
+      "complete": "Completed",
+      "creating": "Creating...",
+      "expired": "Expired",
+      "expiring": "Expiring",
+      "in-progress": "In-Progress",
+      "pending": "Pending",
+      "overdue": "Overdue",
+      "staging": "Staged"
+    },
+    "certificationTask": {
+      "noData": "No Data",
+      "backLink": "Access Reviews",
+      "signOff": "Sign Off",
+      "decisions": "Decisions",
+      "defaultCertifierText": "<strong>{name}</strong> is the certifier for this access",
+      "viewCampaignDetails": "View campaign details",
+      "select": "Select",
+      "user": "User",
+      "application": "Application",
+      "account": "Account",
+      "comments": "Comments",
+      "allUsers": "All Users",
+      "allApplications": "All Applications",
+      "allAccounts": "All Accounts",
+      "allChangesSaved": "All changes saved",
+      "isSaving": "Saving...",
+      "certified": "Certified",
+      "revoked": "Revoked",
+      "exceptionAllowed": "Exception Allowed",
+      "noDecision": "No decision",
+      "customizeColumns": "Customize Columns",
+      "selectAllTasks": "All tasks",
+      "selectAllTasksThisPage": "All on this page",
+      "deselectAll": "Deselect all",
+      "userFullName": "{givenName} {sn}",
+      "actions": {
+        "addComment": "Add Comment",
+        "allowException": "Allow an exception",
+        "forward": "Forward",
+        "viewReviewers": "View Reviewers",
+        "viewActivity": "View Activity",
+        "certify": "Certify",
+        "revoke": "Revoke",
+        "reassign": "Reassign"
+      },
+      "actionsModal": {
+        "certifyTitle": "Certify Access",
+        "certifyDescription": "Certify access for the selected items?",
+        "certifyPlaceHolder": "Reason for Certification",
+        "revokeTitle": "Revoke Access",
+        "forwardTo": "Forward to",
+        "revokeDescription": "Revoke access for the selected items?",
+        "revokePlaceHolder": "Reason for Revocation",
+        "revokeOkLabel": "Revoke Access",
+        "revokeInlineItemDescription": "Revoke access for this user to the requested resource.",
+        "exceptionTitle": "Allow exception",
+        "exceptionDescription": "Allow exception for the selected items?",
+        "exceptionPlaceHolder": "Reason for Exception",
+        "exceptionLabel": "Allow Exception",
+        "exceptionInlineItemDescription": "Allow this certification item to be deferred for 1 week.",
+        "reassignItems": "Reassign Items",
+        "reassignDescription": "Reassign selected items to another user or role.",
+        "reassignToUser": "Reassign to user",
+        "forwardItem": "Forward Item",
+        "forwardItemDescription": "Forward this access review to",
+        "toUser": "Another user",
+        "toRole": "Users with assigned role",
+        "chooseRole": "Choose a role",
+        "chooseUser": "Choose a user",
+        "comment": "Comment",
+        "reassignTo": "Reassign To"
+      },
+      "permissions": {
+        "title": "Permissions",
+        "view": "View",
+        "comment": "Comment",
+        "decide": "Decide",
+        "assignForward": "Forward",
+        "signOff":"Sign Off"
+      },
+      "campaignDetails": {
+        "campaignOwner": "Campaign Owner",
+        "duration": "Duration",
+        "startDate": "Start Date",
+        "description": "Description",
+        "title": "Campaign Details"
+      },
+      "errors": {
+        "addCommentErrorDefaultMessage": "There was an error adding the comment",
+        "allowExceptionError": "There was an error trying to defer this item",
+        "certificationDetailError": "There was an error getting the certification details",
+        "certificationListError": "There was an error getting the list of certifications",
+        "certifyError": "There was an error certifying this item",
+        "filterError": "There was an error trying to get the filters",
+        "forwardItemError": "There was an error forwarding this item.",
+        "getUserError": "There was an error getting the user details",
+        "onForwardError": "There was an error trying to forward the certification tasks",
+        "reassignError": "There was an error trying to reassign the certifications",
+        "revokeError": "There was an error revoking access to this item",
+        "signOffError": "There was an error trying to sign off the certification"
+      },
+      "lineItemActivityModal": {
+        "title": "Activity"
+      },
+      "lineItemAddCommentModal": {
+        "addCommentSuccessfullyMessage": "Comment successfully added"
+      },
+      "lineItemCommentsModal": {
+        "addComment": "Add a Comment",
+        "title": "Comments ({count})"
+      },
+      "lineItemDetailsModal": {
+        "accountDetailsTab": {
+          "lastCertifiedLabel": "Last Certified",
+          "lastCertifiedByLabel": "Last Certified By",
+          "lastUsedLabel": "Last Used",
+          "ownerLabel": "Account Owner",
+          "provisioningMethodLabel": "Provisioning Method",
+          "typeLabel": "Account Type",
+          "riskScoreLabel": "Adj. Risk Score"
+        },
+        "accountDetailsTabText": "Account Details",
+        "applicationDetailsTab": {
+          "nameLabel": "Application Name",
+          "ownerLabel": "Owner(s)",
+          "templateIdLabel": "Template ID",
+          "typeLabel": "Application Type"
+        },
+        "applicationDetailsTabText": "Application Details",
+        "contentDetailsTabText": "Contents",
+        "userDetailsTabText": "Details"
+      },
+      "lineItemReviewersModal": {
+        "addReviewerButtonText": "Add a Reviewer",
+        "addReviewerSuccessfullyMessage": "Reviewer added",
+        "editReviewerModal": {
+          "addUserLabel": "Add a user",
+          "addReviewerButtonText": "Add Reviewer",
+          "addRoleLabel": "Add a role",
+          "chooseRoleDescription": "Choose a role to reassign item to.",
+          "chooseRoleLabel": "Choose a role",
+          "chooseUserDescription": "Choose a user to reassign item to.",
+          "chooseUserLabel": "Choose a user",
+          "description": "Add a user or role as a reviewer for this task.",
+          "permissionsLabel": "Permissions",
+          "permissionLabels": {
+            "decide": "Decide",
+            "comment": "Comment",
+            "forward": "Assign/Forward",
+            "signoff": "Sign Off"
+          },
+          "removeReviewerButtonText": "Remove Reviewer",
+          "reviewerLabel": "Reviewer",
+          "title": "Add a Reviewer"
+        },
+        "editReviewerErrorMessage": "Error saving reviewer",
+        "editReviewerSuccessfullyMessage": "Reviewer permissions saved",
+        "removeReviewerSuccessfullyMessage": "Reviewer removed",
+        "removeReviewerErrorMessage": "Error removing reviewer",
+        "reviewersTable": {
+          "permissionsColumnLabel": "Permissions",
+          "reviewersColumnLabel": "Reviewer"
+        },
+        "role": "Role",
+        "title": "Reviewers"
+      },
+      "success": {
+        "accessReviewForwarded": "Access review forwarded",
+        "allowExceptionSuccess": "The Exception has been completed successfully",
+        "certifySuccess": "The Certification has been completed successfully",
+        "onForwardSuccess": "The Forward has been completed successfully",
+        "reassignSuccess": "The Reassign has been completed successfully",
+        "reviewItemForwarded": "Review item forwarded",
+        "revokeSuccess": "The Revoke has been completed successfully",
+        "saveSuccessful": "All Changes Saved",
+        "signOffSuccess": "The signOff has been completed successfully"
+      }
+    },
+    "forwardReviewModal": {
+      "chooseRole": "Choose a role",
+      "chooseUser": "Choose a user",
+      "description": "Forward this access review to:",
+      "toRole": "Users with assigned role",
+      "toUser": "Another user",
+      "title":" Forward Access Review"
     }
   }
 }

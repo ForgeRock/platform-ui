@@ -1,18 +1,18 @@
-<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
-    :class="`d-flex align-items-center px-4 py-3 border-top ${alignClasses[datasetSize === DatasetSize.SMALL ? Position.CENTER : align]}`"
+    :class="['d-flex align-items-center px-4 py-3', alignClasses[datasetSize === DatasetSize.SMALL ? Position.CENTER : align], { 'border-top': !hideBorder }]"
   >
     <!-- Dropdown -->
     <BDropdown
       v-if="datasetSize !== DatasetSize.SMALL && !hidePageSizeSelector"
-      boundary="window"
       class="mr-1 pagination-dropdown"
       id="dropdown"
       toggle-class="btn btn-link text-dark border-0 toggle-dropdown-button"
+      :boundary="boundary"
       :text="totalRows > 0 ? $t('pagination.dropdown.text', { pageMin, pageMax, totalRows }) : $t('pagination.dropdown.textUnknownTotalRows', { pageMin, pageMax })"
     >
       <BDropdownItem
@@ -162,6 +162,10 @@ export default {
       type: String,
       default: () => this?.$t('pagination.label'),
     },
+    boundary: {
+      type: String,
+      default: 'window',
+    },
     datasetSize: {
       type: String,
       validator(value) {
@@ -176,6 +180,10 @@ export default {
     firstClass: {
       type: String,
       default: null,
+    },
+    hideBorder: {
+      type: Boolean,
+      default: false,
     },
     hideEllipsis: {
       type: Boolean,

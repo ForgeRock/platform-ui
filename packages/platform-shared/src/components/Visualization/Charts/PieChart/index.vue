@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -6,16 +6,19 @@ of the MIT license. See the LICENSE file for details. -->
   <div>
     <!-- Chart -->
     <D3PieChart
-      id="chart"
+      ref="d3chart"
+      :id="id"
+      data-test-id="chart"
       class="pie-chart m-0 mb-3"
       :config="chartConfig"
       :datum="data"
       :height="height"
+      :key="componentKey"
     />
     <!-- List -->
     <div class="d-flex justify-content-center">
       <ul
-        id="list"
+        data-test-id="list"
         class="data-list list-unstyled"
       >
         <li
@@ -36,6 +39,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import uuid from 'uuid';
 import { D3PieChart } from 'vue-d3-charts';
 
 /*
@@ -75,8 +79,22 @@ export default {
       default: '300',
       type: String,
     },
+    adaptToHeigh: {
+      default: false,
+      type: Boolean,
+    },
   },
   data() {
+    const radius = this.adaptToHeigh ? {
+      inner: this.height * 0.36,
+      outter: this.height * 0.48,
+      round: this.height * 0.04,
+    } : {
+      inner: 55,
+      outter: 65,
+      padding: 0.05,
+      round: 15,
+    };
     return {
       /*
        * @description configuration for the pie chart, for more details see the docs
@@ -99,26 +117,105 @@ export default {
         color: {
           key: 'color',
         },
-        radius: {
-          inner: 55,
-          outter: 65,
-          padding: 0.05,
-          round: 15,
-        },
+        radius,
       },
+      /*
+       * @description key used to force rerendering for the component on resize window, this is needed because the
+       * chart d3 library is not able to recalculate the graph by itself on window resize
+       */
+      componentKey: 0,
     };
   },
+  computed: {
+    id() { return `chart_${uuid()}`; },
+  },
+  watch: {
+    data: {
+      handler() {
+        this.addTooltips();
+      },
+      deep: true,
+    },
+  },
+  mounted() {
+    window.addEventListener('resize', this.forceRerender);
+    this.addTooltips();
+  },
+  methods: {
+    addTooltips() {
+      this.$nextTick(
+        () => {
+          if (this.$refs.d3chart?.chart) {
+            this.$refs.d3chart.chart.gcenter
+              .selectAll('.chart__slice-group')
+              .on('mouseover', ({ data }) => {
+                this.$refs.d3chart.chart.tooltip.html(() => `<div role="tooltip">
+            <div class="arrow"></div>
+            <div class="tooltip-inner">
+              <div class="text-gray-400">${data.label}</div>
+              <div class="font-weight-bold">${data.value}</div>
+              </div>
+              </div>
+              `).classed('active', true);
+              })
+              .on('mouseout', () => {
+                this.$refs.d3chart.chart.tooltip.classed('active', false);
+              })
+              .on('mousemove', () => {
+                const { width, height } = this.$refs.d3chart.chart.tooltip.node().getBoundingClientRect();
+                this.$refs.d3chart.chart.tooltip
+                  .style('position', 'fixed')
+                  .style('left', `${window.event.clientX - (width / 2)}px`)
+                  .style('top', `${window.event.clientY - (height + 5)}px`);
+              });
+          } else {
+            setTimeout(this.addTooltips, 200);
+          }
+        },
+      );
+    },
+    forceRerender() {
+      this.componentKey += 1;
+    },
+  },
+
 };
 </script>
 <style lang="scss" scoped>
-.pie-chart::v-deep .chart {
-  &__label--piechart {
-    display: none;
+.pie-chart::v-deep {
+ .chart {
+    &__label--piechart {
+      display: none;
+    }
+    &__line--piechart {
+      display: none;
+    }
   }
-  &__line--piechart {
-    display: none;
+  .chart__tooltip>div {
+    background: transparent !important;
+    padding: 0 0 5px 0;
+  }
+  .arrow {
+    position: absolute;
+    display: block;
+    width: 100%;
+    height: 0.4rem;
+    text-align: center;
+    bottom: 0;
+    left: -5px;
+
+    &::before {
+      top: 0;
+      border-width: 0.4rem 0.4rem 0;
+      border-color: transparent;
+      border-top-color: black;
+      position: absolute;
+      content: "";
+      border-style: solid;
+    }
   }
 }
+
 .data-list li .bullet {
   height: 10px;
   width: 24px;
