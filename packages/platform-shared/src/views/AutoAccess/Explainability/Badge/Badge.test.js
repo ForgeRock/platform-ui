@@ -30,6 +30,6 @@ describe('ExplainabilityBadge', () => {
 
   it('Badge should contain the title prop text value', () => {
     const badgeTitle = wrapper.find('.badgeTitle').text();
-    expect(badgeTitle).toBe(i18n.t(`autoAccess.access.reasons['${propsData.title}']`));
+    expect(badgeTitle).toBe(i18n.t(`autoAccess.access.heuristics['${propsData.title}']`));
   });
 });
