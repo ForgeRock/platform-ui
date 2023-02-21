@@ -6,6 +6,7 @@
     "active": "Active",
     "activate": "Activate",
     "activated": "Activated",
+    "activity": "Activity",
     "add": "Add",
     "added": "Added",
     "adding": "Adding...",
@@ -407,6 +408,17 @@
     "retrievingObject": "Error retrieving {object}",
     "savingObject": "Error saving {object}",
     "updatingMappingsFail": "Unable to update mappings"
+  },
+  "filterModal": {
+    "activeApplied": "No filters applied | {count} filter applied | {count} filters applied",
+    "labelCategoriesButton": "Categories",
+    "labelCategoriesClear": "Clear categories and show all",
+    "labelCategoriesDropdown": "Filter Categories",
+    "labelFiltersClear": "Clear filters and show all",
+    "labelFiltersButton": "Filters",
+    "labelFiltersDropdown": "Filters",
+    "modalDescription": "Add filters below",
+    "modalTitle": "Filter"
   },
   "locale": {
     "addLocale": "Add Locale",
@@ -827,6 +839,25 @@
       },
       "errors": {
         "retrievingActivity": "There was an error retrieving the Activity Log"
+      },
+      "normalView": {
+        "authenticationAttempts": "Authentication Attempts",
+        "dataTimePeriod": "Data reflects the last 6 months",
+        "userNormalViewTitle": "Access Behavior in the last 6 months",
+        "userInformationRequestError": "Unable to retrieve user information",
+        "filterModal": {
+          "description": "Add filters to narrow authentication attempts shown.",
+          "label-filters-clear": "Clear filters and show all features",
+          "filters-dropdown": "Filter by feature",
+          "title": "Filter Authentication Attempts"
+        }
+      },
+      "heuristics": {
+        "is_automated_user_agent": "Automated User Agent",
+        "is_brute_force": "Brute Force",
+        "is_credential_stuffing": "Credential Stuffing",
+        "is_impossible_travel": "Impossible Travel",
+        "is_suspicious_ip": "Suspicious IP"
       },
       "reasons": {
         "is_automated_user_agent": "Automated User Agent",
