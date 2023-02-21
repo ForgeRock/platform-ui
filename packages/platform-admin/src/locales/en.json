@@ -644,6 +644,17 @@
       "dateRangeYesterday": "Yesterday",
       "description": "Trend data is updated every 2-3 hours. All times are UTC.",
       "title": "Trends",
+      "filterModal": {
+        "activeApplied": "No filters applied | {count} filter applied | {count} filters applied",
+        "labelCategoriesButton": "Categories",
+        "labelCategoriesClear": "Clear categories and show all",
+        "labelCategoriesDropdown": "Filter Categories",
+        "labelFiltersClear": "Clear filters and show all journeys",
+        "labelFiltersButton": "Journeys",
+        "labelFiltersDropdown": "Filter Journeys",
+        "modalDescription": "Add filters to narrow journeys shown.",
+        "modalTitle": "Filter Journeys"
+      },
       "charts": {
         "categories": "Categories",
         "chartLegendFail": "Fail",
@@ -657,8 +668,6 @@
         "journeysFilterButtonTitle": "View:",
         "journeysModalSelected": "Show {count} journey | Show {count} journeys",
         "journeysModalSelectedNone": "No filters applied",
-        "journeysModalCategoryDescription": "Clear filters and show all categories",
-        "journeysModalDescription": "Clear filters and show all journeys",
         "journeysModalTitle": "Filter Journeys",
         "journeysSelectedAll": "All Journeys",
         "journeysSelected": "{count} Journey | {count} Journeys",
@@ -1112,7 +1121,7 @@
           "generic": "There has been an error uploading your file. Please try again",
           "reupload": "Metadata reupload failed. Please try again"
         },
-        "attributeStatementsSection":{
+        "attributeStatementsSection": {
           "title": "Attribute Statements (optional)",
           "description": "Insert statements into the SAML assertions shared with your application.",
           "name": "Name",
@@ -1792,7 +1801,7 @@
         "authEndpoint": "Authorization Endpoint",
         "tokenEndpoint": "Token Endpoint",
         "userInfoEndpoint": "User Info Endpoint",
-        "stage1" : {
+        "stage1": {
           "title": "Add Sign On Method",
           "helpText": "Choose an identity provider to use for admin sign-in to this tenant."
         },
