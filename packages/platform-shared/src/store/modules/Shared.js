@@ -23,6 +23,8 @@ const defaultState = {
   fraasPromotionIngressUrl: null,
   fraasPromotionEgressUrl: null,
   googleMapsApiKey: '',
+  governanceEnabled: false,
+  igaApiUrl: null,
   returnRoute: '',
   returnRouteText: '',
   uiConfig: null,
@@ -65,6 +67,11 @@ const mutations = {
         }
         if (env.VUE_APP_AUTO_ACCESS_JAS_URL) {
           state.autoAccessJasUrl = env.VUE_APP_AUTO_ACCESS_JAS_URL;
+        }
+      }
+      if (env.VUE_APP_ENABLE_GOVERNANCE === 'true' || env.VUE_APP_ENABLE_GOVERNANCE === true) {
+        if (env.VUE_APP_IGA_API_URL) {
+          state.igaApiUrl = env.VUE_APP_IGA_API_URL;
         }
       }
       if (env.VUE_APP_FRAAS_FEDERATION_ENFORCEMENT_URL) {
@@ -111,6 +118,9 @@ const mutations = {
       }
       if (env.VUE_APP_SHOW_SERVICE_ACCOUNT_UI) {
         state.showServiceAccountUi = env.VUE_APP_SHOW_SERVICE_ACCOUNT_UI === 'true' || env.VUE_APP_SHOW_SERVICE_ACCOUNT_UI === true;
+      }
+      if (env.VUE_APP_ENABLE_GOVERNANCE === 'true' || env.VUE_APP_ENABLE_GOVERNANCE === true) {
+        state.governanceEnabled = true;
       }
     }
 

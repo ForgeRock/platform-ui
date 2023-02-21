@@ -216,6 +216,10 @@ const addAppAuth = () => {
     [store.state.SharedStore.idmBaseURL]: 'fr:idm:*',
   };
 
+  if (store.state.SharedStore.governanceEnabled) {
+    resourceServers[store.state.SharedStore.igaApiUrl] = 'fr:iga:*';
+  }
+
   if (store.state.SharedStore.autoAccessEnabled) {
     resourceServers[store.state.SharedStore.autoAccessJasUrl] = 'fr:autoaccess:*';
     resourceServers[store.state.SharedStore.autoAccessApiUrl] = 'fr:autoaccess:*';
