@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -8,12 +8,14 @@ of the MIT license. See the LICENSE file for details. -->
       <FrFilterBuilderGroup
         path="0"
         :class="{ 'pb-3': hideAdvanced }"
+        :condition-options="conditionOptions"
         :disabled="disabled"
         :rules="queryFilter"
         :resource-name="resourceName"
         :depth="0"
         :max-depth="maxDepth"
         :index="0"
+        :operator-options="operatorOptions"
         :properties="slashedProperties"
         @add-rule="updateFilter('add-rule', $event)"
         @remove-rule="updateFilter('remove-rule', $event)"
@@ -49,7 +51,7 @@ import { cloneDeep } from 'lodash';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import FrFilterBuilderAdvanced from '../components/FilterBuilderAdvanced';
 import FrFilterBuilderGroup from '../components/FilterBuilderGroup';
-import { operatorOptions, getTypeFromValue } from '../utils/QueryFilterDefaults';
+import { defaultConditionOptions, operatorOptions, getTypeFromValue } from '../utils/QueryFilterDefaults';
 import { findGroup, checkIfWithinThreeLayers } from '../utils/filterBuilderUtils';
 
 const defaultFilterOperator = operatorOptions.Any.delimeter;
@@ -80,6 +82,8 @@ export default {
       allowBasicMode: false,
       uniqueIndex: 0,
       validatedQueryFilter: {},
+      conditionOptions: defaultConditionOptions,
+      operatorOptions,
     };
   },
   props: {
@@ -409,6 +413,7 @@ export default {
   },
   watch: {
     queryFilter(queryFilter) {
+      this.$emit('filter-update', queryFilter);
       const filterString = this.toFilterString(queryFilter, 0);
       this.filterString = filterString;
       const emptyPropertyNames = filterString.match(/\/ /g);
