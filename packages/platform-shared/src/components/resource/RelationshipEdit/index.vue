@@ -30,7 +30,7 @@ of the MIT license. See the LICENSE file for details. -->
       v-model="relationshipField.value"
       open-direction="bottom"
       :allow-empty="true"
-      :close-on-select="closeOnSelect"
+      :close-on-select="relationshipField.type === 'select'"
       :disabled="disabled"
       :description="relationshipField.description"
       :id="relationshipProperty.key + index"
@@ -166,13 +166,6 @@ export default {
   ],
   props: {
     disabled: {
-      type: Boolean,
-      default: false,
-    },
-    /**
-     * Enable/disable closing multiselect after selecting an option
-     */
-    closeOnSelect: {
       type: Boolean,
       default: false,
     },
