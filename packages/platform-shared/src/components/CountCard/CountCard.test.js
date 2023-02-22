@@ -7,6 +7,7 @@
 
 import BootstrapVue from 'bootstrap-vue';
 import { shallowMount, createLocalVue } from '@vue/test-utils';
+import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import CountCard from './index';
 
 const localVue = createLocalVue();
@@ -46,7 +47,7 @@ describe('CountCard Component', () => {
     expect(wrapper.find('h1').exists()).toBe(false);
   });
 
-  it('CountCard to hide loader and show count when loader prop set to false', () => {
+  it('CountCard to hide loader and show correct count when loader prop set to false', () => {
     wrapper = shallowMount(CountCard, {
       propsData: {
         ...propsData,
@@ -59,5 +60,8 @@ describe('CountCard Component', () => {
 
     expect(wrapper.contains('.fr-spinner')).toBe(false);
     expect(wrapper.find('h1').exists()).toBe(true);
+
+    const h1 = findByTestId(wrapper, 'counter-unit_test_count');
+    expect(h1.text()).toBe('100');
   });
 });
