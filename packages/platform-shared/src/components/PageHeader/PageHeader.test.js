@@ -1,10 +1,10 @@
 /**
- * Copyright 2020 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
+
 import { shallowMount } from '@vue/test-utils';
 import PageHeader from './index';
 
@@ -20,11 +20,25 @@ describe('Navbar Component', () => {
         subtitle: 'testSubtitle',
       },
     });
-    expect(wrapper.find('.text-muted').text()).toContain('testSubtitle');
+    expect(wrapper.find('p.text-muted').text()).toContain('testSubtitle');
   });
 
   it('Does not includes a subtitle by default', () => {
     const wrapper = shallowMount(PageHeader);
-    expect(wrapper.find('.text-muted').exists()).toBe(false);
+    expect(wrapper.find('p.text-muted').exists()).toBe(false);
+  });
+
+  it('Includes a top text if given', () => {
+    const wrapper = shallowMount(PageHeader, {
+      propsData: {
+        topText: 'topTextTest',
+      },
+    });
+    expect(wrapper.find('h5.text-muted').text()).toContain('topTextTest');
+  });
+
+  it('Does not includes a top text by default', () => {
+    const wrapper = shallowMount(PageHeader);
+    expect(wrapper.find('h5.text-muted').exists()).toBe(false);
   });
 });
