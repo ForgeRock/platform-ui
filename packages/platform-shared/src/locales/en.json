@@ -1265,6 +1265,7 @@
         },
         "editReviewerErrorMessage": "Error saving reviewer",
         "editReviewerSuccessfullyMessage": "Reviewer permissions saved",
+        "editReviewerUserExistsErrorMessage": "Reviewer already assigned",
         "removeReviewerSuccessfullyMessage": "Reviewer removed",
         "removeReviewerErrorMessage": "Error removing reviewer",
         "reviewersTable": {
