@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -44,7 +44,13 @@ of the MIT license. See the LICENSE file for details. -->
             class="rule-value-col mb-2 mb-md-0"
             v-if="!conditionIsPresent"
             :md="true">
+            <FrGovResourceSelect
+              v-if="inputValue.type === 'managedObject' && selectConditionOptions.value !== 'EXISTS'"
+              v-model="inputValue.value"
+              @input="ruleChange({ value: $event })"
+              :resource-path="getResourcePath(selectPropOptions.value)" />
             <FrField
+              v-else
               v-model="inputValue.value"
               name="inputValue"
               :disabled="disabled"
@@ -72,12 +78,12 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   BCard, BCol, BFormRow,
 } from 'bootstrap-vue';
-import { capitalize } from 'lodash';
+import { capitalize, find } from 'lodash';
 import FrField from '@forgerock/platform-shared/src/components/Field';
+import FrGovResourceSelect from '../GovResourceSelect';
 import FrFilterBuilderAddButton from '../FilterBuilderAddButton';
 import FrFilterBuilderRemoveButton from '../FilterBuilderRemoveButton';
-import { defaultConditionOptions, getTypeFromValue } from '../../utils/QueryFilterDefaults';
-import { ldapDefaultConditionOptions } from '../../utils/LdapFilterDefaults';
+import { getTypeFromValue } from '../../utils/QueryFilterDefaults';
 
 export default {
   name: 'FilterBuilderRow',
@@ -88,13 +94,14 @@ export default {
     FrField,
     FrFilterBuilderAddButton,
     FrFilterBuilderRemoveButton,
+    FrGovResourceSelect,
   },
   computed: {
     selectConditionOptions() {
       let options;
 
       if (this.isLdap) {
-        options = Object.values(ldapDefaultConditionOptions).map(
+        options = Object.values(this.conditionOptions).map(
           (prop) => ({ text: prop.label, value: prop.value }),
         );
         return {
@@ -119,7 +126,8 @@ export default {
       return this.depth === this.maxDepth - 1;
     },
     conditionIsPresent() {
-      return this.rule.operator === defaultConditionOptions.IsPresent.value || this.rule.operator === defaultConditionOptions.IsNotPresent.value;
+      if (!this.conditionOptions.IsPresent) return false;
+      return this.rule.operator === this.conditionOptions.IsPresent.value || this.rule.operator === this.conditionOptions.IsNotPresent.value;
     },
     selectPropOptions() {
       return {
@@ -132,7 +140,6 @@ export default {
   data() {
     return {
       propertyPlaceholder: this.$t('queryFilterBuilder.properties', { propertyName: capitalize(this.resourceName) }),
-      defaultConditionOptions,
       inputValue: this.parseType(this.rule.field, this.rule.value),
       value: '',
       customPropValue: this.rule.field,
@@ -179,6 +186,10 @@ export default {
       required: true,
       type: Object,
     },
+    conditionOptions: {
+      type: Object,
+      required: true,
+    },
   },
   watch: {
     rule(rule, prevRule) {
@@ -191,16 +202,19 @@ export default {
     },
   },
   methods: {
+    getResourcePath(prop) {
+      return find(this.properties, ((x) => x.value === prop)).path;
+    },
     addRule(type) {
       this.$emit('add-rule', {
         depth: this.depth, index: this.index, path: this.path, type,
       });
     },
     conditionOptionsByType(type) {
-      const defaultConditions = Object.values(defaultConditionOptions)
+      const defaultConditions = Object.values(this.conditionOptions)
         .map((option) => ({ text: option.label, value: option.value }));
 
-      const conditions = Object.values(defaultConditionOptions)
+      const conditions = Object.values(this.conditionOptions)
         .filter((option) => option.type.includes(type))
         .map((option) => ({ text: option.label, value: option.value }
         ));
@@ -218,6 +232,8 @@ export default {
           };
         case 'number':
           return { type: 'integer', value: typeof value === 'number' ? value : '' };
+        case 'managedObject':
+          return { type: 'managedObject', value, resourcePath: value };
         default:
           return { type, value };
       }

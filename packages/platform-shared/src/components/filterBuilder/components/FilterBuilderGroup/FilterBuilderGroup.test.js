@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,6 +7,7 @@
 
 import { mount } from '@vue/test-utils';
 import FilterBuilderGroup from './index';
+import { defaultConditionOptions, operatorOptions } from '../../utils/QueryFilterDefaults';
 
 const mountProps = {
   mocks: {
@@ -18,11 +19,13 @@ const mountProps = {
     },
   },
   propsData: {
+    conditionOptions: defaultConditionOptions,
     depth: 0,
     disabled: false,
     hasSiblings: false,
     index: 0,
     maxDepth: 4,
+    operatorOptions,
     path: '0',
     properties: [
       { label: 'Username', value: '/userName', type: 'string' },
