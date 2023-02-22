@@ -790,23 +790,33 @@ export default {
       this.$root.$emit('bv::show::modal', 'CertificationTaskEditReviewerModal');
     },
     closeEditReviewerModal() {
+      this.currentReviewerSelectedModal = null;
       this.$root.$emit('bv::hide::modal', 'CertificationTaskEditReviewerModal');
       this.$root.$emit('bv::show::modal', 'CertificationTaskReviewersModal');
     },
     editReviewer(reviewerId, permissions, newReviewer) {
       this.isSavingReviewer = true;
+
+      // Verify if the user already exists on current reviewers
+      if (newReviewer && this.currentReviewersSelectedModal.some((reviewer) => reviewer.id === reviewerId)) {
+        this.displayNotification('error', this.$t('governance.certificationTask.lineItemReviewersModal.editReviewerUserExistsErrorMessage'));
+        this.isSavingReviewer = false;
+        return;
+      }
+
+      // assign the permissions to the user
       reassignLineItem(this.campaignId, this.currentLineItemIdSelectedModal, reviewerId, permissions).then(() => {
-        const messageKey = !newReviewer
-          ? 'governance.certificationTask.lineItemReviewersModal.editReviewerSuccessfullyMessage'
-          : 'governance.certificationTask.lineItemReviewersModal.addReviewerSuccessfullyMessage';
-        this.displayNotification('success', this.$t(messageKey));
-        if (newReviewer) {
+        let messageKey = 'governance.certificationTask.lineItemReviewersModal.editReviewerSuccessfullyMessage';
+        const currentReviewer = this.currentReviewersSelectedModal.find((reviewer) => reviewer.id === reviewerId);
+        if (!currentReviewer) {
           newReviewer.id = reviewerId;
           newReviewer.permissions = permissions;
           this.currentReviewersSelectedModal.push(newReviewer);
+          messageKey = 'governance.certificationTask.lineItemReviewersModal.addReviewerSuccessfullyMessage';
         } else {
-          this.currentReviewersSelectedModal.find((reviewer) => reviewer.id === reviewerId).permissions = permissions;
+          currentReviewer.permissions = permissions;
         }
+        this.displayNotification('success', this.$t(messageKey));
         this.closeEditReviewerModal();
       }).catch((error) => {
         this.showErrorMessage(error, this.$t('governance.certificationTask.lineItemReviewersModal.editReviewerErrorMessage'));
