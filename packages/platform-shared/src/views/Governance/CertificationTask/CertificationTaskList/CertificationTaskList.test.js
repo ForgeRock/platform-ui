@@ -1092,23 +1092,6 @@ describe('CertificationTaskList', () => {
         wrapper.vm.currentReviewersSelectedModal = reviewers;
       });
 
-      it('editReviewer should call api correctly', async () => {
-        const reviewerId = '/managed/user/12345';
-        [wrapper.vm.currentReviewerSelectedModal] = reviewers;
-        const closeEditReviewerModalSpy = jest.spyOn(wrapper.vm, 'closeEditReviewerModal');
-
-        expect(closeEditReviewerModalSpy).not.toHaveBeenCalled();
-
-        wrapper.vm.editReviewer(reviewerId, permissions);
-
-        await flushPromises();
-
-        expect(displayNotificationSpy).toHaveBeenCalledWith('success', 'governance.certificationTask.lineItemReviewersModal.editReviewerSuccessfullyMessage');
-        expect(wrapper.vm.currentReviewersSelectedModal.find((reviewer) => reviewer.id === reviewerId).permissions).toEqual(permissions);
-        expect(closeEditReviewerModalSpy).toHaveBeenCalled();
-        expect(wrapper.vm.isSavingReviewer).toBe(false);
-      });
-
       it('editReviewer should call api correctly new reviewer', async () => {
         const reviewerId = '/managed/user/123457';
         const newReviewer = {
@@ -1141,6 +1124,40 @@ describe('CertificationTaskList', () => {
         expect(displayNotificationSpy).toHaveBeenCalledWith('success', 'governance.certificationTask.lineItemReviewersModal.addReviewerSuccessfullyMessage');
         expect(wrapper.vm.currentReviewersSelectedModal).toEqual(newReviewers);
         expect(closeEditReviewerModalSpy).toHaveBeenCalled();
+        expect(wrapper.vm.isSavingReviewer).toBe(false);
+      });
+
+      it('editReviewer should show error when the user is already a reviewer', async () => {
+        const reviewerId = '/managed/user/12345';
+        const newReviewer = {
+          id: '/managed/user/12345',
+          givenName: 'test',
+          permissions: {
+            comment: true,
+            delegate: true,
+            forward: true,
+            reassign: true,
+            consult: true,
+            signoff: false,
+            certify: false,
+            exception: false,
+            revoke: false,
+            reset: false,
+            save: true,
+            removeActor: true,
+            accept: true,
+            challenge: true,
+          },
+        };
+        const closeEditReviewerModalSpy = jest.spyOn(wrapper.vm, 'closeEditReviewerModal');
+
+        wrapper.vm.editReviewer(reviewerId, permissions, newReviewer);
+
+        await flushPromises();
+
+        expect(displayNotificationSpy).toHaveBeenCalledWith('error', 'governance.certificationTask.lineItemReviewersModal.editReviewerUserExistsErrorMessage');
+        expect(wrapper.vm.currentReviewersSelectedModal).toEqual(reviewers);
+        expect(closeEditReviewerModalSpy).not.toHaveBeenCalled();
         expect(wrapper.vm.isSavingReviewer).toBe(false);
       });
 
