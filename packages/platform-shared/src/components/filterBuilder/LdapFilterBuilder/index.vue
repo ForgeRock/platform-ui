@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -8,9 +8,11 @@ of the MIT license. See the LICENSE file for details. -->
       <FrFilterBuilderGroup
         is-ldap
         path="0"
+        :condition-options="ldapDefaultConditionOptions"
         :depth="0"
         :disabled="disabled"
         :index="0"
+        :operator-options="ldapOperatorOptions"
         :max-depth="maxDepth"
         :rules="queryFilter"
         @add-rule="updateFilter('add-rule', $event)"
@@ -85,6 +87,8 @@ export default {
       isBasic: true,
       maxDepth: 4,
       queryFilter: {},
+      ldapOperatorOptions,
+      ldapDefaultConditionOptions,
       uniqueIndex: 0,
     };
   },

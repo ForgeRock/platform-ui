@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -9,6 +9,33 @@ of the MIT license. See the LICENSE file for details. -->
  */
 export default {
   name: 'DateMixin',
+  data() {
+    return {
+      daysOfWeek: [
+        this.$t('common.daysOfWeek.sundayShort'),
+        this.$t('common.daysOfWeek.mondayShort'),
+        this.$t('common.daysOfWeek.tuesdayShort'),
+        this.$t('common.daysOfWeek.wednesdayShort'),
+        this.$t('common.daysOfWeek.thursdayShort'),
+        this.$t('common.daysOfWeek.fridayShort'),
+        this.$t('common.daysOfWeek.saturdayShort'),
+      ],
+      monthNames: [
+        this.$t('common.months.january'),
+        this.$t('common.months.february'),
+        this.$t('common.months.march'),
+        this.$t('common.months.april'),
+        this.$t('common.months.may'),
+        this.$t('common.months.june'),
+        this.$t('common.months.july'),
+        this.$t('common.months.august'),
+        this.$t('common.months.september'),
+        this.$t('common.months.october'),
+        this.$t('common.months.november'),
+        this.$t('common.months.december'),
+      ],
+    };
+  },
   methods: {
     // Subtracts input time from current time and converts into comparison string
     timeAgo(date) {

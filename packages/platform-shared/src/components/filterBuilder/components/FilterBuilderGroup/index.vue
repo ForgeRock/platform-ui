@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -11,7 +11,9 @@ of the MIT license. See the LICENSE file for details. -->
         <div
           v-if="isBaseGroup"
           class="pr-2">
-          {{ $t('queryFilterBuilder.groupOperatorText1', { resourceName }) }}
+          <slot name="prefix">
+            {{ $t('queryFilterBuilder.groupOperatorText1', { resourceName }) }}
+          </slot>
         </div>
         <div class="pr-sm-2 py-1 py-sm-0">
           <FrField
@@ -25,7 +27,9 @@ of the MIT license. See the LICENSE file for details. -->
             @input="operatorChange" />
         </div>
         <template v-if="isBaseGroup">
-          {{ $t('queryFilterBuilder.groupOperatorText2') }}
+          <slot name="suffix">
+            {{ $t('queryFilterBuilder.groupOperatorText2') }}
+          </slot>
         </template>
       </div>
       <template v-if="!isBaseGroup">
@@ -45,6 +49,7 @@ of the MIT license. See the LICENSE file for details. -->
     <template v-for="(subfilter, i) in rules.subfilters">
       <FrFilterBuilderRow
         v-if="isRow(subfilter)"
+        :condition-options="conditionOptions"
         :disabled="disabled"
         :rule="subfilter"
         :resource-name="resourceName"
@@ -61,6 +66,7 @@ of the MIT license. See the LICENSE file for details. -->
         @rule-change="ruleChange" />
       <FilterBuilderGroup
         v-else
+        :condition-options="conditionOptions"
         :disabled="disabled"
         :rules="subfilter"
         :resource-name="resourceName"
@@ -70,6 +76,7 @@ of the MIT license. See the LICENSE file for details. -->
         :is-ldap="isLdap"
         :key="subfilter.uniqueIndex"
         :max-depth="maxDepth"
+        :operator-options="operatorOptions"
         :path="`${path}:${i}`"
         :properties="properties"
         @add-rule="addRule"
@@ -86,8 +93,6 @@ import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrFilterBuilderRow from '../FilterBuilderRow';
 import FrFilterBuilderAddButton from '../FilterBuilderAddButton';
 import FrFilterBuilderRemoveButton from '../FilterBuilderRemoveButton';
-import { operatorOptions } from '../../utils/QueryFilterDefaults';
-import { ldapOperatorOptions } from '../../utils/LdapFilterDefaults';
 
 export default {
   name: 'FilterBuilderGroup',
@@ -116,22 +121,19 @@ export default {
       return this.depth === 0;
     },
     defaultOperatorOptions() {
-      const operators = this.isLdap ? ldapOperatorOptions : operatorOptions;
       return {
-        options: Object.values(operators).map(
+        options: Object.values(this.operatorOptions).map(
           (prop) => ({ text: prop.label, value: prop.delimeter }),
         ),
         value: this.rules.operator,
       };
     },
   },
-  data() {
-    return {
-      ldapOperatorOptions,
-      operatorOptions,
-    };
-  },
   props: {
+    conditionOptions: {
+      type: Object,
+      required: true,
+    },
     disabled: {
       type: Boolean,
       default: false,
@@ -163,6 +165,10 @@ export default {
     maxDepth: {
       required: true,
       type: Number,
+    },
+    operatorOptions: {
+      type: Object,
+      default: () => {},
     },
     path: {
       required: true,

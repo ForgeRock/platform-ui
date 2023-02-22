@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -9,6 +9,10 @@ of the MIT license. See the LICENSE file for details. -->
     @click="$emit('click')"
     :data-testid="testid">
     <div v-if="!showSpinner">
+      <FrIcon
+        v-if="icon"
+        :name="icon"
+        :class="iconClass" />
       {{ buttonText }}
     </div>
     <div
@@ -28,13 +32,14 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import { BButton } from 'bootstrap-vue';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 
 /**
  *  Button with a spinner and adjusted text while processing
  */
 export default {
   name: 'ButtonWithSpinner',
-  components: { BButton, FrSpinner },
+  components: { BButton, FrSpinner, FrIcon },
   props: {
     /**
      * Text displayed in button
@@ -78,6 +83,14 @@ export default {
     testid: {
       type: String,
       default: '',
+    },
+    icon: {
+      type: String,
+      default: null,
+    },
+    iconClass: {
+      type: String,
+      default: null,
     },
   },
 };
