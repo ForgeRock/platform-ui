@@ -40,9 +40,9 @@ of the MIT license. See the LICENSE file for details. -->
       {{ $t(displayName) }}
     </span>
     <span
-      v-if="showBadgeWithContentFromStore && badgeContent"
+      v-if="showBadgeWithContentFromStore && badgeContent(showBadgeWithContentFromStore)"
       class="badge badge-pill badge-danger ml-3">
-      {{ badgeContent }}
+      {{ badgeContent(showBadgeWithContentFromStore) }}
     </span>
   </Component>
   <!-- Basic menu item that just emits event -->
@@ -111,6 +111,11 @@ of the MIT license. See the LICENSE file for details. -->
             :name="subItem.icon" />
           <span class="menu-item-text">
             {{ $t(subItem.displayName) }}
+          </span>
+          <span
+            v-if="badgeContent(subItem.showBadgeWithContentFromStore)"
+            class="badge badge-pill badge-danger ml-3">
+            {{ badgeContent(subItem.showBadgeWithContentFromStore) }}
           </span>
         </Component>
       </template>
@@ -266,13 +271,10 @@ export default {
   data() {
     return {
       bootstrapComponent: this.isNav ? BNavItem : BDropdownItem,
-      isExpanded: this.shouldBeExpanded(this.$route.name),
+      isExpanded: !!this.shouldBeExpanded(this.$route.name),
     };
   },
   computed: {
-    badgeContent() {
-      return this.showBadgeWithContentFromStore ? this.$store.state[this.showBadgeWithContentFromStore] : '';
-    },
     showItemForPrivileges() {
       const adminFederationNotEnabled = !this.$store.state.SharedStore.adminFederationEnabled;
       const emptyShowForPrivilegesProp = !this.showForPrivileges.length;
@@ -298,6 +300,9 @@ export default {
     },
   },
   methods: {
+    badgeContent(showBadgeWithContentFromStore) {
+      return showBadgeWithContentFromStore ? this.$store.state[showBadgeWithContentFromStore] : '';
+    },
     // If the item is restricted by roles, only display it to users who have at least one of the required roles
     showSubItemForUser(showForRoles) {
       return !showForRoles?.length || this.userRoles.some((userRole) => showForRoles.includes(userRole));
