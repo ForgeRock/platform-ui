@@ -60,18 +60,18 @@ const router = new Router({
       component: () => import('@/components/profile'),
       meta: { authenticate: true },
     },
-    // {
-    //   path: '/access-reviews',
-    //   name: 'AccessReviews',
-    //   component: () => import('@/views/AccessReviews'),
-    //   meta: { authenticate: true },
-    // },
-    // {
-    //   path: '/certification/certification-task/:campaignId',
-    //   name: 'CertificationTask',
-    //   component: () => import('@forgerock/platform-shared/src/views/Governance/CertificationTask'),
-    //   meta: { hideNavBar: true, hideSideMenu: true },
-    // },
+    {
+      path: '/access-reviews',
+      name: 'AccessReviews',
+      component: () => import('@/views/AccessReviews'),
+      meta: { authenticate: true },
+    },
+    {
+      path: '/certification/certification-task/:campaignId',
+      name: 'CertificationTask',
+      component: () => import('@forgerock/platform-shared/src/views/Governance/CertificationTask'),
+      meta: { hideNavBar: true, hideSideMenu: true },
+    },
     {
       path: '/applications',
       name: 'Applications',
