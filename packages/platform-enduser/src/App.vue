@@ -80,27 +80,27 @@ export default {
           displayName: 'sideMenu.dashboard',
           icon: 'dashboard',
         },
-        // (this.$store.state.SharedStore.governanceEnabled === true
-        //   ? {
-        //     menuGroup: true,
-        //     displayName: 'sideMenu.inbox',
-        //     icon: 'inbox',
-        //     subItems: [
-        //       {
-        //         showBadgeWithContentFromStore: 'certificationCount',
-        //         displayName: 'sideMenu.accessReviews',
-        //         routeTo: {
-        //           name: 'AccessReviews',
-        //         },
-        //       },
-        //     ],
-        //   }
-        //   : {}),
-        // (this.$store.state.SharedStore.workforceEnabled === true
-        //   ? {
-        //     isDivider: true,
-        //   }
-        //   : {}),
+        (this.$store.state.SharedStore.governanceEnabled === true
+          ? {
+            menuGroup: true,
+            displayName: 'sideMenu.inbox',
+            icon: 'inbox',
+            subItems: [
+              {
+                showBadgeWithContentFromStore: 'certificationCount',
+                displayName: 'sideMenu.accessReviews',
+                routeTo: {
+                  name: 'AccessReviews',
+                },
+              },
+            ],
+          }
+          : {}),
+        (this.$store.state.SharedStore.workforceEnabled === true
+          ? {
+            isDivider: true,
+          }
+          : {}),
         (this.$store.state.SharedStore.workforceEnabled === true
           ? {
             routeTo: { name: 'Applications' },
