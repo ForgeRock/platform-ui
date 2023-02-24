@@ -42,7 +42,6 @@ import { getIdmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoA
 import ThemeInjector from '@forgerock/platform-shared/src/components/ThemeInjector/';
 import { getDefaultProcess } from '@forgerock/platform-shared/src/views/AutoAccess/RiskConfig/api/RiskConfigAPI';
 import { getConfig } from '@forgerock/platform-shared/src/views/AutoAccess/Shared/utils/api';
-// import { getCertificationItems } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import i18n from '@/i18n';
 import './scss/main.scss';
 
@@ -153,18 +152,6 @@ export default {
       this.showErrorMessage(error, this.$t('errors.couldNotRetrieveVersion'));
     });
 
-    // if (this.$store.state.SharedStore && this.$store.state.SharedStore.governanceEnabled) {
-    //   // add Dashboard to menu items
-    //   this.menuItems.unshift(
-    //     {
-    //       routeTo: { name: 'Dashboard' },
-    //       displayName: 'sideMenu.dashboard',
-    //       icon: 'dashboard',
-    //     },
-    //   );
-    //   this.setAccessReviewCount();
-    // }
-
     if (this.$store.state.SharedStore && this.$store.state.SharedStore.autoAccessEnabled) {
       this.checkAutoAccess();
     }
@@ -220,13 +207,7 @@ export default {
         this.showRiskAdministration();
       }).catch(() => {});
     },
-    // setAccessReviewCount() {
-    //   getCertificationItems().then(({ data }) => {
-    //     this.$store.commit('setCertificationCount', data.totalCount);
-    //   });
-    // },
     showRiskAdministration() {
-      const menuIndex = this.$store.state.SharedStore.governanceEnabled ? 3 : 2;
       const autoAccessAdminMenu = [
         {
           menuGroup: true,
@@ -248,10 +229,9 @@ export default {
           ],
         },
       ];
-      this.menuItems.splice(menuIndex, 0, autoAccessAdminMenu);
+      this.menuItems.splice(6, 0, autoAccessAdminMenu);
     },
     showRiskDashboad() {
-      const menuIndex = this.$store.state.SharedStore.governanceEnabled ? 1 : 0;
       const autoAccessDashboardMenu = [
         {
           displayName: 'sideMenu.riskDashboard',
@@ -259,7 +239,7 @@ export default {
           icon: 'show_chart',
         },
       ];
-      this.menuItems.splice(menuIndex, 0, autoAccessDashboardMenu);
+      this.menuItems.splice(1, 0, autoAccessDashboardMenu);
     },
   },
 };
