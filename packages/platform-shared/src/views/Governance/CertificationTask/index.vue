@@ -71,7 +71,7 @@ export default {
       campaignDetails: {},
       campaignId: null,
       certifierId: null,
-      hideSignOff: false,
+      hideSignOff: true,
       isDetailsLoading: false,
       isSaving: false,
       loadFailed: false,

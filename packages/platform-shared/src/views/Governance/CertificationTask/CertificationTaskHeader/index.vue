@@ -104,7 +104,7 @@ export default {
     },
     hideSignOff: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     isSaving: {
       type: Boolean,
