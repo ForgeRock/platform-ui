@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -9,6 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
         {{ title }}
       </h5>
       <div
+        v-if="tooltip"
         :id="`link-button-${tooltipId}`"
         class="tooltip-button"
         tabindex="0"
@@ -34,11 +35,17 @@ of the MIT license. See the LICENSE file for details. -->
         </h1>
       </Transition>
       <BTooltip
+        v-if="tooltip"
         no-fade
         placement="top"
         :target="`link-button-${tooltipId}`">
         {{ tooltip }}
       </BTooltip>
+      <RouterLink
+        v-if="linkPath"
+        :to="linkPath">
+        {{ linkText }}
+      </RouterLink>
     </div>
   </BCard>
 </template>
@@ -82,6 +89,20 @@ export default {
       required: true,
       type: Number,
     },
+    /**
+     * Route message
+     */
+    linkText: {
+      default: '',
+      type: String,
+    },
+    /**
+     * Route to redirect
+     */
+    linkPath: {
+      default: '',
+      type: String,
+    },
     loading: {
       default: false,
       type: Boolean,
@@ -90,8 +111,9 @@ export default {
      * String to be used as tooltip  content
      */
     tooltip: {
-      required: true,
+      required: false,
       type: String,
+      default: '',
     },
     /**
      * String to be used as main title of card
