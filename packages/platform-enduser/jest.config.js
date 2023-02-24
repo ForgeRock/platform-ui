@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -12,7 +12,4 @@ process.env.VUE_CLI_BABEL_TRANSPILE_MODULES = true;
 
 module.exports = {
   ...baseConfig,
-  modulePathIgnorePatterns: [
-    'src/components/dashboard',
-  ],
 };
