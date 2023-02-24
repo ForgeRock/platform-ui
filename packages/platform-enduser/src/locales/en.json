@@ -25,6 +25,28 @@
     }
   },
   "pages": {
+    "accessReview": {
+      "title": "Access Reviews",
+      "subTitle": "View and complete your certification tasks.",
+      "status": {
+        "active": "Active",
+        "in-progress": "Active",
+        "cancelled": "Cancelled",
+        "closed": "Closed",
+        "completed": "Completed",
+        "expired": "Expired",
+        "expiring": "Expiring",
+        "overdue": "Overdue"
+      },
+      "forwardReviewModal": {
+        "title": "Forward Access Review",
+        "description": "Forward this access review to:",
+        "toUser": "Another user",
+        "toRole": "Users with assigned role",
+        "chooseRole": "Choose a role",
+        "chooseUser": "Choose a user"
+      }
+    },
     "applications": {
       "search": "Search your apps",
       "title": "My Applications"
@@ -34,7 +56,12 @@
         "heading": "My Applications",
         "listItemBrandIconAltText": "{appName} icon."
       },
+      "cardCount": {
+        "accessReviews": "Access Reviews",
+        "viewAccessReviews": "View access reviews"
+      },
       "errorGetApplications": "There was an error retrieving your applications",
+      "errorRetrievingAccesReviews": "There was an error retrieving access reviews",
       "noWidget": "No Widgets Available",
       "noWidgetSubText": "Don't worry, you still have a <a href=\"#/profile\">profile</a>.",
       "widgets": {
@@ -125,8 +152,12 @@
     }
   },
   "sideMenu": {
-    "applications": "Applications",
-    "profile": "Profile"
+    "applications": "My Applications",
+    "delegates": "Delegates",
+    "directory": "My Directory",
+    "profile": "Profile",
+    "inbox": "Inbox",
+    "accessReviews":"Access Reviews"
   },
   "pageTitles": {
     "Applications": "Applications",
@@ -134,13 +165,32 @@
     "AutoAccessPipelines": "Pipelines",
     "AutoAccessRiskConfig": "RiskConfig",
     "AutoAccessDataSources": "Data Sources",
+    "CertificationTask": "Certification Task",
     "Dashboard": "Dashboard",
+    "Delegates": "Delegates",
     "EditResource": "Edit Resource",
     "Forbidden": "Forbidden",
+    "AccessReviews": "Access Reviews",
     "ListResource": "List Resource",
     "NotFound": "Not Found",
     "pageTitle": "Platform Enduser - {page}",
     "Profile": "Profile",
     "Sharing": "Sharing"
+  },
+  "governance": {
+    "delegates": {
+      "addDelegates": "Add Delegates",
+      "addModalTitle": "Choose users to add as delegates.",
+      "delegateAdded": "Delegate successfully added",
+      "delegateRemoved": "Delegate successfully removed",
+      "endDate": "End Date",
+      "errorAddingDelegate": "Error adding delegate",
+      "errorGettingDelegates": "Error getting delegates",
+      "errorDeletingDelegate": "Error deleting delegate",
+      "startDate": "Start Date",
+      "subtitle": "View users delegated to complete your tasks in the event you are unable.",
+      "timeConstraintLabel": "Assign role only during a selected time period",
+      "title": "My Delegates"
+    }
   }
 }

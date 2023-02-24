@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -60,6 +60,18 @@ const router = new Router({
       component: () => import('@/components/profile'),
       meta: { authenticate: true },
     },
+    // {
+    //   path: '/access-reviews',
+    //   name: 'AccessReviews',
+    //   component: () => import('@/views/AccessReviews'),
+    //   meta: { authenticate: true },
+    // },
+    // {
+    //   path: '/certification/certification-task/:campaignId',
+    //   name: 'CertificationTask',
+    //   component: () => import('@forgerock/platform-shared/src/views/Governance/CertificationTask'),
+    //   meta: { hideNavBar: true, hideSideMenu: true },
+    // },
     {
       path: '/applications',
       name: 'Applications',
@@ -72,6 +84,12 @@ const router = new Router({
           next({ name: 'NotFound' });
         }
       },
+    },
+    {
+      path: '/my-delegates',
+      name: 'Delegates',
+      component: () => import('@/views/Directory/Delegates'),
+      meta: { authenticate: true },
     },
     {
       path: '/list/:resourceType/:resourceName',

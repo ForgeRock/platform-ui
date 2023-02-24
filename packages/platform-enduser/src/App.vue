@@ -42,6 +42,7 @@ import { getIdmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoA
 import ThemeInjector from '@forgerock/platform-shared/src/components/ThemeInjector/';
 import { getDefaultProcess } from '@forgerock/platform-shared/src/views/AutoAccess/RiskConfig/api/RiskConfigAPI';
 import { getConfig } from '@forgerock/platform-shared/src/views/AutoAccess/Shared/utils/api';
+// import { getCertificationItems } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import i18n from '@/i18n';
 import './scss/main.scss';
 
@@ -79,11 +80,45 @@ export default {
           displayName: 'sideMenu.dashboard',
           icon: 'dashboard',
         },
+        // (this.$store.state.SharedStore.governanceEnabled === true
+        //   ? {
+        //     menuGroup: true,
+        //     displayName: 'sideMenu.inbox',
+        //     icon: 'inbox',
+        //     subItems: [
+        //       {
+        //         showBadgeWithContentFromStore: 'certificationCount',
+        //         displayName: 'sideMenu.accessReviews',
+        //         routeTo: {
+        //           name: 'AccessReviews',
+        //         },
+        //       },
+        //     ],
+        //   }
+        //   : {}),
+        // (this.$store.state.SharedStore.workforceEnabled === true
+        //   ? {
+        //     isDivider: true,
+        //   }
+        //   : {}),
         (this.$store.state.SharedStore.workforceEnabled === true
           ? {
             routeTo: { name: 'Applications' },
             displayName: 'sideMenu.applications',
             icon: 'apps',
+          }
+          : {}),
+        (this.$store.state.SharedStore.governanceEnabled === true
+          ? {
+            menuGroup: true,
+            displayName: 'sideMenu.directory',
+            icon: 'people',
+            subItems: [
+              {
+                displayName: 'sideMenu.delegates',
+                routeTo: { name: 'Delegates' },
+              },
+            ],
           }
           : {}),
         {
@@ -117,6 +152,18 @@ export default {
     }, (error) => {
       this.showErrorMessage(error, this.$t('errors.couldNotRetrieveVersion'));
     });
+
+    // if (this.$store.state.SharedStore && this.$store.state.SharedStore.governanceEnabled) {
+    //   // add Dashboard to menu items
+    //   this.menuItems.unshift(
+    //     {
+    //       routeTo: { name: 'Dashboard' },
+    //       displayName: 'sideMenu.dashboard',
+    //       icon: 'dashboard',
+    //     },
+    //   );
+    //   this.setAccessReviewCount();
+    // }
 
     if (this.$store.state.SharedStore && this.$store.state.SharedStore.autoAccessEnabled) {
       this.checkAutoAccess();
@@ -173,7 +220,13 @@ export default {
         this.showRiskAdministration();
       }).catch(() => {});
     },
+    // setAccessReviewCount() {
+    //   getCertificationItems().then(({ data }) => {
+    //     this.$store.commit('setCertificationCount', data.totalCount);
+    //   });
+    // },
     showRiskAdministration() {
+      const menuIndex = this.$store.state.SharedStore.governanceEnabled ? 3 : 2;
       const autoAccessAdminMenu = [
         {
           menuGroup: true,
@@ -195,9 +248,10 @@ export default {
           ],
         },
       ];
-      this.menuItems.splice(3, 0, autoAccessAdminMenu);
+      this.menuItems.splice(menuIndex, 0, autoAccessAdminMenu);
     },
     showRiskDashboad() {
+      const menuIndex = this.$store.state.SharedStore.governanceEnabled ? 1 : 0;
       const autoAccessDashboardMenu = [
         {
           displayName: 'sideMenu.riskDashboard',
@@ -205,7 +259,7 @@ export default {
           icon: 'show_chart',
         },
       ];
-      this.menuItems.splice(1, 0, autoAccessDashboardMenu);
+      this.menuItems.splice(menuIndex, 0, autoAccessDashboardMenu);
     },
   },
 };
