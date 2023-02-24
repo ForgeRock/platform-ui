@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -64,6 +64,7 @@ export function setBaseTheme(accessToken = Cypress.env('ACCESS_TOKEN').access_to
             backgroundColor: '#f6f8fa',
             backgroundImage: '',
             buttonRounded: 5,
+            dangerColor: '#f7685b',
             fontFamily: 'Open Sans',
             journeyCardBackgroundColor: '#ffffff',
             journeyCardHeaderBackgroundColor: '#ffffff',
@@ -98,6 +99,7 @@ export function setBaseTheme(accessToken = Cypress.env('ACCESS_TOKEN').access_to
             profileMenuHoverTextColor: '#ffffff',
             name: 'Starter Theme',
             isDefault: true,
+            successColor: '#2ed47a',
             switchBackgroundColor: '#c0c9d5',
             textColor: '#ffffff',
             topBarBackgroundColor: '#ffffff',
