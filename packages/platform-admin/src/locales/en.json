@@ -299,6 +299,8 @@
         "secondaryColor": "Secondary Color",
         "secondaryColorDescription": "Color used for muted text.",
         "settings": "Settings",
+        "successColor": "Success Color",
+        "successColorDescription": "Color used to indicate a success action.",
         "switchBackgroundColor": "Switch Background Color",
         "switches": "Switches",
         "textColor": "Button Text Color",

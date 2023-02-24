@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -14,8 +14,10 @@ of the MIT license. See the LICENSE file for details. -->
             class="text-muted fr-policy-list-item"
             :key="policy.policyId"
             :class="{
-              'fr-valid': isPolicyMet(policy),
-              'checkmark list-unstyled opacity-100': policyDisplayCheckmark && initialValueEntered,
+              'opacity-50': isPolicyMet(policy),
+              'list-unstyled opacity-100': policyDisplayCheckmark && initialValueEntered,
+              'text-success': isPolicyMet(policy) && policyDisplayCheckmark && initialValueEntered,
+              'text-danger': !isPolicyMet(policy) && policyDisplayCheckmark && initialValueEntered,
             }">
             <FrIcon
               v-if="policyDisplayCheckmark && initialValueEntered && isPolicyMet(policy)"
@@ -157,10 +159,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.fr-valid {
-  opacity: 0.5;
-}
-
 ul {
   &.pl-check {
     padding-left: 0.15rem;
@@ -168,10 +166,6 @@ ul {
 
   li.checkmark {
     color: $red !important;
-
-    &.fr-valid {
-      color: $green !important;
-    }
   }
 }
 
