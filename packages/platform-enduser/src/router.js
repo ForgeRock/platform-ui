@@ -106,7 +106,7 @@ const router = new Router({
     {
       path: '/dashboard',
       name: 'Dashboard',
-      component: () => import('@/components/dashboard'),
+      component: () => import('@/views/DashboardManager'),
       meta: { authenticate: true },
       beforeEnter: (to, from, next) => {
         if (window.location.search && window.location.search.match(/state|oauth_token/)) {
