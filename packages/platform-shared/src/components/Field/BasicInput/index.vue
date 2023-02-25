@@ -64,6 +64,7 @@ of the MIT license. See the LICENSE file for details. -->
         :type="fieldType"
         :autocomplete="$attrs.autocomplete"
         :style="labelHeight && {height: `${labelHeight + 2}px`, 'padding-top': `${labelHeight - 27}px`}"
+        @blur="$emit('blur', $event)"
         @input="evt=>inputValue=evt.target.value"
         @animationstart="floatingLabel && animationStart"
         :data-testid="`input-${testid}`">
