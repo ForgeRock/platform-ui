@@ -1,12 +1,8 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
-
-This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details. -->
-<!--  eslint-disable vue/singleline-html-element-content-newline -->
 <!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
+<!--  eslint-disable vue/singleline-html-element-content-newline vue/html-indent -->
 <template>
   <div>
     <Component :is="'style'">

@@ -8,25 +8,22 @@ of the MIT license. See the LICENSE file for details. -->
       v-for="i in numColumns"
       :key="`password_policy_${i}`">
       <small>
-        <ul :class="policyDisplayCheckmark && initialValueEntered ? 'pl-check' : 'pl-4'">
+        <ul :class="policyDisplayCheckmark ? 'pl-1' : 'pl-4'">
           <li
             v-for="(policy) in policyColumns[i-1]"
             class="text-muted fr-policy-list-item"
             :key="policy.policyId"
-            :class="{
-              'opacity-50': isPolicyMet(policy),
-              'list-unstyled opacity-100': policyDisplayCheckmark && initialValueEntered,
-              'text-success': isPolicyMet(policy) && policyDisplayCheckmark && initialValueEntered,
-              'text-danger': !isPolicyMet(policy) && policyDisplayCheckmark && initialValueEntered,
-            }">
-            <FrIcon
-              v-if="policyDisplayCheckmark && initialValueEntered && isPolicyMet(policy)"
-              class="text-success"
-              name="check" />
-            <FrIcon
-              v-else-if="policyDisplayCheckmark && initialValueEntered && !isPolicyMet(policy)"
-              class="text-danger"
-              name="close" />
+            :class="getPolicyClasses(policy)">
+            <template v-if="policyDisplayCheckmark">
+              <FrIcon
+                v-if="isPolicyMet(policy)"
+                class="text-success"
+                name="check" />
+              <FrIcon
+                v-else
+                :class="{ 'text-danger': displayDangerStyle }"
+                name="close" />
+            </template>
             {{ getPolicyDescription(policy) }}
           </li>
         </ul>
@@ -57,6 +54,13 @@ export default {
     FrIcon,
   },
   props: {
+    /**
+     * Whether the text-danger class should be shown on any password policy
+     */
+    displayDangerStyle: {
+      default: false,
+      type: Boolean,
+    },
     /**
      * Number of columns to display. Policies are evenly distributed between columns.
      */
@@ -96,17 +100,31 @@ export default {
   data() {
     return {
       policyColumns: [],
-      initialValueEntered: false,
     };
   },
   methods: {
-    includes,
     /**
      * Returns a boolean indicating if the policy has been met.
      * @param {Object} policy required policy object to evaluate
      */
     isPolicyMet(policy) {
-      return this.initialValueEntered && !includes(this.policyFailures, policy.policyRequirement);
+      return this.valueEntered && !includes(this.policyFailures, policy.policyRequirement);
+    },
+    /**
+     * Builds policy class array based on field state
+     * @param {Object} policy required policy object to evaluate
+     */
+    getPolicyClasses(policy) {
+      const classes = [];
+      if (this.policyDisplayCheckmark) {
+        classes.push('list-unstyled opacity-100');
+        if (!this.isPolicyMet(policy) && this.displayDangerStyle) {
+          classes.push('text-danger');
+        }
+      } else if (this.isPolicyMet(policy)) {
+        classes.push('opacity-50 fr-valid');
+      }
+      return classes;
     },
     /**
      * Given an array of policies and a number of columns, distribute policies evenly.
@@ -149,21 +167,12 @@ export default {
       },
       immediate: true,
     },
-    valueEntered(value) {
-      if (value) {
-        this.initialValueEntered = true;
-      }
-    },
   },
 };
 </script>
 
 <style lang="scss" scoped>
 ul {
-  &.pl-check {
-    padding-left: 0.15rem;
-  }
-
   li.checkmark {
     color: $red !important;
   }

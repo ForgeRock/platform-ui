@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -10,9 +10,11 @@ of the MIT license. See the LICENSE file for details. -->
       :errors="failuresForField"
       :label="password.label"
       :floating-label="floatingLabel"
+      @blur="lostFocus = true;"
       @input="updateCallback" />
     <FrPolicyPanel
       class="mt-2"
+      :display-danger-style="lostFocus"
       :num-columns="1"
       :policies="policies"
       :policy-display-checkmark="policyDisplayCheckmark"
@@ -113,6 +115,7 @@ export default {
       failuresForPanel: [],
       isValidating: false,
       lastPass: '',
+      lostFocus: false,
       password: {
         label: this.callback.getPrompt(),
         value: '',
