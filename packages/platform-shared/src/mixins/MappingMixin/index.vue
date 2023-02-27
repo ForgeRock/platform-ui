@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -219,6 +219,14 @@ export default {
         properties: defaultProps || [],
         runTargetPhase: authoritative,
       };
+      // If any defaultProps have the condition attribute, set it up
+      if (mappingDefaults.properties.length > 0) {
+        mappingDefaults.properties.forEach((prop, index) => {
+          if (prop.condition) {
+            mappingDefaults.properties[index].condition.globals = { mappingName: mappingNames.outbound };
+          }
+        });
+      }
       // If this is an outbound mapping add sourceCondition and sourceQuery
       if (isOutbound) {
         mappingDefaults.sourceCondition = `/source/effectiveApplications[_id eq "${this.managedApplication._id}"]`;
