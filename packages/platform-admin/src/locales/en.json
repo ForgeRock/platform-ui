@@ -2304,7 +2304,7 @@
   },
   "mapping": {
     "addProperty": "Add a property",
-    "conditionUpdateDescription": "Update only if script evaluates to true. <code>source</code> represents the complete source user object.",
+    "conditionUpdateDescription": "Update only if script evaluates to true. <code>object</code> represents the complete source user object.",
     "conditionUpdateEnabled": "Apply conditional update",
     "conditionUpdateLabel": "Conditional Update Script",
     "defaultValueEnabled": "Apply a default if value is null",
