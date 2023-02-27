@@ -42,7 +42,6 @@ of the MIT license. See the LICENSE file for details. -->
       ref="relationshipArrayGrid"
       responsive
       show-empty
-      stacked="lg"
       :fields="columns"
       :items="gridData"
       :per-page="0"
