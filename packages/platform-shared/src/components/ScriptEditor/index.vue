@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -6,7 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <div class="form-group">
     <div class="d-flex justify-content-end align-items-center">
       <label class="flex-grow-1 mb-0">
-        {{ $t('scriptEditor.title') }}
+        {{ scriptTitle || $t('scriptEditor.title') }}
       </label>
       <div class="d-flex align-items-center">
         <label
@@ -23,6 +23,7 @@ of the MIT license. See the LICENSE file for details. -->
           :searchable="false"
           @input="emitScriptValue" />
         <FrField
+          v-if="showFileUpload"
           v-model="uploadFileToggle"
           type="boolean"
           :label="$t('scriptEditor.uploadFile')"
@@ -179,6 +180,14 @@ export default {
         globals: {},
         source: '',
       }),
+    },
+    showFileUpload: {
+      type: Boolean,
+      default: true,
+    },
+    scriptTitle: {
+      type: String,
+      default: null,
     },
   },
   data() {
