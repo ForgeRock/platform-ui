@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -262,10 +262,12 @@ describe('EditResource.vue', () => {
     wrapper.setProps({
       canClearSessions: true,
     });
+    wrapper.vm.loadData = jest.fn();
     wrapper.vm.isOpenidmAdmin = false;
     await wrapper.vm.refreshData();
     expect(wrapper.vm.resourcePrivilege).toBe(null);
     expect(wrapper.vm.clearSessionsName).toBe('');
+    expect(wrapper.vm.loadData).toHaveBeenCalled();
   });
 
   it('loads data when can not clear sessions', async () => {
@@ -277,10 +279,13 @@ describe('EditResource.vue', () => {
     wrapper.setProps({
       canClearSessions: false,
     });
+    wrapper.vm.loadData = jest.fn();
+
     expect(wrapper.vm.clearSessionsName).toBe('');
 
     await wrapper.vm.loadData();
     expect(wrapper.vm.resourcePrivilege).toBe(null);
+    expect(wrapper.vm.loadData).toHaveBeenCalled();
   });
 
   it('gets object type property display properties', () => {
