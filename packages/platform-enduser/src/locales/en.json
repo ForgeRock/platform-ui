@@ -28,6 +28,8 @@
     "accessReview": {
       "title": "Access Reviews",
       "subTitle": "View and complete your certification tasks.",
+      "taskPopoverCompletedText": "{percentage}% Complete",
+      "taskPopoverItemsCompletedText": "{completed}/{total} tasks completed",
       "status": {
         "active": "Active",
         "in-progress": "Active",
