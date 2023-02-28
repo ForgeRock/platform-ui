@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -24,6 +24,7 @@ module.exports = {
     'node_modules/(?!(babel-jest|jest-vue-preprocessor|vee-validate/dist)/)',
   ],
   moduleNameMapper: {
+    axios: '<rootDir>/../../__mocks__/axios.js',
     '^@/(.*)$': '<rootDir>/src/$1',
     '\\.(css)$': '<rootDir>/../../node_modules/jest-css-modules',
     d3: '<rootDir>/../../node_modules/d3/dist/d3.min.js',
