@@ -169,6 +169,10 @@ export default {
           ...item,
           ...newItem,
           formattedDeadline: item.deadline ? dayjs(item.deadline).format('MMM D, YYYY').toString() : '–',
+          totals: {
+            ...item.totals,
+            completed: (item.totals.total - item.totals['in-progress']),
+          },
         };
       });
       this.totalRows = totalCount;

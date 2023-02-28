@@ -84,11 +84,31 @@ of the MIT license. See the LICENSE file for details. -->
             </template>
           </template>
           <template #cell(progress)="{ item }">
-            <FrInlinePieChart
-              :id="item.id"
-              height="50"
+            <FrCircleProgressBar
+              :id="`taskProgress${item.id}`"
               :progress="progressPercentage(item.progress)"
-            />
+              :thickness="6"
+              :empty-thickness="6"
+              :empty-color="styles.brightGray"
+              :size="50">
+              <template #count="{ count }">
+                <small class="font-weight-bold mb-0">
+                  {{ count.currentValue }}%
+                </small>
+              </template>
+            </FrCircleProgressBar>
+            <BPopover
+              triggers="hover"
+              boundary="window"
+              placement="top"
+              :target="`taskProgress${item.id}`">
+              <div class="p-1">
+                <h5 class="mb-1">
+                  {{ $t('pages.accessReview.taskPopoverCompletedText', { percentage: progressPercentage(item.progress) }) }}
+                </h5>
+                {{ $t('pages.accessReview.taskPopoverItemsCompletedText', { completed: item.totals.completed, total: item.totals.total }) }}
+              </div>
+            </BPopover>
           </template>
           <template #cell(edit)="{ item }">
             <FrActionsCell
@@ -134,6 +154,7 @@ import {
   BDropdownItem,
   BMedia,
   BPagination,
+  BPopover,
   BTable,
 } from 'bootstrap-vue';
 import {
@@ -143,13 +164,14 @@ import {
 } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
+import FrCircleProgressBar from '@forgerock/platform-shared/src/components/CircleProgressBar';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import FrInlinePieChart from '@forgerock/platform-shared/src/components/Visualization/Charts/InlinePieChart';
 // import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import CertificationMixin from '@forgerock/platform-shared/src/mixins/Governance/Certification';
 import FrForwardReviewModal from '@forgerock/platform-shared/src/components/governance/ForwardReviewModal';
+import styles from '@/scss/main.scss';
 
 export default {
   name: 'AccessReviews',
@@ -162,12 +184,13 @@ export default {
     BDropdownItem,
     BMedia,
     BPagination,
+    BPopover,
     BTable,
     FrActionsCell,
+    FrCircleProgressBar,
     FrForwardReviewModal,
     FrHeader,
     FrIcon,
-    FrInlinePieChart,
     // FrSearchInput,
     FrSpinner,
   },
@@ -204,6 +227,7 @@ export default {
           class: 'w-96px',
           label: '',
         }],
+      styles,
     };
   },
   mixins: [

@@ -156,10 +156,18 @@ describe('CertificationMixin', () => {
         {
           a: 'a',
           deadline: '2022-12-19T22:51:51+00:00',
+          totals: {
+            total: 10,
+            'in-progress': 3,
+          },
         },
         {
           b: 'b',
           deadline: '2022-12-19T22:51:51+00:00',
+          totals: {
+            total: 20,
+            'in-progress': 5,
+          },
         },
       ],
       totalCount: 11,
@@ -172,11 +180,21 @@ describe('CertificationMixin', () => {
         a: 'a',
         deadline: '2022-12-19T22:51:51+00:00',
         formattedDeadline: 'Dec 19, 2022',
+        totals: {
+          total: 10,
+          'in-progress': 3,
+          completed: 7,
+        },
       },
       {
         b: 'b',
         deadline: '2022-12-19T22:51:51+00:00',
         formattedDeadline: 'Dec 19, 2022',
+        totals: {
+          total: 20,
+          'in-progress': 5,
+          completed: 15,
+        },
       },
     ]);
     expect(wrapper.vm.totalRows).toEqual(11);
