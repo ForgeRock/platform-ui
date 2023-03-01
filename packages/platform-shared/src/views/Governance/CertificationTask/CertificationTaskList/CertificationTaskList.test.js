@@ -21,7 +21,7 @@ const resourceDataMock = {
   },
 };
 
-function mountComponent(options, data, methods) {
+function mountComponent(options, data, methods, propsData = {}) {
   $emit = jest.fn();
   wrapper = shallowMount(CertificationTaskList, {
     methods: {
@@ -45,6 +45,7 @@ function mountComponent(options, data, methods) {
     propsData: {
       campaignId: 'test-id',
       campaignDetails: {},
+      ...propsData,
     },
   });
 }
@@ -523,6 +524,35 @@ describe('CertificationTaskList', () => {
     it('should emit the bv::show::modal to show the certification reasign modal', () => {
       wrapper.vm.openActionConfirmationModal({});
       expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskActionConfirmModal');
+    });
+  });
+
+  describe('field property', () => {
+    it('should contain the new entitlement column when the prop showEntitlementColumn is true', () => {
+      mountComponent({}, {}, {}, {
+        showEntitlementColumn: true,
+      });
+      wrapper.setData({});
+      expect(wrapper.vm.tasksFields).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            key: 'entitlement',
+          }),
+        ]),
+      );
+    });
+    it('should not contain the new entitlement column when the prop showEntitlementColumn is false', () => {
+      mountComponent({}, {}, {}, {
+        showEntitlementColumn: false,
+      });
+      wrapper.setData({});
+      expect(wrapper.vm.tasksFields).not.toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            key: 'entitlement',
+          }),
+        ]),
+      );
     });
   });
 
