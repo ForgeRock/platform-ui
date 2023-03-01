@@ -180,6 +180,15 @@ of the MIT license. See the LICENSE file for details. -->
           </BMedia>
         </div>
       </template>
+      <template #cell(entitlement)="{ item }">
+        <div class="d-flex justify-content-between align-items-center">
+          <BButton
+            class="text-dark"
+            variant="link">
+            {{ item.entitlement.__NAME__ }}
+          </BButton>
+        </div>
+      </template>
       <template #cell(account)="{ item }">
         <div class="d-flex justify-content-between align-items-center">
           <BButton
@@ -527,6 +536,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    showEntitlementColumn: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     const revokeActionModalProps = {
@@ -615,6 +628,13 @@ export default {
           show: true,
         },
         {
+          key: 'entitlement',
+          label: this.$t('governance.certificationTask.entitlement'),
+          sortable: false,
+          class: 'text-truncate fr-access-cell',
+          show: true,
+        },
+        {
           key: 'account',
           label: this.$t('governance.certificationTask.account'),
           sortable: false,
@@ -636,6 +656,11 @@ export default {
           show: true,
         },
       ];
+
+      if (!this.showEntitlementColumn) {
+        const entitlementColumnIndex = fields.findIndex((column) => (column.key === 'entitlement'));
+        fields.splice(entitlementColumnIndex, 1);
+      }
 
       if (this.campaignDetails.allowBulkCertify) {
         fields.unshift({

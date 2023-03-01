@@ -1061,6 +1061,7 @@
       "application": "Application",
       "account": "Account",
       "comments": "Comments",
+      "entitlement": "Entitlement",
       "allUsers": "All Users",
       "allApplications": "All Applications",
       "allAccounts": "All Accounts",
