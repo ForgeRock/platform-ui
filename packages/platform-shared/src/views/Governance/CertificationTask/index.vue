@@ -24,6 +24,7 @@ of the MIT license. See the LICENSE file for details. -->
         :refresh-tasks="refreshTasks"
         :is-admin="isAdmin"
         :actor-id="actorId"
+        :show-entitlement-column="isEntitlementCertificationType"
         @change-saving="setSaving"
         @check-progress="checkInProgress"
         @refresh-complete="refreshTasks = false"
@@ -82,6 +83,9 @@ export default {
   computed: {
     isComplete() {
       return this.totals?.NONE === undefined;
+    },
+    isEntitlementCertificationType() {
+      return this.campaignDetails.certificationType === 'entitlement';
     },
   },
   methods: {
