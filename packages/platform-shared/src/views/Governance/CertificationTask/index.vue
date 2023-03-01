@@ -6,11 +6,13 @@ of the MIT license. See the LICENSE file for details. -->
   <div class="certification-task-container">
     <template v-if="!loadFailed">
       <FrCertificationTaskHeader
+        :actor-id="actorId"
         :campaign-details="campaignDetails"
         :hide-sign-off="hideSignOff"
         :is-complete="isComplete"
         :is-saving="isSaving"
         @change-saving="setSaving"
+        @review-forwarded="goToBackUrl"
         @sign-off="signOff" />
       <FrCertificationTaskDetails
         :totals="totals"
@@ -133,6 +135,9 @@ export default {
           this.refreshTasks = true;
           this.setSaving();
         });
+    },
+    goToBackUrl() {
+      this.$router.push(this.getBreadcrumbRoute());
     },
   },
   mounted() {
