@@ -25,6 +25,7 @@ const defaultState = {
   fraasPromotionEgressUrl: null,
   googleMapsApiKey: '',
   governanceEnabled: false,
+  governanceEnabledV2: false,
   igaApiUrl: null,
   returnRoute: '',
   returnRouteText: '',
@@ -122,6 +123,10 @@ const mutations = {
       }
       if (env.VUE_APP_ENABLE_GOVERNANCE === 'true' || env.VUE_APP_ENABLE_GOVERNANCE === true) {
         state.governanceEnabled = true;
+      }
+      if (env.VUE_APP_ENABLE_GOVERNANCE_V2 === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_V2 === true) {
+        state.governanceEnabled = true;
+        state.governanceEnabledV2 = true;
       }
     }
 
