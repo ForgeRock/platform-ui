@@ -7,12 +7,12 @@ of the MIT license. See the LICENSE file for details. -->
     v-slot="{ invalid }"
     ref="observer">
     <BModal
+      :id="modalId"
       :ok-disabled="invalid"
       :ok-title="$t('governance.certificationTask.actionsModal.forwardItem')"
       :title="$t('governance.certificationTask.actionsModal.forwardItem')"
       @ok="forwardItem"
       cancel-variant="link"
-      id="certification-forward-modal"
       ok-variant="info"
       size="lg">
       <p>
@@ -79,6 +79,10 @@ export default {
     bulk: {
       type: Boolean,
       default: false,
+    },
+    modalId: {
+      type: String,
+      default: 'certification-forward-modal',
     },
   },
   data() {
