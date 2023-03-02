@@ -46,7 +46,6 @@ of the MIT license. See the LICENSE file for details. -->
 import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
 import {
   getCertificationDetails,
-  getCertificationItems,
   getInProgressTasksByCampaign,
   signOffCertificationTasks,
 } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
@@ -98,11 +97,7 @@ export default {
         .then(({ data }) => {
           this.loadFailed = false;
           this.campaignDetails = data;
-          if (this.isAdmin) {
-            this.actorId = this.$route.query.actorId;
-          } else {
-            this.getActorId(this.campaignDetails.name);
-          }
+          this.actorId = this.$route.query.actorId;
         })
         .catch((error) => {
           this.loadFailed = true;
@@ -111,12 +106,6 @@ export default {
         .finally(() => {
           this.isDetailsLoading = false;
         });
-    },
-    getActorId(campaignName) {
-      getCertificationItems({ queryString: campaignName }).then(({ data }) => {
-        this.actorId = data.results[0]?.certifierId;
-        this.certifierId = data.results[0]?.certifierId;
-      });
     },
     setSaving() {
       this.isSaving = !this.isSaving;
