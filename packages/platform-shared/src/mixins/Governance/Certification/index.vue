@@ -19,6 +19,10 @@ export default {
         type: 'active',
         text: this.$t('governance.status.active'),
       },
+      completedCampaignStatuses: [
+        'signed-off',
+        'completed',
+      ],
       statuses: new Map([
         ['in-progress',
           {
@@ -151,6 +155,10 @@ export default {
           }
           this.setAccessReviewList(fixedData);
         });
+    },
+    getStatusCampaignTranslationLabel(statusParam) {
+      const statusTranslateLabel = this.completedCampaignStatuses.includes(statusParam) ? 'complete' : statusParam;
+      return this.$t(`governance.status.${statusTranslateLabel}`);
     },
     setAccessReviewList({ result, totalCount }) {
       this.accessReviewList = result.map((item) => {
