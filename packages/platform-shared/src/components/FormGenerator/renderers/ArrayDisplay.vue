@@ -12,6 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
     :label="uiSchema.label"
     :options="arrayOptions"
     :type="arrayType"
+    :allow-empty="uiSchema.allowEmpty"
     :validation="uiSchema.validation"
     @input="updateValue" />
 </template>
