@@ -12,13 +12,15 @@ of the MIT license. See the LICENSE file for details. -->
         {{ item }}
       </dt>
       <dd class="col-lg-8 mb-4">
-        {{ content[item] || '--' }}
+        {{ content[item] || blankValueIndicator }}
       </dd>
     </dl>
   </div>
 </template>
 
 <script>
+import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
+
 export default {
   name: 'ContentDetailsTab',
   props: {
@@ -26,6 +28,11 @@ export default {
       type: Object,
       required: true,
     },
+  },
+  data() {
+    return {
+      blankValueIndicator,
+    };
   },
 };
 </script>

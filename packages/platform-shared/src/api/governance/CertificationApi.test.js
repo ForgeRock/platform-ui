@@ -214,4 +214,15 @@ describe('Governace API', () => {
 
     expect(put).toHaveBeenCalledWith(`${governanceCertificationBaseUrl}/items/${itemId}/actors`, { actors });
   });
+
+  it('getCertificationEntitlementDetails should call API correctly', async () => {
+    const campaignId = '9986d9a5-5ffd-4046-8643-c34a60cddb6f';
+    const itemId = '9986d9a5-5ffd-4046-8643-c34a60cddb6e';
+
+    get.mockReturnValue(Promise.resolve({}));
+
+    await CertificationApi.getCertificationEntitlementDetails(campaignId, itemId);
+
+    expect(get).toHaveBeenCalledWith(`${governanceCertificationBaseUrl}/${campaignId}/items/${itemId}/entitlement`);
+  });
 });
