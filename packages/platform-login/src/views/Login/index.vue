@@ -725,13 +725,15 @@ export default {
         const stringParams = createParamString(params);
         this.removeUrlParams();
         window.history.replaceState(null, null, `?realm=${this.realm}${stringParams}`);
-      } else if (paramString.includes('state=') || paramString.includes('code=') || paramString.includes('scope=')) {
+      } else if (params.get('state') || params.get('code') || params.get('scope') || params.get('form_post_entry')) {
         this.state = params.get('state');
         params.delete('state');
         this.code = params.get('code');
         params.delete('code');
         this.scope = params.get('scope');
         params.delete('scope');
+        this.form_post_entry = params.get('form_post_entry');
+        params.delete('form_post_entry');
 
         // session storage is used to resume a tree after returning from a redirect
         const { authIndexValue, step, realm: stepRealm } = this.getStepFromStorage();
@@ -898,6 +900,7 @@ export default {
         stepParams.query.code = this.code ? this.code : undefined;
         stepParams.query.state = this.state ? this.state : undefined;
         stepParams.query.scope = this.scope ? this.scope : undefined;
+        stepParams.query.form_post_entry = this.form_post_entry ? this.form_post_entry : undefined;
       }
 
       // stepParams.query.realm never needs to be included. We are already sending stepParams.realmPath which is what the
@@ -988,10 +991,11 @@ export default {
           this.step = step;
 
           // these step params only need to be sent one time
-          if (this.code || this.state || this.scope) {
+          if (this.code || this.state || this.scope || this.form_post_entry) {
             this.code = undefined;
             this.state = undefined;
             this.scope = undefined;
+            this.form_post_entry = undefined;
           }
 
           switch (step.type) {
