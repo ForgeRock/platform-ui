@@ -27,8 +27,7 @@ of the MIT license. See the LICENSE file for details. -->
                   <div v-if="!loading && !themeLoading">
                     <h1
                       v-if="header"
-                      class="h2"
-                      tabindex="1">
+                      class="h2">
                       {{ header }}
                     </h1>
                     <p
