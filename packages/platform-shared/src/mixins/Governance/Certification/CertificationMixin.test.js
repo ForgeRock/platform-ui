@@ -40,7 +40,7 @@ describe('CertificationMixin', () => {
         };
       },
       mocks: {
-        $t: () => {},
+        $t: (id) => id,
         getItems: jest.fn().mockReturnValue(Promise.resolve({
           data: {
             result: ['test'],
@@ -49,6 +49,21 @@ describe('CertificationMixin', () => {
         })),
       },
     });
+  });
+
+  it('Should return governance.status.complete if the status is signed-off ', () => {
+    const statusLabel = wrapper.vm.getStatusCampaignTranslationLabel('signed-off');
+    expect(statusLabel).toBe('governance.status.complete');
+  });
+
+  it('Should return governance.status.complete if the status is completed ', () => {
+    const statusLabel = wrapper.vm.getStatusCampaignTranslationLabel('completed');
+    expect(statusLabel).toBe('governance.status.complete');
+  });
+
+  it('Should return the status param nested with the governance.status', () => {
+    const statusLabel = wrapper.vm.getStatusCampaignTranslationLabel('staging');
+    expect(statusLabel).toBe('governance.status.staging');
   });
 
   it('Reset view when search is cleared', () => {
