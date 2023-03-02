@@ -16,8 +16,8 @@ import { generateIdmApi } from './BaseApi';
   * @returns {Promise}
   */
 // eslint-disable-next-line import/prefer-default-export
-export function getManagedResource(resourceName, id) {
-  return generateIdmApi().get(`managed/${resourceName}/${id}`);
+export function getManagedResource(resourceName, id, params = '') {
+  return generateIdmApi().get(`managed/${resourceName}/${id}${encodeQueryString(params)}`);
 }
 
 /**
