@@ -40,7 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
                     <div v-if="properties[key].type === 'boolean'">
                       <BFormCheckbox
                         v-model="obj[key]"
-                        :name="key">
+                        :name="key+'_'+index">
                         {{ key }}
                       </BFormCheckbox>
                     </div>
@@ -50,6 +50,7 @@ of the MIT license. See the LICENSE file for details. -->
                         type="number"
                         validation="required|numeric"
                         :label="key"
+                        :name="key+'_'+index"
                         @input="emitInput(listValues)"
                       />
                     </div>
@@ -57,6 +58,7 @@ of the MIT license. See the LICENSE file for details. -->
                       <FrField
                         v-model="obj[key]"
                         :label="key"
+                        :name="key+'_'+index"
                         :type="properties[key].type"
                         :validation="required && required.length && required.includes(properties[key].title) ? 'required' : ''"
                         @input="emitInput(listValues)"
@@ -71,6 +73,7 @@ of the MIT license. See the LICENSE file for details. -->
                 class="position-relative d-inline-flex justify-content-end"
                 style="width: 128px;">
                 <button
+                  :data-testid="`list-objects-remove-${index}`"
                   class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
                   @click.prevent="removeElementFromList(index)">
                   <FrIcon
@@ -78,6 +81,7 @@ of the MIT license. See the LICENSE file for details. -->
                   />
                 </button>
                 <button
+                  :data-testid="`list-objects-add-${index}`"
                   class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
                   @click.prevent="addObjectToList(index)">
                   <FrIcon
