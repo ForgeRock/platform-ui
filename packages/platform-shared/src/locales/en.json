@@ -46,6 +46,7 @@
     "copy": "Copy",
     "copyFail": "Failed to copy",
     "copySuccess": "Copied to your clipboard",
+    "country": "Country",
     "create": "Create",
     "created": "Created",
     "customizeObject": "Customize {object}",
@@ -126,6 +127,7 @@
     "optionalFieldTitle": "{fieldTitle} (optional)",
     "order": "Order",
     "output": "Output",
+    "owner": "Owner",
     "password": "Password",
     "path": "Path",
     "preview": "Preview",
@@ -1127,6 +1129,10 @@
         "startDate": "Start Date",
         "description": "Description",
         "title": "Campaign Details"
+      },
+      "entitlementModal": {
+        "loadErrorMessage": "Error loading entitlement, please try again",
+        "name": "{entitlementName} Entitlement"
       },
       "errors": {
         "addCommentErrorDefaultMessage": "There was an error adding the comment",

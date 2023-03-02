@@ -184,7 +184,8 @@ of the MIT license. See the LICENSE file for details. -->
         <div class="d-flex justify-content-between align-items-center">
           <BButton
             class="text-dark"
-            variant="link">
+            variant="link"
+            @click="openEntitlementModal(item)">
             {{ item.entitlement.__NAME__ }}
           </BButton>
         </div>
@@ -386,6 +387,9 @@ of the MIT license. See the LICENSE file for details. -->
       @close-modal="closeEditReviewerModal"
       @edit-reviewer="editReviewer"
       @delete-reviewer="deleteReviewer" />
+    <FrCertificationTaskEntitlementModal
+      :entitlement="currentEntitlementSelected"
+      :application="currentApplicationSelectedModal" />
   </div>
 </template>
 <script>
@@ -436,6 +440,7 @@ import {
   saveComment,
   reassignLineItem,
   updateLineItemReviewers,
+  getCertificationEntitlementDetails,
 } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import FrCertificationActivityModal from './CertificationTaskActivityModal';
 import FrCertificationTaskAccountModal from './CertificationTaskAccountModal';
@@ -445,6 +450,7 @@ import FrCertificationTaskCommentsModal from './CertificationTaskCommentsModal';
 import FrCertificationTaskUserModal from './CertificationTaskUserModal';
 import FrCertificationTaskReviewersModal from './CertificationTaskReviewersModal';
 import FrCertificationTaskEditReviewerModal from './CertificationTaskEditReviewerModal';
+import FrCertificationTaskEntitlementModal from './CertificationTaskEntitlementModal';
 
 /**
  * @typedef {"certify" | "revoke" | "exception" | "abstain"} ItemDecisionString
@@ -507,6 +513,7 @@ export default {
     FrSpinner,
     FrCertificationTaskReviewersModal,
     FrCertificationTaskEditReviewerModal,
+    FrCertificationTaskEntitlementModal,
   },
   mixins: [
     AppSharedUtilsMixin,
@@ -605,6 +612,7 @@ export default {
       },
       bulkForward: false,
       tasksFieldsToSort: [],
+      currentEntitlementSelected: null,
     };
   },
   computed: {
@@ -736,6 +744,17 @@ export default {
       };
       this.$nextTick(() => {
         this.$root.$emit('bv::show::modal', 'CertificationTaskApplicationModal');
+      });
+    },
+    openEntitlementModal({ id, application }) {
+      getCertificationEntitlementDetails(this.campaignId, id).then(({ data }) => {
+        this.currentApplicationSelectedModal = application;
+        this.currentEntitlementSelected = data;
+        this.$root.$emit('bv::show::modal', 'CertificationTaskEntitlementModal');
+      }).catch((error) => {
+        this.showErrorMessage(error, this.$t('governance.certificationTask.entitlementModal.loadErrorMessage'));
+        this.currentEntitlementSelected = null;
+        this.currentApplicationSelectedModal = null;
       });
     },
     openCommentsModal(activity, lineItem) {

@@ -6,7 +6,7 @@
  */
 
 import { shallowMount } from '@vue/test-utils';
-import { ResourceType } from '@forgerock/platform-shared/src/utils/governanceTypes';
+import { ResourceType } from '@forgerock/platform-shared/src/utils/governance/types';
 import CertificationTaskEditReviewerModal from './index';
 
 describe('CertificationTaskEditReviewerModal', () => {
