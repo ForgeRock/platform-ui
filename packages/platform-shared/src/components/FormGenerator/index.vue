@@ -60,6 +60,7 @@ import FrNumberDisplay from './renderers/NumberDisplay';
 import FrPasswordDisplay from './renderers/PasswordDisplay';
 import FrRadioDisplay from './renderers/RadioDisplay';
 import FrStringDisplay from './renderers/StringDisplay';
+import FrDateDisplay from './renderers/DateDisplay';
 
 export default {
   name: 'FormGenerator',
@@ -73,6 +74,7 @@ export default {
     FrPasswordDisplay,
     FrRadioDisplay,
     FrStringDisplay,
+    FrDateDisplay,
   },
   props: {
     /**
@@ -150,7 +152,7 @@ export default {
           if (property.saveFormat === 'boolean') {
             return valueIsBool;
           }
-          return valueIsString;
+          return valueIsString || valueIsNumber;
         case 'string':
           return valueIsString;
         case 'multiselect':
@@ -167,6 +169,8 @@ export default {
         case 'radio':
           return true;
         case 'password':
+          return true;
+        case 'date':
           return true;
         default:
           return false;
@@ -198,6 +202,7 @@ export default {
           integer: 'FrNumberDisplay',
           radio: 'FrRadioDisplay',
           password: 'FrPasswordDisplay',
+          date: 'FrDateDisplay',
         };
 
         return componentNames[property.type] ? componentNames[property.type] : null;

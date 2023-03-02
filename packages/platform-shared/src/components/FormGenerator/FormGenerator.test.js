@@ -61,6 +61,13 @@ const uiSchema = [
       model: 'core.testPassword',
     },
   ],
+  [
+    {
+      label: 'DateLabel',
+      type: 'date',
+      model: 'core.testDate',
+    },
+  ],
 ];
 
 const schema = {
@@ -96,6 +103,11 @@ const schema = {
       title: 'testPasswordTitle',
       description: 'testPasswordDescription',
     },
+    testDate: {
+      type: 'date',
+      title: 'testDateTile',
+      description: 'testDateDescription',
+    },
   },
 };
 
@@ -119,6 +131,9 @@ const model = {
     },
     testPassword: {
       value: 'initialPassword',
+    },
+    testDate: {
+      value: '2023-04-12T00:00:00+00:00',
     },
   },
 };
@@ -145,6 +160,7 @@ describe('Form Generator', () => {
     expect(wrapper.find('frnumberdisplay-stub').exists()).toBe(true);
     expect(wrapper.find('frradiodisplay-stub').exists()).toBe(true);
     expect(wrapper.find('frpassworddisplay-stub').exists()).toBe(true);
+    expect(wrapper.find('frdatedisplay-stub').exists()).toBe(true);
   });
 
   describe('safeCompare method', () => {
@@ -265,6 +281,12 @@ describe('Form Generator', () => {
       };
       expect(wrapper.vm.getPropertyComponent(passwordTest)).toEqual('FrPasswordDisplay');
 
+      const dateTest = {
+        type: 'date',
+        value: '',
+      };
+      expect(wrapper.vm.getPropertyComponent(dateTest)).toEqual('FrDateDisplay');
+
       const nullTest = {
         value: '',
       };
@@ -300,6 +322,11 @@ describe('Form Generator', () => {
     it('returns the modelValue or an empty string for unhandled types which are not array elements', () => {
       expect(wrapper.vm.getFieldValue('meh', 'banana', false)).toBe('meh');
       expect(wrapper.vm.getFieldValue(undefined, 'banana', false)).toBe('');
+    });
+
+    it('returns the modelValue or an empty string for date field type', () => {
+      expect(wrapper.vm.getFieldValue('2023-04-12T00:00:00+00:00', 'date', false)).toBe('2023-04-12T00:00:00+00:00');
+      expect(wrapper.vm.getFieldValue(undefined, 'date', false)).toBe('');
     });
   });
 });
