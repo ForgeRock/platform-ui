@@ -290,7 +290,7 @@ describe('CertificationTaskList', () => {
       const expectedValue = {
         operator: 'EQUALS',
         operand: {
-          targetName: 'decision.certification.primaryReviewer.id',
+          targetName: 'decision.certification.actors.id',
           targetValue: '',
         },
       };
@@ -299,71 +299,146 @@ describe('CertificationTaskList', () => {
     });
   });
   describe('buildBodyParams', () => {
-    it('should return the base filters to load the list when there is no filters', () => {
-      mountComponent();
-      const expectedValue = {
-        targetFilter: {
-          operator: 'EQUALS',
-          operand: {
-            targetName: 'decision.certification.primaryReviewer.id',
-            targetValue: '',
+    describe('admin', () => {
+      it('should return the base filters to load the list when there is no filters', () => {
+        mountComponent();
+        wrapper.setProps({ isAdmin: true });
+        const expectedValue = {
+          targetFilter: {
+            operator: 'EQUALS',
+            operand: {
+              targetName: 'decision.certification.primaryReviewer.id',
+              targetValue: '',
+            },
           },
-        },
-      };
-      const result = wrapper.vm.buildBodyParams();
-      expect(result).toStrictEqual(expectedValue);
-    });
-    it('should return the base filters to load the list when there is no filters', () => {
-      mountComponent();
-      wrapper.vm.listFilters = {
-        user: 'useris',
-        application: 'appid',
-        decision: ['certify'],
-      };
-      const expectedValue = {
-        targetFilter: {
-          operator: 'AND',
-          operand: [
-            {
-              operator: 'AND',
-              operand: [
-                {
-                  operator: 'IN',
-                  operand: {
-                    targetName: 'decision.certification.decision',
-                    targetValue: [
-                      'certify',
-                    ],
+        };
+        const result = wrapper.vm.buildBodyParams();
+        expect(result).toStrictEqual(expectedValue);
+      });
+
+      it('should return the base filters to load the list when there is no filters', () => {
+        mountComponent();
+        wrapper.setProps({ isAdmin: true });
+        wrapper.vm.listFilters = {
+          user: 'useris',
+          application: 'appid',
+          decision: ['certify'],
+        };
+        const expectedValue = {
+          targetFilter: {
+            operator: 'AND',
+            operand: [
+              {
+                operator: 'AND',
+                operand: [
+                  {
+                    operator: 'IN',
+                    operand: {
+                      targetName: 'decision.certification.decision',
+                      targetValue: [
+                        'certify',
+                      ],
+                    },
                   },
-                },
-                {
-                  operator: 'EQUALS',
-                  operand: {
-                    targetName: 'application.id',
-                    targetValue: 'appid',
+                  {
+                    operator: 'EQUALS',
+                    operand: {
+                      targetName: 'application.id',
+                      targetValue: 'appid',
+                    },
                   },
-                },
-                {
-                  operator: 'EQUALS',
-                  operand: {
-                    targetName: 'user.id',
-                    targetValue: 'useris',
+                  {
+                    operator: 'EQUALS',
+                    operand: {
+                      targetName: 'user.id',
+                      targetValue: 'useris',
+                    },
                   },
-                },
-              ],
-            },
-            {
-              operator: 'EQUALS',
-              operand: {
-                targetName: 'decision.certification.primaryReviewer.id',
-                targetValue: '',
+                ],
               },
+              {
+                operator: 'EQUALS',
+                operand: {
+                  targetName: 'decision.certification.primaryReviewer.id',
+                  targetValue: '',
+                },
+              },
+            ],
+          },
+        };
+        const result = wrapper.vm.buildBodyParams();
+        expect(result).toStrictEqual(expectedValue);
+      });
+    });
+
+    describe('enduser', () => {
+      it('should return the base filters to load the list when there is no filters', () => {
+        mountComponent();
+        const expectedValue = {
+          targetFilter: {
+            operator: 'EQUALS',
+            operand: {
+              targetName: 'decision.certification.actors.id',
+              targetValue: '',
             },
-          ],
-        },
-      };
-      const result = wrapper.vm.buildBodyParams();
-      expect(result).toStrictEqual(expectedValue);
+          },
+        };
+        const result = wrapper.vm.buildBodyParams();
+        expect(result).toStrictEqual(expectedValue);
+      });
+
+      it('should return the base filters to load the list when there is no filters', () => {
+        mountComponent();
+        wrapper.vm.listFilters = {
+          user: 'useris',
+          application: 'appid',
+          decision: ['certify'],
+        };
+        const expectedValue = {
+          targetFilter: {
+            operator: 'AND',
+            operand: [
+              {
+                operator: 'AND',
+                operand: [
+                  {
+                    operator: 'IN',
+                    operand: {
+                      targetName: 'decision.certification.decision',
+                      targetValue: [
+                        'certify',
+                      ],
+                    },
+                  },
+                  {
+                    operator: 'EQUALS',
+                    operand: {
+                      targetName: 'application.id',
+                      targetValue: 'appid',
+                    },
+                  },
+                  {
+                    operator: 'EQUALS',
+                    operand: {
+                      targetName: 'user.id',
+                      targetValue: 'useris',
+                    },
+                  },
+                ],
+              },
+              {
+                operator: 'EQUALS',
+                operand: {
+                  targetName: 'decision.certification.actors.id',
+                  targetValue: '',
+                },
+              },
+            ],
+          },
+        };
+        const result = wrapper.vm.buildBodyParams();
+        expect(result).toStrictEqual(expectedValue);
+      });
     });
   });
   describe('selectTask', () => {
