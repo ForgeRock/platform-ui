@@ -7,18 +7,21 @@ of the MIT license. See the LICENSE file for details. -->
     <dl
       class="row"
       v-for="(detail, name) in user"
-      :key="name">
+      :key="name"
+      :data-testid="name">
       <dt class="col-lg-4">
         {{ $t(`common.user.${name}`) }}
       </dt>
       <dd class="col-lg-8 mb-4">
-        {{ detail || '--' }}
+        {{ detail || blankValueIndicator }}
       </dd>
     </dl>
   </div>
 </template>
 
 <script>
+import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
+
 export default {
   name: 'UserDetailsTab',
   props: {
@@ -26,6 +29,11 @@ export default {
       type: Object,
       required: true,
     },
+  },
+  data() {
+    return {
+      blankValueIndicator,
+    };
   },
 };
 </script>
