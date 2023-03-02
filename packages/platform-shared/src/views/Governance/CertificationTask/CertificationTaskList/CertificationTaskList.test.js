@@ -1123,5 +1123,48 @@ describe('CertificationTaskList', () => {
         expect(wrapper.vm.isLastSignOffReviewer()).toBe(false);
       });
     });
+
+    it('openEntitlementModal should open entitlement modal with data setted', async () => {
+      const entitlement = {
+        id: '1234',
+      };
+      CertificationApi.getCertificationEntitlementDetails.mockImplementation(() => Promise.resolve({ data: entitlement }));
+
+      const lineItem = {
+        id: '9986d9a5-5ffd-4046-8643-c34a60cddb6e',
+        application: {
+          templateName: 'salesforce',
+        },
+      };
+
+      wrapper.vm.openEntitlementModal(lineItem);
+
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.currentEntitlementSelected).toEqual(entitlement);
+      expect(wrapper.vm.currentApplicationSelectedModal).toEqual(lineItem.application);
+      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskEntitlementModal');
+    });
+
+    it('openEntitlementModal should not open entitlement modal when fails data fetch', async () => {
+      const error = new Error('ERROR');
+      CertificationApi.getCertificationEntitlementDetails.mockImplementation(() => Promise.reject(error));
+
+      const lineItem = {
+        id: '9986d9a5-5ffd-4046-8643-c34a60cddb6e',
+        application: {
+          templateName: 'salesforce',
+        },
+      };
+
+      wrapper.vm.openEntitlementModal(lineItem);
+
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.currentEntitlementSelected).toBeNull();
+      expect(wrapper.vm.currentApplicationSelectedModal).toBeNull();
+      expect($emit).not.toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskEntitlementModal');
+      expect(showErrorMessageSpy).toHaveBeenCalledWith(error, 'governance.certificationTask.entitlementModal.loadErrorMessage');
+    });
   });
 });

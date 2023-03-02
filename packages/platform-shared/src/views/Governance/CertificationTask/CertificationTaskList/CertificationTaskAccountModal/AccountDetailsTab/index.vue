@@ -39,7 +39,7 @@ of the MIT license. See the LICENSE file for details. -->
         {{ $t('common.status') }}
       </dt>
       <dd class="col-lg-8 mb-4">
-        --
+        {{ blankValueIndicator }}
       </dd>
       <dt class="col-lg-4">
         {{ $t('governance.certificationTask.lineItemDetailsModal.accountDetailsTab.lastCertifiedLabel') }}
@@ -51,25 +51,25 @@ of the MIT license. See the LICENSE file for details. -->
         {{ $t('governance.certificationTask.lineItemDetailsModal.accountDetailsTab.lastCertifiedByLabel') }}
       </dt>
       <dd class="col-lg-8 mb-4">
-        --
+        {{ blankValueIndicator }}
       </dd>
       <dt class="col-lg-4">
         {{ $t('governance.certificationTask.lineItemDetailsModal.accountDetailsTab.lastUsedLabel') }}
       </dt>
       <dd class="col-lg-8 mb-4">
-        --
+        {{ blankValueIndicator }}
       </dd>
       <dt class="col-lg-4">
         {{ $t('governance.certificationTask.lineItemDetailsModal.accountDetailsTab.riskScoreLabel') }}
       </dt>
       <dd class="col-lg-8 mb-4">
-        --
+        {{ blankValueIndicator }}
       </dd>
       <dt class="col-lg-4">
         {{ $t('governance.certificationTask.lineItemDetailsModal.accountDetailsTab.provisioningMethodLabel') }}
       </dt>
       <dd class="col-lg-8 mb-4">
-        --
+        {{ blankValueIndicator }}
       </dd>
     </dl>
   </div>
@@ -80,6 +80,7 @@ import {
   BImg,
   BMedia,
 } from 'bootstrap-vue';
+import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 
 export default {
   name: 'AccountDetailsTab',
@@ -92,6 +93,11 @@ export default {
       type: Object,
       required: true,
     },
+  },
+  data() {
+    return {
+      blankValueIndicator,
+    };
   },
 };
 </script>

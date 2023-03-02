@@ -151,7 +151,7 @@ import {
   BDropdownDivider,
 } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import { ResourceType } from '@forgerock/platform-shared/src/utils/governanceTypes';
+import { ResourceType } from '@forgerock/platform-shared/src/utils/governance/types';
 
 export default {
   name: 'ReviewersModal',
