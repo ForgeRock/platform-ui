@@ -51,7 +51,7 @@ import {
 import { ValidationObserver } from 'vee-validate';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrGovResourceSelect from '@forgerock/platform-shared/src/components/filterBuilder/components/GovResourceSelect';
-import { ResourceType } from '@forgerock/platform-shared/src/utils/governanceTypes';
+import { ResourceType } from '@forgerock/platform-shared/src/utils/governance/types';
 
 export default {
   name: 'ForwardReviewModal',
