@@ -963,7 +963,10 @@ export default {
       };
     },
     getBaseFilters() {
-      return this.getFilterFormatted('EQUALS', 'decision.certification.primaryReviewer.id', this.actorId);
+      const filterPath = this.isAdmin
+        ? 'decision.certification.primaryReviewer.id'
+        : 'decision.certification.actors.id';
+      return this.getFilterFormatted('EQUALS', filterPath, this.actorId);
     },
     buildBodyParams() {
       if (!this.listFilters) {

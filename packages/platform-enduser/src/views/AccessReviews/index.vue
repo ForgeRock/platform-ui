@@ -231,12 +231,15 @@ export default {
       return searchCertificates(queryString, params);
     },
     viewApplicationDetails(rowData) {
-      this.$router.push({
-        name: 'CertificationTask',
-        params: {
-          campaignId: rowData?.campaignId,
-        },
-      });
+      if (!rowData || !rowData.campaignId || !rowData.certifierId) {
+        this.showErrorMessage('', this.$t('governance.certificationTask.errors.certificationDetailError'));
+      } else {
+        this.$router.push({
+          name: 'CertificationTask',
+          params: { campaignId: rowData?.campaignId },
+          query: { actorId: rowData?.certifierId },
+        });
+      }
     },
     progressPercentage(progress = 0) {
       const actualProgress = progress * 100;
