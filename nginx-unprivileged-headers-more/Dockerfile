@@ -1,10 +1,12 @@
-# Copyright 2020 ForgeRock AS. All Rights Reserved
+# Copyright 2020-2023 ForgeRock AS. All Rights Reserved
 #
 # Use of this code requires a commercial software license with ForgeRock AS.
 # or with one of its affiliates. All use shall be exclusively subject
 # to such license between the licensee and ForgeRock AS.
 
 ARG NGINX_VERSION
+
+# First build stage, used to build an nginx module we use in our image
 FROM nginxinc/nginx-unprivileged:${NGINX_VERSION} as build
 
 ARG HEADERS_MORE_VERSION
@@ -45,11 +47,17 @@ RUN CONFARGS=$(nginx -V 2>&1 | sed -n -e 's/^.*arguments: //p') \
 
 USER 101
 
+# Main stage, combine the upstream nginx image with the built module and update dependencies
 FROM nginxinc/nginx-unprivileged:${NGINX_VERSION}
 
 COPY nginx-unprivileged-headers-more/nginx.conf /etc/nginx/nginx.conf
 COPY --from=build /usr/src/nginx-${NGINX_VERSION}/objs/ngx_http_headers_more_filter_module.so /usr/lib/nginx/modules/ngx_http_headers_more_filter_module.so
 
 USER root
+
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    rm -rf /var/cache/apt
+
 RUN chown -R nginx /usr/share/nginx/html
 USER nginx
