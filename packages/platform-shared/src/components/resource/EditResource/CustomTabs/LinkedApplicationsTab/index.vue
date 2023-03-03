@@ -1,11 +1,11 @@
-<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BTab
     v-if="linkedApplications.length"
-    :title="$t('pages.access.applications')">
+    :title="tabName">
     <template>
       <div>
         <BCardHeader class="p-0">
@@ -114,6 +114,7 @@ export default {
       ],
       filteredApplications: [],
       modalData: {},
+      workforceEnabled: this.$store.state.SharedStore.workforceEnabled,
     };
   },
   props: {
@@ -153,6 +154,9 @@ export default {
     },
   },
   computed: {
+    tabName() {
+      return this.workforceEnabled ? this.$t('pages.access.linkedSystems') : this.$t('pages.access.applications');
+    },
     totalRows() {
       return this.filteredApplications.length;
     },

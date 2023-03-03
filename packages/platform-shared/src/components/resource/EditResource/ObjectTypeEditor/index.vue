@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -42,6 +42,7 @@ of the MIT license. See the LICENSE file for details. -->
             <FrRelationshipEdit
               class="mb-4"
               v-if="field.type === 'relationship'"
+              :close-on-select="isCloseOnSelect(field)"
               :disabled="field.disabled"
               :relationship-property="field"
               :index="index"
@@ -69,6 +70,7 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   camelCase,
   cloneDeep,
+  has,
   startCase,
 } from 'lodash';
 import {
@@ -151,6 +153,9 @@ export default {
     this.oldFormFields = cloneDeep(this.formFields);
   },
   methods: {
+    isCloseOnSelect(field) {
+      return !has(field, 'items');
+    },
     loadData() {
       // make sure display properties have a title
       this.displayProperties.forEach((displayProperty) => {
