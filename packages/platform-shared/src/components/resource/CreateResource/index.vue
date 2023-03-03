@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -54,6 +54,7 @@ of the MIT license. See the LICENSE file for details. -->
                   v-else-if="field.type === 'relationship' || (field.type === 'array' && field.items.type === 'relationship')"
                   :key="'createResource' + index">
                   <FrRelationshipEdit
+                    :close-on-select="isCloseOnSelect(field)"
                     :parent-resource="`${resourceType}/${resourceName}`"
                     :relationship-property="field"
                     :index="index"
@@ -135,6 +136,7 @@ import {
   cloneDeep,
   each,
   find,
+  has,
   isString,
   noop,
   startCase,
@@ -273,6 +275,9 @@ export default {
     },
   },
   methods: {
+    isCloseOnSelect(field) {
+      return !has(field, 'items');
+    },
     saveForm() {
       if (this.isSaving) {
         return;

@@ -6,8 +6,10 @@
  */
 
 import { shallowMount } from '@vue/test-utils';
-import RelationshipEdit from './index';
+import { map } from 'lodash';
+import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import * as schemaApi from '@/api/SchemaApi';
+import RelationshipEdit from './index';
 
 const resourceSchema = { data: 'test' };
 const optionsQueryResult = {
@@ -102,23 +104,33 @@ describe('RelationshipEdit', () => {
   });
 
   it('should setupEditor properly', () => {
+    const queryFilterExtension = '!(/effectiveApplications[_id eq \'1234\'])';
+    const params = {
+      pageSize: 10,
+      fields: '',
+      queryFilter: '',
+      sortKeys: '',
+    };
+    const getManagedResourceList = jest.spyOn(ManagedResourceApi, 'getManagedResourceList').mockReturnValue(Promise.resolve(optionsQueryResult));
     schemaApi.getSchema = jest.fn().mockReturnValue(Promise.resolve(resourceSchema));
-
-    wrapper.vm.getRequestService = () => ({
-      get: jest.fn().mockReturnValue(Promise.resolve(optionsQueryResult)),
-    });
-
-    const optionsSearchRequestSpy = jest.spyOn(wrapper.vm, 'getRequestService');
-
+    wrapper.setProps({ queryFilterExtension });
     wrapper.vm.setupEditor();
+    const { fields } = wrapper.vm.resourceCollection.query;
+    const fieldsMap = map(fields, (field) => `/${field} sw "ab"`).join(' or ');
+    const managedObjectName = wrapper.vm.resourceCollection.path.split('/')[1];
+    params.fields = fields.join(',');
+    params.queryFilter = `(${fieldsMap}) and ${wrapper.vm.queryFilterExtension}`;
+    /* eslint-disable prefer-destructuring */
+    params.sortKeys = fields[0];
+
     expect(wrapper.vm.allResourceCollections.length).toEqual(1);
     expect(wrapper.vm.rescourceCollectionTypes.length).toEqual(1);
     expect(wrapper.vm.relationshipField.value).toEqual('');
     expect(wrapper.vm.resourceCollection).toEqual(wrapper.vm.relationshipField.resourceCollection[0]);
     wrapper.vm.setOptions('a');
-    expect(optionsSearchRequestSpy).not.toHaveBeenCalled();
+    expect(getManagedResourceList).not.toHaveBeenCalled();
     wrapper.vm.setOptions('ab');
-    expect(optionsSearchRequestSpy).toHaveBeenCalledTimes(1);
+    expect(getManagedResourceList).toHaveBeenCalledWith(managedObjectName, params);
   });
 
   it('should emitSelected properly without temporalConstraint', () => {

@@ -151,35 +151,26 @@ of the MIT license. See the LICENSE file for details. -->
       @input="loadGrid(currentPage)"
     />
 
-    <BModal
-      cancel-variant="link"
-      :id="createModalId"
-      :ok-disabled="newRelationships.length === 0"
-      :ok-title="$t('common.save')"
-      :ref="createModalId"
-      :title="addRelationshipModalTitle"
-      size="lg"
-      @ok="saveNewRelationships">
-      <template #modal-header>
-        <slot name="create-modal-header" />
-      </template>
-      <slot
-        name="create-modal-body"
-        :add-new-relationship="addNewRelationship"
-      >
+    <slot
+      name="relationship-form-modal"
+      :add-new-relationship="addNewRelationship"
+      :updateRelationship="updateRelationship">
+      <BModal
+        cancel-variant="link"
+        :id="createModalId"
+        :ok-disabled="newRelationships.length === 0"
+        :ok-title="$t('common.save')"
+        :ref="createModalId"
+        :title="addRelationshipModalTitle"
+        size="lg"
+        @ok="saveNewRelationships">
         <FrRelationshipEdit
           :parent-resource="parentResource"
           :relationship-property="relationshipArrayProperty"
           :index="0"
           @setValue="addNewRelationship" />
-      </slot>
-      <template #modal-footer>
-        <slot
-          name="create-modal-footer"
-          :createModalId="createModalId"
-          :updateRelationship="updateRelationship" />
-      </template>
-    </BModal>
+      </BModal>
+    </slot>
 
     <BModal
       :id="removeModalId"
@@ -207,7 +198,6 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
       </template>
     </BModal>
-    <slot name="modal" />
   </div>
 </template>
 
@@ -236,7 +226,7 @@ import dayjs from 'dayjs';
 import pluralize from 'pluralize';
 
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
-import RelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
+import FrRelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
@@ -260,7 +250,7 @@ export default {
     FrButtonWithSpinner,
     FrIcon,
     FrPagination,
-    FrRelationshipEdit: RelationshipEdit,
+    FrRelationshipEdit,
     FrSearchInput,
   },
   mixins: [
@@ -595,8 +585,12 @@ export default {
       }
     },
     openCreateModal() {
-      this.$refs[this.createModalId].show();
-      this.newRelationships = [];
+      if (this.overrideResourceEvent) {
+        this.$emit('relationship-new-event');
+      } else {
+        this.$refs[this.createModalId].show();
+        this.newRelationships = [];
+      }
     },
     addNewRelationship(data) {
       if (data) {
@@ -657,7 +651,7 @@ export default {
      * @fires patch#revision-update emits new _rev ID
      */
     updateRelationship(operation, items) {
-      const resourcePath = this.parentResourceOverride ? this.parentResourceOverride : this.parentResource;
+      const resourcePath = this.parentResourceOverride || this.parentResource;
       const fieldProp = this.relationshipArrayProperty.propName;
       const patchArray = map(items, (item) => {
         if (operation === 'remove') {
@@ -677,7 +671,9 @@ export default {
         const modal = operation === 'remove' ? this.removeModalId : this.createModalId;
         this.loadGrid(1);
         this.relationshipToDelete = {};
-        this.$refs[modal].hide();
+        if (this.$refs[modal]) {
+          this.$refs[modal].hide();
+        }
       };
 
       this.getRequestService({
