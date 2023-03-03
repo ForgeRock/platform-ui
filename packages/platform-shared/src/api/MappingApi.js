@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -28,4 +28,9 @@ export function previewMapping(payload) {
 
 export function putMappings(payload) {
   return generateIdmApi().put('config/sync', payload);
+}
+
+export function getTargetPreview(resourceId, mapping) {
+  const resourceUrl = `sync?_action=getTargetPreview&resourceId=${resourceId}&mapping=${mapping}`;
+  return generateIdmApi().post(resourceUrl);
 }

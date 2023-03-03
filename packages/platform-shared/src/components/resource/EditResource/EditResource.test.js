@@ -22,7 +22,7 @@ describe('EditResource.vue', () => {
       listRoute: 'test',
     },
     params: {
-      resourceName: 'resourceName',
+      resourceName: 'alpha_user',
       resourceType: 'resourceType',
       resourceId: 'resourceId',
     },
@@ -43,12 +43,14 @@ describe('EditResource.vue', () => {
         $t: () => { },
         $store: {
           state: {
+            isFraas: false,
             userId: 'foo',
             UserStore: {
               adminUser: true,
             },
             SharedStore: {
               hasAmUrl: true,
+              workforceEnabled: true,
             },
           },
         },
@@ -143,10 +145,10 @@ describe('EditResource.vue', () => {
     expect(wrapper.name()).toBe('EditResource');
   });
 
-  it('Format display data', () => {
+  it('Format display data', async () => {
     wrapper.vm.resourceSchema = {
       icon: 'fa-test',
-      order: ['country', 'userName', 'sn', 'email', 'contractor', 'manager'],
+      order: ['country', 'userName', 'sn', 'email', 'contractor', 'applications', 'manager'],
       required: ['userName'],
       properties: {
         userName: {
@@ -179,13 +181,21 @@ describe('EditResource.vue', () => {
           title: 'Manager',
           viewable: true,
         },
+        applications: {
+          type: 'array',
+          title: 'Applications',
+          viewable: true,
+          items: {
+            type: 'relationship',
+          },
+        },
       },
     };
 
     wrapper.vm.resourcePrivilege = {
       UPDATE: {
         allowed: true,
-        properties: ['userName', 'contractor', 'sn', 'email', 'manager'],
+        properties: ['userName', 'contractor', 'sn', 'email', 'applications', 'manager'],
       },
       DELETE: {
         allowed: true,
@@ -206,16 +216,46 @@ describe('EditResource.vue', () => {
     expect(wrapper.vm.icon).toBe('check_box_outline_blank');
     expect(wrapper.vm.formFields.contractor).toBe(false);
     // make sure the view and update properties are merged together and in the correct order
-    expect(wrapper.vm.displayProperties.length).toBe(6);
+    expect(wrapper.vm.displayProperties.length).toBe(7);
     expect(wrapper.vm.displayProperties[0].key).toBe('country');
     // set relationshipProperties
     wrapper.vm.relationshipProperties = wrapper.vm.getRelationshipProperties(wrapper.vm.resourceSchema, wrapper.vm.resourcePrivilege);
     expect(wrapper.vm.relationshipProperties).toEqual({
+      applications: {
+        disabled: false,
+        items: {
+          type: 'relationship',
+        },
+        key: 'applications',
+        propName: 'applications',
+        readOnly: false,
+        title: 'Applications',
+        type: 'array',
+        value: '',
+        viewable: true,
+      },
       manager: {
         type: 'relationship',
         title: 'Manager',
         key: 'manager',
         propName: 'manager',
+        readOnly: false,
+        disabled: false,
+        value: '',
+        viewable: true,
+      },
+    });
+    // filters out 'application' relationship if workforce enabled
+    // so it can display the custom applications component.
+    expect(wrapper.vm.viewableRelationshipArrayProperties).toEqual({
+      applications: {
+        type: 'array',
+        items: {
+          type: 'relationship',
+        },
+        title: 'Applications',
+        key: 'applications',
+        propName: 'applications',
         readOnly: false,
         disabled: false,
         value: '',

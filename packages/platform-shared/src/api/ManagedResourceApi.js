@@ -12,11 +12,11 @@ import { generateIdmApi } from './BaseApi';
   * Returns a managed resource details
   * @param {String} resourceName Specific managed resource path example: managed/user
   * @param {String} id A managed resource _id
+  * @param {Object} params Additional query parameters to be encoded
   *
   * @returns {Promise}
   */
-// eslint-disable-next-line import/prefer-default-export
-export function getManagedResource(resourceName, id, params = '') {
+export function getManagedResource(resourceName, id, params) {
   return generateIdmApi().get(`managed/${resourceName}/${id}${encodeQueryString(params)}`);
 }
 
@@ -27,9 +27,29 @@ export function getManagedResource(resourceName, id, params = '') {
   *
   * @returns {Promise}
   */
-// eslint-disable-next-line import/prefer-default-export
 export function deleteManagedResource(resourceName, id) {
   return generateIdmApi().delete(`managed/${resourceName}/${id}`);
+}
+
+/**
+ * Builds an API url to call for a managed relationship resource
+ *
+ * @param {string} resourceName - Required resource name (e.g., user or role)
+ * @param {string} resourceId - Required resource id
+ * @param {string} relationshipName - Required relationship name (e.g., assignments or applications)
+ * @param {object} params - Optional parameters to be plugged into query string
+ * {
+ *   queryFilter: String,
+ *   fields: String,
+ *   sortKeys: String,
+ *   pageSize: String,
+ *   totalPagedResultsPolicy: String,
+ *   pagedResultsOffset: String,
+ * }
+ */
+export function getManagedRelationshipList(resourceName, resourceId, relationshipName, params) {
+  const resourceUrl = `managed/${resourceName}/${resourceId}/${relationshipName}${encodeQueryString(params)}`;
+  return generateIdmApi().get(resourceUrl);
 }
 
 /**
@@ -52,21 +72,21 @@ export function getManagedResourceList(resourceName, params) {
 }
 
 export function postManagedResource(resourceName, data, routeToForbidden = true) {
-  const resourceUrl = `/managed/${resourceName}?_action=create`;
+  const resourceUrl = `managed/${resourceName}?_action=create`;
   return generateIdmApi(null, routeToForbidden).post(resourceUrl, data);
 }
 
-export function patchManagedResource(resourceName, resourceId, data) {
-  const resourceUrl = `/managed/${resourceName}/${resourceId}`;
-  return generateIdmApi().patch(resourceUrl, data);
+export function patchManagedResource(resourceName, resourceId, data, requestOverride) {
+  const resourceUrl = `managed/${resourceName}/${resourceId}`;
+  return generateIdmApi(requestOverride).patch(resourceUrl, data);
 }
 
 export function putManagedResource(resourceName, resourceId, data, requestOverrides) {
-  const resourceUrl = `/managed/${resourceName}/${resourceId}`;
+  const resourceUrl = `managed/${resourceName}/${resourceId}`;
   return generateIdmApi(requestOverrides).put(resourceUrl, data);
 }
 
 export function getLinkedApplications(resourceName, userId) {
-  const resourceUrl = `/sync?_action=getLinkedResources&resourceName=managed/${resourceName}/${userId}`;
+  const resourceUrl = `sync?_action=getLinkedResources&resourceName=managed/${resourceName}/${userId}`;
   return generateIdmApi().post(resourceUrl);
 }

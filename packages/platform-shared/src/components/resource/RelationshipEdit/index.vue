@@ -30,7 +30,7 @@ of the MIT license. See the LICENSE file for details. -->
       v-model="relationshipField.value"
       open-direction="bottom"
       :allow-empty="true"
-      :close-on-select="relationshipField.type === 'select'"
+      :close-on-select="closeOnSelect"
       :disabled="disabled"
       :description="relationshipField.description"
       :id="relationshipProperty.key + index"
@@ -116,7 +116,7 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
     </FrField>
     <BFormGroup
-      v-if="relationshipProperty.relationshipGrantTemporalConstraintsEnforced"
+      v-if="relationshipProperty.relationshipGrantTemporalConstraintsEnforced && showTimeConstraintsSwitch"
       :label-cols="isRelationshipArray || newResource ? 12 : 0"
       horizontal>
       <FrField
@@ -141,14 +141,14 @@ import {
   map,
 } from 'lodash';
 import { BFormGroup, BButton } from 'bootstrap-vue';
+import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
+import { getInternalResourceList } from '@forgerock/platform-shared/src/api/InternalResourceApi';
 import VueMultiSelect from 'vue-multiselect';
 import TimeConstraint from '@forgerock/platform-shared/src/components/TimeConstraint';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
-import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
 
 export default {
   name: 'RelationshipEdit',
@@ -160,11 +160,12 @@ export default {
     FrIcon,
     FrTimeConstraint: TimeConstraint,
   },
-  mixins: [
-    NotificationMixin,
-    RestMixin,
-  ],
+  mixins: [NotificationMixin],
   props: {
+    closeOnSelect: {
+      type: Boolean,
+      default: false,
+    },
     disabled: {
       type: Boolean,
       default: false,
@@ -188,9 +189,20 @@ export default {
     /**
      * Extends the query defined in relationship queryFilter request
      */
-    queryExtension: {
+    queryFilterExtension: {
       type: String,
       default: '',
+    },
+    /**
+     * Extends the query fields defined in relationship queryFilter request
+     */
+    queryFieldsExtension: {
+      type: Array,
+      default: () => ([]),
+    },
+    showTimeConstraintsSwitch: {
+      type: Boolean,
+      default: true,
     },
     singleSelection: {
       type: Boolean,
@@ -291,7 +303,6 @@ export default {
       this.resourceCollection = this.allResourceCollections[index];
 
       this.showResourceType = this.allResourceCollections.length > 1;
-
       return getSchema(`${this.resourceCollection.path}`).then((schema) => {
         this.resourceCollection.schema = schema.data;
         this.setOptions();
@@ -311,7 +322,7 @@ export default {
       const maxPageSize = 10;
       const { fields: displayFields } = this.resourceCollection.query;
       const { uiConfig } = this.$store.state.SharedStore;
-      const managedObjectName = this.resourceCollection.path.split('/')[1];
+      const [resourceType, managedObjectName] = this.resourceCollection.path.split('/');
       const queryThreshold = has(uiConfig.configuration.platformSettings.managedObjectsSettings, managedObjectName) ? uiConfig.configuration.platformSettings.managedObjectsSettings[managedObjectName].minimumUIFilterLength : null;
       const queryFilter = true;
       let requestEnabled = true;
@@ -332,7 +343,7 @@ export default {
 
       const urlParams = {
         pageSize: maxPageSize,
-        fields: displayFields.join(','),
+        fields: [...this.queryFieldsExtension, ...displayFields].join(','),
         queryFilter,
       };
 
@@ -340,11 +351,11 @@ export default {
         urlParams.queryFilter = map(displayFields, (field) => `/${field} sw "${query}"`).join(' or ');
         // eslint-disable-next-line prefer-destructuring
         urlParams.sortKeys = displayFields[0];
-        if (this.queryExtension) {
-          urlParams.queryFilter = `(${urlParams.queryFilter}) and ${this.queryExtension}`;
+        if (this.queryFilterExtension) {
+          urlParams.queryFilter = `(${urlParams.queryFilter}) and ${this.queryFilterExtension}`;
         }
-      } else if (this.queryExtension) {
-        urlParams.queryFilter = this.queryExtension;
+      } else if (this.queryFilterExtension) {
+        urlParams.queryFilter = this.queryFilterExtension;
       }
 
       if (queryThreshold && query && query.length < queryThreshold) {
@@ -352,8 +363,8 @@ export default {
       }
 
       if (requestEnabled) {
-        const idmInstance = this.getRequestService();
-        idmInstance.get(`${this.resourceCollection.path}${encodeQueryString(urlParams)}`).then((queryResults) => {
+        const getResourceList = resourceType === 'managed' ? getManagedResourceList : getInternalResourceList;
+        getResourceList(managedObjectName, urlParams).then((queryResults) => {
           this.relationshipField.options = [];
           each(queryResults.data.result, (resource) => {
             this.relationshipField.options.push({ value: `${this.resourceCollection.path}/${resource._id}`, resource, displayFields });
