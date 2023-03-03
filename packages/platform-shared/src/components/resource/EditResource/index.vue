@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -131,9 +131,8 @@ of the MIT license. See the LICENSE file for details. -->
             :revision="revision"
             @refresh-data="refreshData" />
           <!-- Add a tab for each viewable/editable relationship array property -->
-          <template v-for="(relationshipProperty) in relationshipProperties">
+          <template v-for="(relationshipProperty) in viewableRelationshipArrayProperties">
             <BTab
-              v-if="relationshipProperty.type === 'array'"
               :title="getTranslation(relationshipProperty.title)"
               :key="`${relationshipProperty.propName}_tab`">
               <FrRelationshipArray
@@ -152,6 +151,16 @@ of the MIT license. See the LICENSE file for details. -->
             :resource-path="`${resourceType}/${resourceName}/${id}`"
             :revision="revision"
             @refresh-data="refreshData" />
+          <BTab
+            v-if="workforceEnabled && isOpenidmAdmin && (resourceIsUser || resourceIsRole)"
+            :title="$t('pages.access.applications')">
+            <slot
+              name="wfApplications"
+              :resource-details="resourceDetails"
+              :relationship-properties="relationshipProperties"
+              :revision="revision"
+              :id="id" />
+          </BTab>
           <LinkedApplicationsTab
             v-if="isOpenidmAdmin"
             :linked-applications="linkedApplications" />
@@ -278,7 +287,8 @@ export default {
       resourceTitle: '',
       resourceName: this.$route.params.resourceName,
       resourceType: this.$route.params.resourceType,
-      resourceIsUser: this.$route.params.resourceName && this.$route.params.resourceName.endsWith('user'),
+      resourceIsUser: this.$route.params.resourceType === 'managed' && this.$route.params.resourceName.endsWith('user'),
+      resourceIsRole: this.$route.params.resourceType === 'managed' && this.$route.params.resourceName.endsWith('role'),
       resourceDetails: null,
       resourceSchema: null,
       resourcePrivilege: null,
@@ -297,7 +307,6 @@ export default {
       settingsProperties: {},
       isLoading: true,
       isDeleting: false,
-      passwordField: {},
       jsonString: '',
       revision: '',
       currentTab: 0,
@@ -317,6 +326,7 @@ export default {
         'org.forgerock.openicf.connectors.scriptedsql.ScriptedSQLConnector': 'scripted.svg',
         'org.forgerock.openicf.connectors.ssh.SSHConnector': 'ssh.svg',
       },
+      workforceEnabled: this.$store.state.SharedStore.workforceEnabled,
     };
   },
   mounted() {
@@ -593,10 +603,6 @@ export default {
 
           if (createPriv.attribute !== 'password' && tempProp.viewable && !tempProp.isConditional) {
             this.displayProperties.push(tempProp);
-          } else {
-            tempProp.type = 'password';
-            tempProp.validation = 'required|policy';
-            this.passwordField = tempProp;
           }
         });
       }
@@ -740,6 +746,9 @@ export default {
       }
 
       return null;
+    },
+    viewableRelationshipArrayProperties() {
+      return pickBy(this.relationshipProperties, (property) => property.type === 'array' && property.viewable !== false);
     },
   },
 };

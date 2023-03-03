@@ -12,7 +12,7 @@
  */
 export default function encodeQueryString(params, appendUnderscores = true) {
   // empty object means empty query string
-  if (!Object.keys(params).length) {
+  if (!params || !Object.keys(params).length) {
     return '';
   }
 
