@@ -33,14 +33,21 @@ of the MIT license. See the LICENSE file for details. -->
         <BCol>
           <FrDatepicker
             data-testid="end-date"
+            :class="[{'fr-field-error': showEndDateError}]"
             v-model="endDate"
             :placeholder="$t('governance.delegates.endDate')" />
+          <div v-if="showEndDateError">
+            <FrValidationError
+              class="error-messages flex-grow-1"
+              :validator-errors="[$t('governance.delegates.errorEndDate')]" />
+          </div>
         </BCol>
       </BRow>
     </BCollapse>
     <template #modal-footer="{ cancel, ok }">
       <div class="d-flex flex-row-reverse">
         <BButton
+          :disabled="!canUserSave"
           data-testid="save-button"
           variant="primary"
           @click="okHandler(ok)">
@@ -69,6 +76,7 @@ import FrDatepicker from '@forgerock/platform-shared/src/components/Datepicker';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrGovResourceSelect from '@forgerock/platform-shared/src/components/filterBuilder/components/GovResourceSelect';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+import FrValidationError from '@forgerock/platform-shared/src/components/ValidationErrorList';
 import { addTaskProxy } from '@/api/GovernanceEnduserApi';
 
 export default {
@@ -82,6 +90,7 @@ export default {
     FrDatepicker,
     FrField,
     FrGovResourceSelect,
+    FrValidationError,
   },
   mixins: [NotificationMixin],
   data() {
@@ -96,6 +105,23 @@ export default {
     isTesting: {
       type: Boolean,
       default: false,
+    },
+  },
+  computed: {
+    isValidEndDate() {
+      if (this.startDate.length > 0 && this.endDate.length > 0) {
+        return this.startDate < this.endDate;
+      }
+      return false;
+    },
+    showEndDateError() {
+      return this.startDate.length > 0 && !this.isValidEndDate && this.endDate.length > 0;
+    },
+    canUserSave() {
+      if (this.enableTimeConstraint) {
+        return this.isValidEndDate;
+      }
+      return true;
     },
   },
   methods: {
