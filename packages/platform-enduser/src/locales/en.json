@@ -184,6 +184,7 @@
       "delegateAdded": "Delegate successfully added",
       "delegateRemoved": "Delegate successfully removed",
       "endDate": "End Date",
+      "errorEndDate": "End date cannot come before start date",
       "errorAddingDelegate": "Error adding delegate",
       "errorGettingDelegates": "Error getting delegates",
       "errorDeletingDelegate": "Error deleting delegate",
