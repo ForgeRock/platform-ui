@@ -21,10 +21,12 @@ of the MIT license. See the LICENSE file for details. -->
       <div>
         <img
           v-if="provider.uiConfig.iconKey"
-          :src="require(`@forgerock/platform-shared/src/assets/images/${provider.uiConfig.iconKey}-logo.svg`)">
+          :src="require(`@forgerock/platform-shared/src/assets/images/${provider.uiConfig.iconKey}-logo.svg`)"
+          alt="">
         <img
           v-else-if="provider.uiConfig.buttonImage"
-          :src="provider.uiConfig.buttonImage">
+          :src="provider.uiConfig.buttonImage"
+          alt="">
         <span class="ml-1">
           {{ $t('login.social.signInWith', {buttonDisplayName: provider.uiConfig.buttonDisplayName}) }}
         </span>
