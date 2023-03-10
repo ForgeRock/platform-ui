@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -46,6 +46,7 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import { BAlert, BButton } from 'bootstrap-vue';
 import QRCodeGenerator from 'qrcode-generator';
+import addAttributesToDomNodeString from '@forgerock/platform-shared/src/utils/stringDomNodeUtils';
 import { CallbackType } from '@forgerock/javascript-sdk';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 
@@ -123,7 +124,10 @@ export default {
       qr.make();
 
       // 3 is the size of the painted squares, 8 is the white border around the edge
-      this.qrCodeHtml = qr.createImgTag(3, 8);
+      const imgTagStr = qr.createImgTag(3, 8);
+      const attributes = new Map().set('alt', '');
+      this.qrCodeHtml = addAttributesToDomNodeString(imgTagStr, attributes);
+
       this.qrCodeMobileLink = text;
       this.hideSpinner = true;
     },
