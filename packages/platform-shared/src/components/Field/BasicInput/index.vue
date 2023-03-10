@@ -77,8 +77,9 @@ of the MIT license. See the LICENSE file for details. -->
           @click="revealText"
           :class="[{'disabled': disabled}]"
           name="revealButton"
-          :aria-label="showPassword ? 'visibility_off' : 'visibility'"
-          @keyup.enter="$emit('enter')">
+          :aria-label="showPassword ? $t('common.hidePassword') : $t('common.showPassword')"
+          @keyup.enter="$emit('enter')"
+          :data-testid="`btn-show-password-${testid}`">
           <FrIcon
             :name="showPassword ? 'visibility_off' : 'visibility'"
           />
