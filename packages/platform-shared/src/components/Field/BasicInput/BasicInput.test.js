@@ -1,67 +1,40 @@
 /**
- * Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, mount, shallowMount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import BasicInput from './index';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
-
-const defaultMixinProps = {
-  id: '',
-  errorMessages: [],
-  name: '',
-  description: '',
-  isHtml: false,
-  label: '',
-  readonly: false,
-  autofocus: true,
-  floatingLabel: true,
-};
+import i18n from '@/i18n';
+import { findByTestId } from '../../../utils/testHelpers';
 
 const defaultProps = {
+  name: '',
   autofocus: false,
   type: 'test',
 };
 
 describe('BasicInput', () => {
   it('BasicInput component loaded', () => {
-    const wrapper = shallowMount(BasicInput, {
-      localVue,
+    const wrapper = mount(BasicInput, {
+      i18n,
       propsData: {
-        ...defaultMixinProps,
         ...defaultProps,
       },
-      mocks: {
-        $t: (text) => (text),
-      },
     });
-
-    wrapper.vm.$refs = {
-      input: {
-        focus: () => {},
-      },
-    };
 
     expect(wrapper.name()).toBe('BasicInput');
     expect(wrapper.vm.floatLabels).toBe(false);
   });
 
   it('starts animation', () => {
-    const wrapper = shallowMount(BasicInput, {
-      localVue,
+    const wrapper = mount(BasicInput, {
+      i18n,
       propsData: {
-        ...defaultMixinProps,
         ...defaultProps,
         label: 'test',
-      },
-      mocks: {
-        $t: (text) => (text),
       },
     });
 
@@ -78,41 +51,36 @@ describe('BasicInput', () => {
     expect(wrapper.vm.floatLabels).toBe(true);
   });
 
-  it('BasicInput component renders reveal button for password', () => {
+  it('BasicInput component renders reveal button for password', async () => {
     const wrapper = mount(BasicInput, {
-      localVue,
+      i18n,
       propsData: {
-        ...defaultMixinProps,
         ...defaultProps,
         type: 'password',
-      },
-      mocks: {
-        $t: (text) => (text),
+        testid: 'stub-testid',
       },
     });
-    const button = wrapper.find('button');
-    const input = wrapper.find('input');
+    const showPasswordButton = findByTestId(wrapper, 'btn-show-password-stub-testid');
+    const input = findByTestId(wrapper, 'input-stub-testid');
 
-    expect(button.exists()).toBe(true);
-    expect(button.attributes('name')).toBe('revealButton');
+    expect(showPasswordButton.exists()).toBe(true);
+    expect(showPasswordButton.attributes('name')).toBe('revealButton');
     expect(wrapper.vm.showPassword).toBe(false);
     expect(input.attributes('type')).toBe('password');
+    expect(showPasswordButton.attributes('aria-label')).toBe('Show password');
 
-    button.trigger('click');
+    await showPasswordButton.trigger('click');
 
     expect(wrapper.vm.showPassword).toBe(true);
     expect(input.attributes('type')).toBe('text');
+    expect(showPasswordButton.attributes('aria-label')).toBe('Hide password');
   });
 
   it('BasicInput passes through component slots', () => {
     const wrapper = mount(BasicInput, {
-      localVue,
+      i18n,
       propsData: {
-        ...defaultMixinProps,
         ...defaultProps,
-      },
-      mocks: {
-        $t: (text) => (text),
       },
       slots: {
         prepend: '<span class="test_prepend">prepend</span>',
@@ -126,14 +94,10 @@ describe('BasicInput', () => {
 
   it('BasicInput without floating label', () => {
     const wrapper = mount(BasicInput, {
-      localVue,
+      i18n,
       propsData: {
-        ...defaultMixinProps,
         ...defaultProps,
         floatingLabel: false,
-      },
-      mocks: {
-        $t: (text) => (text),
       },
     });
 
@@ -141,25 +105,19 @@ describe('BasicInput', () => {
   });
 
   it('BasicInput without floating label must not call animationstart event method', async () => {
-    const animationStart = jest.fn();
     const wrapper = mount(BasicInput, {
-      localVue,
+      i18n,
       propsData: {
-        ...defaultMixinProps,
         ...defaultProps,
         floatingLabel: false,
-      },
-      mocks: {
-        $t: (text) => (text),
-      },
-      methods: {
-        animationStart,
+        testid: 'stub-testid',
       },
     });
+    const animationStartSpy = jest.spyOn(wrapper.vm, 'animationStart');
 
     expect(wrapper.vm.floatLabels).toBe(false);
-    await wrapper.find('input').trigger('animationstart');
-    expect(animationStart).not.toHaveBeenCalled();
+    findByTestId(wrapper, 'input-stub-testid').trigger('animationstart');
+    expect(animationStartSpy).not.toHaveBeenCalled();
     expect(wrapper.vm.floatLabels).toBe(false);
   });
 });
