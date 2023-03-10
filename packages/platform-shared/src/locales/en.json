@@ -90,6 +90,7 @@
     "genericError": "Something went wrong, please try again.",
     "help": "Help",
     "hide": "Hide",
+    "hidePassword": "Hide password",
     "group": "Group",
     "hideAdvanced": "Hide advanced settings",
     "id": "ID",
@@ -163,6 +164,7 @@
     "serviceAccounts": "Service Accounts",
     "settings": "Settings",
     "show": "Show",
+    "showPassword": "Show password",
     "showAdvanced": "Show advanced settings",
     "signOut": "Sign out",
     "signIn": "Sign In",
@@ -867,7 +869,7 @@
           },
           "saveConfig": "Save Config"
         },
-        "dataSourcesAPI":{
+        "dataSourcesAPI": {
           "fileError": "File not found",
           "bucketError": "Bucket not found",
           "errorInvalidJSON": "Invalid JSONL. Cannot be used as Data Source.",
@@ -1121,7 +1123,7 @@
         "comment": "Comment",
         "decide": "Decide",
         "assignForward": "Forward",
-        "signOff":"Sign Off"
+        "signOff": "Sign Off"
       },
       "campaignDetails": {
         "campaignOwner": "Campaign Owner",
@@ -1231,7 +1233,7 @@
       "description": "Forward this access review to:",
       "toRole": "Users with assigned role",
       "toUser": "Another user",
-      "title":" Forward Access Review"
+      "title": " Forward Access Review"
     }
   }
 }
