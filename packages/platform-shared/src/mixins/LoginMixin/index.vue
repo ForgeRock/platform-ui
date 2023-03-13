@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -280,7 +280,7 @@ export function getComponentPropsAndEvents(componentType, callBackIndex, compone
       listeners: ['disable-next-button'],
     }),
     ReCaptchaCallback: () => ({
-      listeners: ['next-step-callback'],
+      listeners: ['next-step-callback', 'disable-next-button'],
     }),
     SelectIdPCallback: () => ({
       callbackSpecificProps: { isOnlyCallback: currentStep.callbacks.length === 1 },
