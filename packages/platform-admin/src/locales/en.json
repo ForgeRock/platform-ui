@@ -935,6 +935,7 @@
     "addField": "Add {field}",
     "application": "Application",
     "errorRetrievingApplications": "Error retrieving Applications",
+    "errorRetrievingApplicationTemplates": "Error retrieving Application templates",
     "listView": {
       "addApp": "Add Application",
       "addCustomApp": "Custom Application",
