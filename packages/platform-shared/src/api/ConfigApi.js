@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -50,4 +50,13 @@ export function patchConfig(file, patch) {
  */
 export function deleteConfig(file) {
   return generateIdmApi().delete(`config/${file}`);
+}
+
+/**
+ * Queries the config endpoint based on a queryFilter
+ *
+ * @returns {Promise} API promise with return list of config files
+ */
+export function queryConfig(queryFilter) {
+  return generateIdmApi().get(`config?_queryFilter=${queryFilter}`);
 }
