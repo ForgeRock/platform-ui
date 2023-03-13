@@ -21,7 +21,7 @@ of the MIT license. See the LICENSE file for details. -->
             class="fr-edit-icon"
             size="2em"
             variant="dark"
-            aria-label="Update profile picture">
+            :aria-label="$t('pages.profile.editProfile.profileImageModal.title')">
             <FrIcon
               class="md-18"
               name="camera_alt"
