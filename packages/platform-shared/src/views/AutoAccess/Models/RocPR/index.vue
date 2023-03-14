@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -77,7 +77,7 @@ export default {
       },
     },
     flatData() {
-      if (this.flatData) {
+      if (this.flatData.length > 0) {
         if (!this.init) {
           ROCPRChart.init(this.$refs.d3Container, this.flatData, this.modelId, this.modelData[this.modelId].area_under_roc);
           this.init = true;
@@ -99,22 +99,20 @@ export default {
           const fprData = source.fpr;
           const { precision } = source;
           const { recall } = source;
-          const { confusionMatrix } = source;
-          arr = scoreThreshhold.map((threshold, index) => (
-            {
-              tpr: tprData[index],
-              fpr: fprData[index],
-              t: threshold,
-              ppv: precision[index],
-              rc: recall[index],
-              tn: confusionMatrix[index].tn,
-              tp: confusionMatrix[index].tp,
-              fn: confusionMatrix[index].fn,
-              fp: confusionMatrix[index].fp,
-            }
-          ));
+          const { confusion_matrix: confusionMatrix } = source;
+          arr = scoreThreshhold.map((threshold, index) => ({
+            tpr: tprData[index],
+            fpr: fprData[index],
+            t: threshold,
+            ppv: precision[index],
+            rc: recall[index],
+            tn: confusionMatrix[index].tn,
+            tp: confusionMatrix[index].tp,
+            fn: confusionMatrix[index].fn,
+            fp: confusionMatrix[index].fp,
+          }));
         } catch (e) {
-          this.setError(this.$t('autoaccess.access.models.noDataError'));
+          this.setError(this.$t('autoAccess.access.models.noDataError'));
         }
       }
       return arr;
