@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -90,7 +90,7 @@ const appendHoverArea = (key, svg) => {
   });
 };
 
-const appendChart = (svg) => {
+export const appendChart = (svg) => {
   svg
     .append('g')
     .attr('class', 'roc-pr-chart-noSkill-g')
@@ -102,7 +102,7 @@ const appendChart = (svg) => {
   svg.append('g').attr('class', 'roc-pr-chart-points-g');
 };
 
-const initChart = (svg, key) => {
+export const initChart = (svg, key) => {
   svg
     .append('text')
     .text(chartMeta[key].labels.title)
@@ -113,5 +113,3 @@ const initChart = (svg, key) => {
   appendHoverArea(key, svg);
   appendChart(svg);
 };
-
-export default { initChart };
