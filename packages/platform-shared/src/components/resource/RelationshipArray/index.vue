@@ -1,42 +1,53 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
-    <div class="px-4 py-2 card-header">
+    <div class="px-4 py-3 card-header ">
       <BRow>
         <BCol
-          v-show="!relationshipArrayProperty.readOnly || isOpenidmAdmin"
-          class="my-1">
-          <BButton
-            variant="primary"
-            class="mr-1"
-            @click="openCreateModal"
-            :id="'add_' + relationshipArrayProperty.key">
-            <FrIcon
-              class="mr-2"
-              :outlined="false"
-              name="add"
-            />{{ addButtonText }}
-          </BButton>
-          <BButton
-            v-show="selected.length > 0"
-            variant="outline-primary"
-            @click="$refs[removeModalId].show()"
-            :id="'delete_' + relationshipArrayProperty.key">
-            {{ removeRelationshipButtonText }}
-          </BButton>
+          md="8"
+          v-show="!relationshipArrayProperty.readOnly || isOpenidmAdmin">
+          <div class="d-md-inline-block mb-3 mb-md-0">
+            <BButton
+              variant="primary"
+              class="mr-1 text-nowrap flex-shrink-0"
+              @click="openCreateModal"
+              :id="'add_' + relationshipArrayProperty.key"
+              block>
+              <FrIcon
+                class="mr-2"
+                :outlined="false"
+                name="add" />
+              {{ addButtonText }}
+            </BButton>
+          </div>
+          <div class="d-md-inline-block mb-3 ml-md-3 mb-md-0">
+            <BButton
+              class="text-nowrap flex-shrink-0"
+              v-show="selected.length > 0"
+              variant="outline-primary"
+              @click="$refs[removeModalId].show()"
+              :id="'delete_' + relationshipArrayProperty.key"
+              block>
+              {{ removeRelationshipButtonText }}
+            </BButton>
+          </div>
         </BCol>
-        <FrSearchInput
-          v-if="showFilter && !disableSortAndSearch"
-          v-model="filter"
-          :placeholder="$t('common.search')"
-          @clear="clear"
-          @search="search" />
+        <BCol
+          md="4"
+          class="d-md-inline-block">
+          <FrSearchInput
+            v-if="showFilter && !disableSortAndSearch"
+            class="text-nowrap flex-shrink-0"
+            v-model="filter"
+            :placeholder="$t('common.search')"
+            @clear="clear"
+            @search="search" />
+        </BCol>
       </BRow>
     </div>
-
     <BTable
       hover
       ref="relationshipArrayGrid"
