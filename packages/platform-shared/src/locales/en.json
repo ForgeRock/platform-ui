@@ -1173,9 +1173,7 @@
         "accountDetailsTabText": "Account Details",
         "applicationDetailsTab": {
           "nameLabel": "Application Name",
-          "ownerLabel": "Owner(s)",
-          "templateIdLabel": "Template ID",
-          "typeLabel": "Application Type"
+          "ownerLabel": "Owner(s)"
         },
         "applicationDetailsTabText": "Application Details",
         "contentDetailsTabText": "Contents",
