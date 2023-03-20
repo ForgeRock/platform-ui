@@ -137,7 +137,7 @@ export default {
   },
   methods: {
     getFullName(givenName, sn) {
-      return this.$t('governance.certificationTask.userFullName', {
+      return this.$t('common.userFullName', {
         givenName,
         sn,
       });
