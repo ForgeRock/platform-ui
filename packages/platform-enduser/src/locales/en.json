@@ -192,6 +192,7 @@
       "errorGettingDelegates": "Error getting delegates",
       "errorDeletingDelegate": "Error deleting delegate",
       "errorEndDate": "End date cannot come before start date",
+      "noDelegates": "No Delegates",
       "startDate": "Start Date",
       "subtitle": "View users delegated to complete your tasks in the event you are unable.",
       "timeConstraintLabel": "Assign role only during a selected time period",

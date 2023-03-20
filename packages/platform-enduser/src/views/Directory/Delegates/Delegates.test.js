@@ -18,7 +18,17 @@ describe('AccessReviews', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    GovernanceEnduserApi.getTaskProxies = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [] } }));
+    GovernanceEnduserApi.getTaskProxies = jest.fn().mockReturnValue(Promise.resolve({
+      data: {
+        result: [
+          {
+            user: 'testUser',
+            start: 'testStart',
+            end: 'testEnd',
+          },
+        ],
+      },
+    }));
     GovernanceEnduserApi.deleteTaskProxy = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [] } }));
     wrapper = mount(Delegates, {
       mocks: {
@@ -205,6 +215,18 @@ describe('AccessReviews', () => {
       await wrapper.vm.$nextTick();
 
       expect(errorSpy).toHaveBeenCalled();
+    });
+
+    it('displays noData component when no task proxies are found', async () => {
+      jest.spyOn(GovernanceEnduserApi, 'getTaskProxies').mockResolvedValue({
+        data: { result: [] },
+      });
+
+      wrapper.vm.loadData();
+      await wrapper.vm.$nextTick();
+
+      const noData = findByTestId(wrapper, 'delegates-no-data');
+      expect(noData.exists()).toBeTruthy();
     });
   });
 

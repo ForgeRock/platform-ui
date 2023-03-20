@@ -52,6 +52,7 @@ of the MIT license. See the LICENSE file for details. -->
           </div>
         </BCardHeader>
         <BTable
+          v-if="accessReviewList.length"
           class="mb-0"
           hover
           responsive
@@ -127,6 +128,13 @@ of the MIT license. See the LICENSE file for details. -->
             </FrActionsCell>
           </template>
         </BTable>
+        <FrNoData
+          v-else
+          :card="false"
+          class="mb-4"
+          data-testid="access-review-no-data"
+          icon="inbox"
+          :subtitle="$t('governance.certificationTask.noAccessReview', { type: statusSort.text })" />
         <BPagination
           v-if="totalRows > 10"
           v-model="currentPage"
@@ -168,6 +176,7 @@ import FrCircleProgressBar from '@forgerock/platform-shared/src/components/Circl
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 // import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
+import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import CertificationMixin from '@forgerock/platform-shared/src/mixins/Governance/Certification';
 import FrForwardReviewModal from '@forgerock/platform-shared/src/components/governance/ForwardReviewModal';
@@ -191,6 +200,7 @@ export default {
     FrForwardReviewModal,
     FrHeader,
     FrIcon,
+    FrNoData,
     // FrSearchInput,
     FrSpinner,
   },
