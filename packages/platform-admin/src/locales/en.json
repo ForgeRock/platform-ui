@@ -2677,6 +2677,7 @@
       "overview": "Overview",
       "campaigns": "Campaigns",
       "updateDeadline": "Update Deadline",
+      "noCampaigns": "No {type} Campaigns",
       "modal": {
         "activateCampaign": "Activate Campaign?",
         "activateCampaignDescription": "Are you sure you want to activate this campaign?",
@@ -2980,6 +2981,7 @@
       "editSchedule":"Edit Schedule",
       "editTemplate": "Edit Template",
       "noneSchedule": "(None Scheduled)",
+      "noTemplates": "No Templates",
       "runPublishedTemplateConfirm": "Are you sure you want to run this campaign now? This will send notifications to all certifiers.",
       "errors": {
         "errorDeletingTemplate": "Error deleting template",
