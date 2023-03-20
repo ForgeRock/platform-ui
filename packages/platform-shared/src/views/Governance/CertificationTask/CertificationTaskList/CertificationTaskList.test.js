@@ -6,6 +6,7 @@
  */
 
 import { shallowMount } from '@vue/test-utils';
+import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import flushPromises from 'flush-promises';
 import * as CertificationApi from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import CertificationTaskList from './index';
@@ -105,10 +106,6 @@ describe('CertificationTaskList', () => {
     });
   });
   describe('loadTasksList', () => {
-    it('should set to true if there is no data', () => {
-      wrapper.vm.loadTasksList(resourceDataMock);
-      expect(wrapper.vm.noData).toEqual(true);
-    });
     it('should set the total rows with the total hits', () => {
       wrapper.vm.loadTasksList(resourceDataMock);
       expect(wrapper.vm.totalRows).toEqual(2);
@@ -149,6 +146,12 @@ describe('CertificationTaskList', () => {
       };
       wrapper.vm.loadTasksList(resource, 1);
       expect($emit).toBeCalledWith('check-progress');
+    });
+    it('should show noData component when there are no templates', () => {
+      wrapper.vm.loadTasksList({ data: { result: [], totalHits: 0 } }, 0);
+
+      const noData = findByTestId(wrapper, 'cert-task-list-no-data');
+      expect(noData.exists()).toBeTruthy();
     });
   });
   describe('getCertificationTaskList', () => {

@@ -1,4 +1,4 @@
-<!-- Copyright 2020-2022 ForgeRock AS. All Rights Reserved
+<!-- Copyright 2020-2023 ForgeRock AS. All Rights Reserved
 
 Use of this code requires a commercial software license with ForgeRock AS
 or with one of its affiliates. All use shall be exclusively subject

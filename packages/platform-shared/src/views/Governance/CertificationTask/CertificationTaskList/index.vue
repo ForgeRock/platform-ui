@@ -116,12 +116,11 @@ of the MIT license. See the LICENSE file for details. -->
       <FrSpinner class="py-5" />
     </div>
     <BTable
-      v-else
+      v-else-if="tasksData.length"
       class="m-0 border-top border-bottom task-list-table"
       :fields="certificationListColumnsToShow"
       :items="tasksData"
       :per-page="pageSize"
-      :empty-text="$t('governance.certificationTask.noData')"
       show-empty
       responsive>
       <template #cell(selector)="{ item }">
@@ -332,6 +331,13 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
       </template>
     </BTable>
+    <FrNoData
+      v-else
+      :card="false"
+      class="mb-4"
+      data-testid="cert-task-list-no-data"
+      icon="inbox"
+      :subtitle="$t('governance.certificationTask.noItems')" />
     <BPagination
       v-if="totalRows > pageSize"
       v-model="paginationPage"
@@ -344,7 +350,6 @@ of the MIT license. See the LICENSE file for details. -->
     <FrCertificationTaskSortModal
       @update-columns="updateColumns"
       :task-list-columns="tasksFieldsToSort" />
-
     <FrCertificationForwardModal
       :id="currentItemTaskId"
       :bulk="bulkForward"
@@ -421,6 +426,7 @@ import FrCertificationForwardModal from '@forgerock/platform-shared/src/views/Go
 import FrCertificationTaskListFilters from '@forgerock/platform-shared/src/views/Governance/CertificationTask/CertificationTaskListFilters';
 import FrCertificationTaskReassignModal from '@forgerock/platform-shared/src/views/Governance/CertificationTask/CertificationTaskReassignModal';
 import FrCertificationTaskActionConfirmModal from '@forgerock/platform-shared/src/views/Governance/CertificationTask/CertificationTaskActionConfirmModal';
+import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import AppSharedUtilsMixin from '@forgerock/platform-shared/src/mixins/AppSharedUtilsMixin';
 import {
@@ -504,16 +510,17 @@ export default {
     FrCertificationTaskAddCommentModal,
     FrCertificationTaskApplicationModal,
     FrCertificationTaskCommentsModal,
+    FrCertificationTaskEditReviewerModal,
+    FrCertificationTaskEntitlementModal,
     FrCertificationTaskListFilters,
     FrCertificationTaskReassignModal,
+    FrCertificationTaskReviewersModal,
     FrCertificationTaskSortModal,
     FrCertificationTaskUserModal,
     FrField,
     FrIcon,
+    FrNoData,
     FrSpinner,
-    FrCertificationTaskReviewersModal,
-    FrCertificationTaskEditReviewerModal,
-    FrCertificationTaskEntitlementModal,
   },
   mixins: [
     AppSharedUtilsMixin,
@@ -590,7 +597,6 @@ export default {
       isDeleting: false,
       isSavingReviewer: false,
       isDeletingReviewer: false,
-      noData: false,
       paginationPage: 1,
       rowTemplateSelectedId: null,
       certificationListColumns: [],
@@ -895,7 +901,6 @@ export default {
       return '';
     },
     loadTasksList(resourceData, page) {
-      this.noData = resourceData.data.result.length === 0;
       this.totalRows = resourceData.data.totalCount;
       this.currentPage = page;
       const resultData = resourceData.data.result;
