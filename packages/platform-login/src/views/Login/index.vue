@@ -477,8 +477,11 @@ export default {
     this.$emit('component-ready');
     this.realm = urlParams.get('realm') || '/';
 
-    if (localStorage.getItem('originalLoginRealm')) {
-      localStorage.removeItem('originalLoginRealm');
+    // Check if web storage exists before trying to use it - see IAM-1873
+    if (this.$store.state.SharedStore.webStorageAvailable) {
+      if (localStorage.getItem('originalLoginRealm')) {
+        localStorage.removeItem('originalLoginRealm');
+      }
     }
 
     this.getConfigurationInfo(this.realm)
@@ -973,18 +976,21 @@ export default {
       FRAuth.next(this.step, stepParams)
         .then((step) => {
           let initialStep;
-          const realmAndTreeInitialStep = JSON.parse(sessionStorage.getItem('initialStep'));
-          const realmAndTreeKey = `${stepParams.realmPath}/${stepParams.tree || ''}`;
-          if (realmAndTreeInitialStep && realmAndTreeInitialStep.key === realmAndTreeKey) {
-            initialStep = new FRStep(realmAndTreeInitialStep.step.payload);
-            initialStep.payload.stage = this.step?.payload?.stage;
-          } else if (step.type !== 'LoginFailure') {
-            sessionStorage.setItem('initialStep', JSON.stringify(
-              {
-                key: realmAndTreeKey,
-                step,
-              },
-            ));
+          // Check if web storage exists before trying to use it - see IAM-1873
+          if (this.$store.state.SharedStore.webStorageAvailable) {
+            const realmAndTreeInitialStep = JSON.parse(sessionStorage.getItem('initialStep')) || '';
+            const realmAndTreeKey = `${stepParams.realmPath}/${stepParams.tree || ''}`;
+            if (realmAndTreeInitialStep && realmAndTreeInitialStep.key === realmAndTreeKey) {
+              initialStep = new FRStep(realmAndTreeInitialStep.step.payload);
+              initialStep.payload.stage = this.step?.payload?.stage;
+            } else if (step.type !== 'LoginFailure') {
+              sessionStorage.setItem('initialStep', JSON.stringify(
+                {
+                  key: realmAndTreeKey,
+                  step,
+                },
+              ));
+            }
           }
           const previousStep = this.step;
           this.step = step;
@@ -1000,8 +1006,10 @@ export default {
           switch (step.type) {
             case 'LoginSuccess':
               this.checkAndNotifyPromotionParentOfLoginSuccess();
-              // If we have a session token, get user information
-              sessionStorage.removeItem('initialStep');
+              // Check if web storage exists before trying to use it - see IAM-1873
+              if (this.$store.state.SharedStore.webStorageAvailable) {
+                sessionStorage.removeItem('initialStep');
+              }
               this.getIdFromSession()
                 .then(this.getUserInfo)
                 .then((userObj) => {
@@ -1209,8 +1217,11 @@ export default {
      * @event postMessage
      */
     checkAndNotifyPromotionParentOfLoginSuccess() {
-      if (sessionStorage.getItem('parentIsPromotionIngressEnvironment') === 'true') {
-        window.opener.postMessage('loginSuccess', this.$store.state.SharedStore.fraasPromotionIngressUrl);
+      // Check if web storage exists before trying to use it - see IAM-1873
+      if (this.$store.state.SharedStore.webStorageAvailable) {
+        if (sessionStorage.getItem('parentIsPromotionIngressEnvironment') === 'true') {
+          window.opener.postMessage('loginSuccess', this.$store.state.SharedStore.fraasPromotionIngressUrl);
+        }
       }
     },
   },
