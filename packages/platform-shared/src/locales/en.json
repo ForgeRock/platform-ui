@@ -1079,7 +1079,8 @@
       "staging": "Staged"
     },
     "certificationTask": {
-      "noData": "No Data",
+      "noItems": "No Certification Items",
+      "noAccessReview": "No {type} Access Reviews",
       "backLink": "Access Reviews",
       "signOff": "Sign Off",
       "decisions": "Decisions",
