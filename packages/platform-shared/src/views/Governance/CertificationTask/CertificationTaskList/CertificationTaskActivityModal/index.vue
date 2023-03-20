@@ -50,13 +50,13 @@ of the MIT license. See the LICENSE file for details. -->
               class="mr-3 rounded-circle"
               height="16"
               width="16"
-              :alt="$t('governance.certificationTask.userFullName', { givenName: item.user.givenName, sn: item.user.sn })"
+              :alt="$t('common.userFullName', { givenName: item.user.givenName, sn: item.user.sn })"
               :src="item.user.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
               fluid />
             <BMediaBody>
               <div class="text-dark d-flex justify-content-start">
                 <div class="font-weight-bold">
-                  {{ $t('governance.certificationTask.userFullName', { givenName: currentGivenName(item.user), sn: item.user.sn }) }}
+                  {{ $t('common.userFullName', { givenName: currentGivenName(item.user), sn: item.user.sn }) }}
                   <span class="text-secondary">
                     {{ item.user.userName }}
                   </span>

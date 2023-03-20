@@ -62,3 +62,14 @@ export function addTaskProxy(userId, taskProxies, startDate, endDate) {
 export function deleteTaskProxy(userId, taskProxies) {
   return generateIgaApi().post(`${governanceUserUrl}/${userId}/remove-proxy`, { proxyIds: taskProxies });
 }
+
+/**
+ * Get list of Direct Report for a given user
+ * @param {String} userId - id of user to retrieve proxies for
+ * @param {object} params - parameters to filter the list of direct reports
+ * @returns {Promise}
+ */
+export async function getDirectReports(userId, params) {
+  const queryString = new URLSearchParams(params).toString();
+  return generateIgaApi().get(`${governanceUserUrl}/${userId}/get-direct-reports?${queryString}`);
+}
