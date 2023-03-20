@@ -30,6 +30,6 @@ describe('CertificationTaskApplicationModal', () => {
   it('getFullName shoul return name formatted', () => {
     const fullName = wrapper.vm.getFullName('first', 'last');
 
-    expect(fullName).toBe('governance.certificationTask.userFullName');
+    expect(fullName).toBe('common.userFullName');
   });
 });

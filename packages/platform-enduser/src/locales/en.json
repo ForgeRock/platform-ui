@@ -155,6 +155,7 @@
     "applications": "My Applications",
     "delegates": "Delegates",
     "directory": "My Directory",
+    "directReports": "Direct Reports",
     "profile": "Profile",
     "inbox": "Inbox",
     "accessReviews":"Access Reviews"
@@ -168,6 +169,7 @@
     "CertificationTask": "Certification Task",
     "Dashboard": "Dashboard",
     "Delegates": "Delegates",
+    "DirectReports": "Direct Reports",
     "EditResource": "Edit Resource",
     "Forbidden": "Forbidden",
     "AccessReviews": "Access Reviews",
@@ -192,6 +194,14 @@
       "subtitle": "View users delegated to complete your tasks in the event you are unable.",
       "timeConstraintLabel": "Assign role only during a selected time period",
       "title": "My Delegates"
+    },
+    "directReports": {
+      "errorGettingDirectReports": "Error getting direct reports.",
+      "noDirectReportsFound": "No direct reports found.",
+      "noResultsHelp": "Try a new search in the seach box above.",
+      "noResultsUser": "No direct reports for this user.",
+      "subtitle": "View your direct reports.",
+      "title": "My Direct Reports"
     }
   }
 }

@@ -112,7 +112,16 @@ export default {
             menuGroup: true,
             displayName: 'sideMenu.directory',
             icon: 'people',
-            subItems: [
+            subItems: this.$store.state.SharedStore.governanceEnabledV2 === true ? [
+              {
+                displayName: 'sideMenu.delegates',
+                routeTo: { name: 'Delegates' },
+              },
+              {
+                displayName: 'sideMenu.directReports',
+                routeTo: { name: 'DirectReports' },
+              },
+            ] : [
               {
                 displayName: 'sideMenu.delegates',
                 routeTo: { name: 'Delegates' },
