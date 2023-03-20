@@ -90,7 +90,7 @@ export default {
   },
   computed: {
     userFullName() {
-      return this.$t('governance.certificationTask.userFullName', {
+      return this.$t('common.userFullName', {
         givenName: this.user?.givenName,
         sn: this.user?.sn,
       });
