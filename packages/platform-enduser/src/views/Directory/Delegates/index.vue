@@ -29,6 +29,7 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
       </BCardHeader>
       <BTable
+        v-if="items.length"
         data-testid="delegate-table"
         @sort-changed="sortChanged"
         hover
@@ -74,6 +75,13 @@ of the MIT license. See the LICENSE file for details. -->
           </FrActionsCell>
         </template>
       </BTable>
+      <FrNoData
+        v-else
+        :card="false"
+        class="mb-4"
+        data-testid="delegates-no-data"
+        icon="inbox"
+        :subtitle="$t('governance.delegates.noDelegates')" />
       <FrPagination
         v-model="paginationPage"
         aria-controls="delegate-table"
@@ -109,6 +117,7 @@ import FrActionsCell from '@forgerock/platform-shared/src/components/cells/Actio
 import FrDeleteModal from '@forgerock/platform-shared/src/components/DeleteModal';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import DateMixin from '@forgerock/platform-shared/src/mixins/DateMixin';
@@ -134,6 +143,7 @@ export default {
     FrDeleteModal,
     FrHeader,
     FrIcon,
+    FrNoData,
     FrPagination,
     FrSearchInput,
   },
