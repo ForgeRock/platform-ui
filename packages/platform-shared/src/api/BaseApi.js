@@ -24,7 +24,8 @@ export function generateIdmApi(requestOverride = {}, routeToForbidden = true) {
     ...requestOverride,
   };
 
-  if (sessionStorage.getItem('accessToken')) {
+  // Check if web storage exists before trying to use it - see IAM-1873
+  if (store.state.SharedStore.webStorageAvailable && sessionStorage.getItem('accessToken')) {
     requestDetails.headers.Authorization = `Bearer ${sessionStorage.getItem('accessToken')}`;
   }
 

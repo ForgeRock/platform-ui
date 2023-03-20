@@ -162,11 +162,14 @@ const startApp = () => {
 
 // Checks if the window has been opened by a related config promotion ingress environment and stores this in session storage
 const checkIfOpenedByIngressEnv = () => {
-  if (!sessionStorage.getItem('parentIsPromotionIngressEnvironment') && window.opener && store.state.SharedStore.fraasPromotionIngressUrl) {
-    const openerOrigin = new URL(document.referrer).origin;
-    const promotionIngressOrigin = new URL(store.state.SharedStore.fraasPromotionIngressUrl).origin;
-    if (openerOrigin === promotionIngressOrigin) {
-      sessionStorage.setItem('parentIsPromotionIngressEnvironment', true);
+  // Check if web storage exists before trying to use it - see IAM-1873
+  if (store.state.SharedStore.webStorageAvailable) {
+    if (!sessionStorage.getItem('parentIsPromotionIngressEnvironment') && window.opener && store.state.SharedStore.fraasPromotionIngressUrl) {
+      const openerOrigin = new URL(document.referrer).origin;
+      const promotionIngressOrigin = new URL(store.state.SharedStore.fraasPromotionIngressUrl).origin;
+      if (openerOrigin === promotionIngressOrigin) {
+        sessionStorage.setItem('parentIsPromotionIngressEnvironment', true);
+      }
     }
   }
 };
