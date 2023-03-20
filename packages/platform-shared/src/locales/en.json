@@ -188,6 +188,7 @@
     "updated": "Updated",
     "updating": "Updating",
     "updatedObject": "{object} Updated",
+    "userFullName": "{givenName} {sn}",
     "users": "Users",
     "value": "Value",
     "variable": "Variable",
@@ -1103,7 +1104,6 @@
       "selectAllTasks": "All tasks",
       "selectAllTasksThisPage": "All on this page",
       "deselectAll": "Deselect all",
-      "userFullName": "{givenName} {sn}",
       "actions": {
         "addComment": "Add Comment",
         "allowException": "Allow an exception",

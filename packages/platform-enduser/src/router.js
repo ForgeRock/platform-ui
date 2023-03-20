@@ -92,6 +92,19 @@ const router = new Router({
       meta: { authenticate: true },
     },
     {
+      path: '/my-reports',
+      name: 'DirectReports',
+      component: () => import('@/views/Directory/DirectReports'),
+      meta: { authenticate: true },
+      beforeEnter: (to, from, next) => {
+        if (store.state.SharedStore.governanceEnabledV2 === true) {
+          next();
+        } else {
+          next({ name: 'NotFound' });
+        }
+      },
+    },
+    {
       path: '/list/:resourceType/:resourceName',
       name: 'ListResource',
       component: () => import(/* webpackChunkName: "listResource" */ '@/views/ListResourceView'),
