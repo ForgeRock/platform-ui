@@ -2823,6 +2823,14 @@
       "statusCardLabel": "Status",
       "title": "Certification {name}"
     },
+    "campaignTemplateTypeModal": {
+      "campaignType": "Campaign Type",
+      "chooseType": "Choose the type of campaign template to create.",
+      "entitlementAssignmentCertification": "Entitlement Assignment Certification",
+      "entitlementAssignmentCertificationMessage": "Certify users who have been assigned specified entitlements.",
+      "identityCertificationMessage": "Certify user accounts and entitlements granted on specified applications.",
+      "newCertificationCampaignTemplate": "New Certification Campaign Template"
+    },
     "editTemplate": {
       "closeActions": {
         "certify": "certify",
