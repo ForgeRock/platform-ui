@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -104,6 +104,7 @@ describe('RelationshipArray', () => {
                     managedObjectsSettings: {
                       user: {
                         disableRelationshipSortAndSearch: true,
+                        minimumUIFilterLength: 3,
                       },
                     },
                   },
@@ -238,7 +239,7 @@ describe('RelationshipArray', () => {
     expect(wrapper.vm.buildGridUrl(0, resourceCollectionSchema)).toEqual('user?_pageSize=10&_totalPagedResultsPolicy=ESTIMATE&_queryFilter=userName=\'test\'&_fields=_ref,_refResourceCollection,_refResourceId,_refProperties,&_sortKeys=userName');
 
     wrapper.vm.$store.state.SharedStore.uiConfig.configuration.platformSettings.managedObjectsSettings.user.disableRelationshipSortAndSearch = false;
-    wrapper.vm.setDisableSortAndSearch(wrapper.vm.relationshipArrayProperty.items.resourceCollection[0]);
+    wrapper.vm.setDisableSortAndSearchOrQueryThreshold(wrapper.vm.relationshipArrayProperty.items.resourceCollection[0]);
     expect(wrapper.vm.buildGridUrl(0, resourceCollectionSchema)).toEqual('user?_pageSize=10&_totalPagedResultsPolicy=ESTIMATE&_queryFilter=userName=\'test\'&_fields=_ref,_refResourceCollection,_refResourceId,_refProperties,&_sortKeys=userName');
   });
 
@@ -294,6 +295,11 @@ describe('RelationshipArray', () => {
     wrapper.vm.sortDesc = true;
     wrapper.vm.search();
     expect(wrapper.vm.sortDesc).toEqual(false);
+
+    const loadGridSpy = jest.spyOn(wrapper.vm, 'loadGrid');
+    wrapper.vm.filter = 'a';
+    wrapper.vm.search();
+    expect(loadGridSpy).not.toHaveBeenCalled();
   });
 
   it('Correctly sets newRelationships', () => {
@@ -313,15 +319,27 @@ describe('RelationshipArray', () => {
   });
 
   it('Correctly sets disableSortAndSearch', () => {
-    wrapper.vm.setDisableSortAndSearch(wrapper.vm.relationshipArrayProperty.items.resourceCollection[0]);
+    wrapper.vm.setDisableSortAndSearchOrQueryThreshold(wrapper.vm.relationshipArrayProperty.items.resourceCollection[0]);
     expect(wrapper.vm.disableSortAndSearch).toEqual(true);
     wrapper.vm.$store.state.SharedStore.uiConfig.configuration.platformSettings.managedObjectsSettings.user.disableRelationshipSortAndSearch = false;
-    wrapper.vm.setDisableSortAndSearch(wrapper.vm.relationshipArrayProperty.items.resourceCollection[0]);
+    wrapper.vm.setDisableSortAndSearchOrQueryThreshold(wrapper.vm.relationshipArrayProperty.items.resourceCollection[0]);
     expect(wrapper.vm.disableSortAndSearch).toEqual(false);
     wrapper.vm.$store.state.SharedStore.uiConfig.configuration.platformSettings.managedObjectsSettings.internalrole = { disableRelationshipSortAndSearch: true };
     wrapper.vm.relationshipArrayProperty.items.resourceCollection[0].path = 'internal/role';
-    wrapper.vm.setDisableSortAndSearch(wrapper.vm.relationshipArrayProperty.items.resourceCollection[0]);
+    wrapper.vm.setDisableSortAndSearchOrQueryThreshold(wrapper.vm.relationshipArrayProperty.items.resourceCollection[0]);
     expect(wrapper.vm.disableSortAndSearch).toEqual(true);
+  });
+
+  it('Correctly sets minimumUIFilterLength', () => {
+    wrapper.vm.setDisableSortAndSearchOrQueryThreshold(wrapper.vm.relationshipArrayProperty.items.resourceCollection[0]);
+    expect(wrapper.vm.queryThreshold).toEqual(3);
+    wrapper.vm.$store.state.SharedStore.uiConfig.configuration.platformSettings.managedObjectsSettings.user.minimumUIFilterLength = 2;
+    wrapper.vm.setDisableSortAndSearchOrQueryThreshold(wrapper.vm.relationshipArrayProperty.items.resourceCollection[0]);
+    expect(wrapper.vm.queryThreshold).toEqual(2);
+    wrapper.vm.$store.state.SharedStore.uiConfig.configuration.platformSettings.managedObjectsSettings.internalrole = { minimumUIFilterLength: 2 };
+    wrapper.vm.relationshipArrayProperty.items.resourceCollection[0].path = 'internal/role';
+    wrapper.vm.setDisableSortAndSearchOrQueryThreshold(wrapper.vm.relationshipArrayProperty.items.resourceCollection[0]);
+    expect(wrapper.vm.queryThreshold).toEqual(2);
   });
 
   it('loads grid', async () => {

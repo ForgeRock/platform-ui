@@ -7,7 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     <div class="px-4 py-3 card-header ">
       <BRow>
         <BCol
-          md="8"
+          md="6"
           v-show="!relationshipArrayProperty.readOnly || isOpenidmAdmin">
           <div class="d-md-inline-block mb-3 mb-md-0">
             <BButton
@@ -36,15 +36,32 @@ of the MIT license. See the LICENSE file for details. -->
           </div>
         </BCol>
         <BCol
-          md="4"
+          md="6"
           class="d-md-inline-block">
           <FrSearchInput
             v-if="showFilter && !disableSortAndSearch"
-            class="text-nowrap flex-shrink-0"
             v-model="filter"
             :placeholder="$t('common.search')"
             @clear="clear"
-            @search="search" />
+            @search="search"
+            @input="setHelpTextFromSearchLength"
+            @search-input-focus="setHelpTextFromSearchLength"
+            @search-input-blur="removeHelpText"
+            class="w-100"
+            :class="{'fr-managed-search-focus': hasFocus}">
+            <template #append>
+              <BInputGroupText>
+                <small
+                  role="searchbox"
+                  class="d-none d-md-block text-muted"
+                  :class="{'pr-3': filter.length > 0, 'mr-3': filter.length > 0}">
+                  <div :class="{'text-danger': submitBeforeLengthValid, shake: submitBeforeLengthValid}">
+                    {{ searchHelpText }}
+                  </div>
+                </small>
+              </BInputGroupText>
+            </template>
+          </FrSearchInput>
         </BCol>
       </BRow>
     </div>
@@ -208,6 +225,7 @@ import {
   BRow,
   BCol,
   BButton,
+  BInputGroupText,
   BTable,
   BFormCheckbox,
   BModal,
@@ -235,6 +253,7 @@ export default {
     BRow,
     BCol,
     BButton,
+    BInputGroupText,
     BTable,
     BFormCheckbox,
     BModal,
@@ -334,6 +353,7 @@ export default {
       isOpenidmAdmin: this.$store.state.UserStore.adminUser,
       showFilter: false,
       disableSortAndSearch: false,
+      queryThreshold: null,
       requiredProps: [
         '_ref',
         '_refResourceCollection',
@@ -348,13 +368,10 @@ export default {
   },
   watch: {
     gridData() {
-      this.columns = this.columns.map((col) => {
-        if (col.sortable !== false) {
-          col.sortable = !this.disableSortAndSearch;
-        }
-
-        return col;
-      });
+      this.setColumnSorting();
+    },
+    filter() {
+      this.setColumnSorting();
     },
   },
   methods: {
@@ -375,7 +392,7 @@ export default {
 
       if (has(this.relationshipArrayProperty, 'items.resourceCollection') && this.relationshipArrayProperty.items.resourceCollection.length === 1) {
         const resourceCollection = this.relationshipArrayProperty.items.resourceCollection[0];
-        this.setDisableSortAndSearch(resourceCollection);
+        this.setDisableSortAndSearchOrQueryThreshold(resourceCollection);
 
         getSchema(resourceCollection.path).then((response) => {
           this.showFilter = true;
@@ -385,7 +402,7 @@ export default {
         doLoad();
       }
     },
-    setDisableSortAndSearch(resourceCollection) {
+    setDisableSortAndSearchOrQueryThreshold(resourceCollection) {
       const { uiConfig } = this.$store.state.SharedStore;
       const resourceType = resourceCollection.path.split('/')[0];
       let resourceName = resourceCollection.path.split('/')[1];
@@ -395,6 +412,8 @@ export default {
       }
       const configDisableRelationshipSortAndSearch = has(uiConfig, `configuration.platformSettings.managedObjectsSettings.${resourceName}`) ? uiConfig.configuration.platformSettings.managedObjectsSettings[resourceName].disableRelationshipSortAndSearch : false;
       this.disableSortAndSearch = !this.isOpenidmAdmin && configDisableRelationshipSortAndSearch;
+      // set query threshold for search
+      this.queryThreshold = has(uiConfig, `configuration.platformSettings.managedObjectsSettings.${resourceName}`) ? uiConfig.configuration.platformSettings.managedObjectsSettings[resourceName].minimumUIFilterLength : false;
     },
     setColumns(resourceCollectionSchema) {
       if ((!this.relationshipArrayProperty.readOnly || this.isOpenidmAdmin) && this.rowSelect) {
@@ -710,13 +729,30 @@ export default {
      */
     search() {
       if (this.filter === '') {
+        this.submitBeforeLengthValid = false;
         this.clear();
         return;
       }
       this.sortBy = null;
       this.sortDesc = false;
 
-      this.loadGrid(1);
+      // only send search request if no queryThreshold is defined or the filter is empty or the filter has at least the same number of chars as queryThreshold
+      if (!this.queryThreshold || !this.filter.length || this.filter.length >= this.queryThreshold) {
+        this.submitBeforeLengthValid = false;
+        this.loadGrid(1);
+      } else if (this.queryThreshold) {
+        this.submitBeforeLengthValid = true;
+      }
+    },
+    setColumnSorting() {
+      // disallow sorting if there is a queryThreshold and the filter doesn't have at least the same number of chars as queryThreshold
+      this.columns = this.columns.map((col) => {
+        if (col.key !== 'selected') {
+          col.sortable = (!this.disableSortAndSearch && !this.queryThreshold) || (this.filter.length >= this.queryThreshold);
+        }
+
+        return col;
+      });
     },
   },
 };
@@ -742,6 +778,51 @@ export default {
 
       .modal-body {
         overflow: visible;
+      }
+
+      .fr-icon-input-right {
+        margin-top: 5px;
+      }
+
+      .input-group-text {
+        border: none;
+      }
+
+      .fr-managed-search-focus {
+        box-shadow: 0 0 0 1pt $blue;
+        outline: 0;
+        border-radius: 5px;
+        height: 50px;
+      }
+
+      .shake {
+        animation: shake 0.82s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+        transform: translate3d(0, 0, 0);
+        backface-visibility: hidden;
+        perspective: 1000px;
+      }
+
+      @keyframes shake {
+        10%,
+        90% {
+          transform: translate3d(-1px, 0, 0);
+        }
+
+        20%,
+        80% {
+          transform: translate3d(2px, 0, 0);
+        }
+
+        30%,
+        50%,
+        70% {
+          transform: translate3d(-4px, 0, 0);
+        }
+
+        40%,
+        60% {
+          transform: translate3d(4px, 0, 0);
+        }
       }
     }
 </style>
