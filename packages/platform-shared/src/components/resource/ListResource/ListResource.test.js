@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -237,34 +237,6 @@ describe('ListResource Component', () => {
     expect(wrapper.vm.currentPage).toBe(1);
   });
 
-  it('Sets help text from search field length', () => {
-    wrapper.setProps({
-      queryThreshold: 0,
-    });
-
-    wrapper.vm.filter = '';
-
-    wrapper.vm.setHelpTextFromSearchLength();
-
-    expect(wrapper.vm.hasFocus).toBe(true);
-    expect(wrapper.vm.searchHelpText).toBe('');
-
-    wrapper.setProps({
-      queryThreshold: 3,
-    });
-
-    wrapper.vm.setHelpTextFromSearchLength();
-    expect(wrapper.vm.searchHelpText).toBe('listResource.searchInProgressText');
-
-    wrapper.vm.filter = 'fo';
-    wrapper.vm.setHelpTextFromSearchLength();
-    expect(wrapper.vm.searchHelpText).toBe('listResource.searchInProgressText');
-
-    wrapper.vm.filter = 'foo';
-    wrapper.vm.setHelpTextFromSearchLength();
-    expect(wrapper.vm.searchHelpText).toBe('listResource.searchActiveText');
-  });
-
   it('Enables/disables column sorting based on queryThreshold when table data changes', async () => {
     wrapper.vm.columns = [
       {
@@ -325,15 +297,6 @@ describe('ListResource Component', () => {
     expect(wrapper.vm.hasClearSessionAccess(item)).toEqual(true);
     item = { hasActiveSessions: false };
     expect(wrapper.vm.hasClearSessionAccess(item)).toEqual(false);
-  });
-
-  it('Removes help text and focus', () => {
-    wrapper.vm.hasFocus = true;
-    wrapper.vm.searchHelpText = 'foo';
-
-    wrapper.vm.removeHelpText();
-    expect(wrapper.vm.hasFocus).toEqual(false);
-    expect(wrapper.vm.searchHelpText).toEqual('');
   });
 
   it('Pagination change works', () => {

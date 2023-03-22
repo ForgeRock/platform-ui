@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -300,9 +300,6 @@ export default {
       resourceToClearSessionsForId: '',
       resourceToClearSessionsForName: '',
       searchHasFocus: true,
-      searchHelpText: '',
-      submitBeforeLengthValid: false,
-      hasFocus: false,
     };
   },
   computed: {
@@ -540,30 +537,6 @@ export default {
       this.$emit('clear-resource-sessions', this.resourceToClearSessionsForId);
       this.closeClearSessionsModal();
       this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.defaultSort, this.paginationPage, this.paginationPageSize);
-    },
-    /**
-     * Change help text based on query threshold value and the current search text length
-     */
-    setHelpTextFromSearchLength() {
-      this.hasFocus = true;
-
-      if (!this.queryThreshold && this.filter.length === 0) {
-        this.searchHelpText = '';
-      } else if (this.filter.length < this.queryThreshold) {
-        this.searchHelpText = this.$t('listResource.searchInProgressText', { queryThreshold: this.queryThreshold });
-      } else {
-        this.searchHelpText = this.$t('listResource.searchActiveText');
-      }
-
-      if (this.filter.length === 0) {
-        this.submitBeforeLengthValid = false;
-      } else if (this.filter.length >= this.queryThreshold) {
-        this.submitBeforeLengthValid = false;
-      }
-    },
-    removeHelpText() {
-      this.hasFocus = false;
-      this.searchHelpText = '';
     },
   },
 };

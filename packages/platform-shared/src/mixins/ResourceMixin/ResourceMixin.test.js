@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -109,5 +109,37 @@ describe('ResourceMixin', () => {
       const filterUrl = wrapper.vm.generateSearch('true', ['isAdmin'], schemaProps);
       expect(filterUrl).toStrictEqual('isAdmin eq true');
     });
+  });
+
+  it('Sets help text from search field length', () => {
+    wrapper.vm.queryThreshold = 0;
+    wrapper.vm.filter = '';
+
+    wrapper.vm.setHelpTextFromSearchLength();
+
+    expect(wrapper.vm.hasFocus).toBe(true);
+    expect(wrapper.vm.searchHelpText).toBe('');
+
+    wrapper.vm.queryThreshold = 3;
+
+    wrapper.vm.setHelpTextFromSearchLength();
+    expect(wrapper.vm.searchHelpText).toBe('listResource.searchInProgressText');
+
+    wrapper.vm.filter = 'fo';
+    wrapper.vm.setHelpTextFromSearchLength();
+    expect(wrapper.vm.searchHelpText).toBe('listResource.searchInProgressText');
+
+    wrapper.vm.filter = 'foo';
+    wrapper.vm.setHelpTextFromSearchLength();
+    expect(wrapper.vm.searchHelpText).toBe('listResource.searchActiveText');
+  });
+
+  it('Removes help text and focus', () => {
+    wrapper.vm.hasFocus = true;
+    wrapper.vm.searchHelpText = 'foo';
+
+    wrapper.vm.removeHelpText();
+    expect(wrapper.vm.hasFocus).toEqual(false);
+    expect(wrapper.vm.searchHelpText).toEqual('');
   });
 });
