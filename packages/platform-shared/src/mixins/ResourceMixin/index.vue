@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -24,6 +24,13 @@ import PasswordPolicyMixin from '@forgerock/platform-shared/src/mixins/PasswordP
 export default {
   name: 'ResourceMixin',
   mixins: [PasswordPolicyMixin],
+  data() {
+    return {
+      searchHelpText: '',
+      submitBeforeLengthValid: false,
+      hasFocus: false,
+    };
+  },
   methods: {
     generateUpdatePatch(original, newForm) {
       const clonedOriginal = cloneDeep(original);
@@ -149,6 +156,30 @@ export default {
       }
 
       return filterUrl;
+    },
+    /**
+     * Change help text based on query threshold value and the current search text length
+     */
+    setHelpTextFromSearchLength() {
+      this.hasFocus = true;
+
+      if (!this.queryThreshold && this.filter.length === 0) {
+        this.searchHelpText = '';
+      } else if (this.filter.length < this.queryThreshold) {
+        this.searchHelpText = this.$t('listResource.searchInProgressText', { queryThreshold: this.queryThreshold });
+      } else {
+        this.searchHelpText = this.$t('listResource.searchActiveText');
+      }
+
+      if (this.filter.length === 0) {
+        this.submitBeforeLengthValid = false;
+      } else if (this.filter.length >= this.queryThreshold) {
+        this.submitBeforeLengthValid = false;
+      }
+    },
+    removeHelpText() {
+      this.hasFocus = false;
+      this.searchHelpText = '';
     },
   },
 };
