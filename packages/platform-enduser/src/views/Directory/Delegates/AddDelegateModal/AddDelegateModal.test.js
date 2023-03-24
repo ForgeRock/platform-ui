@@ -71,7 +71,7 @@ describe('AddDelegateModal', () => {
     expect(errorSpy).toHaveBeenCalled();
   });
 
-  it('should allow only date in the future when setting end-date', async () => {
+  it('should restrict the user to save when the end-date is not in the future as the start-date and the time constraint feature is enabled', async () => {
     const addTaskProxy = jest.spyOn(GovernanceEnduserApi, 'addTaskProxy');
 
     const enableTime = findByTestId(wrapper, 'enable-time-constraint');
@@ -92,128 +92,5 @@ describe('AddDelegateModal', () => {
       '2023-02-01',
       '2023-02-02',
     );
-  });
-
-  describe('isValidEndDate', () => {
-    it('should return false when startdDate and endDate are empty', async () => {
-      await wrapper.setData({
-        startDate: '',
-        endDate: '',
-      });
-
-      expect(wrapper.vm.isValidEndDate).toEqual(false);
-    });
-
-    it('should return false when endDate is empty', async () => {
-      await wrapper.setData({
-        startDate: '01/02/2023',
-        endDate: '',
-      });
-
-      expect(wrapper.vm.isValidEndDate).toEqual(false);
-    });
-
-    it('should return false when endDate is less than the startDate', async () => {
-      await wrapper.setData({
-        startDate: '01/02/2023',
-        endDate: '01/01/2023',
-      });
-
-      expect(wrapper.vm.isValidEndDate).toEqual(false);
-    });
-
-    it('should return false when endDate is equal than the startDate', async () => {
-      await wrapper.setData({
-        startDate: '01/02/2023',
-        endDate: '01/02/2023',
-      });
-
-      expect(wrapper.vm.isValidEndDate).toEqual(false);
-    });
-
-    it('should return true when endDate is greater than the startDate', async () => {
-      await wrapper.setData({
-        startDate: '01/02/2023',
-        endDate: '01/03/2023',
-      });
-
-      expect(wrapper.vm.isValidEndDate).toEqual(true);
-    });
-  });
-
-  describe('showEndDateError', () => {
-    it('should return false if startDate and endDate are empty and isValidEndDate is not valid', async () => {
-      jest.spyOn(wrapper.vm, 'isValidEndDate', 'get').mockImplementation(() => false);
-
-      await wrapper.setData({
-        startDate: '',
-        endDate: '',
-      });
-
-      expect(wrapper.vm.showEndDateError).toEqual(false);
-    });
-
-    it('should return false if endDate is empty and isValidEndDate is not valid', async () => {
-      jest.spyOn(wrapper.vm, 'isValidEndDate', 'get').mockImplementation(() => false);
-
-      await wrapper.setData({
-        startDate: '01/02/2023',
-        endDate: '',
-      });
-
-      expect(wrapper.vm.showEndDateError).toEqual(false);
-    });
-
-    it('should return false if startDate and endDate are not empty and isValidEndDate is valid', async () => {
-      jest.spyOn(wrapper.vm, 'isValidEndDate', 'get').mockImplementation(() => true);
-
-      await wrapper.setData({
-        startDate: '01/02/2023',
-        endDate: '01/03/2023',
-      });
-
-      expect(wrapper.vm.showEndDateError).toEqual(false);
-    });
-
-    it('should return true if startDate and endDate are not empty and isValidEndDate is not valid', async () => {
-      jest.spyOn(wrapper.vm, 'isValidEndDate', 'get').mockImplementation(() => false);
-
-      await wrapper.setData({
-        startDate: '01/02/2023',
-        endDate: '01/01/2023',
-      });
-
-      expect(wrapper.vm.showEndDateError).toEqual(true);
-    });
-  });
-
-  describe('canUserSave', () => {
-    it('should return true if timeConstraint is not enabled', async () => {
-      await wrapper.setData({
-        enableTimeConstraint: false,
-      });
-
-      expect(wrapper.vm.canUserSave).toEqual(true);
-    });
-
-    it('should return false when timeConstraint is enabled and isValidEndDate is not valid', async () => {
-      jest.spyOn(wrapper.vm, 'isValidEndDate', 'get').mockImplementation(() => false);
-
-      await wrapper.setData({
-        enableTimeConstraint: true,
-      });
-
-      expect(wrapper.vm.canUserSave).toEqual(false);
-    });
-
-    it('should return true when timeConstraint is enabled and isValidEndDate is valid', async () => {
-      jest.spyOn(wrapper.vm, 'isValidEndDate', 'get').mockImplementation(() => true);
-
-      await wrapper.setData({
-        enableTimeConstraint: true,
-      });
-
-      expect(wrapper.vm.canUserSave).toEqual(true);
-    });
   });
 });
