@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -27,7 +27,7 @@ describe('Profile.vue', () => {
     const store = new Vuex.Store({
       state: {
         UserStore: {
-          userId: null,
+          userId: '0123456789',
           managedResource: null,
           roles: null,
           internalUser: false,
@@ -47,14 +47,6 @@ describe('Profile.vue', () => {
       localVue,
       i18n,
       store,
-      computed: {
-        fullName() {
-          return '';
-        },
-        profileImage() {
-          return '';
-        },
-      },
       propsData: {
         theme: {},
       },
@@ -66,5 +58,22 @@ describe('Profile.vue', () => {
 
   it('Profile page loaded', () => {
     expect(wrapper.name()).toBe('Profile');
+  });
+
+  it('Sets fullName properly', () => {
+    wrapper.vm.profile = {
+      givenName: 'Stan',
+      sn: 'Marsh',
+    };
+
+    expect(wrapper.vm.fullName).toBe('Stan Marsh');
+    wrapper.vm.profile.givenName = null;
+    expect(wrapper.vm.fullName).toBe(' Marsh');
+    wrapper.vm.profile.givenName = 'Stan';
+    wrapper.vm.profile.sn = null;
+    expect(wrapper.vm.fullName).toBe('Stan ');
+    wrapper.vm.profile.givenName = null;
+    wrapper.vm.profile.sn = null;
+    expect(wrapper.vm.fullName).toBe('0123456789');
   });
 });

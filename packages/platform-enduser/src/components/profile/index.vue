@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -51,7 +51,6 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import { startCase } from 'lodash';
 import { mapState } from 'vuex';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
@@ -110,8 +109,10 @@ export default {
     fullName() {
       let fullName = '';
 
-      if (this.profile.givenName.length > 0 || this.profile.sn.length > 0) {
-        fullName = startCase(`${this.profile.givenName} ${this.profile.sn}`);
+      if (this.profile.givenName?.length > 0 || this.profile.sn?.length > 0) {
+        const givenName = this.profile.givenName || '';
+        const sn = this.profile.sn || '';
+        fullName = this.$t('common.userFullName', { givenName, sn });
       } else {
         fullName = this.userId;
       }
