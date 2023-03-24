@@ -9,6 +9,7 @@
 import { extend } from 'vee-validate';
 import * as rules from 'vee-validate/dist/rules';
 import * as customValidators from '@forgerock/platform-shared/src/utils/validators';
+import dayjs from 'dayjs';
 
 export function getRules(i18n) {
   const alpha = {
@@ -239,6 +240,22 @@ export function getRules(i18n) {
     message: i18n.t('common.policyValidationMessages.lowerCaseAlphaNumericUnderscoreHyphenOnly'),
   };
 
+  const is_before_date = {
+    validate: (value, { date }) => {
+      const startDate = dayjs(date);
+      const endDate = dayjs(value);
+      if (startDate.isValid() && endDate.isValid()) {
+        return startDate.isBefore(endDate);
+      }
+      return false;
+    },
+    message(field, params) {
+      if (params.message) return params.message;
+      return i18n.t('common.policyValidationMessages.IS_BEFORE_DATE', { date: params.date });
+    },
+    params: ['date', 'message'],
+  };
+
   // Rule to check if the value is valid JSON
   const json = {
     validate(value) {
@@ -267,6 +284,7 @@ export function getRules(i18n) {
     isInteger,
     isList,
     isNumber,
+    is_before_date,
     json,
     max,
     max_value,
