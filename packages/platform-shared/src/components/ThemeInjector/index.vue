@@ -115,8 +115,13 @@ of the MIT license. See the LICENSE file for details. -->
       background-color: {{ theme.switchBackgroundColor }};
       }
 
-      .fr-toggle-primary.custom-switch.b-custom-control-lg .custom-control-input:checked ~ .custom-control-label::before {
+      .fr-toggle-primary.custom-switch.b-custom-control-lg .custom-control-input:checked ~ .custom-control-label::before,
+      .custom-control.custom-radio .custom-control-input:checked ~ .custom-control-label::before {
       background-color: {{ theme.primaryColor }};
+      }
+
+      .custom-control.custom-radio .custom-control-input:checked ~ .custom-control-label::before {
+      border-color: {{ theme.primaryColor }}
       }
 
       .spinner-primary {
