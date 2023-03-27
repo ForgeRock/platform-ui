@@ -32,7 +32,6 @@ export default {
       siteKey: recaptchaSiteKey,
     });
     this.$emit('next-step-callback', this.runRecaptcha);
-    this.$emit('disable-next-button', true);
   },
   methods: {
     runRecaptcha() {
@@ -40,7 +39,6 @@ export default {
         .then(() => this.$recaptcha('login')
           .then((token) => {
             this.callback.setInputValue(token);
-            this.$emit('disable-next-button', false);
           }))
         .catch(() => {
           this.handleCaptchaError();
