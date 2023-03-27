@@ -17,7 +17,7 @@ of the MIT license. See the LICENSE file for details. -->
       background-color: {{ backgroundColor }};
       }
 
-      #app <template v-if="!mock">.fr-theme-preview</template> {
+      #app <template v-if="mock">.fr-theme-preview</template> {
         font-family: {{ fontFamily }}, sans-serif;
       }
 
