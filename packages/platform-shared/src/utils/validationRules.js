@@ -240,6 +240,23 @@ export function getRules(i18n) {
     message: i18n.t('common.policyValidationMessages.lowerCaseAlphaNumericUnderscoreHyphenOnly'),
   };
 
+  // check if a date is set to the future
+  const is_after_date = {
+    validate(value, { date }) {
+      const dateValue = dayjs(value);
+      const actualDate = dayjs(date);
+      if (dateValue.isValid()) {
+        return dateValue.isAfter(actualDate);
+      }
+
+      return true;
+    },
+    message(_field, params) {
+      return i18n.t(params.message);
+    },
+    params: ['date', 'message'],
+  };
+
   const is_before_date = {
     validate: (value, { date }) => {
       const startDate = dayjs(date);
@@ -280,6 +297,7 @@ export function getRules(i18n) {
     email_from,
     excluded,
     google_cloud_platform_certificate_validation,
+    is_after_date,
     integer,
     isInteger,
     isList,
