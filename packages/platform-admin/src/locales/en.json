@@ -2667,6 +2667,9 @@
       },
       "campaignsByType": "Campaigns By Type",
       "certificationType": "{type} Certification",
+      "errors": {
+        "errorDeadline": "Deadline must be a future date"
+      },
       "expiringCampaigns": "Expiring Campaigns",
       "expiringCampaignsTooltip": "Total campaigns expiring within the next 2 weeks",
       "title": "Certification",
