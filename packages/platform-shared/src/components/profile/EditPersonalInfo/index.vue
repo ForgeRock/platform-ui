@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -12,17 +12,21 @@ of the MIT license. See the LICENSE file for details. -->
       size="lg"
       cancel-variant="outline-secondary"
       @show="setModal"
-      @keydown.enter.native.prevent="saveForm">
+      @keydown.enter.native.prevent="saveForm"
+      :static="isTesting">
       <template #modal-header>
         <div class="d-flex w-100 h-100">
-          <h5 class="modal-title align-self-center text-center">
+          <h5
+            class="modal-title align-self-center text-center"
+            data-testid="title-edit-personal-info">
             {{ title }}
           </h5>
           <button
             type="button"
             :aria-label="$t('common.close')"
             class="close"
-            @click="hideModal">
+            @click="hideModal"
+            data-testid="btn-edit-personal-info-close">
             <FrIcon
               class="font-weight-bolder md-24"
               name="close" />
@@ -33,52 +37,57 @@ of the MIT license. See the LICENSE file for details. -->
       <BContainer>
         <BRow>
           <template v-if="formFields.length">
-            <template v-for="(field, index) in formFields">
-              <BFormGroup
-                class="w-100"
-                :key="index"
-                :label="title"
-                label-sr-only
-                v-if="field.type === 'string' || field.type === 'number' || field.type === 'boolean'">
-                <FrField
-                  v-model="field.value"
-                  :label="field.title"
-                  :name="field.name"
-                  :type="field.format ? field.format : field.type"
-                  :validation="field.validation" />
-              </BFormGroup>
-              <FrListField
-                v-else-if="field.type === 'array' && field.name !== 'privileges'"
-                v-model="field.value"
-                class="w-100"
-                :key="index"
-                :description="field.description"
-                :items="field.items"
-                :label="field.title"
-                :name="field.name"
-                :required="field.required"
-                :index="index"
-                v-on="$listeners"
-                @input="updateField(index, $event)" />
-            </template>
+            <BFormGroup
+              class="w-100"
+              :label="title"
+              label-sr-only>
+              <template v-for="(field, index) in formFields">
+                <div
+                  :key="index">
+                  <FrField
+                    v-model="field.value"
+                    :label="field.title"
+                    :name="field.name"
+                    :type="field.format ? field.format : field.type"
+                    :validation="field.validation"
+                    :testid="`edit-personal-info-${index}`"
+                    v-if="field.type === 'string' || field.type === 'number' || field.type === 'boolean'" />
+                  <FrListField
+                    v-else-if="field.type === 'array' && field.name !== 'privileges'"
+                    v-model="field.value"
+                    class="w-100"
+                    :description="field.description"
+                    :items="field.items"
+                    :label="field.title"
+                    :name="field.name"
+                    :required="field.required"
+                    :index="index"
+                    v-on="$listeners"
+                    @input="updateField(index, $event)" />
+                </div>
+              </template>
+            </BFormGroup>
           </template>
           <h1
             v-else
-            class="text-center h3">
-            {{ $t('profile.editProfile.noFields') }}
+            class="text-center h3"
+            data-testid="edit-personal-info-no-fields">
+            {{ $t('pages.profile.editProfile.noFields') }}
           </h1>
         </BRow>
       </BContainer>
       <template #modal-footer="{ cancel }">
         <BButton
           variant="link mr-2"
-          @click="cancel()">
+          @click="cancel()"
+          data-testid="btn-edit-personal-info-cancel">
           {{ $t('common.cancel') }}
         </BButton>
         <BButton
           variant="primary"
           :disabled="internalUser || invalid"
-          @click="saveForm">
+          @click="saveForm"
+          data-testid="btn-edit-personal-info-save">
           {{ $t('common.save') }}
         </BButton>
       </template>
@@ -157,6 +166,14 @@ export default {
       type: Object,
       required: true,
     },
+    /**
+     * Should only be used to mount this modal in isolation for testing
+     */
+    isTesting: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
   },
   data() {
     return {
@@ -179,7 +196,7 @@ export default {
                             && properties[propName].type !== 'object');
       const formFields = map(filteredOrder, (name) => ({
         name,
-        title: `${properties[name].title} ${required.includes(name) ? '' : this.$t('common.optional')}`,
+        title: `${properties[name].title} ${required.includes(name) ? '' : this.$t('common.optional')}`.trim(),
         value: this.profile[name] || null,
         type: properties[name].type,
         description: properties[name].description,
@@ -194,7 +211,7 @@ export default {
      * Hide the modal
      */
     hideModal() {
-      this.$refs.fsModal.hide();
+      this.$root.$emit('bv::hide::modal', 'fsModal');
     },
     /**
      * Set the form fields for the modal. Maintain the original values for patch
