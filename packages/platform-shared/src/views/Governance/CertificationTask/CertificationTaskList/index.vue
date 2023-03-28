@@ -195,7 +195,7 @@ of the MIT license. See the LICENSE file for details. -->
           <BButton
             class="text-dark"
             variant="link"
-            @click="openAccountModal(item.account, item.latestCreationTime.account)">
+            @click="openAccountModal(item)">
             {{ item.account.mailNickname }}
           </BButton>
         </div>
@@ -717,12 +717,14 @@ export default {
       const activityByAction = countBy(activity, (item) => item.action);
       return activityByAction?.comment || 0;
     },
-    openAccountModal(account, lastCertified) {
+    openAccountModal(content) {
       this.currentAccountSelectedModal = {
-        ...account,
-        lastCertified,
+        account: content.account,
+        decision: content.item.decision.certification.decision,
+        decisionDate: content.item.decision.certification.decisionDate,
+        decisionBy: content.item.decision.certification.decisionBy,
       };
-      this.contentAccountSelectedModal = cloneDeep(account);
+      this.contentAccountSelectedModal = cloneDeep(content.account);
       delete this.contentAccountSelectedModal?.metadata;
       delete this.contentAccountSelectedModal?.proxyAddresses;
       this.$nextTick(() => {
