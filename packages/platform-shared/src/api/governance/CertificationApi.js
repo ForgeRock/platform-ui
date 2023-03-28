@@ -117,10 +117,17 @@ export function getCertificationCountsByCampaign(campaign, actorId, isAdmin) {
   const resourceUrl = `${governanceCertificationBaseUrl}/${campaign}/items?${queryParams}`;
   return generateIgaApi().get(resourceUrl);
 }
-
-export function getInProgressTasksByCampaign(campaignId) {
+/**
+* Returns in progress tasks
+*
+* @param {string} campaignId - id of the selected campaign
+* @param {boolean} isAdmin - determine if the user is admin
+* @returns {Promise}
+*/
+export function getInProgressTasksByCampaign(campaignId, isAdmin = false) {
   const queryParams = {
     status: 'in-progress',
+    isAdmin,
   };
   const resourceUrl = `${governanceCertificationBaseUrl}/${campaignId}/items`;
   return generateIgaApi().get(resourceUrl, { params: queryParams });

@@ -111,7 +111,7 @@ export default {
       this.isSaving = !this.isSaving;
     },
     checkInProgress() {
-      getInProgressTasksByCampaign(this.campaignId).then(({ data }) => {
+      getInProgressTasksByCampaign(this.campaignId, this.isAdmin).then(({ data }) => {
         this.hideSignOff = !data.result.length;
       });
     },
