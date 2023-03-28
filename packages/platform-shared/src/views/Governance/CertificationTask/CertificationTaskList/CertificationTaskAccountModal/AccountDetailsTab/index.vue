@@ -20,10 +20,14 @@ of the MIT license. See the LICENSE file for details. -->
             :src="account.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
             fluid />
           <div class="media-body">
-            <h5 class="m-0">
+            <h5
+              class="m-0"
+              data-testid="displayName">
               {{ account.displayName }}
             </h5>
-            <small class="text-muted">
+            <small
+              class="text-muted"
+              data-testid="userPrincipalName">
               {{ account.userPrincipalName }}
             </small>
           </div>
@@ -32,7 +36,9 @@ of the MIT license. See the LICENSE file for details. -->
       <dt class="col-lg-4">
         {{ $t('governance.certificationTask.lineItemDetailsModal.accountDetailsTab.typeLabel') }}
       </dt>
-      <dd class="col-lg-8 mb-4">
+      <dd
+        class="col-lg-8 mb-4"
+        data-testid="accountType">
         {{ account.accountType }}
       </dd>
       <dt class="col-lg-4">
@@ -42,16 +48,28 @@ of the MIT license. See the LICENSE file for details. -->
         {{ blankValueIndicator }}
       </dd>
       <dt class="col-lg-4">
+        {{ $t('governance.certificationTask.lineItemDetailsModal.accountDetailsTab.lastDecisionLabel') }}
+      </dt>
+      <dd
+        class="col-lg-8 mb-4"
+        data-testid="lastDecision">
+        {{ account.decision || blankValueIndicator }}
+      </dd>
+      <dt class="col-lg-4">
         {{ $t('governance.certificationTask.lineItemDetailsModal.accountDetailsTab.lastCertifiedLabel') }}
       </dt>
-      <dd class="col-lg-8 mb-4">
-        {{ account.lastCertified }}
+      <dd
+        class="col-lg-8 mb-4"
+        data-testid="decisionDate">
+        {{ formatDate(account.decisionDate) || blankValueIndicator }}
       </dd>
       <dt class="col-lg-4">
         {{ $t('governance.certificationTask.lineItemDetailsModal.accountDetailsTab.lastCertifiedByLabel') }}
       </dt>
-      <dd class="col-lg-8 mb-4">
-        {{ blankValueIndicator }}
+      <dd
+        class="col-lg-8 mb-4"
+        data-testid="decisionBy">
+        {{ account.decisionBy && account.decisionBy.userName || blankValueIndicator }}
       </dd>
       <dt class="col-lg-4">
         {{ $t('governance.certificationTask.lineItemDetailsModal.accountDetailsTab.lastUsedLabel') }}
@@ -81,6 +99,7 @@ import {
   BMedia,
 } from 'bootstrap-vue';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
+import dayjs from 'dayjs';
 
 export default {
   name: 'AccountDetailsTab',
@@ -98,6 +117,11 @@ export default {
     return {
       blankValueIndicator,
     };
+  },
+  methods: {
+    formatDate(date) {
+      return dayjs(date).format('MMMM D, YYYY h:mm A');
+    },
   },
 };
 </script>
