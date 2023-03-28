@@ -704,19 +704,37 @@ describe('CertificationTaskList', () => {
     });
 
     it('openAccountModal called saves currentAccountSelectedModal data and shows CertificationTaskAccountModal', async () => {
-      const account = {
-        id: '4ab37e2f-9470-45f6-85dd-f8a7b095e0d4',
-        displayName: 'Dani Morales',
+      const content = {
+        account: {
+          id: 'test',
+          displayName: 'Dani Morales',
+        },
+        item: {
+          decision: {
+            certification: {
+              decision: 'certify',
+              decisionDate: '2023-02-28T15:12:25+00:00',
+              decisionBy: {
+                givenName: 'Foo',
+                id: 'managed/user/1',
+                mail: 'foo@test.com',
+                sn: 'Test',
+                userName: 'FooTest',
+              },
+            },
+          },
+
+        },
       };
 
-      const lastCertified = '2022-12-16T03:51:49.729Z';
-
-      wrapper.vm.openAccountModal(account, lastCertified);
+      wrapper.vm.openAccountModal(content);
       await flushPromises();
 
       expect(wrapper.vm.currentAccountSelectedModal).toEqual({
-        ...account,
-        lastCertified,
+        account: content.account,
+        decision: content.item.decision.certification.decision,
+        decisionDate: content.item.decision.certification.decisionDate,
+        decisionBy: content.item.decision.certification.decisionBy,
       });
       expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskAccountModal');
     });

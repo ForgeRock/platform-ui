@@ -1188,6 +1188,7 @@
         "accountDetailsTab": {
           "lastCertifiedLabel": "Last Certified",
           "lastCertifiedByLabel": "Last Certified By",
+          "lastDecisionLabel": "Last Decision",
           "lastUsedLabel": "Last Used",
           "ownerLabel": "Account Owner",
           "provisioningMethodLabel": "Provisioning Method",
