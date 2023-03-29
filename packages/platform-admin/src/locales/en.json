@@ -34,6 +34,8 @@
     "AutoAccessPipelines": "Pipelines",
     "AutoAccessRiskConfig": "RiskConfig",
     "AutoAccessDataSources": "Data Sources",
+    "AutoAccessTenantBehavior": "Tenant Authentication Behavior",
+    "AutoAccessUserBehavior": "User Authentication Behavior",
     "BulkImport": "Bulk Import",
     "CampaignDetails": "Campaign Details",
     "CampaignDetailsTask": "Access Reviews",
@@ -71,6 +73,7 @@
     "LogApiKeys": "Log API Keys",
     "ManagedIdentities": "Managed Identities",
     "ManagedObjectSettings": "Managed Object Settings",
+    "NormalView": "Normal View",
     "NotFound": "Not Found",
     "OAuthClients": "OAuth2 Clients",
     "OAuthReturn": "OAuth Return",
@@ -94,6 +97,7 @@
     "applications": "Applications",
     "authentication": "Authentication",
     "authorizationRole": "Internal Role",
+    "authBehavior": "Auth Behavior",
     "authScripts": "Auth Scripts",
     "bulkImport": "Import",
     "certification": "Certification",
@@ -712,6 +716,17 @@
         "receivingJourneys": "Error receiving journeys"
       },
       "realmOverview": "Realm Overview"
+    },
+    "autonomousAccess": {
+      "normalView": {
+        "filterModal": {
+          "activeApplied": "No filters applied | {count} filter applied | {count} filters applied",
+          "labelFiltersClear": "Clear filters and show all features",
+          "labelFiltersDropdown": "Filter by Feature",
+          "modalDescription": "Add filters to narrow authentication attempts shown.",
+          "modalTitle": "Filter Authentication Attempts"
+        }
+      }
     },
     "cardCount": {
       "applications": "Applications",
