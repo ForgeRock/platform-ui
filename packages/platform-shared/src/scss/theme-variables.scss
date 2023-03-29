@@ -40,11 +40,31 @@ $green: #2ed47a;
 $light-green: #d5f6e3;
 $teal: #20c997;
 $light-teal: #d1f0ec;
-$cyan: #17a2b8;
-$light-cyan: #d1ecf1;
+$cyan: #61e2e2;
+$light-cyan: #e3ffff;
 $magenta: #d24572;
 $gray: #69788b;
 $light-gray:  #e7eef4;
+
+.bg-green {
+  background-color: $green;
+}
+
+.bg-yellow {
+  background-color: $yellow;
+}
+
+.bg-blue {
+  background-color: $blue;
+}
+
+.bg-red {
+  background-color: $red;
+}
+
+.bg-cyan {
+  background-color: $cyan;
+}
 
 /* Fr Tenant Tier colors */
 .yellow-tenant{

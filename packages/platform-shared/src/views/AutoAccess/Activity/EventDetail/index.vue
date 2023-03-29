@@ -27,11 +27,7 @@ of the MIT license. See the LICENSE file for details. -->
               {{ $t("autoAccess.access.activity.user") }}
             </div>
             <div class="text-dark">
-              <!-- TODO uncomment to link to user detail view -->
-              <!-- <RouterLink
-                                :to="`user-detail/${data.userId}`"
-                                > -->
-              <div class="d-flex flex-row">
+              <div class="d-flex flex-row mb-2">
                 <img
                   :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"
                   class="align-self-center"
@@ -44,8 +40,14 @@ of the MIT license. See the LICENSE file for details. -->
                   </div>
                 </div>
               </div>
-              <!-- TODO uncomment to link to user detail view -->
-              <!-- </RouterLink> -->
+              <BButton
+                size="sm"
+                variant="outline-primary"
+                @click="$router.push({name: 'AutoAccessUserBehavior', params: { username: data.raw.username}})"
+              >
+                <FrIcon name="insights" />
+                {{ $t("autoAccess.access.activity.viewRecentBehavior") }}
+              </BButton>
             </div>
           </div>
         </div>
@@ -252,6 +254,7 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import { BModal, BButton } from 'bootstrap-vue';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import RiskScore from '../../Shared/RiskScore';
 import Explainability from '../../Explainability';
 import { getEventLogs, apiToInternalEvent } from '../api/ActivityAPI';
@@ -263,6 +266,7 @@ export default {
   components: {
     BModal,
     BButton,
+    FrIcon,
     FrSpinner,
     RiskScore,
     Explainability,
