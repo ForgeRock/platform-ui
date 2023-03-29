@@ -13,6 +13,7 @@ const defaultState = {
   autoAccessEnabled: false,
   autoAccessJasUrl: null,
   autoAccessApiUrl: null,
+  autoAccessReportsUrl: null,
   idmBaseURL: '',
   currentPackage: '',
   fraasEnvironmentUrl: null,
@@ -71,6 +72,9 @@ const mutations = {
         }
         if (env.VUE_APP_AUTO_ACCESS_JAS_URL) {
           state.autoAccessJasUrl = env.VUE_APP_AUTO_ACCESS_JAS_URL;
+        }
+        if (env.VUE_APP_AUTO_ACCESS_REPORTS_URL) {
+          state.autoAccessReportsUrl = env.VUE_APP_AUTO_ACCESS_REPORTS_URL;
         }
       }
       if (env.VUE_APP_ENABLE_GOVERNANCE === 'true' || env.VUE_APP_ENABLE_GOVERNANCE === true || env.VUE_APP_ENABLE_GOVERNANCE_V4 === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_V4 === true) {

@@ -921,21 +921,27 @@
           "doneBtn": "Done",
           "previousAuthentications": "User's Last 5 Risky Authentication Attempts"
         },
-        "apply": "Apply"
+        "apply": "Apply",
+        "viewRecentBehavior": "View recent behavior"
       },
       "errors": {
         "retrievingActivity": "There was an error retrieving the Activity Log"
       },
       "normalView": {
         "authenticationAttempts": "Authentication Attempts",
+        "compareLabel": "Compare to tenant",
         "dataTimePeriod": "Data reflects the last 6 months",
-        "userNormalViewTitle": "Access Behavior in the last 6 months",
+        "featuresSelectedTitle": "View:",
+        "featuresSelectedAll": "All Features",
+        "featuresSelected": "{count} Feature | {count} Features",
+        "retrievingDataError": "There was an error retrieving normal data.",
+        "userBehaviorHeader": "Tenant Access Behvior",
         "userInformationRequestError": "Unable to retrieve user information",
+        "userNormalViewTitle": "User Access Behavior",
+        "userQueryNotFound": "User not found",
+        "viewMore": "View More",
         "filterModal": {
-          "description": "Add filters to narrow authentication attempts shown.",
-          "label-filters-clear": "Clear filters and show all features",
-          "filters-dropdown": "Filter by feature",
-          "title": "Filter Authentication Attempts"
+          "title": "View Options"
         }
       },
       "heuristics": {
