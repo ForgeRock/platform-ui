@@ -241,7 +241,7 @@ export const getConfig = () => new Promise((resolve, reject) => {
     .then((data) => {
       resolve({
         thresholds: {
-          high: _.get(data, 'hits.hits[0]._source.predictionResult.risk_score_data.risk_score_threshhold', 0),
+          high: _.get(data, 'data.hits.hits[0]._source.predictionResult.risk_score_data.risk_score_threshhold', 0),
         },
       });
     })
