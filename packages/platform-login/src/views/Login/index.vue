@@ -301,7 +301,6 @@ import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import { getThemeIdFromStageString } from '@forgerock/platform-shared/src/utils/stage';
 import { svgShapesSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
-import { decodeJwt } from 'jose';
 import i18n from '@/i18n';
 
 export default {
@@ -495,6 +494,17 @@ export default {
       });
   },
   methods: {
+    /**
+     * Decodes a JWT token
+     */
+    decodeJwt(token) {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(window.atob(base64).split('').map((c) => (
+        `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`
+      )).join(''));
+      return JSON.parse(jsonPayload);
+    },
     /**
      * Redirects user to forbidden if non-root realm & journey pages have been inactivated for hosted pages
      */
@@ -1146,7 +1156,7 @@ export default {
     * @returns {Boolean} - whether AllowListings is enabled or not
     */
     allowListingsEnabled(authId) {
-      return !!decodeJwt(authId)['whitelist-state'];
+      return !!this.decodeJwt(authId)['whitelist-state'];
     },
     /**
     * Get a new authId by calling the SDK's FRAuth.next function with no step.
