@@ -109,8 +109,8 @@ of the MIT license. See the LICENSE file for details. -->
                     </div>
                   </BCardBody>
                   <BCardFooter
-                    v-if="pageFooterLocalized"
-                    v-html="pageFooterLocalized" />
+                    v-if="pageNodeFooterLocalized"
+                    v-html="pageNodeFooterLocalized" />
                 </template>
               </FrCenterCard>
             </section>
@@ -231,9 +231,9 @@ of the MIT license. See the LICENSE file for details. -->
                       @click.prevent="backendScriptsHandler"
                       hidden>
                     <div
-                      v-if="pageFooterLocalized"
+                      v-if="pageNodeFooterLocalized"
                       class="page-footer"
-                      v-html="pageFooterLocalized" />
+                      v-html="pageNodeFooterLocalized" />
                   </form>
                 </div>
               </BCol>
@@ -421,6 +421,7 @@ export default {
       nextButtonVisible: false,
       nextStepCallbacks: [],
       nodeThemeId: undefined,
+      pageNodeFooterLocalized: null,
       realm: '/',
       retry: undefined,
       showScriptElms: false,
@@ -440,13 +441,6 @@ export default {
       }
 
       return submitButtonTextOverride || this.buttonText || this.$t('login.next');
-    },
-    pageFooterLocalized() {
-      try {
-        return this.$sanitize(this.getLocalizedString(this.stage.pageFooter, i18n.locale, i18n.fallbackLocale));
-      } catch (e) {
-        return null;
-      }
     },
     nextButtonDisabled() {
       // checks if there are any true bool values in array
@@ -530,6 +524,7 @@ export default {
     },
     buildTreeForm() {
       this.header = this.step.getHeader() || '';
+      this.pageNodeFooterLocalized = this.getPageNodeFooter();
       this.description = this.$sanitize(this.step.getDescription() || '');
       this.nextButtonVisible = true;
       this.nextButtonDisabledArray = [false];
@@ -853,6 +848,13 @@ export default {
         },
       };
       return listenerArray.reduce((acc, listener) => ({ ...acc, [listener]: listeners[listener] }), {});
+    },
+    getPageNodeFooter() {
+      try {
+        return this.stage && this.$sanitize(this.getLocalizedString(this.stage.pageFooter, i18n.locale, i18n.fallbackLocale));
+      } catch (e) {
+        return null;
+      }
     },
     /**
      * @description If session storage has step information, extract it and clear session storage
