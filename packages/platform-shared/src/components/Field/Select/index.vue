@@ -220,4 +220,14 @@ export default {
 
 <style lang="scss" scoped>
 @import '~@forgerock/platform-shared/src/components/Field/assets/vue-multiselect.scss';
+
+::v-deep .form-label-group {
+  .form-label-group-input {
+    .multiselect--active {
+      outline-offset: 2px;
+      outline: 2px solid;
+    }
+  }
+}
+
 </style>
