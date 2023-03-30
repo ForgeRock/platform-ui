@@ -32,7 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
                 <template v-for="([key, statusObj]) in Array.from(statuses)">
                   <BDropdownItem
                     :key="key"
-                    v-if="!statusObj.sortHide"
+                    v-if="!statusObj.sortHide && !statusObj.sortAccessReviewHide"
                     @click="handleStatusSort(statusObj)"
                   >
                     <span
