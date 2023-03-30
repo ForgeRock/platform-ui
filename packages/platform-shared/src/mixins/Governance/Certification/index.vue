@@ -74,6 +74,7 @@ export default {
         ],
         ['cancelled',
           {
+            sortAccessReviewHide: true,
             param: 'cancelled',
             type: 'cancelled',
             variant: 'light',
