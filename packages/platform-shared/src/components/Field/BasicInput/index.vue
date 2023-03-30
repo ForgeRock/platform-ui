@@ -239,27 +239,47 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .form-control.is-invalid {
-    background-image: none;
-  }
+.form-control.is-invalid {
+  background-image: none;
+}
 
-  .fr-hide-input {
-    position: absolute;
-    right: 0;
-    bottom: 0;
+.fr-hide-input {
+  position: absolute;
+  right: 0;
+  bottom: 0;
 
-    .btn {
-      background-color: transparent !important;
-      border-color: transparent;
+  .btn {
+    background-color: transparent !important;
+    border-color: transparent;
 
-      &:active,
-      &:hover,
-      &:focus,
-      &:active:focus {
-        box-shadow: none;
-      }
+    &:active,
+    &:hover,
+    &:focus,
+    &:active:focus {
+      box-shadow: none;
     }
   }
+}
+
+.form-label-group:not(.fr-field-error) {
+  .form-control {
+    &:focus {
+      border-color: $primary !important;
+      -webkit-box-shadow: 0 0 0 0.0625rem $primary !important;
+      box-shadow: 0 0 0 0.0625rem $primary !important;
+    }
+  }
+}
+
+.form-label-group.fr-field-error {
+  .form-control {
+    &:focus {
+      border-color: $danger !important;
+      -webkit-box-shadow: 0 0 0 0.0625rem $danger !important;
+      box-shadow: 0 0 0 0.0625rem $danger !important;
+    }
+  }
+}
 </style>
 
 <style scoped>
