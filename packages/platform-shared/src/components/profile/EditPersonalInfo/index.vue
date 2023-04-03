@@ -8,7 +8,6 @@ of the MIT license. See the LICENSE file for details. -->
     ref="observer">
     <BModal
       id="userDetailsModal"
-      ref="fsModal"
       size="lg"
       cancel-variant="outline-secondary"
       @show="setModal"
@@ -46,6 +45,7 @@ of the MIT license. See the LICENSE file for details. -->
                   :key="index">
                   <FrField
                     v-model="field.value"
+                    class="personal-info-field"
                     :label="field.title"
                     :name="field.name"
                     :type="field.format ? field.format : field.type"
@@ -55,7 +55,7 @@ of the MIT license. See the LICENSE file for details. -->
                   <FrListField
                     v-else-if="field.type === 'array' && field.name !== 'privileges'"
                     v-model="field.value"
-                    class="w-100"
+                    class="w-100 personal-info-field"
                     :description="field.description"
                     :items="field.items"
                     :label="field.title"
@@ -211,7 +211,7 @@ export default {
      * Hide the modal
      */
     hideModal() {
-      this.$root.$emit('bv::hide::modal', 'fsModal');
+      this.$root.$emit('bv::hide::modal', 'userDetailsModal');
     },
     /**
      * Set the form fields for the modal. Maintain the original values for patch
@@ -284,3 +284,10 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+
+.personal-info-field {
+  margin-bottom: 1.875rem
+}
+
+</style>
