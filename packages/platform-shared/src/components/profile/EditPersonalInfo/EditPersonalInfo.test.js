@@ -108,7 +108,7 @@ describe('EditPersonalInfo', () => {
 
       expect(rootWrapper.emitted('bv::hide::modal')).toBeFalsy();
       await closeButton.trigger('click');
-      expect(rootWrapper.emitted('bv::hide::modal')).toBeTruthy();
+      expect(rootWrapper.emitted('bv::hide::modal')[0][0]).toBe('userDetailsModal');
     });
 
     describe('when form is valid', () => {
