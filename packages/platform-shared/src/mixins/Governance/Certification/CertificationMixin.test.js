@@ -150,55 +150,98 @@ describe('CertificationMixin', () => {
     });
   });
 
-  it('Sets access review list', () => {
-    const data = {
-      result: [
+  describe('setAccessReviewList', () => {
+    it('handles totals for enduser', () => {
+      const data = {
+        result: [
+          {
+            a: 'a',
+            deadline: '2022-12-19T22:51:51+00:00',
+            totals: {
+              total: 10,
+              'in-progress': 3,
+            },
+          },
+          {
+            b: 'b',
+            deadline: '2022-12-19T22:51:51+00:00',
+            totals: {
+              total: 20,
+              'in-progress': 5,
+            },
+          },
+        ],
+        totalCount: 11,
+      };
+
+      wrapper.vm.setAccessReviewList(data);
+
+      expect(wrapper.vm.accessReviewList).toEqual([
         {
           a: 'a',
           deadline: '2022-12-19T22:51:51+00:00',
+          formattedDeadline: 'Dec 19, 2022',
           totals: {
             total: 10,
             'in-progress': 3,
+            completed: 7,
           },
         },
         {
           b: 'b',
           deadline: '2022-12-19T22:51:51+00:00',
+          formattedDeadline: 'Dec 19, 2022',
           totals: {
             total: 20,
             'in-progress': 5,
+            completed: 15,
           },
         },
-      ],
-      totalCount: 11,
-    };
+      ]);
+      expect(wrapper.vm.totalRows).toEqual(11);
+      expect(wrapper.vm.tableLoading).toBeFalsy();
+    });
 
-    wrapper.vm.setAccessReviewList(data);
+    it('handles totals for admin', () => {
+      const data = {
+        result: [
+          {
+            a: 'a',
+            deadline: '2022-12-19T22:51:51+00:00',
+            total: 10,
+            inProgress: 3,
+          },
+          {
+            b: 'b',
+            deadline: '2022-12-19T22:51:51+00:00',
+            total: 20,
+            inProgress: 5,
+          },
+        ],
+        totalCount: 11,
+      };
 
-    expect(wrapper.vm.accessReviewList).toEqual([
-      {
-        a: 'a',
-        deadline: '2022-12-19T22:51:51+00:00',
-        formattedDeadline: 'Dec 19, 2022',
-        totals: {
+      wrapper.vm.setAccessReviewList(data);
+
+      expect(wrapper.vm.accessReviewList).toEqual([
+        {
+          a: 'a',
+          deadline: '2022-12-19T22:51:51+00:00',
+          formattedDeadline: 'Dec 19, 2022',
           total: 10,
-          'in-progress': 3,
-          completed: 7,
+          inProgress: 3,
         },
-      },
-      {
-        b: 'b',
-        deadline: '2022-12-19T22:51:51+00:00',
-        formattedDeadline: 'Dec 19, 2022',
-        totals: {
+        {
+          b: 'b',
+          deadline: '2022-12-19T22:51:51+00:00',
+          formattedDeadline: 'Dec 19, 2022',
           total: 20,
-          'in-progress': 5,
-          completed: 15,
+          inProgress: 5,
         },
-      },
-    ]);
-    expect(wrapper.vm.totalRows).toEqual(11);
-    expect(wrapper.vm.tableLoading).toBeFalsy();
+      ]);
+      expect(wrapper.vm.totalRows).toEqual(11);
+      expect(wrapper.vm.tableLoading).toBeFalsy();
+    });
   });
 
   it('isActiveLikeStatus computed prop true by default', () => {

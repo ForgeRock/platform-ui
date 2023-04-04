@@ -165,15 +165,18 @@ export default {
         const newItem = {};
         if (item.campaignId) newItem.id = item.campaignId;
         if (item.campaignName) newItem.name = item.campaignName;
-        return {
+
+        const reviewItem = {
           ...item,
           ...newItem,
           formattedDeadline: item.deadline ? dayjs(item.deadline).format('MMM D, YYYY').toString() : '–',
-          totals: {
-            ...item.totals,
-            completed: (item.totals.total - item.totals['in-progress']),
-          },
         };
+
+        // enduser access review api has totals contained in a separate property
+        // add the number of completed items to that property
+        if (reviewItem.totals) reviewItem.totals.completed = reviewItem.totals.total - reviewItem.totals['in-progress'];
+
+        return reviewItem;
       });
       this.totalRows = totalCount;
       this.tableLoading = false;
