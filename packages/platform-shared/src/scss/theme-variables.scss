@@ -22,19 +22,196 @@ $gray-900: #23282e;
 $black: black;
 
 $blue: #109cf1;
-$indigo: #6610f2;
-$purple: #6f42c1;
-$pink: #e83e8c;
-$red: #f7685b;
-$orange: #fd7e14;
-$yellow: #ffb946;
-$green: #2ed47a;
-$teal: #20c997;
-$cyan: #17a2b8;
-$magenta: #d24572;
 $light-blue: #e4f4fd;
-$light-green: #d5f6e3;
+$indigo: #6610f2;
+$light-indigo: #e7e3fc;
+$purple: #6f42c1;
+$light-purple: #e0d7f9;
+$pink: #e83e8c;
+$light-pink: #f9d6e5;
+$red: #f7685b;
+$light-red: #f5c6cb;
+$orange: #fd7e14;
+$light-orange: #fcecd7;
+$yellow: #ffb946;
 $light-yellow: #fef1d8;
+$green: #2ed47a;
+$light-green: #d5f6e3;
+$teal: #20c997;
+$light-teal: #d1f0ec;
+$cyan: #17a2b8;
+$light-cyan: #d1ecf1;
+$magenta: #d24572;
+$gray: #69788b;;
+$light-gray:  #e7eef4;
+
+/* Fr Tenant Tier colors */
+.yellow-tenant{
+  &.tenant-badge {
+    color: $yellow;
+    border-color: $yellow !important;
+  }
+  &.tenant-icon {
+    color: $yellow;
+  }
+  &.tenant-icon-bg {
+    background-color: $light-yellow;
+  }
+  &.tenant-lock-bg {
+    background-color: $yellow;
+  }
+}
+.indigo-tenant{
+  &.tenant-badge {
+    color: $indigo;
+    border-color: $indigo !important;
+  }
+  &.tenant-icon {
+    color: $indigo;
+  }
+  &.tenant-icon-bg {
+    background-color: $light-indigo;
+  }
+  &.tenant-lock-bg {
+    background-color: $indigo;
+  }
+}
+.purple-tenant{
+  &.tenant-badge {
+    color: $purple;
+    border-color: $purple !important;
+  }
+  &.tenant-icon {
+    color: $purple;
+  }
+  &.tenant-icon-bg {
+    background-color: $light-purple;
+  }
+  &.tenant-lock-bg {
+    background-color: $purple;
+  }
+}
+.pink-tenant{
+  &.tenant-badge {
+    color: $pink;
+    border-color: $pink !important;
+  }
+  &.tenant-icon {
+    color: $pink;
+  }
+  &.tenant-icon-bg {
+    background-color: $light-pink;
+  }
+  &.tenant-lock-bg {
+    background-color: $pink;
+  }
+}
+.red-tenant{
+  &.tenant-badge {
+    color: $red;
+    border-color: $red !important;
+  }
+  &.tenant-icon {
+    color: $red;
+  }
+  &.tenant-icon-bg {
+    background-color: $light-red;
+  }
+  &.tenant-lock-bg {
+    background-color: $red;
+  }
+}
+.orange-tenant{
+  &.tenant-badge {
+    color: $orange;
+    border-color: $orange !important;
+  }
+  &.tenant-icon {
+    color: $orange;
+  }
+  &.tenant-icon-bg {
+    background-color: $light-orange;
+  }
+  &.tenant-lock-bg {
+    background-color: $orange;
+  }
+}
+.teal-tenant{
+  &.tenant-badge {
+    color: $teal;
+    border-color: $teal !important;
+  }
+  &.tenant-icon {
+    color: $teal;
+  }
+  &.tenant-icon-bg {
+    background-color: $light-teal;
+  }
+  &.tenant-lock-bg {
+    background-color: $teal;
+  }
+}
+.blue-tenant{
+  &.tenant-badge {
+    color: $blue;
+    border-color: $blue !important;
+  }
+  &.tenant-icon {
+    color: $blue;
+  }
+  &.tenant-icon-bg {
+    background-color: $light-blue;
+  }
+  &.tenant-lock-bg {
+    background-color: $blue;
+  }
+}
+.green-tenant{
+  &.tenant-badge {
+    color: $green;
+    border-color: $green !important;
+  }
+  &.tenant-icon {
+    color: $green;
+  }
+  &.tenant-icon-bg {
+    background-color: $light-green;
+  }
+  &.tenant-lock-bg {
+    background-color: $green;
+  }
+}
+.cyan-tenant{
+  &.tenant-badge {
+    color: $cyan;
+    border-color: $cyan !important;
+  }
+  &.tenant-icon {
+    color: $cyan;
+  }
+  &.tenant-icon-bg {
+    background-color: $light-cyan;
+  }
+  &.tenant-lock-bg {
+    background-color: $cyan;
+  }
+}
+.gray-tenant{
+  &.tenant-badge {
+    color: $gray;
+    border-color: $gray !important;
+  }
+  &.tenant-icon {
+    color: $gray;
+  }
+  &.tenant-icon-bg {
+    background-color: $light-gray;
+  }
+  &.tenant-lock-bg {
+    background-color: $gray;
+  }
+}
+
 $hover-blue: #0a6eab;
 $orchid: #ba4de1;
 $sky-blue: #61e2e2;
