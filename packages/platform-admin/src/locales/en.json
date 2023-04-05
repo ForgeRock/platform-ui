@@ -2909,6 +2909,7 @@
       "enableStaging": "Enable Campaign Staging",
       "enableStagingDescription": "Certification will remain in staging mode until activated.",
       "entitlements": "Entitlements",
+      "errorReadingCertifierType": "Error reading certifier type from template",
       "errorRetrievingRoles": "Error retrieving list of roles",
       "errorRetrievingApplications": "Error retrieving list of applications",
       "every": "every",
