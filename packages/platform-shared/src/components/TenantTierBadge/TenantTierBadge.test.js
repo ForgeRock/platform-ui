@@ -12,7 +12,7 @@ import i18n from '../../../../platform-admin/src/i18n';
 
 describe('TenantTierBadge', () => {
   it('renders correct abbreviation: "Dev", and associated css classes for a "development" badge: "blue-tenant, tenant-badge"', () => {
-    const tenantTier = 'dev';
+    const tenantTier = 'development';
     const wrapper = mount(TenantTierBadge, {
       i18n,
       propsData: {

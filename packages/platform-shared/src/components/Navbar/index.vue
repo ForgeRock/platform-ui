@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -97,7 +97,7 @@ of the MIT license. See the LICENSE file for details. -->
                 class="pl-sm-4">
                 <template #tenant-header>
                   <BDropdownHeader
-                    v-if="$store.state.isFraas && $store.state.tenantInfo"
+                    v-if="$store.state.isFraas && hasTenantInfo"
                     id="tenant-dropdown-header-label">
                     <h6 class="text-muted">
                       {{ $t('tenantSettings.details.tenant') }}
@@ -320,6 +320,7 @@ export default {
       userStore: (state) => state.UserStore,
     }),
     ...mapGetters({
+      hasTenantInfo: 'hasTenantInfo',
       tenantRegionInfo: 'tenantRegionInfo',
     }),
     profileImage() {

@@ -6,7 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <BBadge
     :class="`bg-white border my-auto mr-2 ${tierColor}-tenant tenant-badge`"
     data-testid="tenant-tier-badge">
-    {{ $t(`tenantTierAbbreviation.${tenantTier}`) }}
+    {{ badgeText }}
   </BBadge>
 </template>
 
@@ -22,16 +22,23 @@ export default {
   components: {
     BBadge,
   },
+  data() {
+    const translation = `tenantTierAbbreviation.${this.tenantTier}`;
+    const tierExists = this.$te(translation, 'en');
+    const abbreviation = tierExists ? this.tenantTier : 'other';
+    const badgeText = tierExists ? this.$t(translation) : this.$t('tenantTierAbbreviation.other');
+    return {
+      abbreviation,
+      badgeText,
+      tierColor: getTierColor(this.tenantTier),
+      translation,
+    };
+  },
   props: {
     tenantTier: {
       type: String,
       default: 'other',
     },
-  },
-  data() {
-    return {
-      tierColor: getTierColor(this.tenantTier),
-    };
   },
 };
 </script>
