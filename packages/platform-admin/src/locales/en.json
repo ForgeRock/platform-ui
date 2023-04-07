@@ -93,33 +93,34 @@
     "applications": "Applications",
     "authentication": "Authentication",
     "authorizationRole": "Internal Role",
+    "authScripts": "Auth Scripts",
     "bulkImport": "Import",
     "certification": "Certification",
     "configureManaged": "Configure",
     "connect": "Connect",
+    "customEndpoints": "Custom Endpoints",
     "dataSources": "Data Sources",
     "email": "Email",
+    "entitlements": "Entitlements",
+    "glossary": "Glossary",
     "hostedPages": "Hosted Pages",
     "identities": "Identities",
     "identityManagement": "Identity Management",
     "journeys": "Journeys",
     "managed": "Manage",
     "nativeConsoles": "Native Consoles",
-    "provider": "Provider",
     "pipelines": "Pipelines",
-    "riskAdministration": "Risk Administration",
-    "riskConfig": "Risk Config",
-    "security": "Security",
-    "scripts": "Scripts",
+    "provider": "Provider",
     "provisioningRole": "External Role",
-    "securityQuestions": "Security Questions",
-    "templates": "Templates",
-    "settings": "Settings",
-    "authScripts": "Auth Scripts",
-    "customEndpoints": "Custom Endpoints",
     "realmOverview": "Realm Overview",
     "risk": "Risk",
-    "glossary": "Glossary"
+    "riskAdministration": "Risk Administration",
+    "riskConfig": "Risk Config",
+    "scripts": "Scripts",
+    "security": "Security",
+    "securityQuestions": "Security Questions",
+    "settings": "Settings",
+    "templates": "Templates"
   },
   "connect": {
     "connectIdentities": "Connect Identities",
@@ -2705,6 +2706,17 @@
         "deleteCampaignButton": "Delete Campaign",
         "updateCampaignDeadline": "Update Campaign Deadline",
         "chooseNewDeadline": "Choose a new deadline for this campaign"
+      }
+    },
+    "entitlements": {
+      "title": "Entitlements",
+      "subtitle": "Manage and configure user entitlements across all your configured applications.",
+      "failedToLoad": "Failed to load entitlements",
+      "tabs": {
+        "breadcrumb": "Entitlements",
+        "details": "Details",
+        "objectProperties": "Object Properties",
+        "users": "Users"
       }
     },
     "glossary":{

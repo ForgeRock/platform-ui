@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -21,6 +21,24 @@ export function findByTestId(wrapper, testId) {
   }
 
   return wrapper.find(`[data-testid=${testId}]`);
+}
+
+/**
+ * vue-test-utils helper function for getting all elements matching data-testid
+ * @param {*} wrapper the component wrapper
+ * @param {*} testId the data-testid string
+ * @returns a wrapperArray containing the found elements
+ */
+export function findAllByTestId(wrapper, testId) {
+  if (!wrapper) {
+    throw new Error('Please provide a wrapper');
+  }
+
+  if (typeof testId !== 'string') {
+    throw new Error('Please provide a valid data-testid');
+  }
+
+  return wrapper.findAll(`[data-testid=${testId}]`);
 }
 
 /**
