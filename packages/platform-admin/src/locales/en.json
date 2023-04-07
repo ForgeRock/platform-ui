@@ -1683,9 +1683,10 @@
     }
   },
   "tenantTierAbbreviation": {
-    "dev": "Dev",
+    "development": "Dev",
     "staging": "Staging",
-    "prod": "Prod",
+    "production": "Prod",
+    "uat": "UAT",
     "other": "Other"
   },
   "tenantSettings": {
@@ -1705,7 +1706,11 @@
       "tenantTier": "Environment Tag",
       "tenant": "TENANT",
       "flagAltText": "Flag",
-      "errorRetrievingTenantRegion": "Error retrieving tenant region information."
+      "errors": {
+        "errorRetrievingLockState": "Error retrieving promotion lock state.",
+        "errorRetrievingProvisionalReport": "Error retrieving provisional report.",
+        "errorRetrievingTenantRegion": "Error retrieving tenant region information."
+      }
     },
     "admins": {
       "title": "Admins",
@@ -2651,15 +2656,16 @@
     "tenantLocked": "Tenant Locked",
     "tenantLockedPopover": "Tenants remain locked during a promotion",
     "tiers": {
-      "dev": "Dev",
+      "development": "Dev",
       "staging": "Staging",
-      "prod": "Production"
+      "production": "Production",
+      "uat": "UAT"
     },
     "viewHistory": "View promotion history",
     "viewUpdates": "View updates"
   },
   "governance": {
-    "certification" :{
+    "certification": {
       "accessReviewHistory": "Access Review History",
       "accessReviewHistoryLabels": {
         "certify": "Certified",
@@ -2719,7 +2725,7 @@
         "users": "Users"
       }
     },
-    "glossary":{
+    "glossary": {
       "addGlossaryItem": "Add {glossaryType} Glossary Item",
       "application": "Application",
       "boolean": "Boolean",
@@ -3012,7 +3018,7 @@
       "unused": "Unused",
       "runNow": "Run Now",
       "scheduleCampaign": "Schedule Campaign",
-      "editSchedule":"Edit Schedule",
+      "editSchedule": "Edit Schedule",
       "editTemplate": "Edit Template",
       "noneSchedule": "(None Scheduled)",
       "noTemplates": "No Templates",
