@@ -9,6 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
     <!-- Dropdown -->
     <BDropdown
       v-if="datasetSize !== DatasetSize.SMALL && !hidePageSizeSelector"
+      data-testid="page_size-button"
       class="mr-1 pagination-dropdown"
       id="dropdown"
       toggle-class="btn btn-link text-dark border-0 toggle-dropdown-button"
@@ -17,6 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
     >
       <BDropdownItem
         v-for="(pageSize, index) in pageSizes"
+        :data-testid="`page_size-${pageSize}`"
         :key="index"
         :active="pageSize === perPage"
         :disabled="pageSize === perPage"
@@ -49,6 +51,7 @@ of the MIT license. See the LICENSE file for details. -->
     >
       <template #first-text>
         <FrIcon
+          data-testid="first_page-button"
           class="md-24"
           name="first_page"
           outlined
@@ -56,6 +59,7 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
       <template #prev-text>
         <FrIcon
+          data-testid="prev_page-button"
           class="md-24"
           name="chevron_left"
           outlined
@@ -63,6 +67,7 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
       <template #next-text>
         <FrIcon
+          data-testid="next_page-button"
           class="md-24"
           name="chevron_right"
           outlined
@@ -70,6 +75,7 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
       <template #last-text>
         <FrIcon
+          data-testid="last_page-button"
           class="md-24"
           name="last_page"
           outlined
