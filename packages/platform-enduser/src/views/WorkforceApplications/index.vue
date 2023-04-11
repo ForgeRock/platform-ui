@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -70,7 +70,7 @@ export default {
   },
   data() {
     return {
-      applications: [],
+      applications: {},
       searchString: '',
       userData: {},
     };
@@ -89,10 +89,11 @@ export default {
       }
       const visibleApplications = this.userData.effectiveApplications.filter((application) => {
         const lowerCaseAppName = application.name.toLowerCase();
-        return this.applications[lowerCaseAppName] && lowerCaseAppName.includes(this.searchString.toLowerCase());
+        return Object.values(this.applications).find((app) => app.dashboardDisplayName[0].toLowerCase() === lowerCaseAppName) && lowerCaseAppName.includes(this.searchString.toLowerCase());
       });
+
       return visibleApplications.map((application) => {
-        const app = this.applications[application.name.toLowerCase()];
+        const app = Object.values(this.applications).find((a) => a.dashboardDisplayName[0].toLowerCase() === application.name.toLowerCase());
         return {
           name: app.dashboardDisplayName[0],
           icon: app.dashboardIcon[0],
