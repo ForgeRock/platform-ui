@@ -264,6 +264,7 @@
       "MAX_LENGTH": "Must be less than {maxLength} characters long",
       "MAX_VALUE": "Must not be greater than {max}",
       "MIN_ITEMS": "Must have at least {minItems} value(s)",
+      "AT_LEAST_ONE_CHECKBOX": "At least one checkbox must be checked",
       "AT_LEAST_X_CAPITAL_LETTERS": "Must have at least {numCaps} capital letter(s)",
       "AT_LEAST_X_LOWER_LETTERS": "Must have at least {numLower} lowercase letter(s)",
       "AT_LEAST_X_NUMBERS": "Must have at least {numNums} number(s)",
