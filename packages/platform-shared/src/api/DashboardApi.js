@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -46,6 +46,18 @@ export function getDefinedDashboards(realm) {
 }
 
 /**
+ * Retrieves the list of globally defined dashboards.
+ *
+ * @returns {Promise}
+ */
+export function getGlobalDashboards(queryFilter = 'true') {
+  return generateAmApi(getHeaders()).get(
+    `/global-config/services/dashboard/instances?_queryFilter=${queryFilter}`,
+    { withCredentials: true },
+  );
+}
+
+/**
 * Post dashboard into store
 *
 * @returns {Promise} API promise with result from put
@@ -61,7 +73,7 @@ export function postDashboard(dashboard) {
 *
 * @returns {Promise} API promise with result from put
 */
-export function putDashboards(dashboardName, config) {
+export function putDashboard(dashboardName, config) {
   return generateAmApi(getHeaders()).put(`/global-config/services/dashboard/instances/${dashboardName}`, config);
 }
 
