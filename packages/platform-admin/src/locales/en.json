@@ -983,6 +983,8 @@
     },
     "addCustomAppModal": {
       "appClientId": "Client ID",
+      "bookmark": "Bookmark",
+      "bookmarkDescription": "Bookmark apps are used to direct users to a specific application URL. They do not need credentials and simply work as normal bookmarks on any browser.",
       "createCredentials": "Create a client ID for your application.",
       "createCredentialsWithSecret": "Create a client ID and secret for your application.",
       "createApp": "Create Application",
