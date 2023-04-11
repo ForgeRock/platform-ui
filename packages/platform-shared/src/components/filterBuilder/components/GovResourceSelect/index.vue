@@ -100,6 +100,11 @@ export default {
         label: `${this.initialData.givenName} ${this.initialData.sn}`,
         value: selectedOption,
       };
+
+      // ensures that the selected option is not in the list twice
+      const match = this.options.find((option) => option.value === initialOption.value);
+      if (match || this.isSearching) return [...this.options];
+
       return [initialOption, ...this.options];
     },
     searchText() {
