@@ -47,6 +47,16 @@ export function getRules(i18n) {
     message: i18n.t('common.policyValidationMessages.alphaNumericLowerCaseOnly'),
   };
 
+  // Checkbox rule
+  // added for certification
+  const atLeastOneSelected = {
+    params: ['checkbox'],
+    validate(value, { checkbox }) {
+      return value || checkbox;
+    },
+    message: i18n.t('common.policyValidationMessages.AT_LEAST_ONE_CHECKBOX'),
+  };
+
   // Date rule
   // added for workflow
   const date_format = {
@@ -292,6 +302,7 @@ export function getRules(i18n) {
     alpha_dash_spaces,
     alpha_num,
     alpha_num_lower,
+    atLeastOneSelected,
     date_format,
     email,
     email_from,
