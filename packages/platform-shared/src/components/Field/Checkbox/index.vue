@@ -5,25 +5,31 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <div class="d-flex">
-      <BFormCheckbox
-        v-model="inputValue"
-        v-on="$listeners"
-        class="mr-0 zindex-1"
-        role="checkbox"
-        inline
-        :aria-label="switchLabel"
-        :disabled="disabled"
+      <ValidationProvider
+        :rules="validation"
         :name="name"
-        :data-testid="testid"
-        :value="$attrs.cbcheckedvalue"
-        :unchecked-value="$attrs.cbuncheckedvalue">
-        <template v-if="switchLabel">
-          <div class="mb-1 text-secondary">
-            {{ switchLabel }}
-          </div>
-        </template>
-        <slot name="append" />
-      </BFormCheckbox>
+        v-slot="{ validate }">
+        <BFormCheckbox
+          v-model="inputValue"
+          v-on="$listeners"
+          @change="validate($event)"
+          class="mr-0 zindex-1"
+          role="checkbox"
+          inline
+          :aria-label="switchLabel"
+          :disabled="disabled"
+          :name="name"
+          :data-testid="testid"
+          :value="$attrs.cbcheckedvalue"
+          :unchecked-value="$attrs.cbuncheckedvalue">
+          <template v-if="switchLabel">
+            <div class="mb-1 text-secondary">
+              {{ switchLabel }}
+            </div>
+          </template>
+          <slot name="append" />
+        </BFormCheckbox>
+      </ValidationProvider>
     </div>
     <template v-if="description">
       <small
@@ -42,6 +48,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import { ValidationProvider } from 'vee-validate';
 import { BFormCheckbox } from 'bootstrap-vue';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import InputMixin from '../Wrapper/InputMixin';
@@ -61,6 +68,7 @@ export default {
   ],
   components: {
     BFormCheckbox,
+    ValidationProvider,
   },
   props: {
     testid: {
