@@ -19,7 +19,6 @@ import getFQDN from '../utils/getFQDN';
 export function generateIdmApi(requestOverride = {}, routeToForbidden = true) {
   const requestDetails = {
     baseURL: store.state.SharedStore.idmBaseURL,
-    timeout: 15000,
     headers: {},
     ...requestOverride,
   };
@@ -72,7 +71,6 @@ export function generateAmApi(resource, requestOverride = {}) {
 
   const requestDetails = {
     baseURL: `${store.state.SharedStore.amBaseURL}/json/${resource.path}`,
-    timeout: 15000,
     ...requestOverride,
     headers,
   };
@@ -99,7 +97,6 @@ export function generateAmApi(resource, requestOverride = {}) {
 export function generateFraasLogApiKeyApi(requestOverride = {}) {
   const requestDetails = {
     baseURL: store.state.SharedStore.fraasLoggingKeyURL,
-    timeout: 15000,
     headers: {},
     ...requestOverride,
   };
@@ -116,7 +113,6 @@ export function generateFraasLogApiKeyApi(requestOverride = {}) {
 export function generateIgaApi(requestOverride = {}) {
   const requestDetails = {
     baseURL: store.state.SharedStore.igaApiUrl,
-    timeout: 15000,
     headers: {},
     ...requestOverride,
   };
@@ -134,7 +130,6 @@ export function generateIgaApi(requestOverride = {}) {
 export function generateFraasEnvironmentApi(requestOverride = {}) {
   const requestDetails = {
     baseURL: store.state.SharedStore.fraasEnvironmentUrl,
-    timeout: 15000,
     headers: {},
     ...requestOverride,
   };
@@ -151,7 +146,6 @@ export function generateFraasEnvironmentApi(requestOverride = {}) {
 export function generateFraasMonitoringApi(requestOverride = {}) {
   const requestDetails = {
     baseURL: store.state.SharedStore.fraasMonitoringURL,
-    timeout: 25000,
     headers: {},
     ...requestOverride,
   };
@@ -169,7 +163,6 @@ export function generateFraasMonitoringApi(requestOverride = {}) {
 export function generateAnalyticsApi(requestOverride = {}) {
   const requestDetails = {
     baseURL: store.state.SharedStore.analyticsURL,
-    timeout: 15000,
     headers: {},
     ...requestOverride,
   };
@@ -188,7 +181,6 @@ export function generateAutoAccessApi(requestOverride = {}) {
   const tenantId = process.env.VUE_APP_AUTO_ACCESS_TENANT_ID;
   const requestDetails = {
     baseURL: store.state.SharedStore.autoAccessApiUrl,
-    timeout: 15000,
     headers: {
       'X-TENANT-ID': tenantId,
     },
@@ -209,7 +201,6 @@ export function generateAutoAccessJas(requestOverride = {}) {
   const tenantId = process.env.VUE_APP_AUTO_ACCESS_TENANT_ID;
   const requestDetails = {
     baseURL: store.state.SharedStore.autoAccessJasUrl,
-    timeout: 15000,
     headers: {
       'X-TENANT-ID': tenantId,
     },
@@ -235,7 +226,6 @@ export function generateAutoAccessJas(requestOverride = {}) {
 //   }
 //   const requestDetails = {
 //     baseURL,
-//     timeout: 30000,
 // headers: {
 //   'X-TENANT-ID': tenantId,
 // },
@@ -255,7 +245,6 @@ export function generateAutoAccessJas(requestOverride = {}) {
 export function generateFraasPromotionApi(requestOverride = {}) {
   const requestDetails = {
     baseURL: store.state.SharedStore.fraasPromotionUrl,
-    timeout: 10000,
     headers: {
       'accept-api-version': 'protocol=1.0,resource=1.0',
     },
