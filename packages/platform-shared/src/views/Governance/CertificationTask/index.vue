@@ -144,7 +144,6 @@ export default {
 <style lang="scss" scoped>
   .certification-task-container {
     background-color: $white;
-    height: 100%;
     min-height: 100vh;
   }
 </style>
