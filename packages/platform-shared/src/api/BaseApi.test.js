@@ -15,7 +15,6 @@ describe('BaseApi', () => {
   describe('generateIgaApi', () => {
     const requestDetails = {
       baseURL: store.state.SharedStore.igaApiUrl,
-      timeout: 15000,
       headers: {},
     };
     const requestOverride = {
