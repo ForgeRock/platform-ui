@@ -193,9 +193,10 @@ of the MIT license. See the LICENSE file for details. -->
         <div class="d-flex justify-content-between align-items-center">
           <BButton
             class="text-dark"
+            data-testid="account-cell"
             variant="link"
             @click="openAccountModal(item)">
-            {{ item.account.mailNickname }}
+            {{ item.account.__NAME__ || item.account.mailNickname }}
           </BButton>
         </div>
       </template>
