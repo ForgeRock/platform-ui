@@ -21,9 +21,11 @@ of the MIT license. See the LICENSE file for details. -->
       -->
       <input
         v-if="fieldType === 'number'"
-        v-model.number="inputValue"
+        :value="inputValue"
         ref="input"
-        type="number"
+        type="text"
+        inputmode="numeric"
+        pattern="[0-9]*"
         :class="[
           'form-control',
           {
@@ -40,6 +42,7 @@ of the MIT license. See the LICENSE file for details. -->
         :placeholder="floatingLabel ? label : placeholder"
         :readonly="readonly"
         :style="labelHeight && {height: `${labelHeight + 2}px`, 'padding-top': `${labelHeight - 27}px`}"
+        @input="event => inputValue = removeNonNumericChars(event)"
         @animationstart="floatingLabel && animationStart"
         @blur="$emit('blur', $event)"
         :data-testid="`input-${testid}`">
@@ -121,7 +124,7 @@ import {
   BInputGroupAppend,
   BTooltip,
 } from 'bootstrap-vue';
-import { delay } from 'lodash';
+import { delay, toNumber } from 'lodash';
 import * as clipboard from 'clipboard-polyfill/text';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
@@ -232,7 +235,22 @@ export default {
       if (this.floatingLabel && newVal !== null) {
         this.floatLabels = newVal.toString().length > 0 && !!this.label;
       }
+
       this.$emit('input', newVal);
+    },
+    /**
+     * Formats the number input by removing any characters that aren't 0-9.
+     * Note: This is due to accessibility concerns with input type="number".
+     *       Accessibility changes implemented as part of this work:
+     *       https://bugster.forgerock.org/jira/browse/IAM-3677
+     */
+    removeNonNumericChars({ target }) {
+      const newVal = target?.value;
+      if (newVal && (typeof newVal === 'string')) {
+        const numericString = newVal.replace(/[^\d]/g, '');
+        return toNumber(numericString);
+      }
+      return newVal;
     },
   },
 };
