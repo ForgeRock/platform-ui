@@ -4,6 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
+    v-if="initialSearch"
     style="height: 50px;">
     <FrField
       :value="selectValue"
@@ -82,6 +83,7 @@ export default {
       options: [],
       showingInitialOptions: false,
       selectValue: this.initialData?.id,
+      initialSearch: false,
     };
   },
   mounted() {
@@ -96,13 +98,14 @@ export default {
     selectOptions() {
       if (isEmpty(this.initialData)) return this.options;
       const selectedOption = this.initialData.id;
+      const match = this.options.find((option) => option.value === selectedOption);
+      const initialLabel = match ? `${match?.userInfo?.givenName} ${match?.userInfo?.sn}` : null;
       const initialOption = {
-        label: `${this.initialData.givenName} ${this.initialData.sn}`,
+        label: initialLabel || `${this.initialData.givenName} ${this.initialData.sn}`,
         value: selectedOption,
       };
 
       // ensures that the selected option is not in the list twice
-      const match = this.options.find((option) => option.value === initialOption.value);
       if (match || this.isSearching) return [...this.options];
 
       return [initialOption, ...this.options];
@@ -147,7 +150,7 @@ export default {
         this.showingInitialOptions = !query;
         const selectedValue = this.initialData?.id || this.options[0].value;
         if (setValue) this.handleInput(selectedValue);
-      }).catch(() => {});
+      }).catch(() => {}).finally(() => { this.initialSearch = true; });
     },
     handleInput(event, isInitial) {
       this.isSearching = false;
