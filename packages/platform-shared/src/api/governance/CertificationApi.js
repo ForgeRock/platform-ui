@@ -83,6 +83,10 @@ export function searchCertificates(searchTerm, params) {
   }, { params: { ...defaultParams, ...params } });
 }
 
+export function searchAllTemplateNames() {
+  return generateIgaApi().get('/governance/certification/template?pageSize=10000&fields=name');
+}
+
 /**
 * Returns the list of certification tasks
 *
