@@ -3040,7 +3040,8 @@
       "runPublishedTemplateConfirm": "Are you sure you want to run this campaign now? This will send notifications to all certifiers.",
       "errors": {
         "errorDeletingTemplate": "Error deleting template",
-        "errorSavingTemplate": "Error saving template"
+        "errorSavingTemplate": "Error saving template",
+        "errorSearchingTemplates": "Error obtaining existing templates"
       },
       "notifications": {
         "savingSuccess": "Saving succeeded"
