@@ -84,7 +84,6 @@ describe('MenuItem Component', () => {
             isFraas: true,
             promotionsEnabled: true,
             SharedStore: {
-              adminFederationEnabled: true,
               hasAmUrl: null,
             },
           },
@@ -107,7 +106,6 @@ describe('MenuItem Component', () => {
             isFraas: true,
             promotionsEnabled: true,
             SharedStore: {
-              adminFederationEnabled: true,
               hasAmUrl: true,
             },
           },
@@ -129,9 +127,6 @@ describe('MenuItem Component', () => {
                 FederationAdmin: true,
               },
             },
-            SharedStore: {
-              adminFederationEnabled: true,
-            },
           },
         },
         $route: { name: 'little-ted' },
@@ -152,9 +147,6 @@ describe('MenuItem Component', () => {
               privileges: {
                 FederationAdmin: false,
               },
-            },
-            SharedStore: {
-              adminFederationEnabled: true,
             },
           },
         },

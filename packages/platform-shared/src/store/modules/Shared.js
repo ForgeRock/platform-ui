@@ -9,7 +9,6 @@ import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 
 const defaultState = {
   adminFederationEnabled: false,
-  adminFederationGroupClaimsEnabled: false,
   amBaseURL: '',
   analyticsURL: '',
   autoAccessEnabled: false,
@@ -138,10 +137,6 @@ const mutations = {
 
     if (env.VUE_APP_ENABLE_ADMIN_FEDERATION) {
       state.adminFederationEnabled = env.VUE_APP_ENABLE_ADMIN_FEDERATION === 'true' || env.VUE_APP_ENABLE_ADMIN_FEDERATION === true;
-    }
-
-    if (env.VUE_APP_ENABLE_ADMIN_FEDERATION_GROUPS_CLAIM) {
-      state.adminFederationGroupClaimsEnabled = env.VUE_APP_ENABLE_ADMIN_FEDERATION_GROUPS_CLAIM === 'true' || env.VUE_APP_ENABLE_ADMIN_FEDERATION_GROUPS_CLAIM === true;
     }
 
     if (env.VUE_APP_ENABLE_WORKFORCE) {
