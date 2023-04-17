@@ -1801,8 +1801,9 @@
         "superTitle": "Set up {providerName}",
         "appIdHelp": "<a href='https://backstage.forgerock.com/docs/idcloud/latest/home.html' target='_blank' rel='noopener'>How to obtain an Application ID?</a>",
         "appSecretHelp": "<a href='https://backstage.forgerock.com/docs/idcloud/latest/home.html' target='_blank' rel='noopener'>How to obtain an Application Secret?</a>",
-        "appId": "application ID",
+        "appId": "Application ID",
         "appSecret": "Application Secret",
+        "clientAuthenticationMethod": "Client Authentication Method",
         "groupsClaim": "Use {applicationName} group membership to allow federated login to ForgeRock",
         "groupsClaimDescription": "Groups claim description",
         "groupsClaimName": "Groups Claim Name",
@@ -1816,6 +1817,7 @@
         "authEndpoint": "Authorization Endpoint",
         "tokenEndpoint": "Token Endpoint",
         "userInfoEndpoint": "User Info Endpoint",
+        "scopes": "Scopes",
         "stage1": {
           "title": "Add Sign On Method",
           "helpText": "Choose an identity provider to use for admin sign-in to this tenant."

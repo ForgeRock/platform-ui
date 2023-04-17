@@ -276,11 +276,10 @@ export default {
   },
   computed: {
     showItemForPrivileges() {
-      const adminFederationNotEnabled = !this.$store.state.SharedStore.adminFederationEnabled;
       const emptyShowForPrivilegesProp = !this.showForPrivileges.length;
       const showForPrivilegesInUserStore = this.showForPrivileges.some((userPrivilege) => !!get(this.$store.state.UserStore.privileges, userPrivilege, false));
       const isAmAdmin = this.$store.state.UserStore.amAdmin;
-      return adminFederationNotEnabled || emptyShowForPrivilegesProp || showForPrivilegesInUserStore || (!adminFederationNotEnabled && isAmAdmin);
+      return emptyShowForPrivilegesProp || showForPrivilegesInUserStore || isAmAdmin;
     },
     // If the item is restricted by roles, only display it to users who have at least one of the required roles
     showItemForUser() {
