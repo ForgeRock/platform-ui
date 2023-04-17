@@ -272,6 +272,7 @@
       "AT_LEAST_X_NUMBERS": "Must have at least {numNums} number(s)",
       "AT_LEAST_X_SYMBOLS": "Must have at least {numSyms} symbol(s)",
       "CANNOT_CONTAIN_OTHERS": "Must not share characters with {disallowedFields}",
+      "CANNOT_CONTAIN_OTHERS_CASE_INSENSITIVE": "Must not share characters with {disallowedFields}, case insensitive",
       "VALID_EMAIL_ADDRESS_FORMAT": "Invalid email format (example@example.com)",
       "VALID_EMAIL_FROM_FORMAT": "Must only contain letters, numbers, spaces, hyphens, underscores, quotes, periods",
       "VALID_SUPPORT_SET_KEY_FORMAT": "Invalid support set key format (1234-1234-1234-1234)",
