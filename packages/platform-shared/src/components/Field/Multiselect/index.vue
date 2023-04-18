@@ -3,69 +3,62 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div
-    @keydown.meta.67="copyOptions"
-    @keydown.ctrl.67="copyOptions">
-    <FrInputLayout
-      :description="description"
+  <FrInputLayout
+    :description="description"
+    :id="id"
+    :errors="errors"
+    :is-html="isHtml"
+    :label="label"
+    :name="name"
+    :validation="validation"
+    :validation-immediate="validationImmediate">
+    <VueMultiSelect
       :id="id"
-      :errors="errors"
-      :is-html="isHtml"
-      :label="label"
+      v-bind="$attrs"
+      v-if="selectOptions"
+      v-model="inputValue"
+      label="text"
+      ref="vms"
+      track-by="multiselectId"
+      role="combobox"
+      :data-testid="testid"
+      :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control p-0', {'no-multiselect-label': !label }, {'h-100': floatLabels || !label }]"
+      :close-on-select="closeOnSelect"
+      :disabled="disabled"
+      :hide-selected="true"
+      :multiple="true"
       :name="name"
-      :validation="validation"
-      :validation-immediate="validationImmediate">
-      <VueMultiSelect
-        :id="id"
-        v-bind="$attrs"
-        v-if="selectOptions"
-        v-model="inputValue"
-        label="text"
-        ref="vms"
-        track-by="multiselectId"
-        :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control p-0', {'no-multiselect-label': !label }, {'h-100': floatLabels || !label }]"
-        :close-on-select="closeOnSelect"
-        :disabled="disabled"
-        :hide-selected="true"
-        :multiple="true"
-        :name="name"
-        :options="selectOptions"
-        :placeholder="defaultPlaceholder"
-        :searchable="defaultSearchable"
-        :show-labels="false"
-        :tag-placeholder="$t('common.placeholders.addOption')"
-        :taggable="taggable"
-        @close="close"
-        @input="$emit('input', map(inputValue, 'value'))"
-        @open="openHandler"
-        @search-change="searchChange"
-        @tag="addTag">
-        <template #noResult>
-          {{ $t('common.noResult') }}
-        </template>
-        <template #tag="{option, remove}">
-          <span :class="['multiselect__tag', {'multiselect__tag-selected': option.copySelect}, valueClass]">
-            <span
-              class="multiselect__tag-contents"
-              @mousedown="setSelectedForCopy(option)">
-              {{ option && option.text }}
-            </span>
-            <span
-              @click.prevent="remove(option)"
-              aria-hidden="true"
-              tabindex="1"
-              class="multiselect__tag-icon" />
+      :options="selectOptions"
+      :placeholder="defaultPlaceholder"
+      :searchable="defaultSearchable"
+      :show-labels="false"
+      :tag-placeholder="$t('common.placeholders.addOption')"
+      :taggable="taggable"
+      @close="close"
+      @input="$emit('input', map(inputValue, 'value'))"
+      @open="openHandler"
+      @search-change="searchChange"
+      @tag="addTag">
+      <template #noResult>
+        {{ $t('common.noResult') }}
+      </template>
+      <template #tag="{option, remove}">
+        <span :class="['multiselect__tag', valueClass]">
+          <span
+            class="multiselect__tag-contents"
+            tabindex="0"
+            :data-testid="`multi-select-tag-contents-${testid}`">
+            {{ option && option.text }}
           </span>
-        </template>
-        <template
-          v-for="(key, slotName) in $scopedSlots"
-          v-slot:[slotName]="slotData">
-          <!-- @slot pass-through slot -->
-          <slot
-            :name="slotName"
-            v-bind="slotData" />
-        </template>
-      </VueMultiSelect>
+          <span
+            class="multiselect__tag-icon"
+            tabindex="0"
+            :data-testid="`multi-select-tag-close-icon-${testid}`"
+            @click.prevent="remove(option)"
+            @keydown.enter="remove(option)"
+            aria-hidden="true" />
+        </span>
+      </template>
       <template
         v-for="(key, slotName) in $scopedSlots"
         v-slot:[slotName]="slotData">
@@ -74,8 +67,16 @@ of the MIT license. See the LICENSE file for details. -->
           :name="slotName"
           v-bind="slotData" />
       </template>
-    </FrInputLayout>
-  </div>
+    </VueMultiSelect>
+    <template
+      v-for="(key, slotName) in $scopedSlots"
+      v-slot:[slotName]="slotData">
+      <!-- @slot pass-through slot -->
+      <slot
+        :name="slotName"
+        v-bind="slotData" />
+    </template>
+  </FrInputLayout>
 </template>
 
 <script>
@@ -86,7 +87,6 @@ import {
   map,
 } from 'lodash';
 import VueMultiSelect from 'vue-multiselect';
-import * as clipboard from 'clipboard-polyfill/text';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
@@ -147,6 +147,10 @@ export default {
       type: String,
       default: '',
     },
+    testid: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
@@ -173,7 +177,6 @@ export default {
             text: option.text,
             value: option.value,
             multiselectId: option.multiselectId !== undefined ? option.multiselectId : this.generateTagId(),
-            copySelect: false,
             ...option,
           }));
         } else {
@@ -181,7 +184,6 @@ export default {
             text: option,
             value: option,
             multiselectId: this.generateTagId(),
-            copySelect: false,
           }));
         }
       }
@@ -205,10 +207,10 @@ export default {
           const existsInCurrentValues = find(this.inputValue, { value: newVal });
           if (!existsInCurrentValues) {
             this.tagOptions.push({
-              multiselectId: this.generateTagId(), text: newVal, value: newVal, copySelect: false,
+              multiselectId: this.generateTagId(), text: newVal, value: newVal,
             });
             this.inputValue.push({
-              multiselectId: this.generateTagId(), text: newVal, value: newVal, copySelect: false,
+              multiselectId: this.generateTagId(), text: newVal, value: newVal,
             });
             this.$emit('input', map(this.inputValue, 'value'));
           }
@@ -217,33 +219,10 @@ export default {
     },
     /**
      * Handler for when the multiselect dropdown is closed.
-     * Tracks values for copying
      */
     close() {
-      const selected = this.options.map((option) => option.copySelect);
       this.addTag();
-      this.selectOptions.forEach((option, index) => {
-        if (selected[index]) {
-          option.copySelect = true;
-        }
-      });
       this.inputValueHandler(this.inputValue);
-    },
-    /**
-     * Copy the selected options to the clipboard
-     */
-    copyOptions() {
-      const selectedOptions = this.inputValue
-        .filter((option) => option.copySelect)
-        .map((option) => option.value)
-        .join(', ');
-      if (selectedOptions.length) {
-        clipboard.writeText(selectedOptions).then(() => {
-          this.displayNotification('success', this.$t('common.copySuccess'));
-        }, (error) => {
-          this.showErrorMessage(error, this.$t('common.copyFail'));
-        });
-      }
     },
     inputValueHandler(inputValue) {
       this.floatLabels = (inputValue.length || document.activeElement === this.$refs.vms.$el.querySelector('input')) > 0 && this.label;
@@ -301,10 +280,6 @@ export default {
         this.inputValue = newInputValue;
       }
     },
-    setSelectedForCopy(option) {
-      option.copySelect = !option.copySelect;
-      option.multiselectId = option.multiselectId !== undefined ? option.multiselectId : this.generateTagId();
-    },
   },
 };
 </script>
@@ -312,17 +287,23 @@ export default {
 <style lang="scss" scoped>
 @import '~@forgerock/platform-shared/src/components/Field/assets/vue-multiselect.scss';
 
-.multiselect .multiselect__tag-selected {
-  color: white;
-  background-color: $primary;
-  border-color: $primary;
-
-  .multiselect__tag-icon::after {
-    color: white;
+.multiselect .multiselect__tag {
+  .multiselect__tag-icon {
+    &:focus-visible {
+      outline: solid 2px $primary;
+      outline-offset: -2px;
+      -webkit-transition: none;
+      transition: none;
+    }
   }
 
-  .multiselect__tag-icon:hover {
-    background-color: $primary;
+  .multiselect__tag-contents {
+    &:focus-visible {
+      outline: solid 2px $primary;
+      outline-offset: -1px;
+      -webkit-transition: none;
+      transition: none;
+    }
   }
 }
 
