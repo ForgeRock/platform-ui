@@ -49,7 +49,10 @@ export const apiToInternalEvent = (data) => {
   const { os, osVersion, userAgentType } = browserData;
 
   const heuristicReasons = predictionResult.risk_score_data.heuristic_agg_result.raw_results
-    .filter((result) => result.risk_score === 100)
+    .filter((result) => {
+      const heuristicKey = Object.keys(result).find((propName) => propName.indexOf('is_') === 0);
+      return result[heuristicKey];
+    })
     .map((result) => Object.keys(result).find((propName) => propName.indexOf('is_') === 0));
 
   let clusteringReasons = [];
@@ -58,7 +61,9 @@ export const apiToInternalEvent = (data) => {
     clusteringReasons = predictionResult.risk_score_data.clustering_result?.top_cluster_explainability;
   }
   if (predictionResult.risk_score_data.risk_score_threshhold < predictionResult.risk_score_data.ueba_avg_risk_score) {
-    if (predictionResult.ueba_signal.explainability && predictionResult.ueba_signal.explainability?.response !== 'failed') {
+    if (predictionResult.ueba_signal.explainability
+        && predictionResult.ueba_signal.explainability?.response !== 'failed'
+        && predictionResult.ueba_signal.explainability?.response !== 'unknown') {
       uebaReasons.push(predictionResult.ueba_signal.explainability?.response);
     }
     if (!predictionResult.ueba_signal.explainability && !clusteringReasons.length && !heuristicReasons.length) {
