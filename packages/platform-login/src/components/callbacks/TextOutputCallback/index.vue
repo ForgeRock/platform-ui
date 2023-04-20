@@ -125,7 +125,7 @@ export default {
 
       // 3 is the size of the painted squares, 8 is the white border around the edge
       const imgTagStr = qr.createImgTag(3, 8);
-      const attributes = new Map().set('alt', '');
+      const attributes = new Map().set('alt', this.$t('common.qrCode'));
       this.qrCodeHtml = addAttributesToDomNodeString(imgTagStr, attributes);
 
       this.qrCodeMobileLink = text;
