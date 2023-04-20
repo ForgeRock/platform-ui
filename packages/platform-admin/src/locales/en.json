@@ -2890,7 +2890,8 @@
         "allowException": "allow exception to"
       },
       "templateType": {
-        "identity": "Identity Certification"
+        "identity": "Identity Certification",
+        "entitlement": "Entitlement Certification"
       },
       "accounts": "Accounts",
       "additionalOptions": "Additional Options",
