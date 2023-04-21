@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -35,7 +35,8 @@ of the MIT license. See the LICENSE file for details. -->
               class="m-0 column-wrapper">
               <li
                 v-for="(code, key) in recoveryCodes"
-                :key="key">
+                :key="key"
+                :data-testid="`recovery-code-${key}`">
                 <span
                   class="ml-2 text-monospace">
                   {{ code }}
@@ -51,16 +52,21 @@ of the MIT license. See the LICENSE file for details. -->
       <BButton
         variant="primary"
         @click="$emit('next-step')"
+        data-testid="btn-recovery-codes-next-step"
       >
         {{ $t('common.done') }}
       </BButton>
       <div>
         <BButton
+          data-testid="btn-copy-recovery-codes"
+          :aria-label="$t('login.recoveryCodes.copyRecoveryCodesToClipboard', { recoveryCodesLength : recoveryCodes.length })"
           variant="link"
           @click="copyRecoveryCodesToClipboard">
           {{ $t('common.copy') }}
         </BButton>
         <BButton
+          data-testid="btn-print-recovery-codes"
+          :aria-label="$t('login.recoveryCodes.printRecoveryCodes', { recoveryCodesLength : recoveryCodes.length })"
           variant="link"
           @click="printRecoveryCodes">
           {{ $t('common.print') }}
@@ -73,7 +79,7 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import { FRRecoveryCodes } from '@forgerock/javascript-sdk';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import { writeText } from 'clipboard-polyfill/text';
+import * as clipboard from 'clipboard-polyfill/text';
 import {
   BCol,
   BRow,
@@ -106,7 +112,7 @@ export default {
   },
   methods: {
     copyRecoveryCodesToClipboard() {
-      writeText(this.recoveryCodes).then(() => {
+      clipboard.writeText(this.recoveryCodes).then(() => {
         this.displayNotification('success', this.$t('common.copySuccess'));
       }, (error) => {
         this.showErrorMessage(error, this.$t('common.copyFail'));
