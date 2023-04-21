@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -7,8 +7,10 @@ of the MIT license. See the LICENSE file for details. -->
     v-if="showOnlyPositiveAnswer"
     class="btn-block mt-3"
     :variant="showButtonsAsLinks ? 'link' : variant"
-    @click="setValue(0)">
-    {{ options[0] }}
+    @click="setValue(0)"
+    :aria-label="firstOption"
+    :data-testid="`btn-${firstOption.toLowerCase().replace(/\s/g, '')}`">
+    {{ firstOption }}
   </BButton>
   <div
     v-else
@@ -19,7 +21,9 @@ of the MIT license. See the LICENSE file for details. -->
       :key="index"
       class="btn-block mt-3"
       :variant="showButtonsAsLinks ? 'link' : variant"
-      @click="setValue(index)">
+      @click="setValue(index)"
+      :aria-label="option"
+      :data-testid="`btn-${option.toLowerCase().replace(/\s/g, '')}`">
       {{ option }}
     </BButton>
   </div>
@@ -52,12 +56,17 @@ export default {
   },
   mounted() {
     this.options = this.callback.getOptions();
+    if (this.showOnlyPositiveAnswer) {
+      // eslint-disable-next-line prefer-destructuring
+      this.firstOption = this.options[0];
+    }
   },
   data() {
     return {
       options: [],
       showButtonsAsLinks: this.stage?.showButtonsAsLinks,
       showOnlyPositiveAnswer: this.stage?.showOnlyPositiveAnswer,
+      firstOption: '',
     };
   },
   methods: {

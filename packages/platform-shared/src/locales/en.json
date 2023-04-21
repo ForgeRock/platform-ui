@@ -446,7 +446,9 @@
       "subheader": "Now you can use your device as a second step when signing in to your account.",
       "subtitle": "Don't get locked out of your account",
       "info": "If you lose your device, or don't have it with you, a recovery code is the only way to sign in to your account with 2-step verification enabled. It's strongly recommended that you print and store these codes in a safe place.",
-      "infoEmphasis": "Each code can only be used once."
+      "infoEmphasis": "Each code can only be used once.",
+      "copyRecoveryCodesToClipboard": "Copy {recoveryCodesLength} recovery codes to clipboard",
+      "printRecoveryCodes": "Print {recoveryCodesLength} recovery codes"
     }
   },
   "navbar": {
