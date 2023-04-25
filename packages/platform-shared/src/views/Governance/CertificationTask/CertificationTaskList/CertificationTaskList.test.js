@@ -776,21 +776,18 @@ describe('CertificationTaskList', () => {
           id: 'test',
           displayName: 'Dani Morales',
         },
-        item: {
-          decision: {
-            certification: {
-              decision: 'certify',
-              decisionDate: '2023-02-28T15:12:25+00:00',
-              decisionBy: {
-                givenName: 'Foo',
-                id: 'managed/user/1',
-                mail: 'foo@test.com',
-                sn: 'Test',
-                userName: 'FooTest',
-              },
+        decision: {
+          certification: {
+            decision: 'certify',
+            decisionDate: '2023-02-28T15:12:25+00:00',
+            decisionBy: {
+              givenName: 'Foo',
+              id: 'managed/user/1',
+              mail: 'foo@test.com',
+              sn: 'Test',
+              userName: 'FooTest',
             },
           },
-
         },
       };
 
@@ -799,9 +796,9 @@ describe('CertificationTaskList', () => {
 
       expect(wrapper.vm.currentAccountSelectedModal).toEqual({
         account: content.account,
-        decision: content.item.decision.certification.decision,
-        decisionDate: content.item.decision.certification.decisionDate,
-        decisionBy: content.item.decision.certification.decisionBy,
+        decision: content.decision.certification.decision,
+        decisionDate: content.decision.certification.decisionDate,
+        decisionBy: content.decision.certification.decisionBy,
       });
       expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskAccountModal');
     });

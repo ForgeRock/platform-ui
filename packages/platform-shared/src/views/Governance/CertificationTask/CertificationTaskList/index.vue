@@ -727,9 +727,9 @@ export default {
     openAccountModal(content) {
       this.currentAccountSelectedModal = {
         account: content.account,
-        decision: content.item.decision.certification.decision,
-        decisionDate: content.item.decision.certification.decisionDate,
-        decisionBy: content.item.decision.certification.decisionBy,
+        decision: content.decision.certification.decision,
+        decisionDate: content.decision.certification.decisionDate,
+        decisionBy: content.decision.certification.decisionBy,
       };
       this.contentAccountSelectedModal = cloneDeep(content.account);
       delete this.contentAccountSelectedModal?.metadata;
