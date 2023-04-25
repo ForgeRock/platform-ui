@@ -1633,6 +1633,7 @@
     "table": {
       "nameHeader": "Name",
       "uuidHeader": "ID",
+      "statusHeader": "Status",
       "actions": {
         "regenerateKey": "Regenerate Key"
       }
