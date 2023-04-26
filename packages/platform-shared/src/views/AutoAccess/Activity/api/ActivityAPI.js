@@ -48,12 +48,11 @@ export const apiToInternalEvent = (data) => {
   const { heuristic_agg_result: heuristics } = riskScoreData;
   const { os, osVersion, userAgentType } = browserData;
 
-  const heuristicReasons = predictionResult.risk_score_data.heuristic_agg_result.raw_results
-    .filter((result) => {
-      const heuristicKey = Object.keys(result).find((propName) => propName.indexOf('is_') === 0);
-      return result[heuristicKey];
-    })
-    .map((result) => Object.keys(result).find((propName) => propName.indexOf('is_') === 0));
+  const heuristicReasons = predictionResult.risk_score_data.heuristic_agg_result?.raw_results?.filter((result) => {
+    const heuristicKey = Object.keys(result).find((propName) => propName.indexOf('is_') === 0);
+    return result[heuristicKey];
+  })
+    .map((result) => Object.keys(result).find((propName) => propName.indexOf('is_') === 0)) || [];
 
   let clusteringReasons = [];
   const uebaReasons = [];
