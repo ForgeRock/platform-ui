@@ -303,4 +303,27 @@ describe('CertificationTaskEditReviewerModal', () => {
 
     expect(wrapper.vm.footerClass).toBe('justify-content-between');
   });
+
+  it('should render default modalId', () => {
+    expect(wrapper.find('#CertificationTaskEditReviewerAccountModal').exists()).toBeTruthy();
+  });
+
+  it('should render prop modalId', () => {
+    wrapper = shallowMount(CertificationTaskEditReviewerModal, {
+      mocks: {
+        $t: (t) => t,
+        $store: {
+          state: {
+            UserStore: {
+              userId: 'testId',
+            },
+          },
+        },
+      },
+      propsData: {
+        modalId: 'CertificationTaskEditReviewerEntitlementModal',
+      },
+    });
+    expect(wrapper.find('#CertificationTaskEditReviewerEntitlementModal').exists()).toBeTruthy();
+  });
 });

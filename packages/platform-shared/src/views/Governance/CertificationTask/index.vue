@@ -18,21 +18,112 @@ of the MIT license. See the LICENSE file for details. -->
         :totals="totals"
         :campaign-details="campaignDetails"
         :is-loading="isDetailsLoading" />
-      <FrCertificationTaskList
-        class="border-top"
-        v-if="campaignId && actorId"
-        :campaign-id="campaignId"
-        :campaign-details="campaignDetails"
-        :refresh-tasks="refreshTasks"
-        :is-admin="isAdmin"
-        :actor-id="actorId"
-        :show-entitlement-column="isEntitlementCertificationType"
-        @change-saving="setSaving"
-        @check-progress="checkInProgress"
-        @refresh-complete="refreshTasks = false"
-        @signed-off="hideSignOff = true;"
-        @set-totals="totals = $event"
-        @update-details="getCertificationDetails" />
+      <div
+        v-if="!governanceV2Flag || isEntitlementCertificationType"
+        class="border-top">
+        <FrCertificationTaskList
+          v-if="campaignId && actorId"
+          :campaign-id="campaignId"
+          :campaign-details="campaignDetails"
+          :refresh-tasks="refreshTasks"
+          :is-admin="isAdmin"
+          :actor-id="actorId"
+          :show-entitlement-column="isEntitlementCertificationType"
+          @change-saving="setSaving"
+          @check-progress="checkInProgress"
+          @refresh-complete="refreshTasks = false"
+          @signed-off="hideSignOff = true;"
+          @set-totals="totals = $event"
+          @update-details="getCertificationDetails" />
+      </div>
+      <div
+        v-else-if="governanceV2Flag && !isGroupByAccount"
+        class="border-top position-relative">
+        <BTabs
+          nav-class="fr-tabs pl-4"
+          data-testid="certification-tasklist-tabs"
+          lazy>
+          <BTab
+            data-testid="cert-accounts-tab"
+            title-link-class="py-4 text-capitalize"
+            key="accounts"
+            :title="$t('governance.certificationTask.certificationTabs.accounts')">
+            <FrCertificationTaskList
+              v-if="campaignId && actorId"
+              certification-grant-type="accounts"
+              :campaign-id="campaignId"
+              :campaign-details="campaignDetails"
+              :refresh-tasks="refreshTasks"
+              :is-admin="isAdmin"
+              :actor-id="actorId"
+              :show-entitlement-column="false"
+              @hide-group-by="hideGroupBy"
+              @change-saving="setSaving"
+              @check-progress="checkInProgress"
+              @refresh-complete="refreshTasks = false"
+              @signed-off="hideSignOff = true;"
+              @set-totals="totals = $event"
+              @update-details="getCertificationDetails"
+            />
+          </BTab>
+          <BTab
+            data-testid="cert-ents-tab"
+            title-link-class="py-4 text-capitalize"
+            key="entitlements"
+            :title="$t('governance.certificationTask.certificationTabs.entitlements')">
+            <FrCertificationTaskList
+              v-if="campaignId && actorId"
+              certification-grant-type="entitlements"
+              :campaign-id="campaignId"
+              :campaign-details="campaignDetails"
+              :refresh-tasks="refreshTasks"
+              :is-admin="isAdmin"
+              :actor-id="actorId"
+              :show-entitlement-column="true"
+              @change-saving="setSaving"
+              @check-progress="checkInProgress"
+              @refresh-complete="refreshTasks = false"
+              @signed-off="hideSignOff = true;"
+              @set-totals="totals = $event"
+              @update-details="getCertificationDetails" />
+          </BTab>
+        </BTabs>
+        <FrField
+          v-if="showGroupByAccount"
+          class="mb-4 text-capitalize group-by-position"
+          v-model="isGroupByAccount"
+          name="certificationGroupByAccount"
+          testid="certification-group-by-account"
+          type="checkbox"
+          :label="$t('governance.certificationTask.certificationTabs.groupByAccount')" />
+      </div>
+      <div
+        v-else-if="governanceV2Flag && isGroupByAccount"
+        class="border-top position-relative">
+        <FrCertificationTaskListGroupBy
+          certification-grant-type="accounts"
+          :campaign-id="campaignId"
+          :campaign-details="campaignDetails"
+          :refresh-tasks="refreshTasks"
+          :is-admin="isAdmin"
+          :actor-id="actorId"
+          :show-entitlement-column="isEntitlementCertificationType"
+          :show-group-by="isGroupByAccount"
+          @change-saving="setSaving"
+          @check-progress="checkInProgress"
+          @refresh-complete="refreshTasks = false"
+          @signed-off="hideSignOff = true;"
+          @set-totals="totals = $event"
+          @update-details="getCertificationDetails"
+        />
+        <FrField
+          class="mb-4 text-capitalize group-by-position"
+          v-model="isGroupByAccount"
+          name="certificationGroupByAccount"
+          testid="certification-group-by-account"
+          type="checkbox"
+          :label="$t('governance.certificationTask.certificationTabs.groupByAccount')" />
+      </div>
     </template>
     <p
       v-else
@@ -45,13 +136,19 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
 import {
+  BTabs,
+  BTab,
+} from 'bootstrap-vue';
+import {
   getCertificationDetails,
   getInProgressTasksByCampaign,
   signOffCertificationTasks,
 } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
+import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrCertificationTaskHeader from './CertificationTaskHeader';
 import FrCertificationTaskDetails from './CertificationTaskDetails';
 import FrCertificationTaskList from './CertificationTaskList';
+import FrCertificationTaskListGroupBy from './CertificationTaskListGroupBy';
 
 export default {
   name: 'CertificationTask',
@@ -59,6 +156,10 @@ export default {
     FrCertificationTaskDetails,
     FrCertificationTaskHeader,
     FrCertificationTaskList,
+    FrCertificationTaskListGroupBy,
+    BTabs,
+    BTab,
+    FrField,
   },
   props: {
     isAdmin: {
@@ -78,6 +179,9 @@ export default {
       loadFailed: false,
       refreshTasks: false,
       totals: null,
+      isGroupByAccount: false,
+      governanceV2Flag: this.$store.state.SharedStore.governanceEnabledV2,
+      showGroupByAccount: true,
     };
   },
   mixins: [BreadcrumbMixin],
@@ -128,6 +232,10 @@ export default {
     goToBackUrl() {
       this.$router.push(this.getBreadcrumbRoute());
     },
+    hideGroupBy() {
+      this.isGroupByAccount = false;
+      this.showGroupByAccount = false;
+    },
   },
   mounted() {
     this.campaignId = this.$route?.params?.campaignId;
@@ -145,5 +253,10 @@ export default {
   .certification-task-container {
     background-color: $white;
     min-height: 100vh;
+  }
+  .group-by-position {
+    position: absolute;
+    top: 25px;
+    right: 45px;
   }
 </style>
