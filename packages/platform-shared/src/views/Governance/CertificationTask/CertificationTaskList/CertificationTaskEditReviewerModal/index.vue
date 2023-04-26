@@ -7,7 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     body-class="p-0"
     :footer-class="footerClass"
     content-class="border-0"
-    id="CertificationTaskEditReviewerModal"
+    :id="modalId"
     no-close-on-backdrop
     no-close-on-esc
     scrollable
@@ -217,6 +217,10 @@ export default {
     isDeleting: {
       type: Boolean,
       default: false,
+    },
+    modalId: {
+      type: String,
+      default: 'CertificationTaskEditReviewerAccountModal',
     },
   },
   data() {

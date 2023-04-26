@@ -80,4 +80,20 @@ describe('CertificationTaskActivityModal', () => {
         .toBe(icons[index]);
     });
   });
+
+  it('should render default modalId', () => {
+    expect(wrapper.find('#CertificationTaskActivityAccountModal').exists()).toBeTruthy();
+  });
+
+  it('should render prop modalId', () => {
+    wrapper = shallowMount(CertificationTaskActivityModal, {
+      mocks: {
+        $t: (t) => t,
+      },
+      propsData: {
+        modalId: 'CertificationTaskActivityEntitlementModal',
+      },
+    });
+    expect(wrapper.find('#CertificationTaskActivityEntitlementModal').exists()).toBeTruthy();
+  });
 });

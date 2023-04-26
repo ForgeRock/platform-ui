@@ -9,7 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
     @hidden="$emit('close-modal')"
     body-class="pb-0"
     content-class="border-0"
-    id="CertificationActivityModal"
+    :id="modalId"
     no-close-on-backdrop
     no-close-on-esc
     ok-only
@@ -130,6 +130,10 @@ export default {
     activity: {
       type: Array,
       default: () => [],
+    },
+    modalId: {
+      type: String,
+      default: 'CertificationTaskActivityAccountModal',
     },
   },
   data() {

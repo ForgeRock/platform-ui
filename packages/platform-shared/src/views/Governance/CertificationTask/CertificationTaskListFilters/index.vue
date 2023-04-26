@@ -9,6 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
         <div class="d-flex justify-content-start mr-4">
           <FrField
             v-model="formFields.certified"
+            testid="cert-filter-certify"
             class="mr-2"
             name="columnSelected"
             type="checkbox" />
