@@ -4,7 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BModal
-    id="CertificationTaskSortModal"
+    :id="modalId"
     ok-variant="primary"
     cancel-variant="secundary"
     @ok="applyCustomization"
@@ -72,11 +72,15 @@ export default {
       type: Array,
       default: () => [],
     },
+    modalId: {
+      type: String,
+      default: 'CertificationTaskSortConfirmAccountModal',
+    },
   },
   methods: {
     applyCustomization() {
       this.$emit('update-columns', this.draggedColumnsList);
-      this.$root.$emit('bv::hide::modal', 'CertificationTaskSortModal');
+      this.$root.$emit('bv::hide::modal', this.modalId);
     },
   },
   data() {

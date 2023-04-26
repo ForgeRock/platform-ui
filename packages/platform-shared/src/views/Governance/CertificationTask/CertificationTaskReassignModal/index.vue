@@ -8,7 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
     ref="observer">
     <BModal
       :ok-disabled="invalid"
-      id="CertificationTaskReassignModal"
+      :id="modalId"
       size="lg"
       ok-variant="primary"
       cancel-variant="link"
@@ -142,6 +142,10 @@ export default {
       type: Array,
       default: () => ([]),
     },
+    modalId: {
+      type: String,
+      default: 'CertificationTaskReassignAccountModal',
+    },
   },
   methods: {
     toggleSaving() {
@@ -167,6 +171,7 @@ export default {
         this.showErrorMessage(error, this.$t('governance.certificationTask.errors.reassignError'));
       }).finally(() => {
         this.toggleSaving();
+        this.$emit('refresh-data');
       });
     },
   },

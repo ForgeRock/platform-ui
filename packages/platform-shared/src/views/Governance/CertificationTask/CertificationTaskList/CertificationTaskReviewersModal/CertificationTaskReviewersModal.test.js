@@ -104,4 +104,20 @@ describe('CertificationTaskReviewersModal', () => {
 
     expect(mappedPermissions).toEqual(['comment', 'forward', 'signoff']);
   });
+
+  it('should render default modalId', () => {
+    expect(wrapper.find('#CertificationTaskReviewersAccountModal').exists()).toBeTruthy();
+  });
+
+  it('should render prop modalId', () => {
+    wrapper = shallowMount(CertificationTaskReviewersModal, {
+      mocks: {
+        $t: (t) => t,
+      },
+      propsData: {
+        modalId: 'CertificationTaskReviewersEntitlementModal',
+      },
+    });
+    expect(wrapper.find('#CertificationTaskReviewersEntitlementModal').exists()).toBeTruthy();
+  });
 });

@@ -4,7 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BModal
-    id="CertificationTaskActionConfirmModal"
+    :id="modalId"
     size="lg"
     ok-variant="primary"
     cancel-variant="link"
@@ -49,6 +49,10 @@ export default {
     modalOptions: {
       type: Object,
       default: () => ({}),
+    },
+    modalId: {
+      type: String,
+      default: 'CertificationTaskActionConfirmAccountModal',
     },
   },
   methods: {
