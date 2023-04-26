@@ -2724,6 +2724,12 @@
       "tabs": {
         "breadcrumb": "Entitlements",
         "details": "Details",
+        "detailsTab": {
+          "entitlementSaved": "Entitlement saved successfully",
+          "entitlementSaveErrorMessage": "Error saving entitlement, please try again",
+          "notLoadErrorMessage": "Error loading the details of entitlement",
+          "title": "General Settings"
+        },
         "objectProperties": "Object Properties",
         "users": "Users"
       }
