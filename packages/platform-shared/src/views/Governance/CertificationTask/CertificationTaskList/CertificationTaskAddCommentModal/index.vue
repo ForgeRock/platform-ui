@@ -5,7 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <BModal
     content-class="border-0"
-    id="CertificationTaskAddCommentModal"
+    :id="modalId"
     no-close-on-backdrop
     no-close-on-esc
     size="lg"
@@ -64,6 +64,12 @@ export default {
     FrIcon,
     FrTextArea,
     BButton,
+  },
+  props: {
+    modalId: {
+      type: String,
+      default: 'CertificationTaskAddCommentAccountModal',
+    },
   },
   data() {
     return {

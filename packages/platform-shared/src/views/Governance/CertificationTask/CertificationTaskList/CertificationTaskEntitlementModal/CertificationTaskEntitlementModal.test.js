@@ -63,4 +63,8 @@ describe('CertificationTaskEntitlementModal', () => {
     expect(wrapper.vm.displayName).toBe('governance.certificationTask.entitlementModal.name');
     expect(getApplicationDisplayName).toHaveBeenCalledWith(application);
   });
+
+  it('should render default modalId', () => {
+    expect(wrapper.find('#CertificationTaskEntAccountModal').exists()).toBeTruthy();
+  });
 });

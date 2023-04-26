@@ -45,4 +45,20 @@ describe('CertificationTaskCommentsModal', () => {
 
     expect(wrapper.emitted()['open-add-comment-modal']).toBeTruthy();
   });
+
+  it('should render default modalId', () => {
+    expect(wrapper.find('#CertificationTaskCommentsAccountModal').exists()).toBeTruthy();
+  });
+
+  it('should render prop modalId', () => {
+    wrapper = shallowMount(CertificationTaskCommentsModal, {
+      mocks: {
+        $t: (t) => t,
+      },
+      propsData: {
+        modalId: 'CertificationTaskCommentsEntitlementModal',
+      },
+    });
+    expect(wrapper.find('#CertificationTaskCommentsEntitlementModal').exists()).toBeTruthy();
+  });
 });

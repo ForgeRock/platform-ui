@@ -84,7 +84,7 @@ export default {
     },
     modalId: {
       type: String,
-      default: 'certification-forward-modal',
+      default: 'CertificationTaskForwardAccountModal',
     },
   },
   data() {
