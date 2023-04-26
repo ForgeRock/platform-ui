@@ -142,7 +142,7 @@ describe('CertificationTaskList', () => {
   describe('paginationChange', () => {
     it('should call getCertificationTaskList with the pagination page', () => {
       const methods = {
-        getCertificationTaskList: jest.fn(),
+        getCertificationTaskList: jest.fn().mockReturnValue(Promise.resolve()),
       };
       shallowMountComponent({}, {}, methods);
       wrapper.vm.paginationPage = 1;
@@ -154,7 +154,7 @@ describe('CertificationTaskList', () => {
   describe('openCertificationTaskSortModal', () => {
     it('should emit the bv::show::modal to show the certification task sort', () => {
       wrapper.vm.openCertificationTaskSortModal();
-      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskSortModal');
+      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskSortConfirmAccountModal');
     });
   });
   describe('isTaskSelected', () => {
@@ -361,13 +361,13 @@ describe('CertificationTaskList', () => {
   describe('getBaseFilters', () => {
     it('should return the base filters to load the list', () => {
       shallowMountComponent();
-      const expectedValue = {
+      const expectedValue = [{
         operator: 'EQUALS',
         operand: {
           targetName: 'decision.certification.actors.id',
           targetValue: '',
         },
-      };
+      }];
       const result = wrapper.vm.getBaseFilters();
       expect(result).toStrictEqual(expectedValue);
     });
@@ -379,11 +379,14 @@ describe('CertificationTaskList', () => {
         wrapper.setProps({ isAdmin: true });
         const expectedValue = {
           targetFilter: {
-            operator: 'EQUALS',
-            operand: {
-              targetName: 'decision.certification.primaryReviewer.id',
-              targetValue: '',
-            },
+            operator: 'AND',
+            operand: [{
+              operand: {
+                targetName: 'decision.certification.primaryReviewer.id',
+                targetValue: '',
+              },
+              operator: 'EQUALS',
+            }],
           },
         };
         const result = wrapper.vm.buildBodyParams();
@@ -450,11 +453,14 @@ describe('CertificationTaskList', () => {
         shallowMountComponent();
         const expectedValue = {
           targetFilter: {
-            operator: 'EQUALS',
-            operand: {
-              targetName: 'decision.certification.actors.id',
-              targetValue: '',
-            },
+            operator: 'AND',
+            operand: [{
+              operand: {
+                targetName: 'decision.certification.actors.id',
+                targetValue: '',
+              },
+              operator: 'EQUALS',
+            }],
           },
         };
         const result = wrapper.vm.buildBodyParams();
@@ -561,7 +567,7 @@ describe('CertificationTaskList', () => {
     });
     it('should call getCertificationTaskList with the main page', () => {
       const methods = {
-        getCertificationTaskList: jest.fn(),
+        getCertificationTaskList: jest.fn().mockReturnValue(Promise.resolve()),
       };
       shallowMountComponent({}, {}, methods);
       wrapper.vm.mainPageNumber = 1;
@@ -572,7 +578,7 @@ describe('CertificationTaskList', () => {
   describe('filterCertificationItems', () => {
     it('should call getCertificationTaskList with the paginationPage', () => {
       const methods = {
-        getCertificationTaskList: jest.fn(),
+        getCertificationTaskList: jest.fn().mockReturnValue(Promise.resolve()),
       };
       shallowMountComponent({}, {}, methods);
       wrapper.vm.paginationPage = 1;
@@ -581,7 +587,7 @@ describe('CertificationTaskList', () => {
     });
     it('listFilters should contain the new filters', () => {
       const methods = {
-        getCertificationTaskList: jest.fn(),
+        getCertificationTaskList: jest.fn().mockReturnValue(Promise.resolve()),
       };
       shallowMountComponent({}, {}, methods);
       const filterTest = {
@@ -655,7 +661,7 @@ describe('CertificationTaskList', () => {
   describe('showReassignBulkActionModal', () => {
     it('should emit the bv::show::modal to show the certification reasign modal', () => {
       wrapper.vm.showReassignBulkActionModal();
-      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskReassignModal');
+      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskReassignAccountModal');
     });
   });
   describe('openActionConfirmationModal', () => {
@@ -672,7 +678,7 @@ describe('CertificationTaskList', () => {
     });
     it('should emit the bv::show::modal to show the certification reasign modal', () => {
       wrapper.vm.openActionConfirmationModal({});
-      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskActionConfirmModal');
+      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskActionConfirmAccountModal');
     });
   });
 
@@ -708,7 +714,7 @@ describe('CertificationTaskList', () => {
   describe('line item details', () => {
     let showErrorMessageSpy;
     const methods = {
-      getCertificationTaskList: jest.fn(),
+      getCertificationTaskList: jest.fn().mockReturnValue(Promise.resolve()),
     };
     beforeEach(() => {
       shallowMountComponent({}, {}, methods);
@@ -827,7 +833,7 @@ describe('CertificationTaskList', () => {
 
       expect(wrapper.vm.currentCommentsSelectedModal).toEqual(comments);
       expect(wrapper.vm.currentLineItemIdSelectedModal).toBe(lineItemId);
-      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskCommentsModal');
+      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskCommentsAccountModal');
     });
 
     it('openAddCommentModalFromCommentsModal called hides CertificationTaskCommentsModal and shows CertificationTaskAddCommentModal', async () => {
@@ -835,8 +841,8 @@ describe('CertificationTaskList', () => {
 
       await flushPromises();
 
-      expect($emit).toHaveBeenCalledWith('bv::hide::modal', 'CertificationTaskCommentsModal');
-      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskAddCommentModal');
+      expect($emit).toHaveBeenCalledWith('bv::hide::modal', 'CertificationTaskCommentsAccountModal');
+      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskAddCommentAccountModal');
     });
 
     it('openAddCommentModal called saves currentLineItemIdSelectedModal data and shows CertificationTaskAddCommentModal', async () => {
@@ -846,7 +852,7 @@ describe('CertificationTaskList', () => {
       await flushPromises();
 
       expect(wrapper.vm.currentLineItemIdSelectedModal).toBe(lineItemId);
-      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskAddCommentModal');
+      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskAddCommentAccountModal');
     });
 
     it('addComment calls governance api properly', async () => {
@@ -880,8 +886,8 @@ describe('CertificationTaskList', () => {
 
       expect(spyNotification).toHaveBeenCalledWith('success', 'governance.certificationTask.lineItemAddCommentModal.addCommentSuccessfullyMessage');
       expect(wrapper.vm.currentCommentsSelectedModal).toEqual(task.decision.certification.comments);
-      expect($emit).toHaveBeenCalledWith('bv::hide::modal', 'CertificationTaskAddCommentModal');
-      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskCommentsModal');
+      expect($emit).toHaveBeenCalledWith('bv::hide::modal', 'CertificationTaskAddCommentAccountModal');
+      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskCommentsAccountModal');
     });
 
     it('addComment calls governance api error', async () => {
@@ -940,7 +946,7 @@ describe('CertificationTaskList', () => {
         },
       };
 
-      expect($emit).not.toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskReviewersModal');
+      expect($emit).not.toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskReviewersAccountModal');
 
       wrapper.vm.openReviewersModal(item);
 
@@ -949,7 +955,7 @@ describe('CertificationTaskList', () => {
       expect(wrapper.vm.currentLineItemIdSelectedModal).toBe(id);
       expect(wrapper.vm.currentReviewersSelectedModal).toEqual(actors);
       expect(wrapper.vm.currentLineItemReassignPermission).toBe(reassign);
-      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskReviewersModal');
+      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskReviewersAccountModal');
     });
 
     it('openEditReviewerModal should open edit reviewer modal with data setted', async () => {
@@ -1009,8 +1015,8 @@ describe('CertificationTaskList', () => {
       await wrapper.vm.$nextTick();
 
       expect(wrapper.vm.currentReviewerSelectedModal).toEqual(reviewer);
-      expect($emit).toHaveBeenCalledWith('bv::hide::modal', 'CertificationTaskReviewersModal');
-      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskEditReviewerModal');
+      expect($emit).toHaveBeenCalledWith('bv::hide::modal', 'CertificationTaskReviewersAccountModal');
+      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskEditReviewerAccountModal');
     });
 
     it('closeEditReviewerModal should close edit reviewer modal and open reviewers modal', async () => {
@@ -1021,8 +1027,8 @@ describe('CertificationTaskList', () => {
 
       await wrapper.vm.$nextTick();
 
-      expect($emit).toHaveBeenCalledWith('bv::hide::modal', 'CertificationTaskEditReviewerModal');
-      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskReviewersModal');
+      expect($emit).toHaveBeenCalledWith('bv::hide::modal', 'CertificationTaskEditReviewerAccountModal');
+      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskReviewersAccountModal');
     });
 
     describe('edit reviewer', () => {
@@ -1324,7 +1330,7 @@ describe('CertificationTaskList', () => {
 
       expect(wrapper.vm.currentEntitlementSelected).toEqual(entitlement);
       expect(wrapper.vm.currentApplicationSelectedModal).toEqual(lineItem.application);
-      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskEntitlementModal');
+      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskEntAccountModal');
     });
 
     it('openEntitlementModal should not open entitlement modal when fails data fetch', async () => {
@@ -1344,8 +1350,433 @@ describe('CertificationTaskList', () => {
 
       expect(wrapper.vm.currentEntitlementSelected).toBeNull();
       expect(wrapper.vm.currentApplicationSelectedModal).toBeNull();
-      expect($emit).not.toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskEntitlementModal');
+      expect($emit).not.toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskEntEntitlementModal');
       expect(showErrorMessageSpy).toHaveBeenCalledWith(error, 'governance.certificationTask.entitlementModal.loadErrorMessage');
+    });
+  });
+
+  describe('Scenarios For Entitlements Tab', () => {
+    const methods = {
+      buildUrlParams: jest.fn(),
+      loadTasksList: jest.fn(),
+      showErrorMessage: jest.fn(),
+    };
+    let addCertificationTaskAccountDetailsSpy;
+
+    beforeEach(() => {
+      wrapper.vm.currentPage = 2;
+      wrapper.vm.sortBy = 'name';
+      wrapper.vm.sortDesc = false;
+      shallowMountComponent({}, {}, methods, {
+        certificationGrantType: 'entitlements', showEntitlementColumn: true, showGroupBy: false, entitlementUserId: null,
+      });
+      CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve({ data: 'results' }));
+      CertificationApi.getCertificationCountsByCampaign.mockImplementation(() => Promise.resolve({ data: 'results' }));
+      CertificationApi.getCertificationTaskAccountDetails.mockImplementation(() => Promise.resolve({ data: 'results' }));
+      addCertificationTaskAccountDetailsSpy = jest.spyOn(wrapper.vm, 'addCertificationTaskAccountDetails').mockImplementation(() => Promise.resolve({ data: 'results' }));
+    });
+    it('should call loadTasksList once the result of the call is ready', async () => {
+      wrapper.vm.getCertificationTaskList(2);
+
+      await wrapper.vm.$nextTick();
+      expect(addCertificationTaskAccountDetailsSpy).toHaveBeenCalled();
+      expect(methods.loadTasksList).toHaveBeenCalled();
+    });
+    it('should show the right columns for entilements tab', () => {
+      expect(wrapper.vm.certificationListColumns).toEqual([{
+        key: 'user', label: 'governance.certificationTask.user', sortable: true, class: 'text-truncate fr-access-cell', show: true,
+      }, {
+        key: 'application', label: 'governance.certificationTask.application', sortable: true, class: 'text-truncate fr-access-cell', show: true,
+      }, {
+        key: 'entitlement', label: 'governance.certificationTask.entitlement', sortable: false, class: 'text-truncate fr-access-cell', show: true,
+      }, {
+        key: 'account', label: 'governance.certificationTask.account', sortable: false, class: 'text-truncate fr-access-cell', show: true,
+      }, {
+        key: 'comments', label: 'governance.certificationTask.comments', sortable: false, class: 'w-140px fr-access-cell', show: true,
+      }, {
+        key: 'actions', class: 'w-208px border-left fr-access-cell', label: '', sortable: false, show: true,
+      }]);
+    });
+    it('openAddCommentModalFromCommentsModal called hides CertificationTaskCommentsModal and shows CertificationTaskAddCommentModal', async () => {
+      wrapper.vm.openAddCommentModalFromCommentsModal();
+
+      await flushPromises();
+
+      expect($emit).toHaveBeenCalledWith('bv::hide::modal', 'CertificationTaskCommentsEntitlementModal');
+      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskAddCommentEntitlementModal');
+    });
+
+    it('openAddCommentModal called saves currentLineItemIdSelectedModal data and shows CertificationTaskAddCommentModal', async () => {
+      const lineItemId = '4ab37e2f-9470-45f6-85dd-f8a7b095e0d4';
+
+      wrapper.vm.openAddCommentModal(lineItemId);
+      await flushPromises();
+
+      expect(wrapper.vm.currentLineItemIdSelectedModal).toBe(lineItemId);
+      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskAddCommentEntitlementModal');
+    });
+    it('openEntitlementModal should open entitlement modal with data setted', async () => {
+      const entitlement = {
+        id: '1234',
+      };
+      CertificationApi.getCertificationEntitlementDetails.mockImplementation(() => Promise.resolve({ data: entitlement }));
+
+      const lineItem = {
+        id: '9986d9a5-5ffd-4046-8643-c34a60cddb6e',
+        application: {
+          templateName: 'salesforce',
+        },
+      };
+
+      wrapper.vm.openEntitlementModal(lineItem);
+
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.currentEntitlementSelected).toEqual(entitlement);
+      expect(wrapper.vm.currentApplicationSelectedModal).toEqual(lineItem.application);
+      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskEntEntitlementModal');
+    });
+    it('openCommentsModal called saves currentCommentsSelectedModal, currentLineItemIdSelectedModal data and shows CertificationTaskCommentsModal', async () => {
+      const comments = [
+        {
+          action: 'comment',
+          comment: 'test comment',
+          user: {
+            givenName: 'Testuser',
+          },
+        },
+      ];
+      const lineItemId = '4ab37e2f-9470-45f6-85dd-f8a7b095e0d4';
+
+      wrapper.vm.openCommentsModal(comments, { id: lineItemId });
+      await flushPromises();
+
+      expect(wrapper.vm.currentCommentsSelectedModal).toEqual(comments);
+      expect(wrapper.vm.currentLineItemIdSelectedModal).toBe(lineItemId);
+      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskCommentsEntitlementModal');
+    });
+    it('openReviewersModal should open reviewers modal with data setted', async () => {
+      const id = '12345';
+      const actors = [
+        {
+          id: '/managed/user/12345',
+          givenName: 'test',
+        },
+        {
+          id: '/managed/rolw/12345',
+          name: 'test',
+        },
+      ];
+      const reassign = true;
+      const item = {
+        id,
+        decision: {
+          certification: {
+            actors,
+          },
+        },
+        permissions: {
+          reassign,
+        },
+      };
+
+      expect($emit).not.toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskReviewersEntitlementModal');
+
+      wrapper.vm.openReviewersModal(item);
+
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.currentLineItemIdSelectedModal).toBe(id);
+      expect(wrapper.vm.currentReviewersSelectedModal).toEqual(actors);
+      expect(wrapper.vm.currentLineItemReassignPermission).toBe(reassign);
+      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskReviewersEntitlementModal');
+    });
+    it('openEditReviewerModal should open edit reviewer modal with data setted', async () => {
+      const reviewers = [
+        {
+          id: '/managed/user/12345',
+          givenName: 'test',
+          permissions: {
+            comment: true,
+            delegate: true,
+            forward: true,
+            reassign: true,
+            consult: true,
+            signoff: true,
+            certify: true,
+            exception: true,
+            revoke: true,
+            reset: true,
+            save: true,
+            removeActor: true,
+            accept: true,
+            challenge: true,
+          },
+        },
+        {
+          id: '/managed/rolw/12345',
+          name: 'test',
+          permissions: {
+            comment: true,
+            delegate: true,
+            forward: true,
+            reassign: true,
+            consult: true,
+            signoff: false,
+            certify: true,
+            exception: true,
+            revoke: true,
+            reset: true,
+            save: true,
+            removeActor: true,
+            accept: true,
+            challenge: true,
+          },
+        },
+      ];
+      const reviewer = {
+        id: '/managed/user/12345',
+        givenName: 'test',
+      };
+
+      expect($emit).not.toHaveBeenCalledWith('bv::hide::modal', 'CertificationTaskReviewersModal');
+      expect($emit).not.toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskEditReviewerModal');
+
+      wrapper.vm.currentReviewersSelectedModal = reviewers;
+      wrapper.vm.openEditReviewerModal(reviewer);
+
+      await wrapper.vm.$nextTick();
+
+      expect(wrapper.vm.currentReviewerSelectedModal).toEqual(reviewer);
+      expect($emit).toHaveBeenCalledWith('bv::hide::modal', 'CertificationTaskReviewersEntitlementModal');
+      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskEditReviewerEntitlementModal');
+    });
+
+    it('closeEditReviewerModal should close edit reviewer modal and open reviewers modal', async () => {
+      expect($emit).not.toHaveBeenCalledWith('bv::hide::modal', 'CertificationTaskEditReviewerModal');
+      expect($emit).not.toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskReviewersModal');
+
+      wrapper.vm.closeEditReviewerModal();
+
+      await flushPromises();
+
+      expect($emit).toHaveBeenCalledWith('bv::hide::modal', 'CertificationTaskEditReviewerEntitlementModal');
+      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskReviewersEntitlementModal');
+    });
+    it('addComment calls governance api properly', async () => {
+      const comment = 'Test comment';
+      const task = {
+        id: '1',
+        decision: {
+          certification: {
+            comments: [
+              {
+                action: 'comment',
+                comment: 'comment 1',
+              },
+              {
+                action: 'comment',
+                comment: 'comment 2',
+              },
+            ],
+          },
+        },
+      };
+
+      wrapper.vm.currentLineItemIdSelectedModal = '1';
+      wrapper.vm.tasksData = [task];
+      wrapper.vm.getCertificationTaskList = jest.fn().mockImplementation(() => Promise.resolve({}));
+      const spyNotification = jest.spyOn(wrapper.vm, 'displayNotification');
+
+      wrapper.vm.addComment(comment);
+
+      await flushPromises();
+
+      expect(spyNotification).toHaveBeenCalledWith('success', 'governance.certificationTask.lineItemAddCommentModal.addCommentSuccessfullyMessage');
+      expect(wrapper.vm.currentCommentsSelectedModal).toEqual(task.decision.certification.comments);
+      expect($emit).toHaveBeenCalledWith('bv::hide::modal', 'CertificationTaskAddCommentEntitlementModal');
+      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskCommentsEntitlementModal');
+    });
+    it('should emit the bv::show::modal to show the certification task sort', () => {
+      wrapper.vm.openCertificationTaskSortModal();
+      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskSortConfirmEntitlementModal');
+    });
+    it('should emit the bv::show::modal to show the certification reasign modal', () => {
+      wrapper.vm.showReassignBulkActionModal();
+      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskReassignEntitlementModal');
+    });
+    it('should emit the bv::show::modal to show the certification reasign modal', () => {
+      wrapper.vm.openActionConfirmationModal({});
+      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskActionConfirmEntitlementModal');
+    });
+  });
+
+  describe('Scenarios For Accounts Tab when group by is true', () => {
+    beforeEach(() => {
+      shallowMountComponent({}, {}, {}, {
+        certificationGrantType: 'accounts', showEntitlementColumn: false, showGroupBy: true, entitlementUserId: null, isAdmin: true,
+      });
+      wrapper.vm.$refs = { selectableTable: { clearSelected: jest.fn(), selectRow: jest.fn() } };
+      CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve({ data: 'results' }));
+      CertificationApi.getCertificationCountsByCampaign.mockImplementation(() => Promise.resolve({ data: 'results' }));
+      CertificationApi.getCertificationTaskAccountDetails.mockImplementation(() => Promise.resolve({ data: 'results' }));
+      jest.spyOn(wrapper.vm, 'addCertificationTaskAccountDetails').mockImplementation(() => Promise.resolve({ data: 'results' }));
+    });
+    it('should display correct account columns', async () => {
+      expect(wrapper.vm.certificationListColumns).toEqual([{
+        key: 'user', label: 'governance.certificationTask.user', sortable: true, class: 'text-truncate fr-access-cell', show: true,
+      }, {
+        key: 'application', label: 'governance.certificationTask.application', sortable: true, class: 'text-truncate fr-access-cell', show: true,
+      }, {
+        key: 'account', label: 'governance.certificationTask.account', sortable: false, class: 'text-truncate fr-access-cell', show: true,
+      }, {
+        key: 'comments', label: 'governance.certificationTask.comments', sortable: false, class: 'w-140px fr-access-cell', show: true,
+      }, {
+        key: 'actions', class: 'w-208px border-left fr-access-cell', label: '', sortable: false, show: true,
+      }]);
+    });
+    it('should have selectable as true', async () => {
+      expect(wrapper.vm.isSelectable).toEqual(true);
+    });
+    it('should clear row selection on filter', async () => {
+      const filters = {
+        decision: [
+          'revoke',
+          'exception',
+          'noDecision',
+        ],
+      };
+      wrapper.vm.filterCertificationItems(filters);
+      await flushPromises();
+      expect(wrapper.emitted()['clear-item']).toBeTruthy();
+    });
+    it('should clear row selection on page change', async () => {
+      wrapper.vm.paginationChange();
+      await flushPromises();
+      expect(wrapper.emitted()['clear-item']).toBeTruthy();
+    });
+    it('should hide group by when accounts count is zero', () => {
+      const accountDataMock = {
+        data: {
+          result: [],
+          totalCount: 0,
+        },
+      };
+      wrapper.vm.loadTasksList(accountDataMock, 1);
+      expect($emit).toBeCalledWith('hide-group-by');
+    });
+    it('should have the right base filter for account', () => {
+      const baseFilters = wrapper.vm.getBaseFilters();
+      expect(baseFilters).toEqual([
+        {
+          operand: { targetName: 'decision.certification.primaryReviewer.id', targetValue: '' },
+          operator: 'EQUALS',
+        },
+        { operand: { targetName: 'item.type', targetValue: 'accountGrant' }, operator: 'EQUALS' }]);
+    });
+    it('should raise select item event on row select', () => {
+      const items = [
+        {
+          id: 'ebf15835-d35c-4268-bac3-a6ec59302246',
+        },
+      ];
+      wrapper.vm.tasksData = items;
+      wrapper.vm.onRowSelected(items);
+      expect($emit).toBeCalledWith('select-item', items[0]);
+    });
+    it('should raise activity modal event with right modal id', () => {
+      const item = {
+        decision: {
+          certification: {
+            comments: ['test'],
+          },
+        },
+      };
+      wrapper.vm.openActivityModal(item);
+      expect($emit).toBeCalledWith('bv::show::modal', 'CertificationTaskActivityAccountModal');
+    });
+    it('should raise forward modal event with right modal id', () => {
+      wrapper.vm.openForwardCertificationModal('1234', true);
+      expect($emit).toBeCalledWith('bv::show::modal', 'CertificationTaskForwardAccountModal');
+    });
+  });
+
+  describe('Scenarios For Entitlements Tab when group by is true', () => {
+    let getCertificationTasksListByCampaignSpy;
+    beforeEach(() => {
+      shallowMountComponent({}, {}, {}, {
+        certificationGrantType: 'entitlements', showEntitlementColumn: true, showGroupBy: true, entitlementUserId: '66f3b405-60db-42a6-8a7a-59f6470348f6', isAdmin: true, refreshTasks: true,
+      });
+      wrapper.vm.$refs = { selectableTable: { clearSelected: jest.fn(), selectRow: jest.fn() } };
+      getCertificationTasksListByCampaignSpy = jest.fn().mockImplementation(() => Promise.resolve({ data: 'results' }));
+      CertificationApi.getCertificationTasksListByCampaign = getCertificationTasksListByCampaignSpy;
+      CertificationApi.getCertificationCountsByCampaign.mockImplementation(() => Promise.resolve({ data: 'results' }));
+      CertificationApi.getCertificationTaskAccountDetails.mockImplementation(() => Promise.resolve({ data: 'results' }));
+      jest.spyOn(wrapper.vm, 'addCertificationTaskAccountDetails').mockImplementation(() => Promise.resolve({ data: 'results' }));
+    });
+    it('should display correct entitlement columns', async () => {
+      expect(wrapper.vm.certificationListColumns).toEqual([{
+        key: 'entitlement', label: 'governance.certificationTask.entitlement', sortable: false, class: 'text-truncate fr-access-cell', show: true,
+      }, {
+        key: 'comments', label: 'governance.certificationTask.comments', sortable: false, class: 'w-140px fr-access-cell', show: true,
+      }, {
+        key: 'actions', class: 'w-208px border-left fr-access-cell', label: '', sortable: false, show: true,
+      }]);
+    });
+    it('should have the right base filter for account', () => {
+      const baseFilters = wrapper.vm.getBaseFilters();
+      expect(baseFilters).toEqual([{ operand: { targetName: 'decision.certification.primaryReviewer.id', targetValue: '' }, operator: 'EQUALS' }, { operand: { targetName: 'item.type', targetValue: 'entitlementGrant' }, operator: 'EQUALS' }]);
+    });
+    it('should call the backend api with correct params when grouped by', async () => {
+      const filters = {
+        decision: [
+          'revoke',
+          'exception',
+          'noDecision',
+        ],
+      };
+      wrapper.vm.filterCertificationItems(filters);
+      await flushPromises();
+      expect(getCertificationTasksListByCampaignSpy).toHaveBeenCalledWith({
+        actorId: '',
+        appendUserPermissions: true,
+        isAdmin: true,
+        pageNumber: 0,
+        pageSize: 10,
+        sortBy: 'user.givenName',
+        sortDesc: false,
+      },
+      'test-id',
+      {
+        targetFilter: {
+          operand: [
+            {
+              operand: [{ operand: { targetName: 'decision.certification.decision', targetValue: ['revoke', 'exception'] }, operator: 'IN' },
+                { operand: [{ operand: { targetName: 'decision.certification.decision', targetValue: undefined }, operator: 'EXISTS' }], operator: 'NOT' },
+              ],
+              operator: 'OR',
+            },
+            { operand: { targetName: 'user.id', targetValue: '66f3b405-60db-42a6-8a7a-59f6470348f6' }, operator: 'EQUALS' },
+            { operand: { targetName: 'decision.certification.primaryReviewer.id', targetValue: '' }, operator: 'EQUALS' },
+            { operand: { targetName: 'item.type', targetValue: 'entitlementGrant' }, operator: 'EQUALS' }],
+          operator: 'AND',
+        },
+      });
+    });
+    it('should raise activity modal event with right modal id', () => {
+      const item = {
+        decision: {
+          certification: {
+            comments: ['test'],
+          },
+        },
+      };
+      wrapper.vm.openActivityModal(item);
+      expect($emit).toBeCalledWith('bv::show::modal', 'CertificationTaskActivityEntitlementModal');
+    });
+    it('should raise forward modal event with right modal id', () => {
+      wrapper.vm.openForwardCertificationModal('1234', true);
+      expect($emit).toBeCalledWith('bv::show::modal', 'CertificationTaskForwardEntitlementModal');
     });
   });
 });

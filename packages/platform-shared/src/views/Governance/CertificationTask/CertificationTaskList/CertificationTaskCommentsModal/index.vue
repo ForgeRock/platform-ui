@@ -8,7 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
     body-class="pb-0"
     content-class="border-0"
     footer-class="justify-content-between"
-    id="CertificationTaskCommentsModal"
+    :id="modalId"
     no-close-on-backdrop
     no-close-on-esc
     scrollable
@@ -152,6 +152,10 @@ export default {
     comments: {
       type: Array,
       default: () => [],
+    },
+    modalId: {
+      type: String,
+      default: 'CertificationTaskCommentsAccountModal',
     },
   },
   data() {

@@ -1157,6 +1157,11 @@
         "revoke": "Revoke",
         "reassign": "Reassign"
       },
+      "certificationTabs": {
+        "accounts": "accounts",
+        "entitlements": "entitlements",
+        "groupByAccount": "group by account"
+      },
       "actionsModal": {
         "certifyTitle": "Certify Access",
         "certifyDescription": "Certify access for the selected items?",

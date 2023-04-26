@@ -30,5 +30,21 @@ describe('CertificationTaskSortModal', () => {
       mountComponent();
       expect(wrapper.name()).toEqual('CertificationTaskSortModal');
     });
+
+    it('should render default modalId', () => {
+      expect(wrapper.find('#CertificationTaskSortConfirmAccountModal').exists()).toBeTruthy();
+    });
+
+    it('should render prop modalId', () => {
+      wrapper = shallowMount(CertificationTaskSortModal, {
+        mocks: {
+          $t: (t) => t,
+        },
+        propsData: {
+          modalId: 'CertificationTaskSortConfirmEntitlementModal',
+        },
+      });
+      expect(wrapper.find('#CertificationTaskSortConfirmEntitlementModal').exists()).toBeTruthy();
+    });
   });
 });

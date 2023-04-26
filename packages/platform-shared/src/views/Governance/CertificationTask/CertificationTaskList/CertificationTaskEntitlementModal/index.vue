@@ -7,7 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     body-class="p-0"
     content-class="border-0"
     scrollable
-    id="CertificationTaskEntitlementModal"
+    :id="modalId"
     no-close-on-backdrop
     no-close-on-esc
     ok-only
@@ -103,6 +103,10 @@ export default {
     application: {
       type: Object,
       default: () => {},
+    },
+    modalId: {
+      type: String,
+      default: 'CertificationTaskEntAccountModal',
     },
   },
   data() {

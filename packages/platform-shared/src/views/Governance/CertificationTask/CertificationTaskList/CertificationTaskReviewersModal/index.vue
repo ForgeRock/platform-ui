@@ -7,7 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     body-class="p-0"
     content-class="border-0"
     :footer-class="!hideCreationButton ? 'justify-content-between' : ''"
-    id="CertificationTaskReviewersModal"
+    :id="modalId"
     no-close-on-backdrop
     no-close-on-esc
     scrollable
@@ -178,6 +178,10 @@ export default {
     hideCreationButton: {
       type: Boolean,
       default: false,
+    },
+    modalId: {
+      type: String,
+      default: 'CertificationTaskReviewersAccountModal',
     },
   },
   data() {

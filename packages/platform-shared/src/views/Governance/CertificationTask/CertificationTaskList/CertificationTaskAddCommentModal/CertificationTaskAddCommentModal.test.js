@@ -40,4 +40,20 @@ describe('CertificationTaskAddCommentModal', () => {
     expect(wrapper.vm.comment).toBeNull();
     expect(wrapper.vm.isSaving).toBe(false);
   });
+
+  it('should render default modalId', () => {
+    expect(wrapper.find('#CertificationTaskAddCommentAccountModal').exists()).toBeTruthy();
+  });
+
+  it('should render prop modalId', () => {
+    wrapper = shallowMount(CertificationTaskAddCommentModal, {
+      mocks: {
+        $t: (t) => t,
+      },
+      propsData: {
+        modalId: 'CertificationTaskAddCommentEntitlementModal',
+      },
+    });
+    expect(wrapper.find('#CertificationTaskAddCommentEntitlementModal').exists()).toBeTruthy();
+  });
 });
