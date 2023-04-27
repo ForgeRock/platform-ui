@@ -15,6 +15,13 @@ describe('CertificationTaskEditReviewerModal', () => {
     wrapper = shallowMount(CertificationTaskEditReviewerModal, {
       mocks: {
         $t: (t) => t,
+        $store: {
+          state: {
+            UserStore: {
+              userId: 'testId',
+            },
+          },
+        },
       },
     });
   });
@@ -246,6 +253,43 @@ describe('CertificationTaskEditReviewerModal', () => {
       signoff: true,
     });
     expect(wrapper.vm.selectedReviewer).toBeNull();
+  });
+
+  it('user can not edit his own permissions', () => {
+    const reviewer = {
+      userName: 'bwalters@jstilton1973unfinishedlife.onmicrosoft.com',
+      givenName: 'Barbara',
+      sn: 'Walters',
+      id: 'managed/user/testId',
+      mail: 'bwalters@jstilton1973unfinishedlife.onmicrosoft.com',
+      permissions: {
+        accept: true,
+        certify: true,
+        challenge: true,
+        comment: true,
+        consult: true,
+        delegate: true,
+        exception: true,
+        forward: true,
+        reassign: true,
+        removeActor: true,
+        reset: true,
+        revoke: true,
+        save: true,
+        signoff: true,
+      },
+    };
+    wrapper.setProps({
+      reviewer,
+    });
+
+    expect(wrapper.vm.permissionOwnedByCurrentUser).toBeTruthy();
+
+    wrapper.vm.deleteReviewer();
+    expect(wrapper.emitted()['delete-reviewer']).toBeFalsy();
+
+    wrapper.vm.editReviewer();
+    expect(wrapper.emitted()['edit-reviewer']).toBeFalsy();
   });
 
   it('footer class empty if edition is not allowed', () => {
