@@ -55,6 +55,13 @@ function mountComponent() {
   wrapper = mount(CertificationTaskList, {
     mocks: {
       $t: (t) => t,
+      $store: {
+        state: {
+          UserStore: {
+            userId: 'testId',
+          },
+        },
+      },
     },
     propsData: {
       campaignDetails: {},

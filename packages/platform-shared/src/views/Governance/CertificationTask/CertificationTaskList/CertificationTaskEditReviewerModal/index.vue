@@ -114,12 +114,12 @@ of the MIT license. See the LICENSE file for details. -->
         class="mb-3"
         v-model="permissions[key]"
         type="checkbox"
-        :disabled="reviewer && !isAllowedDeletion && key === 'signoff'"
+        :disabled="disabledField(key)"
         :label="$t(`governance.certificationTask.lineItemReviewersModal.editReviewerModal.permissionLabels.${key}`)" />
     </div>
     <template #modal-footer>
       <FrButtonWithSpinner
-        v-if="isAllowedDeletion"
+        v-if="isAllowedDeletion && !permissionOwnedByCurrentUser"
         :button-text="$t('governance.certificationTask.lineItemReviewersModal.editReviewerModal.removeReviewerButtonText')"
         :disabled="isDeleting"
         :show-spinner="isDeleting"
@@ -135,6 +135,7 @@ of the MIT license. See the LICENSE file for details. -->
           {{ $t('common.cancel') }}
         </BButton>
         <FrButtonWithSpinner
+          v-if="!permissionOwnedByCurrentUser"
           :button-text="!reviewer ? $t('governance.certificationTask.lineItemReviewersModal.editReviewerModal.addReviewerButtonText') : $t('common.save')"
           :disabled="(!reviewer && !reviewerIdSelected) || isSaving"
           :show-spinner="isSaving"
@@ -147,6 +148,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import {
   BButtonClose,
   BModal,
@@ -159,6 +161,9 @@ import {
   BMediaBody,
   BImg,
 } from 'bootstrap-vue';
+import {
+  includes,
+} from 'lodash';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
 import { ResourceType } from '@forgerock/platform-shared/src/utils/governance/types';
@@ -234,6 +239,7 @@ export default {
       this.$emit('close-modal');
     },
     editReviewer() {
+      if (this.permissionOwnedByCurrentUser) return;
       const mappedPermissions = Object.entries(this.permissions).reduce((acc, [key, value]) => ({
         ...acc,
         ...Object.fromEntries(PERMISSIONS_MAP[key].map((permission) => [permission, value])),
@@ -241,6 +247,7 @@ export default {
       this.$emit('edit-reviewer', this.reviewer ? this.reviewer.id : this.reviewerIdSelected, mappedPermissions, this.selectedReviewer);
     },
     deleteReviewer() {
+      if (this.permissionOwnedByCurrentUser) return;
       this.$emit('delete-reviewer', this.reviewer.id, true);
     },
     setSelectedReviewer(resource) {
@@ -251,6 +258,9 @@ export default {
       this.reviewerIdSelected = null;
       this.permissions = { ...DEFAULT_PERMISSIONS };
       this.selectedReviewer = null;
+    },
+    disabledField(key) {
+      return (this.reviewer && !this.isAllowedDeletion && key === 'signoff') || this.permissionOwnedByCurrentUser;
     },
   },
   watch: {
@@ -279,6 +289,15 @@ export default {
   computed: {
     footerClass() {
       return this.isAllowedDeletion ? 'justify-content-between' : '';
+    },
+    ...mapState({
+      userId: (state) => state.UserStore.userId,
+    }),
+    /**
+     * returns true if the logged in user is editing his own permissions
+     */
+    permissionOwnedByCurrentUser() {
+      return includes(this.reviewer?.id, this.userId);
     },
   },
 };
