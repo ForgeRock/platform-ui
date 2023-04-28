@@ -36,6 +36,13 @@ function shallowMountComponent(options, data, methods, propsData = {}) {
       $root: {
         $emit,
       },
+      $store: {
+        state: {
+          SharedStore: {
+            governanceEnabledV2: true,
+          },
+        },
+      },
       ...options,
     },
     data() {
@@ -57,6 +64,9 @@ function mountComponent() {
       $t: (t) => t,
       $store: {
         state: {
+          SharedStore: {
+            governanceEnabledV2: true,
+          },
           UserStore: {
             userId: 'testId',
           },
@@ -80,6 +90,7 @@ describe('CertificationTaskList', () => {
     CertificationApi.saveComment.mockImplementation(() => Promise.resolve({}));
     CertificationApi.reassignLineItem.mockImplementation(() => Promise.resolve({}));
     CertificationApi.updateLineItemReviewers.mockImplementation(() => Promise.resolve({}));
+    CertificationApi.getUserEntitlementsDetails.mockImplementation(() => Promise.resolve({ data: { results: [] } }));
   });
 
   describe('Account column display', () => {
@@ -802,6 +813,7 @@ describe('CertificationTaskList', () => {
             },
           },
         },
+        relationship: {},
       };
 
       wrapper.vm.openAccountModal(content);

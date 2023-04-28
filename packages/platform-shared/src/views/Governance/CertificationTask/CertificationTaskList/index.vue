@@ -406,7 +406,8 @@ of the MIT license. See the LICENSE file for details. -->
     <FrCertificationTaskUserModal
       v-if="campaignDetails.certificationType === 'entitlement'
         || (campaignDetails.certificationType !== 'entitlement' && !isEntitlementGrantType)"
-      :user="currentUserSelectedModal" />
+      :user="currentUserSelectedModal"
+      :user-entitlements="currentUserEntitlementsDetails" />
     <FrCertificationTaskApplicationModal
       v-if="currentApplicationSelectedModal"
       :application="currentApplicationSelectedModal" />
@@ -489,17 +490,18 @@ import {
   exceptionLineItem,
   forwardCertificationTasks,
   forwardLineItem,
-  getCertificationLineItemUser,
-  getCertificationTasksListByCampaign,
   getCertificationCountsByCampaign,
+  getCertificationEntitlementDetails,
+  getCertificationLineItemUser,
   getCertificationTaskAccountDetails,
+  getCertificationTasksListByCampaign,
+  getUserEntitlementsDetails,
+  reassignLineItem,
   resetLineItem,
   revokeCertificationTasks,
   revokeLineItem,
   saveComment,
-  reassignLineItem,
   updateLineItemReviewers,
-  getCertificationEntitlementDetails,
 } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import FrCertificationActivityModal from './CertificationTaskActivityModal';
 import FrCertificationTaskAccountModal from './CertificationTaskAccountModal';
@@ -648,6 +650,7 @@ export default {
       currentPage: 1,
       currentReviewerSelectedModal: null,
       currentReviewersSelectedModal: [],
+      currentUserEntitlementsDetails: {},
       currentUserSelectedModal: {},
       enableAddComments: true,
       sortDir: 'asc',
@@ -975,6 +978,17 @@ export default {
         .catch((error) => {
           this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserError'));
         });
+
+      // Get entitlements details by user
+      if (this.$store.state.SharedStore.governanceEnabledV2) {
+        getUserEntitlementsDetails(this.campaignId, lineItemId)
+          .then(({ data }) => {
+            this.currentUserEntitlementsDetails = data;
+          })
+          .catch((error) => {
+            this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserEntitlementsError'));
+          });
+      }
     },
     addComment(comment) {
       saveComment(this.campaignId, this.currentLineItemIdSelectedModal, comment).then(() => {
