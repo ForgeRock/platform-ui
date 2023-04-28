@@ -354,3 +354,14 @@ export function getCertificationEntitlementDetails(campaignId, itemId) {
   const resourceUrl = `${governanceCertificationBaseUrl}/${campaignId}/items/${itemId}/entitlement`;
   return generateIgaApi().get(resourceUrl);
 }
+
+/**
+ * @description Obtains the entitlement details by user
+ * @param {String} campaignId - ID of line item campaign
+ * @param {String} itemId - ID of line item
+ * @returns {Promise}
+ */
+export function getUserEntitlementsDetails(campaignId, itemId) {
+  const resourceUrl = `${governanceCertificationBaseUrl}/${campaignId}/items/${itemId}/user/entitlements`;
+  return generateIgaApi().get(resourceUrl);
+}

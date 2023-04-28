@@ -12,6 +12,10 @@ import AccountDetailsTab from './index';
 
 const account = {
   id: 'test',
+  account: {
+    displayName: 'Franklin Horne',
+    userPrincipalName: 'fhorne@jstilton1973unfinishedlife.onmicrosoft.com',
+  },
   accountEnabled: true,
   accountType: 'type',
   decision: 'certify',
@@ -61,9 +65,8 @@ describe('AccountDetailsTab', () => {
   });
 
   it('should show all account details properties', () => {
-    validateFieldByText(wrapper, 'displayName', account.displayName);
-    validateFieldByText(wrapper, 'userPrincipalName', account.userPrincipalName);
-    validateFieldByText(wrapper, 'accountType', account.accountType);
+    validateFieldByText(wrapper, 'displayName', account.account.displayName);
+    validateFieldByText(wrapper, 'userPrincipalName', account.account.userPrincipalName);
     validateFieldByText(wrapper, 'lastDecision', account.decision);
     validateFieldByText(wrapper, 'decisionDate', dayjs(account.decisionDate).format('MMMM D, YYYY h:mm A'));
     validateFieldByText(wrapper, 'decisionBy', account.decisionBy.userName);

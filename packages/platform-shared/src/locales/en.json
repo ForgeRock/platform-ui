@@ -1216,6 +1216,7 @@
         "certifyError": "There was an error certifying this item",
         "filterError": "There was an error trying to get the filters",
         "forwardItemError": "There was an error forwarding this item.",
+        "getUserEntitlementsError": "There was an error getting the entitlements user details",
         "getUserError": "There was an error getting the user details",
         "onForwardError": "There was an error trying to forward the certification tasks",
         "reassignError": "There was an error trying to reassign the certifications",
@@ -1240,7 +1241,6 @@
           "lastUsedLabel": "Last Used",
           "ownerLabel": "Account Owner",
           "provisioningMethodLabel": "Provisioning Method",
-          "typeLabel": "Account Type",
           "riskScoreLabel": "Adj. Risk Score"
         },
         "accountDetailsTabText": "Account Details",
@@ -1250,6 +1250,14 @@
         },
         "applicationDetailsTabText": "Application Details",
         "contentDetailsTabText": "Contents",
+        "entitlementsTab": {
+          "fields": {
+            "account": "Account",
+            "application": "Application",
+            "name": "Name"
+          },
+          "title": "Entitlements"
+        },
         "userDetailsTabText": "Details"
       },
       "lineItemReviewersModal": {
