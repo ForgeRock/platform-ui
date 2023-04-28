@@ -54,11 +54,18 @@ of the MIT license. See the LICENSE file for details. -->
           v-if="user"
           :user="user" />
       </BTab>
+      <BTab
+        v-if="governanceEnabledV2"
+        :title="$t('governance.certificationTask.lineItemDetailsModal.entitlementsTab.title')">
+        <FrEntitlementsTab
+          :entitlements="userEntitlements" />
+      </BTab>
     </BTabs>
   </BModal>
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import {
   BButtonClose,
   BModal,
@@ -69,21 +76,27 @@ import {
 } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrUserDetailsTab from './UserDetailsTab';
+import FrEntitlementsTab from './EntitlementsTab';
 
 export default {
   name: 'CertificationTaskUserModal',
   components: {
     BButtonClose,
+    BImg,
+    BMedia,
     BModal,
     BTab,
     BTabs,
+    FrEntitlementsTab,
     FrIcon,
     FrUserDetailsTab,
-    BMedia,
-    BImg,
   },
   props: {
     user: {
+      type: Object,
+      required: true,
+    },
+    userEntitlements: {
       type: Object,
       required: true,
     },
@@ -95,6 +108,9 @@ export default {
         sn: this.user?.sn,
       });
     },
+    ...mapState({
+      governanceEnabledV2: (state) => state.SharedStore.governanceEnabledV2,
+    }),
   },
 };
 </script>
