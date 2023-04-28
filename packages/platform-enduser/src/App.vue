@@ -107,6 +107,26 @@ export default {
             icon: 'apps',
           }
           : {}),
+        (this.$store.state.SharedStore.governanceEnabledV2 === true
+          ? {
+            displayName: 'sideMenu.myAccess',
+            icon: 'badge',
+            subItems: [
+              {
+                displayName: 'sideMenu.accounts',
+                routeTo: { name: 'Accounts' },
+              },
+              {
+                displayName: 'sideMenu.roles',
+                routeTo: { name: 'Roles' },
+              },
+              {
+                displayName: 'sideMenu.entitlements',
+                routeTo: { name: 'Entitlements' },
+              },
+            ],
+          }
+          : {}),
         (this.$store.state.SharedStore.governanceEnabled === true
           ? {
             menuGroup: true,
