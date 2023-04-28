@@ -16,36 +16,22 @@ of the MIT license. See the LICENSE file for details. -->
             class="mr-3 rounded-circle"
             height="36"
             width="36"
-            :alt="account.displayName"
-            :src="account.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
+            :alt="details.displayName"
+            :src="details.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
             fluid />
           <div class="media-body">
             <h5
               class="m-0"
               data-testid="displayName">
-              {{ account.displayName }}
+              {{ details.displayName }}
             </h5>
             <small
               class="text-muted"
               data-testid="userPrincipalName">
-              {{ account.userPrincipalName }}
+              {{ details.userPrincipalName }}
             </small>
           </div>
         </BMedia>
-      </dd>
-      <dt class="col-lg-4">
-        {{ $t('governance.certificationTask.lineItemDetailsModal.accountDetailsTab.typeLabel') }}
-      </dt>
-      <dd
-        class="col-lg-8 mb-4"
-        data-testid="accountType">
-        {{ account.accountType }}
-      </dd>
-      <dt class="col-lg-4">
-        {{ $t('common.status') }}
-      </dt>
-      <dd class="col-lg-8 mb-4">
-        {{ blankValueIndicator }}
       </dd>
       <dt class="col-lg-4">
         {{ $t('governance.certificationTask.lineItemDetailsModal.accountDetailsTab.lastDecisionLabel') }}
@@ -72,22 +58,10 @@ of the MIT license. See the LICENSE file for details. -->
         {{ account.decisionBy && account.decisionBy.userName || blankValueIndicator }}
       </dd>
       <dt class="col-lg-4">
-        {{ $t('governance.certificationTask.lineItemDetailsModal.accountDetailsTab.lastUsedLabel') }}
-      </dt>
-      <dd class="col-lg-8 mb-4">
-        {{ blankValueIndicator }}
-      </dd>
-      <dt class="col-lg-4">
-        {{ $t('governance.certificationTask.lineItemDetailsModal.accountDetailsTab.riskScoreLabel') }}
-      </dt>
-      <dd class="col-lg-8 mb-4">
-        {{ blankValueIndicator }}
-      </dd>
-      <dt class="col-lg-4">
         {{ $t('governance.certificationTask.lineItemDetailsModal.accountDetailsTab.provisioningMethodLabel') }}
       </dt>
       <dd class="col-lg-8 mb-4">
-        {{ blankValueIndicator }}
+        {{ account.grantType || blankValueIndicator }}
       </dd>
     </dl>
   </div>
@@ -116,6 +90,7 @@ export default {
   data() {
     return {
       blankValueIndicator,
+      details: this.account.account,
     };
   },
   methods: {
