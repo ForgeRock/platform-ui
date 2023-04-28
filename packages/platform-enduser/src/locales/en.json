@@ -86,6 +86,37 @@
         "primaryButton": "Delete {resource}"
       }
     },
+    "myAccess": {
+      "accountName": "Account Name",
+      "timeConstraint": "Time Constraint",
+      "accounts": {
+        "errorGettingData": "Error getting Accounts.",
+        "loadingData": "Loading accounts.",
+        "noRecordFound": "No accounts found.",
+        "noResultsHelp": "Try a new search in the seach box above.",
+        "noResultsUser": "No Accounts for this user.",
+        "subtitle": "View all your application accounts.",
+        "title": "My Accounts"
+      },
+      "entitlements": {
+        "errorGettingData": "Error getting Entitlements.",
+        "loadingData": "Loading entitlements.",
+        "noRecordFound": "No entitlements found.",
+        "noResultsHelp": "Try a new search in the seach box above.",
+        "noResultsUser": "No Entitlements for this user.",
+        "subtitle": "View all your application entitlements.",
+        "title": "My Entitlements"
+      },
+      "roles": {
+        "errorGettingData": "Error getting Roles.",
+        "loadingData": "Loading roles.",
+        "noRecordFound": "No roles found.",
+        "noResultsHelp": "Try a new search in the seach box above.",
+        "noResultsUser": "No Roles for this user.",
+        "subtitle": "View all your application roles.",
+        "title": "My Roles"
+      }
+    },
     "uma": {
       "activity": {
         "Authorisation_Granted": "You created",
@@ -154,28 +185,33 @@
     }
   },
   "sideMenu": {
+    "accessReviews":"Access Reviews",
+    "accounts": "Accounts",
     "applications": "My Applications",
     "delegates": "Delegates",
     "directory": "My Directory",
     "directReports": "Direct Reports",
-    "profile": "Profile",
+    "entitlements": "Entitlements",
     "inbox": "Inbox",
-    "accessReviews":"Access Reviews"
+    "myAccess": "My Access",
+    "profile": "Profile",
+    "roles": "Roles"
   },
   "pageTitles": {
+    "AccessReviews": "Access Reviews",
     "Applications": "Applications",
-    "AutoAccessRiskDashboard": "Risk Dashboard",
+    "AutoAccessDataSources": "Data Sources",
     "AutoAccessPipelines": "Pipelines",
     "AutoAccessRiskConfig": "RiskConfig",
-    "AutoAccessDataSources": "Data Sources",
+    "AutoAccessRiskDashboard": "Risk Dashboard",
     "CertificationTask": "Certification Task",
     "Dashboard": "Dashboard",
     "Delegates": "Delegates",
     "DirectReports": "Direct Reports",
     "EditResource": "Edit Resource",
     "Forbidden": "Forbidden",
-    "AccessReviews": "Access Reviews",
     "ListResource": "List Resource",
+    "MyAccess": "My Access",
     "NotFound": "Not Found",
     "pageTitle": "Platform Enduser - {page}",
     "Profile": "Profile",
