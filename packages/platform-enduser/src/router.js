@@ -132,6 +132,24 @@ const router = new Router({
       },
     },
     {
+      path: '/my-accounts',
+      name: 'Accounts',
+      component: () => import('@/views/MyAccessReview'),
+      meta: { authenticate: true },
+    },
+    {
+      path: '/my-entitlements',
+      name: 'Entitlements',
+      component: () => import('@/views/MyAccessReview'),
+      meta: { authenticate: true },
+    },
+    {
+      path: '/my-roles',
+      name: 'Roles',
+      component: () => import('@/views/MyAccessReview'),
+      meta: { authenticate: true },
+    },
+    {
       path: '/sharing',
       name: 'Sharing',
       component: () => import('@/components/uma'),

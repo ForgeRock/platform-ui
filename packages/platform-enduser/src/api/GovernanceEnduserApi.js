@@ -6,6 +6,7 @@
  */
 
 import { generateIgaApi } from '@forgerock/platform-shared/src/api/BaseApi';
+import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
 
 const governanceBaseUrl = '/governance';
 const governanceCertificationBaseUrl = `${governanceBaseUrl}/certification`;
@@ -18,8 +19,8 @@ const governanceUserUrl = `${governanceBaseUrl}/user`;
  * @returns {Promise}
  */
 export function getCertificationItems(params) {
-  const queryParams = new URLSearchParams(params).toString();
-  const resourceUrl = `${governanceCertificationItemsUrl}?${queryParams}`;
+  const queryParams = encodeQueryString(params, false);
+  const resourceUrl = `${governanceCertificationItemsUrl}${queryParams}`;
   return generateIgaApi().get(resourceUrl);
 }
 
@@ -30,8 +31,8 @@ export function getCertificationItems(params) {
  * @returns {Promise}
  */
 export function getTaskProxies(userId, params) {
-  const queryString = new URLSearchParams(params).toString();
-  return generateIgaApi().get(`${governanceUserUrl}/${userId}/get-proxies?${queryString}`);
+  const queryString = encodeQueryString(params, false);
+  return generateIgaApi().get(`${governanceUserUrl}/${userId}/get-proxies${queryString}`);
 }
 
 /**
@@ -70,6 +71,18 @@ export function deleteTaskProxy(userId, taskProxies) {
  * @returns {Promise}
  */
 export async function getDirectReports(userId, params) {
-  const queryString = new URLSearchParams(params).toString();
-  return generateIgaApi().get(`${governanceUserUrl}/${userId}/get-direct-reports?${queryString}`);
+  const queryString = encodeQueryString(params, false);
+  return generateIgaApi().get(`${governanceUserUrl}/${userId}/get-direct-reports${queryString}`);
+}
+
+/**
+ * Get list of My Access for a given user
+ * @param {String} userId - id of user to retrieve proxies for
+ * @param {object} params - parameters to filter the list of my access
+ * @returns {Promise}
+ */
+
+export async function getMyAccess(userId, params) {
+  const queryString = encodeQueryString(params, false);
+  return generateIgaApi().get(`${governanceUserUrl}/${userId}/grants${queryString}`);
 }
