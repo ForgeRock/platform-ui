@@ -39,6 +39,12 @@ export const causeMap = {
   deviceType: 'Device Type',
 };
 
+/**
+ * Converts the api response data into an object useful to the UI
+ *
+ * @param {Object} data - API response
+ * @returns {Object} object containing useful data
+ */
 export const apiToInternalEvent = (data) => {
   const { predictionResult } = data._source;
   const {
@@ -48,18 +54,23 @@ export const apiToInternalEvent = (data) => {
   const { heuristic_agg_result: heuristics } = riskScoreData;
   const { os, osVersion, userAgentType } = browserData;
 
-  const heuristicReasons = predictionResult.risk_score_data.heuristic_agg_result?.raw_results?.filter((result) => {
+  const heuristicReasons = heuristics?.raw_results?.filter((result) => {
     const heuristicKey = Object.keys(result).find((propName) => propName.indexOf('is_') === 0);
     return result[heuristicKey];
   })
     .map((result) => Object.keys(result).find((propName) => propName.indexOf('is_') === 0)) || [];
 
+  const isIpBlocked = heuristics?.block_rule_result?.is_blocked || false;
+  if (isIpBlocked) {
+    heuristicReasons.push('is_ip_blocked');
+  }
+
   let clusteringReasons = [];
   const uebaReasons = [];
-  if (predictionResult.risk_score_data.risk_score_threshhold < predictionResult.risk_score_data.clustering_model_risk_score) {
-    clusteringReasons = predictionResult.risk_score_data.clustering_result?.top_cluster_explainability;
+  if (riskScoreData.risk_score_threshhold < riskScoreData.clustering_model_risk_score) {
+    clusteringReasons = riskScoreData.clustering_result?.top_cluster_explainability;
   }
-  if (predictionResult.risk_score_data.risk_score_threshhold < predictionResult.risk_score_data.ueba_avg_risk_score) {
+  if (riskScoreData.risk_score_threshhold < riskScoreData.ueba_avg_risk_score) {
     if (predictionResult.ueba_signal.explainability
         && predictionResult.ueba_signal.explainability?.response !== 'failed'
         && predictionResult.ueba_signal.explainability?.response !== 'unknown') {
