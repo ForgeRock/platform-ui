@@ -2731,7 +2731,12 @@
           "title": "General Settings"
         },
         "objectProperties": "Object Properties",
-        "users": "Users"
+        "users": {
+          "title": "Users",
+          "notFound": "No entitlements found",
+          "notFoundDescription": "Try a new search in the seach box above.",
+          "failedToLoad": "Failed to load entitlement's users"
+        }
       }
     },
     "glossary": {
