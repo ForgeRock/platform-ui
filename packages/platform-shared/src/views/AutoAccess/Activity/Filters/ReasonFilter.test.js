@@ -53,6 +53,10 @@ describe('Reason Filter', () => {
       value: ['is_impossible_travel'],
     },
     {
+      text: 'IP Blocklist',
+      value: ['is_ip_blocked'],
+    },
+    {
       text: 'Suspicious IP',
       value: ['is_suspicious_ip'],
     },

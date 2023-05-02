@@ -37,8 +37,13 @@ export default {
         this.$emit('update', value);
       },
     },
+    /**
+     * Formats a list of options used in a multiselect filter
+     *
+     * @returns {Array} filter options
+     */
     reasonOptions() {
-      const defaultOptions = ['is_automated_user_agent', 'is_brute_force', 'is_credential_stuffing', 'is_impossible_travel', 'is_suspicious_ip'];
+      const defaultOptions = ['is_automated_user_agent', 'is_brute_force', 'is_credential_stuffing', 'is_impossible_travel', 'is_ip_blocked', 'is_suspicious_ip'];
       const uebaList = store.state.Dashboard.uebaClusteringReasons.map((reason) => (
         {
           text: `Unusual ${causeMap[reason]}`,
