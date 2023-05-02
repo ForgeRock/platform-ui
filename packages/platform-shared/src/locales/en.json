@@ -874,6 +874,7 @@
         "is_brute_force": "Brute Force",
         "is_credential_stuffing": "Credential Stuffing",
         "is_impossible_travel": "Impossible Travel",
+        "is_ip_blocked": "IP Blocklist",
         "is_suspicious_ip": "Suspicious IP",
         "browser": "Browser",
         "city": "City",

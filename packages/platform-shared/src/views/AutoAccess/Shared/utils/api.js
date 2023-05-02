@@ -9,6 +9,14 @@ import _ from 'lodash';
 import { generateAutoAccessJas } from '@forgerock/platform-shared/src/api/BaseApi';
 import store from '@/store';
 
+/**
+ * Format an object to be used as the payload for an elastic query search
+ *
+ * @param {Array} dateRange - Start and end date of the query
+ * @param {Object} filterObject - Object containing risk range, geo coords, and filters
+ * @param {String} userId - User id for specific user query
+ * @returns {Object} Elastic query search compatible object
+ */
 export function getQueryFilters(dateRange, filterObject, userId) {
   // Date Range
   const bool = {
@@ -106,12 +114,15 @@ export function getQueryFilters(dateRange, filterObject, userId) {
   }
 
   const clusteringReasons = [];
-  const heuristicReasons = [];
+  const heuristicRawResultsReasons = [];
+  let isIpBlocked = false;
   const uebaReasons = [];
   filterObject.reasons.forEach((reasons) => {
     reasons.forEach((reason) => {
-      if (reason.indexOf('is_') === 0) {
-        heuristicReasons.push(reason);
+      if (reason === 'is_ip_blocked') {
+        isIpBlocked = true;
+      } else if (reason.indexOf('is_') === 0) {
+        heuristicRawResultsReasons.push(reason);
       }
       if (store.state.Dashboard.uebaReasons.includes(reason)) {
         uebaReasons.push(reason);
@@ -125,13 +136,27 @@ export function getQueryFilters(dateRange, filterObject, userId) {
   // Heuristic, UEBA, Clustering Reason
   const allQuery = { bool: { should: [], minimum_should_match: 1 } };
   if (filterObject.reasons.length > 0) {
-    const hueristicsQuery = [];
+    const hueristicsRawResultsQuery = [];
 
-    // Heuristics
-    if (heuristicReasons.length > 0) {
-      hueristicsQuery.push({
+    // Heuristics Block Rule
+    if (isIpBlocked) {
+      allQuery.bool.should.push({
         bool: {
-          should: heuristicReasons.map((heuristic) => ({
+          should: {
+            term: {
+              'predictionResult.risk_score_data.heuristic_agg_result.block_rule_result.is_blocked': true,
+            },
+          },
+          minimum_should_match: 1,
+        },
+      });
+    }
+
+    // Heuristic Raw Results
+    if (heuristicRawResultsReasons.length > 0) {
+      hueristicsRawResultsQuery.push({
+        bool: {
+          should: heuristicRawResultsReasons.map((heuristic) => ({
             term: {
               [`predictionResult.risk_score_data.heuristic_agg_result.raw_results.${heuristic}`]: true,
             },
@@ -145,7 +170,7 @@ export function getQueryFilters(dateRange, filterObject, userId) {
           path: 'predictionResult.risk_score_data.heuristic_agg_result.raw_results',
           query: {
             bool: {
-              should: hueristicsQuery,
+              should: hueristicsRawResultsQuery,
             },
           },
         },
