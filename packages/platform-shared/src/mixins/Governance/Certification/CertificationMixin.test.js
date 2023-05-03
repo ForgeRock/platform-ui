@@ -95,6 +95,8 @@ describe('CertificationMixin', () => {
     expect(wrapper.vm.getItems).toHaveBeenCalledWith({
       pageNumber: 0,
       queryString: '',
+      sortBy: 'deadline',
+      sortDesc: false,
       status: 'test',
     });
     expect(setAccessReviewListSpy).toHaveBeenCalledWith({
@@ -119,6 +121,8 @@ describe('CertificationMixin', () => {
     expect(wrapper.vm.getItems).toHaveBeenCalledWith({
       pageNumber: 3,
       queryString: 'searching',
+      sortBy: 'deadline',
+      sortDesc: false,
       status: 'test',
     });
     expect(setAccessReviewListSpy).toHaveBeenCalledWith({
@@ -141,6 +145,8 @@ describe('CertificationMixin', () => {
     expect(wrapper.vm.getItems).toHaveBeenCalledWith({
       pageNumber: 0,
       queryString: 'alphabet',
+      sortBy: 'deadline',
+      sortDesc: false,
       status: 'test',
     });
 
@@ -241,6 +247,50 @@ describe('CertificationMixin', () => {
       ]);
       expect(wrapper.vm.totalRows).toEqual(11);
       expect(wrapper.vm.tableLoading).toBeFalsy();
+    });
+  });
+
+  describe('sortingChanged', () => {
+    it('should normalize sort by when is formattedDeadline', () => {
+      wrapper.vm.sortingChanged({ sortBy: 'formattedDeadline', sortDesc: true });
+
+      expect(wrapper.vm.sortBy).toEqual('formattedDeadline');
+      expect(wrapper.vm.sortDesc).toEqual(true);
+      expect(wrapper.vm.getItems).toHaveBeenCalledWith({
+        pageNumber: 0,
+        queryString: '',
+        sortBy: 'deadline',
+        sortDesc: true,
+        status: 'test',
+      });
+    });
+
+    it('should sort items by name in descending order and update getItems query with correct parameters', () => {
+      wrapper.vm.sortingChanged({ sortBy: 'name', sortDesc: true });
+
+      expect(wrapper.vm.sortBy).toEqual('name');
+      expect(wrapper.vm.sortDesc).toEqual(true);
+      expect(wrapper.vm.getItems).toHaveBeenCalledWith({
+        pageNumber: 0,
+        queryString: '',
+        sortBy: 'name',
+        sortDesc: true,
+        status: 'test',
+      });
+    });
+
+    it('should sort items by name in ascending order and update getItems query with correct parameters', () => {
+      wrapper.vm.sortingChanged({ sortBy: 'name', sortDesc: false });
+
+      expect(wrapper.vm.sortBy).toEqual('name');
+      expect(wrapper.vm.sortDesc).toEqual(false);
+      expect(wrapper.vm.getItems).toHaveBeenCalledWith({
+        pageNumber: 0,
+        queryString: '',
+        sortBy: 'name',
+        sortDesc: false,
+        status: 'test',
+      });
     });
   });
 
