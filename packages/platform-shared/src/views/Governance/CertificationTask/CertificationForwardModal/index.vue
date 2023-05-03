@@ -11,7 +11,9 @@ of the MIT license. See the LICENSE file for details. -->
       :ok-disabled="invalid"
       :ok-title="$t('governance.certificationTask.actionsModal.forwardItem')"
       :title="$t('governance.certificationTask.actionsModal.forwardItem')"
+      :static="isTesting"
       @ok="forwardItem"
+      @hidden="reset"
       cancel-variant="link"
       ok-variant="info"
       size="lg">
@@ -95,6 +97,7 @@ export default {
         { text: this.$t('governance.certificationTask.actionsModal.toUser'), value: FORWARD_TO_TYPES.user },
         { text: this.$t('governance.certificationTask.actionsModal.toRole'), value: FORWARD_TO_TYPES.role },
       ],
+      isTesting: false,
     };
   },
   methods: {
@@ -108,6 +111,11 @@ export default {
       };
       const emitter = this.bulk ? 'forward-bulk' : 'forward-item';
       this.$emit(emitter, payload);
+    },
+    reset() {
+      this.comment = '';
+      this.forwardToUser = '';
+      this.forwardToRole = '';
     },
   },
   computed: {
