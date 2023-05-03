@@ -63,7 +63,6 @@ of the MIT license. See the LICENSE file for details. -->
             class="text-muted w-100 certification-task-filter-dropdown  certification-task-filter-list"
             type="select"
             :label="$t('governance.certificationTask.user')"
-            :searchable="false"
             :options="users">
             <template #singleLabel="{ option }">
               <div
