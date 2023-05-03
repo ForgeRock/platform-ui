@@ -59,7 +59,9 @@ describe('AccessReviews', () => {
       },
     });
     expect(CertificationApi.searchCertificates).not.toHaveBeenCalled();
-    expect(CertificationApi.getCertificationItems).toHaveBeenCalledWith({ pageNumber: 0, status: 'active' });
+    expect(CertificationApi.getCertificationItems).toHaveBeenCalledWith({
+      pageNumber: 0, sortBy: 'deadline', sortDesc: false, status: 'active',
+    });
   });
 
   it('Calling getList with not search params calls getCertificationItems', () => {
@@ -79,6 +81,8 @@ describe('AccessReviews', () => {
       },
     });
     expect(CertificationApi.getCertificationItems).not.toHaveBeenCalled();
-    expect(CertificationApi.searchCertificates).toHaveBeenCalledWith('test search', { pageNumber: 0, status: 'active' });
+    expect(CertificationApi.searchCertificates).toHaveBeenCalledWith('test search', {
+      pageNumber: 0, sortBy: 'deadline', sortDesc: false, status: 'active',
+    });
   });
 });

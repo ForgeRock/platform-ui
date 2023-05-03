@@ -14,6 +14,8 @@ export default {
   data() {
     return {
       searchQuery: '',
+      sortBy: 'formattedDeadline',
+      sortDesc: false,
       statusSort: {
         param: 'active',
         type: 'active',
@@ -135,11 +137,18 @@ export default {
       this.currentPage = 1;
       this.getList();
     },
+    sortingChanged(sort) {
+      this.sortBy = sort.sortBy;
+      this.sortDesc = sort.sortDesc;
+      this.getList();
+    },
     getList() {
       this.getItems({
         status: this.statusSort.param,
         pageNumber: this.currentPage - 1,
         queryString: this.searchQuery,
+        sortBy: this.sortBy === 'formattedDeadline' ? 'deadline' : this.sortBy,
+        sortDesc: this.sortDesc,
       })
         .then(({ data }) => {
           if (this.$store.state?.certificationCount) {
