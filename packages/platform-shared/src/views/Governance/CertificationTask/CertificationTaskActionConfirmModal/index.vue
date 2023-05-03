@@ -10,7 +10,9 @@ of the MIT license. See the LICENSE file for details. -->
     cancel-variant="link"
     :ok-title="$t(`governance.certificationTask.actionsModal.${modalOptions.okLabel}`)"
     @ok="modalOptions.okFunction(confirmMessage)"
-    :title="$t(`governance.certificationTask.actionsModal.${modalOptions.title}`)">
+    :title="$t(`governance.certificationTask.actionsModal.${modalOptions.title}`)"
+    :static="isTesting"
+    @hidden="reset">
     <div class="modal-container">
       <span>{{ $t(`governance.certificationTask.actionsModal.${modalOptions.description}`) }}</span>
       <FrField
@@ -40,12 +42,18 @@ export default {
   data() {
     return {
       confirmMessage: '',
+      isTesting: false,
     };
   },
   props: {
     modalOptions: {
       type: Object,
       default: () => ({}),
+    },
+  },
+  methods: {
+    reset() {
+      this.confirmMessage = '';
     },
   },
 };

@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount } from '@vue/test-utils';
+import { mount, shallowMount } from '@vue/test-utils';
 import CertificationTaskActionConfirmModal from './index';
 
 let wrapper;
@@ -26,10 +26,49 @@ function mountComponent(options) {
   });
 }
 describe('CertificationTaskActionConfirmModal', () => {
-  describe('Component mount', () => {
-    it('CertificationTaskActionConfirmModal successfully loaded', () => {
+  describe('Component shallow mounted', () => {
+    beforeEach(() => {
       mountComponent();
+    });
+
+    it('CertificationTaskActionConfirmModal successfully loaded', () => {
       expect(wrapper.name()).toEqual('CertificationTaskActionConfirmModal');
+      expect(wrapper.vm.confirmMessage).toBe('');
+    });
+
+    it('reset method should reset the component data values', () => {
+      wrapper.vm.confirmMessage = 'test message';
+
+      wrapper.vm.reset();
+
+      expect(wrapper.vm.confirmMessage).toEqual('');
+    });
+  });
+
+  describe('component mounted', () => {
+    it('reset method should reset the component data values and confirm message textarea', () => {
+      wrapper = mount(CertificationTaskActionConfirmModal, {
+        mocks: {
+          $t: (t) => t,
+        },
+        data() {
+          return {
+            isTesting: true,
+          };
+        },
+      });
+
+      const comment = 'test message';
+      const commentTextarea = wrapper.find('textarea');
+      commentTextarea.setValue(comment);
+
+      expect(wrapper.vm.confirmMessage).toBe(comment);
+      expect(commentTextarea.element.value).toBe(comment);
+
+      wrapper.vm.reset();
+
+      expect(wrapper.vm.confirmMessage).toBe('');
+      expect(commentTextarea.element.value).toBe('');
     });
   });
 });
