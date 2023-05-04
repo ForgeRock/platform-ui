@@ -4,54 +4,88 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="mx-5 mt-5 mb-4">
-    <div class="d-flex justify-content-around">
-      <div>
-        <h5>{{ $t('common.status') }}</h5>
-        <div class="d-flex align-items-center">
-          <div class="details-chart position-relative">
-            <FrInlinePieChart
-              id="status-chart"
-              height="100"
-              :progress="progress"
+    <BRow>
+      <BCol
+        class="d-flex justify-content-center"
+        cols="6"
+        md="4"
+        lg="4">
+        <div>
+          <h5>{{ $t('common.status') }}</h5>
+          <div class="d-flex align-items-center">
+            <div class="details-chart position-relative">
+              <FrCircleProgressBar
+                id="status-chart"
+                :progress="progress"
+                :thickness="7"
+                :empty-thickness="7"
+                :empty-color="styles.brightGray"
+                :size="72">
+                <template #count="{ count }">
+                  <small class="font-weight-bold mb-0">
+                    {{ count.currentValue }}%
+                  </small>
+                </template>
+              </FrCircleProgressBar>
+            </div>
+            <div class="ml-2">
+              <span> {{ sumOfDecisions }} / {{ total }} items completed</span>
+            </div>
+          </div>
+        </div>
+      </BCol>
+      <BCol
+        class="d-flex justify-content-center"
+        cols="6"
+        md="4"
+        lg="4">
+        <div>
+          <h5>{{ $t('governance.certificationTask.decisions') }}</h5>
+          <div class="d-flex align-items-center">
+            <FrPieChart
+              v-if="chartDecisions.length"
+              id="decisions-chart"
+              hide-tooltip
+              legend-class="decisions-legend"
+              show-legend-count
+              :data="chartDecisions"
+              :height="72"
+              :radius="27"
+              :stroke-width="1"
+              :width="72"
             />
           </div>
-          <div class="ml-2">
-            <span> {{ sumOfDecisions }} / {{ total }} </span>
+        </div>
+      </BCol>
+      <BCol
+        class="d-flex justify-content-center"
+        cols="12"
+        md="4"
+        lg="4">
+        <div>
+          <h5>{{ $t('common.deadline') }}</h5>
+          <div class="mt-2">
+            <FrIcon
+              class="d-inline"
+              name="event" />
+            <span>{{ formatDate(campaignDetails.deadLine) }}</span>
           </div>
+          <BButton
+            class="my-4 p-0"
+            variant="link"
+            @click="viewDetails()">
+            {{ $t('governance.certificationTask.viewCampaignDetails') }}
+          </BButton>
         </div>
-      </div>
-      <div>
-        <h5>{{ $t('governance.certificationTask.decisions') }}</h5>
-        <div class="d-flex align-items-center">
-          <div class="details-chart position-relative">
-            <FrPieChart
-              height="100"
-              :data="chartDecisions"
-              :adapt-to-heigh="true" />
-          </div>
-        </div>
-      </div>
-      <div class="d-flex flex-column">
-        <h5>{{ $t('common.deadline') }}</h5>
-        <div class="mt-2">
-          <FrIcon
-            class="d-inline"
-            name="event" />
-          <span>{{ formatDate(campaignDetails.deadLine) }}</span>
-        </div>
-        <BButton
-          class="my-4 p-0"
-          variant="link"
-          @click="viewDetails()">
-          {{ $t('governance.certificationTask.viewCampaignDetails') }}
-        </BButton>
-      </div>
-    </div>
-    <div
+      </BCol>
+    </BRow>
+    <BCol
+      v-if="$route.params.certifier"
       class="d-flex justify-content-center"
-      v-if="$route.params.certifier">
+      cols="6"
+      md="12">
       <BMedia
-        class="align-items-center mt-5"
+        class="align-items-center mt-4"
         no-body>
         <BImg
           class="mr-2 rounded-circle"
@@ -66,7 +100,7 @@ of the MIT license. See the LICENSE file for details. -->
             v-html="$t('governance.certificationTask.defaultCertifierText', { name: `${$route.params.certifier.givenName} ${$route.params.certifier.sn}` })" />
         </div>
       </BMedia>
-    </div>
+    </BCol>
     <template v-if="isLoading">
       <FrSpinner class="py-5" />
     </template>
@@ -80,33 +114,38 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import {
   BButton,
-  BMedia,
+  BCol,
   BImg,
+  BMedia,
+  BRow,
 } from 'bootstrap-vue';
-import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import dayjs from 'dayjs';
-import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import FrInlinePieChart from '@forgerock/platform-shared/src/components/Visualization/Charts/InlinePieChart';
 import FrCertificationCampaignDetailsModal from '@forgerock/platform-shared/src/views/Governance/CertificationTask/CertificationCampaignDetailsModal';
+import FrCircleProgressBar from '@forgerock/platform-shared/src/components/CircleProgressBar';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrPieChart from '@forgerock/platform-shared/src/components/Visualization/Charts/PieChart';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import styles from '@/scss/main.scss';
 
 export default {
   name: 'CertificationTaskDetails',
   components: {
     BButton,
-    FrCertificationCampaignDetailsModal,
-    FrIcon,
-    FrInlinePieChart,
-    FrSpinner,
-    FrPieChart,
-    BMedia,
+    BCol,
     BImg,
+    BMedia,
+    BRow,
+    FrCertificationCampaignDetailsModal,
+    FrCircleProgressBar,
+    FrIcon,
+    FrPieChart,
+    FrSpinner,
   },
   data() {
     return {
       chartDecisions: [],
       isSaving: true,
+      styles,
       sumOfDecisions: 0,
       total: 0,
     };
@@ -138,12 +177,12 @@ export default {
     setChartInfo(revoked, certified) {
       this.chartDecisions = [{
         label: this.$t('governance.certificationTask.certified'),
-        color: styles.blue,
+        color: styles.green,
         value: certified,
       },
       {
         label: this.$t('governance.certificationTask.revoked'),
-        color: styles.yellow,
+        color: styles.blue,
         value: revoked,
       }];
     },
@@ -193,5 +232,11 @@ export default {
     background-color: $white;
     height: 80px;
     border-bottom: 1px solid $gray-200;
+}
+::v-deep .decisions-legend {
+  position: absolute;
+  top: 0px;
+  left: 100px;
+  width: 130px;
 }
 </style>

@@ -2688,7 +2688,7 @@
       "activeReviewsTooltip": "Total access reviews currently in-progress",
       "campaignsByStatus": "Campaigns By Status",
       "campaignsByStatusLabels": {
-        "active": "Active",
+        "in-progress": "Active",
         "staging": "Staged",
         "signed-off": "Signed Off"
       },
