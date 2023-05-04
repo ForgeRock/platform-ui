@@ -12,7 +12,8 @@ of the MIT license. See the LICENSE file for details. -->
       no-caret
       right
       toggle-class="text-decoration-none p-0"
-      variant="link">
+      variant="link"
+      :data-testid="`${testId}-actions`">
       <template #button-content>
         <FrIcon
           class="text-dark md-24"
