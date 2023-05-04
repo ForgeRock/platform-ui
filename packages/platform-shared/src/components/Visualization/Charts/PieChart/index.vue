@@ -3,34 +3,30 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div>
-    <!-- Chart -->
-    <D3PieChart
+  <div class="position-relative">
+    <div
+      data-testid="chart"
       ref="d3chart"
-      :id="id"
-      data-test-id="chart"
-      class="pie-chart m-0 mb-3"
-      :config="chartConfig"
-      :datum="data"
-      :height="height"
-      :key="componentKey"
-    />
-    <!-- List -->
-    <div class="d-flex justify-content-center">
+      :id="id" />
+    <div
+      data-testid="legend"
+      :class="[{ 'd-flex justify-content-center mt-4': !legendClass.length}, legendClass]">
       <ul
-        data-test-id="list"
-        class="data-list list-unstyled"
-      >
+        v-if="legend.length"
+        class="list-unstyled">
         <li
-          v-for="(item, index) in data"
-          :key="index"
-        >
+          v-for="item in legend"
+          :key="item.label">
           <span class="d-flex align-items-center">
-            <span
-              class="bullet rounded-pill mr-3"
-              :style="{ backgroundColor: item.color }"
-            />
-            {{ item.label }}
+            <div
+              class="rounded-pill mr-3"
+              :style="{ height: '10px', width: '24px', 'background-color': item.color }" />
+            <template v-if="showLegendCount">
+              {{ item.label }} ({{ item.value }})
+            </template>
+            <template v-else>
+              {{ item.label }}
+            </template>
           </span>
         </li>
       </ul>
@@ -39,13 +35,10 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import uuid from 'uuid';
-import { D3PieChart } from 'vue-d3-charts';
+import * as d3 from 'd3';
 
 /*
  * @description Pie Chart Component used to show data in a pie chart with percentages according the value of each item,
- * this component uses vue-d3-charts library under the hood
- * @tutorial https://saigesp.github.io/vue-d3-charts/#/piechart
  *
  * @param {Array}   data    data to be loaded in the pie chart, each item of the array has the following structure
  *                          @property {string}  label - label to be displayed on the items list
@@ -66,135 +59,176 @@ import { D3PieChart } from 'vue-d3-charts';
  */
 export default {
   name: 'PieChart',
-  components: {
-    D3PieChart,
-  },
   props: {
     data: {
-      default: () => [],
       type: Array,
-      required: true,
+      default: () => [],
     },
     height: {
-      default: '300',
-      type: String,
+      type: Number,
+      default: 250,
     },
-    adaptToHeigh: {
-      default: false,
+    hideTooltip: {
       type: Boolean,
+      deafault: false,
+    },
+    id: {
+      type: String,
+      default: 'PieChart',
+    },
+    legendClass: {
+      type: String,
+      default: '',
+    },
+    radius: {
+      type: Number,
+      default: 110,
+    },
+    showLegendCount: {
+      type: Boolean,
+      default: false,
+    },
+    strokeWidth: {
+      type: Number,
+      default: 3,
+    },
+    width: {
+      type: Number,
+      default: 250,
     },
   },
   data() {
-    const radius = this.adaptToHeigh ? {
-      inner: this.height * 0.36,
-      outter: this.height * 0.48,
-      round: this.height * 0.04,
-    } : {
-      inner: 55,
-      outter: 65,
-      padding: 0.05,
-      round: 15,
-    };
     return {
-      /*
-       * @description configuration for the pie chart, for more details see the docs
-       * @tutorial https://saigesp.github.io/vue-d3-charts/#/piechart
-       * @property  {string}  key             - Field to use as identificator, 'label' by default
-       * @property  {string}  value           - Field to compute item value, 'value' by default
-       * @property  {object}  color           - Chart's color convention, for more details see the docs
-       *                                        @tutorial https://saigesp.github.io/vue-d3-charts/#/piechart
-       * @property  {string}  color.key       - Field to use as color for each item, 'color' by default
-       * @property  {object}  radius          - Radius options convention, for more details see the docs
-       *                                        @tutorial https://saigesp.github.io/vue-d3-charts/#/piechart
-       * @property  {number}  radius.inner    - inner circle radius, 55 by default
-       * @property  {number}  radius.outter   - outter circle radius, 65 by default
-       * @property  {number}  radius.padding  - padding between slices, 0.05 by default
-       * @property  {number}  radius.round    - corner's rounded radius, 15 by default
-       */
-      chartConfig: {
-        key: 'label',
-        value: 'value',
-        color: {
-          key: 'color',
-        },
-        radius,
-      },
-      /*
-       * @description key used to force rerendering for the component on resize window, this is needed because the
-       * chart d3 library is not able to recalculate the graph by itself on window resize
-       */
-      componentKey: 0,
+      legend: [],
+      tooltip: null,
     };
-  },
-  computed: {
-    id() { return `chart_${uuid()}`; },
-  },
-  watch: {
-    data: {
-      handler() {
-        this.addTooltips();
-      },
-      deep: true,
-    },
   },
   mounted() {
-    window.addEventListener('resize', this.forceRerender);
-    this.addTooltips();
+    this.loadData();
   },
   methods: {
-    addTooltips() {
-      this.$nextTick(
-        () => {
-          if (this.$refs.d3chart?.chart) {
-            this.$refs.d3chart.chart.gcenter
-              .selectAll('.chart__slice-group')
-              .on('mouseover', ({ data }) => {
-                this.$refs.d3chart.chart.tooltip.html(() => `<div role="tooltip">
+    loadData() {
+      const chartData = {};
+      const colors = [];
+      this.legend = [];
+
+      if (this.data.length) {
+        this.data.forEach((category, index) => {
+          chartData[index] = category.value;
+          colors.push(category.color);
+          this.legend.push({
+            label: category.label,
+            color: category.color,
+            value: category.value,
+          });
+        });
+
+        this.createChart(chartData, colors);
+      }
+    },
+    createChart(chartData, colors) {
+      // set the dimensions and margins of the graph
+      const margin = 0;
+
+      // The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
+      const radius = Math.min(this.width, this.height) / 2 - margin;
+
+      d3.select(`#${this.id}`)
+        .selectAll('svg').remove();
+
+      // append the svg object to the div called 'my_dataviz'
+      const svg = d3
+        .select(`#${this.id}`)
+        .append('svg')
+        .attr('width', this.width)
+        .attr('height', this.height)
+        .attr('class', 'mx-auto d-block')
+        .append('g')
+        .attr(
+          'transform',
+          `translate(${this.width / 2},${this.height / 2})`,
+        );
+
+      // Create dummy data
+      const data = chartData;
+
+      // set the color scale
+      const color = d3
+        .scaleOrdinal()
+        .domain(Object.keys(data))
+        .range(colors);
+
+      // Compute the position of each group on the pie:
+      const pie = d3.pie().value((d) => d[1]);
+
+      // eslint-disable-next-line camelcase
+      const data_ready = pie(Object.entries(data));
+
+      if (!this.hideTooltip) {
+        this.tooltip = d3.select(`#${this.id}`)
+          .append('div')
+          .style('position', 'fixed')
+          .style('visibility', 'hidden')
+          .style('background-color', 'transparent')
+          .style('border-width', '0px')
+          .style('border-radius', '5px')
+          .style('padding', '0 0 5px 0');
+      }
+
+      // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+      svg
+        .selectAll('whatever')
+        .data(data_ready)
+        .enter()
+        .append('path')
+        .attr('class', `${this.id}-tooltip`)
+        .attr(
+          'd',
+          d3
+            .arc()
+            .innerRadius(this.radius) // This is the size of the donut hole
+            .outerRadius(radius)
+            .cornerRadius(10),
+        )
+        .attr('fill', (d) => color(d.data[0]))
+        .attr('stroke', 'white')
+        .style('stroke-width', `${this.strokeWidth}px`);
+
+      if (!this.hideTooltip) {
+        d3.selectAll(`.${this.id}-tooltip`)
+          .on('mouseover', () => this.tooltip.style('visibility', 'visible'))
+          .on('mouseout', () => this.tooltip.style('visibility', 'hidden'))
+          .on('mousemove', this.mouseMove);
+      }
+    },
+    mouseMove(event) {
+      const { width, height } = this.tooltip.node().getBoundingClientRect();
+      return this.tooltip
+        .style('top', `${event.clientY - (height + 5)}px`)
+        .style('left', `${event.clientX - (width / 2)}px`)
+        .html(() => {
+          const { index } = event.srcElement.__data__;
+          return `<div role="tooltip"">
             <div class="arrow"></div>
             <div class="tooltip-inner">
-              <div class="text-gray-400">${data.label}</div>
-              <div class="font-weight-bold">${data.value}</div>
+              <div class="text-gray-400">${this.legend[index].label}</div>
+              <div class="font-weight-bold">${this.legend[index].value}</div>
               </div>
               </div>
-              `).classed('active', true);
-              })
-              .on('mouseout', () => {
-                this.$refs.d3chart.chart.tooltip.classed('active', false);
-              })
-              .on('mousemove', () => {
-                const { width, height } = this.$refs.d3chart.chart.tooltip.node().getBoundingClientRect();
-                this.$refs.d3chart.chart.tooltip
-                  .style('position', 'fixed')
-                  .style('left', `${window.event.clientX - (width / 2)}px`)
-                  .style('top', `${window.event.clientY - (height + 5)}px`);
-              });
-          } else {
-            setTimeout(this.addTooltips, 200);
-          }
-        },
-      );
-    },
-    forceRerender() {
-      this.componentKey += 1;
+          `;
+        });
     },
   },
-
+  watch: {
+    data() {
+      this.loadData();
+    },
+  },
 };
 </script>
+
 <style lang="scss" scoped>
-.pie-chart::v-deep {
- .chart {
-    &__label--piechart {
-      display: none;
-    }
-    &__line--piechart {
-      display: none;
-    }
-  }
-  .chart__tooltip>div {
-    background: transparent !important;
-    padding: 0 0 5px 0;
-  }
+::v-deep {
   .arrow {
     position: absolute;
     display: block;
@@ -214,10 +248,5 @@ export default {
       border-style: solid;
     }
   }
-}
-
-.data-list li .bullet {
-  height: 10px;
-  width: 24px;
 }
 </style>
