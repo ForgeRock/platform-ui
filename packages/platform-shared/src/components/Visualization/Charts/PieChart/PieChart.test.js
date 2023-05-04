@@ -5,132 +5,189 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { shallowMount } from '@vue/test-utils';
+import * as d3 from 'd3';
 import PieChart from './index';
 
-describe('PieChart', () => {
-  window.event = {
-    pageY: 10,
-    pageX: 10,
-  };
+const mockData = [
+  {
+    label: 'item1',
+    value: 30,
+    color: 'red',
+  },
+  {
+    label: 'item2',
+    value: 20,
+    color: 'yellow',
+  },
+  {
+    label: 'item3',
+    value: 20,
+    color: 'yellow',
+  },
+];
 
-  const wrapper = shallowMount(PieChart, {
-    mocks: {
-      $t: () => {},
-      $refs: {
-        d3chart: {
-          chart: {
-            gcenter: {},
-            tooltip: {},
-          },
-        },
-      },
-    },
-    propsData: {
-      data: [
-        {
-          label: 'item1',
-          value: 30,
-          color: 'red',
-        },
-        {
-          label: 'item2',
-          value: 20,
-          color: 'yellow',
-        },
-        {
-          label: 'item3',
-          value: 20,
-          color: 'yellow',
-        },
-      ],
-    },
-    stubs: ['D3PieChart'],
-  });
+const mountComponent = (props) => shallowMount(PieChart, {
+  mocks: { $t: () => {} },
+  propsData: {
+    data: mockData,
+    ...props,
+  },
+});
+
+describe('PieChart', () => {
+  let wrapper;
 
   it('PieChart successfully loaded', () => {
+    wrapper = mountComponent();
     expect(wrapper.name()).toEqual('PieChart');
   });
 
-  it('chart exists and contains expected attributes', () => {
-    const chart = wrapper.find('[data-test-id="chart"]');
+  it('renders the chart div', () => {
+    wrapper = mountComponent();
+    const chart = findByTestId(wrapper, 'chart');
     expect(chart.exists()).toBe(true);
-    expect(chart.attributes('config')).toBeTruthy();
-    expect(chart.attributes('datum')).toBeTruthy();
   });
 
-  it('all items are rendered properly', () => {
-    const list = wrapper.find('[data-test-id="list"]');
-    expect(list.exists()).toBe(true);
-    const items = wrapper.findAll('li');
-    expect(items.length).toBe(3);
-    items.wrappers.forEach((item, index) => {
-      const itemSpan = item.find('span');
-      expect(itemSpan.exists()).toBe(true);
-      const bullet = itemSpan.find('.bullet');
-      expect(bullet.exists()).toBe(true);
-      expect(bullet.attributes('style')).toBe(`background-color: ${wrapper.vm.$props.data[index].color};`);
-      expect(itemSpan.text()).toBe(wrapper.vm.$props.data[index].label);
+  it('calls to create chart based on data', () => {
+    wrapper = mountComponent();
+    const createChartSpy = jest.spyOn(wrapper.vm, 'createChart');
+    wrapper.vm.loadData();
+    expect(createChartSpy).toHaveBeenCalledWith({
+      0: 30,
+      1: 20,
+      2: 20,
+    }, ['red', 'yellow', 'yellow']);
+  });
+
+  describe('legend', () => {
+    it('renders a legend', () => {
+      wrapper = mountComponent();
+      const legend = findByTestId(wrapper, 'legend');
+      expect(legend.exists()).toBe(true);
+    });
+
+    it('contains list elements for each data object', () => {
+      wrapper = mountComponent();
+      const legend = findByTestId(wrapper, 'legend');
+      const items = legend.findAll('li');
+      expect(items.length).toBe(3);
+    });
+
+    it('has correct label text for legend items', () => {
+      wrapper = mountComponent();
+      const legend = findByTestId(wrapper, 'legend');
+      const items = legend.findAll('li');
+      items.wrappers.forEach((item, index) => {
+        expect(item.text()).toBe(mockData[index].label);
+      });
+    });
+
+    it('has correct colors for legend items', () => {
+      wrapper = mountComponent();
+      const legend = findByTestId(wrapper, 'legend');
+      const items = legend.findAll('span');
+      items.wrappers.forEach((item, index) => {
+        const bullet = item.find('.rounded-pill');
+        expect(bullet.attributes('style')).toBe(`height: 10px; width: 24px; background-color: ${mockData[index].color};`);
+      });
+    });
+
+    it('displays value in legend when showLegenCount is true', () => {
+      wrapper = mountComponent({ showLegendCount: true });
+      const legend = findByTestId(wrapper, 'legend');
+      const items = legend.findAll('li');
+      items.wrappers.forEach((item, index) => {
+        expect(item.text()).toBe(`${mockData[index].label} (${mockData[index].value})`);
+      });
+    });
+
+    it('applies custom class to legend based on legendClass prop', () => {
+      wrapper = mountComponent({ legendClass: 'testClass' });
+      const legend = findByTestId(wrapper, 'legend');
+      expect(legend.attributes('class')).toBe('testClass');
     });
   });
 
-  it('adds tooltips', async () => {
-    const callbacks = {
-      mouseover: null,
-      mouseout: null,
-      mousemove: null,
-    };
-    let html = '';
-    const gcenter = {};
-    const tooltip = {};
+  describe('tooltip', () => {
+    let tooltip;
 
-    gcenter.selectAll = jest.fn().mockReturnValue(gcenter);
-    gcenter.on = jest.fn().mockImplementation((type, callback) => {
-      callbacks[type] = () => { callback({ data: { label: 'testlabel', value: 713 } }); };
-      return gcenter;
+    beforeEach(() => {
+      tooltip = {};
+      tooltip.getBoundingClientRect = jest.fn().mockReturnValue({ width: 10, height: 10 });
+      tooltip.node = jest.fn().mockReturnValue(tooltip);
+      tooltip.style = jest.fn().mockReturnValue(tooltip);
     });
 
-    tooltip.classed = jest.fn().mockReturnValue(tooltip);
-    tooltip.getBoundingClientRect = jest.fn().mockReturnValue({ width: 10, height: 10 });
-    tooltip.html = jest.fn().mockImplementation((cb) => {
-      html = cb();
-      return tooltip;
+    it('selects the tooltip', () => {
+      const selectAllSpy = jest.spyOn(d3, 'selectAll');
+      wrapper = mountComponent({ id: 'test' });
+      expect(selectAllSpy).toHaveBeenCalledWith('.test-tooltip');
     });
-    tooltip.node = jest.fn().mockReturnValue(tooltip);
-    tooltip.style = jest.fn().mockReturnValue(tooltip);
 
-    wrapper.vm.$refs.d3chart = {
-      chart: {
-        gcenter,
-        tooltip,
-      },
-    };
+    it('shows tooltip for first data object', () => {
+      wrapper = mountComponent();
+      let html = '';
+      tooltip.html = jest.fn().mockImplementation((cb) => {
+        html = cb();
+        return tooltip;
+      });
 
-    wrapper.vm.addTooltips();
-    await wrapper.vm.$nextTick();
-    expect(gcenter.selectAll).toHaveBeenCalledWith('.chart__slice-group');
-    expect(gcenter.on).toHaveBeenCalledTimes(3);
+      wrapper.vm.tooltip = tooltip;
 
-    callbacks.mouseover();
-    expect(tooltip.html).toHaveBeenCalled();
-    expect(tooltip.classed).toBeCalledWith('active', true);
-    expect(html).toEqual(expect.stringContaining('testlabel'));
-    expect(html).toEqual(expect.stringContaining('713'));
+      wrapper.vm.mouseMove({
+        clientX: 100,
+        clientY: 100,
+        srcElement: {
+          __data__: { index: 0 },
+        },
+      });
 
-    callbacks.mousemove();
-    expect(tooltip.node).toHaveBeenCalled();
-    expect(tooltip.getBoundingClientRect).toHaveBeenCalled();
-    expect(tooltip.style).toHaveBeenCalledTimes(3);
+      expect(html).toEqual(expect.stringContaining('item1'));
+      expect(html).toEqual(expect.stringContaining('30'));
+    });
 
-    callbacks.mouseout();
-    expect(tooltip.classed).toBeCalledWith('active', true);
-  });
+    it('shows tooltip for second object', () => {
+      wrapper = mountComponent();
+      let html = '';
+      tooltip.html = jest.fn().mockImplementation((cb) => {
+        html = cb();
+        return tooltip;
+      });
 
-  it('forceRerender method should increment keyComponent value', () => {
-    expect(wrapper.vm.componentKey).toBe(0);
+      wrapper.vm.tooltip = tooltip;
 
-    wrapper.vm.forceRerender();
+      wrapper.vm.mouseMove({
+        clientX: 100,
+        clientY: 100,
+        srcElement: {
+          __data__: { index: 1 },
+        },
+      });
+      expect(html).toEqual(expect.stringContaining('item2'));
+      expect(html).toEqual(expect.stringContaining('20'));
+    });
 
-    expect(wrapper.vm.componentKey).toBe(1);
+    it('shows tooltip for third data object', () => {
+      wrapper = mountComponent();
+      let html = '';
+      tooltip.html = jest.fn().mockImplementation((cb) => {
+        html = cb();
+        return tooltip;
+      });
+
+      wrapper.vm.tooltip = tooltip;
+
+      wrapper.vm.mouseMove({
+        clientX: 100,
+        clientY: 100,
+        srcElement: {
+          __data__: { index: 2 },
+        },
+      });
+      expect(html).toEqual(expect.stringContaining('item3'));
+      expect(html).toEqual(expect.stringContaining('20'));
+    });
   });
 });
