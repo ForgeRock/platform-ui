@@ -133,6 +133,10 @@ of the MIT license. See the LICENSE file for details. -->
       :selectable="isSelectable"
       ref="selectableTable"
       @row-selected="onRowSelected"
+      :no-local-sorting="true"
+      :sort-desc="sortDir === 'desc'"
+      :sort-by="sortBy"
+      @sort-changed="sortChange"
     >
       <template #cell(selector)="{ item }">
         <FrField
@@ -646,8 +650,8 @@ export default {
       currentReviewersSelectedModal: [],
       currentUserSelectedModal: {},
       enableAddComments: true,
-      sortDesc: false,
-      sortBy: 'user.givenName',
+      sortDir: 'asc',
+      sortBy: 'user',
       totalRows: 0,
       mainPageNumber: 1,
       pageSize: 10,
@@ -1003,6 +1007,12 @@ export default {
         }
       });
     },
+    sortChange({ sortBy, sortDesc }) {
+      this.sortDir = sortDesc ? 'desc' : 'asc';
+      this.sortBy = sortBy;
+      this.paginationPage = 1;
+      this.getCertificationTaskList(this.paginationPage);
+    },
     updateColumns(draggedColumnsList) {
       this.certificationListColumns = draggedColumnsList || this.tasksFields;
       if (this.campaignDetails.allowBulkCertify) {
@@ -1045,7 +1055,7 @@ export default {
     },
     getCertificationTaskList(currentPage) {
       this.isLoading = true;
-      const urlParams = this.buildUrlParams(currentPage, this.sortBy, this.sortDesc);
+      const urlParams = this.buildUrlParams(currentPage, this.sortBy, this.sortDir);
       const payload = this.buildBodyParams();
 
       // if all users line items are complete, emit an event
@@ -1165,14 +1175,14 @@ export default {
       };
       return targetFilter;
     },
-    buildUrlParams(pageNumber, sortBy, sortDesc) {
+    buildUrlParams(pageNumber, sortBy, sortDir) {
       const sortByColumn = this.getSortParam(sortBy);
       const managedResourceParams = {
         appendUserPermissions: true,
         pageSize: this.pageSize,
         pageNumber: pageNumber - 1,
         sortBy: sortByColumn,
-        sortDesc,
+        sortDir,
       };
       if (this.isAdmin) {
         managedResourceParams.isAdmin = this.isAdmin;
