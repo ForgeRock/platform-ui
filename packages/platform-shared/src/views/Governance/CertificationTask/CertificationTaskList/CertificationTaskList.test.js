@@ -236,7 +236,7 @@ describe('CertificationTaskList', () => {
     beforeEach(() => {
       wrapper.vm.currentPage = 2;
       wrapper.vm.sortBy = 'name';
-      wrapper.vm.sortDesc = false;
+      wrapper.vm.sortDir = 'asc';
       shallowMountComponent({}, {}, methods);
       CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve({ data: 'results' }));
       CertificationApi.getCertificationCountsByCampaign.mockImplementation(() => Promise.resolve({ data: 'results' }));
@@ -252,7 +252,7 @@ describe('CertificationTaskList', () => {
     });
     it('should call buildUrlParams with the required params', () => {
       wrapper.vm.getCertificationTaskList(2);
-      expect(methods.buildUrlParams).toHaveBeenCalledWith(1, 'user.givenName', false);
+      expect(methods.buildUrlParams).toHaveBeenCalledWith(1, 'user', 'asc');
     });
     it('should call getCertificationTasksListByCampaign with the required params', () => {
       wrapper.vm.getCertificationTaskList(2);
@@ -332,9 +332,9 @@ describe('CertificationTaskList', () => {
         pageSize: 10,
         pageNumber: 2,
         sortBy: 'name',
-        sortDesc: false,
+        sortDir: 'asc',
       };
-      const result = wrapper.vm.buildUrlParams(3, 'name', false);
+      const result = wrapper.vm.buildUrlParams(3, 'name', 'asc');
       expect(result).toStrictEqual(expectedValue);
     });
     it('should return the urlParams according to the params when isAdmin', async () => {
@@ -345,7 +345,7 @@ describe('CertificationTaskList', () => {
         pageSize: 10,
         pageNumber: 2,
         sortBy: 'name',
-        sortDesc: false,
+        sortDir: 'asc',
         isAdmin: true,
         actorId: '123',
 
@@ -354,7 +354,7 @@ describe('CertificationTaskList', () => {
         isAdmin: true,
         actorId: '123',
       });
-      const result = wrapper.vm.buildUrlParams(3, 'name', false);
+      const result = wrapper.vm.buildUrlParams(3, 'name', 'asc');
       expect(result).toStrictEqual(expectedValue);
     });
   });
@@ -1366,7 +1366,7 @@ describe('CertificationTaskList', () => {
     beforeEach(() => {
       wrapper.vm.currentPage = 2;
       wrapper.vm.sortBy = 'name';
-      wrapper.vm.sortDesc = false;
+      wrapper.vm.sortDir = 'asc';
       shallowMountComponent({}, {}, methods, {
         certificationGrantType: 'entitlements', showEntitlementColumn: true, showGroupBy: false, entitlementUserId: null,
       });
@@ -1744,7 +1744,7 @@ describe('CertificationTaskList', () => {
         pageNumber: 0,
         pageSize: 10,
         sortBy: 'user.givenName',
-        sortDesc: false,
+        sortDir: 'asc',
       },
       'test-id',
       {
