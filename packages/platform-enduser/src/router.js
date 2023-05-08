@@ -13,6 +13,14 @@ import store from '@/store';
 
 Vue.use(Router);
 
+const checkIfGovernanceV2RouteCanBeAccessed = (to, from, next) => {
+  if (store.state.SharedStore.governanceEnabledV2 === true) {
+    next();
+  } else {
+    next({ name: 'NotFound' });
+  }
+};
+
 /**
  * Available toolbar configuration
  * hideSideMenu - Will hide main toolbar when route accessed
@@ -96,13 +104,14 @@ const router = new Router({
       name: 'DirectReports',
       component: () => import('@/views/Directory/DirectReports'),
       meta: { authenticate: true },
-      beforeEnter: (to, from, next) => {
-        if (store.state.SharedStore.governanceEnabledV2 === true) {
-          next();
-        } else {
-          next({ name: 'NotFound' });
-        }
-      },
+      beforeEnter: (to, from, next) => checkIfGovernanceV2RouteCanBeAccessed(to, from, next),
+    },
+    {
+      path: '/my-reports/:userId/:grantType',
+      name: 'DirectReportDetail',
+      component: () => import('@/views/Directory/DirectReportDetail'),
+      meta: { authenticate: true },
+      beforeEnter: (to, from, next) => checkIfGovernanceV2RouteCanBeAccessed(to, from, next),
     },
     {
       path: '/list/:resourceType/:resourceName',
@@ -134,20 +143,23 @@ const router = new Router({
     {
       path: '/my-accounts',
       name: 'Accounts',
-      component: () => import('@/views/MyAccessReview'),
+      component: () => import('@/views/MyAccessReview/Accounts'),
       meta: { authenticate: true },
+      beforeEnter: (to, from, next) => checkIfGovernanceV2RouteCanBeAccessed(to, from, next),
     },
     {
       path: '/my-entitlements',
       name: 'Entitlements',
-      component: () => import('@/views/MyAccessReview'),
+      component: () => import('@/views/MyAccessReview/Entitlements'),
       meta: { authenticate: true },
+      beforeEnter: (to, from, next) => checkIfGovernanceV2RouteCanBeAccessed(to, from, next),
     },
     {
       path: '/my-roles',
       name: 'Roles',
-      component: () => import('@/views/MyAccessReview'),
+      component: () => import('@/views/MyAccessReview/Roles'),
       meta: { authenticate: true },
+      beforeEnter: (to, from, next) => checkIfGovernanceV2RouteCanBeAccessed(to, from, next),
     },
     {
       path: '/sharing',

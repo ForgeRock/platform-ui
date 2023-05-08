@@ -44,7 +44,6 @@ of the MIT license. See the LICENSE file for details. -->
           :subtitle="isNoResultsFirstLoad ? $t('governance.directReports.noResultsUser') : $t('governance.directReports.noResultsHelp')"
           :card="false" />
       </BCol>
-      <!-- TODO: Determine how to apply sort mock -->
       <BTable
         v-else
         data-testid="table-directreports"
@@ -57,6 +56,7 @@ of the MIT license. See the LICENSE file for details. -->
         :no-local-sorting="true"
         :sort-by.sync="sortBy"
         :sort-desc.sync="sortDesc"
+        @row-clicked="viewDirectReportDetails"
       >
         <template #cell(username)="{ item }">
           <BMedia no-body>
@@ -239,6 +239,16 @@ export default {
       if (this.totalCount === 0) {
         this.isNoResultsFirstLoad = true;
       }
+    },
+    viewDirectReportDetails(rowData) {
+      const params = {
+        grantType: 'account',
+        userId: rowData._refResourceId,
+      };
+      this.$router.push({
+        name: 'DirectReportDetail',
+        params,
+      });
     },
   },
 };
