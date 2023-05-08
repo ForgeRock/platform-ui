@@ -76,4 +76,12 @@ describe('Governance Enduser API', () => {
     expect(BaseApi.generateIgaApi).toBeCalled();
     expect(res).toEqual(data);
   });
+
+  it('should call getDirectReportUserInfo Endpoint with correct payload and url', async () => {
+    const reporteeId = 'reporteeId';
+    const res = await GovernanceEnduserApi.getDirectReportUserInfo(userId, reporteeId);
+    expect(get).toBeCalledWith('/governance/user/testid/get-direct-reports/reporteeId');
+    expect(BaseApi.generateIgaApi).toBeCalled();
+    expect(res).toEqual(data);
+  });
 });
