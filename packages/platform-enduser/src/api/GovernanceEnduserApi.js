@@ -81,8 +81,17 @@ export async function getDirectReports(userId, params) {
  * @param {object} params - parameters to filter the list of my access
  * @returns {Promise}
  */
-
 export async function getMyAccess(userId, params) {
   const queryString = encodeQueryString(params, false);
   return generateIgaApi().get(`${governanceUserUrl}/${userId}/grants${queryString}`);
+}
+
+/**
+ * Get user detail info after manager click from their dirct report row
+ * @param {String} userId - current logged-in manager id
+ * @param {String} reporteeId - id of the row that manager clicked in order to check the details
+ * @returns {Promise}
+ */
+export function getDirectReportUserInfo(userId, reporteeId) {
+  return generateIgaApi().get(`${governanceUserUrl}/${userId}/get-direct-reports/${reporteeId}`);
 }
