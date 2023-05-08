@@ -3,20 +3,21 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <BContainer class="my-5 my-access">
+  <BContainer :class="`${isDetailPage ? 'p-0' : 'my-5'} my-access`">
     <FrHeader
+      v-if="!isDetailPage"
       class="mb-4"
-      :title="$t(`pages.myAccess.${this.routerParameters.resourceName}.title`)"
-      :subtitle="$t(`pages.myAccess.${this.routerParameters.resourceName}.subtitle`)" />
+      :title="$t(`pages.myAccess.${grantType}.title`)"
+      :subtitle="$t(`pages.myAccess.${grantType}.subtitle`)" />
     <BCard no-body>
       <BCardHeader class="p-0">
         <BButtonToolbar
           v-if="!isNoResultsFirstLoad"
           class="justify-content-end p-3 border-bottom-0"
-          data-testid="search-container-my-access">
+          data-testid="my-access-review-table-search-container">
           <FrSearchInput
             v-model="searchQuery"
-            data-testid="search-my-access"
+            data-testid="search-my-access-review-table"
             :placeholder="$t('common.search')"
             @clear="clear"
             @search="loadData()" />
@@ -24,7 +25,7 @@ of the MIT license. See the LICENSE file for details. -->
       </BCardHeader>
       <div
         v-if="isLoading"
-        data-testid="spinner-my-access">
+        data-testid="my-access-review-table-spinner">
         <FrSpinner class="py-5" />
         <div class="text-center pb-4 font-bold">
           {{ $t('common.loading') }}
@@ -34,13 +35,13 @@ of the MIT license. See the LICENSE file for details. -->
         v-else-if="items.length===0"
         icon="people"
         body-class="mb-5"
-        data-testid="no-results-firstload-my-access"
-        :title="$t(`pages.myAccess.${this.routerParameters.resourceName}.noRecordFound`)"
-        :subtitle="isNoResultsFirstLoad ? $t(`pages.myAccess.${this.routerParameters.resourceName}.noResultsUser`) : $t('governance.directReports.noResultsHelp')"
+        data-testid="my-access-review-table-no-results-first-load"
+        :title="$t(`pages.myAccess.${grantType}.noRecordFound`)"
+        :subtitle="isNoResultsFirstLoad ? $t(`pages.myAccess.${grantType}.noResultsUser`) : $t('governance.directReports.noResultsHelp')"
         :card="false" />
       <BTable
         v-else
-        data-testid="table-my-access"
+        data-testid="my-access-review-table"
         @sort-changed="sortChanged"
         responsive
         :fields="fields"
@@ -132,7 +133,7 @@ of the MIT license. See the LICENSE file for details. -->
       </BTable>
       <FrPagination
         v-model="paginationPage"
-        aria-controls="table-my-access"
+        aria-controls="my-access-review-table"
         :per-page="paginationPageSize"
         :total-rows="totalCount"
         @input="pageChange"
@@ -166,7 +167,7 @@ import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/govern
 import * as GovernanceEnduserApi from '@/api/GovernanceEnduserApi';
 
 export default {
-  name: 'MyAccessReview',
+  name: 'MyAccessReviewTable',
   components: {
     BButtonToolbar,
     BCard,
@@ -188,10 +189,31 @@ export default {
     AppSharedUtilsMixin,
     NotificationMixin,
   ],
+  props: {
+    defaultSort: {
+      type: String,
+      required: true,
+    },
+    grantType: {
+      type: String,
+      required: true,
+    },
+    resourceName: {
+      type: String,
+      default: '',
+    },
+    fields: {
+      type: Array,
+      required: true,
+    },
+    userId: {
+      type: String,
+      default: '',
+    },
+  },
   data() {
     return {
       blankValueIndicator,
-      fields: [],
       isLoading: true,
       isNoResultsFirstLoad: false,
       items: [],
@@ -201,18 +223,16 @@ export default {
       sortDesc: null,
       sortBy: null,
       totalCount: 0,
+      isDetailPage: false,
     };
   },
   created() {
-    const resourceName = this.$route.name?.toLowerCase();
-    this.routerParameters = {
-      resourceName,
-    };
+    if (this.resourceName === 'directReportDetail') {
+      this.isDetailPage = true;
+    }
   },
   mounted() {
-    this.getDefaultSort();
-    this.getTableFields();
-    this.loadData(true);
+    this.setup();
   },
   methods: {
     clear() {
@@ -221,75 +241,10 @@ export default {
       this.loadData();
     },
     getDisplayName(item) {
-      if (this.routerParameters.resourceName === 'accounts') {
+      if (this.grantType === 'account' && !this.userId) {
         return item.account.userPrincipalName;
       }
       return this.getApplicationDisplayName(item.application);
-    },
-    getTableFields() {
-      switch (this.routerParameters.resourceName) {
-        case 'accounts':
-          this.fields = [
-            {
-              key: 'appName',
-              label: this.$t('common.name'),
-              sortable: true,
-            },
-            {
-              key: 'status',
-              label: this.$t('common.status'),
-              sortable: true,
-            },
-          ];
-          break;
-        case 'roles':
-          this.fields = [
-            {
-              key: 'roleName',
-              label: this.$t('common.name'),
-              sortable: true,
-            },
-            {
-              key: 'timeConstraint',
-              label: this.$t('pages.myAccess.timeConstraint'),
-            },
-          ];
-          break;
-        case 'entitlements':
-          this.fields = [
-            {
-              key: 'appName',
-              label: this.$t('common.application'),
-              sortable: true,
-            },
-            {
-              key: 'entitlementName',
-              label: this.$t('common.name'),
-              sortable: true,
-            },
-            {
-              key: 'accountName',
-              label: this.$t('pages.myAccess.accountName'),
-              sortable: true,
-            },
-          ];
-          break;
-        default:
-          break;
-      }
-    },
-    getDefaultSort() {
-      switch (this.routerParameters.resourceName) {
-        case 'accounts':
-        case 'entitlements':
-          this.sortBy = 'application.name';
-          break;
-        case 'roles':
-          this.sortBy = 'role.name';
-          break;
-        default:
-          break;
-      }
     },
     /**
      * Loads a list for MyAccess (accounts/entitlements/roles) based on the current path
@@ -297,15 +252,18 @@ export default {
      * @param {Boolean} isInit - Parameter check whether the component is inital rendering, passed from loadData()
      */
     getMyAccess(params, isInit = false) {
-      params.grantType = this.routerParameters.resourceName.slice(0, -1);
-      GovernanceEnduserApi.getMyAccess(this.$store.state.UserStore.userId, params).then(({ data }) => {
+      params.grantType = this.grantType;
+      const userId = this.userId || this.$store.state.UserStore.userId;
+      GovernanceEnduserApi.getMyAccess(userId, params).then(({ data }) => {
         this.items = data.result;
         this.totalCount = data.totalCount;
-        if (isInit && this.totalCount === 0) {
+        if (isInit && !this.totalCount) {
           this.isNoResultsFirstLoad = true;
+        } else {
+          this.isNoResultsFirstLoad = false;
         }
       }).catch((err) => {
-        this.showErrorMessage(err, this.$t(`pages.myAccess.${this.routerParameters.resourceName}.errorGettingData`));
+        this.showErrorMessage(err, this.$t(`pages.myAccess.${this.grantType}.errorGettingData`));
       }).finally(() => {
         this.isLoading = false;
       });
@@ -334,6 +292,10 @@ export default {
     pageSizeChange(pageSize) {
       this.paginationPageSize = pageSize;
       this.loadData();
+    },
+    setup() {
+      this.sortBy = this.defaultSort;
+      this.loadData(true);
     },
     sortChanged(event) {
       const { sortBy } = event;

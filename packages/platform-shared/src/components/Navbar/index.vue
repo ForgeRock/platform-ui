@@ -45,6 +45,7 @@ of the MIT license. See the LICENSE file for details. -->
           @click="$emit('clicked')">
           <RouterLink
             :aria-label="$t('common.breadcrumb')"
+            active-class=""
             class="fr-back-link overflow-hidden p-1 pl-4 pl-lg-0 mt-1"
             role="navigation"
             v-show="getBreadcrumbRoute().length > 0"

@@ -1,9 +1,8 @@
 /**
- * Copyright 2021-2022 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 import {
@@ -56,6 +55,9 @@ describe('DirectReports Component', () => {
   ];
 
   let wrapper;
+  const mockRouter = {
+    push: jest.fn(),
+  };
   beforeEach(() => {
     jest.clearAllMocks();
     GovernanceEnduserApi.getDirectReports = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [] } }));
@@ -63,6 +65,7 @@ describe('DirectReports Component', () => {
     wrapper = mount(DirectReports, {
       mocks: {
         $t: (t) => t,
+        $router: mockRouter,
         $store: {
           state: {
             UserStore: {
@@ -165,6 +168,7 @@ describe('DirectReports Component', () => {
       pageNumber: 1, pageSize: 10, sortBy: 'userName', sortDir: 'asc', queryString: 'test',
     });
   });
+
   it('Sets empty state on inability to load users', async () => {
     GovernanceEnduserApi.getDirectReports = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [], totalCount: 0 } }));
     await wrapper.vm.loadData();
@@ -173,5 +177,47 @@ describe('DirectReports Component', () => {
     expect(noResultsOnFirstLoadDirectReports.exists()).toBeTruthy();
     const noResultsOnFirstLoadSearchInput = findByTestId(wrapper, 'search-container-directreports');
     expect(noResultsOnFirstLoadSearchInput.exists()).toBeFalsy();
+  });
+
+  it('should calls router push to DirectReportDetail on row click', () => {
+    const task = {
+      _id: 'id',
+      _rev: 'test',
+      mail: 'test@forgerock.com',
+      profileImage: null,
+      givenName: 'test',
+      accountStatus: 'active',
+      sn: 'test',
+      userName: 'test@forgerock.com',
+      _refResourceCollection: 'managed/alpha_user',
+      _refResourceId: 'id',
+    };
+    wrapper.vm.viewDirectReportDetails(task);
+    expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
+      name: 'DirectReportDetail',
+      params: {
+        grantType: 'account',
+        userId: 'id',
+      },
+    });
+  });
+
+  it('should have a loading spinner & a table', async () => {
+    await wrapper.setData({
+      isLoading: false,
+      items: mockResultItems,
+    });
+    const directReportsTable = findByTestId(wrapper, 'table-directreports');
+    expect(directReportsTable.exists()).toBeTruthy();
+    expect(directReportsTable.findAll('tr').at(1).text()).toContain(mockResultItems[0].userName);
+    directReportsTable.findAll('tr').at(1).trigger('click');
+    await wrapper.vm.$nextTick();
+    expect(mockRouter.push).toHaveBeenCalledWith({
+      name: 'DirectReportDetail',
+      params: {
+        grantType: 'account',
+        userId: 'aa75d444-379e-491c-8971-f1b85e533c56',
+      },
+    });
   });
 });
