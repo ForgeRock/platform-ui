@@ -830,6 +830,7 @@
     "access": {
       "activity": {
         "header": "Activity",
+        "ipAddress": "IP Address",
         "riskScore": "Risk Score",
         "eventTime": "Event Time",
         "time": "Time",
@@ -873,6 +874,7 @@
         "is_automated_user_agent": "Automated User Agent",
         "is_brute_force": "Brute Force",
         "is_credential_stuffing": "Credential Stuffing",
+        "is_distributed_attack": "Distributed Attack",
         "is_impossible_travel": "Impossible Travel",
         "is_ip_blocked": "IP Blocklist",
         "is_suspicious_ip": "Suspicious IP",
