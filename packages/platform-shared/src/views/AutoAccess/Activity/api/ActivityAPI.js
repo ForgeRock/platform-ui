@@ -48,7 +48,7 @@ export const causeMap = {
 export const apiToInternalEvent = (data) => {
   const { predictionResult } = data._source;
   const {
-    userId, eventId, timestamp, geoData, dayparting, weekday, browserData,
+    ipAddress, userId, eventId, timestamp, geoData, dayparting, weekday, browserData,
   } = predictionResult.features;
   const { raw_event_data: rawEventData, risk_score_data: riskScoreData } = predictionResult;
   const { heuristic_agg_result: heuristics } = riskScoreData;
@@ -87,6 +87,7 @@ export const apiToInternalEvent = (data) => {
     geoData,
     heuristics: heuristics ? heuristics.raw_results : [],
     id: eventId,
+    ipAddress,
     os,
     osVersion,
     raw: data._source,
