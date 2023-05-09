@@ -216,7 +216,13 @@ export default {
     },
     checkInProgress() {
       getInProgressTasksByCampaign(this.campaignId, this.isAdmin).then(({ data }) => {
-        this.hideSignOff = !data.result.length;
+        // verifies if the user has at least one sign-off permission for line items
+        const atLeastOneSignoffPermission = (item) => {
+          const reviewer = item.decision.certification.actors.find((actor) => actor.id === this.actorId);
+          return reviewer?.permissions?.signoff;
+        };
+        const hasSignoffPermission = data.result.some(atLeastOneSignoffPermission);
+        this.hideSignOff = !data.result.length || !hasSignoffPermission;
       });
     },
     signOff() {
