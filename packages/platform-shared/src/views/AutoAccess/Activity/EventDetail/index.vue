@@ -114,6 +114,16 @@ of the MIT license. See the LICENSE file for details. -->
             </div>
           </div>
         </div>
+        <div class="d-flex w-100 mb-5">
+          <div>
+            <div class="text-muted mb-2">
+              {{ $t("autoAccess.access.activity.ipAddress") }}
+            </div>
+            <div class="mt-1 text-dark">
+              {{ data.ipAddress }}
+            </div>
+          </div>
+        </div>
       </div>
       <div class="col-4 pr-0 d-flex flex-column">
         <div class="border p-2">
