@@ -25,11 +25,13 @@ of the MIT license. See the LICENSE file for details. -->
       class="my-2"
       :reasons="explainability" />
     <div>
-      <span>
-        {{ cityCountry }}
-      </span>
-      <span class="mx-1">
-        &middot;
+      <span v-if="cityCountry.length > 0">
+        <span>
+          {{ cityCountry }}
+        </span>
+        <span class="mx-1">
+          &middot;
+        </span>
       </span>
       <span>
         {{ os }}
@@ -68,8 +70,12 @@ export default {
   },
   computed: {
     cityCountry() {
-      const { city, country } = this.eventItemData.geoData;
-      return `${city}, ${country}`;
+      try {
+        const { city, country } = this.eventItemData?.geoData;
+        return `${city}, ${country}`;
+      } catch {
+        return '';
+      }
     },
     explainability() {
       const { heuristicReasons, clusteringReasons, uebaReasons } = this.eventItemData;

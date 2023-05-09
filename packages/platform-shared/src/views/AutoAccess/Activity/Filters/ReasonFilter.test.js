@@ -49,6 +49,10 @@ describe('Reason Filter', () => {
       value: ['is_credential_stuffing'],
     },
     {
+      text: 'Distributed Attack',
+      value: ['is_distributed_attack'],
+    },
+    {
       text: 'Impossible Travel',
       value: ['is_impossible_travel'],
     },
