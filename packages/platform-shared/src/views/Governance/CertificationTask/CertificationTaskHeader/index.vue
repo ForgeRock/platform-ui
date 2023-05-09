@@ -39,6 +39,7 @@ of the MIT license. See the LICENSE file for details. -->
           class="media-body mr-3"
           v-html="$t('governance.certificationTask.isSaving')" />
         <BButton
+          data-testid="signoff-button"
           variant="primary"
           :disabled="disableSignoff"
           @click="$emit('sign-off')">
