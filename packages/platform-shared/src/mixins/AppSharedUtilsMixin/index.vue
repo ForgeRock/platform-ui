@@ -53,7 +53,7 @@ export default {
       return application.name;
     },
     getApplicationLogo(application) {
-      if (application.logoUri) return application.logoUri;
+      if (application.icon) return application.icon;
       const imagePath = application.templateName
         ? logoMap[application.templateName]
         : '';
