@@ -10,6 +10,7 @@ export const CampaignStates = Object.freeze({
   CANCELLED: 'cancelled',
   CLOSED: 'closed',
   COMPLETE: 'complete',
+  SIGNED_OFF: 'signed-off',
   CREATING: 'creating',
   EXPIRED: 'expired',
   EXPIRING: 'expiring',
