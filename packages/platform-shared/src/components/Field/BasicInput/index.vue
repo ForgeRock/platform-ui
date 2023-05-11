@@ -3,119 +3,126 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <FrInputLayout
-    :id="id"
-    :name="name"
-    :description="description"
-    :errors="errors"
-    :floating-label="floatingLabel"
-    :is-html="isHtml"
-    :label="label"
-    :validation="validation"
-    :validation-immediate="validationImmediate">
-    <template v-slot="{ labelHeight }">
-      <!--
+  <ValidationObserver
+    slim
+    ref="basic-input"
+    v-slot="validationObserver">
+    <FrInputLayout
+      :id="id"
+      :name="name"
+      :description="description"
+      :errors="errors"
+      :floating-label="floatingLabel"
+      :is-html="isHtml"
+      :label="label"
+      :validation="validation"
+      :validation-immediate="validationImmediate">
+      <template v-slot="{ labelHeight }">
+        <!--
         slot scoped variable labelHeight is used to change the height of the input as follows:
         - the label height is calculated as labelHeight + 2px (border of label)
         - padding top is calculated as labelHeight - 27px (size of label text with floating label)
       -->
-      <input
-        v-if="fieldType === 'number'"
-        :value="inputValue"
-        ref="input"
-        type="text"
-        inputmode="numeric"
-        pattern="[0-9]*"
-        :class="[
-          'form-control',
-          {
-            'polyfill-placeholder': floatLabels,
-            'is-invalid': errorMessages && errorMessages.length,
-            'text-truncate' : copy,
-          }
-        ]"
-        :data-vv-as="label"
-        :disabled="disabled"
-        :id="id"
-        :name="name"
-        :min="$attrs.min"
-        :placeholder="floatingLabel ? label : placeholder"
-        :readonly="readonly"
-        :style="labelHeight && {height: `${labelHeight + 2}px`, 'padding-top': `${labelHeight - 27}px`}"
-        @input="event => inputValue = removeNonNumericChars(event)"
-        @animationstart="floatingLabel && animationStart"
-        @blur="$emit('blur', $event)"
-        :data-testid="`input-${testid}`">
-      <input
-        v-else
-        v-model="inputValue"
-        ref="input"
-        :class="[
-          'form-control',
-          {
-            'polyfill-placeholder': floatLabels,
-            'is-invalid': errorMessages && errorMessages.length,
-            'text-truncate' : copy,
-          }
-        ]"
-        :data-vv-as="label"
-        :disabled="disabled"
-        :id="id"
-        :name="name"
-        :placeholder="floatingLabel ? getTranslation(label) : placeholder"
-        :readonly="readonly"
-        :type="fieldType"
-        :autocomplete="$attrs.autocomplete"
-        :style="labelHeight && {height: `${labelHeight + 2}px`, 'padding-top': `${labelHeight - 27}px`}"
-        @blur="$emit('blur', $event)"
-        @input="evt=>inputValue=evt.target.value"
-        @animationstart="floatingLabel && animationStart"
-        :data-testid="`input-${testid}`">
-    </template>
-    <template #defaultButtons>
-      <BInputGroupAppend
-        class="fr-hide-input"
-        v-if="type === 'password'">
-        <BButton
-          @click="revealText"
-          :class="[{'disabled': disabled}]"
-          name="revealButton"
-          :aria-label="showPassword ? $t('common.hidePassword') : $t('common.showPassword')"
-          @keyup.enter="$emit('enter')"
-          :data-testid="`btn-show-password-${testid}`">
-          <FrIcon
-            :name="showPassword ? 'visibility_off' : 'visibility'"
-          />
-        </BButton>
-      </BInputGroupAppend>
-      <BInputGroupAppend v-if="copy">
-        <button
-          :id="`copyButton-${value}`"
-          :data-testid="`btn-copy-${testid}`"
-          class="btn btn-outline-secondary"
-          name="copyButton"
-          @click.prevent="copyValueToClipboard(value)">
-          <FrIcon
-            name="copy"
-          />
-        </button>
-        <BTooltip
-          :target="`copyButton-${value}`"
-          placement="top"
-          triggers="hover"
-          :title="$t('common.copy')" />
-      </BInputGroupAppend>
-    </template>
+        <input
+          v-if="fieldType === 'number'"
+          :value="inputValue"
+          ref="input"
+          type="text"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          :class="[
+            'form-control',
+            {
+              'polyfill-placeholder': floatLabels,
+              'is-invalid': errorMessages && errorMessages.length,
+              'text-truncate' : copy,
+            }
+          ]"
+          :data-vv-as="label"
+          :disabled="disabled"
+          :id="id"
+          :name="name"
+          :min="$attrs.min"
+          :placeholder="floatingLabel ? label : placeholder"
+          :readonly="readonly"
+          :style="labelHeight && {height: `${labelHeight + 2}px`, 'padding-top': `${labelHeight - 27}px`}"
+          @input="event => inputValue = removeNonNumericChars(event)"
+          :aria-describedby="getAriaDescribedBy(validationObserver)"
+          @animationstart="floatingLabel && animationStart"
+          @blur="$emit('blur', $event)"
+          :data-testid="`input-${testid}`">
+        <input
+          v-else
+          v-model="inputValue"
+          ref="input"
+          :class="[
+            'form-control',
+            {
+              'polyfill-placeholder': floatLabels,
+              'is-invalid': errorMessages && errorMessages.length,
+              'text-truncate' : copy,
+            }
+          ]"
+          :data-vv-as="label"
+          :disabled="disabled"
+          :id="id"
+          :name="name"
+          :placeholder="floatingLabel ? getTranslation(label) : placeholder"
+          :readonly="readonly"
+          :type="fieldType"
+          :autocomplete="$attrs.autocomplete"
+          :style="labelHeight && {height: `${labelHeight + 2}px`, 'padding-top': `${labelHeight - 27}px`}"
+          :aria-describedby="getAriaDescribedBy(validationObserver)"
+          @blur="$emit('blur', $event)"
+          @input="evt=>inputValue=evt.target.value"
+          @animationstart="floatingLabel && animationStart"
+          :data-testid="`input-${testid}`">
+      </template>
+      <template #defaultButtons>
+        <BInputGroupAppend
+          class="fr-hide-input"
+          v-if="type === 'password'">
+          <BButton
+            @click="revealText"
+            :class="[{'disabled': disabled}]"
+            name="revealButton"
+            :aria-label="showPassword ? $t('common.hidePassword') : $t('common.showPassword')"
+            @keyup.enter="$emit('enter')"
+            :data-testid="`btn-show-password-${testid}`">
+            <FrIcon
+              :name="showPassword ? 'visibility_off' : 'visibility'"
+            />
+          </BButton>
+        </BInputGroupAppend>
+        <BInputGroupAppend v-if="copy">
+          <button
+            :id="`copyButton-${value}`"
+            :data-testid="`btn-copy-${testid}`"
+            class="btn btn-outline-secondary"
+            name="copyButton"
+            @click.prevent="copyValueToClipboard(value)">
+            <FrIcon
+              name="copy"
+            />
+          </button>
+          <BTooltip
+            :target="`copyButton-${value}`"
+            placement="top"
+            triggers="hover"
+            :title="$t('common.copy')" />
+        </BInputGroupAppend>
+      </template>
 
-    <template
-      v-for="(key, slotName) in $scopedSlots"
-      v-slot:[slotName]="slotData">
-      <!-- @slot passthrough slot -->
-      <slot
-        :name="slotName"
-        v-bind="slotData" />
-    </template>
-  </FrInputLayout>
+      <template
+        v-for="(key, slotName) in $scopedSlots"
+        v-slot:[slotName]="slotData">
+        <!-- @slot passthrough slot -->
+        <slot
+          :name="slotName"
+          v-bind="slotData" />
+      </template>
+    </FrInputLayout>
+  </ValidationObserver>
 </template>
 
 <script>
@@ -129,9 +136,10 @@ import * as clipboard from 'clipboard-polyfill/text';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import { ValidationObserver } from 'vee-validate';
+import { createAriaDescribedByList } from '@forgerock/platform-shared/src/utils/accessibilityUtils';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
-
 /**
  * Input with a floating label in the center, this will move when a user types into the input (example can be seen on default login page).
  *
@@ -151,6 +159,7 @@ export default {
     BTooltip,
     FrIcon,
     FrInputLayout,
+    ValidationObserver,
   },
   props: {
     /**
@@ -251,6 +260,17 @@ export default {
         return toNumber(numericString);
       }
       return newVal;
+    },
+    /**
+     * If the field is invalid, we return a string list of error ids which this field is described by
+     */
+    getAriaDescribedBy({ errors, invalid }) {
+      if (!errors) return false;
+
+      const errorList = errors[this.name];
+      if (!invalid || !errorList) return false;
+
+      return createAriaDescribedByList(this.name, errorList);
     },
   },
 };
