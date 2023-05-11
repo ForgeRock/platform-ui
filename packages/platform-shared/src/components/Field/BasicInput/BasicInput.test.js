@@ -9,17 +9,22 @@
 
 import { mount } from '@vue/test-utils';
 import * as clipboard from 'clipboard-polyfill/text';
+import flushPromises from 'flush-promises';
+import { extend } from 'vee-validate';
+import { required } from 'vee-validate/dist/rules.umd';
 import BasicInput from './index';
 import i18n from '@/i18n';
 import { findByTestId } from '../../../utils/testHelpers';
 
+const defaultProps = {
+  name: 'stub-name',
+  testid: 'stub-testid',
+  autofocus: false,
+  type: 'test',
+};
+
 describe('BasicInput', () => {
-  const defaultProps = {
-    name: '',
-    autofocus: false,
-    type: 'test',
-    testid: 'stub-testid',
-  };
+  extend('required', { ...required });
 
   function setup(props) {
     return mount(BasicInput, {
@@ -152,6 +157,26 @@ describe('BasicInput', () => {
 
         const input = findByTestId(wrapper, 'input-stub-testid');
         expect(input.attributes('disabled')).toBeTruthy();
+      });
+
+      describe('when validation errors', () => {
+        it('should add aria-describedby', async () => {
+          jest.useFakeTimers();
+          const wrapper = setup({ validation: 'required' });
+
+          const input = findByTestId(wrapper, 'input-stub-testid');
+          await input.setValue('');
+
+          // Note: this is due to how often the ValidationObserver is computed, see: https://vee-validate.logaretm.com/v3/advanced/testing.html#testing-validationobserver-debounced-state
+          await flushPromises();
+          jest.advanceTimersByTime(50);
+          const error = findByTestId(wrapper, 'stub-name-validation-error-0');
+
+          expect(input.attributes('aria-describedby')).toBe('stub-name0-error');
+          expect(error.text()).toBe('stub-name is not valid.');
+
+          jest.useRealTimers();
+        });
       });
     });
 
