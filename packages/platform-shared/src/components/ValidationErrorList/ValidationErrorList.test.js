@@ -1,37 +1,49 @@
 /**
- * Copyright (c) 2019-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { noop } from 'lodash';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
+import { findByRole, findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import ValidationError from './index';
+import i18n from '@/i18n';
 
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
-
-describe('ValidationError.vue', () => {
-  let wrapper;
-  beforeEach(() => {
-    wrapper = shallowMount(ValidationError, {
-      mocks: {
-        $t: () => {},
-      },
+describe('ValidationErrorList', () => {
+  function setup(props) {
+    return mount(ValidationError, {
+      i18n,
       propsData: {
-        localVue,
-        validatorErrors: {
-          has: noop,
-          first: noop,
-        },
-        fieldName: 'test',
+        fieldName: 'stub-name',
+        ...props,
       },
+    });
+  }
+
+  describe('given no errors', () => {
+    it('should not display errors', () => {
+      const wrapper = setup();
+      const errorWrapper = findByRole(wrapper, 'alert');
+      const firstErrorParagraph = findByTestId(errorWrapper, 'stub-name-validation-error-0');
+
+      expect(firstErrorParagraph.exists()).toBeFalsy();
     });
   });
 
-  it('Validation Error component loaded', () => {
-    expect(wrapper.name()).toEqual('ValidationErrorList');
+  describe('given multiple errors', () => {
+    // Note: id is required for accessibility. To enable inputs to reference this with aria-describedby
+    it('should all have error id', () => {
+      const wrapper = setup({ validatorErrors: ['first error', 'second error'] });
+
+      const errorWrapper = findByRole(wrapper, 'alert');
+      const firstErrorParagraph = findByTestId(errorWrapper, 'stub-name-validation-error-0');
+      expect(firstErrorParagraph.attributes('id')).toBe('stub-name0-error');
+      expect(firstErrorParagraph.text()).toBe('first error');
+
+      const secondErrorParagraph = findByTestId(errorWrapper, 'stub-name-validation-error-1');
+      expect(secondErrorParagraph.attributes('id')).toBe('stub-name1-error');
+      expect(secondErrorParagraph.text()).toBe('second error');
+    });
   });
 });
