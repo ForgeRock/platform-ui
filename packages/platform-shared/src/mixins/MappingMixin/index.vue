@@ -26,16 +26,28 @@ export default {
         });
       });
     },
-    getTemplateMappings(appTemplate, connectorId, authoritative, configManagedObjects) {
+    getTemplateMappings(appTemplate, connectorId, authoritative, configManagedObjects, connectorObjTypes) {
       const mappings = [];
-      if (!appTemplate.objectTypes) return mappings;
+      if (!appTemplate.objectTypes) {
+        // If there are no pre-defined object types, set up empty mappings for the user object type if we find
+        // an __ACCOUNT__ type returned from the connector. This allows the recon tab to show by default for
+        // scripted connectors
+        if (connectorObjTypes?.__ACCOUNT__) {
+          mappings.push({
+            types: { outbound: !authoritative, inbound: true },
+            properties: { outbound: null, inbound: null },
+            connectorId,
+            objectType: '__ACCOUNT__',
+            managedResource: this.getManagedResourceName('user', configManagedObjects),
+          });
+        }
+        // Otherwise, return an empty mappings array
+        return mappings;
+      }
 
       appTemplate.objectTypes.forEach((objectType) => {
         if (!objectType.mappings) return;
 
-        const resourceName = objectType.managedResource || 'user';
-
-        const managedResource = configManagedObjects.find((object) => (!this.$store.state.isFraas || object.name.startsWith(this.$store.state.realm)) && object.name.endsWith(resourceName.toLowerCase())).name;
         const outboundProps = has(objectType.mappings, 'provisioning.properties') && !authoritative
           ? this.parseProperties(objectType.mappings.provisioning.properties)
           : null;
@@ -47,10 +59,15 @@ export default {
           properties: { outbound: outboundProps, inbound: inboundProps },
           connectorId,
           objectType: objectType.name,
-          managedResource,
+          managedResource: this.getManagedResourceName(objectType.managedResource, configManagedObjects),
         });
       });
       return mappings;
+    },
+    // Find the correct managed resource name whether in cloud or forgeops
+    getManagedResourceName(objManagedResource, configManagedObjects) {
+      const resourceName = objManagedResource || 'user';
+      return configManagedObjects.find((object) => (!this.$store.state.isFraas || object.name.startsWith(this.$store.state.realm)) && object.name.endsWith(resourceName.toLowerCase())).name;
     },
     parseProperties(templateProperties) {
       const properties = [];
