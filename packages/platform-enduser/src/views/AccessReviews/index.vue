@@ -111,22 +111,6 @@ of the MIT license. See the LICENSE file for details. -->
               </div>
             </BPopover>
           </template>
-          <template #cell(edit)="{ item }">
-            <FrActionsCell
-              :edit-option="false"
-              :delete-option="false"
-              :divider="false"
-            >
-              <template #custom-top-actions>
-                <BDropdownItem @click="changeSelectedReview(item)">
-                  <FrIcon
-                    class="mr-2"
-                    name="redo" />
-                  {{ $t('common.forward') }}
-                </BDropdownItem>
-              </template>
-            </FrActionsCell>
-          </template>
         </BTable>
         <FrNoData
           v-else
@@ -143,10 +127,6 @@ of the MIT license. See the LICENSE file for details. -->
           :total-rows="totalRows"
           @input="()=> getList()" />
       </BCard>
-      <FrForwardReviewModal
-        :cert-id="selectedCertId"
-        @forward="forward"
-      />
     </div>
   </BContainer>
 </template>
@@ -171,15 +151,12 @@ import {
   forwardCertification,
 } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
 import FrCircleProgressBar from '@forgerock/platform-shared/src/components/CircleProgressBar';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
-import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 // import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import CertificationMixin from '@forgerock/platform-shared/src/mixins/Governance/Certification';
-import FrForwardReviewModal from '@forgerock/platform-shared/src/components/governance/ForwardReviewModal';
 import styles from '@/scss/main.scss';
 
 export default {
@@ -195,11 +172,8 @@ export default {
     BPagination,
     BPopover,
     BTable,
-    FrActionsCell,
     FrCircleProgressBar,
-    FrForwardReviewModal,
     FrHeader,
-    FrIcon,
     FrNoData,
     // FrSearchInput,
     FrSpinner,
@@ -218,7 +192,6 @@ export default {
         },
         {
           key: 'formattedDeadline',
-          class: 'w-140px',
           label: this.$t('common.deadline'),
           sortable: true,
         },
@@ -231,11 +204,6 @@ export default {
           key: 'progress',
           class: 'w-140px',
           label: this.$t('common.progress'),
-        },
-        {
-          key: 'edit',
-          class: 'w-96px',
-          label: '',
         }],
       styles,
     };
@@ -280,10 +248,6 @@ export default {
       return actualProgress >= 50
         ? Math.floor(actualProgress)
         : Math.ceil(actualProgress);
-    },
-    changeSelectedReview(item) {
-      this.$root.$emit('bv::show::modal', 'forward-review-modal');
-      this.selectedCertId = item?.campaignId || item?._id;
     },
     /**
      * @param {Object} data data of the certification to forward
