@@ -202,7 +202,7 @@ of the MIT license. See the LICENSE file for details. -->
             variant="link"
             data-testid="entitlement-cell"
             @click.stop="openEntitlementModal(item)">
-            {{ item.entitlement.__NAME__ }}
+            {{ getResourceDisplayName(item, '/entitlement') }}
           </BButton>
         </div>
       </template>
@@ -213,7 +213,7 @@ of the MIT license. See the LICENSE file for details. -->
             data-testid="account-cell"
             variant="link"
             @click.stop="openAccountModal(item)">
-            {{ item.account.__NAME__ || item.account.mailNickname }}
+            {{ governanceEnabledV2 ? getResourceDisplayName(item, '/account') : (item.account.__NAME__ || item.account.mailNickname) }}
           </BButton>
         </div>
       </template>
@@ -687,6 +687,7 @@ export default {
       bulkForward: false,
       tasksFieldsToSort: [],
       currentEntitlementSelected: null,
+      governanceEnabledV2: this.$store.state.SharedStore.governanceEnabledV2,
     };
   },
   computed: {
@@ -1464,6 +1465,9 @@ export default {
       } else {
         this.$root.$emit('bv::hide::modal', `${modalName}AccountModal`);
       }
+    },
+    getResourceDisplayName(item, resource) {
+      return item.descriptor?.idx?.[resource]?.displayName;
     },
   },
   mounted() {
