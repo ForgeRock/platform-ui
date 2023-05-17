@@ -136,7 +136,8 @@ of the MIT license. See the LICENSE file for details. -->
               :title="getTranslation(relationshipProperty.title)"
               :key="`${relationshipProperty.propName}_tab`">
               <FrRelationshipArray
-                :parent-resource="`${resourceType}/${resourceName}`"
+                :additional-query-filter="relationshipProperty.key === 'assignments' ? assignmentsQueryFilter : ''"
+                :parent-resource="relationshipProperty.key === 'assignments' ? assignmentsParentResource : `${resourceType}/${resourceName}`"
                 :parent-id="id"
                 :relationship-array-property="relationshipProperty"
                 :revision="revision"
@@ -284,6 +285,7 @@ export default {
   },
   data() {
     return {
+      assignmentsQueryFilter: '!(/type eq "__ENTITLEMENT__") and !(/type eq "__RESOURCE__") and !(/type eq "__OVERRIDE__")',
       resourceTitle: '',
       resourceName: this.$route.params.resourceName,
       resourceType: this.$route.params.resourceType,
@@ -697,6 +699,9 @@ export default {
     },
   },
   computed: {
+    assignmentsParentResource() {
+      return `${this.resourceType}/${this.resourceName}/${this.id}/${this.viewableRelationshipArrayProperties.assignments?.propName}`;
+    },
     secondaryTitle() {
       let tempDisplayName = `${this.resourceType} - ${this.resourceName}`;
 
