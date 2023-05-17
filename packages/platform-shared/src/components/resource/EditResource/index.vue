@@ -138,6 +138,7 @@ of the MIT license. See the LICENSE file for details. -->
               <FrRelationshipArray
                 :additional-query-filter="relationshipProperty.key === 'assignments' ? assignmentsQueryFilter : ''"
                 :parent-resource="relationshipProperty.key === 'assignments' ? assignmentsParentResource : `${resourceType}/${resourceName}`"
+                :parent-resource-override="relationshipProperty.key === 'assignments' ? `${resourceType}/${resourceName}` : ''"
                 :parent-id="id"
                 :relationship-array-property="relationshipProperty"
                 :revision="revision"
