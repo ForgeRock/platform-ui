@@ -216,4 +216,70 @@ describe('MyAccessReviewTable', () => {
       expect(noData.exists()).toBeTruthy();
     });
   });
+
+  describe('method getResourceDisplayName should return correct displayName', () => {
+    it('item with descriptor should return property displayName value', () => {
+      const item = {
+        descriptor: {
+          idx: {
+            '/account': {
+              displayName: 'Account name',
+            },
+          },
+        },
+      };
+
+      const resourceDisplayName = wrapper.vm.getResourceDisplayName(item, '/account');
+
+      expect(resourceDisplayName).toBe('Account name');
+    });
+
+    it('item without displayName property should return undefined', () => {
+      const item = {
+        descriptor: {
+          idx: {
+            '/account': {},
+          },
+        },
+      };
+
+      const resourceDisplayName = wrapper.vm.getResourceDisplayName(item, '/account');
+
+      expect(resourceDisplayName).toBeUndefined();
+    });
+
+    it('item without resource property should return undefined', () => {
+      const item = {
+        descriptor: {
+          idx: {
+            '/account': {
+              displayName: 'Account name',
+            },
+          },
+        },
+      };
+
+      const resourceDisplayName = wrapper.vm.getResourceDisplayName(item, '/entitlement');
+
+      expect(resourceDisplayName).toBeUndefined();
+    });
+
+    it('item without idx property should return undefined', () => {
+      const item = {
+        descriptor: {},
+      };
+
+      const resourceDisplayName = wrapper.vm.getResourceDisplayName(item, '/account');
+
+      expect(resourceDisplayName).toBeUndefined();
+    });
+
+    it('item without descriptor property should return undefined', () => {
+      const item = {};
+
+      const resourceDisplayName = wrapper.vm.getResourceDisplayName(item, '/account');
+
+      expect(resourceDisplayName).toBeUndefined();
+    });
+  });
 });
