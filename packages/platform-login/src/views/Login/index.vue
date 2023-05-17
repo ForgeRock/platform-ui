@@ -655,8 +655,12 @@ export default {
     // needs to happen before other query params are processed
     checkNewSession() {
       return new Promise((resolve) => {
-        // need to logout if query param is present and equal to newsession
-        if (new URLSearchParams(this.getCurrentQueryString()).get('arg') === 'newsession') {
+        const params = new URLSearchParams(this.getCurrentQueryString());
+        // If url contains an arg=newsession paramer we need to logout.
+        // Or if a suspendedId parameter is present we assume a user is attempting
+        // to resume a suspended authentication journey and in that case we
+        // must always logout any current users before resuming the journey
+        if (params.get('arg') === 'newsession' || params.get('suspendedId')) {
           SessionManager.logout().then(() => {
             resolve();
           });
