@@ -165,6 +165,7 @@ of the MIT license. See the LICENSE file for details. -->
         size="lg"
         @ok="saveNewRelationships">
         <FrRelationshipEdit
+          :query-filter-extension="additionalQueryFilter"
           :parent-resource="parentResource"
           :relationship-property="relationshipArrayProperty"
           :index="0"
