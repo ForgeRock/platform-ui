@@ -151,7 +151,7 @@ export default {
         sortDesc: this.sortDesc,
       })
         .then(({ data }) => {
-          if (this.$store.state?.certificationCount) {
+          if (this.$store?.state?.certificationCount) {
             this.$store.commit('setCertificationCount', data.totalCount);
           }
           const fixedData = {
@@ -170,7 +170,7 @@ export default {
       const statusTranslateLabel = this.completedCampaignStatuses.includes(statusParam) ? 'complete' : statusParam;
       return this.$t(`governance.status.${statusTranslateLabel}`);
     },
-    setAccessReviewList({ result, totalCount }) {
+    setAccessReviewList({ result = [], totalCount }) {
       this.accessReviewList = result.map((item) => {
         const newItem = {};
         if (item.campaignId) newItem.id = item.campaignId;
