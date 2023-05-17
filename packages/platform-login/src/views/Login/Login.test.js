@@ -6,6 +6,9 @@
  */
 
 import { shallowMount } from '@vue/test-utils';
+import {
+  SessionManager,
+} from '@forgerock/javascript-sdk';
 import i18n from '@/i18n';
 import Login from './index';
 
@@ -182,5 +185,12 @@ describe('Login.vue', () => {
     wrapper.vm.scope = 'test';
     wrapper.setMethods({ getCurrentQueryString });
     expect(wrapper.vm.getStepParams()).toEqual(expectedStepParams);
+  });
+
+  it('should logout current user if suspendedId detected in the url', async () => {
+    const logoutSpy = jest.spyOn(SessionManager, 'logout').mockReturnValue(Promise.resolve());
+    jest.spyOn(wrapper.vm, 'getCurrentQueryString').mockReturnValue('suspendedId=1234');
+    await wrapper.vm.checkNewSession();
+    expect(logoutSpy).toHaveBeenCalled();
   });
 });
