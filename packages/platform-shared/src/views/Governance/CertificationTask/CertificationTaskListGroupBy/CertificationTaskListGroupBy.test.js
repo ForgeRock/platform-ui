@@ -460,6 +460,12 @@ describe('Glossary', () => {
           permissions: {
             comment: true, forward: true, reassign: true, signoff: true, certify: true, exception: true, revoke: true, reset: true,
           },
+          descriptor: {
+            idx: {
+              '/entitlement': { displayName: 'entitlement name' },
+              '/account': { displayName: 'account name' },
+            },
+          },
         }],
         searchAfterKey: ['Perkin', '01fec9de-a9e7-435b-8d16-2b2367714278'],
         totalCount: 1,
@@ -525,7 +531,7 @@ describe('Glossary', () => {
       expect(wrapper.find('#CertificationEntitlementsTaskList').find('table').find('tbody').find('tr')
         .findAll('td')
         .at(1)
-        .text()).toContain('Zoran User');
+        .text()).toContain('entitlement name');
     });
     it('renders chevron_right with correct data', async () => {
       const wrapper = setup();
