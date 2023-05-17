@@ -56,7 +56,7 @@ of the MIT license. See the LICENSE file for details. -->
             class="text-truncate">
             <BMediaBody class="text-truncate">
               <p class="mb-0 text-truncate text-dark">
-                {{ item.account.userPrincipalName }}
+                {{ getResourceDisplayName(item, '/account') }}
               </p>
             </BMediaBody>
           </BMedia>
@@ -92,7 +92,7 @@ of the MIT license. See the LICENSE file for details. -->
             class="text-truncate">
             <BMediaBody class="text-truncate">
               <p class="mb-0 text-truncate text-dark">
-                {{ item.entitlement.__NAME__ }}
+                {{ getResourceDisplayName(item, '/entitlement') }}
               </p>
             </BMediaBody>
           </BMedia>
@@ -117,8 +117,7 @@ of the MIT license. See the LICENSE file for details. -->
             </BMediaBody>
           </BMedia>
         </template>
-        <template #cell(status)="{}">
-        </template>
+        <template #cell(status)="{}" />
         <template #cell(timeConstraint)="{ item }">
           <BMedia
             no-body
@@ -241,8 +240,8 @@ export default {
       this.loadData();
     },
     getDisplayName(item) {
-      if (this.grantType === 'account' && !this.userId) {
-        return item.account.userPrincipalName;
+      if (this.grantType === 'account') {
+        return this.getResourceDisplayName(item, '/account');
       }
       return this.getApplicationDisplayName(item.application);
     },
@@ -321,6 +320,9 @@ export default {
       }
       this.sortDesc = !this.sortDesc;
       this.loadData();
+    },
+    getResourceDisplayName(item, resource) {
+      return item.descriptor?.idx?.[resource]?.displayName;
     },
   },
 };
