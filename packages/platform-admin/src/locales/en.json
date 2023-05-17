@@ -2973,6 +2973,18 @@
       "manager": "Manager",
       "name": "Name",
       "notifications": "Notifications",
+      "notificationsSummary": {
+        "expirationNotification": "Expiration Notification",
+        "escalation": "Escalation",
+        "initialNotification": "Initial Notification",
+        "reassignNotification": "Reassign Notification",
+        "reminders": "Reminders",
+        "sendExpirationNotification": "Send <b>Expiration Notification</b> {numDay} day(s) before campaign expiration",
+        "sendEscalation": "Send <b>Escalation Notification</b> every {duration} {timeSpan} to:",
+        "sendInitialNotification": "Send <b>Campaign Notification</b>",
+        "sendReassignNotification": "Send <b>Reassign Notification</b>",
+        "sendReminders":"Send <b>Reminders Notification</b> every {duration} {timeSpan}"
+      },
       "of": "of",
       "onCampaignExpiration": "On Campaign Expiration",
       "onCampaignExpirationBase": "Close and {action} open items {actionTime}",
