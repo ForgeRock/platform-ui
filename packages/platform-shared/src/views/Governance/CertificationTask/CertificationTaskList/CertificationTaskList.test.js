@@ -58,14 +58,14 @@ function shallowMountComponent(options, data, methods, propsData = {}) {
   });
 }
 
-function mountComponent() {
+function mountComponent(governanceEnabledV2 = true, propsData = {}) {
   wrapper = mount(CertificationTaskList, {
     mocks: {
       $t: (t) => t,
       $store: {
         state: {
           SharedStore: {
-            governanceEnabledV2: true,
+            governanceEnabledV2,
           },
           UserStore: {
             userId: 'testId',
@@ -75,6 +75,7 @@ function mountComponent() {
     },
     propsData: {
       campaignDetails: {},
+      ...propsData,
     },
   });
 }
@@ -108,38 +109,66 @@ describe('CertificationTaskList', () => {
                 certification: {},
               },
               permissions: {},
+              descriptor: {
+                idx: {
+                  '/entitlement': {
+                    displayName: 'entitlement name',
+                  },
+                  '/account': {
+                    displayName: 'account name',
+                  },
+                },
+              },
             },
           ],
         },
       }));
     });
 
-    it('shows __NAME__ property in table', async () => {
+    it('shows __NAME__ property in table for v1', async () => {
       CertificationApi.getCertificationTaskAccountDetails.mockImplementation(() => Promise.resolve({
         data: {
           __NAME__: 'testName',
         },
       }));
 
-      mountComponent();
+      mountComponent(false);
       await flushPromises();
 
       const account = findByTestId(wrapper, 'account-cell');
       expect(account.text()).toBe('testName');
     });
 
-    it('shows mailNickname if __NAME__ is not present', async () => {
+    it('shows mailNickname if __NAME__ is not present for v1', async () => {
       CertificationApi.getCertificationTaskAccountDetails.mockImplementation(() => Promise.resolve({
         data: {
           mailNickname: 'testName',
         },
       }));
 
-      mountComponent();
+      mountComponent(false);
       await flushPromises();
 
       const account = findByTestId(wrapper, 'account-cell');
       expect(account.text()).toBe('testName');
+    });
+
+    it('shows descriptor.idx./account property in table for v2', async () => {
+      mountComponent();
+      await flushPromises();
+
+      const account = findByTestId(wrapper, 'account-cell');
+      expect(account.text()).toBe('account name');
+    });
+
+    it('shows descriptor.idx./entitlement property in table', async () => {
+      mountComponent(true, {
+        showEntitlementColumn: true,
+      });
+      await flushPromises();
+
+      const entitlement = findByTestId(wrapper, 'entitlement-cell');
+      expect(entitlement.text()).toBe('entitlement name');
     });
   });
 
