@@ -590,14 +590,6 @@ export default {
             document.body.appendChild(form);
             form.submit();
           } else {
-            // If this RedirectCallback is a result of selecting an idp remove the reentry token before doing the redirect.
-            // This keeps the user from getting into a loop where they are continuously sent back to the previously selected
-            // idp if they do not complete the idp login process and just return to the login ui.
-            const selectIdP = this.componentList.find((c) => c.callback?.payload?.type === 'SelectIdPCallback');
-            // Is there a SelectIdPCallback in the componentList and if so was an idp selected?
-            if (selectIdP && selectIdP.callback?.payload?.input[0]?.value !== '') {
-              this.clearReentryToken();
-            }
             window.location.href = redirectUrl;
           }
           return;
@@ -681,14 +673,6 @@ export default {
       }
     },
     /**
-     * @description clears and sets the reentry cookie to be deleted
-     */
-    clearReentryToken() {
-      const date = new Date();
-      date.setTime(date.getTime() + (-1 * 24 * 60 * 60 * 1000));
-      document.cookie = `reentry="";expires="${date.toGMTString()}";path=/`;
-    },
-    /**
      * @description Look at the url and see if we are returning to a tree from an Email Suspend Node, Redirect Callback, or SAML.
      * Must be default route and contain the strings "suspendedId=" and "authIndexValue=" for Email Suspend Node.
      * Must contain the strings "state=" and "code=" and "scope=" for redirect callback.
@@ -732,7 +716,7 @@ export default {
         const stringParams = createParamString(params);
         this.removeUrlParams();
         window.history.replaceState(null, null, `?realm=${this.realm}${stringParams}`);
-      } else if (params.get('state') || params.get('code') || params.get('scope') || params.get('form_post_entry')) {
+      } else if (params.get('state') || params.get('code') || params.get('scope') || params.get('form_post_entry') || params.get('responsekey')) {
         this.state = params.get('state');
         params.delete('state');
         this.code = params.get('code');
@@ -741,6 +725,8 @@ export default {
         params.delete('scope');
         this.form_post_entry = params.get('form_post_entry');
         params.delete('form_post_entry');
+        this.responsekey = params.get('responsekey');
+        params.delete('responsekey');
 
         // session storage is used to resume a tree after returning from a redirect
         const { authIndexValue, step, realm: stepRealm } = this.getStepFromStorage();
@@ -751,14 +737,6 @@ export default {
         const stringParams = createParamString(params);
         this.removeUrlParams();
         window.history.replaceState(null, null, `?realm=${this.realm}${stringParams}`);
-      } else if (this.hasReentryToken()) {
-        const { authIndexValue, step, realm: stepRealm } = this.getStepFromStorage();
-        if (authIndexValue && step && step.payload) {
-          this.treeId = authIndexValue;
-          this.step = new FRStep(step.payload);
-          this.realm = stepRealm;
-        }
-        this.clearReentryToken();
       } else {
         const resourceUrlParam = params.get('resourceURL');
         if (resourceUrlParam) params.delete('resourceURL');
@@ -915,6 +893,7 @@ export default {
         stepParams.query.state = this.state ? this.state : undefined;
         stepParams.query.scope = this.scope ? this.scope : undefined;
         stepParams.query.form_post_entry = this.form_post_entry ? this.form_post_entry : undefined;
+        stepParams.query.responsekey = this.responsekey ? this.responsekey : undefined;
       }
 
       // stepParams.query.realm never needs to be included. We are already sending stepParams.realmPath which is what the
@@ -927,15 +906,6 @@ export default {
       // with differences between chains and trees. More consistent to just rely on the request header (see IAM-1440)
       delete stepParams.query.locale;
       return stepParams;
-    },
-    /**
-     * @description Returns boolean true if reentry cookie is set
-     * @returns {Boolean}
-     */
-    hasReentryToken() {
-      return !!document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('reentry='));
     },
     /**
      * @description Returns boolean true if payload has session timeout error code
@@ -1007,11 +977,12 @@ export default {
           this.step = step;
 
           // these step params only need to be sent one time
-          if (this.code || this.state || this.scope || this.form_post_entry) {
+          if (this.code || this.state || this.scope || this.form_post_entry || this.responsekey) {
             this.code = undefined;
             this.state = undefined;
             this.scope = undefined;
             this.form_post_entry = undefined;
+            this.responsekey = undefined;
           }
 
           switch (step.type) {
