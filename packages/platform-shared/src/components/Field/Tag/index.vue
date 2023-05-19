@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -38,8 +38,12 @@ of the MIT license. See the LICENSE file for details. -->
               <span class="fr-tag-text">
                 {{ tag }}
               </span>
-              <span @click="removeTag(tag)">
+              <span
+                :data-testid="`remove-${tag.replace(/\s/g, '-')}-tag`"
+                @click="removeTag(tag)"
+                @keydown.enter="removeTag(tag)">
                 <FrIcon
+                  tabindex="0"
                   :aria-label="$t('common.close')"
                   :aria-controls="`fr-tags-tag_${tag.replace(/\s/g, '_')}`"
                   class="close-icon pl-2"
@@ -54,6 +58,7 @@ of the MIT license. See the LICENSE file for details. -->
           v-bind="inputAttrs"
           v-on="inputHandlers"
           ref="input"
+          :data-testid="`inp-${name}`"
           :class="[{'has-values': tags.length}, 'fr-tag-input']"
           :placeholder="label"
           @input="inputValueHandler(inputValue, $event.target.value)"
@@ -168,6 +173,14 @@ export default {
     &.has-values {
       transition: all 0.15s;
     }
+
+    &:focus-visible {
+      outline: solid 2px $primary;
+      outline-offset: -1px;
+      -webkit-transition: none;
+      transition: none;
+      padding-top: 0 !important;
+    }
   }
 
   .fr-tag-input:focus,
@@ -180,6 +193,15 @@ export default {
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+  }
+
+  .close-icon {
+    &:focus-visible {
+      outline: solid 2px $primary;
+      outline-offset: -1px;
+      -webkit-transition: none;
+      transition: none;
+    }
   }
 }
 </style>
