@@ -708,8 +708,13 @@ a.card {
 
 /* Keyboard navigation highlighting */
 button:focus-visible,
-tr:focus-visible,
 a:focus-visible {
+  outline-offset: -2px;
+  outline: 2px solid $primary !important;
+  background: transparent;
+}
+
+tr:focus-visible {
   outline-offset: -2px;
   outline: 2px solid $black !important;
   background: transparent;
@@ -723,8 +728,13 @@ button:not(.fr-sidebar-menuitems button):focus-visible {
 @media not all and (min-resolution: 0.001dpcm) {
   @supports (-webkit-appearance:none) {
     button:focus,
-    tr:focus,
     a:focus {
+      outline-offset: -2px;
+      outline: 2px solid $primary !important;
+      background: transparent;
+    }
+
+    tr:focus-visible {
       outline-offset: -2px;
       outline: 2px solid $black !important;
       background: transparent;
