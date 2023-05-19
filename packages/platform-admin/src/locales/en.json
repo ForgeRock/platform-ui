@@ -2490,6 +2490,7 @@
     "changeUserAssociation": "Change User Association",
     "errorRetrievingData": "There was an error retrieving data",
     "errorSaveTree": "Saving expression tree failed",
+    "generatingPreview": "Generating preview...",
     "lastReconciliation": "Last Reconciliation",
     "lastRefreshed": "Last refreshed",
     "loadingView": "Loading user association view",
