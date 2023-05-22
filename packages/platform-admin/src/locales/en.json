@@ -2876,8 +2876,7 @@
         "closeButtonText": "Done",
         "title": "About This Campaign"
       },
-      "statusCardLabel": "Status",
-      "title": "Certification {name}"
+      "statusCardLabel": "Status"
     },
     "campaignTemplateTypeModal": {
       "campaignType": "Campaign Type",
@@ -2951,6 +2950,7 @@
       "enableSchedule": "Run on a schedule",
       "enableStaging": "Enable Campaign Staging",
       "enableStagingDescription": "Certification will remain in staging mode until activated.",
+      "entitlementOwner": "Entitlement Owner",
       "entitlements": "Entitlements",
       "errorReadingCertifierType": "Error reading certifier type from template",
       "errorRetrievingRoles": "Error retrieving list of roles",

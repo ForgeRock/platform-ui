@@ -18,7 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
             height="28"
             width="28"
             :alt="item.application.name"
-            :src="item.application.icon"
+            :src="getApplicationLogo(item.application)"
             fluid />
           <div class="media-body align-self-center overflow-hidden text-nowrap">
             <span class="text-dark">
@@ -38,6 +38,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import AppSharedUtilsMixin from '@forgerock/platform-shared/src/mixins/AppSharedUtilsMixin';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { get } from 'lodash';
 import {
@@ -59,6 +60,9 @@ export default {
       required: true,
     },
   },
+  mixins: [
+    AppSharedUtilsMixin,
+  ],
   data() {
     return {
       blankValueIndicator,
