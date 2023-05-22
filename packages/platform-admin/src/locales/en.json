@@ -2828,6 +2828,7 @@
       },
       "decisionsBreakdownChartItemsLabelOther": "Other",
       "decisionsBreakdownChartLabel": "Decisions Breakdown",
+      "decisionsBreakdownChartNoDecisionsLabel": "No decisions yet",
       "decisionsBreakdownChartTooltip": "Decisions made in this campaign",
       "decisionsByAppChartLabel": "Access by Application",
       "decisionsByAppChartTooltip": "Number of accounts to be certified in this campaign by application",

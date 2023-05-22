@@ -61,7 +61,7 @@ export default {
     },
     emptyColor: {
       type: String,
-      default: styles.withesmoke,
+      default: styles.whitesmoke,
     },
   },
   data() {
