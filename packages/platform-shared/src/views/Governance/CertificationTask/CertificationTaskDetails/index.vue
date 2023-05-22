@@ -68,7 +68,7 @@ of the MIT license. See the LICENSE file for details. -->
             <FrIcon
               class="d-inline"
               name="event" />
-            <span>{{ formatDate(campaignDetails.deadLine) }}</span>
+            <span>{{ formatDate(campaignDetails.deadline) }}</span>
           </div>
           <BButton
             class="my-4 p-0"
@@ -120,6 +120,7 @@ import {
   BRow,
 } from 'bootstrap-vue';
 import dayjs from 'dayjs';
+import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import FrCertificationCampaignDetailsModal from '@forgerock/platform-shared/src/views/Governance/CertificationTask/CertificationCampaignDetailsModal';
 import FrCircleProgressBar from '@forgerock/platform-shared/src/components/CircleProgressBar';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
@@ -172,7 +173,8 @@ export default {
       this.$root.$emit('bv::show::modal', 'certificationCampaignDetails');
     },
     formatDate(date) {
-      return dayjs(date).format('MMM D, YYYY');
+      if (date) return dayjs(date).format('MMM D, YYYY');
+      return blankValueIndicator;
     },
     setChartInfo(revoked, certified) {
       this.chartDecisions = [{
