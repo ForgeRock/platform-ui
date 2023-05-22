@@ -27,6 +27,7 @@ import AppAuthHelper from 'appauthhelper-enduser/appAuthHelperCompat';
 import SessionCheck from 'oidcsessioncheck-enduser';
 import VueSanitize from 'vue-sanitize';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
+import { getAmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
 import overrideTranslations, { setLocales } from '@forgerock/platform-shared/src/utils/overrideTranslations';
 import parseSub from '@forgerock/platform-shared/src/utils/OIDC';
 import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
@@ -171,25 +172,9 @@ const startApp = () => {
     .finally(() => loadApp());
 };
 
-const addAppAuth = () => {
+const addAppAuth = (realm) => {
   const AM_URL = store.state.SharedStore.amBaseURL;
-  const urlParams = new URLSearchParams(window.location.search);
-  const originalLoginRealm = localStorage.getItem('originalLoginRealm');
-  const pageLoadUrlRealm = urlParams.get('realm');
-  let realm = pageLoadUrlRealm || store.state.realm;
   let postLogoutUrlClaim;
-
-  /**
-   * If there is an originalLoginRealm here it's because the realm was changed and the page was refreshed or
-   * the user is already logged in to another realm. In this case we want to set the realm used to build the
-   * realmPath below to the originally logged in realm. If we don't do this all the appAuthClient config settings
-   * will be different from when the page was orignially logged in which causes REST calls to fail and breaks
-   * logout because it tries to logout from the wrong realm.
-  */
-  if (originalLoginRealm) {
-    realm = originalLoginRealm;
-    localStorage.removeItem('originalLoginRealm');
-  }
 
   let clickSession;
   let keypressSession;
@@ -325,4 +310,36 @@ store.commit('SharedStore/setBaseURLs', process.env);
 store.commit('SharedStore/setCurrentPackage', 'enduser');
 store.commit('SharedStore/setFeatureFlags', process.env);
 
-addAppAuth();
+async function getRealm() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const originalLoginRealm = localStorage.getItem('originalLoginRealm');
+  const pageLoadUrlRealm = urlParams.get('realm');
+  let realm = pageLoadUrlRealm;
+
+  /**
+   * If there is an originalLoginRealm here it's because the realm was changed and the page was refreshed or
+   * the user is already logged in to another realm. In this case we want to set the realm used to build the
+   * realmPath below to the originally logged in realm. If we don't do this all the appAuthClient config settings
+   * will be different from when the page was orignially logged in which causes REST calls to fail and breaks
+   * logout because it tries to logout from the wrong realm.
+  */
+  if (originalLoginRealm) {
+    realm = originalLoginRealm;
+    store.commit('setRealm', realm);
+    localStorage.removeItem('originalLoginRealm');
+  } else if (!realm) {
+    // If no realm defined in the url params and no originalLoginRealm defined get it from am server info
+    try {
+      const res = await getAmServerInfo();
+      realm = res.data?.realm === '/' ? 'root' : res.data.realm;
+    } catch (e) {
+      realm = 'root';
+    }
+  }
+
+  return realm;
+}
+
+getRealm().then((realm) => {
+  addAppAuth(realm);
+});
