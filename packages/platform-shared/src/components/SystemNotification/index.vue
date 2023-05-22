@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -13,7 +13,7 @@ of the MIT license. See the LICENSE file for details. -->
         <span class="w-100 text-center">
           <span
             class="d-inline-block"
-            v-html="contentWithLocalizedDate(data.content)" />
+            v-html="data.content" />
           <BButton
             v-if="data.modal"
             variant="link"
@@ -42,15 +42,14 @@ of the MIT license. See the LICENSE file for details. -->
       ok-variant="outline-primary"
       :ok-title="$t('common.done')"
       data-testid="system-notification-modal">
-      <template
-        #modal-title>
+      <template #modal-title>
         <span
           data-testid="system-notification-modal-title"
           v-html="data.modal.title" />
       </template>
       <div
         data-testid="system-notification-modal-content"
-        v-html="contentWithLocalizedDate(data.modal.content)" />
+        v-html="data.modal.content" />
     </BModal>
   </div>
 </template>
@@ -58,13 +57,6 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { BAlert, BButton, BModal } from 'bootstrap-vue';
-import dayjs from 'dayjs';
-import advancedFormat from 'dayjs/plugin/advancedFormat';
-import timezone from 'dayjs/plugin/timezone';
-// These extentions to the day.js library are both required to localize dates
-// contained in the system notification message.
-dayjs.extend(timezone);
-dayjs.extend(advancedFormat);
 
 /**
  * Displays an alert message at the top of the page with an optional view details
@@ -91,21 +83,6 @@ export default {
   methods: {
     showModal() {
       this.$root.$emit('bv::show::modal', 'SystemNotificationModal');
-    },
-    /*
-     * Migration messages can sometimes contain dates. They are denoted by a
-     * {{placeholder_management_migration_date}} placeholder. An example message
-     * would be "Scheduled Tenant Migration {{placeholder_management_migration_date}}"
-     * If it exists, we want to replace this placeholder with a localized date
-     */
-    contentWithLocalizedDate(content) {
-      const { placeholderManagementMigrationDate } = this.data;
-      const placeholderRegex = /{{placeholder_management_migration_date}}/g;
-      if (placeholderManagementMigrationDate) {
-        const localDate = dayjs(placeholderManagementMigrationDate).format('MMMM D, YYYY h:mm A z');
-        return content.replace(placeholderRegex, localDate);
-      }
-      return content;
     },
   },
 };
