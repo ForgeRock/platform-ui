@@ -199,8 +199,13 @@ router.beforeEach((to, from, next) => {
   if (store.state.hostedPages === false && to.name !== 'Forbidden') {
     next({ name: 'Forbidden' });
   } else if (realm !== store.state.realm) {
-    url.searchParams.set('realm', store.state.realm);
-    window.location = encodeURI(url);
+    // If there is no realm defined here it means the realm is root and no realm url
+    // param is defined or a custom domain is being used. In both cases we do not need
+    // (or want in the case of custom domain) to add the realm parameter.
+    if (realm) {
+      url.searchParams.set('realm', store.state.realm);
+      window.location = encodeURI(url);
+    }
     next();
   } else {
     next();
