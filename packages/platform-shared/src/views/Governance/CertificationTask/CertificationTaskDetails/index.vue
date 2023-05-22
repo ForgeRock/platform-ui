@@ -43,12 +43,11 @@ of the MIT license. See the LICENSE file for details. -->
           <h5>{{ $t('governance.certificationTask.decisions') }}</h5>
           <div class="d-flex align-items-center">
             <FrPieChart
-              v-if="chartDecisions.length"
               id="decisions-chart"
               hide-tooltip
               legend-class="decisions-legend"
-              show-legend-count
               :data="chartDecisions"
+              :no-data-label="noDataLabel"
               :height="72"
               :radius="27"
               :stroke-width="1"
@@ -155,6 +154,7 @@ export default {
     return {
       chartDecisions: [],
       isSaving: true,
+      noDataLabel: this.$t('governance.certificationTask.noDecision'),
       styles,
       sumOfDecisions: 0,
       total: 0,
