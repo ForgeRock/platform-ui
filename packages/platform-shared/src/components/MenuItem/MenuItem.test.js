@@ -76,13 +76,12 @@ describe('MenuItem Component', () => {
         displayName: 'bob',
         showForRoles: ['superAdmin'],
         userRoles: ['plainOldAdmin'],
-        showForStoreValues: ['isFraas', 'promotionsEnabled', 'SharedStore.hasAmUrl'],
+        showForStoreValues: ['isFraas', 'SharedStore.hasAmUrl'],
       },
       {
         $store: {
           state: {
             isFraas: true,
-            promotionsEnabled: true,
             SharedStore: {
               hasAmUrl: null,
             },
@@ -98,13 +97,12 @@ describe('MenuItem Component', () => {
         displayName: 'bob',
         showForRoles: ['superAdmin'],
         userRoles: ['plainOldAdmin'],
-        showForStoreValues: ['isFraas', 'promotionsEnabled', 'SharedStore.hasAmUrl'],
+        showForStoreValues: ['isFraas', 'SharedStore.hasAmUrl'],
       },
       {
         $store: {
           state: {
             isFraas: true,
-            promotionsEnabled: true,
             SharedStore: {
               hasAmUrl: true,
             },
