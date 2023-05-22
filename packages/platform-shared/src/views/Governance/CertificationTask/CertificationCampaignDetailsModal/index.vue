@@ -47,7 +47,7 @@ of the MIT license. See the LICENSE file for details. -->
             {{ $t('common.deadline') }}
           </span>
           <span class="text-dark">
-            {{ formatDate(campaignDetails.deadLine) }}
+            {{ formatDate(campaignDetails.deadline) }}
           </span>
         </div>
       </div>
@@ -69,6 +69,7 @@ import {
   BModal,
 } from 'bootstrap-vue';
 import dayjs from 'dayjs';
+import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 
 export default {
   name: 'CertificationCampaignDetailModal',
@@ -86,7 +87,8 @@ export default {
   },
   methods: {
     formatDate(date) {
-      return dayjs(date).format('MMM D, YYYY');
+      if (date) return dayjs(date).format('MMM D, YYYY');
+      return blankValueIndicator;
     },
   },
 };
