@@ -27,11 +27,28 @@ const mockData = [
     color: 'yellow',
   },
 ];
+const emptyMockData = [
+  {
+    label: 'item1',
+    value: 0,
+    color: 'red',
+  },
+  {
+    label: 'item2',
+    value: 0,
+    color: 'yellow',
+  },
+  {
+    label: 'item3',
+    value: 0,
+    color: 'yellow',
+  },
+];
 
-const mountComponent = (props) => shallowMount(PieChart, {
+const mountComponent = (props, testData = mockData) => shallowMount(PieChart, {
   mocks: { $t: () => {} },
   propsData: {
-    data: mockData,
+    data: testData,
     ...props,
   },
 });
@@ -59,6 +76,21 @@ describe('PieChart', () => {
       1: 20,
       2: 20,
     }, ['red', 'yellow', 'yellow']);
+  });
+  it('calls to create chart based on data', () => {
+    wrapper = mountComponent({ noDataLabel: 'No data' }, emptyMockData);
+    const createChartSpy = jest.spyOn(wrapper.vm, 'createChart');
+    wrapper.vm.loadData();
+    expect(wrapper.vm.legend).toEqual([
+      {
+        label: 'No data',
+        value: 1,
+        color: undefined,
+      },
+    ]);
+    expect(createChartSpy).toHaveBeenCalledWith({
+      0: 1,
+    }, [undefined]);
   });
 
   describe('legend', () => {

@@ -36,6 +36,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import * as d3 from 'd3';
+import styles from '@/scss/main.scss';
 
 /*
  * @description Pie Chart Component used to show data in a pie chart with percentages according the value of each item,
@@ -80,6 +81,10 @@ export default {
       type: String,
       default: '',
     },
+    noDataLabel: {
+      type: String,
+      default: '',
+    },
     radius: {
       type: Number,
       default: 110,
@@ -108,12 +113,14 @@ export default {
   },
   methods: {
     loadData() {
-      const chartData = {};
-      const colors = [];
+      let chartData = {};
+      let colors = [];
       this.legend = [];
 
       if (this.data.length) {
+        let total = 0;
         this.data.forEach((category, index) => {
+          total += category.value;
           chartData[index] = category.value;
           colors.push(category.color);
           this.legend.push({
@@ -122,9 +129,20 @@ export default {
             value: category.value,
           });
         });
-
-        this.createChart(chartData, colors);
+        if (total === 0) {
+          chartData = {};
+          colors = [];
+          this.legend = [];
+          chartData[0] = 1;
+          colors.push(styles.whitesmoke);
+          this.legend.push({
+            label: this.noDataLabel,
+            color: styles.whitesmoke,
+            value: 1,
+          });
+        }
       }
+      this.createChart(chartData, colors);
     },
     createChart(chartData, colors) {
       // set the dimensions and margins of the graph
