@@ -112,10 +112,9 @@ export function getCertificationTaskAccountDetails(campaignId, itemId) {
 export function getCertificationCountsByCampaign(campaign, actorId, isAdmin) {
   const params = {
     getCount: true,
-    actorId,
+    isAdmin,
+    ...(isAdmin ? { primaryReviewerId: actorId } : { actorId }),
   };
-
-  if (isAdmin) params.isAdmin = true;
 
   const queryParams = new URLSearchParams(params).toString();
   const resourceUrl = `${governanceCertificationBaseUrl}/${campaign}/items?${queryParams}`;
