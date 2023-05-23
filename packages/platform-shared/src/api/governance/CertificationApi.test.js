@@ -225,4 +225,28 @@ describe('Governace API', () => {
 
     expect(get).toHaveBeenCalledWith(`${governanceCertificationBaseUrl}/${campaignId}/items/${itemId}/entitlement`);
   });
+
+  it('getCertificationCountsByCampaign should call API correctly with primaryReviewerId if it is admin', async () => {
+    const campaignId = 'campaignId';
+    const actorId = 'actorId';
+    const isAdmin = true;
+
+    get.mockReturnValue(Promise.resolve({}));
+
+    await CertificationApi.getCertificationCountsByCampaign(campaignId, actorId, isAdmin);
+
+    expect(get).toHaveBeenCalledWith(`${governanceCertificationBaseUrl}/${campaignId}/items?getCount=true&isAdmin=${isAdmin}&primaryReviewerId=${actorId}`);
+  });
+
+  it('getCertificationCountsByCampaign should call API correctly with actorId if it is not admin', async () => {
+    const campaignId = 'campaignId';
+    const actorId = 'actorId';
+    const isAdmin = false;
+
+    get.mockReturnValue(Promise.resolve({}));
+
+    await CertificationApi.getCertificationCountsByCampaign(campaignId, actorId, isAdmin);
+
+    expect(get).toHaveBeenCalledWith(`${governanceCertificationBaseUrl}/${campaignId}/items?getCount=true&isAdmin=${isAdmin}&actorId=${actorId}`);
+  });
 });
