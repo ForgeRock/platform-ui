@@ -21,16 +21,17 @@ describe('ResourceMixin', () => {
 
   describe('Generating update patches', () => {
     const originalForm = {
-      phone: 'b', name: 'c', cn: 'd', sn: '',
+      phone: 'b', name: 'c', cn: 'd', sn: '', mail: 'john@doe.com',
     };
     const newForm = {
-      phone: '', name: 'c', cn: 'e', sn: 'f',
+      phone: '', name: 'c', cn: 'e', sn: 'f', mail: undefined,
     };
 
     const returnedPatch = [
       { operation: 'remove', field: '/phone' },
       { operation: 'replace', field: '/cn', value: 'e' },
       { operation: 'add', field: '/sn', value: 'f' },
+      { operation: 'remove', field: '/mail' },
     ];
     it('Correctly generates a patch based on original and new forms', () => {
       const updatePatch = wrapper.vm.generateUpdatePatch(originalForm, newForm);

@@ -63,7 +63,7 @@ export default {
       }
 
       return map(changes, (formField) => {
-        if (formField.value === '' || formField.value === null) {
+        if (formField.value === '' || formField.value === null || formField.value === undefined) {
           return { operation: 'remove', field: `/${formField.name}` };
         }
         if (clonedOriginal[formField.name] === '' || clonedOriginal[formField.name] === null) {
