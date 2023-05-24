@@ -28,13 +28,6 @@ describe('CertificationTask', () => {
             actorId: 'a96de99c-c638-4bdd-84cb-5fb559225153',
           },
         },
-        $store: {
-          state: {
-            SharedStore: {
-              governanceEnabledV2: false,
-            },
-          },
-        },
       },
       stubs: [
         'RouterLink',
