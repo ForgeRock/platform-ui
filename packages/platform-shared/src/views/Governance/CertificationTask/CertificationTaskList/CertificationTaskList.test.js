@@ -36,13 +36,6 @@ function shallowMountComponent(options, data, methods, propsData = {}) {
       $root: {
         $emit,
       },
-      $store: {
-        state: {
-          SharedStore: {
-            governanceEnabledV2: true,
-          },
-        },
-      },
       ...options,
     },
     data() {
@@ -58,15 +51,12 @@ function shallowMountComponent(options, data, methods, propsData = {}) {
   });
 }
 
-function mountComponent(governanceEnabledV2 = true, propsData = {}) {
+function mountComponent(propsData = {}) {
   wrapper = mount(CertificationTaskList, {
     mocks: {
       $t: (t) => t,
       $store: {
         state: {
-          SharedStore: {
-            governanceEnabledV2,
-          },
           UserStore: {
             userId: 'testId',
           },
@@ -125,35 +115,7 @@ describe('CertificationTaskList', () => {
       }));
     });
 
-    it('shows __NAME__ property in table for v1', async () => {
-      CertificationApi.getCertificationTaskAccountDetails.mockImplementation(() => Promise.resolve({
-        data: {
-          __NAME__: 'testName',
-        },
-      }));
-
-      mountComponent(false);
-      await flushPromises();
-
-      const account = findByTestId(wrapper, 'account-cell');
-      expect(account.text()).toBe('testName');
-    });
-
-    it('shows mailNickname if __NAME__ is not present for v1', async () => {
-      CertificationApi.getCertificationTaskAccountDetails.mockImplementation(() => Promise.resolve({
-        data: {
-          mailNickname: 'testName',
-        },
-      }));
-
-      mountComponent(false);
-      await flushPromises();
-
-      const account = findByTestId(wrapper, 'account-cell');
-      expect(account.text()).toBe('testName');
-    });
-
-    it('shows descriptor.idx./account property in table for v2', async () => {
+    it('shows descriptor.idx./account property in table', async () => {
       mountComponent();
       await flushPromises();
 
@@ -162,7 +124,7 @@ describe('CertificationTaskList', () => {
     });
 
     it('shows descriptor.idx./entitlement property in table', async () => {
-      mountComponent(true, {
+      mountComponent({
         showEntitlementColumn: true,
       });
       await flushPromises();

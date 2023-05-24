@@ -54,23 +54,20 @@ of the MIT license. See the LICENSE file for details. -->
           v-if="user"
           :user="user" />
       </BTab>
-      <template v-if="governanceEnabledV2">
-        <BTab :title="$t('governance.certificationTask.lineItemDetailsModal.rolesTab.title')">
-          <FrRolesTab :roles="userDetails.userRoles" />
-        </BTab>
-        <BTab :title="$t('governance.certificationTask.lineItemDetailsModal.accountsTab.title')">
-          <FrAccountsTab :accounts="userDetails.userAccounts" />
-        </BTab>
-        <BTab :title="$t('governance.certificationTask.lineItemDetailsModal.entitlementsTab.title')">
-          <FrEntitlementsTab :entitlements="userDetails.userEntitlements" />
-        </BTab>
-      </template>
+      <BTab :title="$t('governance.certificationTask.lineItemDetailsModal.rolesTab.title')">
+        <FrRolesTab :roles="userDetails.userRoles" />
+      </BTab>
+      <BTab :title="$t('governance.certificationTask.lineItemDetailsModal.accountsTab.title')">
+        <FrAccountsTab :accounts="userDetails.userAccounts" />
+      </BTab>
+      <BTab :title="$t('governance.certificationTask.lineItemDetailsModal.entitlementsTab.title')">
+        <FrEntitlementsTab :entitlements="userDetails.userEntitlements" />
+      </BTab>
     </BTabs>
   </BModal>
 </template>
 
 <script>
-import { mapState } from 'vuex';
 import {
   BButtonClose,
   BModal,
@@ -122,9 +119,6 @@ export default {
         sn: this.user?.sn,
       });
     },
-    ...mapState({
-      governanceEnabledV2: (state) => state.SharedStore.governanceEnabledV2,
-    }),
   },
 };
 </script>

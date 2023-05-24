@@ -19,7 +19,7 @@ of the MIT license. See the LICENSE file for details. -->
         :campaign-details="campaignDetails"
         :is-loading="isDetailsLoading" />
       <div
-        v-if="!governanceV2Flag || isEntitlementCertificationType"
+        v-if="isEntitlementCertificationType"
         class="border-top">
         <FrCertificationTaskList
           v-if="campaignId && actorId"
@@ -37,7 +37,7 @@ of the MIT license. See the LICENSE file for details. -->
           @update-details="getCertificationDetails" />
       </div>
       <div
-        v-else-if="governanceV2Flag && !isGroupByAccount"
+        v-else-if="!isGroupByAccount"
         class="border-top position-relative">
         <BTabs
           nav-class="fr-tabs pl-4"
@@ -98,7 +98,7 @@ of the MIT license. See the LICENSE file for details. -->
           :label="$t('governance.certificationTask.certificationTabs.groupByAccount')" />
       </div>
       <div
-        v-else-if="governanceV2Flag && isGroupByAccount"
+        v-else-if="isGroupByAccount"
         class="border-top position-relative">
         <FrCertificationTaskListGroupBy
           certification-grant-type="accounts"
@@ -180,7 +180,6 @@ export default {
       refreshTasks: false,
       totals: null,
       isGroupByAccount: false,
-      governanceV2Flag: this.$store.state.SharedStore.governanceEnabledV2,
       showGroupByAccount: true,
     };
   },
