@@ -296,6 +296,14 @@ export function getRules(i18n) {
     message: i18n.t('common.json.invalidJson'),
   };
 
+  const single_spaces = {
+    validate(value) {
+      const regex = /[ ]{2,}/g;
+      return !regex.test(value);
+    },
+    message: i18n.t('common.policyValidationMessages.singleSpaces'),
+  };
+
   const validationRules = {
     alpha,
     alpha_dash,
@@ -322,6 +330,7 @@ export function getRules(i18n) {
     oneOf,
     period_required,
     required,
+    single_spaces,
     start_end_space,
     unique,
     unique_email_template_id,
