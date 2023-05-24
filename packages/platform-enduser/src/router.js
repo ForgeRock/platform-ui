@@ -13,8 +13,8 @@ import store from '@/store';
 
 Vue.use(Router);
 
-const checkIfGovernanceV2RouteCanBeAccessed = (to, from, next) => {
-  if (store.state.SharedStore.governanceEnabledV2 === true) {
+const checkIfGovernanceRouteCanBeAccessed = (to, from, next) => {
+  if (store.state.SharedStore.governanceEnabled === true) {
     next();
   } else {
     next({ name: 'NotFound' });
@@ -73,6 +73,7 @@ const router = new Router({
       name: 'AccessReviews',
       component: () => import('@/views/AccessReviews'),
       meta: { authenticate: true },
+      beforeEnter: (to, from, next) => checkIfGovernanceRouteCanBeAccessed(to, from, next),
     },
     {
       path: '/certification/certification-task/:campaignId',
@@ -98,20 +99,21 @@ const router = new Router({
       name: 'Delegates',
       component: () => import('@/views/Directory/Delegates'),
       meta: { authenticate: true },
+      beforeEnter: (to, from, next) => checkIfGovernanceRouteCanBeAccessed(to, from, next),
     },
     {
       path: '/my-reports',
       name: 'DirectReports',
       component: () => import('@/views/Directory/DirectReports'),
       meta: { authenticate: true },
-      beforeEnter: (to, from, next) => checkIfGovernanceV2RouteCanBeAccessed(to, from, next),
+      beforeEnter: (to, from, next) => checkIfGovernanceRouteCanBeAccessed(to, from, next),
     },
     {
       path: '/my-reports/:userId/:grantType',
       name: 'DirectReportDetail',
       component: () => import('@/views/Directory/DirectReportDetail'),
       meta: { authenticate: true },
-      beforeEnter: (to, from, next) => checkIfGovernanceV2RouteCanBeAccessed(to, from, next),
+      beforeEnter: (to, from, next) => checkIfGovernanceRouteCanBeAccessed(to, from, next),
     },
     {
       path: '/list/:resourceType/:resourceName',
@@ -145,21 +147,21 @@ const router = new Router({
       name: 'Accounts',
       component: () => import('@/views/MyAccessReview/Accounts'),
       meta: { authenticate: true },
-      beforeEnter: (to, from, next) => checkIfGovernanceV2RouteCanBeAccessed(to, from, next),
+      beforeEnter: (to, from, next) => checkIfGovernanceRouteCanBeAccessed(to, from, next),
     },
     {
       path: '/my-entitlements',
       name: 'Entitlements',
       component: () => import('@/views/MyAccessReview/Entitlements'),
       meta: { authenticate: true },
-      beforeEnter: (to, from, next) => checkIfGovernanceV2RouteCanBeAccessed(to, from, next),
+      beforeEnter: (to, from, next) => checkIfGovernanceRouteCanBeAccessed(to, from, next),
     },
     {
       path: '/my-roles',
       name: 'Roles',
       component: () => import('@/views/MyAccessReview/Roles'),
       meta: { authenticate: true },
-      beforeEnter: (to, from, next) => checkIfGovernanceV2RouteCanBeAccessed(to, from, next),
+      beforeEnter: (to, from, next) => checkIfGovernanceRouteCanBeAccessed(to, from, next),
     },
     {
       path: '/sharing',

@@ -114,9 +114,6 @@ describe('Glossary', () => {
     mocks: {
       $store: {
         state: {
-          SharedStore: {
-            governanceEnabledV2: true,
-          },
           UserStore: {
             userId: '1234',
           },
