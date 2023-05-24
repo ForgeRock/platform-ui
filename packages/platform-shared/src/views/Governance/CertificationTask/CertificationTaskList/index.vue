@@ -407,7 +407,7 @@ of the MIT license. See the LICENSE file for details. -->
       v-if="campaignDetails.certificationType === 'entitlement'
         || (campaignDetails.certificationType !== 'entitlement' && !isEntitlementGrantType)"
       :user="currentUserSelectedModal"
-      :user-entitlements="currentUserEntitlementsDetails" />
+      :user-details="currentUserDetails" />
     <FrCertificationTaskApplicationModal
       v-if="currentApplicationSelectedModal"
       :application="currentApplicationSelectedModal" />
@@ -495,7 +495,7 @@ import {
   getCertificationLineItemUser,
   getCertificationTaskAccountDetails,
   getCertificationTasksListByCampaign,
-  getUserEntitlementsDetails,
+  getUserDetails,
   reassignLineItem,
   resetLineItem,
   revokeCertificationTasks,
@@ -650,7 +650,9 @@ export default {
       currentPage: 1,
       currentReviewerSelectedModal: null,
       currentReviewersSelectedModal: [],
-      currentUserEntitlementsDetails: {},
+      currentUserEntitlementsDetails: { result: [] },
+      currentUserAccountsDetails: { result: [] },
+      currentUserRolesDetails: { result: [] },
       currentUserSelectedModal: {},
       enableAddComments: true,
       sortDir: 'asc',
@@ -823,6 +825,13 @@ export default {
     isEntitlementGrantType() {
       return this.certificationGrantType === 'entitlements';
     },
+    currentUserDetails() {
+      return {
+        userAccounts: this.currentUserAccountsDetails,
+        userEntitlements: this.currentUserEntitlementsDetails,
+        userRoles: this.currentUserRolesDetails,
+      };
+    },
   },
   methods: {
     startCase,
@@ -980,11 +989,28 @@ export default {
           this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserError'));
         });
 
-      // Get entitlements details by user
+      // Get user details
       if (this.$store.state.SharedStore.governanceEnabledV2) {
-        getUserEntitlementsDetails(this.campaignId, lineItemId)
+        // Get entitlements details
+        getUserDetails(this.campaignId, lineItemId, 'entitlements')
           .then(({ data }) => {
             this.currentUserEntitlementsDetails = data;
+          })
+          .catch((error) => {
+            this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserEntitlementsError'));
+          });
+        // Get accounts details
+        getUserDetails(this.campaignId, lineItemId, 'accounts')
+          .then(({ data }) => {
+            this.currentUserAccountsDetails = data;
+          })
+          .catch((error) => {
+            this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserEntitlementsError'));
+          });
+        // Get roles details
+        getUserDetails(this.campaignId, lineItemId, 'roles')
+          .then(({ data }) => {
+            this.currentUserRolesDetails = data;
           })
           .catch((error) => {
             this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserEntitlementsError'));
