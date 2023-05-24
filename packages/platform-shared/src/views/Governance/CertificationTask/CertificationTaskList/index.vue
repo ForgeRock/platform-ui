@@ -213,7 +213,7 @@ of the MIT license. See the LICENSE file for details. -->
             data-testid="account-cell"
             variant="link"
             @click.stop="openAccountModal(item)">
-            {{ governanceEnabledV2 ? getResourceDisplayName(item, '/account') : (item.account.__NAME__ || item.account.mailNickname) }}
+            {{ getResourceDisplayName(item, '/account') }}
           </BButton>
         </div>
       </template>
@@ -689,7 +689,6 @@ export default {
       bulkForward: false,
       tasksFieldsToSort: [],
       currentEntitlementSelected: null,
-      governanceEnabledV2: this.$store.state.SharedStore.governanceEnabledV2,
     };
   },
   computed: {
@@ -989,33 +988,30 @@ export default {
           this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserError'));
         });
 
-      // Get user details
-      if (this.$store.state.SharedStore.governanceEnabledV2) {
-        // Get entitlements details
-        getUserDetails(this.campaignId, lineItemId, 'entitlements')
-          .then(({ data }) => {
-            this.currentUserEntitlementsDetails = data;
-          })
-          .catch((error) => {
-            this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserEntitlementsError'));
-          });
-        // Get accounts details
-        getUserDetails(this.campaignId, lineItemId, 'accounts')
-          .then(({ data }) => {
-            this.currentUserAccountsDetails = data;
-          })
-          .catch((error) => {
-            this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserEntitlementsError'));
-          });
-        // Get roles details
-        getUserDetails(this.campaignId, lineItemId, 'roles')
-          .then(({ data }) => {
-            this.currentUserRolesDetails = data;
-          })
-          .catch((error) => {
-            this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserEntitlementsError'));
-          });
-      }
+      // Get entitlements details
+      getUserDetails(this.campaignId, lineItemId, 'entitlements')
+        .then(({ data }) => {
+          this.currentUserEntitlementsDetails = data;
+        })
+        .catch((error) => {
+          this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserEntitlementsError'));
+        });
+      // Get accounts details
+      getUserDetails(this.campaignId, lineItemId, 'accounts')
+        .then(({ data }) => {
+          this.currentUserAccountsDetails = data;
+        })
+        .catch((error) => {
+          this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserEntitlementsError'));
+        });
+      // Get roles details
+      getUserDetails(this.campaignId, lineItemId, 'roles')
+        .then(({ data }) => {
+          this.currentUserRolesDetails = data;
+        })
+        .catch((error) => {
+          this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserEntitlementsError'));
+        });
     },
     addComment(comment) {
       saveComment(this.campaignId, this.currentLineItemIdSelectedModal, comment).then(() => {
