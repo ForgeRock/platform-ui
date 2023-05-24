@@ -333,7 +333,8 @@
       "urlWithoutPath": "Please provide a valid URL that does not contain a path",
       "lowerCaseAlphaNumericUnderscoreHyphenOnly": "Can only contain lowercase a-z, 0-9, underscores and hyphens",
       "lowerCaseAlphaNumericUnderscoreHyphenOnlyWithHtml": "Can only contain lowercase <code>a-z</code>, <code>0-9</code>, <code>underscores</code> and <code>hyphens</code>",
-      "maxLength": "{length} characters maximum"
+      "maxLength": "{length} characters maximum",
+      "singleSpaces": "Multiple spaces prohibited"
     },
     "user": {
       "accountStatus": "Status",
