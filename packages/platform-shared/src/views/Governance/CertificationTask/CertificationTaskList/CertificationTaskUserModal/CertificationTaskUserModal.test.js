@@ -28,6 +28,11 @@ describe('CertificationTaskUserModal', () => {
           sn: 'sntest',
           username: 'test',
         },
+        userDetails: {
+          userAccounts: {},
+          userEntitlements: {},
+          userRoles: {},
+        },
         userEntitlements: {
           result: [{
             application: {

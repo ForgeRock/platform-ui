@@ -6,10 +6,11 @@ of the MIT license. See the LICENSE file for details. -->
   <div>
     <template v-if="totalRows">
       <BTable
-        :fields="entitlementsFields"
-        :items="entitlements.result"
+        :fields="accountsFields"
+        :items="accounts.result"
         :per-page="pageSize"
         :current-page="paginationPage"
+        data-testid="accounts-table"
         show-empty
         responsive>
         <template #cell(application)="{ item }">
@@ -23,18 +24,15 @@ of the MIT license. See the LICENSE file for details. -->
               :alt="item.application.name"
               :src="getApplicationLogo(item.application)"
               fluid />
-            <div class="media-body align-self-center overflow-hidden text-nowrap">
+            <BMediaBody>
               <span class="text-dark">
                 {{ item.application.name }}
               </span>
-            </div>
+            </BMediaBody>
           </BMedia>
         </template>
         <template #cell(name)="{ item }">
           <p>{{ nameValue(item.descriptor) }}</p>
-        </template>
-        <template #cell(account)="{ item }">
-          <p>{{ accountValue(item.descriptor) }}</p>
         </template>
       </BTable>
       <BPagination
@@ -48,7 +46,7 @@ of the MIT license. See the LICENSE file for details. -->
       :card="false"
       class="mb-4"
       icon="inbox"
-      :subtitle="$t('governance.certificationTask.lineItemDetailsModal.entitlementsTab.noItems')" />
+      :subtitle="$t('governance.certificationTask.lineItemDetailsModal.accountsTab.noItems')" />
   </div>
 </template>
 
@@ -59,25 +57,27 @@ import { get } from 'lodash';
 import {
   BImg,
   BMedia,
+  BMediaBody,
   BPagination,
   BTable,
 } from 'bootstrap-vue';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 
 /**
- * Tab that allows to visualize the entitlements of the selected user
+ * Tab that allows to visualize the accounts of the selected user
  */
 export default {
-  name: 'EntitlementsTab',
+  name: 'AccountsTab',
   components: {
     BImg,
     BMedia,
+    BMediaBody,
     BPagination,
     BTable,
     FrNoData,
   },
   props: {
-    entitlements: {
+    accounts: {
       type: Object,
       required: true,
     },
@@ -87,12 +87,10 @@ export default {
   ],
   data() {
     return {
-      blankValueIndicator,
-      entitlementsFields: [
+      accountsFields: [
         {
           key: 'application',
           label: this.$t('common.application'),
-          sortable: true,
           class: 'text-truncate',
           show: true,
         },
@@ -102,13 +100,8 @@ export default {
           class: 'text-truncate',
           show: true,
         },
-        {
-          key: 'account',
-          label: this.$t('common.account'),
-          class: 'text-truncate',
-          show: true,
-        },
       ],
+      blankValueIndicator,
       paginationPage: 1,
       pageSize: 5,
     };
@@ -120,20 +113,12 @@ export default {
      * @returns {String} name value
      */
     nameValue(descriptor) {
-      return get(descriptor, 'idx./entitlement.displayName', this.blankValueIndicator);
-    },
-    /**
-     * Return account value for list item
-     * @param {Object} descriptor - information object returned from API
-     * @returns {String} account value
-     */
-    accountValue(descriptor) {
       return get(descriptor, 'idx./account.displayName', this.blankValueIndicator);
     },
   },
   computed: {
     totalRows() {
-      return this.entitlements.result.length;
+      return this.accounts.result.length;
     },
   },
 };
