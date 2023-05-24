@@ -1253,13 +1253,17 @@
         },
         "applicationDetailsTabText": "Application Details",
         "contentDetailsTabText": "Contents",
+        "accountsTab": {
+          "noItems": "No Accounts Items",
+          "title": "Accounts"
+        },
         "entitlementsTab": {
-          "fields": {
-            "account": "Account",
-            "application": "Application",
-            "name": "Name"
-          },
+          "noItems": "No Entitlements Items",
           "title": "Entitlements"
+        },
+        "rolesTab": {
+          "noItems": "No Roles Items",
+          "title": "Roles"
         },
         "userDetailsTabText": "Details"
       },
