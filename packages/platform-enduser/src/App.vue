@@ -107,7 +107,7 @@ export default {
             icon: 'apps',
           }
           : {}),
-        (this.$store.state.SharedStore.governanceEnabledV2 === true
+        (this.$store.state.SharedStore.governanceEnabled === true
           ? {
             displayName: 'sideMenu.myAccess',
             icon: 'badge',
@@ -132,7 +132,7 @@ export default {
             menuGroup: true,
             displayName: 'sideMenu.directory',
             icon: 'people',
-            subItems: this.$store.state.SharedStore.governanceEnabledV2 === true ? [
+            subItems: [
               {
                 displayName: 'sideMenu.delegates',
                 routeTo: { name: 'Delegates' },
@@ -140,11 +140,6 @@ export default {
               {
                 displayName: 'sideMenu.directReports',
                 routeTo: { name: 'DirectReports' },
-              },
-            ] : [
-              {
-                displayName: 'sideMenu.delegates',
-                routeTo: { name: 'Delegates' },
               },
             ],
           }
