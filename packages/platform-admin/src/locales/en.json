@@ -2765,7 +2765,6 @@
       "glossaryType": "Type",
       "isEnumeratedValue": "Enumerated Values",
       "isEnumeratedValueDesc": "Define a list of enumerated values for this property.",
-      "isIndexable": "Indexed",
       "isMultiValued": "Multi-Valued",
       "isSearchable": "Searchable",
       "loadingGlossary": "Loading Glossary attributes.",
