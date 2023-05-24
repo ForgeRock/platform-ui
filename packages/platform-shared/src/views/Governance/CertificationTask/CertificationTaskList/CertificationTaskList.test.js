@@ -91,7 +91,7 @@ describe('CertificationTaskList', () => {
     CertificationApi.saveComment.mockImplementation(() => Promise.resolve({}));
     CertificationApi.reassignLineItem.mockImplementation(() => Promise.resolve({}));
     CertificationApi.updateLineItemReviewers.mockImplementation(() => Promise.resolve({}));
-    CertificationApi.getUserEntitlementsDetails.mockImplementation(() => Promise.resolve({ data: { results: [] } }));
+    CertificationApi.getUserDetails.mockImplementation(() => Promise.resolve({ data: { results: [] } }));
   });
 
   describe('Account column display', () => {

@@ -11,6 +11,9 @@ const governanceBaseUrl = '/governance';
 const governanceCertificationBaseUrl = `${governanceBaseUrl}/certification`;
 const governanceCertificationAdminBaseUrl = `${governanceBaseUrl}/admin/certification`;
 
+/**
+ * @typedef {"entitlements" | "accounts" | "roles" } detailsType
+ */
 export function getAdminCertificationItems(params = {}) {
   const defaultParams = {
     status: 'active',
@@ -355,12 +358,13 @@ export function getCertificationEntitlementDetails(campaignId, itemId) {
 }
 
 /**
- * @description Obtains the entitlement details by user
+ * @description Obtains entitlements, accounts or roles details by user
  * @param {String} campaignId - ID of line item campaign
  * @param {String} itemId - ID of line item
+ * @param {detailsType} detailsType
  * @returns {Promise}
  */
-export function getUserEntitlementsDetails(campaignId, itemId) {
-  const resourceUrl = `${governanceCertificationBaseUrl}/${campaignId}/items/${itemId}/user/entitlements`;
+export function getUserDetails(campaignId, itemId, detailsType) {
+  const resourceUrl = `${governanceCertificationBaseUrl}/${campaignId}/items/${itemId}/user/${detailsType}`;
   return generateIgaApi().get(resourceUrl);
 }
