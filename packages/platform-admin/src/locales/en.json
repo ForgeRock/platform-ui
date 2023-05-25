@@ -2388,7 +2388,8 @@
     "eventHooks": {
       "modal": {
         "editEventHook": "Edit Event Hook",
-        "addEventHook": "Add Event Hook"
+        "addEventHook": "Add Event Hook",
+        "deleteEventHook": "{eventHook} Event Hook"
       },
       "title": "Event Hooks",
       "subTitle": "Trigger a script or a workflow when specified reconciliation events occurs.",
