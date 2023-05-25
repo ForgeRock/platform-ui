@@ -57,6 +57,7 @@
     "EmailProvider": "Email Provider",
     "EmailTemplates": "Email Templates",
     "EmailTemplatePreview": "Email Template Preview",
+    "Entitlements": "Entitlements",
     "ESV": "Environment Secrets & Variables",
     "Events": "Event Hooks",
     "Forbidden": "Forbidden",
@@ -144,6 +145,7 @@
       "couldNotConnectError": "Could not connect to provisioner",
       "createMappingsError": "Error creating application mappings",
       "createMappingsSuccess": "Application mappings successfully created",
+      "errorLoadingConnectorTemplate": "Error loading connector template",
       "noConnectorsTitle": "No Connector Servers available",
       "noConnectorsSubtitle": "Connecting to your {type} with ForgeRock involves deploying and running a piece of software called a “Connector Server” on your side.",
       "noProvisioning": "You haven't set up provisioning yet",
@@ -948,6 +950,9 @@
     "application": "Application",
     "errorRetrievingApplications": "Error retrieving Applications",
     "errorRetrievingApplicationTemplates": "Error retrieving Application templates",
+    "errorLoadingAppTemplate": "Error loading Application template",
+    "deprecated": "(deprecated)",
+    "templateVersion": "v{version}",
     "listView": {
       "addApp": "Add Application",
       "addCustomApp": "Custom Application",
@@ -1016,6 +1021,7 @@
       "messages": {
         "getAppDataFail": "Unable to retrieve application data",
         "getDashboardFail": "Unable to retrieve enduser application details",
+        "getManagedAppFail": "Unable to retrieve managed application",
         "schemaFail": "Unable to get application properties",
         "updateSuccess": "Application updated",
         "updateFail": "Application update failed",
