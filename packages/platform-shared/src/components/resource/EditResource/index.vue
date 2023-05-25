@@ -480,7 +480,13 @@ export default {
       });
     },
     getRelationshipProperties(schema, privilege) {
+      const noGovernanceProperties = ['assignments', 'ownerOfApp', 'taskPrincipals', 'taskProxies'];
       return pickBy(schema.properties, (property, key) => {
+        // If is a governance environment, remove Assigments, Aplication i Own, Task Principals, and Task Proxies tabs
+        if (this.$store.state.SharedStore.governanceEnabled && noGovernanceProperties.includes(key)) {
+          return false;
+        }
+
         const isInPropertyOrder = schema.order.includes(key);
         const hasPermission = privilege.VIEW.properties.includes(key) || privilege.UPDATE.properties.includes(key) || this.isOpenidmAdmin;
         const isRelationship = property.type === 'relationship' || (property.type === 'array' && (property.items.type === 'relationship' || property.items.isRelationship));
