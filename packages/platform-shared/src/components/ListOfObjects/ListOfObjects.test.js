@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -11,11 +11,8 @@ import ListOfObjects from './index';
 describe('ListOfObjects', () => {
   it('ListOfObjects loaded', () => {
     const wrapper = shallowMount(ListOfObjects, {
-      mocks: {
-        $t: () => {},
-      },
+      mocks: { $t: () => {} },
       propsData: {
-        items: {},
         properties: {},
       },
     });
@@ -24,132 +21,92 @@ describe('ListOfObjects', () => {
 
   it('ListOfObjects sets listValues when there is a value', () => {
     const wrapper = shallowMount(ListOfObjects, {
-      mocks: {
-        $t: () => {},
-      },
+      mocks: { $t: () => {} },
       propsData: {
-        items: {},
         properties: {
           testPropertyKey: {
-            type: 'array',
-            value: 'testPropertyValue',
+            type: 'boolean',
+            title: 'testPropertyValue',
+          },
+          test: {
+            type: 'string',
+            title: 'test',
           },
         },
-        name: 'test',
-        value: [{ value: 'test' }],
+        label: 'test',
+        value: [{ test: 'test' }],
       },
     });
     expect(wrapper.vm.listValues).toStrictEqual([{
-      value: 'test',
+      listUniqueIndex: 1,
+      test: 'test',
     }]);
   });
 
-  it('ListOfObjects adds elements to list', () => {
+  it('ListOfObjects adds empty elements to list', () => {
     const wrapper = shallowMount(ListOfObjects, {
-      mocks: {
-        $t: () => {},
-      },
+      mocks: { $t: () => {} },
       propsData: {
-        items: {},
         properties: {
           testPropertyKey: {
-            type: 'array',
-            value: 'testPropertyValue',
-            items: {
-              type: 'other',
-            },
+            type: 'boolean',
+            title: 'testPropertyValue',
+          },
+          test: {
+            type: 'string',
+            title: 'test',
           },
         },
-        name: 'test',
-        value: [{ value: 'test' }],
+        label: 'test',
       },
     });
+
     wrapper.vm.addObjectToList(0);
     expect(wrapper.vm.listValues).toStrictEqual([{
-      value: 'test',
-    }, {
-      testPropertyKey: [],
-    }]);
-    wrapper.setProps({
-      properties: {
-        testPropertyKey: {
-          type: 'array',
-          value: 'testPropertyValue',
-          items: {
-            type: 'array',
-            value: 'testPropertyValue',
-            items: {
-              type: 'other',
-            },
-          },
-        },
-      },
-    });
-    wrapper.vm.addObjectToList(1);
-    expect(wrapper.vm.listValues).toStrictEqual([{
-      value: 'test',
-    }, {
-      testPropertyKey: [],
-    }, {
-      testPropertyKey: [[]],
+      listUniqueIndex: 1,
+      test: '',
+      testPropertyKey: false,
     }]);
   });
 
   it('ListOfObjects removes elements from list', () => {
     const wrapper = shallowMount(ListOfObjects, {
-      mocks: {
-        $t: () => {},
-      },
+      mocks: { $t: () => {} },
       propsData: {
-        items: {},
         properties: {
           testPropertyKey: {
-            type: 'array',
-            value: 'testPropertyValue',
-            items: {
-              type: 'other',
-            },
+            type: 'boolean',
+            title: 'testPropertyValue',
+          },
+          test: {
+            type: 'string',
+            title: 'test',
           },
         },
-        name: 'test',
-        value: [{ value: 'test' }],
+        label: 'test',
       },
     });
-    wrapper.vm.addObjectToList(0);
-    expect(wrapper.vm.listValues).toStrictEqual([{
-      value: 'test',
-    }, {
-      testPropertyKey: [],
-    }]);
+    wrapper.vm.$data.listValues = [{
+      listUniqueIndex: 1,
+      test: '',
+      testPropertyKey: false,
+    }];
 
-    wrapper.vm.removeElementFromList(1);
-    expect(wrapper.vm.listValues).toStrictEqual([{
-      value: 'test',
-    }]);
+    wrapper.vm.removeElementFromList(0);
+    expect(wrapper.vm.listValues).toStrictEqual([]);
   });
 
   it('ListOfObjects checks if field is valid', () => {
     const wrapper = shallowMount(ListOfObjects, {
-      mocks: {
-        $t: () => {},
-      },
+      mocks: { $t: () => {} },
       propsData: {
-        items: {},
         properties: {
           testPropertyKey: {
             type: 'array',
-            value: [
-              {
-                testPropertyKey: 'testPropertyValue',
-              },
-            ],
-            items: {
-              type: 'other',
-            },
+            title: 'testPropertyKey',
           },
         },
-        name: 'test',
-        value: [{ testPropertyKey: 'test' }],
+        label: 'test',
       },
     });
     expect(wrapper.vm.isValidField()).toBe(false);
@@ -157,14 +114,7 @@ describe('ListOfObjects', () => {
       properties: {
         testPropertyKey: {
           type: 'object',
-          value: [
-            {
-              testPropertyKey: 'testPropertyValue',
-            },
-          ],
-          items: {
-            type: 'other',
-          },
+          title: 'testPropertyKey',
         },
       },
     });
@@ -173,14 +123,7 @@ describe('ListOfObjects', () => {
       properties: {
         testPropertyKey: {
           type: 'other',
-          value: [
-            {
-              testPropertyKey: 'testPropertyValue',
-            },
-          ],
-          items: {
-            type: 'other',
-          },
+          title: 'testPropertyKey',
         },
       },
     });
