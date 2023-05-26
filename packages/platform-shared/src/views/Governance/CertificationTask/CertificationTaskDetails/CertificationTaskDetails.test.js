@@ -6,11 +6,12 @@
  */
 
 import { shallowMount } from '@vue/test-utils';
+import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import CertificationTaskDetails from './index';
 
 let wrapper;
 
-function mountComponent(options) {
+function mountComponent(options, certifier) {
   wrapper = shallowMount(CertificationTaskDetails, {
     methods: {
       cancel: jest.fn(),
@@ -19,14 +20,7 @@ function mountComponent(options) {
       $t: (t) => t,
       $route: {
         params: {
-          certifier: {
-            cn: 'Test Test',
-            givenName: 'Test',
-            sn: 'Castillo',
-            id: '973f3896-c81a-4d54-8bec-1e7d9c8187fb',
-            type: 'user',
-            key: 'managed/user/973f3896-c81a-4d54-8bec-1e7d9c8187fb',
-          },
+          certifier,
         },
       },
       ...options,
@@ -46,8 +40,42 @@ function mountComponent(options) {
 describe('CertificationTaskDetails', () => {
   describe('Component mount', () => {
     it('CertificationTaskDetails successfully loaded', () => {
-      mountComponent();
+      mountComponent({}, {
+        cn: 'Test Test',
+        givenName: 'Test',
+        sn: 'Castillo',
+        id: '973f3896-c81a-4d54-8bec-1e7d9c8187fb',
+        type: 'user',
+        key: 'managed/user/973f3896-c81a-4d54-8bec-1e7d9c8187fb',
+      });
       expect(wrapper.name()).toEqual('CertificationTaskDetails');
+    });
+
+    it('should show the certifier image correctly when is a user', () => {
+      mountComponent({}, {
+        cn: 'Test Test',
+        givenName: 'Test',
+        sn: 'Castillo',
+        id: '973f3896-c81a-4d54-8bec-1e7d9c8187fb',
+        type: 'user',
+        key: 'managed/user/973f3896-c81a-4d54-8bec-1e7d9c8187fb',
+      });
+
+      const certifierImage = findByTestId(wrapper, 'certifier-image-user');
+
+      expect(certifierImage.attributes('alt')).toEqual('governance.certificationDetails.ownerNameLabel');
+    });
+
+    it('should show the certifier image correctly when is a role', () => {
+      mountComponent({}, {
+        name: 'Test Role',
+        id: '973f3896-c81a-4d54-8bec-1e7d9c8187fb',
+        key: 'managed/role/973f3896-c81a-4d54-8bec-1e7d9c8187fb',
+      });
+
+      const certifierImage = findByTestId(wrapper, 'certifier-image-role');
+
+      expect(certifierImage).toBeTruthy();
     });
   });
 
@@ -86,6 +114,36 @@ describe('CertificationTaskDetails', () => {
     it('progress is based on totals', () => {
       wrapper.vm.getProgress(totals);
       expect(wrapper.vm.progress).toBe(38);
+    });
+  });
+  describe('certifierName', () => {
+    it('should return the certifier name when is a user', () => {
+      mountComponent({}, {
+        cn: 'Test Test',
+        givenName: 'Test',
+        sn: 'Castillo',
+        id: '973f3896-c81a-4d54-8bec-1e7d9c8187fb',
+        type: 'user',
+        key: 'managed/user/973f3896-c81a-4d54-8bec-1e7d9c8187fb',
+      });
+
+      const result = wrapper.vm.certifierName();
+
+      expect(result.givenName).toEqual('Test');
+      expect(result.sn).toEqual('Castillo');
+    });
+
+    it('should return the certifier name when is a role', () => {
+      mountComponent({}, {
+        name: 'Test Role',
+        id: '973f3896-c81a-4d54-8bec-1e7d9c8187fb',
+        key: 'managed/role/973f3896-c81a-4d54-8bec-1e7d9c8187fb',
+      });
+
+      const result = wrapper.vm.certifierName();
+
+      expect(result.givenName).toEqual('Test Role');
+      expect(result.sn).toEqual('');
     });
   });
 });
