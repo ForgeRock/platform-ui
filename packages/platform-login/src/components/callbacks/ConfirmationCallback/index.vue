@@ -6,7 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <BButton
     v-if="showOnlyPositiveAnswer"
     class="btn-block mt-3"
-    :variant="showButtonsAsLinks ? 'link' : variant"
+    :variant="variant"
     @click="setValue(0)"
     :aria-label="firstOption"
     :data-testid="`btn-${firstOption.toLowerCase().replace(/\s/g, '')}`">
@@ -14,13 +14,12 @@ of the MIT license. See the LICENSE file for details. -->
   </BButton>
   <div
     v-else
-    :class="[{ 'd-flex': showButtonsAsLinks }]"
-  >
+    :class="[{ 'd-flex': variant === 'link' }]">
     <BButton
       v-for="(option, index) in options"
       :key="index"
       class="btn-block mt-3"
-      :variant="showButtonsAsLinks ? 'link' : variant"
+      :variant="variant"
       @click="setValue(index)"
       :aria-label="option"
       :data-testid="`btn-${option.toLowerCase().replace(/\s/g, '')}`">
@@ -64,7 +63,6 @@ export default {
   data() {
     return {
       options: [],
-      showButtonsAsLinks: this.stage?.showButtonsAsLinks,
       showOnlyPositiveAnswer: this.stage?.showOnlyPositiveAnswer,
       firstOption: '',
     };

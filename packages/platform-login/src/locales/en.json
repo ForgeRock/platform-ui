@@ -20,6 +20,9 @@
       "confirmPassword": "Confirm Password",
       "passwordsDoNotMatch": "Passwords do not match"
     },
+    "pushChallenge": {
+      "message": "Open your Authenticator app and tap the number shown to sign-in."
+    },
     "social": {
       "or": "or",
       "signInWith": "Sign in with {buttonDisplayName}"
