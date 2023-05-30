@@ -341,6 +341,7 @@ export default {
     FrKbaCreateCallback: () => import('@/components/callbacks/KbaCreateCallback'),
     FrPasswordCallback: () => import('@/components/callbacks/PasswordCallback'),
     FrPollingWaitCallback: () => import('@/components/callbacks/PollingWaitCallback'),
+    FrPushChallengeNumber: () => import('@/components/display/PushChallengeNumber'),
     FrReCaptchaCallback: () => import('@/components/callbacks/ReCaptchaCallback'),
     FrRecoveryCodesComponent: () => import('@/components/display/RecoveryCodes'),
     FrSelectIdPCallback: () => import('@/components/callbacks/SelectIdPCallback'),
@@ -591,7 +592,7 @@ export default {
         // Reasign type to use specific component
         if (type === this.FrCallbackType.TextOutputCallback || type === this.FrCallbackType.MetadataCallback) {
           const isWebAuthnStep = FRWebAuthn.getWebAuthnStepType(this.step) !== WebAuthnStepType.None;
-          const isRecovertCodeStep = FRRecoveryCodes.isDisplayStep(this.step);
+          const isRecoveryCodeStep = FRRecoveryCodes.isDisplayStep(this.step);
           if (isWebAuthnStep) {
             // dont call the sdk twice on the same webAuthn step
             const onlyOneWebAuthn = !existsInComponentList(this.FrCallbackType.WebAuthnComponent);
@@ -600,9 +601,14 @@ export default {
             } else {
               return;
             }
-          } else if (isRecovertCodeStep) {
+          } else if (isRecoveryCodeStep) {
             type = this.FrCallbackType.RecoveryCodesComponent;
           }
+        }
+
+        // Check HiddenValueCallback input value is pushChallengeNumber for PushChallengeNumer display
+        if (type === this.FrCallbackType.HiddenValueCallback && callback.getInputValue() === 'pushChallengeNumber') {
+          type = this.FrCallbackType.PushChallengeNumber;
         }
 
         // Only components that need extra props or events

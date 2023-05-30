@@ -19,6 +19,7 @@ export const FrCallbackType = {
   SelectIdPCallback: 'SelectIdPCallback',
   SuspendedTextOutputCallback: 'SuspendedTextOutputCallback',
   WebAuthnComponent: 'WebAuthnComponent',
+  PushChallengeNumber: 'PushChallengeNumber',
 };
 
 export function getIdFromSession() {
@@ -262,11 +263,17 @@ export function getComponentPropsAndEvents(componentType, callBackIndex, compone
       return { callbackSpecificProps: { stage } };
     },
     ConfirmationCallback: () => {
-      let stage;
-      if (currentStage.ConfirmationCallback) {
-        stage = currentStage.ConfirmationCallback.shift();
-      }
-      return { callbackSpecificProps: { stage, variant: existsInComponentList(FrCallbackType.WebAuthnComponent) ? 'link' : 'primary' } };
+      // when the current auth step is showing a push challenge, we want to display the button as a link with the PushChallengeNumber view.
+      const authStepIsShowingPushChallenge = currentStep.getCallbacksOfType(FrCallbackType.HiddenValueCallback)?.[0]?.getInputValue() === 'pushChallengeNumber';
+      const stage = currentStage.ConfirmationCallback?.shift();
+      const showButtonsAsLinks = stage?.showButtonsAsLinks;
+      const callbackSpecificProps = {
+        stage,
+        variant: existsInComponentList(FrCallbackType.WebAuthnComponent) || authStepIsShowingPushChallenge || showButtonsAsLinks ? 'link' : 'primary',
+      };
+      return {
+        callbackSpecificProps,
+      };
     },
     ConsentMappingCallback: () => ({
       callbackSpecificProps: { callbacks: currentStep.callbacks },
@@ -275,10 +282,26 @@ export function getComponentPropsAndEvents(componentType, callBackIndex, compone
     HiddenValueCallback: () => ({
       listeners: ['hidden-value-callback-ref'],
     }),
+    PushChallengeNumber: () => ({
+      // when the current auth step is showing a push challenge, pass the message from PollingWaitCallback to the PushChallengeNumber view.
+      callbackSpecificProps: {
+        pushMessage: currentStep.getCallbacksOfType(FrCallbackType.PollingWaitCallback)?.[0]?.getMessage(),
+      },
+    }),
     KbaCreateCallback: () => ({
       callbackSpecificProps: { showHeader: !existsInComponentList(FrCallbackType.KbaCreateCallback) },
       listeners: ['disable-next-button'],
     }),
+    PollingWaitCallback: () => {
+      // when the current auth step is showing a push challenge, we want to hide the spinner and message of this callback, and instead display the message in the PushChallengeNumber view.
+      const authStepIsShowingPushChallenge = currentStep.getCallbacksOfType(FrCallbackType.HiddenValueCallback)?.[0]?.getInputValue() === 'pushChallengeNumber';
+      const callbackSpecificProps = {
+        hideSpinnerAndMessage: authStepIsShowingPushChallenge,
+      };
+      return {
+        callbackSpecificProps,
+      };
+    },
     ReCaptchaCallback: () => ({
       listeners: ['next-step-callback', 'disable-next-button'],
     }),
