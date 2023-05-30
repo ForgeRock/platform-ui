@@ -40,16 +40,67 @@ describe('ConfirmationCallback', () => {
   }
 
   describe('@renders', () => {
-    describe('when only positive answer', () => {
-      it.each`
-      name                       | isLink
-      ${'first option as buton'} | ${false}
-      ${'first option as link'}  | ${true}
-      `('$name', async ({ isLink }) => {
-        const wrapper = setup({ stage: { showButtonsAsLinks: isLink } });
+    describe('displaying buttons based on variant property', () => {
+      it('displays button as a link', async () => {
+        const propsData = {
+          callback: {
+            getOptions: () => stubOptions,
+            payload: {
+                type: 'ConfirmationCallback',
+            },
+          },
+          variant: 'link',
+        };
+        const wrapper = setup(propsData);
         await wrapper.vm.$nextTick();
 
-        const expectedClass = isLink ? 'btn-link' : 'btn-primary';
+        const cancelButton = findByTestId(wrapper, 'btn-stub-option-1');
+        expect(cancelButton.classes()).toContain('btn-link');
+      });
+
+      it('displays button as a button', async () => {
+        const propsData = {
+          callback: {
+            getOptions: () => stubOptions,
+            payload: {
+                type: 'ConfirmationCallback',
+            },
+          },
+          variant: 'primary',
+        };
+        const wrapper = setup(propsData);
+        await wrapper.vm.$nextTick();
+
+        const cancelButton = findByTestId(wrapper, 'btn-stub-option-1');
+        expect(cancelButton.classes()).toContain('btn-primary');
+      });
+
+      it('displays button as button by default', async () => {
+        const propsData = {
+          callback: {
+            getOptions: () => stubOptions,
+            payload: {
+                type: 'ConfirmationCallback',
+            },
+          },
+        };
+        const wrapper = setup(propsData);
+        await wrapper.vm.$nextTick();
+
+        const cancelButton = findByTestId(wrapper, 'btn-stub-option-1');
+        expect(cancelButton.classes()).toContain('btn-primary');
+      });
+    });
+    describe('when only positive answer', () => {
+      it.each`
+      name                       | variant
+      ${'first option as buton'} | ${'primary'}
+      ${'first option as link'}  | ${'link'}
+      `('$name', async ({ variant }) => {
+        const wrapper = setup({ variant });
+        await wrapper.vm.$nextTick();
+
+        const expectedClass = variant === 'link' ? 'btn-link' : 'btn-primary';
 
         const positiveAnswerOnlyButton = findByTestId(wrapper, 'btn-stub-option-1');
         expect(positiveAnswerOnlyButton.attributes('aria-label')).toBe('stub-option-1');
@@ -60,14 +111,14 @@ describe('ConfirmationCallback', () => {
 
     describe('when not positive answer', () => {
       it.each`
-      name                        | isLink
-      ${'options as buton'}       | ${false}
-      ${'options option as link'} | ${true}
-      `('$name', async ({ isLink }) => {
-        const wrapper = setup({ stage: { showOnlyPositiveAnswer: false, showButtonsAsLinks: isLink } });
+      name                        | variant
+      ${'options as buton'}       | ${'primary'}
+      ${'options option as link'} | ${'link'}
+      `('$name', async ({ variant }) => {
+        const wrapper = setup({ variant, stage: { showOnlyPositiveAnswer: false } });
         await wrapper.vm.$nextTick();
 
-        const expectedClass = isLink ? 'btn-link' : 'btn-primary';
+        const expectedClass = variant === 'link' ? 'btn-link' : 'btn-primary';
 
         stubOptions.forEach((option) => {
           const optionButton = findByTestId(wrapper, `btn-${option}`);
