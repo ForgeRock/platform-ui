@@ -244,6 +244,7 @@ export default {
     openHandler() {
       this.$refs.vms.$el.querySelector('input').focus();
       this.floatLabels = true;
+      this.$emit('open');
     },
     /**
      * Handler for when the user types in the search input.
