@@ -23,7 +23,7 @@
     .multiselect__single,
     .multiselect__select,
     .multiselect__tags {
-      background-color: $gray-100;
+      background-color: $gray-100 !important;
     }
 
     .multiselect__select {

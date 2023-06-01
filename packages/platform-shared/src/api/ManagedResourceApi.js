@@ -76,6 +76,14 @@ export function postManagedResource(resourceName, data, routeToForbidden = true)
   return generateIdmApi(null, routeToForbidden).post(resourceUrl, data);
 }
 
+/**
+ * Adds or removes one or more values from one or more fields in a managed resource
+ * @param {String} resourceName name of managed resource. e.g., user, alpha_role, <realm>_<name>
+ * @param {String} resourceId id of specific resource being patched
+ * @param {Object} data patch request payload
+ * @param {Object} requestOverride override properties or headers to pass along to idm api
+ * @returns Promise containing results of patch (success or failure)
+ */
 export function patchManagedResource(resourceName, resourceId, data, requestOverride) {
   const resourceUrl = `managed/${resourceName}/${resourceId}`;
   return generateIdmApi(requestOverride).patch(resourceUrl, data);

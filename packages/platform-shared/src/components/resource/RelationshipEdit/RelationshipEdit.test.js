@@ -125,7 +125,7 @@ describe('RelationshipEdit', () => {
 
     expect(wrapper.vm.allResourceCollections.length).toEqual(1);
     expect(wrapper.vm.rescourceCollectionTypes.length).toEqual(1);
-    expect(wrapper.vm.relationshipField.value).toEqual('');
+    expect(wrapper.vm.relationshipField.value).toEqual('managed/user/testy');
     expect(wrapper.vm.resourceCollection).toEqual(wrapper.vm.relationshipField.resourceCollection[0]);
     wrapper.vm.setOptions('a');
     expect(getManagedResourceList).not.toHaveBeenCalled();

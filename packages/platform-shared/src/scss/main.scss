@@ -773,3 +773,8 @@ dd {
   }
 }
 /* stylelint-enable */
+
+/* bootstrap 5.0 classes (we can remove these once we migrate to 5.0 */
+.lh-sm {
+  line-height: 1.25rem !important;
+}

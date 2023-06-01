@@ -141,11 +141,11 @@
       "connectorNotFound": "Provisioning not available",
       "connectorSaveError": "There was an error saving the provisioner",
       "connectorSaveSuccess": "Provisioner successfully saved",
-      "connectorServerMissing": "Please ensure your Connector Server is connected.",
+      "connectorMissing": "Please ensure your Application is connected.",
       "couldNotConnectError": "Could not connect to provisioner",
       "createMappingsError": "Error creating application mappings",
       "createMappingsSuccess": "Application mappings successfully created",
-      "noConnectorsTitle": "No provisioners available",
+      "noConnectorsTitle": "No Connector Servers available",
       "noConnectorsSubtitle": "Connecting to your {type} with ForgeRock involves deploying and running a piece of software called a “Connector Server” on your side.",
       "noProvisioning": "You haven't set up provisioning yet",
       "noTokenEndpoint": "No token endpoint configured for this provisioner.",
@@ -946,7 +946,6 @@
     "updateFailed": "Error updating {resourceName} password policy"
   },
   "applications": {
-    "addField": "Add {field}",
     "application": "Application",
     "errorRetrievingApplications": "Error retrieving Applications",
     "errorRetrievingApplicationTemplates": "Error retrieving Application templates",
@@ -1149,37 +1148,14 @@
         "saveError": "Error saving SAML configuration"
       },
       "assignmentsTab": {
-        "title": "Users & Roles"
+        "title": "Users & Roles",
+        "noMappings": "A mapping has not been set up yet",
+        "noMappingsSubtitle": "Set up the provisioner and a mapping to proceed.",
+        "proceedToProvisioning": "Proceed to Provisioning"
       },
       "provisioningTab": {
         "updateMappingSuccess": "Mappings set successfully",
         "createMappingError": "Error setting mappings"
-      },
-      "entitlementsTab": {
-        "addEntitlement": "Add Entitlement",
-        "addEntitlementModal": {
-          "attributesStage": "Define attributes to be mapped to the target system.",
-          "attributesStageTitle": "Entitlement Attributes",
-          "descriptionDescription": "Description to display with this entitlement.",
-          "nameDescription": "Human-readable name for this entitlement.",
-          "nameLabel": "Display Name",
-          "objectTypeDescription": "Object type to create an entitlement for.",
-          "objectTypeLabel": "Object Type",
-          "ownerDescription": "Owner of entitlement",
-          "ownerLabel": "Owner"
-        },
-        "attribute": "Attribute",
-        "editEntitlement": "Edit Entitlement",
-        "entitlement": "Entitlement",
-        "loadingError": "Error loading dependencies",
-        "noEntitlementMappings": "A mapping has not been set up yet",
-        "noEntitlementMappingsSubtitle": "Set up the provisioner and a mapping to proceed.",
-        "noEntitlementObjects": "You haven't specified any object types as entitlements yet",
-        "noEntitlements": "You haven't added any entitlements yet",
-        "noEntitlementsSubtitle": "Add entitlements to give users access to resources in {applicationType}.",
-        "proceedToProvisioning": "Proceed to Provisioning",
-        "requestable": "Requestable",
-        "title": "Entitlements"
       },
       "accessTab": {
         "title": "Access",
@@ -2269,7 +2245,9 @@
   "objectTypeEditor": {
     "addObjectType": "Add Object Type",
     "addProperty": "Add a Property",
-    "allObjectsAssigned": "You can't set this property as an entitlement because all object types already have a(n) {objectType} property specified as an entitlement (only one {objectType} property can be set as an entitlement for each object type).",
+    "allObjectsAssigned": "All non-account object types have already been assigned to a property (each object type can only be assigned to one property).",
+    "applicationObjectType": "Application Object Type",
+    "constrainValues": "Constrain values for this property",
     "creatable": "Creatable",
     "data": "Data",
     "details": "Details",
@@ -2278,7 +2256,8 @@
     "displayAttributeDescription": "Attribute on the target system to use to populate a human-readable name for this object type and any associated entitlements.",
     "editProperty": "Edit Property",
     "entitlement": "Entitlement",
-    "entitlementDescription": "Specify this property as containing entitlement.",
+    "entitlementDescription": "Specify this property as containing entitlements.",
+    "enumeratedValues":"Enumerated Values",
     "errorRetrievingSystemObjects": "Error retrieving system objects",
     "id": "ID",
     "multiValued": "Multi-valued",
@@ -2294,16 +2273,17 @@
     "propertyDeleted": "Property deleted",
     "propertySaved": "Property saved",
     "readable": "Readable",
+    "referencedObjectField": "Object Type Property",
+    "referencedObjectFieldDescription": "Object type property to use to populate enumerated values.",
     "returnedByDefault": "Returned by default",
     "schedules": "Schedules",
-    "selectEntitlement": "Select Entitlement",
-    "selectEntitlementDescription": "Object Type that is the source of entitlements.",
+    "selectNonAccountObject": "Select Object Type",
+    "selectNonAccountObjectDescription": "Object type from which to populate enumerated values for this property",
+    "sourceOfValues": "Source of Values",
     "updatable": "Updatable",
     "userSpecific": "User-specific",
     "userSpecificHelpText": "Property is specific to individual users and not applicable to roles.",
     "reconcile": "Reconcile",
-    "enumeratedValues": "Enumerated Values",
-    "enumeratedValuesDescription": "Define a list of enumerated values for this property",
     "values": "Values"
   },
   "schedules": {
@@ -2424,7 +2404,9 @@
     },
     "schedules": {
       "title": "Schedules",
-      "subTitle": "Periodically perform a full or partial reconciliation."
+      "titleFullOnly": "Schedule",
+      "subTitle": "Periodically perform a full or partial reconciliation.",
+      "subTitleFullOnly": "Periodically perform a full reconciliation."
     }
   },
   "reconciliation": {
@@ -2508,6 +2490,7 @@
     "readError": "Error getting data",
     "reconAccounts": "Reconcile Accounts",
     "reconCanceled": "Reconciliation canceled by admin",
+    "reconcileAppNonAccountObject": "Reconcile {applicationName} {nonAccountObject}",
     "reconciled": "Reconciled",
     "reconIdentity": "Reconcile Identity",
     "reconNow": "Reconcile Now",
@@ -2577,6 +2560,7 @@
       "absent": "Source object has no matching target.",
       "allGone": "Source object removed, link not found, correlation not possible.",
       "ambiguous": "Source object correlates to multiple target objects, without a link.",
+      "changesToIncorporate": "Change was made on application and IDM will incorporate.",
       "confirmed": "Valid source and target objects linked.",
       "found": "Correlation query from source points to one target object.",
       "foundAlreadyLinked": "Correlation from source points to a target object already linked to a different source.",
@@ -2584,6 +2568,7 @@
       "missing": "The source links to a missing target object.",
       "sourceIgnored": "Does not pass validSource script.",
       "sourceMissing": "Valid target found, link found.",
+      "sourceTargetConflict": "Source and target have different values, but cannot be remedied or disallowed.",
       "targetIgnored": "Does not pass validTarget script.",
       "unassigned": "Valid target found, no link.",
       "unqualified": "Source object not qualified, but target objects found."

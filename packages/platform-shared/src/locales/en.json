@@ -182,6 +182,7 @@
     "success": "Success",
     "tableNavigation": "Table Navigation",
     "tenant": "Tenant",
+    "text": "Text",
     "time": "Time",
     "true": "True",
     "type": "Type",
@@ -531,6 +532,7 @@
       "assignRoles": "Assign Roles",
       "assignUsers": "Assign Users",
       "editAccountDetails": "Specify account details as they should exist in {application}.",
+      "editDetails": "Edit Details",
       "noConfiguredAttributes": "The administrator has not configured any attributes to be provisioned via this role.",
       "accountDetails": "{appName} Account Details",
       "attribute": "attribute",
@@ -571,7 +573,8 @@
       "noOperation": "No Operation",
       "newEventText": "\/\/ Script has access to the following variables:\n\/\/ sourceObject\n\/\/ targetObject\n\/\/ existingTargetObject\n\/\/ linkQualifier \nreturn targetObject;\n\/\/ Role assignment scripts must always return targetObject, otherwise\n\/\/ other scripts and code that occur downstream of your script will\n\/\/ not work as expected. ",
       "resourceNotFound": "Cannot retrieve resource on the target system.",
-      "resourceUpdated": "Resource updated"
+      "resourceUpdated": "Resource updated",
+      "errorSavingAssignment": "Error saving assignment"
     },
     "authenticationDevices": {
       "title": "2-Step/Push Authentication",
