@@ -6,18 +6,24 @@
  */
 
 import { generateIdmApi } from '@forgerock/platform-shared/src/api/BaseApi';
+import encodeQueryString from '../utils/encodeQueryString';
 
-export function getMappings(mappingNames) {
-  if (!mappingNames?.length) {
-    return generateIdmApi().get('/endpoint/mappingDetails');
-  }
+export function getMappingDetails() {
+  return generateIdmApi().get('/endpoint/mappingDetails');
+}
 
-  const params = mappingNames.map((mappingName, index) => {
-    const param = `name%20eq%20"${mappingName}"`;
-    return index ? `%20OR%20${param}` : param;
-  });
+export function getMappings(params) {
+  const url = `sync/mappings${encodeQueryString(params)}`;
 
-  const url = `sync/mappings?_queryFilter=${params.join('')}`;
+  return generateIdmApi().get(url);
+}
+
+export function getConfigSyncMappings() {
+  return generateIdmApi().get('config/sync');
+}
+
+export function getMapping(mappingId) {
+  const url = `sync/mappings/${mappingId}`;
 
   return generateIdmApi().get(url);
 }
@@ -27,10 +33,25 @@ export function previewMapping(payload) {
 }
 
 export function putMappings(payload) {
-  return generateIdmApi().put('config/sync', payload);
+  return generateIdmApi().put('config/sync?waitForCompletion=true', payload);
 }
 
 export function getTargetPreview(resourceId, mapping) {
   const resourceUrl = `sync?_action=getTargetPreview&resourceId=${resourceId}&mapping=${mapping}`;
   return generateIdmApi().post(resourceUrl);
+}
+
+export function buildQueryFilterMappingString(mappingNames) {
+  if (!mappingNames || !mappingNames.length) {
+    return true;
+  }
+
+  let queryFilter = '';
+  mappingNames.forEach((mappingName, index) => {
+    if (index) {
+      queryFilter = `${queryFilter} OR `;
+    }
+    queryFilter = `${queryFilter}name eq "${mappingName}"`;
+  });
+  return queryFilter;
 }
