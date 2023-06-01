@@ -15,10 +15,10 @@ function fillOutRegistrationForm(fieldData) {
       .type(field.text);
   });
 
-  cy.findAllByRole('listbox').first().click();
+  cy.findAllByRole('combobox').first().click();
   cy.findAllByText('What\'s your favorite color?').first().click();
   cy.findAllByPlaceholderText('Answer').first().clear().type('orange');
-  cy.findAllByRole('listbox').last().click();
+  cy.findAllByRole('combobox').last().click();
   cy.findAllByText('Who was your first employer?').last().click();
   cy.findAllByPlaceholderText('Answer').last().clear().type('ForgeRock');
 }
