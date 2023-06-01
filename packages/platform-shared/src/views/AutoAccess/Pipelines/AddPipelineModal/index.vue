@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -57,17 +57,17 @@ of the MIT license. See the LICENSE file for details. -->
             </span>
           </template>
           <BDropdownItem
-            v-for="type in types"
-            :key="type.name"
-            @click="selectType(type)"
+            v-for="dropdownItemType in types"
+            :key="dropdownItemType.name"
+            @click="selectType(dropdownItemType)"
           >
             <span
               aria-hidden="true"
               class="mr-2 md-24 material-icons-outlined">
-              {{ type.icon }}
+              {{ dropdownItemType.icon }}
             </span>
             <span>
-              {{ $t(`autoAccess.access.pipelines.types["${type.name}"]`) }}
+              {{ $t(`autoAccess.access.pipelines.types["${dropdownItemType.name}"]`) }}
             </span>
           </BDropdownItem>
         </BDropdown>

@@ -419,25 +419,27 @@ export default {
           // Build an array of the connectors data by combining each of it's
           // properties names, types and values from app.content and app.schema.
           app.data = [];
-          Object.keys(app.content).forEach((key) => {
-            if (app.schema[key]
-                && app.schema[key].nativeName
-                && app.content[key]
-                && (app.content[key].length !== 0)
-                && app.schema[key].type) {
-              const prop = {};
-              prop.name = app.schema[key].nativeName;
-              prop.value = app.content[key];
-              prop.type = app.schema[key].type;
-              prop.itemsType = app.schema[key].items ? app.schema[key].items.type : null;
-              // VuePrismEditor expects a json string so if the property is an
-              // object stringify it before passing it along
-              if (prop.type === 'object' || (prop.type === 'array' && prop.itemsType === 'object')) {
-                prop.value = JSON.stringify(prop.value, null, 2);
+          if (app.content) {
+            Object.keys(app.content).forEach((key) => {
+              if (app.schema[key]
+                  && app.schema[key].nativeName
+                  && app.content[key]
+                  && (app.content[key].length !== 0)
+                  && app.schema[key].type) {
+                const prop = {};
+                prop.name = app.schema[key].nativeName;
+                prop.value = app.content[key];
+                prop.type = app.schema[key].type;
+                prop.itemsType = app.schema[key].items ? app.schema[key].items.type : null;
+                // VuePrismEditor expects a json string so if the property is an
+                // object stringify it before passing it along
+                if (prop.type === 'object' || (prop.type === 'array' && prop.itemsType === 'object')) {
+                  prop.value = JSON.stringify(prop.value, null, 2);
+                }
+                app.data.push(prop);
               }
-              app.data.push(prop);
-            }
-          });
+            });
+          }
           this.linkedApplications.push(app);
         });
       });
