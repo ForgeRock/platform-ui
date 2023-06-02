@@ -2394,7 +2394,9 @@
         "allowEmptySource": "Allow reconciliations from an Empty Source",
         "emptySourceDescription": "Allow reconciliations from an empty source to delete all data in a target resource.",
         "threadsPerRecon": "Threads Per Reconciliation",
-        "threadsDescription": "Tune performance by adjusting the number of concurrent threads dedicated to reconciliation."
+        "threadsDescription": "Tune performance by adjusting the number of concurrent threads dedicated to reconciliation.",
+        "syncToken": "Sync Token",
+        "syncTokenDescription": "Sync token used for incremental inbound reconciliation."
       }
     },
     "eventHooks": {
