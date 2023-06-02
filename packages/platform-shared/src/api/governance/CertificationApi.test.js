@@ -230,23 +230,25 @@ describe('Governace API', () => {
     const campaignId = 'campaignId';
     const actorId = 'actorId';
     const isAdmin = true;
+    const taskStatus = 'active';
 
     get.mockReturnValue(Promise.resolve({}));
 
-    await CertificationApi.getCertificationCountsByCampaign(campaignId, actorId, isAdmin);
+    await CertificationApi.getCertificationCountsByCampaign(campaignId, actorId, isAdmin, taskStatus);
 
-    expect(get).toHaveBeenCalledWith(`${governanceCertificationBaseUrl}/${campaignId}/items?getCount=true&isAdmin=${isAdmin}&primaryReviewerId=${actorId}`);
+    expect(get).toHaveBeenCalledWith(`${governanceCertificationBaseUrl}/${campaignId}/items?getCount=true&isAdmin=${isAdmin}&taskStatus=${taskStatus}&primaryReviewerId=${actorId}`);
   });
 
   it('getCertificationCountsByCampaign should call API correctly with actorId if it is not admin', async () => {
     const campaignId = 'campaignId';
     const actorId = 'actorId';
     const isAdmin = false;
+    const taskStatus = 'active';
 
     get.mockReturnValue(Promise.resolve({}));
 
-    await CertificationApi.getCertificationCountsByCampaign(campaignId, actorId, isAdmin);
+    await CertificationApi.getCertificationCountsByCampaign(campaignId, actorId, isAdmin, taskStatus);
 
-    expect(get).toHaveBeenCalledWith(`${governanceCertificationBaseUrl}/${campaignId}/items?getCount=true&isAdmin=${isAdmin}&actorId=${actorId}`);
+    expect(get).toHaveBeenCalledWith(`${governanceCertificationBaseUrl}/${campaignId}/items?getCount=true&isAdmin=${isAdmin}&taskStatus=${taskStatus}&actorId=${actorId}`);
   });
 });
