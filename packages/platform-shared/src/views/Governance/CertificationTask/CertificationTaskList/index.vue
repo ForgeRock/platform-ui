@@ -617,6 +617,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    taskStatus: {
+      type: String,
+      default: 'active',
+    },
     entitlementUserId: {
       type: String,
       default: null,
@@ -1096,7 +1100,7 @@ export default {
       const payload = this.buildBodyParams();
 
       // if all users line items are complete, emit an event
-      getCertificationCountsByCampaign(this.campaignId, this.actorId, this.isAdmin).then(({ data }) => {
+      getCertificationCountsByCampaign(this.campaignId, this.actorId, this.isAdmin, this.taskStatus).then(({ data }) => {
         this.$emit('set-totals', data.totals);
       });
 
@@ -1220,6 +1224,7 @@ export default {
         pageNumber: pageNumber - 1,
         sortBy: sortByColumn,
         sortDir,
+        taskStatus: this.taskStatus,
       };
       if (this.isAdmin) {
         managedResourceParams.isAdmin = this.isAdmin;
