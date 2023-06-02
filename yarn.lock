@@ -2781,10 +2781,10 @@ anymatch@~3.1.2:
     webcrypto-shim "^0.1.6"
     whatwg-fetch "^3.2.0"
 
-appauthhelper@1.0.0-alpha.0:
-  version "1.0.0-alpha.0"
-  resolved "https://registry.yarnpkg.com/appauthhelper/-/appauthhelper-1.0.0-alpha.0.tgz#81182354bc424e0409a8aa85b210278d6c307c8f"
-  integrity sha512-fa1z3HjxF0IAuRZIB4hatrpTxvGzbjaVhSGpJFjkXKNFsMRtr0SJO81ZRoYkh0Vz5bTWbhEPU9QOLHbWVCVYAw==
+appauthhelper@1.0.0-alpha.2:
+  version "1.0.0-alpha.2"
+  resolved "https://registry.yarnpkg.com/appauthhelper/-/appauthhelper-1.0.0-alpha.2.tgz#7e96286502eadc4284b33d2ed2e5eb19eb486dfd"
+  integrity sha512-6tXE0Xeie0rBvla3PiIPWsfwVacxPWhtRcxL4pY+09gFrpwV8n6/aghhhw8BXssLcRXe6NDtgVoPPlG3iGI4wA==
   dependencies:
     "@openid/appauth" "^1.2.8"
     promise-polyfill "8.1.3"
