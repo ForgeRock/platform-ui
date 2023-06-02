@@ -11,6 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
         :hide-sign-off="hideSignOff"
         :is-complete="isComplete"
         :is-saving="isSaving"
+        :task-status="taskStatus"
         @change-saving="setSaving"
         @review-forwarded="goToBackUrl"
         @sign-off="signOff" />
@@ -29,6 +30,7 @@ of the MIT license. See the LICENSE file for details. -->
           :is-admin="isAdmin"
           :actor-id="actorId"
           :show-entitlement-column="isEntitlementCertificationType"
+          :task-status="taskStatus"
           @change-saving="setSaving"
           @check-progress="checkInProgress"
           @refresh-complete="refreshTasks = false"
@@ -57,6 +59,7 @@ of the MIT license. See the LICENSE file for details. -->
               :is-admin="isAdmin"
               :actor-id="actorId"
               :show-entitlement-column="false"
+              :task-status="taskStatus"
               @hide-group-by="hideGroupBy"
               @change-saving="setSaving"
               @check-progress="checkInProgress"
@@ -80,6 +83,7 @@ of the MIT license. See the LICENSE file for details. -->
               :is-admin="isAdmin"
               :actor-id="actorId"
               :show-entitlement-column="true"
+              :task-status="taskStatus"
               @change-saving="setSaving"
               @check-progress="checkInProgress"
               @refresh-complete="refreshTasks = false"
@@ -109,6 +113,7 @@ of the MIT license. See the LICENSE file for details. -->
           :actor-id="actorId"
           :show-entitlement-column="isEntitlementCertificationType"
           :show-group-by="isGroupByAccount"
+          :task-status="taskStatus"
           @change-saving="setSaving"
           @check-progress="checkInProgress"
           @refresh-complete="refreshTasks = false"
@@ -178,6 +183,7 @@ export default {
       isSaving: false,
       loadFailed: false,
       refreshTasks: false,
+      taskStatus: null,
       totals: null,
       isGroupByAccount: false,
       showGroupByAccount: true,
@@ -214,7 +220,7 @@ export default {
       this.isSaving = !this.isSaving;
     },
     checkInProgress() {
-      getInProgressTasksByCampaign(this.campaignId, this.isAdmin).then(({ data }) => {
+      getInProgressTasksByCampaign(this.campaignId, this.isAdmin, this.taskStatus).then(({ data }) => {
         // verifies if the user has at least one sign-off permission for line items
         const atLeastOneSignoffPermission = (item) => {
           const reviewer = item.decision.certification.actors.find((actor) => actor.id === this.actorId);
@@ -245,6 +251,7 @@ export default {
   mounted() {
     this.campaignId = this.$route?.params?.campaignId;
     this.actorId = this.$route.query.actorId;
+    this.taskStatus = this.$route.query.taskStatus;
     this.getCertificationDetails();
     let backUrl = '/access-reviews';
     if (this.isAdmin) {
