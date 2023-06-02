@@ -39,7 +39,6 @@ export function getCertificationItems(params = {}) {
 }
 
 export function activateCertification(campaignId) {
-  // TODO: no staged available in API
   return generateIgaApi().post(`/governance/certification/${campaignId}/activate`);
 }
 
@@ -112,10 +111,11 @@ export function getCertificationTaskAccountDetails(campaignId, itemId) {
   return generateIgaApi().get(resourceUrl);
 }
 
-export function getCertificationCountsByCampaign(campaign, actorId, isAdmin) {
+export function getCertificationCountsByCampaign(campaign, actorId, isAdmin, taskStatus) {
   const params = {
     getCount: true,
     isAdmin,
+    taskStatus,
     ...(isAdmin ? { primaryReviewerId: actorId } : { actorId }),
   };
 
@@ -130,10 +130,11 @@ export function getCertificationCountsByCampaign(campaign, actorId, isAdmin) {
 * @param {boolean} isAdmin - determine if the user is admin
 * @returns {Promise}
 */
-export function getInProgressTasksByCampaign(campaignId, isAdmin = false) {
+export function getInProgressTasksByCampaign(campaignId, isAdmin = false, taskStatus) {
   const queryParams = {
     status: 'in-progress',
     isAdmin,
+    taskStatus,
   };
   const resourceUrl = `${governanceCertificationBaseUrl}/${campaignId}/items`;
   return generateIgaApi().get(resourceUrl, { params: queryParams });

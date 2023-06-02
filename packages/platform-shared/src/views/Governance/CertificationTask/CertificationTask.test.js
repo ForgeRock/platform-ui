@@ -26,6 +26,7 @@ describe('CertificationTask', () => {
           },
           query: {
             actorId: 'a96de99c-c638-4bdd-84cb-5fb559225153',
+            taskStatus: 'active',
           },
         },
       },
@@ -50,7 +51,7 @@ describe('CertificationTask', () => {
 
   describe('checkInProgress method', () => {
     afterEach(() => {
-      expect(CertificationApi.getInProgressTasksByCampaign).toHaveBeenCalledWith('a96de99c-c638-4bdd-84cb-5fb559225152', false);
+      expect(CertificationApi.getInProgressTasksByCampaign).toHaveBeenCalledWith('a96de99c-c638-4bdd-84cb-5fb559225152', false, 'active');
     });
 
     it('checkInProgress method, two line items with signoff permission should show sign-off button', async () => {
