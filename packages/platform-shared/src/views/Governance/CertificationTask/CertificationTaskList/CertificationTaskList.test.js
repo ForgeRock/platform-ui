@@ -335,6 +335,7 @@ describe('CertificationTaskList', () => {
         pageNumber: 2,
         sortBy: 'name',
         sortDir: 'asc',
+        taskStatus: 'active',
       };
       const result = wrapper.vm.buildUrlParams(3, 'name', 'asc');
       expect(result).toStrictEqual(expectedValue);
@@ -350,7 +351,7 @@ describe('CertificationTaskList', () => {
         sortDir: 'asc',
         isAdmin: true,
         actorId: '123',
-
+        taskStatus: 'active',
       };
       await wrapper.setProps({
         isAdmin: true,
@@ -1748,6 +1749,7 @@ describe('CertificationTaskList', () => {
         pageSize: 10,
         sortBy: 'user.givenName',
         sortDir: 'asc',
+        taskStatus: 'active',
       },
       'test-id',
       {
