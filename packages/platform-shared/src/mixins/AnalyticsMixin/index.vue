@@ -199,18 +199,15 @@ export default {
       dotText.each(function dotme() {
         const text = d3.select(this);
         const words = text.text().split(/\s+/);
-        text.attr('title', words);
 
         const ellipsis = text.text('').append('tspan').attr('class', 'elip').text('...');
         const width = parseFloat(text.attr('width')) - ellipsis.node().getComputedTextLength();
         const numWords = words.length;
 
         const tspan = text.insert('tspan', ':first-child').text(words.join(' '));
-        text.insert('title').text(words);
 
         // Try the whole line
         // While it's too long, and we have words left, keep removing words
-
         while (tspan.node().getComputedTextLength() > width && words.length > 1) {
           words.pop();
           tspan.text(words.join(' '));
