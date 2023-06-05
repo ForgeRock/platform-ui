@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -26,11 +26,13 @@ of the MIT license. See the LICENSE file for details. -->
             v-if="label && isHtml"
             v-html="label"
             ref="inputLabel"
+            :id="labelId"
             :for="id"
             :class="['pe-none full-width', {'overflow-hidden text-nowrap': labelTextOverflowHidden, 'readonly-label': readonlyLabel}]" />
           <label
             v-else-if="label"
             ref="inputLabel"
+            :id="labelId"
             :for="id"
             :class="['pe-none', {'overflow-hidden text-nowrap': labelTextOverflowHidden, 'readonly-label': readonlyLabel}]">
             {{ getTranslation(label) }}
@@ -42,10 +44,12 @@ of the MIT license. See the LICENSE file for details. -->
           <label
             v-if="label && isHtml"
             v-html="label"
+            :id="labelId"
             :for="id"
             class="pe-none overflow-hidden text-nowrap full-width" />
           <label
             v-else-if="label"
+            :id="labelId"
             :for="id"
             class="pe-none overflow-hidden text-nowrap">
             {{ getTranslation(label) }}
@@ -198,6 +202,7 @@ export default {
   },
   data() {
     return {
+      labelId: `${this.id}-label`, // stores the label id
       labelHeight: 0, // stores the label height
       labelTextOverflowHidden: false, // verifies if the label text is overflow hidden
     };
