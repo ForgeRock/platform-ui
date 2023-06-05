@@ -222,6 +222,10 @@ export default {
       type: String,
       default: 'CertificationTaskEditReviewerAccountModal',
     },
+    currentUserPermissions: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   data() {
     return {
@@ -236,6 +240,7 @@ export default {
       selectedReviewer: null,
       resourceSelectLabel: this.$t('governance.certificationTask.lineItemReviewersModal.editReviewerModal.chooseUserLabel'),
       resourceSelectDescription: this.$t('governance.certificationTask.lineItemReviewersModal.editReviewerModal.chooseUserDescription'),
+      currentUserMappedPermissions: {},
     };
   },
   methods: {
@@ -264,30 +269,48 @@ export default {
       this.selectedReviewer = null;
     },
     disabledField(key) {
-      return (this.reviewer && !this.isAllowedDeletion && key === 'signoff') || this.permissionOwnedByCurrentUser;
+      return (this.reviewer && !this.isAllowedDeletion && key === 'signoff') || this.permissionOwnedByCurrentUser || !this.currentUserMappedPermissions[key];
+    },
+    /**
+     * maps the permissions received as parameter to decide, comment, forward, signoff permissions according with the
+     * PERMISSIONS_MAP constant.
+     * This method reduces the PERMISSIONS_MAP constant according to the permissions passed as parameter to obtain
+     * a permission object to show in the view just with four attributes (decide, comment, forward, signoff ).
+     * The callback function passed to the reduce iterates each item in the PERMISSIONS_MAP an assign the
+     * permission to an accumulator object (permissionsAccumulator) that finally contains the new object
+     * @param {Object} permissions - object with the permissions, each attribute represents a permission with value true or false
+     */
+    getMappedPermissions(permissions) {
+      return Object.entries(PERMISSIONS_MAP).reduce((permissionsAccumulator, [permissionGroup, permissionsInGroup]) => {
+        // just validate the first permission in the group, it is not possible to assign permissions in the group separately at this time.
+        permissionsAccumulator[permissionGroup] = !!permissions[permissionsInGroup[0]];
+        return permissionsAccumulator;
+      }, {});
     },
   },
   watch: {
     reviewer(newReviewer) {
       if (!newReviewer) {
-        this.permissions = {
-          ...DEFAULT_PERMISSIONS,
-        };
+        // if is creating a new reviewer returns the permissions allowed according the current user permissions
+        this.permissions = this.getMappedPermissions(this.currentUserPermissions);
         this.reviewerType = ResourceType.USER;
       } else {
-        this.permissions = Object.entries(PERMISSIONS_MAP).reduce((acc, [key, value]) => {
-          for (let i = 0; i < value.length; i += 1) {
-            acc[key] = !!newReviewer.permissions[value[i]];
-            break;
-          }
-          return acc;
-        }, {});
+        // if is editing a reviewer return the permissions related to that reviewer
+        this.permissions = this.getMappedPermissions(newReviewer.permissions);
         [, this.reviewerType] = newReviewer.id.split('/');
       }
     },
     reviewerType(newReviewerType) {
       this.resourceSelectLabel = this.$t(`governance.certificationTask.lineItemReviewersModal.editReviewerModal.${newReviewerType === ResourceType.USER ? 'chooseUserLabel' : 'chooseRoleLabel'}`);
       this.resourceSelectDescription = this.$t(`governance.certificationTask.lineItemReviewersModal.editReviewerModal.${newReviewerType === ResourceType.USER ? 'chooseUserDescription' : 'chooseRoleDescription'}`);
+    },
+    currentUserPermissions(permissions) {
+      if (!this.reviewer) {
+        // if no reviewer is selected that means that is a reviewer creation, the permissions shown for this case are
+        // the same permissions of the current user logged in
+        this.permissions = this.getMappedPermissions(permissions);
+      }
+      this.currentUserMappedPermissions = this.getMappedPermissions(permissions);
     },
   },
   computed: {
