@@ -331,9 +331,10 @@ filterTests(['forgeops', 'cloud'], () => {
           cy.findByRole('cell', { name: internalRoleName });
           // Ensure user can add and delete internal roles
           cy.findByRole('button', { name: 'Add Authorization Roles' }).click();
-          cy.findByRole('dialog').findByLabelText('Authorization Roles').click({ force: true }).type(`${internalRoleName}`);
+          cy.findByRole('dialog').findAllByLabelText('Authorization Roles').first().click({ force: true })
+            .type(`${internalRoleName}`);
           cy.findByRole('dialog').get('.multiselect__option--highlight').contains(internalRoleName);
-          cy.findByRole('dialog').findByLabelText('Authorization Roles').type('{enter}');
+          cy.findByRole('dialog').findAllByLabelText('Authorization Roles').first().type('{enter}');
           cy.contains('.multiselect__tag', internalRoleName);
           cy.findByRole('button', { name: 'Cancel' }).click();
 
