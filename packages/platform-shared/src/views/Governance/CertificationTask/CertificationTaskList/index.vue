@@ -439,6 +439,7 @@ of the MIT license. See the LICENSE file for details. -->
       :is-deleting="isDeletingReviewer"
       :is-allowed-deletion="currentReviewerSelectedModal && currentReviewersSelectedModal.length > 1 && !isLastSignOffReviewer()"
       :modal-id="certificationTaskEditReviewerModalId"
+      :current-user-permissions="currentUserPermissions"
       @close-modal="closeEditReviewerModal"
       @edit-reviewer="editReviewer"
       @delete-reviewer="deleteReviewer" />
@@ -501,6 +502,7 @@ import {
   saveComment,
   updateLineItemReviewers,
 } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
+import { ADMIN_REVIEWER_PERMISSIONS } from '@forgerock/platform-shared/src/utils/governance/constants';
 import FrCertificationActivityModal from './CertificationTaskActivityModal';
 import FrCertificationTaskAccountModal from './CertificationTaskAccountModal';
 import FrCertificationTaskAddCommentModal from './CertificationTaskAddCommentModal';
@@ -655,6 +657,7 @@ export default {
       currentUserEntitlementsDetails: { result: [] },
       currentUserAccountsDetails: { result: [] },
       currentUserRolesDetails: { result: [] },
+      currentUserPermissions: {},
       currentUserSelectedModal: {},
       enableAddComments: true,
       sortDir: 'asc',
@@ -916,6 +919,9 @@ export default {
     },
     openEditReviewerModal(reviewer) {
       this.currentReviewerSelectedModal = reviewer;
+      this.currentUserPermissions = this.isAdmin
+        ? ADMIN_REVIEWER_PERMISSIONS
+        : this.currentReviewersSelectedModal.find((currentReviewer) => currentReviewer.id === this.actorId)?.permissions;
       this.closeModal('CertificationTaskReviewers');
       this.openModal('CertificationTaskEditReviewer');
     },
@@ -923,6 +929,7 @@ export default {
       this.closeModal('CertificationTaskEditReviewer');
       this.openModal('CertificationTaskReviewers');
       this.currentReviewerSelectedModal = null;
+      this.currentUserPermissions = {};
     },
     editReviewer(reviewerId, permissions, newReviewer) {
       this.isSavingReviewer = true;
