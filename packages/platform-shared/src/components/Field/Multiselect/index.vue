@@ -21,6 +21,8 @@ of the MIT license. See the LICENSE file for details. -->
       ref="vms"
       track-by="multiselectId"
       role="combobox"
+      :aria-expanded="isExpanded ? 'true': 'false'"
+      :aria-labelledby="id + '-label'"
       :data-testid="testid"
       :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control p-0', {'no-multiselect-label': !label }, {'h-100': floatLabels || !label }]"
       :close-on-select="closeOnSelect"
@@ -158,6 +160,7 @@ export default {
       searchValue: '',
       nextIdTag: 0,
       tagOptions: [],
+      isExpanded: false,
     };
   },
   mounted() {
@@ -222,6 +225,7 @@ export default {
      * Handler for when the multiselect dropdown is closed.
      */
     close() {
+      this.isExpanded = false;
       this.addTag();
       this.inputValueHandler(this.inputValue);
     },
@@ -243,6 +247,7 @@ export default {
      * @description focus the Vue Multi Select component (vms) and floats the label
      */
     openHandler() {
+      this.isExpanded = true;
       this.$refs.vms.$el.querySelector('input').focus();
       this.floatLabels = true;
       this.$emit('open');
