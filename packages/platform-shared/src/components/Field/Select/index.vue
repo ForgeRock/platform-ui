@@ -22,6 +22,9 @@ of the MIT license. See the LICENSE file for details. -->
       class="text-nowrap"
       label="text"
       track-by="value"
+      role="combobox"
+      :aria-expanded="isExpanded ? 'true': 'false'"
+      :aria-labelledby="id + '-label'"
       :name="name"
       :disabled="disabled"
       :options="selectOptions"
@@ -123,6 +126,11 @@ export default {
       default: '',
     },
   },
+  data() {
+    return {
+      isExpanded: false,
+    };
+  },
   mounted() {
     if (this.searchable) {
       this.$refs.vms.$refs.search.setAttribute('autocomplete', 'off');
@@ -158,6 +166,7 @@ export default {
   },
   methods: {
     closeDropDown(newVal) {
+      this.isExpanded = false;
       if (newVal === null) {
         this.floatLabels = false;
       } else {
@@ -179,6 +188,7 @@ export default {
      * Also scrolls the selected option into view if showSelectedOptionOnOpen is true
      */
     openHandler() {
+      this.isExpanded = true;
       this.$emit('open');
 
       if (this.searchable) {
