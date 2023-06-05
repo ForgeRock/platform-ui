@@ -21,6 +21,13 @@ of the MIT license. See the LICENSE file for details. -->
       />
     </div>
 
+    <!--y-axis Label -->
+    <div
+      class="journey-label-container"
+      ref="journey-label-tooltip">
+      <span>{{ journeyLabel }}</span>
+    </div>
+
     <FrPagination
       v-if="chartData.length > 10"
       v-model="currentPage"
@@ -46,10 +53,12 @@ export default {
   },
   data() {
     return {
+      currentJourneyName: '',
       currentPage: 0,
       DatasetSize,
       displayData: [],
       mouseOffset: [],
+      journeyLabel: '',
       tooltipData: {},
     };
   },
@@ -90,6 +99,7 @@ export default {
       const width = this.viewBox[0];
       const height = this.viewBox[1];
 
+      // Create the svg and add it to the dom via the chartContainer div
       const svg = d3.select(`#${this.chartId}`)
         .html('')
         .append('svg')
@@ -99,11 +109,12 @@ export default {
         .append('g')
         .attr('transform', `translate(${margin.left}, ${margin.top})`);
 
-      // Add X axis
+      // Add x-axis
       const x = d3.scaleLinear()
         .domain([0, this.domain])
         .range([0, width - margin.left - margin.right]);
 
+      // Generate and fomat the x-axis based on the domainType
       const xAxisGenerator = d3.axisBottom(x);
       xAxisGenerator.ticks(20);
       xAxisGenerator.tickSize((height - margin.bottom) * -1);
@@ -114,31 +125,66 @@ export default {
       }
       xAxisGenerator.tickPadding(10);
 
+      // Position the x-axis
       const xAxis = svg.append('g').call(xAxisGenerator);
       xAxis.attr('transform', `translate(0, ${height - margin.bottom})`);
       xAxis.attr('class', 'xchart');
       xAxis.call((g) => g.selectAll('.tick line')
         .attr('class', 'xtick'));
 
-      // Y axis
+      // y-axis
       const y = d3.scaleBand()
         .range([0, height - margin.bottom])
-        .domain(this.displayData.map((d) => `${d.name}`))
+        .domain(this.displayData.map((d) => d.name))
         .padding(0.5);
 
+      // Generate the y-axis
       const yAxisGenerator = d3.axisLeft(y);
       const yAxis = svg.append('g').call(yAxisGenerator);
       yAxis.attr('class', 'ychart');
 
+      // Format and size the y-axis label
       yAxis.call((g) => g.selectAll('.tick text')
         .attr('y', '0')
         .attr('text-anchor', 'end')
         .attr('width', margin.left - 25)
         .attr('class', 'yDomainText'));
+
+      // Hide the default d3 UI bits per the UX design
       yAxis.call((g) => g.selectAll('.tick line')
         .attr('class', 'd-none'));
       yAxis.select('.domain')
         .attr('class', 'd-none');
+
+      // Adds the y-axis label hover tooltip
+      d3.selectAll(`#${this.chartId} .ychart .tick`).call((yLabel) => {
+        const bar = this;
+        const tooltipRef = this.$refs['journey-label-tooltip'];
+        yLabel.each(function setupLabels() {
+          const text = d3.select(this);
+          text.style('cursor', 'default');
+
+          // Show the tooltip and add the label text
+          text.on('mouseover', (_, d) => {
+            bar.journeyLabel = d;
+            tooltipRef.style.display = 'block';
+          })
+            // Have the popup follow the mouse cursor
+            .on('mousemove', () => {
+              const mouseX = bar.mouseOffset[0];
+              const mouseY = bar.mouseOffset[1];
+              tooltipRef.style.left = `${mouseX - (tooltipRef.offsetWidth / 2)}px`;
+              tooltipRef.style.top = `${mouseY - 50}px`;
+            })
+            // Hide and reset the label text
+            .on('mouseout', () => {
+              bar.journeyLabel = '';
+              tooltipRef.style.display = 'none';
+            });
+        });
+      });
+
+      // Truncate the text in the y-axis label to fit better in the UI
       d3.selectAll(`#${this.chartId} .yDomainText`).call(this.svgTextTruncate);
 
       // TODO: Make this better
@@ -240,6 +286,16 @@ svg text {
 .tooltip-container {
   position: absolute;
   z-index: 1;
+}
+
+.journey-label-container {
+  background: $black;
+  border-radius: 4px;
+  color: $white;
+  display: none;
+  padding: 10px;
+  position: absolute;
+  z-index: 100;
 }
 
 .xchart {
