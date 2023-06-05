@@ -964,67 +964,6 @@ describe('CertificationTaskList', () => {
       expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskReviewersAccountModal');
     });
 
-    it('openEditReviewerModal should open edit reviewer modal with data setted', async () => {
-      const reviewers = [
-        {
-          id: '/managed/user/12345',
-          givenName: 'test',
-          permissions: {
-            comment: true,
-            delegate: true,
-            forward: true,
-            reassign: true,
-            consult: true,
-            signoff: true,
-            certify: true,
-            exception: true,
-            revoke: true,
-            reset: true,
-            save: true,
-            removeActor: true,
-            accept: true,
-            challenge: true,
-          },
-        },
-        {
-          id: '/managed/rolw/12345',
-          name: 'test',
-          permissions: {
-            comment: true,
-            delegate: true,
-            forward: true,
-            reassign: true,
-            consult: true,
-            signoff: false,
-            certify: true,
-            exception: true,
-            revoke: true,
-            reset: true,
-            save: true,
-            removeActor: true,
-            accept: true,
-            challenge: true,
-          },
-        },
-      ];
-      const reviewer = {
-        id: '/managed/user/12345',
-        givenName: 'test',
-      };
-
-      expect($emit).not.toHaveBeenCalledWith('bv::hide::modal', 'CertificationTaskReviewersModal');
-      expect($emit).not.toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskEditReviewerModal');
-
-      wrapper.vm.currentReviewersSelectedModal = reviewers;
-      wrapper.vm.openEditReviewerModal(reviewer);
-
-      await wrapper.vm.$nextTick();
-
-      expect(wrapper.vm.currentReviewerSelectedModal).toEqual(reviewer);
-      expect($emit).toHaveBeenCalledWith('bv::hide::modal', 'CertificationTaskReviewersAccountModal');
-      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskEditReviewerAccountModal');
-    });
-
     it('closeEditReviewerModal should close edit reviewer modal and open reviewers modal', async () => {
       expect($emit).not.toHaveBeenCalledWith('bv::hide::modal', 'CertificationTaskEditReviewerModal');
       expect($emit).not.toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskReviewersModal');
@@ -1035,6 +974,8 @@ describe('CertificationTaskList', () => {
 
       expect($emit).toHaveBeenCalledWith('bv::hide::modal', 'CertificationTaskEditReviewerAccountModal');
       expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskReviewersAccountModal');
+      expect(wrapper.vm.currentReviewerSelectedModal).toBeNull();
+      expect(wrapper.vm.currentUserPermissions).toEqual({});
     });
 
     describe('edit reviewer', () => {
@@ -1358,6 +1299,138 @@ describe('CertificationTaskList', () => {
       expect(wrapper.vm.currentApplicationSelectedModal).toBeNull();
       expect($emit).not.toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskEntEntitlementModal');
       expect(showErrorMessageSpy).toHaveBeenCalledWith(error, 'governance.certificationTask.entitlementModal.loadErrorMessage');
+    });
+  });
+
+  describe('Open edit reviewer modal', () => {
+    describe('Admin view', () => {
+      beforeEach(() => {
+        shallowMountComponent({}, {}, {}, { isAdmin: true });
+      });
+
+      it('openEditReviewerModal should open edit reviewer modal with data setted', async () => {
+        const reviewers = [
+          {
+            id: '/managed/user/12345',
+            givenName: 'test',
+            permissions: {
+              certify: true,
+              comment: true,
+              exception: true,
+              forward: false,
+              reassign: false,
+              reset: true,
+              revoke: true,
+              signoff: false,
+            },
+          },
+          {
+            id: '/managed/rolw/12345',
+            name: 'test',
+            permissions: {
+              certify: true,
+              comment: false,
+              exception: true,
+              forward: true,
+              reassign: true,
+              reset: true,
+              revoke: true,
+              signoff: true,
+            },
+          },
+        ];
+        const reviewer = {
+          id: '/managed/user/12345',
+          givenName: 'test',
+        };
+
+        expect($emit).not.toHaveBeenCalledWith('bv::hide::modal', 'CertificationTaskReviewersModal');
+        expect($emit).not.toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskEditReviewerModal');
+
+        wrapper.vm.currentReviewersSelectedModal = reviewers;
+        wrapper.vm.openEditReviewerModal(reviewer);
+
+        await wrapper.vm.$nextTick();
+
+        expect(wrapper.vm.currentReviewerSelectedModal).toEqual(reviewer);
+        expect(wrapper.vm.currentUserPermissions).toEqual({
+          certify: true,
+          comment: true,
+          exception: true,
+          forward: true,
+          reassign: true,
+          reset: true,
+          revoke: true,
+          signoff: true,
+        });
+        expect($emit).toHaveBeenCalledWith('bv::hide::modal', 'CertificationTaskReviewersAccountModal');
+        expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskEditReviewerAccountModal');
+      });
+    });
+
+    describe('EndUser view', () => {
+      beforeEach(() => {
+        shallowMountComponent({}, {}, {}, { actorId: '/managed/user/12345' });
+      });
+
+      it('openEditReviewerModal should open edit reviewer modal with data setted', async () => {
+        const reviewers = [
+          {
+            id: '/managed/user/12345',
+            givenName: 'test',
+            permissions: {
+              certify: true,
+              comment: true,
+              exception: true,
+              forward: false,
+              reassign: false,
+              reset: true,
+              revoke: true,
+              signoff: false,
+            },
+          },
+          {
+            id: '/managed/rolw/12345',
+            name: 'test',
+            permissions: {
+              certify: true,
+              comment: false,
+              exception: true,
+              forward: true,
+              reassign: true,
+              reset: true,
+              revoke: true,
+              signoff: true,
+            },
+          },
+        ];
+        const reviewer = {
+          id: '/managed/user/12345',
+          givenName: 'test',
+        };
+
+        expect($emit).not.toHaveBeenCalledWith('bv::hide::modal', 'CertificationTaskReviewersModal');
+        expect($emit).not.toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskEditReviewerModal');
+
+        wrapper.vm.currentReviewersSelectedModal = reviewers;
+        wrapper.vm.openEditReviewerModal(reviewer);
+
+        await wrapper.vm.$nextTick();
+
+        expect(wrapper.vm.currentReviewerSelectedModal).toEqual(reviewer);
+        expect(wrapper.vm.currentUserPermissions).toEqual({
+          certify: true,
+          comment: true,
+          exception: true,
+          forward: false,
+          reassign: false,
+          reset: true,
+          revoke: true,
+          signoff: false,
+        });
+        expect($emit).toHaveBeenCalledWith('bv::hide::modal', 'CertificationTaskReviewersAccountModal');
+        expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskEditReviewerAccountModal');
+      });
     });
   });
 

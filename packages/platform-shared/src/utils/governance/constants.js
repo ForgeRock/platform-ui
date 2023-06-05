@@ -5,5 +5,18 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-// eslint-disable-next-line import/prefer-default-export
 export const blankValueIndicator = '--';
+
+/**
+ * Admin permissions in the reviewers modal for access reviews
+ */
+export const ADMIN_REVIEWER_PERMISSIONS = {
+  certify: true,
+  comment: true,
+  exception: true,
+  forward: true,
+  reassign: true,
+  reset: true,
+  revoke: true,
+  signoff: true,
+};
