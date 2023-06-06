@@ -47,7 +47,7 @@ of the MIT license. See the LICENSE file for details. -->
       <dd
         class="col-lg-8 mb-4"
         data-testid="decisionDate">
-        {{ formatDate(account.decisionDate) || blankValueIndicator }}
+        {{ formatDate(account.decisionDate) }}
       </dd>
       <dt class="col-lg-4">
         {{ $t('governance.certificationTask.lineItemDetailsModal.accountDetailsTab.lastCertifiedByLabel') }}
@@ -95,7 +95,8 @@ export default {
   },
   methods: {
     formatDate(date) {
-      return dayjs(date).format('MMMM D, YYYY h:mm A');
+      if (date) return dayjs(date).format('MMMM D, YYYY h:mm A');
+      return blankValueIndicator;
     },
   },
 };
