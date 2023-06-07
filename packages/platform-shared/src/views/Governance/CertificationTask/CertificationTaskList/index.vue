@@ -404,8 +404,6 @@ of the MIT license. See the LICENSE file for details. -->
       :campaign-id="campaignId"
       :selected-tasks="selectedTasks" />
     <FrCertificationTaskUserModal
-      v-if="campaignDetails.certificationType === 'entitlement'
-        || (campaignDetails.certificationType !== 'entitlement' && !isEntitlementGrantType)"
       :user="currentUserSelectedModal"
       :user-details="currentUserDetails" />
     <FrCertificationTaskApplicationModal
