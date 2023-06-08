@@ -31,7 +31,7 @@ of the MIT license. See the LICENSE file for details. -->
           inputmode="numeric"
           pattern="[0-9]*"
           :class="[
-            'form-control',
+            'form-control w-100',
             {
               'polyfill-placeholder': floatLabels,
               'is-invalid': errorMessages && errorMessages.length,
