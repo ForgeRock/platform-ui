@@ -20,48 +20,48 @@ of the MIT license. See the LICENSE file for details. -->
       </div>
     </div>
 
-    <p
-      v-if="showHeader"
-      class="text-center kbaHeaderText">
-      {{ $t('login.kba.description') }}
-    </p>
-
     <ValidationObserver ref="observer">
-      <FrField
-        v-model="selected"
-        class="mb-2 kbaQuestionSelect"
-        role="listbox"
-        type="select"
-        :searchable="false"
-        :label="callback.getPrompt()"
-        :name="callback.getPrompt()"
-        :placeholder="callback.getPrompt()"
-        :id="questionModel.key + '_selector'"
-        :options="options"
-        :validation="questionSelectValidation"
-        :floating-label="floatingLabel"
-        @input="onQuestionSelectionChange()"
-        @open="loadOptions()" />
-      <FrField
-        v-if="showCustom"
-        v-model="questionModel.value"
-        class="mb-3"
-        :label="questionModel.title"
-        :name="questionModel.key"
-        :validation="questionTextInputValidation"
-        :validation-immediate="true"
-        :floating-label="floatingLabel"
-        @input="onQuestionSelectionChange()" />
-      <FrField
-        v-model="answerModel"
-        class="mb-3"
-        type="password"
-        validation="required"
-        :label="$t('login.kba.answer')"
-        :name="`callback_${index}_answer_field`"
-        :disabled="selected === null"
-        :floating-label="floatingLabel"
-        @input="validateAnswer" />
+      <fieldset class="w-100">
+        <legend
+          v-if="showHeader"
+          class="text-center kbaHeaderText mb-4">
+          {{ $t('login.kba.description') }}
+        </legend>
+        <FrField
+          v-model="selected"
+          class="mb-2 kbaQuestionSelect"
+          type="select"
+          :searchable="true"
+          :label="callback.getPrompt()"
+          :name="callback.getPrompt()"
+          :placeholder="callback.getPrompt()"
+          :id="questionModel.key + '_selector'"
+          :options="options"
+          :validation="questionSelectValidation"
+          :floating-label="floatingLabel"
+          @input="onQuestionSelectionChange()"
+          @open="loadOptions()" />
+        <FrField
+          v-if="showCustom"
+          v-model="questionModel.value"
+          class="mb-3"
+          :label="questionModel.title"
+          :name="questionModel.key"
+          :validation="questionTextInputValidation"
+          :validation-immediate="true"
+          :floating-label="floatingLabel"
+          @input="onQuestionSelectionChange()" />
+        <FrField
+          v-model="answerModel"
+          class="mb-3"
+          type="password"
+          validation="required"
+          :label="$t('login.kba.answer')"
+          :name="`callback_${index}_answer_field`"
+          :disabled="selected === null"
+          :floating-label="floatingLabel"
+          @input="validateAnswer" />
+      </fieldset>
     </ValidationObserver>
     <hr>
   </div>
