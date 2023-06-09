@@ -139,12 +139,11 @@ import {
 import { BFormGroup, BButton } from 'bootstrap-vue';
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { getInternalResourceList } from '@forgerock/platform-shared/src/api/InternalResourceApi';
+import VueMultiSelect from 'vue-multiselect';
 import TimeConstraint from '@forgerock/platform-shared/src/components/TimeConstraint';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-// import vue-multiselect from src because dist min/uglified package gets removed in build
-import VueMultiSelect from '../../../../../../node_modules/vue-multiselect/src/index';
 
 export default {
   name: 'RelationshipEdit',

@@ -64,8 +64,7 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   find,
 } from 'lodash';
-// import vue-multiselect from src because dist min/uglified package gets removed in build
-import VueMultiSelect from '../../../../../../node_modules/vue-multiselect/src/index';
+import VueMultiSelect from 'vue-multiselect';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
 
@@ -141,13 +140,10 @@ export default {
       if (this.options.length && Object.hasOwnProperty.call(this.options[0], 'value')) {
         formattedOptions = [...this.options];
       } else {
-        formattedOptions = this.options.map((option) => {
-          const formattedOption = typeof (option) === 'string' ? option.trim() : option;
-          return {
-            text: formattedOption,
-            value: formattedOption,
-          };
-        });
+        formattedOptions = this.options.map((option) => ({
+          text: option,
+          value: option,
+        }));
       }
 
       if (this.sortOptions) {
