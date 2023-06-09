@@ -461,7 +461,7 @@ export default {
 
     .multiselect__select::before {
       border: none;
-      content: 'expand_more' / '';
+      content: 'expand_more';
       font-family: 'Material Icons Outlined', sans-serif;
       color: $blue;
       top: 35%;

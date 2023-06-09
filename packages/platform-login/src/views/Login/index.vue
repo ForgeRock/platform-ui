@@ -22,20 +22,17 @@ of the MIT license. See the LICENSE file for details. -->
                 :logo-enabled="logoEnabled && !themeLoading"
                 :logo-height="logoHeight"
                 :logo-path="logoPath"
-                :header-classes="['login-header']"
-              >
+                :header-classes="['login-header']">
                 <template #center-card-header>
-                  <div aria-live="assertive">
-                    <template v-if="!loading && !themeLoading">
-                      <h1
-                        v-if="header"
-                        class="h2">
-                        {{ header }}
-                      </h1>
-                      <p
-                        v-if="description"
-                        v-html="description" />
-                    </template>
+                  <div v-if="!loading && !themeLoading">
+                    <h1
+                      v-if="header"
+                      class="h2">
+                      {{ header }}
+                    </h1>
+                    <p
+                      v-if="description"
+                      v-html="description" />
                   </div>
                 </template>
 
@@ -155,10 +152,7 @@ of the MIT license. See the LICENSE file for details. -->
           </div>
 
           <div class="px-4 px-md-5">
-            <BRow
-              class="m-0"
-              aria-live="assertive"
-            >
+            <BRow class="m-0">
               <BCol xl="9">
                 <h1
                   v-if="header"
@@ -807,7 +801,7 @@ export default {
         'update-auth-id': (authId) => {
           this.step.payload.authId = authId;
         },
-        // event emitted from FrField
+        // event emited from FrField
         input: (value) => {
           if (callback && callback.setInputValue) {
             callback.setInputValue(value);
