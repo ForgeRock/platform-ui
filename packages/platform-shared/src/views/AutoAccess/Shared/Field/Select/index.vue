@@ -58,7 +58,8 @@ import {
   has,
   map,
 } from 'lodash';
-import VueMultiSelect from 'vue-multiselect';
+// import vue-multiselect from src because dist min/uglified package gets removed in build
+import VueMultiSelect from '../../../../../../../../node_modules/vue-multiselect/src/index';
 import InputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
 
