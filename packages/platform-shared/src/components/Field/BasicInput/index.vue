@@ -43,7 +43,7 @@ of the MIT license. See the LICENSE file for details. -->
           :id="id"
           :name="name"
           :min="$attrs.min"
-          :placeholder="floatingLabel ? label : placeholder"
+          :placeholder="floatingLabel ? getTranslation(label) : placeholder"
           :readonly="readonly"
           :style="labelHeight && {height: `${labelHeight + 2}px`, 'padding-top': `${labelHeight - 27}px`}"
           @input="event => inputValue = removeNonNumericChars(event)"
@@ -180,6 +180,13 @@ export default {
       type: String,
       default: '',
     },
+    /**
+     * Id of describeBy element
+     */
+    describedbyId: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
@@ -265,10 +272,10 @@ export default {
      * If the field is invalid, we return a string list of error ids which this field is described by
      */
     getAriaDescribedBy({ errors, invalid }) {
-      if (!errors) return false;
+      if (!errors) return this.describedbyId;
 
       const errorList = errors[this.name];
-      if (!invalid || !errorList) return false;
+      if (!invalid || !errorList) return this.describedbyId;
 
       return createAriaDescribedByList(this.name, errorList);
     },

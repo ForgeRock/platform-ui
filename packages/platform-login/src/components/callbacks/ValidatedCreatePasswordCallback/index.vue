@@ -10,6 +10,7 @@ of the MIT license. See the LICENSE file for details. -->
       :errors="failuresForField"
       :label="password.label"
       :floating-label="floatingLabel"
+      :describedby-id="`policy_panel_${index}`"
       @blur="lostFocus = true;"
       @input="updateCallback" />
     <FrPolicyPanel
@@ -19,7 +20,8 @@ of the MIT license. See the LICENSE file for details. -->
       :policies="policies"
       :policy-display-checkmark="policyDisplayCheckmark"
       :policy-failures="failuresForPanel"
-      :value-entered="!!password.value" />
+      :value-entered="!!password.value"
+      :policy-panel-id="`policy_panel_${index}`" />
     <FrField
       v-if="confirmPassword"
       v-model="confirmPasswordText"
