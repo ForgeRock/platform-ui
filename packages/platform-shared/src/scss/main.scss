@@ -141,7 +141,7 @@ body {
 .dropdown-toggle {
   &::after {
     border: none;
-    content: 'expand_more' / '';
+    content: 'expand_more';
     font-family: 'Material Icons Outlined', sans-serif;
     font-size: 1rem;
     transition: opacity 0.2s ease-out;
