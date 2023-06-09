@@ -86,11 +86,10 @@ import {
   isEqual,
   map,
 } from 'lodash';
+import VueMultiSelect from 'vue-multiselect';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
-// import vue-multiselect from src because dist min/uglified package gets removed in build
-import VueMultiSelect from '../../../../../../node_modules/vue-multiselect/src/index';
 
 /**
  *  Multi select input. Allows selection of multiple elements in a dropdown
