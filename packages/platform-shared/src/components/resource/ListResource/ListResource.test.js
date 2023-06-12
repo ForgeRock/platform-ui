@@ -8,6 +8,7 @@
 import { shallowMount, createLocalVue } from '@vue/test-utils';
 import BootstrapVue from 'bootstrap-vue';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
+import { generateSearchQuery } from '@forgerock/platform-shared/src/utils/queryFilterUtils';
 import generateIDMAPI from './__mocks__/generateIDMAPI';
 import ListResource from './index';
 
@@ -213,8 +214,8 @@ describe('ListResource Component', () => {
   });
 
   it('Generated query filter for search', () => {
-    expect(wrapper.vm.generateSearch('test', ['test1', 'test2'])).toBe('test1 sw "test" OR test2 sw "test"');
-    expect(wrapper.vm.generateSearch('', ['test1', 'test2'])).toBe('true');
+    expect(generateSearchQuery('test', ['test1', 'test2'])).toBe('test1 sw "test" OR test2 sw "test"');
+    expect(generateSearchQuery('', ['test1', 'test2'])).toBe('true');
   });
 
   it('Clear search and sort', () => {

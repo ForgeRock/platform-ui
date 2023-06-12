@@ -10,12 +10,9 @@ import {
   filter,
   find,
   has,
-  isNaN,
   isArray,
   map,
   isEqual,
-  isUndefined,
-  toNumber,
 } from 'lodash';
 import PasswordPolicyMixin from '@forgerock/platform-shared/src/mixins/PasswordPolicyMixin';
 import { getManagedResourceCount } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
@@ -107,56 +104,6 @@ export default {
       }
 
       return error;
-    },
-    /**
-     * Builds API URL using value in search box
-     *
-     * @param {string} filterString - Required current value of search box
-     * @param {array} displayFields - Required array of field names that we want to query on
-     * @param {object} schemaProps - Required metadata of current schema
-     */
-    generateSearch(filterString, displayFields, schemaProps) {
-      let filterUrl = '';
-
-      if (filterString.length > 0) {
-        // remove nested properties
-        const filteredFields = displayFields.filter((field) => (!field.includes('/')));
-
-        each(filteredFields, (field, index) => {
-          let type = 'string';
-
-          if (!isUndefined(schemaProps) && !isUndefined(schemaProps[field])) {
-            type = schemaProps[field].type;
-          }
-
-          if (type === 'number' && !isNaN(toNumber(filterString))) {
-            // Search based on number and proper number value
-            if ((index + 1) < filteredFields.length) {
-              filterUrl = `${filterUrl}${field} eq ${filterString} OR `;
-            } else {
-              filterUrl = `${filterUrl}${field} eq ${filterString}`;
-            }
-          } else if (type === 'boolean' && (filterString === 'true' || filterString === 'false')) {
-            // Search based on boolean and proper boolean true/false
-            if ((index + 1) < filteredFields.length) {
-              filterUrl = `${filterUrl}${field} eq ${filterString} OR `;
-            } else {
-              filterUrl = `${filterUrl}${field} eq ${filterString}`;
-            }
-          } else if ((index + 1) < filteredFields.length) {
-            // Fallback to general string search if all other criteria fails
-            // IAM-1003 revealed an issue with some url encoding differences between
-            // chrome and IE. Need to use %22 instead of " to avoid the encoding
-            filterUrl = `${filterUrl}${field} sw "${filterString}" OR `;
-          } else {
-            filterUrl = `${filterUrl}${field} sw "${filterString}"`;
-          }
-        });
-      } else {
-        filterUrl = 'true';
-      }
-
-      return filterUrl;
     },
     /**
      * Change help text based on query threshold value and the current search text length
