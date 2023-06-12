@@ -2440,6 +2440,7 @@
       "noMatch": "No match found",
       "noMatchApp": "No match found for Forgerock user in {appName}",
       "conflictingMatch": "Conflicting matches",
+      "conflictingChanges": "Conflicting changes",
       "allOtherIds": "All other users",
       "unresolvedIds": "Unresolved {appName} users",
       "unresolvedObjects": "Unresolved ForgeRock users",
