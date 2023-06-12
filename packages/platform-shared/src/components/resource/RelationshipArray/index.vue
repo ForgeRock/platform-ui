@@ -151,27 +151,22 @@ of the MIT license. See the LICENSE file for details. -->
       @input="loadGrid(currentPage)"
     />
 
-    <slot
-      name="relationship-form-modal"
-      :add-new-relationship="addNewRelationship"
-      :update-relationship="updateRelationship">
-      <BModal
-        cancel-variant="link"
-        :id="createModalId"
-        :ok-disabled="newRelationships.length === 0"
-        :ok-title="$t('common.save')"
-        :ref="createModalId"
-        :title="addRelationshipModalTitle"
-        size="lg"
-        @ok="saveNewRelationships">
-        <FrRelationshipEdit
-          :query-filter-extension="additionalQueryFilter"
-          :parent-resource="parentResource"
-          :relationship-property="relationshipArrayProperty"
-          :index="0"
-          @setValue="addNewRelationship" />
-      </BModal>
-    </slot>
+    <BModal
+      cancel-variant="link"
+      :id="createModalId"
+      :ok-disabled="newRelationships.length === 0"
+      :ok-title="$t('common.save')"
+      :ref="createModalId"
+      :title="addRelationshipModalTitle"
+      size="lg"
+      @ok="saveNewRelationships">
+      <FrRelationshipEdit
+        :query-filter-extension="additionalQueryFilter"
+        :parent-resource="parentResource"
+        :relationship-property="relationshipArrayProperty"
+        :index="0"
+        @setValue="addNewRelationship" />
+    </BModal>
 
     <BModal
       :id="removeModalId"
@@ -226,6 +221,7 @@ import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import dayjs from 'dayjs';
 import pluralize from 'pluralize';
 
+import { generateSearchQuery } from '@forgerock/platform-shared/src/utils/queryFilterUtils';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
 import FrRelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
@@ -513,7 +509,7 @@ export default {
         ? this.parentResource
         : `${this.parentResource}/${this.parentId}/${this.relationshipArrayProperty.propName}`;
       const filter = this.filter
-        ? this.generateSearch(this.filter, currentResourceCollection.query.fields, resourceCollectionSchema.properties)
+        ? generateSearchQuery(this.filter, currentResourceCollection.query.fields, resourceCollectionSchema.properties)
         : '';
       let resourceUrl = `${resourcePath}?_pageSize=${this.gridPageSize}&_totalPagedResultsPolicy=ESTIMATE`;
 

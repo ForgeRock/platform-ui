@@ -161,6 +161,7 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
+import { generateSearchQuery } from '@forgerock/platform-shared/src/utils/queryFilterUtils';
 import { DatasetSize } from '@forgerock/platform-shared/src/components/Pagination/types';
 import FrClearResourceSessions from '../ClearResourceSessions';
 
@@ -360,7 +361,7 @@ export default {
         this.displayFields = newVal.map((obj) => obj.key);
         this.columns = newVal;
         if (oldVal.length) {
-          this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.defaultSort, this.paginationPage);
+          this.loadData(generateSearchQuery(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.defaultSort, this.paginationPage);
         }
       }
     },
@@ -464,7 +465,7 @@ export default {
      * Repulls data based on new table page
      */
     paginationChange() {
-      this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.calculateSort(this.sortDesc, this.sortBy), this.paginationPage, this.paginationPageSize);
+      this.loadData(generateSearchQuery(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.calculateSort(this.sortDesc, this.sortBy), this.paginationPage, this.paginationPageSize);
     },
     cancelDelete() {
       this.resourceToDeleteId = '';
@@ -491,7 +492,7 @@ export default {
 
       if (this.filter.length >= this.queryThreshold) {
         this.submitBeforeLengthValid = false;
-        this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.calculateSort(this.sortDesc, this.sortBy), this.paginationPage, this.paginationPageSize);
+        this.loadData(generateSearchQuery(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.calculateSort(this.sortDesc, this.sortBy), this.paginationPage, this.paginationPageSize);
       } else {
         this.submitBeforeLengthValid = true;
       }
@@ -506,7 +507,7 @@ export default {
       const sortUrl = this.calculateSort(sort.sortDesc, sort.sortBy);
       this.$emit('sort', sortUrl);
 
-      this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, sortUrl, this.paginationPage, this.paginationPageSize);
+      this.loadData(generateSearchQuery(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, sortUrl, this.paginationPage, this.paginationPageSize);
     },
     hasClearSessionAccess(item) {
       return this.canClearSessions && item.hasActiveSessions === true;
@@ -536,7 +537,7 @@ export default {
     clearSessionsAndCloseModal() {
       this.$emit('clear-resource-sessions', this.resourceToClearSessionsForId);
       this.closeClearSessionsModal();
-      this.loadData(this.generateSearch(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.defaultSort, this.paginationPage, this.paginationPageSize);
+      this.loadData(generateSearchQuery(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.defaultSort, this.paginationPage, this.paginationPageSize);
     },
   },
 };

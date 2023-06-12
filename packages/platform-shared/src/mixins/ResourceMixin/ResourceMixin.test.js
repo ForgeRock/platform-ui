@@ -105,30 +105,6 @@ describe('ResourceMixin', () => {
     });
   });
 
-  describe('Generating Search URLs', () => {
-    const schemaProps = {
-      isAdmin: { type: 'boolean' },
-      sn: { type: 'string' },
-      userName: { type: 'string' },
-      age: { type: 'number' },
-    };
-
-    it('Generates a filter url for a string', () => {
-      const filterUrl = wrapper.vm.generateSearch('a', ['userName', 'sn'], schemaProps);
-      expect(filterUrl).toStrictEqual('userName sw "a" OR sn sw "a"');
-    });
-
-    it('Generates a filter url for a number', () => {
-      const filterUrl = wrapper.vm.generateSearch('1', ['age'], schemaProps);
-      expect(filterUrl).toStrictEqual('age eq 1');
-    });
-
-    it('Generates a filter url for a boolean', () => {
-      const filterUrl = wrapper.vm.generateSearch('true', ['isAdmin'], schemaProps);
-      expect(filterUrl).toStrictEqual('isAdmin eq true');
-    });
-  });
-
   it('Sets help text from search field length', () => {
     wrapper.vm.queryThreshold = 0;
     wrapper.vm.filter = '';
