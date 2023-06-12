@@ -82,6 +82,30 @@ describe('FilterBuilderRow', () => {
     expect(rowFormElement).toEqual('test');
   });
 
+  it('should emit the rule-change and then clear the value input through the props', async () => {
+    // set the input initial value
+    const inputFieldValue = wrapper.find('input[name="inputValue"]');
+    inputFieldValue.setValue('Initial Value');
+
+    // simulates the dropdown change
+    const propertySelector = wrapper.find('input[name="selectPropOptions"]');
+    propertySelector.setValue('Status');
+    propertySelector.trigger('change');
+
+    // emit the function which is the one will update the value for all inputs using the props
+    await wrapper.vm.$nextTick();
+    expect(wrapper.emitted()['rule-change']).toBeTruthy();
+
+    // set the external props to execute the rule watch which is the one who clear the input value
+    wrapper.setProps({
+      rule: { field: 'Status' },
+    });
+
+    // review the new values
+    expect(inputFieldValue.element.value).toEqual('');
+    expect(propertySelector.element.value).toBe('Status');
+  });
+
   it('Returns the correct select options by type (String)', () => {
     const returnObject = wrapper.vm.conditionOptionsByType('string');
     expect(returnObject).toEqual(
