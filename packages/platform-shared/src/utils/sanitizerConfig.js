@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -11,6 +11,8 @@ import sanitizeHtml from 'sanitize-html';
 const svgShapeTags = ['svg', 'circle', 'ellipse', 'line', 'path', 'polygon', 'polyline', 'rect', 'image', 'text'];
 // presentation attributes for svg shapes tags
 const presentationAttributes = ['stroke', 'stroke-width', 'fill'];
+// aria attributes for creating accessible html
+const ariaAttributes = ['aria-activedescendant', 'aria-atomic', 'aria-autocomplete', 'aria-braillelabel', 'aria-brailleroledescription', 'aria-busy', 'aria-checked', 'aria-colcount', 'aria-colindex', 'aria-colindextext', 'aria-colspan', 'aria-controls', 'aria-current', 'aria-describedby', 'aria-description', 'aria-details', 'aria-disabled', 'aria-dropeffectDeprecated', 'aria-errormessage', 'aria-expanded', 'aria-flowto', 'aria-grabbedDeprecated', 'aria-haspopup', 'aria-hidden', 'aria-invalid', 'aria-keyshortcuts', 'aria-label', 'aria-labelledby', 'aria-level', 'aria-live', 'aria-modal', 'aria-multiline', 'aria-multiselectable', 'aria-orientation', 'aria-owns', 'aria-placeholder', 'aria-posinset', 'aria-pressed', 'aria-readonly', 'aria-relevant', 'aria-required', 'aria-roledescription', 'aria-rowcount', 'aria-rowindex', 'aria-rowindextext', 'aria-rowspan', 'aria-selected', 'aria-setsize', 'aria-sort', 'aria-valuemax', 'aria-valuemin', 'aria-valuenow', 'aria-valuetext', 'role'];
 // attributes for svg shapes tags
 const svgShapeAttributes = {
   svg: ['height', 'width', 'viewBox'],
@@ -29,7 +31,7 @@ export const baseSanitizerConfig = {
   ...sanitizeHtml.defaults,
   allowedAttributes: {
     ...sanitizeHtml.defaults.allowedAttributes,
-    '*': ['class', 'style', 'data-testid', 'id'],
+    '*': [...ariaAttributes, 'class', 'style', 'data-testid', 'id'],
     a: ['href', 'name', 'target'],
     img: [...sanitizeHtml.defaults.allowedAttributes.img, 'height', 'alt'],
   },
