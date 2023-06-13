@@ -30,6 +30,7 @@ of the MIT license. See the LICENSE file for details. -->
       </BCardHeader>
       <BTable
         v-if="items.length"
+        id="delegate-table"
         data-testid="delegate-table"
         @sort-changed="sortChanged"
         hover

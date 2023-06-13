@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -6,6 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <div>
     <template>
       <div
+        id="toolbar-with-buttons-label"
         class="btn-toolbar row mb-4"
         role="toolbar"
         :aria-label="$t('pages.uma.resources.toolbarWithButtons')">
@@ -21,8 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
           <input
             type="text"
             class="form-control"
-            :aria-label="$t('common.search')"
-            aria-describedby="btnGroupAddon"
+            aria-labelledby="toolbar-with-buttons-label"
             :placeholder="$t('common.search')"
             v-model="resourceFilter">
         </div>
