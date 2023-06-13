@@ -1701,6 +1701,27 @@ describe('CertificationTaskList', () => {
       wrapper.vm.openActivityModal(item);
       expect($emit).toBeCalledWith('bv::show::modal', 'CertificationTaskActivityAccountModal');
     });
+    it('should raise activity modal event with right modal id and set the right activity items', () => {
+      const item = {
+        decision: {
+          certification: {
+            comments: [{
+              action: 'comment',
+              comment: 'test comment',
+            },
+            {
+              action: 'exception',
+              comment: 'exception comment',
+            }],
+          },
+        },
+      };
+      wrapper.vm.openActivityModal(item);
+      expect(wrapper.vm.currentLineItemActivity).toEqual([{
+        action: 'exception',
+        comment: 'exception comment',
+      }]);
+    });
     it('should raise forward modal event with right modal id', () => {
       wrapper.vm.openForwardCertificationModal('1234', true);
       expect($emit).toBeCalledWith('bv::show::modal', 'CertificationTaskForwardAccountModal');
