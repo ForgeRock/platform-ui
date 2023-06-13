@@ -42,6 +42,7 @@ of the MIT license. See the LICENSE file for details. -->
         :card="false" />
       <BTable
         v-else
+        id="my-access-review-table"
         data-testid="my-access-review-table"
         @sort-changed="sortChanged"
         responsive

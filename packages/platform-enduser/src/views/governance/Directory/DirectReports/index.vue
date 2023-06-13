@@ -46,6 +46,7 @@ of the MIT license. See the LICENSE file for details. -->
       </BCol>
       <BTable
         v-else
+        id="table-directreports"
         data-testid="table-directreports"
         @sort-changed="sortChanged"
         hover
