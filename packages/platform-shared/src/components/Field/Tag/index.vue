@@ -24,36 +24,38 @@ of the MIT license. See the LICENSE file for details. -->
         <ul
           class="overflow-hidden pl-0 mb-0"
           :id="`fr-tags-list_${id}`">
-          <Draggable
-            v-model="inputValue"
-            :disabled="disabled"
-            class="d-flex flex-wrap w-100"
-            ghost-class="ghost-tag">
-            <div
-              v-b-tooltip="{ title: tag, delay: { show: 1500, hide: 0 } }"
-              v-for="tag in tags"
-              body-class="py-1 pr-2 text-nowrap"
-              class="fr-tag"
-              :key="tag"
-              :id="`fr-tags-tag_${tag.replace(/\s/g, '_')}`">
-              <span class="fr-tag-text">
-                {{ tag }}
-              </span>
-              <span
-                :data-testid="`remove-${tag.replace(/\s/g, '-')}-tag`"
-                @click="removeTag(tag)"
-                @keydown.enter="removeTag(tag)">
-                <FrIcon
-                  tabindex="0"
-                  :aria-label="$t('common.close')"
-                  :aria-controls="`fr-tags-tag_${tag.replace(/\s/g, '_')}`"
-                  class="close-icon pl-2"
-                  style="font-size: 12px; font-weight: 900;"
-                  name="close"
-                />
-              </span>
-            </div>
-          </Draggable>
+          <li>
+            <Draggable
+              v-model="inputValue"
+              :disabled="disabled"
+              class="d-flex flex-wrap w-100"
+              ghost-class="ghost-tag">
+              <div
+                v-b-tooltip="{ title: tag, delay: { show: 1500, hide: 0 } }"
+                v-for="tag in tags"
+                body-class="py-1 pr-2 text-nowrap"
+                class="fr-tag"
+                :key="tag"
+                :id="`fr-tags-tag_${tag.replace(/\s/g, '_')}`">
+                <span class="fr-tag-text">
+                  {{ tag }}
+                </span>
+                <span
+                  :data-testid="`remove-${tag.replace(/\s/g, '-')}-tag`"
+                  @click="removeTag(tag)"
+                  @keydown.enter="removeTag(tag)">
+                  <FrIcon
+                    tabindex="0"
+                    :aria-label="$t('common.close')"
+                    :aria-controls="`fr-tags-tag_${tag.replace(/\s/g, '_')}`"
+                    class="close-icon pl-2"
+                    style="font-size: 12px; font-weight: 900;"
+                    name="close"
+                  />
+                </span>
+              </div>
+            </Draggable>
+          </li>
         </ul>
         <input
           v-bind="inputAttrs"

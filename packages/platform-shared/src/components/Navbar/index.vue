@@ -22,7 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
         />
       </button>
       <BNavbarNav class="flex-row align-items-center justify-content-between flex-grow-1">
-        <div
+        <li
           v-if="tenantLockedMode"
           class="d-flex align-items-center px-3">
           <FrIcon
@@ -39,8 +39,8 @@ of the MIT license. See the LICENSE file for details. -->
             v-b-tooltip.hover.focus>
             <FrIcon name="info" />
           </BLink>
-        </div>
-        <div
+        </li>
+        <li
           v-else
           @click="$emit('clicked')">
           <RouterLink
@@ -60,15 +60,15 @@ of the MIT license. See the LICENSE file for details. -->
               </span>
             </h1>
           </RouterLink>
-        </div>
-        <div>
+        </li>
+        <li>
           <!-- Content displayed in center of navbar -->
           <slot name="center-content" />
-        </div>
-        <div class="flex-row d-flex">
+        </li>
+        <li class="flex-row d-flex">
           <slot name="right-content">
             <FrNotification v-if="showNotifications" />
-            <li
+            <div
               v-if="showHelpLink"
               class="mr-4 d-none d-sm-block nav-item">
               <a
@@ -77,8 +77,8 @@ of the MIT license. See the LICENSE file for details. -->
                 target="_blank">
                 {{ $t('navbar.helpSupport') }}
               </a>
-            </li>
-            <li
+            </div>
+            <div
               v-if="showDocsLink"
               class="d-none d-sm-block nav-item">
               <a
@@ -87,8 +87,8 @@ of the MIT license. See the LICENSE file for details. -->
                 target="_blank">
                 {{ $t('navbar.docs') }}
               </a>
-            </li>
-            <li v-if="!hideDropdown">
+            </div>
+            <div v-if="!hideDropdown">
               <FrDropdownMenu
                 :user-details="userDetails"
                 :dropdown-items="tenantMenuItems"
@@ -161,9 +161,9 @@ of the MIT license. See the LICENSE file for details. -->
                   <BDropdownDivider />
                 </template>
               </FrDropdownMenu>
-            </li>
+            </div>
           </slot>
-        </div>
+        </li>
       </BNavbarNav>
     </BNavbar>
   </header>
