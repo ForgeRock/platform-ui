@@ -12,6 +12,7 @@ import * as clipboard from 'clipboard-polyfill/text';
 import flushPromises from 'flush-promises';
 import { extend } from 'vee-validate';
 import { required } from 'vee-validate/dist/rules.umd';
+import * as AccessibilityUtils from '@forgerock/platform-shared/src/utils/accessibilityUtils';
 import BasicInput from './index';
 import i18n from '@/i18n';
 import { findByTestId } from '../../../utils/testHelpers';
@@ -102,11 +103,13 @@ describe('BasicInput', () => {
 
     describe('as text', () => {
       it('default', () => {
+        const createAriaDescribedByListSpy = jest.spyOn(AccessibilityUtils, 'createAriaDescribedByList');
         jest.useFakeTimers();
         const wrapper = setup({ autofocus: true });
 
         // Note: there is a manual delay when setting focus - to maintain consistency between browsers
         jest.advanceTimersByTime(600);
+        expect(createAriaDescribedByListSpy).not.toHaveBeenCalled();
         const input = findByTestId(wrapper, 'input-stub-testid');
         expect(input.attributes('id')).toBe(document.activeElement.id);
 
@@ -126,6 +129,15 @@ describe('BasicInput', () => {
         const copyValueButton = findByTestId(wrapper, 'btn-copy-stub-testid');
         expect(copyValueButton.exists()).toBeFalsy();
         jest.useRealTimers();
+      });
+
+      it('when given describedbyId', () => {
+        const createAriaDescribedByListSpy = jest.spyOn(AccessibilityUtils, 'createAriaDescribedByList');
+        const wrapper = setup({ describedbyId: 'stub-describedbyid' });
+        expect(createAriaDescribedByListSpy).not.toHaveBeenCalled();
+
+        const input = findByTestId(wrapper, 'input-stub-testid');
+        expect(input.attributes('aria-describedby')).toBe('stub-describedbyid');
       });
 
       describe('when placeholder', () => {
@@ -160,8 +172,17 @@ describe('BasicInput', () => {
       });
 
       describe('when validation errors', () => {
-        it('should add aria-describedby', async () => {
+        beforeEach(() => {
           jest.useFakeTimers();
+        });
+
+        afterEach(() => {
+          jest.useRealTimers();
+        });
+
+        // Note: when an error occurs due to user input in the component.
+        it('when component errors', async () => {
+          const createAriaDescribedByListSpy = jest.spyOn(AccessibilityUtils, 'createAriaDescribedByList');
           const wrapper = setup({ validation: 'required' });
 
           const input = findByTestId(wrapper, 'input-stub-testid');
@@ -170,12 +191,52 @@ describe('BasicInput', () => {
           // Note: this is due to how often the ValidationObserver is computed, see: https://vee-validate.logaretm.com/v3/advanced/testing.html#testing-validationobserver-debounced-state
           await flushPromises();
           jest.advanceTimersByTime(50);
-          const error = findByTestId(wrapper, 'stub-name-validation-error-0');
+          expect(createAriaDescribedByListSpy).toHaveBeenCalledWith('stub-name', ['stub-name is not valid.']);
 
           expect(input.attributes('aria-describedby')).toBe('stub-name0-error');
-          expect(error.text()).toBe('stub-name is not valid.');
 
-          jest.useRealTimers();
+          const error = findByTestId(wrapper, 'stub-name-validation-error-0');
+          expect(error.text()).toBe('stub-name is not valid.');
+        });
+
+        // Note: when an error is provided to the component by its parent on load.
+        it('when parent errors', async () => {
+          const createAriaDescribedByListSpy = jest.spyOn(AccessibilityUtils, 'createAriaDescribedByList');
+          jest.useFakeTimers();
+          const wrapper = setup({ errors: ['parent error.'] });
+
+          // Note: this is due to how often the ValidationObserver is computed, see: https://vee-validate.logaretm.com/v3/advanced/testing.html#testing-validationobserver-debounced-state
+          await flushPromises();
+          jest.advanceTimersByTime(50);
+          expect(createAriaDescribedByListSpy).toHaveBeenCalledWith('stub-name', ['parent error.']);
+
+          const input = findByTestId(wrapper, 'input-stub-testid');
+          expect(input.attributes('aria-describedby')).toBe('stub-name0-error');
+
+          const error = findByTestId(wrapper, 'stub-name-validation-error-0');
+          expect(error.text()).toBe('parent error.');
+        });
+
+        // Note: when an error is provided to the component by its parent on load and there is an error due to user input.
+        it('when combined parent & component errors', async () => {
+          const createAriaDescribedByListSpy = jest.spyOn(AccessibilityUtils, 'createAriaDescribedByList');
+          const wrapper = setup({ validation: 'required', errors: ['parent error.'] });
+
+          const input = findByTestId(wrapper, 'input-stub-testid');
+          await input.setValue('');
+
+          // Note: this is due to how often the ValidationObserver is computed, see: https://vee-validate.logaretm.com/v3/advanced/testing.html#testing-validationobserver-debounced-state
+          await flushPromises();
+          jest.advanceTimersByTime(50);
+          expect(createAriaDescribedByListSpy).toHaveBeenCalledWith('stub-name', ['parent error.', 'stub-name is not valid.']);
+
+          expect(input.attributes('aria-describedby')).toBe('stub-name0-error stub-name1-error');
+
+          const firstError = findByTestId(wrapper, 'stub-name-validation-error-0');
+          expect(firstError.text()).toBe('parent error.');
+
+          const secondError = findByTestId(wrapper, 'stub-name-validation-error-1');
+          expect(secondError.text()).toBe('stub-name is not valid.');
         });
       });
     });
