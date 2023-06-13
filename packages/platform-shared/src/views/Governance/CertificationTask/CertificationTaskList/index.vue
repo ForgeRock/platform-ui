@@ -1033,7 +1033,8 @@ export default {
     },
     openActivityModal(item) {
       const lineItemActivity = item?.decision?.certification?.comments;
-      this.currentLineItemActivity = lineItemActivity;
+      const activityList = filter(lineItemActivity, (activity) => (activity.action !== 'comment'));
+      this.currentLineItemActivity = activityList;
       this.openModal('CertificationTaskActivity');
     },
     closeActivityModal() {
