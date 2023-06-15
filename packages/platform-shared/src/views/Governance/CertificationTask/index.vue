@@ -46,6 +46,7 @@ of the MIT license. See the LICENSE file for details. -->
           data-testid="certification-tasklist-tabs"
           lazy>
           <BTab
+            v-if="isAccountTargetFilter"
             data-testid="cert-accounts-tab"
             title-link-class="py-4 text-capitalize"
             key="accounts"
@@ -70,6 +71,7 @@ of the MIT license. See the LICENSE file for details. -->
             />
           </BTab>
           <BTab
+            v-if="isEntitlementTargetFilter"
             data-testid="cert-ents-tab"
             title-link-class="py-4 text-capitalize"
             key="entitlements"
@@ -93,7 +95,7 @@ of the MIT license. See the LICENSE file for details. -->
           </BTab>
         </BTabs>
         <FrField
-          v-if="showGroupByAccount"
+          v-if="showGroupByField"
           class="mb-4 text-capitalize group-by-position"
           v-model="isGroupByAccount"
           name="certificationGroupByAccount"
@@ -197,6 +199,15 @@ export default {
     isEntitlementCertificationType() {
       return this.campaignDetails.certificationType === 'entitlement';
     },
+    isAccountTargetFilter() {
+      return this.isGrantType('accountGrant');
+    },
+    isEntitlementTargetFilter() {
+      return this.isGrantType('entitlementGrant');
+    },
+    showGroupByField() {
+      return this.isAccountTargetFilter && this.isEntitlementTargetFilter && this.showGroupByAccount;
+    },
   },
   methods: {
     getCertificationDetails() {
@@ -246,6 +257,13 @@ export default {
     hideGroupBy() {
       this.isGroupByAccount = false;
       this.showGroupByAccount = false;
+    },
+    /**
+     * Verifies if a grant type is present in the campaign using the target filter types property.
+     * @param {string} type - type of grant
+     */
+    isGrantType(type) {
+      return this.campaignDetails.targetFilter?.type?.includes(type);
     },
   },
   mounted() {
