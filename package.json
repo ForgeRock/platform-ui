@@ -48,8 +48,8 @@
     "style-resources-loader": "1.2.1",
     "stylelint": "14.1.0",
     "stylelint-config-html": "1.0.0",
-    "vue": "2.6.11",
-    "vue-template-compiler": "2.6.11"
+    "vue": "2.7.14",
+    "vue-template-compiler": "2.7.14"
   },
   "resolutions": {
     "babel-jest/@jest/transform/@babel/core/json5": "2.2.2",
