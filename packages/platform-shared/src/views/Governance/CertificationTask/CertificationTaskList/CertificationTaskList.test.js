@@ -360,6 +360,26 @@ describe('CertificationTaskList', () => {
       const result = wrapper.vm.buildUrlParams(3, 'name', 'asc');
       expect(result).toStrictEqual(expectedValue);
     });
+    it('should not return task status if task status is staging', async () => {
+      wrapper.vm.pageSize = 10;
+      shallowMountComponent({}, {}, {});
+      const expectedValue = {
+        appendUserPermissions: true,
+        pageSize: 10,
+        pageNumber: 2,
+        sortBy: 'name',
+        sortDir: 'asc',
+        isAdmin: true,
+        actorId: '123',
+      };
+      await wrapper.setProps({
+        isAdmin: true,
+        actorId: '123',
+        taskStatus: 'staging',
+      });
+      const result = wrapper.vm.buildUrlParams(3, 'name', 'asc');
+      expect(result).toStrictEqual(expectedValue);
+    });
   });
   describe('getBaseFilters', () => {
     it('should return the base filters to load the list', () => {
