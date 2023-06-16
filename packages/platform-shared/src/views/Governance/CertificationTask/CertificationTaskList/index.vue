@@ -503,6 +503,7 @@ import {
   updateLineItemReviewers,
 } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import { ADMIN_REVIEWER_PERMISSIONS } from '@forgerock/platform-shared/src/utils/governance/constants';
+import { CampaignStates } from '@forgerock/platform-shared/src/utils/governance/types';
 import FrCertificationActivityModal from './CertificationTaskActivityModal';
 import FrCertificationTaskAccountModal from './CertificationTaskAccountModal';
 import FrCertificationTaskAddCommentModal from './CertificationTaskAddCommentModal';
@@ -1230,8 +1231,11 @@ export default {
         pageNumber: pageNumber - 1,
         sortBy: sortByColumn,
         sortDir,
-        taskStatus: this.taskStatus,
       };
+
+      // staged campaigns grab all tasks, status is not important
+      if (this.taskStatus !== CampaignStates.STAGING) managedResourceParams.taskStatus = this.taskStatus;
+
       if (this.isAdmin) {
         managedResourceParams.isAdmin = this.isAdmin;
         managedResourceParams.actorId = this.actorId;
