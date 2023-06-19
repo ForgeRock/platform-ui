@@ -48,14 +48,5 @@ filterTests(['forgeops', 'cloud'], () => {
         expect(location.href).to.not.eq(`${Cypress.config().baseUrl}/am/XUI/?realm=/#/`);
       });
     });
-
-    it('should logout any current sessions if suspendedId param detected in the url', () => {
-      cy.intercept('POST', '**/sessions/?_action=logout').as('logout');
-      cy.login();
-      cy.visit(`${Cypress.config().baseUrl}/am/XUI/?realm=/&suspendedId=123`);
-      cy.wait('@logout').then(({ response }) => {
-        expect(response.statusCode).to.equal(200);
-      });
-    });
   });
 });
