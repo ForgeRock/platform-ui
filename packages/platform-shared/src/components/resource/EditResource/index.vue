@@ -225,7 +225,7 @@ import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import FrDeletePanel from '@forgerock/platform-shared/src/components/DeletePanel';
-// eslint-disable-next-line import/no-extraneous-dependencies
+import { compareRealmSpecificResourceName } from '@forgerock/platform-shared/src/utils/realm';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import { clearSessions, getSessionInfo } from '@forgerock/platform-shared/src/api/SessionsApi';
 import ClearResourceSessions from '@forgerock/platform-shared/src/components/resource/ClearResourceSessions';
@@ -483,13 +483,7 @@ export default {
       });
     },
     getRelationshipProperties(schema, privilege) {
-      const noGovernanceProperties = ['assignments', 'ownerOfApp', 'taskPrincipals', 'taskProxies'];
       return pickBy(schema.properties, (property, key) => {
-        // If is a governance environment, remove Assigments, Aplication i Own, Task Principals, and Task Proxies tabs
-        if (this.$store.state.SharedStore.governanceEnabled && noGovernanceProperties.includes(key)) {
-          return false;
-        }
-
         const isInPropertyOrder = schema.order.includes(key);
         const hasPermission = privilege.VIEW.properties.includes(key) || privilege.UPDATE.properties.includes(key) || this.isOpenidmAdmin;
         const isRelationship = property.type === 'relationship' || (property.type === 'array' && (property.items.type === 'relationship' || property.items.isRelationship));
@@ -761,8 +755,19 @@ export default {
 
       return null;
     },
+    /**
+     * Returns object containing all relationship properties that are arrays, viewable, and in the case
+     * of governance, not of a certain type of property
+     */
     viewableRelationshipArrayProperties() {
-      return pickBy(this.relationshipProperties, (property) => property.type === 'array' && property.viewable !== false);
+      const noGovernanceProperties = ['assignments', 'ownerOfApp', 'taskPrincipals', 'taskProxies'];
+      return pickBy(this.relationshipProperties, (property, key) => {
+        // If is a governance environment, remove Assigments, Applications I Own, Task Principals, and Task Proxies tabs
+        if (this.$store.state.SharedStore.governanceEnabled && noGovernanceProperties.includes(key) && compareRealmSpecificResourceName(this.resourceName, 'user')) {
+          return false;
+        }
+        return property.type === 'array' && property.viewable !== false;
+      });
     },
   },
 };
