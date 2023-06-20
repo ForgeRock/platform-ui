@@ -10,9 +10,9 @@ import {
 } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import DirectReports from './index';
-import * as GovernanceEnduserApi from '@/api/GovernanceEnduserApi';
+import * as DirectoryApi from '@/api/governance/DirectoryApi';
 
-jest.mock('@/api/GovernanceEnduserApi');
+jest.mock('@/api/governance/DirectoryApi');
 
 describe('DirectReports Component', () => {
   const mockResultItems = [
@@ -60,7 +60,7 @@ describe('DirectReports Component', () => {
   };
   beforeEach(() => {
     jest.clearAllMocks();
-    GovernanceEnduserApi.getDirectReports = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [] } }));
+    DirectoryApi.getDirectReports = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [] } }));
 
     wrapper = mount(DirectReports, {
       mocks: {
@@ -114,7 +114,7 @@ describe('DirectReports Component', () => {
 
     expect(wrapper.vm.sortDesc).toBeTruthy();
     expect(loadSpy).toBeCalled();
-    expect(GovernanceEnduserApi.getDirectReports).toBeCalledWith('testId', {
+    expect(DirectoryApi.getDirectReports).toBeCalledWith('testId', {
       pageNumber: 1, pageSize: 10, sortBy: 'userName', sortDir: 'desc',
     });
   });
@@ -126,7 +126,7 @@ describe('DirectReports Component', () => {
 
     expect(wrapper.vm.sortDesc).toBeFalsy();
     expect(loadSpy).toBeCalled();
-    expect(GovernanceEnduserApi.getDirectReports).toBeCalledWith('testId', {
+    expect(DirectoryApi.getDirectReports).toBeCalledWith('testId', {
       pageNumber: 1, pageSize: 10, sortBy: 'userName', sortDir: 'asc',
     });
   });
@@ -137,7 +137,7 @@ describe('DirectReports Component', () => {
 
     expect(wrapper.vm.paginationPageSize).toBe(20);
     expect(loadSpy).toBeCalled();
-    expect(GovernanceEnduserApi.getDirectReports).toBeCalledWith('testId', {
+    expect(DirectoryApi.getDirectReports).toBeCalledWith('testId', {
       pageNumber: 1, pageSize: 20, sortBy: 'userName', sortDir: 'asc',
     });
   });
@@ -148,14 +148,14 @@ describe('DirectReports Component', () => {
 
     expect(wrapper.vm.paginationPage).toBe(2);
     expect(loadSpy).toBeCalled();
-    expect(GovernanceEnduserApi.getDirectReports).toBeCalledWith('testId', {
+    expect(DirectoryApi.getDirectReports).toBeCalledWith('testId', {
       pageNumber: 2, pageSize: 10, sortBy: 'userName', sortDir: 'asc',
     });
   });
 
   it('can display an error if API fails', async () => {
     const error = new Error();
-    GovernanceEnduserApi.getDirectReports.mockImplementation(() => Promise.reject(error));
+    DirectoryApi.getDirectReports.mockImplementation(() => Promise.reject(error));
     const spyNotification = jest.spyOn(wrapper.vm, 'showErrorMessage');
     await wrapper.vm.loadData();
     expect(spyNotification).toHaveBeenCalledWith(error, 'governance.directReports.errorGettingDirectReports');
@@ -164,13 +164,13 @@ describe('DirectReports Component', () => {
   it('adjusting search input adjusts search query', async () => {
     wrapper.setData({ searchQuery: 'test' });
     await wrapper.vm.searchDirectReports();
-    expect(GovernanceEnduserApi.getDirectReports).toBeCalledWith('testId', {
+    expect(DirectoryApi.getDirectReports).toBeCalledWith('testId', {
       pageNumber: 1, pageSize: 10, sortBy: 'userName', sortDir: 'asc', queryString: 'test',
     });
   });
 
   it('Sets empty state on inability to load users', async () => {
-    GovernanceEnduserApi.getDirectReports = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [], totalCount: 0 } }));
+    DirectoryApi.getDirectReports = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [], totalCount: 0 } }));
     await wrapper.vm.loadData();
     wrapper.vm.checkIfNoResultsFirstLoad();
     const noResultsOnFirstLoadDirectReports = findByTestId(wrapper, 'no-results-firstload-directreports');
