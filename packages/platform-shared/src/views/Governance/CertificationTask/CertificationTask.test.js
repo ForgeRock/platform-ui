@@ -29,6 +29,7 @@ describe('CertificationTask', () => {
             taskStatus: 'active',
           },
         },
+        $router: { push: jest.fn() },
       },
       stubs: [
         'RouterLink',
@@ -324,5 +325,24 @@ describe('CertificationTask', () => {
       const groupByAccountField = findByTestId(wrapper, 'certification-group-by-account');
       expect(groupByAccountField.exists()).toBe(false);
     });
+  });
+
+  it('signOff method, should redirect to breadcrumb url', async () => {
+    CertificationApi.signOffCertificationTasks.mockImplementation(() => Promise.resolve({}));
+    const goToBackUrlSpy = jest.spyOn(wrapper.vm, 'goToBackUrl');
+    wrapper.vm.totals = {
+      NONE: 1,
+    };
+    wrapper.vm.signOff();
+    await flushPromises();
+    expect(goToBackUrlSpy).not.toHaveBeenCalled();
+    expect(wrapper.vm.isComplete).toEqual(false);
+    wrapper.vm.totals = {
+      completed: 1,
+    };
+    expect(wrapper.vm.isComplete).toEqual(true);
+    wrapper.vm.signOff();
+    await flushPromises();
+    expect(goToBackUrlSpy).toHaveBeenCalled();
   });
 });
