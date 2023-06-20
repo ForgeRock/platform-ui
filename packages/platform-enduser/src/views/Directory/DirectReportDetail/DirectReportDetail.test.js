@@ -9,7 +9,7 @@ import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import flushPromises from 'flush-promises';
 import { mount } from '@vue/test-utils';
 import DirectReportDetail from './index';
-import * as GovernanceEnduserApi from '@/api/GovernanceEnduserApi';
+import * as DirectoryApi from '@/api/governance/DirectoryApi';
 
 describe('DirectReportDetail', () => {
   const setup = (grantType) => mount(DirectReportDetail, {
@@ -33,7 +33,7 @@ describe('DirectReportDetail', () => {
   });
 
   beforeAll(() => {
-    jest.spyOn(GovernanceEnduserApi, 'getDirectReportUserInfo').mockReturnValue(Promise.resolve({
+    jest.spyOn(DirectoryApi, 'getDirectReportUserInfo').mockReturnValue(Promise.resolve({
       data: {
         givenName: 'Test',
         profileImage: './test/img',
@@ -70,7 +70,7 @@ describe('DirectReportDetail', () => {
       expect(directReportDetailTabEnt.attributes().class).toContain('active');
     });
     it('default error message on getDirectReportUserInfo fails', async () => {
-      jest.spyOn(GovernanceEnduserApi, 'getDirectReportUserInfo').mockReturnValueOnce(Promise.reject());
+      jest.spyOn(DirectoryApi, 'getDirectReportUserInfo').mockReturnValueOnce(Promise.reject());
       const wrapper = setup('account');
       const showErrorSpy = jest.spyOn(wrapper.vm, 'displayNotification');
       await flushPromises();

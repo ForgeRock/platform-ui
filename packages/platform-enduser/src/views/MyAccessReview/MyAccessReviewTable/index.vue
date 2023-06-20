@@ -163,7 +163,7 @@ import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import AppSharedUtilsMixin from '@forgerock/platform-shared/src/mixins/AppSharedUtilsMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
-import * as GovernanceEnduserApi from '@/api/GovernanceEnduserApi';
+import { getMyAccess } from '@/api/governance/MyAccessApi';
 
 export default {
   name: 'MyAccessReviewTable',
@@ -253,7 +253,7 @@ export default {
     getMyAccess(params, isInit = false) {
       params.grantType = this.grantType;
       const userId = this.userId || this.$store.state.UserStore.userId;
-      GovernanceEnduserApi.getMyAccess(userId, params).then(({ data }) => {
+      getMyAccess(userId, params).then(({ data }) => {
         this.items = data.result;
         this.totalCount = data.totalCount;
         if (isInit && !this.totalCount) {
