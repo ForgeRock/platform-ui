@@ -842,149 +842,121 @@ describe('EditResource.vue', () => {
     });
 
     it('Get relationship properties filter properties for governance should remove the assignments, ownerOfApp, taskProxies, taskPrincipals properties', () => {
-      const resourceSchema = {
-        icon: 'fa-test',
-        order: ['country', 'userName', 'sn', 'email', 'contractor', 'applications', 'manager', 'assignments', 'ownerOfApp', 'taskProxies', 'taskPrincipals'],
-        required: ['userName'],
-        properties: {
-          userName: {
-            type: 'string',
-            title: 'Username',
-            viewable: true,
-          },
-          sn: {
-            type: 'string',
-            title: 'Last Name',
-            viewable: true,
-          },
-          email: {
-            type: 'string',
-            title: 'Email',
-            viewable: true,
-          },
-          contractor: {
-            type: 'boolean',
-            title: 'Contractor',
-            viewable: true,
-          },
-          country: {
-            type: 'string',
-            title: 'Country',
-            viewable: true,
-          },
-          manager: {
-            type: 'relationship',
-            title: 'Manager',
-            viewable: true,
-          },
-          applications: {
-            type: 'array',
-            title: 'Applications',
-            viewable: true,
-            items: {
-              type: 'relationship',
-            },
-          },
-          assignments: {
-            description: 'Assignments',
-            title: 'Assignments',
-            type: 'array',
-            viewable: true,
-            propName: 'assignments',
-            readOnly: false,
-            key: 'assignments',
-            value: '',
-            disabled: false,
-            items: {
-              type: 'relationship',
-            },
-          },
-          ownerOfApp: {
-            items: {
-              type: 'relationship',
-            },
-            returnByDefault: false,
-            searchable: false,
-            title: 'Applications I Own',
-            type: 'array',
-            userEditable: false,
-            viewable: true,
-            propName: 'ownerOfApp',
-            readOnly: false,
-            key: 'ownerOfApp',
-            value: '',
-            disabled: false,
-          },
-          taskPrincipals: {
-            description: 'Users who proxy their tasks to me',
-            isVirtual: false,
-            items: {
-              type: 'relationship',
-            },
-            returnByDefault: false,
-            searchable: false,
-            title: 'Task Principals',
-            type: 'array',
-            userEditable: false,
-            viewable: true,
-            propName: 'taskPrincipals',
-            readOnly: false,
-            key: 'taskPrincipals',
-            value: '',
-            disabled: false,
-          },
-          taskProxies: {
-            description: 'Users I proxy my tasks to',
-            isVirtual: false,
-            items: {
-              type: 'relationship',
-            },
-            returnByDefault: false,
-            searchable: false,
-            title: 'Task Proxies',
-            type: 'array',
-            userEditable: false,
-            viewable: true,
-            propName: 'taskProxies',
-            readOnly: false,
-            key: 'taskProxies',
-            value: '',
-            disabled: false,
-          },
+      wrapper.vm.relationshipProperties = {
+        userName: {
+          type: 'string',
+          title: 'Username',
+          viewable: true,
         },
-      };
-
-      const resourcePrivilege = {
-        UPDATE: {
-          allowed: true,
-          properties: ['userName', 'contractor', 'sn', 'email', 'applications', 'manager', 'assignments', 'ownerOfApp', 'taskProxies', 'taskPrincipals'],
+        sn: {
+          type: 'string',
+          title: 'Last Name',
+          viewable: true,
         },
-        DELETE: {
-          allowed: true,
+        email: {
+          type: 'string',
+          title: 'Email',
+          viewable: true,
         },
-        VIEW: {
-          allowed: true,
-          properties: ['userName', 'country', 'sn', 'email'],
+        contractor: {
+          type: 'boolean',
+          title: 'Contractor',
+          viewable: true,
         },
-      };
-
-      const relationshipProperties = wrapper.vm.getRelationshipProperties(resourceSchema, resourcePrivilege);
-      expect(relationshipProperties).toEqual({
-        applications: {
-          items: {
-            type: 'relationship',
-          },
-          propName: 'applications',
-          readOnly: false,
-          title: 'Applications',
-          type: 'array',
+        country: {
+          type: 'string',
+          title: 'Country',
           viewable: true,
         },
         manager: {
           type: 'relationship',
           title: 'Manager',
-          propName: 'manager',
+          viewable: true,
+        },
+        applications: {
+          type: 'array',
+          title: 'Applications',
+          viewable: true,
+          items: {
+            type: 'relationship',
+          },
+        },
+        assignments: {
+          description: 'Assignments',
+          title: 'Assignments',
+          type: 'array',
+          viewable: true,
+          propName: 'assignments',
           readOnly: false,
+          key: 'assignments',
+          value: '',
+          disabled: false,
+          items: {
+            type: 'relationship',
+          },
+        },
+        ownerOfApp: {
+          items: {
+            type: 'relationship',
+          },
+          returnByDefault: false,
+          searchable: false,
+          title: 'Applications I Own',
+          type: 'array',
+          userEditable: false,
+          viewable: true,
+          propName: 'ownerOfApp',
+          readOnly: false,
+          key: 'ownerOfApp',
+          value: '',
+          disabled: false,
+        },
+        taskPrincipals: {
+          description: 'Users who proxy their tasks to me',
+          isVirtual: false,
+          items: {
+            type: 'relationship',
+          },
+          returnByDefault: false,
+          searchable: false,
+          title: 'Task Principals',
+          type: 'array',
+          userEditable: false,
+          viewable: true,
+          propName: 'taskPrincipals',
+          readOnly: false,
+          key: 'taskPrincipals',
+          value: '',
+          disabled: false,
+        },
+        taskProxies: {
+          description: 'Users I proxy my tasks to',
+          isVirtual: false,
+          items: {
+            type: 'relationship',
+          },
+          returnByDefault: false,
+          searchable: false,
+          title: 'Task Proxies',
+          type: 'array',
+          userEditable: false,
+          viewable: true,
+          propName: 'taskProxies',
+          readOnly: false,
+          key: 'taskProxies',
+          value: '',
+          disabled: false,
+        },
+      };
+
+      const relationshipProperties = wrapper.vm.viewableRelationshipArrayProperties;
+      expect(relationshipProperties).toEqual({
+        applications: {
+          items: {
+            type: 'relationship',
+          },
+          title: 'Applications',
+          type: 'array',
           viewable: true,
         },
       });
