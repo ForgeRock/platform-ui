@@ -249,6 +249,9 @@ export default {
         }).finally(() => {
           this.refreshTasks = true;
           this.setSaving();
+          if (this.isComplete) {
+            this.goToBackUrl();
+          }
         });
     },
     goToBackUrl() {
