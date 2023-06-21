@@ -1,10 +1,10 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <ul
-    v-if="index === 0"
+    v-if="index === 1"
     class="m-0 p-0">
     <ConsentListItem
       v-for="( callback, key ) in callbacks"
@@ -65,7 +65,7 @@ export default {
     },
   },
   mounted() {
-    if (this.index === 0) {
+    if (this.index === 1) {
       this.isRequired = this.callbacks[0].getOutputByName('isRequired');
       this.$emit('disable-next-button', this.isRequired);
     }
