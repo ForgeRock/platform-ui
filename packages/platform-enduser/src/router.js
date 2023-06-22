@@ -6,6 +6,7 @@
  */
 
 import Router from 'vue-router';
+import { every } from 'lodash';
 import Vue from 'vue';
 import i18n from './i18n';
 
@@ -13,17 +14,18 @@ import store from '@/store';
 
 Vue.use(Router);
 
-const checkIfGovernanceRouteCanBeAccessed = (to, from, next) => {
-  if (store.state.SharedStore.governanceEnabled === true) {
+function checkIfRouteCanBeAccessed(next, requiredFlags = [], onFailRoute = { name: 'NotFound' }) {
+  if (!requiredFlags.length || every(requiredFlags, (flag) => flag)) {
     next();
   } else {
-    next({ name: 'NotFound' });
+    next(onFailRoute);
   }
-};
+}
 
 /**
- * Available toolbar configuration
- * hideSideMenu - Will hide main toolbar when route accessed
+ * Available configuration
+ * hideSideMenu - Will hide left-hand navigation when route accessed
+ * hideNavBar - Will hide top toolbar when route accessed
  */
 const router = new Router({
   routes: [
@@ -71,9 +73,16 @@ const router = new Router({
     {
       path: '/access-reviews',
       name: 'AccessReviews',
-      component: () => import('@/views/AccessReviews'),
+      component: () => import('@/views/governance/AccessReviews'),
       meta: { authenticate: true },
-      beforeEnter: (to, from, next) => checkIfGovernanceRouteCanBeAccessed(to, from, next),
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
+    },
+    {
+      path: '/my-requests/new-request',
+      name: 'AccessRequestNew',
+      component: () => import(/* webpackChunkName: "AccessRequestNew" */ '@/views/governance/accessRequest/NewRequest'),
+      meta: { hideNavBar: true, hideSideMenu: true },
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabledV3, to.params.requestingFor], { path: '/my-requests' }),
     },
     {
       path: '/certification/certification-task/:campaignId',
@@ -86,34 +95,28 @@ const router = new Router({
       name: 'Applications',
       component: () => import('@/views/WorkforceApplications'),
       meta: { authenticate: true },
-      beforeEnter: (to, from, next) => {
-        if (store.state.SharedStore.workforceEnabled === true) {
-          next();
-        } else {
-          next({ name: 'NotFound' });
-        }
-      },
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.workforceEnabled]),
     },
     {
       path: '/my-delegates',
       name: 'Delegates',
-      component: () => import('@/views/Directory/Delegates'),
+      component: () => import('@/views/governance/Directory/Delegates'),
       meta: { authenticate: true },
-      beforeEnter: (to, from, next) => checkIfGovernanceRouteCanBeAccessed(to, from, next),
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
     },
     {
       path: '/my-reports',
       name: 'DirectReports',
-      component: () => import('@/views/Directory/DirectReports'),
+      component: () => import('@/views/governance/Directory/DirectReports'),
       meta: { authenticate: true },
-      beforeEnter: (to, from, next) => checkIfGovernanceRouteCanBeAccessed(to, from, next),
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
     },
     {
       path: '/my-reports/:userId/:grantType',
       name: 'DirectReportDetail',
-      component: () => import('@/views/Directory/DirectReportDetail'),
+      component: () => import('@/views/governance/Directory/DirectReportDetail'),
       meta: { authenticate: true },
-      beforeEnter: (to, from, next) => checkIfGovernanceRouteCanBeAccessed(to, from, next),
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
     },
     {
       path: '/list/:resourceType/:resourceName',
@@ -145,23 +148,23 @@ const router = new Router({
     {
       path: '/my-accounts',
       name: 'Accounts',
-      component: () => import('@/views/MyAccessReview/Accounts'),
+      component: () => import('@/views/governance/MyAccessReview/Accounts'),
       meta: { authenticate: true },
-      beforeEnter: (to, from, next) => checkIfGovernanceRouteCanBeAccessed(to, from, next),
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
     },
     {
       path: '/my-entitlements',
       name: 'Entitlements',
-      component: () => import('@/views/MyAccessReview/Entitlements'),
+      component: () => import('@/views/governance/MyAccessReview/Entitlements'),
       meta: { authenticate: true },
-      beforeEnter: (to, from, next) => checkIfGovernanceRouteCanBeAccessed(to, from, next),
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
     },
     {
       path: '/my-roles',
       name: 'Roles',
-      component: () => import('@/views/MyAccessReview/Roles'),
+      component: () => import('@/views/governance/MyAccessReview/Roles'),
       meta: { authenticate: true },
-      beforeEnter: (to, from, next) => checkIfGovernanceRouteCanBeAccessed(to, from, next),
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
     },
     {
       path: '/sharing',
