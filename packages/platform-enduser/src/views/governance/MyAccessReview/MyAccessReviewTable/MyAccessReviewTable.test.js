@@ -5,10 +5,11 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { mount } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
-import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as MyAccessApi from '@/api/governance/MyAccessApi';
+import i18n from '@/i18n';
 import MyAccessReviewTable from './index';
 
 jest.mock('@/api/governance/MyAccessApi');
@@ -37,7 +38,7 @@ describe('MyAccessReviewTable', () => {
     }));
     wrapper = mount(MyAccessReviewTable, {
       mocks: {
-        $t: (t) => t,
+        $t: (text, prop) => i18n.t(text, prop),
         $store: {
           state: {
             UserStore: {
@@ -280,6 +281,27 @@ describe('MyAccessReviewTable', () => {
       const resourceDisplayName = wrapper.vm.getResourceDisplayName(item, '/account');
 
       expect(resourceDisplayName).toBeUndefined();
+    });
+  });
+
+  describe('method formatConstraintDate should return correct temporal constraint', () => {
+    it('method should return undefined when role has no temporal constraint', () => {
+      const temporalConstraints = [];
+      const parsedDate = wrapper.vm.formatConstraintDate(temporalConstraints);
+
+      expect(parsedDate).toBeUndefined();
+    });
+
+    it('method should return parsed date when role has temporal constraint', () => {
+      const temporalConstraints = [
+        {
+          duration: '2023-06-22/2023-07-01',
+        },
+      ];
+      const translatedDate = 'June 22, 2023 12:00 AM to July 1, 2023 12:00 AM.';
+
+      const parsedDate = wrapper.vm.formatConstraintDate(temporalConstraints);
+      expect(parsedDate).toBe(translatedDate);
     });
   });
 });
