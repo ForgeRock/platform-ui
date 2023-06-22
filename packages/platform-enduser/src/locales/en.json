@@ -1,4 +1,7 @@
 {
+  "routeNames": {
+    "AccessRequestNew": "New Access Request"
+  },
   "user": {
     "profile": {
       "authorizedApplications": {
@@ -214,6 +217,7 @@
     "DirectReportDetail": "Direct Report Details",
     "EditResource": "Edit Resource",
     "Entitlements": "Entitlements",
+    "AccessRequestNew": "New Request",
     "Forbidden": "Forbidden",
     "ListResource": "List Resource",
     "NotFound": "Not Found",
@@ -247,6 +251,12 @@
       "noResultsUser": "No direct reports for this user.",
       "subtitle": "View your direct reports.",
       "title": "My Direct Reports"
+    },
+    "accessRequests": {
+      "newRequest": {},
+      "myRequests": {
+        "title": "My Requests"
+      }
     }
   }
 }
