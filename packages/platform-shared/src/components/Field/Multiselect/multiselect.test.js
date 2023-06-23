@@ -8,10 +8,12 @@
 import { mount } from '@vue/test-utils';
 import i18n from '@/i18n';
 import MultiSelect from './index';
+import { findByTestId } from '../../../utils/testHelpers';
 
 describe('Multiselect', () => {
   const defaultProps = {
-    name: '',
+    name: 'stub-name',
+    testid: 'stub-testid',
   };
 
   function setup(props) {
@@ -23,6 +25,27 @@ describe('Multiselect', () => {
       },
     });
   }
+
+  describe('@renders', () => {
+    it('default', () => {
+      const wrapper = setup();
+
+      const multiselect = findByTestId(wrapper, 'stub-testid');
+      expect(multiselect.attributes('aria-expanded')).toBe('false');
+      expect(multiselect.attributes('aria-labelledby')).toBe('floatingLabelInput4-label');
+    });
+  });
+
+  describe('@actions', () => {
+    it('when open, should have aria-expanded attribute', async () => {
+      const wrapper = setup();
+
+      const multiselect = findByTestId(wrapper, 'stub-testid');
+      // Note: not ideal to be calling directly but the triggering the `open` event doesn't seem to work
+      await wrapper.vm.openHandler();
+      expect(multiselect.attributes('aria-expanded')).toBe('true');
+    });
+  });
 
   it('MultiSelect input adds tags', () => {
     const wrapper = setup({ taggable: true });

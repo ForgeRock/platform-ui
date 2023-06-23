@@ -36,7 +36,7 @@ import { get } from 'lodash';
 import { mapState } from 'vuex';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrCountCard from '@forgerock/platform-shared/src/components/CountCard';
-import { getCertificationItems } from '@/api/GovernanceEnduserApi';
+import { getCertificationItems } from '@/api/governance/AccessReviewApi';
 import Welcome from '@/views/DashboardManager/dashboards/widgets/WelcomeWidget';
 
 /**

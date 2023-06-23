@@ -77,7 +77,7 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrMyAccessReviewTable from '../../MyAccessReview/MyAccessReviewTable';
-import { getDirectReportUserInfo } from '@/api/GovernanceEnduserApi';
+import { getDirectReportUserInfo } from '@/api/governance/DirectoryApi';
 
 /**
  * DirectReports base container component. This component renders a vertical tab menu for application, entitlement and role options

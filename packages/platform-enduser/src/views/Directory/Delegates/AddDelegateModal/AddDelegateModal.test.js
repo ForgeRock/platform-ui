@@ -10,17 +10,17 @@ import dayjs from 'dayjs';
 import flushPromises from 'flush-promises';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
-import * as GovernanceEnduserApi from '@/api/GovernanceEnduserApi';
+import * as DirectoryApi from '@/api/governance/DirectoryApi';
 import AddDelegateModal from './index';
 
-jest.mock('@/api/GovernanceEnduserApi');
+jest.mock('@/api/governance/DirectoryApi');
 jest.mock('dayjs');
 
 describe('AddDelegateModal', () => {
   let wrapper;
 
   CommonsApi.getResource = jest.fn().mockReturnValue(Promise.resolve({ data: {} }));
-  GovernanceEnduserApi.addTaskProxy = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [] } }));
+  DirectoryApi.addTaskProxy = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [] } }));
 
   dayjs.mockImplementation((time) => ({
     local: () => ({
@@ -48,7 +48,7 @@ describe('AddDelegateModal', () => {
   });
 
   it('clicking save calls to add a task proxy', async () => {
-    const addTaskProxy = jest.spyOn(GovernanceEnduserApi, 'addTaskProxy');
+    const addTaskProxy = jest.spyOn(DirectoryApi, 'addTaskProxy');
     const displayNotificationSpy = jest.spyOn(wrapper.vm, 'displayNotification');
     const saveButton = findByTestId(wrapper, 'save-button');
     await saveButton.trigger('click');
@@ -60,7 +60,7 @@ describe('AddDelegateModal', () => {
   });
 
   it('a failed save shows an error notification', async () => {
-    const addTaskProxy = jest.spyOn(GovernanceEnduserApi, 'addTaskProxy').mockRejectedValue();
+    const addTaskProxy = jest.spyOn(DirectoryApi, 'addTaskProxy').mockRejectedValue();
     const errorSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
 
     const saveButton = findByTestId(wrapper, 'save-button');
@@ -72,7 +72,7 @@ describe('AddDelegateModal', () => {
   });
 
   it('should restrict the user to save when the end-date is not in the future as the start-date and the time constraint feature is enabled', async () => {
-    const addTaskProxy = jest.spyOn(GovernanceEnduserApi, 'addTaskProxy');
+    const addTaskProxy = jest.spyOn(DirectoryApi, 'addTaskProxy');
 
     const enableTime = findByTestId(wrapper, 'enable-time-constraint');
     await enableTime.setChecked(true);

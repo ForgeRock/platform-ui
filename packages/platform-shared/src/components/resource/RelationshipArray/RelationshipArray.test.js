@@ -212,12 +212,12 @@ describe('RelationshipArray', () => {
   });
 
   it('Correctly builds grid url', () => {
-    expect(wrapper.vm.buildGridUrl(0)).toEqual('user/bjensen/reports?_pageSize=10&_totalPagedResultsPolicy=ESTIMATE&_queryFilter=true');
-    expect(wrapper.vm.buildGridUrl(1)).toEqual('user/bjensen/reports?_pageSize=10&_totalPagedResultsPolicy=ESTIMATE&_queryFilter=true&_pagedResultsOffset=10');
+    expect(wrapper.vm.buildGridUrl(0)).toEqual('user/bjensen/reports?_pageSize=10&_totalPagedResultsPolicy=ESTIMATE&_queryFilter=true&_fields=*');
+    expect(wrapper.vm.buildGridUrl(1)).toEqual('user/bjensen/reports?_pageSize=10&_totalPagedResultsPolicy=ESTIMATE&_queryFilter=true&_fields=*&_pagedResultsOffset=10');
     wrapper.vm.sortBy = 'userName';
-    expect(wrapper.vm.buildGridUrl(0)).toEqual('user/bjensen/reports?_pageSize=10&_totalPagedResultsPolicy=ESTIMATE&_queryFilter=true&_sortKeys=-userName');
+    expect(wrapper.vm.buildGridUrl(0)).toEqual('user/bjensen/reports?_pageSize=10&_totalPagedResultsPolicy=ESTIMATE&_queryFilter=true&_fields=*&_sortKeys=-userName');
     wrapper.vm.sortDesc = true;
-    expect(wrapper.vm.buildGridUrl(0)).toEqual('user/bjensen/reports?_pageSize=10&_totalPagedResultsPolicy=ESTIMATE&_queryFilter=true&_sortKeys=userName');
+    expect(wrapper.vm.buildGridUrl(0)).toEqual('user/bjensen/reports?_pageSize=10&_totalPagedResultsPolicy=ESTIMATE&_queryFilter=true&_fields=*&_sortKeys=userName');
 
     wrapper.setProps({
       filter: 'filterValue',

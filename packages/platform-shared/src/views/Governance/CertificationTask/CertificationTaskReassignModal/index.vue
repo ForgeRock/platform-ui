@@ -41,8 +41,7 @@ of the MIT license. See the LICENSE file for details. -->
           class="d-flex flex-row mr-2"
           :key="permission.key">
           <FrField
-            :v-model="permission.key"
-            :value="permission.selected"
+            v-model="permission.selected"
             class="mr-2"
             name="columnSelected"
             type="checkbox" />
@@ -91,11 +90,6 @@ export default {
     return {
       reassignToRole: '',
       reassignToUser: '',
-      certify: true,
-      comment: true,
-      view: true,
-      forward: true,
-      signoff: true,
       reassignToType: REASSIGN_TO_TYPES.user,
       reassignToOptions: [
         { text: this.$t('governance.certificationTask.actionsModal.toUser'), value: REASSIGN_TO_TYPES.user },
@@ -152,13 +146,21 @@ export default {
       this.$emit('change-saving');
     },
     saveReassignBulkAction() {
+      // Making the permissions object to be stored
+      const getPermissionValue = (key) => this.permissions.find((permission) => permission.key === key).selected;
+      const decide = getPermissionValue('decide');
+      const forward = getPermissionValue('assignForward');
       this.toggleSaving();
       const permissions = {
-        certify: this.certify,
-        comment: this.comment,
-        view: this.view,
-        forward: this.forward,
-        signoff: this.signoff,
+        certify: decide,
+        revoke: decide,
+        exception: decide,
+        reset: decide,
+        comment: getPermissionValue('comment'),
+        view: getPermissionValue('view'),
+        forward,
+        reassign: forward,
+        signoff: getPermissionValue('signOff'),
       };
       const payload = {
         permissions,

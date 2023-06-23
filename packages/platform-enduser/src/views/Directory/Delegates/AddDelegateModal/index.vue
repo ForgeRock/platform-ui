@@ -75,7 +75,7 @@ import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrGovResourceSelect from '@forgerock/platform-shared/src/components/filterBuilder/components/GovResourceSelect';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import { ValidationObserver } from 'vee-validate';
-import { addTaskProxy } from '@/api/GovernanceEnduserApi';
+import { addTaskProxy } from '@/api/governance/DirectoryApi';
 
 export default {
   name: 'AddDelegateModal',

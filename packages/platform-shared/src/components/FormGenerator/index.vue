@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -181,7 +181,7 @@ export default {
      * @param property - Current field property
      */
     showField(property) {
-      if (has(property, 'show')) {
+      if (property?.show) {
         const modelProp = get(this.model, property.show);
         let currentVal;
         if (modelProp !== undefined) {

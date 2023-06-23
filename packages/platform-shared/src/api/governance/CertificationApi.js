@@ -11,6 +11,9 @@ const governanceBaseUrl = '/governance';
 const governanceCertificationBaseUrl = `${governanceBaseUrl}/certification`;
 const governanceCertificationAdminBaseUrl = `${governanceBaseUrl}/admin/certification`;
 
+/**
+ * @typedef {"entitlements" | "accounts" | "roles" } detailsType
+ */
 export function getAdminCertificationItems(params = {}) {
   const defaultParams = {
     status: 'active',
@@ -36,7 +39,6 @@ export function getCertificationItems(params = {}) {
 }
 
 export function activateCertification(campaignId) {
-  // TODO: no staged available in API
   return generateIgaApi().post(`/governance/certification/${campaignId}/activate`);
 }
 
@@ -109,10 +111,11 @@ export function getCertificationTaskAccountDetails(campaignId, itemId) {
   return generateIgaApi().get(resourceUrl);
 }
 
-export function getCertificationCountsByCampaign(campaign, actorId, isAdmin) {
+export function getCertificationCountsByCampaign(campaign, actorId, isAdmin, taskStatus) {
   const params = {
     getCount: true,
     isAdmin,
+    taskStatus,
     ...(isAdmin ? { primaryReviewerId: actorId } : { actorId }),
   };
 
@@ -127,10 +130,11 @@ export function getCertificationCountsByCampaign(campaign, actorId, isAdmin) {
 * @param {boolean} isAdmin - determine if the user is admin
 * @returns {Promise}
 */
-export function getInProgressTasksByCampaign(campaignId, isAdmin = false) {
+export function getInProgressTasksByCampaign(campaignId, isAdmin = false, taskStatus) {
   const queryParams = {
     status: 'in-progress',
     isAdmin,
+    taskStatus,
   };
   const resourceUrl = `${governanceCertificationBaseUrl}/${campaignId}/items`;
   return generateIgaApi().get(resourceUrl, { params: queryParams });
@@ -355,12 +359,13 @@ export function getCertificationEntitlementDetails(campaignId, itemId) {
 }
 
 /**
- * @description Obtains the entitlement details by user
+ * @description Obtains entitlements, accounts or roles details by user
  * @param {String} campaignId - ID of line item campaign
  * @param {String} itemId - ID of line item
+ * @param {detailsType} detailsType
  * @returns {Promise}
  */
-export function getUserEntitlementsDetails(campaignId, itemId) {
-  const resourceUrl = `${governanceCertificationBaseUrl}/${campaignId}/items/${itemId}/user/entitlements`;
+export function getUserDetails(campaignId, itemId, detailsType) {
+  const resourceUrl = `${governanceCertificationBaseUrl}/${campaignId}/items/${itemId}/user/${detailsType}`;
   return generateIgaApi().get(resourceUrl);
 }

@@ -7,13 +7,13 @@
 
 import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
-import * as GovernanceEnduserApi from '@/api/GovernanceEnduserApi';
+import * as AccessReviewApi from '@/api/governance/AccessReviewApi';
 import GovernanceDashboard from './index';
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue);
 
-jest.mock('@/api/GovernanceEnduserApi');
+jest.mock('@/api/governance/AccessReviewApi');
 
 /**
  * @constant
@@ -38,7 +38,7 @@ const USER_STORE = {
 describe('GovernanceDashboard', () => {
   let wrapper;
 
-  GovernanceEnduserApi.getCertificationItems = jest.fn().mockReturnValue(Promise.resolve({ data: {} }));
+  AccessReviewApi.getCertificationItems = jest.fn().mockReturnValue(Promise.resolve({ data: {} }));
 
   beforeEach(() => {
     wrapper = shallowMount(GovernanceDashboard, {
@@ -63,7 +63,7 @@ describe('GovernanceDashboard', () => {
 
   describe('getAccessReviewsCount', () => {
     it('should call getCertificationItems', async () => {
-      const getCertSpy = jest.spyOn(GovernanceEnduserApi, 'getCertificationItems').mockImplementation(() => Promise.resolve({ data: { objectTypes: {} } }));
+      const getCertSpy = jest.spyOn(AccessReviewApi, 'getCertificationItems').mockImplementation(() => Promise.resolve({ data: { objectTypes: {} } }));
       wrapper.vm.getAccessReviewsCount();
 
       await wrapper.vm.$nextTick();
