@@ -23,6 +23,16 @@ export function getRequest(id) {
   });
 }
 
+export function getUserRequests(userId, params, filter) {
+  return Promise.resolve({ data: getRequestsMock(params, filter) });
+  // /governance/user/{userId}/requests
+}
+
+export function getUserApprovals(userId, params, filter) {
+  return Promise.resolve({ data: getRequestsMock(params, filter) });
+  // /governance/user/{userId}/approvals
+}
+
 export function cancelRequest(id) {
   return Promise.resolve();
   // return generateIgaApi().post('/requests/${requestId}/cancel');
