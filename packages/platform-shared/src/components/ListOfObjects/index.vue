@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -41,7 +41,7 @@ of the MIT license. See the LICENSE file for details. -->
                       <BFormCheckbox
                         v-model="obj[key]"
                         :name="key+'_'+index">
-                        {{ key }}
+                        {{ properties[key].title || key }}
                       </BFormCheckbox>
                     </div>
                     <div v-else-if="properties[key].type === 'number'">
@@ -49,7 +49,7 @@ of the MIT license. See the LICENSE file for details. -->
                         v-model.number="obj[key]"
                         type="number"
                         validation="required|numeric"
-                        :label="key"
+                        :label="properties[key].title || key"
                         :name="key+'_'+index"
                         @input="emitInput(listValues)"
                       />
@@ -57,7 +57,7 @@ of the MIT license. See the LICENSE file for details. -->
                     <div v-else>
                       <FrField
                         v-model="obj[key]"
-                        :label="key"
+                        :label="properties[key].title ? properties[key].title : key"
                         :name="key+'_'+index"
                         :type="properties[key].type"
                         :validation="required && required.length && required.includes(properties[key].title) ? 'required' : ''"
@@ -81,6 +81,7 @@ of the MIT license. See the LICENSE file for details. -->
                   />
                 </button>
                 <button
+                  v-if="multiValued || listValues.length === 0"
                   :data-testid="`list-objects-add-${index}`"
                   class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
                   @click.prevent="addObjectToList(index)">
@@ -140,24 +141,24 @@ export default {
       type: String,
       default: '',
     },
-    properties: {
-      type: Object,
-      default: () => {},
-    },
     label: {
       type: String,
       default: '',
     },
-    name: {
-      type: String,
-      default: '',
+    multiValued: {
+      type: Boolean,
+      default: true,
+    },
+    properties: {
+      type: Object,
+      default: () => ({}),
     },
     required: {
       type: Array,
       default: () => [],
     },
     value: {
-      type: [Array, String],
+      type: [Array, Object, String],
       default: () => [],
     },
   },
@@ -180,7 +181,7 @@ export default {
     },
   },
   mounted() {
-    if (this.value && this.value !== '' && this.value !== null) {
+    if (this.value) {
       const listValues = cloneDeep(this.value);
       listValues.forEach((val) => {
         val.listUniqueIndex = this.getUniqueIndex();
@@ -204,9 +205,9 @@ export default {
         return val;
       });
       if (emitValue.length === 0) {
-        this.$emit('input', '');
+        this.$emit('input', this.multiValued ? [] : {});
       } else {
-        this.$emit('input', emitValue);
+        this.$emit('input', this.multiValued ? emitValue : emitValue[0]);
       }
     },
     /**

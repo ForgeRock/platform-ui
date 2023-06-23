@@ -126,7 +126,7 @@ import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import * as GovernanceEnduserApi from '@/api/GovernanceEnduserApi';
+import { getDirectReports } from '@/api/governance/DirectoryApi';
 /*
  * @description view to show a list of direct reports
  */
@@ -211,7 +211,7 @@ export default {
       // Adds sortby to params
       params.sortBy = this.sortBy;
 
-      await GovernanceEnduserApi.getDirectReports(this.$store.state.UserStore.userId, params).then(({ data }) => {
+      await getDirectReports(this.$store.state.UserStore.userId, params).then(({ data }) => {
         this.items = data.result;
         this.totalCount = data.totalCount;
       }).catch((err) => {

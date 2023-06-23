@@ -165,6 +165,7 @@ of the MIT license. See the LICENSE file for details. -->
         size="lg"
         @ok="saveNewRelationships">
         <FrRelationshipEdit
+          :query-filter-extension="additionalQueryFilter"
           :parent-resource="parentResource"
           :relationship-property="relationshipArrayProperty"
           :index="0"
@@ -531,13 +532,17 @@ export default {
       }
 
       // Add required fields, query fields, and prop-passed fields to grid query
-      if (!this.disableSortAndSearch && currentResourceCollection) {
-        const requiredProps = this.requiredProps.join(',');
-        const resourceCollectionFields = currentResourceCollection.query.fields.join(',');
-        const incomingFields = this.incomingFields.length
-          ? `,${this.incomingFields.join(',')}`
-          : '';
-        resourceUrl = `${resourceUrl}&_fields=${requiredProps},${resourceCollectionFields}${incomingFields}`;
+      if (!this.disableSortAndSearch) {
+        if (currentResourceCollection) {
+          const requiredProps = this.requiredProps.join(',');
+          const resourceCollectionFields = currentResourceCollection.query.fields.join(',');
+          const incomingFields = this.incomingFields.length
+            ? `,${this.incomingFields.join(',')}`
+            : '';
+          resourceUrl = `${resourceUrl}&_fields=${requiredProps},${resourceCollectionFields}${incomingFields}`;
+        } else {
+          resourceUrl = `${resourceUrl}&_fields=*`;
+        }
       }
 
       if (page > 0) {

@@ -23,11 +23,24 @@ describe('CertificationTaskEditReviewerModal', () => {
           },
         },
       },
+      propsData: {
+        currentUserPermissions: {
+          certify: true,
+          comment: true,
+          exception: true,
+          forward: false,
+          reassign: false,
+          reset: true,
+          revoke: true,
+          signoff: false,
+        },
+      },
     });
   });
 
   it('component loaded correctly', () => {
     expect(wrapper.name()).toBe('EditReviewerModal');
+    expect(wrapper.vm.currentUserMappedPermissions).toEqual({});
   });
 
   it('closeModal method should emit close-modal event', () => {
@@ -325,5 +338,74 @@ describe('CertificationTaskEditReviewerModal', () => {
       },
     });
     expect(wrapper.find('#CertificationTaskEditReviewerEntitlementModal').exists()).toBeTruthy();
+  });
+
+  it('getMappedPermissions method should map correctly reviewer permissions when reviewer change', async () => {
+    expect(wrapper.vm.permissions).toEqual({
+      decide: true,
+      comment: true,
+      forward: true,
+      signoff: true,
+    });
+
+    const reviewer = {
+      userName: 'bwalters@jstilton1973unfinishedlife.onmicrosoft.com',
+      givenName: 'Barbara',
+      sn: 'Walters',
+      id: 'managed/user/2cdfc1d4-a206-435b-b22e-a5ed8804f4af',
+      mail: 'bwalters@jstilton1973unfinishedlife.onmicrosoft.com',
+      permissions: {
+        certify: false,
+        comment: true,
+        exception: false,
+        forward: true,
+        reassign: true,
+        reset: false,
+        revoke: false,
+        signoff: true,
+      },
+    };
+
+    await wrapper.setProps({
+      reviewer,
+    });
+
+    expect(wrapper.vm.permissions).toEqual({
+      decide: false,
+      comment: true,
+      forward: true,
+      signoff: true,
+    });
+
+    await wrapper.setProps({
+      reviewer: null,
+    });
+
+    expect(wrapper.vm.permissions).toEqual({
+      decide: true,
+      comment: true,
+      forward: false,
+      signoff: false,
+    });
+  });
+
+  it('getMappedPermissions method should map reviewer permissions correctly', () => {
+    const permissions = wrapper.vm.getMappedPermissions({
+      certify: false,
+      comment: false,
+      exception: false,
+      forward: true,
+      reassign: true,
+      reset: false,
+      revoke: false,
+      signoff: true,
+    });
+
+    expect(permissions).toEqual({
+      decide: false,
+      comment: false,
+      forward: true,
+      signoff: true,
+    });
   });
 });

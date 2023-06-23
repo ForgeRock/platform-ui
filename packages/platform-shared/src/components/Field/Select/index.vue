@@ -22,6 +22,9 @@ of the MIT license. See the LICENSE file for details. -->
       class="text-nowrap"
       label="text"
       track-by="value"
+      role="combobox"
+      :aria-expanded="isExpanded ? 'true': 'false'"
+      :aria-labelledby="id + '-label'"
       :name="name"
       :disabled="disabled"
       :options="selectOptions"
@@ -64,7 +67,8 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   find,
 } from 'lodash';
-import VueMultiSelect from 'vue-multiselect';
+// import vue-multiselect from src because dist min/uglified package gets removed in build
+import VueMultiSelect from '../../../../../../node_modules/vue-multiselect/src/index';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
 
@@ -122,6 +126,11 @@ export default {
       default: '',
     },
   },
+  data() {
+    return {
+      isExpanded: false,
+    };
+  },
   mounted() {
     if (this.searchable) {
       this.$refs.vms.$refs.search.setAttribute('autocomplete', 'off');
@@ -140,10 +149,13 @@ export default {
       if (this.options.length && Object.hasOwnProperty.call(this.options[0], 'value')) {
         formattedOptions = [...this.options];
       } else {
-        formattedOptions = this.options.map((option) => ({
-          text: option,
-          value: option,
-        }));
+        formattedOptions = this.options.map((option) => {
+          const formattedOption = typeof (option) === 'string' ? option.trim() : option;
+          return {
+            text: formattedOption,
+            value: formattedOption,
+          };
+        });
       }
 
       if (this.sortOptions) {
@@ -154,6 +166,7 @@ export default {
   },
   methods: {
     closeDropDown(newVal) {
+      this.isExpanded = false;
       if (newVal === null) {
         this.floatLabels = false;
       } else {
@@ -175,6 +188,7 @@ export default {
      * Also scrolls the selected option into view if showSelectedOptionOnOpen is true
      */
     openHandler() {
+      this.isExpanded = true;
       this.$emit('open');
 
       if (this.searchable) {
