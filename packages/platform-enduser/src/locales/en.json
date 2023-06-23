@@ -231,6 +231,17 @@
     "Sharing": "Sharing"
   },
   "governance": {
+    "accessRequest": {
+      "requestTypes": {
+        "accountGrant": "Grant Application",
+        "accountRevoke": "Remove Application",
+        "entitlementGrant": "Grant Entitlement",
+        "entitlementRevoke": "Remove Entitlement",
+        "roleGrant": "Grant Role",
+        "roleRevoke": "Remove Role"
+      },
+      "idLabel": "ID: {id}"
+    },
     "approval":{
       "subtitle": "View and take action on your pending access requests."
     },
