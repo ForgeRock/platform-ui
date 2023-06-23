@@ -54,18 +54,20 @@ of the MIT license. See the LICENSE file for details. -->
           v-if="user"
           :user="user" />
       </BTab>
-      <BTab
-        v-if="governanceEnabledV2"
-        :title="$t('governance.certificationTask.lineItemDetailsModal.entitlementsTab.title')">
-        <FrEntitlementsTab
-          :entitlements="userEntitlements" />
+      <BTab :title="$t('governance.certificationTask.lineItemDetailsModal.rolesTab.title')">
+        <FrRolesTab :roles="userDetails.userRoles" />
+      </BTab>
+      <BTab :title="$t('governance.certificationTask.lineItemDetailsModal.accountsTab.title')">
+        <FrAccountsTab :accounts="userDetails.userAccounts" />
+      </BTab>
+      <BTab :title="$t('governance.certificationTask.lineItemDetailsModal.entitlementsTab.title')">
+        <FrEntitlementsTab :entitlements="userDetails.userEntitlements" />
       </BTab>
     </BTabs>
   </BModal>
 </template>
 
 <script>
-import { mapState } from 'vuex';
 import {
   BButtonClose,
   BModal,
@@ -77,6 +79,8 @@ import {
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrUserDetailsTab from './UserDetailsTab';
 import FrEntitlementsTab from './EntitlementsTab';
+import FrRolesTab from './RolesTab';
+import FrAccountsTab from './AccountsTab';
 
 export default {
   name: 'CertificationTaskUserModal',
@@ -87,8 +91,10 @@ export default {
     BModal,
     BTab,
     BTabs,
+    FrAccountsTab,
     FrEntitlementsTab,
     FrIcon,
+    FrRolesTab,
     FrUserDetailsTab,
   },
   props: {
@@ -96,9 +102,14 @@ export default {
       type: Object,
       required: true,
     },
-    userEntitlements: {
+    userDetails: {
       type: Object,
       required: true,
+      default: () => ({
+        userAccounts: {},
+        userEntitlements: {},
+        userRoles: {},
+      }),
     },
   },
   computed: {
@@ -108,9 +119,6 @@ export default {
         sn: this.user?.sn,
       });
     },
-    ...mapState({
-      governanceEnabledV2: (state) => state.SharedStore.governanceEnabledV2,
-    }),
   },
 };
 </script>

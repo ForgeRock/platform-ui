@@ -213,7 +213,7 @@ of the MIT license. See the LICENSE file for details. -->
             data-testid="account-cell"
             variant="link"
             @click.stop="openAccountModal(item)">
-            {{ governanceEnabledV2 ? getResourceDisplayName(item, '/account') : (item.account.__NAME__ || item.account.mailNickname) }}
+            {{ getResourceDisplayName(item, '/account') }}
           </BButton>
         </div>
       </template>
@@ -404,10 +404,8 @@ of the MIT license. See the LICENSE file for details. -->
       :campaign-id="campaignId"
       :selected-tasks="selectedTasks" />
     <FrCertificationTaskUserModal
-      v-if="campaignDetails.certificationType === 'entitlement'
-        || (campaignDetails.certificationType !== 'entitlement' && !isEntitlementGrantType)"
       :user="currentUserSelectedModal"
-      :user-entitlements="currentUserEntitlementsDetails" />
+      :user-details="currentUserDetails" />
     <FrCertificationTaskApplicationModal
       v-if="currentApplicationSelectedModal"
       :application="currentApplicationSelectedModal" />
@@ -441,6 +439,7 @@ of the MIT license. See the LICENSE file for details. -->
       :is-deleting="isDeletingReviewer"
       :is-allowed-deletion="currentReviewerSelectedModal && currentReviewersSelectedModal.length > 1 && !isLastSignOffReviewer()"
       :modal-id="certificationTaskEditReviewerModalId"
+      :current-user-permissions="currentUserPermissions"
       @close-modal="closeEditReviewerModal"
       @edit-reviewer="editReviewer"
       @delete-reviewer="deleteReviewer" />
@@ -495,7 +494,7 @@ import {
   getCertificationLineItemUser,
   getCertificationTaskAccountDetails,
   getCertificationTasksListByCampaign,
-  getUserEntitlementsDetails,
+  getUserDetails,
   reassignLineItem,
   resetLineItem,
   revokeCertificationTasks,
@@ -503,6 +502,8 @@ import {
   saveComment,
   updateLineItemReviewers,
 } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
+import { ADMIN_REVIEWER_PERMISSIONS } from '@forgerock/platform-shared/src/utils/governance/constants';
+import { CampaignStates } from '@forgerock/platform-shared/src/utils/governance/types';
 import FrCertificationActivityModal from './CertificationTaskActivityModal';
 import FrCertificationTaskAccountModal from './CertificationTaskAccountModal';
 import FrCertificationTaskAddCommentModal from './CertificationTaskAddCommentModal';
@@ -617,6 +618,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    taskStatus: {
+      type: String,
+      default: 'active',
+    },
     entitlementUserId: {
       type: String,
       default: null,
@@ -650,7 +655,10 @@ export default {
       currentPage: 1,
       currentReviewerSelectedModal: null,
       currentReviewersSelectedModal: [],
-      currentUserEntitlementsDetails: {},
+      currentUserEntitlementsDetails: { result: [] },
+      currentUserAccountsDetails: { result: [] },
+      currentUserRolesDetails: { result: [] },
+      currentUserPermissions: {},
       currentUserSelectedModal: {},
       enableAddComments: true,
       sortDir: 'asc',
@@ -687,7 +695,6 @@ export default {
       bulkForward: false,
       tasksFieldsToSort: [],
       currentEntitlementSelected: null,
-      governanceEnabledV2: this.$store.state.SharedStore.governanceEnabledV2,
     };
   },
   computed: {
@@ -823,6 +830,13 @@ export default {
     isEntitlementGrantType() {
       return this.certificationGrantType === 'entitlements';
     },
+    currentUserDetails() {
+      return {
+        userAccounts: this.currentUserAccountsDetails,
+        userEntitlements: this.currentUserEntitlementsDetails,
+        userRoles: this.currentUserRolesDetails,
+      };
+    },
   },
   methods: {
     startCase,
@@ -847,9 +861,9 @@ export default {
     openAccountModal(content) {
       this.currentAccountSelectedModal = {
         account: content.account,
-        decision: content.decision.certification.decision,
-        decisionDate: content.decision.certification.decisionDate,
-        decisionBy: content.decision.certification.decisionBy,
+        decision: content.item?.decision?.certification?.decision,
+        decisionDate: content.item?.decision?.certification?.decisionDate,
+        decisionBy: content.item?.decision?.certification?.decisionBy,
       };
       this.contentAccountSelectedModal = cloneDeep(content.account);
       delete this.contentAccountSelectedModal?.metadata;
@@ -906,6 +920,9 @@ export default {
     },
     openEditReviewerModal(reviewer) {
       this.currentReviewerSelectedModal = reviewer;
+      this.currentUserPermissions = this.isAdmin
+        ? ADMIN_REVIEWER_PERMISSIONS
+        : this.currentReviewersSelectedModal.find((currentReviewer) => currentReviewer.id === this.actorId)?.permissions;
       this.closeModal('CertificationTaskReviewers');
       this.openModal('CertificationTaskEditReviewer');
     },
@@ -913,6 +930,7 @@ export default {
       this.closeModal('CertificationTaskEditReviewer');
       this.openModal('CertificationTaskReviewers');
       this.currentReviewerSelectedModal = null;
+      this.currentUserPermissions = {};
     },
     editReviewer(reviewerId, permissions, newReviewer) {
       this.isSavingReviewer = true;
@@ -980,16 +998,30 @@ export default {
           this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserError'));
         });
 
-      // Get entitlements details by user
-      if (this.$store.state.SharedStore.governanceEnabledV2) {
-        getUserEntitlementsDetails(this.campaignId, lineItemId)
-          .then(({ data }) => {
-            this.currentUserEntitlementsDetails = data;
-          })
-          .catch((error) => {
-            this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserEntitlementsError'));
-          });
-      }
+      // Get entitlements details
+      getUserDetails(this.campaignId, lineItemId, 'entitlements')
+        .then(({ data }) => {
+          this.currentUserEntitlementsDetails = data;
+        })
+        .catch((error) => {
+          this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserEntitlementsError'));
+        });
+      // Get accounts details
+      getUserDetails(this.campaignId, lineItemId, 'accounts')
+        .then(({ data }) => {
+          this.currentUserAccountsDetails = data;
+        })
+        .catch((error) => {
+          this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserEntitlementsError'));
+        });
+      // Get roles details
+      getUserDetails(this.campaignId, lineItemId, 'roles')
+        .then(({ data }) => {
+          this.currentUserRolesDetails = data;
+        })
+        .catch((error) => {
+          this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserEntitlementsError'));
+        });
     },
     addComment(comment) {
       saveComment(this.campaignId, this.currentLineItemIdSelectedModal, comment).then(() => {
@@ -1009,7 +1041,8 @@ export default {
     },
     openActivityModal(item) {
       const lineItemActivity = item?.decision?.certification?.comments;
-      this.currentLineItemActivity = lineItemActivity;
+      const activityList = filter(lineItemActivity, (activity) => (activity.action !== 'comment'));
+      this.currentLineItemActivity = activityList;
       this.openModal('CertificationTaskActivity');
     },
     closeActivityModal() {
@@ -1074,7 +1107,7 @@ export default {
       const payload = this.buildBodyParams();
 
       // if all users line items are complete, emit an event
-      getCertificationCountsByCampaign(this.campaignId, this.actorId, this.isAdmin).then(({ data }) => {
+      getCertificationCountsByCampaign(this.campaignId, this.actorId, this.isAdmin, this.taskStatus).then(({ data }) => {
         this.$emit('set-totals', data.totals);
       });
 
@@ -1199,6 +1232,10 @@ export default {
         sortBy: sortByColumn,
         sortDir,
       };
+
+      // staged campaigns grab all tasks, status is not important
+      if (this.taskStatus !== CampaignStates.STAGING) managedResourceParams.taskStatus = this.taskStatus;
+
       if (this.isAdmin) {
         managedResourceParams.isAdmin = this.isAdmin;
         managedResourceParams.actorId = this.actorId;

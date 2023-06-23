@@ -22,17 +22,20 @@ of the MIT license. See the LICENSE file for details. -->
                 :logo-enabled="logoEnabled && !themeLoading"
                 :logo-height="logoHeight"
                 :logo-path="logoPath"
-                :header-classes="['login-header']">
+                :header-classes="['login-header']"
+              >
                 <template #center-card-header>
-                  <div v-if="!loading && !themeLoading">
-                    <h1
-                      v-if="header"
-                      class="h2">
-                      {{ header }}
-                    </h1>
-                    <p
-                      v-if="description"
-                      v-html="description" />
+                  <div aria-live="assertive">
+                    <template v-if="!loading && !themeLoading">
+                      <h1
+                        v-if="header"
+                        class="h2">
+                        {{ header }}
+                      </h1>
+                      <p
+                        v-if="description"
+                        v-html="description" />
+                    </template>
                   </div>
                 </template>
 
@@ -152,7 +155,10 @@ of the MIT license. See the LICENSE file for details. -->
           </div>
 
           <div class="px-4 px-md-5">
-            <BRow class="m-0">
+            <BRow
+              class="m-0"
+              aria-live="assertive"
+            >
               <BCol xl="9">
                 <h1
                   v-if="header"
@@ -565,33 +571,7 @@ export default {
 
         if (type === this.FrCallbackType.RedirectCallback) {
           this.nextButtonVisible = false;
-          if (callback.getOutputByName('trackingCookie')) {
-            // save current step information for later resumption of tree.
-            sessionStorage.setItem('authIndexValue', this.treeId || this.$route.params.tree);
-            sessionStorage.setItem('step', JSON.stringify(this.step));
-            sessionStorage.setItem('realm', this.realm);
-          }
-          const redirectUrl = callback.getOutputByName('redirectUrl');
-          if (callback.getOutputByName('redirectMethod') === 'POST') {
-            const redirectData = callback.getOutputByName('redirectData');
-            const form = document.createElement('form');
-            form.method = 'post';
-            form.action = redirectUrl;
-
-            Object.entries(redirectData).forEach(([key, value]) => {
-              const hiddenField = document.createElement('input');
-              hiddenField.type = 'hidden';
-              hiddenField.name = key;
-              hiddenField.value = value;
-
-              form.appendChild(hiddenField);
-            });
-
-            document.body.appendChild(form);
-            form.submit();
-          } else {
-            window.location.href = redirectUrl;
-          }
+          this.handleRedirectCallback(callback);
           return;
         }
 
@@ -823,7 +803,7 @@ export default {
         'update-auth-id': (authId) => {
           this.step.payload.authId = authId;
         },
-        // event emited from FrField
+        // event emitted from FrField
         input: (value) => {
           if (callback && callback.setInputValue) {
             callback.setInputValue(value);
@@ -849,14 +829,10 @@ export default {
      * @returns {Object} two properties needed to resume tree: step and authIndex value
      */
     getStepFromStorage() {
-      const step = sessionStorage.getItem('step');
-      const authIndexValue = sessionStorage.getItem('authIndexValue');
-      const realm = sessionStorage.getItem('realm');
-      if (step !== null && authIndexValue !== null && realm !== null) {
-        sessionStorage.removeItem('step');
-        sessionStorage.removeItem('authIndexValue');
-        sessionStorage.removeItem('realm');
-        return { step: JSON.parse(step), authIndexValue, realm };
+      const stepData = localStorage.getItem('stepData');
+      if (stepData !== null) {
+        localStorage.removeItem('stepData');
+        return JSON.parse(stepData);
       }
       return { step: undefined, authIndexValue: undefined, realm: undefined };
     },
@@ -906,6 +882,49 @@ export default {
       // with differences between chains and trees. More consistent to just rely on the request header (see IAM-1440)
       delete stepParams.query.locale;
       return stepParams;
+    },
+    /**
+     * @description Performs DOM and URL actions necessary to execute a redirect based on the passed callback.
+     * Stores step information for resuming the tree if needed.
+     * @param {Object} redirectCallback the redirect callback that informs how and where to redirect the user
+     */
+    handleRedirectCallback(redirectCallback) {
+      const redirectUrl = redirectCallback.getOutputByName('redirectUrl');
+      const redirectByPost = redirectCallback.getOutputByName('redirectMethod') === 'POST';
+      const expectToReturnFromRedirect = redirectCallback.getOutputByName('trackingCookie');
+
+      if (expectToReturnFromRedirect) {
+        // Save current step information for later resumption of tree.
+        const stepData = {
+          authIndexValue: this.treeId || this.$route.params.tree,
+          realm: this.realm,
+          step: this.step,
+        };
+        localStorage.setItem('stepData', JSON.stringify(stepData));
+      }
+
+      if (redirectByPost) {
+        // Build and submit a post form that submits the passed redirect data
+        const redirectData = redirectCallback.getOutputByName('redirectData');
+        const form = document.createElement('form');
+        form.method = 'post';
+        form.action = redirectUrl;
+
+        Object.entries(redirectData).forEach(([key, value]) => {
+          const hiddenField = document.createElement('input');
+          hiddenField.type = 'hidden';
+          hiddenField.name = key;
+          hiddenField.value = value;
+
+          form.appendChild(hiddenField);
+        });
+
+        document.body.appendChild(form);
+        form.submit();
+      } else {
+        // Plain redirect
+        window.location.href = redirectUrl;
+      }
     },
     /**
      * @description Returns boolean true if payload has session timeout error code

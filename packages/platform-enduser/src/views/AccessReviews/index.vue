@@ -239,7 +239,10 @@ export default {
         this.$router.push({
           name: 'CertificationTask',
           params: { campaignId: rowData?.campaignId },
-          query: { actorId: rowData?.certifierId },
+          query: {
+            actorId: rowData?.certifierId,
+            taskStatus: this.statusSort.param,
+          },
         });
       }
     },

@@ -194,7 +194,7 @@ export default {
   watch: {
     rule(rule, prevRule) {
       if (rule.field !== prevRule.field) {
-        const updateValueFromField = this.parseType(rule.field, prevRule.value);
+        const updateValueFromField = this.parseType(rule.field, '');
         this.$set(this.$data, 'inputValue', {
           ...updateValueFromField,
         });

@@ -122,7 +122,7 @@ import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import DateMixin from '@forgerock/platform-shared/src/mixins/DateMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import { getTaskProxies, deleteTaskProxy } from '@/api/GovernanceEnduserApi';
+import { getTaskProxies, deleteTaskProxy } from '@/api/governance/DirectoryApi';
 import FrAddDelegateModal from './AddDelegateModal';
 
 export default {

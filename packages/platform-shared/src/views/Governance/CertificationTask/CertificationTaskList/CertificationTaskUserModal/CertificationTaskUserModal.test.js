@@ -14,19 +14,17 @@ describe('CertificationTaskUserModal', () => {
     wrapper = shallowMount(CertificationTaskUserModal, {
       mocks: {
         $t: (t) => t,
-        $store: {
-          state: {
-            SharedStore: {
-              governanceEnabledV2: true,
-            },
-          },
-        },
       },
       propsData: {
         user: {
           givenName: 'firstname',
           sn: 'sntest',
           username: 'test',
+        },
+        userDetails: {
+          userAccounts: {},
+          userEntitlements: {},
+          userRoles: {},
         },
         userEntitlements: {
           result: [{

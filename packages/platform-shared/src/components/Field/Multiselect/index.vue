@@ -21,6 +21,8 @@ of the MIT license. See the LICENSE file for details. -->
       ref="vms"
       track-by="multiselectId"
       role="combobox"
+      :aria-expanded="isExpanded ? 'true': 'false'"
+      :aria-labelledby="id + '-label'"
       :data-testid="testid"
       :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control p-0', {'no-multiselect-label': !label }, {'h-100': floatLabels || !label }]"
       :close-on-select="closeOnSelect"
@@ -86,10 +88,11 @@ import {
   isEqual,
   map,
 } from 'lodash';
-import VueMultiSelect from 'vue-multiselect';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
+// import vue-multiselect from src because dist min/uglified package gets removed in build
+import VueMultiSelect from '../../../../../../node_modules/vue-multiselect/src/index';
 
 /**
  *  Multi select input. Allows selection of multiple elements in a dropdown
@@ -157,6 +160,7 @@ export default {
       searchValue: '',
       nextIdTag: 0,
       tagOptions: [],
+      isExpanded: false,
     };
   },
   mounted() {
@@ -221,6 +225,7 @@ export default {
      * Handler for when the multiselect dropdown is closed.
      */
     close() {
+      this.isExpanded = false;
       this.addTag();
       this.inputValueHandler(this.inputValue);
     },
@@ -242,8 +247,10 @@ export default {
      * @description focus the Vue Multi Select component (vms) and floats the label
      */
     openHandler() {
+      this.isExpanded = true;
       this.$refs.vms.$el.querySelector('input').focus();
       this.floatLabels = true;
+      this.$emit('open');
     },
     /**
      * Handler for when the user types in the search input.

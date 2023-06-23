@@ -19,8 +19,7 @@ of the MIT license. See the LICENSE file for details. -->
         :options="rescourceCollectionTypes"
         :show-labels="false"
         @select="setResourceCollectionType">
-        <template
-          v-slot:option="{ option }">
+        <template #option="{ option }">
           {{ option.text }}
         </template>
       </VueMultiSelect>
@@ -32,10 +31,10 @@ of the MIT license. See the LICENSE file for details. -->
       :allow-empty="true"
       :close-on-select="closeOnSelect"
       :disabled="disabled"
-      :description="relationshipField.description"
-      :id="relationshipProperty.key + index"
+      :description="fieldDescription"
+      :id="`${relationshipField.key}${index}`"
       :internal-search="false"
-      :label="relationshipField.title"
+      :label="floatingLabel"
       :limit="10"
       :max-height="600"
       :name="relationshipField.key"
@@ -50,10 +49,10 @@ of the MIT license. See the LICENSE file for details. -->
       :type="relationshipField.type"
       :validation="relationshipField.validation"
       :validation-immediate="relationshipField.validationImmediate"
+      @open="setOptions"
       @search-change="debouncedSetOptions"
       @input="emitSelected">
-      <template
-        v-slot:singleLabel="{ option }">
+      <template #singleLabel="{ option }">
         <div class="media">
           <div class="media-body">
             <span
@@ -69,10 +68,8 @@ of the MIT license. See the LICENSE file for details. -->
           </div>
         </div>
       </template>
-      <template
-        v-slot:tag="{ option, remove }">
-        <div
-          class="multiselect__tag">
+      <template #tag="{ option, remove }">
+        <div class="multiselect__tag">
           <div>
             <span
               v-for="(displayField, idx) in option.displayFields"
@@ -95,8 +92,7 @@ of the MIT license. See the LICENSE file for details. -->
           {{ option.resource[option.displayFields[0]] }}
         </div>
       </template>
-      <template
-        v-slot:option="{ option }">
+      <template #option="{ option }">
         <div class="media">
           <div class="media-body">
             <div class="text-bold">
@@ -143,12 +139,12 @@ import {
 import { BFormGroup, BButton } from 'bootstrap-vue';
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { getInternalResourceList } from '@forgerock/platform-shared/src/api/InternalResourceApi';
-import VueMultiSelect from 'vue-multiselect';
 import TimeConstraint from '@forgerock/platform-shared/src/components/TimeConstraint';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
+// import vue-multiselect from src because dist min/uglified package gets removed in build
+import VueMultiSelect from '../../../../../../node_modules/vue-multiselect/src/index';
 
 export default {
   name: 'RelationshipEdit',
@@ -170,13 +166,17 @@ export default {
       type: Boolean,
       default: false,
     },
+    label: {
+      type: String,
+      default: '',
+    },
     relationshipProperty: {
       type: Object,
       required: true,
     },
     value: {
       type: [Object, String, Array],
-      default: () => {},
+      default: () => ({}),
     },
     index: {
       type: Number,
@@ -193,13 +193,6 @@ export default {
       type: String,
       default: '',
     },
-    /**
-     * Extends the query fields defined in relationship queryFilter request
-     */
-    queryFieldsExtension: {
-      type: Array,
-      default: () => ([]),
-    },
     showTimeConstraintsSwitch: {
       type: Boolean,
       default: true,
@@ -211,6 +204,8 @@ export default {
   },
   data() {
     return {
+      fieldDescription: this.relationshipProperty.description !== this.relationshipProperty.title ? this.relationshipProperty.description : '',
+      floatingLabel: this.label || this.relationshipProperty.title,
       name: '',
       options: [],
       selected: null,
@@ -237,7 +232,7 @@ export default {
   },
   watch: {
     temporalConstraint(newVal) {
-      if (this.relationshipField.value && this.relationshipField.value.length) {
+      if (this.relationshipField.value?.length) {
         const relationships = this.relationshipField.value.map((selection) => {
           const refProperties = { temporalConstraints: [{ duration: newVal }] };
 
@@ -251,7 +246,7 @@ export default {
      * adds/removes temporal constraint property of relationship based on toggle value
      */
     temporalConstraintEnabled(newVal) {
-      if (this.relationshipField.value && this.relationshipField.value.length) {
+      if (this.relationshipField.value?.length) {
         const relationships = this.relationshipField.value.map((selection) => {
           const refProperties = newVal ? { temporalConstraints: [{ duration: this.temporalConstraint }] } : null;
           return { _ref: selection, _refProperties: refProperties };
@@ -293,7 +288,6 @@ export default {
       let index = 0;
 
       if (rescourceCollectionType) {
-        // eslint-disable-next-line prefer-destructuring
         index = rescourceCollectionType.index;
       }
 
@@ -303,19 +297,13 @@ export default {
       this.resourceCollection = this.allResourceCollections[index];
 
       this.showResourceType = this.allResourceCollections.length > 1;
-      return getSchema(`${this.resourceCollection.path}`).then((schema) => {
-        this.resourceCollection.schema = schema.data;
-        this.setOptions();
-      })
-        .catch((error) => {
-          this.displayNotification('error', error.response.data.message);
-        });
+      this.setOriginalValues();
     },
     setSearchPlaceholder(numChars) {
       if (numChars) {
-        this.searchPlaceholder = this.$t('common.placeholders.typeXCharactersToSearchFor', { numChars, item: this.resourceCollection.label });
+        this.searchPlaceholder = this.$t('common.placeholders.typeXCharactersToSearchFor', { numChars, item: this.label || this.resourceCollection.label });
       } else {
-        this.searchPlaceholder = this.$t('common.placeholders.typeToSearchFor', { item: this.resourceCollection.label });
+        this.searchPlaceholder = this.$t('common.placeholders.typeToSearchFor', { item: this.label || this.resourceCollection.label });
       }
     },
     setOptions(query) {
@@ -331,26 +319,19 @@ export default {
         this.setSearchPlaceholder(queryThreshold);
       }
 
-      if (!query && (!this.relationshipField.value || this.relationshipField.value.length === 0) && this.value) {
-        if (Array.isArray(this.value)) {
-          this.relationshipField.options = this.value.map((value) => ({ value: value._ref, resource: value, displayFields }));
-          this.relationshipField.value = this.value.map((value) => value._ref);
-        } else {
-          this.relationshipField.options = [{ value: this.value._ref, resource: this.value, displayFields }];
-          this.relationshipField.value = this.value._ref;
-        }
+      if (!query && this.relationshipField.value?.length === 0) {
+        this.setOriginalValues();
       }
 
       const urlParams = {
         pageSize: maxPageSize,
-        fields: [...this.queryFieldsExtension, ...displayFields].join(','),
+        fields: displayFields.join(','),
         queryFilter,
       };
 
       if (query) {
         urlParams.queryFilter = map(displayFields, (field) => `/${field} sw "${query}"`).join(' or ');
-        // eslint-disable-next-line prefer-destructuring
-        urlParams.sortKeys = displayFields[0];
+        [urlParams.sortKeys] = displayFields;
         if (this.queryFilterExtension) {
           urlParams.queryFilter = `(${urlParams.queryFilter}) and ${this.queryFilterExtension}`;
         }
@@ -358,7 +339,7 @@ export default {
         urlParams.queryFilter = this.queryFilterExtension;
       }
 
-      if (queryThreshold && query && query.length < queryThreshold) {
+      if (queryThreshold && query?.length < queryThreshold) {
         requestEnabled = false;
       }
 
@@ -375,10 +356,25 @@ export default {
           });
       }
     },
+    /**
+     * Adds original values to options and field value to allow field to display initial values
+     * before managed query is sent of.
+     */
+    setOriginalValues() {
+      if (this.value) {
+        const displayFields = this.resourceCollection.query.fields;
+        if (Array.isArray(this.value)) {
+          this.relationshipField.options = this.value.map((value) => ({ value: value._ref, resource: value, displayFields }));
+          this.relationshipField.value = this.value.map((value) => value._ref);
+        } else {
+          this.relationshipField.options = [{ value: this.value._ref, resource: this.value, displayFields }];
+          this.relationshipField.value = this.value._ref;
+        }
+      }
+    },
     emitSelected(selected) {
+      let emitValues;
       if (selected && Array.isArray(selected)) {
-        let emitValues;
-
         // Replace drop down value with single value if singleSelection prop is true
         if (this.singleSelection && selected.length > 1) {
           selected.shift();
@@ -395,18 +391,18 @@ export default {
         } else {
           emitValues = uniqueSelected.map((currentValue) => ({ _ref: currentValue, _refProperties: {} }));
         }
-        this.$emit('setValue', emitValues);
       } else if (selected) {
         if (this.relationshipProperty.relationshipGrantTemporalConstraintsEnforced && this.temporalConstraint.length > 0) {
           const refProperties = { temporalConstraints: [{ duration: this.temporalConstraint }] };
-          this.$emit('setValue', { _ref: selected, _refProperties: refProperties });
+          emitValues = { _ref: selected, _refProperties: refProperties };
         } else {
-          this.$emit('setValue', { _ref: selected, _refProperties: {} });
+          emitValues = { _ref: selected, _refProperties: {} };
         }
       } else {
         this.relationshipField.value = null;
-        this.$emit('setValue', null);
+        emitValues = null;
       }
+      this.$emit('setValue', emitValues);
     },
   },
 };

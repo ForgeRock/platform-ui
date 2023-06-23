@@ -11,6 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
         :hide-sign-off="hideSignOff"
         :is-complete="isComplete"
         :is-saving="isSaving"
+        :task-status="taskStatus"
         @change-saving="setSaving"
         @review-forwarded="goToBackUrl"
         @sign-off="signOff" />
@@ -19,7 +20,7 @@ of the MIT license. See the LICENSE file for details. -->
         :campaign-details="campaignDetails"
         :is-loading="isDetailsLoading" />
       <div
-        v-if="!governanceV2Flag || isEntitlementCertificationType"
+        v-if="isEntitlementCertificationType"
         class="border-top">
         <FrCertificationTaskList
           v-if="campaignId && actorId"
@@ -29,6 +30,7 @@ of the MIT license. See the LICENSE file for details. -->
           :is-admin="isAdmin"
           :actor-id="actorId"
           :show-entitlement-column="isEntitlementCertificationType"
+          :task-status="taskStatus"
           @change-saving="setSaving"
           @check-progress="checkInProgress"
           @refresh-complete="refreshTasks = false"
@@ -37,13 +39,14 @@ of the MIT license. See the LICENSE file for details. -->
           @update-details="getCertificationDetails" />
       </div>
       <div
-        v-else-if="governanceV2Flag && !isGroupByAccount"
+        v-else-if="!isGroupByAccount"
         class="border-top position-relative">
         <BTabs
           nav-class="fr-tabs pl-4"
           data-testid="certification-tasklist-tabs"
           lazy>
           <BTab
+            v-if="isAccountTargetFilter"
             data-testid="cert-accounts-tab"
             title-link-class="py-4 text-capitalize"
             key="accounts"
@@ -57,6 +60,7 @@ of the MIT license. See the LICENSE file for details. -->
               :is-admin="isAdmin"
               :actor-id="actorId"
               :show-entitlement-column="false"
+              :task-status="taskStatus"
               @hide-group-by="hideGroupBy"
               @change-saving="setSaving"
               @check-progress="checkInProgress"
@@ -67,6 +71,7 @@ of the MIT license. See the LICENSE file for details. -->
             />
           </BTab>
           <BTab
+            v-if="isEntitlementTargetFilter"
             data-testid="cert-ents-tab"
             title-link-class="py-4 text-capitalize"
             key="entitlements"
@@ -80,6 +85,7 @@ of the MIT license. See the LICENSE file for details. -->
               :is-admin="isAdmin"
               :actor-id="actorId"
               :show-entitlement-column="true"
+              :task-status="taskStatus"
               @change-saving="setSaving"
               @check-progress="checkInProgress"
               @refresh-complete="refreshTasks = false"
@@ -89,7 +95,7 @@ of the MIT license. See the LICENSE file for details. -->
           </BTab>
         </BTabs>
         <FrField
-          v-if="showGroupByAccount"
+          v-if="showGroupByField"
           class="mb-4 text-capitalize group-by-position"
           v-model="isGroupByAccount"
           name="certificationGroupByAccount"
@@ -98,7 +104,7 @@ of the MIT license. See the LICENSE file for details. -->
           :label="$t('governance.certificationTask.certificationTabs.groupByAccount')" />
       </div>
       <div
-        v-else-if="governanceV2Flag && isGroupByAccount"
+        v-else-if="isGroupByAccount"
         class="border-top position-relative">
         <FrCertificationTaskListGroupBy
           certification-grant-type="accounts"
@@ -109,6 +115,7 @@ of the MIT license. See the LICENSE file for details. -->
           :actor-id="actorId"
           :show-entitlement-column="isEntitlementCertificationType"
           :show-group-by="isGroupByAccount"
+          :task-status="taskStatus"
           @change-saving="setSaving"
           @check-progress="checkInProgress"
           @refresh-complete="refreshTasks = false"
@@ -178,9 +185,9 @@ export default {
       isSaving: false,
       loadFailed: false,
       refreshTasks: false,
+      taskStatus: null,
       totals: null,
       isGroupByAccount: false,
-      governanceV2Flag: this.$store.state.SharedStore.governanceEnabledV2,
       showGroupByAccount: true,
     };
   },
@@ -191,6 +198,15 @@ export default {
     },
     isEntitlementCertificationType() {
       return this.campaignDetails.certificationType === 'entitlement';
+    },
+    isAccountTargetFilter() {
+      return this.isGrantType('accountGrant');
+    },
+    isEntitlementTargetFilter() {
+      return this.isGrantType('entitlementGrant');
+    },
+    showGroupByField() {
+      return this.isAccountTargetFilter && this.isEntitlementTargetFilter && this.showGroupByAccount;
     },
   },
   methods: {
@@ -215,7 +231,7 @@ export default {
       this.isSaving = !this.isSaving;
     },
     checkInProgress() {
-      getInProgressTasksByCampaign(this.campaignId, this.isAdmin).then(({ data }) => {
+      getInProgressTasksByCampaign(this.campaignId, this.isAdmin, this.taskStatus).then(({ data }) => {
         // verifies if the user has at least one sign-off permission for line items
         const atLeastOneSignoffPermission = (item) => {
           const reviewer = item.decision.certification.actors.find((actor) => actor.id === this.actorId);
@@ -233,6 +249,9 @@ export default {
         }).finally(() => {
           this.refreshTasks = true;
           this.setSaving();
+          if (this.isComplete) {
+            this.goToBackUrl();
+          }
         });
     },
     goToBackUrl() {
@@ -242,10 +261,18 @@ export default {
       this.isGroupByAccount = false;
       this.showGroupByAccount = false;
     },
+    /**
+     * Verifies if a grant type is present in the campaign using the target filter types property.
+     * @param {string} type - type of grant
+     */
+    isGrantType(type) {
+      return this.campaignDetails.targetFilter?.type?.includes(type);
+    },
   },
   mounted() {
     this.campaignId = this.$route?.params?.campaignId;
     this.actorId = this.$route.query.actorId;
+    this.taskStatus = this.$route.query.taskStatus;
     this.getCertificationDetails();
     let backUrl = '/access-reviews';
     if (this.isAdmin) {

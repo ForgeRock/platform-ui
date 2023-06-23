@@ -138,6 +138,7 @@ of the MIT license. See the LICENSE file for details. -->
               <FrRelationshipArray
                 :additional-query-filter="relationshipProperty.key === 'assignments' ? assignmentsQueryFilter : ''"
                 :parent-resource="relationshipProperty.key === 'assignments' ? assignmentsParentResource : `${resourceType}/${resourceName}`"
+                :parent-resource-override="relationshipProperty.key === 'assignments' ? `${resourceType}/${resourceName}` : ''"
                 :parent-id="id"
                 :relationship-array-property="relationshipProperty"
                 :revision="revision"
@@ -224,7 +225,7 @@ import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import FrDeletePanel from '@forgerock/platform-shared/src/components/DeletePanel';
-// eslint-disable-next-line import/no-extraneous-dependencies
+import { compareRealmSpecificResourceName } from '@forgerock/platform-shared/src/utils/realm';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import { clearSessions, getSessionInfo } from '@forgerock/platform-shared/src/api/SessionsApi';
 import ClearResourceSessions from '@forgerock/platform-shared/src/components/resource/ClearResourceSessions';
@@ -418,25 +419,27 @@ export default {
           // Build an array of the connectors data by combining each of it's
           // properties names, types and values from app.content and app.schema.
           app.data = [];
-          Object.keys(app.content).forEach((key) => {
-            if (app.schema[key]
-                && app.schema[key].nativeName
-                && app.content[key]
-                && (app.content[key].length !== 0)
-                && app.schema[key].type) {
-              const prop = {};
-              prop.name = app.schema[key].nativeName;
-              prop.value = app.content[key];
-              prop.type = app.schema[key].type;
-              prop.itemsType = app.schema[key].items ? app.schema[key].items.type : null;
-              // VuePrismEditor expects a json string so if the property is an
-              // object stringify it before passing it along
-              if (prop.type === 'object' || (prop.type === 'array' && prop.itemsType === 'object')) {
-                prop.value = JSON.stringify(prop.value, null, 2);
+          if (app.content) {
+            Object.keys(app.content).forEach((key) => {
+              if (app.schema[key]
+                  && app.schema[key].nativeName
+                  && app.content[key]
+                  && (app.content[key].length !== 0)
+                  && app.schema[key].type) {
+                const prop = {};
+                prop.name = app.schema[key].nativeName;
+                prop.value = app.content[key];
+                prop.type = app.schema[key].type;
+                prop.itemsType = app.schema[key].items ? app.schema[key].items.type : null;
+                // VuePrismEditor expects a json string so if the property is an
+                // object stringify it before passing it along
+                if (prop.type === 'object' || (prop.type === 'array' && prop.itemsType === 'object')) {
+                  prop.value = JSON.stringify(prop.value, null, 2);
+                }
+                app.data.push(prop);
               }
-              app.data.push(prop);
-            }
-          });
+            });
+          }
           this.linkedApplications.push(app);
         });
       });
@@ -752,8 +755,19 @@ export default {
 
       return null;
     },
+    /**
+     * Returns object containing all relationship properties that are arrays, viewable, and in the case
+     * of governance, not of a certain type of property
+     */
     viewableRelationshipArrayProperties() {
-      return pickBy(this.relationshipProperties, (property) => property.type === 'array' && property.viewable !== false);
+      const noGovernanceProperties = ['assignments', 'ownerOfApp', 'taskPrincipals', 'taskProxies'];
+      return pickBy(this.relationshipProperties, (property, key) => {
+        // If is a governance environment, remove Assigments, Applications I Own, Task Principals, and Task Proxies tabs
+        if (this.$store.state.SharedStore.governanceEnabled && noGovernanceProperties.includes(key) && compareRealmSpecificResourceName(this.resourceName, 'user')) {
+          return false;
+        }
+        return property.type === 'array' && property.viewable !== false;
+      });
     },
   },
 };
