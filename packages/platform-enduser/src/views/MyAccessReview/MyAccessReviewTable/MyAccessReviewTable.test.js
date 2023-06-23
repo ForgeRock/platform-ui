@@ -8,17 +8,17 @@
 import { mount } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
-import * as GovernanceEnduserApi from '@/api/GovernanceEnduserApi';
+import * as MyAccessApi from '@/api/governance/MyAccessApi';
 import MyAccessReviewTable from './index';
 
-jest.mock('@/api/GovernanceEnduserApi');
+jest.mock('@/api/governance/MyAccessApi');
 
 describe('MyAccessReviewTable', () => {
   let wrapper;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    GovernanceEnduserApi.getMyAccess = jest.fn().mockReturnValue(Promise.resolve({
+    MyAccessApi.getMyAccess = jest.fn().mockReturnValue(Promise.resolve({
       data: {
         result: [{
           user: {
@@ -99,7 +99,7 @@ describe('MyAccessReviewTable', () => {
     wrapper.vm.sortChanged({ sortBy: 'appName', sortDesc: true });
     expect(wrapper.vm.sortDesc).toBeTruthy();
     expect(loadSpy).toBeCalled();
-    expect(GovernanceEnduserApi.getMyAccess).toBeCalledWith('testId', {
+    expect(MyAccessApi.getMyAccess).toBeCalledWith('testId', {
       pageNumber: 0, pageSize: 10, sortBy: 'application.name', sortDir: 'desc', grantType: 'account',
     });
   });
@@ -108,7 +108,7 @@ describe('MyAccessReviewTable', () => {
     const loadSpy = jest.spyOn(wrapper.vm, 'loadData');
     wrapper.vm.sortChanged({ sortBy: 'appName', sortDesc: false });
     expect(loadSpy).toBeCalled();
-    expect(GovernanceEnduserApi.getMyAccess).toBeCalledWith('testId', {
+    expect(MyAccessApi.getMyAccess).toBeCalledWith('testId', {
       pageNumber: 0, pageSize: 10, sortBy: 'application.name', sortDir: 'asc', grantType: 'account',
     });
   });
@@ -131,7 +131,7 @@ describe('MyAccessReviewTable', () => {
 
   describe('loadData()', () => {
     it('gets my access based on page size', async () => {
-      const getMyAccess = jest.spyOn(GovernanceEnduserApi, 'getMyAccess');
+      const getMyAccess = jest.spyOn(MyAccessApi, 'getMyAccess');
       wrapper.vm.paginationPageSize = 20;
       wrapper.vm.loadData();
       expect(getMyAccess).toBeCalledWith('testId', {
@@ -140,7 +140,7 @@ describe('MyAccessReviewTable', () => {
     });
 
     it('gets my access based on page number', () => {
-      const getMyAccess = jest.spyOn(GovernanceEnduserApi, 'getMyAccess');
+      const getMyAccess = jest.spyOn(MyAccessApi, 'getMyAccess');
       wrapper.vm.paginationPage = 2;
       wrapper.vm.loadData();
       expect(getMyAccess).toBeCalledWith('testId', {
@@ -149,7 +149,7 @@ describe('MyAccessReviewTable', () => {
     });
 
     it('gets my access that match a query string', async () => {
-      const getMyAccess = jest.spyOn(GovernanceEnduserApi, 'getMyAccess');
+      const getMyAccess = jest.spyOn(MyAccessApi, 'getMyAccess');
       wrapper.vm.searchQuery = 'test';
       await wrapper.vm.loadData();
       await wrapper.vm.$nextTick();
@@ -185,7 +185,7 @@ describe('MyAccessReviewTable', () => {
           },
         },
       ];
-      jest.spyOn(GovernanceEnduserApi, 'getMyAccess').mockResolvedValue({
+      jest.spyOn(MyAccessApi, 'getMyAccess').mockResolvedValue({
         data: { result: accounts },
       });
 
@@ -196,7 +196,7 @@ describe('MyAccessReviewTable', () => {
     });
 
     it('displays an error notifcation if API fails', async () => {
-      jest.spyOn(GovernanceEnduserApi, 'getMyAccess').mockRejectedValue('test');
+      jest.spyOn(MyAccessApi, 'getMyAccess').mockRejectedValue('test');
       const errorSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
 
       wrapper.vm.loadData();
@@ -206,7 +206,7 @@ describe('MyAccessReviewTable', () => {
     });
 
     it('displays noData component when no my access are found', async () => {
-      jest.spyOn(GovernanceEnduserApi, 'getMyAccess').mockResolvedValue({
+      jest.spyOn(MyAccessApi, 'getMyAccess').mockResolvedValue({
         data: { result: [] },
       });
       wrapper.vm.loadData(true);

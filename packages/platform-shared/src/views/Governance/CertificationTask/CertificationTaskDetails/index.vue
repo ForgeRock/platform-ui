@@ -43,12 +43,11 @@ of the MIT license. See the LICENSE file for details. -->
           <h5>{{ $t('governance.certificationTask.decisions') }}</h5>
           <div class="d-flex align-items-center">
             <FrPieChart
-              v-if="chartDecisions.length"
               id="decisions-chart"
               hide-tooltip
               legend-class="decisions-legend"
-              show-legend-count
               :data="chartDecisions"
+              :no-data-label="noDataLabel"
               :height="72"
               :radius="27"
               :stroke-width="1"
@@ -88,16 +87,25 @@ of the MIT license. See the LICENSE file for details. -->
         class="align-items-center mt-4"
         no-body>
         <BImg
+          v-if="isCertifierAUser"
+          data-testid="certifier-image-user"
           class="mr-2 rounded-circle"
           height="28"
           width="28"
-          :alt="`${$route.params.certifier.givenName} ${$route.params.certifier.sn}`"
+          :alt="$t('governance.certificationDetails.ownerNameLabel', { givenName: certifierName().givenName, sn: certifierName().sn })"
           :src="$route.params.certifier.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
           fluid />
+        <FrIcon
+          v-else
+          data-testid="certifier-image-role"
+          class="mr-1 md-28 rounded-circle"
+          name="assignment_ind"
+        />
         <div class="media-body">
           <span
+            test-id="certifier-name"
             class="text-dark mr-1"
-            v-html="$t('governance.certificationTask.defaultCertifierText', { name: `${$route.params.certifier.givenName} ${$route.params.certifier.sn}` })" />
+            v-html="$t('governance.certificationTask.defaultCertifierText', { name: `${certifierName().givenName} ${certifierName().sn}` })" />
         </div>
       </BMedia>
     </BCol>
@@ -146,6 +154,7 @@ export default {
     return {
       chartDecisions: [],
       isSaving: true,
+      noDataLabel: this.$t('governance.certificationTask.noDecision'),
       styles,
       sumOfDecisions: 0,
       total: 0,
@@ -199,6 +208,20 @@ export default {
       this.sumOfDecisions = this.total - notActed;
       this.setChartInfo(revoke, certified);
     },
+
+    /**
+     *  The method retrieves an object containing the specified name and surname of the certifier.
+     Useful for displaying the name of the certifier in the certification task details when is a user or role
+     */
+    certifierName() {
+      const givenName = this.$route.params.certifier.givenName || this.$route.params.certifier.name;
+      const sn = this.$route.params.certifier.sn || '';
+
+      return {
+        givenName,
+        sn,
+      };
+    },
   },
   watch: {
     totals: {
@@ -217,6 +240,9 @@ export default {
       return progress >= 50
         ? Math.floor(progress)
         : Math.ceil(progress);
+    },
+    isCertifierAUser() {
+      return this.$route.params.certifier?.key.startsWith('managed/user');
     },
   },
 };

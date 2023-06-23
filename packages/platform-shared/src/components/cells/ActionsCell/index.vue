@@ -13,7 +13,7 @@ of the MIT license. See the LICENSE file for details. -->
       right
       toggle-class="text-decoration-none p-0"
       variant="link"
-      :data-testid="`${testId}-actions`">
+      :data-testid="`actions-${testId}`">
       <template #button-content>
         <FrIcon
           class="text-dark md-24"

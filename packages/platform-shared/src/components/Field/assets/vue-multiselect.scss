@@ -23,7 +23,7 @@
     .multiselect__single,
     .multiselect__select,
     .multiselect__tags {
-      background-color: $gray-100;
+      background-color: $gray-100 !important;
     }
 
     .multiselect__select {
@@ -161,7 +161,7 @@
     background-color: $white;
 
     &::before {
-      content: 'expand_more';
+      content: 'expand_more' / '';
       font-family: 'Material Icons Outlined', sans-serif;
       font-size: 1rem;
       line-height: 1;

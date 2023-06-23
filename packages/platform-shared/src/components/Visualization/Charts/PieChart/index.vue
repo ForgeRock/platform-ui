@@ -36,6 +36,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import * as d3 from 'd3';
+import styles from '@/scss/main.scss';
 
 /*
  * @description Pie Chart Component used to show data in a pie chart with percentages according the value of each item,
@@ -80,6 +81,10 @@ export default {
       type: String,
       default: '',
     },
+    noDataLabel: {
+      type: String,
+      default: '',
+    },
     radius: {
       type: Number,
       default: 110,
@@ -108,12 +113,14 @@ export default {
   },
   methods: {
     loadData() {
-      const chartData = {};
-      const colors = [];
+      let chartData = {};
+      let colors = [];
       this.legend = [];
 
       if (this.data.length) {
+        let total = 0;
         this.data.forEach((category, index) => {
+          total += category.value;
           chartData[index] = category.value;
           colors.push(category.color);
           this.legend.push({
@@ -122,9 +129,20 @@ export default {
             value: category.value,
           });
         });
-
-        this.createChart(chartData, colors);
+        if (total === 0) {
+          chartData = {};
+          colors = [];
+          this.legend = [];
+          chartData[0] = 1;
+          colors.push(styles.whitesmoke);
+          this.legend.push({
+            label: this.noDataLabel,
+            color: styles.whitesmoke,
+            value: 1,
+          });
+        }
       }
+      this.createChart(chartData, colors);
     },
     createChart(chartData, colors) {
       // set the dimensions and margins of the graph
@@ -175,6 +193,13 @@ export default {
           .style('padding', '0 0 5px 0');
       }
 
+      // path is the function used to generate the SVG path data for the pie slices
+      const path = d3
+        .arc()
+        .innerRadius(this.radius) // This is the size of the donut hole
+        .outerRadius(radius)
+        .cornerRadius(10);
+
       // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
       svg
         .selectAll('whatever')
@@ -182,17 +207,16 @@ export default {
         .enter()
         .append('path')
         .attr('class', `${this.id}-tooltip`)
-        .attr(
-          'd',
-          d3
-            .arc()
-            .innerRadius(this.radius) // This is the size of the donut hole
-            .outerRadius(radius)
-            .cornerRadius(10),
-        )
+        .attr('d', path)
         .attr('fill', (d) => color(d.data[0]))
         .attr('stroke', 'white')
-        .style('stroke-width', `${this.strokeWidth}px`);
+        .style('stroke-width', `${this.strokeWidth}px`)
+        .transition() // defines a transition
+        .duration(1000) // controls the animation duration
+        .attrTween('d', (d) => { // attrTween is used to interpolate attributes over the time
+          const interpolate = d3.interpolate({ startAngle: 0, endAngle: 0 }, d); // interpolate from { startAngle: 0, endAngle: 0 } to d
+          return function (t) { return path(interpolate(t)); }; // returns the SVG path data according the interpolation over the time
+        });
 
       if (!this.hideTooltip) {
         d3.selectAll(`.${this.id}-tooltip`)

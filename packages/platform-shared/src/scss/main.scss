@@ -141,7 +141,7 @@ body {
 .dropdown-toggle {
   &::after {
     border: none;
-    content: 'expand_more';
+    content: 'expand_more' / '';
     font-family: 'Material Icons Outlined', sans-serif;
     font-size: 1rem;
     transition: opacity 0.2s ease-out;
@@ -773,3 +773,8 @@ dd {
   }
 }
 /* stylelint-enable */
+
+/* bootstrap 5.0 classes (we can remove these once we migrate to 5.0 */
+.lh-sm {
+  line-height: 1.25rem !important;
+}

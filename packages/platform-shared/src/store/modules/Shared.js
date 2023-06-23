@@ -8,7 +8,6 @@
 import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 
 const defaultState = {
-  adminFederationEnabled: false,
   amBaseURL: '',
   analyticsURL: '',
   autoAccessEnabled: false,
@@ -26,7 +25,7 @@ const defaultState = {
   googleFontsApiKey: '',
   googleMapsApiKey: '',
   governanceEnabled: false,
-  governanceEnabledV2: false,
+  governanceEnabledV3: false,
   igaApiUrl: null,
   returnRoute: '',
   returnRouteText: '',
@@ -72,7 +71,7 @@ const mutations = {
           state.autoAccessJasUrl = env.VUE_APP_AUTO_ACCESS_JAS_URL;
         }
       }
-      if (env.VUE_APP_ENABLE_GOVERNANCE === 'true' || env.VUE_APP_ENABLE_GOVERNANCE === true || env.VUE_APP_ENABLE_GOVERNANCE_V2 === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_V2 === true) {
+      if (env.VUE_APP_ENABLE_GOVERNANCE === 'true' || env.VUE_APP_ENABLE_GOVERNANCE === true || env.VUE_APP_ENABLE_GOVERNANCE_V3 === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_V3 === true) {
         if (env.VUE_APP_IGA_API_URL) {
           state.igaApiUrl = env.VUE_APP_IGA_API_URL;
         }
@@ -129,14 +128,10 @@ const mutations = {
       if (env.VUE_APP_ENABLE_GOVERNANCE === 'true' || env.VUE_APP_ENABLE_GOVERNANCE === true) {
         state.governanceEnabled = true;
       }
-      if (env.VUE_APP_ENABLE_GOVERNANCE_V2 === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_V2 === true) {
+      if (env.VUE_APP_ENABLE_GOVERNANCE_V3 === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_V3 === true) {
         state.governanceEnabled = true;
-        state.governanceEnabledV2 = true;
+        state.governanceEnabledV3 = true;
       }
-    }
-
-    if (env.VUE_APP_ENABLE_ADMIN_FEDERATION) {
-      state.adminFederationEnabled = env.VUE_APP_ENABLE_ADMIN_FEDERATION === 'true' || env.VUE_APP_ENABLE_ADMIN_FEDERATION === true;
     }
 
     if (env.VUE_APP_ENABLE_WORKFORCE) {
