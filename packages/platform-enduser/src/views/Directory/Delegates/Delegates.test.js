@@ -8,17 +8,17 @@
 import { mount, createWrapper } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
-import * as GovernanceEnduserApi from '@/api/GovernanceEnduserApi';
+import * as DirectoryApi from '@/api/governance/DirectoryApi';
 import Delegates from './index';
 
-jest.mock('@/api/GovernanceEnduserApi');
+jest.mock('@/api/governance/DirectoryApi');
 
 describe('AccessReviews', () => {
   let wrapper;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    GovernanceEnduserApi.getTaskProxies = jest.fn().mockReturnValue(Promise.resolve({
+    DirectoryApi.getTaskProxies = jest.fn().mockReturnValue(Promise.resolve({
       data: {
         result: [
           {
@@ -29,7 +29,7 @@ describe('AccessReviews', () => {
         ],
       },
     }));
-    GovernanceEnduserApi.deleteTaskProxy = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [] } }));
+    DirectoryApi.deleteTaskProxy = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [] } }));
     wrapper = mount(Delegates, {
       mocks: {
         $t: (t) => t,
@@ -123,7 +123,7 @@ describe('AccessReviews', () => {
 
   describe('loadData()', () => {
     it('gets task proxies based on page size', () => {
-      const getTaskProxies = jest.spyOn(GovernanceEnduserApi, 'getTaskProxies');
+      const getTaskProxies = jest.spyOn(DirectoryApi, 'getTaskProxies');
       wrapper.vm.paginationPageSize = 20;
       wrapper.vm.loadData();
       expect(getTaskProxies).toBeCalledWith('testId', {
@@ -133,7 +133,7 @@ describe('AccessReviews', () => {
     });
 
     it('gets task proxies based on page number', () => {
-      const getTaskProxies = jest.spyOn(GovernanceEnduserApi, 'getTaskProxies');
+      const getTaskProxies = jest.spyOn(DirectoryApi, 'getTaskProxies');
       wrapper.vm.paginationPage = 2;
       wrapper.vm.loadData();
       expect(getTaskProxies).toBeCalledWith('testId', {
@@ -143,7 +143,7 @@ describe('AccessReviews', () => {
     });
 
     it('gets task proxies for a given user', () => {
-      const getTaskProxies = jest.spyOn(GovernanceEnduserApi, 'getTaskProxies');
+      const getTaskProxies = jest.spyOn(DirectoryApi, 'getTaskProxies');
       wrapper.vm.loadData();
       expect(getTaskProxies).toBeCalledWith('testId', {
         pageNumber: 1,
@@ -152,7 +152,7 @@ describe('AccessReviews', () => {
     });
 
     it('gets task proxies sorted by userName', () => {
-      const getTaskProxies = jest.spyOn(GovernanceEnduserApi, 'getTaskProxies');
+      const getTaskProxies = jest.spyOn(DirectoryApi, 'getTaskProxies');
       wrapper.vm.sortDesc = true;
       wrapper.vm.loadData();
       expect(getTaskProxies).toBeCalledWith('testId', {
@@ -173,7 +173,7 @@ describe('AccessReviews', () => {
     });
 
     it('gets task proxies that match a query string', () => {
-      const getTaskProxies = jest.spyOn(GovernanceEnduserApi, 'getTaskProxies');
+      const getTaskProxies = jest.spyOn(DirectoryApi, 'getTaskProxies');
       wrapper.vm.searchQuery = 'testSearch';
       wrapper.vm.loadData();
       expect(getTaskProxies).toBeCalledWith('testId', {
@@ -196,7 +196,7 @@ describe('AccessReviews', () => {
           sn: 'user',
         },
       ];
-      jest.spyOn(GovernanceEnduserApi, 'getTaskProxies').mockResolvedValue({
+      jest.spyOn(DirectoryApi, 'getTaskProxies').mockResolvedValue({
         data: { result: delgates },
       });
 
@@ -208,7 +208,7 @@ describe('AccessReviews', () => {
     });
 
     it('displays an error notifcation if loading fails', async () => {
-      jest.spyOn(GovernanceEnduserApi, 'getTaskProxies').mockRejectedValue('test');
+      jest.spyOn(DirectoryApi, 'getTaskProxies').mockRejectedValue('test');
       const errorSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
 
       wrapper.vm.loadData();
@@ -218,7 +218,7 @@ describe('AccessReviews', () => {
     });
 
     it('displays noData component when no task proxies are found', async () => {
-      jest.spyOn(GovernanceEnduserApi, 'getTaskProxies').mockResolvedValue({
+      jest.spyOn(DirectoryApi, 'getTaskProxies').mockResolvedValue({
         data: { result: [] },
       });
 
@@ -232,7 +232,7 @@ describe('AccessReviews', () => {
 
   describe('removeDelegate', () => {
     it('calls to remove a task proxy from a user', () => {
-      const deleteTaskProxy = jest.spyOn(GovernanceEnduserApi, 'deleteTaskProxy');
+      const deleteTaskProxy = jest.spyOn(DirectoryApi, 'deleteTaskProxy');
       wrapper.vm.selectedDelegate = {
         _refResourceId: 'removeId',
       };

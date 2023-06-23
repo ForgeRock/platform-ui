@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -69,11 +69,12 @@ of the MIT license. See the LICENSE file for details. -->
       </BListGroupItem>
     </BListGroup>
     <div
-      v-if="!disabled && currentKey === null"
+      v-if="currentKey === null"
       class="mt-3">
       <BButton
         variant="link"
         class="p-0 text-decoration-none"
+        :disabled="disabled"
         @click="showAdd()">
         <FrIcon
           class="mr-2"

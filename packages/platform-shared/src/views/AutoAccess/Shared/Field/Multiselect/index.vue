@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -83,9 +83,10 @@ import {
   isEqual,
   map,
 } from 'lodash';
-import VueMultiSelect from 'vue-multiselect';
 import * as clipboard from 'clipboard-polyfill/text';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
+// import vue-multiselect from src because dist min/uglified package gets removed in build
+import VueMultiSelect from '../../../../../../../../node_modules/vue-multiselect/src/index';
 import InputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
 

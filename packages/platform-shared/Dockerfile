@@ -15,7 +15,6 @@ COPY package.json yarn.lock /home/app/
 COPY packages/platform-admin/package.json /home/app/packages/platform-admin/
 COPY packages/platform-enduser/package.json /home/app/packages/platform-enduser/
 COPY packages/platform-login/package.json /home/app/packages/platform-login/
-COPY packages/platform-onboarding/package.json /home/app/packages/platform-onboarding/
 COPY packages/platform-registration/package.json /home/app/packages/platform-registration/
 COPY packages/platform-shared/package.json /home/app/packages/platform-shared/
 

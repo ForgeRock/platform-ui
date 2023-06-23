@@ -18,6 +18,11 @@ it('encodes flat object correctly', () => {
   expect(queryString).toBe('?_sortKeys=userName&_pageSize=10&_fields=userName%2CgivenName%2Csn&_queryFilter=%2FuserName%20sw%20%22d%22%20or%20%2FgivenName%20sw%20%22d%22%20or%20%2Fsn%20sw%20%22d%22');
 });
 
+it('returns an empty string for no values passed in', () => {
+  const queryString = encodeQueryString();
+  expect(queryString).toBe('');
+});
+
 it('returns an empty string for empty object argument', () => {
   const queryString = encodeQueryString({});
   expect(queryString).toBe('');

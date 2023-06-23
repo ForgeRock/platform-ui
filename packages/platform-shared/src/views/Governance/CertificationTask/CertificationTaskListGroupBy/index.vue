@@ -1,3 +1,7 @@
+<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="d-flex flex-row">
     <BCard
@@ -19,6 +23,7 @@
         :is-admin="isAdmin"
         :actor-id="actorId"
         :show-entitlement-column="false"
+        :task-status="taskStatus"
         @change-saving="setSaving"
         @check-progress="checkInProgress"
         @refresh-complete="refreshComplete"
@@ -74,6 +79,7 @@
         :actor-id="actorId"
         :entitlement-user-id="userId"
         :show-entitlement-column="true"
+        :task-status="taskStatus"
         @change-saving="setSaving"
         @check-progress="checkInProgress"
         @signed-off="hideSignOff = true;"
@@ -147,6 +153,10 @@ export default {
     showGroupBy: {
       type: Boolean,
       default: false,
+    },
+    taskStatus: {
+      type: String,
+      default: 'active',
     },
     isEntitlementCertificationType: {
       type: Boolean,

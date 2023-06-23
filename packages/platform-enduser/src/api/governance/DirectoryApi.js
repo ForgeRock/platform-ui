@@ -8,21 +8,7 @@
 import { generateIgaApi } from '@forgerock/platform-shared/src/api/BaseApi';
 import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
 
-const governanceBaseUrl = '/governance';
-const governanceCertificationBaseUrl = `${governanceBaseUrl}/certification`;
-const governanceCertificationItemsUrl = `${governanceCertificationBaseUrl}/items`;
-const governanceUserUrl = `${governanceBaseUrl}/user`;
-
-/**
- * Returns the certification items
- * @param {object} params - Optional parameters to be plugged into query string
- * @returns {Promise}
- */
-export function getCertificationItems(params) {
-  const queryParams = encodeQueryString(params, false);
-  const resourceUrl = `${governanceCertificationItemsUrl}${queryParams}`;
-  return generateIgaApi().get(resourceUrl);
-}
+const governanceUserUrl = '/governance/user';
 
 /**
  * Get list of task proxies (delgates) for a given user
@@ -73,17 +59,6 @@ export function deleteTaskProxy(userId, taskProxies) {
 export async function getDirectReports(userId, params) {
   const queryString = encodeQueryString(params, false);
   return generateIgaApi().get(`${governanceUserUrl}/${userId}/get-direct-reports${queryString}`);
-}
-
-/**
- * Get list of My Access for a given user
- * @param {String} userId - id of user to retrieve proxies for
- * @param {object} params - parameters to filter the list of my access
- * @returns {Promise}
- */
-export async function getMyAccess(userId, params) {
-  const queryString = encodeQueryString(params, false);
-  return generateIgaApi().get(`${governanceUserUrl}/${userId}/grants${queryString}`);
 }
 
 /**
