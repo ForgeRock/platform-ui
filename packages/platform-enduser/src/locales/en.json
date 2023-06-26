@@ -193,6 +193,7 @@
     "accessReviews":"Access Reviews",
     "accounts": "Accounts",
     "applications": "My Applications",
+    "approvals": "Approvals",
     "delegates": "Delegates",
     "directory": "My Directory",
     "directReports": "Direct Reports",
@@ -206,6 +207,7 @@
     "AccessReviews": "Access Reviews",
     "Accounts": "Accounts",
     "Applications": "Applications",
+    "Approvals": "Approvals",
     "AutoAccessDataSources": "Data Sources",
     "AutoAccessPipelines": "Pipelines",
     "AutoAccessRiskConfig": "RiskConfig",
@@ -227,6 +229,9 @@
     "Sharing": "Sharing"
   },
   "governance": {
+    "approval":{
+      "subtitle": "View and take action on your pending access requests."
+    },
     "delegates": {
       "addDelegates": "Add Delegates",
       "addModalTitle": "Choose users to add as delegates.",
