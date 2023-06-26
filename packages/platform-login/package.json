@@ -23,6 +23,7 @@
     "bootstrap-vue": "2.22.0",
     "clipboard-polyfill": "3.0.1",
     "core-js": "3.6.5",
+    "flush-promises": "1.0.2",
     "jose": "4.14.4",
     "lodash": "4.17.21",
     "qrcode-generator": "1.4.4",
