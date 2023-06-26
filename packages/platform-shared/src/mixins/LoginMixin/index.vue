@@ -287,7 +287,8 @@ export function getComponentPropsAndEvents(componentType, callBackIndex, compone
       listeners: ['hide-next-button', 'disable-next-button'],
     }),
     TextOutputCallback: () => ({
-      listeners: ['disable-next-button', 'has-scripts', 'hide-next-button', 'next-step-callback'],
+      callbackSpecificProps: { isFirstRenderedCallback: componentList.length === 0 },
+      listeners: ['disable-next-button', 'has-scripts', 'hide-next-button', 'next-step-callback', 'update-screen-reader-message'],
     }),
     ValidatedCreatePasswordCallback: () => {
       let stage;
