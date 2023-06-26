@@ -71,6 +71,13 @@ const router = new Router({
       meta: { authenticate: true },
     },
     {
+      path: '/approvals',
+      name: 'Approvals',
+      component: () => import('@/views/governance/Approvals'),
+      meta: { authenticate: true },
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled, store.state.SharedStore.governanceEnabledV3]),
+    },
+    {
       path: '/access-reviews',
       name: 'AccessReviews',
       component: () => import('@/views/governance/AccessReviews'),

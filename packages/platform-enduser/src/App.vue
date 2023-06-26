@@ -84,15 +84,30 @@ export default {
             menuGroup: true,
             displayName: 'sideMenu.inbox',
             icon: 'inbox',
-            subItems: [
-              {
-                showBadgeWithContentFromStore: 'certificationCount',
-                displayName: 'sideMenu.accessReviews',
-                routeTo: {
-                  name: 'AccessReviews',
+            subItems: (this.$store.state.SharedStore.governanceEnabledV3 === true
+              ? [
+                {
+                  displayName: 'sideMenu.approvals',
+                  routeTo: {
+                    name: 'Approvals',
+                  },
                 },
-              },
-            ],
+                {
+                  showBadgeWithContentFromStore: 'certificationCount',
+                  displayName: 'sideMenu.accessReviews',
+                  routeTo: {
+                    name: 'AccessReviews',
+                  },
+                },
+              ] : [
+                {
+                  showBadgeWithContentFromStore: 'certificationCount',
+                  displayName: 'sideMenu.accessReviews',
+                  routeTo: {
+                    name: 'AccessReviews',
+                  },
+                },
+              ]),
           }
           : {}),
         (this.$store.state.SharedStore.workforceEnabled === true
