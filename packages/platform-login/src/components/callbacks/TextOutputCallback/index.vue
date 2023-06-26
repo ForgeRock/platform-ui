@@ -64,6 +64,10 @@ export default {
       type: Object,
       required: true,
     },
+    isFirstRenderedCallback: {
+      type: Boolean,
+      required: true,
+    },
     step: {
       type: Object,
       required: true,
@@ -95,6 +99,11 @@ export default {
 
     if (this.messageType === 'SCRIPT') {
       this.$emit('has-scripts', this.invokeScriptWithHelpers);
+    }
+
+    // Populate screenReaderMessage with callback text only if the message callback is the first TextOutputCallback rendered and is not a script
+    if (this.isFirstRenderedCallback && this.messageType === 'INFORMATION') {
+      this.$emit('update-screen-reader-message', this.callback.getMessage());
     }
   },
   methods: {
