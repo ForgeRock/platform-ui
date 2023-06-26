@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -15,7 +15,9 @@ describe('TextOutputCallback.vue', () => {
 
   beforeEach(() => {
     wrapper = undefined;
-    mountComponent = ({ messageType, message, mockMethods }) => {
+    mountComponent = ({
+      messageType, message, isFirstRenderedCallback, mockMethods,
+    }) => {
       const step = {
         getCallbacksOfType: jest.fn(),
         find: jest.fn(),
@@ -31,6 +33,7 @@ describe('TextOutputCallback.vue', () => {
         },
         index: 5,
         step,
+        isFirstRenderedCallback: isFirstRenderedCallback || false,
       };
       wrapper = mount(TextOutputCallback, {
         i18n,
@@ -40,9 +43,23 @@ describe('TextOutputCallback.vue', () => {
     };
   });
 
-  it('Load TextOutputCallback component', () => {
-    mountComponent({ messageType: '1' });
-    expect(wrapper.name()).toEqual('TextOutputCallback');
+  it('Emits updateScreenReaderMessage if its type Information and isFirstRenderedCallback is true', () => {
+    mountComponent({ messageType: '3', isFirstRenderedCallback: true, message: 'this was emitted' });
+
+    const emitted = wrapper.emitted()['update-screen-reader-message'].pop()[0];
+    expect(emitted).toEqual('this was emitted');
+  });
+
+  it('Doesn\'t emit updateScreenReaderMessage on isFirstRenderedCallback is false', () => {
+    mountComponent({ messageType: '3', isFirstRenderedCallback: false, message: 'this was emitted' });
+
+    expect(wrapper.emitted()['update-screen-reader-message']).toBeFalsy();
+  });
+
+  it('Doesn\'t emit updateScreenReaderMessage type isn\'t Information', () => {
+    mountComponent({ messageType: '4', isFirstRenderedCallback: true, message: 'this was emitted' });
+
+    expect(wrapper.emitted()['update-screen-reader-message']).toBeFalsy();
   });
 
   it('Sets data messageType base on getMessageType', () => {
