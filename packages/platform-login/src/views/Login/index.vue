@@ -25,7 +25,7 @@ of the MIT license. See the LICENSE file for details. -->
                 :header-classes="['login-header']"
               >
                 <template #center-card-header>
-                  <div aria-live="assertive">
+                  <div aria-live="polite">
                     <template v-if="!loading && !themeLoading">
                       <h1
                         v-if="header"
@@ -35,6 +35,9 @@ of the MIT license. See the LICENSE file for details. -->
                       <p
                         v-if="description"
                         v-html="description" />
+                      <p class="sr-only">
+                        {{ screenReaderMessage }}
+                      </p>
                     </template>
                   </div>
                 </template>
@@ -106,7 +109,9 @@ of the MIT license. See the LICENSE file for details. -->
                   </BCardBody>
                   <BCardBody v-else>
                     <div class="h-100 d-flex">
-                      <div class="fr-center-card">
+                      <div
+                        class="fr-center-card"
+                        aria-live="polite">
                         <Spinner class="mb-4" />
                       </div>
                     </div>
@@ -154,11 +159,10 @@ of the MIT license. See the LICENSE file for details. -->
             </div>
           </div>
 
-          <div class="px-4 px-md-5">
-            <BRow
-              class="m-0"
-              aria-live="assertive"
-            >
+          <div
+            class="px-4 px-md-5"
+            aria-live="polite">
+            <BRow class="m-0">
               <BCol xl="9">
                 <h1
                   v-if="header"
@@ -170,6 +174,9 @@ of the MIT license. See the LICENSE file for details. -->
                   v-html="description" />
               </BCol>
             </BRow>
+            <p class="sr-only">
+              {{ screenReaderMessage }}
+            </p>
           </div>
         </div>
         <div class="mt-1 px-4 px-md-5 d-flex w-100 flex-grow-1">
@@ -246,7 +253,9 @@ of the MIT license. See the LICENSE file for details. -->
             </BRow>
             <BRow
               v-else
-              class="justify-content-center">
+              class="justify-content-center"
+              aria-live="polite"
+            >
               <div class="fr-center-card">
                 <Spinner class="mb-4" />
               </div>
@@ -434,6 +443,7 @@ export default {
       suspendedId: undefined,
       treeId: undefined,
       svgShapesSanitizerConfig,
+      screenReaderMessage: '',
     };
   },
   computed: {
@@ -544,6 +554,7 @@ export default {
       this.description = this.$sanitize(this.step.getDescription() || '');
       this.nextButtonVisible = true;
       this.nextButtonDisabledArray = [false];
+      this.screenReaderMessage = '';
 
       this.checkNodeForThemeOverride(this.stage);
 
@@ -802,6 +813,9 @@ export default {
         },
         'update-auth-id': (authId) => {
           this.step.payload.authId = authId;
+        },
+        'update-screen-reader-message': (message) => {
+          this.screenReaderMessage = message;
         },
         // event emitted from FrField
         input: (value) => {
