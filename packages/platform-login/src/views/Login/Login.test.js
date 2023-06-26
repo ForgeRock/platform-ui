@@ -5,7 +5,11 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount } from '@vue/test-utils';
+import { mount, shallowMount } from '@vue/test-utils';
+import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import flushPromises from 'flush-promises';
+import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
+import { URLSearchParams } from 'url';
 import i18n from '@/i18n';
 import Login from './index';
 
@@ -122,7 +126,7 @@ describe('Login.vue', () => {
     const windowHash = '#/service/ResetPassword';
     const windowHashWithParams = '#/service/Login?goto=https%3A%2F%2Fdefault.iam.example.com';
     const windowSearch = '&authIndexType=service&authIndexValue=Registration';
-    const URLSearchParams = {
+    const URLSearchParamsMock = {
       get: (param) => {
         if (param === 'authIndexType') return 'service';
         if (param === 'authIndexValue') return 'Registration';
@@ -130,7 +134,7 @@ describe('Login.vue', () => {
       },
     };
 
-    wrapper.vm.setPageTitle(windowSearch, URLSearchParams);
+    wrapper.vm.setPageTitle(windowSearch, URLSearchParamsMock);
     expect(document.title).toEqual('Registration');
 
     wrapper.vm.setPageTitle(windowHash);
@@ -182,5 +186,115 @@ describe('Login.vue', () => {
     wrapper.vm.scope = 'test';
     wrapper.setMethods({ getCurrentQueryString });
     expect(wrapper.vm.getStepParams()).toEqual(expectedStepParams);
+  });
+});
+
+describe('Component Test', () => {
+  const originalWindow = window;
+  global.URLSearchParams = URLSearchParams;
+
+  const mountMethods = {
+    nextStep() {
+      this.loading = false;
+      this.themeLoading = false;
+    },
+    redirectIfInactive() {},
+    setRealm() {},
+    getConfigurationInfo() {
+      return Promise.resolve();
+    },
+    evaluateUrlParams() {},
+    checkNewSession() {
+      return Promise.resolve();
+    },
+  };
+
+  const setUrl = (url) => {
+    // eslint-disable-next-line no-global-assign
+    delete window.location;
+    window.location = new URL(url);
+  };
+
+  const mountLogin = ({ methods }) => mount(Login, {
+    i18n,
+    stubs: {
+      'router-link': true,
+    },
+    methods,
+    mocks: {
+      $route: {
+        params: {
+          tree: undefined,
+        },
+      },
+      $t: () => {},
+      $store: {
+        state: {
+          SharedStore: {
+            webStorageAvailable: true,
+          },
+        },
+      },
+    },
+    mixins: [LoginMixin],
+  });
+
+  let replaceState;
+  beforeEach(() => {
+    replaceState = jest.fn();
+    Object.defineProperty(global, 'window', {
+      writable: true,
+      value: {
+        location: {},
+        history: {
+          replaceState,
+        },
+      },
+    });
+  });
+
+  afterAll(() => {
+    // eslint-disable-next-line no-global-assign
+    window = originalWindow;
+  });
+
+  it('Loads login callbacks components even with extraneous params', async () => {
+    const removeUrlParamsMock = jest.fn();
+    const mockMethods = {
+      ...mountMethods,
+      removeUrlParams: removeUrlParamsMock,
+    };
+    delete mockMethods.evaluateUrlParams;
+
+    setUrl('https://forgerock.io/login/?realm=/&code=aCode');
+
+    const wrapper = await mountLogin({
+      methods: mockMethods,
+    });
+    await flushPromises();
+
+    expect(removeUrlParamsMock).toHaveBeenCalled();
+    expect(replaceState).toBeCalledWith(null, null, '?realm=/');
+    expect(findByTestId(wrapper, 'callbacks_panel').exists()).toBeTruthy();
+  });
+
+  it('Loads login callbacks components even with extraneous params and doesn\'t remove param', async () => {
+    const removeUrlParamsMock = jest.fn();
+    const mockMethods = {
+      ...mountMethods,
+      removeUrlParams: removeUrlParamsMock,
+    };
+    delete mockMethods.evaluateUrlParams;
+
+    setUrl('https://forgerock.io/login/?realm=/&code=aCode&notRemoved=here');
+
+    const wrapper = await mountLogin({
+      methods: mockMethods,
+    });
+    await flushPromises();
+
+    expect(removeUrlParamsMock).toHaveBeenCalled();
+    expect(replaceState).toBeCalledWith(null, null, '?realm=/&notRemoved=here');
+    expect(findByTestId(wrapper, 'callbacks_panel').exists()).toBeTruthy();
   });
 });

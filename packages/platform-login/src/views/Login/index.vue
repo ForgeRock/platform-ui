@@ -45,7 +45,8 @@ of the MIT license. See the LICENSE file for details. -->
                 <template #center-card-body>
                   <BCardBody
                     v-if="!loading && !themeLoading"
-                    id="callbacksPanel">
+                    id="callbacksPanel"
+                    data-testid="callbacks_panel">
                     <FrAlert
                       :show="loginFailure"
                       :dismissible="false"
@@ -721,9 +722,10 @@ export default {
 
         // session storage is used to resume a tree after returning from a redirect
         const { authIndexValue, step, realm: stepRealm } = this.getStepFromStorage();
+
         this.treeId = authIndexValue;
-        this.step = new FRStep(step.payload);
-        this.realm = stepRealm;
+        this.step = step ? new FRStep(step.payload) : undefined;
+        this.realm = stepRealm || realm;
 
         const stringParams = createParamString(params);
         this.removeUrlParams();
