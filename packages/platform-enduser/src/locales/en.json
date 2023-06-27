@@ -201,6 +201,7 @@
     "inbox": "Inbox",
     "myAccess": "My Access",
     "profile": "Profile",
+    "requests": "My Requests",
     "roles": "Roles"
   },
   "pageTitles": {
@@ -222,6 +223,7 @@
     "AccessRequestNew": "New Request",
     "Forbidden": "Forbidden",
     "ListResource": "List Resource",
+    "MyRequests": "My Requests",
     "NotFound": "Not Found",
     "Roles": "Roles",
     "pageTitle": "Platform Enduser - {page}",
@@ -260,7 +262,7 @@
     "accessRequests": {
       "newRequest": {},
       "myRequests": {
-        "title": "My Requests"
+        "subtitle": "View and take action on your pending access requests."
       }
     }
   }

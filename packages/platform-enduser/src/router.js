@@ -126,6 +126,13 @@ const router = new Router({
       beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
     },
     {
+      path: '/requests',
+      name: 'Requests',
+      component: () => import('@/views/governance/Requests'),
+      meta: { authenticate: true },
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabledV3, store.state.SharedStore.governanceEnabled]),
+    },
+    {
       path: '/list/:resourceType/:resourceName',
       name: 'ListResource',
       component: () => import(/* webpackChunkName: "listResource" */ '@/views/ListResourceView'),
