@@ -159,6 +159,13 @@ export default {
             ],
           }
           : {}),
+        (this.$store.state.SharedStore.governanceEnabledV3 === true
+          ? {
+            routeTo: { name: 'Requests' },
+            displayName: 'sideMenu.requests',
+            icon: 'person_add',
+          }
+          : {}),
         {
           routeTo: { name: 'Profile' },
           displayName: 'sideMenu.profile',
