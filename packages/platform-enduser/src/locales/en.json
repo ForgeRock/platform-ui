@@ -63,10 +63,16 @@
       },
       "cardCount": {
         "accessReviews": "Access Reviews",
-        "viewAccessReviews": "View access reviews"
+        "pendingApprovals": "Pending Approvals",
+        "pendingRequests": "Pending Requests",
+        "viewAccessReviews": "View access reviews",
+        "viewPendingApprovals": "View pending approvals",
+        "viewPendingRequests": "View pending requests"
       },
       "errorGetApplications": "There was an error retrieving your applications",
       "errorRetrievingAccesReviews": "There was an error retrieving access reviews",
+      "errorRetrievingPendingApprovals": "There was an error retrieving pending approvals",
+      "errorRetrievingPendingRequests": "There was an error retrieving pending requests",
       "noWidget": "No Widgets Available",
       "noWidgetSubText": "Don't worry, you still have a <a href=\"#/profile\">profile</a>.",
       "widgets": {
