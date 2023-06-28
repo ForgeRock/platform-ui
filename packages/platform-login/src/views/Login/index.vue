@@ -1053,7 +1053,7 @@ export default {
                     this.componentList = [];
                     this.buildTreeForm();
                   }
-                  if (this.allowListingsEnabled(this.step.payload.authId)) {
+                  if (this.step?.payload && this.allowListingsEnabled(this.step.payload.authId)) {
                     this.getNewAuthId(stepParams).then((authId) => {
                       this.step.payload.authId = authId;
                       this.loading = false;
