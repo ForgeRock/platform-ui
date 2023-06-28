@@ -4,10 +4,10 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <!--  eslint-disable vue/singleline-html-element-content-newline vue/html-indent -->
 <template>
-  <div>
+  <div id="theme-injector">
     <Component :is="'style'">
-      <template v-if="googleFontUrl">
-        @import url('{{ googleFontUrl }}');
+      <template v-if="fontUrl">
+        @import url('{{ fontUrl }}');
       </template>
 
       /**
@@ -477,6 +477,11 @@ export default {
       default: () => ({ realm: {} }),
     },
   },
+  data() {
+    return {
+      ignoredFonts: ['Arial', 'Helvetica'],
+    };
+  },
   computed: {
     backgroundColor() {
       let tempBackground = 'inherit';
@@ -502,33 +507,37 @@ export default {
     logoProfileCollapsed() {
       return this.getLocalizedString(this.theme.logoProfileCollapsed, i18n.locale, i18n.fallbackLocale);
     },
-    googleFontUrl() {
+    fontUrl() {
       const apiUrl = [];
-      const themeFont = this.theme?.fontFamily;
+      const fontFamily = this.theme?.fontFamily;
+      const themeFont = fontFamily?.family || fontFamily;
 
-      if (typeof themeFont === 'object') {
-        apiUrl.push('https://fonts.googleapis.com/css?family=');
-        apiUrl.push(themeFont.family.replace(/ /g, '+'));
+      if (this.ignoredFonts.includes(themeFont) || !themeFont) {
+        return null;
+      }
 
+      apiUrl.push('https://fonts.bunny.net/css2?family=');
+      apiUrl.push(themeFont.replace(/ /g, '+'));
+      if (typeof fontFamily === 'object') {
         // Includes all possible font variants (weights).
         // Pushes each variant weight separated by a comma.
-        themeFont.variants.forEach((elm, index) => {
+        fontFamily.variants.forEach((elm, index) => {
           if (index === 0) {
             apiUrl.push(':');
           }
           apiUrl.push(elm);
           // To avoid adding in an unnecessary last comma
-          if (index < themeFont.variants.length - 1) {
+          if (index < fontFamily.variants.length - 1) {
             apiUrl.push(',');
           }
         });
-
-        // Adds &display=swap param at end of url to ensure that the
-        // fallback font is used before the google font loads
-        apiUrl.push('&display=swap');
       }
+      // Adds &display=swap param at end of url to ensure that the
+      // fallback font is used before the google font loads
+      apiUrl.push('&display=swap');
+
       // Creates one solid string to inject in the theme via import
-      // (e.g. https://fonts.googleapis.com/css?family=Open+Sans:200,300,regular&display=swap)
+      // (e.g. https://fonts.bunny.net/css2?family=Open+Sans:200,300,regular&display=swap)
       return apiUrl.length ? apiUrl.join('') : null;
     },
   },
