@@ -8,6 +8,7 @@
 import { shallowMount } from '@vue/test-utils';
 import ThemeInjector from './index';
 
+const fontProvider = 'https://fonts.bunny.net';
 describe('Theme Injector Component', () => {
   it('Theme Injector successfully loaded', () => {
     const wrapper = shallowMount(ThemeInjector, {
@@ -30,11 +31,17 @@ describe('Theme Injector Component', () => {
           },
         },
       },
+      data() {
+        return {
+          fontProvider,
+        };
+      },
     });
-    expect(wrapper.vm.googleFontUrl).toEqual('https://fonts.googleapis.com/css?family=Luxurious+Script:regular&display=swap');
+
+    expect(wrapper.vm.fontUrl).toEqual(`${fontProvider}/css2?family=Luxurious+Script:regular&display=swap`);
   });
 
-  it('Returns null if theme font family is a string', () => {
+  it('Returns google font url from string', () => {
     const wrapper = shallowMount(ThemeInjector, {
       propsData: {
         theme: {
@@ -42,6 +49,17 @@ describe('Theme Injector Component', () => {
         },
       },
     });
-    expect(wrapper.vm.googleFontUrl).toEqual(null);
+    expect(wrapper.vm.fontUrl).toEqual(`${fontProvider}/css2?family=Open+Sans&display=swap`);
+  });
+
+  it('Returns null if font is ignored', () => {
+    const wrapper = shallowMount(ThemeInjector, {
+      propsData: {
+        theme: {
+          fontFamily: 'Helvetica',
+        },
+      },
+    });
+    expect(wrapper.vm.fontUrl).toEqual(null);
   });
 });
