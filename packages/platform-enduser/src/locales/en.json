@@ -275,6 +275,13 @@
       "myRequests": {
         "subtitle": "View and take action on your pending access requests."
       }
+    },
+    "requestModal": {
+      "defaultTitle": "Request Details",
+      "requestDetailsLink": "Request Details",
+      "details": "Details",
+      "workflow": "Workflow",
+      "comments": "Comments"
     }
   }
 }
