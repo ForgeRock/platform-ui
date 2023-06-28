@@ -52,3 +52,21 @@ export function commentRequest(id, phaseName, comment) {
   return Promise.resolve();
   // return generateIgaApi().post('/requests/{requestId}/phases/{phaseName}/comment', { comment });
 }
+
+export function getRequestsItems(userId, params) {
+  return Promise.resolve({
+    data: {
+      totalCount: 0,
+    },
+  });
+  // return generateIgaApi().get(`/user/${userId}/requests`);
+}
+
+export function getApprovalsItems(userId, params) {
+  return Promise.resolve({
+    data: {
+      totalCount: 0,
+    },
+  });
+  // return generateIgaApi().get(`/user/${userId}/approvals`);
+}
