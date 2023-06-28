@@ -118,6 +118,7 @@ import {
 import dayjs from 'dayjs';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import AppSharedUtilsMixin from '@forgerock/platform-shared/src/mixins/AppSharedUtilsMixin';
+import getPriorityImageSrc from '@/components/utils/governance/AccessRequestUtils';
 import FrRequestModal, { REQUEST_MODAL_TYPES } from '../RequestModal';
 
 /**
@@ -168,6 +169,7 @@ export default {
     },
   },
   methods: {
+    getPriorityImageSrc,
     handleRowClick(item) {
       this.modalItem = item;
       this.modalType = REQUEST_MODAL_TYPES.DETAILS;
@@ -278,19 +280,6 @@ export default {
     getDateString(date) {
       if (!date) return '';
       return dayjs(date).format('MMM D, YYYY');
-    },
-    /**
-     * Gets image source for the priority icons based on priority level
-     * @param {String} priority access request priority: high, medium, low
-     * @returns {String} image src for the given priority
-     */
-    getPriorityImageSrc(priority) {
-      const images = require.context('@forgerock/platform-shared/src/assets/images/priorities/', false, /\.svg$/);
-      let imageName = '';
-      if (priority === 'high') imageName = 'priority-high.svg';
-      if (priority === 'medium') imageName = 'priority-med.svg';
-      if (priority === 'low') imageName = 'priority-low.svg';
-      return images(`./${imageName}`);
     },
     /**
      * Get translated text of the request type

@@ -74,6 +74,10 @@ export default {
       type: String,
       default: '',
     },
+    firstOption: {
+      type: Object,
+      default: () => {},
+    },
   },
   data() {
     return {
@@ -96,7 +100,13 @@ export default {
   },
   computed: {
     selectOptions() {
+      // used for inputs that have an additional option that is not a specific resource
+      if (!isEmpty(this.firstOption)) return [this.firstOption, ...this.options];
+
+      // no initial value supplied
       if (isEmpty(this.initialData)) return this.options;
+
+      // initial value supplied
       const selectedOption = this.initialData.id;
       const match = this.options.find((option) => option.value === selectedOption);
       const initialLabel = match ? `${match?.userInfo?.givenName} ${match?.userInfo?.sn}` : null;

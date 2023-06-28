@@ -240,6 +240,7 @@
   "governance": {
     "accessRequest": {
       "requestTypes": {
+        "all": "All request types",
         "accountGrant": "Grant Application",
         "accountRevoke": "Remove Application",
         "entitlementGrant": "Grant Entitlement",
@@ -247,7 +248,17 @@
         "roleGrant": "Grant Role",
         "roleRevoke": "Remove Role"
       },
-      "idLabel": "ID: {id}"
+      "priorities": {
+        "lowPriority": "Low Priority",
+        "mediumPriority": "Medium Priority",
+        "highPriority": "High Priority"
+      },
+      "allRequesters": "All Requesters",
+      "idLabel": "ID: {id}",
+      "requestedFor": "Requested For",
+      "requester": "Requester",
+      "requestId": "Request ID",
+      "requestType": "Request Type"
     },
     "approval":{
       "subtitle": "View and take action on your pending access requests."
@@ -306,6 +317,8 @@
       "workflow": "Workflow",
       "comments": "Comments"
     },
+    "hideFilters": "Hide Filters",
+    "showFilters": "Show Filters",
     "sortBy": "Sort by"
   }
 }
