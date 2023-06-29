@@ -6,6 +6,8 @@
  */
 
 /* eslint-disable no-unused-vars */
+// import { generateIgaApi } from '@forgerock/platform-shared/src/api/BaseApi';
+import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
 import {
   getCatalogMock,
   getUsersApplicationsMock,
@@ -13,14 +15,22 @@ import {
   getUsersRolesMock,
 } from './CatalogApiMock';
 
-export function searchCatalog(params = {}, type) {
-  return Promise.resolve({ data: getCatalogMock(params, type) });
+export function searchCatalog(params = {}, payload) {
+  // const url = /governance/catalog;
+  return Promise.resolve({ data: getCatalogMock(params, payload.targetFilter.operand.targetValue) });
+  // return generateIgaApi().post(url, encodeQueryString(params), payload);
 }
 
-export function getCatalogFilterSchema(type) {
-  // types will likely be 'application', 'entitlement', 'role'
-
-  // return generateIgaApi().post('/catalog/get-filter-schema/${type}', filter);
+/**
+ * Get the properties available to filter by/search in catalog
+ * @param {*} objectType optional - If specified, only shows schema for provided objectType
+ */
+export function getCatalogFilterSchema(objectType) {
+  // const url = '/governance/search/schema';
+  // if (objectType) {
+  //   url += `/${objectType}`;
+  // }
+  // return generateIgaApi().get(url);
 }
 
 export function getUsersApplications(userIds) {

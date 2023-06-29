@@ -277,7 +277,23 @@
       "title": "My Direct Reports"
     },
     "accessRequests": {
-      "newRequest": {},
+      "newRequest": {
+        "added": "Added",
+        "application": "application",
+        "catalogSubtitle": "Browse available applications, roles, and entitlements for selected users.",
+        "catalogTitle": "Access Catalog",
+        "entitlement": "entitlement",
+        "errorSearchingCatalog": "There was an error searching the catalog",
+        "filters": "Filters",
+        "filterByApplications": "Filter by applications",
+        "itemOwner": "{item} Owner",
+        "itemName": "{item} Name",
+        "request": "Request",
+        "requestAdded": "Request added",
+        "results": "{totalCount} Result | {totalCount} Results",
+        "role": "role",
+        "showIf": "Show if"
+      },
       "myRequests": {
         "subtitle": "View and take action on your pending access requests."
       }
@@ -288,6 +304,7 @@
       "details": "Details",
       "workflow": "Workflow",
       "comments": "Comments"
-    }
+    },
+    "sortBy": "Sort by"
   }
 }

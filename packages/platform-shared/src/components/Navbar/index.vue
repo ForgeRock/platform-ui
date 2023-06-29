@@ -357,10 +357,11 @@ export default {
       text-decoration: none;
     }
 
-    h4 {
+    .h4 {
       margin-bottom: 0;
       font-weight: 400;
       font-size: 1rem;
+      color: $gray-800;
     }
   }
 

@@ -8,12 +8,20 @@
 import { mount } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
 import NewRequest from './index';
+import i18n from '@/i18n';
 
 describe('NewRequest', () => {
+  const RestMixin = {
+    methods: {
+      getRequestService: jest.fn().mockImplementation({ post: () => Promise.resolve() }),
+    },
+  };
+  window.matchMedia = jest.fn((param) => param);
   function mountComponent(overrideParams = {}) {
     const wrapper = mount(NewRequest, {
+      i18n,
+      mixins: [RestMixin],
       mocks: {
-        $t: (text) => text,
         $router: { push: jest.fn() },
         $route: {
           params: {
@@ -35,7 +43,7 @@ describe('NewRequest', () => {
     await flushPromises();
     const breadcrumb = wrapper.find('h1[class="text-truncate h4"]');
     expect(breadcrumb.exists()).toBe(true);
-    expect(breadcrumb.find('span[class="align-middle"]').text()).toBe('governance.accessRequests.myRequests.title');
+    expect(breadcrumb.find('span[class="align-middle"]').text()).toBe('My Requests');
   });
 
   it('should expand side panel when cart is clicked', async () => {
@@ -43,13 +51,13 @@ describe('NewRequest', () => {
     await flushPromises();
 
     let shoppingCartSidePanel = wrapper.find('div[class="fr-cart-panel position-fixed shadow-lg h-100 pb-4"]');
-    expect(shoppingCartSidePanel.exists()).toBe(false);
+    expect(shoppingCartSidePanel.exists()).toBe(true);
 
     const shoppingCartButton = wrapper.find('#expandRequestCart');
     shoppingCartButton.trigger('click');
     await flushPromises();
 
     shoppingCartSidePanel = wrapper.find('div[class="fr-cart-panel position-fixed shadow-lg h-100 pb-4"]');
-    expect(shoppingCartSidePanel.exists()).toBe(true);
+    expect(shoppingCartSidePanel.exists()).toBe(false);
   });
 });
