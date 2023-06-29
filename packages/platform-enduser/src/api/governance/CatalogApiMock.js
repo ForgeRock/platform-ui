@@ -78,10 +78,23 @@ const applications = [
     templateVersion: '2.0',
   },
   {
-    description: 'My Azure App',
-    icon: '',
-    id: '2',
-    name: 'My Azure App',
+    _rev: '23b2b11e-3ee6-499d-9e66-88ea2a867f98-50136',
+    authoritative: true,
+    connectorId: 'AzureADAuth1',
+    description: 'AD Auth App1',
+    fr: {
+      realm: 'alpha',
+    },
+    icon: 'https://openam-glossary-fix-0608.forgeblocks.com/platform/img/microsoft.8a785075.svg',
+    id: '26f2bd6b-3d23-4fbb-92f7-9aecd0183852',
+    mappingNames: [
+      'systemAzureadauth1User_managedAlpha_user',
+    ],
+    metadata: {
+      entityType: '/openidm/managed/application',
+      created: '2023-06-09T15:01:49.259Z',
+    },
+    name: 'AzureADAuth1',
     templateName: 'azure.ad',
     templateVersion: '2.0',
   },
@@ -107,22 +120,44 @@ const users = [
 const entitlements = [
   {
     displayName: 'All Users',
+    description: 'Can read basic directory information. Commonly used to grant directory read access to applications and guests.',
     id: '1',
   },
   {
     displayName: 'Groups Administrator',
+    description: 'Has admin access.',
     id: '2',
+  },
+];
+
+const assignments = [
+  {
+    name: 'Directory Readers',
+    type: '__ENTITLEMENT__',
+    id: 'system_TargetADApp2_directoryRole_08ec32b7-b9c5-4d71-bd72-ea7b8584c5a4',
+  },
+  {
+    name: 'Chief Information Officer',
+    type: '__ENTITLEMENT__',
+    id: 'system_TargetADApp2_directoryRole_08ec32b7-b9c5-4d71-bd72-ea7b8584c5a4',
   },
 ];
 
 const roles = [
   {
-    name: 'Main Role',
+    name: 'Cloud Deployment Manager',
+    description: 'Manager overseeing all offshore cloud deployments in the Europe and Asia.',
     id: '1',
   },
   {
-    name: 'Secondary Role',
+    name: 'HelpDesk',
+    description: 'Troubleshooting technical issues with individual employees. Preparing new employee hardware, including a P.C. and dual monitors. Tracking/detailing hardware inventory.',
     id: '2',
+  },
+  {
+    name: 'Sales',
+    description: 'Sales department coordinator responsible for Western US.',
+    id: '3',
   },
 ];
 
@@ -150,16 +185,17 @@ function generateRequest(id, type) {
   };
 
   switch (type) {
-    case 'application':
+    case 'accountGrant':
       values.application = applications[id % applications.length];
       values.applicationOwner = users[id % users.length];
       break;
-    case 'entitlement':
+    case 'entitlementGrant':
       values.application = applications[id % applications.length];
       values.entitlement = entitlements[id % entitlements.length];
       values.entitlementOwner = users[id % users.length];
+      values.assignment = assignments[id % assignments.length];
       break;
-    case 'role':
+    case 'roleMembership':
       values.role = roles[id % roles.length];
       break;
     default:
@@ -169,34 +205,70 @@ function generateRequest(id, type) {
   return getDefaultRequest(values);
 }
 
-function generateRequests(pageSize, pageNumber, type) {
+function generateRequests(pageSize, pageNumber, type, sortDir) {
+  const returnObject = {};
   if (pageNumber > 1) {
-    return {
-      totalCount: pageSize + 1,
-      results: [
-        generateRequest(pageSize + 1, type),
-      ],
-    };
-  }
+    returnObject.totalCount = pageSize + 1;
+    returnObject.results = [
+      generateRequest(pageSize + 1, type),
+    ];
+  } else {
+    const results = [];
+    for (let i = 0; i < pageSize; i += 1) {
+      results.push(generateRequest(i + 1, type));
+    }
 
-  const results = [];
-  for (let i = 0; i < pageSize; i += 1) {
-    results.push(generateRequest(i + 1, type));
+    returnObject.totalCount = pageSize + 1;
+    returnObject.results = results;
+    if (sortDir === 'desc') {
+      returnObject.results = returnObject.results.sort((a, b) => {
+        if (a.application) {
+          if (a.application.name > b.application.name) {
+            return -1;
+          }
+          if (a.application.name < b.application.name) {
+            return 1;
+          }
+          return 0;
+        }
+        if (a.role.name > b.role.name) {
+          return -1;
+        }
+        if (a.role.name < b.role.name) {
+          return 1;
+        }
+        return 0;
+      });
+    } else {
+      returnObject.results = returnObject.results.sort((a, b) => {
+        if (a.application) {
+          if (a.application.name > b.application.name) {
+            return 1;
+          }
+          if (a.application.name < b.application.name) {
+            return -1;
+          }
+          return 0;
+        }
+        if (a.role.name > b.role.name) {
+          return 1;
+        }
+        if (a.role.name < b.role.name) {
+          return -1;
+        }
+        return 0;
+      });
+    }
   }
-
-  return {
-    totalCount: pageSize + 1,
-    results,
-  };
+  return returnObject;
 }
 
-export function getCatalogMock(params, type = 'application') {
-  let pageSize = 10;
-  let pageNumber = 1;
-  if (params.pageSize) pageSize = params.pageSize;
-  if (params.pageNumber) pageNumber = params.pageNumber;
+export function getCatalogMock(params, type = 'accountGrant') {
+  const pageSize = params.pageSize ?? 10;
+  const pageNumber = params.pageNumber ?? 1;
+  const sortDir = params.sortDir ?? 'desc';
 
-  return generateRequests(pageSize, pageNumber, type);
+  return generateRequests(pageSize, pageNumber, type, sortDir);
 }
 
 // Not exactly sure what this API will look like
