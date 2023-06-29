@@ -7,8 +7,11 @@
 
 import { mount } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
+import getPriorityImageSrc from '@/components/utils/governance/AccessRequestUtils';
 import NewRequest from './index';
 import i18n from '@/i18n';
+
+jest.mock('@/components/utils/governance/AccessRequestUtils');
 
 describe('NewRequest', () => {
   const RestMixin = {
@@ -25,10 +28,10 @@ describe('NewRequest', () => {
         $router: { push: jest.fn() },
         $route: {
           params: {
-            requestingFor: {
+            requestingFor: [{
               name: 'Barbara Jensen',
               userName: 'bjensen',
-            },
+            }],
           },
           ...overrideParams,
         },
@@ -37,6 +40,12 @@ describe('NewRequest', () => {
     });
     return wrapper;
   }
+
+  window.matchMedia = jest.fn((param) => param);
+
+  beforeEach(() => {
+    getPriorityImageSrc.mockClear();
+  });
 
   it('should render with top navigation bar including breadcrumb', async () => {
     const wrapper = mountComponent();
@@ -50,14 +59,14 @@ describe('NewRequest', () => {
     const wrapper = mountComponent();
     await flushPromises();
 
-    let shoppingCartSidePanel = wrapper.find('div[class="fr-cart-panel position-fixed shadow-lg h-100 pb-4"]');
+    let shoppingCartSidePanel = wrapper.find('div[class="fr-cart-panel position-fixed shadow-lg h-100 overflow-auto"]');
     expect(shoppingCartSidePanel.exists()).toBe(true);
 
     const shoppingCartButton = wrapper.find('#expandRequestCart');
     shoppingCartButton.trigger('click');
     await flushPromises();
 
-    shoppingCartSidePanel = wrapper.find('div[class="fr-cart-panel position-fixed shadow-lg h-100 pb-4"]');
+    shoppingCartSidePanel = wrapper.find('div[class="fr-cart-panel position-fixed shadow-lg h-100 overflow-auto"]');
     expect(shoppingCartSidePanel.exists()).toBe(false);
   });
 });
