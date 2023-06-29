@@ -142,6 +142,7 @@
     "preview": "Preview",
     "previous": "Previous",
     "print": "Print",
+    "priority": "Priority",
     "progress": "Progress",
     "promote": "Promote",
     "promoteConfiguration": "Promote configuration",
@@ -208,6 +209,8 @@
     "version": "Version",
     "versions": "Versions",
     "view": "View",
+    "viewLess": "View less",
+    "viewMore": "View {count} more",
     "viewDetails": "View Details",
     "yes": "Yes",
     "validation": {

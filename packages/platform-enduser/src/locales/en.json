@@ -308,20 +308,38 @@
     "accessRequests": {
       "newRequest": {
         "added": "Added",
+        "addItems": "Add items to complete request",
         "application": "application",
+        "applyExpirationDate": "Apply Expiration Date (optional)",
         "catalogSubtitle": "Browse available applications, roles, and entitlements for selected users.",
         "catalogTitle": "Access Catalog",
+        "completeRequest": "Complete Request",
         "entitlement": "entitlement",
         "errorSearchingCatalog": "There was an error searching the catalog",
+        "expiryDate": "Expiry Date",
         "filters": "Filters",
         "filterByApplications": "Filter by applications",
         "itemOwner": "{item} Owner",
         "itemName": "{item} Name",
+        "itemRemoved": "Requested item removed",
+        "justification": "Justification",
+        "justificationDescription": "Provide a justification for granting this request.",
+        "noRequestedItemsYet": "No requested items yet",
+        "priority": {
+          "low": "Low",
+          "med": "Medium",
+          "high": "High"
+        },
         "request": "Request",
         "requestAdded": "Request added",
+        "requestedAccess": "Requested Access",
+        "requesteeRemoved": "Requestee removed",
+        "requestingFor": "Requesting for",
+        "requestSuccess": "Request successfully submitted",
         "results": "{totalCount} Result | {totalCount} Results",
         "role": "role",
-        "showIf": "Show if"
+        "showIf": "Show if",
+        "yourRequest": "Your Request"
       },
       "myRequests": {
         "subtitle": "View and take action on your pending access requests."

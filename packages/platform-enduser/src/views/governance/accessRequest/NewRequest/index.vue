@@ -36,7 +36,7 @@ of the MIT license. See the LICENSE file for details. -->
             :catalog-items="catalogItems"
             :total-count="totalCount"
             @add-item-to-cart="addItemToCart"
-            @remove-item-from-cart="removeItemFromCart"
+            @remove-item-from-cart="removeRequestedItem('accessItem', $event)"
             @search:catalog="searchCatalog"
             @search:applications="searchApplications" />
         </div>
@@ -44,10 +44,30 @@ of the MIT license. See the LICENSE file for details. -->
         <!-- eslint-disable-next-line vue/component-name-in-template-casing -->
         <transition name="slide-fade">
           <div
-            id="expandableRequestCart"
             v-if="requestCartExpanded"
-            class="fr-cart-panel position-fixed shadow-lg h-100 pb-4">
-            Request panel
+            id="expandableRequestCart"
+            class="fr-cart-panel position-fixed shadow-lg h-100 overflow-auto">
+            <div class="px-4 pt-4 pb-5">
+              <div class="d-flex align-items-center justify-content-between mb-4">
+                <h2 class="mb-0 h5">
+                  {{ $t('governance.accessRequests.newRequest.yourRequest') }}
+                </h2>
+                <BButtonClose
+                  class="ml-auto d-lg-none"
+                  variant="link"
+                  @click="toggleRequestCartPanel">
+                  <FrIcon
+                    name="close"
+                    class="text-light text-muted md-24" />
+                </BButtonClose>
+              </div>
+              <FrRequestCart
+                :request-cart-items="requestCartItems"
+                :request-cart-users="users"
+                @remove-requested-item="removeRequestedItem"
+                @requested-item-click="openRequestedItemModal"
+                @submit-new-request="submitNewRequest" />
+            </div>
           </div>
         </transition>
       </div>
@@ -56,16 +76,20 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import { BButton } from 'bootstrap-vue';
+import {
+  BButton,
+  BButtonClose,
+} from 'bootstrap-vue';
+import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrNavbar from '@forgerock/platform-shared/src/components/Navbar';
-import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
 import MediaMixin from '@forgerock/platform-shared/src/mixins/MediaMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import AppSharedUtilsMixin from '@forgerock/platform-shared/src/mixins/AppSharedUtilsMixin';
 import { getResource } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import FrAccessRequestCatalog from '../../components/AccessRequestCatalog';
-import { searchCatalog } from '../../../../api/governance/CatalogApi';
+import FrRequestCart from '@/components/governance/RequestCart';
+import { saveNewRequest, searchCatalog } from '../../../../api/governance/CatalogApi';
 
 /**
  * View housing new access request catalog and request cart panel
@@ -75,8 +99,10 @@ export default {
   components: {
     BButton,
     FrAccessRequestCatalog,
+    BButtonClose,
     FrIcon,
     FrNavbar,
+    FrRequestCart,
   },
   mixins: [
     AppSharedUtilsMixin,
@@ -88,12 +114,16 @@ export default {
     return {
       applicationSearchResults: [],
       catalogResults: [],
-      requestCartItems: [],
       requestCartExpanded: false,
+      requestCartItems: [],
+      requestCartUsers: this.$route.params.requestingFor || [],
       totalCount: 0,
     };
   },
   computed: {
+    applications() {
+      return this.requestCartItems.filter((item) => item.itemType === 'application');
+    },
     catalogItems() {
       if (this.catalogResults[0]?.role) {
         return this.catalogResults.map((catalogItem) => ({
@@ -127,6 +157,18 @@ export default {
       }
       return this.catalogResults;
     },
+    entitlements() {
+      return this.requestCartItems.filter((item) => item.itemType === 'entitlement');
+    },
+    roles() {
+      return this.requestCartItems.filter((item) => item.itemType === 'role');
+    },
+    users() {
+      return this.requestCartUsers.map((user) => ({
+        icon: user.profileImage,
+        ...user,
+      }));
+    },
   },
   mounted() {
     this.handleResize();
@@ -155,14 +197,6 @@ export default {
      */
     isRequested(catalogItemId) {
       return !!this.requestCartItems.find((requestCartItem) => requestCartItem.id === catalogItemId);
-    },
-    /**
-     * Removes selected item from request cart
-     * @param {String} itemId id of item to remove from cart
-     */
-    removeItemFromCart(itemId) {
-      const removeIndex = this.requestCartItems.findIndex((requestCartItem) => requestCartItem.id === itemId);
-      this.requestCartItems.splice(removeIndex, 1);
     },
     /**
      * Search the request catalog using the provided filter, sort, and page details
@@ -212,6 +246,48 @@ export default {
         this.applicationSearchResults = data?.result || [];
       } catch (error) {
         this.showErrorMessage(error, this.$t('governance.accessRequests.newRequest.errorSearchingCatalog'));
+      }
+    },
+    /**
+     * Opens up the requested items details modal
+     */
+    openRequestedItemModal() {
+
+    },
+    /**
+     * Removes selected item from request cart
+     * @param {String} context either 'user' or 'accessItem' to target corresponding request item array
+     * @param {String} itemId id of item to remove from cart
+     */
+    removeRequestedItem(context, itemId) {
+      const targetArray = context === 'user' ? this.requestCartUsers : this.requestCartItems;
+      const index = targetArray.findIndex((targetItem) => targetItem.id === itemId);
+      const itemRemovedSuccessTranslation = context === 'user' ? 'requesteeRemoved' : 'itemRemoved';
+
+      targetArray.splice(index, 1);
+      this.displayNotification('success', this.$t(`governance.accessRequests.newRequest.${itemRemovedSuccessTranslation}`));
+    },
+    /**
+     * Submits a new request
+     * @param {Object} payload justification, priority, expiration properties
+     */
+    submitNewRequest(payload) {
+      try {
+        const body = { ...payload };
+        const users = this.users.map((user) => user.id);
+        const applications = this.applications.map((application) => ({ type: 'application', id: application.id }));
+        const entitlements = this.entitlements.map((entitlement) => ({ type: 'entitlement', id: entitlement.id }));
+        const roles = this.roles.map((role) => ({ type: 'role', id: role.id }));
+
+        body.users = users;
+        body.catalogs = [...applications, ...entitlements, ...roles];
+        saveNewRequest(body);
+        this.displayNotification('success', this.$t('governance.accessRequests.newRequest.requestSuccess'));
+        this.$router.push({
+          name: 'MyRequests',
+        });
+      } catch (error) {
+        this.displayNotification('error', error);
       }
     },
     /**
