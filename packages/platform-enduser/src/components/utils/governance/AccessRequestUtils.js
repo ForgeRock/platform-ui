@@ -11,12 +11,16 @@
  * @returns {String} image src for the given priority
  */
 export default function getPriorityImageSrc(priority) {
-  const images = require.context('@forgerock/platform-shared/src/assets/images/priorities/', false, /\.svg$/);
-  let imageName = '';
-  if (priority === 'high') imageName = 'priority-high.svg';
-  if (priority === 'medium') imageName = 'priority-med.svg';
-  if (priority === 'low') imageName = 'priority-low.svg';
-  return images(`./${imageName}`);
+  try {
+    const images = require.context('@forgerock/platform-shared/src/assets/images/priorities/', false, /\.svg$/);
+    let imageName = '';
+    if (priority === 'high') imageName = 'priority-high.svg';
+    if (priority === 'medium') imageName = 'priority-med.svg';
+    if (priority === 'low') imageName = 'priority-low.svg';
+    return images(`./${imageName}`);
+  } catch (err) {
+    return '';
+  }
 }
 
 export const requestTypes = {
