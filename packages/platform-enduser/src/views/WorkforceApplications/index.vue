@@ -54,11 +54,11 @@ of the MIT license. See the LICENSE file for details. -->
 import { mapState } from 'vuex';
 import { BContainer, BImg } from 'bootstrap-vue';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import resolveImage from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import { getDefinedDashboards } from '@forgerock/platform-shared/src/api/DashboardApi';
+import { getManagedResource } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 
 export default {
   name: 'WorkforceApplications',
@@ -77,7 +77,6 @@ export default {
   },
   mixins: [
     NotificationMixin,
-    RestMixin,
   ],
   computed: {
     ...mapState({
@@ -110,9 +109,8 @@ export default {
   },
   methods: {
     getUserProfile() {
-      const isRootRealm = this.$store.state.realm === 'root' || this.$store.state.realm === '/';
-      const userManagedObject = isRootRealm ? 'user' : `${this.$store.state.realm}_user`;
-      this.getRequestService().get(`managed/${userManagedObject}/${this.userId}`).then(({ data }) => {
+      const userManagedObject = this.$store.state.isFraas ? `${this.$store.state.realm}_user` : 'user';
+      getManagedResource(userManagedObject, this.userId).then(({ data }) => {
         this.userData = data;
       }).catch((error) => {
         this.showErrorMessage(error, this.$t('pages.profile.failedGettingProfile'));
