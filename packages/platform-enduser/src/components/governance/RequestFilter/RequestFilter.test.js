@@ -18,8 +18,8 @@ const baseFilter = {
     low: true,
   },
   requestType: null,
-  requestedFor: 'all',
-  requester: 'all',
+  requestedFor: null,
+  requester: null,
   requestId: null,
 };
 
@@ -40,11 +40,6 @@ describe('RequestFilter', () => {
     wrapper = mount(RequestFilter, {
       mocks: {
         $t: (text) => text,
-      },
-      methods: {
-        getPriorityImageSrc() {
-          return '';
-        },
       },
     });
   });
@@ -70,7 +65,7 @@ describe('RequestFilter', () => {
 
       expect(wrapper.emitted()['filter-change'][0]).toEqual([{
         filter: expectedFilter,
-        count: 3,
+        count: 1,
       }]);
 
       const medPriority = findByTestId(wrapper, 'priority-medium');
@@ -79,7 +74,7 @@ describe('RequestFilter', () => {
 
       expect(wrapper.emitted()['filter-change'][1]).toEqual([{
         filter: expectedFilter,
-        count: 4,
+        count: 2,
       }]);
 
       const lowPriority = findByTestId(wrapper, 'priority-low');
@@ -88,7 +83,7 @@ describe('RequestFilter', () => {
 
       expect(wrapper.emitted()['filter-change'][2]).toEqual([{
         filter: expectedFilter,
-        count: 5,
+        count: 3,
       }]);
     });
   });
@@ -105,7 +100,7 @@ describe('RequestFilter', () => {
 
     expect(wrapper.emitted()['filter-change'].pop()).toEqual([{
       filter: expectedFilter,
-      count: 3,
+      count: 1,
     }]);
   });
 
@@ -121,7 +116,7 @@ describe('RequestFilter', () => {
 
     expect(wrapper.emitted()['filter-change'].pop()).toEqual([{
       filter: expectedFilter,
-      count: 2,
+      count: 1,
     }]);
   });
 
@@ -137,7 +132,7 @@ describe('RequestFilter', () => {
 
     expect(wrapper.emitted()['filter-change'].pop()).toEqual([{
       filter: expectedFilter,
-      count: 2,
+      count: 1,
     }]);
   });
 
@@ -149,7 +144,7 @@ describe('RequestFilter', () => {
 
     expect(wrapper.emitted()['filter-change'].pop()).toEqual([{
       filter: expectedFilter,
-      count: 3,
+      count: 1,
     }]);
   });
 });

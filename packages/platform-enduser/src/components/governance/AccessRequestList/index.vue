@@ -4,8 +4,12 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
+    <slot name="header" />
+    <FrSpinner
+      v-if="isLoading"
+      class="py-5" />
     <BTable
-      v-if="items.length"
+      v-else-if="items.length"
       class="access-request-list"
       thead-class="d-none"
       tbody-tr-class="cursor-pointer"
@@ -101,6 +105,10 @@ of the MIT license. See the LICENSE file for details. -->
           name="actions" />
       </template>
     </BTable>
+    <template v-else>
+      <slot name="no-data" />
+    </template>
+    <slot name="footer" />
     <FrRequestModal
       :type="modalType"
       :item="modalItem" />
@@ -117,6 +125,7 @@ import {
 } from 'bootstrap-vue';
 import dayjs from 'dayjs';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import AppSharedUtilsMixin from '@forgerock/platform-shared/src/mixins/AppSharedUtilsMixin';
 import getPriorityImageSrc from '@/components/utils/governance/AccessRequestUtils';
 import FrRequestModal, { REQUEST_MODAL_TYPES } from '../RequestModal';
@@ -134,9 +143,14 @@ export default {
     BTable,
     FrIcon,
     FrRequestModal,
+    FrSpinner,
   },
   mixins: [AppSharedUtilsMixin],
   props: {
+    isLoading: {
+      type: Boolean,
+      default: false,
+    },
     requests: {
       type: Array,
       default: () => [],
