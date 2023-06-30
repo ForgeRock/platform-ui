@@ -27,7 +27,7 @@ of the MIT license. See the LICENSE file for details. -->
           <BDropdownItem
             v-for="status in statusOptions"
             :active="status === selectedStatus"
-            @click="handleStatusChange(status, index)"
+            @click="handleStatusChange(status)"
             :key="status">
             {{ status }}
           </BDropdownItem>

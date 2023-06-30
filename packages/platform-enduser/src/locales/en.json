@@ -255,6 +255,7 @@
       },
       "allRequesters": "All Requesters",
       "idLabel": "ID: {id}",
+      "noRequests": "No {status} Access Requests",
       "requestedFor": "Requested For",
       "requester": "Requester",
       "requestId": "Request ID",
@@ -278,7 +279,8 @@
       }
     },
     "approval":{
-      "subtitle": "View and take action on your pending access requests."
+      "subtitle": "View and take action on your pending access requests.",
+      "errorGettingApprovals": "Error getting user approvals"
     },
     "delegates": {
       "addDelegates": "Add Delegates",
