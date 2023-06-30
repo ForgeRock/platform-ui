@@ -124,13 +124,13 @@ export default {
         highPriority: true,
         mediumPriority: true,
         lowPriority: true,
-        requester: 'all',
-        requestedFor: 'all',
+        requester: 'managed/user/all',
+        requestedFor: 'managed/user/all',
         requestId: '',
         requestType: 'all',
       },
       allRequestersOption: {
-        label: this.$t('governance.accessRequest.allRequesters'),
+        text: this.$t('governance.accessRequest.allRequesters'),
         value: 'all',
       },
       requestTypeOptions: [
