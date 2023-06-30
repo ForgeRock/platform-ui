@@ -1,29 +1,19 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div
-    class="fr-icon-input-holder">
-    <FrIcon
-      class="fr-icon fr-icon-input-left"
-      :name="prependIcon"
-    />
-    <a
-      tabindex="0"
-      v-if="value.length > 0"
-      @click.prevent="clearSearch()"
-      href="#">
-      <FrIcon
-        class="fr-icon fr-icon-input-right"
-        :name="appendIcon"
-      />
-    </a>
-    <!--
-      Emitted when pressing enter key to search
-      @event search
-     -->
+  <div class="fr-search-input-holder">
     <BInputGroup>
+      <BInputGroupPrepend>
+        <BInputGroupText class="border-none">
+          <FrIcon :name="prependIcon" />
+        </BInputGroupText>
+      </BInputGroupPrepend>
+      <!--
+        Emitted when pressing enter key to search
+        @event search
+      -->
       <BFormInput
         ref="searchInput"
         :placeholder="placeholder"
@@ -33,17 +23,28 @@ of the MIT license. See the LICENSE file for details. -->
         @keydown.native.enter="$emit('search')"
         @keydown.native.esc="clearSearch"
         v-model="value"
-        class="fr-icon-input mx-0"
+        class="pl-0 mx-0 border-none"
         type="search" />
       <slot name="append" />
+      <BInputGroupAppend v-if="value.length">
+        <BButton
+          @click.prevent="clearSearch()"
+          variant="link">
+          <FrIcon :name="appendIcon" />
+        </BButton>
+      </BInputGroupAppend>
     </BInputGroup>
   </div>
 </template>
 
 <script>
 import {
+  BButton,
   BFormInput,
   BInputGroup,
+  BInputGroupAppend,
+  BInputGroupPrepend,
+  BInputGroupText,
 } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 
@@ -53,8 +54,12 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 export default {
   name: 'SearchInput',
   components: {
+    BButton,
     BFormInput,
     BInputGroup,
+    BInputGroupAppend,
+    BInputGroupPrepend,
+    BInputGroupText,
     FrIcon,
   },
   props: {
@@ -93,9 +98,7 @@ export default {
     clearSearch() {
       this.value = '';
       this.$refs.searchInput.$el.focus();
-      /**
-       * Emitted after clicking the append icon and input set to empty string.
-       */
+      // Emitted after clicking the append icon and input set to empty string.
       this.$emit('clear');
     },
   },
@@ -104,7 +107,7 @@ export default {
       /**
        * Emitted when input value changes.
        *
-       * @property {String} newVal input value.
+       * @param {String} newVal input value.
        */
       this.$emit('input', newVal);
     },
@@ -113,55 +116,28 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.fr-icon-input-holder {
-  position: relative;
-
-  .fr-icon-input {
-    padding-left: 2.5rem;
-    border: none;
-
-    &::-webkit-search-cancel-button {
-      display: none;
-    }
-  }
-
-  .fr-icon {
-    position: absolute;
-    z-index: 1000;
-    margin-top: 16px;
-
-    &.fr-icon-input-left {
-      margin-left: 20px;
-    }
-
-    &.fr-icon-input-right {
-      right: 0;
-      margin-right: 18px;
-      cursor: pointer;
-      color: $gray-500;
-
-      &:hover {
-        color: $gray-900;
-      }
-    }
-  }
-
+.fr-search-input-holder {
   .input-group {
     border: 1px solid $gray-400;
     border-radius: 5px;
-  }
 
-  .form-control:focus {
-    border-color: transparent;
-    box-shadow: none;
-    outline: none;
-  }
+    .input-group-text {
+      padding-left: 1.25rem;
+      padding-right: 1.25rem;
+    }
 
-  .fr-icon-input:only-child:focus {
-    box-shadow: 0 0 0 1pt $blue;
-    outline: 0;
-    border-radius: 5px;
+    .input-group-append .btn {
+      color: $gray-900;
+    }
+
+    ::-webkit-search-cancel-button {
+      display: none;
+    }
+
+    .form-control:focus {
+      box-shadow: none;
+      outline: none;
+    }
   }
 }
-
 </style>
