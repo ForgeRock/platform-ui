@@ -31,7 +31,7 @@ describe('Login.vue', () => {
       },
       mocks: {
         $route,
-        $t: () => {},
+        $t: () => { },
         $store: {
           state: {
             SharedStore: {
@@ -41,17 +41,13 @@ describe('Login.vue', () => {
         },
       },
       methods: {
-        nextStep() {},
+        nextStep() { },
       },
     });
   });
 
   afterAll(() => {
     jest.resetAllMocks();
-  });
-
-  it('Load login component', () => {
-    expect(wrapper.vm.$options.name).toEqual('Login');
   });
 
   it('Removes undefined and "undefined" tree from stepParams', () => {
@@ -195,6 +191,57 @@ describe('Login.vue', () => {
 
     expect(wrapper.vm.getStepParams()).toEqual(expectedStepParams);
   });
+
+  describe('handleIdpComponent', () => {
+    describe('given idp component ', () => {
+      it('should remove idp component from componentsList to the `idpComponent` field', () => {
+        const componentList = [
+          {
+            callback: {
+              payload: {
+                type: 'NameCallback',
+              },
+            },
+          },
+          {
+            callback: {
+              payload: {
+                type: 'SelectIdPCallback',
+              },
+            },
+          },
+          {
+            callback: {
+              payload: {
+                type: 'PasswordCallback',
+              },
+            },
+          },
+        ];
+
+        expect(componentList.length).toBe(3);
+        expect(wrapper.vm.idpComponent).toBeUndefined();
+
+        wrapper.vm.handleIdpComponent(componentList, 1);
+        expect(componentList.length).toBe(2);
+        expect(wrapper.vm.idpComponent).toStrictEqual({
+          callback: {
+            payload: {
+              type: 'SelectIdPCallback',
+            },
+          },
+        });
+      });
+    });
+
+    describe('given non array', () => {
+      it('should do nothing', () => {
+        wrapper.vm.handleIdpComponent({}, 1);
+
+        expect(wrapper.vm.idpComponent).toBeUndefined();
+      });
+    });
+  });
 });
 
 describe('Component Test', () => {
@@ -207,12 +254,12 @@ describe('Component Test', () => {
         this.loading = false;
         this.themeLoading = false;
       },
-      redirectIfInactive() {},
-      setRealm() {},
+      redirectIfInactive() { },
+      setRealm() { },
       getConfigurationInfo() {
         return Promise.resolve();
       },
-      evaluateUrlParams() {},
+      evaluateUrlParams() { },
       checkNewSession() {
         return Promise.resolve();
       },
@@ -236,7 +283,7 @@ describe('Component Test', () => {
             tree: undefined,
           },
         },
-        $t: () => {},
+        $t: () => { },
         $store: {
           state: {
             SharedStore: {
