@@ -6,7 +6,6 @@
  */
 
 import { mount } from '@vue/test-utils';
-import dayjs from 'dayjs';
 import flushPromises from 'flush-promises';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
@@ -14,7 +13,6 @@ import * as DirectoryApi from '@/api/governance/DirectoryApi';
 import AddDelegateModal from './index';
 
 jest.mock('@/api/governance/DirectoryApi');
-jest.mock('dayjs');
 
 describe('AddDelegateModal', () => {
   let wrapper;
@@ -22,11 +20,9 @@ describe('AddDelegateModal', () => {
   CommonsApi.getResource = jest.fn().mockReturnValue(Promise.resolve({ data: {} }));
   DirectoryApi.addTaskProxy = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [] } }));
 
-  dayjs.mockImplementation((time) => ({
-    local: () => ({
-      format: () => time,
-    }),
-  }));
+  afterAll(() => {
+    jest.clearAllMocks();
+  });
 
   beforeEach(() => {
     jest.clearAllMocks();

@@ -167,7 +167,7 @@ import {
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
 import { ResourceType } from '@forgerock/platform-shared/src/utils/governance/types';
-import FrGovResourceSelect from '@forgerock/platform-shared/src/components/filterBuilder/components/GovResourceSelect';
+import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 
 const DEFAULT_PERMISSIONS = {
