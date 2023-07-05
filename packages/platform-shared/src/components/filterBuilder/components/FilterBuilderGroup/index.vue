@@ -63,7 +63,16 @@ of the MIT license. See the LICENSE file for details. -->
         :properties="properties"
         @add-rule="addRule"
         @remove-rule="removeRule"
-        @rule-change="ruleChange" />
+        @rule-change="ruleChange">
+        <template
+          v-for="(key, slotName) in $scopedSlots"
+          v-slot:[slotName]="slotData">
+          <!-- @slot passthrough slot -->
+          <slot
+            :name="slotName"
+            v-bind="slotData" />
+        </template>
+      </FrFilterBuilderRow>
       <FilterBuilderGroup
         v-else
         :condition-options="conditionOptions"
@@ -82,7 +91,16 @@ of the MIT license. See the LICENSE file for details. -->
         @add-rule="addRule"
         @operator-change="operatorChange"
         @remove-rule="removeRule"
-        @rule-change="ruleChange" />
+        @rule-change="ruleChange">
+        <template
+          v-for="(key, slotName) in $scopedSlots"
+          v-slot:[slotName]="slotData">
+          <!-- @slot passthrough slot -->
+          <slot
+            :name="slotName"
+            v-bind="slotData" />
+        </template>
+      </FilterBuilderGroup>
     </template>
   </BCard>
 </template>
