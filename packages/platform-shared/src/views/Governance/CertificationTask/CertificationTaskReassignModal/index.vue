@@ -61,7 +61,7 @@ import {
 } from 'bootstrap-vue';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrField from '@forgerock/platform-shared/src/components/Field';
-import FrGovResourceSelect from '@forgerock/platform-shared/src/components/filterBuilder/components/GovResourceSelect';
+import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
 import { reassignCertificationTasks } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import { ValidationObserver } from 'vee-validate';
 

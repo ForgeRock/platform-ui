@@ -53,7 +53,7 @@ import {
 } from 'bootstrap-vue';
 import { ValidationObserver } from 'vee-validate';
 import FrField from '@forgerock/platform-shared/src/components/Field';
-import FrGovResourceSelect from '@forgerock/platform-shared/src/components/filterBuilder/components/GovResourceSelect';
+import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
 
 /**
  * @constant {Object}

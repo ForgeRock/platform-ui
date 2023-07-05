@@ -72,7 +72,7 @@ import {
 import dayjs from 'dayjs';
 import FrDatepicker from '@forgerock/platform-shared/src/components/Datepicker';
 import FrField from '@forgerock/platform-shared/src/components/Field';
-import FrGovResourceSelect from '@forgerock/platform-shared/src/components/filterBuilder/components/GovResourceSelect';
+import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import { ValidationObserver } from 'vee-validate';
 import { addTaskProxy } from '@/api/governance/DirectoryApi';
@@ -118,10 +118,10 @@ export default {
 
       if (this.enableTimeConstraint) {
         startDate = this.startDate
-          ? dayjs(this.startDate).local().format()
+          ? dayjs(this.startDate).local().format('YYYY-MM-DD')
           : null;
         endDate = this.endDate
-          ? dayjs(this.endDate).local().format()
+          ? dayjs(this.endDate).local().format('YYYY-MM-DD')
           : null;
       }
 

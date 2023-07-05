@@ -44,19 +44,20 @@ of the MIT license. See the LICENSE file for details. -->
             class="rule-value-col mb-2 mb-md-0"
             v-if="!conditionIsPresent"
             :md="true">
-            <FrGovResourceSelect
-              v-if="inputValue.type === 'managedObject' && selectConditionOptions.value !== 'EXISTS'"
-              v-model="inputValue.value"
-              @input="ruleChange({ value: $event })"
-              :resource-path="getResourcePath(selectPropOptions.value)" />
-            <FrField
-              v-else
-              v-model="inputValue.value"
-              name="inputValue"
-              :disabled="disabled"
-              :options="inputValue.options"
-              :type="inputValue.type"
-              @input="ruleChange({ value: $event })" />
+            <slot
+              name="valueField"
+              :inputValue="inputValue"
+              :selectedCondition="selectConditionOptions.value"
+              :selectedProp="selectPropOptions.value"
+              :ruleChange="ruleChange">
+              <FrField
+                v-model="inputValue.value"
+                name="inputValue"
+                :disabled="disabled"
+                :options="inputValue.options"
+                :type="inputValue.type"
+                @input="ruleChange({ value: $event })" />
+            </slot>
           </BCol>
         </BFormRow>
       </div>
@@ -78,9 +79,8 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   BCard, BCol, BFormRow,
 } from 'bootstrap-vue';
-import { capitalize, find } from 'lodash';
+import { capitalize } from 'lodash';
 import FrField from '@forgerock/platform-shared/src/components/Field';
-import FrGovResourceSelect from '../GovResourceSelect';
 import FrFilterBuilderAddButton from '../FilterBuilderAddButton';
 import FrFilterBuilderRemoveButton from '../FilterBuilderRemoveButton';
 import { getTypeFromValue } from '../../utils/QueryFilterDefaults';
@@ -94,7 +94,6 @@ export default {
     FrField,
     FrFilterBuilderAddButton,
     FrFilterBuilderRemoveButton,
-    FrGovResourceSelect,
   },
   computed: {
     selectConditionOptions() {
@@ -200,11 +199,11 @@ export default {
         });
       }
     },
+    properties() {
+      this.inputValue = this.parseType(this.rule.field, this.rule.value);
+    },
   },
   methods: {
-    getResourcePath(prop) {
-      return find(this.properties, ((x) => x.value === prop)).path;
-    },
     addRule(type) {
       this.$emit('add-rule', {
         depth: this.depth, index: this.index, path: this.path, type,
