@@ -18,7 +18,7 @@ function updateHypothetical() {
   const d = getHypothetical();
   const detail = d3.select('#roc-pr-chart-detail');
 
-  const content = detail.select('.roc-pr-chart-detail-content');
+  const content = detail.select('#roc-pr-chart-detail-content');
 
   content.selectAll('*').remove();
 
