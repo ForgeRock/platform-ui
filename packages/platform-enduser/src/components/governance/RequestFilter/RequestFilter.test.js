@@ -18,8 +18,8 @@ const baseFilter = {
     low: true,
   },
   requestType: null,
-  requestedFor: null,
-  requester: null,
+  requestedFor: 'all',
+  requester: 'all',
   requestId: null,
 };
 
@@ -68,27 +68,27 @@ describe('RequestFilter', () => {
       const expectedFilter = cloneDeep(baseFilter);
       expectedFilter.priorities.high = false;
 
-      expect(wrapper.emitted()['filter-change'][2]).toEqual([{
+      expect(wrapper.emitted()['filter-change'][0]).toEqual([{
         filter: expectedFilter,
-        count: 1,
+        count: 3,
       }]);
 
       const medPriority = findByTestId(wrapper, 'priority-medium');
       medPriority.setChecked(false);
       expectedFilter.priorities.medium = false;
 
-      expect(wrapper.emitted()['filter-change'][3]).toEqual([{
+      expect(wrapper.emitted()['filter-change'][1]).toEqual([{
         filter: expectedFilter,
-        count: 2,
+        count: 4,
       }]);
 
       const lowPriority = findByTestId(wrapper, 'priority-low');
       lowPriority.setChecked(false);
       expectedFilter.priorities.low = false;
 
-      expect(wrapper.emitted()['filter-change'][4]).toEqual([{
+      expect(wrapper.emitted()['filter-change'][2]).toEqual([{
         filter: expectedFilter,
-        count: 3,
+        count: 5,
       }]);
     });
   });
@@ -105,7 +105,7 @@ describe('RequestFilter', () => {
 
     expect(wrapper.emitted()['filter-change'].pop()).toEqual([{
       filter: expectedFilter,
-      count: 1,
+      count: 3,
     }]);
   });
 
@@ -121,7 +121,7 @@ describe('RequestFilter', () => {
 
     expect(wrapper.emitted()['filter-change'].pop()).toEqual([{
       filter: expectedFilter,
-      count: 1,
+      count: 2,
     }]);
   });
 
@@ -137,7 +137,7 @@ describe('RequestFilter', () => {
 
     expect(wrapper.emitted()['filter-change'].pop()).toEqual([{
       filter: expectedFilter,
-      count: 1,
+      count: 2,
     }]);
   });
 
@@ -149,7 +149,7 @@ describe('RequestFilter', () => {
 
     expect(wrapper.emitted()['filter-change'].pop()).toEqual([{
       filter: expectedFilter,
-      count: 1,
+      count: 3,
     }]);
   });
 });

@@ -6,7 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <div class="fr-search-input-holder">
     <BInputGroup>
       <BInputGroupPrepend>
-        <BInputGroupText class="border-none">
+        <BInputGroupText class="border-0">
           <FrIcon :name="prependIcon" />
         </BInputGroupText>
       </BInputGroupPrepend>
@@ -23,7 +23,7 @@ of the MIT license. See the LICENSE file for details. -->
         @keydown.native.enter="$emit('search')"
         @keydown.native.esc="clearSearch"
         v-model="value"
-        class="pl-0 mx-0 border-none"
+        class="pl-0 mx-0 border-0"
         type="search" />
       <slot name="append" />
       <BInputGroupAppend v-if="value.length">
