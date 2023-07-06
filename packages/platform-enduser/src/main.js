@@ -24,6 +24,7 @@ import {
 } from 'vee-validate';
 import Vue from 'vue';
 import AppAuthHelper from 'appauthhelper-enduser/appAuthHelperCompat';
+import { Config, SessionManager } from '@forgerock/javascript-sdk';
 import SessionCheck from 'oidcsessioncheck-enduser';
 import VueSanitize from 'vue-sanitize';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
@@ -130,6 +131,9 @@ Vue.component('RouterView', RouterView);
 Vue.component('RouterLink', RouterLink);
 
 const loadApp = () => {
+  Config.set({
+    serverConfig: { baseUrl: getFQDN(`${process.env.VUE_APP_AM_URL}/`) },
+  });
   /* eslint-disable no-new */
   new Vue({
     el: '#app',
@@ -290,6 +294,9 @@ const addAppAuth = (realm) => {
     // clear hash so user is not directed to previous hash on subsequent logins
     if (clearHash) window.location.hash = '';
 
+    // SessionManager.logout is required here in conjunction with AppAuthHelper.logout
+    // so any persistent cookies that have been set are removed
+    SessionManager.logout();
     AppAuthHelper.logout().then(() => {
       /**
        * If there is a postLogoutUrlClaim and the logout button was clicked (clearHash === true)
