@@ -140,7 +140,7 @@
     transform: none !important;
 
     &::before {
-      content: 'expand_more' / '';
+      content: 'expand_more';
       font-family: 'Material Icons Outlined', sans-serif;
       font-size: 1rem;
       line-height: 1;
@@ -150,6 +150,14 @@
       color: initial;
       margin: 0;
       border: none;
+    }
+
+    @supports (content: 'expand_more' / '') {
+      .multiselect__select {
+        &::before {
+          content: 'expand_more' / '';
+        }
+      }
     }
   }
 
