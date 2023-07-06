@@ -462,10 +462,16 @@ export default {
 
     .multiselect__select::before {
       border: none;
-      content: 'expand_more' / '';
+      content: 'expand_more';
       font-family: 'Material Icons Outlined', sans-serif;
       color: $blue;
       top: 35%;
+    }
+
+    @supports (content: 'expand_more' / '') {
+      .multiselect__select::before {
+        content: 'expand_more' / '';
+      }
     }
 
     .multiselect__single {
