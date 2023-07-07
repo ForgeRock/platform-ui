@@ -87,6 +87,7 @@ export default {
             subItems: (this.$store.state.SharedStore.governanceEnabledV3 === true
               ? [
                 {
+                  showBadgeWithContentFromStore: 'approvalsCount',
                   displayName: 'sideMenu.approvals',
                   routeTo: {
                     name: 'Approvals',
