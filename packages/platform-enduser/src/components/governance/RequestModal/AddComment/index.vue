@@ -4,24 +4,27 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="p-25">
-    {{ subtitle() }}
+    <FrField
+      @input="$emit('request-comment', $event);"
+      name="addComment"
+      type="textarea"
+      validation="required"
+      :label="$t('common.comment')" />
   </div>
 </template>
 
 <script>
 
+import FrField from '@forgerock/platform-shared/src/components/Field';
+
 export default {
-  name: 'ApproveRequest',
-  components: { },
-  methods: {
-    subtitle() {
-      return this.$t('governance.requestModal.subtitle', { modal: this.$t('common.approve').toLowerCase() });
-    },
-  },
+  name: 'AddComment',
+  components: { FrField },
 };
+
 </script>
 <style scoped>
-  .p-25 {
+  .p-25{
     padding-bottom: 25px;
   }
 </style>

@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount, shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import CertificationForwardModal from './index';
 
 describe('CertificationForwardModal', () => {
@@ -23,47 +23,32 @@ describe('CertificationForwardModal', () => {
     it('component should load correctly', () => {
       expect(wrapper.name()).toBe('CertificationForwardModal');
       expect(wrapper.vm.comment).toBe('');
-      expect(wrapper.vm.forwardToUser).toBe('');
-      expect(wrapper.vm.forwardToRole).toBe('');
     });
 
-    it('reset method should reset the component data values', () => {
-      wrapper.vm.comment = 'Test comment';
-      wrapper.vm.forwardToUser = 'Test user';
-      wrapper.vm.forwardToRole = 'Test role';
-
-      wrapper.vm.reset();
-
-      expect(wrapper.vm.comment).toBe('');
-      expect(wrapper.vm.forwardToUser).toBe('');
-      expect(wrapper.vm.forwardToRole).toBe('');
+    it('component should change value on updated actor', () => {
+      wrapper.vm.updateActors('testActor');
+      expect(wrapper.vm.newActorId).toBe('testActor');
     });
-  });
 
-  describe('component mounted', () => {
-    it('reset method should reset the component data values and textarea comment value', () => {
-      wrapper = mount(CertificationForwardModal, {
-        mocks: {
-          $t: (t) => t,
-        },
-        data() {
-          return {
-            isTesting: true,
-          };
-        },
+    it('component should change value on updated comment', () => {
+      wrapper.vm.updateComment('testComment');
+      expect(wrapper.vm.comment).toBe('testComment');
+    });
+
+    it('component should forwardItem with correct payload', () => {
+      wrapper.setProps({
+        bulk: true,
       });
-
-      const comment = 'test comment';
-      const commentTextarea = wrapper.find('textarea');
-      commentTextarea.setValue(comment);
-
-      expect(wrapper.vm.comment).toBe(comment);
-      expect(commentTextarea.element.value).toBe(comment);
-
-      wrapper.vm.reset();
-
-      expect(wrapper.vm.comment).toBe('');
-      expect(commentTextarea.element.value).toBe('');
+      wrapper.vm.comment = 'testComment';
+      wrapper.vm.newActorId = 'testId';
+      const payload = {
+        id: undefined,
+        comment: wrapper.vm.comment,
+        newActorId: wrapper.vm.newActorId,
+      };
+      wrapper.vm.forwardItem();
+      expect(wrapper.emitted()['forward-bulk']).toBeTruthy();
+      expect(wrapper.emitted()['forward-bulk'][0]).toEqual([payload]);
     });
   });
 });

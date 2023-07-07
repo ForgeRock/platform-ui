@@ -366,6 +366,41 @@
     },
     "hideFilters": "Hide Filters",
     "showFilters": "Show Filters",
+    "requestModal": {
+      "titles": {
+        "addComment": "Add a Comment",
+        "approve": "Approve Request",
+        "details": "Request Details",
+        "forward": "Forward Request",
+        "reject": "Reject Request"
+      },
+      "messages": {
+        "approve": "Approved Request",
+        "comment": "Comment Added",
+        "errorApprove":"Error Approving Request",
+        "errorComment":"Error Adding Comment",
+        "errorReject":"Error Rejecting Request",
+        "errorForward":"Error Forwarding Request",
+        "forward": "Request Forwarded",
+        "loadingApprove":"Approving Request...",
+        "loadingComment":"Adding Comment...",
+        "loadingReject":"Rejecting Request...",
+        "loadingForward":"Forwarding Request...",
+        "reject": "Rejected Request"
+      },
+      "reject": {
+        "footer": "Provide a justification for why this request is rejected.",
+        "justification": "Justification"
+      },
+      "forward": {
+        "description":"Forward this request to"
+      },
+      "addComment": "Add Comment",
+      "comments": "Comments",
+      "requestDetailsLink": "Request Details",
+      "subtitle": "Are you sure you want to {modal} this request?",
+      "workflow": "Workflow"
+    },
     "sortBy": "Sort by"
   }
 }
