@@ -6,9 +6,11 @@
  */
 
 import { mount } from '@vue/test-utils';
+import flushPromises from 'flush-promises';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import getPriorityImageSrc from '@/components/utils/governance/AccessRequestUtils';
 import RequestModal, { REQUEST_MODAL_TYPES } from './index';
+import i18n from '@/i18n';
 
 jest.mock('@/components/utils/governance/AccessRequestUtils');
 
@@ -50,7 +52,7 @@ describe('RequestModal', () => {
   const mountGovernanceRequestModal = (propsData) => mount(RequestModal, {
     attachTo: document.body,
     mocks: {
-      $t: () => {},
+      $t: (text, prop) => i18n.t(text, prop),
     },
     propsData,
   });
@@ -100,5 +102,93 @@ describe('RequestModal', () => {
 
     approveButton = await findByTestId(wrapper, 'governance-request-modal-goto-approve-btn');
     expect(approveButton.exists()).toBeTruthy();
+  });
+  it('changeModal should change the current component type', async () => {
+    const wrapper = mountGovernanceRequestModal(typicalPropsData);
+    expect(wrapper.vm.modalType).toEqual('DETAILS');
+    wrapper.vm.modalType = 'APPROVE';
+    expect(wrapper.vm.modalType).toEqual('APPROVE');
+    wrapper.vm.modalType = 'COMMENT';
+    expect(wrapper.vm.modalType).toEqual('COMMENT');
+    wrapper.vm.modalType = 'FORWARD';
+    expect(wrapper.vm.modalType).toEqual('FORWARD');
+    wrapper.vm.modalType = 'REJECT';
+    expect(wrapper.vm.modalType).toEqual('REJECT');
+  });
+  it('modal got updateActors emition and will update information', () => {
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
+    expect(wrapper.vm.actors).toEqual('');
+    wrapper.vm.updateActors('testActor');
+    expect(wrapper.vm.actors).toEqual('testActor');
+  });
+  it('modal got updateComment emition and will update information', () => {
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
+    expect(wrapper.vm.comment).toEqual('');
+    wrapper.vm.updateComment('testComment');
+    expect(wrapper.vm.comment).toEqual('testComment');
+  });
+  it('reset modal will reset Modal type to original type', () => {
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
+    expect(wrapper.vm.modalType).toEqual('DETAILS');
+    wrapper.vm.modalType = 'APPROVE';
+    expect(wrapper.vm.modalType).toEqual('APPROVE');
+    wrapper.vm.resetModal();
+    expect(wrapper.vm.modalType).toEqual('DETAILS');
+  });
+  it('test loading modal', async () => {
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
+    wrapper.vm.loading = true;
+    await flushPromises();
+    const loader = await findByTestId(wrapper, 'loading-modal');
+    await wrapper.vm.$nextTick();
+    const loadingText = await findByTestId(wrapper, 'loading-text');
+    await wrapper.vm.$nextTick();
+    const detailsFooter = await findByTestId(wrapper, 'details-footer');
+    await wrapper.vm.$nextTick();
+    const othersFooter = await findByTestId(wrapper, 'others-footer');
+    await wrapper.vm.$nextTick();
+    expect(detailsFooter.exists()).toBeFalsy();
+    expect(othersFooter.exists()).toBeFalsy();
+    expect(loader.exists()).toBeTruthy();
+    expect(loadingText.text()).toEqual('Approving Request...');
+  });
+  it('test comment loading modal', async () => {
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
+    wrapper.vm.loading = true;
+    wrapper.vm.modalType = 'COMMENT';
+
+    await flushPromises();
+    const loader = await findByTestId(wrapper, 'loading-modal');
+    await wrapper.vm.$nextTick();
+    const loadingText = await findByTestId(wrapper, 'loading-text');
+    await wrapper.vm.$nextTick();
+    expect(loader.exists()).toBeTruthy();
+    expect(loadingText.text()).toEqual('Adding Comment...');
+  });
+  it('test reassign loading modal', async () => {
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
+    wrapper.vm.loading = true;
+    wrapper.vm.modalType = 'REASSIGN';
+
+    await flushPromises();
+    const loader = await findByTestId(wrapper, 'loading-modal');
+    await wrapper.vm.$nextTick();
+    const loadingText = await findByTestId(wrapper, 'loading-text');
+    await wrapper.vm.$nextTick();
+    expect(loader.exists()).toBeTruthy();
+    expect(loadingText.text()).toEqual('Forwarding Request...');
+  });
+  it('test reject loading modal', async () => {
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
+    wrapper.vm.loading = true;
+    wrapper.vm.modalType = 'REJECT';
+
+    await flushPromises();
+    const loader = await findByTestId(wrapper, 'loading-modal');
+    await wrapper.vm.$nextTick();
+    const loadingText = await findByTestId(wrapper, 'loading-text');
+    await wrapper.vm.$nextTick();
+    expect(loader.exists()).toBeTruthy();
+    expect(loadingText.text()).toEqual('Rejecting Request...');
   });
 });

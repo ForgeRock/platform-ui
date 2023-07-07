@@ -49,7 +49,7 @@ export default {
       tabs: [
         {
           component: 'FrDetails',
-          title: this.$t('governance.accessRequest.requestModal.details'),
+          title: this.$t('common.details'),
         },
         {
           component: '',
