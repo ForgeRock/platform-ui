@@ -6,6 +6,7 @@
  */
 
 import '@testing-library/cypress/add-commands';
+import 'cypress-file-upload';
 
 Cypress.Commands.add('clearSessionStorage', () => {
   cy.window().then((win) => {
@@ -40,4 +41,31 @@ Cypress.Commands.add('logout', () => {
   cy.clearCookies();
   cy.clearLocalStorage();
   cy.clearSessionStorage();
+});
+
+/**
+ * Use the admin UI tree import feature to import all trees in the passed array
+ * @param {Array} fixtureArray an array containing the name of test fixture files to import as trees
+ */
+Cypress.Commands.add('importTrees', (fixtureArray) => {
+  const realm = Cypress.env('IS_FRAAS') ? 'alpha' : '/';
+  const treeListUrl = `${Cypress.config().baseUrl}/platform/?realm=${realm}#/journeys`;
+
+  cy.login();
+  cy.visit(treeListUrl);
+
+  fixtureArray.forEach((fixtureName) => {
+    cy.findByRole('button', { name: 'Import' }).click();
+    cy.findByRole('dialog', { name: 'Import Journeys' }).within(() => {
+      cy.findByRole('button', { name: 'Skip Backup', timeout: 25000 }).should('be.enabled').click();
+      cy.findByRole('button', { name: 'Skip Backup' }).click();
+
+      // Use the test fixture as upload data
+      cy.get('[type="file"]').attachFile(fixtureName);
+      cy.findByRole('button', { name: 'Next' }).should('be.enabled').click();
+      cy.findByRole('button', { name: 'Start Import' }).should('be.enabled').click();
+      cy.contains('Import Complete').should('be.visible');
+      cy.findByRole('button', { name: 'Done' }).click();
+    });
+  });
 });

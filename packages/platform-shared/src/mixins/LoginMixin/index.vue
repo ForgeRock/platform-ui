@@ -4,7 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <script>
 import {
-  fromPairs, isEmpty, map, last, has, noop,
+  last, has, noop,
 } from 'lodash';
 import {
   CallbackType, FRWebAuthn, WebAuthnStepType,
@@ -120,26 +120,6 @@ export function verifyGotoUrlAndRedirect(url, realm, isAdmin = false, isGotoOnFa
       return redirectUserBasedOnType();
     })
     .catch(() => redirectUserBasedOnType());
-}
-
-/**
- * Returns the query string from the URI
- * @returns {string} Unescaped query string or empty string if no query string was found
- */
-export function getCurrentQueryString() {
-  const queryString = window.location.search;
-
-  return queryString.substr(1, queryString.length);
-}
-
-/**
- * @description Creates an object of key value pairs from the passed in query string
- * @param {string} paramString A string containing a query string
- * @returns {object} An Object of key value pairs
- */
-export function parseParameters(paramString) {
-  const object = isEmpty(paramString) ? {} : fromPairs(map(paramString.split('&'), (pair) => pair.split('=')));
-  return object;
 }
 
 /**
@@ -357,8 +337,6 @@ export default {
     isDefaultPath,
     isSamlURL,
     verifyGotoUrlAndRedirect,
-    getCurrentQueryString,
-    parseParameters,
     isCallbackRequired,
     getTranslatedPolicyFailures,
     getField,
