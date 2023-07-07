@@ -318,6 +318,14 @@ import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationM
 import { getThemeIdFromStageString } from '@forgerock/platform-shared/src/utils/stage';
 import { svgShapesSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 import i18n from '@/i18n';
+import {
+  resumingTreeFollowingRedirect,
+  resumingSuspendedTree,
+  addTreeResumeDataToStorage,
+  getResumeDataFromStorageAndClear,
+  shouldAbortResume,
+} from '../../utils/authResumptionUtil';
+import { getCurrentQueryString, parseParameters, replaceUrlParams } from '../../utils/urlUtil';
 
 export default {
   name: 'Login',
@@ -443,6 +451,7 @@ export default {
       showScriptElms: false,
       step: undefined,
       suspendedId: undefined,
+      treeResumptionParameters: undefined,
       treeId: undefined,
       svgShapesSanitizerConfig,
       screenReaderMessage: '',
@@ -654,7 +663,7 @@ export default {
     checkNewSession() {
       return new Promise((resolve) => {
         // need to logout if query param is present and equal to newsession
-        if (new URLSearchParams(this.getCurrentQueryString()).get('arg') === 'newsession') {
+        if (new URLSearchParams(getCurrentQueryString()).get('arg') === 'newsession') {
           SessionManager.logout().then(() => {
             resolve();
           });
@@ -671,71 +680,51 @@ export default {
       }
     },
     /**
-     * @description Look at the url and see if we are returning to a tree from an Email Suspend Node, Redirect Callback, or SAML.
-     * Must be default route and contain the strings "suspendedId=" and "authIndexValue=" for Email Suspend Node.
-     * Must contain the strings "state=" and "code=" and "scope=" for redirect callback.
-     * Must contain reentry cookie for SAML redirect.
+     * Reads query parameters to determine if a tree is being resumed from a suspend or redirect and acts appropriately.
+     * Also sets the page title from the URL and clears up and transforms query parameters.
+     * The presense of the "suspendedId" query parameter indicates we're restarting a tree that has been suspended.
+     * Presence of a reentry cookie (and some known query params) indicates we're resuming after a redirect.
      */
     evaluateUrlParams() {
-      const paramString = this.getCurrentQueryString();
+      const paramString = getCurrentQueryString();
       const params = new URLSearchParams(paramString);
-      const realm = params.get('realm') || '/';
-      const hash = window.location.hash || '';
 
-      const createParamString = (urlParams) => {
-        const ampersand = urlParams.toString().length > 1 ? '&' : '';
-        let stringParams = '';
-        urlParams.forEach((value, key) => {
-          if (stringParams.length) {
-            stringParams += '&';
-          }
-          if (key === 'authIndexValue' && urlParams.get('authIndexType') === 'service') {
-            stringParams += `${key}=${value}`;
-          } else {
-            stringParams += `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
-          }
-        });
-        return `${ampersand}${stringParams}`;
-      };
+      this.setPageTitle(window.location.hash, params);
 
-      this.setPageTitle(hash, params);
-
-      if (realm) params.delete('realm');
+      if (params.has('realm')) params.delete('realm');
       // arg query parameter handled in checkNewSession method
       if (params.get('arg') === 'newsession') params.delete('arg');
-      if (this.$route.name === 'login' && paramString.includes('suspendedId=') && paramString.includes('authIndexValue=')) {
+      if (resumingSuspendedTree(this.$route.name, params)) {
         // setting params in vue data then deleting to remove redundant params from URL
         this.treeId = params.get('authIndexValue');
         params.delete('authIndexValue');
         params.delete('authIndexType');
         this.suspendedId = params.get('suspendedId');
         params.delete('suspendedId');
+      } else if (resumingTreeFollowingRedirect(params)) {
+        // We can assume the tree id in the URL is always valid
+        this.treeId = params.get('authIndexValue');
 
-        const stringParams = createParamString(params);
-        this.removeUrlParams();
-        window.history.replaceState(null, null, `?realm=${this.realm}${stringParams}`);
-      } else if (params.get('state') || params.get('code') || params.get('scope') || params.get('form_post_entry') || params.get('responsekey')) {
-        this.state = params.get('state');
-        params.delete('state');
-        this.code = params.get('code');
-        params.delete('code');
-        this.scope = params.get('scope');
-        params.delete('scope');
-        this.form_post_entry = params.get('form_post_entry');
-        params.delete('form_post_entry');
-        this.responsekey = params.get('responsekey');
-        params.delete('responsekey');
+        // Load tree data to resume the journey, clearing down resumption data
+        const { urlAtRedirect, step } = getResumeDataFromStorageAndClear();
 
-        // session storage is used to resume a tree after returning from a redirect
-        const { authIndexValue, step, realm: stepRealm } = this.getStepFromStorage();
-
-        this.treeId = authIndexValue;
-        this.step = step ? new FRStep(step.payload) : undefined;
-        this.realm = stepRealm || realm;
-
-        const stringParams = createParamString(params);
-        this.removeUrlParams();
-        window.history.replaceState(null, null, `?realm=${this.realm}${stringParams}`);
+        // Check if the resume operation is valid or should be aborted (this is extra platform-ui functionality on top of AM/XUI)
+        if (!shouldAbortResume(urlAtRedirect, window.location.href)) {
+          this.step = new FRStep(step.payload);
+          // Tree resumption parameters should generally only be supplied once, so we remove them from the query string after storing them in memory (see IAM-492)
+          this.treeResumptionParameters = {
+            state: params.has('state') ? params.get('state') : undefined,
+            code: params.has('code') ? params.get('code') : undefined,
+            scope: params.has('scope') ? params.get('scope') : undefined,
+            form_post_entry: params.has('form_post_entry') ? params.get('form_post_entry') : undefined,
+            responsekey: params.has('responsekey') ? params.get('responsekey') : undefined,
+          };
+          params.delete('state');
+          params.delete('code');
+          params.delete('scope');
+          params.delete('form_post_entry');
+          params.delete('responsekey');
+        }
       } else {
         const resourceUrlParam = params.get('resourceURL');
         if (resourceUrlParam) params.delete('resourceURL');
@@ -762,11 +751,10 @@ export default {
         } else if (params.get('authIndexValue') && params.get('authIndexType') === 'service') {
           this.treeId = params.get('authIndexValue');
         }
-
-        this.removeUrlParams();
-        const stringParams = createParamString(params);
-        window.history.replaceState(null, null, `?realm=${this.realm}${stringParams}${hash}`);
       }
+
+      // Once the URL params and state have been updated, update the URL to have just the parameters we want going forwards
+      replaceUrlParams(this.realm, params);
     },
     /**
      * @description Used to get link to start of tree from stepParams
@@ -846,21 +834,9 @@ export default {
         return null;
       }
     },
-    /**
-     * @description If session storage has step information, extract it and clear session storage
-     * @returns {Object} two properties needed to resume tree: step and authIndex value
-     */
-    getStepFromStorage() {
-      const stepData = localStorage.getItem('stepData');
-      if (stepData !== null) {
-        localStorage.removeItem('stepData');
-        return JSON.parse(stepData);
-      }
-      return { step: undefined, authIndexValue: undefined, realm: undefined };
-    },
     getStepParams() {
-      const paramString = this.getCurrentQueryString();
-      const paramsObj = this.parseParameters(paramString);
+      const paramString = getCurrentQueryString();
+      const paramsObj = parseParameters(paramString);
       if (paramsObj.authIndexValue) {
         paramsObj.authIndexValue = decodeURI(paramsObj.authIndexValue);
       }
@@ -886,12 +862,8 @@ export default {
       // add the "suspendId" for email redirects or "code", "state" and "scope" in other case to step query params
       if (this.suspendedId) {
         stepParams.query.suspendedId = this.suspendedId;
-      } else {
-        stepParams.query.code = this.code ? this.code : undefined;
-        stepParams.query.state = this.state ? this.state : undefined;
-        stepParams.query.scope = this.scope ? this.scope : undefined;
-        stepParams.query.form_post_entry = this.form_post_entry ? this.form_post_entry : undefined;
-        stepParams.query.responsekey = this.responsekey ? this.responsekey : undefined;
+      } else if (this.treeResumptionParameters) {
+        stepParams.query = { ...stepParams.query, ...this.treeResumptionParameters };
       }
 
       // stepParams.query.realm never needs to be included. We are already sending stepParams.realmPath which is what the
@@ -917,12 +889,7 @@ export default {
 
       if (expectToReturnFromRedirect) {
         // Save current step information for later resumption of tree.
-        const stepData = {
-          authIndexValue: this.treeId || this.$route.params.tree,
-          realm: this.realm,
-          step: this.step,
-        };
-        localStorage.setItem('stepData', JSON.stringify(stepData));
+        addTreeResumeDataToStorage(this.step, window.location.href);
       }
 
       if (redirectByPost) {
@@ -1017,13 +984,9 @@ export default {
           const previousStep = this.step;
           this.step = step;
 
-          // these step params only need to be sent one time
-          if (this.code || this.state || this.scope || this.form_post_entry || this.responsekey) {
-            this.code = undefined;
-            this.state = undefined;
-            this.scope = undefined;
-            this.form_post_entry = undefined;
-            this.responsekey = undefined;
+          // Tree resumption parameters should generally only be supplied once, so we remove them from memory after we've sent them to the SDK (see IAM-492)
+          if (this.treeResumptionParameters) {
+            this.treeResumptionParameters = undefined;
           }
 
           switch (step.type) {
@@ -1151,14 +1114,6 @@ export default {
         }
       });
     },
-    removeUrlParams() {
-      // remove query params from the url
-      window.history.replaceState(null, null, window.location.pathname);
-      // if a tree is defined reset the hash to the proper tree
-      if (this.treeId) {
-        window.location.hash = `service/${this.treeId}`;
-      }
-    },
     /**
     * AllowListings is a AM auth tree setting that can be enabled. When it is
     * enabled an extra whitelist-state parameter is sent in the authId of every
@@ -1204,8 +1159,7 @@ export default {
      * Sets page title depending on the journey service type
      *
      * @param {String} hash - window.location.hash
-     * @param {Oject} params - params.get(string)
-     *
+     * @param {URLSearchParams} params - params.get(string)
      */
     setPageTitle(hash, params) {
       // For the following registration url params:

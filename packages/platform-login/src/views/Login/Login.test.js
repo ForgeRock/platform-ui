@@ -10,6 +10,8 @@ import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import flushPromises from 'flush-promises';
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 import { URLSearchParams } from 'url';
+import * as urlUtil from '../../utils/urlUtil';
+import * as authResumptionUtil from '../../utils/authResumptionUtil';
 import i18n from '@/i18n';
 import Login from './index';
 
@@ -42,6 +44,10 @@ describe('Login.vue', () => {
         nextStep() {},
       },
     });
+  });
+
+  afterAll(() => {
+    jest.resetAllMocks();
   });
 
   it('Load login component', () => {
@@ -145,7 +151,7 @@ describe('Login.vue', () => {
   });
 
   it('keeps params like noSession when is a link from an Email URL', () => {
-    const getCurrentQueryString = () => 'noSession=true&param1=test';
+    jest.spyOn(urlUtil, 'getCurrentQueryString').mockReturnValue('noSession=true&param1=test');
 
     const expectedStepParams = {
       query: {
@@ -160,12 +166,12 @@ describe('Login.vue', () => {
       realm: 'test',
       suspendedId: 'test',
     });
-    wrapper.setMethods({ getCurrentQueryString });
+
     expect(wrapper.vm.getStepParams()).toEqual(expectedStepParams);
   });
 
   it('keeps params like noSession when is a redirect from a callback ', () => {
-    const getCurrentQueryString = () => 'noSession=true&param1=test';
+    jest.spyOn(urlUtil, 'getCurrentQueryString').mockReturnValue('noSession=true&param1=test');
 
     const expectedStepParams = {
       query: {
@@ -181,120 +187,137 @@ describe('Login.vue', () => {
     wrapper.setData({
       realm: 'test',
     });
-    wrapper.vm.code = 'test';
-    wrapper.vm.state = 'test';
-    wrapper.vm.scope = 'test';
-    wrapper.setMethods({ getCurrentQueryString });
+    wrapper.vm.treeResumptionParameters = {
+      code: 'test',
+      state: 'test',
+      scope: 'test',
+    };
+
     expect(wrapper.vm.getStepParams()).toEqual(expectedStepParams);
   });
 });
 
 describe('Component Test', () => {
-  const originalWindow = window;
-  global.URLSearchParams = URLSearchParams;
+  describe('Loads login callback components with extra query parameters in the URL', () => {
+    const originalWindow = window;
+    global.URLSearchParams = URLSearchParams;
 
-  const mountMethods = {
-    nextStep() {
-      this.loading = false;
-      this.themeLoading = false;
-    },
-    redirectIfInactive() {},
-    setRealm() {},
-    getConfigurationInfo() {
-      return Promise.resolve();
-    },
-    evaluateUrlParams() {},
-    checkNewSession() {
-      return Promise.resolve();
-    },
-  };
-
-  const setUrl = (url) => {
-    // eslint-disable-next-line no-global-assign
-    delete window.location;
-    window.location = new URL(url);
-  };
-
-  const mountLogin = ({ methods }) => mount(Login, {
-    i18n,
-    stubs: {
-      'router-link': true,
-    },
-    methods,
-    mocks: {
-      $route: {
-        params: {
-          tree: undefined,
-        },
+    const mountMethods = {
+      nextStep() {
+        this.loading = false;
+        this.themeLoading = false;
       },
-      $t: () => {},
-      $store: {
-        state: {
-          SharedStore: {
-            webStorageAvailable: true,
+      redirectIfInactive() {},
+      setRealm() {},
+      getConfigurationInfo() {
+        return Promise.resolve();
+      },
+      evaluateUrlParams() {},
+      checkNewSession() {
+        return Promise.resolve();
+      },
+    };
+
+    const setUrl = (url) => {
+      // eslint-disable-next-line no-global-assign
+      delete window.location;
+      window.location = new URL(url);
+    };
+
+    const mountLogin = ({ methods }) => mount(Login, {
+      i18n,
+      stubs: {
+        'router-link': true,
+      },
+      methods,
+      mocks: {
+        $route: {
+          params: {
+            tree: undefined,
+          },
+        },
+        $t: () => {},
+        $store: {
+          state: {
+            SharedStore: {
+              webStorageAvailable: true,
+            },
           },
         },
       },
-    },
-    mixins: [LoginMixin],
-  });
+      mixins: [LoginMixin],
+    });
 
-  let replaceState;
-  beforeEach(() => {
-    replaceState = jest.fn();
-    Object.defineProperty(global, 'window', {
-      writable: true,
-      value: {
-        location: {},
-        history: {
-          replaceState,
+    let replaceState;
+
+    beforeAll(() => {
+      jest.restoreAllMocks();
+    });
+
+    beforeEach(() => {
+      replaceState = jest.fn();
+      Object.defineProperty(global, 'window', {
+        writable: true,
+        value: {
+          location: {},
+          history: {
+            replaceState,
+          },
         },
-      },
+      });
     });
-  });
 
-  afterAll(() => {
-    // eslint-disable-next-line no-global-assign
-    window = originalWindow;
-  });
-
-  it('Loads login callbacks components even with extraneous params', async () => {
-    const removeUrlParamsMock = jest.fn();
-    const mockMethods = {
-      ...mountMethods,
-      removeUrlParams: removeUrlParamsMock,
-    };
-    delete mockMethods.evaluateUrlParams;
-
-    setUrl('https://forgerock.io/login/?realm=/&code=aCode');
-
-    const wrapper = await mountLogin({
-      methods: mockMethods,
+    afterAll(() => {
+      // eslint-disable-next-line no-global-assign
+      window = originalWindow;
     });
-    await flushPromises();
 
-    expect(removeUrlParamsMock).toHaveBeenCalled();
-    expect(replaceState).toBeCalledWith(null, null, '?realm=/');
-    expect(findByTestId(wrapper, 'callbacks_panel').exists()).toBeTruthy();
-  });
+    it('Removes tree resumption query parameters when returning from a redirect', async () => { // TODO this scenario may no longer be relevant given the other changes made here
+      const mockMethods = {
+        ...mountMethods,
+      };
+      delete mockMethods.evaluateUrlParams;
 
-  it('Loads login callbacks components even with extraneous params and doesn\'t remove param', async () => {
-    const removeUrlParamsMock = jest.fn();
-    const mockMethods = {
-      ...mountMethods,
-      removeUrlParams: removeUrlParamsMock,
-    };
-    delete mockMethods.evaluateUrlParams;
+      setUrl('https://forgerock.io/login/?realm=/&code=aCode');
 
-    setUrl('https://forgerock.io/login/?realm=/&code=aCode&notRemoved=here');
+      // indicate that the tree is being resumed following a redirect
+      const resumingSpy = jest.spyOn(authResumptionUtil, 'resumingTreeFollowingRedirect').mockReturnValue(true);
+      const getStepSpy = jest.spyOn(authResumptionUtil, 'getResumeDataFromStorageAndClear').mockReturnValue({ urlAtRedirect: 'blah', step: { payload: {} } });
+      const shouldAbortResumeSpy = jest.spyOn(authResumptionUtil, 'shouldAbortResume').mockReturnValue(false);
 
-    const wrapper = await mountLogin({
-      methods: mockMethods,
+      const wrapper = await mountLogin({
+        methods: mockMethods,
+      });
+      await flushPromises();
+
+      expect(replaceState).toBeCalledWith(null, null, '?realm=/');
+      expect(findByTestId(wrapper, 'callbacks_panel').exists()).toBeTruthy();
+
+      resumingSpy.mockRestore();
+      getStepSpy.mockRestore();
+      shouldAbortResumeSpy.mockRestore();
     });
-    await flushPromises();
 
-    expect(removeUrlParamsMock).toHaveBeenCalled();
-    expect(replaceState).toBeCalledWith(null, null, '?realm=/&notRemoved=here');
-    expect(findByTestId(wrapper, 'callbacks_panel').exists()).toBeTruthy();
+    it('Leaves tree resumption query paramters in place when not returning from a redirect', async () => {
+      const mockMethods = {
+        ...mountMethods,
+      };
+      delete mockMethods.evaluateUrlParams;
+
+      setUrl('https://forgerock.io/login/?realm=/&code=aCode&notRemoved=here');
+
+      // indicate that the tree is being resumed following a redirect
+      const resumingSpy = jest.spyOn(authResumptionUtil, 'resumingTreeFollowingRedirect').mockReturnValue(false);
+
+      const wrapper = await mountLogin({
+        methods: mockMethods,
+      });
+      await flushPromises();
+
+      expect(replaceState).toBeCalledWith(null, null, '?realm=/&code=aCode&notRemoved=here');
+      expect(findByTestId(wrapper, 'callbacks_panel').exists()).toBeTruthy();
+
+      resumingSpy.mockRestore();
+    });
   });
 });
