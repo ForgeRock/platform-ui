@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -7,6 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     <FrField
       v-model="uiSchema.value"
       class="pb-1 mb-4"
+      :autocomplete="uiSchema.autocomplete || ''"
       :copy="uiSchema.append"
       :disabled="uiSchema.disabled"
       :description="uiSchema.description"
