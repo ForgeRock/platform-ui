@@ -1,0 +1,284 @@
+{
+  "meta": {
+    "exportTool": "platform-admin ui tree export",
+    "exportToolVersion": "1.0",
+    "treesSelectedForExport": [
+      "IAM-4384"
+    ],
+    "innerTreesIncluded": []
+  },
+  "trees": {
+    "IAM-4384": {
+      "tree": {
+        "_id": "IAM-4384",
+        "_rev": "-1818583921",
+        "identityResource": "managed/alpha_user",
+        "uiConfig": {
+          "categories": "[]"
+        },
+        "entryNodeId": "66c5cfcf-ecc6-4bd6-a134-04835e0a2a7f",
+        "nodes": {
+          "66c5cfcf-ecc6-4bd6-a134-04835e0a2a7f": {
+            "x": 210,
+            "y": 290,
+            "connections": {
+              "outcome": "fc857242-a239-407f-a37a-5003d472a5d7"
+            },
+            "nodeType": "ValidatedUsernameNode",
+            "displayName": "Platform Username"
+          },
+          "649f3e49-063b-43e8-9f83-2d116b2329dd": {
+            "x": 907,
+            "y": 290,
+            "connections": {
+              "true": "e301438c-0bd0-429c-ab0c-66126501069a"
+            },
+            "nodeType": "ScriptedDecisionNode",
+            "displayName": "Show me everything"
+          },
+          "fc857242-a239-407f-a37a-5003d472a5d7": {
+            "x": 447,
+            "y": 252.5,
+            "connections": {
+              "true": "9e28ce65-3763-4b49-9867-30663e1d3c77",
+              "false": "0a461f61-6c23-432f-959d-1dd91f163067",
+              "error": "9b906ab7-64a2-41f5-a4bc-01f913e5d037"
+            },
+            "nodeType": "ScriptedDecisionNode",
+            "displayName": "Redirect Test"
+          },
+          "9e28ce65-3763-4b49-9867-30663e1d3c77": {
+            "x": 677,
+            "y": 80,
+            "connections": {
+              "true": "649f3e49-063b-43e8-9f83-2d116b2329dd",
+              "false": "649f3e49-063b-43e8-9f83-2d116b2329dd"
+            },
+            "nodeType": "MessageNode",
+            "displayName": "Message Node"
+          },
+          "0a461f61-6c23-432f-959d-1dd91f163067": {
+            "x": 677,
+            "y": 265,
+            "connections": {
+              "true": "649f3e49-063b-43e8-9f83-2d116b2329dd",
+              "false": "649f3e49-063b-43e8-9f83-2d116b2329dd"
+            },
+            "nodeType": "MessageNode",
+            "displayName": "Message Node"
+          },
+          "9b906ab7-64a2-41f5-a4bc-01f913e5d037": {
+            "x": 677,
+            "y": 450,
+            "connections": {
+              "true": "649f3e49-063b-43e8-9f83-2d116b2329dd",
+              "false": "649f3e49-063b-43e8-9f83-2d116b2329dd"
+            },
+            "nodeType": "MessageNode",
+            "displayName": "Message Node"
+          }
+        },
+        "staticNodes": {
+          "startNode": {
+            "x": 70,
+            "y": 282.5
+          },
+          "70e691a5-1e33-4ac3-a356-e7b6d60d92e0": {
+            "x": 70,
+            "y": 635
+          },
+          "e301438c-0bd0-429c-ab0c-66126501069a": {
+            "x": 1148,
+            "y": 282.5
+          }
+        },
+        "enabled": true
+      },
+      "nodes": {
+        "66c5cfcf-ecc6-4bd6-a134-04835e0a2a7f": {
+          "_id": "66c5cfcf-ecc6-4bd6-a134-04835e0a2a7f",
+          "_rev": "-1788800238",
+          "usernameAttribute": "userName",
+          "validateInput": false,
+          "_type": {
+            "_id": "ValidatedUsernameNode",
+            "name": "Platform Username",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "outcome",
+              "displayName": "Outcome"
+            }
+          ]
+        },
+        "649f3e49-063b-43e8-9f83-2d116b2329dd": {
+          "_id": "649f3e49-063b-43e8-9f83-2d116b2329dd",
+          "_rev": "1567976605",
+          "script": "2e409b02-ad3d-4900-8617-df5e5a12bbdc",
+          "outcomes": [
+            "true"
+          ],
+          "outputs": [
+            "*"
+          ],
+          "inputs": [
+            "*"
+          ],
+          "_type": {
+            "_id": "ScriptedDecisionNode",
+            "name": "Scripted Decision",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "true",
+              "displayName": "true"
+            }
+          ]
+        },
+        "fc857242-a239-407f-a37a-5003d472a5d7": {
+          "_id": "fc857242-a239-407f-a37a-5003d472a5d7",
+          "_rev": "1535988270",
+          "script": "0d6db28e-0581-4c75-948d-c8eb96e62222",
+          "outcomes": [
+            "true",
+            "false",
+            "error"
+          ],
+          "outputs": [
+            "*"
+          ],
+          "inputs": [
+            "*"
+          ],
+          "_type": {
+            "_id": "ScriptedDecisionNode",
+            "name": "Scripted Decision",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "true",
+              "displayName": "true"
+            },
+            {
+              "id": "false",
+              "displayName": "false"
+            },
+            {
+              "id": "error",
+              "displayName": "error"
+            }
+          ]
+        },
+        "9e28ce65-3763-4b49-9867-30663e1d3c77": {
+          "_id": "9e28ce65-3763-4b49-9867-30663e1d3c77",
+          "_rev": "1480649895",
+          "messageYes": {},
+          "message": {
+            "en": "Made it to true!  No bug here"
+          },
+          "messageNo": {},
+          "_type": {
+            "_id": "MessageNode",
+            "name": "Message Node",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "true",
+              "displayName": "True"
+            },
+            {
+              "id": "false",
+              "displayName": "False"
+            }
+          ]
+        },
+        "0a461f61-6c23-432f-959d-1dd91f163067": {
+          "_id": "0a461f61-6c23-432f-959d-1dd91f163067",
+          "_rev": "-823913705",
+          "messageYes": {},
+          "message": {
+            "en": "Made it to false... not looking good"
+          },
+          "messageNo": {},
+          "_type": {
+            "_id": "MessageNode",
+            "name": "Message Node",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "true",
+              "displayName": "True"
+            },
+            {
+              "id": "false",
+              "displayName": "False"
+            }
+          ]
+        },
+        "9b906ab7-64a2-41f5-a4bc-01f913e5d037": {
+          "_id": "9b906ab7-64a2-41f5-a4bc-01f913e5d037",
+          "_rev": "524611833",
+          "messageYes": {},
+          "message": {
+            "en": "Error throw... what did you do wrong?"
+          },
+          "messageNo": {},
+          "_type": {
+            "_id": "MessageNode",
+            "name": "Message Node",
+            "collection": true
+          },
+          "_outcomes": [
+            {
+              "id": "true",
+              "displayName": "True"
+            },
+            {
+              "id": "false",
+              "displayName": "False"
+            }
+          ]
+        }
+      },
+      "innerNodes": {},
+      "scripts": {
+        "2e409b02-ad3d-4900-8617-df5e5a12bbdc": {
+          "_id": "2e409b02-ad3d-4900-8617-df5e5a12bbdc",
+          "name": "Simple Debugger",
+          "description": "null",
+          "script": "\"var fr = JavaImporter(\\n  org.forgerock.openam.auth.node.api,\\n  javax.security.auth.callback.TextOutputCallback\\n);\\n\\noutcome = \\\"true\\\";\\n\\nwith (fr) {\\n  if (callbacks.isEmpty()) {\\n    var seperatorCB = new TextOutputCallback(TextOutputCallback.INFORMATION, \\\"================================\\\");\\n    var sharedStateCB = new TextOutputCallback(TextOutputCallback.INFORMATION, \\\"sharedState: \\\" + sharedState.toString());\\n    var transientStateCB = new TextOutputCallback(TextOutputCallback.INFORMATION, \\\"transientState: \\\" + transientState.toString());\\n    var requestHeadersCB = new TextOutputCallback(TextOutputCallback.INFORMATION, \\\"requestHeaders: \\\" + requestHeaders.toString());\\n    var requestParametersCB = new TextOutputCallback(TextOutputCallback.INFORMATION, \\\"requestParameters: \\\" + requestParameters.toString());\\n    var theCallbacks = [sharedStateCB, seperatorCB, transientStateCB, seperatorCB, requestHeadersCB, seperatorCB, requestParametersCB];\\n    action = Action.send(theCallbacks).build();\\n  } else {\\n    action = Action.goTo(\\\"true\\\").build();\\n  }\\n}\"",
+          "default": false,
+          "language": "JAVASCRIPT",
+          "context": "AUTHENTICATION_TREE_DECISION_NODE",
+          "createdBy": "null",
+          "creationDate": 0,
+          "lastModifiedBy": "null",
+          "lastModifiedDate": 0
+        },
+        "0d6db28e-0581-4c75-948d-c8eb96e62222": {
+          "_id": "0d6db28e-0581-4c75-948d-c8eb96e62222",
+          "name": "redirectTest",
+          "description": "null",
+          "script": "\"(function () {\\n  var prePendString = \\\"TESTTESTTEST: \\\";\\n  outcome = \\\"false\\\";\\n  try {\\n\\n    var fr = JavaImporter(\\n      org.forgerock.openam.auth.node.api.Action,\\n      com.sun.identity.authentication.spi.RedirectCallback,\\n      org.forgerock.util.encode.Base64url,\\n      org.forgerock.openam.shared.security.ThreadLocalSecureRandom\\n    )\\n\\n    logger.message(prePendString + \\\"Begin function\\\");\\n    if (!requestParameters.get(\\\"comingback\\\")) {\\n      logger.message(prePendString + \\\"Looks like its the first time visiting this script.  Request doesn't contain the comingback parm. Need to redirect\\\");\\n      var nonce = fr.Base64url.encode(fr.ThreadLocalSecureRandom.nextBytes(16));\\n      var redirectURL = \\\"https://webhook.site/bdfb1238-7636-4c14-a951-dd2664e1f476/?nonce=\\\" + nonce;\\n      sharedState.put(\\\"theNonce\\\", nonce);\\n      var redirect = new fr.RedirectCallback(redirectURL, null, \\\"GET\\\");\\n      redirect.setTrackingCookie(true);\\n\\n      logger.message(prePendString + \\\"About to redirect to start this little test.  Here are the current state of affairs:\\\");\\n      logger.message(prePendString + \\\"Here is the entire sharedState: \\\" + sharedState.toString());\\n      logger.message(prePendString + \\\"Here is the entire transientState: \\\" + transientState.toString());\\n      logger.message(prePendString + \\\"Here is the entire requestHeaders: \\\" + requestHeaders.toString());\\n      logger.message(prePendString + \\\"Here is the entire requestParameters: \\\" + requestParameters.toString());\\n\\n\\n      action = fr.Action.send(redirect).build();\\n    }\\n    else if (requestParameters.get(\\\"comingback\\\") && requestParameters.get(\\\"comingback\\\").get(0)) {\\n      logger.message(prePendString + \\\"Just got back from the redirect.  About to unpack and check shared state. Here are the current state of affairs:\\\");\\n      logger.message(prePendString + \\\"Here is the entire sharedState: \\\" + sharedState.toString());\\n      logger.message(prePendString + \\\"Here is the entire transientState: \\\" + transientState.toString());\\n      logger.message(prePendString + \\\"Here is the entire requestHeaders: \\\" + requestHeaders.toString());\\n      logger.message(prePendString + \\\"Here is the entire requestParameters: \\\" + requestParameters.toString());\\n      var storedNonce = sharedState.get(\\\"theNonce\\\");\\n      if (storedNonce!=null){\\n        if (storedNonce == requestParameters.get(\\\"nonce\\\").get(0)){\\n          logger.message(prePendString + \\\"Hit Hit Hit.  Nonce sent in requestParms match what is in shared state\\\");\\n          outcome = \\\"true\\\";\\n        }\\n        else{\\n          nodeState.putShared(\\\"lastFalse\\\", \\\"storedNonce!= requestParameters.get(\\\\\\\"nonce\\\\\\\").get(0):(.  Heres the compare\\\" + requestParameters.get(\\\"nonce\\\").get(0));\\n        }\\n      }\\n      else{\\n        logger.message(prePendString + \\\"The nonce is not in sharedState.  We are in a different journey instance\\\");\\n        nodeState.putShared(\\\"inElseIF\\\", \\\"but got to else meaning storedNonce is null :(\\\")\\n      }\\n    }\\n    else{\\n      nodeState.putShared(\\\"lastElse\\\", \\\"Got to last else :(\\\");\\n      logger.message(prePendString + \\\"Miss on the if and miss on the else if.  Landed here :( Here are the current state of affairs:\\\");\\n      logger.message(prePendString + \\\"Here is the entire sharedState: \\\" + sharedState.toString());\\n      logger.message(prePendString + \\\"Here is the entire transientState: \\\" + transientState.toString());\\n      logger.message(prePendString + \\\"Here is the entire requestHeaders: \\\" + requestHeaders.toString());\\n      logger.message(prePendString + \\\"Here is the entire requestParameters: \\\" + requestParameters.toString());\\n\\n      //taking the default outcome = false... set at top of script\\n    }\\n  } catch (error) {\\n    nodeState.putShared(\\\"errorMessage\\\", error.toString());\\n    logger.error(prePendString + \\\"Failed script: \\\" + error);\\n    outcome = \\\"error\\\";\\n  }\\n}());\"",
+          "default": false,
+          "language": "JAVASCRIPT",
+          "context": "AUTHENTICATION_TREE_DECISION_NODE",
+          "createdBy": "null",
+          "creationDate": 0,
+          "lastModifiedBy": "null",
+          "lastModifiedDate": 0
+        }
+      },
+      "emailTemplates": {},
+      "socialIdentityProviders": {},
+      "themes": [],
+      "saml2Entities": {},
+      "circlesOfTrust": {}
+    }
+  }
+}
