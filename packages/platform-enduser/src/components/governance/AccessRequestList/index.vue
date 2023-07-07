@@ -295,9 +295,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-::v-deep {
-  .w-200px {
-    width: 200px;
-  }
+.w-200px {
+  width: 200px;
 }
 </style>

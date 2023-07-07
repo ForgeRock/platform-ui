@@ -150,7 +150,7 @@ import FrActionsCell from '@forgerock/platform-shared/src/components/cells/Actio
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrAccessRequestList from '@/components/governance/AccessRequestList';
 import FrRequestToolbar from '@/components/governance/RequestToolbar';
-import { cancelRequest, getUserRequests } from '@/api/governance/AccessRequestApi';
+import { requestAction, getUserRequests } from '@/api/governance/AccessRequestApi';
 import FrRequestModal, { REQUEST_MODAL_TYPES } from '@/components/governance/RequestModal';
 /**
  * View new access request items
@@ -217,7 +217,7 @@ export default {
     async handleCancelRequest(hide) {
       this.isCanceling = true;
       try {
-        await cancelRequest(this.modalItem.details.id);
+        await requestAction(this.modalItem.details.id, 'cancel');
         this.displayNotification('success', this.$t('governance.accessRequest.myRequests.cancelRequestSuccess'));
         this.loadRequests();
         this.modalItem = {};

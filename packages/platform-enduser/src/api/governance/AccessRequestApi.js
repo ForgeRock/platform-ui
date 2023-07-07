@@ -33,23 +33,19 @@ export function getUserApprovals(userId, params, filter) {
   // /governance/user/{userId}/approvals
 }
 
-export function cancelRequest(id) {
+/**
+ * Take action on a request
+ * @param {String} requestId ID of request
+ * @param {String} phaseName Phase name in which the request is
+ * @param {String} action action being realized to the request
+ * @param {String} comments Comments to leave on request
+ * @param {Array} updatedActors Actor who the request will be forwarded to
+ * @returns {Promise}
+ */
+export function requestAction(requestId, action, phaseName, comments, updatedActors) {
+  const url = `/governance/requests/${requestId}?_action=${action}&phaseName=${phaseName}`;
   return Promise.resolve();
-  // return generateIgaApi().post('/requests/${requestId}/cancel');
-}
-
-export function approveRequest(id, phaseName) {
-  return Promise.resolve();
-  // return generateIgaApi().post('/requests/{requestId}/phases/{phaseName}/approve);
-}
-
-export function rejectRequest(id, phaseName) {
-  return Promise.resolve();
-  // return generateIgaApi().post('/requests/{requestId}/phases/{phaseName}/reject');
-}
-
-export function commentRequest(id, phaseName, comment) {
-  return Promise.resolve();
+  // return generateIgaApi().post(url, { comments, updatedActors });
   // return generateIgaApi().post('/requests/{requestId}/phases/{phaseName}/comment', { comment });
 }
 
