@@ -36,7 +36,7 @@ export function getQueryFilters(dateRange, filterObject, userId) {
     bool.must.push({
       range: {
         'predictionResult.risk_score_data.risk_score': {
-          lte: filterObject.riskRange[1],
+          lt: filterObject.riskRange[1] + 0.5,
           gte: filterObject.riskRange[0],
         },
       },
