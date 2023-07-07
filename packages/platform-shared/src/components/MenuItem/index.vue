@@ -32,18 +32,22 @@ of the MIT license. See the LICENSE file for details. -->
     :link-classes="'d-flex align-items-center'"
     :target="url ? '_blank' : ''"
     :to="routeTo">
-    <FrIcon
-      v-if="icon"
-      class="mr-3"
-      :name="icon" />
-    <span class="menu-item-text">
-      {{ $t(displayName) }}
-    </span>
-    <span
-      v-if="showBadgeWithContentFromStore && badgeContent(showBadgeWithContentFromStore)"
-      class="badge badge-pill badge-danger ml-3">
-      {{ badgeContent(showBadgeWithContentFromStore) }}
-    </span>
+    <div class="d-flex justify-content-between align-items-center pr-4">
+      <FrIcon
+        v-if="icon"
+        class="mr-3"
+        :name="icon" />
+      <span class="menu-item-text">
+        {{ $t(displayName) }}
+      </span>
+      <BBadge
+        v-if="showBadgeWithContentFromStore && badgeContent(showBadgeWithContentFromStore)"
+        class="ml-1"
+        variant="light"
+        pill>
+        {{ badgeContent(showBadgeWithContentFromStore) }}
+      </BBadge>
+    </div>
   </Component>
   <!-- Basic menu item that just emits event -->
   <Component
@@ -105,18 +109,22 @@ of the MIT license. See the LICENSE file for details. -->
           :href="subItem.url"
           :target="subItem.url ? '_blank' : ''"
           :to="subItem.routeTo">
-          <FrIcon
-            v-if="subItem.icon"
-            class="mr-3"
-            :name="subItem.icon" />
-          <span class="menu-item-text">
-            {{ $t(subItem.displayName) }}
-          </span>
-          <span
-            v-if="badgeContent(subItem.showBadgeWithContentFromStore)"
-            class="badge badge-pill badge-danger ml-3">
-            {{ badgeContent(subItem.showBadgeWithContentFromStore) }}
-          </span>
+          <div class="d-flex justify-content-between align-items-center pr-4">
+            <FrIcon
+              v-if="subItem.icon"
+              class="mr-3"
+              :name="subItem.icon" />
+            <span class="menu-item-text">
+              {{ $t(subItem.displayName) }}
+            </span>
+            <BBadge
+              v-if="badgeContent(subItem.showBadgeWithContentFromStore)"
+              class="ml-1"
+              variant="light"
+              pill>
+              {{ badgeContent(subItem.showBadgeWithContentFromStore) }}
+            </BBadge>
+          </div>
         </Component>
       </template>
     </BCollapse>
@@ -125,6 +133,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import {
+  BBadge,
   BButton,
   BCollapse,
   BNavItem,
@@ -145,6 +154,7 @@ Vue.directive('b-toggle', VBToggle);
 export default {
   name: 'MenuItem',
   components: {
+    BBadge,
     BButton,
     BCollapse,
     BNavItem,
@@ -350,6 +360,10 @@ button.btn.btn-secondary.dropdown-toggle {
   &.router-link-active {
     background-color: $fr-sidemenu-hover;
     border-left-color: $primary;
+    .badge {
+      background-color: $primary;
+      color: $white;
+    }
   }
 
   &.hidden {

@@ -31,6 +31,7 @@ export default new Vuex.Store({
     hostedPages: true,
 
     // user
+    approvalsCount: null,
     certificationCount: null,
   },
   mutations: {
@@ -72,6 +73,10 @@ export default new Vuex.Store({
 
     setCertificationCount(state, count) {
       state.certificationCount = count;
+    },
+
+    setApprovalsCount(state, count) {
+      state.approvalsCount = count;
     },
   },
   modules: {
