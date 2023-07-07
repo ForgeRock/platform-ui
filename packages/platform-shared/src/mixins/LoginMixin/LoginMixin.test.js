@@ -21,7 +21,6 @@ describe('LoginMixin', () => {
   });
   // Many methods in this mixin do not require unit testing:
   // getIdFromSession, getUserInfo, getConfigurationInfo,
-  // getCurrentQueryString, parseParameters
   // Or are constructed in a way that makes unit testing undesirable:
   // verifyGotoUrlAndRedirect
   it('Checks for a default path', () => {
