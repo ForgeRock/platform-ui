@@ -57,7 +57,7 @@ export default {
           });
           loader.load().then(() => {
             const map = new google.maps.Map(document.getElementById('event-detail-mini-map'), {
-              center: activity.geo_data ? { lat: activity.geo_data.lat, lng: activity.geo_data.longitude } : { lat: 0, lng: 0 },
+              center: activity.geoData ? { lat: activity.geoData.lat, lng: activity.geoData.longitude } : { lat: 0, lng: 0 },
               zoom: 5,
               minZoom: MIN_ZOOM - 1,
               maxZoom: MAX_ZOOM,
@@ -101,10 +101,10 @@ export default {
           strokeColor: color,
           fillColor: color,
         };
-        const markers = group.filter((auth) => auth.geo_data).map((auth) => {
+        const markers = group.filter((auth) => auth.geoData).map((auth) => {
           const marker = new google.maps.Marker({
             map: mapObject,
-            position: new google.maps.LatLng(auth.geo_data.lat, auth.geo_data.longitude),
+            position: new google.maps.LatLng(auth.geoData.lat, auth.geoData.longitude),
             icon,
           });
           bounds.extend(marker.position);
