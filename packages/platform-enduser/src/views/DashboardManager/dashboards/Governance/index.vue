@@ -132,6 +132,7 @@ export default {
       getApprovalsItems({ status: 'pending' })
         .then((resourceData) => {
           this.pendingApprovalsCount = get(resourceData, 'data.totalCount', 0);
+          this.$store.commit('setApprovalsCount', this.pendingApprovalsCount);
         })
         .catch((error) => {
           this.showErrorMessage(error, this.$t('pages.dashboard.errorRetrievingPendingApprovals'));
