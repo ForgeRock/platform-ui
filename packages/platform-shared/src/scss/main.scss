@@ -385,6 +385,10 @@ a.card {
   }
 }
 
+.hover-gray:hover {
+  background-color: $gray-100;
+}
+
 .pagination-material-buttons {
   .page-item {
     &.active .page-link {

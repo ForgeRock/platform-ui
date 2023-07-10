@@ -437,6 +437,18 @@
     "modalDescription": "Add filters below",
     "modalTitle": "Filter"
   },
+  "filters": {
+    "contains": "contains",
+    "is": "is",
+    "include": "include",
+    "dontInclude": "don't include",
+    "startsWith": "starts with",
+    "endsWith": "ends with",
+    "greaterThanEqual": "GTE (>=)",
+    "greaterThan": "GT (>)",
+    "lessThanEqual": "LTE (<=)",
+    "lessThan": "LT (<)"
+  },
   "locale": {
     "addLocale": "Add Locale",
     "specifyLocale": "Specify a Locale",

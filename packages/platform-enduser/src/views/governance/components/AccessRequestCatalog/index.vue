@@ -6,8 +6,8 @@ of the MIT license. See the LICENSE file for details. -->
   <BContainer class="my-5">
     <div class="mb-4">
       <FrPageHeader
-        :title="$t('governance.accessRequests.newRequest.catalogTitle')"
-        :subtitle="$t('governance.accessRequests.newRequest.catalogSubtitle')" />
+        :title="$t('governance.accessRequest.newRequest.catalogTitle')"
+        :subtitle="$t('governance.accessRequest.newRequest.catalogSubtitle')" />
     </div>
     <BTabs
       v-model="selectedTab"
@@ -21,22 +21,50 @@ of the MIT license. See the LICENSE file for details. -->
           :key="key"
           :data-testid="`tab-${key}`"
           :title="catalogCategory.capitalizedTitle">
-          <BButtonToolbar
-            v-if="selectedTab === 1"
-            class="pb-3 pt-0 px-0">
-            <FrField
-              v-model="applicationToFilterBy"
-              class="w-100"
-              name="filterByApplication"
-              type="multiselect"
-              :internal-search="false"
-              :label="$t('governance.accessRequests.newRequest.filterByApplications')"
-              :options="applicationFilterOptions"
-              @input="filterByApplication"
-              @search-change="debouncedApplicationSearch"
-              @open="!applicationFilterOptions.length ? filterByApplicationSearch('') : null">
-              <template #tag="{ option, remove }">
-                <span class="multiselect__tag">
+          <FrNoData
+            v-if="!catalogItems.length && firstQuery"
+            class="mt-5 border-0 shadow-none"
+            :icon="tabNoResultsIcon"
+            :title="$t('governance.accessRequest.newRequest.noResults', { item: catalogTabs[tabType].capitalizedTitle })"
+            :subtitle="$t('governance.accessRequest.newRequest.noResultsSubTitle', { item: catalogTabs[tabType].capitalizedTitle })" />
+          <template v-else>
+            <BButtonToolbar
+              v-if="selectedTab === 1"
+              class="pb-3 pt-0 px-0 border-0">
+              <FrField
+                v-model="applicationToFilterBy"
+                class="w-100"
+                name="filterByApplication"
+                type="multiselect"
+                :internal-search="false"
+                :label="$t('governance.accessRequest.newRequest.filterByApplications')"
+                :options="applicationFilterOptions"
+                @input="filterByApplication"
+                @search-change="debouncedApplicationSearch"
+                @open="!applicationFilterOptions.length ? filterByApplicationSearch('') : null">
+                <template #tag="{ option, remove }">
+                  <span class="multiselect__tag">
+                    <BMedia no-body>
+                      <BImg
+                        height="24"
+                        width="24"
+                        class="mr-2 align-self-center"
+                        :src="option.icon" />
+                      <BMediaBody class="pl-1">
+                        <div class="mb-1 text-dark">
+                          {{ option.title }}
+                        </div>
+                        <div class="text-muted">
+                          {{ option.subtitle }}
+                        </div>
+                      </BMediaBody>
+                    </BMedia>
+                    <i
+                      class="multiselect__tag-icon"
+                      @click="remove(option)" />
+                  </span>
+                </template>
+                <template #option="{ option }">
                   <BMedia no-body>
                     <BImg
                       height="24"
@@ -52,148 +80,170 @@ of the MIT license. See the LICENSE file for details. -->
                       </div>
                     </BMediaBody>
                   </BMedia>
-                  <i
-                    class="multiselect__tag-icon"
-                    @click="remove(option)" />
-                </span>
-              </template>
-              <template #option="{ option }">
-                <BMedia no-body>
-                  <BImg
-                    height="24"
-                    width="24"
-                    class="mr-2 align-self-center"
-                    :src="option.icon" />
-                  <BMediaBody class="pl-1">
-                    <div class="mb-1 text-dark">
-                      {{ option.title }}
-                    </div>
-                    <div class="text-muted">
-                      {{ option.subtitle }}
-                    </div>
-                  </BMediaBody>
-                </BMedia>
-              </template>
-            </FrField>
-          </BButtonToolbar>
-          <BButtonToolbar class="pb-3 pt-0 px-0 justify-content-between border-0">
-            <FrSearchInput
-              v-model="searchValue"
-              class="flex-grow-1"
-              :placeholder="$t('common.searchPlaceholder', { searchItem: catalogCategory.lowercaseTitle })"
-              @search="searchFieldChange(searchValue)" />
-            <BButton
-              class="ml-3"
-              pill
-              variant="outline-primary"
-              @click="showFilterModal">
-              <FrIcon
-                class="mr-2"
-                name="filter_list" />
-              {{ $t('governance.accessRequests.newRequest.filters') }}
-            </BButton>
-          </BButtonToolbar>
-          <div>
-            <BButtonToolbar class="p-0 mb-1 justify-content-between align-items-center border-0">
-              <div class="mb-0 text-muted">
-                {{ $tc('governance.accessRequests.newRequest.results', totalCount, { totalCount }) }}
-              </div>
-              <FrSortDropdown
-                :selected-item="sortField"
-                :sort-by-options="sortByOptions"
-                @sort-field-change="searchCatalog({ sortField: $event })"
-                @sort-direction-change="searchCatalog({ sortDir: $event })" />
+                </template>
+              </FrField>
             </BButtonToolbar>
-            <BRow :id="`${key}Grid`">
-              <template v-for="(item, itemKey) in catalogItems">
-                <BCol
-                  cols="12"
-                  lg="6"
-                  xl="4"
-                  class="mb-4"
-                  :key="itemKey">
-                  <BCard
-                    class="h-100 shadow-none cursor-pointer"
-                    no-body
-                    tag="a"
-                    @click="toggleItemInCart(item)">
-                    <BCardBody class="d-flex">
-                      <BMedia
-                        body-class="overflow-hidden"
-                        class="overflow-hidden">
-                        <BImg
-                          v-if="selectedTab < 2"
-                          height="28"
-                          class="mb-3"
-                          :alt="item.appType || $t('governance.accessRequests.newRequest.role')"
-                          :src="item.icon" />
-                        <div
-                          v-else
-                          class="rounded-circle bg-lightblue color-blue d-flex align-items-center justify-content-center mb-3"
-                          style="width: 28px; height: 28px;">
-                          <FrIcon name="assignment_ind" />
-                        </div>
-                        <h2 class="h5 text-truncate mb-1">
-                          {{ item.name }}
-                        </h2>
-                        <p
-                          v-if="item.appType"
-                          class="mb-2 text-dark">
-                          {{ item.appType }}
-                        </p>
-                        <p class="max-lines max-lines-3">
-                          <small class="d-block">
-                            {{ item.description }}
-                          </small>
-                        </p>
-                      </BMedia>
-                    </BCardBody>
-                    <BCardFooter class="border-0 pt-0 d-flex justify-content-end">
-                      <template v-if="item.requested">
-                        <FrIcon
-                          class="mr-2 text-success"
-                          name="check" />{{ $t('governance.accessRequests.newRequest.added') }}
-                      </template>
-                      <span
-                        v-else
-                        class="hover-underline color-blue">
-                        <FrIcon
-                          class="mr-2"
-                          name="add" />{{ $t('governance.accessRequests.newRequest.request') }}
-                      </span>
-                    </BCardFooter>
-                  </BCard>
-                </BCol>
+            <BButtonToolbar class="pb-3 pt-0 px-0 justify-content-between border-0">
+              <FrSearchInput
+                v-model="searchValue"
+                class="flex-grow-1"
+                :placeholder="$t('common.searchPlaceholder', { searchItem: catalogCategory.lowercaseTitle })"
+                @search="searchCatalog()" />
+              <BButton
+                class="ml-3"
+                pill
+                variant="outline-primary"
+                @click="showFilterModal">
+                <FrIcon
+                  class="mr-2"
+                  name="filter_list" />
+                {{ $t('governance.accessRequest.newRequest.filters') }}
+                <BBadge
+                  v-if="quantityFilters"
+                  class="ml-1"
+                  pill
+                  variant="primary">
+                  {{ quantityFilters }}
+                </BBadge>
+              </BButton>
+            </BButtonToolbar>
+            <div>
+              <FrNoData
+                v-if="!catalogItems.length"
+                class="mt-5 border-0 shadow-none"
+                :icon="tabNoResultsIcon"
+                :title="$t('governance.accessRequest.newRequest.noFilterResults')"
+                :subtitle="$t('governance.accessRequest.newRequest.noFilterResultsSubTitle')" />
+              <template v-else>
+                <BButtonToolbar class="p-0 mb-1 justify-content-between align-items-center border-0">
+                  <div class="mb-0 text-muted">
+                    {{ $tc('governance.accessRequest.newRequest.results', totalCount, { totalCount }) }}
+                  </div>
+                  <FrSortDropdown
+                    :selected-item="sortField"
+                    :sort-by-options="sortByOptions"
+                    @sort-field-change="searchCatalog({ sortField: $event })"
+                    @sort-direction-change="searchCatalog({ sortDir: $event })" />
+                </BButtonToolbar>
+                <BRow :id="`${key}Grid`">
+                  <template v-for="(item, itemKey) in catalogItems">
+                    <BCol
+                      cols="12"
+                      lg="6"
+                      xl="4"
+                      class="mb-4"
+                      :key="itemKey">
+                      <BCard
+                        class="h-100 shadow-none cursor-pointer"
+                        no-body
+                        tag="a"
+                        @click="toggleItemInCart(item)">
+                        <BCardBody class="d-flex">
+                          <BMedia
+                            body-class="overflow-hidden"
+                            class="overflow-hidden">
+                            <BImg
+                              v-if="selectedTab < 2"
+                              height="28"
+                              class="mb-3"
+                              :alt="item.appType || $t('governance.accessRequest.newRequest.role')"
+                              :src="item.icon" />
+                            <div
+                              v-else
+                              class="rounded-circle bg-lightblue color-blue d-flex align-items-center justify-content-center mb-3"
+                              style="width: 28px; height: 28px;">
+                              <FrIcon name="assignment_ind" />
+                            </div>
+                            <h2 class="h5 text-truncate mb-1">
+                              {{ item.name }}
+                            </h2>
+                            <p
+                              v-if="item.appType"
+                              class="mb-2 text-dark">
+                              {{ item.appType }}
+                            </p>
+                            <p class="max-lines max-lines-3">
+                              <small class="d-block">
+                                {{ item.description }}
+                              </small>
+                            </p>
+                          </BMedia>
+                        </BCardBody>
+                        <BCardFooter class="border-0 pt-0 d-flex justify-content-end">
+                          <template v-if="item.requested">
+                            <FrIcon
+                              class="mr-2 text-success"
+                              name="check" />{{ $t('governance.accessRequest.newRequest.added') }}
+                          </template>
+                          <span
+                            v-else
+                            class="hover-underline color-blue">
+                            <FrIcon
+                              class="mr-2"
+                              name="add" />{{ $t('governance.accessRequest.newRequest.request') }}
+                          </span>
+                        </BCardFooter>
+                      </BCard>
+                    </BCol>
+                  </template>
+                </BRow>
+                <FrPagination
+                  v-if="totalCount > 10"
+                  v-model="page"
+                  :per-page="pageSize"
+                  :total-rows="totalCount"
+                  @input="searchCatalog()"
+                  @on-page-size-change="searchCatalog({ pageSize: $event })" />
               </template>
-            </BRow>
-            <FrPagination
-              v-if="totalCount > 10"
-              v-model="page"
-              :per-page="pageSize"
-              :total-rows="totalCount"
-              @input="searchCatalog()"
-              @on-page-size-change="searchCatalog({ pageSize: $event })" />
-          </div>
+            </div>
+          </template>
         </BTab>
       </template>
     </BTabs>
-    <BModal
-      id="filterModal"
-      :title="$t('governance.accessRequests.newRequest.filters')">
-      <!-- <FrQueryFilterBuilder
-        :prefix-group-text="$t('governance.accessRequests.newRequest.showIf')"
-        :resource-name="resourceName"
-        :query-filter-string="filter"
-        :properties="filterOptions"
-        :select-property-values="selectPropertyValues"
-        @change="restrictSituationFilter = $event" /> -->
-    </BModal> <!-- TODO: For Application Filter Modal -->
+    <ValidationObserver v-slot="{ invalid }">
+      <BModal
+        id="filterModal"
+        no-close-on-backdrop
+        no-close-on-esc
+        size="lg"
+        :title="$t('governance.accessRequest.newRequest.filters')"
+        @close="resetFilter"
+        @ok="filterResults">
+        <FrCertificationFilter
+          @filter-update="filter = getGovernanceFilter($event)"
+          body-class="p-0"
+          card-class="border-0 shadow-none"
+          :hide-group="true"
+          :resource-name="tabType"
+          :properties="filterOptions"
+          :filter="filter">
+          <template #prefix>
+            {{ $t('governance.accessRequest.newRequest.showIf') }}
+          </template>
+        </FrCertificationFilter>
+        <template #modal-footer="{ ok }">
+          <BButton
+            class="mr-auto"
+            variant="link"
+            @click="clearAll">
+            {{ $t('governance.accessRequest.newRequest.clearAll') }}
+          </BButton>
+          <BButton
+            variant="primary"
+            :disabled="invalid"
+            @click="ok">
+            {{ $t('common.apply') }}
+          </BButton>
+        </template>
+      </BModal>
+    </ValidationObserver>
   </BContainer>
 </template>
 
 <script>
-import { capitalize, debounce } from 'lodash';
+import { capitalize, cloneDeep, debounce } from 'lodash';
 import {
+  BBadge,
   BButton,
   BButtonToolbar,
   BCard,
@@ -209,14 +259,17 @@ import {
   BTab,
   BTabs,
 } from 'bootstrap-vue';
+import { ValidationObserver } from 'vee-validate';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrPageHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
-// import FrQueryFilterBuilder from '@forgerock/platform-shared/src/components/filterBuilder/QueryFilterBuilder';
+import FrCertificationFilter from '@forgerock/platform-shared/src/components/filterBuilder/CertificationFilter';
+import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
-import PluralizeFilter, { PluralizeSingular } from '@forgerock/platform-shared/src/filters/PluralizeFilter';
+import PluralizeFilter from '@forgerock/platform-shared/src/filters/PluralizeFilter';
 import AppSharedUtilsMixin from '@forgerock/platform-shared/src/mixins/AppSharedUtilsMixin';
+import { getGovernanceFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import FrSortDropdown from '../../../../components/governance/SortDropdown';
 
 /**
@@ -225,6 +278,7 @@ import FrSortDropdown from '../../../../components/governance/SortDropdown';
 export default {
   name: 'AccessRequestCatalog',
   components: {
+    BBadge,
     BButton,
     BButtonToolbar,
     BCard,
@@ -241,17 +295,23 @@ export default {
     BTabs,
     FrIcon,
     FrField,
+    FrNoData,
     FrPageHeader,
     FrPagination,
-    // FrQueryFilterBuilder,
+    FrCertificationFilter,
     FrSearchInput,
     FrSortDropdown,
+    ValidationObserver,
   },
   mixins: [
     AppSharedUtilsMixin,
   ],
   props: {
     applicationSearchResults: {
+      type: Array,
+      default: () => [],
+    },
+    catalogFilterSchema: {
       type: Array,
       default: () => [],
     },
@@ -268,32 +328,31 @@ export default {
     return {
       applicationToFilterBy: '',
       catalogTabs: {
-        applications: {
-          capitalizedTitle: PluralizeFilter(capitalize(this.$t('governance.accessRequests.newRequest.application'))),
-          capitalizedSingularTitle: capitalize(this.$t('governance.accessRequests.newRequest.application')),
-          lowercaseTitle: PluralizeFilter(this.$t('governance.accessRequests.newRequest.application')),
+        application: {
+          capitalizedTitle: PluralizeFilter(capitalize(this.$t('governance.accessRequest.newRequest.application'))),
+          capitalizedSingularTitle: capitalize(this.$t('governance.accessRequest.newRequest.application')),
+          lowercaseTitle: PluralizeFilter(this.$t('governance.accessRequest.newRequest.application')),
           itemType: 'accountGrant',
         },
-        entitlements: {
-          capitalizedTitle: PluralizeFilter(capitalize(this.$t('governance.accessRequests.newRequest.entitlement'))),
-          capitalizedSingularTitle: capitalize(this.$t('governance.accessRequests.newRequest.entitlement')),
-          lowercaseTitle: PluralizeFilter(this.$t('governance.accessRequests.newRequest.entitlement')),
+        entitlement: {
+          capitalizedTitle: PluralizeFilter(capitalize(this.$t('governance.accessRequest.newRequest.entitlement'))),
+          capitalizedSingularTitle: capitalize(this.$t('governance.accessRequest.newRequest.entitlement')),
+          lowercaseTitle: PluralizeFilter(this.$t('governance.accessRequest.newRequest.entitlement')),
           itemType: 'entitlementGrant',
         },
-        roles: {
-          capitalizedTitle: PluralizeFilter(capitalize(this.$t('governance.accessRequests.newRequest.role'))),
-          capitalizedSingularTitle: capitalize(this.$t('governance.accessRequests.newRequest.role')),
-          lowercaseTitle: PluralizeFilter(this.$t('governance.accessRequests.newRequest.role')),
+        role: {
+          capitalizedTitle: PluralizeFilter(capitalize(this.$t('governance.accessRequest.newRequest.role'))),
+          capitalizedSingularTitle: capitalize(this.$t('governance.accessRequest.newRequest.role')),
+          lowercaseTitle: PluralizeFilter(this.$t('governance.accessRequest.newRequest.role')),
           itemType: 'roleMembership',
         },
       },
       debouncedApplicationSearch: debounce(this.filterByApplicationSearch, 500),
-      filter: '',
-      // filterOptions: [ // For Application Filter Modal
-      //   Application Type
-      // ],
+      filter: {},
+      firstQuery: true,
       page: 1,
       pageSize: 10,
+      savedFilter: {},
       searchValue: '',
       selectedTab: 0,
       sortDir: 'desc',
@@ -309,34 +368,63 @@ export default {
         icon: this.getApplicationLogo(application),
       }));
     },
+    filterOptions() {
+      return this.catalogFilterSchema.map((option) => {
+        const filterOption = {
+          value: option.key,
+          label: option.displayName,
+          type: option.type,
+        };
+        if (option.type === 'managedObject') {
+          filterOption.path = option.managedObjectType;
+        }
+        return filterOption;
+      });
+    },
+    quantityFilters() {
+      return this.filter.operand?.length || 0;
+    },
     sortByOptions() {
       // TODO: Should these values be just name and owner, need to determine this when api is available
       if (this.selectedTab === 0) {
         return [
-          { text: this.$t('governance.accessRequests.newRequest.itemName', { item: this.catalogTabs.applications.capitalizedSingularTitle }), value: 'application.name' },
-          { text: this.$t('governance.accessRequests.newRequest.itemOwner', { item: this.catalogTabs.applications.capitalizedSingularTitle }), value: 'application.owner' },
+          { text: this.$t('governance.accessRequest.newRequest.itemName', { item: this.catalogTabs.application.capitalizedSingularTitle }), value: 'application.name' },
+          { text: this.$t('governance.accessRequest.newRequest.itemOwner', { item: this.catalogTabs.application.capitalizedSingularTitle }), value: 'application.owner' },
         ];
       }
       if (this.selectedTab === 1) {
         return [
-          { text: this.$t('governance.accessRequests.newRequest.itemName', { item: this.catalogTabs.entitlements.capitalizedSingularTitle }), value: 'entitlement.name' },
-          { text: this.catalogTabs.applications.capitalizedSingularTitle, value: 'application' }, // TODO: determine if this needs to be application.name
-          { text: this.$t('governance.accessRequests.newRequest.itemOwner', { item: this.catalogTabs.applications.capitalizedSingularTitle }), value: 'application.owner' },
-          { text: this.$t('governance.accessRequests.newRequest.itemOwner', { item: this.catalogTabs.entitlements.capitalizedSingularTitle }), value: 'entitlement.owner' },
+          { text: this.$t('governance.accessRequest.newRequest.itemName', { item: this.catalogTabs.entitlement.capitalizedSingularTitle }), value: 'entitlement.name' },
+          { text: this.catalogTabs.application.capitalizedSingularTitle, value: 'application' }, // TODO: determine if this needs to be application.name when api is available
+          { text: this.$t('governance.accessRequest.newRequest.itemOwner', { item: this.catalogTabs.application.capitalizedSingularTitle }), value: 'application.owner' },
+          { text: this.$t('governance.accessRequest.newRequest.itemOwner', { item: this.catalogTabs.entitlement.capitalizedSingularTitle }), value: 'entitlement.owner' },
         ];
       }
-      return [
-        { text: this.$t('governance.accessRequests.newRequest.itemName', { item: this.catalogTabs.roles.capitalizedSingularTitle }), value: 'role.name' },
-      ];
+      return [{ text: this.$t('governance.accessRequest.newRequest.itemName', { item: this.catalogTabs.role.capitalizedSingularTitle }), value: 'role.name' }];
+    },
+    tabNoResultsIcon() {
+      const tabIconMap = {
+        application: 'apps',
+        entitlement: 'assignment_turned_in',
+        role: 'assignment_ind',
+      };
+      return tabIconMap[this.tabType];
     },
     tabType() {
-      return PluralizeSingular(Object.keys(this.catalogTabs)[this.selectedTab]);
+      return Object.keys(this.catalogTabs)[this.selectedTab];
     },
   },
   mounted() {
     this.searchCatalog();
   },
   methods: {
+    /**
+     * Clears filter and calls to filter results
+     */
+    clearAll() {
+      this.filter = {};
+      this.filterResults();
+    },
     /**
      * Called on selecting one or more applications in entitlement view
      * @param {Array} applicationFilter Currently selected application(s)
@@ -346,12 +434,26 @@ export default {
       this.searchCatalog({ applicationFilter });
     },
     /**
-     * Called on confirming from filter modal
-     * @param {Object} filter Built filter
+     * Search for applications using the searchValue
+     * @param {String} searchValue value in field at the time of debounce resolution
      */
-    filterResults(filter) {
-      // TODO: For Application Filter Modal
-      console.log(filter);
+    filterByApplicationSearch(searchValue) {
+      this.$emit('search:applications', searchValue);
+    },
+    /**
+     * Called on confirming from filter modal, hides filter modal and sends off request to search with
+     * updated filter
+     */
+    filterResults() {
+      this.$root.$emit('bv::hide::modal', 'filterModal');
+      this.searchCatalog();
+    },
+    getGovernanceFilter,
+    /**
+     * Sets filter back to what it was when filter modal was opened
+     */
+    resetFilter() {
+      this.filter = cloneDeep(this.savedFilter);
     },
     /**
      * Builds search parameters and emits them out for view to query api for applications, entitlements, or roles.
@@ -371,23 +473,31 @@ export default {
         sortField: this.sortField,
         searchValue: this.searchValue,
         applicationFilter: this.applicationFilter,
+        filter: this.filter,
       };
       const { itemType } = Object.values(this.catalogTabs)[this.selectedTab];
       this.$emit('search:catalog', itemType, searchParams);
     },
     /**
-     * Search for applications using the searchValue
-     * @param {String} searchValue value in field at the time of debounce resolution
+     * Shows filter builder modal
      */
-    filterByApplicationSearch(searchValue) {
-      this.$emit('search:applications', searchValue);
+    async showFilterModal() {
+      this.savedFilter = cloneDeep(this.filter);
+      this.$emit('get-catalog-filter-schema', this.tabType);
+      this.$root.$emit('bv::show::modal', 'filterModal');
     },
     /**
-     * debounces every half second a search requests using the searchValue
-     * @param {String} searchValue value in search field at the time of debounce resolution
+     * Resets filter, sort field, page, sort direction, and search value and sends off search request
      */
-    searchFieldChange(searchValue) {
-      debounce(this.searchCatalog({ searchValue }), 500);
+    tabChange() {
+      this.searchCatalog({
+        applicationFilter: '',
+        filter: {},
+        page: 1,
+        searchValue: '',
+        sortDir: 'desc',
+        sortField: `${this.tabType}.name`,
+      });
     },
     /**
      * Adds or removes selected catalog item in request cart
@@ -408,23 +518,12 @@ export default {
         this.$emit('add-item-to-cart', emitItem);
       }
     },
-    // TODO: create tests
-    /**
-     * Shows filter builder modal
-     */
-    showFilterModal() {
-      this.$root.$emit('bv::show::modal', 'filterModal');
-    },
-    /**
-     * Resets sort field, page, sort direction, and search value and sends off search request
-     */
-    tabChange() {
-      this.searchCatalog({
-        sortField: `${this.tabType}.name`,
-        page: 1,
-        sortDir: 'desc',
-        searchValue: '',
-      });
+  },
+  watch: {
+    catalogItems(items) {
+      if (items?.length) {
+        this.firstQuery = false;
+      }
     },
   },
 };
@@ -443,5 +542,9 @@ a.card:hover {
 
 .h5 {
   font-weight: 600;
+}
+
+.rounded-pill {
+  border-radius: 50rem !important;
 }
 </style>

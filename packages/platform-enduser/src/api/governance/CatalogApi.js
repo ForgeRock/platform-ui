@@ -10,6 +10,7 @@
 import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
 import {
   getCatalogMock,
+  getFilterSchemaMock,
   getUsersApplicationsMock,
   getUsersEntitlementsMock,
   getUsersRolesMock,
@@ -31,6 +32,7 @@ export function getCatalogFilterSchema(objectType) {
   //   url += `/${objectType}`;
   // }
   // return generateIgaApi().get(url);
+  return Promise.resolve({ data: getFilterSchemaMock(objectType) });
 }
 
 export function getUsersApplications(userIds) {

@@ -2,7 +2,6 @@
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
-
 <template>
   <div>
     <BContainer>
@@ -16,12 +15,12 @@ of the MIT license. See the LICENSE file for details. -->
           <div class="d-flex justify-content-lg-end">
             <BButton
               variant="primary"
-              :aria-label="$t('governance.accessRequests.newRequest.newRequest')"
+              :aria-label="$t('governance.accessRequest.newRequest.newRequest')"
               @click="newRequest">
               <FrIcon
                 class="mr-1"
                 name="add" />
-              {{ $t('governance.accessRequests.newRequest.newRequest') }}
+              {{ $t('governance.accessRequest.newRequest.newRequest') }}
             </BButton>
           </div>
         </BCol>
@@ -84,7 +83,7 @@ of the MIT license. See the LICENSE file for details. -->
                         <FrIcon
                           class="mr-2"
                           name="cancel" />
-                        {{ $t('governance.accessRequests.myRequests.cancelRequest') }}
+                        {{ $t('governance.accessRequest.myRequests.cancelRequest') }}
                       </Bdropdownitem>
                     </template>
                   </FrActionsCell>
@@ -106,8 +105,8 @@ of the MIT license. See the LICENSE file for details. -->
       :item="modalItem" />
     <BModal
       id="cancel_modal"
-      :title="$t('governance.accessRequests.myRequests.cancelRequest')">
-      <p>{{ $t('governance.accessRequests.myRequests.cancelRequestMessage') }}</p>
+      :title="$t('governance.accessRequest.myRequests.cancelRequest')">
+      <p>{{ $t('governance.accessRequest.myRequests.cancelRequestMessage') }}</p>
       <template #modal-footer="{ hide }">
         <div class="w-100 d-flex justify-content-end">
           <BButton
@@ -119,7 +118,7 @@ of the MIT license. See the LICENSE file for details. -->
           </BButton>
           <FrButtonWithSpinner
             variant="danger"
-            :button-text="$t('governance.accessRequests.myRequests.cancelRequest')"
+            :button-text="$t('governance.accessRequest.myRequests.cancelRequest')"
             :spinner-text="$t('common.canceling')"
             :show-spinner="isCanceling"
             @click="handleCancelRequest(hide)" />
@@ -219,11 +218,11 @@ export default {
       this.isCanceling = true;
       try {
         await cancelRequest(this.modalItem.details.id);
-        this.displayNotification('success', this.$t('governance.accessRequests.myRequests.cancelRequestSuccess'));
+        this.displayNotification('success', this.$t('governance.accessRequest.myRequests.cancelRequestSuccess'));
         this.loadRequests();
         this.modalItem = {};
       } catch (error) {
-        this.showErrorMessage(error, this.$t('governance.accessRequests.myRequests.errorCancelingRequest'));
+        this.showErrorMessage(error, this.$t('governance.accessRequest.myRequests.errorCancelingRequest'));
       } finally {
         this.isCanceling = false;
         hide();
@@ -259,7 +258,7 @@ export default {
       } catch (error) {
         this.accessRequests = [];
         this.totalRows = 0;
-        this.showErrorMessage(error, this.$t('governance.accessRequests.myRequests.errorGettingRequests'));
+        this.showErrorMessage(error, this.$t('governance.accessRequest.myRequests.errorGettingRequests'));
       } finally {
         this.isLoading = false;
       }

@@ -14,9 +14,11 @@ of the MIT license. See the LICENSE file for details. -->
         :resource-name="resourceName"
         :depth="0"
         :max-depth="maxDepth"
+        :hide-group="hideGroup"
         :index="0"
         :operator-options="operatorOptions"
         :properties="slashedProperties"
+        :prefix-group-text="prefixGroupText"
         @add-rule="updateFilter('add-rule', $event)"
         @remove-rule="updateFilter('remove-rule', $event)"
         @operator-change="updateFilter('operator-change', $event)"
@@ -106,6 +108,14 @@ export default {
     hideAdvanced: {
       type: Boolean,
       default: false,
+    },
+    hideGroup: {
+      default: false,
+      type: Boolean,
+    },
+    prefixGroupText: {
+      default: '',
+      type: String,
     },
   },
   methods: {
