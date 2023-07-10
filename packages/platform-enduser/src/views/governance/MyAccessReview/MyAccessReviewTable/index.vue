@@ -124,7 +124,7 @@ of the MIT license. See the LICENSE file for details. -->
             class="text-truncate">
             <BMediaBody class="text-truncate">
               <p class="mb-0 text-truncate">
-                {{ item.relationship.temporalConstraints || blankValueIndicator }}
+                {{ formatConstraintDate(item.role.temporalConstraints) || blankValueIndicator }}
               </p>
             </BMediaBody>
           </BMedia>
@@ -143,6 +143,8 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import dayjs from 'dayjs';
+import { map } from 'lodash';
 import {
   BButtonToolbar,
   BCard,
@@ -323,6 +325,25 @@ export default {
     },
     getResourceDisplayName(item, resource) {
       return item.descriptor?.idx?.[resource]?.displayName;
+    },
+    /**
+     * Parse the temporal constraints of the role in case it has
+     * @param {Object[]} temporalConstraints temporal constraints info
+     * @returns {String} Parsed date
+     */
+    formatConstraintDate(temporalConstraints = []) {
+      const value = temporalConstraints[0]?.duration;
+      if (value) {
+        const dates = map(value.split('/'), (date) => {
+          const retVal = dayjs(date).format('MMMM D, YYYY h:mm A');
+
+          return retVal;
+        });
+
+        return this.$t('pages.myAccess.role.temporalConstraint', { startDate: dates[0], endDate: dates[1] });
+      }
+
+      return value;
     },
   },
 };

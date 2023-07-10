@@ -1,4 +1,7 @@
 {
+  "routeNames": {
+    "AccessRequestNew": "New Access Request"
+  },
   "user": {
     "profile": {
       "authorizedApplications": {
@@ -60,10 +63,16 @@
       },
       "cardCount": {
         "accessReviews": "Access Reviews",
-        "viewAccessReviews": "View access reviews"
+        "pendingApprovals": "Pending Approvals",
+        "pendingRequests": "Pending Requests",
+        "viewAccessReviews": "View access reviews",
+        "viewPendingApprovals": "View pending approvals",
+        "viewPendingRequests": "View pending requests"
       },
       "errorGetApplications": "There was an error retrieving your applications",
       "errorRetrievingAccesReviews": "There was an error retrieving access reviews",
+      "errorRetrievingPendingApprovals": "There was an error retrieving pending approvals",
+      "errorRetrievingPendingRequests": "There was an error retrieving pending requests",
       "noWidget": "No Widgets Available",
       "noWidgetSubText": "Don't worry, you still have a <a href=\"#/profile\">profile</a>.",
       "widgets": {
@@ -116,6 +125,7 @@
         "noResultsUser": "No Roles for this user.",
         "subtitle": "View all your application roles.",
         "tabTitle": "Roles",
+        "temporalConstraint": "{startDate} to {endDate}.",
         "title": "My Roles"
       }
     },
@@ -190,6 +200,7 @@
     "accessReviews":"Access Reviews",
     "accounts": "Accounts",
     "applications": "My Applications",
+    "approvals": "Approvals",
     "delegates": "Delegates",
     "directory": "My Directory",
     "directReports": "Direct Reports",
@@ -197,12 +208,14 @@
     "inbox": "Inbox",
     "myAccess": "My Access",
     "profile": "Profile",
+    "requests": "My Requests",
     "roles": "Roles"
   },
   "pageTitles": {
     "AccessReviews": "Access Reviews",
     "Accounts": "Accounts",
     "Applications": "Applications",
+    "Approvals": "Approvals",
     "AutoAccessDataSources": "Data Sources",
     "AutoAccessPipelines": "Pipelines",
     "AutoAccessRiskConfig": "RiskConfig",
@@ -214,8 +227,10 @@
     "DirectReportDetail": "Direct Report Details",
     "EditResource": "Edit Resource",
     "Entitlements": "Entitlements",
+    "AccessRequestNew": "New Request",
     "Forbidden": "Forbidden",
     "ListResource": "List Resource",
+    "MyRequests": "My Requests",
     "NotFound": "Not Found",
     "Roles": "Roles",
     "pageTitle": "Platform Enduser - {page}",
@@ -223,6 +238,20 @@
     "Sharing": "Sharing"
   },
   "governance": {
+    "accessRequest": {
+      "requestTypes": {
+        "accountGrant": "Grant Application",
+        "accountRevoke": "Remove Application",
+        "entitlementGrant": "Grant Entitlement",
+        "entitlementRevoke": "Remove Entitlement",
+        "roleGrant": "Grant Role",
+        "roleRevoke": "Remove Role"
+      },
+      "idLabel": "ID: {id}"
+    },
+    "approval":{
+      "subtitle": "View and take action on your pending access requests."
+    },
     "delegates": {
       "addDelegates": "Add Delegates",
       "addModalTitle": "Choose users to add as delegates.",
@@ -247,6 +276,36 @@
       "noResultsUser": "No direct reports for this user.",
       "subtitle": "View your direct reports.",
       "title": "My Direct Reports"
-    }
+    },
+    "accessRequests": {
+      "newRequest": {
+        "added": "Added",
+        "application": "application",
+        "catalogSubtitle": "Browse available applications, roles, and entitlements for selected users.",
+        "catalogTitle": "Access Catalog",
+        "entitlement": "entitlement",
+        "errorSearchingCatalog": "There was an error searching the catalog",
+        "filters": "Filters",
+        "filterByApplications": "Filter by applications",
+        "itemOwner": "{item} Owner",
+        "itemName": "{item} Name",
+        "request": "Request",
+        "requestAdded": "Request added",
+        "results": "{totalCount} Result | {totalCount} Results",
+        "role": "role",
+        "showIf": "Show if"
+      },
+      "myRequests": {
+        "subtitle": "View and take action on your pending access requests."
+      }
+    },
+    "requestModal": {
+      "defaultTitle": "Request Details",
+      "requestDetailsLink": "Request Details",
+      "details": "Details",
+      "workflow": "Workflow",
+      "comments": "Comments"
+    },
+    "sortBy": "Sort by"
   }
 }
