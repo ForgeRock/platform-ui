@@ -22,8 +22,11 @@ of the MIT license. See the LICENSE file for details. -->
           :data-testid="testid"
           :value="$attrs.cbcheckedvalue"
           :unchecked-value="$attrs.cbuncheckedvalue">
+          <slot name="prepend" />
           <template v-if="switchLabel">
-            <div class="mb-1 text-secondary">
+            <div
+              class="mb-1 text-secondary"
+              :class="{'d-inline': inline}">
               {{ switchLabel }}
             </div>
           </template>
@@ -71,6 +74,10 @@ export default {
     ValidationProvider,
   },
   props: {
+    inline: {
+      type: Boolean,
+      default: false,
+    },
     testid: {
       type: String,
       default: '',
