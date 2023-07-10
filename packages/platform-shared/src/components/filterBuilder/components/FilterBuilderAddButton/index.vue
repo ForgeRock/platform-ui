@@ -1,25 +1,26 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BDropdown
+    class="hover-gray"
     no-caret
-    variant="outline-secondary"
-    :disabled="disabled">
+    variant="link"
+    :disabled="disabled"
+    @show="checkPreventDefault">
     <span class="sr-only">
       {{ $t('queryFilterBuilder.queryFilterAddDropDown') }}
     </span>
     <FrIcon
+      class="text-dark"
       slot="button-content"
       name="add"
     />
     <BDropdownItem @click="$emit('add-rule', 'row')">
       {{ $t('queryFilterBuilder.addRuleButton') }}
     </BDropdownItem>
-    <BDropdownItem
-      v-if="!hideGroup"
-      @click="$emit('add-rule', 'group')">
+    <BDropdownItem @click="$emit('add-rule', 'group')">
       {{ $t('queryFilterBuilder.addGroupButton') }}
     </BDropdownItem>
   </BDropdown>
@@ -44,6 +45,18 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+  },
+  methods: {
+    /**
+     * Don't open dropdown if hideGroup is true
+     * @param {Event} bvEvent bootstrap vue dropdown open event
+     */
+    checkPreventDefault(bvEvent) {
+      if (this.hideGroup) {
+        bvEvent.preventDefault();
+        this.$emit('add-rule', 'row');
+      }
     },
   },
 };

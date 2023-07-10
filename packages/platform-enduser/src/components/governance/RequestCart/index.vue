@@ -2,13 +2,12 @@
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
-
 <template>
   <div>
     <!-- Requesting for list of users -->
     <div class="mb-5">
       <h3 class="mb-2 text-muted font-weight-normal h5">
-        {{ $t('governance.accessRequests.newRequest.requestingFor') }}
+        {{ $t('governance.accessRequest.newRequest.requestingFor') }}
       </h3>
       <div class="mb-3">
         <FrRequestItemsGroup
@@ -20,7 +19,7 @@ of the MIT license. See the LICENSE file for details. -->
     <!-- List of access request items (Applicattions, Entitlements, Roles) -->
     <div class="mb-5">
       <h3 class="mb-2 text-muted font-weight-normal h5">
-        {{ $t('governance.accessRequests.newRequest.requestedAccess') }}
+        {{ $t('governance.accessRequest.newRequest.requestedAccess') }}
       </h3>
       <FrRequestItemsGroup
         context="accessItem"
@@ -34,8 +33,8 @@ of the MIT license. See the LICENSE file for details. -->
       <FrField
         v-model="justificationText"
         type="textarea"
-        :label="$t('governance.accessRequests.newRequest.justification')"
-        :description="$t('governance.accessRequests.newRequest.justificationDescription')"
+        :label="$t('governance.accessRequest.newRequest.justification')"
+        :description="$t('governance.accessRequest.newRequest.justificationDescription')"
         :max-rows="10"
         :rows="5" />
     </BFormGroup>
@@ -70,12 +69,12 @@ of the MIT license. See the LICENSE file for details. -->
     <!-- Expiration Datepicker -->
     <BFormGroup>
       <div class="mb-2 text-muted">
-        {{ $t('governance.accessRequests.newRequest.applyExpirationDate') }}
+        {{ $t('governance.accessRequest.newRequest.applyExpirationDate') }}
       </div>
       <FrDatepicker
         v-model="expirationDate"
         :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
-        :placeholder="$t('governance.accessRequests.newRequest.expiryDate')" />
+        :placeholder="$t('governance.accessRequest.newRequest.expiryDate')" />
     </BFormGroup>
     <!-- Submit new request button -->
     <div class="mb-5">
@@ -85,7 +84,7 @@ of the MIT license. See the LICENSE file for details. -->
         data-testid="submit-request-button"
         :disabled="!requestCartItems.length"
         @click="submitRequest">
-        {{ $t('governance.accessRequests.newRequest.completeRequest') }}
+        {{ $t('governance.accessRequest.newRequest.completeRequest') }}
       </BButton>
     </div>
   </div>
@@ -132,19 +131,19 @@ export default {
         {
           // eslint-disable-next-line global-require
           imgSrc: getPriorityImageSrc('low'),
-          text: this.$t('governance.accessRequests.newRequest.priority.low'),
+          text: this.$t('governance.accessRequest.newRequest.priority.low'),
           value: 'low',
         },
         {
           // eslint-disable-next-line global-require
           imgSrc: getPriorityImageSrc('medium'),
-          text: this.$t('governance.accessRequests.newRequest.priority.med'),
+          text: this.$t('governance.accessRequest.newRequest.priority.med'),
           value: 'medium',
         },
         {
           // eslint-disable-next-line global-require
           imgSrc: getPriorityImageSrc('high'),
-          text: this.$t('governance.accessRequests.newRequest.priority.high'),
+          text: this.$t('governance.accessRequest.newRequest.priority.high'),
           value: 'high',
         },
       ],
