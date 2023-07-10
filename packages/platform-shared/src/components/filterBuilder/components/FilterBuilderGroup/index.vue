@@ -12,7 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
           v-if="isBaseGroup"
           class="pr-2">
           <slot name="prefix">
-            {{ $t('queryFilterBuilder.groupOperatorText1', { resourceName }) }}
+            {{ prefixGroupOperatorText }}
           </slot>
         </div>
         <div class="pr-sm-2 py-1 py-sm-0">
@@ -55,6 +55,7 @@ of the MIT license. See the LICENSE file for details. -->
         :resource-name="resourceName"
         :depth="depth"
         :has-siblings="rules.subfilters.length > 1"
+        :hide-group="hideGroup"
         :index="i"
         :is-ldap="isLdap"
         :key="subfilter.uniqueIndex"
@@ -146,6 +147,9 @@ export default {
         value: this.rules.operator,
       };
     },
+    prefixGroupOperatorText() {
+      return this.prefixGroupText || this.$t('queryFilterBuilder.groupOperatorText1', { resourceName: this.resourceName });
+    },
   },
   props: {
     conditionOptions: {
@@ -157,6 +161,10 @@ export default {
       default: false,
     },
     hasSiblings: {
+      default: false,
+      type: Boolean,
+    },
+    hideGroup: {
       default: false,
       type: Boolean,
     },
@@ -190,6 +198,10 @@ export default {
     },
     path: {
       required: true,
+      type: String,
+    },
+    prefixGroupText: {
+      default: '',
       type: String,
     },
     properties: {

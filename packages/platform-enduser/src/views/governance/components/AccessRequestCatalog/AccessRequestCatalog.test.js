@@ -44,7 +44,7 @@ describe('AccessRequestCatalog Component', () => {
   }
 
   it('displays total count in singular', async () => {
-    const wrapper = mountComponent({ totalCount: 1 });
+    const wrapper = mountComponent({ catalogItems: [{}], totalCount: 1 });
     await flushPromises();
     const resultsText = wrapper.find('.btn-toolbar .text-muted');
 
@@ -53,7 +53,7 @@ describe('AccessRequestCatalog Component', () => {
   });
 
   it('displays total count in plural', () => {
-    const wrapper = mountComponent({ totalCount: 2 });
+    const wrapper = mountComponent({ catalogItems: [{}], totalCount: 2 });
     const resultsText = wrapper.find('.btn-toolbar .text-muted');
 
     expect(resultsText.exists()).toBeTruthy();
@@ -92,7 +92,7 @@ describe('AccessRequestCatalog Component', () => {
   });
 
   it('displays pagination if more than 10 results', () => {
-    const wrapper = mountComponent({ totalCount: 11 });
+    const wrapper = mountComponent({ catalogItems: [{}], totalCount: 11 });
     const paginationComponent = wrapper.find('.pagination-dropdown');
 
     expect(paginationComponent.exists()).toBeTruthy();
@@ -118,7 +118,7 @@ describe('AccessRequestCatalog Component', () => {
     const catalogCards = wrapper.findAll('a.card');
     catalogCards.at(1).trigger('click');
     expect(wrapper.emitted()['add-item-to-cart'][0][0]).toEqual({
-      itemType: 'roles',
+      itemType: 'role',
       description: 'role',
       templateName: 'template2',
       icon: '',

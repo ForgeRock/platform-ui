@@ -2,7 +2,6 @@
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
-
 <template>
   <div>
     <BListGroup
@@ -83,10 +82,10 @@ of the MIT license. See the LICENSE file for details. -->
           class="opacity-30 mb-3 md-48 pt-4"
           name="add" />
         <h3 class="h5">
-          {{ $t('governance.accessRequests.newRequest.noRequestedItemsYet') }}
+          {{ $t('governance.accessRequest.newRequest.noRequestedItemsYet') }}
         </h3>
         <p>
-          {{ $t('governance.accessRequests.newRequest.addItems') }}
+          {{ $t('governance.accessRequest.newRequest.addItems') }}
         </p>
       </slot>
     </div>
