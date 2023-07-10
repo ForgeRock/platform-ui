@@ -47,7 +47,7 @@ of the MIT license. See the LICENSE file for details. -->
           :readonly="readonly"
           :style="labelHeight && {height: `${labelHeight + 2}px`, 'padding-top': `${labelHeight - 27}px`}"
           @input="event => inputValue = removeNonNumericChars(event)"
-          :aria-describedby="getAriaDescribedBy(validationObserver)"
+          :aria-describedby="getAriaDescribedBy(validationObserver, errors)"
           @animationstart="floatingLabel && animationStart"
           @blur="$emit('blur', $event)"
           :data-testid="`input-${testid}`">
@@ -72,7 +72,7 @@ of the MIT license. See the LICENSE file for details. -->
           :type="fieldType"
           :autocomplete="$attrs.autocomplete"
           :style="labelHeight && {height: `${labelHeight + 2}px`, 'padding-top': `${labelHeight - 27}px`}"
-          :aria-describedby="getAriaDescribedBy(validationObserver)"
+          :aria-describedby="getAriaDescribedBy(validationObserver, errors)"
           @blur="$emit('blur', $event)"
           @input="evt=>inputValue=evt.target.value"
           @animationstart="floatingLabel && animationStart"
@@ -270,14 +270,17 @@ export default {
     },
     /**
      * If the field is invalid, we return a string list of error ids which this field is described by
+     * @param {ValidationObserver} validationObserver errors from user input
+     * @param {Array} parentErrors the errors given to the component by its parent on load
      */
-    getAriaDescribedBy({ errors, invalid }) {
-      if (!errors) return this.describedbyId;
+    getAriaDescribedBy({ errors: componentErrors, invalid }, parentErrors) {
+      if ((!invalid && !parentErrors.length) || !componentErrors) return this.describedbyId;
 
-      const errorList = errors[this.name];
-      if (!invalid || !errorList) return this.describedbyId;
+      const fieldErrors = componentErrors[this.name];
+      const combinedErrors = parentErrors.concat(fieldErrors);
+      if (!combinedErrors) return this.describedbyId;
 
-      return createAriaDescribedByList(this.name, errorList);
+      return createAriaDescribedByList(this.name, combinedErrors);
     },
   },
 };

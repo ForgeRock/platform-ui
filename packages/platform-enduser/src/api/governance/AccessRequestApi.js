@@ -23,6 +23,16 @@ export function getRequest(id) {
   });
 }
 
+export function getUserRequests(userId, params, filter) {
+  return Promise.resolve({ data: getRequestsMock(params, filter) });
+  // /governance/user/{userId}/requests
+}
+
+export function getUserApprovals(userId, params, filter) {
+  return Promise.resolve({ data: getRequestsMock(params, filter) });
+  // /governance/user/{userId}/approvals
+}
+
 export function cancelRequest(id) {
   return Promise.resolve();
   // return generateIgaApi().post('/requests/${requestId}/cancel');
@@ -41,4 +51,22 @@ export function rejectRequest(id, phaseName) {
 export function commentRequest(id, phaseName, comment) {
   return Promise.resolve();
   // return generateIgaApi().post('/requests/{requestId}/phases/{phaseName}/comment', { comment });
+}
+
+export function getRequestsItems(userId, params) {
+  return Promise.resolve({
+    data: {
+      totalCount: 0,
+    },
+  });
+  // return generateIgaApi().get(`/user/${userId}/requests`);
+}
+
+export function getApprovalsItems(userId, params) {
+  return Promise.resolve({
+    data: {
+      totalCount: 0,
+    },
+  });
+  // return generateIgaApi().get(`/user/${userId}/approvals`);
 }
