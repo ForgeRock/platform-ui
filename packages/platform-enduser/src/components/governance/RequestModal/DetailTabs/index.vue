@@ -15,7 +15,10 @@ of the MIT license. See the LICENSE file for details. -->
         :title="tab.title"
         class="p-0"
         :data-testid="`tab-${tab}`">
-        {{ item }}
+        <Component
+          :is="tab.component"
+          :item="item"
+        />
       </BTab>
     </BTabs>
   </div>
@@ -26,11 +29,14 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   BTabs, BTab,
 } from 'bootstrap-vue';
+import FrDetails from './Details';
 
 export default {
-  name: 'RequestModalDetails',
+  name: 'RequestModalDetailTabs',
   components: {
-    BTabs, BTab,
+    BTabs,
+    BTab,
+    FrDetails,
   },
   props: {
     item: {
@@ -41,9 +47,18 @@ export default {
   data() {
     return {
       tabs: [
-        { title: this.$t('governance.requestModal.details') },
-        { title: this.$t('governance.requestModal.workflow') },
-        { title: this.$t('governance.requestModal.comments') },
+        {
+          component: 'FrDetails',
+          title: this.$t('governance.accessRequest.requestModal.details'),
+        },
+        {
+          component: '',
+          title: this.$t('governance.accessRequest.requestModal.workflow'),
+        },
+        {
+          component: '',
+          title: this.$t('governance.accessRequest.requestModal.comments'),
+        },
       ],
     };
   },
@@ -53,6 +68,10 @@ export default {
 <style lang="scss" scoped>
   ::v-deep .nav-pills {
     padding: 0px;
+  }
+
+  ::v-deep .tabs > .col-auto {
+    min-width: 160px;
   }
 
   .card-tabs-vertical ::v-deep .nav {
