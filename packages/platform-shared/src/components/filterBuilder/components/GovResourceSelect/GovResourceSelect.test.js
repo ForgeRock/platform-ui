@@ -34,29 +34,65 @@ const mountComponent = () => mount(GovResourceSelect, {
 
 describe('GovResourceSelect Component', () => {
   let wrapper;
+  CommonsApi.getResource = jest.fn().mockReturnValue(Promise.resolve({
+    data: {
+      result: [
+        {
+          givenName: 'test1',
+          sn: 'user',
+          id: 'userId1',
+        },
+        {
+          givenName: 'test2',
+          sn: 'user',
+          id: 'userId2',
+        },
+      ],
+    },
+  }));
 
   it('does not duplicate the selected option', async () => {
-    CommonsApi.getResource = jest.fn().mockReturnValue(Promise.resolve({
-      data: {
-        result: [
-          {
-            givenName: 'test1',
-            sn: 'user',
-            id: 'userId1',
-          },
-          {
-            givenName: 'test2',
-            sn: 'user',
-            id: 'userId2',
-          },
-        ],
-      },
-    }));
-
     wrapper = mountComponent();
     await flushPromises();
 
     expect(wrapper.vm.selectOptions).toEqual([
+      {
+        label: 'test1 user',
+        userInfo: {
+          givenName: 'test1',
+          sn: 'user',
+          id: 'userId1',
+        },
+        value: 'userId1',
+      },
+      {
+        label: 'test2 user',
+        userInfo: {
+          givenName: 'test2',
+          sn: 'user',
+          id: 'userId2',
+        },
+        value: 'userId2',
+      },
+    ]);
+  });
+
+  it('includes an all option if selectAllText is provided', async () => {
+    wrapper = mountComponent();
+    await flushPromises();
+
+    wrapper.setProps({
+      firstOption: {
+        label: 'test option',
+        value: 'all',
+      },
+    });
+
+    expect(wrapper.vm.selectOptions).toEqual([
+      {
+        label: 'test option',
+        value: 'all',
+      },
       {
         label: 'test1 user',
         userInfo: {

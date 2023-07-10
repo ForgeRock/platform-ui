@@ -9,7 +9,8 @@ of the MIT license. See the LICENSE file for details. -->
     :id="modalId"
     :title="title"
     :static="isTesting"
-    ref="governance-request-modal">
+    ref="governance-request-modal"
+    @show="modalType = REQUEST_MODAL_TYPES[type]">
     <Component
       :is="component"
       :item="item"
@@ -91,7 +92,7 @@ import {
   BButton, BModal, BRow, BCol,
 } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import FrRequestDetailTabs from './DetailsTabs';
+import FrRequestDetailTabs from './DetailTabs';
 import FrApproveRequest from './ApproveRequest';
 
 export const REQUEST_MODAL_TYPES = {
@@ -115,7 +116,7 @@ export default {
   props: {
     type: {
       type: String,
-      default: REQUEST_MODAL_TYPES.DETAILS,
+      required: true,
     },
     item: {
       type: Object,
@@ -139,7 +140,7 @@ export default {
         case REQUEST_MODAL_TYPES.APPROVE:
           return this.$t('common.approve');
         default:
-          return this.$t('governance.requestModal.defaultTitle');
+          return this.$t('governance.accessRequest.requestModal.defaultTitle');
       }
     },
     component() {

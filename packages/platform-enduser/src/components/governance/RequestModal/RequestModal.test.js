@@ -7,22 +7,56 @@
 
 import { mount } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import getPriorityImageSrc from '@/components/utils/governance/AccessRequestUtils';
 import RequestModal, { REQUEST_MODAL_TYPES } from './index';
+
+jest.mock('@/components/utils/governance/AccessRequestUtils');
 
 describe('RequestModal', () => {
   const typicalPropsData = {
     isTesting: true,
     type: REQUEST_MODAL_TYPES.DETAILS,
     item: {
-      key: 1,
+      details: {
+        id: 1,
+        type: 'Remove Entitlement',
+        name: 'Groups Administrator',
+        description: 'Administers different groups',
+        date: '2023-06-22T19:23:26+00:00',
+        priority: 'medium',
+        icon: 'img/microsoft.8a785075.svg',
+        requesteeInfo: {
+          mail: 'manuel.escobar@test.com',
+          givenName: 'Manuel',
+          sn: 'Escobar',
+          id: '1234-456-3',
+          userName: 'manuel.escobar@test.com',
+        },
+      },
+      rawData: {
+        decision: {
+          status: 'in-progress',
+        },
+        request: {
+          common: {
+            justification: 'this is the right thing to do',
+          },
+        },
+      },
+
     },
   };
+
   const mountGovernanceRequestModal = (propsData) => mount(RequestModal, {
     attachTo: document.body,
     mocks: {
       $t: () => {},
     },
     propsData,
+  });
+
+  beforeEach(() => {
+    getPriorityImageSrc.mockClear();
   });
 
   it('Details type should display approve, reject and forward buttons', async () => {
