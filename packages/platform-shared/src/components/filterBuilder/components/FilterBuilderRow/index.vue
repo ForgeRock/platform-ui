@@ -20,6 +20,7 @@ of the MIT license. See the LICENSE file for details. -->
               :disabled="disabled"
               :options="selectPropOptions.options"
               :placeholder="propertyPlaceholder"
+              validation="required"
               @input="ruleChange({ field: $event })" />
             <FrField
               v-else
@@ -69,7 +70,7 @@ of the MIT license. See the LICENSE file for details. -->
       <FrFilterBuilderAddButton
         class="add-button"
         :disabled="disabled"
-        :hide-group="isMaxDepth"
+        :hide-group="groupIsHidden"
         @add-rule="addRule" />
     </div>
   </BCard>
@@ -121,6 +122,9 @@ export default {
         value,
       };
     },
+    groupIsHidden() {
+      return this.isMaxDepth || this.hideGroup;
+    },
     isMaxDepth() {
       return this.depth === this.maxDepth - 1;
     },
@@ -156,6 +160,10 @@ export default {
     depth: {
       required: true,
       type: Number,
+    },
+    hideGroup: {
+      default: false,
+      type: Boolean,
     },
     index: {
       required: true,
