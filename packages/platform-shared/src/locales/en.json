@@ -1164,6 +1164,12 @@
       "overdue": "Overdue",
       "staging": "Staged"
     },
+    "decisions": {
+      "approved": "Approved",
+      "cancelled": "Cancelled",
+      "pending": "Pending",
+      "rejected": "Rejected"
+    },
     "certificationTask": {
       "noItems": "No Certification Items",
       "noAccessReview": "No {type} Access Reviews",
