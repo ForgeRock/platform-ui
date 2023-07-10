@@ -220,6 +220,17 @@ legend {
   font-size: $font-size-base;
 }
 
+.hover-underline {
+  &:hover {
+    text-decoration: underline;
+
+    &.color-blue,
+    .color-blue {
+      color: $hover-blue;
+    }
+  }
+}
+
 .color-blue {
   color: $blue;
 }

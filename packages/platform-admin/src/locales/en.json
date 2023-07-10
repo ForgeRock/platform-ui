@@ -2309,7 +2309,7 @@
     "conditionUpdateLabel": "Conditional Update Script",
     "defaultValueEnabled": "Apply a default if value is null",
     "defaultValueLabel": "Default value",
-    "editPropertyMapping": "Edit Property Mapping: {prop}",
+    "editPropertyMapping": "{application} Property Mapping",
     "inbound": "Inbound",
     "noProperties": "No properties mapped",
     "noPropertiesHelp": "Map properties from {source} to {target}.",
