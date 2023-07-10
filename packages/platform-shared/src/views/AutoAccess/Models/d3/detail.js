@@ -22,8 +22,8 @@ const initDetail = (svg) => {
     .append('g')
     .attr('id', 'roc-pr-chart-detail')
     .style('transform', `translate(${dim.width + dim.detailMargin.lr}px, ${dim.padding.t}px)`);
-  const hypothetical = detail.append('g').style('transform', `translate(0, ${dim.padding.t + 8}px)`);
-
+  const hypothetical = detail.append('g').style('transform', `translate(0, ${dim.padding.t + 8}px)`)
+    .attr('id', 'roc-pr-chart-detail-content');
   hypothetical
     .append('rect')
     .attr('height', `${hypotheticalHeight}px`)
@@ -74,7 +74,8 @@ const appendConfusionMatrix = (node, d) => {
     .data(['tp', 'fp', 'fn', 'tn'])
     .enter()
     .append('g')
-    .style('transform', (i) => `translate(${i % 2 === 1 ? quadrantW : 0}px, ${i > 1 ? quadrantH : 0}px)`);
+    .attr('class', 'confusion-quadrant')
+    .style('transform', (_i, index) => `translate(${index % 2 === 1 ? quadrantW : 0}px, ${index > 1 ? quadrantH : 0}px)`);
 
   quadrants
     .append('rect')

@@ -125,6 +125,13 @@ export default {
       type: String,
       default: '',
     },
+    /**
+     * For accessibility: if you want to manually associate the input field with a label, legend etc.
+     */
+    inputLabelledby: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
@@ -141,6 +148,16 @@ export default {
     }
 
     this.setInputValue(this.value);
+  },
+  updated() {
+    // Note: in certain browsers, screen readers are unable to associate a <legend> with the select component
+    // this fix tells the input what it's labelledby, which is the id of that <legend> element
+    if (this.inputLabelledby) {
+      const multiselectInput = this.$el.querySelector('.multiselect__input');
+      if (multiselectInput) {
+        multiselectInput.setAttribute('aria-labelledby', this.inputLabelledby);
+      }
+    }
   },
   computed: {
     selectOptions() {

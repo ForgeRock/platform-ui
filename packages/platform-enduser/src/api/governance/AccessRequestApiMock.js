@@ -6,12 +6,6 @@
  */
 
 /* eslint-disable no-unused-vars */
-/**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
- *
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE file for details.
- */
 
 import { cloneDeep, merge, isEmpty } from 'lodash';
 
@@ -21,8 +15,8 @@ const accessRequest = {
   request: {
     common: {
       priority: '',
-      startDate: '2022-05-19',
-      endDate: '2023-11-27',
+      startDate: '2023-06-22T19:23:26+00:00',
+      endDate: '2023-07-15T19:23:26+00:00',
     },
   },
   // This is who created the access request
@@ -150,10 +144,12 @@ const applications = [
 const entitlements = [
   {
     displayName: 'All Users',
+    description: 'This is for all users',
     id: '1',
   },
   {
     displayName: 'Groups Administrator',
+    description: 'Administers different groups',
     id: '2',
   },
 ];
@@ -161,10 +157,12 @@ const entitlements = [
 const roles = [
   {
     name: 'Main Role',
+    description: 'The primary role for everyone',
     id: '1',
   },
   {
     name: 'Secondary Role',
+    description: 'A secondary role with less permissions',
     id: '2',
   },
 ];
@@ -201,8 +199,6 @@ function generateRequest(id, status) {
   const request = {
     common: {
       priority: priorities[id % priorities.length],
-      startDate: 'today',
-      endDate: 'tomorrow',
     },
   };
   const decision = {
