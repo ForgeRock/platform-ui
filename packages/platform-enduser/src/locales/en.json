@@ -258,7 +258,24 @@
       "requestedFor": "Requested For",
       "requester": "Requester",
       "requestId": "Request ID",
-      "requestType": "Request Type"
+      "requestType": "Request Type",
+      "requestModal": {
+        "defaultTitle": "Request Details",
+        "requestDetailsLink": "Request Details",
+        "details": "Details",
+        "workflow": "Workflow",
+        "comments": "Comments",
+        "detailsTab": {
+          "requestId": "Request ID", 
+          "requestDate": "Request Date", 
+          "requestType": "Request Type",
+          "decision": "Decision", 
+          "requested": "Requested", 
+          "requestedFor": "Requested For",
+          "priority": "Priority",
+          "justification": "Justification"
+        }
+      }
     },
     "approval":{
       "subtitle": "View and take action on your pending access requests."
@@ -309,13 +326,6 @@
       "myRequests": {
         "subtitle": "View and take action on your pending access requests."
       }
-    },
-    "requestModal": {
-      "defaultTitle": "Request Details",
-      "requestDetailsLink": "Request Details",
-      "details": "Details",
-      "workflow": "Workflow",
-      "comments": "Comments"
     },
     "hideFilters": "Hide Filters",
     "showFilters": "Show Filters",
