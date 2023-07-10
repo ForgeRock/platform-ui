@@ -23,6 +23,7 @@ of the MIT license. See the LICENSE file for details. -->
     <ValidationObserver ref="observer">
       <fieldset class="w-100">
         <legend
+          id="legend-kba-create-callback-description"
           v-if="showHeader"
           class="text-center kbaHeaderText mb-4">
           {{ $t('login.kba.description') }}
@@ -31,6 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
           v-model="selected"
           class="mb-2 kbaQuestionSelect"
           type="select"
+          input-labelledby="legend-kba-create-callback-description"
           :searchable="true"
           :label="callback.getPrompt()"
           :name="callback.getPrompt()"

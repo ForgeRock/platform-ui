@@ -30,12 +30,24 @@ describe('Select', () => {
 
   describe('@renders', () => {
     it('default', () => {
-      const wrapper = setup();
+      const wrapper = setup({ _uid: 'test' });
 
       const multiselect = findByTestId(wrapper, 'stub-testid');
       expect(wrapper.vm.floatLabels).toBe(false);
       expect(multiselect.attributes('aria-expanded')).toBe('false');
       expect(multiselect.attributes('aria-labelledby')).toBe('floatingLabelInput3-label');
+
+      const multiSelectInput = multiselect.find(`[id=floatingLabelInput${wrapper.vm._uid}]`);
+      expect(multiSelectInput.attributes('aria-labelledby')).not.toBeDefined();
+    });
+
+    it('given inputLabelledby', async () => {
+      const wrapper = setup({ inputLabelledby: 'stub-input-labelledby' });
+      await wrapper.vm.$nextTick();
+
+      const multiselect = findByTestId(wrapper, 'stub-testid');
+      const multiSelectInput = multiselect.find(`[id=floatingLabelInput${wrapper.vm._uid}]`);
+      expect(multiSelectInput.attributes('aria-labelledby')).toBe('stub-input-labelledby');
     });
   });
 

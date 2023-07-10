@@ -25,7 +25,7 @@ of the MIT license. See the LICENSE file for details. -->
                 :header-classes="['login-header']"
               >
                 <template #center-card-header>
-                  <div aria-live="assertive">
+                  <div aria-live="polite">
                     <template v-if="!loading && !themeLoading">
                       <h1
                         v-if="header"
@@ -35,6 +35,9 @@ of the MIT license. See the LICENSE file for details. -->
                       <p
                         v-if="description"
                         v-html="description" />
+                      <p class="sr-only">
+                        {{ screenReaderMessage }}
+                      </p>
                     </template>
                   </div>
                 </template>
@@ -42,7 +45,8 @@ of the MIT license. See the LICENSE file for details. -->
                 <template #center-card-body>
                   <BCardBody
                     v-if="!loading && !themeLoading"
-                    id="callbacksPanel">
+                    id="callbacksPanel"
+                    data-testid="callbacks_panel">
                     <FrAlert
                       :show="loginFailure"
                       :dismissible="false"
@@ -106,7 +110,9 @@ of the MIT license. See the LICENSE file for details. -->
                   </BCardBody>
                   <BCardBody v-else>
                     <div class="h-100 d-flex">
-                      <div class="fr-center-card">
+                      <div
+                        class="fr-center-card"
+                        aria-live="polite">
                         <Spinner class="mb-4" />
                       </div>
                     </div>
@@ -154,11 +160,10 @@ of the MIT license. See the LICENSE file for details. -->
             </div>
           </div>
 
-          <div class="px-4 px-md-5">
-            <BRow
-              class="m-0"
-              aria-live="assertive"
-            >
+          <div
+            class="px-4 px-md-5"
+            aria-live="polite">
+            <BRow class="m-0">
               <BCol xl="9">
                 <h1
                   v-if="header"
@@ -170,6 +175,9 @@ of the MIT license. See the LICENSE file for details. -->
                   v-html="description" />
               </BCol>
             </BRow>
+            <p class="sr-only">
+              {{ screenReaderMessage }}
+            </p>
           </div>
         </div>
         <div class="mt-1 px-4 px-md-5 d-flex w-100 flex-grow-1">
@@ -246,7 +254,9 @@ of the MIT license. See the LICENSE file for details. -->
             </BRow>
             <BRow
               v-else
-              class="justify-content-center">
+              class="justify-content-center"
+              aria-live="polite"
+            >
               <div class="fr-center-card">
                 <Spinner class="mb-4" />
               </div>
@@ -331,6 +341,7 @@ export default {
     FrKbaCreateCallback: () => import('@/components/callbacks/KbaCreateCallback'),
     FrPasswordCallback: () => import('@/components/callbacks/PasswordCallback'),
     FrPollingWaitCallback: () => import('@/components/callbacks/PollingWaitCallback'),
+    FrPushChallengeNumber: () => import('@/components/display/PushChallengeNumber'),
     FrReCaptchaCallback: () => import('@/components/callbacks/ReCaptchaCallback'),
     FrRecoveryCodesComponent: () => import('@/components/display/RecoveryCodes'),
     FrSelectIdPCallback: () => import('@/components/callbacks/SelectIdPCallback'),
@@ -434,6 +445,7 @@ export default {
       suspendedId: undefined,
       treeId: undefined,
       svgShapesSanitizerConfig,
+      screenReaderMessage: '',
     };
   },
   computed: {
@@ -544,6 +556,7 @@ export default {
       this.description = this.$sanitize(this.step.getDescription() || '');
       this.nextButtonVisible = true;
       this.nextButtonDisabledArray = [false];
+      this.screenReaderMessage = '';
 
       this.checkNodeForThemeOverride(this.stage);
 
@@ -579,7 +592,7 @@ export default {
         // Reasign type to use specific component
         if (type === this.FrCallbackType.TextOutputCallback || type === this.FrCallbackType.MetadataCallback) {
           const isWebAuthnStep = FRWebAuthn.getWebAuthnStepType(this.step) !== WebAuthnStepType.None;
-          const isRecovertCodeStep = FRRecoveryCodes.isDisplayStep(this.step);
+          const isRecoveryCodeStep = FRRecoveryCodes.isDisplayStep(this.step);
           if (isWebAuthnStep) {
             // dont call the sdk twice on the same webAuthn step
             const onlyOneWebAuthn = !existsInComponentList(this.FrCallbackType.WebAuthnComponent);
@@ -588,9 +601,14 @@ export default {
             } else {
               return;
             }
-          } else if (isRecovertCodeStep) {
+          } else if (isRecoveryCodeStep) {
             type = this.FrCallbackType.RecoveryCodesComponent;
           }
+        }
+
+        // Check HiddenValueCallback input value is pushChallengeNumber for PushChallengeNumer display
+        if (type === this.FrCallbackType.HiddenValueCallback && callback.getInputValue() === 'pushChallengeNumber') {
+          type = this.FrCallbackType.PushChallengeNumber;
         }
 
         // Only components that need extra props or events
@@ -710,9 +728,10 @@ export default {
 
         // session storage is used to resume a tree after returning from a redirect
         const { authIndexValue, step, realm: stepRealm } = this.getStepFromStorage();
+
         this.treeId = authIndexValue;
-        this.step = new FRStep(step.payload);
-        this.realm = stepRealm;
+        this.step = step ? new FRStep(step.payload) : undefined;
+        this.realm = stepRealm || realm;
 
         const stringParams = createParamString(params);
         this.removeUrlParams();
@@ -802,6 +821,9 @@ export default {
         },
         'update-auth-id': (authId) => {
           this.step.payload.authId = authId;
+        },
+        'update-screen-reader-message': (message) => {
+          this.screenReaderMessage = message;
         },
         // event emitted from FrField
         input: (value) => {
@@ -1053,7 +1075,7 @@ export default {
                     this.componentList = [];
                     this.buildTreeForm();
                   }
-                  if (this.allowListingsEnabled(this.step.payload.authId)) {
+                  if (this.step?.payload && this.allowListingsEnabled(this.step.payload.authId)) {
                     this.getNewAuthId(stepParams).then((authId) => {
                       this.step.payload.authId = authId;
                       this.loading = false;
