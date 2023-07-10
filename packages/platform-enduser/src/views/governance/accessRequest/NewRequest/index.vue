@@ -18,7 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
             class="ml-auto d-lg-none"
             aria-controls="expandableRequestCart"
             :aria-expanded="requestCartExpanded"
-            :aria-label="$t('governance.accessRequests.newRequest.expandRequestCart')"
+            :aria-label="$t('governance.accessRequest.newRequest.expandRequestCart')"
             @click="toggleRequestCartPanel">
             <FrIcon
               class="md-24"
@@ -33,9 +33,11 @@ of the MIT license. See the LICENSE file for details. -->
         <div class="overflow-auto h-100">
           <FrAccessRequestCatalog
             :application-search-results="applicationSearchResults"
+            :catalog-filter-schema="catalogFilterSchema"
             :catalog-items="catalogItems"
             :total-count="totalCount"
             @add-item-to-cart="addItemToCart"
+            @get-catalog-filter-schema="getCatalogFilterSchema"
             @remove-item-from-cart="removeRequestedItem('accessItem', $event)"
             @search:catalog="searchCatalog"
             @search:applications="searchApplications" />
@@ -50,7 +52,7 @@ of the MIT license. See the LICENSE file for details. -->
             <div class="px-4 pt-4 pb-5">
               <div class="d-flex align-items-center justify-content-between mb-4">
                 <h2 class="mb-0 h5">
-                  {{ $t('governance.accessRequests.newRequest.yourRequest') }}
+                  {{ $t('governance.accessRequest.newRequest.yourRequest') }}
                 </h2>
                 <BButtonClose
                   class="ml-auto d-lg-none"
@@ -89,7 +91,7 @@ import AppSharedUtilsMixin from '@forgerock/platform-shared/src/mixins/AppShared
 import { getResource } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import FrAccessRequestCatalog from '../../components/AccessRequestCatalog';
 import FrRequestCart from '@/components/governance/RequestCart';
-import { saveNewRequest, searchCatalog } from '../../../../api/governance/CatalogApi';
+import { getCatalogFilterSchema, saveNewRequest, searchCatalog } from '../../../../api/governance/CatalogApi';
 
 /**
  * View housing new access request catalog and request cart panel
@@ -113,6 +115,7 @@ export default {
   data() {
     return {
       applicationSearchResults: [],
+      catalogFilterSchema: [],
       catalogResults: [],
       requestCartExpanded: false,
       requestCartItems: [],
@@ -183,7 +186,19 @@ export default {
      */
     addItemToCart(item) {
       this.requestCartItems.push(item);
-      this.displayNotification('success', this.$t('pageTitles.requestAdded'));
+      this.displayNotification('success', this.$t('governance.accessRequest.newRequest.requestAdded'));
+    },
+    /**
+     * Retrieves list of fields that can be filtered on
+     * @param {String} objectType object type to filter results by
+     */
+    async getCatalogFilterSchema(objectType) {
+      try {
+        const { data: catalogFilterSchema } = await getCatalogFilterSchema(objectType === 'entitlement' ? 'assignment' : objectType);
+        this.catalogFilterSchema = catalogFilterSchema;
+      } catch (error) {
+        this.showErrorMessage(error, this.$t('governance.accessRequest.newRequest.errorGettingCatalogFilterSchema'));
+      }
     },
     /**
      * Ensures access request cart is always expanded when screen resolution is above 992px
@@ -224,16 +239,19 @@ export default {
           },
         };
         if (params.applicationFilter) {
-          // TODOL add to targetFilter with full api?
+          // TODO add to targetFilter with full api?
+        }
+        if (params.filter) {
+          // TODO add to targetFilter with full api?
         }
         if (params.searchValue) {
-          // TODOL add to targetFilter with full api?
+          // TODO add to targetFilter with full api?
         }
         const { data } = await searchCatalog(searchParams, payload);
         this.catalogResults = data?.results || [];
         this.totalCount = data?.totalCount || 0;
       } catch (error) {
-        this.showErrorMessage(error, this.$t('governance.accessRequests.newRequest.errorSearchingCatalog'));
+        this.showErrorMessage(error, this.$t('governance.accessRequest.newRequest.errorSearchingCatalog'));
       }
     },
     /**
@@ -245,7 +263,7 @@ export default {
         const { data } = await getResource(`${this.$store.state.realm}_application`, query);
         this.applicationSearchResults = data?.result || [];
       } catch (error) {
-        this.showErrorMessage(error, this.$t('governance.accessRequests.newRequest.errorSearchingCatalog'));
+        this.showErrorMessage(error, this.$t('governance.accessRequest.newRequest.errorSearchingCatalog'));
       }
     },
     /**
@@ -265,7 +283,7 @@ export default {
       const itemRemovedSuccessTranslation = context === 'user' ? 'requesteeRemoved' : 'itemRemoved';
 
       targetArray.splice(index, 1);
-      this.displayNotification('success', this.$t(`governance.accessRequests.newRequest.${itemRemovedSuccessTranslation}`));
+      this.displayNotification('success', this.$t(`governance.accessRequest.newRequest.${itemRemovedSuccessTranslation}`));
     },
     /**
      * Submits a new request
@@ -282,7 +300,7 @@ export default {
         body.users = users;
         body.catalogs = [...applications, ...entitlements, ...roles];
         saveNewRequest(body);
-        this.displayNotification('success', this.$t('governance.accessRequests.newRequest.requestSuccess'));
+        this.displayNotification('success', this.$t('governance.accessRequest.newRequest.requestSuccess'));
         this.$router.push({
           name: 'MyRequests',
         });
