@@ -85,6 +85,13 @@ const router = new Router({
       beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
     },
     {
+      path: '/my-requests',
+      name: 'MyRequests',
+      component: () => import(/* webpackChunkName: "MyRequests" */ '@/views/governance/accessRequest/MyRequests'),
+      meta: { authenticate: true },
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled, store.state.SharedStore.governanceEnabledV3]),
+    },
+    {
       path: '/my-requests/new-request',
       name: 'AccessRequestNew',
       component: () => import(/* webpackChunkName: "AccessRequestNew" */ '@/views/governance/accessRequest/NewRequest'),
@@ -124,13 +131,6 @@ const router = new Router({
       component: () => import('@/views/governance/Directory/DirectReportDetail'),
       meta: { authenticate: true },
       beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
-    },
-    {
-      path: '/requests',
-      name: 'Requests',
-      component: () => import('@/views/governance/Requests'),
-      meta: { authenticate: true },
-      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabledV3, store.state.SharedStore.governanceEnabled]),
     },
     {
       path: '/list/:resourceType/:resourceName',
