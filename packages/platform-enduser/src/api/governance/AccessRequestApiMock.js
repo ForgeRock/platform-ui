@@ -237,25 +237,106 @@ function generateRequest(id, status) {
   });
 }
 
-function generateRequests(pageSize, pageNumber, status) {
+function generateRequests(pageSize, pageNumber, status, sortDir, sortType) {
+  const returnObject = {};
   if (pageNumber > 1) {
-    return {
-      totalCount: pageSize + 1,
-      results: [
-        generateRequest(pageSize + 1, status),
-      ],
-    };
+    returnObject.totalCount = pageSize + 1;
+    returnObject.results = [
+      generateRequest(pageSize + 1, status),
+    ];
+  } else {
+    const results = [];
+    for (let i = 0; i < pageSize; i += 1) {
+      results.push(generateRequest(i + 1, status));
+    }
+
+    returnObject.totalCount = pageSize + 1;
+    returnObject.results = results;
+
+    if (sortDir === 'desc') {
+      returnObject.results = returnObject.results.sort((a, b) => {
+        if (sortType === 'date') {
+          if (a.request.common.startDate > b.request.common.startDate) {
+            return -1;
+          }
+          if (a.request.common.startDate < b.request.common.startDate) {
+            return 1;
+          }
+          return 0;
+        }
+        if (sortType === 'requestedBy') {
+          if (a.requester.givenName > b.requester.givenName) {
+            return -1;
+          }
+          if (a.requester.givenName < b.requester.givenName) {
+            return 1;
+          }
+          return 0;
+        }
+        if (sortType === 'priority') {
+          if (a.request.common.priority > b.request.common.priority) {
+            return -1;
+          }
+          if (a.request.common.priority < b.request.common.priority) {
+            return 1;
+          }
+          return 0;
+        }
+        if (sortType === 'id') {
+          if (a.id > b.id) {
+            return -1;
+          }
+          if (a.id < b.id) {
+            return 1;
+          }
+          return 0;
+        }
+        return 0;
+      });
+    } else {
+      returnObject.results = returnObject.results.sort((a, b) => {
+        if (sortType === 'requestDate') {
+          if (a.request.common.startDate > b.request.common.startDate) {
+            return 1;
+          }
+          if (a.request.common.startDate < b.request.common.startDate) {
+            return -1;
+          }
+          return 0;
+        }
+        if (sortType === 'requestedBy') {
+          if (a.requester.givenName > b.requester.givenName) {
+            return 1;
+          }
+          if (a.requester.givenName < b.requester.givenName) {
+            return -1;
+          }
+          return 0;
+        }
+        if (sortType === 'priority') {
+          if (a.request.common.priority > b.request.common.priority) {
+            return 1;
+          }
+          if (a.request.common.priority < b.request.common.priority) {
+            return -1;
+          }
+          return 0;
+        }
+        if (sortType === 'id') {
+          if (a.id > b.id) {
+            return 1;
+          }
+          if (a.id < b.id) {
+            return -1;
+          }
+          return 0;
+        }
+        return 0;
+      });
+    }
   }
 
-  const results = [];
-  for (let i = 0; i < pageSize; i += 1) {
-    results.push(generateRequest(i + 1, status));
-  }
-
-  return {
-    totalCount: pageSize + 1,
-    results,
-  };
+  return returnObject;
 }
 
 export function getRequestMock(id) {
@@ -265,11 +346,15 @@ export function getRequestMock(id) {
 export function getRequestsMock(params, filters) {
   let pageSize = 10;
   let pageNumber = 1;
+  let sortDir = params.sortDir ?? 'desc';
+  let sortType = params.sortType ?? 'requestDate';
   let status = statusMap.pending;
 
   if (params.pageSize) pageSize = params.pageSize;
   if (params.pageNumber) pageNumber = params.pageNumber;
+  if (params.sortDir) sortDir = params.sortDir;
+  if (params.sortDir) sortType = params.sortType;
   if (params.status) status = params.status;
 
-  return generateRequests(pageSize, pageNumber, status);
+  return generateRequests(pageSize, pageNumber, status, sortDir, sortType);
 }

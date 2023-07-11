@@ -16,7 +16,7 @@ of the MIT license. See the LICENSE file for details. -->
       hover
       :fields="fields"
       :items="items"
-      @row-clicked="handleRowClick">
+      @row-clicked="$emit('open-detail', $event);">
       <template #cell(details)="{ item }">
         <div class="mb-2">
           <small data-testid="request-type">
@@ -101,17 +101,14 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
       <template #cell(actions)="{ item }">
         <slot
-          :item="item"
-          name="actions" />
+          name="actions"
+          :item="item" />
       </template>
     </BTable>
     <template v-else>
       <slot name="no-data" />
     </template>
     <slot name="footer" />
-    <FrRequestModal
-      :type="modalType"
-      :item="modalItem" />
   </div>
 </template>
 
@@ -128,7 +125,6 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import AppSharedUtilsMixin from '@forgerock/platform-shared/src/mixins/AppSharedUtilsMixin';
 import getPriorityImageSrc from '@/components/utils/governance/AccessRequestUtils';
-import FrRequestModal, { REQUEST_MODAL_TYPES } from '../RequestModal';
 
 /**
  * A table that displays an array of access request objects
@@ -142,7 +138,6 @@ export default {
     BMediaBody,
     BTable,
     FrIcon,
-    FrRequestModal,
     FrSpinner,
   },
   mixins: [AppSharedUtilsMixin],
@@ -167,11 +162,9 @@ export default {
         {
           key: 'actions',
           label: '',
-          class: 'w-175px',
+          class: 'w-200px p-3',
         },
       ],
-      modalType: REQUEST_MODAL_TYPES.DETAILS,
-      modalItem: null,
     };
   },
   watch: {
@@ -184,11 +177,6 @@ export default {
   },
   methods: {
     getPriorityImageSrc,
-    handleRowClick(item) {
-      this.modalItem = item;
-      this.modalType = REQUEST_MODAL_TYPES.DETAILS;
-      this.$bvModal.show('request_modal');
-    },
     /**
      * Converts access request objects to have information at the top level
      * that is necessary for the table display
@@ -308,8 +296,8 @@ export default {
 </script>
 <style lang="scss" scoped>
 ::v-deep {
-  .w-175px {
-    width: 175px;
+  .w-200px {
+    width: 200px;
   }
 }
 </style>

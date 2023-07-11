@@ -34,6 +34,13 @@ of the MIT license. See the LICENSE file for details. -->
         </template>
       </BDropdown>
       <div>
+        <FrSortDropdown
+          class="px-3"
+          :selected-item="sortField"
+          :hide-labels-on-mobile="true"
+          :sort-by-options="sortByOptions"
+          @sort-field-change="handleSortChange"
+          @sort-direction-change="handleSortDirectionChange" />
         <BButton
           @click="showFilters = !showFilters"
           class="toolbar-link-text"
@@ -80,6 +87,7 @@ import {
 } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrRequestFilter from '@/components/governance/RequestFilter';
+import FrSortDropdown from '@/components/governance/SortDropdown';
 /**
  * Toolbar used for sorting and filtering access requests
  */
@@ -94,6 +102,7 @@ export default {
     BDropdownItem,
     FrIcon,
     FrRequestFilter,
+    FrSortDropdown,
   },
   props: {
     statusOptions: {
@@ -106,6 +115,25 @@ export default {
       numFilters: 0,
       selectedStatus: '',
       showFilters: false,
+      sortByOptions: [
+        {
+          value: 'date',
+          text: this.$t('governance.accessRequest.requestDate'),
+        },
+        {
+          value: 'requestedFor',
+          text: this.$t('governance.accessRequest.requestedFor'),
+        },
+        {
+          value: 'priority',
+          text: this.$t('common.priority'),
+        },
+        {
+          value: 'id',
+          text: this.$t('governance.accessRequest.requestId'),
+        },
+      ],
+      sortField: 'date',
     };
   },
   mounted() {
@@ -120,6 +148,20 @@ export default {
     handleFilterChange({ filter, count }) {
       this.numFilters = count;
       this.$emit('filter-change', filter);
+    },
+    /**
+     * Set sort type and emit event
+     * @param {String} sort sort type dropdown selection value
+     */
+    handleSortChange(sort) {
+      this.$emit('sort-change', sort);
+    },
+    /**
+     * Set sort direction and emit event
+     * @param {String} direction sort direction dropdown selection value (asc, desc)
+     */
+    handleSortDirectionChange(direction) {
+      this.$emit('sort-direction-change', direction);
     },
     /**
      * Set current status and emit event with the status

@@ -36,7 +36,7 @@
       "status": {
         "active": "Active",
         "in-progress": "Active",
-        "cancelled": "Cancelled",
+        "cancelled": "Canceled",
         "closed": "Closed",
         "completed": "Completed",
         "expired": "Expired",
@@ -128,6 +128,9 @@
         "temporalConstraint": "{startDate} to {endDate}.",
         "title": "My Roles"
       }
+    },
+    "myRequests": {
+      "subTitle": "View your pending access requests or submit a new request."
     },
     "uma": {
       "activity": {
@@ -258,6 +261,8 @@
       "noRequests": "No {status} Access Requests",
       "requestedFor": "Requested For",
       "requester": "Requester",
+      "requestDate": "Request Date",
+      "requestedBy": "Requested By",
       "requestId": "Request ID",
       "requestType": "Request Type",
       "requestModal": {
@@ -327,6 +332,7 @@
         "justification": "Justification",
         "justificationDescription": "Provide a justification for granting this request.",
         "noRequestedItemsYet": "No requested items yet",
+        "newRequest": "New Request",
         "priority": {
           "low": "Low",
           "med": "Medium",
@@ -344,6 +350,11 @@
         "yourRequest": "Your Request"
       },
       "myRequests": {
+        "cancelRequest": "Cancel Request",
+        "cancelRequestMessage": "Are you sure you want to cancel this request?",
+        "cancelRequestSuccess": "Request successfully canceled",
+        "errorCancelingRequest": "There was an error canceling the request",
+        "errorGettingRequests": "There was an error retrieving your requests",
         "subtitle": "View and take action on your pending access requests."
       }
     },
