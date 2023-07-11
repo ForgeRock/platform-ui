@@ -2006,6 +2006,10 @@
         "name": "Configuration Provider Node",
         "description": "Default global script for Config Provider."
       },
+      "LIBRARY": {
+        "name": "Journey Decision Node Library",
+        "description": "Reusable script for use across journey decision nodes."
+      },
       "OAUTH2_ACCESS_TOKEN_MODIFICATION": {
         "name": "OAuth2 Access Token Modification",
         "description": "Script to modify OAuth2 authentication tokens when they are passed from the server to the client."
