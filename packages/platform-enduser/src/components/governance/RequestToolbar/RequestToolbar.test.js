@@ -74,4 +74,16 @@ describe('RequestToolbar', () => {
 
     expect(wrapper.emitted()['filter-change'][0]).toEqual([{ prop1: 'test value' }]);
   });
+
+  it('emits a new sort value when the handleSortChange method is executed', () => {
+    const emittedValue = 'sortTypeChangeValue';
+    wrapper.vm.handleSortChange(emittedValue);
+    expect(wrapper.emitted('sort-change')[0]).toEqual([emittedValue]);
+  });
+
+  it('emits a new sort direction value when the handleSortDirectionChange method is executed', () => {
+    const emittedValue = 'desc';
+    wrapper.vm.handleSortDirectionChange(emittedValue);
+    expect(wrapper.emitted('sort-direction-change')[0]).toEqual([emittedValue]);
+  });
 });

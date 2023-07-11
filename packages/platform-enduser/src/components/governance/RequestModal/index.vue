@@ -96,10 +96,11 @@ import FrRequestDetailTabs from './DetailTabs';
 import FrApproveRequest from './ApproveRequest';
 
 export const REQUEST_MODAL_TYPES = {
-  DETAILS: 'DETAILS',
-  REJECT: 'REJECT',
   APPROVE: 'APPROVE',
+  COMMENT: 'COMMENT',
+  DETAILS: 'DETAILS',
   FORWARD: 'FORWARD',
+  REJECT: 'REJECT',
 };
 
 export default {

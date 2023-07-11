@@ -11,7 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
       <FrIcon
         class="mr-2 pt-02"
         name="sort" />
-      <div>
+      <div :class="{ 'd-none d-lg-block': hideLabelsOnMobile }">
         <span class="font-weight-bold mr-1">
           {{ $t('governance.sortBy') }}:
         </span>
@@ -80,6 +80,10 @@ export default {
     FrIcon,
   },
   props: {
+    hideLabelsOnMobile: {
+      type: Boolean,
+      default: false,
+    },
     selectedItem: {
       type: String,
       default: '',

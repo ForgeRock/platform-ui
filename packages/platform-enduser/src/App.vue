@@ -162,7 +162,7 @@ export default {
           : {}),
         (this.$store.state.SharedStore.governanceEnabledV3 === true
           ? {
-            routeTo: { name: 'Requests' },
+            routeTo: { name: 'MyRequests' },
             displayName: 'sideMenu.requests',
             icon: 'person_add',
           }
