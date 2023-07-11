@@ -1,0 +1,285 @@
+<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
+
+<template>
+  <div>
+    <BContainer>
+      <BRow class="mt-5 pb-4 pb-lg-0 align-items-center">
+        <BCol lg="8">
+          <FrHeader
+            :title="$t('pageTitles.MyRequests')"
+            :subtitle="$t('pages.myRequests.subTitle')" />
+        </BCol>
+        <BCol lg="4">
+          <div class="d-flex justify-content-lg-end">
+            <BButton
+              variant="primary"
+              :aria-label="$t('governance.accessRequests.newRequest.newRequest')"
+              @click="newRequest">
+              <FrIcon
+                class="mr-1"
+                name="add" />
+              {{ $t('governance.accessRequests.newRequest.newRequest') }}
+            </BButton>
+          </div>
+        </BCol>
+      </BRow>
+      <BRow>
+        <BCol>
+          <BCard no-body>
+            <FrAccessRequestList
+              :is-loading="isLoading"
+              :requests="accessRequests"
+              @open-detail="openModal($event, 'DETAILS')">
+              <template #header>
+                <FrRequestToolbar
+                  :status-options="statusOptions"
+                  @filter-change="filterHandler({ filter: $event })"
+                  @sort-change="filterHandler({ sortType: $event })"
+                  @sort-direction-change="filterHandler({ sortDir: $event })"
+                  @status-change="filterHandler({ status: $event })" />
+              </template>
+              <template #no-data>
+                <FrNoData
+                  class="mb-4 border-top"
+                  data-testid="requests-no-data"
+                  icon="person_add"
+                  :card="false"
+                  :subtitle="$t('governance.accessRequest.noRequests', { status })" />
+              </template>
+              <template #actions="{ item }">
+                <div class="d-flex justify-content-end align-items-center">
+                  <div class="d-none d-lg-block w-100 mr-4">
+                    <BBadge
+                      class="w-100 font-weight-normal"
+                      data-testid="status-badge"
+                      variant="light">
+                      {{ status }}
+                    </BBadge>
+                  </div>
+                  <FrActionsCell
+                    test-id="cell-button"
+                    :delete-option="false"
+                    :divider="false"
+                    :edit-option="false">
+                    <template #custom-top-actions>
+                      <BDropdownItem @click="openModal(item, 'COMMENT')">
+                        <FrIcon
+                          class="mr-3"
+                          name="chat_bubble_outline" />
+                        {{ $t('governance.certificationTask.actions.addComment') }}
+                      </BDropdownItem>
+                      <BDropdownItem
+                        data-testid="view-details-button"
+                        @click="openModal(item, 'DETAILS')">
+                        <FrIcon
+                          class="mr-3"
+                          name="list_alt" />
+                        {{ $t('common.viewDetails') }}
+                      </BDropdownItem>
+                      <BDropdownDivider />
+                      <BDropdownItem @click="openModal(item, 'CANCEL')">
+                        <FrIcon
+                          class="mr-2"
+                          name="cancel" />
+                        {{ $t('governance.accessRequests.myRequests.cancelRequest') }}
+                      </Bdropdownitem>
+                    </template>
+                  </FrActionsCell>
+                </div>
+              </template>
+            </FrAccessRequestList>
+            <FrPagination
+              v-model="currentPage"
+              :per-page="pageSize"
+              :total-rows="totalRows"
+              @input="filterHandler({ currentPage: $event })"
+              @on-page-size-change="filterHandler({ pageSize: $event })" />
+          </BCard>
+        </BCol>
+      </Brow>
+    </BContainer>
+    <FrRequestModal
+      :type="modalType"
+      :item="modalItem" />
+    <BModal
+      id="cancel_modal"
+      :title="$t('governance.accessRequests.myRequests.cancelRequest')">
+      <p>{{ $t('governance.accessRequests.myRequests.cancelRequestMessage') }}</p>
+      <template #modal-footer="{ hide }">
+        <div class="w-100 d-flex justify-content-end">
+          <BButton
+            class="text-danger"
+            variant="link"
+            :aria-label="$t('common.cancel')"
+            @click="hide()">
+            {{ $t('common.cancel') }}
+          </BButton>
+          <FrButtonWithSpinner
+            variant="danger"
+            :button-text="$t('governance.accessRequests.myRequests.cancelRequest')"
+            :spinner-text="$t('common.canceling')"
+            :show-spinner="isCanceling"
+            @click="handleCancelRequest(hide)" />
+        </div>
+      </template>
+    </BModal>
+  </div>
+</template>
+
+<script>
+import {
+  BBadge,
+  BButton,
+  BCard,
+  BCol,
+  BContainer,
+  BDropdownDivider,
+  BDropdownItem,
+  BModal,
+  BRow,
+} from 'bootstrap-vue';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
+import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
+import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
+import CertificationMixin from '@forgerock/platform-shared/src/mixins/Governance/Certification';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
+import FrNoData from '@forgerock/platform-shared/src/components/NoData';
+import FrAccessRequestList from '@/components/governance/AccessRequestList';
+import FrRequestToolbar from '@/components/governance/RequestToolbar';
+import { cancelRequest, getUserRequests } from '@/api/governance/AccessRequestApi';
+import FrRequestModal, { REQUEST_MODAL_TYPES } from '@/components/governance/RequestModal';
+/**
+ * View new access request items
+ */
+export default {
+  name: 'MyRequests',
+  components: {
+    BBadge,
+    BButton,
+    BCard,
+    BCol,
+    BContainer,
+    BDropdownDivider,
+    BDropdownItem,
+    BModal,
+    BRow,
+    FrAccessRequestList,
+    FrActionsCell,
+    FrButtonWithSpinner,
+    FrHeader,
+    FrIcon,
+    FrNoData,
+    FrPagination,
+    FrRequestModal,
+    FrRequestToolbar,
+  },
+  data() {
+    return {
+      accessRequests: [],
+      currentPage: 1,
+      filter: {},
+      isCanceling: false,
+      isLoading: false,
+      modalItem: {},
+      modalType: 'REQUEST_MODAL_TYPES.DETAILS',
+      pageSize: 10,
+      sortDir: 'desc',
+      sortType: 'date',
+      status: this.$t('governance.status.pending'),
+      statusOptions: [
+        this.$t('governance.status.pending'),
+        this.$t('governance.status.complete'),
+        this.$t('governance.status.canceled'),
+      ],
+      totalRows: 0,
+    };
+  },
+  mixins: [
+    CertificationMixin,
+    NotificationMixin,
+  ],
+  mounted() {
+    this.loadRequests();
+  },
+  methods: {
+    buildTargetFilter(filter) {
+      // TODO: Implement this when integrating with API
+      return filter;
+    },
+    /**
+     * Cancels the selected request
+     * @param {Function} hide function passed in through slot scope props
+     */
+    async handleCancelRequest(hide) {
+      this.isCanceling = true;
+      try {
+        await cancelRequest(this.modalItem.details.id);
+        this.displayNotification('success', this.$t('governance.accessRequests.myRequests.cancelRequestSuccess'));
+        this.loadRequests();
+        this.modalItem = {};
+      } catch (error) {
+        this.showErrorMessage(error, this.$t('governance.accessRequests.myRequests.errorCancelingRequest'));
+      } finally {
+        this.isCanceling = false;
+        hide();
+      }
+    },
+    /**
+     * Handles filtering requests as well as updates to pagination
+     * @param {Object} property updated property
+     */
+    filterHandler(property) {
+      const [key, value] = Object.entries(property)[0];
+      this[key] = value;
+      this.loadRequests();
+    },
+    /**
+     * Get current users access requests based on query params and target filter
+     */
+    async loadRequests() {
+      this.isLoading = true;
+      const payload = this.buildTargetFilter(this.filter);
+      const params = {
+        pageNumber: this.currentPage,
+        pageSize: this.pageSize,
+        sortDir: this.sortDir,
+        sortType: this.sortType,
+        status: this.status,
+      };
+
+      try {
+        const { data } = await getUserRequests(this.$store.state.UserStore.userId, params, payload);
+        this.accessRequests = data.results;
+        this.totalRows = data.totalCount;
+      } catch (error) {
+        this.accessRequests = [];
+        this.totalRows = 0;
+        this.showErrorMessage(error, this.$t('governance.accessRequests.myRequests.errorGettingRequests'));
+      } finally {
+        this.isLoading = false;
+      }
+    },
+    newRequest() {
+    },
+    /**
+     * Opens the request / cancel modals
+     * @param {Object} item request item that was clicked
+     * @param {String} type string that tells the modal what view to show
+     */
+    openModal(item, type) {
+      this.modalItem = item;
+      if (type !== 'CANCEL') {
+        this.modalType = REQUEST_MODAL_TYPES[type];
+        this.$bvModal.show('request_modal');
+      } else {
+        this.$bvModal.show('cancel_modal');
+      }
+    },
+  },
+};
+</script>
