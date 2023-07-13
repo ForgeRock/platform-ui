@@ -286,7 +286,7 @@ export default {
   },
   data() {
     return {
-      assignmentsQueryFilter: '!(/type eq "__ENTITLEMENT__") and !(/type eq "__RESOURCE__") and !(/type eq "__OVERRIDE__")',
+      assignmentsQueryFilter: this.$store.state.SharedStore.workforceEnabled ? '!(/type eq "__ENTITLEMENT__") and !(/type eq "__RESOURCE__") and !(/type eq "__OVERRIDE__")' : 'true',
       resourceTitle: '',
       resourceName: this.$route.params.resourceName,
       resourceType: this.$route.params.resourceType,
