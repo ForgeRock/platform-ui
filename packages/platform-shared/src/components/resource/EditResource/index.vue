@@ -589,7 +589,7 @@ export default {
           }
 
           // Try and do some primary detection for a display name
-          if (createPriv.attrubute !== '_id' && this.displayNameField.length === 0) {
+          if (createPriv.attribute !== '_id' && createPriv.attribute !== 'password' && this.displayNameField.length === 0) {
             this.displayNameField = createPriv.attribute;
           }
 
