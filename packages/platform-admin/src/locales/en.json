@@ -2328,7 +2328,7 @@
     "selectPropertyLabel": "Choose {application} property",
     "showScriptEditor": "Show Script Editor",
     "sourceProperty": "source.{prop}",
-    "sourceValueDescription": "User property or expression to map to the target property. <code>source</code> represents the ForgeRock user identity profile.",
+    "sourceValueDescription": "User property or expression to map to the target property. <code>source</code> represents the {application} user identity profile.",
     "sourceValueLabel": "Source Value",
     "sourceValuePlaceholder": "Choose a property or enter an expression",
     "sourceValueTag": "Press enter",
