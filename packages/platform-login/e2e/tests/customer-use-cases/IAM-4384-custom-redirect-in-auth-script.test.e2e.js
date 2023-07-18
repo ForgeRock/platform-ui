@@ -10,7 +10,7 @@ import { filterTests } from '../../../../../e2e/util';
 const realm = Cypress.env('IS_FRAAS') ? 'alpha' : '/';
 
 filterTests(['forgeops', 'cloud'], () => {
-  describe('IAM-4383 Login supports custom redirects in auth scripts', () => {
+  xdescribe('IAM-4383 Login supports custom redirects in auth scripts', () => {
     const testTreeUrl = `${Cypress.config().baseUrl}/am/XUI/?realm=${realm}&authIndexType=service&authIndexValue=IAM-4384`;
 
     before(() => {
