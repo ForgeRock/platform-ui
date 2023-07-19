@@ -241,6 +241,14 @@ export function getRules(i18n) {
     },
   };
 
+  // Rule to check whether url, relative path or esv is valid in bookmark applications
+  const validBookmarkUrl = {
+    validate(value) {
+      return customValidators.validBookmarkUrl(value);
+    },
+    message: i18n.t('common.policyValidationMessages.urlPathEsv'),
+  };
+
   // Rule to check for compatibility with ESV naming schema
   const lower_case_alpha_numeric_underscore_hyphen_only = {
     validate(value) {
@@ -338,6 +346,7 @@ export function getRules(i18n) {
     url,
     url_with_path,
     url_without_path,
+    validBookmarkUrl,
     lower_case_alpha_numeric_underscore_hyphen_only,
   };
   return validationRules;
