@@ -50,6 +50,21 @@ export const url = (value) => {
   }
 };
 
+/**
+ * validates a text field is a url, a relative path or an ESV
+ * @param {String} value
+ * @returns {Boolean}
+ */
+export const validBookmarkUrl = (value) => {
+  try {
+    const relativePathRegex = /^(?:\/[a-zA-Z0-9-_?=#.]+)+\/?$/g;
+    const esvRegex = /^\${.+}$/g;
+    return (url(value) || relativePathRegex.test(value) || esvRegex.test(value));
+  } catch (e) {
+    return false;
+  }
+};
+
 export function testUniqueness(value, { otherValues }) {
   let uniqueValues;
   if (typeof otherValues === 'string') {
