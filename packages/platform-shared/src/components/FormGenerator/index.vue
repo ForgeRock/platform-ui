@@ -16,7 +16,13 @@ of the MIT license. See the LICENSE file for details. -->
           :class="[{'pl-lg-0': columnIndex === 0, 'pr-lg-0': columnIndex === row.length - 1}, property.columnClass]"
           :key="`${property.model}_${columnIndex}`"
           :lg="property.columns">
-          <template v-if="!property.customSlot">
+          <template v-if="property.type === 'managedObject'">
+            <slot
+              name="relationshipField"
+              :index="index"
+              :property="property" />
+          </template>
+          <template v-else-if="!property.customSlot">
             <Component
               v-if="getPropertyComponent(property)"
               @update:model="$emit('update:model', $event, property.saveFormat)"

@@ -2732,6 +2732,7 @@
     "glossary": {
       "addGlossaryItem": "Add {glossaryType} Glossary Item",
       "application": "Application",
+      "assignment": "assignment",
       "boolean": "Boolean",
       "createAttrError": "Failed to create {resourceType} attribute",
       "createAttrSuccess": "Successfully created {resourceType} attribute",

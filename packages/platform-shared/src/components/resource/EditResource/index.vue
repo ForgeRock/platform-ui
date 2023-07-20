@@ -90,17 +90,27 @@ of the MIT license. See the LICENSE file for details. -->
           pills>
           <BTab
             :title="$t('pages.access.details')">
-            <FrObjectTypeEditor
-              v-if="displayProperties.length > 0"
-              @refresh-data="refreshData"
-              :revision="revision"
-              :form-fields="formFields"
-              :display-properties="displayProperties"
-              :resource-path="`${resourceType}/${resourceName}/${id}`"
-              :resource-title="getTranslation(resourceTitle)"
-              :is-openidm-admin="isOpenidmAdmin"
-              :disable-save-button="disableSaveButton"
-              @disable-save-button="disableSaveButton = $event" />
+            <template v-if="propertiesAvailable">
+              <FrObjectTypeEditor
+                v-if="displayProperties.length"
+                :revision="revision"
+                :form-fields="formFields"
+                :display-properties="displayProperties"
+                :resource-path="`${resourceType}/${resourceName}/${id}`"
+                :resource-title="getTranslation(resourceTitle)"
+                :is-openidm-admin="isOpenidmAdmin"
+                :disable-save-button="disableSaveButton"
+                @disable-save-button="disableSaveButton = $event"
+                @refresh-data="$emit('save-clicked', refreshData)">
+                <template
+                  v-for="(key, slotName) in $scopedSlots"
+                  v-slot:[slotName]="slotData">
+                  <slot
+                    :name="slotName"
+                    v-bind="slotData" />
+                </template>
+              </FrObjectTypeEditor>
+            </template>
             <span v-else>
               {{ $t('pages.access.noAvailableProperties') }}
             </span>
@@ -654,7 +664,7 @@ export default {
     refreshData() {
       this.isLoading = true;
       // set the currentTab so we know which tab to return to after data is refreshed
-      this.currentTab = (this.$refs.resourceTabs) ? this.$refs.resourceTabs.currentTab : 0;
+      this.currentTab = this.$refs.resourceTabs?.currentTab || 0;
       // clear out existing data and reload everything
       this.displayProperties = [];
       this.objectTypeProperties = {};
@@ -704,6 +714,9 @@ export default {
   computed: {
     assignmentsParentResource() {
       return `${this.resourceType}/${this.resourceName}/${this.id}/${this.viewableRelationshipArrayProperties.assignments?.propName}`;
+    },
+    propertiesAvailable() {
+      return this.displayProperties.length > 0 || (this.$store.state.SharedStore.governanceEnabledV3 && this.resourceIsRole);
     },
     secondaryTitle() {
       let tempDisplayName = `${this.resourceType} - ${this.resourceName}`;
