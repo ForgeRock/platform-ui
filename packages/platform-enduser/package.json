@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "@braintree/sanitize-url": "6.0.2",
-    "@forgerock/javascript-sdk": "3.0.0",
     "@forgerock/platform-shared": "1.0.0",
     "@googlemaps/js-api-loader": "1.14.0",
     "@googlemaps/markerclusterer": "2.0.3",
