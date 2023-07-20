@@ -51,6 +51,7 @@ of the MIT license. See the LICENSE file for details. -->
           </div>
         </template>
       </ValidationObserver>
+      <slot name="additionalFields" />
     </div>
     <div class="card-footer">
       <div class="float-right mb-4">
