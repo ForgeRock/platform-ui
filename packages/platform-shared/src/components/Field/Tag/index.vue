@@ -26,6 +26,7 @@ of the MIT license. See the LICENSE file for details. -->
           :id="`fr-tags-list_${id}`">
           <Draggable
             v-model="inputValue"
+            :disabled="disabled"
             class="d-flex flex-wrap w-100"
             ghost-class="ghost-tag">
             <div
