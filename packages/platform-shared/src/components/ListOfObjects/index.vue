@@ -17,6 +17,8 @@ of the MIT license. See the LICENSE file for details. -->
           </div>
           <button
             class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
+            data-testid="list-objects-none-add"
+            :disabled="disabled"
             @click.prevent="addObjectToList(-1)">
             <FrIcon
               name="add"
@@ -40,6 +42,7 @@ of the MIT license. See the LICENSE file for details. -->
                     <div v-if="properties[key].type === 'boolean'">
                       <BFormCheckbox
                         v-model="obj[key]"
+                        :disabled="disabled"
                         :name="key+'_'+index">
                         {{ properties[key].title || key }}
                       </BFormCheckbox>
@@ -47,6 +50,7 @@ of the MIT license. See the LICENSE file for details. -->
                     <div v-else-if="properties[key].type === 'number'">
                       <FrField
                         v-model.number="obj[key]"
+                        :disabled="disabled"
                         type="number"
                         validation="required|numeric"
                         :label="properties[key].title || key"
@@ -57,6 +61,7 @@ of the MIT license. See the LICENSE file for details. -->
                     <div v-else>
                       <FrField
                         v-model="obj[key]"
+                        :disabled="disabled"
                         :label="properties[key].title ? properties[key].title : key"
                         :name="key+'_'+index"
                         :type="properties[key].type"
@@ -75,6 +80,7 @@ of the MIT license. See the LICENSE file for details. -->
                 <button
                   :data-testid="`list-objects-remove-${index}`"
                   class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
+                  :disabled="disabled"
                   @click.prevent="removeElementFromList(index)">
                   <FrIcon
                     name="remove"
@@ -84,6 +90,7 @@ of the MIT license. See the LICENSE file for details. -->
                   v-if="multiValued || listValues.length === 0"
                   :data-testid="`list-objects-add-${index}`"
                   class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
+                  :disabled="disabled"
                   @click.prevent="addObjectToList(index)">
                   <FrIcon
                     name="add"
@@ -141,6 +148,10 @@ export default {
       type: String,
       default: '',
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
     label: {
       type: String,
       default: '',
@@ -158,7 +169,7 @@ export default {
       default: () => [],
     },
     value: {
-      type: [Array, Object, String],
+      type: [Array, Object],
       default: () => [],
     },
   },
@@ -182,7 +193,10 @@ export default {
   },
   mounted() {
     if (this.value) {
-      const listValues = cloneDeep(this.value);
+      let listValues = cloneDeep(this.value);
+      if (!this.multiValued) {
+        listValues = [listValues];
+      }
       listValues.forEach((val) => {
         val.listUniqueIndex = this.getUniqueIndex();
       });
