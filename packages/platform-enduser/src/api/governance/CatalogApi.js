@@ -42,9 +42,3 @@ export function getUsersEntitlements(/* userIds */) {
 export function getUsersRoles(/* userIds */) {
   return Promise.resolve({ data: getUsersRolesMock() });
 }
-
-export function saveNewRequest(/* userIds */) {
-  // const url = /governance/requests;
-  return Promise.resolve();
-  // return generateIgaApi().post(url, payload);
-}
