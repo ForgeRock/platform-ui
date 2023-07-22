@@ -80,7 +80,7 @@ export default {
             param: 'cancelled',
             type: 'cancelled',
             variant: 'light',
-            text: this.$t('governance.status.cancelled'),
+            text: this.$t('governance.status.canceled'),
           },
         ],
         ['completed',

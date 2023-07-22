@@ -3,38 +3,20 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div>
-    <!-- Requesting for list of users -->
-    <div class="mb-5">
-      <h3 class="mb-2 text-muted font-weight-normal h5">
-        {{ $t('governance.accessRequest.newRequest.requestingFor') }}
-      </h3>
-      <div class="mb-3">
-        <FrRequestItemsGroup
-          :request-items="requestCartUsers"
-          :show-empty-state="false"
-          v-on="$listeners" />
-      </div>
-    </div>
-    <!-- List of access request items (Applicattions, Entitlements, Roles) -->
-    <div class="mb-5">
-      <h3 class="mb-2 text-muted font-weight-normal h5">
-        {{ $t('governance.accessRequest.newRequest.requestedAccess') }}
-      </h3>
-      <FrRequestItemsGroup
-        context="accessItem"
-        data-testid="request-items-container"
-        :fr-hover="true"
-        :request-items="requestCartItems"
-        v-on="$listeners" />
-    </div>
+  <BModal
+    id="revoke-request-modal"
+    size="lg"
+    :static="isTesting"
+    :title="$t('governance.directReports.revokeRequest')"
+    @hidden="$emit('hidden')">
     <!-- Justification textarea -->
     <BFormGroup>
       <FrField
         v-model="justificationText"
+        data-testid="justification-field"
         type="textarea"
-        :label="$t('governance.accessRequest.newRequest.justification')"
-        :description="$t('governance.accessRequest.newRequest.justificationDescription')"
+        :label="$t('governance.directReports.justification')"
+        :description="$t('governance.directReports.revokeJustification')"
         :max-rows="10"
         :rows="5" />
     </BFormGroup>
@@ -45,8 +27,9 @@ of the MIT license. See the LICENSE file for details. -->
       </div>
       <FrField
         v-model="selectedPriority"
-        type="select"
+        data-testid="priority-field"
         name="Priority"
+        type="select"
         :options="priorityOptions"
         :preselect-first="true"
         :searchable="false">
@@ -76,52 +59,56 @@ of the MIT license. See the LICENSE file for details. -->
         :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
         :placeholder="$t('governance.accessRequest.newRequest.expiryDate')" />
     </BFormGroup>
-    <!-- Submit new request button -->
-    <div class="mb-5">
-      <FrButtonWithSpinner
-        class="w-100 d-flex justify-content-center"
-        data-testid="submit-request-button"
-        variant="primary"
-        :button-text="$t('governance.accessRequest.newRequest.completeRequest')"
-        :disabled="!requestCartItems.length || showSpinner"
-        :spinner-text="$t('governance.status.completing')"
-        :show-spinner="showSpinner"
-        @click="submitRequest" />
-    </div>
-  </div>
+    <template #modal-footer="{ cancel }">
+      <div class="w-100 d-flex justify-content-end">
+        <BButton
+          variant="link"
+          :aria-label="$t('common.cancel')"
+          @click="cancel()">
+          {{ $t('common.cancel') }}
+        </BButton>
+        <FrButtonWithSpinner
+          data-testid="revoke-request-submit-button"
+          variant="primary"
+          :button-text="$t('governance.directReports.submitRequest')"
+          :spinner-text="$t('common.submitting')"
+          :show-spinner="showSpinner"
+          @click="submission" />
+      </div>
+    </template>
+  </BModal>
 </template>
 
 <script>
 import {
-  BImg,
+  BButton,
   BFormGroup,
+  BImg,
+  BModal,
 } from 'bootstrap-vue';
-import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
+import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner/';
 import FrDatepicker from '@forgerock/platform-shared/src/components/Datepicker';
 import FrField from '@forgerock/platform-shared/src/components/Field';
-import FrRequestItemsGroup from './RequestItemsGroup';
 import getPriorityImageSrc from '@/components/utils/governance/AccessRequestUtils';
+
 /**
- * A form that displays fields for requesting access to applications, entitlements and roles for one or multiple users
+ * Provides the ability to revoke grants for direct reports.
  */
 export default {
-  name: 'RequestCart',
+  name: 'RevokeRequestModal',
   components: {
-    BImg,
+    BButton,
     BFormGroup,
+    BImg,
+    BModal,
     FrButtonWithSpinner,
     FrDatepicker,
     FrField,
-    FrRequestItemsGroup,
   },
   props: {
-    requestCartUsers: {
-      type: Array,
-      required: true,
-    },
-    requestCartItems: {
-      type: Array,
-      default: () => [],
+    isTesting: {
+      type: Boolean,
+      default: false,
     },
     showSpinner: {
       type: Boolean,
@@ -156,21 +143,15 @@ export default {
     };
   },
   methods: {
-    /**
-     * Emits the new request payload
-     */
-    submitRequest() {
-      const payload = {
-        priority: this.selectedPriority,
-        accessModifier: 'add',
-      };
+    submission() {
+      const payload = { priority: this.selectedPriority };
       if (this.expirationDate) {
         payload.expiryDate = this.expirationDate;
       }
       if (this.justificationText) {
         payload.justification = this.justificationText;
       }
-      this.$emit('submit-new-request', payload);
+      this.$emit('submission', payload);
     },
   },
 };
