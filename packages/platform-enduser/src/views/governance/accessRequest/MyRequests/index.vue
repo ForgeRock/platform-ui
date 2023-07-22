@@ -209,12 +209,12 @@ export default {
         pageSize: this.pageSize,
         sortDir: this.sortDir,
         sortType: this.sortType,
-        status: this.status,
+        status: this.status.toLowerCase(),
       };
 
       try {
         const { data } = await getUserRequests(this.$store.state.UserStore.userId, params, payload);
-        this.accessRequests = data.results;
+        this.accessRequests = data.result;
         this.totalRows = data.totalCount;
       } catch (error) {
         this.accessRequests = [];

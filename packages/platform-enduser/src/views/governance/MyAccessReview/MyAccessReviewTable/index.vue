@@ -17,6 +17,7 @@ of the MIT license. See the LICENSE file for details. -->
           data-testid="my-access-review-table-search-container">
           <FrSearchInput
             v-model="searchQuery"
+            class="col-12 col-lg-auto p-0"
             data-testid="search-my-access-review-table"
             :placeholder="$t('common.search')"
             @clear="clear"
@@ -45,7 +46,7 @@ of the MIT license. See the LICENSE file for details. -->
         @sort-changed="sortChanged"
         responsive
         :fields="fields"
-        :items="items"
+        :items="itemsWithAssignment"
         :busy="isLoading"
         :no-local-sorting="true"
         :sort-by.sync="sortBy"
@@ -129,6 +130,36 @@ of the MIT license. See the LICENSE file for details. -->
             </BMediaBody>
           </BMedia>
         </template>
+        <template
+          v-if="resourceName === 'directReportDetail'"
+          #cell(assignment)="{ item }">
+          <BBadge
+            class="font-weight-normal"
+            data-testid="status-badge"
+            style="width: 100px"
+            variant="light">
+            {{ item.assignment }}
+          </BBadge>
+        </template>
+        <template
+          v-if="resourceName === 'directReportDetail'"
+          #cell(actions)="{ item }">
+          <FrActionsCell
+            v-if="item.assignment === directAssignment || item.assignment === staticAssignment"
+            test-id="relationship-menu"
+            :delete-option="false"
+            :divider="false"
+            :edit-option="false">
+            <template #custom-top-actions>
+              <BDropdownItem @click="$emit('revoke-request', item);">
+                <FrIcon
+                  class="mr-2"
+                  name="delete" />
+                {{ $t('common.revoke') }}
+              </Bdropdownitem>
+            </template>
+          </FrActionsCell>
+        </template>
       </BTable>
       <FrPagination
         v-model="paginationPage"
@@ -146,10 +177,12 @@ of the MIT license. See the LICENSE file for details. -->
 import dayjs from 'dayjs';
 import { map } from 'lodash';
 import {
+  BBadge,
   BButtonToolbar,
   BCard,
   BCardHeader,
   BContainer,
+  BDropdownItem,
   BImg,
   BMedia,
   BMediaAside,
@@ -162,6 +195,7 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
+import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
 import AppSharedUtilsMixin from '@forgerock/platform-shared/src/mixins/AppSharedUtilsMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
@@ -170,15 +204,18 @@ import { getMyAccess } from '@/api/governance/MyAccessApi';
 export default {
   name: 'MyAccessReviewTable',
   components: {
+    BBadge,
     BButtonToolbar,
     BCard,
     BCardHeader,
     BContainer,
+    BDropdownItem,
     BImg,
     BMedia,
     BMediaAside,
     BMediaBody,
     BTable,
+    FrActionsCell,
     FrHeader,
     FrIcon,
     FrPagination,
@@ -215,14 +252,18 @@ export default {
   data() {
     return {
       blankValueIndicator,
+      directAssignment: this.$t('common.direct'),
+      dynamicAssignment: this.$t('common.dynamic'),
       isLoading: true,
       isNoResultsFirstLoad: false,
       items: [],
       paginationPage: 1,
       paginationPageSize: 10,
+      roleBasedAssignment: this.$t('pages.assignment.roleBased'),
       searchQuery: '',
       sortDesc: null,
       sortBy: null,
+      staticAssignment: this.$t('common.static'),
       totalCount: 0,
       isDetailPage: false,
     };
@@ -235,11 +276,53 @@ export default {
   mounted() {
     this.setup();
   },
+  computed: {
+    itemsWithAssignment() {
+      return this.items.map((item) => ({
+        ...item,
+        assignment: this.assignmentHandler(item),
+      }));
+    },
+  },
   methods: {
+    assignmentHandler(membership) {
+      switch (membership.item.type) {
+        case 'accountGrant':
+          return this.grantTypeLabel(membership);
+        case 'entitlementGrant':
+          return this.grantTypeLabel(membership);
+        case 'roleMembership':
+          return membership?.role?.condition ? this.dynamicAssignment : this.staticAssignment;
+        default:
+          return '';
+      }
+    },
     clear() {
       this.paginationPage = 1;
       this.searchQuery = '';
       this.loadData();
+    },
+    /**
+     * Parse the temporal constraints of the role in case it has
+     * @param {Object[]} temporalConstraints temporal constraints info
+     * @returns {String} Parsed date
+     */
+    formatConstraintDate(temporalConstraints = []) {
+      const value = temporalConstraints[0]?.duration;
+      if (value) {
+        const dates = map(value.split('/'), (date) => {
+          const retVal = dayjs(date).format('MMMM D, YYYY h:mm A');
+
+          return retVal;
+        });
+
+        return this.$t('pages.myAccess.role.temporalConstraint', { startDate: dates[0], endDate: dates[1] });
+      }
+
+      return value;
+    },
+    getResourceDisplayName(item, resource) {
+      return item.descriptor?.idx?.[resource]?.displayName;
     },
     getDisplayName(item) {
       if (this.grantType === 'account') {
@@ -268,6 +351,18 @@ export default {
       }).finally(() => {
         this.isLoading = false;
       });
+    },
+    /**
+     * Determines the assignment label for accounts and ententitlements
+     * @param {Object} membership - table membership item object
+     */
+    grantTypeLabel(membership) {
+      const grantTypes = membership?.relationship?.properties?.grantTypes;
+      if (grantTypes) {
+        const foundGrantType = grantTypes.find((grantType) => grantType.id === membership.relationship.id);
+        return foundGrantType.grantType === 'role' ? this.roleBasedAssignment : this.directAssignment;
+      }
+      return '';
     },
     /**
      * Loads a list for MyAccess
@@ -318,37 +413,19 @@ export default {
           break;
         default:
           this.sortBy = null;
-          break;
+          return;
       }
       this.sortDesc = !this.sortDesc;
       this.loadData();
-    },
-    getResourceDisplayName(item, resource) {
-      return item.descriptor?.idx?.[resource]?.displayName;
-    },
-    /**
-     * Parse the temporal constraints of the role in case it has
-     * @param {Object[]} temporalConstraints temporal constraints info
-     * @returns {String} Parsed date
-     */
-    formatConstraintDate(temporalConstraints = []) {
-      const value = temporalConstraints[0]?.duration;
-      if (value) {
-        const dates = map(value.split('/'), (date) => {
-          const retVal = dayjs(date).format('MMMM D, YYYY h:mm A');
-
-          return retVal;
-        });
-
-        return this.$t('pages.myAccess.role.temporalConstraint', { startDate: dates[0], endDate: dates[1] });
-      }
-
-      return value;
     },
   },
 };
 </script>
 <style lang="scss" scoped>
+
+.table-responsive {
+  margin-bottom: 0;
+}
 .my-access {
   .icon {
     height: 34px;

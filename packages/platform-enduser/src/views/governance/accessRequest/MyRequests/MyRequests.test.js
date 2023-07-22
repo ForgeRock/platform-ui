@@ -79,7 +79,7 @@ describe('MyRequests', () => {
 
   AccessRequestApi.getUserRequests = jest.fn().mockReturnValue(Promise.resolve({
     data: {
-      results: accessRequests,
+      result: accessRequests,
     },
   }));
 
