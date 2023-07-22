@@ -56,13 +56,13 @@ describe('RequestCart', () => {
   });
 
   describe('@Component Tests', () => {
-    it('submit button is disabled if no requested items present', () => {
+    it('disables the submit button if no requested items present', () => {
       const wrapper = setup();
       const submitButton = findByTestId(wrapper, 'submit-request-button');
       expect(submitButton.element.disabled).toBeTruthy();
     });
 
-    it('submit button emits "remove-requested-user" event', () => {
+    it('emits "remove-requested-user" event when form is submitted with the expected payload', async () => {
       const wrapper = setup({
         propsData: {
           requestCartUsers: requestCartUsersStub,
@@ -70,8 +70,11 @@ describe('RequestCart', () => {
         },
       });
       const submitButton = findByTestId(wrapper, 'submit-request-button');
-      submitButton.trigger('click');
-      expect(wrapper.emitted('submit-new-request')).toBeTruthy();
+      await submitButton.trigger('click');
+      expect(wrapper.emitted('submit-new-request')).toEqual([[{
+        accessModifier: 'add',
+        priority: 'low',
+      }]]);
     });
   });
 });

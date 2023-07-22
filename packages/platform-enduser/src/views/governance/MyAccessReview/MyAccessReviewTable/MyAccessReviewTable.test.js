@@ -21,18 +21,32 @@ describe('MyAccessReviewTable', () => {
     jest.clearAllMocks();
     MyAccessApi.getMyAccess = jest.fn().mockReturnValue(Promise.resolve({
       data: {
-        result: [{
-          user: {
-            accountStatus: 'active',
+        result: [
+          {
+            item: {
+              type: 'accountGrant',
+            },
+            user: {
+              accountStatus: 'active',
+            },
+            account: {
+              userPrincipalName: 'test1@forgerock.com',
+            },
+            application: {
+              name: 'test',
+              templateName: 'test',
+            },
+            relationship: {
+              id: '1234',
+              properties: {
+                grantTypes: [{
+                  grantType: 'recon',
+                  id: '1234',
+                }],
+              },
+            },
           },
-          account: {
-            userPrincipalName: 'test1@forgerock.com',
-          },
-          application: {
-            name: 'test',
-            templateName: 'test',
-          },
-        }],
+        ],
         totalCount: 1,
       },
     }));
@@ -53,13 +67,23 @@ describe('MyAccessReviewTable', () => {
         fields: [
           {
             key: 'appName',
-            label: 'common.name',
-            sortable: true,
+            label: '',
           },
           {
-            key: 'status',
-            label: 'common.status',
-            sortable: true,
+            key: 'entitlementName',
+            label: '',
+          },
+          {
+            key: 'accountName',
+            label: '',
+          },
+          {
+            key: 'assignment',
+            label: '',
+          },
+          {
+            key: 'actions',
+            label: '',
           },
         ],
       },
@@ -80,6 +104,119 @@ describe('MyAccessReviewTable', () => {
   it('should have an input to search my access review table', () => {
     const searchMyAccessReviewTable = findByTestId(wrapper, 'search-my-access-review-table');
     expect(searchMyAccessReviewTable.exists()).toBeTruthy();
+  });
+
+  it('shows the actions menu if the resourceName is "directReportDetail" and account assignment is direct', async () => {
+    let actionOptionsMenu = findByTestId(wrapper, 'actions-relationship-menu');
+    expect(actionOptionsMenu.exists()).toBeFalsy();
+    let badge = findByTestId(wrapper, 'status-badge');
+    expect(badge.exists()).toBeFalsy();
+
+    // We set the resourceName to 'directReportDetails' to test that the actions
+    // menu should be showing and the badge should be set to 'Direct'.
+    await wrapper.setProps({
+      resourceName: 'directReportDetail',
+      grantType: 'account',
+      defaultSort: 'application.name',
+      fields: [
+        {
+          key: 'appName',
+          label: '',
+        },
+        {
+          key: 'entitlementName',
+          label: '',
+        },
+        {
+          key: 'accountName',
+          label: '',
+        },
+        {
+          key: 'assignment',
+          label: '',
+        },
+        {
+          key: 'actions',
+          label: '',
+        },
+      ],
+    });
+    actionOptionsMenu = findByTestId(wrapper, 'actions-relationship-menu');
+    expect(actionOptionsMenu.exists()).toBeTruthy();
+    badge = findByTestId(wrapper, 'status-badge');
+    expect(badge.text()).toBe(wrapper.vm.directAssignment);
+
+    // We make the relationship's grantType: 'role' to test that the actions
+    // menu should now be hidden since it should only show if set to 'recon'
+    // and the badge assignment set to 'Role-based'.
+    await wrapper.setData({
+      items: [
+        {
+          item: {
+            type: 'accountGrant',
+          },
+          user: {
+            accountStatus: 'active',
+          },
+          account: {
+            userPrincipalName: 'test1@forgerock.com',
+          },
+          application: {
+            name: 'test',
+            templateName: 'test',
+          },
+          relationship: {
+            id: '4321',
+            properties: {
+              grantTypes: [{
+                grantType: 'role',
+                id: '4321',
+              }],
+            },
+          },
+        },
+      ],
+    });
+
+    actionOptionsMenu = findByTestId(wrapper, 'actions-relationship-menu');
+    expect(actionOptionsMenu.exists()).toBeFalsy();
+    badge = findByTestId(wrapper, 'status-badge');
+    expect(badge.text()).toBe(wrapper.vm.roleBasedAssignment);
+  });
+
+  it('should emit "revoke-request" if a grantType is attempted to be revoked', async () => {
+    await wrapper.setProps({
+      resourceName: 'directReportDetail',
+      grantType: 'account',
+      defaultSort: 'application.name',
+      fields: [
+        {
+          key: 'appName',
+          label: '',
+        },
+        {
+          key: 'entitlementName',
+          label: '',
+        },
+        {
+          key: 'accountName',
+          label: '',
+        },
+        {
+          key: 'assignment',
+          label: '',
+        },
+        {
+          key: 'actions',
+          label: '',
+        },
+      ],
+    });
+
+    const actionOptionsMenu = findByTestId(wrapper, 'actions-relationship-menu');
+    await actionOptionsMenu.trigger('click');
+    await actionOptionsMenu.find('li:nth-of-type(1) > a').trigger('click'); // Revoke menu item
+    expect(wrapper.emitted('revoke-request')).toEqual([[wrapper.vm.itemsWithAssignment[0]]]);
   });
 
   it('clearing the search input resets the query params', async () => {
@@ -162,6 +299,9 @@ describe('MyAccessReviewTable', () => {
     it('sets table items when data is successfully loaded', async () => {
       const accounts = [
         {
+          item: {
+            type: 'roleMembership',
+          },
           user: {
             accountStatus: 'active',
           },
@@ -174,6 +314,9 @@ describe('MyAccessReviewTable', () => {
           },
         },
         {
+          item: {
+            type: 'roleMembership',
+          },
           user: {
             accountStatus: 'active',
           },
