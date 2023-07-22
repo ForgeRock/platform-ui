@@ -97,6 +97,7 @@
     },
     "myAccess": {
       "accountName": "Account Name",
+      "assignment": "Assignment",
       "timeConstraint": "Time Constraint",
       "account": {
         "errorGettingData": "Error getting Accounts.",
@@ -244,6 +245,7 @@
     "accessRequest": {
       "requestTypes": {
         "all": "All request types",
+        "applicationGrant": "Grant Application",
         "accountGrant": "Grant Application",
         "accountRevoke": "Remove Application",
         "entitlementGrant": "Grant Entitlement",
@@ -343,9 +345,14 @@
     "directReports": {
       "errorGettingDirectReports": "Error getting direct reports.",
       "errorGettingDirectReportUserInfo": "Error getting direct report user information.",
+      "justification": "Justification",
       "noDirectReportsFound": "No direct reports found.",
       "noResultsHelp": "Try a new search in the seach box above.",
       "noResultsUser": "No direct reports for this user.",
+      "requestSubmitted": "Request Submitted",
+      "revokeJustification": "Provide a justification for revoking access.",
+      "revokeRequest": "Revoke Request",
+      "submitRequest": "Submit Request",
       "subtitle": "View your direct reports.",
       "title": "My Direct Reports"
     },

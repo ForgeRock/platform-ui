@@ -66,7 +66,8 @@ of the MIT license. See the LICENSE file for details. -->
               </div>
               <FrRequestCart
                 :request-cart-items="requestCartItems"
-                :request-cart-users="users"
+                :request-cart-users="requestedUsers"
+                :show-spinner="saving"
                 @remove-requested-item="removeRequestedItem"
                 @requested-item-click="openRequestedItemModal"
                 @submit-new-request="submitNewRequest" />
@@ -90,7 +91,8 @@ import AppSharedUtilsMixin from '@forgerock/platform-shared/src/mixins/AppShared
 import { getResource } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import FrAccessRequestCatalog from '../../components/AccessRequestCatalog';
 import FrRequestCart from '@/components/governance/RequestCart';
-import { getCatalogFilterSchema, saveNewRequest, searchCatalog } from '@/api/governance/CatalogApi';
+import { saveNewRequest } from '@/api/governance/AccessRequestApi';
+import { getCatalogFilterSchema, searchCatalog } from '@/api/governance/CatalogApi';
 
 /**
  * View housing new access request catalog and request cart panel
@@ -120,13 +122,11 @@ export default {
       requestCartExpanded: false,
       requestCartItems: [],
       requestCartUsers: this.$route.params.requestingFor || [],
+      saving: false,
       totalCount: 0,
     };
   },
   computed: {
-    applications() {
-      return this.requestCartItems.filter((item) => item.itemType === 'application');
-    },
     catalogItems() {
       if (this.catalogResults[0]?.role) {
         return this.catalogResults.map((catalogItem) => ({
@@ -160,13 +160,16 @@ export default {
       }
       return this.catalogResults;
     },
-    entitlements() {
+    requestedApplications() {
+      return this.requestCartItems.filter((item) => item.itemType === 'application');
+    },
+    requestedEntitlements() {
       return this.requestCartItems.filter((item) => item.itemType === 'entitlement');
     },
-    roles() {
+    requestedRoles() {
       return this.requestCartItems.filter((item) => item.itemType === 'role');
     },
-    users() {
+    requestedUsers() {
       return this.requestCartUsers.map((user) => ({
         icon: user.profileImage,
         ...user,
@@ -307,7 +310,7 @@ export default {
      * Opens up the requested items details modal
      */
     openRequestedItemModal() {
-
+      // TODO
     },
     /**
      * Removes selected item from request cart
@@ -326,23 +329,25 @@ export default {
      * Submits a new request
      * @param {Object} payload justification, priority, expiration properties
      */
-    submitNewRequest(payload) {
+    async submitNewRequest(payload) {
+      this.saving = true;
       try {
-        const body = { ...payload };
-        const users = this.users.map((user) => user.id);
-        const applications = this.applications.map((application) => ({ type: 'application', id: application.id }));
-        const entitlements = this.entitlements.map((entitlement) => ({ type: 'entitlement', id: entitlement.id }));
-        const roles = this.roles.map((role) => ({ type: 'role', id: role.id }));
+        const users = this.requestedUsers.map((user) => user.id);
+        const applications = this.requestedApplications.map((application) => ({ type: 'application', id: application.id }));
+        const entitlements = this.requestedEntitlements.map((entitlement) => ({ type: 'entitlement', id: entitlement.id }));
+        const roles = this.requestedRoles.map((role) => ({ type: 'role', id: role.id }));
 
-        body.users = users;
-        body.catalogs = [...applications, ...entitlements, ...roles];
-        saveNewRequest(body);
+        payload.users = users;
+        payload.catalogs = [...applications, ...entitlements, ...roles];
+        await saveNewRequest(payload);
         this.displayNotification('success', this.$t('governance.accessRequest.newRequest.requestSuccess'));
         this.$router.push({
           name: 'MyRequests',
         });
       } catch (error) {
         this.displayNotification('error', error);
+      } finally {
+        this.saving = false;
       }
     },
     /**
