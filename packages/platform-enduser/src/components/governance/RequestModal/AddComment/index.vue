@@ -14,14 +14,12 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-
 import FrField from '@forgerock/platform-shared/src/components/Field';
 
 export default {
   name: 'AddComment',
   components: { FrField },
 };
-
 </script>
 <style scoped>
   .p-25{

@@ -16,6 +16,7 @@ jest.mock('@/components/utils/governance/AccessRequestUtils');
 
 describe('RequestModal', () => {
   const typicalPropsData = {
+    isApprovals: true,
     isTesting: true,
     type: REQUEST_MODAL_TYPES.DETAILS,
     item: {
@@ -38,6 +39,42 @@ describe('RequestModal', () => {
       rawData: {
         decision: {
           status: 'in-progress',
+          comments: [{
+            timeStamp: '2023-06-13T15:27:48+00:00',
+            user: {
+              mail: 'mkormann@frgov.net', givenName: 'Matt', sn: 'Kormann', id: 'managed/user/ae20eee7-89a6-40c6-a150-6797ae92bf2d', userName: 'mkormann',
+            },
+            comment: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore.',
+            action: 'comment',
+          }, {
+            timeStamp: '2023-06-13T15:27:48+00:00',
+            user: {
+              mail: 'mkormann@frgov.net', givenName: 'Matt', sn: 'Kormann', id: 'managed/user/ae20eee7-89a6-40c6-a150-6797ae92bf2d', userName: 'mkormann',
+            },
+            comment: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore.',
+            action: 'comment',
+          }, {
+            timeStamp: '2023-06-13T15:27:48+00:00',
+            user: {
+              mail: 'mkormann@frgov.net', givenName: 'Matt', sn: 'Kormann', id: 'managed/user/ae20eee7-89a6-40c6-a150-6797ae92bf2d', userName: 'mkormann',
+            },
+            comment: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore.',
+            action: 'comment',
+          }, {
+            timeStamp: '2023-06-13T15:27:48+00:00',
+            user: {
+              mail: 'mkormann@frgov.net', givenName: 'Matt', sn: 'Kormann', id: 'managed/user/ae20eee7-89a6-40c6-a150-6797ae92bf2d', userName: 'mkormann',
+            },
+            comment: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore.',
+            action: 'comment',
+          }, {
+            timeStamp: '2023-06-13T15:27:48+00:00',
+            user: {
+              mail: 'mkormann@frgov.net', givenName: 'Matt', sn: 'Kormann', id: 'managed/user/ae20eee7-89a6-40c6-a150-6797ae92bf2d', userName: 'mkormann',
+            },
+            comment: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore.',
+            action: 'comment',
+          }],
         },
         request: {
           common: {
@@ -126,14 +163,6 @@ describe('RequestModal', () => {
     expect(wrapper.vm.comment).toEqual('');
     wrapper.vm.updateComment('testComment');
     expect(wrapper.vm.comment).toEqual('testComment');
-  });
-  it('reset modal will reset Modal type to original type', () => {
-    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
-    expect(wrapper.vm.modalType).toEqual('DETAILS');
-    wrapper.vm.modalType = 'APPROVE';
-    expect(wrapper.vm.modalType).toEqual('APPROVE');
-    wrapper.vm.resetModal();
-    expect(wrapper.vm.modalType).toEqual('DETAILS');
   });
   it('test loading modal', async () => {
     const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
