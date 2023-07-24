@@ -12,7 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
         <FrAccessRequestList
           :is-loading="isLoading"
           :requests="accessRequests"
-          @open-detail="openModal">
+          @open-detail="openModal($event, 'DETAILS')">
           <template #header>
             <FrRequestToolbar
               data-testid="approvals-toolbar"
@@ -130,7 +130,9 @@ of the MIT license. See the LICENSE file for details. -->
     </div>
     <FrRequestModal
       :type="modalType"
-      :item="modalItem" />
+      :item="modalItem"
+      :is-approvals="true"
+      @modal-closed="modalType = null; modalItem = null" />
   </BContainer>
 </template>
 
@@ -168,19 +170,20 @@ export default {
     FrAccessRequestList,
     FrHeader,
     FrIcon,
-    FrNoData,
-    FrPagination,
     FrRequestModal,
     FrRequestToolbar,
+    FrNoData,
+    FrPagination,
   },
   mixins: [NotificationMixin],
   data() {
     return {
+      REQUEST_MODAL_TYPES,
       accessRequests: [],
       filter: {},
       currentPage: 1,
       isLoading: false,
-      modalType: REQUEST_MODAL_TYPES.DETAILS,
+      modalType: null,
       modalItem: null,
       pageSize: 10,
       status: this.$t('governance.status.pending'),

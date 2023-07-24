@@ -8,29 +8,28 @@ of the MIT license. See the LICENSE file for details. -->
     ref="observer">
     <BModal
       :body-class="modalType === REQUEST_MODAL_TYPES.DETAILS ? 'p-0' : ''"
-      size="lg"
+      :size="size"
       :id="modalId"
       :title="title"
       :static="isTesting"
       ref="governance-request-modal"
       :hide-footer="loading"
-      @hidden="resetModal()"
-    >
+      @hidden="$emit('modal-closed')">
       <template v-if="loading">
         <FrSpinner
-        class="py-5"
-        data-testid="loading-modal" />
+          class="py-5"
+          data-testid="loading-modal" />
         <div
           class="text-center"
           data-testid="loading-text">
           {{ loadingText }}
         </div>
       </template>
-
       <Component
         v-else
         :is="component"
         :item="item"
+        @change-modal-type="modalType = REQUEST_MODAL_TYPES[$event]"
         @request-comment="updateComment"
         @request-update-actors="updateActors"
       />
@@ -39,10 +38,12 @@ of the MIT license. See the LICENSE file for details. -->
           v-if="component === 'FrRequestDetailTabs'"
           data-testid="details-footer">
           <BRow class="justify-content-between">
-            <BCol class="pl-0">
+            <BCol
+              v-if="isApprovals"
+              class="pl-0">
               <BButton
                 variant="outline-secondary"
-                class="mx-1"
+                class="mx-1 mb-2 mb-lg-0"
                 @click="modalType = REQUEST_MODAL_TYPES.APPROVE"
                 data-testid="governance-request-modal-goto-approve-btn">
                 <FrIcon
@@ -52,7 +53,7 @@ of the MIT license. See the LICENSE file for details. -->
               </BButton>
               <BButton
                 variant="outline-secondary"
-                class="mx-1"
+                class="mx-1 mb-2 mb-lg-0"
                 @click="modalType = REQUEST_MODAL_TYPES.REJECT"
                 data-testid="governance-request-modal-goto-reject-btn">
                 <FrIcon
@@ -71,6 +72,17 @@ of the MIT license. See the LICENSE file for details. -->
                 {{ $t('common.forward') }}
               </BButton>
             </BCol>
+            <BCol
+              v-else-if="isMyRequests"
+              class="pl-0">
+              <BButton
+                variant="outline-danger"
+                @click="modalType = REQUEST_MODAL_TYPES.CANCEL"
+                data-testid="governance-request-modal-goto-cancelrequest-btn">
+                <FrIcon name="cancel" />
+                {{ $t('governance.requestModal.cancelRequest') }}
+              </BButton>
+            </BCol>
             <BButton
               variant="outline-primary"
               @click="close(cancel)"
@@ -85,7 +97,7 @@ of the MIT license. See the LICENSE file for details. -->
           <BRow class="justify-content-between">
             <BCol class="pl-0">
               <BButton
-                v-if="showRequestDetailsLink()"
+                v-if="showRequestDetailsLink"
                 variant="link"
                 class="mx-1"
                 @click="modalType = REQUEST_MODAL_TYPES.DETAILS"
@@ -94,14 +106,14 @@ of the MIT license. See the LICENSE file for details. -->
               </BButton>
             </BCol>
             <BButton
-              class="mr-2"
+              :class="['mr-2', modalType === REQUEST_MODAL_TYPES.CANCEL ? 'text-danger' : '']"
               variant="link"
               @click="close(cancel)"
               data-testid="governance-request-modal-cancel-btn">
               {{ $t('common.cancel') }}
             </BButton>
             <BButton
-              variant="primary"
+              :variant="modalType === REQUEST_MODAL_TYPES.CANCEL ? 'danger' : 'primary'"
               data-testid="governance-request-modal-confirm-btn"
               :disabled="invalid"
               @click="modalAction(item, cancel)">
@@ -127,10 +139,19 @@ import FrAddComment from './AddComment';
 import FrApproveRequest from './ApproveRequest';
 import FrForwardRequest from './ForwardRequest';
 import FrRejectRequest from './RejectRequest';
+import FrCancelRequest from './CancelRequest';
 import FrRequestDetailTabs from './DetailTabs';
 
+/**
+ * @typedef {string} REQUEST_MODAL_TYPE
+ * */
+
+/**
+ * @enum {REQUEST_MODAL_TYPE}
+ */
 export const REQUEST_MODAL_TYPES = {
   APPROVE: 'APPROVE',
+  CANCEL: 'CANCEL',
   COMMENT: 'COMMENT',
   DETAILS: 'DETAILS',
   REASSIGN: 'REASSIGN',
@@ -146,6 +167,7 @@ export default {
     BCol,
     FrAddComment,
     FrApproveRequest,
+    FrCancelRequest,
     FrForwardRequest,
     FrIcon,
     FrRejectRequest,
@@ -156,11 +178,19 @@ export default {
   props: {
     type: {
       type: String,
-      required: true,
+      default: null,
     },
     item: {
       type: Object,
       default: () => ({}),
+    },
+    isApprovals: {
+      type: Boolean,
+      default: false,
+    },
+    isMyRequests: {
+      type: Boolean,
+      default: false,
     },
     isTesting: {
       type: Boolean,
@@ -182,22 +212,10 @@ export default {
     };
   },
   computed: {
-    title() {
-      switch (this.modalType) {
-        case REQUEST_MODAL_TYPES.APPROVE:
-          return this.$t('governance.requestModal.titles.approve');
-        case REQUEST_MODAL_TYPES.COMMENT:
-          return this.$t('governance.requestModal.titles.addComment');
-        case REQUEST_MODAL_TYPES.REASSIGN:
-          return this.$t('governance.requestModal.titles.forward');
-        case REQUEST_MODAL_TYPES.REJECT:
-          return this.$t('governance.requestModal.titles.reject');
-        default:
-          return this.$t('governance.requestModal.titles.details');
-      }
-    },
     buttonName() {
       switch (this.modalType) {
+        case REQUEST_MODAL_TYPES.CANCEL:
+          return this.$t('governance.requestModal.cancelRequest');
         case REQUEST_MODAL_TYPES.COMMENT:
           return this.$t('governance.requestModal.addComment');
         case REQUEST_MODAL_TYPES.REASSIGN:
@@ -212,6 +230,8 @@ export default {
       switch (this.modalType) {
         case REQUEST_MODAL_TYPES.APPROVE:
           return 'FrApproveRequest';
+        case REQUEST_MODAL_TYPES.CANCEL:
+          return 'FrCancelRequest';
         case REQUEST_MODAL_TYPES.COMMENT:
           return 'FrAddComment';
         case REQUEST_MODAL_TYPES.REASSIGN:
@@ -224,6 +244,8 @@ export default {
     },
     errorMessage() {
       switch (this.modalType) {
+        case REQUEST_MODAL_TYPES.CANCEL:
+          return this.$t('governance.requestModal.messages.errorCancel');
         case REQUEST_MODAL_TYPES.COMMENT:
           return this.$t('governance.requestModal.messages.errorComment');
         case REQUEST_MODAL_TYPES.REASSIGN:
@@ -234,20 +256,10 @@ export default {
           return this.$t('governance.requestModal.messages.errorApprove');
       }
     },
-    message() {
-      switch (this.modalType) {
-        case REQUEST_MODAL_TYPES.COMMENT:
-          return this.$t('governance.requestModal.messages.comment');
-        case REQUEST_MODAL_TYPES.REASSIGN:
-          return this.$t('governance.requestModal.messages.forward');
-        case REQUEST_MODAL_TYPES.REJECT:
-          return this.$t('governance.requestModal.messages.reject');
-        default:
-          return this.$t('governance.requestModal.messages.approve');
-      }
-    },
     loadingText() {
       switch (this.modalType) {
+        case REQUEST_MODAL_TYPES.CANCEL:
+          return this.$t('governance.requestModal.messages.loadingCancel');
         case REQUEST_MODAL_TYPES.COMMENT:
           return this.$t('governance.requestModal.messages.loadingComment');
         case REQUEST_MODAL_TYPES.REASSIGN:
@@ -258,15 +270,68 @@ export default {
           return this.$t('governance.requestModal.messages.loadingApprove');
       }
     },
+    message() {
+      switch (this.modalType) {
+        case REQUEST_MODAL_TYPES.CANCEL:
+          return this.$t('governance.requestModal.messages.cancel');
+        case REQUEST_MODAL_TYPES.COMMENT:
+          return this.$t('governance.requestModal.messages.comment');
+        case REQUEST_MODAL_TYPES.REASSIGN:
+          return this.$t('governance.requestModal.messages.forward');
+        case REQUEST_MODAL_TYPES.REJECT:
+          return this.$t('governance.requestModal.messages.reject');
+        default:
+          return this.$t('governance.requestModal.messages.approve');
+      }
+    },
+    size() {
+      switch (this.modalType) {
+        case REQUEST_MODAL_TYPES.CANCEL:
+          return 'md';
+        default:
+          return 'lg';
+      }
+    },
+    showRequestDetailsLink() {
+      switch (this.modalType) {
+        case REQUEST_MODAL_TYPES.CANCEL:
+        case REQUEST_MODAL_TYPES.COMMENT:
+        case REQUEST_MODAL_TYPES.REASSIGN:
+          return false;
+        default:
+          return true;
+      }
+    },
+    title() {
+      switch (this.modalType) {
+        case REQUEST_MODAL_TYPES.COMMENT:
+          return this.$t('governance.requestModal.titles.addComment');
+        case REQUEST_MODAL_TYPES.APPROVE:
+          return this.$t('governance.requestModal.titles.approve');
+        case REQUEST_MODAL_TYPES.CANCEL:
+          return this.$t('governance.requestModal.titles.cancel');
+        case REQUEST_MODAL_TYPES.REASSIGN:
+          return this.$t('governance.requestModal.titles.forward');
+        case REQUEST_MODAL_TYPES.REJECT:
+          return this.$t('governance.requestModal.titles.reject');
+        default:
+          return this.$t('governance.requestModal.titles.details');
+      }
+    },
   },
   methods: {
     /**
     * @param {Function} cancel close modal function
+    * @param {Function} cancel close modal function
     */
-    close(cancel) {
-      if (this.previousModal === REQUEST_MODAL_TYPES.DETAILS && this.modalType === REQUEST_MODAL_TYPES.COMMENT) {
+    close(cancel, isSuccessfulAction = false) {
+      if (isSuccessfulAction && !(this.modalType === REQUEST_MODAL_TYPES.COMMENT)) {
+        cancel();
+      } else if (this.previousModal === REQUEST_MODAL_TYPES.DETAILS && this.modalType === REQUEST_MODAL_TYPES.COMMENT) {
         this.modalType = REQUEST_MODAL_TYPES.DETAILS;
       } else if (this.previousModal === REQUEST_MODAL_TYPES.DETAILS && this.modalType === REQUEST_MODAL_TYPES.REASSIGN) {
+        this.modalType = REQUEST_MODAL_TYPES.DETAILS;
+      } else if (this.modalType === REQUEST_MODAL_TYPES.CANCEL && this.previousModal === REQUEST_MODAL_TYPES.DETAILS) {
         this.modalType = REQUEST_MODAL_TYPES.DETAILS;
       } else {
         cancel();
@@ -280,31 +345,17 @@ export default {
     */
     modalAction(item, cancel) {
       const action = this.modalType.toLowerCase();
+      const id = item.id || item.details.id;
       this.loading = true;
-      requestAction(item.id, action, item.phaseName, this.comment, this.actors).then(() => {
+      requestAction(id, action, item.phaseName, this.comment, this.actors).then(() => {
         this.displayNotification('success', this.message);
+        this.$emit('modal-success');
       }).catch(() => {
         this.showErrorMessage('', this.errorMessage);
       }).finally(() => {
         this.loading = false;
-        this.close(cancel);
+        this.close(cancel, true);
       });
-    },
-    /**
-    * Reseting modal to original values of the current component
-    */
-    resetModal() {
-      this.modalType = REQUEST_MODAL_TYPES[this.type];
-      this.previousModal = null;
-    },
-    showRequestDetailsLink() {
-      switch (this.modalType) {
-        case REQUEST_MODAL_TYPES.COMMENT:
-        case REQUEST_MODAL_TYPES.REASSIGN:
-          return false;
-        default:
-          return true;
-      }
     },
     /**
     * @param {Array} newActors Update actors the request will be forwarded to

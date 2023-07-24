@@ -50,9 +50,9 @@ of the MIT license. See the LICENSE file for details. -->
               </template>
               <template #actions="{ item }">
                 <div class="d-flex justify-content-end align-items-center">
-                  <div class="d-none d-lg-block w-100 mr-4">
+                  <div class="d-none d-lg-block mr-4">
                     <BBadge
-                      class="w-100 font-weight-normal"
+                      class="badge-status font-weight-normal"
                       data-testid="status-badge"
                       variant="light">
                       {{ status }}
@@ -102,29 +102,11 @@ of the MIT license. See the LICENSE file for details. -->
     </BContainer>
     <FrRequestModal
       :type="modalType"
-      :item="modalItem" />
-    <BModal
-      id="cancel_modal"
-      :title="$t('governance.accessRequest.myRequests.cancelRequest')">
-      <p>{{ $t('governance.accessRequest.myRequests.cancelRequestMessage') }}</p>
-      <template #modal-footer="{ hide }">
-        <div class="w-100 d-flex justify-content-end">
-          <BButton
-            class="text-danger"
-            variant="link"
-            :aria-label="$t('common.cancel')"
-            @click="hide()">
-            {{ $t('common.cancel') }}
-          </BButton>
-          <FrButtonWithSpinner
-            variant="danger"
-            :button-text="$t('governance.accessRequest.myRequests.cancelRequest')"
-            :spinner-text="$t('common.canceling')"
-            :show-spinner="isCanceling"
-            @click="handleCancelRequest(hide)" />
-        </div>
-      </template>
-    </BModal>
+      :item="modalItem"
+      :is-my-requests="true"
+      @modal-closed="modalType = null; modalItem = null"
+      @modal-success="loadRequests"
+    />
   </div>
 </template>
 
@@ -137,11 +119,9 @@ import {
   BContainer,
   BDropdownDivider,
   BDropdownItem,
-  BModal,
   BRow,
 } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import CertificationMixin from '@forgerock/platform-shared/src/mixins/Governance/Certification';
@@ -150,7 +130,7 @@ import FrActionsCell from '@forgerock/platform-shared/src/components/cells/Actio
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrAccessRequestList from '@/components/governance/AccessRequestList';
 import FrRequestToolbar from '@/components/governance/RequestToolbar';
-import { requestAction, getUserRequests } from '@/api/governance/AccessRequestApi';
+import { getUserRequests } from '@/api/governance/AccessRequestApi';
 import FrRequestModal, { REQUEST_MODAL_TYPES } from '@/components/governance/RequestModal';
 /**
  * View new access request items
@@ -165,11 +145,9 @@ export default {
     BContainer,
     BDropdownDivider,
     BDropdownItem,
-    BModal,
     BRow,
     FrAccessRequestList,
     FrActionsCell,
-    FrButtonWithSpinner,
     FrHeader,
     FrIcon,
     FrNoData,
@@ -182,7 +160,6 @@ export default {
       accessRequests: [],
       currentPage: 1,
       filter: {},
-      isCanceling: false,
       isLoading: false,
       modalItem: {},
       modalType: 'REQUEST_MODAL_TYPES.DETAILS',
@@ -209,24 +186,6 @@ export default {
     buildTargetFilter(filter) {
       // TODO: Implement this when integrating with API
       return filter;
-    },
-    /**
-     * Cancels the selected request
-     * @param {Function} hide function passed in through slot scope props
-     */
-    async handleCancelRequest(hide) {
-      this.isCanceling = true;
-      try {
-        await requestAction(this.modalItem.details.id, 'cancel');
-        this.displayNotification('success', this.$t('governance.accessRequest.myRequests.cancelRequestSuccess'));
-        this.loadRequests();
-        this.modalItem = {};
-      } catch (error) {
-        this.showErrorMessage(error, this.$t('governance.accessRequest.myRequests.errorCancelingRequest'));
-      } finally {
-        this.isCanceling = false;
-        hide();
-      }
     },
     /**
      * Handles filtering requests as well as updates to pagination
@@ -272,13 +231,14 @@ export default {
      */
     openModal(item, type) {
       this.modalItem = item;
-      if (type !== 'CANCEL') {
-        this.modalType = REQUEST_MODAL_TYPES[type];
-        this.$bvModal.show('request_modal');
-      } else {
-        this.$bvModal.show('cancel_modal');
-      }
+      this.modalType = REQUEST_MODAL_TYPES[type];
+      this.$bvModal.show('request_modal');
     },
   },
 };
 </script>
+<style lang="scss" scoped>
+.badge-status {
+  width: 100px;
+}
+</style>
