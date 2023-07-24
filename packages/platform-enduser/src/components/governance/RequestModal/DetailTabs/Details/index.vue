@@ -15,7 +15,7 @@ of the MIT license. See the LICENSE file for details. -->
       <BCol
         lg="4"
         class="font-weight-bold">
-        {{ $t(`governance.accessRequest.requestModal.detailsTab.${key}`) }}
+        {{ $t(`governance.requestModal.detailsTab.${key}`) }}
       </BCol>
       <BCol
         lg="8"
@@ -50,7 +50,7 @@ of the MIT license. See the LICENSE file for details. -->
               class="rounded-circle"
               height="28"
               width="28"
-              :alt="item.details.requesteeInfo.givenName"
+              alt=""
               :aria-hidden="true"
               :src="item.details.requesteeInfo.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
           </template>
