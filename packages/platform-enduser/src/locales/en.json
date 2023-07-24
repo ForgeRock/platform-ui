@@ -260,9 +260,6 @@
       "idLabel": "ID: {id}",
       "myRequests": {
         "cancelRequest": "Cancel Request",
-        "cancelRequestMessage": "Are you sure you want to cancel this request?",
-        "cancelRequestSuccess": "Request successfully canceled",
-        "errorCancelingRequest": "There was an error canceling the request",
         "errorGettingRequests": "There was an error retrieving your requests",
         "subtitle": "View and take action on your pending access requests."
       },
@@ -316,24 +313,7 @@
       "requestDate": "Request Date",
       "requestedBy": "Requested By",
       "requestId": "Request ID",
-      "requestType": "Request Type",
-      "requestModal": {
-        "defaultTitle": "Request Details",
-        "requestDetailsLink": "Request Details",
-        "details": "Details",
-        "workflow": "Workflow",
-        "comments": "Comments",
-        "detailsTab": {
-          "requestId": "Request ID", 
-          "requestDate": "Request Date", 
-          "requestType": "Request Type",
-          "decision": "Decision", 
-          "requested": "Requested", 
-          "requestedFor": "Requested For",
-          "priority": "Priority",
-          "justification": "Justification"
-        }
-      }
+      "requestType": "Request Type"
     },
     "approval":{
       "subtitle": "View and take action on your pending access requests.",
@@ -367,22 +347,36 @@
     "hideFilters": "Hide Filters",
     "showFilters": "Show Filters",
     "requestModal": {
+      "detailsTab": {
+        "requestId": "Request ID", 
+        "requestDate": "Request Date", 
+        "requestType": "Request Type",
+        "decision": "Decision", 
+        "requested": "Requested", 
+        "requestedFor": "Requested For",
+        "priority": "Priority",
+        "justification": "Justification"
+      },
       "titles": {
         "addComment": "Add a Comment",
         "approve": "Approve Request",
+        "cancel": "Cancel Request",
         "details": "Request Details",
         "forward": "Forward Request",
         "reject": "Reject Request"
       },
       "messages": {
         "approve": "Approved Request",
-        "comment": "Comment Added",
+        "cancel": "Request successfully canceled",
+        "comment": "Comment Added",        
         "errorApprove":"Error Approving Request",
+        "errorCancel": "There was an error canceling the request",
         "errorComment":"Error Adding Comment",
         "errorReject":"Error Rejecting Request",
         "errorForward":"Error Forwarding Request",
         "forward": "Request Forwarded",
         "loadingApprove":"Approving Request...",
+        "loadingCancel":"Cancelling Request...",
         "loadingComment":"Adding Comment...",
         "loadingReject":"Rejecting Request...",
         "loadingForward":"Forwarding Request...",
@@ -396,7 +390,9 @@
         "description":"Forward this request to"
       },
       "addComment": "Add Comment",
+      "cancelRequest": "Cancel Request",
       "comments": "Comments",
+      "noComments": "No comments yet",
       "requestDetailsLink": "Request Details",
       "subtitle": "Are you sure you want to {modal} this request?",
       "workflow": "Workflow"

@@ -9,6 +9,24 @@
 
 import { cloneDeep, merge, isEmpty } from 'lodash';
 
+const makeComments = (count) => {
+  const array = new Array(count);
+  return array.fill(
+    {
+      timeStamp: '2023-06-13T15:27:48+00:00',
+      user: {
+        mail: 'mkormann@frgov.net',
+        givenName: 'Matt',
+        sn: 'Kormann',
+        id: 'managed/user/ae20eee7-89a6-40c6-a150-6797ae92bf2d',
+        userName: 'mkormann',
+      },
+      comment: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore.',
+      action: 'comment',
+    },
+  );
+};
+
 const accessRequest = {
   id: '',
   requestType: '',
@@ -40,7 +58,7 @@ const accessRequest = {
     outcome: null,
     completionDate: null,
     deadline: null,
-    comments: [],
+    comments: null,
     phases: [
       {
         name: 'userApprove',
@@ -203,6 +221,7 @@ function generateRequest(id, status) {
   };
   const decision = {
     status: statusMap[status],
+    comments: makeComments(Math.floor(Math.random() * 50 * (id % 2))),
   };
 
   let application = {};
