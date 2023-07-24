@@ -8,16 +8,29 @@ of the MIT license. See the LICENSE file for details. -->
       class="w-100"
       pills
       card
-      vertical>
+      vertical
+      v-model="tabIndex">
       <BTab
-        v-for="tab in tabs"
+        v-for="(tab, index) in tabs"
         :key="tab.title"
         :title="tab.title"
         class="p-0"
         :data-testid="`tab-${tab}`">
+        <template
+          v-if="tab.component === 'FrComments'"
+          #title>
+          {{ tab.title }}
+          <BBadge
+            class="ml-3"
+            pill
+            :variant="tabIndex === index ? 'primary': 'secondary'">
+            {{ commentsCount }}
+          </BBadge>
+        </template>
         <Component
           :is="tab.component"
           :item="item"
+          v-on="$listeners"
         />
       </BTab>
     </BTabs>
@@ -27,15 +40,18 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 
 import {
-  BTabs, BTab,
+  BBadge, BTabs, BTab,
 } from 'bootstrap-vue';
 import FrDetails from './Details';
+import FrComments from './Comments';
 
 export default {
   name: 'RequestModalDetailTabs',
   components: {
+    BBadge,
     BTabs,
     BTab,
+    FrComments,
     FrDetails,
   },
   props: {
@@ -53,13 +69,15 @@ export default {
         },
         {
           component: '',
-          title: this.$t('governance.accessRequest.requestModal.workflow'),
+          title: this.$t('governance.requestModal.workflow'),
         },
         {
-          component: '',
-          title: this.$t('governance.accessRequest.requestModal.comments'),
+          component: 'FrComments',
+          title: this.$t('governance.requestModal.comments'),
         },
       ],
+      tabIndex: 0,
+      commentsCount: this.item.rawData.decision.comments.length,
     };
   },
 };
