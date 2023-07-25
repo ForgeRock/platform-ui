@@ -5,21 +5,18 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-/* eslint-disable no-unused-vars */
-// import { generateIgaApi } from '@forgerock/platform-shared/src/api/BaseApi';
+import { generateIgaApi } from '@forgerock/platform-shared/src/api/BaseApi';
 import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
 import {
-  getCatalogMock,
-  getFilterSchemaMock,
   getUsersApplicationsMock,
   getUsersEntitlementsMock,
   getUsersRolesMock,
 } from './CatalogApiMock';
 
 export function searchCatalog(params = {}, payload) {
-  // const url = /governance/catalog;
-  return Promise.resolve({ data: getCatalogMock(params, payload.targetFilter.operand.targetValue) });
-  // return generateIgaApi().post(url, encodeQueryString(params), payload);
+  params.action = 'search';
+  const url = `/governance/catalog${encodeQueryString(params)}`;
+  return generateIgaApi().post(url, payload);
 }
 
 /**
@@ -27,27 +24,26 @@ export function searchCatalog(params = {}, payload) {
  * @param {*} objectType optional - If specified, only shows schema for provided objectType
  */
 export function getCatalogFilterSchema(objectType) {
-  // const url = '/governance/search/schema';
-  // if (objectType) {
-  //   url += `/${objectType}`;
-  // }
-  // return generateIgaApi().get(url);
-  return Promise.resolve({ data: getFilterSchemaMock(objectType) });
+  let url = '/governance/search/schema';
+  if (objectType) {
+    url += `/${objectType}`;
+  }
+  return generateIgaApi().get(url);
 }
 
-export function getUsersApplications(userIds) {
+export function getUsersApplications(/* userIds */) {
   return Promise.resolve({ data: getUsersApplicationsMock() });
 }
 
-export function getUsersEntitlements(userIds) {
+export function getUsersEntitlements(/* userIds */) {
   return Promise.resolve({ data: getUsersEntitlementsMock() });
 }
 
-export function getUsersRoles(userIds) {
+export function getUsersRoles(/* userIds */) {
   return Promise.resolve({ data: getUsersRolesMock() });
 }
 
-export function saveNewRequest(payload) {
+export function saveNewRequest(/* userIds */) {
   // const url = /governance/requests;
   return Promise.resolve();
   // return generateIgaApi().post(url, payload);

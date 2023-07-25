@@ -159,6 +159,7 @@ export default {
         justification: this.justificationText,
         priority: this.selectedPriority,
         expiryDate: this.expirationDate,
+        accessModifier: 'add',
       });
     },
   },
