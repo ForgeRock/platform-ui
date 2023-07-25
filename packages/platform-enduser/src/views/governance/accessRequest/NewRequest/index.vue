@@ -35,6 +35,7 @@ of the MIT license. See the LICENSE file for details. -->
             :application-search-results="applicationSearchResults"
             :catalog-filter-schema="catalogFilterSchema"
             :catalog-items="catalogItems"
+            :loading="loading"
             :total-count="totalCount"
             @add-item-to-cart="addItemToCart"
             @get-catalog-filter-schema="getCatalogFilterSchema"
@@ -78,10 +79,8 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import {
-  BButton,
-  BButtonClose,
-} from 'bootstrap-vue';
+import { cloneDeep } from 'lodash';
+import { BButton, BButtonClose } from 'bootstrap-vue';
 import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrNavbar from '@forgerock/platform-shared/src/components/Navbar';
@@ -91,7 +90,7 @@ import AppSharedUtilsMixin from '@forgerock/platform-shared/src/mixins/AppShared
 import { getResource } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import FrAccessRequestCatalog from '../../components/AccessRequestCatalog';
 import FrRequestCart from '@/components/governance/RequestCart';
-import { getCatalogFilterSchema, saveNewRequest, searchCatalog } from '../../../../api/governance/CatalogApi';
+import { getCatalogFilterSchema, saveNewRequest, searchCatalog } from '@/api/governance/CatalogApi';
 
 /**
  * View housing new access request catalog and request cart panel
@@ -117,6 +116,7 @@ export default {
       applicationSearchResults: [],
       catalogFilterSchema: [],
       catalogResults: [],
+      loading: true,
       requestCartExpanded: false,
       requestCartItems: [],
       requestCartUsers: this.$route.params.requestingFor || [],
@@ -132,7 +132,7 @@ export default {
         return this.catalogResults.map((catalogItem) => ({
           description: catalogItem.role.description,
           name: catalogItem.role.name,
-          id: catalogItem.role.id,
+          id: catalogItem.id,
           requested: this.isRequested(catalogItem.role.id),
         }));
       }
@@ -141,9 +141,9 @@ export default {
           description: catalogItem.entitlement.description,
           icon: this.getApplicationLogo(catalogItem.application),
           name: catalogItem.entitlement.displayName,
-          appType: catalogItem.assignment.name,
+          appType: catalogItem.entitlement.name,
           templateName: catalogItem.application.templateName,
-          id: catalogItem.entitlement.id,
+          id: catalogItem.id,
           requested: this.isRequested(catalogItem.entitlement.id),
         }));
       }
@@ -154,7 +154,7 @@ export default {
           name: catalogItem.application.name,
           appType: this.getApplicationDisplayName(catalogItem.application),
           templateName: catalogItem.application.templateName,
-          id: catalogItem.application.id,
+          id: catalogItem.id,
           requested: this.isRequested(catalogItem.application.id),
         }));
       }
@@ -194,7 +194,7 @@ export default {
      */
     async getCatalogFilterSchema(objectType) {
       try {
-        const { data: catalogFilterSchema } = await getCatalogFilterSchema(objectType === 'entitlement' ? 'assignment' : objectType);
+        const { data: catalogFilterSchema } = await getCatalogFilterSchema(objectType);
         this.catalogFilterSchema = catalogFilterSchema;
       } catch (error) {
         this.showErrorMessage(error, this.$t('governance.accessRequest.newRequest.errorGettingCatalogFilterSchema'));
@@ -215,20 +215,26 @@ export default {
     },
     /**
      * Search the request catalog using the provided filter, sort, and page details
-     * @param {String} catalogType application, entitlement, or role
+     * @param {String} catalogType accountGrant, entitlementGrant, or roleMembership
      * @param {Object} params query parameters including pageSize, page, sortField, and sort direction
      * overall catalog search
      */
     async searchCatalog(catalogType, params) {
       try {
-        const searchParams = {
-          // fields: 'application, entitlement, assignment, role', // TODO: determine what this looks like with full api
-          pageSize: params.pageSize || 10,
-          pagedResultsOffset: ((params.page || 1) - 1) * 10, // TODO: This will be used for the full api
-          pageNumber: params.page || 1, // TODO: Remove this for the final api
-          sortKeys: [params.sortField] || '',
-          sortDir: params.sortDir || 'desc',
+        this.loading = true;
+        const fieldsMap = {
+          accountGrant: 'application,id',
+          entitlementGrant: 'application,entitlement,id',
+          roleMembership: 'role,id',
         };
+        const searchParams = {
+          fields: fieldsMap[catalogType],
+          pageSize: params.pageSize || 10,
+          pagedResultsOffset: ((params.page || 1) - 1) * 10,
+        };
+        if (params.sortField) {
+          searchParams.sortKeys = `${params.sortDir === 'desc' ? '-' : ''}${params.sortField}`;
+        }
         const payload = {
           targetFilter: {
             operator: 'EQUALS',
@@ -238,21 +244,52 @@ export default {
             },
           },
         };
-        if (params.applicationFilter) {
-          // TODO add to targetFilter with full api?
+
+        if (params.applicationFilter || params.filter?.operand || params.searchValue) {
+          payload.targetFilter.operand = [cloneDeep(payload.targetFilter)];
+          payload.targetFilter.operator = 'AND';
+          if (params.applicationFilter) {
+            const applicationFilterOperand = {
+              operator: 'OR',
+              operand: [],
+            };
+            params.applicationFilter.forEach((applicationId) => {
+              applicationFilterOperand.operand.push({
+                operator: 'EQUALS',
+                operand: {
+                  targetName: 'application.id',
+                  targetValue: applicationId,
+                },
+              });
+            });
+            payload.targetFilter.operand.push(applicationFilterOperand);
+          }
+          if (params.filter?.operand) {
+            payload.targetFilter.operand.push(params.filter);
+          }
+          if (params.searchValue) {
+            const nameMap = {
+              accountGrant: 'application.name',
+              entitlementGrant: 'entitlement.name',
+              roleMembership: 'role.name',
+            };
+            payload.targetFilter.operand.push({
+              operator: 'CONTAINS',
+              operand: {
+                targetName: nameMap[catalogType],
+                targetValue: params.searchValue,
+              },
+            });
+          }
         }
-        if (params.filter) {
-          // TODO add to targetFilter with full api?
-        }
-        if (params.searchValue) {
-          // TODO add to targetFilter with full api?
-        }
+
         const { data } = await searchCatalog(searchParams, payload);
-        this.catalogResults = data?.results || [];
+        this.catalogResults = data?.result || [];
         this.totalCount = data?.totalCount || 0;
       } catch (error) {
         this.showErrorMessage(error, this.$t('governance.accessRequest.newRequest.errorSearchingCatalog'));
       }
+      this.loading = false;
     },
     /**
      * Search the IGA commons for applications for the entitlement application filter field
