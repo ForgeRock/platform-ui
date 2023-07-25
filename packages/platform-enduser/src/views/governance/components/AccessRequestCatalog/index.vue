@@ -21,8 +21,9 @@ of the MIT license. See the LICENSE file for details. -->
           :key="key"
           :data-testid="`tab-${key}`"
           :title="catalogCategory.capitalizedTitle">
+          <FrSpinner v-if="loading && firstQuery" />
           <FrNoData
-            v-if="!catalogItems.length && firstQuery"
+            v-else-if="!catalogItems.length && firstQuery"
             class="mt-5 border-0 shadow-none"
             :icon="tabNoResultsIcon"
             :title="$t('governance.accessRequest.newRequest.noResults', { item: catalogTabs[tabType].capitalizedTitle })"
@@ -88,7 +89,8 @@ of the MIT license. See the LICENSE file for details. -->
                 v-model="searchValue"
                 class="flex-grow-1"
                 :placeholder="$t('common.searchPlaceholder', { searchItem: catalogCategory.lowercaseTitle })"
-                @search="searchCatalog()" />
+                @search="searchCatalog({ page: 1 })"
+                @clear="searchCatalog({ searchValue: $event, page: 1 })" />
               <BButton
                 class="ml-3"
                 pill
@@ -122,10 +124,13 @@ of the MIT license. See the LICENSE file for details. -->
                   <FrSortDropdown
                     :selected-item="sortField"
                     :sort-by-options="sortByOptions"
-                    @sort-field-change="searchCatalog({ sortField: $event })"
-                    @sort-direction-change="searchCatalog({ sortDir: $event })" />
+                    @sort-field-change="searchCatalog({ sortField: $event, page: 1 })"
+                    @sort-direction-change="searchCatalog({ sortDir: $event, page: 1 })" />
                 </BButtonToolbar>
-                <BRow :id="`${key}Grid`">
+                <FrSpinner v-if="loading" />
+                <BRow
+                  v-else
+                  :id="`${key}Grid`">
                   <template v-for="(item, itemKey) in catalogItems">
                     <BCol
                       cols="12"
@@ -193,7 +198,7 @@ of the MIT license. See the LICENSE file for details. -->
                   :per-page="pageSize"
                   :total-rows="totalCount"
                   @input="searchCatalog()"
-                  @on-page-size-change="searchCatalog({ pageSize: $event })" />
+                  @on-page-size-change="searchCatalog({ pageSize: $event, page: 1 })" />
               </template>
             </div>
           </template>
@@ -260,17 +265,18 @@ import {
   BTabs,
 } from 'bootstrap-vue';
 import { ValidationObserver } from 'vee-validate';
+import FrCertificationFilter from '@forgerock/platform-shared/src/components/filterBuilder/CertificationFilter';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrPageHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
-import FrCertificationFilter from '@forgerock/platform-shared/src/components/filterBuilder/CertificationFilter';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import PluralizeFilter from '@forgerock/platform-shared/src/filters/PluralizeFilter';
 import AppSharedUtilsMixin from '@forgerock/platform-shared/src/mixins/AppSharedUtilsMixin';
 import { getGovernanceFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
-import FrSortDropdown from '../../../../components/governance/SortDropdown';
+import FrSortDropdown from '@/components/governance/SortDropdown';
 
 /**
  * View housing access request catalog and request cart panel
@@ -301,6 +307,7 @@ export default {
     FrCertificationFilter,
     FrSearchInput,
     FrSortDropdown,
+    FrSpinner,
     ValidationObserver,
   },
   mixins: [
@@ -318,6 +325,10 @@ export default {
     catalogItems: {
       type: Array,
       default: () => [],
+    },
+    loading: {
+      type: Boolean,
+      default: true,
     },
     totalCount: {
       type: Number,
@@ -385,19 +396,18 @@ export default {
       return this.filter.operand?.length || 0;
     },
     sortByOptions() {
-      // TODO: Should these values be just name and owner, need to determine this when api is available
       if (this.selectedTab === 0) {
         return [
           { text: this.$t('governance.accessRequest.newRequest.itemName', { item: this.catalogTabs.application.capitalizedSingularTitle }), value: 'application.name' },
-          { text: this.$t('governance.accessRequest.newRequest.itemOwner', { item: this.catalogTabs.application.capitalizedSingularTitle }), value: 'application.owner' },
+          { text: this.$t('governance.accessRequest.newRequest.itemOwner', { item: this.catalogTabs.application.capitalizedSingularTitle }), value: 'applicationOwner.userName' },
         ];
       }
       if (this.selectedTab === 1) {
         return [
-          { text: this.$t('governance.accessRequest.newRequest.itemName', { item: this.catalogTabs.entitlement.capitalizedSingularTitle }), value: 'entitlement.name' },
-          { text: this.catalogTabs.application.capitalizedSingularTitle, value: 'application' }, // TODO: determine if this needs to be application.name when api is available
-          { text: this.$t('governance.accessRequest.newRequest.itemOwner', { item: this.catalogTabs.application.capitalizedSingularTitle }), value: 'application.owner' },
-          { text: this.$t('governance.accessRequest.newRequest.itemOwner', { item: this.catalogTabs.entitlement.capitalizedSingularTitle }), value: 'entitlement.owner' },
+          { text: this.$t('governance.accessRequest.newRequest.itemName', { item: this.catalogTabs.entitlement.capitalizedSingularTitle }), value: 'assignment.name' },
+          { text: this.catalogTabs.application.capitalizedSingularTitle, value: 'application.name' },
+          { text: this.$t('governance.accessRequest.newRequest.itemOwner', { item: this.catalogTabs.application.capitalizedSingularTitle }), value: 'applicationOwner.userName' },
+          { text: this.$t('governance.accessRequest.newRequest.itemOwner', { item: this.catalogTabs.entitlement.capitalizedSingularTitle }), value: 'entitlementOwner.userName' },
         ];
       }
       return [{ text: this.$t('governance.accessRequest.newRequest.itemName', { item: this.catalogTabs.role.capitalizedSingularTitle }), value: 'role.name' }];
@@ -431,7 +441,7 @@ export default {
      */
     filterByApplication(applicationFilter) {
       this.applicationFilter = applicationFilter;
-      this.searchCatalog({ applicationFilter });
+      this.searchCatalog({ applicationFilter, page: 1 });
     },
     /**
      * Search for applications using the searchValue
@@ -446,7 +456,7 @@ export default {
      */
     filterResults() {
       this.$root.$emit('bv::hide::modal', 'filterModal');
-      this.searchCatalog();
+      this.searchCatalog({ page: 1 });
     },
     getGovernanceFilter,
     /**
@@ -490,13 +500,18 @@ export default {
      * Resets filter, sort field, page, sort direction, and search value and sends off search request
      */
     tabChange() {
+      const sortFieldMap = {
+        application: 'application',
+        entitlement: 'assignment',
+        role: 'role',
+      };
       this.searchCatalog({
         applicationFilter: '',
         filter: {},
         page: 1,
         searchValue: '',
         sortDir: 'desc',
-        sortField: `${this.tabType}.name`,
+        sortField: `${sortFieldMap[this.tabType]}.name`,
       });
     },
     /**

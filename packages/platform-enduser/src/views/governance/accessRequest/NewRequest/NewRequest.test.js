@@ -8,10 +8,27 @@
 import { mount } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
 import getPriorityImageSrc from '@/components/utils/governance/AccessRequestUtils';
+import * as CatalogApi from '@/api/governance/CatalogApi';
 import NewRequest from './index';
 import i18n from '@/i18n';
 
 jest.mock('@/components/utils/governance/AccessRequestUtils');
+CatalogApi.searchCatalog = jest.fn().mockReturnValue({
+  data: {
+    result: [
+      {
+        application: {
+          description: 'My Service Now App',
+          icon: '',
+          id: '1',
+          name: 'My Service Now App',
+          templateName: 'servicenow',
+          templateVersion: '2.0',
+        },
+      },
+    ],
+  },
+});
 
 describe('NewRequest', () => {
   const requestCartItems = [
@@ -82,14 +99,14 @@ describe('NewRequest', () => {
   });
 
   it('should add item to cart', async () => {
-    const wrapper = mountComponent();
+    const wrapper = mountComponent({}, { loading: false });
     await flushPromises();
 
     // Find first application button and click Add request
     expect(wrapper.vm.requestCartItems).toStrictEqual([]);
-    const accessRequestCatalog = wrapper.findAll('span[class="hover-underline color-blue"]').at(0);
-    expect(accessRequestCatalog.exists()).toBe(true);
-    accessRequestCatalog.trigger('click');
+    const catalogItemRequestButton = wrapper.findAll('span[class="hover-underline color-blue"]').at(0);
+    expect(catalogItemRequestButton.exists()).toBe(true);
+    catalogItemRequestButton.trigger('click');
     await flushPromises();
 
     expect(wrapper.vm.requestCartItems.length).toBe(1);

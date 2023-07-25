@@ -36,6 +36,7 @@ describe('AccessRequestCatalog Component', () => {
     const wrapper = mount(AccessRequestCatalog, {
       i18n,
       propsData: {
+        loading: false,
         ...propsData,
       },
     });
