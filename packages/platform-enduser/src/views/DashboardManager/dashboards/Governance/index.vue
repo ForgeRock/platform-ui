@@ -30,7 +30,7 @@ of the MIT license. See the LICENSE file for details. -->
           <BCol lg="4">
             <FrCountCard
               class="mb-4"
-              link-path="requests"
+              link-path="my-requests"
               :count="pendingRequestsCount"
               :link-text="$t('pages.dashboard.cardCount.viewPendingRequests')"
               :loading="loadingPendingRequests"
