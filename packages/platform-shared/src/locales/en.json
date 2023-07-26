@@ -1377,6 +1377,9 @@
         "signOffSuccess": "The signOff has been completed successfully"
       }
     },
+    "errors": {
+      "getUsers": "Users cannot be obtained at the moment"
+    },
     "forwardReviewModal": {
       "chooseRole": "Choose a role",
       "chooseUser": "Choose a user",
