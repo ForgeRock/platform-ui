@@ -8,6 +8,6 @@
 import { generateIgaApi } from '@forgerock/platform-shared/src/api/BaseApi';
 
 // eslint-disable-next-line import/prefer-default-export
-export function getResource(resource, queryString = '') {
-  return generateIgaApi().get(`commons/search/${resource}?queryString=${queryString}`);
+export function getResource(resource, queryString = '', pageSize = '') {
+  return generateIgaApi().get(`commons/search/${resource}?queryString=${queryString}&pageSize=${pageSize}`);
 }

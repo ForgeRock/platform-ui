@@ -18,9 +18,8 @@ of the MIT license. See the LICENSE file for details. -->
               :aria-label="$t('governance.accessRequest.newRequest.newRequest')"
               @click="newRequest">
               <FrIcon
-                class="mr-1"
-                name="add" />
-              {{ $t('governance.accessRequest.newRequest.newRequest') }}
+                class="mr-2"
+                name="add" />{{ $t('governance.accessRequest.newRequest.newRequest') }}
             </BButton>
           </div>
         </BCol>
@@ -107,6 +106,7 @@ of the MIT license. See the LICENSE file for details. -->
       @modal-closed="modalType = null; modalItem = null"
       @modal-success="loadRequests"
     />
+    <FrNewRequestModal />
   </div>
 </template>
 
@@ -132,6 +132,7 @@ import FrAccessRequestList from '@/components/governance/AccessRequestList';
 import FrRequestToolbar from '@/components/governance/RequestToolbar';
 import { getUserRequests } from '@/api/governance/AccessRequestApi';
 import FrRequestModal, { REQUEST_MODAL_TYPES } from '@/components/governance/RequestModal';
+import FrNewRequestModal from '@/components/governance/NewRequestModal';
 /**
  * View new access request items
  */
@@ -150,6 +151,7 @@ export default {
     FrActionsCell,
     FrHeader,
     FrIcon,
+    FrNewRequestModal,
     FrNoData,
     FrPagination,
     FrRequestModal,
@@ -223,6 +225,7 @@ export default {
       }
     },
     newRequest() {
+      this.$root.$emit('bv::show::modal', 'NewRequestModal');
     },
     /**
      * Opens the request / cancel modals
