@@ -42,8 +42,9 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   BBadge, BTabs, BTab,
 } from 'bootstrap-vue';
-import FrDetails from './Details';
 import FrComments from './Comments';
+import FrDetails from './Details';
+import FrWorkflow from './Workflow';
 
 export default {
   name: 'RequestModalDetailTabs',
@@ -53,6 +54,7 @@ export default {
     BTab,
     FrComments,
     FrDetails,
+    FrWorkflow,
   },
   props: {
     item: {
@@ -68,12 +70,12 @@ export default {
           title: this.$t('common.details'),
         },
         {
-          component: '',
+          component: 'FrWorkflow',
           title: this.$t('governance.requestModal.workflow'),
         },
         {
           component: 'FrComments',
-          title: this.$t('governance.requestModal.comments'),
+          title: this.$t('common.comments'),
         },
       ],
       tabIndex: 0,
