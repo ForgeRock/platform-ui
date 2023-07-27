@@ -52,7 +52,9 @@ export const apiToInternalEvent = (data) => {
   } = predictionResult.features;
   const { raw_event_data: rawEventData, risk_score_data: riskScoreData } = predictionResult;
   const { heuristic_agg_result: heuristics } = riskScoreData;
-  const { os, osVersion, userAgentType } = browserData;
+  const {
+    device, deviceType, os, osVersion, userAgentType,
+  } = browserData;
 
   const heuristicReasons = heuristics?.raw_results?.filter((result) => {
     const heuristicKey = Object.keys(result).find((propName) => propName.indexOf('is_') === 0);
@@ -83,6 +85,8 @@ export const apiToInternalEvent = (data) => {
 
   return {
     dayparting,
+    device,
+    deviceType,
     eventId,
     geoData,
     heuristics: heuristics ? heuristics.raw_results : [],

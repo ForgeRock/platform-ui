@@ -58,6 +58,8 @@ describe('Activity API', () => {
     const expectedOptions = {
       clusteringReasons: [],
       dayparting: undefined,
+      device: 'other',
+      deviceType: 'none',
       eventId: '840abfd7-7978-4ead-a75f-5418b9a31ec5',
       geoData: {
         city: 'city_unknown_united_states',
