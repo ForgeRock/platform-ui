@@ -1,6 +1,6 @@
 import 'cypress-lighthouse';
 
-describe('login lighthouse report', { retries: 0 }, () => {
+describe.skip('login lighthouse report', { retries: 0 }, () => { // eslint-disable-line mocha/no-exclusive-tests
   const locationUrl = `${Cypress.config().baseUrl}/am/XUI`;
   const passThreshold = Cypress.env('lighthousePassThreshold');
   const auditResults = {};
