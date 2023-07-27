@@ -16,7 +16,6 @@
 module.exports = (on, config) => ({
   ...config,
   fixturesFolder: 'e2e/fixtures',
-  integrationFolder: 'e2e/tests',
   screenshotsFolder: 'e2e/screenshots',
   videosFolder: 'e2e/videos',
   supportFile: 'e2e/support/index.js',

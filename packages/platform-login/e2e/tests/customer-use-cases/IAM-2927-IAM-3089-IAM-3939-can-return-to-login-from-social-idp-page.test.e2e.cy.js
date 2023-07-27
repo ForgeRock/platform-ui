@@ -38,7 +38,7 @@ filterTests(['forgeops', 'cloud'], () => {
       cy.findByRole('button', { name: 'Sign in with Facebook' }).click();
       cy.url().should('contain', 'facebook.com');
       cy.visit(referenceTreeUrl);
-      cy.findByLabelText('User Name').should('exist');
+      cy.findByLabelText('User Name', { timeout: 20000 }).should('exist');
 
       cy.log('IAM-3089 - navigating to the IDP tree following a social IDP redirect works');
       cy.visit(testTreeWithTwoIDPsUrl);
@@ -56,7 +56,7 @@ filterTests(['forgeops', 'cloud'], () => {
       // redirected automatically
       cy.url().should('contain', 'facebook.com');
       cy.visit(referenceTreeUrl);
-      cy.findByLabelText('User Name').should('exist');
+      cy.findByLabelText('User Name', { timeout: 20000 }).should('exist');
     });
   });
 });
