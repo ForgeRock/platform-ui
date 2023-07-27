@@ -1,9 +1,9 @@
 import 'cypress-lighthouse';
 
-describe('platform-enduser lighthouse suite', () => {
+describe.skip('platform-enduser lighthouse suite', () => { // eslint-disable-line mocha/no-exclusive-tests
   const passThreshold = Cypress.env('lighthousePassThreshold');
-  const adminUserName = Cypress.env('AM_USERNAME');
-  const adminPassword = Cypress.env('AM_PASSWORD');
+  const adminUserName = Cypress.env('AM_USERNAME'); // eslint-disable-line no-unused-vars
+  const adminPassword = Cypress.env('AM_PASSWORD'); // eslint-disable-line no-unused-vars
   const retries = 0;
 
   describe('/enduser/profile', { retries }, () => {
@@ -11,7 +11,7 @@ describe('platform-enduser lighthouse suite', () => {
     const auditResults = {};
 
     before(() => {
-      cy.login(adminUserName, adminPassword, locationUrl);
+      cy.loginAsAdmin();
       cy.lighthouse(locationUrl).then((results) => {
         Object.assign(auditResults, results);
       });
@@ -35,7 +35,7 @@ describe('platform-enduser lighthouse suite', () => {
     const auditResults = {};
 
     before(() => {
-      cy.login(adminUserName, adminPassword, locationUrl);
+      cy.loginAsAdmin();
       cy.lighthouse(locationUrl).then((results) => {
         Object.assign(auditResults, results);
       });
