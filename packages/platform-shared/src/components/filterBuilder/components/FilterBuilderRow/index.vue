@@ -20,7 +20,6 @@ of the MIT license. See the LICENSE file for details. -->
               :disabled="disabled"
               :options="selectPropOptions.options"
               :placeholder="propertyPlaceholder"
-              validation="required"
               @input="ruleChange({ field: $event })" />
             <FrField
               v-else
