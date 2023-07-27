@@ -76,12 +76,75 @@ of the MIT license. See the LICENSE file for details. -->
         </transition>
       </div>
     </div>
+    <BModal
+      no-close-on-backdrop
+      no-close-on-esc
+      ok-only
+      size="lg"
+      :ok-title="$t('common.done')"
+      :static="isTesting"
+      :visible="requestErrors.length > 0"
+      @hide="requestErrors = []">
+      <template #modal-title>
+        <div class="d-flex align-items-center">
+          <FrIcon
+            class="md-24 mr-3 text-danger"
+            name="error_outline" />
+          <h1 class="h5 modal-title">
+            {{ $t('governance.accessRequest.newRequest.requestErrorTitle') }}
+          </h1>
+        </div>
+      </template>
+      <p class="mb-4">
+        {{ $t('governance.accessRequest.newRequest.requestErrorBody') }}
+      </p>
+      <BTable
+        class="border"
+        thead-class="d-none"
+        :fields="requestErrorFields"
+        :items="requestErrors">
+        <template #cell(user)="{ item }">
+          <BMedia no-body>
+            <BImg
+              class="mr-3 align-self-center rounded-circle"
+              height="36"
+              width="36"
+              :alt="$t('common.avatar')"
+              :src="item.user.icon || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
+            <BMediaBody>
+              <h2 class="h5 m-0">
+                {{ item.user.name }}
+              </h2>
+              <small class="text-muted">
+                {{ item.user.userName }}
+              </small>
+            </BMediaBody>
+          </BMedia>
+        </template>
+        <template #cell(error)="{ item }">
+          <div class="d-flex justify-content-end">
+            <BBadge variant="danger">
+              {{ item.error }}
+            </BBadge>
+          </div>
+        </template>
+      </BTable>
+    </BModal>
   </div>
 </template>
 
 <script>
 import { cloneDeep } from 'lodash';
-import { BButton, BButtonClose } from 'bootstrap-vue';
+import {
+  BBadge,
+  BButton,
+  BButtonClose,
+  BImg,
+  BMedia,
+  BMediaBody,
+  BModal,
+  BTable,
+} from 'bootstrap-vue';
 import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrNavbar from '@forgerock/platform-shared/src/components/Navbar';
@@ -91,7 +154,7 @@ import AppSharedUtilsMixin from '@forgerock/platform-shared/src/mixins/AppShared
 import { getResource } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import FrAccessRequestCatalog from '../../components/AccessRequestCatalog';
 import FrRequestCart from '@/components/governance/RequestCart';
-import { saveNewRequest } from '@/api/governance/AccessRequestApi';
+import { saveNewRequest, validateRequest } from '@/api/governance/AccessRequestApi';
 import { getCatalogFilterSchema, searchCatalog } from '@/api/governance/CatalogApi';
 
 /**
@@ -100,9 +163,15 @@ import { getCatalogFilterSchema, searchCatalog } from '@/api/governance/CatalogA
 export default {
   name: 'NewRequest',
   components: {
+    BBadge,
     BButton,
-    FrAccessRequestCatalog,
     BButtonClose,
+    BImg,
+    BMedia,
+    BMediaBody,
+    BModal,
+    BTable,
+    FrAccessRequestCatalog,
     FrIcon,
     FrNavbar,
     FrRequestCart,
@@ -118,11 +187,14 @@ export default {
       applicationSearchResults: [],
       catalogFilterSchema: [],
       catalogResults: [],
+      isTesting: false,
       loading: true,
       requestCartExpanded: false,
       requestCartItems: [],
       requestCartUsers: this.$route.params.requestingFor || [],
       saving: false,
+      requestErrorFields: [{ key: 'user' }, { key: 'error' }],
+      requestErrors: [],
       totalCount: 0,
     };
   },
@@ -133,7 +205,7 @@ export default {
           description: catalogItem.role.description,
           name: catalogItem.role.name,
           id: catalogItem.id,
-          requested: this.isRequested(catalogItem.role.id),
+          requested: this.isRequested(catalogItem.id),
         }));
       }
       if (this.catalogResults[0]?.entitlement) {
@@ -144,7 +216,7 @@ export default {
           appType: catalogItem.entitlement.name,
           templateName: catalogItem.application.templateName,
           id: catalogItem.id,
-          requested: this.isRequested(catalogItem.entitlement.id),
+          requested: this.isRequested(catalogItem.id),
         }));
       }
       if (this.catalogResults[0]?.application) {
@@ -155,7 +227,7 @@ export default {
           appType: this.getApplicationDisplayName(catalogItem.application),
           templateName: catalogItem.application.templateName,
           id: catalogItem.id,
-          requested: this.isRequested(catalogItem.application.id),
+          requested: this.isRequested(catalogItem.id),
         }));
       }
       return this.catalogResults;
@@ -187,9 +259,28 @@ export default {
      * Adds selected item to request cart
      * @param {Object} item item to add to cart
      */
-    addItemToCart(item) {
-      this.requestCartItems.push(item);
-      this.displayNotification('success', this.$t('governance.accessRequest.newRequest.requestAdded'));
+    async addItemToCart(item) {
+      try {
+        // check if user already has access
+        const { data } = await validateRequest({
+          users: this.requestedUsers.map((user) => user.id),
+          catalogs: [{ type: item.itemType, id: item.id }],
+          accessModifier: 'add',
+          priority: 'low',
+        });
+        if (data?.errors?.length) {
+          // open modal showing errors if there are any validation errors
+          this.requestErrors = data?.errors.map((error) => ({
+            user: this.requestedUsers.find((user) => user.id === error.userId),
+            error: this.$t(`governance.accessRequest.newRequest.${error.error}`),
+          }));
+        } else {
+          this.requestCartItems.push(item);
+          this.displayNotification('success', this.$t('governance.accessRequest.newRequest.requestAdded'));
+        }
+      } catch (error) {
+        this.showErrorMessage(error, this.$t('governance.accessRequest.newRequest.errorValidatingAccessRequests'));
+      }
     },
     /**
      * Retrieves list of fields that can be filtered on
@@ -219,7 +310,7 @@ export default {
     /**
      * Search the request catalog using the provided filter, sort, and page details
      * @param {String} catalogType accountGrant, entitlementGrant, or roleMembership
-     * @param {Object} params query parameters including pageSize, page, sortField, and sort direction
+     * @param {Object} params query parameters including pageSize, page, sortKeys, and sort direction
      * overall catalog search
      */
     async searchCatalog(catalogType, params) {
@@ -235,8 +326,8 @@ export default {
           pageSize: params.pageSize || 10,
           pagedResultsOffset: ((params.page || 1) - 1) * 10,
         };
-        if (params.sortField) {
-          searchParams.sortKeys = `${params.sortDir === 'desc' ? '-' : ''}${params.sortField}`;
+        if (params.sortKeys) {
+          searchParams.sortKeys = `${params.sortDir === 'desc' ? '-' : ''}${params.sortKeys}`;
         }
         const payload = {
           targetFilter: {
@@ -273,7 +364,7 @@ export default {
           if (params.searchValue) {
             const nameMap = {
               accountGrant: 'application.name',
-              entitlementGrant: 'entitlement.name',
+              entitlementGrant: 'assignment.name',
               roleMembership: 'role.name',
             };
             payload.targetFilter.operand.push({

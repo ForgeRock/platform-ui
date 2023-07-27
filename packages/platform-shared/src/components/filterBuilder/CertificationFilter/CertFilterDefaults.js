@@ -8,7 +8,7 @@
 import i18n from '@/i18n';
 
 export const operatorOptions = {
-  All: { label: 'All', delimeter: 'ALL' },
+  All: { label: 'All', delimeter: 'AND' },
   Any: { label: 'Any', delimeter: 'OR' },
 };
 
