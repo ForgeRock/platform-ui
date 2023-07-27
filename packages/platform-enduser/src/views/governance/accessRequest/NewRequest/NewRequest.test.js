@@ -9,6 +9,7 @@ import { mount } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
 import getPriorityImageSrc from '@/components/utils/governance/AccessRequestUtils';
 import * as CatalogApi from '@/api/governance/CatalogApi';
+import * as AccessRequestApi from '@/api/governance/AccessRequestApi';
 import NewRequest from './index';
 import i18n from '@/i18n';
 
@@ -17,6 +18,7 @@ CatalogApi.searchCatalog = jest.fn().mockReturnValue({
   data: {
     result: [
       {
+        id: '111',
         application: {
           description: 'My Service Now App',
           icon: '',
@@ -35,7 +37,7 @@ describe('NewRequest', () => {
     {
       description: 'ServiceNow',
       icon: '',
-      id: '1',
+      id: '111',
       itemType: 'applications',
       name: 'My Service Now App',
       templateName: 'servicenow',
@@ -58,6 +60,7 @@ describe('NewRequest', () => {
             requestingFor: [{
               name: 'Barbara Jensen',
               userName: 'bjensen',
+              id: '123',
             }],
           },
           ...overrideParams,
@@ -73,6 +76,12 @@ describe('NewRequest', () => {
 
   beforeEach(() => {
     getPriorityImageSrc.mockClear();
+
+    AccessRequestApi.validateRequest = jest.fn().mockReturnValue({
+      data: {
+        errors: [],
+      },
+    });
   });
 
   it('should render with top navigation bar including breadcrumb', async () => {
@@ -115,7 +124,7 @@ describe('NewRequest', () => {
   });
 
   it('should remove item from cart', async () => {
-    const wrapper = mountComponent({}, { requestCartItems });
+    const wrapper = mountComponent({}, { requestCartItems, loading: false });
     await flushPromises();
 
     // Find first application button and click Remove request
@@ -125,5 +134,35 @@ describe('NewRequest', () => {
     await flushPromises();
 
     expect(wrapper.vm.requestCartItems).toStrictEqual([]);
+  });
+
+  it('should open error modal when user already has access', async () => {
+    AccessRequestApi.validateRequest = jest.fn().mockReturnValue({
+      data: {
+        errors: [
+          {
+            userId: '123',
+            error: 'DUPLICATED',
+          },
+        ],
+      },
+    });
+
+    const wrapper = mountComponent();
+    await flushPromises();
+
+    let modalTitle = wrapper.find('h1.h5.modal-title');
+    expect(modalTitle.exists()).toBe(false);
+    expect(wrapper.vm.requestCartItems).toStrictEqual([]);
+
+    wrapper.setData({ isTesting: true });
+    const catalogItemRequestButton = wrapper.findAll('span[class="hover-underline color-blue"]').at(0);
+    expect(catalogItemRequestButton.exists()).toBe(true);
+    catalogItemRequestButton.trigger('click');
+    await flushPromises();
+
+    modalTitle = wrapper.find('h1.h5.modal-title');
+    expect(modalTitle.exists()).toBe(true);
+    expect(modalTitle.text()).toBe('Request Error');
   });
 });
