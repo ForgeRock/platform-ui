@@ -11,10 +11,11 @@ import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import * as AccessRequestApi from '@/api/governance/AccessRequestApi';
 import Approvals from './index';
+import i18n from '@/i18n';
 
 const mountComponent = () => mount(Approvals, {
+  i18n,
   mocks: {
-    $t: (text) => text,
     $store: { state: { UserStore: {} } },
   },
 });
@@ -244,7 +245,7 @@ describe('Approvals', () => {
     expect(wrapper.vm.currentPage).toBe(2);
     expect(getApprovalsSpy).toHaveBeenCalledWith(
       undefined,
-      { pageNumber: 2, pageSize: 10, status: 'governance.status.pending' },
+      { pageNumber: 2, pageSize: 10, status: i18n.t('governance.status.pending') },
       {},
     );
   });
@@ -292,7 +293,7 @@ describe('Approvals', () => {
     toolbar.vm.$emit('filter-change', { filter: 'test' });
     expect(getApprovalsSpy).toHaveBeenCalledWith(
       undefined,
-      { pageNumber: 1, pageSize: 10, status: 'governance.status.pending' },
+      { pageNumber: 1, pageSize: 10, status: i18n.t('governance.status.pending') },
       { filter: 'test' },
     );
   });
@@ -312,9 +313,12 @@ describe('Approvals', () => {
       .spyOn(wrapper.vm, 'openModal')
       .mockImplementation();
     await flushPromises();
-
-    findByTestId(wrapper, 'action-approve').trigger('click');
     await wrapper.vm.$nextTick();
+    expect(findByTestId(wrapper, 'approvals-no-data').exists).toBeTruthy();
+    const approveButton = findByTestId(wrapper, 'action-approve');
+    expect(approveButton.exists()).toBe(true);
+    await wrapper.vm.$nextTick();
+    approveButton.trigger('click');
     expect(showModalSpy).toHaveBeenCalledWith(openModalMock, 'APPROVE');
   });
   it('test open modal with reject', async () => {

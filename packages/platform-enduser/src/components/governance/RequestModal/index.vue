@@ -203,7 +203,16 @@ export default {
   data() {
     return {
       REQUEST_MODAL_TYPES,
-      actors: '',
+      actors: {
+        id: null,
+        permissions: {
+          approve: true,
+          comment: true,
+          modify: true,
+          reject: true,
+          reassign: true,
+        },
+      },
       comment: '',
       loading: false,
       modalId: 'request_modal',
@@ -345,23 +354,23 @@ export default {
     */
     modalAction(item, cancel) {
       const action = this.modalType.toLowerCase();
-      const id = item.id || item.details.id;
       this.loading = true;
-      requestAction(id, action, item.phaseName, this.comment, this.actors).then(() => {
+      requestAction(item.details.id, action, item.rawData.decision.phases[0].name, this.comment, [this.actors]).then(() => {
         this.displayNotification('success', this.message);
         this.$emit('modal-success');
       }).catch(() => {
         this.showErrorMessage('', this.errorMessage);
       }).finally(() => {
         this.loading = false;
-        this.close(cancel, true);
+        this.close(cancel);
+        this.$emit('update-list');
       });
     },
     /**
     * @param {Array} newActors Update actors the request will be forwarded to
     */
     updateActors(newActors) {
-      this.actors = newActors;
+      this.actors.id = newActors;
     },
     /**
     * @param {String} newComment Update comment of the request

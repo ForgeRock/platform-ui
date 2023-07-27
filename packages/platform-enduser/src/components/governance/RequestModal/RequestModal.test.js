@@ -154,9 +154,29 @@ describe('RequestModal', () => {
   });
   it('modal got updateActors emition and will update information', () => {
     const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
-    expect(wrapper.vm.actors).toEqual('');
+    const defaultActor = {
+      id: null,
+      permissions: {
+        approve: true,
+        comment: true,
+        modify: true,
+        reject: true,
+        reassign: true,
+      },
+    };
+    const testActor = {
+      id: 'testActor',
+      permissions: {
+        approve: true,
+        comment: true,
+        modify: true,
+        reject: true,
+        reassign: true,
+      },
+    };
+    expect(wrapper.vm.actors).toEqual(defaultActor);
     wrapper.vm.updateActors('testActor');
-    expect(wrapper.vm.actors).toEqual('testActor');
+    expect(wrapper.vm.actors).toEqual(testActor);
   });
   it('modal got updateComment emition and will update information', () => {
     const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });

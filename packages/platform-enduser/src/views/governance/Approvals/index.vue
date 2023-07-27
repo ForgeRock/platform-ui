@@ -138,7 +138,8 @@ of the MIT license. See the LICENSE file for details. -->
       :type="modalType"
       :item="modalItem"
       :is-approvals="true"
-      @modal-closed="modalType = null; modalItem = null" />
+      @modal-closed="modalType = null; modalItem = null"
+      @update-list="loadRequests" />
   </BContainer>
 </template>
 
@@ -254,9 +255,9 @@ export default {
       this.loadRequests();
     },
     /**
-     * Open Modal for respective Item and type of action
-     * @param {Object} item item the user is willing to request an action for
-     * @param {String} type type of requests
+     * Opens the request / cancel modals
+     * @param {Object} item request item that was clicked
+     * @param {String} type string that tells the modal what view to show
      */
     openModal(item, type = 'DETAILS') {
       this.modalItem = item;
