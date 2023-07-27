@@ -360,14 +360,18 @@
     "showFilters": "Show Filters",
     "requestModal": {
       "detailsTab": {
-        "requestId": "Request ID", 
-        "requestDate": "Request Date", 
-        "requestType": "Request Type",
+        "awaitingApproval": "Awaiting Approval",
         "decision": "Decision", 
+        "justification": "Justification",
+        "priority": "Priority",
+        "provisioning": "Provisioning",
+        "requestComplete": "Request Complete",
+        "requestDate": "Request Date", 
         "requested": "Requested", 
         "requestedFor": "Requested For",
-        "priority": "Priority",
-        "justification": "Justification"
+        "requestId": "Request ID", 
+        "requestSubmitted": "Request Submitted",
+        "requestType": "Request Type"
       },
       "titles": {
         "addComment": "Add a Comment",
@@ -375,7 +379,8 @@
         "cancel": "Cancel Request",
         "details": "Request Details",
         "forward": "Forward Request",
-        "reject": "Reject Request"
+        "reject": "Reject Request",
+        "tracking": "Tracking"
       },
       "messages": {
         "approve": "Approved Request",
@@ -403,7 +408,6 @@
       },
       "addComment": "Add Comment",
       "cancelRequest": "Cancel Request",
-      "comments": "Comments",
       "noComments": "No comments yet",
       "requestDetailsLink": "Request Details",
       "subtitle": "Are you sure you want to {modal} this request?",
