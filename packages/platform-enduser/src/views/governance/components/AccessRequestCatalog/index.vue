@@ -122,9 +122,9 @@ of the MIT license. See the LICENSE file for details. -->
                     {{ $tc('governance.accessRequest.newRequest.results', totalCount, { totalCount }) }}
                   </div>
                   <FrSortDropdown
-                    :selected-item="sortField"
+                    :selected-item="sortKeys"
                     :sort-by-options="sortByOptions"
-                    @sort-field-change="searchCatalog({ sortField: $event, page: 1 })"
+                    @sort-field-change="searchCatalog({ sortKeys: $event, page: 1 })"
                     @sort-direction-change="searchCatalog({ sortDir: $event, page: 1 })" />
                 </BButtonToolbar>
                 <FrSpinner v-if="loading" />
@@ -139,9 +139,11 @@ of the MIT license. See the LICENSE file for details. -->
                       class="mb-4"
                       :key="itemKey">
                       <BCard
-                        class="h-100 shadow-none cursor-pointer"
+                        class="h-100 shadow-none cursor-pointer hover-blue-border"
                         no-body
-                        tag="a"
+                        role="button"
+                        tabindex="0"
+                        @keydown.enter="toggleItemInCart(item)"
                         @click="toggleItemInCart(item)">
                         <BCardBody class="d-flex">
                           <BMedia
@@ -367,7 +369,7 @@ export default {
       searchValue: '',
       selectedTab: 0,
       sortDir: 'desc',
-      sortField: 'application.name',
+      sortKeys: 'application.name',
     };
   },
   computed: {
@@ -480,7 +482,7 @@ export default {
         pageSize: this.pageSize,
         page: this.page,
         sortDir: this.sortDir,
-        sortField: this.sortField,
+        sortKeys: this.sortKeys,
         searchValue: this.searchValue,
         applicationFilter: this.applicationFilter,
         filter: this.filter,
@@ -511,7 +513,7 @@ export default {
         page: 1,
         searchValue: '',
         sortDir: 'desc',
-        sortField: `${sortFieldMap[this.tabType]}.name`,
+        sortKeys: `${sortFieldMap[this.tabType]}.name`,
       });
     },
     /**
