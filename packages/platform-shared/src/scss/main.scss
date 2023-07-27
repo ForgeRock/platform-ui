@@ -231,6 +231,15 @@ legend {
   }
 }
 
+.hover-blue-border {
+  transition-property: border-color;
+  transition-duration: .25s;
+
+  &:hover {
+    border-color: $blue !important;
+  }
+}
+
 .color-blue {
   color: $blue;
 }

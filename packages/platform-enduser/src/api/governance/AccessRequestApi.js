@@ -5,7 +5,6 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-/* eslint-disable no-unused-vars */
 import { generateIgaApi } from '@forgerock/platform-shared/src/api/BaseApi';
 import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
 
@@ -30,8 +29,8 @@ export function getUserApprovals(userId, params, filter) {
  * @param {Array} updatedActors Actor who the request will be forwarded to
  * @returns {Promise}
  */
-export function requestAction(requestId, action, phaseName, comments, updatedActors) {
-  const url = `/governance/requests/${requestId}?_action=${action}&phaseName=${phaseName}`;
+export function requestAction(/* requestId, action, phaseName, comments, updatedActors */) {
+  // const url = `/governance/requests/${requestId}?_action=${action}&phaseName=${phaseName}`;
   return Promise.resolve();
   // return generateIgaApi().post(url, { comments, updatedActors });
   // return generateIgaApi().post('/requests/{requestId}/phases/{phaseName}/comment', { comment });
@@ -39,4 +38,15 @@ export function requestAction(requestId, action, phaseName, comments, updatedAct
 
 export function saveNewRequest(payload) {
   return generateIgaApi().post('governance/requests?_action=create', payload);
+}
+
+/**
+ * Validate a request for invalid entries
+ * @param {String} payload ID of request
+ * @param {Array} payload containing request details to validate
+ * @returns {Promise}
+ */
+export function validateRequest(payload) {
+  const url = '/governance/requests?_action=validate';
+  return generateIgaApi().post(url, payload);
 }
