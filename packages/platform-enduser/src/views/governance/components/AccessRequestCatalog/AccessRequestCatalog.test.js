@@ -80,7 +80,7 @@ describe('AccessRequestCatalog Component', () => {
         ],
       },
     );
-    const catalogCards = wrapper.findAll('a.card');
+    const catalogCards = wrapper.findAll('div.card');
 
     expect(catalogCards.length).toEqual(2);
   });
@@ -105,7 +105,7 @@ describe('AccessRequestCatalog Component', () => {
         catalogItems: mockCatalogItems,
       },
     );
-    const catalogCards = wrapper.findAll('a.card');
+    const catalogCards = wrapper.findAll('div.card');
     expect(catalogCards.at(0).find('.card-footer').text()).toBe('check\nAdded');
     expect(catalogCards.at(1).find('.card-footer').text()).toBe('add\nRequest');
   });
@@ -116,7 +116,7 @@ describe('AccessRequestCatalog Component', () => {
         catalogItems: mockCatalogItems,
       },
     );
-    const catalogCards = wrapper.findAll('a.card');
+    const catalogCards = wrapper.findAll('div.card');
     catalogCards.at(1).trigger('click');
     expect(wrapper.emitted()['add-item-to-cart'][0][0]).toEqual({
       itemType: 'role',
@@ -134,7 +134,7 @@ describe('AccessRequestCatalog Component', () => {
         catalogItems: mockCatalogItems,
       },
     );
-    const catalogCards = wrapper.findAll('a.card');
+    const catalogCards = wrapper.findAll('div.card');
     catalogCards.at(0).trigger('click');
     expect(wrapper.emitted()['remove-item-from-cart'][0][0]).toEqual(1);
   });
