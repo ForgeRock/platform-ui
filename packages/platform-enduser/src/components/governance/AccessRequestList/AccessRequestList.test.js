@@ -12,13 +12,15 @@ import AccessRequestList from './index';
 
 const application = {
   id: 1,
+  decision: {
+    startDate: '2023-06-22T19:23:26+00:00',
+  },
   request: {
     common: {
-      startDate: '2023-06-22T19:23:26+00:00',
       priority: '',
     },
   },
-  requestType: 'accountGrant',
+  requestType: 'applicationGrant',
   application: {
     name: 'test application',
     description: 'test description',
@@ -31,9 +33,11 @@ const application = {
 
 const entitlement = {
   id: 2,
+  decision: {
+    startDate: '2023-06-22T19:23:26+00:00',
+  },
   request: {
     common: {
-      startDate: '',
       priority: '',
     },
   },
@@ -51,9 +55,11 @@ const entitlement = {
 
 const role = {
   id: 3,
+  decision: {
+    startDate: '2023-06-22T19:23:26+00:00',
+  },
   request: {
     common: {
-      startDate: '',
       priority: '',
     },
   },
@@ -103,9 +109,9 @@ describe('AccessReviews', () => {
       });
 
       let requestType = findByTestId(wrapper, 'request-type');
-      expect(requestType.text()).toBe('governance.accessRequest.requestTypes.accountGrant');
+      expect(requestType.text()).toBe('governance.accessRequest.requestTypes.applicationGrant');
 
-      app.requestType = 'accountRevoke';
+      app.requestType = 'applicationRevoke';
 
       wrapper.setProps({
         requests: [
@@ -114,7 +120,7 @@ describe('AccessReviews', () => {
       });
 
       requestType = findByTestId(wrapper, 'request-type');
-      expect(requestType.text()).toBe('governance.accessRequest.requestTypes.accountRevoke');
+      expect(requestType.text()).toBe('governance.accessRequest.requestTypes.applicationRevoke');
     });
 
     it('should display application name', () => {
