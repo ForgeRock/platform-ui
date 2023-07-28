@@ -19,17 +19,17 @@ of the MIT license. See the LICENSE file for details. -->
             <span class="font-weight-bold mr-1">
               {{ `${$t('common.status')}:` }}
             </span>
-            {{ selectedStatus }}
+            {{ selectedStatus.text }}
           </BButton>
         </template>
 
         <template #default>
           <BDropdownItem
             v-for="status in statusOptions"
-            :active="status === selectedStatus"
+            :active="status.value === selectedStatus.value"
             @click="handleStatusChange(status)"
-            :key="status">
-            {{ status }}
+            :key="status.value">
+            {{ status.text }}
           </BDropdownItem>
         </template>
       </BDropdown>
@@ -113,7 +113,7 @@ export default {
   data() {
     return {
       numFilters: 0,
-      selectedStatus: '',
+      selectedStatus: {},
       showFilters: false,
       sortByOptions: [
         {
@@ -169,7 +169,7 @@ export default {
      */
     handleStatusChange(status) {
       this.selectedStatus = status;
-      this.$emit('status-change', status);
+      this.$emit('status-change', status.value);
     },
   },
 };

@@ -8,22 +8,6 @@
 /* eslint-disable no-unused-vars */
 import { generateIgaApi } from '@forgerock/platform-shared/src/api/BaseApi';
 import encodeQueryString from '@forgerock/platform-shared/src/utils/encodeQueryString';
-import {
-  getRequestMock,
-  getRequestsMock,
-} from './AccessRequestApiMock';
-
-export function searchRequests(params = {}, filter) {
-  return Promise.resolve({ data: getRequestsMock(params, filter) });
-  // const queryString = encodeQueryString(params, false);
-  // return generateIgaApi().post('/requests/search${queryString}', filter);
-}
-
-export function getRequest(id) {
-  return Promise.resolve({
-    data: getRequestMock(id),
-  });
-}
 
 export function getUserRequests(userId, params, filter) {
   params.action = 'search';
@@ -32,8 +16,9 @@ export function getUserRequests(userId, params, filter) {
 }
 
 export function getUserApprovals(userId, params, filter) {
-  return Promise.resolve({ data: getRequestsMock(params, filter) });
-  // /governance/user/{userId}/approvals
+  params._action = 'search';
+  const queryString = encodeQueryString(params, false);
+  return generateIgaApi().post(`/governance/user/${userId}/approvals${queryString}`, { targetFilter: filter });
 }
 
 /**
