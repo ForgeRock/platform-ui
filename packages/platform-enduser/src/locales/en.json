@@ -246,8 +246,7 @@
       "requestTypes": {
         "all": "All request types",
         "applicationGrant": "Grant Application",
-        "accountGrant": "Grant Application",
-        "accountRevoke": "Remove Application",
+        "applicationRevoke": "Remove Application",
         "entitlementGrant": "Grant Entitlement",
         "entitlementRevoke": "Remove Entitlement",
         "roleGrant": "Grant Role",

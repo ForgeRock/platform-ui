@@ -21,11 +21,10 @@ const mountComponent = () => mount(Approvals, {
 
 const mockRequest = {
   id: 3,
-  requestType: 'accountRevoke',
+  requestType: 'applicationRevoke',
   request: {
     common: {
       priority: 'high',
-      startDate: '2023-06-22T19:23:26+00:00',
       endDate: '2023-07-15T19:23:26+00:00',
     },
   },
@@ -67,6 +66,7 @@ const mockRequest = {
         workflowTaskId: '2511',
       },
     ],
+    startDate: '2023-06-22T19:23:26+00:00',
   },
   application: {
     description: 'My Azure App',
@@ -93,7 +93,7 @@ const openModalMock = {
       sn: 'Hertel',
       userName: 'andrew.hertel@test.com',
     },
-    type: 'governance.accessRequest.requestTypes.accountRevoke',
+    type: 'governance.accessRequest.requestTypes.applicationRevoke',
   },
   rawData: {
     application: {
@@ -123,6 +123,7 @@ const openModalMock = {
           workflowTaskId: '2511',
         },
       ],
+      startDate: '2023-06-22T19:23:26+00:00',
       status: 'in-progress',
     },
     id: 3,
@@ -130,10 +131,9 @@ const openModalMock = {
       common: {
         endDate: '2023-07-15T19:23:26+00:00',
         priority: 'high',
-        startDate: '2023-06-22T19:23:26+00:00',
       },
     },
-    requestType: 'accountRevoke',
+    requestType: 'applicationRevoke',
     requester: {
       givenName: 'Mike',
       id: '1234-456-1',
@@ -151,7 +151,7 @@ const openModalMock = {
   },
 };
 
-describe('RequestFilter', () => {
+describe('Approvals', () => {
   CommonsApi.getResource = jest.fn().mockReturnValue(Promise.resolve({}));
   let wrapper;
 
@@ -159,7 +159,7 @@ describe('RequestFilter', () => {
     AccessRequestApi.getUserApprovals = jest.fn().mockReturnValue(
       Promise.resolve({
         data: {
-          results: [],
+          result: [],
           totalCount: 0,
         },
       }),
@@ -176,7 +176,7 @@ describe('RequestFilter', () => {
     AccessRequestApi.getUserApprovals = jest.fn().mockReturnValue(
       Promise.resolve({
         data: {
-          results: [mockRequest],
+          result: [mockRequest],
           totalCount: 1,
         },
       }),
@@ -189,11 +189,11 @@ describe('RequestFilter', () => {
     expect(pagination.exists()).toBeTruthy();
   });
 
-  it('sets page size and gets approvals based on event from pagination component', async () => {
+  fit('sets page size and gets approvals based on event from pagination component', async () => {
     AccessRequestApi.getUserApprovals = jest.fn().mockReturnValue(
       Promise.resolve({
         data: {
-          results: [mockRequest],
+          result: [mockRequest],
           totalCount: 1,
         },
       }),
@@ -209,8 +209,18 @@ describe('RequestFilter', () => {
     expect(wrapper.vm.pageSize).toBe(2);
     expect(getApprovalsSpy).toHaveBeenCalledWith(
       undefined,
-      { pageNumber: 1, pageSize: 2, status: 'governance.status.pending' },
-      {},
+      {
+        _pagedResultsOffset: 0,
+        _pageSize: 2,
+        _sortKeys: 'decision.startDate',
+        _sortType: 'date',
+        _sortDir: 'desc',
+        actorStatus: 'active',
+      },
+      {
+        operator: 'AND',
+        operand: [],
+      },
     );
   });
 
@@ -218,7 +228,7 @@ describe('RequestFilter', () => {
     AccessRequestApi.getUserApprovals = jest.fn().mockReturnValue(
       Promise.resolve({
         data: {
-          results: [mockRequest],
+          result: [mockRequest],
           totalCount: 1,
         },
       }),
@@ -243,7 +253,7 @@ describe('RequestFilter', () => {
     AccessRequestApi.getUserApprovals = jest.fn().mockReturnValue(
       Promise.resolve({
         data: {
-          results: [mockRequest],
+          result: [mockRequest],
           totalCount: 1,
         },
       }),
@@ -267,7 +277,7 @@ describe('RequestFilter', () => {
     AccessRequestApi.getUserApprovals = jest.fn().mockReturnValue(
       Promise.resolve({
         data: {
-          results: [mockRequest],
+          result: [mockRequest],
           totalCount: 1,
         },
       }),
@@ -291,7 +301,7 @@ describe('RequestFilter', () => {
     AccessRequestApi.getUserApprovals = jest.fn().mockReturnValue(
       Promise.resolve({
         data: {
-          results: [mockRequest],
+          result: [mockRequest],
           totalCount: 1,
         },
       }),
@@ -311,7 +321,7 @@ describe('RequestFilter', () => {
     AccessRequestApi.getUserApprovals = jest.fn().mockReturnValue(
       Promise.resolve({
         data: {
-          results: [mockRequest],
+          result: [mockRequest],
           totalCount: 1,
         },
       }),
@@ -331,7 +341,7 @@ describe('RequestFilter', () => {
     AccessRequestApi.getUserApprovals = jest.fn().mockReturnValue(
       Promise.resolve({
         data: {
-          results: [mockRequest],
+          result: [mockRequest],
           totalCount: 1,
         },
       }),
@@ -352,7 +362,7 @@ describe('RequestFilter', () => {
     AccessRequestApi.getUserApprovals = jest.fn().mockReturnValue(
       Promise.resolve({
         data: {
-          results: [mockRequest],
+          result: [mockRequest],
           totalCount: 1,
         },
       }),

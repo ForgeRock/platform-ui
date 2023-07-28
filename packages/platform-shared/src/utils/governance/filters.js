@@ -38,3 +38,13 @@ export function getGovernanceFilter(filterObject) {
   };
   return generateFilter(filterObject);
 }
+
+export function getBasicFilter(operator, targetName, targetValue) {
+  return {
+    operator,
+    operand: {
+      targetName,
+      targetValue,
+    },
+  };
+}

@@ -1,9 +1,8 @@
 /**
- * Copyright 2023 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2023 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 import { mount } from '@vue/test-utils';
@@ -32,6 +31,7 @@ const accessRequests = [{
     deadline: null,
     outcome: null,
     phases: [],
+    startDate: '2023-06-22T19:23:26+00:00',
     status: 'in-progress',
   },
   entitlement: {
@@ -44,7 +44,6 @@ const accessRequests = [{
     common: {
       endDate: '2023-07-15T19:23:26+00:00',
       priority: 'medium',
-      startDate: '2023-06-22T19:23:26+00:00',
     },
   },
   requestType: 'entitlementRevoke',

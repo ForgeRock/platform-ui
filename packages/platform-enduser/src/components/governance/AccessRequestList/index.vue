@@ -12,7 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
       v-else-if="items.length"
       class="access-request-list"
       thead-class="d-none"
-      tbody-tr-class="cursor-pointer"
+      tbody-tr-class="cursor-pointer d-flex justify-content-between border-top"
       hover
       :fields="fields"
       :items="items"
@@ -158,11 +158,12 @@ export default {
         {
           key: 'details',
           label: '',
+          class: 'border-top-0',
         },
         {
           key: 'actions',
           label: '',
-          class: 'w-200px p-3',
+          class: 'd-flex align-items-center border-top-0',
         },
       ],
     };
@@ -171,7 +172,7 @@ export default {
     requests: {
       immediate: true,
       handler(requestList) {
-        if (requestList.length) this.items = this.buildRequestDisplay(requestList);
+        this.items = this.buildRequestDisplay(requestList);
       },
     },
   },
@@ -209,7 +210,7 @@ export default {
      * @returns {String} the base object type of the request: application, entitlment, role.
      */
     getRequestObjectType(requestType) {
-      if (requestType.includes('account')) return 'application';
+      if (requestType.includes('application')) return 'application';
       if (requestType.includes('entitlement')) return 'entitlement';
       if (requestType.includes('role')) return 'role';
       return '';
@@ -227,7 +228,7 @@ export default {
           name: request.application?.name,
           description: request.application?.description,
           priority: request.request?.common?.priority,
-          date: request.request?.common?.startDate,
+          date: request.decision?.startDate,
           requesteeInfo: request.user,
           icon: this.getApplicationLogo(request.application),
         },
@@ -247,7 +248,7 @@ export default {
           name: request.entitlement?.displayName,
           description: request.entitlement?.description,
           priority: request.request?.common?.priority,
-          date: request.request?.common?.startDate,
+          date: request.decision?.startDate,
           requesteeInfo: request.user,
           icon: this.getApplicationLogo(request.application),
         },
@@ -267,7 +268,7 @@ export default {
           name: request.role?.name,
           description: request.role?.description,
           priority: request.request?.common?.priority,
-          date: request.request?.common?.startDate,
+          date: request.decision?.startDate,
           requesteeInfo: request.user,
           icon: 'assignment_ind',
         },
