@@ -17,8 +17,10 @@ of the MIT license. See the LICENSE file for details. -->
             <FrRequestToolbar
               data-testid="approvals-toolbar"
               :status-options="statusOptions"
-              @status-change="handleStatusChange"
-              @filter-change="handleFilterChange" />
+              @filter-change="filterHandler({ filter: $event })"
+              @sort-change="filterHandler({ sortKeys: $event })"
+              @sort-direction-change="filterHandler({ sortDir: $event })"
+              @status-change="filterHandler({ status: $event })" />
           </template>
           <template #no-data>
             <FrNoData
@@ -26,33 +28,35 @@ of the MIT license. See the LICENSE file for details. -->
               class="mb-4 border-top"
               data-testid="approvals-no-data"
               icon="inbox"
-              :subtitle="$t('governance.accessRequest.noRequests', { status })" />
+              :subtitle="$t('governance.accessRequest.noRequests', { status: getStatusText(statusOptions, status) })" />
           </template>
           <template #actions="{ item }">
             <div class="d-flex align-items-center justify-content-end">
               <div class="d-flex">
-                <BButton
-                  variant="outline-secondary"
-                  size="sm"
-                  class="d-none d-lg-block mx-lg-1"
-                  data-testid="action-approve"
-                  @click="openModal(item, 'APPROVE')">
-                  <FrIcon
-                    class="mr-2 text-success"
-                    name="check"
-                  />{{ $t('common.approve') }}
-                </BButton>
-                <BButton
-                  variant="outline-secondary"
-                  size="sm"
-                  class="d-none d-lg-block mx-lg-1"
-                  data-testid="action-reject"
-                  @click="openModal(item, 'REJECT')">
-                  <FrIcon
-                    class="mr-2 text-danger"
-                    name="block"
-                  />{{ $t('common.reject') }}
-                </BButton>
+                <template v-if="status === 'pending'">
+                  <BButton
+                    variant="outline-secondary"
+                    size="sm"
+                    class="d-none d-lg-block mx-lg-1"
+                    data-testid="action-approve"
+                    @click="openModal(item, 'APPROVE')">
+                    <FrIcon
+                      class="mr-2 text-success"
+                      name="check"
+                    />{{ $t('common.approve') }}
+                  </BButton>
+                  <BButton
+                    variant="outline-secondary"
+                    size="sm"
+                    class="d-none d-lg-block mx-lg-1"
+                    data-testid="action-reject"
+                    @click="openModal(item, 'REJECT')">
+                    <FrIcon
+                      class="mr-2 text-danger"
+                      name="block"
+                    />{{ $t('common.reject') }}
+                  </BButton>
+                </template>
                 <div class="text-right dropdown-padding">
                   <BDropdown
                     boundary="window"
@@ -67,41 +71,43 @@ of the MIT license. See the LICENSE file for details. -->
                         name="more_horiz"
                       />
                     </template>
-                    <BDropdownItem
-                      class="d-block d-lg-none"
-                      @click="openModal(item, 'APPROVE')"
-                      data-testid="dropdown-action-approve">
-                      <FrIcon
-                        class="mr-2 text-success"
-                        name="check"
-                      />{{ $t('common.approve') }}
-                    </BDropdownItem>
-                    <BDropdownItem
-                      class="d-block d-lg-none"
-                      data-testid="dropdown-action-reject"
-                      @click="openModal(item, 'REJECT')">
-                      <FrIcon
-                        class="mr-2 text-danger"
-                        name="block"
-                      />{{ $t('common.reject') }}
-                    </BDropdownItem>
-                    <BDropdownDivider class="d-block d-lg-none" />
-                    <BDropdownItem
-                      data-testid="dropdown-action-reassign"
-                      @click="openModal(item, 'REASSIGN')">
-                      <FrIcon
-                        name="redo"
-                        class="mr-2"
-                      />{{ $t('common.forward') }}
-                    </BDropdownItem>
-                    <BDropdownItem
-                      data-testid="dropdown-action-comment"
-                      @click="openModal(item, 'COMMENT')">
-                      <FrIcon
-                        name="chat_bubble_outline"
-                        class="mr-2"
-                      />{{ $t('governance.requestModal.addComment') }}
-                    </BDropdownItem>
+                    <template v-if="status === 'pending'">
+                      <BDropdownItem
+                        class="d-block d-lg-none"
+                        @click="openModal(item, 'APPROVE')"
+                        data-testid="dropdown-action-approve">
+                        <FrIcon
+                          class="mr-2 text-success"
+                          name="check"
+                        />{{ $t('common.approve') }}
+                      </BDropdownItem>
+                      <BDropdownItem
+                        class="d-block d-lg-none"
+                        data-testid="dropdown-action-reject"
+                        @click="openModal(item, 'REJECT')">
+                        <FrIcon
+                          class="mr-2 text-danger"
+                          name="block"
+                        />{{ $t('common.reject') }}
+                      </BDropdownItem>
+                      <BDropdownDivider class="d-block d-lg-none" />
+                      <BDropdownItem
+                        data-testid="dropdown-action-reassign"
+                        @click="openModal(item, 'REASSIGN')">
+                        <FrIcon
+                          name="redo"
+                          class="mr-2"
+                        />{{ $t('common.forward') }}
+                      </BDropdownItem>
+                      <BDropdownItem
+                        data-testid="dropdown-action-comment"
+                        @click="openModal(item, 'COMMENT')">
+                        <FrIcon
+                          name="chat_bubble_outline"
+                          class="mr-2"
+                        />{{ $t('governance.requestModal.addComment') }}
+                      </BDropdownItem>
+                    </template>
                     <BDropdownItem
                       data-testid="dropdown-action-details"
                       @click="openModal(item, 'DETAILS')">
@@ -122,8 +128,8 @@ of the MIT license. See the LICENSE file for details. -->
               data-testid="approvals-pagination"
               :per-page="pageSize"
               :total-rows="totalCount"
-              @input="paginationChange"
-              @on-page-size-change="pageSizeChange" />
+              @input="filterHandler({ currentPage: $event })"
+              @on-page-size-change="filterHandler({ pageSize: $event })" />
           </template>
         </FrAccessRequestList>
       </BCard>
@@ -152,6 +158,7 @@ import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrAccessRequestList from '@/components/governance/AccessRequestList';
 import FrRequestToolbar from '@/components/governance/RequestToolbar';
+import { getRequestFilter, getStatusText, sortKeysMap } from '@/components/utils/governance/AccessRequestUtils';
 import { getUserApprovals } from '@/api/governance/AccessRequestApi';
 import FrRequestModal, { REQUEST_MODAL_TYPES } from '@/components/governance/RequestModal';
 
@@ -180,16 +187,24 @@ export default {
     return {
       REQUEST_MODAL_TYPES,
       accessRequests: [],
-      filter: {},
       currentPage: 1,
+      filter: {},
       isLoading: false,
-      modalType: null,
       modalItem: null,
+      modalType: REQUEST_MODAL_TYPES.DETAILS,
       pageSize: 10,
-      status: this.$t('governance.status.pending'),
+      sortDir: 'desc',
+      sortKeys: 'date',
+      status: 'pending',
       statusOptions: [
-        this.$t('governance.status.pending'),
-        this.$t('governance.status.complete'),
+        {
+          text: this.$t('governance.status.pending'),
+          value: 'pending',
+        },
+        {
+          text: this.$t('governance.status.complete'),
+          value: 'complete',
+        },
       ],
       totalCount: 0,
     };
@@ -198,40 +213,37 @@ export default {
     this.loadRequests();
   },
   methods: {
-    buildTargetFilter(filter) {
-      // TODO: Implement this when integrating with API
-      return filter;
-    },
+    getStatusText,
     /**
      * Get access requests based on query params and target filter
      */
-    loadRequests() {
+    async loadRequests(goToFirstPage) {
       this.isLoading = true;
-      const payload = this.buildTargetFilter(this.filter);
+
+      if (goToFirstPage) this.currentPage = 1;
+
+      const payload = getRequestFilter(this.filter);
       const params = {
-        pageNumber: this.currentPage,
-        pageSize: this.pageSize,
-        status: this.status,
+        _pagedResultsOffset: (this.currentPage - 1) * this.pageSize,
+        _pageSize: this.pageSize,
+        _sortKeys: sortKeysMap[this.sortKeys],
+        _sortDir: this.sortDir,
+        actorStatus: this.status === 'pending' ? 'active' : 'inactive',
       };
 
-      getUserApprovals(this.$store.state.UserStore.userId, params, payload).then(({ data }) => {
-        this.accessRequests = data.results;
+      if (this.sortKeys === 'date') params._sortType = 'date';
+
+      try {
+        const { data } = await getUserApprovals(this.$store.state.UserStore.userId, params, payload);
+        this.accessRequests = data.result;
         this.totalCount = data.totalCount;
-      }).catch((error) => {
+      } catch (error) {
         this.accessRequests = [];
         this.totalCount = 0;
         this.showErrorMessage(error, this.$t('governance.approval.errorGettingApprovals'));
-      }).finally(() => {
+      } finally {
         this.isLoading = false;
-      });
-    },
-    /**
-     * Update filter and reload requests
-     * @param {Object} filter filter to apply to requests
-     */
-    handleFilterChange(filter) {
-      this.filter = filter;
-      this.loadRequests();
+      }
     },
     /**
      * Update status and reload requests
@@ -252,20 +264,14 @@ export default {
       this.$bvModal.show('request_modal');
     },
     /**
-     * Update page and reload requests
-     * @param {Number} pageNumber current page
+     * Handles filtering requests as well as updates to pagination
+     * @param {Object} property updated property
      */
-    paginationChange(pageNumber) {
-      this.currentPage = pageNumber;
-      this.loadRequests();
-    },
-    /**
-     * Update page size and reload requests
-     * @param {Number} pageSize current page size
-     */
-    pageSizeChange(pageSize) {
-      this.pageSize = pageSize;
-      this.loadRequests();
+    filterHandler(property) {
+      const [key, value] = Object.entries(property)[0];
+      this[key] = value;
+      const resetPaging = (key !== 'currentPage');
+      this.loadRequests(resetPaging);
     },
   },
 };

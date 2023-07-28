@@ -18,8 +18,14 @@ describe('RequestToolbar', () => {
       },
       propsData: {
         statusOptions: [
-          'testStatus1',
-          'testStatus2',
+          {
+            text: 'testStatus1',
+            value: 'stat1',
+          },
+          {
+            text: 'testStatus2',
+            value: 'stat2',
+          },
         ],
       },
       stubs: ['FrRequestFilter'],
@@ -62,7 +68,7 @@ describe('RequestToolbar', () => {
       .trigger('click');
 
     expect(dropdownBtn.text()).toMatch('testStatus2');
-    expect(wrapper.emitted()['status-change'][0]).toEqual(['testStatus2']);
+    expect(wrapper.emitted()['status-change'][0]).toEqual(['stat2']);
   });
 
   it('when the filter changes emit filter-change event with new filter', () => {

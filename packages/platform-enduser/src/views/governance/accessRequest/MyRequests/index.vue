@@ -35,7 +35,7 @@ of the MIT license. See the LICENSE file for details. -->
                 <FrRequestToolbar
                   :status-options="statusOptions"
                   @filter-change="filterHandler({ filter: $event })"
-                  @sort-change="filterHandler({ sortType: $event })"
+                  @sort-change="filterHandler({ sortKeys: $event })"
                   @sort-direction-change="filterHandler({ sortDir: $event })"
                   @status-change="filterHandler({ status: $event })" />
               </template>
@@ -45,7 +45,7 @@ of the MIT license. See the LICENSE file for details. -->
                   data-testid="requests-no-data"
                   icon="person_add"
                   :card="false"
-                  :subtitle="$t('governance.accessRequest.noRequests', { status })" />
+                  :subtitle="$t('governance.accessRequest.noRequests', { status: getStatusText(statusOptions, status) })" />
               </template>
               <template #actions="{ item }">
                 <div class="d-flex justify-content-end align-items-center">
@@ -53,8 +53,8 @@ of the MIT license. See the LICENSE file for details. -->
                     <BBadge
                       class="badge-status font-weight-normal"
                       data-testid="status-badge"
-                      variant="light">
-                      {{ status }}
+                      :variant="status === 'complete' ? 'success' : 'light'">
+                      {{ getStatusText(statusOptions, status) }}
                     </BBadge>
                   </div>
                   <FrActionsCell
@@ -130,6 +130,7 @@ import FrActionsCell from '@forgerock/platform-shared/src/components/cells/Actio
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrAccessRequestList from '@/components/governance/AccessRequestList';
 import FrRequestToolbar from '@/components/governance/RequestToolbar';
+import { getRequestFilter, getStatusText, sortKeysMap } from '@/components/utils/governance/AccessRequestUtils';
 import { getUserRequests } from '@/api/governance/AccessRequestApi';
 import FrRequestModal, { REQUEST_MODAL_TYPES } from '@/components/governance/RequestModal';
 import FrNewRequestModal from '@/components/governance/NewRequestModal';
@@ -157,6 +158,10 @@ export default {
     FrRequestModal,
     FrRequestToolbar,
   },
+  mixins: [
+    CertificationMixin,
+    NotificationMixin,
+  ],
   data() {
     return {
       accessRequests: [],
@@ -167,50 +172,47 @@ export default {
       modalType: 'REQUEST_MODAL_TYPES.DETAILS',
       pageSize: 10,
       sortDir: 'desc',
-      sortType: 'date',
-      status: this.$t('governance.status.pending'),
+      sortKeys: 'date',
+      status: 'in-progress',
       statusOptions: [
-        this.$t('governance.status.pending'),
-        this.$t('governance.status.complete'),
-        this.$t('governance.status.canceled'),
+        {
+          text: this.$t('governance.status.pending'),
+          value: 'in-progress',
+        },
+        {
+          text: this.$t('governance.status.complete'),
+          value: 'complete',
+        },
+        {
+          text: this.$t('governance.status.canceled'),
+          value: 'cancelled',
+        },
       ],
       totalRows: 0,
     };
   },
-  mixins: [
-    CertificationMixin,
-    NotificationMixin,
-  ],
   mounted() {
     this.loadRequests();
   },
   methods: {
-    buildTargetFilter(filter) {
-      // TODO: Implement this when integrating with API
-      return filter;
-    },
-    /**
-     * Handles filtering requests as well as updates to pagination
-     * @param {Object} property updated property
-     */
-    filterHandler(property) {
-      const [key, value] = Object.entries(property)[0];
-      this[key] = value;
-      this.loadRequests();
-    },
+    getStatusText,
     /**
      * Get current users access requests based on query params and target filter
      */
-    async loadRequests() {
+    async loadRequests(goToFirstPage) {
       this.isLoading = true;
-      const payload = this.buildTargetFilter(this.filter);
+
+      if (goToFirstPage) this.currentPage = 1;
+
+      const payload = getRequestFilter(this.filter, this.status);
       const params = {
-        pageNumber: this.currentPage,
+        pagedResultsOffset: (this.currentPage - 1) * this.pageSize,
         pageSize: this.pageSize,
+        sortKeys: sortKeysMap[this.sortKeys],
         sortDir: this.sortDir,
-        sortType: this.sortType,
-        status: this.status.toLowerCase(),
       };
+
+      if (this.sortKeys === 'date') params.sortType = 'date';
 
       try {
         const { data } = await getUserRequests(this.$store.state.UserStore.userId, params, payload);
@@ -236,6 +238,16 @@ export default {
       this.modalItem = item;
       this.modalType = REQUEST_MODAL_TYPES[type];
       this.$bvModal.show('request_modal');
+    },
+    /**
+     * Handles filtering requests as well as updates to pagination
+     * @param {Object} property updated property
+     */
+    filterHandler(property) {
+      const [key, value] = Object.entries(property)[0];
+      this[key] = value;
+      const resetPaging = (key !== 'currentPage');
+      this.loadRequests(resetPaging);
     },
   },
 };
