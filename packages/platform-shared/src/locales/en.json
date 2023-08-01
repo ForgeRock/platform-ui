@@ -39,6 +39,7 @@
     "change": "Change",
     "checkIconAltText": "Success icon",
     "close": "Close",
+    "clear": "Clear",
     "columns": "Columns",
     "code": "Code",
     "comment": "Comment",
@@ -1397,5 +1398,11 @@
       "toUser": "Another user",
       "title": " Forward Access Review"
     }
+  },
+  "esvInput": {
+    "title": "Select Esv",
+    "searchVariables": "Search variables",
+    "noVariables": "No variables found",
+    "noSecrets": "No secrets found"
   }
 }

@@ -1666,6 +1666,7 @@ __metadata:
     "@forgerock/platform-shared": 1.0.0
     "@googlemaps/js-api-loader": 1.14.0
     "@googlemaps/markerclusterer": 2.0.3
+    "@pinia/testing": 0.1.3
     "@riophae/vue-treeselect": 0.4.0
     "@testing-library/cypress": 7.0.3
     "@vue/cli-plugin-babel": 4.5.18
@@ -1698,6 +1699,7 @@ __metadata:
     lint-staged: 8.1.5
     lodash: 4.17.21
     oidcsessioncheck: 2.0.0-alpha.0
+    pinia: 2.1.6
     pretty-data: 0.40.0
     raw-loader: 4.0.2
     regenerator-runtime: 0.13.2
@@ -1876,6 +1878,7 @@ __metadata:
   dependencies:
     "@forgerock/javascript-sdk": 3.0.0
     "@forgerock/platform-shared": 1.0.0
+    "@pinia/testing": 0.1.3
     "@vue/cli-plugin-babel": 4.5.18
     "@vue/cli-service": 4.5.18
     "@vue/test-utils": 1.0.0-beta.29
@@ -1896,6 +1899,7 @@ __metadata:
     ldap-filter: 0.3.3
     lodash: 4.17.21
     material-icons: 1.10.4
+    pinia: 2.1.6
     pluralize: 8.0.0
     pretty-data: 0.40.0
     prismjs: 1.27.0
@@ -2778,6 +2782,17 @@ __metadata:
     form-data: ^3.0.0
     opener: ^1.5.2
   checksum: 545b59f83b06e6970024bd68ab370eab762a1f6d2b326087be3c960223a0f3aa36fe2f71b8f4f05d7c96abae61509baaa1c8bc4aaf6e02935064429e76deec80
+  languageName: node
+  linkType: hard
+
+"@pinia/testing@npm:0.1.3":
+  version: 0.1.3
+  resolution: "@pinia/testing@npm:0.1.3"
+  dependencies:
+    vue-demi: ">=0.14.5"
+  peerDependencies:
+    pinia: ">=2.1.5"
+  checksum: 02df818686f63b8f7b2521f05ecbf5f7fea1ab934d3dec8575a8d5146ebfcfb0605c61b64474271e6a954586f60510fba83dadd1a9498f7765c1187e58954c26
   languageName: node
   linkType: hard
 
@@ -3865,6 +3880,13 @@ __metadata:
     prettier:
       optional: true
   checksum: 26ac79b12b414cfb21f7eba8e7827254a28f1e491002f36eeb67ff8e4a014d2008b56d5da0ccb6a23353ec095b089c4e581679793dafd69a2d852f115838ada5
+  languageName: node
+  linkType: hard
+
+"@vue/devtools-api@npm:^6.5.0":
+  version: 6.5.0
+  resolution: "@vue/devtools-api@npm:6.5.0"
+  checksum: ec819ef3a426e91d09e9cfefd2827e9ed8ec9d62bb3b3e0674f3da8c7e92a4b879c3b777dc7329172ca6fe2670b62dd5580d23160339208f0f5ae038f2e504ad
   languageName: node
   linkType: hard
 
@@ -10203,6 +10225,7 @@ __metadata:
     stylelint: 14.1.0
     stylelint-config-html: 1.0.0
     vue: 2.7.14
+    vue-demi: 0.14.5
     vue-template-compiler: 2.7.14
   languageName: unknown
   linkType: soft
@@ -17182,6 +17205,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pinia@npm:2.1.6":
+  version: 2.1.6
+  resolution: "pinia@npm:2.1.6"
+  dependencies:
+    "@vue/devtools-api": ^6.5.0
+    vue-demi: ">=0.14.5"
+  peerDependencies:
+    "@vue/composition-api": ^1.4.0
+    typescript: ">=4.4.4"
+    vue: ^2.6.14 || ^3.3.0
+  peerDependenciesMeta:
+    "@vue/composition-api":
+      optional: true
+    typescript:
+      optional: true
+  checksum: 4e881e590c4f6ec9c2dc6174cf7ecc71a48bff1f3a5be878669b3b2fd32994fa64c3cbf499d138bc4e0f222ac6ad1d07935b0a592791acdaf8c9f2a12c98f042
+  languageName: node
+  linkType: hard
+
 "pinkie-promise@npm:^2.0.0":
   version: 2.0.1
   resolution: "pinkie-promise@npm:2.0.1"
@@ -21764,6 +21806,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"vue-demi@npm:0.14.5, vue-demi@npm:>=0.14.5":
+  version: 0.14.5
+  resolution: "vue-demi@npm:0.14.5"
+  peerDependencies:
+    "@vue/composition-api": ^1.0.0-rc.1
+    vue: ^3.0.0-0 || ^2.6.0
+  peerDependenciesMeta:
+    "@vue/composition-api":
+      optional: true
+  bin:
+    vue-demi-fix: bin/vue-demi-fix.js
+    vue-demi-switch: bin/vue-demi-switch.js
+  checksum: ff44b9372b8224590514252a2f73363cced6062205f9628a6b130dccb80e2023d55cd9d1da94aeb68d5539b7ea9eedcecf88ab281a3a9ff48b8db4c5366b9643
+  languageName: node
+  linkType: hard
+
 "vue-drag-drop@npm:1.1.4":
   version: 1.1.4
   resolution: "vue-drag-drop@npm:1.1.4"
@@ -21885,8 +21943,8 @@ __metadata:
   linkType: hard
 
 "vue-loader@npm:^15.9.2":
-  version: 15.9.5
-  resolution: "vue-loader@npm:15.9.5"
+  version: 15.10.1
+  resolution: "vue-loader@npm:15.10.1"
   dependencies:
     "@vue/component-compiler-utils": ^3.1.0
     hash-sum: ^1.0.2
@@ -21901,7 +21959,7 @@ __metadata:
       optional: true
     vue-template-compiler:
       optional: true
-  checksum: b3c6743a6bf7fa4d43949705b263a5905752a34fb33fdb0e4c4ed2bbfcbc7482524b4ebfce4444865cbc5f682fce8774b38b36bdd6aa48856584cccde72661e3
+  checksum: 753a6b6da29e8c0dc328365424cc43757573a2242b0dced5cf36aab775818b622a2bb831c053b43eabfc604755b6b957c196520a66da19bc634b245cb7b44a2b
   languageName: node
   linkType: hard
 
