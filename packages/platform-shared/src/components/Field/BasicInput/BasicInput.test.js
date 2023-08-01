@@ -256,20 +256,42 @@ describe('BasicInput', () => {
       });
     });
 
-    it('prepend & append slots', () => {
-      const wrapper = mount(BasicInput, {
-        i18n,
-        propsData: {
-          ...defaultProps,
-        },
-        slots: {
-          prepend: '<span class="test_prepend">prepend</span>',
-          append: '<span class="test_append">append</span>',
-        },
+    describe('passing through slots for the InputLayout component to render', () => {
+      it('renders the prepend slot', () => {
+        const wrapper = mount(BasicInput, {
+          i18n,
+          propsData: {
+            ...defaultProps,
+          },
+          slots: {
+            prepend: '<span class="test_prepend">prepend</span>',
+          },
+        });
+
+        expect(wrapper.contains('.test_prepend')).toBe(true);
+
+        // When prepending, the input text should not be truncated
+        const input = findByTestId(wrapper, 'input-stub-testid');
+        expect(input.classes()).not.toContain('text-truncate');
       });
 
-      expect(wrapper.contains('.test_prepend')).toBe(true);
-      expect(wrapper.contains('.test_append')).toBe(true);
+      it('prepend & append slots', () => {
+        const wrapper = mount(BasicInput, {
+          i18n,
+          propsData: {
+            ...defaultProps,
+          },
+          slots: {
+            append: '<span class="test_append">append</span>',
+          },
+        });
+
+        expect(wrapper.contains('.test_append')).toBe(true);
+
+        // When appending, the input text should be truncated
+        const input = findByTestId(wrapper, 'input-stub-testid');
+        expect(input.classes()).toContain('text-truncate');
+      });
     });
   });
 

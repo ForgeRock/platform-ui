@@ -13,7 +13,7 @@ of the MIT license. See the LICENSE file for details. -->
           v-model="inputValue"
           v-on="$listeners"
           @change="validate($event)"
-          class="mr-0 zindex-1"
+          class="mr-0 zindex-1 align-middle"
           role="checkbox"
           inline
           :aria-label="switchLabel"
@@ -30,7 +30,9 @@ of the MIT license. See the LICENSE file for details. -->
               {{ switchLabel }}
             </div>
           </template>
-          <slot name="append" />
+          <slot
+            name="label"
+            :is-inline-label="true" />
         </BFormCheckbox>
       </ValidationProvider>
     </div>
