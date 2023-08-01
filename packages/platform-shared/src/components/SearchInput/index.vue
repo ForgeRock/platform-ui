@@ -29,7 +29,7 @@ of the MIT license. See the LICENSE file for details. -->
       <BInputGroupAppend v-if="value.length">
         <BButton
           class="border-0"
-          @click.prevent="clearSearch()"
+          @click.prevent.stop="clearSearch()"
           variant="link">
           <FrIcon :name="appendIcon" />
         </BButton>

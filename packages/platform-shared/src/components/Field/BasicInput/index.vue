@@ -60,7 +60,7 @@ of the MIT license. See the LICENSE file for details. -->
             {
               'polyfill-placeholder': floatLabels,
               'is-invalid': errorMessages && errorMessages.length,
-              'text-truncate' : copy,
+              'text-truncate' : hasAppendSlot || copy,
             }
           ]"
           :data-vv-as="label"
@@ -187,10 +187,18 @@ export default {
       type: String,
       default: '',
     },
+    /**
+     * When true will show the value of a password as text instead of it being hidden
+     */
+    forceShowPassword: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       showPassword: false,
+      hasAppendSlot: Object.keys(this.$scopedSlots).includes('append'),
     };
   },
   mounted() {
@@ -208,7 +216,7 @@ export default {
       if (this.type === 'number') {
         return 'number';
       }
-      return this.type === 'password' && !this.showPassword ? 'password' : 'text';
+      return this.type === 'password' && !this.showPassword && !this.forceShowPassword ? 'password' : 'text';
     },
   },
   methods: {
@@ -287,47 +295,47 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.form-control.is-invalid {
-  background-image: none;
-}
+  .form-control.is-invalid {
+    background-image: none;
+  }
 
-.fr-hide-input {
-  position: absolute;
-  right: 0;
-  bottom: 0;
+  .fr-hide-input {
+    position: absolute;
+    right: 0;
+    bottom: 0;
 
-  .btn {
-    background-color: transparent !important;
-    border-color: transparent;
+    .btn {
+      background-color: transparent !important;
+      border-color: transparent;
 
-    &:active,
-    &:hover,
-    &:focus,
-    &:active:focus {
-      box-shadow: none;
+      &:active,
+      &:hover,
+      &:focus,
+      &:active:focus {
+        box-shadow: none;
+      }
     }
   }
-}
 
-.form-label-group:not(.fr-field-error) {
-  .form-control {
-    &:focus {
-      border-color: $primary !important;
-      -webkit-box-shadow: 0 0 0 0.0625rem $primary !important;
-      box-shadow: 0 0 0 0.0625rem $primary !important;
+  .form-label-group:not(.fr-field-error) {
+    .form-control {
+      &:focus {
+        border-color: $primary !important;
+        -webkit-box-shadow: 0 0 0 0.0625rem $primary !important;
+        box-shadow: 0 0 0 0.0625rem $primary !important;
+      }
     }
   }
-}
 
-.form-label-group.fr-field-error {
-  .form-control {
-    &:focus {
-      border-color: $danger !important;
-      -webkit-box-shadow: 0 0 0 0.0625rem $danger !important;
-      box-shadow: 0 0 0 0.0625rem $danger !important;
+  .form-label-group.fr-field-error {
+    .form-control {
+      &:focus {
+        border-color: $danger !important;
+        -webkit-box-shadow: 0 0 0 0.0625rem $danger !important;
+        box-shadow: 0 0 0 0.0625rem $danger !important;
+      }
     }
   }
-}
 </style>
 
 <style scoped>
