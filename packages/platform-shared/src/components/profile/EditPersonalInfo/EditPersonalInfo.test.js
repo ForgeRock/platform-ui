@@ -54,6 +54,7 @@ describe('EditPersonalInfo', () => {
               managedResource: {},
               internalUser: false,
             },
+            isFraas: true,
           },
         },
       },

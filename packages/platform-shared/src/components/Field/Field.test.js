@@ -1,17 +1,17 @@
 /**
- * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import BootstrapVue from 'bootstrap-vue';
-import {
-  createLocalVue, mount, shallowMount,
-} from '@vue/test-utils';
+import { createLocalVue, mount } from '@vue/test-utils';
+import { createTestingPinia } from '@pinia/testing';
 import flushPromises from 'flush-promises';
 import { extend, ValidationObserver, ValidationProvider } from 'vee-validate';
 import { required, email } from 'vee-validate/dist/rules.umd';
+import i18n from '@/i18n';
 import FrField from './index';
 
 // function to clear promises and trigger timers (validation runs every 16ms)
@@ -232,78 +232,182 @@ describe('Field Component', () => {
     await flush();
     expect(wrapper.find('.b-form-spinbutton')).toBeTruthy();
   });
-  it('checks if the input received an object with placeholder value', () => {
-    wrapper = shallowMount(FrField, {
-      sync: false,
+
+  describe('Showing a readonly string input when the field value is a placeholder', () => {
+    const defaultProps = {
+      i18n,
       mocks: {
-        $t: () => {},
+        $t: (key) => key,
       },
       propsData: {
-        type: 'object',
-        name: 'testField',
-        value: { $placeholderField: '&{forgerock.test.string}' },
+        name: 'test',
+        id: 'test',
+        options: [],
       },
-      stubs,
-      methods: {
-        created: () => {
-          wrapper.vm.PLACEHOLDER_REGEX = new RegExp(/^([\w '"",.:/$£@]+)?(&{(([\w])+(.[\w]+)*)})([\w '"",.:/$£@]+)?$/);
-          wrapper.vm.hasPlaceholder();
+    };
+
+    function setup(props) {
+      return mount(FrField, {
+        ...defaultProps,
+        ...props,
+      });
+    }
+
+    it('shows the ReadonlyPlaceholderInput instead of the normal input type when the initial value is a placeholder string', async () => {
+      wrapper = setup({ propsData: { name: 'bob', value: '&{esv-myesv}', type: 'checkbox' } });
+
+      await flush();
+
+      expect(wrapper.vm.component).toBe('FrReadonlyPlaceholderInput');
+      const input = wrapper.find('input');
+      expect(input.attributes('readonly')).toBeTruthy();
+    });
+
+    it('shows the ReadonlyPlaceholderInput instead of the normal input type when the initial value is a placeholder object', async () => {
+      wrapper = setup({ propsData: { name: 'bob', value: { key: '&{my-esv}' }, type: 'checkbox' } });
+
+      await flush();
+
+      expect(wrapper.vm.component).toBe('FrReadonlyPlaceholderInput');
+      const input = wrapper.find('input');
+      expect(input.attributes('readonly')).toBeTruthy();
+    });
+
+    // TODO re-enable when string inputs are supported for placeholder entry
+    // it('switches to the ReadonlyPlaceholderInput instead of the normal input type when the value is changed to a placeholder string and placeholder entry is allowed', async () => {
+    //   wrapper = setup({
+    //     propsData: {
+    //       name: 'bob',
+    //       value: 'bill',
+    //       type: 'string',
+    //       canEnterPlaceholders: true,
+    //     },
+    //   });
+
+    //   await flush();
+
+    //   expect(wrapper.vm.component).toBe('FrEsvInputWrapper');
+
+    //   const input = wrapper.find('input');
+    //   await input.setValue('&{esv-myesv}');
+
+    //   expect(wrapper.vm.component).toBe('FrReadonlyPlaceholderInput');
+    // });
+
+    // it('does not switch to the ReadonlyPlaceholderInput instead of the normal input type when the value is changed to a placeholder string and placeholder entry is not allowed', async () => {
+    //   wrapper = setup({
+    //     propsData: {
+    //       name: 'bob',
+    //       value: 'bill',
+    //       type: 'string',
+    //       canEnterPlaceholders: false,
+    //     },
+    //   });
+
+    //   await flush();
+
+    //   expect(wrapper.vm.component).toBe('FrBasicInput');
+
+    //   const input = wrapper.find('input');
+    //   await input.setValue('&{esv-myesv}');
+
+    //   expect(wrapper.vm.component).toBe('FrBasicInput');
+    // });
+
+    it('switches to the normal input when a ReadonlyPlaceholderInput clears the field value from a placeholder', async () => {
+      wrapper = setup({ propsData: { name: 'bob', value: { key: '&{my-esv}' }, type: 'checkbox' } });
+
+      await flush();
+
+      expect(wrapper.vm.component).toBe('FrReadonlyPlaceholderInput');
+
+      // Clear the input value
+      const clearButton = wrapper.find('button');
+      clearButton.trigger('click');
+
+      expect(wrapper.vm.component).toBe('FrCheckbox');
+    });
+  });
+
+  describe('Deciding when to use the EsvInputWrapper component', () => {
+    const defaultProps = {
+      global: {
+        plugins: [
+          createTestingPinia({
+            initialState: {
+              esvInput: { secrets: [], variables: [] },
+            },
+          }),
+        ],
+      },
+      i18n,
+      mocks: {
+        $t: (key) => key,
+      },
+      propsData: {
+        name: 'test',
+        id: 'test',
+        canEnterPlaceholders: true,
+      },
+    };
+
+    function setup(props) {
+      return mount(FrField, {
+        ...defaultProps,
+        ...props,
+      });
+    }
+
+    it('Has the input wrapper as the top level component when placeholder entry is enabled and supported for the field type', () => {
+      wrapper = setup({
+        propsData: {
+          name: 'bob',
+          value: 'bill',
+          type: 'checkbox',
+          canEnterPlaceholders: true,
         },
-      },
+      });
+
+      expect(wrapper.vm.component).toBe('FrEsvInputWrapper');
     });
-    expect(wrapper.vm.containsPlaceholder).toBeTruthy();
-    expect(wrapper.vm.placeholderValue).toEqual('&{forgerock.test.string}');
-  });
-  it('checks if the input received an object without placeholder value', () => {
-    wrapper = shallowMount(FrField, {
-      sync: false,
-      mocks: {
-        $t: () => {},
-      },
-      propsData: {
-        type: 'object',
-        name: 'testField',
-        value: { id: 2, value: 'noPlaceholder' },
-      },
-      stubs,
-      methods: {
-        created: () => {
-          wrapper.vm.PLACEHOLDER_REGEX = new RegExp(/^([\w '"",.:/$£@]+)?(&{(([\w])+(.[\w]+)*)})([\w '"",.:/$£@]+)?$/);
-          wrapper.vm.hasPlaceholder();
+
+    it('Has the field type component as the top level component when placeholder entry is disabled but supported for the field type', () => {
+      wrapper = setup({
+        propsData: {
+          name: 'bob',
+          value: 'bill',
+          type: 'checkbox',
+          canEnterPlaceholders: false,
         },
-      },
+      });
+
+      expect(wrapper.vm.component).toBe('FrCheckbox');
     });
-    expect(wrapper.vm.containsPlaceholder).toBeFalsy();
-    expect(wrapper.vm.placeholderValue).toEqual({ id: 2, value: 'noPlaceholder' });
-  });
-  it('checks if the input received a non object with placeholder value', async () => {
-    wrapper = shallowMount(FrField, {
-      sync: false,
-      mocks: {
-        $t: () => {},
-      },
-      propsData: {
-        name: 'testField',
-        value: '&{forgerock.test.string}',
-      },
-      stubs,
+
+    it('Has the field type component as the top level component when placeholder entry is enabled but not supported for the field type', () => {
+      wrapper = setup({
+        propsData: {
+          name: 'bob',
+          value: 'bill',
+          type: 'json',
+          canEnterPlaceholders: true,
+        },
+      });
+
+      expect(wrapper.vm.component).toBe('FrJsonInput');
     });
-    await flush();
-    expect(wrapper.vm.containsPlaceholder).toBeTruthy();
-  });
-  it('checks if the input received a non object without placeholder value', async () => {
-    wrapper = shallowMount(FrField, {
-      sync: false,
-      mocks: {
-        $t: () => {},
-      },
-      propsData: {
-        name: 'testField',
-        value: 'testString',
-      },
-      stubs,
+
+    it('Has the field type component as the top level component when placeholder entry is disabled and not supported for the field type', () => {
+      wrapper = setup({
+        propsData: {
+          name: 'bob',
+          value: 'bill',
+          type: 'json',
+          canEnterPlaceholders: false,
+        },
+      });
+
+      expect(wrapper.vm.component).toBe('FrJsonInput');
     });
-    await flush();
-    expect(wrapper.vm.containsPlaceholder).toBeFalsy();
   });
 });
