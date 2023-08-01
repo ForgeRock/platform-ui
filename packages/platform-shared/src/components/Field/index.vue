@@ -4,32 +4,22 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
-    v-if="containsPlaceholder"
-    class="fr-field"
-    :id="fieldName">
-    <slot name="label" />
-    <slot name="appendLabel" />
-    <FrBasicInput
-      v-bind="attrs"
-      :name="fieldName"
-      type="string"
-      :testid="testid"
-      :value="placeholderValue"
-      readonly
-    />
-  </div>
-  <div
-    v-else
     :class="[{'d-flex': booleanOrCheckbox}, 'fr-field']"
-    :id="fieldName">
-    <slot name="label" />
+    :id="fieldName"
+    :data-testid="`fr-field-${fieldName}`">
+    <slot
+      v-if="!checkboxField"
+      name="label"
+      :is-inline-label="checkboxField" />
     <Component
       v-bind="attrs"
       v-on="$listeners"
       :is="component"
       :name="fieldName"
       :type="fieldType"
-      :testid="testid">
+      :inner-component="innerComponent"
+      :testid="testid"
+      @input="valueUpdated">
       <template
         v-for="(key, slotName) in $scopedSlots"
         v-slot:[slotName]="slotData">
@@ -38,7 +28,6 @@ of the MIT license. See the LICENSE file for details. -->
           v-bind="slotData" />
       </template>
     </Component>
-    <slot name="appendLabel" />
   </div>
 </template>
 
@@ -58,6 +47,12 @@ import FrSwitch from '@forgerock/platform-shared/src/components/Field/Switch';
 import FrTag from '@forgerock/platform-shared/src/components/Field/Tag';
 import FrTextArea from '@forgerock/platform-shared/src/components/Field/TextArea';
 import FrTimeInput from '@forgerock/platform-shared/src/components/Field/TimeInput';
+import FrReadonlyPlaceholderInput from '@forgerock/platform-shared/src/components/Field/ReadonlyPlaceholderInput';
+import FrEsvInputWrapper from '@forgerock/platform-shared/src/components/Field/EsvInputWrapper';
+import {
+  doesValueContainPlaceholder,
+  isFieldTypeSupportedForPlaceholderEntry,
+} from '@forgerock/platform-shared/src/utils/esvUtils';
 
 export default {
   name: 'FrField',
@@ -77,6 +72,8 @@ export default {
     FrTag,
     FrTextArea,
     FrTimeInput,
+    FrReadonlyPlaceholderInput,
+    FrEsvInputWrapper,
   },
   props: {
     name: {
@@ -100,35 +97,57 @@ export default {
       default: '',
       required: false,
     },
+    /**
+     * Defines whether extended field behaviour for entering ESV placeholders should be exposed
+     */
+    canEnterPlaceholders: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      fieldContainsPlaceholder: doesValueContainPlaceholder(this.$attrs.value),
+    };
+  },
+  watch: {
+    // eslint-disable-next-line object-shorthand
+    '$attrs.value'(newValue) {
+      this.valueUpdated(newValue);
+    },
   },
   computed: {
     attrs() {
       return { ...this.$options.propsData, ...this.$attrs };
     },
+    checkboxField() {
+      if (this.fieldContainsPlaceholder) return false;
+      return this.fieldType === 'checkbox';
+    },
     booleanOrCheckbox() {
+      if (this.fieldContainsPlaceholder) return false;
       return this.fieldType === 'boolean' || this.fieldType === 'checkbox';
     },
+    /**
+     * Top level component to be rendered by the Field
+     */
     component() {
-      const componentMap = {
-        boolean: 'FrSwitch',
-        checkbox: 'FrCheckbox',
-        date: 'FrDateInput',
-        datetime: 'FrDateTimeInput',
-        duration: 'FrDurationInput',
-        json: 'FrJsonInput',
-        multiselect: 'FrMultiselect',
-        number: 'FrBasicInput',
-        object: 'FrKeyValueList',
-        password: 'FrBasicInput',
-        select: 'FrSelect',
-        selectWithActions: 'FrSelectWithActions',
-        spinbutton: 'FrSpinButton',
-        string: 'FrBasicInput',
-        tag: 'FrTag',
-        textarea: 'FrTextArea',
-        time: 'FrTimeInput',
-      };
-      return componentMap[this.fieldType];
+      if (this.fieldContainsPlaceholder) {
+        return 'FrReadonlyPlaceholderInput';
+      }
+      if (this.canEnterPlaceholders && isFieldTypeSupportedForPlaceholderEntry(this.type)) {
+        return 'FrEsvInputWrapper';
+      }
+      return this.determineInputComponent();
+    },
+    /**
+     * Component to be displayed together with extended ESV functionality when placeholders can be entered
+     */
+    innerComponent() {
+      if (!this.fieldContainsPlaceholder && this.canEnterPlaceholders) {
+        return this.determineInputComponent();
+      }
+      return undefined;
     },
     fieldName() {
       return this.name || this.$attrs.label;
@@ -150,37 +169,34 @@ export default {
       return this.type;
     },
   },
-  updated() {
-    this.hasPlaceholder();
-  },
-  created() {
-    /**
-     * RegExp to determine if a property is a placeholder
-     * must be a string with numbers/letters/fullstops and enclosed by &{}
-     */
-    this.PLACEHOLDER_REGEX = new RegExp(/^([\w '"",.:/$£@]+)?(&{(([\w])+(.[\w]+)*)})([\w '"",.:/$£@]+)?$/);
-    this.hasPlaceholder();
-  },
   methods: {
-    hasPlaceholder() {
-      this.containsPlaceholder = false;
-      this.placeholderValue = this.attrs.value;
-      if (this?.attrs?.value) {
-        if (typeof this.attrs.value === 'object' && Object.values(this.attrs.value)[0]) {
-          this.containsPlaceholder = Object.values(this.attrs.value).some((value) => this.PLACEHOLDER_REGEX.test(value));
-          this.getPlaceHolderValue();
-        }
-
-        if (typeof this.attrs.value !== 'object') {
-          this.containsPlaceholder = this.PLACEHOLDER_REGEX.test(this.attrs.value);
-        }
+    valueUpdated(newVal) {
+      // Only check value changes for placeholders in when the value can contain a placeholder change
+      if (this.component === 'FrReadonlyPlaceholderInput' || this.canEnterPlaceholders) {
+        this.fieldContainsPlaceholder = doesValueContainPlaceholder(newVal);
       }
-      return this.containsPlaceholder;
     },
-    getPlaceHolderValue() {
-      if (this.containsPlaceholder) {
-        this.placeholderValue = Object.values(this.attrs.value)[0]?.toString();
-      }
+    determineInputComponent() {
+      const componentMap = {
+        boolean: 'FrSwitch',
+        checkbox: 'FrCheckbox',
+        date: 'FrDateInput',
+        datetime: 'FrDateTimeInput',
+        duration: 'FrDurationInput',
+        json: 'FrJsonInput',
+        multiselect: 'FrMultiselect',
+        number: 'FrBasicInput',
+        object: 'FrKeyValueList',
+        password: 'FrBasicInput',
+        select: 'FrSelect',
+        selectWithActions: 'FrSelectWithActions',
+        spinbutton: 'FrSpinButton',
+        string: 'FrBasicInput',
+        tag: 'FrTag',
+        textarea: 'FrTextArea',
+        time: 'FrTimeInput',
+      };
+      return componentMap[this.fieldType];
     },
   },
 };
