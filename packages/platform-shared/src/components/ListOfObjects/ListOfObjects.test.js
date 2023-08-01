@@ -7,16 +7,31 @@
 
 import { shallowMount } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { ValidationProvider } from 'vee-validate';
 import ListOfObjects from './index';
+
+const stubs = { ValidationProvider };
+const wrapperNoValue = {
+  mocks: { $t: () => {} },
+  propsData: {
+    properties: {
+      testPropertyKey: {
+        type: 'boolean',
+        title: 'testPropertyValue',
+      },
+      test: {
+        type: 'string',
+        title: 'test',
+      },
+    },
+    label: 'test',
+  },
+  stubs,
+};
 
 describe('ListOfObjects', () => {
   it('ListOfObjects loaded', () => {
-    const wrapper = shallowMount(ListOfObjects, {
-      mocks: { $t: () => {} },
-      propsData: {
-        properties: {},
-      },
-    });
+    const wrapper = shallowMount(ListOfObjects, wrapperNoValue);
     expect(wrapper.name()).toBe('ListOfObjects');
   });
 
@@ -37,6 +52,7 @@ describe('ListOfObjects', () => {
         label: 'test',
         value: [{ test: 'test' }],
       },
+      stubs,
     });
     expect(wrapper.vm.listValues).toStrictEqual([{
       listUniqueIndex: 1,
@@ -62,6 +78,7 @@ describe('ListOfObjects', () => {
         multiValued: false,
         value: { test: 'test' },
       },
+      stubs,
     });
     expect(wrapper.vm.listValues).toStrictEqual([{
       listUniqueIndex: 1,
@@ -70,22 +87,7 @@ describe('ListOfObjects', () => {
   });
 
   it('ListOfObjects adds empty elements to list', () => {
-    const wrapper = shallowMount(ListOfObjects, {
-      mocks: { $t: () => {} },
-      propsData: {
-        properties: {
-          testPropertyKey: {
-            type: 'boolean',
-            title: 'testPropertyValue',
-          },
-          test: {
-            type: 'string',
-            title: 'test',
-          },
-        },
-        label: 'test',
-      },
-    });
+    const wrapper = shallowMount(ListOfObjects, wrapperNoValue);
 
     wrapper.vm.addObjectToList(0);
     expect(wrapper.vm.listValues).toStrictEqual([{
@@ -96,22 +98,7 @@ describe('ListOfObjects', () => {
   });
 
   it('ListOfObjects removes elements from list', () => {
-    const wrapper = shallowMount(ListOfObjects, {
-      mocks: { $t: () => {} },
-      propsData: {
-        properties: {
-          testPropertyKey: {
-            type: 'boolean',
-            title: 'testPropertyValue',
-          },
-          test: {
-            type: 'string',
-            title: 'test',
-          },
-        },
-        label: 'test',
-      },
-    });
+    const wrapper = shallowMount(ListOfObjects, wrapperNoValue);
     wrapper.vm.$data.listValues = [{
       listUniqueIndex: 1,
       test: '',
@@ -134,6 +121,7 @@ describe('ListOfObjects', () => {
         },
         label: 'test',
       },
+      stubs,
     });
     expect(wrapper.vm.isValidField()).toBe(false);
     wrapper.setProps({
@@ -157,20 +145,33 @@ describe('ListOfObjects', () => {
   });
 
   it('Add button disabled if field is disabled', () => {
+    const wrapper = shallowMount(ListOfObjects, wrapperNoValue);
+    wrapper.setProps({ disabled: true });
+
+    const addButton = findByTestId(wrapper, 'list-objects-none-add');
+    expect(addButton.attributes('disabled')).toBeTruthy();
+  });
+
+  it('If all fields are empty or null, remove the object', () => {
     const wrapper = shallowMount(ListOfObjects, {
       mocks: { $t: () => {} },
       propsData: {
-        disabled: true,
         label: 'test',
         properties: {
-          testPropertyKey: {
-            type: 'array',
-            title: 'testPropertyKey',
+          test: {
+            type: 'string',
+            title: 'test',
+          },
+          testtwo: {
+            type: 'string',
+            title: 'testtwo',
           },
         },
       },
+      stubs,
     });
-    const addButton = findByTestId(wrapper, 'list-objects-none-add');
-    expect(addButton.attributes('disabled')).toBeTruthy();
+    const emptyObj = [{ test: '', testtwo: null }];
+    wrapper.vm.emitInput(emptyObj);
+    expect(wrapper.emitted().input[0]).toEqual([[]]);
   });
 });
