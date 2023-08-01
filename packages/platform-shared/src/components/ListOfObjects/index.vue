@@ -6,7 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <div class="pt-2">
     <div :class="{ 'border-bottom': isValidJSONString(listValues) && isValidField()}">
       <div class="d-flex justify-content-between align-items-center">
-        <label>{{ capitalizedDescription }}</label>
+        <label>{{ fieldTitle }}</label>
       </div>
       <div>
         <div
@@ -20,9 +20,7 @@ of the MIT license. See the LICENSE file for details. -->
             data-testid="list-objects-none-add"
             :disabled="disabled"
             @click.prevent="addObjectToList(-1)">
-            <FrIcon
-              name="add"
-            />
+            <FrIcon name="add" />
           </button>
         </div>
         <template v-if="isValidJSONString(listValues) && isValidField()">
@@ -43,7 +41,8 @@ of the MIT license. See the LICENSE file for details. -->
                       <BFormCheckbox
                         v-model="obj[key]"
                         :disabled="disabled"
-                        :name="key+'_'+index">
+                        :name="key+'_'+index"
+                        @change="emitInput(listValues)">
                         {{ properties[key].title || key }}
                       </BFormCheckbox>
                     </div>
@@ -111,19 +110,31 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
       </div>
     </div>
+    <ValidationProvider
+      v-slot="{ errors }"
+      mode="aggressive"
+      :bails="false"
+      :immediate="validationImmediate"
+      :name="label"
+      :ref="label"
+      :rules="validation"
+      :vid="label">
+      <FrValidationError
+        class="error-messages"
+        :validator-errors="[...errors]"
+        :field-name="label" />
+    </ValidationProvider>
   </div>
 </template>
 
 <script>
-import {
-  cloneDeep,
-} from 'lodash';
-import {
-  BFormCheckbox,
-} from 'bootstrap-vue';
+import { cloneDeep } from 'lodash';
+import { BFormCheckbox } from 'bootstrap-vue';
+import { ValidationProvider } from 'vee-validate';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrInlineJsonEditor from '@forgerock/platform-shared/src/components/InlineJsonEditor';
+import FrValidationError from '@forgerock/platform-shared/src/components/ValidationErrorList';
 import ListsMixin from '@forgerock/platform-shared/src/mixins/ListsMixin';
 
 /**
@@ -139,15 +150,13 @@ export default {
     FrField,
     FrIcon,
     FrInlineJsonEditor,
+    FrValidationError,
+    ValidationProvider,
   },
   mixins: [
     ListsMixin,
   ],
   props: {
-    description: {
-      type: String,
-      default: '',
-    },
     disabled: {
       type: Boolean,
       default: false,
@@ -172,12 +181,23 @@ export default {
       type: [Array, Object],
       default: () => [],
     },
+    /**
+     * Whether error validation should happen when this component renders.
+     */
+    validationImmediate: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * Vee-validate validation types to check against.
+     */
+    validation: {
+      type: [String, Object],
+      default: '',
+    },
   },
   data() {
     return {
-      expanded: false,
-      hover: false,
-      isValidJason: true,
       listValues: [],
       listUniqueIndex: 0,
     };
@@ -188,6 +208,16 @@ export default {
         delete val.listUniqueIndex;
         return val;
       });
+    },
+    requiredAndEmpty() {
+      const filteredListValues = this.checkEmptyValues(this.listValues);
+      return (this.validation?.required || this.validation?.includes('required')) && !filteredListValues.length;
+    },
+    fieldTitle() {
+      if (this.validation?.required || this.validation?.includes('required')) {
+        return this.capitalizedDescription;
+      }
+      return this.$t('common.optionalFieldTitle', { fieldTitle: this.capitalizedDescription });
     },
   },
   mounted() {
@@ -200,6 +230,7 @@ export default {
         val.listUniqueIndex = this.getUniqueIndex();
       });
       this.listValues = listValues;
+      this.validateField();
     }
   },
   methods: {
@@ -212,16 +243,30 @@ export default {
       this.emitInput(this.listValues);
     },
     emitInput(value) {
-      const emitValue = cloneDeep(value);
-      emitValue.map((val) => {
-        delete val.listUniqueIndex;
-        return val;
-      });
+      const emitValue = this.checkEmptyValues(value);
+      this.validateField();
+
       if (emitValue.length === 0) {
         this.$emit('input', this.multiValued ? [] : {});
       } else {
         this.$emit('input', this.multiValued ? emitValue : emitValue[0]);
       }
+    },
+    /**
+     * Check if all the values in our object are empty or null
+     * If nothing is left, delete the obj. This helps ensure required fields
+     * actually have values present.
+     */
+    checkEmptyValues(value) {
+      const filteredArray = cloneDeep(value);
+      filteredArray.forEach((obj, index) => {
+        delete obj.listUniqueIndex;
+        const filteredVals = Object.values(obj).filter((x) => x !== null && x !== '');
+        if (!filteredVals.length) {
+          filteredArray.splice(index, 1);
+        }
+      });
+      return filteredArray;
     },
     /**
      * Ensures our keys in v-if iteration have unique values
@@ -255,6 +300,9 @@ export default {
     removeElementFromList(index) {
       this.listValues.splice(index, 1);
       this.emitInput(this.listValues);
+    },
+    validateField() {
+      this.$refs[this.label].setErrors(this.requiredAndEmpty ? [this.$t('common.policyValidationMessages.REQUIRED')] : '');
     },
   },
 };
