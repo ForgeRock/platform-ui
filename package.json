@@ -13,6 +13,8 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "7.22.9",
+    "@forgerock/copyright-bot": "1.0.0",
+    "@forgerock/coverage-diff": "1.0.0",
     "@testing-library/dom": "7.30.0",
     "@testing-library/jest-dom": "5.11.9",
     "@testing-library/user-event": "13.0.1",
@@ -29,6 +31,7 @@
     "eslint-plugin-vue": "5.0.0",
     "got": "11.8.5",
     "husky": "5.0.4",
+    "jest": "26.4.2",
     "jest-circus": "28.1.3",
     "jest-css-modules": "2.1.0",
     "jest-environment-node": "26.6.2",
@@ -39,6 +42,7 @@
     "mocha": "8.1.1",
     "mochawesome": "6.1.1",
     "mochawesome-merge": "4.1.0",
+    "mochawesome-report-generator": "5.1.0",
     "nano-staged": "0.8.0",
     "nock": "13.0.4",
     "postcss-html": "1.4.1",
@@ -52,39 +56,9 @@
     "vue-template-compiler": "2.7.14"
   },
   "resolutions": {
-    "babel-jest/@jest/transform/@babel/core/json5": "2.2.2",
-    "qs": "6.5.3",
-    "css-select": "4.0.0",
-    "follow-redirects": "1.14.8",
-    "got": "11.8.5",
-    "http-cache-semantics": "4.1.1",
-    "json5": "1.0.2",
-    "mocha/yargs/y18n": "4.0.1",
-    "moment": "2.29.2",
-    "node-gyp": "5.0.4",
-    "node-pre-gyp": "0.17.0",
-    "node-pre-gyp/rc/ini": "1.3.6",
-    "node-sass/request/http-signature/jsprim/json-schema": "0.4.0",
-    "node-sass/sass-graph/yargs/y18n": "3.2.2",
-    "normalize-url": "4.5.1",
-    "postcss-svgo": "4.0.3",
-    "stylelint/global-modules/global-prefix/ini": "1.3.6",
-    "**/**/ansi-regex": "4.1.1",
-    "**/**/copy-webpack-plugin/serialize-javascript": "2.1.2",
-    "**/css-select/nth-check": "2.0.1",
-    "**/juice/cheerio": "1.0.0-rc.6",
-    "**/pretty/js-beautify/config-chain/ini": "1.3.6",
-    "**/**/cypress-lighthouse/lighthouse/yargs/y18n": "3.2.2",
-    "**/**/d3-color": "3.1.0",
-    "**/**/lodash": "4.17.21",
-    "**/**/minimatch": "5.1.0",
-    "**/**/minimist": "1.2.6",
-    "**/**/ramda": "0.27.1",
-    "**/**/with/acorn": "4.0.13",
-    "raw-loader/loader-utils": "3.2.1",
-    "**/**/semver": "7.5.4",
-    "**/**/istanbul-lib-instrument": "6.0.0",
-    "tough-cookie": "4.1.3"
+    "nodegit@npm:0.27.0/got": "11.8.5",
+    "nodegit@npm:0.27.0/node-gyp": "8.0.0",
+    "node-pre-gyp@npm:0.13.0/semver": "7.5.2"
   },
   "workspaces": {
     "packages": [
@@ -100,5 +74,6 @@
     "> 1%",
     "last 2 versions",
     "not ie < 11"
-  ]
+  ],
+  "packageManager": "yarn@3.6.1"
 }
