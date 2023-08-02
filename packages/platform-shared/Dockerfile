@@ -20,7 +20,7 @@ COPY packages/platform-shared/package.json /home/app/packages/platform-shared/
 
 # Install dependencies (don’t generate yarn.lock)
 WORKDIR /home/app/packages/platform-shared
-RUN yarn install --pure-lockfile
+RUN yarn install --immutable
 
 # Copy source code
 COPY . /home/app/
