@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -47,7 +47,6 @@ of the MIT license. See the LICENSE file for details. -->
           <!-- slot for router -->
           <slot />
         </Transition>
-        <!-- eslint-disable-next-line vue/component-name-in-template-casing -->
         <notifications
           class="ml-3"
           position="bottom left"
@@ -55,7 +54,7 @@ of the MIT license. See the LICENSE file for details. -->
           animation-type="velocity"
           :animation="animation"
           :duration="4000">
-          <template v-slot:body="props">
+          <template #body="props">
             <FrAlert
               :variant="props.item.type"
               :title="props.item.text"

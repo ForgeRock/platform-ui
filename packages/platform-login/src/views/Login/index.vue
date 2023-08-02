@@ -4,11 +4,10 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="min-vh-100 d-flex flex-column fr-fullscreen-mobile">
-    <template
+    <header
       v-if="journeyHeaderEnabled && journeyHeader && (journeyLayout === 'card' || !journeyTheaterMode)"
-      id="appHeader">
-      <header v-html="sanitizedHeader" />
-    </template>
+      v-html="sanitizedHeader"
+      id="appHeader" />
     <main
       v-if="!journeyLayout || journeyLayout === 'card' || !journeyTheaterMode"
       class="px-0 flex-grow-1 d-flex container">
@@ -143,7 +142,7 @@ of the MIT license. See the LICENSE file for details. -->
                   </BCardBody>
                   <BCardFooter
                     v-if="pageNodeFooterLocalized"
-                    v-html="pageNodeFooterLocalized" />
+                    :footer-html="pageNodeFooterLocalized" />
                 </template>
               </FrCenterCard>
             </section>
@@ -301,11 +300,10 @@ of the MIT license. See the LICENSE file for details. -->
           class="d-flex h-100 w-100 justify-content-center align-self-center" />
       </div>
     </main>
-    <template
+    <footer
       v-if="journeyFooterEnabled && journeyFooter && (journeyLayout === 'card' || !journeyTheaterMode)"
-      id="appFooter">
-      <footer v-html="sanitizedFooter" />
-    </template>
+      v-html="sanitizedFooter"
+      id="appFooter" />
   </div>
 </template>
 

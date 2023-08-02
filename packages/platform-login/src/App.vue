@@ -37,13 +37,12 @@ of the MIT license. See the LICENSE file for details. -->
       </Transition>
     </div>
     <!-- Application View -->
-    <!-- eslint-disable-next-line vue/component-name-in-template-casing -->
     <notifications
       class="ml-3"
       position="bottom left"
       width="320"
       :duration="4000">
-      <template v-slot:body="props">
+      <template #body="props">
         <FrAlert
           :variant="props.item.type"
           show>

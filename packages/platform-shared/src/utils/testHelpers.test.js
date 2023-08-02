@@ -5,7 +5,6 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-/* eslint-disable indent */
 import { mount, createLocalVue } from '@vue/test-utils';
 import { findByRole, findByTestId, findAllByTestId } from './testHelpers';
 import FrCheckbox from '../components/Field/Checkbox';
@@ -15,14 +14,14 @@ describe('testHelpers', () => {
   describe('findByTestId', () => {
     describe('should throw error', () => {
       describe('when wrapper is falsy', () => {
-        it.each`
-          name                    | invalidWrapper
-          ${'given false'}        | ${false}
-          ${'given zero'}         | ${0}
-          ${'given empty string'} | ${''}
-          ${'given null'}         | ${null}
-          ${'given undefined'}    | ${undefined}
-          `('$name', ({ invalidWrapper }) => {
+        const testCases = [
+          ['given false', false],
+          ['given zero', 0],
+          ['given empty string', ''],
+          ['given null', null],
+          ['given undefined', undefined],
+        ];
+        it.each(testCases)('%s', (name, invalidWrapper) => {
           expect(() => findByTestId(invalidWrapper, 'given_test_id')).toThrow(Error('Please provide a wrapper'));
         });
       });
@@ -33,14 +32,14 @@ describe('testHelpers', () => {
             name: 'stub-name',
           },
         });
-        it.each`
-          name                 | testid
-          ${'given false'}     | ${false}
-          ${'given zero'}      | ${0}
-          ${'given null'}      | ${null}
-          ${'given NaN'}       | ${NaN}
-          ${'given undefined'} | ${undefined}
-          `('$name', ({ testid }) => {
+        const testCases = [
+          ['given false', false],
+          ['given zero', 0],
+          ['given null', null],
+          ['given NaN', NaN],
+          ['given undefined', undefined],
+        ];
+        it.each(testCases)('%s', (name, testid) => {
           expect(() => findByTestId(stubWrapper, testid)).toThrow(Error('Please provide a valid data-testid'));
         });
       });
@@ -66,14 +65,14 @@ describe('testHelpers', () => {
     describe('findAllByTestId', () => {
       describe('should throw error', () => {
         describe('when wrapper is falsy', () => {
-          it.each`
-            name                    | invalidWrapper
-            ${'given false'}        | ${false}
-            ${'given zero'}         | ${0}
-            ${'given empty string'} | ${''}
-            ${'given null'}         | ${null}
-            ${'given undefined'}    | ${undefined}
-            `('$name', ({ invalidWrapper }) => {
+          const testCases = [
+            ['given false', false],
+            ['given zero', 0],
+            ['given empty string', ''],
+            ['given null', null],
+            ['given undefined', undefined],
+          ];
+          it.each(testCases)('%s', (name, invalidWrapper) => {
             expect(() => findAllByTestId(invalidWrapper, 'given_test_id')).toThrow(Error('Please provide a wrapper'));
           });
         });
@@ -94,14 +93,14 @@ describe('testHelpers', () => {
               ],
             },
           });
-          it.each`
-            name                 | testid
-            ${'given false'}     | ${false}
-            ${'given zero'}      | ${0}
-            ${'given null'}      | ${null}
-            ${'given NaN'}       | ${NaN}
-            ${'given undefined'} | ${undefined}
-            `('$name', ({ testid }) => {
+          const testCases = [
+            ['given false', false],
+            ['given zero', 0],
+            ['given null', null],
+            ['given NaN', NaN],
+            ['given undefined', undefined],
+          ];
+          it.each(testCases)('%s', (name, testid) => {
             expect(() => findAllByTestId(stubWrapper, testid)).toThrow(Error('Please provide a valid data-testid'));
           });
         });
@@ -135,14 +134,14 @@ describe('testHelpers', () => {
   describe('findByRole', () => {
     describe('should throw error', () => {
       describe('when wrapper is falsy', () => {
-        it.each`
-          name                    | invalidWrapper
-          ${'given false'}        | ${false}
-          ${'given zero'}         | ${0}
-          ${'given empty string'} | ${''}
-          ${'given null'}         | ${null}
-          ${'given undefined'}    | ${undefined}
-          `('$name', ({ invalidWrapper }) => {
+        const testCases = [
+          ['given false', false],
+          ['given zero', 0],
+          ['given empty string', ''],
+          ['given null', null],
+          ['given undefined', undefined],
+        ];
+        it.each(testCases)('%s', (name, invalidWrapper) => {
           expect(() => findByRole(invalidWrapper, 'given_role')).toThrow(Error('Please provide a wrapper'));
         });
       });
@@ -153,14 +152,14 @@ describe('testHelpers', () => {
             name: 'stub-name',
           },
         });
-        it.each`
-          name                 | role
-          ${'given false'}     | ${false}
-          ${'given zero'}      | ${0}
-          ${'given null'}      | ${null}
-          ${'given NaN'}       | ${NaN}
-          ${'given undefined'} | ${undefined}
-          `('$name', ({ role }) => {
+        const testCases = [
+          ['given false', false],
+          ['given zero', 0],
+          ['given null', null],
+          ['given NaN', NaN],
+          ['given undefined', undefined],
+        ];
+        it.each(testCases)('%s', (name, role) => {
           expect(() => findByRole(stubWrapper, role)).toThrow(Error('Please provide a valid role'));
         });
       });

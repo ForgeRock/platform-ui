@@ -266,7 +266,6 @@ describe('Component Test', () => {
     };
 
     const setUrl = (url) => {
-      // eslint-disable-next-line no-global-assign
       delete window.location;
       window.location = new URL(url);
     };

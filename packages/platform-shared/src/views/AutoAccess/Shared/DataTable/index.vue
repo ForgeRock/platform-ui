@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -17,7 +17,7 @@ of the MIT license. See the LICENSE file for details. -->
       v-on="$listeners">
       <template
         v-for="(key, slotName) in $scopedSlots"
-        v-slot:[slotName]="slotData">
+        #[slotName]="slotData">
         <!-- @slot Custom cell slot. -->
         <slot
           :name="slotName"
@@ -163,7 +163,7 @@ export default {
   },
   data() {
     return {
-      allSelected: this.initialSelected.length === this.pageRows,
+      allSelected: false,
       currentPage: this.initialPage,
       perPage: this.pagination ? this.initialPerPage : 0,
       selected: this.initialSelected,

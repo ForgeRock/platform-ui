@@ -109,7 +109,7 @@ of the MIT license. See the LICENSE file for details. -->
         {{ $t('governance.certificationTask.lineItemReviewersModal.editReviewerModal.permissionsLabel') }}
       </p>
       <FrField
-        v-for="([key, value], index) in Object.entries(permissions)"
+        v-for="([key], index) in Object.entries(permissions)"
         :key="index"
         class="mb-3"
         v-model="permissions[key]"

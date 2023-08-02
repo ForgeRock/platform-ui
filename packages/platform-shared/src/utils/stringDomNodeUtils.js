@@ -5,7 +5,20 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-/* eslint-disable no-use-before-define */
+function getLocToPlaceAttribute(domNodeString) {
+  const endTagCount = domNodeString.split('>').length - 1;
+  const isSelfClosingElement = endTagCount === 1;
+
+  let loc;
+  if (isSelfClosingElement) {
+    loc = domNodeString.length - 2;
+  } else {
+    loc = domNodeString.indexOf('>');
+    if (loc === -1) throw new Error('Non valid html string detected. Please provide a string representing valid html.');
+  }
+
+  return loc;
+}
 
 /**
  * Appends attributes to a given dom node string
@@ -30,21 +43,6 @@ function addAttributesToDomNodeString(domNodeString, attributesMap) {
 
   const domNodeStringLength = domNodeString.length;
   return `${domNodeString.substring(0, endFirstTagLoc)} ${attributes.trim()}${domNodeString.substring(endFirstTagLoc, domNodeStringLength)}`;
-}
-
-function getLocToPlaceAttribute(domNodeString) {
-  const endTagCount = domNodeString.split('>').length - 1;
-  const isSelfClosingElement = endTagCount === 1;
-
-  let loc;
-  if (isSelfClosingElement) {
-    loc = domNodeString.length - 2;
-  } else {
-    loc = domNodeString.indexOf('>');
-    if (loc === -1) throw new Error('Non valid html string detected. Please provide a string representing valid html.');
-  }
-
-  return loc;
 }
 
 export default addAttributesToDomNodeString;

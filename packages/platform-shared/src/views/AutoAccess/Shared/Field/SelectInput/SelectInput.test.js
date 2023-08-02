@@ -1,13 +1,13 @@
 /**
- * Copyright (c) 2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, mount, shallowMount } from '@vue/test-utils';
-import Select from './index';
+import { createLocalVue, mount } from '@vue/test-utils';
+import SelectInput from './index';
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue);
@@ -26,24 +26,9 @@ const defaultProps = {
   selectOptions: [],
 };
 
-describe('Select input', () => {
-  it('Select input component loaded', () => {
-    const wrapper = shallowMount(Select, {
-      localVue,
-      mocks: {
-        $t: () => {},
-      },
-      propsData: {
-        ...defaultMixinProps,
-        ...defaultProps,
-      },
-    });
-
-    expect(wrapper.name()).toBe('Select');
-  });
-
-  it('Select input component process selectOptions prop from array', () => {
-    const wrapper = mount(Select, {
+describe('SelectInput', () => {
+  it('SelectInput component process selectOptions prop from array', () => {
+    const wrapper = mount(SelectInput, {
       localVue,
       mocks: {
         $t: () => {},
@@ -64,14 +49,14 @@ describe('Select input', () => {
     expect(wrapper.vm.options).toEqual(expected);
   });
 
-  it('Select input component passes through selectOptions object prop', () => {
+  it('SelectInput component passes through selectOptions object prop', () => {
     const selectOptions = [
       { text: 'd', value: 'd' },
       { text: 'e', value: 'e' },
       { text: 'f', value: 'f' },
     ];
 
-    const wrapper = mount(Select, {
+    const wrapper = mount(SelectInput, {
       localVue,
       mocks: {
         $t: () => {},
@@ -86,8 +71,8 @@ describe('Select input', () => {
     expect(wrapper.vm.options).toEqual(selectOptions);
   });
 
-  it('Select input component renders the options', () => {
-    const wrapper = mount(Select, {
+  it('SelectInput component renders the options', () => {
+    const wrapper = mount(SelectInput, {
       localVue,
       mocks: {
         $t: () => {},
@@ -106,8 +91,8 @@ describe('Select input', () => {
     expect(elements.length).toBe(3);
   });
 
-  it('Select input component allows single selections', () => {
-    const wrapper = mount(Select, {
+  it('SelectInput component allows single selections', () => {
+    const wrapper = mount(SelectInput, {
       localVue,
       mocks: {
         $t: () => {},
@@ -131,8 +116,8 @@ describe('Select input', () => {
     expect(wrapper.vm.inputValue).toEqual({ text: 'a', value: 'a' });
   });
 
-  it('Select passes through component slots', () => {
-    const wrapper = mount(Select, {
+  it('SelectInput passes through component slots', () => {
+    const wrapper = mount(SelectInput, {
       localVue,
       mocks: {
         $t: () => {},
@@ -151,8 +136,8 @@ describe('Select input', () => {
     expect(wrapper.contains('.test_append')).toBe(true);
   });
 
-  it('Select is not autofocused on absence of prop "autofocus"', () => {
-    const wrapper = mount(Select, {
+  it('SelectInput is not autofocused on absence of prop "autofocus"', () => {
+    const wrapper = mount(SelectInput, {
       localVue,
       mocks: {
         $t: () => {},
@@ -173,8 +158,8 @@ describe('Select input', () => {
   });
 
   // TODO: to make this test work, follow guide to upgrade vue-test-utils https://vue-test-utils.vuejs.org/upgrading-to-v1/
-  // it('Select is autofocused on prop "autofocus"', () => {
-  //   const wrapper = mount(Select, {
+  // it('SelectInput is autofocused on prop "autofocus"', () => {
+  //   const wrapper = mount(SelectInput, {
   //     localVue,
   //     mocks: {
   //       $t: () => {},

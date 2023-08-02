@@ -94,7 +94,7 @@ of the MIT license. See the LICENSE file for details. -->
           </BCol>
         </BRow>
 
-        <template v-slot:modal-footer>
+        <template #modal-footer>
           <div class="flex-grow-1">
             <BButton
               v-if="stepIndex >= 0"

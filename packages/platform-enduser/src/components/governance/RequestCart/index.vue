@@ -134,19 +134,16 @@ export default {
       justificationText: '',
       priorityOptions: [
         {
-          // eslint-disable-next-line global-require
           imgSrc: getPriorityImageSrc('low'),
           text: this.$t('governance.accessRequest.newRequest.priority.low'),
           value: 'low',
         },
         {
-          // eslint-disable-next-line global-require
           imgSrc: getPriorityImageSrc('medium'),
           text: this.$t('governance.accessRequest.newRequest.priority.med'),
           value: 'medium',
         },
         {
-          // eslint-disable-next-line global-require
           imgSrc: getPriorityImageSrc('high'),
           text: this.$t('governance.accessRequest.newRequest.priority.high'),
           value: 'high',

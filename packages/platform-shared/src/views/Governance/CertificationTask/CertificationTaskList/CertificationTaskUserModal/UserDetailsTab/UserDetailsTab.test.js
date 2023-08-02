@@ -5,8 +5,6 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-/* eslint-disable indent */
-
 import { shallowMount } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
@@ -34,17 +32,17 @@ describe('UserDetailsTab', () => {
   });
 
   describe('should load correctly user data in template', () => {
-    it.each`
-    name                    | userProp      | value
-    ${'given false'}        | ${false}      | ${blankValueIndicator}
-    ${'given zero'}         | ${0}          | ${blankValueIndicator}
-    ${'given empty string'} | ${''}         | ${blankValueIndicator}
-    ${'given null'}         | ${null}       | ${blankValueIndicator}
-    ${'given undefined'}    | ${undefined}  | ${blankValueIndicator}
-    ${'given NaN'}          | ${NaN}        | ${blankValueIndicator}
-    ${'given valid string'} | ${'test'}     | ${'test'}
-    ${'given valid number'} | ${10}         | ${'10'}
-    `('$name', ({ userProp, value }) => {
+    const testCases = [
+      ['given false', false, blankValueIndicator],
+      ['given zero', 0, blankValueIndicator],
+      ['given empty string', '', blankValueIndicator],
+      ['given null', null, blankValueIndicator],
+      ['given undefined', undefined, blankValueIndicator],
+      ['given NaN', NaN, blankValueIndicator],
+      ['given valid string', 'test', 'test'],
+      ['given valid number', 10, '10'],
+    ];
+    it.each(testCases)('%s', (name, userProp, value) => {
       const wrapper = mountComponent({ userProp });
       const elem = findByTestId(wrapper, 'userProp');
       expect(elem.exists()).toBe(true);

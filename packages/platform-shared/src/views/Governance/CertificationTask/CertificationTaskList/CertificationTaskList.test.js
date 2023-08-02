@@ -277,14 +277,12 @@ describe('CertificationTaskList', () => {
       },
     };
     const accountData = {
-      // eslint-disable-next-line quote-props
-      '1': {
+      1: {
         accountEnabled: true,
         displayName: 'Barbara Walters',
         givenName: 'Barbara',
       },
-      // eslint-disable-next-line quote-props
-      '2': {
+      2: {
         accountEnabled: true,
         displayName: 'Dania Nunez',
         givenName: 'Dania',
