@@ -48,8 +48,12 @@ describe('RelationshipEdit', () => {
                   },
                 },
               },
+              managedObjectMinimumUIFilterLength: {
+                user: 2,
+              },
             },
           },
+          commit: () => {},
         },
       },
       propsData: {
@@ -103,7 +107,7 @@ describe('RelationshipEdit', () => {
     expect(wrapper.name()).toEqual('RelationshipEdit');
   });
 
-  it('should setupEditor properly', () => {
+  it('should setupEditor properly', async () => {
     const queryFilterExtension = '!(/effectiveApplications[_id eq \'1234\'])';
     const params = {
       pageSize: 10,
@@ -127,9 +131,9 @@ describe('RelationshipEdit', () => {
     expect(wrapper.vm.rescourceCollectionTypes.length).toEqual(1);
     expect(wrapper.vm.relationshipField.value).toEqual('managed/user/testy');
     expect(wrapper.vm.resourceCollection).toEqual(wrapper.vm.relationshipField.resourceCollection[0]);
-    wrapper.vm.setOptions('a');
+    await wrapper.vm.setOptions('a');
     expect(getManagedResourceList).not.toHaveBeenCalled();
-    wrapper.vm.setOptions('ab');
+    await wrapper.vm.setOptions('ab');
     expect(getManagedResourceList).toHaveBeenCalledWith(managedObjectName, params);
   });
 
