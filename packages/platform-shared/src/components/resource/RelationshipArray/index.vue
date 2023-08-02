@@ -366,7 +366,7 @@ export default {
     },
   },
   methods: {
-    loadGrid(page) {
+    async loadGrid(page) {
       this.currentPage = page;
       const doLoad = (resourceCollectionSchema) => {
         const buildGridUrl = this.buildGridUrl(page - 1, resourceCollectionSchema);
@@ -383,7 +383,14 @@ export default {
 
       if (has(this.relationshipArrayProperty, 'items.resourceCollection') && this.relationshipArrayProperty.items.resourceCollection.length === 1) {
         const resourceCollection = this.relationshipArrayProperty.items.resourceCollection[0];
-        this.setDisableSortAndSearchOrQueryThreshold(resourceCollection);
+        const resourceType = resourceCollection.path.split('/')[0];
+        let resourceName = resourceCollection.path.split('/')[1];
+        // special case for internal/role
+        if (resourceName === 'role' && resourceType === 'internal') {
+          resourceName = 'internalrole';
+        }
+
+        await this.setDisableSortAndSearchOrQueryThreshold(resourceName);
 
         getSchema(resourceCollection.path).then((response) => {
           this.showFilter = true;
@@ -393,18 +400,12 @@ export default {
         doLoad();
       }
     },
-    setDisableSortAndSearchOrQueryThreshold(resourceCollection) {
+    async setDisableSortAndSearchOrQueryThreshold(resourceName) {
       const { uiConfig } = this.$store.state.SharedStore;
-      const resourceType = resourceCollection.path.split('/')[0];
-      let resourceName = resourceCollection.path.split('/')[1];
-      // special case for internal/role
-      if (resourceName === 'role' && resourceType === 'internal') {
-        resourceName = 'internalrole';
-      }
-      const configDisableRelationshipSortAndSearch = has(uiConfig, `configuration.platformSettings.managedObjectsSettings.${resourceName}`) ? uiConfig.configuration.platformSettings.managedObjectsSettings[resourceName].disableRelationshipSortAndSearch : false;
+      const configDisableRelationshipSortAndSearch = has(uiConfig, `configuration.platformSettings.managedObjectsSettings.${resourceName}.disableRelationshipSortAndSearch`) ? uiConfig.configuration.platformSettings.managedObjectsSettings[resourceName].disableRelationshipSortAndSearch : false;
       this.disableSortAndSearch = !this.isOpenidmAdmin && configDisableRelationshipSortAndSearch;
       // set query threshold for search
-      this.queryThreshold = has(uiConfig, `configuration.platformSettings.managedObjectsSettings.${resourceName}`) ? uiConfig.configuration.platformSettings.managedObjectsSettings[resourceName].minimumUIFilterLength : false;
+      this.queryThreshold = await this.getMinimumUIFilterLength(resourceName);
     },
     setColumns(resourceCollectionSchema) {
       if ((!this.relationshipArrayProperty.readOnly || this.isOpenidmAdmin) && this.rowSelect) {

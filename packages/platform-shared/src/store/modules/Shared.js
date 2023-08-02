@@ -36,6 +36,7 @@ const defaultState = {
   showServiceAccountUi: false,
   webStorageAvailable: true,
   workforceEnabled: false,
+  managedObjectMinimumUIFilterLength: {},
 };
 
 const mutations = {
@@ -145,6 +146,9 @@ const mutations = {
   },
   setWebStorageAvailable(state, val) {
     state.webStorageAvailable = val;
+  },
+  setManagedObjectMinimumUIFilterLength(state, { managedObjectName, val }) {
+    state.managedObjectMinimumUIFilterLength[managedObjectName] = val;
   },
 };
 

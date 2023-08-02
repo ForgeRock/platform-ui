@@ -106,12 +106,19 @@ describe('RelationshipArray', () => {
                         disableRelationshipSortAndSearch: true,
                         minimumUIFilterLength: 3,
                       },
+                      internalrole: {
+                        minimumUIFilterLength: 1,
+                      },
                     },
                   },
                 },
               },
+              managedObjectMinimumUIFilterLength: {
+                user: 3,
+              },
             },
           },
+          commit: () => {},
         },
       },
       propsData: {
@@ -287,7 +294,8 @@ describe('RelationshipArray', () => {
     expect(wrapper.vm.sortDesc).toEqual(false);
   });
 
-  it('Correctly handles search', () => {
+  it('Correctly handles search', async () => {
+    await wrapper.vm.loadGrid(0);
     wrapper.vm.sortBy = 'userName';
     wrapper.vm.search();
     expect(wrapper.vm.sortBy).toEqual(null);
@@ -319,26 +327,28 @@ describe('RelationshipArray', () => {
   });
 
   it('Correctly sets disableSortAndSearch', () => {
-    wrapper.vm.setDisableSortAndSearchOrQueryThreshold(wrapper.vm.relationshipArrayProperty.items.resourceCollection[0]);
+    const resourceName = wrapper.vm.relationshipArrayProperty.items.resourceCollection[0].path.split('/')[1];
+    wrapper.vm.setDisableSortAndSearchOrQueryThreshold(resourceName);
     expect(wrapper.vm.disableSortAndSearch).toEqual(true);
     wrapper.vm.$store.state.SharedStore.uiConfig.configuration.platformSettings.managedObjectsSettings.user.disableRelationshipSortAndSearch = false;
-    wrapper.vm.setDisableSortAndSearchOrQueryThreshold(wrapper.vm.relationshipArrayProperty.items.resourceCollection[0]);
+    wrapper.vm.setDisableSortAndSearchOrQueryThreshold(resourceName);
     expect(wrapper.vm.disableSortAndSearch).toEqual(false);
     wrapper.vm.$store.state.SharedStore.uiConfig.configuration.platformSettings.managedObjectsSettings.internalrole = { disableRelationshipSortAndSearch: true };
-    wrapper.vm.relationshipArrayProperty.items.resourceCollection[0].path = 'internal/role';
-    wrapper.vm.setDisableSortAndSearchOrQueryThreshold(wrapper.vm.relationshipArrayProperty.items.resourceCollection[0]);
+    wrapper.vm.setDisableSortAndSearchOrQueryThreshold('internalrole');
     expect(wrapper.vm.disableSortAndSearch).toEqual(true);
   });
 
-  it('Correctly sets minimumUIFilterLength', () => {
-    wrapper.vm.setDisableSortAndSearchOrQueryThreshold(wrapper.vm.relationshipArrayProperty.items.resourceCollection[0]);
+  it('Correctly sets minimumUIFilterLength', async () => {
+    const resourceName = wrapper.vm.relationshipArrayProperty.items.resourceCollection[0].path.split('/')[1];
+    await wrapper.vm.setDisableSortAndSearchOrQueryThreshold(resourceName);
     expect(wrapper.vm.queryThreshold).toEqual(3);
     wrapper.vm.$store.state.SharedStore.uiConfig.configuration.platformSettings.managedObjectsSettings.user.minimumUIFilterLength = 2;
-    wrapper.vm.setDisableSortAndSearchOrQueryThreshold(wrapper.vm.relationshipArrayProperty.items.resourceCollection[0]);
+    await wrapper.vm.setDisableSortAndSearchOrQueryThreshold(resourceName);
     expect(wrapper.vm.queryThreshold).toEqual(2);
-    wrapper.vm.$store.state.SharedStore.uiConfig.configuration.platformSettings.managedObjectsSettings.internalrole = { minimumUIFilterLength: 2 };
-    wrapper.vm.relationshipArrayProperty.items.resourceCollection[0].path = 'internal/role';
-    wrapper.vm.setDisableSortAndSearchOrQueryThreshold(wrapper.vm.relationshipArrayProperty.items.resourceCollection[0]);
+    await wrapper.vm.setDisableSortAndSearchOrQueryThreshold('internalrole');
+    expect(wrapper.vm.queryThreshold).toEqual(1);
+    wrapper.vm.$store.state.SharedStore.uiConfig.configuration.platformSettings.managedObjectsSettings.internalrole.minimumUIFilterLength = 2;
+    await wrapper.vm.setDisableSortAndSearchOrQueryThreshold('internalrole');
     expect(wrapper.vm.queryThreshold).toEqual(2);
   });
 
