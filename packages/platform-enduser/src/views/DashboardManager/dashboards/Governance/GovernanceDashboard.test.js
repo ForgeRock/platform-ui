@@ -23,7 +23,7 @@ jest.mock('@/api/governance/AccessRequestApi');
  * @default
  */
 const USER_STORE = {
-  userId: null,
+  userId: 'testId',
   managedResource: null,
   roles: null,
   internalUser: false,
@@ -41,8 +41,8 @@ describe('GovernanceDashboard', () => {
   let wrapper;
 
   AccessReviewApi.getCertificationItems = jest.fn().mockReturnValue(Promise.resolve({ data: {} }));
-  AccessRequestApi.getRequestsItems = jest.fn().mockReturnValue(Promise.resolve({ data: {} }));
-  AccessRequestApi.getApprovalsItems = jest.fn().mockReturnValue(Promise.resolve({ data: {} }));
+  AccessRequestApi.getUserRequests = jest.fn().mockReturnValue(Promise.resolve({ data: {} }));
+  AccessRequestApi.getUserApprovals = jest.fn().mockReturnValue(Promise.resolve({ data: {} }));
 
   function shallowMountComponent(governanceEnabledV3 = false) {
     wrapper = shallowMount(GovernanceDashboard, {
@@ -82,23 +82,37 @@ describe('GovernanceDashboard', () => {
 
   describe('getPendingRequestsCount', () => {
     shallowMountComponent(true);
-    it('should call getRequestsItems', async () => {
-      const getCertSpy = jest.spyOn(AccessRequestApi, 'getRequestsItems').mockImplementation(() => Promise.resolve({ data: { objectTypes: {} } }));
+    it('should call getUserRequests', async () => {
+      const getCertSpy = jest.spyOn(AccessRequestApi, 'getUserRequests').mockImplementation(() => Promise.resolve({ data: { objectTypes: {} } }));
       wrapper.vm.getPendingRequestsCount();
 
       await wrapper.vm.$nextTick();
-      expect(getCertSpy).toHaveBeenCalledWith({ status: 'pending' });
+      expect(getCertSpy)
+        .toHaveBeenCalledWith(
+          USER_STORE.userId,
+          {
+            pageSize: 0,
+            status: 'in-progress',
+          },
+        );
     });
   });
 
   describe('getPendingApprovalsCount', () => {
     shallowMountComponent(true);
-    it('should call getApprovalsItems', async () => {
-      const getCertSpy = jest.spyOn(AccessRequestApi, 'getApprovalsItems').mockImplementation(() => Promise.resolve({ data: { objectTypes: {} } }));
+    it('should call getUserApprovals', async () => {
+      const getCertSpy = jest.spyOn(AccessRequestApi, 'getUserApprovals').mockImplementation(() => Promise.resolve({ data: { objectTypes: {} } }));
       wrapper.vm.getPendingApprovalsCount();
 
       await wrapper.vm.$nextTick();
-      expect(getCertSpy).toHaveBeenCalledWith({ status: 'pending' });
+      expect(getCertSpy)
+        .toHaveBeenCalledWith(
+          USER_STORE.userId,
+          {
+            pageSize: 0,
+            status: 'in-progress',
+          },
+        );
     });
   });
 });
