@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -46,7 +46,7 @@ of the MIT license. See the LICENSE file for details. -->
       <strong>
         {{ $t('pages.profile.accountControls.deleteModalWarning') }}
       </strong>
-      <template v-slot:modal-footer="{ cancel }">
+      <template #modal-footer="{ cancel }">
         <BButton
           variant="link"
           class="text-danger"
@@ -76,7 +76,6 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 
-/* eslint-disable no-underscore-dangle */
 export default {
   name: 'AccountControls',
   mixins: [

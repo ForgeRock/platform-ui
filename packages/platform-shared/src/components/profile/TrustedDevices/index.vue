@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -8,7 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
       accordion-group="trustedDevices"
       class="mb-4"
       :items="devices">
-      <template v-slot:accordionHeader>
+      <template #accordionHeader>
         <div class="p-4">
           <h1 class="h4">
             {{ $t('pages.profile.trustedDevices.title') }}
@@ -18,7 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
           </p>
         </div>
       </template>
-      <template v-slot:header="slotData">
+      <template #header="slotData">
         <BRow>
           <BCol
             cols="10">
@@ -63,7 +63,7 @@ of the MIT license. See the LICENSE file for details. -->
           </BCol>
         </BRow>
       </template>
-      <template v-slot:body="slotData">
+      <template #body="slotData">
         <BRow>
           <BCol
             v-if="slotData.map"
@@ -158,7 +158,7 @@ of the MIT license. See the LICENSE file for details. -->
       <template v-if="modalType === 'remove'">
         {{ $t('pages.profile.trustedDevices.removeModalText') }}
       </template>
-      <template v-slot:modal-footer="{ cancel }">
+      <template #modal-footer="{ cancel }">
         <BButton
           variant="btn-link mr-2"
           :class="modalType === 'remove' && 'text-danger'"

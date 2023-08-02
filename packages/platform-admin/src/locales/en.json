@@ -696,6 +696,7 @@
           "title": "Metric Breakdown"
         },
         "tooltips": {
+          "amount": "{total} of {totalUsage}",
           "percentageBreakdown": "Percentage Breakdown",
           "failRate": "fail rate",
           "successRate": "success rate",

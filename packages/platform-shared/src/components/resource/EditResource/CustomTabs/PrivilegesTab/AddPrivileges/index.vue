@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -27,7 +27,7 @@ of the MIT license. See the LICENSE file for details. -->
             type="select"
             :label="$t('pages.access.chooseIdentityObject')"
             :options="identityObjectField.options">
-            <template v-slot:option="{ option }">
+            <template #option="{ option }">
               <FrIcon
                 class="mr-3"
                 :name="option.icon || 'settings_system_daydream'"
@@ -37,7 +37,7 @@ of the MIT license. See the LICENSE file for details. -->
                 {{ option.value }}
               </small>
             </template>
-            <template v-slot:singleLabel="{ option }">
+            <template #singleLabel="{ option }">
               <FrIcon
                 class="mr-3"
                 :name="option.icon || 'settings_system_daydream'"
@@ -74,7 +74,6 @@ import {
   BButton,
 } from 'bootstrap-vue';
 import FrField from '@forgerock/platform-shared/src/components/Field';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import PluralizeFilter from '@forgerock/platform-shared/src/filters/PluralizeFilter';
 import IsFraasFilterMixin from '@forgerock/platform-shared/src/mixins/IsFraasFilterMixin';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
@@ -99,10 +98,6 @@ export default {
       type: Array,
       default: () => [],
     },
-    newPrivileges: {
-      type: Array,
-      default: () => [],
-    },
     privilegesField: {
       type: Object,
       default: () => {},
@@ -122,6 +117,7 @@ export default {
         options: this.getIdentityObjectOptions(),
         value: '',
       },
+      newPrivileges: [],
     };
   },
   computed: {
@@ -188,6 +184,14 @@ export default {
       }
 
       return sortBy(options, 'text');
+    },
+  },
+  watch: {
+    newPrivileges: {
+      handler(newPrivileges) {
+        this.$emit('new-privileges-modified', newPrivileges);
+      },
+      deep: true,
     },
   },
 };

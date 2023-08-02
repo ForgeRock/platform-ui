@@ -5,8 +5,6 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-/* eslint-disable indent */
-
 import { mount } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import ConfirmationCallback from '@/components/callbacks/ConfirmationCallback';
@@ -46,7 +44,7 @@ describe('ConfirmationCallback', () => {
           callback: {
             getOptions: () => stubOptions,
             payload: {
-                type: 'ConfirmationCallback',
+              type: 'ConfirmationCallback',
             },
           },
           variant: 'link',
@@ -63,7 +61,7 @@ describe('ConfirmationCallback', () => {
           callback: {
             getOptions: () => stubOptions,
             payload: {
-                type: 'ConfirmationCallback',
+              type: 'ConfirmationCallback',
             },
           },
           variant: 'primary',
@@ -80,7 +78,7 @@ describe('ConfirmationCallback', () => {
           callback: {
             getOptions: () => stubOptions,
             payload: {
-                type: 'ConfirmationCallback',
+              type: 'ConfirmationCallback',
             },
           },
         };
@@ -92,11 +90,11 @@ describe('ConfirmationCallback', () => {
       });
     });
     describe('when only positive answer', () => {
-      it.each`
-      name                       | variant
-      ${'first option as buton'} | ${'primary'}
-      ${'first option as link'}  | ${'link'}
-      `('$name', async ({ variant }) => {
+      const testCases = [
+        ['first option as buton', 'primary'],
+        ['first option as link', 'link'],
+      ];
+      it.each(testCases)('%s', async (name, variant) => {
         const wrapper = setup({ variant });
         await wrapper.vm.$nextTick();
 
@@ -110,11 +108,11 @@ describe('ConfirmationCallback', () => {
     });
 
     describe('when not positive answer', () => {
-      it.each`
-      name                        | variant
-      ${'options as buton'}       | ${'primary'}
-      ${'options option as link'} | ${'link'}
-      `('$name', async ({ variant }) => {
+      const testCases = [
+        ['options as buton', 'primary'],
+        ['options option as link', 'link'],
+      ];
+      it.each(testCases)('%s', async (name, variant) => {
         const wrapper = setup({ variant, stage: { showOnlyPositiveAnswer: false } });
         await wrapper.vm.$nextTick();
 

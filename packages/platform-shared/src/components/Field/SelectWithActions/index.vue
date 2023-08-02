@@ -1,14 +1,14 @@
-<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <FrSelect
+  <FrSelectInput
     v-bind="$attrs"
     v-on="$listeners"
     sort-options
     show-selected-option-on-open>
-    <template v-slot:singleLabel="{ option }">
+    <template #singleLabel="{ option }">
       <div :class="[{'can-edit': showEdit(option)}, 'collapsed-option d-flex align-items-center justify-content-between w-100']">
         <div
           :title="option.text"
@@ -34,7 +34,7 @@ of the MIT license. See the LICENSE file for details. -->
         </BButton>
       </div>
     </template>
-    <template v-slot:beforeList>
+    <template #beforeList>
       <div class="row-before-list cursor-default d-flex align-items-center justify-content-between pl-3 py-2">
         <h5 class="mb-0">
           {{ addRowText }}
@@ -55,7 +55,7 @@ of the MIT license. See the LICENSE file for details. -->
         </BButton>
       </div>
     </template>
-    <template v-slot:option="{ option }">
+    <template #option="{ option }">
       <div class="d-flex align-items-center justify-content-between w-100">
         <div
           :title="option.text"
@@ -82,13 +82,13 @@ of the MIT license. See the LICENSE file for details. -->
         </BButton>
       </div>
     </template>
-  </FrSelect>
+  </FrSelectInput>
 </template>
 
 <script>
 import { BButton } from 'bootstrap-vue';
-import Icon from '@forgerock/platform-shared/src/components/Icon';
-import Select from '@forgerock/platform-shared/src/components/Field/Select';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import FrSelectInput from '@forgerock/platform-shared/src/components/Field/SelectInput';
 
 /**
  *  Select input with actions for adding and editing items which fire events.
@@ -98,8 +98,8 @@ export default {
   name: 'SelectWithActions',
   components: {
     BButton,
-    FrSelect: Select,
-    FrIcon: Icon,
+    FrSelectInput,
+    FrIcon,
   },
   props: {
     /**

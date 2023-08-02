@@ -22,7 +22,6 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-/* eslint-disable no-underscore-dangle */
 import {
   each, first, reject, merge, isEmpty, isUndefined,
 } from 'lodash';

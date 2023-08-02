@@ -58,11 +58,11 @@ of the MIT license. See the LICENSE file for details. -->
       {{ $t('common.endSessions') }}
     </BButton>
     <slot
-      :relationshipProperties="relationshipProperties"
-      :displayProperties="displayProperties"
+      :relationship-properties="relationshipProperties"
+      :display-properties="displayProperties"
       :revision="revision"
-      :refreshData="refreshData"
-      :resourceDetails="resourceDetails">
+      :refresh-data="refreshData"
+      :resource-details="resourceDetails">
       <BCard class="card-tabs-vertical mb-5">
         <BDropdown
           v-if="mobileDropdownTabs.length && !hideNav"
@@ -104,7 +104,7 @@ of the MIT license. See the LICENSE file for details. -->
                 @refresh-data="$emit('save-clicked', refreshData)">
                 <template
                   v-for="(key, slotName) in $scopedSlots"
-                  v-slot:[slotName]="slotData">
+                  #[slotName]="slotData">
                   <slot
                     :name="slotName"
                     v-bind="slotData" />

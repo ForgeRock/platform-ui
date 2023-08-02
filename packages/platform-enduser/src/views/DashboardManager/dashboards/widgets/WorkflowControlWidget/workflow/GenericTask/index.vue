@@ -100,7 +100,6 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-/* eslint-disable no-underscore-dangle */
 import {
   omit, clone, capitalize, isUndefined, each,
 } from 'lodash';
@@ -143,8 +142,7 @@ export default {
 
         // If no variable value set default value to first option
         if (isUndefined(tempField.value) && field.type.values) {
-          // eslint-disable-next-line prefer-destructuring
-          tempField.value = Object.keys(field.type.values)[0];
+          [tempField.value] = Object.keys(field.type.values);
           tempFormValues[field._id] = tempField.value;
         }
       }

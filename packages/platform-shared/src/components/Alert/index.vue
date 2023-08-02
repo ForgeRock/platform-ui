@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -8,7 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
     v-bind="$props"
     :data-testid="testId"
     aria-live="assertive">
-    <template v-slot:dismiss>
+    <template #dismiss>
       <FrIcon
         class="fr-alert-dismiss"
         :aria-label="$t('common.close')"

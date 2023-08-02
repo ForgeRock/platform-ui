@@ -7,7 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     class="my-applications-list-item"
     data-test-id="my-applications-item">
     <ListItem :collapsible="collapsible">
-      <template v-slot:list-item-header>
+      <template #list-item-header>
         <a
           class="pt-1 pb-1"
           data-test-id="my-applications-link"

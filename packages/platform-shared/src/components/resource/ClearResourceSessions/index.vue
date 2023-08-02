@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -15,7 +15,7 @@ of the MIT license. See the LICENSE file for details. -->
     <p>
       {{ $t('clearSessionsModal.consequencesText') }}
     </p>
-    <template v-slot:modal-footer>
+    <template #modal-footer>
       <BButton
         variant="link"
         class="text-danger"

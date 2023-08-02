@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -105,6 +105,7 @@ describe('ScriptEditor', () => {
     expect(wrapper.vm.scriptType.value).toEqual('text/groovy');
     expect(wrapper.vm.value.file).toEqual('/file/path.js');
     const file = new File(['text'], 'test.js');
+    expect(wrapper.vm.fileChanged).toEqual(false);
     wrapper.vm.onFileChange({
       target: {
         files: [
@@ -114,6 +115,6 @@ describe('ScriptEditor', () => {
     });
 
     expect(wrapper.vm.scriptType.value).toEqual('text/javascript');
-    expect(wrapper.vm.value.file).toEqual(undefined);
+    expect(wrapper.vm.fileChanged).toEqual(true);
   });
 });

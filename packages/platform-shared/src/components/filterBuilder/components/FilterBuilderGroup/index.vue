@@ -67,7 +67,7 @@ of the MIT license. See the LICENSE file for details. -->
         @rule-change="ruleChange">
         <template
           v-for="(key, slotName) in $scopedSlots"
-          v-slot:[slotName]="slotData">
+          #[slotName]="slotData">
           <!-- @slot passthrough slot -->
           <slot
             :name="slotName"
@@ -95,7 +95,7 @@ of the MIT license. See the LICENSE file for details. -->
         @rule-change="ruleChange">
         <template
           v-for="(key, slotName) in $scopedSlots"
-          v-slot:[slotName]="slotData">
+          #[slotName]="slotData">
           <!-- @slot passthrough slot -->
           <slot
             :name="slotName"

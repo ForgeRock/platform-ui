@@ -44,7 +44,6 @@ of the MIT license. See the LICENSE file for details. -->
             @search:applications="searchApplications" />
         </div>
         <div class="w-100 h-100 fixed-top fr-sidebar-shim d-lg-none" />
-        <!-- eslint-disable-next-line vue/component-name-in-template-casing -->
         <transition name="slide-fade">
           <div
             v-if="requestCartExpanded"

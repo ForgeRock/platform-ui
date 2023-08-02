@@ -83,7 +83,7 @@ of the MIT license. See the LICENSE file for details. -->
       @row-clicked="resourceClicked"
       @row-selected="onRowSelected"
       @sort-changed="sortingChanged">
-      <template v-slot:head(selected)>
+      <template #head(selected)>
         <div
           v-show="gridData.length > 0"
           class="cursor-pointer"
@@ -98,7 +98,7 @@ of the MIT license. See the LICENSE file for details. -->
           </BFormCheckbox>
         </div>
       </template>
-      <template v-slot:cell(selected)="data">
+      <template #cell(selected)="data">
         <BFormCheckbox
           class="pl-3"
           :id="'rowSelectCheckbox_' + relationshipArrayProperty.key + data.index"
@@ -109,7 +109,7 @@ of the MIT license. See the LICENSE file for details. -->
           </span>
         </BFormCheckbox>
       </template>
-      <template v-slot:cell(_relationshipDetails)="data">
+      <template #cell(_relationshipDetails)="data">
         <div
           class="media cursor-pointer"
           @click="resourceClicked(data.item)">
@@ -154,7 +154,7 @@ of the MIT license. See the LICENSE file for details. -->
     <slot
       name="relationship-form-modal"
       :add-new-relationship="addNewRelationship"
-      :updateRelationship="updateRelationship">
+      :update-relationship="updateRelationship">
       <BModal
         cancel-variant="link"
         :id="createModalId"
@@ -465,20 +465,16 @@ export default {
     setGridData(relationships, schema) {
       const addRows = () => {
         relationships.forEach((relationship) => {
-          // eslint-disable-next-line no-underscore-dangle
           const resourceCollectionSchema = find(schema.items.resourceCollection, { path: relationship._refResourceCollection });
           // special display logic for internal user
           if (resourceCollectionSchema && has(resourceCollectionSchema, 'path') && resourceCollectionSchema.path === 'internal/user') {
             // _ref looks "internal/user/openidm-admin"
             // here we are grabbing the last part of the path to display "userName" which is also the internal user's "_id"
-            // eslint-disable-next-line no-underscore-dangle
             relationship._relationshipDetails = [last(relationship._ref.split('/'))];
           } else if (resourceCollectionSchema) {
-            // eslint-disable-next-line no-underscore-dangle
             relationship._relationshipDetails = toArray(pick(relationship, resourceCollectionSchema.query.fields));
           } else {
             // if no schema information for resourceCollection just show the object's _id
-            // eslint-disable-next-line no-underscore-dangle
             relationship._relationshipDetails = [relationship._id];
           }
 
@@ -492,7 +488,6 @@ export default {
         // In this case to retrieve the data needed to fill in grid columns we need to loop over each relationship
         // record and do a get on the _ref ('managed/user/USER_GUUID').
         relationships.forEach((relationship, index) => {
-          // eslint-disable-next-line no-underscore-dangle
           const resourceCollectionSchema = find(schema.items.resourceCollection, { path: relationship._refResourceCollection });
           promises.push(
             this.getRelationshipFieldsData(relationship, resourceCollectionSchema.query.fields).then((fieldsData) => {
@@ -580,11 +575,8 @@ export default {
         this.$router.push({
           name: 'EditResource',
           params: {
-            // eslint-disable-next-line no-underscore-dangle
             resourceType: item._refResourceCollection.split('/')[0],
-            // eslint-disable-next-line no-underscore-dangle
             resourceName: item._refResourceCollection.split('/')[1],
-            // eslint-disable-next-line no-underscore-dangle
             resourceId: item._refResourceId,
           },
         });

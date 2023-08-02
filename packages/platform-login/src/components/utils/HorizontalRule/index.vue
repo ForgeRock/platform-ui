@@ -1,10 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="row">
     <div class="col pr-0">
@@ -12,9 +9,7 @@ of the MIT license. See the LICENSE file for details.
     </div>
     <div
       class="col-auto pt-1"
-      v-html="insert">
-      {{ insert }}
-    </div>
+      v-html="insert" />
     <div class="col pl-0">
       <hr>
     </div>

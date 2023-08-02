@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -87,7 +87,7 @@ import dayjs from 'dayjs';
 import LocalizedFormat from 'dayjs/plugin/localizedFormat';
 import DateMixin from '@forgerock/platform-shared/src/mixins/DateMixin/';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import FallbackImage from '@/components/utils/FallbackImage';
+import FrFallbackImage from '@/components/utils/FallbackImage';
 
 dayjs.extend(LocalizedFormat);
 
@@ -97,7 +97,7 @@ dayjs.extend(LocalizedFormat);
 export default {
   name: 'Requests',
   components: {
-    FrFallbackImage: FallbackImage,
+    FrFallbackImage,
     FrIcon,
   },
   mixins: [
@@ -121,17 +121,7 @@ export default {
   },
   methods: {
     finalizeAccess(request, index, action) {
-      this.requests[index].decision = true;
-
-      // eslint-disable-next-line no-underscore-dangle
-      this.$emit('finalizeResourceAccess', request._id, action, {
-        scopes: request.permissions,
-        onSuccess: () => {
-          if (action === 'approve') {
-            this.requests[index].allowed = true;
-          }
-        },
-      });
+      this.$emit('finalize-resource-access', request._id, action, index, { scopes: request.permissions });
     },
   },
 };

@@ -5,7 +5,6 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <FrField
-      v-model="uiSchema.value"
       class="pb-1 mb-4"
       :autocomplete="uiSchema.autocomplete || ''"
       :copy="uiSchema.append"
@@ -14,6 +13,7 @@ of the MIT license. See the LICENSE file for details. -->
       :is-html="uiSchema.isHtml"
       :label="uiSchema.label"
       :validation="uiSchema.validation"
+      :value="uiSchema.value"
       @input="valueChange" />
   </div>
 </template>

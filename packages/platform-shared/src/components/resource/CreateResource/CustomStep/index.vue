@@ -30,10 +30,10 @@ of the MIT license. See the LICENSE file for details. -->
         v-model="temporalconstraint" />
       <FrAddPrivileges
         v-if="property.key === 'privileges' && !loading"
-        :new-privileges="newPrivileges"
         :privileges-field="property"
         :schema-map="schemaMap"
-        :loading="loading" />
+        :loading="loading"
+        @new-privileges-modified="newPrivileges = $event" />
     </div>
   </div>
 </template>
@@ -175,7 +175,6 @@ export default {
             schemas.forEach((schema) => {
               // filter out schemas with no properties
               if (has(schema, 'properties') && !isEmpty(schema.properties)) {
-                // eslint-disable-next-line no-underscore-dangle
                 this.schemaMap[schema._id] = schema;
               }
             });

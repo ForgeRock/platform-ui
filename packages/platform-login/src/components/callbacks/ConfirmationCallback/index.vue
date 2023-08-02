@@ -56,8 +56,7 @@ export default {
   mounted() {
     this.options = this.callback.getOptions();
     if (this.showOnlyPositiveAnswer) {
-      // eslint-disable-next-line prefer-destructuring
-      this.firstOption = this.options[0];
+      [this.firstOption] = this.options;
     }
   },
   data() {

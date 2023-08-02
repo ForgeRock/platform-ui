@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -104,7 +104,6 @@ export default {
     };
   },
   beforeMount() {
-    // eslint-disable-next-line no-underscore-dangle
     this.id = `listItem${this._uid}`;
   },
   computed: {
