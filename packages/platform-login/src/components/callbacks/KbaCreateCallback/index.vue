@@ -58,6 +58,8 @@ of the MIT license. See the LICENSE file for details. -->
           class="mb-3"
           type="password"
           validation="required"
+          :aria-label-show="$t('common.showText')"
+          :aria-label-hide="$t('common.hideText')"
           :label="$t('login.kba.answer')"
           :name="`callback_${index}_answer_field`"
           :disabled="selected === null"
