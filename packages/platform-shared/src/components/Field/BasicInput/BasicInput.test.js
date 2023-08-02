@@ -246,6 +246,19 @@ describe('BasicInput', () => {
         expect(showPasswordButton.exists()).toBeTruthy();
       });
 
+      it('supports custom aria labels for show button', () => {
+        const wrapper = setup({ type: 'password', ariaLabelShow: 'Show text', ariaLabelHide: 'Hide text' });
+        const showPasswordButton = findByTestId(wrapper, 'btn-show-password-stub-testid');
+        expect(showPasswordButton.attributes('aria-label')).toBe('Show text');
+      });
+
+      it('supports custom aria labels for hide button', () => {
+        const wrapper = setup({ type: 'password', ariaLabelShow: 'Show text', ariaLabelHide: 'Hide text' });
+        const showPasswordButton = findByTestId(wrapper, 'btn-show-password-stub-testid');
+        showPasswordButton.trigger('click');
+        expect(showPasswordButton.attributes('aria-label')).toBe('Hide text');
+      });
+
       it('when disabled', () => {
         const wrapper = setup({ type: 'password', disabled: true });
 

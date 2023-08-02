@@ -89,7 +89,7 @@ of the MIT license. See the LICENSE file for details. -->
             @click="revealText"
             :class="[{'disabled': disabled}]"
             name="revealButton"
-            :aria-label="showPassword ? $t('common.hidePassword') : $t('common.showPassword')"
+            :aria-label="showPassword ? hideText : showText"
             @keyup.enter="$emit('enter')"
             :data-testid="`btn-show-password-${testid}`">
             <FrIcon
@@ -197,6 +197,20 @@ export default {
       type: Boolean,
       default: false,
     },
+    /**
+     * aria-label for the show button
+     */
+    ariaLabelShow: {
+      type: String,
+      default: '',
+    },
+    /**
+     * aria-label for the hide button
+     */
+    ariaLabelHide: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
@@ -216,6 +230,12 @@ export default {
     }
   },
   computed: {
+    showText() {
+      return this.ariaLabelShow || this.$t('common.showPassword');
+    },
+    hideText() {
+      return this.ariaLabelHide || this.$t('common.hidePassword');
+    },
     fieldType() {
       if (this.type === 'number') {
         return 'number';
