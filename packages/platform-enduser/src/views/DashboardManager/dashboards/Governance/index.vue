@@ -59,7 +59,7 @@ import FrCountCard from '@forgerock/platform-shared/src/components/CountCard';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import Welcome from '@/views/DashboardManager/dashboards/widgets/WelcomeWidget';
 import { getCertificationItems } from '@/api/governance/AccessReviewApi';
-import { getRequestsItems, getApprovalsItems } from '@/api/governance/AccessRequestApi';
+import { getUserRequests, getUserApprovals } from '@/api/governance/AccessRequestApi';
 
 /**
  * @description Controlling component for the governance dashboard
@@ -80,12 +80,17 @@ export default {
       loadingPendingRequests: false,
       pendingApprovalsCount: 0,
       pendingRequestsCount: 0,
+      queryParams: {
+        pageSize: 0,
+        status: 'in-progress',
+      },
     };
   },
   computed: {
     ...mapState({
       isGovernanceEnabledV3: (state) => state.SharedStore.governanceEnabledV3,
       userDetails: (state) => state.UserStore,
+      userId: (state) => state.UserStore.userId,
     }),
   },
   mounted() {
@@ -116,7 +121,7 @@ export default {
     },
     getPendingRequestsCount() {
       this.loadingPendingRequests = true;
-      getRequestsItems({ status: 'pending' })
+      getUserRequests(this.userId, this.queryParams)
         .then((resourceData) => {
           this.pendingRequestsCount = get(resourceData, 'data.totalCount', 0);
         })
@@ -129,7 +134,7 @@ export default {
     },
     getPendingApprovalsCount() {
       this.loadingPendingApprovals = true;
-      getApprovalsItems({ status: 'pending' })
+      getUserApprovals(this.userId, this.queryParams)
         .then((resourceData) => {
           this.pendingApprovalsCount = get(resourceData, 'data.totalCount', 0);
           this.$store.commit('setApprovalsCount', this.pendingApprovalsCount);
