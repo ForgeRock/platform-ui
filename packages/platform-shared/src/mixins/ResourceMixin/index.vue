@@ -3,6 +3,7 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <script>
+/* eslint-disable no-restricted-syntax */
 import {
   cloneDeep,
   each,
@@ -17,6 +18,7 @@ import {
   toNumber,
 } from 'lodash';
 import PasswordPolicyMixin from '@forgerock/platform-shared/src/mixins/PasswordPolicyMixin';
+import { getManagedResourceCount } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 
 /**
  * @description Resource management mixin used for generating an update patch and handling policy errors
@@ -180,6 +182,67 @@ export default {
     removeHelpText() {
       this.hasFocus = false;
       this.searchHelpText = '';
+    },
+    /**
+     * Gets the minimumUIFilterLength setting from uiConfig and if no setting exists there does a _countOnly query
+     * on the specified managed object then if the number of records exceeds 1000 the minimumUIFilterLength is set to 3
+     * else it is set to 0.
+     *
+     * @param {string} managedObjectName - Required name of managed object to get minimumUIFilterLength for
+     * @returns {number} number representing minimumUIFilterLength
+     */
+    async getMinimumUIFilterLength(managedObjectName) {
+      const defaultMinimumUIFilterLength = 3;
+      const numRecordsForIntervention = 1000;
+      const { uiConfig, managedObjectMinimumUIFilterLength } = this.$store.state.SharedStore;
+      let minimumUIFilterLength = 0;
+      // check the SharedStore first to see if the minimumUIFilterLength value has already been set for this managed object
+      if (has(uiConfig.configuration?.platformSettings?.managedObjectsSettings, `${managedObjectName}.minimumUIFilterLength`)) {
+        // the setting exists in uiConfig so it takes precedence
+        minimumUIFilterLength = uiConfig.configuration.platformSettings.managedObjectsSettings[managedObjectName].minimumUIFilterLength;
+      } else if (has(managedObjectMinimumUIFilterLength, managedObjectName)) {
+        // the setting has already been calculated by getting a count on the object's dataset
+        minimumUIFilterLength = managedObjectMinimumUIFilterLength[managedObjectName];
+      } else if (managedObjectName === 'internalrole') {
+        // special case for internalrole if an override is not already set in uiConfig.configuration?.platformSettings?.managedObjectsSettings
+        // set it to zero
+        minimumUIFilterLength = 0;
+      } else if (this.$store.state.UserStore.adminUser) {
+        // this user has openidm-admin role so they are allowed to get the count of the whole managed object's dataset
+        const result = await getManagedResourceCount(managedObjectName);
+        // based on resultCount set a value in SharedStore.managedObjectMinimumUIFilterLength for this managed object
+        // this will keep the number of calls to getManagedResourceCount() to a minimum
+        if (result?.data.resultCount > numRecordsForIntervention) {
+          // the object meets the criteria for intervention
+          // set it to defaultMinimumUIFilterLength
+          this.$store.commit('SharedStore/setManagedObjectMinimumUIFilterLength', { managedObjectName, val: defaultMinimumUIFilterLength });
+          minimumUIFilterLength = defaultMinimumUIFilterLength;
+        } else {
+          // the object does not have enough records to cause a performance degredation
+          // set it to zero
+          this.$store.commit('SharedStore/setManagedObjectMinimumUIFilterLength', { managedObjectName, val: 0 });
+          minimumUIFilterLength = 0;
+        }
+      } else {
+        // this is a delegated admin user who does not have access to the getManagedResourceCount request above and there is no uiConfig setting
+        // set to defaultMinimumUIFilterLength as a catch all
+        minimumUIFilterLength = defaultMinimumUIFilterLength;
+      }
+
+      return minimumUIFilterLength;
+    },
+    /**
+     * Gets minimumUIFilterLength setting for each manage object
+     *
+     * @param {array} managedObjects - Required array of managed object schemas
+     * @returns {object} an object with a property with the name of the managed object who's value is minimumUIFilterLength for said object
+     */
+    async getAllMinimumUIFilterLengthSettings(managedObjects) {
+      const minimumUIFilterLengthSettings = {};
+      for await (const managedObject of managedObjects) {
+        minimumUIFilterLengthSettings[managedObject.name] = await this.getMinimumUIFilterLength(managedObject.name);
+      }
+      return minimumUIFilterLengthSettings;
     },
   },
 };

@@ -143,6 +143,7 @@ import TimeConstraint from '@forgerock/platform-shared/src/components/TimeConstr
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 // import vue-multiselect from src because dist min/uglified package gets removed in build
 import VueMultiSelect from '../../../../../../node_modules/vue-multiselect/src/index';
 
@@ -156,7 +157,10 @@ export default {
     FrIcon,
     FrTimeConstraint: TimeConstraint,
   },
-  mixins: [NotificationMixin],
+  mixins: [
+    NotificationMixin,
+    ResourceMixin,
+  ],
   props: {
     closeOnSelect: {
       type: Boolean,
@@ -306,12 +310,15 @@ export default {
         this.searchPlaceholder = this.$t('common.placeholders.typeToSearchFor', { item: this.label || this.resourceCollection.label });
       }
     },
-    setOptions(query) {
+    async setOptions(query) {
+      const [resourceType, managedObjectName] = this.resourceCollection.path.split('/');
+      let resourceName = managedObjectName;
+      if (resourceType === 'internal' && managedObjectName === 'role') {
+        resourceName = 'internalrole';
+      }
+      const queryThreshold = await this.getMinimumUIFilterLength(resourceName);
       const maxPageSize = 10;
       const { fields: displayFields } = this.resourceCollection.query;
-      const { uiConfig } = this.$store.state.SharedStore;
-      const [resourceType, managedObjectName] = this.resourceCollection.path.split('/');
-      const queryThreshold = has(uiConfig.configuration.platformSettings.managedObjectsSettings, managedObjectName) ? uiConfig.configuration.platformSettings.managedObjectsSettings[managedObjectName].minimumUIFilterLength : null;
       const queryFilter = true;
       let requestEnabled = true;
 
