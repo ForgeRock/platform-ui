@@ -66,9 +66,9 @@ export function getManagedRelationshipList(resourceName, resourceId, relationshi
  *   pagedResultsOffset: String,
  * }
  */
-export function getManagedResourceList(resourceName, params) {
+export function getManagedResourceList(resourceName, params, requestOverride) {
   const resourceUrl = `managed/${resourceName}${encodeQueryString(params)}`;
-  return generateIdmApi().get(resourceUrl);
+  return generateIdmApi(requestOverride).get(resourceUrl);
 }
 
 export function postManagedResource(resourceName, data, routeToForbidden = true) {
@@ -97,4 +97,16 @@ export function putManagedResource(resourceName, resourceId, data, requestOverri
 export function getLinkedApplications(resourceName, userId) {
   const resourceUrl = `sync?_action=getLinkedResources&resourceName=managed/${resourceName}/${userId}`;
   return generateIdmApi().post(resourceUrl);
+}
+
+export function getManagedResourceCount(resourceName) {
+  const managedResourceParams = {
+    countOnly: true,
+    queryFilter: 'true',
+    totalPagedResultsPolicy: 'EXACT',
+  };
+  const headers = {
+    'accept-api-version': 'protocol=2.2,resource=1.0',
+  };
+  return getManagedResourceList(resourceName, managedResourceParams, { headers });
 }

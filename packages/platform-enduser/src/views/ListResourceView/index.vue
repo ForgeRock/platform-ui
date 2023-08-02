@@ -72,12 +72,12 @@ import {
   pick,
 } from 'lodash';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
+import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import FrListResource from '@forgerock/platform-shared/src/components/resource/ListResource';
 import FrCreateResource from '@forgerock/platform-shared/src/components/resource/CreateResource';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { getManagedResourceList, deleteManagedResource } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { getInternalResourceList, deleteInternalResource } from '@forgerock/platform-shared/src/api/InternalResourceApi';
-import { getConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
@@ -91,6 +91,7 @@ export default {
   name: 'ListResourceView',
   mixins: [
     NotificationMixin,
+    ResourceMixin,
     RestMixin,
     TranslationMixin,
   ],
@@ -128,8 +129,7 @@ export default {
     axios.all([
       getSchema(`${this.$route.params.resourceType}/${this.$route.params.resourceName}`),
       idmInstance.get(`privilege/${this.$route.params.resourceType}/${this.$route.params.resourceName}`),
-      getConfig('ui/configuration'),
-    ]).then(axios.spread((schema, privilege, uiConfig) => {
+    ]).then(axios.spread((schema, privilege) => {
       let { resourceName } = this.$route.params;
 
       if (resourceName === 'role' && this.$route.params.resourceType === 'internal') {
@@ -140,11 +140,11 @@ export default {
         this.displayName = schema.data.title;
       }
 
-      if (has(uiConfig.data.configuration.platformSettings.managedObjectsSettings, resourceName)) {
-        this.queryThreshold = uiConfig.data.configuration.platformSettings.managedObjectsSettings[resourceName].minimumUIFilterLength || null;
-      }
+      this.getMinimumUIFilterLength(resourceName).then((minimumUIFilterLength) => {
+        this.queryThreshold = minimumUIFilterLength;
 
-      this.setPrivileges(privilege, schema);
+        this.setPrivileges(privilege, schema);
+      });
     }), (error) => {
       this.displayNotification('error', error.response.data.message);
     });
