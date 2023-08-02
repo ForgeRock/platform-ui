@@ -37,24 +37,6 @@ export function requestAction(requestId, action, phaseName, comments, updatedAct
   // return generateIgaApi().post('/requests/{requestId}/phases/{phaseName}/comment', { comment });
 }
 
-export function getRequestsItems(userId, params) {
-  return Promise.resolve({
-    data: {
-      totalCount: 0,
-    },
-  });
-  // return generateIgaApi().get(`/user/${userId}/requests`);
-}
-
-export function getApprovalsItems(userId, params) {
-  return Promise.resolve({
-    data: {
-      totalCount: 0,
-    },
-  });
-  // return generateIgaApi().get(`/user/${userId}/approvals`);
-}
-
 export function saveNewRequest(payload) {
   return generateIgaApi().post('governance/requests?_action=create', payload);
 }
