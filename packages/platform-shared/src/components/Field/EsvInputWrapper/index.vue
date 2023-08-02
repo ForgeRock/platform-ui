@@ -36,7 +36,7 @@ import FrDurationInput from '@forgerock/platform-shared/src/components/Field/Dur
 import FrJsonInput from '@forgerock/platform-shared/src/components/Field/JsonInput';
 import FrKeyValueList from '@forgerock/platform-shared/src/components/Field/KeyValueList';
 import FrMultiselect from '@forgerock/platform-shared/src/components/Field/Multiselect';
-import FrSelect from '@forgerock/platform-shared/src/components/Field/Select';
+import FrSelect from '@forgerock/platform-shared/src/components/Field/SelectInput';
 import FrSelectWithActions from '@forgerock/platform-shared/src/components/Field/SelectWithActions';
 import FrSpinButton from '@forgerock/platform-shared/src/components/Field/SpinButton';
 import FrSwitch from '@forgerock/platform-shared/src/components/Field/Switch';

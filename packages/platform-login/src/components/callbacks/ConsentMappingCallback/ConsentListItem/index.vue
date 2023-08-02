@@ -1,14 +1,11 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <li class="list-group-item text-left">
     <BMedia>
-      <template v-slot:aside>
+      <template #aside>
         <BImg
           :alt="displayName"
           :src="icon"

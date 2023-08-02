@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -7,7 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     variant="outline-secondary">
     <template
       v-if="active"
-      v-slot:button-content>
+      #button-content>
       <FrIcon
         class="mr-md-2 text-success"
         name="check_circle"
@@ -17,7 +17,7 @@ of the MIT license. See the LICENSE file for details. -->
     </template>
     <template
       v-else
-      v-slot:button-content>
+      #button-content>
       <span>{{ $t('common.inactive') }}</span>
     </template>
 

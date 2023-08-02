@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -58,7 +58,7 @@ of the MIT license. See the LICENSE file for details. -->
         </template>
       </div>
 
-      <template v-slot:modal-footer="{ cancel }">
+      <template #modal-footer="{ cancel }">
         <BButton
           variant="link"
           @click="cancel()">
@@ -89,7 +89,6 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import QueryFilterBuilder from '@forgerock/platform-shared/src/components/filterBuilder/QueryFilterBuilder';
 import FrField from '@forgerock/platform-shared/src/components/Field';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 
 export default {

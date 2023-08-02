@@ -10,12 +10,12 @@ of the MIT license. See the LICENSE file for details. -->
     :size="size"
     :thickness="thickness"
     :empty-thickness="emptyThickness">
-    <template v-slot:default="{ counterTick }">
+    <template #default="{ counterTick }">
       <slot
         name="count"
         :count="counterTick" />
     </template>
-    <template v-slot:legend-caption>
+    <template #legend-caption>
       <slot name="caption" />
     </template>
   </VueEllipseProgress>

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -45,7 +45,7 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
       <template
         v-for="(key, slotName) in $scopedSlots"
-        v-slot:[slotName]="slotData">
+        #[slotName]="slotData">
         <!-- @slot passthrough slot -->
         <slot
           :name="slotName"
@@ -54,7 +54,7 @@ of the MIT license. See the LICENSE file for details. -->
     </VueMultiSelect>
     <template
       v-for="(key, slotName) in $scopedSlots"
-      v-slot:[slotName]="slotData">
+      #[slotName]="slotData">
       <!-- @slot passthrough slot -->
       <slot
         :name="slotName"
@@ -79,7 +79,7 @@ import InputMixin from '../Wrapper/InputMixin';
  *  @param {String} value default ''
  */
 export default {
-  name: 'Select',
+  name: 'SelectInput',
   mixins: [InputMixin],
   components: {
     FrInputLayout,

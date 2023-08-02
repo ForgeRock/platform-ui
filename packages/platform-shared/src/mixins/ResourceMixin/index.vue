@@ -126,7 +126,6 @@ export default {
           let type = 'string';
 
           if (!isUndefined(schemaProps) && !isUndefined(schemaProps[field])) {
-            // eslint-disable-next-line prefer-destructuring
             type = schemaProps[field].type;
           }
 

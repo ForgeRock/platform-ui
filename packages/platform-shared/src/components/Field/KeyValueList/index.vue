@@ -219,7 +219,6 @@ export default {
     };
   },
   mounted() {
-    // eslint-disable-next-line no-underscore-dangle
     this.id = this._uid;
     if (this.showInitialAdd) {
       this.showAdd();

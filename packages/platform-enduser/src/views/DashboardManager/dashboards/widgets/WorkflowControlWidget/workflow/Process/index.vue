@@ -74,7 +74,6 @@ export default {
   methods: {
     cancel() {
       this.reset();
-      // eslint-disable-next-line no-underscore-dangle
       this.$emit('cancel', this.processDefinition._id);
     },
     reset() {

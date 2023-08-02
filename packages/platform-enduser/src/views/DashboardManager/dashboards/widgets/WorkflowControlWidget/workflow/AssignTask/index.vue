@@ -59,7 +59,6 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-/* eslint-disable no-underscore-dangle */
 import { isEmpty } from 'lodash';
 import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 import axios from 'axios';

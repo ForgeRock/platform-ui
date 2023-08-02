@@ -43,7 +43,7 @@ of the MIT license. See the LICENSE file for details. -->
       @change="onFileChange"
       accept=".js, .groovy"
       :placeholder="fieldPlaceholder">
-      <template v-slot:file-name>
+      <template #file-name>
         <FrField
           v-model="filePathModel"
           class="file-import-floating-label"
@@ -195,6 +195,7 @@ export default {
       jsonStructured: true,
       code: '',
       currentJSONCode: '',
+      fileChanged: false,
       fieldPlaceholder: this.$t('scriptEditor.uploadFile'),
       filePathModel: '',
       jsonEditToggle: false,
@@ -343,7 +344,7 @@ export default {
      * @param {Object} event - metadata containing details of selected file
      */
     onFileChange(event) {
-      delete this.value.file;
+      this.fileChanged = true;
       const file = event.target.files[0];
       const fileComponents = file.name.split('.');
       if (fileComponents[fileComponents.length - 1] === 'js') {
@@ -371,7 +372,7 @@ export default {
         type,
         globals,
       };
-      if (this.value && this.value.file) {
+      if (this.value?.file && !this.fileChanged) {
         scriptObject.file = this.value.file;
       } else {
         scriptObject.source = this.code;

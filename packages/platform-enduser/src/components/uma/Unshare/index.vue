@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -8,7 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
     ref="fsModal"
     cancel-variant="outline-secondary"
     @keydown.enter.native.prevent="unshare">
-    <template v-slot:modal-header>
+    <template #modal-header>
       <div class="d-flex w-100 h-100">
         <h6 class="my-0">
           {{ $t('pages.uma.resources.unshareResource', {resourceName: resourceName}) }}
@@ -25,7 +25,7 @@ of the MIT license. See the LICENSE file for details. -->
       </div>
     </template>
     {{ $t('pages.uma.resources.warningMessage') }}
-    <template v-slot:modal-footer="{ cancel }">
+    <template #modal-footer="{ cancel }">
       <BButton
         variant="outline-secondary mr-2"
         @click="cancel()">

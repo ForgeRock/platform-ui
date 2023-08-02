@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -14,7 +14,7 @@ of the MIT license. See the LICENSE file for details. -->
     <div v-else>
       {{ $t('statePanel.body', { type: translatedItemType.toLowerCase(), futureState: futureState.toLowerCase() }) }}
     </div>
-    <template v-slot:modal-footer="{ cancel }">
+    <template #modal-footer="{ cancel }">
       <BButton
         variant="link"
         :class="`text-${variant}`"
