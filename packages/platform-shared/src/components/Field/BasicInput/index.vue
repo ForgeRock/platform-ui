@@ -17,7 +17,7 @@ of the MIT license. See the LICENSE file for details. -->
       :label="label"
       :validation="validation"
       :validation-immediate="validationImmediate">
-      <template v-slot="{ labelHeight }">
+      <template #default="{ labelHeight }">
         <!--
         slot scoped variable labelHeight is used to change the height of the input as follows:
         - the label height is calculated as labelHeight + 2px (border of label)
@@ -115,7 +115,7 @@ of the MIT license. See the LICENSE file for details. -->
 
       <template
         v-for="(key, slotName) in $scopedSlots"
-        v-slot:[slotName]="slotData">
+        #[slotName]="slotData">
         <!-- @slot passthrough slot -->
         <slot
           :name="slotName"

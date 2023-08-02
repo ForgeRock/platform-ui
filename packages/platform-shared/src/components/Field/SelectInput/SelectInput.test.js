@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -8,10 +8,10 @@
 import Vue from 'vue';
 import { mount } from '@vue/test-utils';
 import i18n from '@/i18n';
-import Select from './index';
+import SelectInput from './index';
 import { findByTestId } from '../../../utils/testHelpers';
 
-describe('Select', () => {
+describe('SelectInput', () => {
   const defaultProps = {
     name: 'stub-name',
     testid: 'stub-testid',
@@ -19,7 +19,7 @@ describe('Select', () => {
   };
 
   function setup(props) {
-    return mount(Select, {
+    return mount(SelectInput, {
       i18n,
       propsData: {
         ...defaultProps,
@@ -62,7 +62,7 @@ describe('Select', () => {
     });
   });
 
-  it('Select input component process options prop from array', () => {
+  it('SelectInput component process options prop from array', () => {
     const wrapper = setup({ options: ['a', 'b', 'c'] });
 
     const expected = [
@@ -74,7 +74,7 @@ describe('Select', () => {
     expect(wrapper.vm.selectOptions).toEqual(expected);
   });
 
-  it('Select input component passes through options object prop', () => {
+  it('SelectInput component passes through options object prop', () => {
     const options = [
       { text: 'd', value: 'd' },
       { text: 'e', value: 'e' },
@@ -86,7 +86,7 @@ describe('Select', () => {
     expect(wrapper.vm.selectOptions).toEqual(options);
   });
 
-  it('Select input component renders the options', () => {
+  it('SelectInput component renders the options', () => {
     const wrapper = setup({ options: ['a', 'b', 'c'] });
 
     const select = wrapper.find('.multiselect');
@@ -96,7 +96,7 @@ describe('Select', () => {
     expect(elements.length).toBe(3);
   });
 
-  it('Select input component Closes Dropdown', () => {
+  it('SelectInput component Closes Dropdown', () => {
     const wrapper = setup({ options: ['a', 'b', 'c'], label: 'testLabel' });
 
     wrapper.vm.floatLabels = true;
@@ -107,8 +107,8 @@ describe('Select', () => {
     expect(wrapper.vm.floatLabels).toBe(true);
   });
 
-  it('Select input component Closes Dropdown without floating label', async () => {
-    const closeDropDownSpy = jest.spyOn(Select.methods, 'closeDropDown');
+  it('SelectInput component Closes Dropdown without floating label', async () => {
+    const closeDropDownSpy = jest.spyOn(SelectInput.methods, 'closeDropDown');
     const wrapper = setup({ options: ['a', 'b', 'c'], label: 'testLabel', floatingLabel: false });
 
     expect(wrapper.vm.floatLabels).toBe(false);
@@ -117,7 +117,7 @@ describe('Select', () => {
     expect(wrapper.vm.floatLabels).toBe(false);
   });
 
-  it('Select input component allows single selections', () => {
+  it('SelectInput component allows single selections', () => {
     const wrapper = setup({ options: ['a', 'b', 'c'] });
 
     const select = wrapper.find('.multiselect');
@@ -132,8 +132,8 @@ describe('Select', () => {
     expect(wrapper.vm.inputValue).toEqual({ text: 'a', value: 'a' });
   });
 
-  it('Select passes through component slots', () => {
-    const wrapper = mount(Select, {
+  it('SelectInput passes through component slots', () => {
+    const wrapper = mount(SelectInput, {
       i18n,
       propsData: {
         ...defaultProps,
@@ -160,7 +160,7 @@ describe('Select', () => {
     wrapper.setProps({ value: 'b' });
     await wrapper.vm.$nextTick();
 
-    // Check that the select shows the correct initial text
+    // Check that the SelectInput shows the correct initial text
     expect(wrapper.find('.multiselect__single').text()).toBe('bee');
 
     wrapper.setProps({
@@ -174,7 +174,7 @@ describe('Select', () => {
     expect(wrapper.find('.multiselect__single').text()).toBe('beegees?');
   });
 
-  it('Select removes float for blank values', async () => {
+  it('SelectInput removes float for blank values', async () => {
     const wrapper = setup({
       options: [
         { text: 'ayy', value: 'a' },
@@ -192,7 +192,7 @@ describe('Select', () => {
     expect(wrapper.vm.floatLabels).toBe(false);
   });
 
-  it('Select removes float for blank values without floating label', () => {
+  it('SelectInput removes float for blank values without floating label', () => {
     const wrapper = setup({
       options: [
         { text: 'ayy', value: 'a' },
@@ -207,8 +207,8 @@ describe('Select', () => {
     expect(wrapper.vm.floatLabels).toBe(false);
   });
 
-  it('Select is not autofocused on absence of prop "autofocus"', () => {
-    const wrapper = mount(Select, {
+  it('SelectInput is not autofocused on absence of prop "autofocus"', () => {
+    const wrapper = mount(SelectInput, {
       i18n,
       propsData: {
         ...defaultProps,
@@ -225,8 +225,8 @@ describe('Select', () => {
   });
 
   // TODO: to make this test work, follow guide to upgrade vue-test-utils https://vue-test-utils.vuejs.org/upgrading-to-v1/
-  it('Select is autofocused on prop "autofocus"', async () => {
-    const wrapper = mount(Select, {
+  it('SelectInput is autofocused on prop "autofocus"', async () => {
+    const wrapper = mount(SelectInput, {
       i18n,
       attachToDocument: true,
       propsData: {

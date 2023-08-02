@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -12,55 +12,55 @@ of the MIT license. See the LICENSE file for details. -->
       :key="mapping.name"
       :collapsible="mapping.consented"
       :panel-shown="false">
-      <template
-        v-slot:list-item-header
-        class="overflow-hidden">
-        <FrFallbackImage
-          :src="mapping.icon"
-          class="mr-3"
-          width="24"
-          height="24"
-          :alt="mapping.displayName"
-          fallback="settings_applications" />
-        <div
-          class="media-body"
-          style="width: 100%;">
-          <div class="d-block">
-            <h6 class="my-0">
-              {{ mapping.displayName }}
-            </h6>
-            <small class="text-muted">
-              {{ mapping.subTitle }}
-            </small>
-          </div>
-        </div>
-
-        <div class="d-flex align-self-right">
-          <BButton
-            variant="link"
-            @click.stop.prevent="showModal(mapping.name)">
-            {{ $t(`pages.profile.consent.${mapping.consented ? 'deny' : 'allow'}`) }}
-          </BButton>
+      <template #list-item-header>
+        <span class="overflow-hidden">
+          <FrFallbackImage
+            :src="mapping.icon"
+            class="mr-3"
+            width="24"
+            height="24"
+            :alt="mapping.displayName"
+            fallback="settings_applications" />
           <div
-            class="caret ml-2 my-auto list-group-item-action"
-            v-if="mapping.consented">
-            <FrIcon
-              class="font-weight-bolder md-24 mb-1 pr-0 caret-down align-self-center"
-              name="keyboard_arrow_down"
-            />
-            <FrIcon
-              class="font-weight-bolder md-24 mb-1 pr-0 caret-up align-self-center"
-              name="keyboard_arrow_up"
-            />
+            class="media-body"
+            style="width: 100%;">
+            <div class="d-block">
+              <h6 class="my-0">
+                {{ mapping.displayName }}
+              </h6>
+              <small class="text-muted">
+                {{ mapping.subTitle }}
+              </small>
+            </div>
           </div>
-        </div>
+
+          <div class="d-flex align-self-right">
+            <BButton
+              variant="link"
+              @click.stop.prevent="showModal(mapping.name)">
+              {{ $t(`pages.profile.consent.${mapping.consented ? 'deny' : 'allow'}`) }}
+            </BButton>
+            <div
+              class="caret ml-2 my-auto list-group-item-action"
+              v-if="mapping.consented">
+              <FrIcon
+                class="font-weight-bolder md-24 mb-1 pr-0 caret-down align-self-center"
+                name="keyboard_arrow_down"
+              />
+              <FrIcon
+                class="font-weight-bolder md-24 mb-1 pr-0 caret-up align-self-center"
+                name="keyboard_arrow_up"
+              />
+            </div>
+          </div>
+        </span>
 
         <BModal
           :id="mapping.name"
           :ref="mapping.name"
           size="md"
           cancel-variant="outline-secondary">
-          <template v-slot:modal-header>
+          <template #modal-header>
             <div class="d-flex w-100 h-100">
               <h5 class="modal-title align-self-center text-center">
                 {{ mapping.modalHeader }}
@@ -87,7 +87,7 @@ of the MIT license. See the LICENSE file for details. -->
               :fields="mapping.fields" />
           </BContainer>
 
-          <template v-slot:modal-footer>
+          <template #modal-footer>
             <div class="float-right">
               <BButton
                 variant="outline-secondary mr-2"
@@ -104,7 +104,7 @@ of the MIT license. See the LICENSE file for details. -->
         </BModal>
       </template>
 
-      <template v-slot:list-item-collapse-body>
+      <template #list-item-collapse-body>
         <FrAccessLevel :fields="mapping.fields" />
       </template>
     </FrListItem>

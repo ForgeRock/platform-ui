@@ -5,8 +5,6 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-/* eslint-disable indent */
-
 import { shallowMount } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
@@ -57,18 +55,18 @@ describe('EntitlementDetailsTab', () => {
   });
 
   describe('should load correctly entitlement data in template', () => {
-    it.each`
-    name                      | entitlementProp | value
-    ${'given false'}          | ${false}        | ${'false'}
-    ${'given zero'}           | ${0}            | ${'0'}
-    ${'given empty string'}   | ${''}           | ${''}
-    ${'given null'}           | ${null}         | ${blankValueIndicator}
-    ${'given undefined'}      | ${undefined}    | ${blankValueIndicator}
-    ${'given NaN'}            | ${NaN}          | ${'NaN'}
-    ${'given valid string'}   | ${'test'}       | ${'test'}
-    ${'given valid number'}   | ${10}           | ${'10'}
-    ${'given an empty array'} | ${[]}           | ${'[]'}
-    `('$name', ({ entitlementProp, value }) => {
+    const testCases = [
+      ['given false', false, 'false'],
+      ['given zero', 0, '0'],
+      ['given empty string', '', ''],
+      ['given null', null, blankValueIndicator],
+      ['given undefined', undefined, blankValueIndicator],
+      ['given NaN', NaN, 'NaN'],
+      ['given valid string', 'test', 'test'],
+      ['given valid number', 10, '10'],
+      ['given an empty array', [], '[]'],
+    ];
+    it.each(testCases)('%s', (name, entitlementProp, value) => {
       const wrapper = mountComponent({ entitlementProp });
       const elem = findByTestId(wrapper, 'entitlementProp');
       expect(elem.exists()).toBe(true);

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -41,8 +41,7 @@ describe('ObjectTypeEditor', () => {
   });
 
   it('loads data', () => {
-    wrapper.vm.loadData();
-    expect(wrapper.vm.displayProperties[0].title).toEqual('description');
+    expect(wrapper.vm.clonedDisplayProperties[0].title).toEqual('description');
 
     wrapper.setProps({
       displayProperties: [
@@ -53,8 +52,7 @@ describe('ObjectTypeEditor', () => {
         },
       ],
     });
-    wrapper.vm.loadData();
-    expect(wrapper.vm.displayProperties[0].title).toEqual('Test Key');
+    expect(wrapper.vm.clonedDisplayProperties[0].title).toEqual('Test Key');
   });
 
   it('sets singleton relationship value', () => {
@@ -79,7 +77,7 @@ describe('ObjectTypeEditor', () => {
       },
     };
     await wrapper.vm.saveResource();
-    expect(wrapper.vm.formFields.testKey).toBe('initialValue');
+    expect(wrapper.vm.oldFormFields.testKey).toBe('initialValue');
 
     const error400 = { response: { status: 400 } };
     jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => (
@@ -104,8 +102,8 @@ describe('ObjectTypeEditor', () => {
   it('updates field', () => {
     const index = 0;
     const newValue = 'newValue';
-    expect(wrapper.vm.displayProperties[0].value).toEqual('initialValue');
+    expect(wrapper.vm.clonedDisplayProperties[0].value).toEqual('initialValue');
     wrapper.vm.updateField(index, newValue);
-    expect(wrapper.vm.displayProperties[0].value).toEqual('newValue');
+    expect(wrapper.vm.clonedDisplayProperties[0].value).toEqual('newValue');
   });
 });

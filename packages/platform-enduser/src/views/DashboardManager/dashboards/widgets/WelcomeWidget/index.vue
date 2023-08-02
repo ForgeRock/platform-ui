@@ -8,7 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
     class="container my-4"
     data-testid="compactHeader">
     <BMedia>
-      <template v-slot:aside>
+      <template #aside>
         <BAvatar
           variant="link"
           size="72px"
@@ -25,7 +25,7 @@ of the MIT license. See the LICENSE file for details. -->
     data-testid="defaultHeader"
   >
     <BJumbotron class="text-center">
-      <template v-slot:header>
+      <template #header>
         <BAvatar
           variant="link"
           size="112px"
@@ -36,7 +36,7 @@ of the MIT license. See the LICENSE file for details. -->
           </span>
         </div>
       </template>
-      <template v-slot:lead>
+      <template #lead>
         <div v-if="!$store.state.isFraas">
           {{ $t('pages.dashboard.widgets.welcome.welcomeMessage') }}
         </div>

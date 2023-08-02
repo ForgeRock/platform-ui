@@ -179,7 +179,6 @@ export default {
       hover: false,
       isValidJason: true,
       listValues: [],
-      // eslint-disable-next-line vue/no-reserved-keys
       listUniqueIndex: 0,
     };
   },

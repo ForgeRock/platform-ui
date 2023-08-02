@@ -31,7 +31,7 @@ of the MIT license. See the LICENSE file for details. -->
             variant="link"
             right
             class="float-right text-muted">
-            <template v-slot:button-content>
+            <template #button-content>
               <span class="text-muted">
                 <FrIcon
                   class="md-24 mb-1"
@@ -184,7 +184,7 @@ of the MIT license. See the LICENSE file for details. -->
                   class="fr-card-menu-link float-right"
                   right
                   no-caret>
-                  <template v-slot:button-content>
+                  <template #button-content>
                     <span class="text-muted">
                       <FrIcon
                         class="md-24"

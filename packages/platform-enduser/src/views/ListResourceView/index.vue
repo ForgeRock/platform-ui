@@ -238,7 +238,6 @@ export default {
         params: {
           resourceType: this.$route.params.resourceType,
           resourceName: this.$route.params.resourceName,
-          // eslint-disable-next-line no-underscore-dangle
           resourceId: item._id,
         },
       });

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -17,16 +17,16 @@ of the MIT license. See the LICENSE file for details. -->
       :name="name"
       :value="value"
       class="card-input-element"
-      @change="$emit('change', value)"
-      @focus="$emit('change', value)"
+      @change="$emit('change', radioValue)"
+      @focus="$emit('change', radioValue)"
       :data-testid="testid">
     <BCard
       class="card-input fr-card-clickable"
       :body-class="cardBodyClass">
       <!-- @slot Provide custom content for card body -->
       <slot>
-        <div :aria-label="value">
-          {{ value }}
+        <div :aria-label="radioValue">
+          {{ radioValue }}
         </div>
       </slot>
     </BCard>
@@ -44,7 +44,7 @@ import {
 export default {
   name: 'CardRadioInput',
   model: {
-    prop: 'selected',
+    prop: 'value',
     event: 'change',
   },
   components: {
@@ -75,14 +75,14 @@ export default {
     /**
      * if initial value is equal to the value prop, will initialize as the selected input.
      */
-    selected: {
+    value: {
       type: [Number, String, Boolean],
       default: '',
     },
     /**
      * Value that selecting the input will provide
      */
-    value: {
+    radioValue: {
       type: [Number, String, Boolean],
       default: '',
     },
@@ -93,7 +93,7 @@ export default {
   },
   computed: {
     isChecked() {
-      return this.value === this.selected;
+      return this.radioValue === this.value;
     },
   },
 };

@@ -101,7 +101,7 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
       <template
         v-for="(key, slotName) in $scopedSlots"
-        v-slot:[slotName]="slotData">
+        #[slotName]="slotData">
         <!-- @slot Custom cell slot -->
         <slot
           :name="slotName"

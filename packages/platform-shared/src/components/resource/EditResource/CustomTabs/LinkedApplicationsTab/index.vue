@@ -41,7 +41,7 @@ of the MIT license. See the LICENSE file for details. -->
           :current-page="currentPage"
           @row-clicked="viewLinkedApplicationDetails($event)">
           <template
-            v-slot:cell(name)="data">
+            #cell(name)="data">
             <BMedia no-body>
               <BImg
                 class="mt-1 mr-4"

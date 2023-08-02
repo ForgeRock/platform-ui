@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -102,7 +102,7 @@ of the MIT license. See the LICENSE file for details. -->
       ref="fsModal"
       :title="$t('pages.profile.oauthApplications.removeConfirmationTitle', {applicationName: confirmApplication.name})">
       {{ $t('pages.profile.oauthApplications.removeConfirmation', {applicationName: confirmApplication.name }) }}
-      <template v-slot:modal-footer="{ cancel }">
+      <template #modal-footer="{ cancel }">
         <BButton
           class="text-danger"
           variant="link"
@@ -120,7 +120,6 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-/* eslint-disable no-underscore-dangle */
 import { mapState } from 'vuex';
 import FrAccordion from '@forgerock/platform-shared/src/components/Accordion';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';

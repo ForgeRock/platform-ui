@@ -6,7 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <div>
     <div class="card-body m-4">
       <ValidationObserver ref="observer">
-        <template v-for="(field, index) in displayProperties">
+        <template v-for="(field, index) in clonedDisplayProperties">
           <div
             v-if="(field.type === 'string' || field.type === 'number' || field.type === 'boolean') && field.encryption === undefined"
             class="mb-4"
@@ -138,6 +138,7 @@ export default {
   ],
   data() {
     return {
+      clonedDisplayProperties: [],
       oldFormFields: {},
     };
   },
@@ -145,8 +146,9 @@ export default {
     displayProperties: {
       immediate: true,
       deep: true,
-      handler() {
-        this.loadData();
+      handler(displayProperties) {
+        this.clonedDisplayProperties = cloneDeep(displayProperties);
+        this.loadData(this.clonedDisplayProperties);
       },
     },
   },
@@ -157,11 +159,11 @@ export default {
     isCloseOnSelect(field) {
       return !has(field, 'items');
     },
-    loadData() {
+    loadData(clonedDisplayProperties) {
       // make sure display properties have a title
-      this.displayProperties.forEach((displayProperty) => {
-        const hasTitle = displayProperty.title && displayProperty.title.length > 0;
-        const hasDescription = displayProperty.description && displayProperty.description.length > 0;
+      clonedDisplayProperties.forEach((displayProperty) => {
+        const hasTitle = displayProperty.title?.length > 0;
+        const hasDescription = displayProperty.description?.length > 0;
 
         if (!hasTitle && hasDescription) {
           displayProperty.title = displayProperty.description;
@@ -186,10 +188,11 @@ export default {
       const isValid = await this.$refs.observer.validate();
       if (isValid) {
         let saveData;
+        const formFields = cloneDeep(this.formFields);
 
-        this.displayProperties.forEach((field) => {
+        this.clonedDisplayProperties.forEach((field) => {
           if (field.value !== null) {
-            this.formFields[field.key] = field.value;
+            formFields[field.key] = field.value;
           }
         });
 
@@ -198,21 +201,21 @@ export default {
           const newSubProp = {};
 
           originalSubProp[this.subPropertyName] = cloneDeep(this.oldFormFields);
-          newSubProp[this.subPropertyName] = cloneDeep(this.formFields);
+          newSubProp[this.subPropertyName] = cloneDeep(formFields);
 
           saveData = this.generateUpdatePatch(originalSubProp, newSubProp);
         } else {
-          saveData = this.generateUpdatePatch(cloneDeep(this.oldFormFields), cloneDeep(this.formFields));
+          saveData = this.generateUpdatePatch(cloneDeep(this.oldFormFields), cloneDeep(formFields));
         }
 
         idmInstance.patch(this.resourcePath, saveData).then(() => {
           const resourceName = this.resourceTitle ? this.resourceTitle : this.resourcePath.split('/')[1];
-          this.oldFormFields = cloneDeep(this.formFields);
+          this.oldFormFields = cloneDeep(formFields);
           this.$emit('refresh-data');
           this.displayNotification('success', this.$t('pages.access.successEdited', { resource: resourceName }));
         },
         (error) => {
-          const generatedErrors = this.findPolicyError(error.response, this.displayProperties);
+          const generatedErrors = this.findPolicyError(error.response, this.clonedDisplayProperties);
 
           this.$refs.observer.reset();
 
@@ -233,7 +236,7 @@ export default {
       }
     },
     updateField(index, newValue) {
-      this.displayProperties[index].value = newValue;
+      this.clonedDisplayProperties[index].value = newValue;
       this.$forceUpdate();
     },
   },

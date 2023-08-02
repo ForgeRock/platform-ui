@@ -20,7 +20,7 @@ of the MIT license. See the LICENSE file for details. -->
       :class="{'polyfill-placeholder': floatLabels}"
       :disabled="disabled"
       :id="id">
-      <template v-slot="{ tags, inputAttrs, inputHandlers, removeTag }">
+      <template #default="{ tags, inputAttrs, inputHandlers, removeTag }">
         <ul
           class="overflow-hidden pl-0 mb-0"
           :id="`fr-tags-list_${id}`">

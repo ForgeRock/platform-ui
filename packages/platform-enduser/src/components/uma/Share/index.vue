@@ -1,8 +1,7 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
-<!-- eslint-disable no-underscore-dangle -->
 <template>
   <BModal
     id="shareModal"
@@ -11,7 +10,7 @@ of the MIT license. See the LICENSE file for details. -->
     cancel-variant="outline-secondary"
     @keydown.enter.native.prevent="validateResource"
     @hide="resetModal">
-    <template v-slot:modal-header>
+    <template #modal-header>
       <div class="d-flex w-100 h-100">
         <div class="media">
           <div class="d-flex mr-3 align-self-center">
@@ -58,7 +57,7 @@ of the MIT license. See the LICENSE file for details. -->
         <BFormInput
           :placeholder="$t('pages.uma.resources.shareWith')"
           v-model="newShare" />
-        <template v-slot:append>
+        <template #append>
           <BDropdown
             :text="text"
             variant="outline-secondary"
@@ -118,7 +117,7 @@ of the MIT license. See the LICENSE file for details. -->
               size="sm"
               right
               toggle-class="dropdown-toggle">
-              <template v-slot:button-content>
+              <template #button-content>
                 <span class="dropdown-toggle">
                   <span class="d-none d-sm-inline">
                     {{ $t('pages.uma.resources.permissions', { permissionScopes: permission.scopes.join(", ") }) }}
@@ -160,7 +159,7 @@ of the MIT license. See the LICENSE file for details. -->
       </ul>
     </div>
 
-    <template v-slot:modal-footer>
+    <template #modal-footer>
       <div class="w-100">
         <div>
           <BButton

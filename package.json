@@ -28,7 +28,7 @@
     "eslint-import-resolver-node": "0.3.4",
     "eslint-plugin-cypress": "2.11.1",
     "eslint-plugin-mocha": "8.1.0",
-    "eslint-plugin-vue": "5.0.0",
+    "eslint-plugin-vue": "9.15.1",
     "got": "11.8.5",
     "husky": "5.0.4",
     "jest": "26.4.2",

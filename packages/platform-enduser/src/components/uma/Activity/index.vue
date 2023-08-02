@@ -1,15 +1,12 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
-
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <template v-for="(activityGroup, index) in activityGroups">
       <FrListGroup :key="`activityGroup-${index}`">
-        <template v-slot:list-group-header>
+        <template #list-group-header>
           <div class="card-body m-0 py-4">
             <h6 class="card-title mb-0">
               {{ formatDateTitle(activityGroup.day) }}
@@ -22,7 +19,7 @@ of the MIT license. See the LICENSE file for details.
           :collapsible="false"
           :panel-shown="false"
           :hover-item="false">
-          <template v-slot:list-item-header>
+          <template #list-item-header>
             <span class="d-inline-flex w-100">
               <div class="flex-grow-1 media-body">
                 <span class="activity-type">

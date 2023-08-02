@@ -179,8 +179,7 @@ export default {
       // Compute the position of each group on the pie:
       const pie = d3.pie().value((d) => d[1]);
 
-      // eslint-disable-next-line camelcase
-      const data_ready = pie(Object.entries(data));
+      const dataReady = pie(Object.entries(data));
 
       if (!this.hideTooltip) {
         this.tooltip = d3.select(`#${this.id}`)
@@ -203,7 +202,7 @@ export default {
       // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
       svg
         .selectAll('whatever')
-        .data(data_ready)
+        .data(dataReady)
         .enter()
         .append('path')
         .attr('class', `${this.id}-tooltip`)
@@ -215,7 +214,7 @@ export default {
         .duration(1000) // controls the animation duration
         .attrTween('d', (d) => { // attrTween is used to interpolate attributes over the time
           const interpolate = d3.interpolate({ startAngle: 0, endAngle: 0 }, d); // interpolate from { startAngle: 0, endAngle: 0 } to d
-          return function (t) { return path(interpolate(t)); }; // returns the SVG path data according the interpolation over the time
+          return function interpolatePath(t) { return path(interpolate(t)); }; // returns the SVG path data according the interpolation over the time
         });
 
       if (!this.hideTooltip) {

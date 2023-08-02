@@ -26,7 +26,7 @@ of the MIT license. See the LICENSE file for details. -->
             <!-- Self -->
             <FrCardRadioInput
               class="mb-3"
-              value="self"
+              radio-value="self"
               name="requestOption"
               v-model="requestOption">
               <BMedia
@@ -52,7 +52,7 @@ of the MIT license. See the LICENSE file for details. -->
             <!-- Other users -->
             <FrCardRadioInput
               class="mb-3"
-              value="others"
+              radio-value="others"
               name="requestOption"
               v-model="requestOption">
               <BMedia

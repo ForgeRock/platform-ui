@@ -21,7 +21,7 @@ of the MIT license. See the LICENSE file for details. -->
       v-else>
       {{ $t('deletePanel.body', { type: translatedItemType.toLowerCase() }) }}
     </div>
-    <template v-slot:modal-footer="{ cancel }">
+    <template #modal-footer="{ cancel }">
       <BButton
         variant="link"
         class="text-danger"

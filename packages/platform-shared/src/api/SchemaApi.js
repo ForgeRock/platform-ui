@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -24,8 +24,7 @@ const setSchemaProperties = (schema) => {
         // If the property is nullable type will be an array so we need to grab the first array item that is not null to determine property type
         if (isArray(prop.type)) {
           prop.isNullable = true;
-          // eslint-disable-next-line prefer-destructuring
-          prop.type = reject(prop.type, 'null')[0];
+          [prop.type] = reject(prop.type, 'null');
         }
       }
     });

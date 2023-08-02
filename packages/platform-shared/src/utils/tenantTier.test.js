@@ -5,7 +5,6 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-/* eslint-disable import/prefer-default-export */
 import { getTierColor } from './tenantTier';
 
 describe('getTierColor function', () => {

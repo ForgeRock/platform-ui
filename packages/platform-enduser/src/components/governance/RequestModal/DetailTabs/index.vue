@@ -43,7 +43,7 @@ import {
   BBadge, BTabs, BTab,
 } from 'bootstrap-vue';
 import FrComments from './Comments';
-import FrDetails from './Details';
+import FrRequestModalDetails from './RequestModalDetails';
 import FrWorkflow from './Workflow';
 
 export default {
@@ -53,7 +53,7 @@ export default {
     BTabs,
     BTab,
     FrComments,
-    FrDetails,
+    FrRequestModalDetails,
     FrWorkflow,
   },
   props: {
@@ -66,7 +66,7 @@ export default {
     return {
       tabs: [
         {
-          component: 'FrDetails',
+          component: 'FrRequestModalDetails',
           title: this.$t('common.details'),
         },
         {

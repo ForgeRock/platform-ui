@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -26,7 +26,7 @@ of the MIT license. See the LICENSE file for details. -->
         <BTab
           title="Requests"
           v-if="requests.length > 0">
-          <template v-slot:title>
+          <template #title>
             {{ $t('pages.uma.notifications.requests') }} <BBadge
               pill
               variant="danger">
@@ -35,14 +35,14 @@ of the MIT license. See the LICENSE file for details. -->
           </template>
           <FrRequests
             :requests="requests"
-            @finalizeResourceAccess="finalizeResourceAccess" />
+            @finalize-resource-access="finalizeResourceAccess" />
         </BTab>
       </BTabs>
       <div v-else>
         <FrCenterCard
           :show-logo="false"
           class="mt-5">
-          <template v-slot:center-card-body>
+          <template #center-card-body>
             <BCardBody>
               <img
                 :src="require('@/assets/images/empty-box.svg')"
@@ -81,11 +81,11 @@ import { mapState } from 'vuex';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrCenterCard from '@forgerock/platform-shared/src/components/CenterCard';
-import Activity from '@/components/uma/Activity';
-import Requests from '@/components/uma/Requests';
-import Resources from '@/components/uma/Resources';
-import Share from '@/components/uma/Share';
-import Unshare from '@/components/uma/Unshare';
+import FrActivity from '@/components/uma/Activity';
+import FrRequests from '@/components/uma/Requests';
+import FrResources from '@/components/uma/Resources';
+import FrShare from '@/components/uma/Share';
+import FrUnshare from '@/components/uma/Unshare';
 
 /**
  * @description Controlling component for sharing resources, this UI is primarily focused making use of AM and its UMA features.
@@ -98,12 +98,12 @@ export default {
     NotificationMixin,
   ],
   components: {
-    FrActivity: Activity,
+    FrActivity,
     FrCenterCard,
-    FrRequests: Requests,
-    FrResources: Resources,
-    FrShare: Share,
-    FrUnshare: Unshare,
+    FrRequests,
+    FrResources,
+    FrShare,
+    FrUnshare,
   },
   data() {
     return {
@@ -284,16 +284,17 @@ export default {
           this.displayNotification('error', error.response.data.message);
         });
     },
-    finalizeResourceAccess(id, action, config = {}) {
+    finalizeResourceAccess(id, action, index, config = {}) {
       const successMsg = action === 'approve' ? this.$t('user.sharing.requestAllowedSuccess') : this.$t('user.sharing.requestDeniedSuccess');
       const selfServiceInstance = this.getRequestService();
       const payload = { scopes: config.scopes || {} };
       // TODO Will break until updated
       const url = `${id}`; // this.amDataEndpoints.baseUrl + this.userId + this.amDataEndpoints.resourceSet + query;
+      this.requests[index].decision = true;
 
       selfServiceInstance.post(url, payload, { withCredentials: true }).then(() => {
-        if (config.onSuccess) {
-          config.onSuccess();
+        if (action === 'approve') {
+          this.requests[index].allowed = true;
         }
 
         this.delayedUpdate = true;

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -74,7 +74,7 @@ of the MIT license. See the LICENSE file for details. -->
         ref="fsModal"
         cancel-variant="outline-secondary"
         @close="setModalData('', {})">
-        <template v-slot:modal-header="{ close }">
+        <template #modal-header="{ close }">
           <div class="d-flex w-100 h-100">
             <h5
               class="modal-title my-0">
@@ -110,7 +110,7 @@ of the MIT license. See the LICENSE file for details. -->
           v-if="modalType === 'errorDelete'">
           {{ $t('pages.authenticationDevices.unableToDeleteModalText') }}
         </template>
-        <template v-slot:modal-footer="{ cancel }">
+        <template #modal-footer="{ cancel }">
           <BButton
             v-show="modalInfo.showCancel"
             variant="btn-link mr-2"

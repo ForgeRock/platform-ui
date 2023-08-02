@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -100,7 +100,6 @@ export default {
   },
   created() {
     // generate unique ids based on Vue uid for multiple color pickers on one page
-    // eslint-disable-next-line no-underscore-dangle
     this.id = this._uid;
   },
   watch: {

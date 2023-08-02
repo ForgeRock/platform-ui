@@ -7,35 +7,34 @@
 
 import addAttributesToDomNodeString from './stringDomNodeUtils';
 
-/* eslint-disable indent */
 describe('stringDomNodeUtils', () => {
   describe('addAttributesToDomNodeString', () => {
     describe('should throw error', () => {
       describe('when domNodeString is falsy', () => {
-        it.each`
-        name                    | domNodeString
-        ${'given false'}        | ${false}
-        ${'given zero'}         | ${0}
-        ${'given empty string'} | ${''}
-        ${'given null'}         | ${null}
-        ${'given undefined'}    | ${undefined}
-        ${'given NaN'}          | ${NaN}
-        `('$name', ({ domNodeString }) => {
+        const testCases = [
+          ['given false', false],
+          ['given zero', 0],
+          ['given empty string', ''],
+          ['given null', null],
+          ['given undefined', undefined],
+          ['given NaN', NaN],
+        ];
+        it.each(testCases)('%s', (name, domNodeString) => {
           expect(() => addAttributesToDomNodeString(domNodeString)).toThrowError('Please provide both parameters.');
         });
       });
 
       describe('when attributesMap is falsy', () => {
         const givenNodeString = '<p>given node string</p>';
-        it.each`
-        name                    | attributesMap
-        ${'given false'}        | ${false}
-        ${'given zero'}         | ${0}
-        ${'given empty string'} | ${''}
-        ${'given null'}         | ${null}
-        ${'given undefined'}    | ${undefined}
-        ${'given NaN'}          | ${NaN}
-        `('$name', ({ attributesMap }) => {
+        const testCases = [
+          ['given false', false],
+          ['given zero', 0],
+          ['given empty string', ''],
+          ['given null', null],
+          ['given undefined', undefined],
+          ['given NaN', NaN],
+        ];
+        it.each(testCases)('%s', (name, attributesMap) => {
           expect(() => addAttributesToDomNodeString(givenNodeString, attributesMap)).toThrowError('Please provide both parameters.');
         });
       });
