@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -72,14 +72,6 @@ describe('UMA Requests Component', () => {
       },
     });
   });
-  // TODO: Test fails on build server but passes in local environment. Need to fix for server.
-
-  // it('should format as relative time difference for events that occured today', () => {
-  //   const eventToday = new Date();
-  //   const offset = eventToday.getHours() - 1;
-
-  //   expect(wrapper.vm.$options.filters.formatTime(eventToday.setHours(offset))).toBe('an hour ago');
-  // });
 
   it('should use actual time for events on previous days', () => {
     const eventDifferentDay = new Date();
@@ -89,9 +81,9 @@ describe('UMA Requests Component', () => {
     expect(formattedTime.match(/\d{1,2}:\d{1,2} [AP]M/)).toBeTruthy();
   });
 
-  it('should emit "finalizeResourceAccess" event', () => {
-    wrapper.vm.finalizeAccess('12345', 0, 'approve');
+  it('should emit "finalize-resource-access" event', () => {
+    wrapper.vm.finalizeAccess({ _id: '12345', permissions: [] }, 0, 'approve');
 
-    expect(wrapper.emitted('finalizeResourceAccess').length).toBe(1);
+    expect(wrapper.emitted('finalize-resource-access').length).toBe(1);
   });
 });

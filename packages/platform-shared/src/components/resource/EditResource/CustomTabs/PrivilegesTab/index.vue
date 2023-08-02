@@ -79,10 +79,10 @@ of the MIT license. See the LICENSE file for details. -->
           v-if="privilegeToEdit"
           :privilege="privilegeToEdit"
           :identity-object-schema="schemaMap[privilegeToEdit.path]"
-          :disabled="privilegesField.disabled"
+          :disabled="clonedPrivilegesField.disabled"
           :excluded-names="editNames"
           @input="updatePrivilege" />
-        <template v-slot:modal-footer="{ cancel }">
+        <template #modal-footer="{ cancel }">
           <BButton
             variant="link"
             @click="cancel()">
@@ -90,7 +90,7 @@ of the MIT license. See the LICENSE file for details. -->
           </BButton>
           <BButton
             variant="primary"
-            :disabled="privilegesField.disabled || invalid"
+            :disabled="clonedPrivilegesField.disabled || invalid"
             @click="savePrivilege">
             {{ $t('common.save') }}
           </BButton>
@@ -105,12 +105,12 @@ of the MIT license. See the LICENSE file for details. -->
         body-class="p-0"
         size="xl">
         <FrAddPrivileges
-          :new-privileges="newPrivileges"
-          :privileges-field="privilegesField"
+          :privileges-field="clonedPrivilegesField"
           :schema-map="schemaMap"
           :loading="loading"
-          :existing-names="existingNames" />
-        <template v-slot:modal-footer="{ cancel }">
+          :existing-names="existingNames"
+          @new-privileges-modified="newPrivileges = $event" />
+        <template #modal-footer="{ cancel }">
           <BButton
             variant="link"
             @click="cancel()">
@@ -133,7 +133,7 @@ of the MIT license. See the LICENSE file for details. -->
       <div>
         {{ $t('pages.access.removeConfirm', { type: $t('pages.access.privilege') }) }}
       </div>
-      <template v-slot:modal-footer="{ cancel }">
+      <template #modal-footer="{ cancel }">
         <BButton
           variant="link"
           class="text-danger"
@@ -195,6 +195,7 @@ export default {
   },
   data() {
     return {
+      clonedPrivilegesField: {},
       loading: true,
       newPrivileges: [],
       privilegeToEdit: null,
@@ -246,7 +247,7 @@ export default {
   },
   computed: {
     privileges() {
-      return this.privilegesField.value || [];
+      return this.clonedPrivilegesField.value || [];
     },
     editNames() {
       return this.privileges.map((privilege, index) => {
@@ -286,7 +287,7 @@ export default {
     * Removes confirmed privilege from privileges array
     */
     removePrivilege() {
-      this.privilegesField.value.splice(this.editIndex, 1);
+      this.clonedPrivilegesField.value.splice(this.editIndex, 1);
       this.savePrivileges();
       this.$refs.removePrivilege.hide();
     },
@@ -308,7 +309,7 @@ export default {
       if (this.privilegeToEdit.accessFlags.length === 0) {
         this.showErrorMessage('', this.$t('pages.access.mustHaveOneAttributeWithRead'));
       } else {
-        this.privilegesField.value[this.editIndex] = this.privilegeToEdit;
+        this.clonedPrivilegesField.value[this.editIndex] = this.privilegeToEdit;
 
         this.savePrivileges();
       }
@@ -319,16 +320,16 @@ export default {
     saveNewPrivileges() {
       let doSave = true;
       this.newPrivileges.forEach((newPrivilege) => {
-        // if there is no privilegesField.value make one
-        if (!this.privilegesField.value) {
-          this.privilegesField.value = [];
+        // if there is no clonedPrivilegesField.value make one
+        if (!this.clonedPrivilegesField.value) {
+          this.clonedPrivilegesField.value = [];
         }
 
         if (newPrivilege.accessFlags.length === 0) {
           doSave = false;
           this.showErrorMessage('', this.$t('pages.access.mustHaveOneAttributeWithRead'));
         } else {
-          this.privilegesField.value.push(newPrivilege);
+          this.clonedPrivilegesField.value.push(newPrivilege);
         }
       });
 
@@ -346,13 +347,13 @@ export default {
         },
       });
 
-      this.privilegesField.value.forEach((privilege) => {
+      this.clonedPrivilegesField.value.forEach((privilege) => {
         if (privilege.filter === '') {
           delete privilege.filter;
         }
       });
 
-      const patch = [{ operation: 'add', field: '/privileges', value: this.privilegesField.value }];
+      const patch = [{ operation: 'add', field: '/privileges', value: this.clonedPrivilegesField.value }];
 
       idmInstance.patch(this.resourcePath, patch).then(() => {
         this.displayNotification('success', this.$t('pages.access.successEdited', { resource: capitalize(this.resourceName) }));
@@ -396,7 +397,6 @@ export default {
           });
 
           schemas.forEach((schema) => {
-            // eslint-disable-next-line no-underscore-dangle
             this.schemaMap[schema._id] = schema;
           });
 
@@ -429,6 +429,14 @@ export default {
       );
     }
     this.existingNames = this.privileges.map((privilege) => privilege.name);
+  },
+  watch: {
+    privilegesField: {
+      handler(privilegesField) {
+        this.clonedPrivilegesField = cloneDeep(privilegesField);
+      },
+      immediate: true,
+    },
   },
 };
 </script>

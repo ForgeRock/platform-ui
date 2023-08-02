@@ -5,8 +5,6 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-/* eslint-disable indent */
-
 import { mount } from '@vue/test-utils';
 import * as clipboard from 'clipboard-polyfill/text';
 import flushPromises from 'flush-promises';
@@ -355,11 +353,11 @@ describe('BasicInput', () => {
     });
 
     describe('when number field', () => {
-      it.each`
-      name                                              | value     | expectedValue
-      ${'should allow input given numeric value'}       | ${'583'}  | ${'583'}
-      ${'should prevent input given non-numeric value'} | ${'text'} | ${'0'}
-      `('$name', async ({ value, expectedValue }) => {
+      const testCases = [
+        ['should allow input given numeric value', '583', '583'],
+        ['should prevent input given non-numeric value', 'text', '0'],
+      ];
+      it.each(testCases)('%s', async (name, value, expectedValue) => {
         const wrapper = setup({ type: 'number' });
 
         const input = findByTestId(wrapper, 'input-stub-testid');

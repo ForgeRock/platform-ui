@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -7,9 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     class="fr-notification-icon align-self-center mr-4"
     :id="$t('pages.app.notifications.title')"
     right>
-    <template
-      v-slot:button-content
-    >
+    <template #button-content>
       <FrIcon
         class="mr-2 md-24"
         name="notifications"

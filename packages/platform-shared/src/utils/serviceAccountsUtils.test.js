@@ -1,11 +1,10 @@
 /**
- * Copyright (c) 2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-/* eslint-disable indent */
 import { removeEsvSubScopes, buildScopes, getPublicKey } from './serviceAccountUtils';
 
 describe('serviceAccountUtils', () => {
@@ -27,25 +26,25 @@ describe('serviceAccountUtils', () => {
     });
 
     describe('should throw error', () => {
-      it.each`
-      name                    | invalidScope
-      ${'given false'}        | ${false}
-      ${'given zero'}         | ${0}
-      ${'given empty string'} | ${''}
-      ${'given null'}         | ${null}
-      ${'given undefined'}    | ${undefined}
-      ${'given NaN'}          | ${NaN}
-      `('$name', ({ invalidScope }) => {
+      let testCases = [
+        ['given false', false],
+        ['given zero', 0],
+        ['given empty string', ''],
+        ['given null', null],
+        ['given undefined', undefined],
+        ['given NaN', NaN],
+      ];
+      it.each(testCases)('%s', (name, invalidScope) => {
         expect(() => removeEsvSubScopes(invalidScope)).toThrowError('Something went wrong. No scopes found.');
       });
 
-      it.each`
-      name                   | invalidScope
-      ${'when empty array'}  | ${[]}
-      ${'when empty object'} | ${{}}
-      ${'when string'}       | ${'string'}
-      ${'when number'}       | ${42}
-      `('$name', ({ invalidScope }) => {
+      testCases = [
+        ['when empty array', []],
+        ['when empty object', {}],
+        ['when string', 'string'],
+        ['when number', 42],
+      ];
+      it.each(testCases)('%s', (name, invalidScope) => {
         expect(() => removeEsvSubScopes(invalidScope)).toThrowError('Something went wrong, pleaser provide valid list of scopes.');
       });
     });
@@ -53,12 +52,12 @@ describe('serviceAccountUtils', () => {
 
   describe('buildScopes', () => {
     describe('should build scopes', () => {
-      it.each`
-      name                                                                                     | validScope                                                                        | expected
-      ${'when empty scopes provided, should remove empty scopes'}                              | ${['fr:idm:*', '', '', 'fr:am:*']}                                                | ${['fr:idm:*', 'fr:am:*']}
-      ${'when fr:idc:esv:* selected, should remove esv:read/esv:update/esv:restart'}           | ${['fr:idc:esv:*', 'fr:idc:esv:read', 'fr:idc:esv:update', 'fr:idc:esv:restart']} | ${['fr:idc:esv:*']}
-      ${'when esv:read/esv:update/esv:restart all selected, should replace with fr:idc:esv:*'} | ${['fr:idc:esv:read', 'fr:idc:esv:update', 'fr:idc:esv:restart']}                 | ${['fr:idc:esv:*']}
-      `('$name', ({ validScope, expected }) => {
+      const testCases = [
+        ['when empty scopes provided, should remove empty scopes', ['fr:idm:*', '', '', 'fr:am:*'], ['fr:idm:*', 'fr:am:*']],
+        ['when fr:idc:esv:* selected, should remove esv:read/esv:update/esv:restart', ['fr:idc:esv:*', 'fr:idc:esv:read', 'fr:idc:esv:update', 'fr:idc:esv:restart'], ['fr:idc:esv:*']],
+        ['when esv:read/esv:update/esv:restart all selected, should replace with fr:idc:esv:*', ['fr:idc:esv:read', 'fr:idc:esv:update', 'fr:idc:esv:restart'], ['fr:idc:esv:*']],
+      ];
+      it.each(testCases)('%s', (name, validScope, expected) => {
         const scopes = buildScopes(validScope);
         expect(scopes).toEqual(expected);
       });
@@ -66,25 +65,25 @@ describe('serviceAccountUtils', () => {
 
     describe('should throw error', () => {
       describe('when invalid scopes', () => {
-        it.each`
-        name                    | invalidScope
-        ${'given false'}        | ${false}
-        ${'given zero'}         | ${0}
-        ${'given empty string'} | ${''}
-        ${'given null'}         | ${null}
-        ${'given undefined'}    | ${undefined}
-        ${'given NaN'}          | ${NaN}
-        `('$name', ({ invalidScope }) => {
+        let testCases = [
+          ['given false', false],
+          ['given zero', 0],
+          ['given empty string', ''],
+          ['given null', null],
+          ['given undefined', undefined],
+          ['given NaN', NaN],
+        ];
+        it.each(testCases)('%s', (name, invalidScope) => {
           expect(() => buildScopes(invalidScope)).toThrowError('Something went wrong. No scopes found.');
         });
 
-        it.each`
-        name                   | invalidScope
-        ${'when empty array'}  | ${[]}
-        ${'when empty object'} | ${{}}
-        ${'when string'}       | ${'string'}
-        ${'when number'}       | ${42}
-        `('$name', ({ invalidScope }) => {
+        testCases = [
+          ['when empty array', []],
+          ['when empty object', {}],
+          ['when string', 'string'],
+          ['when number', 42],
+        ];
+        it.each(testCases)('%s', (name, invalidScope) => {
           expect(() => buildScopes(invalidScope)).toThrowError('Something went wrong, pleaser provide valid list of scopes.');
         });
       });
@@ -94,12 +93,12 @@ describe('serviceAccountUtils', () => {
   describe('getPublicKey', () => {
     describe('should return public key', () => {
       describe('given valid jwks', () => {
-        it.each`
-        name                        | validJwks | expected
-        ${'given stub-publickey'}   | ${'{"e":"AQAB","kty":"RSA","n":"stub-publickey"}'}   | ${'stub-publickey'}
-        ${'given stub-publickey-2'} | ${'{"e":"AQAB","kty":"RSA","n":"stub-publickey-2"}'} | ${'stub-publickey-2'}
-        ${'given stub-publickey-3'} | ${'{"e":"AQAB","kty":"RSA","n":"stub-publickey-3"}'} | ${'stub-publickey-3'}
-        `('$name', ({ validJwks, expected }) => {
+        const testCases = [
+          ['given stub-publickey', '{"e":"AQAB","kty":"RSA","n":"stub-publickey"}', 'stub-publickey'],
+          ['given stub-publickey-2', '{"e":"AQAB","kty":"RSA","n":"stub-publickey-2"}', 'stub-publickey-2'],
+          ['given stub-publickey-3', '{"e":"AQAB","kty":"RSA","n":"stub-publickey-3"}', 'stub-publickey-3'],
+        ];
+        it.each(testCases)('%s', (name, validJwks, expected) => {
           const publicKey = getPublicKey(validJwks);
           expect(publicKey).toBe(expected);
         });
@@ -108,15 +107,15 @@ describe('serviceAccountUtils', () => {
 
     describe('should throw error', () => {
       describe('when invalid jwks', () => {
-        it.each`
-        name                    | invalidJwks
-        ${'given false'}        | ${false}
-        ${'given zero'}         | ${0}
-        ${'given empty string'} | ${''}
-        ${'given null'}         | ${null}
-        ${'given undefined'}    | ${undefined}
-        ${'given NaN'}          | ${NaN}
-        `('$name', ({ invalidJwks }) => {
+        const testCases = [
+          ['given false', false],
+          ['given zero', 0],
+          ['given empty string', ''],
+          ['given null', null],
+          ['given undefined', undefined],
+          ['given NaN', NaN],
+        ];
+        it.each(testCases)('%s', (name, invalidJwks) => {
           expect(() => getPublicKey(invalidJwks)).toThrowError('Please provide a valid json web key set');
         });
 

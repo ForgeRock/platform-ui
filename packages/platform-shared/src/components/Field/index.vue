@@ -22,7 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
       @input="valueUpdated">
       <template
         v-for="(key, slotName) in $scopedSlots"
-        v-slot:[slotName]="slotData">
+        #[slotName]="slotData">
         <slot
           :name="slotName"
           v-bind="slotData" />
@@ -40,7 +40,7 @@ import FrDurationInput from '@forgerock/platform-shared/src/components/Field/Dur
 import FrJsonInput from '@forgerock/platform-shared/src/components/Field/JsonInput';
 import FrKeyValueList from '@forgerock/platform-shared/src/components/Field/KeyValueList';
 import FrMultiselect from '@forgerock/platform-shared/src/components/Field/Multiselect';
-import FrSelect from '@forgerock/platform-shared/src/components/Field/Select';
+import FrSelectInput from '@forgerock/platform-shared/src/components/Field/SelectInput';
 import FrSelectWithActions from '@forgerock/platform-shared/src/components/Field/SelectWithActions';
 import FrSpinButton from '@forgerock/platform-shared/src/components/Field/SpinButton';
 import FrSwitch from '@forgerock/platform-shared/src/components/Field/Switch';
@@ -65,7 +65,7 @@ export default {
     FrJsonInput,
     FrKeyValueList,
     FrMultiselect,
-    FrSelect,
+    FrSelectInput,
     FrSelectWithActions,
     FrSpinButton,
     FrSwitch,
@@ -188,7 +188,7 @@ export default {
         number: 'FrBasicInput',
         object: 'FrKeyValueList',
         password: 'FrBasicInput',
-        select: 'FrSelect',
+        select: 'FrSelectInput',
         selectWithActions: 'FrSelectWithActions',
         spinbutton: 'FrSpinButton',
         string: 'FrBasicInput',

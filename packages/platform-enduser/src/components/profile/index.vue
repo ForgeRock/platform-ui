@@ -54,14 +54,14 @@ of the MIT license. See the LICENSE file for details. -->
 import { mapState } from 'vuex';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import AccountSecurity from '@forgerock/platform-shared/src/components/profile/AccountSecurity';
-import TrustedDevices from '@forgerock/platform-shared/src/components/profile/TrustedDevices';
-import EditProfile from '@forgerock/platform-shared/src/components/profile/EditProfile';
-import AccountControls from '@/components/profile/AccountControls';
-import AuthorizedApplications from '@/components/profile/AuthorizedApplications';
-import Preferences from '@/components/profile/Preferences';
-import Consent from '@/components/profile/Consent';
-import Social from '@/components/profile/Social/';
+import FrAccountSecurity from '@forgerock/platform-shared/src/components/profile/AccountSecurity';
+import FrTrustedDevices from '@forgerock/platform-shared/src/components/profile/TrustedDevices';
+import FrEditProfile from '@forgerock/platform-shared/src/components/profile/EditProfile';
+import FrAccountControls from '@/components/profile/AccountControls';
+import FrAuthorizedApplications from '@/components/profile/AuthorizedApplications';
+import FrPreferences from '@/components/profile/Preferences';
+import FrConsent from '@/components/profile/Consent';
+import FrSocial from '@/components/profile/Social/';
 
 /**
  * @description Controlling component for profile management
@@ -84,14 +84,14 @@ export default {
     };
   },
   components: {
-    FrAccountControls: AccountControls,
-    FrAccountSecurity: AccountSecurity,
-    FrAuthorizedApplications: AuthorizedApplications,
-    FrEditProfile: EditProfile,
-    FrPreferences: Preferences,
-    FrTrustedDevices: TrustedDevices,
-    FrConsent: Consent,
-    FrSocial: Social,
+    FrAccountControls,
+    FrAccountSecurity,
+    FrAuthorizedApplications,
+    FrEditProfile,
+    FrPreferences,
+    FrTrustedDevices,
+    FrConsent,
+    FrSocial,
   },
   props: {
     theme: {

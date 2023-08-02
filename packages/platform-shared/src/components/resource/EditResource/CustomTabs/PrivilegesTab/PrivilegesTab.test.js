@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -132,10 +132,6 @@ describe('PrivilegesTab', () => {
     };
   });
 
-  it('Privileges Tab successfully loaded', () => {
-    expect(wrapper.name()).toEqual('PrivilegesTab');
-  });
-
   it('updates privilege', () => {
     expect(wrapper.vm.privilegeToEdit).toStrictEqual({
       accessFlags: [],
@@ -188,7 +184,7 @@ describe('PrivilegesTab', () => {
       },
     });
     await wrapper.vm.saveNewPrivileges();
-    expect(wrapper.vm.privilegesField.value).toStrictEqual([]);
+    expect(wrapper.vm.clonedPrivilegesField.value).toStrictEqual([]);
   });
 
   it('shows error when failing to get schema', async () => {

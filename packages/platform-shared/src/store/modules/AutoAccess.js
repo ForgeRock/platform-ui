@@ -12,7 +12,6 @@ import { getPipelineDefinition } from '../../views/AutoAccess/Pipelines/api/Pipe
 import { getUEBAClusteringExplainability, getFeatures } from '../../views/AutoAccess/Activity/api/ActivityAPI';
 import { getDataSourceDefinition, getAuthenticationDefinition } from '../../views/AutoAccess/DataSources/api/DataSourcesAPI';
 
-/* eslint-disable import/prefer-default-export */
 export default {
   Dashboard: {
     namespaced: true,

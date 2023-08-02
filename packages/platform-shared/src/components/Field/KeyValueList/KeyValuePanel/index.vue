@@ -1,16 +1,16 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <ValidationObserver v-slot="{ invalid }">
     <BFormGroup class="mb-3">
-      <FrSelect
+      <FrSelectInput
         ref="select"
         v-if="keyOptions.length"
-        v-model="value.key"
-        :name="value.keyLabel || $t('common.key')"
-        :label="value.keyLabel || $t('common.key')"
+        v-model="inputValue.key"
+        :name="keyLabel"
+        :label="keyLabel"
         :options="availableKeyOptions"
         @search-change="validateKey($event)"
         @tag="addNewKey($event)"
@@ -22,22 +22,22 @@ of the MIT license. See the LICENSE file for details. -->
             {{ $t('common.policyValidationMessages.UNIQUE') }}
           </div>
         </template>
-      </FrSelect>
+      </FrSelectInput>
       <FrBasicInput
         v-else
-        v-model="value.key"
+        v-model="inputValue.key"
         type="string"
         :autofocus="autofocus"
-        :name="value.keyLabel || $t('common.key')"
-        :label="value.keyLabel || $t('common.key')"
+        :name="keyLabel"
+        :label="keyLabel"
         :validation="validationRules" />
     </BFormGroup>
     <BFormGroup class="mb-3">
       <FrTextArea
-        v-model="value.value"
+        v-model="inputValue.value"
         validation="required"
-        :label="value.valueLabel || $t('common.value')"
-        :name="value.valueLabel || $t('common.value')" />
+        :label="valueLabel"
+        :name="valueLabel" />
     </BFormGroup>
     <div class="d-flex flex-row-reverse">
       <BButton
@@ -61,12 +61,13 @@ import {
   BFormGroup,
 } from 'bootstrap-vue';
 import {
+  cloneDeep,
   xor,
   union,
 } from 'lodash';
 import { ValidationObserver } from 'vee-validate';
 import FrBasicInput from '@forgerock/platform-shared/src/components/Field/BasicInput';
-import FrSelect from '@forgerock/platform-shared/src/components/Field/Select';
+import FrSelectInput from '@forgerock/platform-shared/src/components/Field/SelectInput';
 import FrTextArea from '@forgerock/platform-shared/src/components/Field/TextArea';
 
 /**
@@ -79,7 +80,7 @@ export default {
     BButton,
     BFormGroup,
     FrBasicInput,
-    FrSelect,
+    FrSelectInput,
     FrTextArea,
     ValidationObserver,
   },
@@ -127,15 +128,24 @@ export default {
       default: () => {},
     },
   },
+  data() {
+    return {
+      inputValue: {},
+      isTaggable: true,
+      availableKeyOptions: this.getAvailableKeyOptions({}),
+    };
+  },
+  computed: {
+    keyLabel() {
+      return this.inputValue.keyLabel || this.$t('common.key');
+    },
+    valueLabel() {
+      return this.inputValue.valueLabel || this.$t('common.value');
+    },
+  },
   mounted() {
     // disable auto complete on the vue multiselect search input
     if (this.keyOptions.length) this.$refs.select.$refs.vms.$refs.search.setAttribute('autocomplete', 'off');
-  },
-  data() {
-    return {
-      isTaggable: true,
-      availableKeyOptions: this.getAvailableKeyOptions(),
-    };
   },
   methods: {
     /**
@@ -151,10 +161,10 @@ export default {
      *
      * @returns {Array} key options
      */
-    getAvailableKeyOptions() {
-      // current value always needs to be an option
-      return this.value.key.length
-        ? union(this.keyOptions, [this.value.key])
+    getAvailableKeyOptions(inputValue) {
+      // current inputValue always needs to be an option
+      return inputValue.key?.length
+        ? union(this.keyOptions, [inputValue.key])
         : this.keyOptions;
     },
     /**
@@ -169,19 +179,26 @@ export default {
         this.availableKeyOptions = [];
       } else {
         this.isTaggable = true;
-        this.availableKeyOptions = this.getAvailableKeyOptions();
+        this.availableKeyOptions = this.getAvailableKeyOptions(this.inputValue);
       }
     },
     /**
      * Emits an input change to notify v-model that the component has updated
      */
     saveKeyValue() {
-      this.$emit('save-key-value', { key: this.value.key, value: this.value.value });
+      this.$emit('save-key-value', { key: this.inputValue.key, value: this.inputValue.value });
     },
   },
   watch: {
     keyOptions() {
-      this.availableKeyOptions = this.getAvailableKeyOptions();
+      this.availableKeyOptions = this.getAvailableKeyOptions(this.inputValue);
+    },
+    value: {
+      deep: true,
+      handler(value) {
+        this.inputValue = cloneDeep(value);
+      },
+      immediate: true,
     },
   },
 };

@@ -5,8 +5,6 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-/* eslint-disable indent */
-
 import { shallowMount } from '@vue/test-utils';
 import EntitlementsTab from './index';
 

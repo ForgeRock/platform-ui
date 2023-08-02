@@ -124,8 +124,7 @@ describe('RelationshipEdit', () => {
     const managedObjectName = wrapper.vm.resourceCollection.path.split('/')[1];
     params.fields = fields.join(',');
     params.queryFilter = `(${fieldsMap}) and ${wrapper.vm.queryFilterExtension}`;
-    /* eslint-disable prefer-destructuring */
-    params.sortKeys = fields[0];
+    [params.sortKeys] = fields;
 
     expect(wrapper.vm.allResourceCollections.length).toEqual(1);
     expect(wrapper.vm.rescourceCollectionTypes.length).toEqual(1);

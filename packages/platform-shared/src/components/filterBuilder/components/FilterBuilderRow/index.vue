@@ -46,10 +46,10 @@ of the MIT license. See the LICENSE file for details. -->
             :md="true">
             <slot
               name="valueField"
-              :inputValue="inputValue"
-              :selectedCondition="selectConditionOptions.value"
-              :selectedProp="selectPropOptions.value"
-              :ruleChange="ruleChange">
+              :input-value="inputValue"
+              :selected-condition="selectConditionOptions.value"
+              :selected-prop="selectPropOptions.value"
+              :rule-change="ruleChange">
               <FrField
                 v-model="inputValue.value"
                 name="inputValue"
