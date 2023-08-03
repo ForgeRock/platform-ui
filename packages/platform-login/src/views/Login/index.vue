@@ -323,7 +323,6 @@ import {
   resumingSuspendedTree,
   addTreeResumeDataToStorage,
   getResumeDataFromStorageAndClear,
-  shouldAbortResume,
 } from '../../utils/authResumptionUtil';
 import { getCurrentQueryString, parseParameters, replaceUrlParams } from '../../utils/urlUtil';
 
@@ -688,6 +687,7 @@ export default {
     evaluateUrlParams() {
       const paramString = getCurrentQueryString();
       const params = new URLSearchParams(paramString);
+      const realm = params.get('realm') || '/';
 
       this.setPageTitle(window.location.hash, params);
 
@@ -706,25 +706,23 @@ export default {
         this.treeId = params.get('authIndexValue');
 
         // Load tree data to resume the journey, clearing down resumption data
-        const { urlAtRedirect, step } = getResumeDataFromStorageAndClear();
+        const { realmAtRedirect, step } = getResumeDataFromStorageAndClear();
 
-        // Check if the resume operation is valid or should be aborted (this is extra platform-ui functionality on top of AM/XUI)
-        if (!shouldAbortResume(urlAtRedirect, window.location.href)) {
-          this.step = new FRStep(step.payload);
-          // Tree resumption parameters should generally only be supplied once, so we remove them from the query string after storing them in memory (see IAM-492)
-          this.treeResumptionParameters = {
-            state: params.has('state') ? params.get('state') : undefined,
-            code: params.has('code') ? params.get('code') : undefined,
-            scope: params.has('scope') ? params.get('scope') : undefined,
-            form_post_entry: params.has('form_post_entry') ? params.get('form_post_entry') : undefined,
-            responsekey: params.has('responsekey') ? params.get('responsekey') : undefined,
-          };
-          params.delete('state');
-          params.delete('code');
-          params.delete('scope');
-          params.delete('form_post_entry');
-          params.delete('responsekey');
-        }
+        this.step = new FRStep(step.payload);
+        this.realm = realmAtRedirect || realm; // IAM-4533 - use the realm from before the redirect
+        // Tree resumption parameters should generally only be supplied once, so we remove them from the query string after storing them in memory (see IAM-492)
+        this.treeResumptionParameters = {
+          state: params.has('state') ? params.get('state') : undefined,
+          code: params.has('code') ? params.get('code') : undefined,
+          scope: params.has('scope') ? params.get('scope') : undefined,
+          form_post_entry: params.has('form_post_entry') ? params.get('form_post_entry') : undefined,
+          responsekey: params.has('responsekey') ? params.get('responsekey') : undefined,
+        };
+        params.delete('state');
+        params.delete('code');
+        params.delete('scope');
+        params.delete('form_post_entry');
+        params.delete('responsekey');
       } else {
         const resourceUrlParam = params.get('resourceURL');
         if (resourceUrlParam) params.delete('resourceURL');
@@ -889,7 +887,7 @@ export default {
 
       if (expectToReturnFromRedirect) {
         // Save current step information for later resumption of tree.
-        addTreeResumeDataToStorage(this.step, window.location.href);
+        addTreeResumeDataToStorage(this.step, this.realm);
       }
 
       if (redirectByPost) {

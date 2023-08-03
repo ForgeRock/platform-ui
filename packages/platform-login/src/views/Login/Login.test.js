@@ -283,7 +283,6 @@ describe('Component Test', () => {
       // indicate that the tree is being resumed following a redirect
       const resumingSpy = jest.spyOn(authResumptionUtil, 'resumingTreeFollowingRedirect').mockReturnValue(true);
       const getStepSpy = jest.spyOn(authResumptionUtil, 'getResumeDataFromStorageAndClear').mockReturnValue({ urlAtRedirect: 'blah', step: { payload: {} } });
-      const shouldAbortResumeSpy = jest.spyOn(authResumptionUtil, 'shouldAbortResume').mockReturnValue(false);
 
       const wrapper = await mountLogin({
         methods: mockMethods,
@@ -295,7 +294,6 @@ describe('Component Test', () => {
 
       resumingSpy.mockRestore();
       getStepSpy.mockRestore();
-      shouldAbortResumeSpy.mockRestore();
     });
 
     it('Leaves tree resumption query paramters in place when not returning from a redirect', async () => {

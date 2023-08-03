@@ -69,9 +69,9 @@ function resumingSuspendedTree(routeName, urlParams) {
  * Adds data for resuming a tree into browser storage for later retrieval to resume a tree
  * @param {Step} step the SDK step to store
  */
-function addTreeResumeDataToStorage(step, urlAtRedirect) {
+function addTreeResumeDataToStorage(step, realmAtRedirect) {
   const storeData = {
-    urlAtRedirect,
+    realmAtRedirect,
     step,
   };
   localStorage.setItem(resumeDataKey, JSON.stringify(storeData));
@@ -89,62 +89,6 @@ function getResumeDataFromStorageAndClear() {
   return JSON.parse(resumeData);
 }
 
-/**
- * Determines whether a new auth URL has any extra (or altered) query parameters compared to a reference URL
- * @param {String} oldUrl old authentication URL to use as a reference
- * @param {String} newUrl new authentication URL to check against the old URL
- * @returns {Boolean} whether the two URLs are functionally equivalent
- */
-function doesNewAuthUrlContainExtraQueryParams(oldUrl, newUrl) {
-  const oldUrlSearch = new URLSearchParams(new URL(oldUrl).search);
-  const newUrlSearch = new URLSearchParams(new URL(newUrl).search);
-
-  // The AM server is authoritative on trees and realms, so we can discount realm and tree query parameters
-  oldUrlSearch.delete('realm');
-  newUrlSearch.delete('realm');
-  if (oldUrlSearch.get('authIndexType') === 'service') {
-    oldUrlSearch.delete('authIndexType');
-    oldUrlSearch.delete('authIndexValue');
-  }
-  if (newUrlSearch.get('authIndexType') === 'service') {
-    newUrlSearch.delete('authIndexType');
-    newUrlSearch.delete('authIndexValue');
-  }
-
-  const newUrlSearchSize = Array.from(newUrlSearch.keys()).length;
-  const oldUrlSearchSize = Array.from(oldUrlSearch.keys()).length;
-
-  // If the new URL has extra query parameters it indicates it has returned from redirect with extra information and we want to resume
-  if (newUrlSearchSize > oldUrlSearchSize) return true;
-
-  // If there are the same number of parameters, check if they have changed
-  let queryParamsMatch = true;
-  // eslint-disable-next-line no-restricted-syntax
-  for (const [key, value] of oldUrlSearch) {
-    queryParamsMatch = value === newUrlSearch.get(key);
-    if (queryParamsMatch === false) break;
-  }
-
-  return !queryParamsMatch;
-}
-
-/**
- * Determines whether the tree resumption should be aborted.
- * We don't want to resume if it looks like the user has returned to or switched tree,
- * rather than continuing with their redirect. This could happen if the user has clicked
- * back in the browser (IAM-2927) or used a link or their URL bar to return to the platform-login
- * without data to continue the tree.
- * @param {String} urlAtRedirect auth URL when the user was redirected away from platform-login
- * @param {String} urlAtResume auth URL when the user resumed a tree with from platform-login
- * @returns {Boolean} whether the current tree resume operation is invalid and should be aborted
- */
-function shouldAbortResume(urlAtRedirect, urlAtResume) {
-  const returnUrlHasExtraData = doesNewAuthUrlContainExtraQueryParams(urlAtRedirect, urlAtResume);
-
-  // Abort resume if there are no extra params in the return URL
-  return !returnUrlHasExtraData;
-}
-
 export {
   hasReentryToken,
   clearReentryToken,
@@ -154,6 +98,4 @@ export {
   resumingSuspendedTree,
   addTreeResumeDataToStorage,
   getResumeDataFromStorageAndClear,
-  doesNewAuthUrlContainExtraQueryParams,
-  shouldAbortResume,
 };
