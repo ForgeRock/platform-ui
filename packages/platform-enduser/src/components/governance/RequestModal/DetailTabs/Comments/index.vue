@@ -5,7 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <div
-      v-if="comments.length === 0"
+      v-if="filteredComments.length === 0"
       class="px-4 py-5 h-100 text-center">
       <div
         class="mb-4 mt-3 opacity-20">
@@ -45,7 +45,7 @@ of the MIT license. See the LICENSE file for details. -->
         id="commentsList"
         class="list-feed pl-0 mb-0">
         <BMedia
-          v-for="(commentObj, index) in displayedComments"
+          v-for="(commentObj, index) in pagedComments"
           :key="index"
           tag="li"
           no-body
@@ -54,9 +54,7 @@ of the MIT license. See the LICENSE file for details. -->
             <div
               class="d-flex align-items-center justify-content-center rounded-circle bg-light mr-4 my-2"
               style="width: 2rem; height: 2rem;">
-              <FrIcon
-                name="chat_bubble_outline"
-              />
+              <FrIcon name="chat_bubble_outline" />
             </div>
             <div class="thread-line flex-grow-1 py-2" />
           </div>
@@ -96,11 +94,11 @@ of the MIT license. See the LICENSE file for details. -->
         </BMedia>
       </ul>
       <FrPagination
-        v-if="comments.length > 10"
+        v-if="filteredComments.length > 10"
         class="border-top-0"
         v-model="currentPage"
         :per-page="entriesPerPage"
-        :total-rows="comments.length"
+        :total-rows="filteredComments.length"
         @on-page-size-change="(size) => { entriesPerPage = size }"
       />
     </div>
@@ -142,11 +140,14 @@ export default {
     };
   },
   computed: {
+    filteredComments() {
+      return this.comments.filter(({ action }) => action === 'comment');
+    },
     // All comment's are included in the object but we only want to show a portion of them
-    displayedComments() {
+    pagedComments() {
       const start = (this.currentPage - 1) * this.entriesPerPage;
       const end = start + this.entriesPerPage;
-      return this.comments.slice(start, end);
+      return this.filteredComments.slice(start, end);
     },
   },
   methods: {
