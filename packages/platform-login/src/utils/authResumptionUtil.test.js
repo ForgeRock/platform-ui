@@ -11,7 +11,6 @@ import {
   doURLParamsContainAnyResumptionParameter,
   resumingTreeFollowingRedirect,
   resumingSuspendedTree,
-  doesNewAuthUrlContainExtraQueryParams,
 } from './authResumptionUtil';
 
 describe('hasReentryToken', () => {
@@ -83,21 +82,5 @@ describe('resumingSuspendedTree', () => {
     ${'Is not resuming when the route is login, the suspend param is absent and a tree param is present'}      | ${'login'} | ${'authIndexValue=1'}                 | ${false}
     `('$name', ({ routeName, paramString, expectedValue }) => {
       expect(resumingSuspendedTree(routeName, new URLSearchParams(paramString))).toBe(expectedValue);
-  });
-});
-
-describe('doesNewAuthUrlContainExtraQueryParams', () => {
-  it.each`
-    name                                                                       | oldQuery | newQuery | expectedValue
-    ${'Identifies when the newURL has more query parameters'}                  | ${''} | ${'?a=1&b=2'} | ${true}
-    ${'Identifies when the newURL has differing query parameters'}             | ${'?a=1'} | ${'?b=1'} | ${true}
-    ${'Identifies when the newURL has query parameters with different content'} | ${'?a=1'} | ${'?a=2'} | ${true}
-    ${'Identifies when the newURL has matching query parameters'}              | ${'?a=1'} | ${'?a=1'} | ${false}
-    ${'Ignores realm parameters'}                                              | ${'?realm=a&a=1'} | ${'?realm=b&a=1'} | ${false}
-    ${'Ignores service/value parameter pairs'}                                 | ${'?authIndexType=service&authIndexValue=tree1&a=1'} | ${'?authIndexType=service&authIndexValue=tree2&a=1'} | ${false}
-  `('$name', ({ oldQuery, newQuery, expectedValue }) => {
-    const oldUrl = `https://blah.com${oldQuery}`;
-    const newUrl = `https://blah.com${newQuery}`;
-    expect(doesNewAuthUrlContainExtraQueryParams(oldUrl, newUrl)).toBe(expectedValue);
   });
 });
