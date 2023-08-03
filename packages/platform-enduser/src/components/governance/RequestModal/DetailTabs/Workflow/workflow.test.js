@@ -31,7 +31,6 @@ describe('Workflow', () => {
 
     it('component should display all 4 steps', () => {
       const wrapper = createWrapper(defaultPropsData);
-      // console.log(wrapper.html());
       const listItems = wrapper.findAll('.list-workflow-item');
       expect(listItems.length).toBe(4);
       expect(listItems.at(0).text()).toContain('requestSubmitted');
@@ -42,7 +41,6 @@ describe('Workflow', () => {
 
     it('component should show 1 complete and 3 pending steps when status is provisioning', () => {
       const wrapper = createWrapper(defaultPropsData);
-      // console.log(wrapper.html());
       const listItems = wrapper.findAll('.list-workflow-item');
       expect(listItems.length).toBe(4);
       expect(listItems.at(0).text()).toContain('Jun 22, 2023'); // shows date completed
@@ -65,7 +63,6 @@ describe('Workflow', () => {
         },
       };
       const wrapper = createWrapper(propsData);
-      // console.log(wrapper.html());
       const listItems = wrapper.findAll('.list-workflow-item');
       expect(listItems.length).toBe(4);
       expect(listItems.at(0).text()).toContain('Jun 22, 2023'); // shows date completed
@@ -89,7 +86,6 @@ describe('Workflow', () => {
         },
       };
       const wrapper = createWrapper(propsData);
-      // console.log(wrapper.html());
       const listItems = wrapper.findAll('.list-workflow-item');
       expect(listItems.length).toBe(4);
       expect(listItems.at(0).text()).toContain('Jun 22, 2023'); // shows date completed

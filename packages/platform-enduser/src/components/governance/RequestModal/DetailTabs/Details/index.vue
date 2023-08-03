@@ -91,7 +91,6 @@ import {
   BBadge,
 } from 'bootstrap-vue';
 import dayjs from 'dayjs';
-import resolveImage from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import getPriorityImageSrc from '@/components/utils/governance/AccessRequestUtils';
 
@@ -124,7 +123,7 @@ export default {
       requestType: this.item.details.type,
       decision: this.setDecisionValue(this.item.rawData.decision.decision),
       requested: {
-        icon: resolveImage(this.item.details.icon),
+        icon: this.item.details.icon,
         name: this.item.details.name,
         description: this.item.details.description,
       },
