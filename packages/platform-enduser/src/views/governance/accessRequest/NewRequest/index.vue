@@ -436,7 +436,7 @@ export default {
           name: 'MyRequests',
         });
       } catch (error) {
-        this.displayNotification('error', error);
+        this.showErrorMessage(error, this.$t('governance.accessRequest.newRequest.requestErrorTitle'));
       } finally {
         this.saving = false;
       }
