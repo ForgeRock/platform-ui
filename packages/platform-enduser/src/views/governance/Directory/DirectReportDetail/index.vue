@@ -223,14 +223,15 @@ export default {
         {
           key: 'assignment',
           label: this.$t('pages.myAccess.assignment'),
-          class: '',
           sortable: false,
+          thClass: 'w-150px',
         },
         {
           key: 'actions',
           label: '',
           class: 'p-3',
           sortable: false,
+          thClass: 'w-100px',
         },
       ];
       switch (grantType) {
@@ -313,7 +314,7 @@ export default {
         await saveNewRequest(payload);
         this.displayNotification('success', this.$t('governance.accessRequest.newRequest.requestSuccess'));
       } catch (error) {
-        this.displayNotification('error', error);
+        this.showErrorMessage(error, this.$t('governance.accessRequest.newRequest.requestErrorTitle'));
       } finally {
         this.$root.$emit('bv::hide::modal', 'revoke-request-modal');
       }
