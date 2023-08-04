@@ -630,6 +630,7 @@
       "replaceTarget": "Replace target",
       "removeFromTarget": "Remove from target",
       "roleBased": "Role-based",
+      "ruleBased": "Rule-based",
       "successSavingOnTargetSystem": "Target system resource saved",
       "noOperation": "No Operation",
       "newEventText": "\/\/ Script has access to the following variables:\n\/\/ sourceObject\n\/\/ targetObject\n\/\/ existingTargetObject\n\/\/ linkQualifier \nreturn targetObject;\n\/\/ Role assignment scripts must always return targetObject, otherwise\n\/\/ other scripts and code that occur downstream of your script will\n\/\/ not work as expected. ",

@@ -254,13 +254,13 @@ export default {
     return {
       blankValueIndicator,
       directAssignment: this.$t('common.direct'),
-      dynamicAssignment: this.$t('common.dynamic'),
       isLoading: true,
       isNoResultsFirstLoad: false,
       items: [],
       paginationPage: 1,
       paginationPageSize: 10,
       roleBasedAssignment: this.$t('pages.assignment.roleBased'),
+      ruleBasedAssignment: this.$t('pages.assignment.ruleBased'),
       searchQuery: '',
       sortDesc: null,
       sortBy: null,
@@ -293,7 +293,7 @@ export default {
         case 'entitlementGrant':
           return this.grantTypeLabel(membership);
         case 'roleMembership':
-          return membership?.role?.condition ? this.dynamicAssignment : this.staticAssignment;
+          return membership?.role?.condition ? this.ruleBasedAssignment : this.directAssignment;
         default:
           return '';
       }
@@ -434,6 +434,14 @@ export default {
   }
   .w-100px {
     width: 100px;
+  }
+}
+::v-deep {
+  .w-100px {
+    width: 100px;
+  }
+  .w-150px {
+    width: 150px;
   }
 }
 </style>
