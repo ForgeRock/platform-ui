@@ -284,7 +284,7 @@ export default {
 
       const activeData = d.find((data) => data.stroke === 'solid');
       const compareData = d.find((data) => data.stroke === 'dashed');
-      const pctChange = compareData ? Math.round(((activeData.value - compareData.value) / compareData.value) * 100) : 0;
+      const pctChange = compareData ? Math.round(((activeData?.value - compareData?.value) / compareData?.value) * 100) : 0;
       const pctChangeTxtVal = Number.isInteger(pctChange) ? `${pctChange}%` : '';
 
       const content = tooltip.select('.line-chart-tooltip-content');
