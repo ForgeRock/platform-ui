@@ -56,7 +56,7 @@ export const sortKeysMap = {
   date: 'decision.startDate',
   requestedFor: 'user.userName',
   priority: 'request.common.priority',
-  id: 'id',
+  id: 'metadata.primaryKey',
 };
 
 export function getRequestFilter(filter, status) {
