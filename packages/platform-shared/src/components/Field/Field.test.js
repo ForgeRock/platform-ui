@@ -14,10 +14,8 @@ import { required, email } from 'vee-validate/dist/rules.umd';
 import i18n from '@/i18n';
 import FrField from './index';
 
-// function to clear promises and trigger timers (validation runs every 16ms)
 async function flush() {
   await flushPromises();
-  jest.runAllTimers();
 }
 
 const stubs = {
@@ -183,6 +181,9 @@ describe('Field Component', () => {
       sync: false,
       mocks: {
         $t: () => {},
+      },
+      methods: {
+        validateField: jest.fn(),
       },
       propsData: {
         type: 'object',
