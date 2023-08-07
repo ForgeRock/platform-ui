@@ -9,12 +9,12 @@
     "postinstall": "husky install",
     "test:cb": "jest --config=jest.config.crossbrowser.js",
     "test:docker:build": "docker build -t platform-ui-e2e-testrunner -f docker-e2e/Dockerfile .",
-    "test:docker:run": "docker run -it --network host -v /var/run/docker.sock:/var/run/docker.sock -v ~/.ssh:/root/.ssh -v ~/.config/gcloud:/root/.config/gcloud -e DEPLOYMENT_NAMESPACE=$USER platform-ui-e2e-testrunner"
+    "test:docker:run": "docker run -it --network host -v /var/run/docker.sock:/var/run/docker.sock -v ~/.ssh:/root/.ssh -v ~/.config/gcloud:/root/.config/gcloud -e DEPLOYMENT_NAMESPACE=$USER platform-ui-e2e-testrunner",
+    "copyright-bot": "yarn g:copyright-bot",
+    "coverage-diff": "yarn g:coverage-diff"
   },
   "devDependencies": {
     "@babel/eslint-parser": "7.22.9",
-    "@forgerock/copyright-bot": "1.0.0",
-    "@forgerock/coverage-diff": "1.0.0",
     "@testing-library/dom": "7.30.0",
     "@testing-library/jest-dom": "5.11.9",
     "@testing-library/user-event": "13.0.1",
