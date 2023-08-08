@@ -90,6 +90,7 @@ of the MIT license. See the LICENSE file for details. -->
               </template>
             </FrAccessRequestList>
             <FrPagination
+              v-if="totalRows > 0"
               v-model="currentPage"
               :per-page="pageSize"
               :total-rows="totalRows"
