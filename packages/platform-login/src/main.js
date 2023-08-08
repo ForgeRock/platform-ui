@@ -7,6 +7,7 @@
 
 import 'whatwg-fetch';
 import 'core-js/stable';
+import '@forgerock/platform-shared/src/utils/domCollectionsForEach';
 import 'regenerator-runtime/runtime';
 
 import Vue from 'vue';

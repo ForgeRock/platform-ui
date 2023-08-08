@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 const path = require('path');
+const dotenv = require('dotenv');
 
 function generateTheme() {
   let variableLoad = `
@@ -28,20 +29,31 @@ module.exports = {
   publicPath: SUBFOLDER,
   runtimeCompiler: true,
   devServer: {
-    before: (app) => {
+    setupMiddlewares: (middlewares, devServer) => {
       if (SUBFOLDER !== './') {
-        app.get(SUBFOLDER.replace(/\/$/, '$'), (req, res) => {
+        devServer.app.get(SUBFOLDER.replace(/\/$/, '$'), (req, res) => {
           res.redirect(SUBFOLDER);
         });
       } else {
-        app.all((req, res, next) => {
+        devServer.app.all((req, res, next) => {
           next();
         });
       }
+      return middlewares;
     },
-    disableHostCheck: true,
+    allowedHosts: 'all',
     host: process.env.HOST || '0.0.0.0',
     port: process.env.DEV_PORT || 8083,
+    client: {
+      webSocketURL: {
+        hostname: 'localhost',
+        pathname: 'ws',
+        port: process.env.DEV_PORT || 8083,
+      },
+    },
+    webSocketServer: process.env.NODE_ENV !== 'development' ? false : 'ws',
+    compress: false,
+    historyApiFallback: true,
   },
   chainWebpack: (config) => {
     config.module
@@ -51,6 +63,30 @@ module.exports = {
         ...options,
         rootMode: 'upward',
       }));
+
+    /**
+     * Regenerates the environment variables using the define plugin of webpack in non-development environments
+     *   - before building load the environment variables from .env file using dotenv module
+     *   - format those variables to fit the string format required by define plugin
+     *   - overwrites the formated variables to the webpack definitions
+     * This is required due to an error replacing environment variables on the final bundle where they are replaced by empty values
+     */
+    if (process.env.NODE_ENV !== 'development') {
+      config
+        .plugin('define')
+        .tap((definitions) => {
+          const envs = dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
+          const envsFormatted = Object.entries(envs.parsed).reduce((newEnvs, [key, value]) => {
+            newEnvs[key] = JSON.stringify(value);
+            return newEnvs;
+          }, {});
+          definitions[0]['process.env'] = {
+            ...definitions[0]['process.env'],
+            ...envsFormatted,
+          };
+          return definitions;
+        });
+    }
   },
   configureWebpack: {
     devtool: process.env.NODE_ENV === 'development' ? 'eval-source-map' : 'source-map',
@@ -70,6 +106,12 @@ module.exports = {
   },
   css: {
     loaderOptions: {
+      css: {
+        modules: {
+          auto: () => true,
+          mode: 'global',
+        },
+      },
       sass: {
         prependData: generateTheme(),
       },

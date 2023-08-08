@@ -14,7 +14,6 @@ export VUE_APP_BUILD_NUMBER=local
 export VUE_APP_BUILD_DATE_TIME="$(date +%s)"
 
 cd /home/app/packages/$1
-sed -i 's!\\!!g' .env
 
 if [[ -v SUBFOLDER ]]; then
     echo "Hosting under $SUBFOLDER"
