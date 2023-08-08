@@ -123,7 +123,7 @@ export default {
       this.loadingPendingRequests = true;
       getUserRequests(this.userId, this.queryParams)
         .then((resourceData) => {
-          this.pendingRequestsCount = get(resourceData, 'data.totalCount', 0);
+          this.pendingRequestsCount = get(resourceData, 'data.totalCount', 0) || 0;
         })
         .catch((error) => {
           this.showErrorMessage(error, this.$t('pages.dashboard.errorRetrievingPendingRequests'));
@@ -136,7 +136,7 @@ export default {
       this.loadingPendingApprovals = true;
       getUserApprovals(this.userId, this.queryParams)
         .then((resourceData) => {
-          this.pendingApprovalsCount = get(resourceData, 'data.totalCount', 0);
+          this.pendingApprovalsCount = get(resourceData, 'data.totalCount', 0) || 0;
           this.$store.commit('setApprovalsCount', this.pendingApprovalsCount);
         })
         .catch((error) => {
