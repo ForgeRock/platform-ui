@@ -5,8 +5,9 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
+import { mount, createWrapper } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
+import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import getPriorityImageSrc from '@/components/utils/governance/AccessRequestUtils';
 import * as CatalogApi from '@/api/governance/CatalogApi';
 import * as AccessRequestApi from '@/api/governance/AccessRequestApi';
@@ -14,6 +15,8 @@ import NewRequest from './index';
 import i18n from '@/i18n';
 
 jest.mock('@/components/utils/governance/AccessRequestUtils');
+jest.mock('@forgerock/platform-shared/src/api/governance/CommonsApi');
+
 CatalogApi.searchCatalog = jest.fn().mockReturnValue({
   data: {
     result: [
@@ -82,6 +85,7 @@ describe('NewRequest', () => {
         errors: [],
       },
     });
+    CommonsApi.getUserGrants.mockImplementation(() => Promise.resolve({ data: { results: [] } }));
   });
 
   it('should render with top navigation bar including breadcrumb', async () => {
@@ -164,5 +168,28 @@ describe('NewRequest', () => {
     modalTitle = wrapper.find('h1.h5.modal-title');
     expect(modalTitle.exists()).toBe(true);
     expect(modalTitle.text()).toBe('Request Error');
+  });
+
+  it('openUserModal called saves currentUserSelectedModal data and shows GovernanceUserDetailsModal', async () => {
+    const wrapper = mountComponent();
+    const rootWrapper = createWrapper(wrapper.vm.$root);
+    const id = 'id-test';
+    const user = {
+      givenName: 'Test',
+      sn: 'Test',
+    };
+
+    CommonsApi.getUserDetails.mockImplementation(() => Promise.resolve({
+      data: {
+        result: [user],
+      },
+    }));
+    wrapper.vm.openUserDetailsModal(id);
+    await flushPromises();
+
+    expect(wrapper.vm.currentUser).toEqual(user);
+    expect(rootWrapper.emitted('bv::show::modal')).toBeTruthy();
+    expect(rootWrapper.emitted('bv::show::modal').length).toBe(1);
+    expect(rootWrapper.emitted('bv::show::modal')[0][0]).toEqual('GovernanceUserDetailsModal');
   });
 });
