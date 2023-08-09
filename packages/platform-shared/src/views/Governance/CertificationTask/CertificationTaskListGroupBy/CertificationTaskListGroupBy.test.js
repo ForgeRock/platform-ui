@@ -569,7 +569,7 @@ describe('Glossary', () => {
     it('should open add comments for account table', async () => {
       const wrapper = setup();
       await flushPromises();
-      findByTestId(wrapper, 'add-comment-button').trigger('click');
+      findByTestId(wrapper, 'add-comment-button-01fec9de-a9e7-435b-8d16-2b2367714278').trigger('click');
       await wrapper.vm.$nextTick();
       const rootWrapper = createWrapper(wrapper.vm.$root);
       expect(rootWrapper.emitted()['bv::show::modal'][0][0]).toEqual('CertificationTaskAddCommentAccountModal');
@@ -577,7 +577,7 @@ describe('Glossary', () => {
     it('should open add comments for entitlement table', async () => {
       const wrapper = setup();
       await flushPromises();
-      wrapper.findAll('[data-testid="add-comment-button"]').at(1).trigger('click');
+      wrapper.findAll('[data-testid="add-comment-button-01fec9de-a9e7-435b-8d16-2b2367714278"]').at(1).trigger('click');
       await wrapper.vm.$nextTick();
       const rootWrapper = createWrapper(wrapper.vm.$root);
       expect(rootWrapper.emitted()['bv::show::modal'][0][0]).toEqual('CertificationTaskAddCommentEntitlementModal');
