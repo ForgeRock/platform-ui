@@ -2,7 +2,6 @@
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
-
 <template>
   <div>
     <FrRequestItemsList
@@ -38,6 +37,7 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import { BButton, BCollapse } from 'bootstrap-vue';
 import FrRequestItemsList from '../RequestItemsList';
+
 /**
  * Lists out the selected access request items
  */
@@ -75,8 +75,8 @@ export default {
   },
   data() {
     return {
-      viewMoreToggle: false,
       defaultViewableItems: 3,
+      viewMoreToggle: false,
     };
   },
   computed: {
