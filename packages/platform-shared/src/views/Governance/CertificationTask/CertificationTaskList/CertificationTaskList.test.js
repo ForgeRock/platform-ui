@@ -6,7 +6,7 @@
  */
 
 import { shallowMount, mount } from '@vue/test-utils';
-import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { findByTestId, createTooltipContainer } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { cloneDeep } from 'lodash';
 import flushPromises from 'flush-promises';
 import * as CertificationApi from '@forgerock/platform-shared/src/api/governance/CertificationApi';
@@ -22,7 +22,6 @@ const resourceDataMock = {
     totalCount: 2,
   },
 };
-
 function shallowMountComponent(options, data, methods, propsData = {}) {
   $emit = jest.fn();
   wrapper = shallowMount(CertificationTaskList, {
@@ -54,6 +53,7 @@ function shallowMountComponent(options, data, methods, propsData = {}) {
 
 function mountComponent(propsData = {}) {
   wrapper = mount(CertificationTaskList, {
+    attachTo: createTooltipContainer(['btnCertify-test-id-0', 'btnRevoke-test-id-0', 'btnAllowException-test-id-0']),
     mocks: {
       $t: (t) => t,
       $store: {
@@ -2005,6 +2005,133 @@ describe('CertificationTaskList', () => {
     it('should raise forward modal event with right modal id', () => {
       wrapper.vm.openForwardCertificationModal('1234', true);
       expect($emit).toBeCalledWith('bv::show::modal', 'CertificationTaskForwardEntitlementModal');
+    });
+  });
+  describe('Verify items', () => {
+    const resource = {
+      data: {
+        result: [{
+          decision: {
+            certification: {
+              status: 'test',
+              comments: '',
+            },
+          },
+          user: {
+            id: '',
+            givenName: '',
+            username: '',
+          },
+          icon: '',
+          id: 'test-id-0',
+          permissions: {
+            certify: true,
+            revoke: true,
+            exception: true,
+            forward: true,
+            comment: true,
+          },
+          application: {
+            name: 'testApp',
+          },
+        }],
+      },
+    };
+    it('are disabled and do not exist if is in staging with showGroupBy and test certificationGrantType, allowing bulk with exception duration and enabled forward', async () => {
+      mountComponent({
+        campaignDetails: {
+          allowBulkCertify: true,
+          status: 'staging',
+          exceptionDuration: 1,
+          enableForward: true,
+        },
+        certificationGrantType: 'test',
+        showGroupBy: true,
+      });
+      await flushPromises();
+      wrapper.vm.loadTasksList(resource, 1);
+
+      const bulkSelectBtn = findByTestId(wrapper, 'bulk-select-btn');
+      expect(bulkSelectBtn.exists()).toBeFalsy();
+      const bulkSelectDropdown = findByTestId(wrapper, 'bulk-select-dropdown');
+      expect(bulkSelectDropdown.exists()).toBeFalsy();
+      const itemSelectCheckbox = findByTestId(wrapper, 'item-select-checkbox-test-id-0');
+      expect(itemSelectCheckbox.exists()).toBeFalsy();
+
+      const revokeBtn = findByTestId(wrapper, 'btnRevoke-test-id-0');
+      expect(revokeBtn.attributes('disabled')).toBeTruthy();
+      const allowExceptionBtn = findByTestId(wrapper, 'btnAllowException-test-id-0');
+      expect(allowExceptionBtn.attributes('disabled')).toBeTruthy();
+      const forwardBtn = findByTestId(wrapper, 'forward-button-test-id-0');
+      expect(forwardBtn.classes()).toContain('disabled');
+      const addCommentBtn = findByTestId(wrapper, 'add-comment-button-test-id-0');
+      expect(addCommentBtn.classes()).toContain('disabled');
+      const cartReviewersBtn = findByTestId(wrapper, 'cert-reviewers-button-test');
+      expect(cartReviewersBtn.classes()).toContain('disabled');
+    });
+    it('are enabled and do exist if is not in staging with showGroupBy and test certificationGrantType, allowing bulk with exception duration and enabled forward', async () => {
+      mountComponent({
+        campaignDetails: {
+          allowBulkCertify: true,
+          status: 'in-progress',
+          exceptionDuration: 1,
+          enableForward: true,
+        },
+        certificationGrantType: 'test',
+        showGroupBy: true,
+      });
+      await flushPromises();
+      wrapper.vm.loadTasksList(resource, 1);
+
+      const bulkSelectBtn = findByTestId(wrapper, 'bulk-select-btn');
+      expect(bulkSelectBtn.exists()).toBeTruthy();
+      const bulkSelectDropdown = findByTestId(wrapper, 'bulk-select-dropdown');
+      expect(bulkSelectDropdown.exists()).toBeTruthy();
+      const itemSelectCheckbox = findByTestId(wrapper, 'item-select-checkbox-test-id-0');
+      expect(itemSelectCheckbox.exists()).toBeTruthy();
+
+      const revokeBtn = findByTestId(wrapper, 'btnRevoke-test-id-0');
+      expect(revokeBtn.attributes('disabled')).toBeFalsy();
+      const allowExceptionBtn = findByTestId(wrapper, 'btnAllowException-test-id-0');
+      expect(allowExceptionBtn.attributes('disabled')).toBeFalsy();
+      const forwardBtn = findByTestId(wrapper, 'forward-button-test-id-0');
+      expect(forwardBtn.classes()).not.toContain('disabled');
+      const addCommentBtn = findByTestId(wrapper, 'add-comment-button-test-id-0');
+      expect(addCommentBtn.classes()).not.toContain('disabled');
+      const cartReviewersBtn = findByTestId(wrapper, 'cert-reviewers-button-test');
+      expect(cartReviewersBtn.classes()).not.toContain('disabled');
+    });
+    it('does exist if it not in staging with showGroupBy and accounts certificationGrantType, allowing bulk with exception duration and enabled forward', async () => {
+      mountComponent({
+        campaignDetails: {
+          allowBulkCertify: true,
+          status: 'in-progress',
+          exceptionDuration: 1,
+          enableForward: true,
+        },
+        certificationGrantType: 'accounts',
+        showGroupBy: true,
+      });
+      await flushPromises();
+      wrapper.vm.loadTasksList(resource, 1);
+      const selectEntitlementBtn = findByTestId(wrapper, 'btnSelectEntitlement-test-id-0');
+      expect(selectEntitlementBtn.exists()).toBeTruthy();
+    });
+    it('does not exist if it is in staging with showGroupBy and accounts certificationGrantType, allowing bulk with exception duration and enabled forward', async () => {
+      mountComponent({
+        campaignDetails: {
+          allowBulkCertify: true,
+          status: 'staging',
+          exceptionDuration: 1,
+          enableForward: true,
+        },
+        certificationGrantType: 'accounts',
+        showGroupBy: true,
+      });
+      await flushPromises();
+      wrapper.vm.loadTasksList(resource, 1);
+      const selectEntitlementBtn = findByTestId(wrapper, 'btnSelectEntitlement-test-id-0');
+      expect(selectEntitlementBtn.exists()).toBeFalsy();
     });
   });
 });
