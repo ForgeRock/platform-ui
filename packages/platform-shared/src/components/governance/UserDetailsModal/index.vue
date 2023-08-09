@@ -7,7 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     :ok-title="$t('common.done')"
     body-class="p-0"
     content-class="border-0"
-    id="CertificationTaskUserModal"
+    id="GovernanceUserDetailsModal"
     no-close-on-backdrop
     no-close-on-esc
     ok-only
@@ -54,15 +54,17 @@ of the MIT license. See the LICENSE file for details. -->
           v-if="user"
           :user="user" />
       </BTab>
-      <BTab :title="$t('governance.certificationTask.lineItemDetailsModal.rolesTab.title')">
-        <FrRolesTab :roles="userDetails.userRoles" />
-      </BTab>
-      <BTab :title="$t('governance.certificationTask.lineItemDetailsModal.accountsTab.title')">
-        <FrAccountsTab :accounts="userDetails.userAccounts" />
-      </BTab>
-      <BTab :title="$t('governance.certificationTask.lineItemDetailsModal.entitlementsTab.title')">
-        <FrEntitlementsTab :entitlements="userDetails.userEntitlements" />
-      </BTab>
+      <template v-if="!onlyDetails">
+        <BTab :title="$t('governance.certificationTask.lineItemDetailsModal.rolesTab.title')">
+          <FrRolesTab :roles="userDetails.userRoles" />
+        </BTab>
+        <BTab :title="$t('governance.certificationTask.lineItemDetailsModal.accountsTab.title')">
+          <FrAccountsTab :accounts="userDetails.userAccounts" />
+        </BTab>
+        <BTab :title="$t('governance.certificationTask.lineItemDetailsModal.entitlementsTab.title')">
+          <FrEntitlementsTab :entitlements="userDetails.userEntitlements" />
+        </BTab>
+      </template>
     </BTabs>
   </BModal>
 </template>
@@ -83,7 +85,7 @@ import FrRolesTab from './RolesTab';
 import FrAccountsTab from './AccountsTab';
 
 export default {
-  name: 'CertificationTaskUserModal',
+  name: 'GovernanceUserDetailsModal',
   components: {
     BButtonClose,
     BImg,
@@ -110,6 +112,10 @@ export default {
         userEntitlements: {},
         userRoles: {},
       }),
+    },
+    onlyDetails: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
