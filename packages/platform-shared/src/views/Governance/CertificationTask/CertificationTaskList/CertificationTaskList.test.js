@@ -742,7 +742,7 @@ describe('CertificationTaskList', () => {
       showErrorMessageSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
     });
 
-    it('openUserModal called saves currentUserSelectedModal data and shows CertificationTaskUserModal', async () => {
+    it('openUserModal called saves currentUserSelectedModal data and shows GovernanceUserDetailsModal', async () => {
       const id = 'id-test';
       const user = {
         givenName: 'Test',
@@ -754,7 +754,7 @@ describe('CertificationTaskList', () => {
       await flushPromises();
 
       expect(wrapper.vm.currentUserSelectedModal).toEqual(user);
-      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskUserModal');
+      expect($emit).toHaveBeenCalledWith('bv::show::modal', 'GovernanceUserDetailsModal');
     });
 
     it('openUserModal called saves currentUserSelectedModal and it must not match the user if it has a property that is not allowed.', async () => {

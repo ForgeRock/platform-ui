@@ -129,11 +129,19 @@ of the MIT license. See the LICENSE file for details. -->
         </template>
       </BTable>
     </BModal>
+    <FrGovernanceUserDetailsModal
+      :user="currentUser"
+      :user-details="currentUserDetails"
+      :only-details="true" />
   </div>
 </template>
 
 <script>
-import { cloneDeep } from 'lodash';
+import {
+  cloneDeep,
+  get,
+  pick,
+} from 'lodash';
 import {
   BBadge,
   BButton,
@@ -150,11 +158,29 @@ import FrNavbar from '@forgerock/platform-shared/src/components/Navbar';
 import MediaMixin from '@forgerock/platform-shared/src/mixins/MediaMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import AppSharedUtilsMixin from '@forgerock/platform-shared/src/mixins/AppSharedUtilsMixin';
-import { getResource } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import {
+  // getUserGrants,
+  getResource,
+  getUserDetails,
+} from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import FrGovernanceUserDetailsModal from '@forgerock/platform-shared/src/components/governance/UserDetailsModal';
 import FrAccessRequestCatalog from '../../components/AccessRequestCatalog';
 import FrRequestCart from '@/components/governance/RequestCart';
 import { saveNewRequest, validateRequest } from '@/api/governance/AccessRequestApi';
 import { getCatalogFilterSchema, searchCatalog } from '@/api/governance/CatalogApi';
+
+/**
+ * @constant
+ * @type {Array}
+ * @default
+ */
+const userRequiredParams = [
+  'userName',
+  'givenName',
+  'sn',
+  'mail',
+  'accountStatus',
+];
 
 /**
  * View housing new access request catalog and request cart panel
@@ -171,6 +197,7 @@ export default {
     BModal,
     BTable,
     FrAccessRequestCatalog,
+    FrGovernanceUserDetailsModal,
     FrIcon,
     FrNavbar,
     FrRequestCart,
@@ -186,14 +213,18 @@ export default {
       applicationSearchResults: [],
       catalogFilterSchema: [],
       catalogResults: [],
+      currentUser: {},
+      currentUserAccountsDetails: { result: [] },
+      currentUserEntitlementsDetails: { result: [] },
+      currentUserRolesDetails: { result: [] },
       isTesting: false,
       loading: true,
       requestCartExpanded: false,
       requestCartItems: [],
       requestCartUsers: this.$route.params.requestingFor || [],
-      saving: false,
       requestErrorFields: [{ key: 'user' }, { key: 'error' }],
       requestErrors: [],
+      saving: false,
       totalCount: 0,
     };
   },
@@ -230,6 +261,13 @@ export default {
         }));
       }
       return this.catalogResults;
+    },
+    currentUserDetails() {
+      return {
+        userAccounts: this.currentUserAccountsDetails,
+        userEntitlements: this.currentUserEntitlementsDetails,
+        userRoles: this.currentUserRolesDetails,
+      };
     },
     requestedApplications() {
       return this.requestCartItems.filter((item) => item.itemType === 'application');
@@ -398,9 +436,54 @@ export default {
     },
     /**
      * Opens up the requested items details modal
+     * @param {String} id item ID
      */
-    openRequestedItemModal() {
-      // TODO
+    openRequestedItemModal(id) {
+      if (!this.context === 'user') {
+        return;
+      }
+      this.openUserDetailsModal(id);
+    },
+    /**
+     * Get user information and open details modal
+     * @param {String} id user ID
+     */
+    openUserDetailsModal(id) {
+      // get user details
+      getUserDetails(id)
+        .then(({ data }) => {
+          const userData = get(data, 'result[0]', {});
+          this.currentUser = pick(userData, userRequiredParams);
+          this.$root.$emit('bv::show::modal', 'GovernanceUserDetailsModal');
+        })
+        .catch((error) => {
+          this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserError'));
+        });
+      // TODO: These calls have been temporarily disabled as it is not possible to access them for all users (see comment in ticket).
+      // // get roles details
+      // getUserGrants(id, 'role')
+      //   .then(({ data }) => {
+      //     this.currentUserRolesDetails = data;
+      //   })
+      //   .catch((error) => {
+      //     this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserError'));
+      //   });
+      // // get accounts details
+      // getUserGrants(id, 'account')
+      //   .then(({ data }) => {
+      //     this.currentUserAccountsDetails = data;
+      //   })
+      //   .catch((error) => {
+      //     this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserError'));
+      //   });
+      // // get entitlements details
+      // getUserGrants(id, 'entitlement')
+      //   .then(({ data }) => {
+      //     this.currentUserEntitlementsDetails = data;
+      //   })
+      //   .catch((error) => {
+      //     this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserError'));
+      //   });
     },
     /**
      * Removes selected item from request cart

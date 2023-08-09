@@ -403,7 +403,7 @@ of the MIT license. See the LICENSE file for details. -->
       @refresh-data="refreshData"
       :campaign-id="campaignId"
       :selected-tasks="selectedTasks" />
-    <FrCertificationTaskUserModal
+    <FrGovernanceUserDetailsModal
       :user="currentUserSelectedModal"
       :user-details="currentUserDetails" />
     <FrCertificationTaskApplicationModal
@@ -504,15 +504,15 @@ import {
 } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import { ADMIN_REVIEWER_PERMISSIONS } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { CampaignStates } from '@forgerock/platform-shared/src/utils/governance/types';
+import FrGovernanceUserDetailsModal from '@forgerock/platform-shared/src/components/governance/UserDetailsModal';
 import FrCertificationActivityModal from './CertificationTaskActivityModal';
 import FrCertificationTaskAccountModal from './CertificationTaskAccountModal';
 import FrCertificationTaskAddCommentModal from './CertificationTaskAddCommentModal';
 import FrCertificationTaskApplicationModal from './CertificationTaskApplicationModal';
 import FrCertificationTaskCommentsModal from './CertificationTaskCommentsModal';
-import FrCertificationTaskUserModal from './CertificationTaskUserModal';
-import FrCertificationTaskReviewersModal from './CertificationTaskReviewersModal';
 import FrCertificationTaskEditReviewerModal from './CertificationTaskEditReviewerModal';
 import FrCertificationTaskEntitlementModal from './CertificationTaskEntitlementModal';
+import FrCertificationTaskReviewersModal from './CertificationTaskReviewersModal';
 
 /**
  * @typedef {"certify" | "revoke" | "exception" | "abstain"} ItemDecisionString
@@ -572,8 +572,8 @@ export default {
     FrCertificationTaskReassignModal,
     FrCertificationTaskReviewersModal,
     FrCertificationTaskSortModal,
-    FrCertificationTaskUserModal,
     FrField,
+    FrGovernanceUserDetailsModal,
     FrIcon,
     FrNoData,
     FrSpinner,
@@ -992,7 +992,7 @@ export default {
       getCertificationLineItemUser(this.campaignId, lineItemId)
         .then(({ data }) => {
           this.currentUserSelectedModal = pick(data, userRequiredParams);
-          this.$root.$emit('bv::show::modal', 'CertificationTaskUserModal');
+          this.$root.$emit('bv::show::modal', 'GovernanceUserDetailsModal');
         })
         .catch((error) => {
           this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserError'));
