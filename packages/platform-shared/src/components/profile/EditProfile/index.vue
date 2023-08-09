@@ -13,7 +13,8 @@ of the MIT license. See the LICENSE file for details. -->
             variant="link"
             :button="showImageUpload"
             size="112px"
-            :src="profileImage.length > 0 ? profileImage : require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
+            :src="profileImage.length > 0 ? profileImage : require('@forgerock/platform-shared/src/assets/images/avatar.png')"
+            :aria-label="showImageUpload ? $t('pages.profile.editProfile.profileImageModal.title') : $t('pages.profile.editProfile.profilePicture')" />
           <BAvatar
             v-if="showImageUpload"
             button
