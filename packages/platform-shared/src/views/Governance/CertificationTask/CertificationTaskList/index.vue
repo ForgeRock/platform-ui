@@ -6,12 +6,14 @@ of the MIT license. See the LICENSE file for details. -->
   <div>
     <div class="d-flex justify-content-between certification-task-list_controls">
       <div class="d-flex justify-content-start">
-        <template v-if="campaignDetails.allowBulkCertify">
+        <template v-if="campaignDetails.allowBulkCertify && !isStaged">
           <BButton
+            data-testid="bulk-select-btn"
             variant="link-dark">
             <FrIcon name="done_all" />
           </BButton>
           <BDropdown
+            data-testid="bulk-select-dropdown"
             toggle-class="p-1"
             variant="link">
             <template #button-content>
@@ -140,7 +142,7 @@ of the MIT license. See the LICENSE file for details. -->
     >
       <template #cell(selector)="{ item }">
         <FrField
-          v-if="item.decision.certification.status !== 'signed-off' && !item.isRoleBasedGrant"
+          v-if="item.decision.certification.status !== 'signed-off' && !item.isRoleBasedGrant && !isStaged"
           :testid="`multiselect-${item.id}`"
           class="m-4"
           :value="item.selected"
@@ -274,8 +276,10 @@ of the MIT license. See the LICENSE file for details. -->
           <!-- Certify -->
           <template v-if="item.permissions.certify">
             <BButton
+              :disabled="isStaged"
               style="height: 30px; width: 35px; padding: 0px;"
               :id="`btnCertify-${item.id}`"
+              :data-testid="`btnCertify-${item.id}`"
               :pressed="pressedButton(item, 'certify')"
               class="mr-1"
               variant="outline-success"
@@ -296,6 +300,7 @@ of the MIT license. See the LICENSE file for details. -->
 
           <template v-if="item.permissions.revoke && !item.isRoleBasedGrant">
             <BButton
+              :disabled="isStaged"
               style="height: 30px; width: 35px; padding: 0px;"
               :id="`btnRevoke-${item.id}`"
               :data-testid="`btnRevoke-${item.id}`"
@@ -316,6 +321,7 @@ of the MIT license. See the LICENSE file for details. -->
           <!-- Allow exception -->
           <template v-if="campaignDetails.exceptionDuration > 0 && item.permissions.exception && !item.isRoleBasedGrant">
             <BButton
+              :disabled="isStaged"
               style="height: 30px; width: 35px; padding: 0px;"
               :id="`btnAllowException-${item.id}`"
               :data-testid="`btnAllowException-${item.id}`"
@@ -344,6 +350,8 @@ of the MIT license. See the LICENSE file for details. -->
                 name="more_horiz" />
             </template>
             <BDropdownItem
+              :data-testid="`forward-button-${item.id}`"
+              :disabled="isStaged"
               v-if="campaignDetails.enableForward && item.permissions.forward"
               @click="openForwardCertificationModal(item.id, false)">
               <FrIcon
@@ -352,6 +360,7 @@ of the MIT license. See the LICENSE file for details. -->
               {{ $t('governance.certificationTask.actions.forward') }}
             </BDropdownItem>
             <BDropdownItem
+              :disabled="isStaged"
               :data-testid="`cert-reviewers-button-${certificationGrantType}`"
               @click="openReviewersModal(item)">
               <FrIcon
@@ -360,8 +369,9 @@ of the MIT license. See the LICENSE file for details. -->
               {{ $t('governance.certificationTask.actions.viewReviewers') }}
             </BDropdownItem>
             <BDropdownItem
+              :data-testid="`add-comment-button-${item.id}`"
+              :disabled="isStaged"
               v-if="item.permissions.comment"
-              data-testid="add-comment-button"
               @click="openAddCommentModal(item.id)">
               <FrIcon
                 class="mr-2"
@@ -378,8 +388,9 @@ of the MIT license. See the LICENSE file for details. -->
           </BDropdown>
 
           <!-- Select Row To Display Entitlements -->
-          <template v-if="isGroupByAccounts">
+          <template v-if="isGroupByAccounts && !isStaged">
             <BButton
+              :data-testid="`btnSelectEntitlement-${item.id}`"
               :id="`btnSelectEntitlement-${item.id}`"
               class="mr-1 p-1"
               @click="onRowSelected(item)">
@@ -724,6 +735,7 @@ export default {
       bulkForward: false,
       tasksFieldsToSort: [],
       currentEntitlementSelected: null,
+      isStaged: false,
     };
   },
   computed: {
@@ -1546,6 +1558,7 @@ export default {
     },
   },
   mounted() {
+    this.isStaged = this.campaignDetails.status === 'staging';
     this.updateColumns();
     this.getCertificationTaskList(this.paginationPage).then(() => {
       if (this.showGroupBy && this.certificationGrantType === 'accounts') {
