@@ -59,4 +59,19 @@ export function findByRole(wrapper, role) {
   return wrapper.find(`[role=${role}]`);
 }
 
+/**
+ * vue-test-utils helper function for creating containers with provided IDs
+ * @param {*} idArray the array of ids that need to be created for the tooltip component to find
+ * @returns an array containing the elements with the correct id attribute
+ */
+export function createTooltipContainer(idArray) {
+  const elementsArray = idArray.map((elementId) => {
+    const tooltipElement = document.createElement('span');
+    tooltipElement.setAttribute('id', elementId);
+    document.body.appendChild(tooltipElement);
+    return tooltipElement;
+  });
+  return elementsArray;
+}
+
 export default { findByTestId, findByRole };
