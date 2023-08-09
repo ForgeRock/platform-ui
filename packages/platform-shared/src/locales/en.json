@@ -695,7 +695,8 @@
           "profileImageUrl": "Profile Image URL",
           "validUrl": "Please provide a valid URL.",
           "tips": "TIPS"
-        }
+        },
+        "profilePicture": "Profile picture"
       },
       "trustedDevices": {
         "title": "Trusted Devices",
