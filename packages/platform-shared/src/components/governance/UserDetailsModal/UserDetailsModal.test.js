@@ -6,12 +6,12 @@
  */
 
 import { shallowMount } from '@vue/test-utils';
-import CertificationTaskUserModal from './index';
+import GovernanceUserDetailsModal from './index';
 
-describe('CertificationTaskUserModal', () => {
+describe('GovernanceUserDetailsModal', () => {
   let wrapper;
   beforeEach(() => {
-    wrapper = shallowMount(CertificationTaskUserModal, {
+    wrapper = shallowMount(GovernanceUserDetailsModal, {
       mocks: {
         $t: (t) => t,
       },
@@ -40,6 +40,6 @@ describe('CertificationTaskUserModal', () => {
   });
 
   it('component should load correclty', () => {
-    expect(wrapper.name()).toBe('CertificationTaskUserModal');
+    expect(wrapper.name()).toBe('GovernanceUserDetailsModal');
   });
 });

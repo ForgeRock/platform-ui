@@ -11,6 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
       </h3>
       <div class="mb-3">
         <FrRequestItemsGroup
+          :fr-hover="true"
           :request-items="requestCartUsers"
           :show-empty-state="false"
           v-on="$listeners" />
@@ -101,14 +102,15 @@ import FrDatepicker from '@forgerock/platform-shared/src/components/Datepicker';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrRequestItemsGroup from './RequestItemsGroup';
 import getPriorityImageSrc from '@/components/utils/governance/AccessRequestUtils';
+
 /**
  * A form that displays fields for requesting access to applications, entitlements and roles for one or multiple users
  */
 export default {
   name: 'RequestCart',
   components: {
-    BImg,
     BFormGroup,
+    BImg,
     FrButtonWithSpinner,
     FrDatepicker,
     FrField,
