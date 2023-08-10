@@ -274,46 +274,45 @@ describe('Field Component', () => {
       expect(input.attributes('readonly')).toBeTruthy();
     });
 
-    // TODO re-enable when string inputs are supported for placeholder entry
-    // it('switches to the ReadonlyPlaceholderInput instead of the normal input type when the value is changed to a placeholder string and placeholder entry is allowed', async () => {
-    //   wrapper = setup({
-    //     propsData: {
-    //       name: 'bob',
-    //       value: 'bill',
-    //       type: 'string',
-    //       canEnterPlaceholders: true,
-    //     },
-    //   });
+    it('switches to the ReadonlyPlaceholderInput instead of the normal input type when the value is changed to a placeholder string and placeholder entry is allowed', async () => {
+      wrapper = setup({
+        propsData: {
+          name: 'bob',
+          value: 'bill',
+          type: 'string',
+          canEnterPlaceholders: true,
+        },
+      });
 
-    //   await flush();
+      await flush();
 
-    //   expect(wrapper.vm.component).toBe('FrEsvInputWrapper');
+      expect(wrapper.vm.component).toBe('FrEsvInputWrapper');
 
-    //   const input = wrapper.find('input');
-    //   await input.setValue('&{esv-myesv}');
+      const input = wrapper.find('input');
+      await input.setValue('&{esv-myesv}');
 
-    //   expect(wrapper.vm.component).toBe('FrReadonlyPlaceholderInput');
-    // });
+      expect(wrapper.vm.component).toBe('FrReadonlyPlaceholderInput');
+    });
 
-    // it('does not switch to the ReadonlyPlaceholderInput instead of the normal input type when the value is changed to a placeholder string and placeholder entry is not allowed', async () => {
-    //   wrapper = setup({
-    //     propsData: {
-    //       name: 'bob',
-    //       value: 'bill',
-    //       type: 'string',
-    //       canEnterPlaceholders: false,
-    //     },
-    //   });
+    it('does not switch to the ReadonlyPlaceholderInput instead of the normal input type when the value is changed to a placeholder string and placeholder entry is not allowed', async () => {
+      wrapper = setup({
+        propsData: {
+          name: 'bob',
+          value: 'bill',
+          type: 'string',
+          canEnterPlaceholders: false,
+        },
+      });
 
-    //   await flush();
+      await flush();
 
-    //   expect(wrapper.vm.component).toBe('FrBasicInput');
+      expect(wrapper.vm.component).toBe('FrBasicInput');
 
-    //   const input = wrapper.find('input');
-    //   await input.setValue('&{esv-myesv}');
+      const input = wrapper.find('input');
+      await input.setValue('&{esv-myesv}');
 
-    //   expect(wrapper.vm.component).toBe('FrBasicInput');
-    // });
+      expect(wrapper.vm.component).toBe('FrBasicInput');
+    });
 
     it('switches to the normal input when a ReadonlyPlaceholderInput clears the field value from a placeholder', async () => {
       wrapper = setup({ propsData: { name: 'bob', value: { key: '&{my-esv}' }, type: 'checkbox' } });

@@ -15,6 +15,7 @@ import {
   getPlaceholderValueToDisplay,
   isFieldTypeSupportedForPlaceholderEntry,
   determineEsvTypeForField,
+  showEsvSecretsForField,
 } from './esvUtils';
 
 /* eslint-disable indent */
@@ -279,5 +280,16 @@ describe('determining which esv types are relevant for an input field type', () 
     ${null}        | ${'Unable to determine ESVs to show for the field type null'}
     `('Throws an error when given $inputFieldType', ({ inputfieldType, expectedError }) => {
       expect(() => determineEsvTypeForField(inputfieldType)).toThrow(Error(expectedError));
+  });
+});
+
+describe('checking if secrets should be shown for a field type', () => {
+  it.each`
+    name                                   | fieldType     | expectedValue
+    ${'type that should show secrets'}     | ${'string'}   | ${true}
+    ${'type that should not show secrets'} | ${'datetime'} | ${false}
+    ${'non string value as type'}          | ${false}      | ${false}
+    `('Given $name', ({ fieldType, expectedValue }) => {
+      expect(showEsvSecretsForField(fieldType)).toBe(expectedValue);
   });
 });

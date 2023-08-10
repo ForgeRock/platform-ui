@@ -1402,7 +1402,9 @@
   "esvInput": {
     "title": "Select Esv",
     "searchVariables": "Search variables",
+    "searchSecretsAndVariables": "Search secrets & variables",
+    "secretsAndVariables": "Secrets & Variables",
     "noVariables": "No variables found",
-    "noSecrets": "No secrets found"
+    "noSecretsOrVariables": "No secrets or variables found"
   }
 }
