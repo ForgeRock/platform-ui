@@ -7,8 +7,11 @@ of the MIT license. See the LICENSE file for details. -->
     right
     no-caret
     variant="link"
-    boundary="window"
-    toggle-class="text-decoration-none py-0 px-1">
+    boundary="scrollParent"
+    menu-class="w-100"
+    :toggle-class="`text-decoration-none ${isWithinInput ? '' : 'py-0 px-1'}`"
+    :class="`field-type-${fieldType}`"
+    data-testid="esv-dropdown">
     <template #button-content>
       <FrIcon
         class="placeholder-dropdown"
@@ -19,29 +22,28 @@ of the MIT license. See the LICENSE file for details. -->
     </template>
     <BDropdownText>
       <h5 class="my-0">
-        {{ $t('common.variables') }}
+        {{ secretsVisible ? $t('esvInput.secretsAndVariables') : $t('common.variables') }}
       </h5>
     </BDropdownText>
     <BDropdownForm @submit.stop.prevent>
       <FrSearchInput
         v-model="query"
-        :placeholder="$t('esvInput.searchVariables')"
+        :placeholder="secretsVisible ? $t('esvInput.searchSecretsAndVariables') : $t('esvInput.searchVariables')"
         class="border-bottom border-top"
       />
     </BDropdownForm>
-    <template v-if="filteredVariables.length">
-      <BDropdownItem
-        v-for="item in filteredVariables"
-        :key="item._id"
-        class="text-monospace"
-        @click="esvClicked(item)">
-        {{ item.placeholder }}
-      </BDropdownItem>
-    </template>
-    <template v-else>
+    <BDropdownItem
+      v-for="item in filteredEsvs"
+      :key="item._id"
+      class="text-monospace"
+      @click="esvClicked(item)">
+      {{ item.placeholder }}
+    </BDropdownItem>
+    <template v-if="!filteredEsvs.length">
       <BDropdownText>
-        <span class="text-muted">
-          {{ $t('esvInput.noVariables') }}
+        <span
+          class="text-muted">
+          {{ secretsVisible ? $t('esvInput.noSecretsOrVariables') : $t('esvInput.noVariables') }}
         </span>
       </BDropdownText>
     </template>
@@ -59,6 +61,7 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import { ref } from 'vue';
 import useFilteredEsvs from '@forgerock/platform-shared/src/composables/filteredEsvs';
+import { showEsvSecretsForField } from '@forgerock/platform-shared/src/utils/esvUtils';
 
 export default {
   name: 'EsvDropdown',
@@ -75,10 +78,15 @@ export default {
       type: String,
       required: true,
     },
+    isWithinInput: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, context) {
     const query = ref('');
-    const { filteredVariables } = useFilteredEsvs(query, props.fieldType);
+    const { filteredEsvs } = useFilteredEsvs(query, props.fieldType);
+    const secretsVisible = showEsvSecretsForField(props.fieldType);
 
     function esvClicked(esvItem) {
       context.emit('esv-selected', esvItem.placeholder);
@@ -86,8 +94,9 @@ export default {
 
     return {
       query,
-      filteredVariables,
+      secretsVisible,
       esvClicked,
+      filteredEsvs,
     };
   },
 };

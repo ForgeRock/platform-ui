@@ -56,9 +56,18 @@ of the MIT license. See the LICENSE file for details. -->
           </label>
           <slot />
         </div>
-        <slot name="defaultButtons" />
-        <!-- slot appends  buttons or elements to the input -->
-        <slot name="append" />
+        <span
+          class="d-flex"
+          v-if="$scopedSlots.prependButton || $scopedSlots.defaultButtons || $scopedSlots.append">
+          <div
+            class="prepend-button"
+            v-if="$scopedSlots.prependButton">
+            <slot name="prependButton" />
+          </div>
+          <slot name="defaultButtons" />
+          <!-- slot appends  buttons or elements to the input -->
+          <slot name="append" />
+        </span>
       </div>
       <div
         v-if="showLengthCount"

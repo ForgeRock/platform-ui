@@ -16,7 +16,8 @@ of the MIT license. See the LICENSE file for details. -->
       :is-html="isHtml"
       :label="label"
       :validation="validation"
-      :validation-immediate="validationImmediate">
+      :validation-immediate="validationImmediate"
+      :class="{ 'has-prepend-btn': hasPrependBtn }">
       <template #default="{ labelHeight }">
         <!--
         slot scoped variable labelHeight is used to change the height of the input as follows:
@@ -35,7 +36,7 @@ of the MIT license. See the LICENSE file for details. -->
             {
               'polyfill-placeholder': floatLabels,
               'is-invalid': errorMessages && errorMessages.length,
-              'text-truncate' : copy,
+              'text-truncate': hasAppendSlot || copy,
             }
           ]"
           :data-vv-as="label"
@@ -60,7 +61,7 @@ of the MIT license. See the LICENSE file for details. -->
             {
               'polyfill-placeholder': floatLabels,
               'is-invalid': errorMessages && errorMessages.length,
-              'text-truncate' : hasAppendSlot || copy,
+              'text-truncate': hasAppendSlot || copy,
             }
           ]"
           :data-vv-as="label"
@@ -78,9 +79,11 @@ of the MIT license. See the LICENSE file for details. -->
           @animationstart="floatingLabel && animationStart"
           :data-testid="`input-${testid}`">
       </template>
-      <template #defaultButtons>
+      <template
+        #defaultButtons
+        v-if="type === 'password' || copy">
         <BInputGroupAppend
-          class="fr-hide-input"
+          class="within-input-button"
           v-if="type === 'password'">
           <BButton
             @click="revealText"
@@ -199,6 +202,7 @@ export default {
     return {
       showPassword: false,
       hasAppendSlot: Object.keys(this.$scopedSlots).includes('append'),
+      hasPrependBtn: Object.keys(this.$scopedSlots).includes('prependButton'),
     };
   },
   mounted() {
@@ -299,22 +303,59 @@ export default {
     background-image: none;
   }
 
-  .fr-hide-input {
-    position: absolute;
-    right: 0;
-    bottom: 0;
+  .password-field input[type=text],
+  .password-field input[type=password] {
+    padding-right: 0px;
+  }
 
-    .btn {
-      background-color: transparent !important;
-      border-color: transparent;
+  :deep(.prepend-button .btn) {
+    margin-left: -1px;
+    border-radius: 0 !important;
+  }
 
-      &:active,
-      &:hover,
-      &:focus,
-      &:active:focus {
-        box-shadow: none;
-      }
+  :deep(.prepend-button:only-child .btn) {
+    // Give button the correct padding inside the input field
+    padding: 0.75rem 1.25rem !important;
+    // Gives button a curved border on the right hand side
+    border-top-right-radius: $border-radius !important;
+    border-bottom-right-radius: $border-radius !important;
+  }
+
+  :deep(.prepend-button:not(:only-child) .btn) {
+    padding: 0.75rem !important;
+  }
+
+  :deep(.within-input-button .btn) {
+    background-color: $white !important;
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+    border-left: 0 !important;
+
+    &:active,
+    &:hover,
+    &:focus,
+    &:active:focus {
+      box-shadow: none !important;
+      // Fix for password show/hide button content disappearing on active
+      // because colour changed to white
+      color: $gray-800 !important;
     }
+  }
+
+  // If the secret input also contains an esv dropdown button this will adjust
+  // the padding to be correct for when both buttons are showing
+  .has-prepend-btn .within-input-button .btn {
+    padding-left: 0.75rem !important;
+  }
+
+  .form-label-group.fr-field-error .within-input-button .btn {
+    // Fix for password show/hide button right border radius being 0 when it needs
+    // to match the input
+    border-bottom-right-radius: $border-radius !important;
+    border-top-right-radius: $border-radius !important;
+
+    // Fix for password show/hide button border changing to gray on active
+    border-color: $danger !important;
   }
 
   .form-label-group:not(.fr-field-error) {
@@ -336,9 +377,19 @@ export default {
       }
     }
   }
-</style>
 
-<style scoped>
+  :deep(.material-icons), :deep(.material-icons-outlined) {
+    line-height: 1.125rem;
+  }
+
+  :deep(.btn.clear-btn),
+  :deep(.btn.clear-btn):active,
+  :deep(.btn.clear-btn):focus {
+    border-left: none !important;
+    background-color: $gray-100 !important;
+    color: $gray-800 !important;
+  }
+
   /* Styles used to ensure Chrome's password save still triggers label move */
   /* stylelint-disable */
   input:-webkit-autofill {
