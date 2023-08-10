@@ -140,7 +140,8 @@ of the MIT license. See the LICENSE file for details. -->
     >
       <template #cell(selector)="{ item }">
         <FrField
-          v-if="item.decision.certification.status !== 'signed-off'"
+          v-if="item.decision.certification.status !== 'signed-off' && !item.isRoleBasedGrant"
+          :testid="`multiselect-${item.id}`"
           class="m-4"
           :value="item.selected"
           @change="addIndividualTaskToSelected($event, item)"
@@ -243,7 +244,9 @@ of the MIT license. See the LICENSE file for details. -->
           <BBadge
             :variant="getVariant(item.decision.certification.decision)"
             class="w-100">
-            {{ startCase(item.decision.certification.decision) }}
+            {{ item.decision.certification.decision === 'certify' && item.isRoleBasedGrant
+              ? $t('governance.certificationTask.actions.acknowledge')
+              : startCase(item.decision.certification.decision) }}
           </BBadge>
         </template>
         <div
@@ -262,17 +265,21 @@ of the MIT license. See the LICENSE file for details. -->
             </BButton>
             <BTooltip
               :target="`btnCertify-${item.id}`"
+              :data-testid="`tooltip-certify-${item.id}`"
               triggers="hover"
               placement="top">
-              {{ $t('governance.certificationTask.actions.certify') }}
+              {{ item.isRoleBasedGrant
+                ? $t('governance.certificationTask.actions.acknowledge')
+                : $t('governance.certificationTask.actions.certify') }}
             </BTooltip>
           </template>
           <!-- Revoke -->
 
-          <template v-if="item.permissions.revoke">
+          <template v-if="item.permissions.revoke && !item.isRoleBasedGrant">
             <BButton
               style="height: 30px; width: 35px; padding: 0px;"
               :id="`btnRevoke-${item.id}`"
+              :data-testid="`btnRevoke-${item.id}`"
               :pressed="pressedButton(item, 'revoke')"
               class="mr-1"
               variant="outline-danger"
@@ -288,10 +295,11 @@ of the MIT license. See the LICENSE file for details. -->
           </template>
 
           <!-- Allow exception -->
-          <template v-if="campaignDetails.exceptionDuration > 0 && item.permissions.exception">
+          <template v-if="campaignDetails.exceptionDuration > 0 && item.permissions.exception && !item.isRoleBasedGrant">
             <BButton
               style="height: 30px; width: 35px; padding: 0px;"
               :id="`btnAllowException-${item.id}`"
+              :data-testid="`btnAllowException-${item.id}`"
               :pressed="pressedButton(item, 'exception')"
               class="mr-2"
               variant="outline-secondary"
@@ -783,7 +791,7 @@ export default {
       return this.selectedTasks.findIndex((task) => task.permissions?.revoke === false) === -1;
     },
     enableBulkException() {
-      if (this.campaignDetails.exceptionDuraion === 0) return false;
+      if (this.campaignDetails.exceptionDuration === 0) return false;
       return this.selectedTasks.findIndex((task) => task.permissions?.exception === false) === -1;
     },
     enableBulkReassign() {
@@ -1090,10 +1098,14 @@ export default {
       this.currentPage = page;
       const resultData = resourceData.data.result;
 
-      this.tasksData = resultData.map((task) => ({
-        ...task,
-        selected: this.isTaskSelected(task.id),
-      }));
+      this.tasksData = resultData.map((task) => {
+        const grantTypes = task.relationship?.properties?.grantTypes;
+        return {
+          ...task,
+          selected: this.isTaskSelected(task.id),
+          isRoleBasedGrant: (grantTypes && grantTypes.findIndex((grant) => (grant.grantType === 'role')) !== -1) || false,
+        };
+      });
 
       this.$emit('check-progress');
 
@@ -1251,7 +1263,7 @@ export default {
       this.selectedTasks = [];
       const tasksListClone = cloneDeep(this.tasksData);
       this.tasksData = tasksListClone.map((task) => {
-        if (selectValue) this.selectedTasks = [...this.selectedTasks, task];
+        if (selectValue) this.selectedTasks.push(task);
         return {
           ...task,
           selected: selectValue,
