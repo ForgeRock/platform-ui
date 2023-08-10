@@ -1231,13 +1231,14 @@
       "deselectAll": "Deselect all",
       "actions": {
         "addComment": "Add Comment",
+        "acknowledge": "Acknowledge",
         "allowException": "Allow an exception",
-        "forward": "Forward",
-        "viewReviewers": "View Reviewers",
-        "viewActivity": "View Activity",
         "certify": "Certify",
+        "forward": "Forward",
+        "reassign": "Reassign",
         "revoke": "Revoke",
-        "reassign": "Reassign"
+        "viewActivity": "View Activity",
+        "viewReviewers": "View Reviewers"
       },
       "certificationTabs": {
         "accounts": "accounts",
