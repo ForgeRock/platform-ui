@@ -17,7 +17,8 @@ const defaultProps = {
   innerComponent: 'FrBasicInput',
   testid: 'stub-testid',
   autofocus: false,
-  type: 'test',
+  type: 'string',
+  originalType: 'string',
 };
 
 describe('EsvInputWrapper', () => {
@@ -46,10 +47,32 @@ describe('EsvInputWrapper', () => {
       ${'string'}   | ${true}
       ${'text'}     | ${true}
       ${'password'} | ${true}
+      ${'number'}   | ${true}
+      ${'integer'}  | ${true}
       ${'checkbox'} | ${false}
       `('Given the field type $fieldType', ({ fieldType, expectedDropdownWithinInput }) => {
         const wrapper = setup({ type: fieldType });
         expect(wrapper.vm.dropdownWithinInput).toBe(expectedDropdownWithinInput);
+    });
+  });
+
+  describe('handles selected placeholder', () => {
+    it.each`
+      fieldType     | placeholder         | expectedEmit
+      ${'string'}   | ${'&{esv.string}'}  | ${{ $string: '&{esv.string}' }}
+      ${'text'}     | ${'&{esv.string}'}  | ${{ $string: '&{esv.string}' }}
+      ${'password'} | ${'&{esv.string}'}  | ${{ $string: '&{esv.string}' }}
+      ${'checkbox'} | ${'&{esv.boolean}'} | ${{ $bool: '&{esv.boolean}' }}
+      ${'boolean'}  | ${'&{esv.boolean}'} | ${{ $bool: '&{esv.boolean}' }}
+      ${'integer'}  | ${'&{esv.integer}'} | ${{ $int: '&{esv.integer}' }}
+      ${'number'}   | ${'&{esv.number}'}  | ${{ $number: '&{esv.number}' }}
+      ${'integer'}  | ${'&{esv.integer}'} | ${{ $int: '&{esv.integer}' }}
+      `('Given the field type $fieldType and placeholder $placeholder', ({ fieldType, placeholder, expectedEmit }) => {
+        const wrapper = setup({ type: fieldType, originalType: fieldType });
+        expect(wrapper.emitted().input).toBeFalsy();
+        wrapper.vm.handlePlaceholderEntered(placeholder);
+        wrapper.vm.$nextTick();
+        expect(wrapper.emitted().input).toEqual([[expectedEmit]]);
     });
   });
 });

@@ -4,7 +4,29 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
-    <template v-if="dropdownWithinInput === false">
+    <template v-if="dropdownWithinInput">
+      <Component
+        v-bind="$attrs"
+        v-on="$listeners"
+        :type="type"
+        :is="innerComponent">
+        <template
+          v-for="(key, slotName) in $scopedSlots"
+          #[slotName]="slotData">
+          <slot
+            :name="slotName"
+            v-bind="slotData" />
+        </template>
+        <template #prependButton>
+          <FrEsvDropdown
+            class="within-input-button"
+            is-within-input
+            :field-type="originalType"
+            @esv-selected="handlePlaceholderEntered" />
+        </template>
+      </Component>
+    </template>
+    <template v-else>
       <div class="d-flex">
         <Component
           v-bind="$attrs"
@@ -20,7 +42,7 @@ of the MIT license. See the LICENSE file for details. -->
           </template>
         </Component>
         <FrEsvDropdown
-          :field-type="type"
+          :field-type="originalType"
           @esv-selected="handlePlaceholderEntered" />
       </div>
     </template>
@@ -84,6 +106,14 @@ export default {
       type: String,
       required: true,
     },
+    /**
+     * Original type of field, before it has been transformed in to fieldType in
+     * the field component
+     */
+    originalType: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
@@ -100,6 +130,8 @@ export default {
         case 'string':
         case 'text':
         case 'password':
+        case 'number':
+        case 'integer':
           dropdownWithinInput = true;
           break;
         case 'checkbox':
@@ -117,7 +149,7 @@ export default {
      * @param {Object} placeholder the placeholder value
      */
     handlePlaceholderEntered(placeholder) {
-      const coercedPlaceholder = coercePlaceholderByType(this.type, placeholder);
+      const coercedPlaceholder = coercePlaceholderByType(this.originalType, placeholder);
       this.$emit('input', coercedPlaceholder);
     },
   },

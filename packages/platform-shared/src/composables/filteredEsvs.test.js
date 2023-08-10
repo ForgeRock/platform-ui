@@ -50,16 +50,15 @@ describe('filterEsv composable', () => {
   describe('Obtaining ESVs from the store', () => {
     it('Returns empty lists of variables and secrets if there is no ESV data', () => {
       setupTestStore([], []);
-      const { filteredVariables, filteredSecrets } = useFilteredEsvs(ref(''), 'string');
-      expect(filteredVariables.value.length).toBe(0);
-      expect(filteredSecrets.value.length).toBe(0);
+      const { filteredEsvs } = useFilteredEsvs(ref(''), 'string');
+      expect(filteredEsvs.value.length).toBe(0);
     });
 
-    it('Filters ESV variables from the store based on the relevant expression type for the passed field type', () => {
+    it('Filters ESVs from the store based on the relevant expression type for the passed field type', () => {
       setupTestStore(sampleVariables, sampleSecrets);
-      const { filteredVariables } = useFilteredEsvs(ref('&{'), 'string');
+      const { filteredEsvs } = useFilteredEsvs(ref('&{'), 'string');
 
-      expect(filteredVariables.value).toEqual([
+      expect(filteredEsvs.value).toEqual([
         {
           expressionType: 'string',
           placeholder: '&{esv.myString}',
@@ -68,6 +67,12 @@ describe('filterEsv composable', () => {
           expressionType: 'string',
           placeholder: '&{esv.yourString}',
         },
+        {
+          placeholder: '&{esv.myPassword}',
+        },
+        {
+          placeholder: '&{esv.yourPassword}',
+        },
       ]);
     });
   });
@@ -75,9 +80,9 @@ describe('filterEsv composable', () => {
   it('Filters the relevant ESVs reactively based on the passed query', () => {
     setupTestStore(sampleVariables, sampleSecrets);
     const query = ref('&{');
-    const { filteredVariables, filteredSecrets } = useFilteredEsvs(query, 'string');
+    const { filteredEsvs } = useFilteredEsvs(query, 'string');
 
-    expect(filteredVariables.value).toEqual([
+    expect(filteredEsvs.value).toEqual([
       {
         expressionType: 'string',
         placeholder: '&{esv.myString}',
@@ -86,9 +91,6 @@ describe('filterEsv composable', () => {
         expressionType: 'string',
         placeholder: '&{esv.yourString}',
       },
-    ]);
-
-    expect(filteredSecrets.value).toEqual([
       {
         placeholder: '&{esv.myPassword}',
       },
@@ -99,14 +101,11 @@ describe('filterEsv composable', () => {
 
     query.value = '&{esv.my';
 
-    expect(filteredVariables.value).toEqual([
+    expect(filteredEsvs.value).toEqual([
       {
         expressionType: 'string',
         placeholder: '&{esv.myString}',
       },
-    ]);
-
-    expect(filteredSecrets.value).toEqual([
       {
         placeholder: '&{esv.myPassword}',
       },
@@ -116,9 +115,9 @@ describe('filterEsv composable', () => {
   it('Performs a case insensitive filter based on the passed query', () => {
     setupTestStore(sampleVariables, sampleSecrets);
     const query = ref('&{');
-    const { filteredVariables, filteredSecrets } = useFilteredEsvs(query, 'string');
+    const { filteredEsvs } = useFilteredEsvs(query, 'string');
 
-    expect(filteredVariables.value).toEqual([
+    expect(filteredEsvs.value).toEqual([
       {
         expressionType: 'string',
         placeholder: '&{esv.myString}',
@@ -127,9 +126,6 @@ describe('filterEsv composable', () => {
         expressionType: 'string',
         placeholder: '&{esv.yourString}',
       },
-    ]);
-
-    expect(filteredSecrets.value).toEqual([
       {
         placeholder: '&{esv.myPassword}',
       },
@@ -140,16 +136,25 @@ describe('filterEsv composable', () => {
 
     query.value = '&{esv.MY';
 
-    expect(filteredVariables.value).toEqual([
+    expect(filteredEsvs.value).toEqual([
       {
         expressionType: 'string',
         placeholder: '&{esv.myString}',
       },
-    ]);
-
-    expect(filteredSecrets.value).toEqual([
       {
         placeholder: '&{esv.myPassword}',
+      },
+    ]);
+  });
+
+  it('Only includes secrets for relevant field types', () => {
+    setupTestStore(sampleVariables, sampleSecrets);
+    const { filteredEsvs } = useFilteredEsvs(ref('&{'), 'boolean');
+
+    expect(filteredEsvs.value).toEqual([
+      {
+        expressionType: 'bool',
+        placeholder: '&{esv.myBool}',
       },
     ]);
   });

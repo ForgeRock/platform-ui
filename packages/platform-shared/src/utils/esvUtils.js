@@ -31,6 +31,20 @@ export const ESVTypes = [
  */
 const SUPPORTED_PLACEHOLDER_FIELDS = [
   'checkbox',
+  'password',
+  'string',
+  'text',
+  'number',
+  'integer',
+];
+
+/**
+ * List of field types for which we support entering ESV secrets
+ */
+const FIELDS_ALLOWING_SECRET_INPUT = [
+  'string',
+  'text',
+  'password',
 ];
 
 /**
@@ -84,14 +98,6 @@ export function mapBooleanToSecretVersionStatus(versionStatus) {
 }
 
 /**
- * Tests a string to see whether it starts like a placeholder
- * @param {String} value the value to be tested
- */
-export function startsWithPlaceholder(value) {
-  return value.startsWith('&{');
-}
-
-/**
  * Determines which ESV expression type is relevant for a given input field type
  * @param {String} fieldType the input field type provided by the field component
  * @returns {String} the relevant ESV expression type
@@ -105,6 +111,10 @@ export function determineEsvTypeForField(fieldType) {
     case 'checkbox':
     case 'boolean':
       return 'bool';
+    case 'number':
+      return 'number';
+    case 'integer':
+      return 'int';
     default:
       throw new Error(`Unable to determine ESVs to show for the field type ${fieldType}`);
   }
@@ -172,4 +182,14 @@ export function getPlaceholderValueToDisplay(fieldValueWithPlaceholder) {
 export function isFieldTypeSupportedForPlaceholderEntry(fieldType) {
   if (typeof fieldType !== 'string') return false;
   return SUPPORTED_PLACEHOLDER_FIELDS.includes(fieldType);
+}
+
+/**
+ * Determines whether ESV secrets should be shown for a field type
+ * @param {String} fieldType the field type to evaluate
+ * @returns {Boolean} whether secrets should be shown for the field type
+ */
+export function showEsvSecretsForField(fieldType) {
+  if (typeof fieldType !== 'string') return false;
+  return FIELDS_ALLOWING_SECRET_INPUT.includes(fieldType);
 }
