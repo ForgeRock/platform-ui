@@ -6,9 +6,17 @@
  */
 
 import { computed } from 'vue';
-import { determineEsvTypeForField } from '../utils/esvUtils';
+import { determineEsvTypeForField, showEsvSecretsForField } from '../utils/esvUtils';
 import { useEsvInputStore } from '../stores/esvInput';
 
+/**
+ * Filters the list of ESV secrets and variables taken from the global store
+ * based on a search query and a field type
+ * @param {String} query the search query to filter by
+ * @param {String} fieldType the type of the field to filter by
+ * @returns {Object} containing a list of filtered variables and a list of
+ * filtered secrets
+ */
 export default function useFilteredEsvs(query, fieldType) {
   if (query === null || query === undefined || fieldType === null || fieldType === undefined) {
     throw new Error('Both fieldType and query are required to use this composable');
@@ -20,8 +28,16 @@ export default function useFilteredEsvs(query, fieldType) {
   const relevantVariables = computed(() => esvInputStore.variables
     .filter(({ expressionType }) => typeof expressionType === 'undefined' || expressionTypesToInclude.includes(expressionType)));
 
-  const filteredVariables = computed(() => relevantVariables.value.filter(({ placeholder }) => placeholder.includes(query.value.toLowerCase())));
-  const filteredSecrets = computed(() => esvInputStore.secrets.filter(({ placeholder }) => placeholder.includes(query.value.toLowerCase())));
+  // Compute the ESV list, only include secrets if needed for the field type
+  const includeSecrets = showEsvSecretsForField(fieldType);
+  const filteredEsvs = computed(() => {
+    const lowerCaseQuery = query.value.toLowerCase();
 
-  return { filteredVariables, filteredSecrets };
+    return [
+      ...relevantVariables.value.filter(({ placeholder }) => placeholder.includes(lowerCaseQuery)),
+      ...(includeSecrets ? esvInputStore.secrets.filter(({ placeholder }) => placeholder.includes(lowerCaseQuery)) : []),
+    ];
+  });
+
+  return { filteredEsvs };
 }
