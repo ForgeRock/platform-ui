@@ -7,6 +7,7 @@
 
 import { shallowMount, mount } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { cloneDeep } from 'lodash';
 import flushPromises from 'flush-promises';
 import * as CertificationApi from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import CertificationTaskList from './index';
@@ -63,6 +64,7 @@ function mountComponent(propsData = {}) {
         },
       },
     },
+    stubs: ['BTooltip'],
     propsData: {
       campaignDetails: {},
       ...propsData,
@@ -729,6 +731,103 @@ describe('CertificationTaskList', () => {
           }),
         ]),
       );
+    });
+  });
+
+  fdescribe(('Role based grants'), () => {
+    const nonRoleBased = {
+      data: {
+        result: [
+          {
+            id: 'testId',
+            user: {},
+            account: {},
+            application: {},
+            entitlement: {},
+            permissions: {
+              certify: true,
+              revoke: true,
+              exception: true,
+            },
+            decision: {
+              certification: {},
+            },
+            descriptor: {
+              idx: {
+                '/entitlement': {
+                  displayName: 'entitlement name',
+                },
+                '/account': {
+                  displayName: 'account name',
+                },
+              },
+            },
+          },
+        ],
+      },
+    };
+
+    const roleBased = cloneDeep(nonRoleBased);
+    roleBased.data.result[0].relationship = {
+      properties: {
+        grantTypes: [
+          {
+            grantType: 'role',
+          },
+        ],
+      },
+    };
+
+    beforeEach(() => {
+      CertificationApi.getCertificationCountsByCampaign.mockImplementation(() => Promise.resolve({ data: 'results' }));
+    });
+    it('shows revoke for non-role based', async () => {
+      CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve(nonRoleBased));
+      mountComponent();
+      await flushPromises();
+      const revoke = findByTestId(wrapper, 'btnRevoke-testId');
+      expect(revoke.exists()).toBe(true);
+    });
+
+    it('hides revoke action for role based', async () => {
+      CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve(roleBased));
+      mountComponent();
+      await flushPromises();
+      const revoke = findByTestId(wrapper, 'btnRevoke-testId');
+      expect(revoke.exists()).toBe(false);
+    });
+
+    it('shows exception for non-role based', async () => {
+      CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve(nonRoleBased));
+      mountComponent({ campaignDetails: { exceptionDuration: 1 } });
+      await flushPromises();
+      const exception = findByTestId(wrapper, 'btnAllowException-testId');
+      expect(exception.exists()).toBe(true);
+    });
+
+    it('hides exception action for role based', async () => {
+      CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve(roleBased));
+      mountComponent({ campaignDetails: { exceptionDuration: 1 } });
+      await flushPromises();
+      const exception = findByTestId(wrapper, 'btnAllowException-testId');
+      expect(exception.exists()).toBe(false);
+    });
+
+    it('hides multiselect option', async () => {
+      CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve(roleBased));
+      mountComponent();
+      await flushPromises();
+      const revoke = findByTestId(wrapper, 'multiselect-testId');
+      expect(revoke.exists()).toBe(false);
+    });
+
+    it('changes tooltip text from certify to acknowledge', async () => {
+      CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve(roleBased));
+      mountComponent();
+      await flushPromises();
+      const revoke = findByTestId(wrapper, 'tooltip-certify-testId');
+      expect(revoke.exists()).toBe(true);
+      expect(revoke.text()).toBe('governance.certificationTask.actions.acknowledge');
     });
   });
 
