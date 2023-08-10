@@ -17,6 +17,7 @@ of the MIT license. See the LICENSE file for details. -->
       :is="component"
       :name="fieldName"
       :type="fieldType"
+      :original-type="type"
       :inner-component="innerComponent"
       :testid="testid"
       @input="valueUpdated">
