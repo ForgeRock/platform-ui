@@ -276,6 +276,7 @@ const addAppAuth = (realm) => {
 
   // trigger logout from anywhere in the SPA by calling this global function
   window.logout = (clearHash = true, invalidSession = false) => {
+    store.commit('SharedStore/showLogoutScreen');
     const loginRealm = localStorage.getItem('originalLoginRealm');
     /**
      * If there is an originalLoginRealm and that realm is different from the current realm
