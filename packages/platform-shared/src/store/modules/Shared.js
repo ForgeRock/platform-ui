@@ -27,6 +27,7 @@ const defaultState = {
   governanceEnabled: false,
   governanceEnabledV3: false,
   igaApiUrl: null,
+  logoutScreen: false,
   returnRoute: '',
   returnRouteText: '',
   uiConfig: null,
@@ -99,6 +100,10 @@ const mutations = {
     if (env.VUE_APP_GOOGLE_MAPS_API_KEY) {
       state.googleMapsApiKey = env.VUE_APP_GOOGLE_MAPS_API_KEY;
     }
+  },
+
+  showLogoutScreen(state) {
+    state.logoutScreen = true;
   },
 
   setReturnRoute(state, newValue) {
