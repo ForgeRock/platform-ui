@@ -825,8 +825,7 @@
     "title": "Script",
     "type": "Type: ",
     "uploadFile": "Upload File",
-    "variables": "Variables",
-    "defineCustom": "Define custom variables to pass to your script.",
+    "variables": "Passed Variables",
     "value": "Value",
     "json": "JSON",
     "jsonNotStructured": "JSON is not structured properly"

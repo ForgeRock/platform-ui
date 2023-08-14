@@ -127,6 +127,10 @@ describe('BasicInput', () => {
         const copyValueButton = findByTestId(wrapper, 'btn-copy-stub-testid');
         expect(copyValueButton.exists()).toBeFalsy();
         jest.useRealTimers();
+
+        // has is-invalid class when error
+        wrapper.setData({ errorMessages: 'Failed' });
+        expect(input.classes()).toContain('is-invalid');
       });
 
       it('when given describedbyId', () => {
@@ -290,6 +294,18 @@ describe('BasicInput', () => {
         const input = findByTestId(wrapper, 'input-stub-testid');
         expect(input.classes()).toContain('text-truncate');
       });
+    });
+
+    it('as custom class', () => {
+      const wrapper = mount(BasicInput, {
+        i18n,
+        propsData: {
+          ...defaultProps,
+          inputClass: 'custom-class',
+        },
+      });
+
+      expect(wrapper.contains('.custom-class')).toBe(true);
     });
   });
 
