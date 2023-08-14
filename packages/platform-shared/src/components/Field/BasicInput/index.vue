@@ -31,14 +31,7 @@ of the MIT license. See the LICENSE file for details. -->
           type="text"
           inputmode="numeric"
           pattern="[0-9]*"
-          :class="[
-            'form-control',
-            {
-              'polyfill-placeholder': floatLabels,
-              'is-invalid': errorMessages && errorMessages.length,
-              'text-truncate': hasAppendSlot || copy,
-            }
-          ]"
+          :class="inputClasses"
           :data-vv-as="label"
           :disabled="disabled"
           :id="id"
@@ -56,14 +49,7 @@ of the MIT license. See the LICENSE file for details. -->
           v-else
           v-model="inputValue"
           ref="input"
-          :class="[
-            'form-control',
-            {
-              'polyfill-placeholder': floatLabels,
-              'is-invalid': errorMessages && errorMessages.length,
-              'text-truncate': hasAppendSlot || copy,
-            }
-          ]"
+          :class="inputClasses"
           :data-vv-as="label"
           :disabled="disabled"
           :id="id"
@@ -197,6 +183,13 @@ export default {
       type: Boolean,
       default: false,
     },
+    /**
+     * Custom input class
+     */
+    inputClass: {
+      type: String,
+      default: '',
+    },
   },
   data() {
     return {
@@ -227,6 +220,19 @@ export default {
         return 'number';
       }
       return this.type === 'password' && !this.showPassword && !this.forceShowPassword ? 'password' : 'text';
+    },
+    inputClasses() {
+      const inputClasses = ['form-control', this.inputClass];
+      if (this.floatLabels) {
+        inputClasses.push('polyfill-placeholder');
+      }
+      if (this.errorMessages?.length) {
+        inputClasses.push('is-invalid');
+      }
+      if (this.hasAppendSlot || this.copy) {
+        inputClasses.push('text-truncate');
+      }
+      return inputClasses;
     },
   },
   methods: {
