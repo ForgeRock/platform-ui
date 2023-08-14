@@ -117,4 +117,9 @@ describe('ScriptEditor', () => {
     expect(wrapper.vm.scriptType.value).toEqual('text/javascript');
     expect(wrapper.vm.fileChanged).toEqual(true);
   });
+
+  it('removes variables container when showVariables is false', () => {
+    wrapper.setProps({ showVariables: false });
+    expect(wrapper.contains('.fr-script-editor-vars')).toBe(false);
+  });
 });

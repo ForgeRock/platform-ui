@@ -3,12 +3,12 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div class="form-group">
-    <div class="d-flex justify-content-end align-items-center">
-      <label class="flex-grow-1 mb-0">
-        {{ scriptTitle || $t('scriptEditor.title') }}
+  <div class="form-group mb-0 h-100 d-flex flex-column">
+    <div class="d-flex justify-content-between align-items-center">
+      <label class="mb-0 mr-2 py-2">
+        {{ scriptTitle === null ? $t('scriptEditor.title') : scriptTitle }}
       </label>
-      <div class="d-flex align-items-center">
+      <div class="d-flex align-items-center py-2">
         <label
           v-show="showScriptType"
           class="mr-1 mb-0">
@@ -30,14 +30,18 @@ of the MIT license. See the LICENSE file for details. -->
           size="sm" />
       </div>
     </div>
-    <VuePrismEditor
-      v-if="uploadFileToggle === false"
-      v-model="code"
-      :aria-label="$t('editor.accessibilityHelp')"
-      :language="scriptType.value.split('/')[1]"
-      :line-numbers="showLineNumbers"
-      @input="emitScriptValue"
-      @keydown="blurOnEscape" />
+    <div class="fr-script-editor w-100">
+      <div class="d-flex w-100 h-100 fr-script-editor-sidebar-nav position-relative">
+        <VuePrismEditor
+          v-if="uploadFileToggle === false"
+          v-model="code"
+          :aria-label="$t('editor.accessibilityHelp')"
+          :language="scriptType.value.split('/')[1]"
+          :line-numbers="showLineNumbers"
+          @input="emitScriptValue"
+          @keydown="blurOnEscape" />
+      </div>
+    </div>
     <BFormFile
       v-show="uploadFileToggle === true"
       @change="onFileChange"
@@ -50,90 +54,106 @@ of the MIT license. See the LICENSE file for details. -->
           :label="$t('scriptEditor.uploadFile')" />
       </template>
     </BFormFile>
-    <div class="justify-content-between pt-3">
-      <BButton
-        v-if="selectedVariables.length === 0 && !jsonEditToggle"
-        variant="link"
-        @click="addVariable('', '', 0)">
-        <FrIcon
-          name="add"
-        />
-        {{ $t('common.addObject', {object: $t('scriptEditor.variables')}) }}
-      </BButton>
-      <template v-else>
-        <div class="d-flex align-items-center">
-          <label class="flex-grow-1">
-            {{ $t('scriptEditor.variables') }}
-          </label>
-          <label
-            v-if="!jsonStructured"
-            class="text-secondary">
-            {{ $t('scriptEditor.jsonNotStructured') }}
-          </label>
-          <FrField
-            v-else
-            v-model="jsonEditToggle"
-            type="boolean"
-            :label="$t('scriptEditor.json')"
-            size="sm"
-            @change="jsonEditorToggle($event)" />
-        </div>
-        <template v-if="jsonEditToggle">
-          <VuePrismEditor
-            v-model="variablesJsonCode"
-            language="json"
-            :aria-label="$t('editor.accessibilityHelp')"
-            :line-numbers="true"
-            @input="checkIfCodeIsParsable($event.target.innerText)"
-            @keydown="blurOnEscape" />
-        </template>
+    <div
+      v-if="showVariables"
+      class="fr-script-editor fr-script-editor-vars pb-0 px-3">
+      <div class="pb-3">
+        <BButton
+          v-if="selectedVariables.length === 0 && !jsonEditToggle"
+          class="my-2 float-right"
+          variant="link"
+          size="sm"
+          @click="addVariable('', '', 0)">
+          <FrIcon name="add" />
+          {{ $t('common.variables') }}
+        </BButton>
         <template v-else>
-          <ValidationObserver ref="validationObserver">
+          <div class="d-flex align-items-center">
+            <label class="flex-grow-1 h6 text-uppercase mt-3">
+              {{ $t('scriptEditor.variables') }}
+            </label>
+            <label
+              v-if="!jsonStructured"
+              class="text-secondary">
+              {{ $t('scriptEditor.jsonNotStructured') }}
+            </label>
+            <FrField
+              v-else
+              v-model="jsonEditToggle"
+              type="boolean"
+              :label="$t('scriptEditor.json')"
+              size="sm"
+              @change="jsonEditorToggle($event)" />
+          </div>
+          <template v-if="jsonEditToggle">
+            <VuePrismEditor
+              v-model="variablesJsonCode"
+              language="json"
+              :aria-label="$t('editor.accessibilityHelp')"
+              :line-numbers="true"
+              @input="checkIfCodeIsParsable($event.target.innerText)"
+              @keydown="blurOnEscape" />
+          </template>
+          <template v-else>
             <div
-              v-for="(selectedVariable, index) in selectedVariables"
-              :key="selectedVariable.index">
-              <div :class="[{'pt-3': index}, 'd-flex']">
+              class="form-row pb-1"
+              style="padding-right: 90px;">
+              <div class="col-6">
+                <small>{{ $t('common.name') }}</small>
+              </div>
+              <div class="col-6">
+                <small>{{ $t('scriptEditor.value') }}</small>
+              </div>
+            </div>
+            <ValidationObserver ref="validationObserver">
+              <div
+                v-for="(selectedVariable, index) in selectedVariables"
+                :key="selectedVariable.index"
+                :class="[{'pt-2': index}, 'd-flex','form-group', 'mb-0', 'align-iterm-start']">
                 <div class="flex-grow-1 pr-3">
-                  <div class="form-row">
+                  <div class="form-row align-items-start">
                     <FrField
                       v-model="selectedVariable.name"
-                      class="px-1 col-6"
+                      class="col-6"
+                      input-class="form-control-sm form-control-dark"
                       validation="required"
-                      :label="$t('common.name')"
+                      :name="$t('common.name')"
                       @input="emitScriptValue" />
                     <FrField
                       v-model="selectedVariable.value.value"
-                      class="px-1 col-6"
+                      class="col-6"
+                      input-class="form-control-sm form-control-dark"
                       validation="required"
-                      :label="$t('scriptEditor.value')"
+                      :name="$t('common.value')"
                       :type="selectedVariable.type"
                       @input="emitScriptValue" />
                   </div>
                 </div>
-                <BButton
-                  variant="outline-secondary mr-1"
-                  class="max-height-50"
-                  @click="removeVariable(index)">
-                  <FrIcon
-                    name="remove"
-                  />
-                </BButton>
-                <BButton
-                  variant="outline-secondary mr-1"
-                  class="max-height-50"
-                  @click="addVariable('', '', index + 1)">
-                  <FrIcon
-                    name="add"
-                  />
-                </BButton>
+                <div class="d-flex">
+                  <BButton
+                    variant="link mr-1"
+                    class="max-height-50"
+                    size="sm"
+                    @click="removeVariable(index)">
+                    <FrIcon
+                      name="remove"
+                    />
+                  </BButton>
+                  <BButton
+                    variant="link mr-1"
+                    class="max-height-50"
+                    size="sm"
+                    @click="addVariable('', '', index + 1)">
+                    <FrIcon
+                      name="add"
+                    />
+                  </BButton>
+                </div>
               </div>
-            </div>
-          </ValidationObserver>
+            </ValidationObserver>
+          </template>
         </template>
-        <small>
-          {{ $t('scriptEditor.defineCustom') }}
-        </small>
-      </template>
+      </div>
     </div>
   </div>
 </template>
@@ -151,7 +171,7 @@ import blurOnEscape from '@forgerock/platform-shared/src/utils/codeEditor';
 import 'prismjs';
 import 'prismjs/components/prism-groovy';
 import 'prismjs/components/prism-json';
-import 'prismjs/themes/prism.css';
+import 'prismjs/themes/prism-tomorrow.css';
 import VuePrismEditor from 'vue-prism-editor';
 import 'vue-prism-editor/dist/VuePrismEditor.css';
 
@@ -188,6 +208,10 @@ export default {
     scriptTitle: {
       type: String,
       default: null,
+    },
+    showVariables: {
+      type: Boolean,
+      default: true,
     },
   },
   data() {
@@ -490,5 +514,36 @@ export default {
       background: none;
     }
   }
+
+  .fr-script-editor-vars {
+    background-color: #1a1e22;
+    border-top: 1px solid $black;
+    color: $gray-400;
+    .btn-link,
+    .h6 {
+      color: $gray-400;
+    }
+  }
+  .prism-editor-wrapper,
+  code[class*="language-"],
+  pre[class*="language-"] {
+    background-color: $gray-900 !important;
+    text-shadow: none;
+    line-height: 1.75;
+  }
+  .language-css .token.string,
+  .style .token.string,
+  .token.entity,
+  .token.operator,
+  .token.url {
+    background: transparent;
+  }
+
+  .form-control.form-control-dark {
+    color: $white;
+    background-color: #30373f;
+    border-color: $gray-800;
+  }
 }
+
 </style>

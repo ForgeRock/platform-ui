@@ -7,3 +7,7 @@ pre[class*='language-'] {
 .prism-editor-wrapper {
   background-color: $gray-100;
 }
+
+code[class*='language-'] {
+  display: inline !important;
+}
