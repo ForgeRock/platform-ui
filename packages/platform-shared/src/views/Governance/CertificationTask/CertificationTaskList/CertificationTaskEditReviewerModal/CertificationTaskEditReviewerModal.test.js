@@ -39,7 +39,6 @@ describe('CertificationTaskEditReviewerModal', () => {
   });
 
   it('component loaded correctly', () => {
-    expect(wrapper.name()).toBe('EditReviewerModal');
     expect(wrapper.vm.currentUserMappedPermissions).toEqual({});
   });
 
@@ -77,7 +76,7 @@ describe('CertificationTaskEditReviewerModal', () => {
     expect(wrapper.emitted()['edit-reviewer'][0][2]).toEqual(selectedReviewer);
   });
 
-  it('editReviewer should emit edit-reviewer event with properly data on edit reviewer', () => {
+  it('editReviewer should emit edit-reviewer event with properly data on edit reviewer', async () => {
     const reviewer = {
       userName: 'bwalters@jstilton1973unfinishedlife.onmicrosoft.com',
       givenName: 'Barbara',
@@ -101,7 +100,7 @@ describe('CertificationTaskEditReviewerModal', () => {
         signoff: true,
       },
     };
-    wrapper.setProps({
+    await wrapper.setProps({
       reviewer,
     });
 
@@ -128,7 +127,7 @@ describe('CertificationTaskEditReviewerModal', () => {
     expect(wrapper.emitted()['edit-reviewer'][0][2]).toEqual(null);
   });
 
-  it('editReviewer should emit edit-reviewer event with properly data on edit reviewer no decide', () => {
+  it('editReviewer should emit edit-reviewer event with properly data on edit reviewer no decide', async () => {
     const reviewer = {
       userName: 'bwalters@jstilton1973unfinishedlife.onmicrosoft.com',
       givenName: 'Barbara',
@@ -152,7 +151,7 @@ describe('CertificationTaskEditReviewerModal', () => {
         challenge: true,
       },
     };
-    wrapper.setProps({
+    await wrapper.setProps({
       reviewer,
     });
 
@@ -179,7 +178,7 @@ describe('CertificationTaskEditReviewerModal', () => {
     expect(wrapper.emitted()['edit-reviewer'][0][2]).toEqual(null);
   });
 
-  it('deleteReviewer should emit delete-reviewer event', () => {
+  it('deleteReviewer should emit delete-reviewer event', async () => {
     const reviewer = {
       userName: 'bwalters@jstilton1973unfinishedlife.onmicrosoft.com',
       givenName: 'Barbara',
@@ -203,7 +202,7 @@ describe('CertificationTaskEditReviewerModal', () => {
         signoff: true,
       },
     };
-    wrapper.setProps({
+    await wrapper.setProps({
       reviewer,
     });
 
@@ -268,7 +267,7 @@ describe('CertificationTaskEditReviewerModal', () => {
     expect(wrapper.vm.selectedReviewer).toBeNull();
   });
 
-  it('user can not edit his own permissions', () => {
+  it('user can not edit his own permissions', async () => {
     const reviewer = {
       userName: 'bwalters@jstilton1973unfinishedlife.onmicrosoft.com',
       givenName: 'Barbara',
@@ -292,7 +291,7 @@ describe('CertificationTaskEditReviewerModal', () => {
         signoff: true,
       },
     };
-    wrapper.setProps({
+    await wrapper.setProps({
       reviewer,
     });
 
@@ -309,8 +308,8 @@ describe('CertificationTaskEditReviewerModal', () => {
     expect(wrapper.vm.footerClass).toBe('');
   });
 
-  it('footer class justify-content-between if edition is allowed', () => {
-    wrapper.setProps({
+  it('footer class justify-content-between if edition is allowed', async () => {
+    await wrapper.setProps({
       isAllowedDeletion: true,
     });
 

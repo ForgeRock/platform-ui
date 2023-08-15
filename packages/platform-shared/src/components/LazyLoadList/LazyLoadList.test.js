@@ -34,17 +34,17 @@ describe('LazyLoadList', () => {
   it('displays spinner while loading', async () => {
     const wrapper = mountComponent();
     expect(wrapper.find('.spinner-small').exists()).toBeFalsy();
-    wrapper.setProps({
+    await wrapper.setProps({
       listItems: [],
       additionalItemsAvailable: true,
     });
-    await wrapper.vm.$nextTick();
+    await flushPromises();
     expect(wrapper.find('.spinner-small').exists()).toBeTruthy();
   });
 
   it('displays items after loading', async () => {
     const wrapper = mountComponent();
-    wrapper.setProps({
+    await wrapper.setProps({
       listItems: [{
         _id: 'id',
       }],

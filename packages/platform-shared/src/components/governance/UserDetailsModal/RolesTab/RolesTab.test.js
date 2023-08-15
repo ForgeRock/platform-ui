@@ -29,8 +29,8 @@ describe('RolesTab', () => {
       wrapper = mountComponent({ result: [] });
       const rolesTable = findByTestId(wrapper, 'roles-table');
       expect(rolesTable.exists()).toBeFalsy();
-      expect(wrapper.find(FrNoData).exists()).toBe(true);
-      expect(wrapper.find(FrNoData).props('subtitle')).toBe('governance.certificationTask.lineItemDetailsModal.rolesTab.noItems');
+      expect(wrapper.findComponent(FrNoData).exists()).toBe(true);
+      expect(wrapper.findComponent(FrNoData).props('subtitle')).toBe('governance.certificationTask.lineItemDetailsModal.rolesTab.noItems');
     });
 
     it('Shows roles table and not FrNoData when component have roles information', () => {
@@ -46,7 +46,7 @@ describe('RolesTab', () => {
         ],
       });
 
-      expect(wrapper.find(FrNoData).exists()).toBe(false);
+      expect(wrapper.findComponent(FrNoData).exists()).toBe(false);
       const rolesTable = findByTestId(wrapper, 'roles-table');
       expect(rolesTable.exists()).toBeTruthy();
     });

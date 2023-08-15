@@ -12,6 +12,6 @@ describe('No Data Component', () => {
   it('No data successfully loaded', () => {
     const wrapper = shallowMount(NoData);
 
-    expect(wrapper.name()).toEqual('NoData');
+    expect(wrapper.vm.icon).toEqual('bug_report');
   });
 });

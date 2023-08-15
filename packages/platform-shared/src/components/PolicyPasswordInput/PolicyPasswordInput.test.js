@@ -31,7 +31,7 @@ describe('PasswordPolicyInput.vue', () => {
 
   describe('proper render', () => {
     it('should load the page', () => {
-      expect(wrapper.name()).toBe('PolicyPasswordInput');
+      expect(wrapper.vm.resourceType).toBe('managed');
     });
   });
 });

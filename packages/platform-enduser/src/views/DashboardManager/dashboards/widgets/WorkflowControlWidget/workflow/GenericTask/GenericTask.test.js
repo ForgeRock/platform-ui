@@ -44,6 +44,6 @@ describe('GenericTask.vue', () => {
   });
 
   it('GenericTask successfully loaded', () => {
-    expect(wrapper.name()).toEqual('GenericTask');
+    expect(wrapper.vm.formValues).toStrictEqual({ 123: '123var' });
   });
 });

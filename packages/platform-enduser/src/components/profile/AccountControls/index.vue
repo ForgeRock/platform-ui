@@ -32,7 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
           @click="slotData.buttonMethod">
           <FrIcon
             class="mr-2"
-            :name="slotData.buttonIcon"
+            :name="slotData.buttonIcon ? slotData.buttonIcon : 'check_box_outline_blank'"
           />
           {{ slotData.buttonText }}
         </BButton>

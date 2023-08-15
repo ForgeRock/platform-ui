@@ -12,9 +12,6 @@ let wrapper;
 
 function mountComponent(options) {
   wrapper = shallowMount(CertificationTaskSortModal, {
-    methods: {
-      cancel: jest.fn(),
-    },
     mocks: {
       $t: (t) => t,
       ...options,
@@ -26,12 +23,8 @@ function mountComponent(options) {
 }
 describe('CertificationTaskSortModal', () => {
   describe('Component mount', () => {
-    it('CertificationTaskSortModal successfully loaded', () => {
-      mountComponent();
-      expect(wrapper.name()).toEqual('CertificationTaskSortModal');
-    });
-
     it('should render default modalId', () => {
+      mountComponent();
       expect(wrapper.find('#CertificationTaskSortConfirmAccountModal').exists()).toBeTruthy();
     });
 

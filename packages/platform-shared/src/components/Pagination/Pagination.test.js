@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { mount } from '@vue/test-utils';
+import flushPromises from 'flush-promises';
 import Pagination from './index';
 import { DatasetSize } from './types';
 
@@ -22,11 +23,6 @@ describe('Pagination Component', () => {
       },
     });
   }
-
-  it('Component successfully loaded', () => {
-    const wrapper = mountPagination();
-    expect(wrapper.name()).toEqual('Pagination');
-  });
 
   it('Pagination correct aria labels', () => {
     const wrapper = mountPagination();
@@ -103,7 +99,7 @@ describe('Pagination Component', () => {
     expect(paginationWrapperDiv.classes('justify-content-end')).toBe(true);
   });
 
-  it('Should emit input event when next button clicked', () => {
+  it('Should emit input event when next button clicked', async () => {
     const wrapper = mountPagination({
       propsData: {
         totalRows: 20,
@@ -112,14 +108,15 @@ describe('Pagination Component', () => {
     const pagination = wrapper.find('#pagination');
     expect(pagination.exists()).toBe(true);
     const buttons = pagination.findAll('.page-item');
-    const nextButton = buttons.at(3).find('.page-link');
+    const nextButton = buttons.at(4).find('.page-link');
     nextButton.trigger('click');
+    await flushPromises();
     expect(wrapper.emitted('input')).toBeTruthy();
     expect(wrapper.emitted('input').length).toBe(1);
     expect(wrapper.emitted('input')[0]).toEqual([2]);
   });
 
-  it('Should emit input event when previous button clicked', () => {
+  it('Should emit input event when previous button clicked', async () => {
     const wrapper = mountPagination({
       propsData: {
         totalRows: 30,
@@ -131,12 +128,13 @@ describe('Pagination Component', () => {
     const buttons = pagination.findAll('.page-item');
     const prevButton = buttons.at(1).find('.page-link');
     prevButton.trigger('click');
+    await flushPromises();
     expect(wrapper.emitted('input')).toBeTruthy();
     expect(wrapper.emitted('input').length).toBe(1);
     expect(wrapper.emitted('input')[0]).toEqual([1]);
   });
 
-  it('Should emit input event when last button clicked', () => {
+  it('Should emit input event when last button clicked', async () => {
     const wrapper = mountPagination({
       propsData: {
         totalRows: 20,
@@ -145,14 +143,15 @@ describe('Pagination Component', () => {
     const pagination = wrapper.find('#pagination');
     expect(pagination.exists()).toBe(true);
     const buttons = pagination.findAll('.page-item');
-    const nextButton = buttons.at(4).find('.page-link');
+    const nextButton = buttons.at(5).find('.page-link');
     nextButton.trigger('click');
+    await flushPromises();
     expect(wrapper.emitted('input')).toBeTruthy();
     expect(wrapper.emitted('input').length).toBe(1);
     expect(wrapper.emitted('input')[0]).toEqual([2]);
   });
 
-  it('Should emit input event when first button clicked', () => {
+  it('Should emit input event when first button clicked', async () => {
     const wrapper = mountPagination({
       propsData: {
         totalRows: 30,
@@ -164,12 +163,13 @@ describe('Pagination Component', () => {
     const buttons = pagination.findAll('.page-item');
     const prevButton = buttons.at(0).find('.page-link');
     prevButton.trigger('click');
+    await flushPromises();
     expect(wrapper.emitted('input')).toBeTruthy();
     expect(wrapper.emitted('input').length).toBe(1);
     expect(wrapper.emitted('input')[0]).toEqual([1]);
   });
 
-  it('Should emit input event when page button clicked', () => {
+  it('Should emit input event when page button clicked', async () => {
     const wrapper = mountPagination({
       propsData: {
         totalRows: 20,
@@ -180,6 +180,7 @@ describe('Pagination Component', () => {
     const buttons = pagination.findAll('.page-item');
     const prevButton = buttons.at(3).find('.page-link');
     prevButton.trigger('click');
+    await flushPromises();
     expect(wrapper.emitted('input')).toBeTruthy();
     expect(wrapper.emitted('input').length).toBe(1);
     expect(wrapper.emitted('input')[0]).toEqual([2]);
@@ -375,7 +376,7 @@ describe('Pagination Component', () => {
       expect(paginationWrapperDiv.classes('justify-content-start')).toBe(true);
     });
 
-    it('Dropdown toggle button text with correct indexes on page change', () => {
+    it('Dropdown toggle button text with correct indexes on page change', async () => {
       const wrapper = mountPaginationCustom({
         propsData: {
           totalRows: 25,
@@ -387,14 +388,14 @@ describe('Pagination Component', () => {
       expect(wrapper.vm.pageMin).toBe(1);
       expect(wrapper.vm.pageMax).toBe(10);
 
-      wrapper.setProps({
+      await wrapper.setProps({
         value: 2,
       });
 
       expect(wrapper.vm.pageMin).toBe(11);
       expect(wrapper.vm.pageMax).toBe(20);
 
-      wrapper.setProps({
+      await wrapper.setProps({
         value: 3,
       });
 

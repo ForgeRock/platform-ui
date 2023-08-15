@@ -60,10 +60,6 @@ describe('AccountDetailsTab', () => {
     });
   });
 
-  it('component should load correctly', () => {
-    expect(wrapper.name()).toBe('AccountDetailsTab');
-  });
-
   it('should show all account details properties', () => {
     validateFieldByText(wrapper, 'displayName', account.account.displayName);
     validateFieldByText(wrapper, 'userPrincipalName', account.account.userPrincipalName);

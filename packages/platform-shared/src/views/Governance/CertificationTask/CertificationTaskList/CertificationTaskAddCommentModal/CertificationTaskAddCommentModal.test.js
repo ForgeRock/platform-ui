@@ -18,10 +18,6 @@ describe('CertificationTaskAddCommentModal', () => {
     });
   });
 
-  it('component should load correclty', () => {
-    expect(wrapper.name()).toBe('AddCommentModal');
-  });
-
   it('addComment shoul change isSaving and emmit add-comment', () => {
     wrapper.setData({
       comment: 'Test comment',

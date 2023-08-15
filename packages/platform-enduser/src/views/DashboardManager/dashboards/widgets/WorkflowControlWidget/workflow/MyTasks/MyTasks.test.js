@@ -28,10 +28,6 @@ describe('MyTasks.vue', () => {
     });
   });
 
-  it('MyTasks successfully loaded', () => {
-    expect(wrapper.name()).toEqual('MyTasks');
-  });
-
   it('Sets panelShown id data property to true', () => {
     wrapper.vm.setShown('panel_id');
     expect(wrapper.vm.panelShown).toEqual({

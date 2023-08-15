@@ -9,11 +9,6 @@ import { shallowMount } from '@vue/test-utils';
 import PageHeader from './index';
 
 describe('Navbar Component', () => {
-  it('Component successfully loaded', () => {
-    const wrapper = shallowMount(PageHeader);
-    expect(wrapper.name()).toEqual('PageHeader');
-  });
-
   it('Includes a subtitle if given', () => {
     const wrapper = shallowMount(PageHeader, {
       propsData: {

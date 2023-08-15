@@ -14,16 +14,16 @@ localVue.use(BootstrapVue);
 
 describe('Process.vue', () => {
   let wrapper;
+  const formGenerationTemplate = () => {};
   beforeEach(() => {
     jest.clearAllMocks();
     wrapper = shallowMount(Process, {
       localVue,
       propsData: {
         processDefinition: {
-          formGenerationTemplate: () => {},
+          formGenerationTemplate,
         },
-        tasks: {
-        },
+        tasks: {},
       },
       mocks: {
         $t: (key) => (key),
@@ -32,6 +32,6 @@ describe('Process.vue', () => {
   });
 
   it('Process successfully loaded', () => {
-    expect(wrapper.name()).toEqual('Process');
+    expect(wrapper.vm.processDefinition).toEqual({ formGenerationTemplate });
   });
 });

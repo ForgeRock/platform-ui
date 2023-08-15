@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -21,17 +21,6 @@ describe('CountCard Component', () => {
     tooltip: 'Unit Test tooltip description',
   };
 
-  it('CountCard successfully loaded with all required props', () => {
-    wrapper = shallowMount(CountCard, {
-      propsData,
-      mocks: {
-        $t: () => {},
-      },
-    });
-
-    expect(wrapper.name()).toEqual('CountCard');
-  });
-
   it('CountCard to show loader and hide count when loader prop set to true', () => {
     wrapper = shallowMount(CountCard, {
       propsData: {
@@ -43,7 +32,7 @@ describe('CountCard Component', () => {
       },
     });
 
-    expect(wrapper.contains('.fr-spinner')).toBe(true);
+    expect(wrapper.find('.fr-spinner').exists()).toBe(true);
     expect(wrapper.find('h1').exists()).toBe(false);
   });
 
@@ -58,7 +47,7 @@ describe('CountCard Component', () => {
       },
     });
 
-    expect(wrapper.contains('.fr-spinner')).toBe(false);
+    expect(wrapper.find('.fr-spinner').exists()).toBe(false);
     expect(wrapper.find('h1').exists()).toBe(true);
 
     const h1 = findByTestId(wrapper, 'counter-unit_test_count');

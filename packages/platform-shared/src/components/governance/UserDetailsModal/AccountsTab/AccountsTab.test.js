@@ -29,8 +29,8 @@ describe('AccountsTab', () => {
       wrapper = mountComponent({ result: [] });
       const accountsTable = findByTestId(wrapper, 'accounts-table');
       expect(accountsTable.exists()).toBeFalsy();
-      expect(wrapper.find(FrNoData).exists()).toBe(true);
-      expect(wrapper.find(FrNoData).props('subtitle')).toBe('governance.certificationTask.lineItemDetailsModal.accountsTab.noItems');
+      expect(wrapper.findComponent(FrNoData).exists()).toBe(true);
+      expect(wrapper.findComponent(FrNoData).props('subtitle')).toBe('governance.certificationTask.lineItemDetailsModal.accountsTab.noItems');
     });
 
     it('Shows accounts table and not FrNoData when component have accounts information', () => {
@@ -53,7 +53,7 @@ describe('AccountsTab', () => {
         ],
       });
 
-      expect(wrapper.find(FrNoData).exists()).toBe(false);
+      expect(wrapper.findComponent(FrNoData).exists()).toBe(false);
       const accountsTable = findByTestId(wrapper, 'accounts-table');
       expect(accountsTable.exists()).toBeTruthy();
     });

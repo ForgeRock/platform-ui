@@ -24,6 +24,6 @@ describe('contentDetailsTab', () => {
   });
 
   it('component should load correclty', () => {
-    expect(wrapper.name()).toBe('ContentDetailsTab');
+    expect(wrapper.vm.blankValueIndicator).toBe('--');
   });
 });
