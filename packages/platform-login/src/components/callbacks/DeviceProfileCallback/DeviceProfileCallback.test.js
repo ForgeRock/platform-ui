@@ -35,10 +35,6 @@ describe('DeviceProfileCallback', () => {
     });
   });
 
-  it('Loads DeviceProfileCallback component', () => {
-    expect(wrapper.name()).toEqual('DeviceProfileCallback');
-  });
-
   it('Sets profile data and emits "next-step"', async () => {
     expect(wrapper.vm.$data.message).toBe('Message');
     await wrapper.vm.$nextTick();

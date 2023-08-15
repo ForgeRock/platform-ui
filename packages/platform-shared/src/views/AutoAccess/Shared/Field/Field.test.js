@@ -232,14 +232,13 @@ describe('FrField.vue', () => {
   });
 
   it('uses checkbox component for boolean type', async () => {
-    wrapper.setProps({
+    await wrapper.setProps({
       field: {
         type: 'checkbox',
         key: 'testField',
         value: true,
       },
     });
-    await flush();
     expect(wrapper.vm.field.value).toBe(true);
   });
 

@@ -13,21 +13,21 @@ import ConsumerApplications from './index';
 const localVue = createLocalVue();
 localVue.use(BootstrapVue);
 
-describe('Dashboard.vue', () => {
+describe('ConsumerApplications', () => {
   it('Consumer Applications widget loaded', () => {
     const wrapper = shallowMount(ConsumerApplications, {
       localVue,
       i18n,
       propsData: {
         applicationDetails: {
-          dashboardDisplayName: 'Google',
-          dashboardLogin: 'https://www.google.com',
-          dashboardIcon: 'google.png',
+          dashboardDisplayName: ['Google'],
+          dashboardLogin: ['https://www.google.com'],
+          dashboardIcon: ['google.png'],
           brandLogoAltText: 'Google logo',
         },
       },
     });
 
-    expect(wrapper.name()).toBe('ConsumerApplications');
+    expect(wrapper.vm.applicationName).toBe('Google');
   });
 });

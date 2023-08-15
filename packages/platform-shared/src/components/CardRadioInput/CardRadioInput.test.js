@@ -11,11 +11,6 @@ import CardRadioInput from './index';
 describe('CardRadioInput Component', () => {
   let wrapper;
 
-  it('CardRadioInput successfully loaded', () => {
-    wrapper = shallowMount(CardRadioInput);
-    expect(wrapper.name()).toEqual('CardRadioInput');
-  });
-
   it('uses a card containing value text by default', () => {
     wrapper = shallowMount(CardRadioInput, {
       propsData: {

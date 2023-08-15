@@ -300,7 +300,7 @@ export default {
     getAriaDescribedBy({ errors: componentErrors, invalid }, parentErrors) {
       if ((!invalid && !parentErrors.length) || !componentErrors) return this.describedbyId || false;
 
-      const fieldErrors = componentErrors[this.name];
+      const fieldErrors = componentErrors[this.name] || [];
       const combinedErrors = parentErrors.concat(fieldErrors);
       if (!combinedErrors) return this.describedbyId || false;
 

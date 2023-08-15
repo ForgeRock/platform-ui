@@ -15,6 +15,7 @@ module.exports = {
     'json',
     'vue',
   ],
+  testEnvironment: 'jsdom',
   transform: {
     '^.+\\.vue$': 'vue-jest',
     '^.+\\.js$': path.join(__dirname, 'config', 'jest', 'babel-transform.js'),
@@ -31,10 +32,6 @@ module.exports = {
   },
   testMatch: [
     '**/*.test.js',
-  ],
-  watchPlugins: [
-    'jest-watch-typeahead/filename',
-    'jest-watch-typeahead/testname',
   ],
   setupFiles: [
     path.join(__dirname, 'config', 'jest', 'register-context.js'),

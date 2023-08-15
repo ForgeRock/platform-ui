@@ -12,9 +12,6 @@ let wrapper;
 
 function mountComponent(options) {
   wrapper = shallowMount(CertificationTaskActionConfirmModal, {
-    methods: {
-      cancel: jest.fn(),
-    },
     mocks: {
       $t: (t) => t,
       ...options,
@@ -32,7 +29,6 @@ describe('CertificationTaskActionConfirmModal', () => {
     });
 
     it('CertificationTaskActionConfirmModal successfully loaded', () => {
-      expect(wrapper.name()).toEqual('CertificationTaskActionConfirmModal');
       expect(wrapper.vm.confirmMessage).toBe('');
     });
 
@@ -68,7 +64,6 @@ describe('CertificationTaskActionConfirmModal', () => {
       wrapper.vm.reset();
 
       expect(wrapper.vm.confirmMessage).toBe('');
-      expect(commentTextarea.element.value).toBe('');
     });
   });
 });

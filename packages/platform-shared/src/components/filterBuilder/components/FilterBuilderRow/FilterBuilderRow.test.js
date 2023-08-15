@@ -6,6 +6,7 @@
  */
 
 import { mount } from '@vue/test-utils';
+import flushPromises from 'flush-promises';
 import FilterBuilderRow from './index';
 import { defaultConditionOptions } from '../../utils/QueryFilterDefaults';
 
@@ -58,10 +59,6 @@ describe('FilterBuilderRow', () => {
     wrapper = mount(FilterBuilderRow, mountProps);
   });
 
-  it('FilterBuilderRow successfully loaded', () => {
-    expect(wrapper.name()).toEqual('FilterBuilderRow');
-  });
-
   it('Initial rule renders the correct values', () => {
     // Property
     let rowFormElement = wrapper.find(
@@ -93,11 +90,11 @@ describe('FilterBuilderRow', () => {
     propertySelector.trigger('change');
 
     // emit the function which is the one will update the value for all inputs using the props
-    await wrapper.vm.$nextTick();
+    await flushPromises();
     expect(wrapper.emitted()['rule-change']).toBeTruthy();
 
     // set the external props to execute the rule watch which is the one who clear the input value
-    wrapper.setProps({
+    await wrapper.setProps({
       rule: { field: 'Status' },
     });
 

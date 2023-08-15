@@ -34,10 +34,6 @@ describe('GenericProcess.vue', () => {
     });
   });
 
-  it('GenericProcess successfully loaded', () => {
-    expect(wrapper.name()).toEqual('GenericProcess');
-  });
-
   it('Resets form', () => {
     wrapper.vm.resetForm();
     expect(wrapper.vm.formValues).toEqual({

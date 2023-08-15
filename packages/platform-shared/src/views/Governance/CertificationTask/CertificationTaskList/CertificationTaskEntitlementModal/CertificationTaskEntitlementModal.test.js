@@ -45,13 +45,9 @@ describe('CertificationTaskEntitlementModal', () => {
       },
       mixins: [AppSharedUtilsMixin],
       localVue,
-      attachToDocument: true,
+      attachTo: document.body,
     });
     wrapper.vm.isTest = true;
-  });
-
-  it('Component should load correctly', () => {
-    expect(wrapper.name()).toBe('CertificationTaskEntitlementModal');
   });
 
   it('should load application logo correctly', () => {

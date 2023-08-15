@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -13,16 +13,6 @@ const localVue = createLocalVue();
 localVue.use(BootstrapVue);
 
 describe('CenterCard Component', () => {
-  it('CenterCard successfully loaded', () => {
-    const wrapper = shallowMount(CenterCard, {
-      mocks: {
-        $t: () => {},
-      },
-    });
-
-    expect(wrapper.name()).toEqual('CenterCard');
-  });
-
   it('Center Card component loaded with header images', () => {
     const wrapper = shallowMount(CenterCard, {
       localVue,
@@ -31,8 +21,7 @@ describe('CenterCard Component', () => {
       },
     });
 
-    expect(wrapper.name()).toBe('CenterCard');
-    expect(wrapper.contains('.fr-logo')).toBe(true);
+    expect(wrapper.find('.fr-logo').exists()).toBe(true);
   });
 
   it('CenterCard has a logo with default props', () => {

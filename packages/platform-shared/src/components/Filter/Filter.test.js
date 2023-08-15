@@ -6,9 +6,10 @@
  */
 
 import { mount } from '@vue/test-utils';
+import flushPromises from 'flush-promises';
 import FilterModal from './index';
 
-describe('FilterFiltersModal', () => {
+describe('Filter.test.js', () => {
   let wrapper;
 
   const filtersStringArray = [
@@ -74,7 +75,7 @@ describe('FilterFiltersModal', () => {
 
   const factory = (propsData) => {
     const component = mount(FilterModal, {
-      attachToDocument: document.body,
+      attachTo: document.body,
       mocks: {
         $t: () => {},
         $tc: () => {},
@@ -116,6 +117,7 @@ describe('FilterFiltersModal', () => {
     wrapper = factory({ filters: filtersCategoriesArray, categories });
     wrapper.vm.show = true;
     wrapper.vm.filterTypeSelected = 'categories';
+    await flushPromises();
 
     // We have categories
     const buttonContainer = wrapper.find('.filter-type-radio');
@@ -126,7 +128,7 @@ describe('FilterFiltersModal', () => {
     expect(renderedOptions).toEqual(expect.arrayContaining(categories));
   });
 
-  it('Loads the filter with categories array filters', async () => {
+  it('Loads the filter with multiple category array filters', async () => {
     const activeCategories = ['Cat1', 'Cat5'];
     const activeFilters = ['objFilter1', 'objFilter2', 'objFilter3', 'objFilter4'];
     wrapper = factory({
@@ -134,6 +136,7 @@ describe('FilterFiltersModal', () => {
     });
     wrapper.vm.show = true;
     wrapper.vm.filterTypeSelected = 'categories';
+    await flushPromises();
     wrapper.vm.$emit = jest.fn();
 
     // Check active categories
@@ -142,7 +145,7 @@ describe('FilterFiltersModal', () => {
     expect(selectedRenderedCategories).toEqual(activeCategories);
 
     wrapper.vm.filterTypeSelected = 'filters';
-    await wrapper.vm.$nextTick;
+    await flushPromises();
 
     // Check active filters
     const selectedRenderedFilters = [];
@@ -155,6 +158,7 @@ describe('FilterFiltersModal', () => {
 
     wrapper = factory({ filters: filtersStringArray, activeFilters });
     wrapper.vm.show = true;
+    await flushPromises();
     wrapper.vm.$emit = jest.fn();
 
     const selectedRenderedOptions = [];
@@ -181,26 +185,30 @@ describe('FilterFiltersModal', () => {
     wrapper.vm.$emit = jest.fn();
   });
 
-  it('Emits pending values when options are selected', () => {
+  it('Emits pending values when options are selected', async () => {
     wrapper = factory({ filters: filtersStringArray });
     wrapper.vm.show = true;
+    await flushPromises();
     wrapper.vm.$emit = jest.fn();
 
     // Check emitted value
     wrapper.findAll('#filter-list_field_wrapper .multiselect__element .multiselect__option').at(1).trigger('click');
     wrapper.findAll('#filter-list_field_wrapper .multiselect__element .multiselect__option').at(3).trigger('click');
+    await flushPromises();
     expect(wrapper.vm.$emit).toHaveBeenCalledWith('update', wrapper.vm.pendingFilters, wrapper.vm.pendingCategories);
   });
 
-  it('Emits pending values when category options are selected', () => {
+  it('Emits pending values when category options are selected', async () => {
     wrapper = factory({ filters: filtersCategoriesArray, categories });
     wrapper.vm.show = true;
     wrapper.vm.filterTypeSelected = 'categories';
+    await flushPromises();
     wrapper.vm.$emit = jest.fn();
 
     // Check emitted value
     wrapper.findAll('#categories-list_field_wrapper .multiselect__element .multiselect__option').at(0).trigger('click');
     wrapper.findAll('#categories-list_field_wrapper .multiselect__element .multiselect__option').at(2).trigger('click');
+    await flushPromises();
     expect(wrapper.vm.$emit).toHaveBeenCalledWith('update', wrapper.vm.pendingFilters, wrapper.vm.pendingCategories);
   });
 

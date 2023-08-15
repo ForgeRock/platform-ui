@@ -1,10 +1,10 @@
 /**
- * Copyright 2020 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
+
 import { shallowMount } from '@vue/test-utils';
 import TimeConstraint from './index';
 
@@ -21,18 +21,14 @@ describe('TimeConstraint Component', () => {
     });
   });
 
-  it('TimeConstraint successfully loaded', () => {
-    expect(wrapper.name()).toEqual('TimeConstraint');
-  });
-
   it('contains two datepickers, two timepickers, and one offset selector', () => {
-    const datepickers = wrapper.findAll({ name: 'Datepicker' });
+    const datepickers = wrapper.findAllComponents({ name: 'Datepicker' });
     expect(datepickers.at(0).exists()).toBe(true);
     expect(datepickers.at(1).exists()).toBe(true);
-    const timepickers = wrapper.findAll({ name: 'Timepicker' });
+    const timepickers = wrapper.findAllComponents({ name: 'Timepicker' });
     expect(timepickers.at(0).exists()).toBe(true);
     expect(timepickers.at(1).exists()).toBe(true);
-    expect(wrapper.find({ name: 'TimezoneOffset' }).exists()).toBe(true);
+    expect(wrapper.findComponent({ name: 'TimezoneOffset' }).exists()).toBe(true);
   });
 
   // TODO Server has a different timezone so tests that pass locally fail on server.

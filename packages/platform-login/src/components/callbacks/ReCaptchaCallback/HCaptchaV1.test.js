@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -27,10 +27,6 @@ describe('HCaptchaV1.vue', () => {
         index: 5,
       },
     });
-  });
-
-  it('Load HCaptchaV1 component', () => {
-    expect(wrapper.name()).toEqual('HCaptchaV1');
   });
 
   it('hCaptcha site key was retrieved from callback', () => {

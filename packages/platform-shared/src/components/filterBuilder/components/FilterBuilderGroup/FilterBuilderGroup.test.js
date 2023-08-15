@@ -63,10 +63,6 @@ describe('FilterBuilderGroup', () => {
     wrapper = mount(FilterBuilderGroup, mountProps);
   });
 
-  it('FilterBuilderGroup successfully loaded', () => {
-    expect(wrapper.name()).toEqual('FilterBuilderGroup');
-  });
-
   it('Creates object to add a rule', () => {
     const addRuleSpy = jest.spyOn(wrapper.vm, 'addRule');
     wrapper.vm.addRuleHandler('foo');

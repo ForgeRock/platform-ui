@@ -53,15 +53,16 @@ describe('AccessRequestCatalog Component', () => {
     expect(resultsText.text()).toEqual('1 Result');
   });
 
-  it('displays total count in plural', () => {
+  it('displays total count in plural', async () => {
     const wrapper = mountComponent({ catalogItems: [{}], totalCount: 2 });
+    await flushPromises();
     const resultsText = wrapper.find('.btn-toolbar .text-muted');
 
     expect(resultsText.exists()).toBeTruthy();
     expect(resultsText.text()).toEqual('2 Results');
   });
 
-  it('displays catalog items passed in as props', () => {
+  it('displays catalog items passed in as props', async () => {
     const wrapper = mountComponent(
       {
         catalogItems: [
@@ -80,6 +81,7 @@ describe('AccessRequestCatalog Component', () => {
         ],
       },
     );
+    await flushPromises();
     const catalogCards = wrapper.findAll('div.card');
 
     expect(catalogCards.length).toEqual(2);
@@ -92,32 +94,37 @@ describe('AccessRequestCatalog Component', () => {
     expect(paginationComponent.exists()).toBeFalsy();
   });
 
-  it('displays pagination if more than 10 results', () => {
+  it('displays pagination if more than 10 results', async () => {
     const wrapper = mountComponent({ catalogItems: [{}], totalCount: 11 });
+    await flushPromises();
     const paginationComponent = wrapper.find('.pagination-dropdown');
 
     expect(paginationComponent.exists()).toBeTruthy();
   });
 
-  it('displays catalog item as requested if it is in the request cart', () => {
+  it('displays catalog item as requested if it is in the request cart', async () => {
     const wrapper = mountComponent(
       {
         catalogItems: mockCatalogItems,
       },
     );
+    await flushPromises();
     const catalogCards = wrapper.findAll('div.card');
     expect(catalogCards.at(0).find('.card-footer').text()).toBe('check\nAdded');
     expect(catalogCards.at(1).find('.card-footer').text()).toBe('add\nRequest');
   });
 
-  it('emits out event to add request when un-requested item is clicked', () => {
+  it('emits out event to add request when un-requested item is clicked', async () => {
     const wrapper = mountComponent(
       {
         catalogItems: mockCatalogItems,
       },
     );
+    await flushPromises();
+    wrapper.vm.selectedTab = 2;
     const catalogCards = wrapper.findAll('div.card');
     catalogCards.at(1).trigger('click');
+    await flushPromises();
     expect(wrapper.emitted()['add-item-to-cart'][0][0]).toEqual({
       itemType: 'role',
       description: 'role',
@@ -128,12 +135,13 @@ describe('AccessRequestCatalog Component', () => {
     });
   });
 
-  it('emits out event to remove request when requested item is clicked', () => {
+  it('emits out event to remove request when requested item is clicked', async () => {
     const wrapper = mountComponent(
       {
         catalogItems: mockCatalogItems,
       },
     );
+    await flushPromises();
     const catalogCards = wrapper.findAll('div.card');
     catalogCards.at(0).trigger('click');
     expect(wrapper.emitted()['remove-item-from-cart'][0][0]).toEqual(1);

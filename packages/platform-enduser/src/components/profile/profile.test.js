@@ -23,7 +23,6 @@ Profile.components['fr-edit-profile'] = jest.fn();
 describe('Profile.vue', () => {
   let wrapper;
   beforeEach(() => {
-    const getUserProfile = jest.fn();
     const store = new Vuex.Store({
       state: {
         UserStore: {
@@ -50,14 +49,10 @@ describe('Profile.vue', () => {
       propsData: {
         theme: {},
       },
-      methods: {
-        getUserProfile,
-      },
     });
-  });
-
-  it('Profile page loaded', () => {
-    expect(wrapper.name()).toBe('Profile');
+    jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => ({
+      get: () => Promise.resolve(),
+    }));
   });
 
   it('Sets fullName properly', () => {

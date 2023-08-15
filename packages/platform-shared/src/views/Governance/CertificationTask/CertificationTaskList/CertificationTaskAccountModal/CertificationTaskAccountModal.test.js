@@ -24,6 +24,6 @@ describe('CertificationTaskAccountModal', () => {
   });
 
   it('component should load correclty', () => {
-    expect(wrapper.name()).toBe('CertificationTaskAccountModal');
+    expect(wrapper.vm.account).toStrictEqual({ id: 'test' });
   });
 });

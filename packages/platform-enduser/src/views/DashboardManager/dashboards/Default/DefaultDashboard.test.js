@@ -8,6 +8,7 @@
 import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
 import Vuex from 'vuex';
+import flushPromises from 'flush-promises';
 import i18n from '@/i18n';
 import DefaultDashboard from './index';
 import Workflow from '@/views/DashboardManager/dashboards/widgets/WorkflowControlWidget';
@@ -52,10 +53,6 @@ describe('DefaultDashboard.vue', () => {
     });
   });
 
-  it('DefaultDashboard page loaded', () => {
-    expect(wrapper.name()).toBe('DefaultDashboard');
-  });
-
   describe('loading dashboard data', () => {
     it('executes loadWidgets method', async () => {
       const loadWidgetsSpy = jest.spyOn(wrapper.vm, 'loadWidgets');
@@ -71,10 +68,11 @@ describe('DefaultDashboard.vue', () => {
         }),
       }));
 
-      await wrapper.vm.loadWidgets();
+      wrapper.vm.loadWidgets();
+      await flushPromises();
 
       expect(loadWidgetsSpy).toHaveBeenCalled();
-      expect(wrapper.find(Workflow).exists()).toBe(true);
+      expect(wrapper.findComponent(Workflow).exists()).toBe(true);
       expect(wrapper.find('.my-applications-tiles').exists()).toBe(false);
       expect(wrapper.vm.widgets).toEqual([{ type: 'Workflow' }]);
     });
@@ -87,8 +85,8 @@ describe('DefaultDashboard.vue', () => {
         get: () => Promise.reject(error),
       }));
 
-      await wrapper.vm.loadWidgets();
-      await wrapper.vm.$nextTick();
+      wrapper.vm.loadWidgets();
+      await flushPromises();
       expect(notificationSpy).toHaveBeenCalledWith('error', 'your widgets call failed');
     });
 
@@ -105,7 +103,8 @@ describe('DefaultDashboard.vue', () => {
         }),
       }));
 
-      await wrapper.vm.loadConsumerApplications();
+      wrapper.vm.loadConsumerApplications();
+      await flushPromises();
       expect(loadApplicationsSpy).toHaveBeenCalled();
       expect(wrapper.find('.my-applications-tiles').exists()).toBe(true);
 
@@ -125,8 +124,8 @@ describe('DefaultDashboard.vue', () => {
         get: () => Promise.reject(error),
       }));
 
-      await wrapper.vm.loadConsumerApplications();
-      await wrapper.vm.$nextTick();
+      wrapper.vm.loadConsumerApplications();
+      await flushPromises();
       expect(notificationSpy).toHaveBeenCalledWith('your applications call failed', 'pages.dashboard.errorGetApplications');
     });
   });

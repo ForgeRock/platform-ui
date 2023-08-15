@@ -1,12 +1,12 @@
 /**
- * Copyright (c) 2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, shallowMount, mount } from '@vue/test-utils';
+import { createLocalVue, mount } from '@vue/test-utils';
 import SelectWithActions from './index';
 
 const localVue = createLocalVue();
@@ -29,18 +29,6 @@ const defaultProps = {
 };
 
 describe('SelectWithActions input', () => {
-  it('loads the component', () => {
-    const wrapper = shallowMount(SelectWithActions, {
-      mocks: {
-        $t: () => {},
-      },
-      propsData: {
-        ...defaultProps,
-      },
-    });
-    expect(wrapper.name()).toBe('SelectWithActions');
-  });
-
   it('emits add and edit events', () => {
     const wrapper = mount(SelectWithActions, {
       localVue,

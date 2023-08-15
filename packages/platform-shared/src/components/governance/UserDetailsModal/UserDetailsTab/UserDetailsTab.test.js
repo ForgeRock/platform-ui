@@ -22,15 +22,6 @@ describe('UserDetailsTab', () => {
     });
   }
 
-  it('component should load correclty', () => {
-    const wrapper = mountComponent({
-      givenName: 'firstname',
-      sn: 'sntest',
-      username: 'test',
-    });
-    expect(wrapper.name()).toBe('UserDetailsTab');
-  });
-
   describe('should load correctly user data in template', () => {
     const testCases = [
       ['given false', false, blankValueIndicator],

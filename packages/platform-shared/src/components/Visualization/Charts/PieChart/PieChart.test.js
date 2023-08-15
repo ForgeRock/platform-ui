@@ -8,6 +8,7 @@
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { shallowMount } from '@vue/test-utils';
 import * as d3 from 'd3';
+import flushPromises from 'flush-promises';
 import PieChart from './index';
 
 const mockData = [
@@ -56,11 +57,6 @@ const mountComponent = (props, testData = mockData) => shallowMount(PieChart, {
 describe('PieChart', () => {
   let wrapper;
 
-  it('PieChart successfully loaded', () => {
-    wrapper = mountComponent();
-    expect(wrapper.name()).toEqual('PieChart');
-  });
-
   it('renders the chart div', () => {
     wrapper = mountComponent();
     const chart = findByTestId(wrapper, 'chart');
@@ -100,8 +96,9 @@ describe('PieChart', () => {
       expect(legend.exists()).toBe(true);
     });
 
-    it('contains list elements for each data object', () => {
+    it('contains list elements for each data object', async () => {
       wrapper = mountComponent();
+      await flushPromises();
       const legend = findByTestId(wrapper, 'legend');
       const items = legend.findAll('li');
       expect(items.length).toBe(3);

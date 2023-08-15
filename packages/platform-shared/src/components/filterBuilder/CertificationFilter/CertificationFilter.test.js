@@ -30,10 +30,6 @@ describe('CertificationFilter', () => {
       });
     });
 
-    it('CertificationFilter successfully loaded', () => {
-      expect(wrapper.name()).toEqual('CertificationFilter');
-    });
-
     it('gets the correct default group', () => {
       const group = wrapper.vm.getDefaultGroup();
       expect(group).toEqual({

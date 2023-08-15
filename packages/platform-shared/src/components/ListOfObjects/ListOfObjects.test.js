@@ -30,11 +30,6 @@ const wrapperNoValue = {
 };
 
 describe('ListOfObjects', () => {
-  it('ListOfObjects loaded', () => {
-    const wrapper = shallowMount(ListOfObjects, wrapperNoValue);
-    expect(wrapper.name()).toBe('ListOfObjects');
-  });
-
   it('ListOfObjects sets listValues when there is an array value', () => {
     const wrapper = shallowMount(ListOfObjects, {
       mocks: { $t: () => {} },
@@ -109,7 +104,7 @@ describe('ListOfObjects', () => {
     expect(wrapper.vm.listValues).toStrictEqual([]);
   });
 
-  it('ListOfObjects checks if field is valid', () => {
+  it('ListOfObjects checks if field is valid', async () => {
     const wrapper = shallowMount(ListOfObjects, {
       mocks: { $t: () => {} },
       propsData: {
@@ -124,7 +119,7 @@ describe('ListOfObjects', () => {
       stubs,
     });
     expect(wrapper.vm.isValidField()).toBe(false);
-    wrapper.setProps({
+    await wrapper.setProps({
       properties: {
         testPropertyKey: {
           type: 'object',
@@ -133,7 +128,7 @@ describe('ListOfObjects', () => {
       },
     });
     expect(wrapper.vm.isValidField()).toBe(false);
-    wrapper.setProps({
+    await wrapper.setProps({
       properties: {
         testPropertyKey: {
           type: 'other',
@@ -144,9 +139,9 @@ describe('ListOfObjects', () => {
     expect(wrapper.vm.isValidField()).toBe(true);
   });
 
-  it('Add button disabled if field is disabled', () => {
+  it('Add button disabled if field is disabled', async () => {
     const wrapper = shallowMount(ListOfObjects, wrapperNoValue);
-    wrapper.setProps({ disabled: true });
+    await wrapper.setProps({ disabled: true });
 
     const addButton = findByTestId(wrapper, 'list-objects-none-add');
     expect(addButton.attributes('disabled')).toBeTruthy();

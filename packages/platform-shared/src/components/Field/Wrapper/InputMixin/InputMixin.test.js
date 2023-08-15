@@ -14,15 +14,6 @@ const TestComponent = {
 };
 
 describe('InputMixin', () => {
-  it('InputMixin loaded', () => {
-    const wrapper = shallowMount(TestComponent, {
-      propsData: {
-        name: 'testMixin',
-      },
-    });
-    expect(wrapper.name()).toBe('InputMixin');
-  });
-
   it('InputMixin uid is set', () => {
     const wrapper = shallowMount(TestComponent, {
       propsData: {
@@ -81,18 +72,14 @@ describe('InputMixin', () => {
   });
 
   it('Initial value calls setter method setInputValue', () => {
-    const setInputValue = jest.fn();
-    shallowMount(TestComponent, {
+    const wrapper = shallowMount(TestComponent, {
       propsData: {
         name: 'testMixin',
         value: 'test',
       },
-      methods: {
-        setInputValue,
-      },
     });
 
-    expect(setInputValue).toBeCalled();
+    expect(wrapper.vm.inputValue).toBe('test');
   });
 
   it('Initial value defaults to empty string', () => {
