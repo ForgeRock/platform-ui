@@ -150,10 +150,6 @@ describe('EditResource.vue', () => {
       });
     });
 
-    it('EditResource page loaded', () => {
-      expect(wrapper.name()).toBe('EditResource');
-    });
-
     it('Format display data', async () => {
       wrapper.vm.resourceSchema = {
         icon: 'fa-test',

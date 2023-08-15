@@ -7,6 +7,7 @@
 
 import { mount } from '@vue/test-utils';
 import { cloneDeep } from 'lodash';
+import flushPromises from 'flush-promises';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import RequestFilter from './index';
@@ -56,9 +57,10 @@ describe('RequestFilter', () => {
       expect(lowPriority.exists()).toBeTruthy();
     });
 
-    it('changing priority emits filter-change event with filter and count', () => {
+    it('changing priority emits filter-change event with filter and count', async () => {
       const highPriority = findByTestId(wrapper, 'priority-high');
       highPriority.setChecked(false);
+      await flushPromises();
 
       const expectedFilter = cloneDeep(baseFilter);
       expectedFilter.priorities.high = false;
@@ -71,6 +73,7 @@ describe('RequestFilter', () => {
       const medPriority = findByTestId(wrapper, 'priority-medium');
       medPriority.setChecked(false);
       expectedFilter.priorities.medium = false;
+      await flushPromises();
 
       expect(wrapper.emitted()['filter-change'][1]).toEqual([{
         filter: expectedFilter,
@@ -80,6 +83,7 @@ describe('RequestFilter', () => {
       const lowPriority = findByTestId(wrapper, 'priority-low');
       lowPriority.setChecked(false);
       expectedFilter.priorities.low = false;
+      await flushPromises();
 
       expect(wrapper.emitted()['filter-change'][2]).toEqual([{
         filter: expectedFilter,
@@ -88,7 +92,7 @@ describe('RequestFilter', () => {
     });
   });
 
-  it('changing requestType emits filter-change event with filter and count', () => {
+  it('changing requestType emits filter-change event with filter and count', async () => {
     const expectedFilter = cloneDeep(baseFilter);
     expectedFilter.requestType = wrapper.vm.requestTypeOptions[1].value;
 
@@ -97,6 +101,7 @@ describe('RequestFilter', () => {
       .at(1)
       .find('span')
       .trigger('click');
+    await flushPromises();
 
     expect(wrapper.emitted()['filter-change'].pop()).toEqual([{
       filter: expectedFilter,
@@ -104,7 +109,7 @@ describe('RequestFilter', () => {
     }]);
   });
 
-  it('changing requestedFor emits filter-change event with filter and count', () => {
+  it('changing requestedFor emits filter-change event with filter and count', async () => {
     const expectedFilter = cloneDeep(baseFilter);
     expectedFilter.requestedFor = 'managed/user/testId';
 
@@ -113,6 +118,7 @@ describe('RequestFilter', () => {
       .at(1)
       .find('span')
       .trigger('click');
+    await flushPromises();
 
     expect(wrapper.emitted()['filter-change'].pop()).toEqual([{
       filter: expectedFilter,
@@ -120,7 +126,7 @@ describe('RequestFilter', () => {
     }]);
   });
 
-  it('changing requester emits filter-change event with filter and count', () => {
+  it('changing requester emits filter-change event with filter and count', async () => {
     const expectedFilter = cloneDeep(baseFilter);
     expectedFilter.requester = 'managed/user/testId';
 
@@ -129,6 +135,7 @@ describe('RequestFilter', () => {
       .at(1)
       .find('span')
       .trigger('click');
+    await flushPromises();
 
     expect(wrapper.emitted()['filter-change'].pop()).toEqual([{
       filter: expectedFilter,
@@ -136,11 +143,12 @@ describe('RequestFilter', () => {
     }]);
   });
 
-  it('changing request id emits filter-change event with filter and count', () => {
+  it('changing request id emits filter-change event with filter and count', async () => {
     const expectedFilter = cloneDeep(baseFilter);
     expectedFilter.requestId = 'testId';
 
     findByTestId(wrapper, 'input-request-id').setValue('testId');
+    await flushPromises();
 
     expect(wrapper.emitted()['filter-change'].pop()).toEqual([{
       filter: expectedFilter,

@@ -3,27 +3,20 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <li
-    class="my-applications-list-item"
-    data-test-id="my-applications-item">
+  <li class="my-applications-list-item">
     <ListItem :collapsible="collapsible">
       <template #list-item-header>
         <a
           class="pt-1 pb-1"
-          data-test-id="my-applications-link"
           :href="applicationLoginLink"
           target="_blank">
-          <div
-            class="my-applications-list-item-brand-logo-wrapper mr-3"
-            data-test-id="my-applications-list-item-brand-logo">
+          <div class="my-applications-list-item-brand-logo-wrapper mr-3">
             <FallbackImage
               fallback="exit_to_app"
               :src="applicationIcon"
               :alt="applicationIconAltText" />
           </div>
-          <span
-            class="my-applications-list-item-text"
-            data-test-id="my-applications-link-text">
+          <span class="my-applications-list-item-text">
             {{ applicationName }}
           </span>
         </a>

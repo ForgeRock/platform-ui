@@ -5,6 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+import flushPromises from 'flush-promises';
 import { mount } from '@vue/test-utils';
 import i18n from '@/i18n';
 import MultiSelect from './index';
@@ -139,6 +140,7 @@ describe('Multiselect', () => {
 
     multiselect.trigger('click');
     elements().at(1).trigger('click');
+    await flushPromises();
     expect(wrapper.vm.inputValue).toEqual([{
       multiselectId: 1,
       text: 'b',
@@ -172,14 +174,14 @@ describe('Multiselect', () => {
       },
     });
 
-    expect(wrapper.contains('.test_prepend')).toBe(true);
-    expect(wrapper.contains('.test_append')).toBe(true);
+    expect(wrapper.find('.test_prepend').exists()).toBe(true);
+    expect(wrapper.find('.test_append').exists()).toBe(true);
   });
 
   it('Multiselect is not autofocused on absence of prop "autofocus"', async () => {
     const wrapper = mount(MultiSelect, {
       i18n,
-      attachToDocument: true,
+      attachTo: document.body,
       propsData: {
         ...defaultProps,
         autofocus: false,
@@ -201,7 +203,7 @@ describe('Multiselect', () => {
   it('Multiselect is autofocused on prop "autofocus"', async () => {
     const wrapper = mount(MultiSelect, {
       i18n,
-      attachToDocument: true,
+      attachTo: document.body,
       propsData: {
         ...defaultProps,
         autofocus: true,

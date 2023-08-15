@@ -86,11 +86,6 @@ describe('AccessReviews', () => {
           return text;
         },
       },
-      methods: {
-        getPriorityImageSrc() {
-          return '';
-        },
-      },
       propsData: {
         requests: [
           application,
@@ -100,9 +95,9 @@ describe('AccessReviews', () => {
   });
 
   describe(('applications'), () => {
-    it('should display request types', () => {
+    it('should display request types', async () => {
       const app = cloneDeep(application);
-      wrapper.setProps({
+      await wrapper.setProps({
         requests: [
           app,
         ],
@@ -113,7 +108,7 @@ describe('AccessReviews', () => {
 
       app.requestType = 'applicationRevoke';
 
-      wrapper.setProps({
+      await wrapper.setProps({
         requests: [
           app,
         ],
@@ -147,9 +142,9 @@ describe('AccessReviews', () => {
   });
 
   describe(('entitlements'), () => {
-    it('should display request types', () => {
+    it('should display request types', async () => {
       const ent = cloneDeep(entitlement);
-      wrapper.setProps({
+      await wrapper.setProps({
         requests: [
           ent,
         ],
@@ -160,7 +155,7 @@ describe('AccessReviews', () => {
 
       ent.requestType = 'entitlementRevoke';
 
-      wrapper.setProps({
+      await wrapper.setProps({
         requests: [
           ent,
         ],
@@ -170,8 +165,8 @@ describe('AccessReviews', () => {
       expect(requestType.text()).toBe('governance.accessRequest.requestTypes.entitlementRevoke');
     });
 
-    it('should display entitlement name', () => {
-      wrapper.setProps({
+    it('should display entitlement name', async () => {
+      await wrapper.setProps({
         requests: [
           entitlement,
         ],
@@ -194,9 +189,9 @@ describe('AccessReviews', () => {
   });
 
   describe(('roles'), () => {
-    it('should display request types', () => {
+    it('should display request types', async () => {
       const myRole = cloneDeep(role);
-      wrapper.setProps({
+      await wrapper.setProps({
         requests: [
           myRole,
         ],
@@ -207,7 +202,7 @@ describe('AccessReviews', () => {
 
       myRole.requestType = 'roleRevoke';
 
-      wrapper.setProps({
+      await wrapper.setProps({
         requests: [
           myRole,
         ],
@@ -217,8 +212,8 @@ describe('AccessReviews', () => {
       expect(requestType.text()).toBe('governance.accessRequest.requestTypes.roleRevoke');
     });
 
-    it('should display role name', () => {
-      wrapper.setProps({
+    it('should display role name', async () => {
+      await wrapper.setProps({
         requests: [
           role,
         ],

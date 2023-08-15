@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { shallowMount } from '@vue/test-utils';
+import flushPromises from 'flush-promises';
 import KbaCreateCallback from '@/components/callbacks/KbaCreateCallback';
 import i18n from '@/i18n';
 
@@ -28,10 +29,6 @@ describe('KbaCreateCallback.vue', () => {
         showHeader: true,
       },
     });
-  });
-
-  it('Load KbaCreateCallback component', () => {
-    expect(wrapper.name()).toEqual('KbaCreateCallback');
   });
 
   it('Emits disable-next-button and sets options', () => {
@@ -57,9 +54,10 @@ describe('KbaCreateCallback.vue', () => {
       const customQuestionOption = { value: 'custom', text: 'Provide your own:' };
       expect(wrapper.vm.$data.options).toContainEqual(customQuestionOption);
     });
-    it('Hides customQuestionOption when callback is false', () => {
-      wrapper.setProps({ callback: { ...callbackProp, getOutputByName: () => false } });
+    it('Hides customQuestionOption when callback is false', async () => {
+      await wrapper.setProps({ callback: { ...callbackProp, getOutputByName: () => false } });
       wrapper.vm.loadOptions();
+      await flushPromises();
       const customQuestionOption = { value: 'custom', text: 'Provide your own:' };
       expect(wrapper.vm.$data.options).not.toContainEqual(customQuestionOption);
     });
@@ -72,8 +70,8 @@ describe('KbaCreateCallback.vue', () => {
     expect(header.length).toBe(2);
   });
 
-  it('Hides header', () => {
-    wrapper.setProps({ showHeader: false });
+  it('Hides header', async () => {
+    await wrapper.setProps({ showHeader: false });
     const kbaContainer = wrapper.find('.kbaQuestionAnswerContainer');
     const header = kbaContainer.findAll('.kbaHeaderText');
 

@@ -6,6 +6,7 @@
  */
 
 import { mount } from '@vue/test-utils';
+import flushPromises from 'flush-promises';
 import i18n from '@/i18n';
 import Tag from './index';
 import { findByTestId } from '../../../utils/testHelpers';
@@ -19,7 +20,7 @@ const defaultProps = {
 describe('Tag', () => {
   function setup(props) {
     return mount(Tag, {
-      attachToDocument: true,
+      attachTo: document.body,
       i18n,
       propsData: {
         ...defaultProps,
@@ -32,10 +33,11 @@ describe('Tag', () => {
     it('should remove tag with click', async () => {
       const wrapper = setup();
       wrapper.vm.setInputValue(['new value']); // TODO: replace with .setValue
-      await wrapper.vm.$nextTick();
+      await flushPromises();
 
       const closeButtonBeforeRemove = findByTestId(wrapper, 'remove-new-value-tag');
       closeButtonBeforeRemove.trigger('click');
+      await flushPromises();
 
       // Note: once we click remove, this should no longer exist
       const closeButtonAfterRemove = findByTestId(wrapper, 'remove-new-value-tag');
@@ -45,10 +47,11 @@ describe('Tag', () => {
     it('should remove tag with keyboard', async () => {
       const wrapper = setup();
       wrapper.vm.setInputValue(['new value']); // TODO: replace with .setValue
-      await wrapper.vm.$nextTick();
+      await flushPromises();
 
       const closeButtonBeforeRemove = findByTestId(wrapper, 'remove-new-value-tag');
       closeButtonBeforeRemove.trigger('keydown.enter');
+      await flushPromises();
 
       // Note: once we click remove, this should no longer exist
       const closeButtonAfterRemove = findByTestId(wrapper, 'remove-new-value-tag');
@@ -62,6 +65,7 @@ describe('Tag', () => {
       wrapper.vm.setInputValue('');
       expect(wrapper.vm.inputValue).toStrictEqual([]);
       wrapper.vm.setInputValue(['test']);
+      await flushPromises();
       expect(wrapper.vm.inputValue).toStrictEqual(['test']);
 
       expect(wrapper.vm.floatLabels).toBe(true);

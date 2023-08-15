@@ -27,9 +27,6 @@ describe('Date Range Picker Component', () => {
       },
     });
   });
-  it('Component succesfully loaded', () => {
-    expect(wrapper.name()).toEqual('DateRangePicker');
-  });
   it('get/set in inputVal computed property works propertly', () => {
     expect(wrapper.vm.inputVal.startDate).toEqual('2022-12-28T00:00:00-05:00');
     expect(wrapper.vm.inputVal.endDate).toEqual('2023-01-27T23:59:59-05:00');

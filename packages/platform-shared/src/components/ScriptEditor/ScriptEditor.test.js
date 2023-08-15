@@ -35,8 +35,6 @@ describe('ScriptEditor', () => {
   });
 
   it('script editor sets values given as props into component', () => {
-    expect(wrapper.name()).toEqual('ScriptEditor');
-
     expect(wrapper.vm.scriptType.value).toEqual('text/javascript');
     expect(wrapper.vm.value.globals).toEqual({});
     expect(wrapper.vm.value.source).toEqual('');
@@ -118,8 +116,8 @@ describe('ScriptEditor', () => {
     expect(wrapper.vm.fileChanged).toEqual(true);
   });
 
-  it('removes variables container when showVariables is false', () => {
-    wrapper.setProps({ showVariables: false });
-    expect(wrapper.contains('.fr-script-editor-vars')).toBe(false);
+  it('removes variables container when showVariables is false', async () => {
+    await wrapper.setProps({ showVariables: false });
+    expect(wrapper.find('.fr-script-editor-vars').exists()).toBe(false);
   });
 });

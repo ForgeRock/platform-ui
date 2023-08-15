@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -13,14 +13,14 @@ of the MIT license. See the LICENSE file for details. -->
       <template #button-content>
         {{ title || $t('locale.localeTitle') }}:
         <span
-          data-test-id="selected-language"
+          data-testid="selected-language"
           class="font-weight-bold">
-          <span data-test-id="selected-language-text">
+          <span data-testid="selected-language-text">
             {{ currentLanguage }}
           </span>
           <div
             v-if="currentLanguage === defaultLocale"
-            data-test-id="selected-language-badge"
+            data-testid="selected-language-badge"
             class="ml-1 badge badge-white font-weight-normal border border-darkened">
             {{ $t('common.default') }}
           </div>
@@ -55,7 +55,7 @@ of the MIT license. See the LICENSE file for details. -->
       <template v-if="showAdd">
         <BDropdownDivider />
         <BDropdownItem
-          data-test-id="add-locale-button"
+          data-testid="add-locale-button"
           id="add-button"
           @click="addLocale"
         >

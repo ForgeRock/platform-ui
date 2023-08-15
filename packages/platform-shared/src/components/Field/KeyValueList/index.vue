@@ -329,7 +329,9 @@ export default {
      * @param {String} errorText override error text to display
      */
     validateField(errorText) {
-      this.$refs[this.name].setErrors(this.requiredAndEmpty ? errorText || [this.$t('common.policyValidationMessages.REQUIRED')] : '');
+      if (this.$refs[this.name].setErrors) {
+        this.$refs[this.name].setErrors(this.requiredAndEmpty ? errorText || [this.$t('common.policyValidationMessages.REQUIRED')] : '');
+      }
     },
   },
 };

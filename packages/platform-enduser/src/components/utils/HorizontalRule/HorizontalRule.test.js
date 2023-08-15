@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -13,17 +13,6 @@ const localVue = createLocalVue();
 localVue.use(BootstrapVue);
 
 describe('HorizontalRule.vue', () => {
-  it('Horizontal Rule component loaded', () => {
-    const wrapper = shallowMount(HorizontalRule, {
-      localVue,
-      propsData: {
-        insert: 'test',
-      },
-    });
-
-    expect(wrapper.name()).toBe('HorizontalRule');
-  });
-
   it('Renders insert prop', () => {
     const wrapper = shallowMount(HorizontalRule, {
       localVue,

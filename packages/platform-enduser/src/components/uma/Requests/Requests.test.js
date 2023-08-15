@@ -54,23 +54,7 @@ describe('UMA Requests Component', () => {
   });
 
   afterEach(() => {
-    wrapper = undefined;
-  });
-
-  it('Requests page loaded', () => {
-    expect(wrapper.name()).toBe('Requests');
-    wrapper = shallowMount(Requests, {
-      localVue,
-      i18n,
-      filters: {
-        formatTime() {
-          return '7:45';
-        },
-      },
-      propsData: {
-        requests,
-      },
-    });
+    wrapper.destroy();
   });
 
   it('should use actual time for events on previous days', () => {

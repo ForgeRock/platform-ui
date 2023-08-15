@@ -46,7 +46,7 @@ describe('SystemNotification', () => {
   describe('@renders', () => {
     it('should render the SystemNotification', () => {
       const wrapper = setup();
-      const systemNotification = wrapper.find(FrSystemNotification);
+      const systemNotification = wrapper.findComponent(FrSystemNotification);
       expect(systemNotification.exists()).toBeTruthy();
     });
 

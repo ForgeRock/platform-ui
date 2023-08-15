@@ -7,6 +7,7 @@
 
 import { shallowMount } from '@vue/test-utils';
 import { map } from 'lodash';
+import flushPromises from 'flush-promises';
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import * as schemaApi from '@/api/SchemaApi';
 import RelationshipEdit from './index';
@@ -103,10 +104,6 @@ describe('RelationshipEdit', () => {
     });
   });
 
-  it('RelationshipEdit successfully loaded', () => {
-    expect(wrapper.name()).toEqual('RelationshipEdit');
-  });
-
   it('should setupEditor properly', async () => {
     const queryFilterExtension = '!(/effectiveApplications[_id eq \'1234\'])';
     const params = {
@@ -117,7 +114,7 @@ describe('RelationshipEdit', () => {
     };
     const getManagedResourceList = jest.spyOn(ManagedResourceApi, 'getManagedResourceList').mockReturnValue(Promise.resolve(optionsQueryResult));
     schemaApi.getSchema = jest.fn().mockReturnValue(Promise.resolve(resourceSchema));
-    wrapper.setProps({ queryFilterExtension });
+    await wrapper.setProps({ queryFilterExtension });
     wrapper.vm.setupEditor();
     const { fields } = wrapper.vm.resourceCollection.query;
     const fieldsMap = map(fields, (field) => `/${field} sw "ab"`).join(' or ');
@@ -157,18 +154,21 @@ describe('RelationshipEdit', () => {
     expect(wrapper.emitted().setValue[1]).toEqual([{ _ref: 'test', _refProperties: { temporalConstraints: [{ duration: wrapper.vm.temporalConstraint }] } }]);
   });
 
-  it('should set value properly when temporalConstraint changed', () => {
+  it('should set value properly when temporalConstraint changed', async () => {
     wrapper.vm.relationshipField.value = ['test'];
     wrapper.vm.temporalConstraint = '2021-05-21T20:50:00.000Z/2022-05-22T03:50:00.000Z';
+    await flushPromises();
     expect(wrapper.emitted().setValue[0]).toEqual([[{ _ref: 'test', _refProperties: { temporalConstraints: [{ duration: wrapper.vm.temporalConstraint }] } }]]);
   });
 
-  it('should set value properly when temporalConstraint enabled and disabled', () => {
+  it('should set value properly when temporalConstraint enabled and disabled', async () => {
     wrapper.vm.relationshipField.value = ['test'];
     wrapper.vm.temporalConstraint = '2021-05-21T20:50:00.000Z/2023-05-22T03:50:00.000Z';
     wrapper.vm.temporalConstraintEnabled = true;
+    await flushPromises();
     expect(wrapper.emitted().setValue[1]).toEqual([[{ _ref: 'test', _refProperties: { temporalConstraints: [{ duration: wrapper.vm.temporalConstraint }] } }]]);
     wrapper.vm.temporalConstraintEnabled = false;
+    await flushPromises();
     expect(wrapper.emitted().setValue[2]).toEqual([[{ _ref: 'test', _refProperties: null }]]);
   });
 });

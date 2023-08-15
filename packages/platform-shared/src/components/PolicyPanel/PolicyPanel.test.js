@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -32,33 +32,26 @@ describe('PolicyPanel.vue', () => {
     });
   });
 
-  it('PolicyPanel component loaded', () => {
-    expect(wrapper.name()).toBe('PolicyPanel');
-  });
-
   describe('proper render', () => {
     it('should not show anything when "policyFailures" is loading', () => {
-      wrapper.setProps({ policyFailures: 'loading' });
+      wrapper.setProps({ policyFailures: ['loading'] });
 
-      expect(wrapper.contains('ul')).toBe(true);
-      expect(wrapper.contains('div.alert')).toBe(false);
+      expect(wrapper.find('ul').exists()).toBe(true);
+      expect(wrapper.find('div.alert').exists()).toBe(false);
     });
 
-    it('Will show all policies as passing when failedRules is empty', () => {
-      wrapper.setProps({ policyFailures: [], valueEntered: 'test' });
-      wrapper.vm.$nextTick(() => {
-        expect(wrapper.classes('.text-muted')).toBe(false);
-        const passingPoliciesArray = wrapper.findAll('.fr-valid');
-        expect(passingPoliciesArray.length).toBe(3);
-      });
+    it('Will show all policies as passing when failedRules is empty', async () => {
+      await wrapper.setProps({ policyFailures: [], valueEntered: true });
+
+      expect(wrapper.classes('.text-muted')).toBe(false);
+      const passingPoliciesArray = wrapper.findAll('.fr-valid');
+      expect(passingPoliciesArray.length).toBe(3);
     });
 
-    it('Will show all policies as failing when failedRules matches rules', () => {
-      wrapper.setProps({ policyFailures: ['test', 'test2', 'test3'] });
-      wrapper.vm.$nextTick(() => {
-        const passingPoliciesArray = wrapper.findAll('.fr-valid');
-        expect(passingPoliciesArray.length).toBe(0);
-      });
+    it('Will show all policies as failing when failedRules matches rules', async () => {
+      await wrapper.setProps({ policyFailures: ['test', 'test2', 'test3'] });
+      const passingPoliciesArray = wrapper.findAll('.fr-valid');
+      expect(passingPoliciesArray.length).toBe(0);
     });
   });
 

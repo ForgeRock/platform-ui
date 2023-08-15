@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -23,20 +23,6 @@ const defaultProps = {
 };
 
 describe('DurationInput', () => {
-  it('DurationInput component loaded', () => {
-    const wrapper = shallowMount(DurationInput, {
-      localVue,
-      propsData: {
-        ...defaultProps,
-      },
-      mocks: {
-        $t: (text) => (text),
-      },
-    });
-
-    expect(wrapper.name()).toBe('DurationInput');
-  });
-
   it('builds a formatted duration', () => {
     const wrapper = shallowMount(DurationInput, {
       localVue,

@@ -1,11 +1,12 @@
 /**
- * Copyright (c) 2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { shallowMount } from '@vue/test-utils';
+import flushPromises from 'flush-promises';
 import KeyValueList from './index';
 
 describe('KeyValueList', () => {
@@ -21,10 +22,6 @@ describe('KeyValueList', () => {
         },
       },
     });
-  });
-
-  it('Key Value successfully loaded', () => {
-    expect(wrapper.name()).toEqual('KeyValueList');
   });
 
   it('Saves new key value pair', () => {
@@ -97,19 +94,21 @@ describe('KeyValueList', () => {
     expect(emptyTextElement.text()).toBe('()');
   });
 
-  it('Hides the text indicating it is empty when adding a first value', () => {
+  it('Hides the text indicating it is empty when adding a first value', async () => {
     wrapper.find('.fr-key-link').trigger('click');
+    await flushPromises();
     const emptyTextElement = wrapper.find('.fr-key-value-panel.text-center.py-3');
     expect(emptyTextElement.exists()).toBe(false);
   });
 
-  it('Hides the text indicating it is empty when it has saved values', () => {
+  it('Hides the text indicating it is empty when it has saved values', async () => {
     wrapper.setData({
       keyValues: {
         en: 'value',
       },
       currentKey: 'en',
     });
+    await flushPromises();
 
     const emptyTextElement = wrapper.find('.fr-key-value-panel.text-center.py-3');
     expect(emptyTextElement.exists()).toBe(false);

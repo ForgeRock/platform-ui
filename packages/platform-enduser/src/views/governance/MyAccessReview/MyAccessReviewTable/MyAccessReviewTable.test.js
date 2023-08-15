@@ -90,13 +90,15 @@ describe('MyAccessReviewTable', () => {
     });
   });
 
-  it('should have a loading spinner then have a table', () => {
+  it('should have a loading spinner then have a table', async () => {
     wrapper.setData({ isLoading: true });
+    await flushPromises();
     const myAccessSpinner = findByTestId(wrapper, 'my-access-review-table-spinner');
     expect(myAccessSpinner.exists()).toBeTruthy();
     wrapper.setData({
       isLoading: false,
     });
+    await flushPromises();
     const myAccessTable = findByTestId(wrapper, 'my-access-review-table');
     expect(myAccessTable.exists()).toBeTruthy();
   });
@@ -344,7 +346,7 @@ describe('MyAccessReviewTable', () => {
       const errorSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
 
       wrapper.vm.loadData();
-      await wrapper.vm.$nextTick();
+      await flushPromises();
 
       expect(errorSpy).toHaveBeenCalled();
     });

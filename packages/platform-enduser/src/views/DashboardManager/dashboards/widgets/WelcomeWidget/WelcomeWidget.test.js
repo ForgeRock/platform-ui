@@ -16,21 +16,6 @@ localVue.use(BootstrapVue);
 localVue.use(Vuex);
 
 describe('WelcomeWidget.vue', () => {
-  it('Welcome widget loaded', () => {
-    const wrapper = shallowMount(WelcomeWidget, {
-      localVue,
-      i18n,
-      propsData: {
-        userDetails: {
-          givenName: 'test',
-          sn: 'test',
-        },
-      },
-    });
-
-    expect(wrapper.name()).toBe('WelcomeWidget');
-  });
-
   it('renders default header if displayCompactHeader is set to false', () => {
     const wrapper = shallowMount(WelcomeWidget, {
       localVue,
@@ -98,7 +83,7 @@ describe('WelcomeWidget.vue', () => {
     expect(wrapper.vm.timeOfDay).toBe('Morning');
   });
 
-  it('sets greeting timeOfDay of compact header to: Afternoon, from hour 12 up until, and icnluding, hour 17', () => {
+  it('sets greeting timeOfDay of compact header to: Afternoon, from hour 12 up until, and including, hour 17', () => {
     const wrapper = shallowMount(WelcomeWidget, {
       localVue,
       i18n,
@@ -120,7 +105,7 @@ describe('WelcomeWidget.vue', () => {
     expect(wrapper.vm.timeOfDay).toBe('Afternoon');
   });
 
-  it('sets greeting timeOfDay of compact header to: Evening, from hour 18 up until, and icnluding, hour 23', () => {
+  it('sets greeting timeOfDay of compact header to: Evening, from hour 18 up until, and including, hour 23', () => {
     const wrapper = shallowMount(WelcomeWidget, {
       localVue,
       i18n,
@@ -142,7 +127,7 @@ describe('WelcomeWidget.vue', () => {
     expect(wrapper.vm.timeOfDay).toBe('Evening');
   });
 
-  it('correctly returns a full name on the fullName computed property', () => {
+  it('correctly returns a full name on the fullName computed property', async () => {
     const wrapper = shallowMount(WelcomeWidget, {
       localVue,
       propsData: {
@@ -156,7 +141,7 @@ describe('WelcomeWidget.vue', () => {
     expect(wrapper.vm.fullName).toBe('John Doe');
 
     // returns userId if no first or last name provided
-    wrapper.setProps({
+    await wrapper.setProps({
       userDetails: {
         userId: 44,
         givenName: '',

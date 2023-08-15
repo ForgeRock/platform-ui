@@ -1,12 +1,13 @@
 /**
- * Copyright (c) 2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, mount, shallowMount } from '@vue/test-utils';
+import { createLocalVue, mount } from '@vue/test-utils';
+import flushPromises from 'flush-promises';
 import BasicInput from './index';
 
 const localVue = createLocalVue();
@@ -29,19 +30,7 @@ const defaultProps = {
 };
 
 describe('BasicInput', () => {
-  it('BasicInput component loaded', () => {
-    const wrapper = shallowMount(BasicInput, {
-      localVue,
-      propsData: {
-        ...defaultMixinProps,
-        ...defaultProps,
-      },
-    });
-
-    expect(wrapper.name()).toBe('BasicInput');
-  });
-
-  it('BasicInput component renders reveal button for password', () => {
+  it('BasicInput component renders reveal button for password', async () => {
     const wrapper = mount(BasicInput, {
       localVue,
       propsData: {
@@ -59,6 +48,7 @@ describe('BasicInput', () => {
     expect(input.attributes('type')).toBe('password');
 
     button.trigger('click');
+    await flushPromises();
 
     expect(wrapper.vm.showPassword).toBe(true);
     expect(input.attributes('type')).toBe('text');
@@ -77,7 +67,7 @@ describe('BasicInput', () => {
       },
     });
 
-    expect(wrapper.contains('.test_prepend')).toBe(true);
-    expect(wrapper.contains('.test_append')).toBe(true);
+    expect(wrapper.find('.test_prepend').exists()).toBe(true);
+    expect(wrapper.find('.test_append').exists()).toBe(true);
   });
 });
