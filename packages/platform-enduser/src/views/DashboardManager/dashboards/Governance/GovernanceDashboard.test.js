@@ -64,11 +64,6 @@ describe('GovernanceDashboard', () => {
     jest.clearAllMocks();
   });
 
-  it('GovernanceDashboard successfully loaded', () => {
-    shallowMountComponent();
-    expect(wrapper.name()).toBe('GovernanceDashboard');
-  });
-
   describe('getAccessReviewsCount', () => {
     shallowMountComponent();
     it('should call getCertificationItems', async () => {

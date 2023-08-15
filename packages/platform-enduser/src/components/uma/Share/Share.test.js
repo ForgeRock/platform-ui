@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -33,7 +33,7 @@ describe('Sharing.vue', () => {
         },
       },
       newScopes: { value: '' },
-      newShare: false,
+      newShare: 'test',
       value: 'test',
     };
 
@@ -48,11 +48,7 @@ describe('Sharing.vue', () => {
   });
 
   afterEach(() => {
-    wrapper = null;
-  });
-
-  it('Resources page loaded', () => {
-    expect(wrapper.name()).toBe('Share');
+    wrapper.destroy();
   });
 
   it('Emits "modifyResource" event', () => {
@@ -91,7 +87,7 @@ describe('Sharing.vue', () => {
   it('Validates resource', () => {
     const spy = jest.spyOn(wrapper.vm, 'resetModal');
 
-    wrapper.vm.newShare = true;
+    wrapper.vm.newShare = 'shareWith';
     wrapper.vm.validateResource();
 
     expect(spy).toBeCalled();
@@ -109,8 +105,7 @@ describe('Sharing.vue', () => {
   it('Prevents sharing with same user', () => {
     const spy = jest.spyOn(wrapper.vm, 'resetModal');
 
-    wrapper.setMethods({ displayNotification: jest.fn() });
-    wrapper.setData({ newShare: true });
+    wrapper.setData({ newShare: 'shareWith' });
     wrapper.vm.validateResource();
 
     expect(spy).toBeCalled();
@@ -119,7 +114,7 @@ describe('Sharing.vue', () => {
   it('Calls "shareResource" if resource is valid', () => {
     const spy = jest.spyOn(wrapper.vm, 'shareResource');
 
-    wrapper.setData({ newShare: true });
+    wrapper.setData({ newShare: 'shareWith' });
     wrapper.vm.validateResource();
 
     expect(spy).toBeCalled();
@@ -128,7 +123,7 @@ describe('Sharing.vue', () => {
   it('Calls "shareResource" if resouce is shared for the first time', () => {
     const spy = jest.spyOn(wrapper.vm, 'shareResource');
 
-    wrapper.setData({ newShare: true });
+    wrapper.setData({ newShare: 'shareWith' });
     wrapper.vm.$refs.fsModal.hide = jest.fn();
     wrapper.vm.validateResource();
 

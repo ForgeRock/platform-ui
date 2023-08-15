@@ -18,10 +18,6 @@ describe('CertificationTaskCommentsModal', () => {
     });
   });
 
-  it('component should load correclty', () => {
-    expect(wrapper.name()).toBe('CommentsModal');
-  });
-
   it('commentsPaginationChange method should update commentsCurrentPage', () => {
     wrapper.vm.commentsPaginationChange(2);
 

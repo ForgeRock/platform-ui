@@ -18,8 +18,10 @@ describe('KeyValueList', () => {
         mocks: {
           $t: (key) => key,
         },
-        methods: {
-          validateField: jest.fn(), // This method does not work with shallowMount
+        $refs: {
+          testField: {
+            setErrors: () => Promise.resolve(true),
+          },
         },
         propsData: {
           value: '',
@@ -148,6 +150,7 @@ describe('KeyValueList', () => {
 
     it('shows required error if field is required but not filled out', async () => {
       const wrapper = mountComponent({ validation: 'required', value: [{ key: 'initialValue' }] });
+      await flushPromises();
       expect(wrapper.find('.list-group-item').exists()).toBe(true);
       expect(wrapper.find('#testfield0-error').text()).toBe('');
       const deleteButton = wrapper.find('.material-icons-outlined');

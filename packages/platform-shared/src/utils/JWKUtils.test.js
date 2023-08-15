@@ -7,6 +7,11 @@
 
 import { buildJwkSet } from './JWKUtils';
 
+jest.mock('jose', () => ({
+  generateKeyPair: () => {},
+  exportJWK: () => {},
+}));
+
 describe('JWKUtils', () => {
   describe('buildJwkSet', () => {
     describe('should throw error when jwkList is falsy', () => {

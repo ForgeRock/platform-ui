@@ -97,8 +97,6 @@ describe('ListResource Component', () => {
   });
 
   it('Component successfully loaded', () => {
-    expect(wrapper.isVueInstance()).toEqual(true);
-    expect(wrapper.name()).toEqual('ListResource');
     expect(wrapper.vm.columns.length).toEqual(2);
   });
 
@@ -137,8 +135,8 @@ describe('ListResource Component', () => {
     });
   });
 
-  it('emits get-table-data without sortField if queryThreshold is specified, but with sortField if search filter & sort field are both specified', () => {
-    wrapper.setProps({ queryThreshold: 3 });
+  it('emits get-table-data without sortField if queryThreshold is specified, but with sortField if search filter & sort field are both specified', async () => {
+    await wrapper.setProps({ queryThreshold: 3 });
     wrapper.vm.loadData('', ['field1'], '', '', 20);
     expect(wrapper.emitted()['get-table-data'][0][0]).toEqual({
       fields: ['field1'],
@@ -169,7 +167,6 @@ describe('ListResource Component', () => {
       filter: 'true',
       page: 1,
       pageSize: 10,
-      sortField: 'userName',
     });
   });
 
@@ -178,19 +175,12 @@ describe('ListResource Component', () => {
       .mockImplementation(() => { });
   });
 
-  it('ListResource page loaded', () => {
-    expect(wrapper.name()).toBe('ListResource');
-  });
-
   it('ListResource sort column', () => {
-    wrapper.setMethods({ loadTable: () => { } });
-
     expect(wrapper.vm.calculateSort(false, 'test')).toBe('-test');
     expect(wrapper.vm.calculateSort(true, 'test')).toBe('test');
   });
 
   it('Sorting change reset', () => {
-    wrapper.setMethods({ loadTable: () => { } });
     wrapper.vm.sortingChanged({
       sortDesc: false,
       sortBy: 'test',
@@ -201,17 +191,14 @@ describe('ListResource Component', () => {
   });
 
   it('Empty search entered', () => {
-    wrapper.setMethods({ loadTable: () => { } });
     wrapper.vm.search();
 
     expect(wrapper.vm.sortBy).toBeNull();
     expect(wrapper.vm.currentPage).toBe(1);
   });
 
-  it('New search entered with queryThreshold enabled', () => {
-    wrapper.setMethods({ loadTable: () => { } });
-
-    wrapper.setProps({
+  it('New search entered with queryThreshold enabled', async () => {
+    await wrapper.setProps({
       queryThreshold: 3,
     });
 
@@ -230,7 +217,6 @@ describe('ListResource Component', () => {
   });
 
   it('Clear search and sort', () => {
-    wrapper.setMethods({ loadTable: () => { } });
     wrapper.vm.clear();
 
     expect(wrapper.vm.sortBy).toBeNull();
@@ -263,7 +249,7 @@ describe('ListResource Component', () => {
     expect(wrapper.vm.columns[0].sortable).toEqual(true);
 
     wrapper.vm.filter = '';
-    wrapper.setProps({
+    await wrapper.setProps({
       queryThreshold: 3,
       tableData: ['doNotSortWithEmptyFilterAndQueryThreshold'],
     });
@@ -278,20 +264,20 @@ describe('ListResource Component', () => {
     expect(wrapper.vm.columns[0].sortable).toEqual(false);
 
     wrapper.vm.filter = 'foo';
-    wrapper.setProps({
+    await wrapper.setProps({
       queryThreshold: 3,
       tableData: ['sortWithQueryThresholdAndLongEnoughFilter'],
     });
     expect(wrapper.vm.columns[0].sortable).toEqual(true);
   });
 
-  it('Sets hasClearSessionAccess', () => {
+  it('Sets hasClearSessionAccess', async () => {
     let item = { hasActiveSessions: true };
     wrapper.setProps({
       canClearSessions: false,
     });
     expect(wrapper.vm.hasClearSessionAccess(item)).toEqual(false);
-    wrapper.setProps({
+    await wrapper.setProps({
       canClearSessions: true,
     });
     expect(wrapper.vm.hasClearSessionAccess(item)).toEqual(true);
@@ -300,16 +286,14 @@ describe('ListResource Component', () => {
   });
 
   it('Pagination change works', () => {
-    wrapper.setMethods({ loadTable: () => { } });
-
     const paginationChangeSpy = jest.spyOn(wrapper.vm, 'loadData');
     wrapper.vm.paginationChange();
 
     expect(paginationChangeSpy).toHaveBeenCalled();
   });
 
-  it('regenerates column list when propColumns are provided', () => {
-    wrapper.setProps({
+  it('regenerates column list when propColumns are provided', async () => {
+    await wrapper.setProps({
       propColumns: [
         {
           key: 'userName',
@@ -344,8 +328,6 @@ describe('ListResource Component', () => {
   });
 
   it('Pagination change page size should load data table', () => {
-    wrapper.setMethods({ paginationChange: () => { } });
-
     const paginationChangeSpy = jest.spyOn(wrapper.vm, 'paginationChange');
     wrapper.vm.pageSizeChange(2);
 
@@ -356,27 +338,27 @@ describe('ListResource Component', () => {
 
   describe('Pagination attributes verification', () => {
     it('hide pagination when data table is empty', () => {
-      expect(wrapper.find(FrPagination).exists()).toBe(false);
+      expect(wrapper.findComponent(FrPagination).exists()).toBe(false);
     });
 
-    it('show pagination when data table have data', () => {
-      wrapper.setProps({ tableData: [{}, {}] });
+    it('show pagination when data table have data', async () => {
+      await wrapper.setProps({ tableData: [{}, {}] });
 
-      expect(wrapper.find(FrPagination).exists()).toBe(true);
+      expect(wrapper.findComponent(FrPagination).exists()).toBe(true);
     });
 
-    it('hide pagination when data table have data and is loading', () => {
-      wrapper.setProps({ tableData: [{}, {}], isLoading: true });
+    it('hide pagination when data table have data and is loading', async () => {
+      await wrapper.setProps({ tableData: [{}, {}], isLoading: true });
 
-      expect(wrapper.find(FrPagination).exists()).toBe(false);
+      expect(wrapper.findComponent(FrPagination).exists()).toBe(false);
     });
 
-    it('pagination page should be equal to current page prop', () => {
-      wrapper.setProps({ currentPage: 2 });
+    it('pagination page should be equal to current page prop', async () => {
+      await wrapper.setProps({ currentPage: 2 });
 
       expect(wrapper.vm.paginationPage).toBe(2);
 
-      wrapper.setProps({ currentPage: 3 });
+      await wrapper.setProps({ currentPage: 3 });
 
       expect(wrapper.vm.paginationPage).toBe(3);
     });

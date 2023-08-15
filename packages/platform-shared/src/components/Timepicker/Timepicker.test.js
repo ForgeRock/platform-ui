@@ -1,22 +1,17 @@
 /**
- * Copyright 2020 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
+
 import { shallowMount } from '@vue/test-utils';
 import Timepicker from './index';
 
 describe('Timepicker Component', () => {
-  it('Timepicker successfully loaded', () => {
-    const wrapper = shallowMount(Timepicker);
-    expect(wrapper.name()).toEqual('Timepicker');
-  });
-
   it('contains a bootstrap timepicker', () => {
     const wrapper = shallowMount(Timepicker);
-    expect(wrapper.find({ name: 'BFormTimepicker' }).exists()).toBe(true);
+    expect(wrapper.findComponent({ name: 'BFormTimepicker' }).exists()).toBe(true);
   });
 
   it('has placeholder text', () => {
@@ -25,17 +20,17 @@ describe('Timepicker Component', () => {
         placeholder: 'test',
       },
     });
-    expect(wrapper.find({ name: 'BFormTimepicker' }).attributes('placeholder')).toBe('test');
+    expect(wrapper.findComponent({ name: 'BFormTimepicker' }).attributes('placeholder')).toBe('test');
   });
 
-  it('floats placeholder text when a value is set', () => {
+  it('floats placeholder text when a value is set', async () => {
     const wrapper = shallowMount(Timepicker, {
       propsData: {
         placeholder: 'test',
       },
     });
     expect(wrapper.find('.input-has-value').exists()).toBe(false);
-    wrapper.setProps({ value: 'John' });
+    await wrapper.setProps({ value: 'John' });
     expect(wrapper.find('.input-has-value').exists()).toBe(true);
   });
 });

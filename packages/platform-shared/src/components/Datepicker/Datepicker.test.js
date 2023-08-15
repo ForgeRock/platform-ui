@@ -10,11 +10,6 @@ import { mount } from '@vue/test-utils';
 import Datepicker from './index';
 
 describe('Datepicker Component', () => {
-  it('Datepicker successfully loaded', () => {
-    const wrapper = mount(Datepicker);
-    expect(wrapper.name()).toEqual('Datepicker');
-  });
-
   it('contains a bootstrap datepicker', () => {
     const wrapper = mount(Datepicker);
     const datepicker = findByTestId(wrapper, 'datepicker');
@@ -33,14 +28,14 @@ describe('Datepicker Component', () => {
     expect(datepicker.find('.text-muted').text()).toBe('test');
   });
 
-  it('floats placeholder text when a value is set', () => {
+  it('floats placeholder text when a value is set', async () => {
     const wrapper = mount(Datepicker, {
       propsData: {
         placeholder: 'test',
       },
     });
     expect(wrapper.find('.input-has-value').exists()).toBe(false);
-    wrapper.setProps({ value: 'John' });
+    await wrapper.setProps({ value: 'John' });
     expect(wrapper.find('.input-has-value').exists()).toBe(true);
   });
 });

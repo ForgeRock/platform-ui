@@ -37,6 +37,6 @@ describe('Task.vue', () => {
   });
 
   it('Task successfully loaded', () => {
-    expect(wrapper.name()).toEqual('Task');
+    expect(wrapper.vm.processDefinition).toStrictEqual({});
   });
 });

@@ -6,6 +6,7 @@
  */
 
 import { shallowMount } from '@vue/test-utils';
+import flushPromises from 'flush-promises';
 import RiskScoreSlider from './index';
 
 describe('RiskScoreSlider', () => {
@@ -23,8 +24,8 @@ describe('RiskScoreSlider', () => {
       expect(wrapper.vm.selectedRange).toEqual([0, 100]);
     });
 
-    it('should use initial values when they are passed ', () => {
-      wrapper.setProps({
+    it('should use initial values when they are passed', async () => {
+      await wrapper.setProps({
         value: [10, 80],
       });
 

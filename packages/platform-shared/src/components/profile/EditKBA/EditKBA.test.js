@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -30,18 +30,6 @@ describe('EditKBA.vue', () => {
       1: { en: 'Question1?' },
     },
   };
-
-  it('AccountSecurity page loaded', () => {
-    wrapper = shallowMount(EditKBA, {
-      localVue,
-      i18n,
-      propsData: {
-        kbaData,
-      },
-    });
-
-    expect(wrapper.name()).toBe('EditKBA');
-  });
 
   describe('#generatePatch', () => {
     beforeEach(() => {
@@ -104,7 +92,7 @@ describe('EditKBA.vue', () => {
       expect(wrapper.emitted().updateKBA[0]).toEqual(['patch']);
     });
 
-    it('Collapses the reset-security-questions-form, when the network request has been processed', () => {
+    it('Collapses the reset-security-questions-form, when the network request has been processed', async () => {
       wrapper = shallowMount(EditKBA, {
         localVue,
         i18n,
@@ -118,7 +106,7 @@ describe('EditKBA.vue', () => {
           };
         },
       });
-      wrapper.setProps({ processingRequest: false });
+      await wrapper.setProps({ processingRequest: false });
 
       expect(wrapper.vm.showKBAResetForm).toBe(false);
     });

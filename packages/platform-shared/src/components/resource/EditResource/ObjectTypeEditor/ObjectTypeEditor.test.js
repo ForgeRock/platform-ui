@@ -33,17 +33,13 @@ describe('ObjectTypeEditor', () => {
   });
 
   afterEach(() => {
-    wrapper = null;
+    wrapper.destroy();
   });
 
-  it('Object Type Editor successfully loaded', () => {
-    expect(wrapper.name()).toEqual('ObjectTypeEditor');
-  });
-
-  it('loads data', () => {
+  it('loads data', async () => {
     expect(wrapper.vm.clonedDisplayProperties[0].title).toEqual('description');
 
-    wrapper.setProps({
+    await wrapper.setProps({
       displayProperties: [
         {
           title: '',

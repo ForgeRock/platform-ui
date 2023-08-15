@@ -38,24 +38,28 @@ describe('SearchInput Component', () => {
     expect(wrapper.find('.input-group-append .material-icons-outlined').text()).toBe('close');
   });
 
-  it('clicking the close icon will clear the input value and remove the icon', () => {
+  it('clicking the close icon will clear the input value and remove the icon', async () => {
     const wrapper = mount(SearchInput);
     wrapper.setData({ value: 'Hello' });
+    await flushPromises();
     expect(wrapper.find('.input-group-append .material-icons-outlined').exists()).toBe(true);
     wrapper.find('.input-group-append .material-icons-outlined').trigger('click');
+    await flushPromises();
     expect(wrapper.find('input[type="search"]').text()).toBe('');
     expect(wrapper.find('.input-group-append .material-icons-outlined').exists()).toBe(false);
   });
 
-  it('emits an event when the input value changes', () => {
+  it('emits an event when the input value changes', async () => {
     const wrapper = mount(SearchInput);
     wrapper.setData({ value: 'Hello' });
+    await flushPromises();
     expect(wrapper.emitted().input[0]).toEqual(['Hello']);
   });
 
-  it('emits a clear event when the close icon is clicked', () => {
+  it('emits a clear event when the close icon is clicked', async () => {
     const wrapper = mount(SearchInput);
     wrapper.setData({ value: 'Hello' });
+    await flushPromises();
     wrapper.find('.input-group-append .material-icons-outlined').trigger('click');
     expect(wrapper.emitted().clear).toBeTruthy();
   });

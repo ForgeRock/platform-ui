@@ -13,12 +13,8 @@ jest.mock('@forgerock/platform-shared/src/api/governance/CertificationApi');
 
 let wrapper;
 
-function mountComponent(mocks = {}, methods = {}, propsData = {}) {
+function mountComponent(mocks = {}, propsData = {}) {
   wrapper = shallowMount(CertificationTaskReassignModal, {
-    methods: {
-      cancel: jest.fn(),
-      ...methods,
-    },
     mocks: {
       $t: (t) => t,
       ...mocks,
@@ -30,25 +26,9 @@ function mountComponent(mocks = {}, methods = {}, propsData = {}) {
   });
 }
 describe('CertificationTaskReassignModal', () => {
-  describe('Component mount', () => {
-    it('CertificationTaskReassignModal successfully loaded', () => {
-      mountComponent();
-      expect(wrapper.name()).toEqual('CertificationTaskReassignModal');
-    });
-  });
-
   describe('setReassignBulkAction', () => {
-    const methods = {
-      updateCertificationTaskList: jest.fn(),
-      emitSavingStatus: jest.fn(),
-      toggleSaving: jest.fn(),
-    };
-    beforeEach(() => {
-      jest.spyOn(wrapper.vm, 'showErrorMessage');
-      mountComponent({}, methods);
-      reassignCertificationTasks.mockImplementation(() => Promise.resolve({ data: 'results' }));
-    });
     it('should set the is loading to false to hide the loader in the header', async () => {
+      mountComponent({});
       reassignCertificationTasks.mockImplementation(() => Promise.reject(new Error()));
       const showErrorMessage = jest.spyOn(wrapper.vm, 'showErrorMessage');
       wrapper.vm.saveReassignBulkAction();
@@ -60,7 +40,7 @@ describe('CertificationTaskReassignModal', () => {
 
   describe('saveReassignBulkAction method', () => {
     beforeEach(() => {
-      mountComponent({}, {}, {
+      mountComponent({}, {
         campaignId: 'a96de99c-c638-4bdd-84cb-5fb559225152',
         selectedTasks: [],
       });

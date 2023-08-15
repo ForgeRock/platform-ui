@@ -73,6 +73,10 @@ describe('App.vue', () => {
     });
   });
 
+  afterAll(() => {
+    wrapper.destroy();
+  });
+
   it('Loaded Menus File should load default items', async () => {
     shallowMountComponent(store);
     await wrapper.vm.$nextTick();

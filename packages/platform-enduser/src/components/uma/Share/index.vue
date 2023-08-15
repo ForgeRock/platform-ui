@@ -215,7 +215,7 @@ export default {
   },
   data() {
     return {
-      newShare: false,
+      newShare: '',
       text: `Can ${this.resource.scopes[0]}`,
       newScopes: {},
     };

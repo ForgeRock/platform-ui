@@ -84,11 +84,7 @@ describe('CustomStep.vue', () => {
     });
   });
   afterEach(() => {
-    wrapper = null;
-  });
-
-  it('Create resource dialog loaded', () => {
-    expect(wrapper.name()).toBe('CustomStep');
+    wrapper.destroy();
   });
 
   it('handles changes to query filter', async () => {

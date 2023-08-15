@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -28,21 +28,6 @@ const defaultProps = {
 };
 
 describe('DateTimeInput', () => {
-  it('DateTimeInput component loaded', () => {
-    const wrapper = shallowMount(DateTimeInput, {
-      localVue,
-      propsData: {
-        ...defaultMixinProps,
-        ...defaultProps,
-      },
-      mocks: {
-        $t: (text) => (text),
-      },
-    });
-
-    expect(wrapper.name()).toBe('DateTimeInput');
-  });
-
   it('sets date and time from formatted string', () => {
     const wrapper = shallowMount(DateTimeInput, {
       localVue,

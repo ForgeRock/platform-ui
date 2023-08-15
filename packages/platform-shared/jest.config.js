@@ -1,5 +1,5 @@
 /**
- * Copyright 2019-2020 ForgeRock AS. All Rights Reserved
+ * Copyright 2019-2023 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS.
  * or with one of its affiliates. All use shall be exclusively subject
@@ -12,4 +12,5 @@ process.env.VUE_CLI_BABEL_TRANSPILE_MODULES = true;
 
 module.exports = {
   ...baseConfig,
+  displayName: 'platform-shared',
 };

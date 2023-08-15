@@ -20,6 +20,9 @@ describe('PrivilegesTab', () => {
             UserStore: {
               adminUser: true,
             },
+            SharedStore: {
+              workforceEnabled: false,
+            },
           },
         },
       },
@@ -133,12 +136,29 @@ describe('PrivilegesTab', () => {
   });
 
   it('updates privilege', () => {
+    const privilege = {
+      path: 'managed/alpha_user',
+      name: 'Alpha realm - Users',
+      actions: [],
+      permissions: [
+        'VIEW',
+        'CREATE',
+        'UPDATE',
+        'DELETE',
+      ],
+      accessFlags: [
+        {
+          attribute: 'userName',
+          readOnly: true,
+        },
+      ],
+    };
     expect(wrapper.vm.privilegeToEdit).toStrictEqual({
       accessFlags: [],
       filter: 'testFilter',
     });
-    wrapper.vm.updatePrivilege('testValue');
-    expect(wrapper.vm.privilegeToEdit).toBe('testValue');
+    wrapper.vm.updatePrivilege(privilege);
+    expect(wrapper.vm.privilegeToEdit).toStrictEqual(privilege);
   });
 
   it('saves privilege', async () => {
@@ -178,37 +198,13 @@ describe('PrivilegesTab', () => {
       name: 'testValue',
     });
 
-    wrapper.setProps({
+    await wrapper.setProps({
       privilegesField: {
         value: null,
       },
     });
     await wrapper.vm.saveNewPrivileges();
     expect(wrapper.vm.clonedPrivilegesField.value).toStrictEqual([]);
-  });
-
-  it('shows error when failing to get schema', async () => {
-    wrapper = shallowMount(PrivilegesTab, {
-      mocks: {
-        $t: () => {},
-        $store: {
-          state: {
-            UserStore: {
-              adminUser: false,
-            },
-          },
-        },
-      },
-      propsData: {
-        privilegesField: {
-          value: [{
-            name: 'testValue',
-            filter: '',
-          }],
-        },
-        resourceName: 'resourceName',
-      },
-    });
   });
 
   it('sets edit names', () => {

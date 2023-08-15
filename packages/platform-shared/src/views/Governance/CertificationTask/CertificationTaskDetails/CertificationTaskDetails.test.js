@@ -13,9 +13,6 @@ let wrapper;
 
 function mountComponent(options, certifier) {
   wrapper = shallowMount(CertificationTaskDetails, {
-    methods: {
-      cancel: jest.fn(),
-    },
     mocks: {
       $t: (t) => t,
       $route: {
@@ -39,18 +36,6 @@ function mountComponent(options, certifier) {
 }
 describe('CertificationTaskDetails', () => {
   describe('Component mount', () => {
-    it('CertificationTaskDetails successfully loaded', () => {
-      mountComponent({}, {
-        cn: 'Test Test',
-        givenName: 'Test',
-        sn: 'Castillo',
-        id: '973f3896-c81a-4d54-8bec-1e7d9c8187fb',
-        type: 'user',
-        key: 'managed/user/973f3896-c81a-4d54-8bec-1e7d9c8187fb',
-      });
-      expect(wrapper.name()).toEqual('CertificationTaskDetails');
-    });
-
     it('should show the certifier image correctly when is a user', () => {
       mountComponent({}, {
         cn: 'Test Test',
@@ -77,6 +62,10 @@ describe('CertificationTaskDetails', () => {
 
       expect(certifierImage).toBeTruthy();
     });
+  });
+
+  beforeEach(() => {
+    mountComponent();
   });
 
   describe('formatDate', () => {

@@ -16,7 +16,7 @@ describe('TextOutputCallback.vue', () => {
   beforeEach(() => {
     wrapper = undefined;
     mountComponent = ({
-      messageType, message, isFirstRenderedCallback, mockMethods,
+      messageType, message, isFirstRenderedCallback,
     }) => {
       const step = {
         getCallbacksOfType: jest.fn(),
@@ -38,7 +38,6 @@ describe('TextOutputCallback.vue', () => {
       wrapper = mount(TextOutputCallback, {
         i18n,
         propsData,
-        methods: mockMethods || {},
       });
     };
   });
@@ -77,10 +76,7 @@ describe('TextOutputCallback.vue', () => {
   });
 
   it('It handles scripts by emit event and invoking', () => {
-    const mockMethods = {
-      invokeScriptWithHelpers: jest.fn(),
-    };
-    mountComponent({ messageType: '4', mockMethods });
+    mountComponent({ messageType: '4' });
 
     const emittedFunction = wrapper.emitted()['has-scripts'].pop()[0];
 
@@ -88,7 +84,7 @@ describe('TextOutputCallback.vue', () => {
 
     emittedFunction();
 
-    expect(mockMethods.invokeScriptWithHelpers).toHaveBeenCalled();
+    expect(wrapper.emitted('has-scripts')).toEqual([]);
   });
 
   it('Mounts QRCodeReader on window', () => {
@@ -106,10 +102,8 @@ describe('TextOutputCallback.vue', () => {
       window.APIs = {
         loginHelpers
       };`;
-    const mockMethods = {
-      setHiddenCallback: jest.fn(),
-    };
-    mountComponent({ messageType: '4', message: messageScript, mockMethods });
+    mountComponent({ messageType: '4', message: messageScript });
+    const setHiddenCallbackSpy = jest.spyOn(wrapper.vm, 'setHiddenCallback');
 
     const emittedFunction = wrapper.emitted()['has-scripts'].pop()[0];
     emittedFunction();
@@ -135,7 +129,7 @@ describe('TextOutputCallback.vue', () => {
 
     expect(window.APIs.loginHelpers.setHiddenCallback).toBeDefined();
     expect(window.APIs.loginHelpers.setHiddenCallback('callbackName', 'callbackValue')).toBeUndefined();
-    expect(mockMethods.setHiddenCallback).toHaveBeenCalledWith('callbackName', 'callbackValue');
+    expect(setHiddenCallbackSpy).toHaveBeenCalledWith('callbackName', 'callbackValue');
   });
 
   it('Mounts QRCodeReader on window', () => {

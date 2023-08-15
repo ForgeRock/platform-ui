@@ -104,6 +104,7 @@ describe('GovUsersMultiSelect', () => {
         userName: 'userName2',
       },
     ];
+    await flushPromises();
     wrapper.vm.filterOptions(wrapper.vm.options);
 
     expect(wrapper.vm.options).toEqual([

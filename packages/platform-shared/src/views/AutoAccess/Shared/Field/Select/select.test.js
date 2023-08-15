@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -27,21 +27,6 @@ const defaultProps = {
 };
 
 describe('Select input', () => {
-  it('Select input component loaded', () => {
-    const wrapper = shallowMount(Select, {
-      localVue,
-      mocks: {
-        $t: () => {},
-      },
-      propsData: {
-        ...defaultMixinProps,
-        ...defaultProps,
-      },
-    });
-
-    expect(wrapper.name()).toBe('Select');
-  });
-
   it('Select input component process selectOptions prop from array', () => {
     const wrapper = mount(Select, {
       localVue,
@@ -147,8 +132,8 @@ describe('Select input', () => {
       },
     });
 
-    expect(wrapper.contains('.test_prepend')).toBe(true);
-    expect(wrapper.contains('.test_append')).toBe(true);
+    expect(wrapper.find('.test_prepend').exists()).toBe(true);
+    expect(wrapper.find('.test_append').exists()).toBe(true);
   });
 
   it('Select is not autofocused on absence of prop "autofocus"', () => {

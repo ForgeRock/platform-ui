@@ -14,10 +14,6 @@ import { required, email } from 'vee-validate/dist/rules.umd';
 import i18n from '@/i18n';
 import FrField from './index';
 
-async function flush() {
-  await flushPromises();
-}
-
 const stubs = {
   ValidationObserver,
   ValidationProvider,
@@ -30,7 +26,6 @@ describe('Field Component', () => {
   beforeEach(() => {
     localVue = createLocalVue();
     localVue.use(BootstrapVue);
-    jest.useFakeTimers();
     extend('required', {
       ...required,
     });
@@ -52,10 +47,10 @@ describe('Field Component', () => {
       },
       stubs,
     });
-    await flush();
+    await flushPromises();
     const input = wrapper.find(`#${wrapper.vm.fieldWrapperId}`).find('input');
     input.setValue('test');
-    await flush();
+    await flushPromises();
     expect(input.element.value).toBe('test');
   });
 
@@ -72,13 +67,13 @@ describe('Field Component', () => {
       },
       stubs,
     });
-    await flush();
+    await flushPromises();
     const input = wrapper.find(`#${wrapper.vm.fieldWrapperId}`).find('input');
     input.setValue(5);
-    await flush();
+    await flushPromises();
     expect(input.element.value).not.toBe('3');
     input.setValue(3);
-    await flush();
+    await flushPromises();
     expect(input.element.value).toBe('3');
   });
 
@@ -95,12 +90,12 @@ describe('Field Component', () => {
       },
       stubs,
     });
-    await flush();
+    await flushPromises();
     const input = wrapper.find(`#${wrapper.vm.fieldWrapperId}`).find('input');
     const passwordButton = wrapper.find('.input-group-append');
     expect(passwordButton.exists()).toBe(true);
     input.setValue('pass');
-    await flush();
+    await flushPromises();
     expect(input.element.value).toBe('pass');
   });
 
@@ -119,11 +114,11 @@ describe('Field Component', () => {
     });
     // Ensure we get a failure when trying to select a value that is not in options
     wrapper.vm.$attrs.value = ['option3'];
-    await flush();
+    await flushPromises();
     expect(wrapper.vm.$attrs.value).not.toBe(['option3']);
     // Ensure we get a success when trying to select a value that is in options
     wrapper.vm.$attrs.value = 'option2';
-    await flush();
+    await flushPromises();
     expect(wrapper.vm.$attrs.value).toBe('option2');
   });
 
@@ -142,14 +137,14 @@ describe('Field Component', () => {
     });
     // Ensure we get a failure when trying to select a value that is not in options
     wrapper.vm.$attrs.value = ['option3'];
-    await flush();
+    await flushPromises();
     expect(wrapper.vm.$attrs.value).not.toBe(['option3']);
     // Ensure we get a success when trying to select a value that is in options
     wrapper.vm.$attrs.value = ['option2'];
-    await flush();
+    await flushPromises();
     expect(wrapper.vm.$attrs.value).toStrictEqual(['option2']);
     // Ensure we get a success when trying to select two values that are in options
-    await flush();
+    await flushPromises();
     wrapper.vm.$attrs.value = ['option1', 'option2'];
     expect(wrapper.vm.$attrs.value).toStrictEqual(['option1', 'option2']);
   });
@@ -168,11 +163,11 @@ describe('Field Component', () => {
       },
       stubs,
     });
-    await flush();
+    await flushPromises();
     expect(wrapper.vm.$attrs.value).toStrictEqual([]);
     const input = wrapper.find(`#${wrapper.vm.fieldWrapperId}`).find('input');
     input.setValue('should convert to empty array without hitting return');
-    await flush();
+    await flushPromises();
     expect(wrapper.vm.$attrs.value).toStrictEqual([]);
   });
 
@@ -182,9 +177,6 @@ describe('Field Component', () => {
       mocks: {
         $t: () => {},
       },
-      methods: {
-        validateField: jest.fn(),
-      },
       propsData: {
         type: 'object',
         name: 'testField',
@@ -192,7 +184,7 @@ describe('Field Component', () => {
       },
       stubs,
     });
-    await flush();
+    await flushPromises();
     expect(wrapper.vm.$attrs.value).toStrictEqual({});
     expect(wrapper.find('.fr-link')).toBeTruthy();
   });
@@ -210,27 +202,25 @@ describe('Field Component', () => {
       },
       stubs,
     });
-    await flush();
+    await flushPromises();
     expect(wrapper.find('.fr-toggle-primary').isVisible()).toBeTruthy();
   });
 
   it('uses checkbox component for checkbox type', async () => {
-    wrapper.setProps({
+    await wrapper.setProps({
       type: 'checkbox',
       name: 'testField',
       value: true,
     });
-    await flush();
     expect(wrapper.vm.$attrs.value).toBe(true);
   });
 
   it('uses spinbutton component for spinbutton type', async () => {
-    wrapper.setProps({
+    await wrapper.setProps({
       type: 'spinbutton',
       name: 'testField',
       value: true,
     });
-    await flush();
     expect(wrapper.find('.b-form-spinbutton')).toBeTruthy();
   });
 
@@ -257,7 +247,7 @@ describe('Field Component', () => {
     it('shows the ReadonlyPlaceholderInput instead of the normal input type when the initial value is a placeholder string', async () => {
       wrapper = setup({ propsData: { name: 'bob', value: '&{esv-myesv}', type: 'checkbox' } });
 
-      await flush();
+      await flushPromises();
 
       expect(wrapper.vm.component).toBe('FrReadonlyPlaceholderInput');
       const input = wrapper.find('input');
@@ -267,7 +257,7 @@ describe('Field Component', () => {
     it('shows the ReadonlyPlaceholderInput instead of the normal input type when the initial value is a placeholder object', async () => {
       wrapper = setup({ propsData: { name: 'bob', value: { key: '&{my-esv}' }, type: 'checkbox' } });
 
-      await flush();
+      await flushPromises();
 
       expect(wrapper.vm.component).toBe('FrReadonlyPlaceholderInput');
       const input = wrapper.find('input');
@@ -284,7 +274,7 @@ describe('Field Component', () => {
         },
       });
 
-      await flush();
+      await flushPromises();
 
       expect(wrapper.vm.component).toBe('FrEsvInputWrapper');
 
@@ -304,7 +294,7 @@ describe('Field Component', () => {
         },
       });
 
-      await flush();
+      await flushPromises();
 
       expect(wrapper.vm.component).toBe('FrBasicInput');
 
@@ -317,7 +307,7 @@ describe('Field Component', () => {
     it('switches to the normal input when a ReadonlyPlaceholderInput clears the field value from a placeholder', async () => {
       wrapper = setup({ propsData: { name: 'bob', value: { key: '&{my-esv}' }, type: 'checkbox' } });
 
-      await flush();
+      await flushPromises();
 
       expect(wrapper.vm.component).toBe('FrReadonlyPlaceholderInput');
 

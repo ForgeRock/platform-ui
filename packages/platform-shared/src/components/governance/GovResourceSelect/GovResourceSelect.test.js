@@ -98,7 +98,7 @@ describe('GovResourceSelect Component', () => {
     const wrapper = mountComponent();
     await flushPromises();
 
-    wrapper.setProps({
+    await wrapper.setProps({
       firstOption: {
         text: 'test option',
         value: 'all',

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -170,10 +170,6 @@ describe('TrustedDevices.vue', () => {
     });
   });
 
-  it('Trusted Devices loads', () => {
-    expect(wrapper.name()).toBe('TrustedDevices');
-  });
-
   it('ParseDevice method returns an object with device data', () => {
     const localDeviceData = { ...deviceData[0] };
     const expected = {
@@ -216,17 +212,15 @@ describe('TrustedDevices.vue', () => {
     expect(parsedDevice.isCurrent).toBe(true);
   });
 
-  it('ParseLocation method returns a promise that resolves with a location object', async (done) => {
+  it('ParseLocation method returns a promise that resolves with a location object', async () => {
     const location = { ...deviceData[0].location };
     const expected = {
       formattedAddress: 'Austin, TX, USA',
       locality: 'Austin',
       map: 'https://mapurl',
     };
-    wrapper.vm.parseLocation(location).then((actualLocation) => {
-      expect(actualLocation).toEqual(expected);
-      done();
-    });
+    const actualLocation = await wrapper.vm.parseLocation(location);
+    expect(actualLocation).toEqual(expected);
   });
 
   it('SortDevicesByDate method returns devices sorted by lastSelectedDate', () => {
@@ -288,27 +282,35 @@ describe('TrustedDevices.vue', () => {
   });
 
   it('handleModalPrimaryButton method calls the correct handler', () => {
-    const spy = jest.fn();
     wrapper = shallowMount(TrustedDevices, {
       localVue,
       mixins: [MapMixin],
       mocks: {
         $t: () => {},
-        $store: () => {},
-      },
-      methods: {
-        updateDeviceAlias: spy,
-        removeDevice: spy,
+        $store: {
+          state: {
+            UserStore: {
+              userSearchAttribute: '',
+            },
+          },
+        },
       },
       i18n,
     });
+    const updateDeviceAliasSpy = jest.spyOn(wrapper.vm, 'updateDeviceAlias');
+    const getRequestServiceSpy = jest.spyOn(wrapper.vm, 'getRequestService').mockReturnValue({
+      put: () => Promise.resolve(),
+      delete: () => Promise.resolve(),
+    });
+    const removeDeviceSpy = jest.spyOn(wrapper.vm, 'removeDevice');
     wrapper.vm.$data.modalDevice = { id: '111', index: '1' };
     wrapper.vm.$data.editModal = 'update';
 
     wrapper.vm.handleModalPrimaryButton('edit');
-    expect(spy).toHaveBeenCalledWith('111', 'update', '1');
+    expect(updateDeviceAliasSpy).toHaveBeenCalledWith('111', 'update', '1');
+    expect(getRequestServiceSpy).toHaveBeenCalledWith({ context: 'AM' });
 
     wrapper.vm.handleModalPrimaryButton('remove');
-    expect(spy).toHaveBeenCalledWith('111');
+    expect(removeDeviceSpy).toHaveBeenCalledWith('111');
   });
 });

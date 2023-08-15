@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -30,12 +30,8 @@ describe('KeyValuePanel', () => {
     });
   });
 
-  it('Key Value successfully loaded', () => {
-    expect(wrapper.name()).toEqual('KeyValuePanel');
-  });
-
-  it('Can override default labels', () => {
-    wrapper.setProps({
+  it('Can override default labels', async () => {
+    await wrapper.setProps({
       value: {
         key: '',
         value: '',
@@ -53,8 +49,8 @@ describe('KeyValuePanel', () => {
     expect(wrapper.find('textarea').attributes('placeholder')).toBe('common.value');
   });
 
-  it('Will have a select with options when keyOptions prop is provided', () => {
-    wrapper.setProps({
+  it('Will have a select with options when keyOptions prop is provided', async () => {
+    await wrapper.setProps({
       value: {
         key: '',
         value: '',
@@ -71,8 +67,8 @@ describe('KeyValuePanel', () => {
     expect(listElements[1].text()).toBe('option 2');
   });
 
-  it('Emits save-key-value event with the current key/value when clicking done', () => {
-    wrapper.setProps({
+  it('Emits save-key-value event with the current key/value when clicking done', async () => {
+    await wrapper.setProps({
       value: {
         key: 'test key',
         value: 'test value',
@@ -87,8 +83,8 @@ describe('KeyValuePanel', () => {
   });
 
   describe('validateKey method', () => {
-    it('prevents tagging if new key is already present in KeyValueList', () => {
-      wrapper.setProps({
+    it('prevents tagging if new key is already present in KeyValueList', async () => {
+      await wrapper.setProps({
         value: {
           key: '',
           value: '',
@@ -111,8 +107,8 @@ describe('KeyValuePanel', () => {
       expect(wrapper.vm.availableKeyOptions).toEqual([]);
     });
 
-    it('allows tagging if new key is not present in KeyValueList', () => {
-      wrapper.setProps({
+    it('allows tagging if new key is not present in KeyValueList', async () => {
+      await wrapper.setProps({
         value: {
           key: '',
           value: '',

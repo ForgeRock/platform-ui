@@ -1,10 +1,10 @@
 /**
- * @license
- * Copyright (c) 2020 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
+
 import { createLocalVue, shallowMount } from '@vue/test-utils';
 import Vuex from 'vuex';
 import i18n from '@/i18n';
@@ -39,6 +39,6 @@ describe('TrustedDevices.vue', () => {
   });
 
   it('Authentication Devices loads', () => {
-    expect(wrapper.name()).toBe('AuthenticationDevices');
+    expect(wrapper.vm.forceRoot).toBe(false);
   });
 });

@@ -9,15 +9,6 @@ import { shallowMount } from '@vue/test-utils';
 import CircleProgressBar from './index';
 
 describe('CircleProgressBar Component', () => {
-  it('Component successfully loaded', () => {
-    const wrapper = shallowMount(CircleProgressBar, {
-      propsData: {
-        progress: 50,
-      },
-    });
-    expect(wrapper.name()).toEqual('CircleProgressBar');
-  });
-
   it('Component loaded with properly params', () => {
     const wrapper = shallowMount(CircleProgressBar, {
       propsData: {
