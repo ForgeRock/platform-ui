@@ -57,8 +57,8 @@ export const url = (value) => {
  */
 export const validBookmarkUrl = (value) => {
   try {
-    const relativePathRegex = /^(?:\/[a-zA-Z0-9-_?=#.]+)+\/?$/g;
-    const esvRegex = /^\${.+}$/g;
+    const relativePathRegex = /^(?:\/[a-zA-Z0-9-_?=#.&{}]+)+\/?$/g;
+    const esvRegex = /^&{.+}$/g;
     return (url(value) || relativePathRegex.test(value) || esvRegex.test(value));
   } catch (e) {
     return false;
