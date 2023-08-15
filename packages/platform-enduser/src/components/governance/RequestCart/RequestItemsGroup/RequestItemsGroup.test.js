@@ -6,6 +6,7 @@
  */
 
 import { mount } from '@vue/test-utils';
+import flushPromises from 'flush-promises';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import i18n from '@/i18n';
 import RequestItemsGroup from './index';
@@ -61,12 +62,12 @@ describe('RequestItemsGroup', () => {
       expect(viewMoreButton.exists()).toBeFalsy();
     });
 
-    it('shows the "View More" button when there are more than 3 request items', () => {
+    it('shows the "View More" button when there are more than 3 request items', async () => {
       const wrapper = setup();
       const viewMoreButtonWithLessThanThreeItems = findByTestId(wrapper, 'view-more-button');
       expect(viewMoreButtonWithLessThanThreeItems.exists()).toBeFalsy();
 
-      wrapper.setProps({
+      await wrapper.setProps({
         requestItems: requestCartItemsLongStub,
       });
 
@@ -74,7 +75,7 @@ describe('RequestItemsGroup', () => {
       expect(viewMoreButtonWithMoreThanThreeItems.exists()).toBeTruthy();
     });
 
-    it('toggles the visibility of the remaining request items if the "View More" button is clicked', () => {
+    it('toggles the visibility of the remaining request items if the "View More" button is clicked', async () => {
       const wrapper = setup({
         propsData: {
           requestItems: requestCartItemsLongStub,
@@ -84,8 +85,10 @@ describe('RequestItemsGroup', () => {
       const viewMoreButton = findByTestId(wrapper, 'view-more-button');
       expect(viewMoreItemsContainer.isVisible()).toBe(false);
       viewMoreButton.trigger('click');
+      await flushPromises();
       expect(viewMoreItemsContainer.isVisible()).toBe(true);
       viewMoreButton.trigger('click');
+      await flushPromises();
       expect(viewMoreItemsContainer.isVisible()).toBe(false);
     });
   });

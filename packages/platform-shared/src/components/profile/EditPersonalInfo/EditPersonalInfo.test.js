@@ -6,6 +6,7 @@
  */
 
 import { mount, shallowMount } from '@vue/test-utils';
+import flushPromises from 'flush-promises';
 import { first } from 'lodash';
 import i18n from '@/i18n';
 import EditPersonalInfo from './index';
@@ -84,10 +85,11 @@ describe('EditPersonalInfo', () => {
     });
 
     describe('given form fields', () => {
-      it('should render fields', () => {
+      it('should render fields', async () => {
         const wrapper = setup();
         // Note: must trigger the 'show' event as when we mount the modal manually it doesn't trigger bootstrap @shown event
         wrapper.vm.$root.$emit('bv::show::modal', 'userDetailsModal');
+        await flushPromises();
 
         const firstField = findByTestId(wrapper, 'input-edit-personal-info-0');
         expect(firstField.exists()).toBeTruthy();

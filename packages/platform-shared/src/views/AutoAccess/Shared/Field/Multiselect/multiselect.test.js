@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,7 +7,8 @@
 
 import Vue from 'vue';
 import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, mount, shallowMount } from '@vue/test-utils';
+import flushPromises from 'flush-promises';
+import { createLocalVue, mount } from '@vue/test-utils';
 import MultiSelect from './index';
 
 const localVue = createLocalVue();
@@ -28,21 +29,6 @@ const defaultProps = {
 };
 
 describe('MultiSelect input', () => {
-  it('MultiSelect input component loaded', () => {
-    const wrapper = shallowMount(MultiSelect, {
-      localVue,
-      mocks: {
-        $t: () => {},
-      },
-      propsData: {
-        ...defaultMixinProps,
-        ...defaultProps,
-      },
-    });
-
-    expect(wrapper.name()).toBe('MultiSelect');
-  });
-
   it('MultiSelect input component process selectOptions prop from array', () => {
     const wrapper = mount(MultiSelect, {
       localVue,
@@ -143,16 +129,18 @@ describe('MultiSelect input', () => {
 
     multiselect.trigger('click');
     elements().at(1).trigger('click');
+    await flushPromises();
     expect(wrapper.vm.inputValue).toEqual([{
       copySelect: false,
       multiselectId: 1,
       text: 'b',
       value: 'b',
     }]);
-    expect(wrapper.emitted().input[1]).toEqual([['b']]);
+    expect(wrapper.emitted().input[0]).toEqual([['b']]);
 
     multiselect.trigger('click');
     elements().at(0).trigger('click');
+    await flushPromises();
     expect(wrapper.vm.inputValue).toEqual([{
       copySelect: false,
       multiselectId: 1,
@@ -164,7 +152,7 @@ describe('MultiSelect input', () => {
       text: 'a',
       value: 'a',
     }]);
-    expect(wrapper.emitted().input[2]).toEqual([['b', 'a']]);
+    expect(wrapper.emitted().input[1]).toEqual([['b', 'a']]);
   });
 
   it('MultiSelect passes through component slots', () => {
@@ -183,8 +171,8 @@ describe('MultiSelect input', () => {
       },
     });
 
-    expect(wrapper.contains('.test_prepend')).toBe(true);
-    expect(wrapper.contains('.test_append')).toBe(true);
+    expect(wrapper.find('.test_prepend').exists()).toBe(true);
+    expect(wrapper.find('.test_append').exists()).toBe(true);
   });
 
   it('Multiselect is not autofocused on absence of prop "autofocus"', async () => {
@@ -193,7 +181,7 @@ describe('MultiSelect input', () => {
       mocks: {
         $t: () => {},
       },
-      attachToDocument: true,
+      attachTo: document.body,
       propsData: {
         ...defaultMixinProps,
         ...defaultProps,
@@ -219,7 +207,7 @@ describe('MultiSelect input', () => {
   //     mocks: {
   //       $t: () => {},
   //     },
-  //     attachToDocument: true,
+  //     attachTo: document.body,
   //     propsData: {
   //       ...defaultMixinProps,
   //       ...defaultProps,

@@ -29,10 +29,6 @@ describe('GroupTasks.vue', () => {
     });
   });
 
-  it('GroupTasks successfully loaded', () => {
-    expect(wrapper.name()).toEqual('GroupTasks');
-  });
-
   it('Sets panelShown id data property to true', () => {
     wrapper.vm.setShown('panel_id');
     expect(wrapper.vm.panelShown).toEqual({

@@ -35,10 +35,6 @@ describe('CertificationTaskReviewersModal', () => {
     });
   });
 
-  it('component loaded correctly', () => {
-    expect(wrapper.name()).toBe('ReviewersModal');
-  });
-
   it('openAddReviewerModal method should emit open-edit-reviewer-modal event', () => {
     expect(wrapper.emitted()['open-edit-reviewer-modal']).toBeFalsy();
 

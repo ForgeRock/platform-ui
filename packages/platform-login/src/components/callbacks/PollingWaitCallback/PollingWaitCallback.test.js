@@ -1,5 +1,4 @@
 /**
- * @license
  * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
@@ -30,16 +29,13 @@ describe('PollingWaitCallback', () => {
       },
     });
   }
-  it('Load PollingWaitCallback component', () => {
-    wrapper = setup();
-    expect(wrapper.name()).toEqual('PollingWaitCallback');
-  });
 
   it('Sets interval and message data', () => {
+    const setTimeoutSpy = jest.spyOn(window, 'setTimeout');
     wrapper = setup();
     expect(wrapper.vm.$data.message).toEqual('Message');
     expect(wrapper.vm.$data.timeout).toBeDefined();
-    expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 1000);
+    expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 1000);
   });
 
   it('Emits next-step', () => {

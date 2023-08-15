@@ -16,14 +16,10 @@ jest.mock('@forgerock/platform-shared/src/api/governance/CertificationApi');
 
 let wrapper;
 
-function mountComponent(options, methods) {
+function mountComponent() {
   wrapper = shallowMount(CertificationTaskListFilters, {
-    methods: {
-      ...methods,
-    },
     mocks: {
       $t: (t) => t,
-      ...options,
     },
     propsData: {
       certId: 'certification-id',
@@ -35,23 +31,13 @@ describe('CertificationTaskListFilters', () => {
   beforeEach(() => {
     getCertificationUserFilter.mockImplementation(() => Promise.resolve({ data: [{ id: 'user' }] }));
     getCertificationApplicationFilter.mockImplementation(() => Promise.resolve({ data: [{ id: 'application' }] }));
-  });
-  describe('Component mount', () => {
-    it('CertificationTaskListFilters successfully loaded', () => {
-      const methods = {
-        getUserInfoFilter: jest.fn(),
-        getApplicationInfoFilter: jest.fn(),
-      };
-      mountComponent({}, methods);
-      expect(wrapper.name()).toEqual('CertificationTaskListFilters');
-    });
+    mountComponent();
   });
   describe('getUserInfoFilter', () => {
     beforeEach(() => {
       jest.spyOn(wrapper.vm, 'showErrorMessage');
     });
     it('should call the notification error message', async () => {
-      mountComponent();
       getCertificationUserFilter.mockImplementation(() => Promise.reject(new Error()));
       const showErrorMessage = jest.spyOn(wrapper.vm, 'showErrorMessage');
       wrapper.vm.getUserInfoFilter();
@@ -60,7 +46,6 @@ describe('CertificationTaskListFilters', () => {
       expect(showErrorMessage).toBeCalled();
     });
     it('should set the user response to the user variable', async () => {
-      mountComponent();
       getCertificationUserFilter.mockImplementation(() => Promise.resolve({ data: [{ id: 'user' }] }));
       wrapper.vm.getUserInfoFilter();
 
@@ -109,18 +94,12 @@ describe('CertificationTaskListFilters', () => {
     });
   });
   describe('getUserSelected', () => {
-    const methods = {
-      getUserInfoFilter: jest.fn(),
-      getApplicationInfoFilter: jest.fn(),
-    };
     it('returns the name of the user when formFields.user.name exists', () => {
-      mountComponent({}, methods);
       const result = wrapper.vm.getUserSelected();
       expect(result).toBe('governance.certificationTask.allUsers');
     });
 
     it('returns the translated string "governance.certificationTask.allUsers" when the name does not exist', () => {
-      mountComponent({}, methods);
       const result = wrapper.vm.getUserSelected();
       expect(result).toBe('governance.certificationTask.allUsers');
     });

@@ -57,7 +57,7 @@ describe('EntitlementsTab', () => {
     });
 
     it('component should load correctly', () => {
-      expect(wrapper.name()).toBe('EntitlementsTab');
+      expect(wrapper.vm.blankValueIndicator).toBe('--');
     });
   });
 });

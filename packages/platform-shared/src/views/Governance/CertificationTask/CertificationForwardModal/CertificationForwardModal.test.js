@@ -6,6 +6,7 @@
  */
 
 import { shallowMount } from '@vue/test-utils';
+import flushPromises from 'flush-promises';
 import CertificationForwardModal from './index';
 
 describe('CertificationForwardModal', () => {
@@ -21,7 +22,6 @@ describe('CertificationForwardModal', () => {
     });
 
     it('component should load correctly', () => {
-      expect(wrapper.name()).toBe('CertificationForwardModal');
       expect(wrapper.vm.comment).toBe('');
     });
 
@@ -35,8 +35,8 @@ describe('CertificationForwardModal', () => {
       expect(wrapper.vm.comment).toBe('testComment');
     });
 
-    it('component should forwardItem with correct payload', () => {
-      wrapper.setProps({
+    it('component should forwardItem with correct payload', async () => {
+      await wrapper.setProps({
         bulk: true,
       });
       wrapper.vm.comment = 'testComment';
@@ -47,6 +47,7 @@ describe('CertificationForwardModal', () => {
         newActorId: wrapper.vm.newActorId,
       };
       wrapper.vm.forwardItem();
+      await flushPromises();
       expect(wrapper.emitted()['forward-bulk']).toBeTruthy();
       expect(wrapper.emitted()['forward-bulk'][0]).toEqual([payload]);
     });

@@ -10,15 +10,6 @@ import i18n from '@/i18n';
 import ForwardReviewModal from './index';
 
 describe('ForwardReviewModal', () => {
-  it('OAuth Return loaded', () => {
-    const wrapper = shallowMount(ForwardReviewModal,
-      {
-        i18n,
-      });
-
-    expect(wrapper.name()).toBe('ForwardReviewModal');
-  });
-
   it('Handles forwarding to user', async () => {
     const wrapper = shallowMount(ForwardReviewModal,
       {

@@ -33,6 +33,6 @@ describe('WorkflowControlWidget.vue', () => {
   });
 
   it('WorkflowControlWidget loaded', () => {
-    expect(wrapper.name()).toBe('WorkflowControlWidget');
+    expect(wrapper.vm.assignedTasks).toStrictEqual({});
   });
 });

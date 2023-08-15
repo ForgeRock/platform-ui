@@ -6,6 +6,7 @@
  */
 
 import { shallowMount } from '@vue/test-utils';
+import flushPromises from 'flush-promises';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as CertificationApi from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import AccessReviews from './index';
@@ -26,7 +27,7 @@ describe('AccessReviews', () => {
     }));
   });
 
-  it('is defined', () => {
+  it('should display noData component when no access reviews are found', async () => {
     wrapper = shallowMount(AccessReviews, {
       mocks: {
         $t: (id) => id,
@@ -37,11 +38,8 @@ describe('AccessReviews', () => {
         })),
       },
     });
-    expect(wrapper.name()).toEqual('AccessReviews');
-  });
-
-  it('should display noData component when no access reviews are found', async () => {
-    await wrapper.vm.setAccessReviewList({ result: [], totalCount: 0 });
+    wrapper.vm.setAccessReviewList({ result: [], totalCount: 0 });
+    await flushPromises();
 
     const noData = findByTestId(wrapper, 'access-review-no-data');
     expect(noData.exists()).toBeTruthy();

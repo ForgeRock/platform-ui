@@ -1,6 +1,5 @@
 /**
- * @license
- * Copyright (c) 2020 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -14,6 +13,7 @@ SelectIdPCallback.mounted = jest.fn();
 
 describe('SelectIdPCallback.vue', () => {
   let wrapper;
+  const getOutputByName = () => {};
 
   beforeEach(() => {
     wrapper = shallowMount(SelectIdPCallback, {
@@ -23,7 +23,7 @@ describe('SelectIdPCallback.vue', () => {
       },
       propsData: {
         callback: {
-          getOutputByName: () => {},
+          getOutputByName,
         },
         // Does not currently work
         callbackSubmitButton: document.createElement('button'),
@@ -32,6 +32,6 @@ describe('SelectIdPCallback.vue', () => {
   });
 
   it('Load SelectIdPCallback component', () => {
-    expect(wrapper.name()).toEqual('SelectIdPCallback');
+    expect(wrapper.vm.callback).toEqual({ getOutputByName });
   });
 });

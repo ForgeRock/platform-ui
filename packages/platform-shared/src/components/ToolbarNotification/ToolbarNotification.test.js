@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -14,7 +14,13 @@ const localVue = createLocalVue();
 localVue.use(BootstrapVue);
 localVue.use(Vuex);
 
-const store = new Vuex.Store({});
+const store = new Vuex.Store({
+  state: {
+    UserStore: {
+      userId: '',
+    },
+  },
+});
 
 describe('ToolbarNotification', () => {
   let wrapper;
@@ -41,16 +47,11 @@ describe('ToolbarNotification', () => {
       mocks: {
         $t: () => {},
       },
-      methods: { loadData: jest.fn() },
     });
 
     wrapper.setData({
       notifications,
     });
-  });
-
-  it('Toolbar Notification component loaded', () => {
-    expect(wrapper.name()).toEqual('ToolbarNotification');
   });
 
   it('Toolbar Notifications sort by time', () => {

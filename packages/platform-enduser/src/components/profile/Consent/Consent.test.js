@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -42,12 +42,7 @@ describe('Profile Consent Component', () => {
   });
 
   afterEach(() => {
-    wrapper = undefined;
-  });
-  describe('Consent.vue', () => {
-    it('Consent page loaded', () => {
-      expect(wrapper.name()).toBe('Consent');
-    });
+    wrapper.destroy();
   });
 
   describe('computed#mappings', () => {
@@ -132,8 +127,7 @@ describe('Profile Consent Component', () => {
 
   describe('#toggleConsent', () => {
     it('should emit "updateProfile"', () => {
-      wrapper.setMethods({ generatePatch: jest.fn() });
-      wrapper.vm.toggleConsent();
+      wrapper.vm.toggleConsent({ consentDate: '123', name: 'test' });
 
       expect(wrapper.emitted().updateProfile.length).toBe(1);
     });

@@ -48,7 +48,6 @@ describe('CertificationTask', () => {
     });
 
     it('component should load correctly', () => {
-      expect(wrapper.name()).toBe('CertificationTask');
       expect(wrapper.vm.isDetailsLoading).toBe(false);
       expect(wrapper.vm.loadFailed).toBe(false);
       expect(wrapper.vm.campaignDetails).toEqual({});

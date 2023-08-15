@@ -132,8 +132,8 @@ describe('SelectInput', () => {
       },
     });
 
-    expect(wrapper.contains('.test_prepend')).toBe(true);
-    expect(wrapper.contains('.test_append')).toBe(true);
+    expect(wrapper.find('.test_prepend').exists()).toBe(true);
+    expect(wrapper.find('.test_append').exists()).toBe(true);
   });
 
   it('SelectInput is not autofocused on absence of prop "autofocus"', () => {
@@ -175,7 +175,7 @@ describe('SelectInput', () => {
   //       append: '<span class="test_append">append</span>', // Will match <slot name="FooBar" />,
   //     },
   //   });
-  //   expect(document.activeElement).toEqual(wrapper.findComponent({ ref: 'vms' }).querySelector('input'));
+  //   expect(document.activeElement).toEqual(wrapper.find({ ref: 'vms' }).querySelector('input'));
   //   document.activeElement.blur();
   // });
 });

@@ -8,12 +8,17 @@
 import { mount, shallowMount } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import flushPromises from 'flush-promises';
-import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 import { URLSearchParams } from 'url';
 import * as urlUtil from '../../utils/urlUtil';
 import * as authResumptionUtil from '../../utils/authResumptionUtil';
 import i18n from '@/i18n';
 import Login from './index';
+
+const LoginMixin = {
+  methods: {
+    getConfigurationInfo: () => Promise.resolve({ data: { realm: '/' } }),
+  },
+};
 
 describe('Login.vue', () => {
   let wrapper;
@@ -40,9 +45,7 @@ describe('Login.vue', () => {
           },
         },
       },
-      methods: {
-        nextStep() {},
-      },
+      mixins: [LoginMixin],
     });
   });
 
@@ -209,33 +212,16 @@ describe('Component Test', () => {
     const originalWindow = window;
     global.URLSearchParams = URLSearchParams;
 
-    const mountMethods = {
-      nextStep() {
-        this.loading = false;
-        this.themeLoading = false;
-      },
-      redirectIfInactive() {},
-      setRealm() {},
-      getConfigurationInfo() {
-        return Promise.resolve();
-      },
-      evaluateUrlParams() {},
-      checkNewSession() {
-        return Promise.resolve();
-      },
-    };
-
     const setUrl = (url) => {
       delete window.location;
       window.location = new URL(url);
     };
 
-    const mountLogin = ({ methods }) => mount(Login, {
+    const mountLogin = () => mount(Login, {
       i18n,
       stubs: {
         'router-link': true,
       },
-      methods,
       mocks: {
         $route: {
           params: {
@@ -279,20 +265,13 @@ describe('Component Test', () => {
     });
 
     it('Removes tree resumption query parameters when returning from a redirect', async () => { // TODO this scenario may no longer be relevant given the other changes made here
-      const mockMethods = {
-        ...mountMethods,
-      };
-      delete mockMethods.evaluateUrlParams;
-
       setUrl('https://forgerock.io/login/?realm=/&code=aCode');
 
       // indicate that the tree is being resumed following a redirect
       const resumingSpy = jest.spyOn(authResumptionUtil, 'resumingTreeFollowingRedirect').mockReturnValue(true);
       const getStepSpy = jest.spyOn(authResumptionUtil, 'getResumeDataFromStorageAndClear').mockReturnValue({ urlAtRedirect: 'blah', step: { payload: {} } });
 
-      const wrapper = await mountLogin({
-        methods: mockMethods,
-      });
+      const wrapper = await mountLogin();
       await flushPromises();
 
       expect(replaceState).toBeCalledWith(null, null, '?realm=/');
@@ -303,19 +282,12 @@ describe('Component Test', () => {
     });
 
     it('Leaves tree resumption query paramters in place when not returning from a redirect', async () => {
-      const mockMethods = {
-        ...mountMethods,
-      };
-      delete mockMethods.evaluateUrlParams;
-
       setUrl('https://forgerock.io/login/?realm=/&code=aCode&notRemoved=here');
 
       // indicate that the tree is being resumed following a redirect
       const resumingSpy = jest.spyOn(authResumptionUtil, 'resumingTreeFollowingRedirect').mockReturnValue(false);
 
-      const wrapper = await mountLogin({
-        methods: mockMethods,
-      });
+      const wrapper = await mountLogin();
       await flushPromises();
 
       expect(replaceState).toBeCalledWith(null, null, '?realm=/&code=aCode&notRemoved=here');

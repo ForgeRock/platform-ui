@@ -214,11 +214,7 @@ describe('RelationshipArray', () => {
     };
   });
 
-  it('RelationshipArray successfully loaded', () => {
-    expect(wrapper.name()).toEqual('RelationshipArray');
-  });
-
-  it('Correctly builds grid url', () => {
+  it('Correctly builds grid url', async () => {
     expect(wrapper.vm.buildGridUrl(0)).toEqual('user/bjensen/reports?_pageSize=10&_totalPagedResultsPolicy=ESTIMATE&_queryFilter=true&_fields=*');
     expect(wrapper.vm.buildGridUrl(1)).toEqual('user/bjensen/reports?_pageSize=10&_totalPagedResultsPolicy=ESTIMATE&_queryFilter=true&_fields=*&_pagedResultsOffset=10');
     wrapper.vm.sortBy = 'userName';
@@ -226,7 +222,7 @@ describe('RelationshipArray', () => {
     wrapper.vm.sortDesc = true;
     expect(wrapper.vm.buildGridUrl(0)).toEqual('user/bjensen/reports?_pageSize=10&_totalPagedResultsPolicy=ESTIMATE&_queryFilter=true&_fields=*&_sortKeys=userName');
 
-    wrapper.setProps({
+    await wrapper.setProps({
       filter: 'filterValue',
       additionalQueryFilter: 'userName=\'test\'',
       relationshipArrayProperty: {
@@ -372,8 +368,10 @@ describe('RelationshipArray', () => {
     expect(wrapper.vm.lastPage).toBe(true);
   });
 
-  it('opens create modal', () => {
+  it('opens create modal', async () => {
     wrapper.vm.newRelationships = ['relationship'];
+    await flushPromises();
+    wrapper.vm.$refs.testId.show = () => {};
     const showTestIdSpy = jest.spyOn(wrapper.vm.$refs.testId, 'show');
     expect(wrapper.vm.newRelationships).toStrictEqual(['relationship']);
     wrapper.vm.openCreateModal();
@@ -381,8 +379,10 @@ describe('RelationshipArray', () => {
     expect(wrapper.vm.newRelationships).toStrictEqual([]);
   });
 
-  it('removes relationships', async () => {
+  it('hides modal', async () => {
+    await flushPromises();
     const notificationSpy = jest.spyOn(wrapper.vm, 'displayNotification');
+    wrapper.vm.$refs.testId.hide = () => {};
     const hideTestIdSpy = jest.spyOn(wrapper.vm.$refs.testId, 'hide');
     wrapper.vm.gridData = [1, 2, 3, 4];
     wrapper.vm.onRowSelected([1, 2, 3, 4]);
@@ -405,7 +405,7 @@ describe('RelationshipArray', () => {
     expect(hideTestIdSpy).toHaveBeenCalled();
   });
 
-  it('removes relationships', () => {
+  it('emits resource event', async () => {
     const routerPushSpy = jest.spyOn(wrapper.vm.$router, 'push');
     const item = {
       _refResourceCollection: '',
@@ -419,20 +419,21 @@ describe('RelationshipArray', () => {
         },
       },
     };
-    wrapper.setProps({
+    await wrapper.setProps({
       overrideResourceEvent: true,
     });
     wrapper.vm.resourceClicked(item, index, event);
     expect(wrapper.emitted()['resource-event'][0]).toEqual([item]);
 
-    wrapper.setProps({
+    await wrapper.setProps({
       overrideResourceEvent: false,
     });
     wrapper.vm.resourceClicked(item, index, event);
     expect(routerPushSpy).toHaveBeenCalled();
   });
 
-  it('removes relationships', () => {
+  it('removes relationships', async () => {
+    wrapper.vm.$refs.testId.show = () => {};
     const data = 'relationshipToDelete';
     wrapper.vm.onRelationshipDelete(data);
     expect(wrapper.vm.relationshipToDelete).toBe('relationshipToDelete');

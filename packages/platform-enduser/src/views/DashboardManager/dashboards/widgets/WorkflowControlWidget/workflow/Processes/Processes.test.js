@@ -29,10 +29,6 @@ describe('Processes.vue', () => {
     });
   });
 
-  it('Processes successfully loaded', () => {
-    expect(wrapper.name()).toEqual('Processes');
-  });
-
   it('Sets panelShown id data property to true and emits loadProcess', () => {
     wrapper.vm.show('panel_id');
     expect(wrapper.vm.panelShown).toEqual({

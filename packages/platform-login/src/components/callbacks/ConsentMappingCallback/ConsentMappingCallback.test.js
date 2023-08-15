@@ -6,6 +6,7 @@
  */
 
 import { mount } from '@vue/test-utils';
+import flushPromises from 'flush-promises';
 import ConsentContainer from '@/components/callbacks/ConsentMappingCallback';
 import i18n from '@/i18n';
 
@@ -36,10 +37,6 @@ describe('ConsentMappingCallback', () => {
     });
   });
 
-  it('Loads ConsentMappingCallback component', () => {
-    expect(wrapper.name()).toEqual('ConsentContainer');
-  });
-
   it('Sets options data and emits "disable-next-button"', () => {
     expect(wrapper.vm.$data.isRequired).toBe(true);
     expect(wrapper.vm.$data.checked).toBe(false);
@@ -49,11 +46,11 @@ describe('ConsentMappingCallback', () => {
   it('Responds to consent click', async () => {
     const consentItemsCheckbox = wrapper.find('[data-testid=consent-mapping-checkbox]');
 
-    consentItemsCheckbox.trigger('click');
+    consentItemsCheckbox.setChecked(true);
 
-    await wrapper.vm.$nextTick();
+    await flushPromises();
 
-    expect(wrapper.vm.$data.checked).toBe(true);
+    expect(wrapper.vm.checked).toBe(true);
     expect(wrapper.emitted()['disable-next-button'].pop()).toEqual([false]);
     expect(wrapper.emitted()['did-consent'].pop()).toEqual([true]);
   });

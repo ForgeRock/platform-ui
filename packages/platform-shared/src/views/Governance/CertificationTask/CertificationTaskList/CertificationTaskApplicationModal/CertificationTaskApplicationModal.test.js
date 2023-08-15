@@ -23,10 +23,6 @@ describe('CertificationTaskApplicationModal', () => {
     });
   });
 
-  it('component should load correclty', () => {
-    expect(wrapper.name()).toBe('CertificationTaskApplicationModal');
-  });
-
   it('getFullName shoul return name formatted', () => {
     const fullName = wrapper.vm.getFullName('first', 'last');
 

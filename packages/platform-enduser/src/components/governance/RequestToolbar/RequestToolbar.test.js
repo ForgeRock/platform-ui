@@ -6,6 +6,7 @@
  */
 
 import { mount } from '@vue/test-utils';
+import flushPromises from 'flush-promises';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import RequestToolbar from './index';
 
@@ -32,12 +33,13 @@ describe('RequestToolbar', () => {
     });
   });
 
-  it('clicking the button to show filters will expand the filter section', () => {
-    const filterCollapse = findByTestId(wrapper, 'filter-collapse');
+  it('clicking the button to show filters will expand the filter section', async () => {
+    const filterCollapse = wrapper.find('#filter-collapse');
     expect(filterCollapse.attributes('style')).toBe('display: none;');
 
     const toggleBtn = findByTestId(wrapper, 'filter-toggle');
     toggleBtn.trigger('click');
+    await flushPromises();
 
     expect(filterCollapse.attributes('style')).toBe('');
   });
@@ -47,25 +49,28 @@ describe('RequestToolbar', () => {
     expect(filterBadge.exists()).toBeFalsy();
   });
 
-  it('the badge reflects the number of filters applied', () => {
+  it('the badge reflects the number of filters applied', async () => {
     const requestFilter = findByTestId(wrapper, 'request-filter');
     requestFilter.vm.$emit('filter-change', {
       filter: {},
       count: 1,
     });
+    await flushPromises();
 
     const filterBadge = findByTestId(wrapper, 'filter-badge');
     expect(filterBadge.text()).toBe('1');
   });
 
-  it('changing the status emits the status-change event with the new status', () => {
+  it('changing the status emits the status-change event with the new status', async () => {
     const dropdownBtn = findByTestId(wrapper, 'status-dropdown-button');
     dropdownBtn.trigger('click');
+    await flushPromises();
 
     findByTestId(wrapper, 'status-dropdown').findAll('li')
       .at(1)
       .find('a')
       .trigger('click');
+    await flushPromises();
 
     expect(dropdownBtn.text()).toMatch('testStatus2');
     expect(wrapper.emitted()['status-change'][0]).toEqual(['stat2']);

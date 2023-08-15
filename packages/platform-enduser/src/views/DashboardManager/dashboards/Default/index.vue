@@ -40,14 +40,10 @@ of the MIT license. See the LICENSE file for details. -->
     <BContainer
       v-if="myApplications.length">
       <BCol>
-        <section
-          data-test-id="my-applications"
-          class="my-applications-wrapper">
+        <section class="my-applications-wrapper">
           <ListGroup
             :title="$t('pages.dashboard.applications.heading')">
-            <ul
-              class="list-unstyled ml-4 mr-4 mb-4 my-applications-tiles"
-              data-test-id="my-applications-list">
+            <ul class="list-unstyled ml-4 mr-4 mb-4 my-applications-tiles">
               <FrConsumerApplications
                 v-for="application in myApplications"
                 :key="application.dashboardDisplayName[0]"

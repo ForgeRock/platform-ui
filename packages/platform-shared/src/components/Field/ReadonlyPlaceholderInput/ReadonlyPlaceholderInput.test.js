@@ -20,7 +20,7 @@ describe('ReadonlyPlaceholderInput', () => {
   function setup(props, provide) {
     return mount(ReadonlyPlaceholderInput, {
       i18n,
-      attachToDocument: true,
+      attachTo: document.body,
       propsData: {
         ...defaultProps,
         ...props,

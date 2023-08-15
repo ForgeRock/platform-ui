@@ -37,10 +37,6 @@ describe('EntitlementDetailsTab', () => {
       });
     });
 
-    it('component should load correctly', () => {
-      expect(wrapper.name()).toBe('EntitlementDetailsTab');
-    });
-
     it('entitlement data loaded correctly on template', () => {
       const owner = findByTestId(wrapper, 'owner');
       expect(owner.find('dd').text()).toBe(blankValueIndicator);

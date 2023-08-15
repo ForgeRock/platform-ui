@@ -1140,6 +1140,7 @@
           "metadataFileDescription": "Upload the service provider metadata."
         },
         "errors": {
+          "creatingIdpFailed": "Creating IDP Failed",
           "uniqueEntityId": "Metadata must contain a unique entityID",
           "generic": "There has been an error uploading your file. Please try again",
           "reupload": "Metadata reupload failed. Please try again"
@@ -1387,7 +1388,7 @@
     "domain": "Domain",
     "domainDescription1": "Use a custom domain to enable a seamless user experience between your domain and ForgeRock. Adding a custom domain to this realm will override any",
     "domainDescription2": "To complete setup you’ll need access to your Domain Name Registrar so that you can modify Domain Name Server (DNS) records.",
-    "errorDeletngDomains": "There was an error deleting the custom domains",
+    "errorRetrievingCircleOfTrust": "There was an error retrieving the circle of trust",
     "errorRetrievingDomains": "There was an error retrieving this realm's custom domains",
     "errorSavingDomains": "There was an error saving the custom domains",
     "noDomainMessage": "You haven't added a custom domain for this realm yet",

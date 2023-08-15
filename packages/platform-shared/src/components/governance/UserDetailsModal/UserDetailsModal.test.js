@@ -40,6 +40,6 @@ describe('GovernanceUserDetailsModal', () => {
   });
 
   it('component should load correclty', () => {
-    expect(wrapper.name()).toBe('GovernanceUserDetailsModal');
+    expect(wrapper.vm.userFullName).toBe('common.userFullName');
   });
 });

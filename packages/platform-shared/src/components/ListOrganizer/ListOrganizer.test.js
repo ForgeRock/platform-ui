@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -37,9 +37,6 @@ describe('ListOrganizer Component', () => {
       },
     });
   });
-  it('ListOrganizer successfully loaded', () => {
-    expect(wrapper.name()).toEqual('ListOrganizer');
-  });
 
   it('has a list of fields for each element in value prop', () => {
     const wrapperArray = wrapper.findAll('frfield-stub');
@@ -57,8 +54,8 @@ describe('ListOrganizer Component', () => {
     expect(wrapperArray.at(2).attributes('value')).toBe('true');
   });
 
-  it('has checkboxes unchecked for fields that are disabled', () => {
-    wrapper.setProps({
+  it('has checkboxes unchecked for fields that are disabled', async () => {
+    await wrapper.setProps({
       value: [
         {
           key: 1,

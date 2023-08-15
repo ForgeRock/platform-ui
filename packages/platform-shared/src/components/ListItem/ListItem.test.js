@@ -1,10 +1,10 @@
 /**
- * Copyright 2019 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2019-2023 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS.
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
+
 import { shallowMount } from '@vue/test-utils';
 import ListItem from './index';
 
@@ -16,6 +16,6 @@ describe('ListItem Component', () => {
       },
     });
 
-    expect(wrapper.name()).toEqual('ListItem');
+    expect(wrapper.vm.id).toEqual('listItem3');
   });
 });

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -21,27 +21,17 @@ describe('uma.vue', () => {
     wrapper = shallowMount(Uma, {
       localVue,
       i18n,
-      methods: {
-        loadData: jest.fn(),
-        getResources: jest.fn(() => {
-          this.resources = [];
-        }),
-        getActivity: jest.fn(() => {
-          this.activity = [];
-        }),
-        getRequests: jest.fn(() => {
-          this.requests = [];
-        }),
-      },
+    });
+    jest.spyOn(wrapper.vm, 'getRequestService').mockReturnValue({
+      get: () => Promise.resolve(),
+      put: () => Promise.resolve(),
+      post: () => Promise.resolve(),
+      delete: () => Promise.resolve(),
     });
   });
 
   afterEach(() => {
     wrapper.destroy();
-  });
-
-  it('Sharing page loaded', () => {
-    expect(wrapper.name()).toBe('Sharing');
   });
 
   it('Emits "renderShareModal" event', () => {

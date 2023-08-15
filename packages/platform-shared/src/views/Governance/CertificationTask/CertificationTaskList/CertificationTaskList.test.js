@@ -23,14 +23,10 @@ const resourceDataMock = {
     totalCount: 2,
   },
 };
-function shallowMountComponent(options, data, methods, propsData = {}) {
+
+function shallowMountComponent(options = {}, data = {}, propsData = {}) {
   $emit = jest.fn();
   wrapper = shallowMount(CertificationTaskList, {
-    methods: {
-      cancel: jest.fn(),
-      showErrorMessage: jest.fn(),
-      ...methods,
-    },
     mocks: {
       $t: (t) => t,
       $emit,
@@ -53,8 +49,9 @@ function shallowMountComponent(options, data, methods, propsData = {}) {
 }
 
 function mountComponent(propsData = {}) {
+  createTooltipContainer(['btnCertify-test-id-0', 'btnRevoke-test-id-0', 'btnAllowException-test-id-0']);
   wrapper = mount(CertificationTaskList, {
-    attachTo: createTooltipContainer(['btnCertify-test-id-0', 'btnRevoke-test-id-0', 'btnAllowException-test-id-0']),
+    attachTo: document.body,
     mocks: {
       $t: (t) => t,
       $store: {
@@ -138,22 +135,15 @@ describe('CertificationTaskList', () => {
     });
   });
 
-  describe('Component mount', () => {
-    it('CertificationTaskList successfully loaded', () => {
-      shallowMountComponent();
-      expect(wrapper.name()).toEqual('CertificationTaskList');
-    });
-  });
-
   describe('paginationChange', () => {
-    it('should call getCertificationTaskList with the pagination page', () => {
-      const methods = {
-        getCertificationTaskList: jest.fn().mockReturnValue(Promise.resolve()),
-      };
-      shallowMountComponent({}, {}, methods);
+    it('should call getCertificationTaskList with the pagination page', async () => {
+      shallowMountComponent();
+      const getCertificationTaskListSpy = jest.spyOn(wrapper.vm, 'getCertificationTaskList');
+      await flushPromises();
       wrapper.vm.paginationPage = 1;
       wrapper.vm.paginationChange();
-      expect(methods.getCertificationTaskList).toBeCalledWith(1);
+      await flushPromises();
+      expect(getCertificationTaskListSpy).toBeCalledWith(1);
     });
   });
 
@@ -208,7 +198,7 @@ describe('CertificationTaskList', () => {
       expect(wrapper.vm.tasksData).toEqual(expectedValue);
     });
     it('should add flags to item', () => {
-      shallowMountComponent({}, {}, { isTaskSelected: jest.fn() });
+      shallowMountComponent({}, {});
       const resource = {
         data: {
           result: [{}],
@@ -218,7 +208,7 @@ describe('CertificationTaskList', () => {
       expect(wrapper.vm.tasksData[0].flags).toEqual(['NEW_ACCESS']);
     });
     it('should emit check-progress if there is a task in status', () => {
-      shallowMountComponent({}, {}, { isTaskSelected: jest.fn() });
+      shallowMountComponent();
       const resource = {
         data: {
           result: [{
@@ -234,37 +224,40 @@ describe('CertificationTaskList', () => {
       wrapper.vm.loadTasksList(resource, 1);
       expect($emit).toBeCalledWith('check-progress');
     });
-    it('should show noData component when there are no templates', () => {
+    it('should show noData component when there are no templates', async () => {
       wrapper.vm.loadTasksList({ data: { result: [], totalHits: 0 } }, 0);
+      await flushPromises();
 
       const noData = findByTestId(wrapper, 'cert-task-list-no-data');
       expect(noData.exists()).toBeTruthy();
     });
   });
   describe('getCertificationTaskList', () => {
-    const methods = {
-      buildUrlParams: jest.fn(),
-      loadTasksList: jest.fn(),
-      showErrorMessage: jest.fn(),
-    };
+    let loadTasksListSpy;
+    let buildUrlParamsSpy;
+    let addCertificationTaskAccountDetailsSpy;
 
     beforeEach(() => {
-      wrapper.vm.currentPage = 2;
-      wrapper.vm.sortBy = 'name';
-      wrapper.vm.sortDir = 'asc';
-      shallowMountComponent({}, {}, methods);
+      shallowMountComponent({}, {
+        currentPage: 2,
+        sortBy: 'name',
+        sortDir: 'asc',
+      });
+      loadTasksListSpy = jest.spyOn(wrapper.vm, 'loadTasksList');
+      buildUrlParamsSpy = jest.spyOn(wrapper.vm, 'buildUrlParams');
       CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve({ data: 'results' }));
       CertificationApi.getCertificationCountsByCampaign.mockImplementation(() => Promise.resolve({ data: 'results' }));
     });
     it('should call loadTasksList once the result of the call is ready', async () => {
       wrapper.vm.getCertificationTaskList(2);
 
-      await wrapper.vm.$nextTick();
-      expect(methods.loadTasksList).toHaveBeenCalled();
+      await flushPromises();
+      expect(addCertificationTaskAccountDetailsSpy).toHaveBeenCalled();
+      expect(loadTasksListSpy).toHaveBeenCalled();
     });
     it('should call buildUrlParams with the required params', () => {
       wrapper.vm.getCertificationTaskList(2);
-      expect(methods.buildUrlParams).toHaveBeenCalledWith(1, 'user', 'asc');
+      expect(buildUrlParamsSpy).toHaveBeenCalledWith(2, 'name', 'asc');
     });
     it('should call getCertificationTasksListByCampaign with the required params', () => {
       wrapper.vm.getCertificationTaskList(2);
@@ -274,7 +267,7 @@ describe('CertificationTaskList', () => {
   describe('buildUrlParams', () => {
     it('should return the urlParams according to the params', () => {
       wrapper.vm.pageSize = 10;
-      shallowMountComponent({}, {}, {});
+      shallowMountComponent();
       const expectedValue = {
         appendUserPermissions: true,
         pageSize: 10,
@@ -288,7 +281,7 @@ describe('CertificationTaskList', () => {
     });
     it('should return the urlParams according to the params when isAdmin', async () => {
       wrapper.vm.pageSize = 10;
-      shallowMountComponent({}, {}, {});
+      shallowMountComponent();
       const expectedValue = {
         appendUserPermissions: true,
         pageSize: 10,
@@ -308,7 +301,7 @@ describe('CertificationTaskList', () => {
     });
     it('should not return task status if task status is staging', async () => {
       wrapper.vm.pageSize = 10;
-      shallowMountComponent({}, {}, {});
+      shallowMountComponent();
       const expectedValue = {
         appendUserPermissions: true,
         pageSize: 10,
@@ -343,9 +336,9 @@ describe('CertificationTaskList', () => {
   });
   describe('buildBodyParams', () => {
     describe('admin', () => {
-      it('should return the base filters to load the list when there is no filters', () => {
+      it('should return the base filters to load the list when there is no filters', async () => {
         shallowMountComponent();
-        wrapper.setProps({ isAdmin: true });
+        await wrapper.setProps({ isAdmin: true });
         const expectedValue = {
           targetFilter: {
             operator: 'AND',
@@ -362,9 +355,9 @@ describe('CertificationTaskList', () => {
         expect(result).toStrictEqual(expectedValue);
       });
 
-      it('should return the base filters to load the list when there is no filters', () => {
+      it('should return the base filters to load the list when there are filters', async () => {
         shallowMountComponent();
-        wrapper.setProps({ isAdmin: true });
+        await wrapper.setProps({ isAdmin: true });
         wrapper.vm.listFilters = {
           user: 'useris',
           application: 'appid',
@@ -436,7 +429,7 @@ describe('CertificationTaskList', () => {
         expect(result).toStrictEqual(expectedValue);
       });
 
-      it('should return the base filters to load the list when there is no filters', () => {
+      it('should return the base filters to load the list when there are filters', () => {
         shallowMountComponent();
         wrapper.vm.listFilters = {
           user: 'useris',
@@ -535,32 +528,25 @@ describe('CertificationTaskList', () => {
       expect(wrapper.vm.selectedTasks).toEqual([]);
     });
     it('should call getCertificationTaskList with the main page', () => {
-      const methods = {
-        getCertificationTaskList: jest.fn().mockReturnValue(Promise.resolve()),
-      };
-      shallowMountComponent({}, {}, methods);
+      shallowMountComponent();
+      const getCertificationTaskListSpy = jest.spyOn(wrapper.vm, 'getCertificationTaskList');
       wrapper.vm.mainPageNumber = 1;
       wrapper.vm.updateCertificationTaskList();
-      expect(methods.getCertificationTaskList).toBeCalledWith(1);
+      expect(getCertificationTaskListSpy).toBeCalledWith(1);
     });
   });
   describe('filterCertificationItems', () => {
     it('should call getCertificationTaskList with the paginationPage', () => {
-      const methods = {
-        getCertificationTaskList: jest.fn().mockReturnValue(Promise.resolve()),
-      };
-      shallowMountComponent({}, {}, methods);
+      shallowMountComponent();
+      const getCertificationTaskListSpy = jest.spyOn(wrapper.vm, 'getCertificationTaskList');
       wrapper.vm.paginationPage = 1;
-      wrapper.vm.filterCertificationItems({});
-      expect(methods.getCertificationTaskList).toBeCalledWith(1);
+      wrapper.vm.filterCertificationItems({ decision: ['noDecision'] });
+      expect(getCertificationTaskListSpy).toBeCalledWith(1);
     });
     it('listFilters should contain the new filters', () => {
-      const methods = {
-        getCertificationTaskList: jest.fn().mockReturnValue(Promise.resolve()),
-      };
-      shallowMountComponent({}, {}, methods);
+      shallowMountComponent();
       const filterTest = {
-        decision: 'certify',
+        decision: ['certify'],
       };
       wrapper.vm.filterCertificationItems(filterTest);
       expect(wrapper.vm.listFilters).toEqual({ ...filterTest });
@@ -568,12 +554,8 @@ describe('CertificationTaskList', () => {
   });
 
   describe('saveCertifyBulkAction', () => {
-    const methods = {
-      updateCertificationTaskList: jest.fn(),
-    };
     beforeEach(() => {
-      wrapper.vm.campaignId = 'test-id';
-      shallowMountComponent({}, {}, methods);
+      shallowMountComponent({}, {}, { campaignId: 'test-id' });
       CertificationApi.certifyCertificationTasks.mockImplementation(() => Promise.resolve({ data: 'results' }));
     });
     it('should toggle the saving status to add a loader in the header', () => {
@@ -581,19 +563,16 @@ describe('CertificationTaskList', () => {
       expect($emit).toBeCalledWith('change-saving');
     });
     it('should call updateCertificationTaskList after the certification is completed', async () => {
+      const updateCertificationTaskListSpy = jest.spyOn(wrapper.vm, 'updateCertificationTaskList');
       wrapper.vm.saveCertifyBulkAction('comments');
 
-      await wrapper.vm.$nextTick();
-      expect(methods.updateCertificationTaskList).toHaveBeenCalledWith('certifySuccess');
+      await flushPromises();
+      expect(updateCertificationTaskListSpy).toHaveBeenCalledWith('certifySuccess');
     });
   });
   describe('saveRevokeCertificationTasks', () => {
-    const methods = {
-      updateCertificationTaskList: jest.fn(),
-    };
     beforeEach(() => {
-      wrapper.vm.campaignId = 'test-id';
-      shallowMountComponent({}, {}, methods);
+      shallowMountComponent({}, {}, { campaignId: 'test-id' });
       CertificationApi.revokeCertificationTasks.mockImplementation(() => Promise.resolve({ data: 'results' }));
     });
     it('should toggle the saving status to add a loader in the header', () => {
@@ -601,19 +580,16 @@ describe('CertificationTaskList', () => {
       expect($emit).toBeCalledWith('change-saving');
     });
     it('should call updateCertificationTaskList after the certification is completed', async () => {
+      const updateCertificationTaskListSpy = jest.spyOn(wrapper.vm, 'updateCertificationTaskList');
       wrapper.vm.saveRevokeCertificationTasks('comments');
 
-      await wrapper.vm.$nextTick();
-      expect(methods.updateCertificationTaskList).toHaveBeenCalledWith('revokeSuccess');
+      await flushPromises(); // TODO: change to flushPromises();
+      expect(updateCertificationTaskListSpy).toHaveBeenCalledWith('revokeSuccess');
     });
   });
   describe('saveAllowExceptionBulkAction', () => {
-    const methods = {
-      updateCertificationTaskList: jest.fn(),
-    };
     beforeEach(() => {
-      wrapper.vm.campaignId = 'test-id';
-      shallowMountComponent({}, {}, methods);
+      shallowMountComponent({}, {}, { campaignId: 'test-id' });
       CertificationApi.exceptionCertificationTasks.mockImplementation(() => Promise.resolve({ data: 'results' }));
     });
     it('should toggle the saving status to add a loader in the header', () => {
@@ -621,10 +597,11 @@ describe('CertificationTaskList', () => {
       expect($emit).toBeCalledWith('change-saving');
     });
     it('should call updateCertificationTaskList after the certification is completed', async () => {
+      const updateCertificationTaskListSpy = jest.spyOn(wrapper.vm, 'updateCertificationTaskList');
       wrapper.vm.saveAllowExceptionBulkAction('comments');
 
-      await wrapper.vm.$nextTick();
-      expect(methods.updateCertificationTaskList).toHaveBeenCalledWith('allowExceptionSuccess');
+      await flushPromises();
+      expect(updateCertificationTaskListSpy).toHaveBeenCalledWith('allowExceptionSuccess');
     });
   });
   describe('showReassignBulkActionModal', () => {
@@ -653,10 +630,7 @@ describe('CertificationTaskList', () => {
 
   describe('field property', () => {
     it('should contain the new entitlement column when the prop showEntitlementColumn is true', () => {
-      shallowMountComponent({}, {}, {}, {
-        showEntitlementColumn: true,
-      });
-      wrapper.setData({});
+      shallowMountComponent({}, {}, { showEntitlementColumn: true });
       expect(wrapper.vm.tasksFields).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
@@ -666,10 +640,7 @@ describe('CertificationTaskList', () => {
       );
     });
     it('should not contain the new entitlement column when the prop showEntitlementColumn is false', () => {
-      shallowMountComponent({}, {}, {}, {
-        showEntitlementColumn: false,
-      });
-      wrapper.setData({});
+      shallowMountComponent({}, {}, { showEntitlementColumn: false });
       expect(wrapper.vm.tasksFields).not.toEqual(
         expect.arrayContaining([
           expect.objectContaining({
@@ -780,11 +751,8 @@ describe('CertificationTaskList', () => {
   describe('line item details', () => {
     jest.spyOn(CommonsApi, 'getGlossarySchema').mockReturnValue(Promise.resolve({ data: { result: [] } }));
     let showErrorMessageSpy;
-    const methods = {
-      getCertificationTaskList: jest.fn().mockReturnValue(Promise.resolve()),
-    };
     beforeEach(() => {
-      shallowMountComponent({}, {}, methods);
+      shallowMountComponent();
       showErrorMessageSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
     });
 
@@ -954,7 +922,6 @@ describe('CertificationTaskList', () => {
 
       wrapper.vm.currentLineItemIdSelectedModal = '1';
       wrapper.vm.tasksData = [task];
-      methods.getCertificationTaskList.mockImplementation(() => Promise.resolve({}));
       const spyNotification = jest.spyOn(wrapper.vm, 'displayNotification');
 
       wrapper.vm.addComment(comment);
@@ -1027,7 +994,7 @@ describe('CertificationTaskList', () => {
 
       wrapper.vm.openReviewersModal(item);
 
-      await wrapper.vm.$nextTick();
+      await flushPromises();
 
       expect(wrapper.vm.currentLineItemIdSelectedModal).toBe(id);
       expect(wrapper.vm.currentReviewersSelectedModal).toEqual(actors);
@@ -1041,7 +1008,7 @@ describe('CertificationTaskList', () => {
 
       wrapper.vm.closeEditReviewerModal();
 
-      await wrapper.vm.$nextTick();
+      await flushPromises();
 
       expect($emit).toHaveBeenCalledWith('bv::hide::modal', 'CertificationTaskEditReviewerAccountModal');
       expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskReviewersAccountModal');
@@ -1310,11 +1277,8 @@ describe('CertificationTaskList', () => {
         expect(wrapper.vm.isDeletingReviewer).toBe(false);
       });
 
-      it('isLastSignOffReviewer false', () => {
-        expect(wrapper.vm.isLastSignOffReviewer()).toBe(false);
-      });
-
       it('isLastSignOffReviewer true', () => {
+        expect(wrapper.vm.isLastSignOffReviewer()).toBe(false);
         wrapper.vm.currentReviewersSelectedModal[0].permissions.signoff = false;
         [, wrapper.vm.currentReviewerSelectedModal] = wrapper.vm.currentReviewersSelectedModal;
 
@@ -1347,7 +1311,7 @@ describe('CertificationTaskList', () => {
 
       wrapper.vm.openEntitlementModal(lineItem);
 
-      await wrapper.vm.$nextTick();
+      await flushPromises();
 
       expect(wrapper.vm.currentEntitlementSelected).toEqual({
         name: 'test',
@@ -1362,7 +1326,7 @@ describe('CertificationTaskList', () => {
   describe('Open edit reviewer modal', () => {
     describe('Admin view', () => {
       beforeEach(() => {
-        shallowMountComponent({}, {}, {}, { isAdmin: true });
+        shallowMountComponent({}, {}, { isAdmin: true });
       });
 
       it('openEditReviewerModal should open edit reviewer modal with data setted', async () => {
@@ -1407,7 +1371,7 @@ describe('CertificationTaskList', () => {
         wrapper.vm.currentReviewersSelectedModal = reviewers;
         wrapper.vm.openEditReviewerModal(reviewer);
 
-        await wrapper.vm.$nextTick();
+        await flushPromises();
 
         expect(wrapper.vm.currentReviewerSelectedModal).toEqual(reviewer);
         expect(wrapper.vm.currentUserPermissions).toEqual({
@@ -1427,7 +1391,7 @@ describe('CertificationTaskList', () => {
 
     describe('EndUser view', () => {
       beforeEach(() => {
-        shallowMountComponent({}, {}, {}, { actorId: '/managed/user/12345' });
+        shallowMountComponent({}, {}, { actorId: '/managed/user/12345' });
       });
 
       it('openEditReviewerModal should open edit reviewer modal with data setted', async () => {
@@ -1472,7 +1436,7 @@ describe('CertificationTaskList', () => {
         wrapper.vm.currentReviewersSelectedModal = reviewers;
         wrapper.vm.openEditReviewerModal(reviewer);
 
-        await wrapper.vm.$nextTick();
+        await flushPromises();
 
         expect(wrapper.vm.currentReviewerSelectedModal).toEqual(reviewer);
         expect(wrapper.vm.currentUserPermissions).toEqual({
@@ -1492,27 +1456,26 @@ describe('CertificationTaskList', () => {
   });
 
   describe('Scenarios For Entitlements Tab', () => {
-    const methods = {
-      buildUrlParams: jest.fn(),
-      loadTasksList: jest.fn(),
-      showErrorMessage: jest.fn(),
-    };
+    let loadTasksListSpy;
+    let addCertificationTaskAccountDetailsSpy;
 
     beforeEach(() => {
       wrapper.vm.currentPage = 2;
       wrapper.vm.sortBy = 'name';
       wrapper.vm.sortDir = 'asc';
-      shallowMountComponent({}, {}, methods, {
+      shallowMountComponent({}, {}, {
         certificationGrantType: 'entitlements', showEntitlementColumn: true, showGroupBy: false, entitlementUserId: null,
       });
+      loadTasksListSpy = jest.spyOn(wrapper.vm, 'loadTasksList');
       CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve({ data: 'results' }));
       CertificationApi.getCertificationCountsByCampaign.mockImplementation(() => Promise.resolve({ data: 'results' }));
     });
     it('should call loadTasksList once the result of the call is ready', async () => {
       wrapper.vm.getCertificationTaskList(2);
 
-      await wrapper.vm.$nextTick();
-      expect(methods.loadTasksList).toHaveBeenCalled();
+      await flushPromises();
+      expect(addCertificationTaskAccountDetailsSpy).toHaveBeenCalled();
+      expect(loadTasksListSpy).toHaveBeenCalled();
     });
     it('should show the right columns for entilements tab', () => {
       expect(wrapper.vm.certificationListColumns).toEqual([{
@@ -1565,7 +1528,7 @@ describe('CertificationTaskList', () => {
 
       wrapper.vm.openEntitlementModal(lineItem);
 
-      await wrapper.vm.$nextTick();
+      await flushPromises();
 
       expect(wrapper.vm.currentEntitlementSelected).toEqual({
         name: 'test',
@@ -1623,7 +1586,7 @@ describe('CertificationTaskList', () => {
 
       wrapper.vm.openReviewersModal(item);
 
-      await wrapper.vm.$nextTick();
+      await flushPromises();
 
       expect(wrapper.vm.currentLineItemIdSelectedModal).toBe(id);
       expect(wrapper.vm.currentReviewersSelectedModal).toEqual(actors);
@@ -1684,7 +1647,7 @@ describe('CertificationTaskList', () => {
       wrapper.vm.currentReviewersSelectedModal = reviewers;
       wrapper.vm.openEditReviewerModal(reviewer);
 
-      await wrapper.vm.$nextTick();
+      await flushPromises();
 
       expect(wrapper.vm.currentReviewerSelectedModal).toEqual(reviewer);
       expect($emit).toHaveBeenCalledWith('bv::hide::modal', 'CertificationTaskReviewersEntitlementModal');
@@ -1752,7 +1715,7 @@ describe('CertificationTaskList', () => {
 
   describe('Scenarios For Accounts Tab when group by is true', () => {
     beforeEach(() => {
-      shallowMountComponent({}, {}, {}, {
+      shallowMountComponent({}, {}, {
         certificationGrantType: 'accounts', showEntitlementColumn: false, showGroupBy: true, entitlementUserId: null, isAdmin: true,
       });
       wrapper.vm.$refs = { selectableTable: { clearSelected: jest.fn(), selectRow: jest.fn() } };
@@ -1862,7 +1825,7 @@ describe('CertificationTaskList', () => {
   describe('Scenarios For Entitlements Tab when group by is true', () => {
     let getCertificationTasksListByCampaignSpy;
     beforeEach(() => {
-      shallowMountComponent({}, {}, {}, {
+      shallowMountComponent({}, {}, {
         certificationGrantType: 'entitlements', showEntitlementColumn: true, showGroupBy: true, entitlementUserId: '66f3b405-60db-42a6-8a7a-59f6470348f6', isAdmin: true, refreshTasks: true,
       });
       wrapper.vm.$refs = { selectableTable: { clearSelected: jest.fn(), selectRow: jest.fn() } };

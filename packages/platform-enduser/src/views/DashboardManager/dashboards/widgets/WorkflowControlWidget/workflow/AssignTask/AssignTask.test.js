@@ -51,10 +51,6 @@ describe('AssignTask.vue', () => {
     });
   });
 
-  it('AssignTask successfully loaded', () => {
-    expect(wrapper.name()).toEqual('AssignTask');
-  });
-
   it('Emits assignTask object', () => {
     wrapper.vm.assignTask();
     expect(wrapper.emitted().assignTask).toEqual([[{
@@ -87,8 +83,8 @@ describe('AssignTask.vue', () => {
       }]);
     });
 
-    it('returns options if taskDefinition.task.usersToAssign IS NOT present', () => {
-      wrapper.setProps({
+    it('returns options if taskDefinition.task.usersToAssign IS NOT present', async () => {
+      await wrapper.setProps({
         taskDefinition: {
           task: {
             usersToAssign: [],

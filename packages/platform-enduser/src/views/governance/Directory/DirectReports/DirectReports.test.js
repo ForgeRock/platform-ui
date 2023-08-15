@@ -8,6 +8,7 @@
 import {
   mount,
 } from '@vue/test-utils';
+import flushPromises from 'flush-promises';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import DirectReports from './index';
 import * as DirectoryApi from '@/api/governance/DirectoryApi';
@@ -171,8 +172,10 @@ describe('DirectReports Component', () => {
 
   it('Sets empty state on inability to load users', async () => {
     DirectoryApi.getDirectReports = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [], totalCount: 0 } }));
-    await wrapper.vm.loadData();
+    wrapper.vm.loadData();
+    await flushPromises();
     wrapper.vm.checkIfNoResultsFirstLoad();
+    await flushPromises();
     const noResultsOnFirstLoadDirectReports = findByTestId(wrapper, 'no-results-firstload-directreports');
     expect(noResultsOnFirstLoadDirectReports.exists()).toBeTruthy();
     const noResultsOnFirstLoadSearchInput = findByTestId(wrapper, 'search-container-directreports');

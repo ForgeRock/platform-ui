@@ -9,14 +9,10 @@ import { shallowMount } from '@vue/test-utils';
 import CertificationCampaignDetailModal from './index';
 
 let wrapper;
-function mountComponent(options) {
+function mountComponent() {
   wrapper = shallowMount(CertificationCampaignDetailModal, {
-    methods: {
-      cancel: jest.fn(),
-    },
     mocks: {
       $t: (t) => t,
-      ...options,
     },
     propsData: {
       campaignDetails: {
@@ -29,14 +25,10 @@ function mountComponent(options) {
     },
   });
 }
-describe('CertificationCampaignDetailModal', () => {
-  describe('Component mount', () => {
-    it('CertificationCampaignDetailModal successfully loaded', () => {
-      mountComponent();
-      expect(wrapper.name()).toEqual('CertificationCampaignDetailModal');
-    });
+describe('CertificationCampaignDetailsModal', () => {
+  beforeEach(() => {
+    mountComponent();
   });
-
   describe('formatDate', () => {
     it('Should return the param date with the format MMM D, YYYY', () => {
       const result = wrapper.vm.formatDate('12/11/2022');
