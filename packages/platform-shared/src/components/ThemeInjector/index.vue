@@ -177,7 +177,10 @@ of the MIT license. See the LICENSE file for details. -->
       border-color: {{ theme.journeyInputBorderColor || '#c0c9d5' }} !important;
       }
 
-      <template v-if="mock">.fr-theme-preview.login</template> .multiselect .multiselect__option--highlight,
+      <template v-if="mock">.fr-theme-preview.login</template> .multiselect .multiselect__option--highlight {
+      background-color: {{ theme.journeyInputSelectHoverColor || '#f6f8fa' }} !important;
+      }
+
       <template v-if="mock">.fr-theme-preview.login</template> .multiselect .multiselect__option--selected {
       background-color: {{ theme.journeyInputSelectColor || '#e4f4fd' }} !important;
       }
@@ -310,7 +313,9 @@ of the MIT license. See the LICENSE file for details. -->
       border-color: {{ theme.accountCardInputBorderColor || '#c0c9d5' }};
       color: {{ theme.accountCardInputTextColor || '#23282e' }};
       }
-      <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__option--highlight,
+      <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__option--highlight {
+      background-color: {{ theme.accountCardInputSelectHoverColor || '#f6f8fa' }} !important;
+      }
       <template v-if="mock">.fr-theme-preview.enduser</template> .form-label-group .form-label-group-input .multiselect .multiselect__option--selected {
       background-color: {{ theme.accountCardInputSelectColor || '#e4f4fd' }} !important;
       }
