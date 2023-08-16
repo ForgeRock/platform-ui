@@ -2006,7 +2006,19 @@
       "chooseType": "Choose the type of script to create.",
       "errorSaving": "Error saving script",
       "errorLoading": "Error loading script data",
+      "legacyScriptAlert": "You are creating this script using the legacy script engine. There is an enhanced scripting engine available that offers new features and functions. Learn more about it and about how to migrate existing scripts to the new version.",
+      "viewNewEngineDetails": "View details",
       "saveSuccess": "Script saved"
+    },
+    "engineChoice": {
+      "description": "ForgeRock has introduced a new script engine for Journey Decision Node scripts that introduces new features and functions. You can choose to create your script using the new version or continue to use the previous version.",
+      "legacyTitle": "Legacy",
+      "legacyEngineChoice": "Use the legacy Journey Node scripting engine with existing features and functions.",
+      "nextGenerationTitle": "Next Generation",
+      "nextGenerationChoice": "Take advantage of the enhanced scripting engine with new features and functions.",
+      "scriptUsesNewGeneration": "This script uses the next generation scripting engine.",
+      "selectEngineTitle": "Choose Script Engine",
+      "title": "Script Engine"
     },
     "deleteModal": {
       "body": "Are you sure you want to delete script {resource}?",
@@ -2022,7 +2034,7 @@
         "description": "Default global script for Config Provider."
       },
       "LIBRARY": {
-        "name": "Journey Decision Node Library",
+        "name": "Library",
         "description": "Reusable script for use across journey decision nodes."
       },
       "OAUTH2_ACCESS_TOKEN_MODIFICATION": {
@@ -2061,6 +2073,14 @@
     "languages": {
       "GROOVY": "Groovy",
       "JAVASCRIPT": "JavaScript"
+    },
+    "editorTabs": {
+      "libraries": "Libraries",
+      "documents": "Docs",
+      "libraryError": "Error loading libraries data",
+      "libraryScripts": "Library Scripts",
+      "noLibrariesFound": "No library scripts found",
+      "noSearchResult": "No results found for '{searchString}'"
     }
   },
   "events": {
