@@ -462,6 +462,7 @@ export default {
       linkToTreeStart: '',
       loading: true,
       loginFailure: false,
+      mutationObserver: undefined,
       nextButtonDisabledArray: [],
       nextButtonVisible: false,
       nextStepCallbacks: [],
@@ -804,14 +805,14 @@ export default {
         'has-scripts': (appendScript) => {
           this.showScriptElms = true;
           // listen on body.appendchild and append to #body-append-el instead
-          const observer = new MutationObserver((records) => {
+          this.mutationObserver = new MutationObserver((records) => {
             const nodeList = records[records.length - 1].addedNodes || [];
             Array.prototype.forEach.call(nodeList, (node) => {
               document.getElementById('body-append-el').appendChild(node);
             });
-            observer.disconnect();
+            this.mutationObserver.disconnect();
           });
-          observer.observe(document.body, { childList: true });
+          this.mutationObserver.observe(document.body, { childList: true });
           // only hide next button if we know it should be hidden (webAuthn, deviceId)
           if (this.backendScriptsIdsContains('clientScriptOutputData', this.step)) {
             this.nextButtonVisible = false;
@@ -964,6 +965,10 @@ export default {
       }
       this.loginFailure = false;
       this.linkToTreeStart = '';
+
+      if (this.mutationObserver) {
+        this.mutationObserver.disconnect();
+      }
 
       // invoke callbacks before nextStep
       // if a callback returns a promise, the promise is pushed to an array
