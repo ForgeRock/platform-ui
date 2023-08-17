@@ -10,6 +10,7 @@ import { findByTestId, createTooltipContainer } from '@forgerock/platform-shared
 import { cloneDeep } from 'lodash';
 import flushPromises from 'flush-promises';
 import * as CertificationApi from '@forgerock/platform-shared/src/api/governance/CertificationApi';
+import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import CertificationTaskList from './index';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/CertificationApi');
@@ -84,6 +85,7 @@ describe('CertificationTaskList', () => {
     CertificationApi.reassignLineItem.mockImplementation(() => Promise.resolve({}));
     CertificationApi.updateLineItemReviewers.mockImplementation(() => Promise.resolve({}));
     CertificationApi.getUserDetails.mockImplementation(() => Promise.resolve({ data: { results: [] } }));
+    jest.spyOn(CommonsApi, 'getGlossarySchema').mockImplementation(() => Promise.resolve({ data: {} }));
   });
 
   describe('Account column display', () => {
@@ -245,7 +247,6 @@ describe('CertificationTaskList', () => {
       loadTasksList: jest.fn(),
       showErrorMessage: jest.fn(),
     };
-    let addCertificationTaskAccountDetailsSpy;
 
     beforeEach(() => {
       wrapper.vm.currentPage = 2;
@@ -254,14 +255,11 @@ describe('CertificationTaskList', () => {
       shallowMountComponent({}, {}, methods);
       CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve({ data: 'results' }));
       CertificationApi.getCertificationCountsByCampaign.mockImplementation(() => Promise.resolve({ data: 'results' }));
-      CertificationApi.getCertificationTaskAccountDetails.mockImplementation(() => Promise.resolve({ data: 'results' }));
-      addCertificationTaskAccountDetailsSpy = jest.spyOn(wrapper.vm, 'addCertificationTaskAccountDetails').mockImplementation(() => Promise.resolve({ data: 'results' }));
     });
     it('should call loadTasksList once the result of the call is ready', async () => {
       wrapper.vm.getCertificationTaskList(2);
 
       await wrapper.vm.$nextTick();
-      expect(addCertificationTaskAccountDetailsSpy).toHaveBeenCalled();
       expect(methods.loadTasksList).toHaveBeenCalled();
     });
     it('should call buildUrlParams with the required params', () => {
@@ -271,68 +269,6 @@ describe('CertificationTaskList', () => {
     it('should call getCertificationTasksListByCampaign with the required params', () => {
       wrapper.vm.getCertificationTaskList(2);
       expect(CertificationApi.getCertificationTasksListByCampaign).toHaveBeenCalled();
-    });
-  });
-  describe('addCertificationTaskAccountDetails', () => {
-    let getCertificationTaskAccountDetailsSpy;
-    const resourceData = {
-      data: {
-        result: [
-          {
-            id: '1',
-          },
-          {
-            id: '2',
-          },
-        ],
-        totalHits: 1,
-      },
-    };
-    const accountData = {
-      1: {
-        accountEnabled: true,
-        displayName: 'Barbara Walters',
-        givenName: 'Barbara',
-      },
-      2: {
-        accountEnabled: true,
-        displayName: 'Dania Nunez',
-        givenName: 'Dania',
-        jobTitle: 'bigboss',
-      },
-    };
-    beforeEach(() => {
-      jest.clearAllMocks();
-      shallowMountComponent({}, {}, {});
-      getCertificationTaskAccountDetailsSpy = jest.spyOn(CertificationApi, 'getCertificationTaskAccountDetails').mockImplementation((campaignId, taskId) => Promise.resolve({ data: accountData[`${taskId}`] }));
-
-      wrapper.vm.campaignId = 'test-id';
-    });
-
-    it('should call getCertificationTaskAccountDetails per each item', () => {
-      wrapper.vm.addCertificationTaskAccountDetails(resourceData);
-
-      expect(getCertificationTaskAccountDetailsSpy).toHaveBeenCalledTimes(2);
-    });
-
-    it('should return the account data for each item', async () => {
-      const response = await wrapper.vm.addCertificationTaskAccountDetails(resourceData);
-
-      await flushPromises();
-      const mappedItems = resourceData.data.result.map((item) => ({
-        ...item,
-        account: accountData[`${item.id}`],
-      }));
-
-      expect(response).toEqual({
-        ...resourceData,
-        data: {
-          ...resourceData.data,
-          result: [
-            ...mappedItems,
-          ],
-        },
-      });
     });
   });
   describe('buildUrlParams', () => {
@@ -842,6 +778,7 @@ describe('CertificationTaskList', () => {
   });
 
   describe('line item details', () => {
+    jest.spyOn(CommonsApi, 'getGlossarySchema').mockReturnValue(Promise.resolve({ data: { result: [] } }));
     let showErrorMessageSpy;
     const methods = {
       getCertificationTaskList: jest.fn().mockReturnValue(Promise.resolve()),
@@ -903,17 +840,24 @@ describe('CertificationTaskList', () => {
         userName: 'igaadmin',
       }];
 
-      wrapper.vm.openApplicationModal(application, applicationOwners);
+      await wrapper.vm.openApplicationModal(application, applicationOwners, { test1: 'test1' });
       await flushPromises();
 
       expect(wrapper.vm.currentApplicationSelectedModal).toEqual({
         ...application,
         applicationOwners,
+        glossary: { test1: 'test1' },
       });
       expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskApplicationModal');
     });
 
     it('openAccountModal called saves currentAccountSelectedModal data and shows CertificationTaskAccountModal', async () => {
+      CertificationApi.getCertificationTaskAccountDetails.mockImplementation(() => Promise.resolve({
+        account: {
+          id: 'test',
+          displayName: 'Dani Morales',
+        },
+      }));
       const content = {
         account: {
           id: 'test',
@@ -941,7 +885,7 @@ describe('CertificationTaskList', () => {
       await flushPromises();
 
       expect(wrapper.vm.currentAccountSelectedModal).toEqual({
-        account: content.account,
+        account: { account: content.account },
         decision: content.item.decision.certification.decision,
         decisionDate: content.item.decision.certification.decisionDate,
         decisionBy: content.item.decision.certification.decisionBy,
@@ -1386,46 +1330,32 @@ describe('CertificationTaskList', () => {
     });
 
     it('openEntitlementModal should open entitlement modal with data setted', async () => {
-      const entitlement = {
-        id: '1234',
-      };
-      CertificationApi.getCertificationEntitlementDetails.mockImplementation(() => Promise.resolve({ data: entitlement }));
-
+      CertificationApi.getCertificationEntitlementDetails.mockImplementation(() => Promise.resolve({
+        data: {
+          name: 'test',
+        },
+      }));
       const lineItem = {
         id: '9986d9a5-5ffd-4046-8643-c34a60cddb6e',
         application: {
           templateName: 'salesforce',
         },
+        entitlement: { name: 'test' },
+        entitlementOwner: { userName: 'mikeTest' },
+        glossary: { test1: 'test1' },
       };
 
       wrapper.vm.openEntitlementModal(lineItem);
 
       await wrapper.vm.$nextTick();
 
-      expect(wrapper.vm.currentEntitlementSelected).toEqual(entitlement);
+      expect(wrapper.vm.currentEntitlementSelected).toEqual({
+        name: 'test',
+        entitlementOwner: { userName: 'mikeTest' },
+        glossary: { test1: 'test1' },
+      });
       expect(wrapper.vm.currentApplicationSelectedModal).toEqual(lineItem.application);
       expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskEntAccountModal');
-    });
-
-    it('openEntitlementModal should not open entitlement modal when fails data fetch', async () => {
-      const error = new Error('ERROR');
-      CertificationApi.getCertificationEntitlementDetails.mockImplementation(() => Promise.reject(error));
-
-      const lineItem = {
-        id: '9986d9a5-5ffd-4046-8643-c34a60cddb6e',
-        application: {
-          templateName: 'salesforce',
-        },
-      };
-
-      wrapper.vm.openEntitlementModal(lineItem);
-
-      await wrapper.vm.$nextTick();
-
-      expect(wrapper.vm.currentEntitlementSelected).toBeNull();
-      expect(wrapper.vm.currentApplicationSelectedModal).toBeNull();
-      expect($emit).not.toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskEntEntitlementModal');
-      expect(showErrorMessageSpy).toHaveBeenCalledWith(error, 'governance.certificationTask.entitlementModal.loadErrorMessage');
     });
   });
 
@@ -1567,7 +1497,6 @@ describe('CertificationTaskList', () => {
       loadTasksList: jest.fn(),
       showErrorMessage: jest.fn(),
     };
-    let addCertificationTaskAccountDetailsSpy;
 
     beforeEach(() => {
       wrapper.vm.currentPage = 2;
@@ -1578,14 +1507,11 @@ describe('CertificationTaskList', () => {
       });
       CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve({ data: 'results' }));
       CertificationApi.getCertificationCountsByCampaign.mockImplementation(() => Promise.resolve({ data: 'results' }));
-      CertificationApi.getCertificationTaskAccountDetails.mockImplementation(() => Promise.resolve({ data: 'results' }));
-      addCertificationTaskAccountDetailsSpy = jest.spyOn(wrapper.vm, 'addCertificationTaskAccountDetails').mockImplementation(() => Promise.resolve({ data: 'results' }));
     });
     it('should call loadTasksList once the result of the call is ready', async () => {
       wrapper.vm.getCertificationTaskList(2);
 
       await wrapper.vm.$nextTick();
-      expect(addCertificationTaskAccountDetailsSpy).toHaveBeenCalled();
       expect(methods.loadTasksList).toHaveBeenCalled();
     });
     it('should show the right columns for entilements tab', () => {
@@ -1622,23 +1548,30 @@ describe('CertificationTaskList', () => {
       expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskAddCommentEntitlementModal');
     });
     it('openEntitlementModal should open entitlement modal with data setted', async () => {
-      const entitlement = {
-        id: '1234',
-      };
-      CertificationApi.getCertificationEntitlementDetails.mockImplementation(() => Promise.resolve({ data: entitlement }));
-
+      CertificationApi.getCertificationEntitlementDetails.mockImplementation(() => Promise.resolve({
+        data: {
+          name: 'test',
+        },
+      }));
       const lineItem = {
         id: '9986d9a5-5ffd-4046-8643-c34a60cddb6e',
         application: {
           templateName: 'salesforce',
         },
+        entitlement: { name: 'test' },
+        entitlementOwner: { userName: 'mikeTest' },
+        glossary: { test1: 'test1' },
       };
 
       wrapper.vm.openEntitlementModal(lineItem);
 
       await wrapper.vm.$nextTick();
 
-      expect(wrapper.vm.currentEntitlementSelected).toEqual(entitlement);
+      expect(wrapper.vm.currentEntitlementSelected).toEqual({
+        name: 'test',
+        entitlementOwner: { userName: 'mikeTest' },
+        glossary: { test1: 'test1' },
+      });
       expect(wrapper.vm.currentApplicationSelectedModal).toEqual(lineItem.application);
       expect($emit).toHaveBeenCalledWith('bv::show::modal', 'CertificationTaskEntEntitlementModal');
     });
@@ -1825,8 +1758,6 @@ describe('CertificationTaskList', () => {
       wrapper.vm.$refs = { selectableTable: { clearSelected: jest.fn(), selectRow: jest.fn() } };
       CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve({ data: 'results' }));
       CertificationApi.getCertificationCountsByCampaign.mockImplementation(() => Promise.resolve({ data: 'results' }));
-      CertificationApi.getCertificationTaskAccountDetails.mockImplementation(() => Promise.resolve({ data: 'results' }));
-      jest.spyOn(wrapper.vm, 'addCertificationTaskAccountDetails').mockImplementation(() => Promise.resolve({ data: 'results' }));
     });
     it('should display correct account columns', async () => {
       expect(wrapper.vm.certificationListColumns).toEqual([{
@@ -1938,8 +1869,6 @@ describe('CertificationTaskList', () => {
       getCertificationTasksListByCampaignSpy = jest.fn().mockImplementation(() => Promise.resolve({ data: 'results' }));
       CertificationApi.getCertificationTasksListByCampaign = getCertificationTasksListByCampaignSpy;
       CertificationApi.getCertificationCountsByCampaign.mockImplementation(() => Promise.resolve({ data: 'results' }));
-      CertificationApi.getCertificationTaskAccountDetails.mockImplementation(() => Promise.resolve({ data: 'results' }));
-      jest.spyOn(wrapper.vm, 'addCertificationTaskAccountDetails').mockImplementation(() => Promise.resolve({ data: 'results' }));
     });
     it('should display correct entitlement columns', async () => {
       expect(wrapper.vm.certificationListColumns).toEqual([{

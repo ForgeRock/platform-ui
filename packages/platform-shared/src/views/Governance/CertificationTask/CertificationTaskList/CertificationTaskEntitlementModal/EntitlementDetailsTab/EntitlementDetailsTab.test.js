@@ -24,10 +24,8 @@ describe('EntitlementDetailsTab', () => {
 
   describe('component loaded', () => {
     let wrapper;
-
     beforeEach(() => {
       wrapper = mountComponent({
-        description: 'Zoran Admin',
         id: '34858681-bdd9-4482-bae3-9805b77e6db6',
         linkQualifier: 'default',
         mailEnabled: false,
@@ -35,6 +33,7 @@ describe('EntitlementDetailsTab', () => {
         securityEnabled: true,
         __NAME__: 'Zoran Admin',
         _id: '34858681-bdd9-4482-bae3-9805b77e6db6',
+        glossary: { idx: { '/entitlement': { description: 'Zoran Admin' } } },
       });
     });
 
@@ -47,10 +46,7 @@ describe('EntitlementDetailsTab', () => {
       expect(owner.find('dd').text()).toBe(blankValueIndicator);
 
       const description = findByTestId(wrapper, 'entDescription');
-      expect(description.find('dd').text()).toBe(wrapper.vm.entitlement.description);
-
-      const country = findByTestId(wrapper, 'country');
-      expect(country.find('dd').text()).toBe(blankValueIndicator);
+      expect(description.find('dd').text()).toBe('Zoran Admin');
     });
   });
 
