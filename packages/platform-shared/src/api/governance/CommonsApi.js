@@ -33,3 +33,11 @@ export function getUserDetails(userId = '') {
 export function getUserGrants(userId = '', grantType = '') {
   return generateIgaApi().get(`/governance/user/${userId}/grants?grantType=${grantType}`);
 }
+
+/**
+ * get schema of the glossary attributes for application, role, entitlement
+ * @returns {Promise} Glossary schema for application, role, entitlement
+ */
+export function getGlossarySchema() {
+  return generateIgaApi().get('commons/glossary/schemaConfig');
+}
