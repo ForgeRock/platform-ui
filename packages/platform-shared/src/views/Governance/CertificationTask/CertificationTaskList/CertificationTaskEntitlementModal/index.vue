@@ -43,8 +43,7 @@ of the MIT license. See the LICENSE file for details. -->
         @click="close">
         <FrIcon
           name="close"
-          class="md-24"
-        />
+          class="md-24" />
       </BButtonClose>
     </template>
     <BTabs
@@ -56,6 +55,12 @@ of the MIT license. See the LICENSE file for details. -->
         :title="$t('common.details')">
         <FrEntitlementDetailsTab :entitlement="entitlement" />
       </BTab>
+      <BTab :title="$t('governance.certificationTask.glossary')">
+        <FrGlossaryDisplayForm
+          class="p-4"
+          :glossary-schema="glossarySchema"
+          :glossary-values="glossaryValues" />
+      </BTab>
     </BTabs>
   </BModal>
 </template>
@@ -63,14 +68,15 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import {
   BButtonClose,
+  BImg,
+  BMedia,
   BModal,
   BTab,
   BTabs,
-  BMedia,
-  BImg,
 } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import AppSharedUtilsMixin from '@forgerock/platform-shared/src/mixins/AppSharedUtilsMixin';
+import FrGlossaryDisplayForm from '@forgerock/platform-shared/src/components/governance/GlossaryDisplayForm';
 import FrEntitlementDetailsTab from './EntitlementDetailsTab';
 
 /**
@@ -86,23 +92,28 @@ export default {
   name: 'CertificationTaskEntitlementModal',
   components: {
     BButtonClose,
+    BImg,
+    BMedia,
     BModal,
     BTab,
     BTabs,
     FrEntitlementDetailsTab,
+    FrGlossaryDisplayForm,
     FrIcon,
-    BMedia,
-    BImg,
   },
   mixins: [AppSharedUtilsMixin],
   props: {
+    application: {
+      type: Object,
+      default: () => {},
+    },
     entitlement: {
       type: Object,
       default: () => {},
     },
-    application: {
-      type: Object,
-      default: () => {},
+    glossarySchema: {
+      type: Array,
+      default: () => [],
     },
     modalId: {
       type: String,
@@ -120,6 +131,9 @@ export default {
     },
     displayName() {
       return this.$t('governance.certificationTask.entitlementModal.name', { entitlementName: this.getApplicationDisplayName(this.application) });
+    },
+    glossaryValues() {
+      return this.entitlement?.glossary?.idx?.['/entitlement'] || {};
     },
   },
 };
