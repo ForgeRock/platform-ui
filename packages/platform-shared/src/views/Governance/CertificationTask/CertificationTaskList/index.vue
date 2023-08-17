@@ -20,7 +20,6 @@ of the MIT license. See the LICENSE file for details. -->
               <label class="text-secondary mb-0">
                 {{ $t('governance.certificationTask.select') }}
               </label>
-              {{ languageSelected }}
             </template>
             <BDropdownItem
               :data-testid="`cert-select-all-tasks-${certificationGrantType}`"
@@ -96,11 +95,11 @@ of the MIT license. See the LICENSE file for details. -->
       </div>
       <div>
         <BButton
-          v-if="!this.entitlementUserId"
+          v-if="!entitlementUserId"
           data-testid="cert-filter-button"
           variant="link-dark"
           class="mr-2"
-          @click="setFiltersView()">
+          @click="showFiltersSection = !showFiltersSection">
           <FrIcon name="filter_list" />
         </BButton>
         <BButton
@@ -115,7 +114,7 @@ of the MIT license. See the LICENSE file for details. -->
     </div>
     <div v-show="showFiltersSection">
       <FrCertificationTaskListFilters
-        v-if="!this.entitlementUserId"
+        v-if="!entitlementUserId"
         :cert-id="campaignId"
         :actor-id="actorId"
         @filter-certification-items="filterCertificationItems" />
@@ -183,7 +182,7 @@ of the MIT license. See the LICENSE file for details. -->
             class="clickable align-items-center"
             data-testid="application-cell"
             no-body
-            @click.stop="openApplicationModal(item.application, item.applicationOwner)">
+            @click.stop="openApplicationModal(item.application, item.applicationOwner, item.glossary)">
             <BImg
               class="mr-4"
               width="28"
@@ -418,13 +417,11 @@ of the MIT license. See the LICENSE file for details. -->
       :total-rows="totalRows"
       @input="paginationChange" />
 
-    <!-- Modal -->
+    <!-- Modals -->
     <FrCertificationTaskSortModal
       @update-columns="updateColumns"
       :task-list-columns="tasksFieldsToSort"
-      :modal-id="certificationTaskSortModalId"
-    />
-
+      :modal-id="certificationTaskSortModalId" />
     <FrCertificationForwardModal
       :id="currentItemTaskId"
       :bulk="bulkForward"
@@ -433,8 +430,7 @@ of the MIT license. See the LICENSE file for details. -->
       @forward-bulk="saveForwardBulkAction" />
     <FrCertificationTaskActionConfirmModal
       :modal-options="actionConfirmationModalProps"
-      :modal-id="certificationTaskActionConfirmModalId"
-    />
+      :modal-id="certificationTaskActionConfirmModalId" />
     <FrCertificationTaskReassignModal
       @change-saving="toggleSaving"
       :modal-id="certificationTaskReassignModalId"
@@ -446,7 +442,8 @@ of the MIT license. See the LICENSE file for details. -->
       :user-details="currentUserDetails" />
     <FrCertificationTaskApplicationModal
       v-if="currentApplicationSelectedModal"
-      :application="currentApplicationSelectedModal" />
+      :application="currentApplicationSelectedModal"
+      :glossary-schema="glossarySchema.application" />
     <FrCertificationTaskAccountModal
       v-if="currentAccountSelectedModal"
       :account="currentAccountSelectedModal"
@@ -456,15 +453,14 @@ of the MIT license. See the LICENSE file for details. -->
       :comments="currentCommentsSelectedModal"
       :modal-id="certificationTaskCommentsModalId"
       @open-add-comment-modal="openAddCommentModalFromCommentsModal"
-      @close-modal="closeCertificationCommentsModal" />
+      @close-modal="currentCommentsSelectedModal = []" />
     <FrCertificationTaskAddCommentModal
       @add-comment="addComment"
-      :modal-id="certificationTaskAddCommentModalId"
-    />
+      :modal-id="certificationTaskAddCommentModalId" />
     <FrCertificationActivityModal
       :activity="currentLineItemActivity"
       :modal-id="certificationActivityModalId"
-      @close-modal="closeActivityModal" />
+      @close-modal="currentLineItemActivity = []" />
     <FrCertificationTaskReviewersModal
       :reviewers="currentReviewersSelectedModal"
       :hide-creation-button="!currentLineItemReassignPermission"
@@ -482,8 +478,9 @@ of the MIT license. See the LICENSE file for details. -->
       @edit-reviewer="editReviewer"
       @delete-reviewer="deleteReviewer" />
     <FrCertificationTaskEntitlementModal
-      :entitlement="currentEntitlementSelected"
       :application="currentApplicationSelectedModal"
+      :entitlement="currentEntitlementSelected"
+      :glossary-schema="glossarySchema.entitlement"
       :modal-id="certificationTaskEntitlementModalId"
     />
   </div>
@@ -540,9 +537,13 @@ import {
   saveComment,
   updateLineItemReviewers,
 } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
+import {
+  getGlossarySchema,
+} from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { ADMIN_REVIEWER_PERMISSIONS } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { CampaignStates } from '@forgerock/platform-shared/src/utils/governance/types';
 import { getGrantFlags, isRoleBased, icons } from '@forgerock/platform-shared/src/utils/governance/flags';
+import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import FrGovernanceUserDetailsModal from '@forgerock/platform-shared/src/components/governance/UserDetailsModal';
 import FrCertificationActivityModal from './CertificationTaskActivityModal';
 import FrCertificationTaskAccountModal from './CertificationTaskAccountModal';
@@ -622,10 +623,6 @@ export default {
     NotificationMixin,
   ],
   props: {
-    campaignDetails: {
-      type: Object,
-      default: () => {},
-    },
     /**
      * this is the governance certification campaign selected
     */
@@ -633,25 +630,33 @@ export default {
       type: String,
       default: '',
     },
+    campaignDetails: {
+      type: Object,
+      default: () => {},
+    },
     campaignId: {
       type: String,
       default: null,
     },
-    refreshTasks: {
+    certificationGrantType: {
+      type: String,
+      default: null,
+    },
+    entitlementUserId: {
+      type: String,
+      default: null,
+    },
+    isAdmin: {
       type: Boolean,
       default: false,
     },
-    isAdmin: {
+    refreshTasks: {
       type: Boolean,
       default: false,
     },
     showEntitlementColumn: {
       type: Boolean,
       default: false,
-    },
-    certificationGrantType: {
-      type: String,
-      default: null,
     },
     showGroupBy: {
       type: Boolean,
@@ -660,10 +665,6 @@ export default {
     taskStatus: {
       type: String,
       default: 'active',
-    },
-    entitlementUserId: {
-      type: String,
-      default: null,
     },
   },
   data() {
@@ -701,22 +702,23 @@ export default {
       currentUserSelectedModal: {},
       enableAddComments: true,
       flagIcons: icons,
+      glossarySchema: {
+        application: [],
+        entitlement: [],
+        role: [],
+      },
       sortDir: 'asc',
       sortBy: 'user',
       totalRows: 0,
-      mainPageNumber: 1,
       pageSize: 10,
       tasksData: [],
       selectedTasks: [],
-      isAllSelected: false,
       isLoading: false,
-      isDeleting: false,
       isSavingReviewer: false,
       isDeletingReviewer: false,
       paginationPage: 1,
       rowTemplateSelectedId: null,
       certificationListColumns: [],
-      languageSelected: '',
       showFiltersSection: false,
       currentItemTaskId: '',
       revokeActionModalProps,
@@ -886,6 +888,30 @@ export default {
       };
     },
   },
+  async mounted() {
+    try {
+      const { data } = await getGlossarySchema();
+      this.glossarySchema = {
+        application: data['/openidm/managed/application'],
+        entitlement: data['/openidm/managed/assignment'],
+        role: data['/openidm/managed/role'],
+      };
+    } catch (error) {
+      this.showErrorMessage(error, this.$t('governance.certificationTask.errors.glossaryError'));
+    }
+
+    this.isStaged = this.campaignDetails.status === 'staging';
+    this.updateColumns();
+
+    try {
+      await this.getCertificationTaskList(this.paginationPage);
+      if (this.showGroupBy && this.certificationGrantType === 'accounts') {
+        this.onRowSelected(this.tasksData);
+      }
+    } catch (error) {
+      this.showErrorMessage(error, this.$t('governance.certificationTask.errors.certificationListError'));
+    }
+  },
   methods: {
     startCase,
     toggleSaving() {
@@ -906,19 +932,27 @@ export default {
       const activityByAction = countBy(activity, (item) => item.action);
       return activityByAction?.comment || 0;
     },
-    openAccountModal(content) {
-      this.currentAccountSelectedModal = {
-        account: content.account,
-        decision: content.item?.decision?.certification?.decision,
-        decisionDate: content.item?.decision?.certification?.decisionDate,
-        decisionBy: content.item?.decision?.certification?.decisionBy,
-      };
-      this.contentAccountSelectedModal = cloneDeep(content.account);
-      delete this.contentAccountSelectedModal?.metadata;
-      delete this.contentAccountSelectedModal?.proxyAddresses;
-      this.$nextTick(() => {
-        this.$root.$emit('bv::show::modal', 'CertificationTaskAccountModal');
-      });
+    async openAccountModal(content) {
+      try {
+        const account = await getCertificationTaskAccountDetails(this.campaignId, content.id);
+
+        this.currentAccountSelectedModal = {
+          account,
+          decision: content.item?.decision?.certification?.decision,
+          decisionDate: content.item?.decision?.certification?.decisionDate,
+          decisionBy: content.item?.decision?.certification?.decisionBy,
+        };
+
+        this.contentAccountSelectedModal = cloneDeep(content.account);
+        delete this.contentAccountSelectedModal?.metadata;
+        delete this.contentAccountSelectedModal?.proxyAddresses;
+
+        this.$nextTick(() => {
+          this.$root.$emit('bv::show::modal', 'CertificationTaskAccountModal');
+        });
+      } catch (error) {
+        this.showErrorMessage(error, this.$t('governance.certificationTask.entitlementModal.loadErrorMessage'));
+      }
     },
     openAddCommentModal(lineItemId) {
       this.currentLineItemIdSelectedModal = lineItemId;
@@ -928,25 +962,34 @@ export default {
       this.closeModal('CertificationTaskComments');
       this.openModal('CertificationTaskAddComment');
     },
-    openApplicationModal(application, applicationOwners) {
+    async openApplicationModal(application, applicationOwners, glossary) {
       this.currentApplicationSelectedModal = {
         ...application,
         applicationOwners,
+        glossary,
       };
       this.$nextTick(() => {
         this.$root.$emit('bv::show::modal', 'CertificationTaskApplicationModal');
       });
     },
-    openEntitlementModal({ id, application }) {
-      getCertificationEntitlementDetails(this.campaignId, id).then(({ data }) => {
+    async openEntitlementModal({
+      application,
+      id,
+      glossary,
+      entitlementOwner,
+    }) {
+      try {
+        const { data } = await getCertificationEntitlementDetails(this.campaignId, id);
         this.currentApplicationSelectedModal = application;
-        this.currentEntitlementSelected = data;
+        this.currentEntitlementSelected = {
+          ...data,
+          entitlementOwner,
+          glossary,
+        };
         this.openModal('CertificationTaskEnt');
-      }).catch((error) => {
+      } catch (error) {
         this.showErrorMessage(error, this.$t('governance.certificationTask.entitlementModal.loadErrorMessage'));
-        this.currentEntitlementSelected = null;
-        this.currentApplicationSelectedModal = null;
-      });
+      }
     },
     openCommentsModal(activity, lineItem) {
       this.enableAddComments = lineItem.permissions?.comment;
@@ -956,9 +999,6 @@ export default {
       this.$nextTick(() => {
         this.openModal('CertificationTaskComments');
       });
-    },
-    closeCertificationCommentsModal() {
-      this.currentCommentsSelectedModal = [];
     },
     openReviewersModal({ id, decision: { certification: { actors } }, permissions: { reassign } }) {
       this.currentLineItemIdSelectedModal = id;
@@ -1093,9 +1133,6 @@ export default {
       this.currentLineItemActivity = activityList;
       this.openModal('CertificationTaskActivity');
     },
-    closeActivityModal() {
-      this.currentLineItemActivity = [];
-    },
     paginationChange() {
       this.getCertificationTaskList(this.paginationPage).then(() => {
         if (this.showGroupBy && this.certificationGrantType === 'accounts') {
@@ -1162,7 +1199,6 @@ export default {
       });
 
       return getCertificationTasksListByCampaign(urlParams, this.campaignId, payload)
-        .then((resourceData) => this.addCertificationTaskAccountDetails(resourceData))
         .then((resourceData) => this.loadTasksList(resourceData, currentPage))
         .catch((error) => {
           this.showErrorMessage(error, this.$t('governance.certificationTask.errors.certificationListError'));
@@ -1170,24 +1206,6 @@ export default {
         .finally(() => {
           this.isLoading = false;
         });
-    },
-    async addCertificationTaskAccountDetails(resourceData) {
-      const data = resourceData.data.result.map(async (task) => {
-        const accountResponse = await getCertificationTaskAccountDetails(this.campaignId, task.id);
-        return {
-          ...task,
-          account: accountResponse?.data,
-        };
-      });
-      const result = await Promise.all(data);
-      const mappedData = {
-        ...resourceData,
-        data: {
-          ...resourceData.data,
-          result,
-        },
-      };
-      return mappedData;
     },
     getSortParam(sortBy) {
       switch (sortBy) {
@@ -1203,29 +1221,15 @@ export default {
       let grantType;
       if (certificationGrantType === 'accounts') grantType = 'accountGrant';
       if (certificationGrantType === 'entitlements') grantType = 'entitlementGrant';
-      return {
-        operator: 'EQUALS',
-        operand: {
-          targetName: 'item.type',
-          targetValue: grantType,
-        },
-      };
-    },
-    getFilterFormatted(operator, targetName, targetValue) {
-      return {
-        operator,
-        operand: {
-          targetName,
-          targetValue,
-        },
-      };
+
+      return getBasicFilter('EQUALS', 'item.type', grantType);
     },
     getBaseFilters() {
       const filterPath = this.isAdmin
         ? 'decision.certification.primaryReviewer.id'
         : 'decision.certification.actors.id';
 
-      const formattedFilters = this.getFilterFormatted('EQUALS', filterPath, this.actorId);
+      const formattedFilters = getBasicFilter('EQUALS', filterPath, this.actorId);
       let baseFilters = [formattedFilters];
 
       if (this.certificationGrantType) {
@@ -1238,7 +1242,7 @@ export default {
       if (!this.listFilters) {
         let defaultBaseFilter = this.getBaseFilters();
         if (this.entitlementUserId) {
-          defaultBaseFilter = [...defaultBaseFilter, this.getFilterFormatted('EQUALS', 'user.id', this.entitlementUserId)];
+          defaultBaseFilter = [...defaultBaseFilter, getBasicFilter('EQUALS', 'user.id', this.entitlementUserId)];
         }
         return {
           targetFilter: {
@@ -1250,13 +1254,13 @@ export default {
       const decisionsFilter = this.listFilters.decision;
       const includeNoDecision = decisionsFilter?.includes('noDecision');
       const user = this.entitlementUserId || this.listFilters.user;
-      const userFilter = this.getFilterFormatted('EQUALS', 'user.id', user);
-      const applicationFilter = this.getFilterFormatted('EQUALS', 'application.id', this.listFilters.application);
+      const userFilter = getBasicFilter('EQUALS', 'user.id', user);
+      const applicationFilter = getBasicFilter('EQUALS', 'application.id', this.listFilters.application);
       const decisionsToFilter = decisionsFilter.filter((decision) => (decision !== 'noDecision'));
-      const decisionFilter = this.getFilterFormatted('IN', 'decision.certification.decision', decisionsToFilter);
+      const decisionFilter = getBasicFilter('IN', 'decision.certification.decision', decisionsToFilter);
       const noDecisionFilter = {
         operator: 'NOT',
-        operand: [this.getFilterFormatted('EXISTS', 'decision.certification.decision')],
+        operand: [getBasicFilter('EXISTS', 'decision.certification.decision')],
       };
       const userApplicationFilter = [applicationFilter, userFilter].filter((filterInput) => (filterInput.operand.targetValue));
       const operandTargetFilter = {
@@ -1307,12 +1311,6 @@ export default {
           selected: selectValue,
         };
       });
-    },
-    setFiltersView() {
-      this.showFiltersSection = !this.showFiltersSection;
-    },
-    getUnique(arr) {
-      return [...new Map(arr.map((item) => ([item.id, item]))).values()];
     },
     /**
      * Determines whether the button is to be displayed pressed depending on the decision applied in the item
@@ -1445,7 +1443,7 @@ export default {
      * @param {String} message message to be displayed in the success notification
      * @param {Number} [page] number of page to reload
      */
-    updateCertificationTaskList(message, page = this.mainPageNumber) {
+    updateCertificationTaskList(message, page = 1) {
       this.displayNotification('success', this.$t(`governance.certificationTask.success.${message}`));
       this.selectedTasks = [];
       this.clearRowSelected();
@@ -1557,15 +1555,6 @@ export default {
       return item.descriptor?.idx?.[resource]?.displayName;
     },
   },
-  mounted() {
-    this.isStaged = this.campaignDetails.status === 'staging';
-    this.updateColumns();
-    this.getCertificationTaskList(this.paginationPage).then(() => {
-      if (this.showGroupBy && this.certificationGrantType === 'accounts') {
-        this.onRowSelected(this.tasksData);
-      }
-    });
-  },
   watch: {
     refreshTasks(newVal, oldVal) {
       if (newVal && !oldVal) {
@@ -1586,43 +1575,40 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-  .certification-task-list {
-    &_controls {
-      padding: 10px;
-      border-bottom: 1 solid $gray-200;
-    }
+.certification-task-list {
+  &_controls {
+    padding: 10px;
+    border-bottom: 1 solid $gray-200;
   }
-  .small-column {
-    width: 5%;
-  }
-  .clickable:hover {
-    cursor: pointer;
-    text-decoration: underline;
-  }
-  .comments-counter {
-    right: 0.25rem;
-    top: -0.25rem;
+}
+.small-column {
+  width: 5%;
+}
+.clickable:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
+.comments-counter {
+  right: 0.25rem;
+  top: -0.25rem;
+}
+
+::v-deep {
+  .fr-access-cell {
+    padding: 1rem 1.5rem !important;
   }
 
-  ::v-deep {
-    .fr-access-cell {
-      padding: 1rem 1.5rem !important;
-    }
-
-    .selector-cell {
-      width: 40px;
-      padding: 0 .5rem 0 0 !important;
-    }
-
-    .w-208px {
-      width: 208px;
-      box-shadow: -4px 0px 5px 0px rgb(0 0 0 / 5%);
-    }
-    .w-140px {
-      width: 140px;
-    }
-    .w-175px {
-      width: 175px;
-    }
+  .selector-cell {
+    width: 40px;
+    padding: 0 .5rem 0 0 !important;
   }
+
+  .w-208px {
+    width: 208px;
+    box-shadow: -4px 0px 5px 0px rgb(0 0 0 / 5%);
+  }
+  .w-140px {
+    width: 140px;
+  }
+}
 </style>
