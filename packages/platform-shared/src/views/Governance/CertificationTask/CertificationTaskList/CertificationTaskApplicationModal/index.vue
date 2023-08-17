@@ -61,7 +61,7 @@ of the MIT license. See the LICENSE file for details. -->
               {{ $t('common.description') }}
             </dt>
             <dd class="col-lg-8 mb-4">
-              {{ application.description }}
+              {{ application.description || blankValueIndicator }}
             </dd>
             <dt class="col-lg-4">
               {{ $t('governance.certificationTask.lineItemDetailsModal.applicationDetailsTab.ownerLabel') }}
@@ -90,6 +90,9 @@ of the MIT license. See the LICENSE file for details. -->
               </BMedia>
             </dd>
           </dl>
+          <FrGlossaryDisplayForm
+            :glossary-schema="glossarySchema"
+            :glossary-values="glossaryValues" />
         </div>
       </BTab>
     </BTabs>
@@ -99,13 +102,14 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import {
   BButtonClose,
+  BImg,
   BModal,
+  BMedia,
   BTab,
   BTabs,
-  BMedia,
-  BImg,
 } from 'bootstrap-vue';
 import AppSharedUtilsMixin from '@forgerock/platform-shared/src/mixins/AppSharedUtilsMixin';
+import FrGlossaryDisplayForm from '@forgerock/platform-shared/src/components/governance/GlossaryDisplayForm';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 
@@ -113,19 +117,29 @@ export default {
   name: 'CertificationTaskApplicationModal',
   components: {
     BButtonClose,
+    BImg,
     BModal,
+    BMedia,
     BTab,
     BTabs,
+    FrGlossaryDisplayForm,
     FrIcon,
-    BMedia,
-    BImg,
   },
   mixins: [AppSharedUtilsMixin],
   props: {
     application: {
       type: Object,
-      required: true,
+      default: () => ({}),
     },
+    glossarySchema: {
+      type: Array,
+      default: () => ([]),
+    },
+  },
+  data() {
+    return {
+      blankValueIndicator,
+    };
   },
   computed: {
     logo() {
@@ -133,6 +147,9 @@ export default {
     },
     displayName() {
       return this.getApplicationDisplayName(this.application);
+    },
+    glossaryValues() {
+      return this.application.glossary?.idx?.['/application'] || {};
     },
   },
   methods: {
@@ -142,11 +159,6 @@ export default {
         sn,
       });
     },
-  },
-  data() {
-    return {
-      blankValueIndicator,
-    };
   },
 };
 </script>

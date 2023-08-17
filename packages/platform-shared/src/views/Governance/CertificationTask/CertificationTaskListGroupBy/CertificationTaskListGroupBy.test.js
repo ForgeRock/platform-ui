@@ -9,6 +9,7 @@ import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import flushPromises from 'flush-promises';
 import { mount, createWrapper } from '@vue/test-utils';
 import * as CertificationApi from '@forgerock/platform-shared/src/api/governance/CertificationApi';
+import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import i18n from '@/i18n';
 import CertificationTaskListGroupBy from './index';
 
@@ -125,6 +126,7 @@ describe('Glossary', () => {
     },
   });
   beforeEach(() => {
+    jest.spyOn(CommonsApi, 'getGlossarySchema').mockReturnValue(Promise.resolve({ data: { result: [] } }));
     jest.spyOn(CertificationApi, 'getCertificationCountsByCampaign').mockReturnValue(Promise.resolve({
       data: {
         result: [],
@@ -469,11 +471,6 @@ describe('Glossary', () => {
         resultCount: 1,
       },
     }));
-    jest.spyOn(CertificationApi, 'getCertificationTaskAccountDetails').mockReturnValue(Promise.resolve({
-      data: {
-        __PASSWORD__: null, _id: 'c7c5b4b3-e723-48a8-ad15-4176f15f82f0', accountEnabled: false, city: null, country: null, department: null, displayName: 'Perkin Reek', givenName: 'Perkin', jobTitle: null, linkQualifier: 'default', mail: 'Perkin.Reek@autoidzoran.onmicrosoft.com', mailNickname: 'Perkin.Reek', manager: null, memberOf: ['a895d259-3279-45e8-b91c-ed6c8962202f', '0fcfd73c-6c0a-4ad3-a580-95795af493c5'], metadata: { entityType: '/openidm/reconciliation', created: '2023-04-27T18:43:08.454Z' }, mobilePhone: null, onPremisesImmutableId: null, onPremisesSecurityIdentifier: null, otherMails: [], postalCode: null, preferredLanguage: null, proxyAddresses: ['SMTP:Perkin.Reek@autoidzoran.onmicrosoft.com'], state: null, streetAddress: null, surname: 'Reek', usageLocation: null, userPrincipalName: 'Perkin.Reek@autoidzoran.onmicrosoft.com', userType: 'Member',
-      },
-    }));
     jest.spyOn(CertificationApi, 'getCertificationEntitlementDetails').mockReturnValue(Promise.resolve({
       data: {
         __NAME__: 'Zoran User', _id: '0fcfd73c-6c0a-4ad3-a580-95795af493c5', description: 'Zoran User', id: '0fcfd73c-6c0a-4ad3-a580-95795af493c5', linkQualifier: 'default', mailEnabled: false, metadata: { entityType: '/openidm/reconciliation', created: '2023-04-27T17:51:04.804Z' }, proxyAddresses: [], securityEnabled: true,
@@ -543,9 +540,11 @@ describe('Glossary', () => {
       expect(wrapper.emitted()['check-progress']).toBeTruthy();
     });
     it('should open account modal on account name click', async () => {
+      jest.spyOn(CertificationApi, 'getCertificationTaskAccountDetails').mockResolvedValue({});
       const wrapper = setup();
       await flushPromises();
       findByTestId(wrapper, 'account-cell').trigger('click');
+      await flushPromises();
       await wrapper.vm.$nextTick();
       const rootWrapper = createWrapper(wrapper.vm.$root);
       expect(rootWrapper.emitted()['bv::show::modal'][0][0]).toEqual('CertificationTaskAccountModal');
@@ -554,6 +553,7 @@ describe('Glossary', () => {
       const wrapper = setup();
       await flushPromises();
       findByTestId(wrapper, 'application-cell').trigger('click');
+      await flushPromises();
       await wrapper.vm.$nextTick();
       const rootWrapper = createWrapper(wrapper.vm.$root);
       expect(rootWrapper.emitted()['bv::show::modal'][0][0]).toEqual('CertificationTaskApplicationModal');
@@ -562,6 +562,7 @@ describe('Glossary', () => {
       const wrapper = setup();
       await flushPromises();
       findByTestId(wrapper, 'entitlement-cell').trigger('click');
+      await flushPromises();
       await wrapper.vm.$nextTick();
       const rootWrapper = createWrapper(wrapper.vm.$root);
       expect(rootWrapper.emitted()['bv::show::modal'][0][0]).toEqual('CertificationTaskEntEntitlementModal');

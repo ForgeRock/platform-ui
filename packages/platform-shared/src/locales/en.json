@@ -1202,6 +1202,8 @@
       "rejected": "Rejected"
     },
     "certificationTask": {
+      "hideTechnicalDetails": "Hide technical details",
+      "showTechnicalDetails": "Show technical details",
       "noItems": "No Certification Items",
       "noAccessReview": "No {type} Access Reviews",
       "backLink": "Access Reviews",
@@ -1216,6 +1218,7 @@
       "flags": "Flags",
       "comments": "Comments",
       "entitlement": "Entitlement",
+      "glossary": "Glossary",
       "allUsers": "All Users",
       "allApplications": "All Applications",
       "allAccounts": "All Accounts",
@@ -1301,6 +1304,7 @@
         "forwardItemError": "There was an error forwarding this item.",
         "getUserEntitlementsError": "There was an error getting the entitlements user details",
         "getUserError": "There was an error getting the user details",
+        "glossaryError": "There was an error getting the glossary schema",
         "onForwardError": "There was an error trying to forward the certification tasks",
         "reassignError": "There was an error trying to reassign the certifications",
         "revokeError": "There was an error revoking access to this item",
