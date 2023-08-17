@@ -23,10 +23,11 @@ of the MIT license. See the LICENSE file for details. -->
       :name="name"
       :size="size"
       :disabled="disabled">
-      <span
-        class="sr-only">
-        {{ switchLabel }}
-      </span>
+      <slot name="appendLabel">
+        <span class="sr-only">
+          {{ switchLabel }}
+        </span>
+      </slot>
     </BFormCheckbox>
   </div>
 </template>
