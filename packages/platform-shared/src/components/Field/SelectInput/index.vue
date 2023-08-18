@@ -31,7 +31,7 @@ of the MIT license. See the LICENSE file for details. -->
       :searchable="searchable"
       :show-labels="false"
       :allow-empty="allowEmpty"
-      :class="[{'polyfill-placeholder': floatLabels, 'h-100': floatingLabel}, 'white-label-background form-control p-0', {'no-multiselect-label': !this.label }]"
+      :class="[{'polyfill-placeholder': floatLabels, 'h-100': floatingLabel, 'has-prepend-button': hasPrependBtn}, 'white-label-background form-control p-0', {'no-multiselect-label': !this.label }]"
       :placeholder="placeholder"
       :data-testid="testid"
       @search-change="$emit('search-change', $event)"
@@ -136,6 +136,7 @@ export default {
   data() {
     return {
       isExpanded: false,
+      hasPrependBtn: Object.keys(this.$scopedSlots).includes('prependButton'),
     };
   },
   mounted() {
@@ -252,13 +253,30 @@ export default {
 <style lang="scss" scoped>
 @import '~@forgerock/platform-shared/src/components/Field/assets/vue-multiselect.scss';
 
-::v-deep .form-label-group {
+:deep(.form-label-group) {
   .form-label-group-input {
     .multiselect--active {
       outline-offset: 2px;
       outline: 2px solid;
     }
   }
+}
+
+:deep(.has-prepend-button .multiselect__tags) {
+  padding-right: 86px;
+}
+
+:deep(.within-input-button) {
+  z-index: 51;
+  position: absolute;
+  top: -1px;
+  right: 36px;
+}
+
+:deep(.within-input-button .btn) {
+  padding: 0.75rem 1rem !important;
+  border-color: rgba(0,0,0,0) !important;
+  background: transparent !important;
 }
 
 </style>

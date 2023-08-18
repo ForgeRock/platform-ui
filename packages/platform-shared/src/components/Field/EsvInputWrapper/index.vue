@@ -58,16 +58,14 @@ import FrDurationInput from '@forgerock/platform-shared/src/components/Field/Dur
 import FrJsonInput from '@forgerock/platform-shared/src/components/Field/JsonInput';
 import FrKeyValueList from '@forgerock/platform-shared/src/components/Field/KeyValueList';
 import FrMultiselect from '@forgerock/platform-shared/src/components/Field/Multiselect';
-import FrSelect from '@forgerock/platform-shared/src/components/Field/SelectInput';
+import FrSelectInput from '@forgerock/platform-shared/src/components/Field/SelectInput';
 import FrSelectWithActions from '@forgerock/platform-shared/src/components/Field/SelectWithActions';
 import FrSpinButton from '@forgerock/platform-shared/src/components/Field/SpinButton';
 import FrSwitch from '@forgerock/platform-shared/src/components/Field/Switch';
 import FrTag from '@forgerock/platform-shared/src/components/Field/Tag';
 import FrTextArea from '@forgerock/platform-shared/src/components/Field/TextArea';
 import FrTimeInput from '@forgerock/platform-shared/src/components/Field/TimeInput';
-import {
-  coercePlaceholderByType,
-} from '@forgerock/platform-shared/src/utils/esvUtils';
+import { coercePlaceholderByType } from '@forgerock/platform-shared/src/utils/esvUtils';
 import FrEsvDropdown from '../EsvDropdown';
 
 /**
@@ -86,7 +84,7 @@ export default {
     FrJsonInput,
     FrKeyValueList,
     FrMultiselect,
-    FrSelect,
+    FrSelectInput,
     FrSelectWithActions,
     FrSpinButton,
     FrSwitch,
@@ -132,6 +130,9 @@ export default {
         case 'password':
         case 'number':
         case 'integer':
+        case 'select':
+        case 'selectWithActions':
+        case 'tag':
           dropdownWithinInput = true;
           break;
         case 'checkbox':
