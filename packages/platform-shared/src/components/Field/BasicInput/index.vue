@@ -197,20 +197,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    /**
-     * aria-label for the show button
-     */
-    ariaLabelShow: {
-      type: String,
-      default: '',
-    },
-    /**
-     * aria-label for the hide button
-     */
-    ariaLabelHide: {
-      type: String,
-      default: '',
-    },
   },
   data() {
     return {
@@ -231,10 +217,10 @@ export default {
   },
   computed: {
     showText() {
-      return this.ariaLabelShow || this.$t('common.showPassword');
+      return this.$t('common.showLabel', { label: this.getTranslation(this.label) });
     },
     hideText() {
-      return this.ariaLabelHide || this.$t('common.hidePassword');
+      return this.$t('common.hideLabel', { label: this.getTranslation(this.label) });
     },
     fieldType() {
       if (this.type === 'number') {
