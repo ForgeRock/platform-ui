@@ -30,12 +30,15 @@ export const ESVTypes = [
  * List of field types for which we support entering ESV placeholders
  */
 const SUPPORTED_PLACEHOLDER_FIELDS = [
+  'array',
   'checkbox',
   'password',
   'string',
   'text',
   'number',
   'integer',
+  'select',
+  'selectWithActions',
 ];
 
 /**
@@ -107,6 +110,8 @@ export function determineEsvTypeForField(fieldType) {
     case 'string':
     case 'text':
     case 'password':
+    case 'select':
+    case 'selectWithActions':
       return 'string';
     case 'checkbox':
     case 'boolean':
@@ -115,6 +120,10 @@ export function determineEsvTypeForField(fieldType) {
       return 'number';
     case 'integer':
       return 'int';
+    case 'object':
+      return 'object';
+    case 'array':
+      return 'array';
     default:
       throw new Error(`Unable to determine ESVs to show for the field type ${fieldType}`);
   }

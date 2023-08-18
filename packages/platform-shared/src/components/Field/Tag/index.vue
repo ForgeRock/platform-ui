@@ -6,6 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <FrInputLayout
     :description="description"
     :id="`${id}___input__`"
+    :class="{ 'has-prepend-btn': hasPrependBtn }"
     :errors="errors"
     :label="label"
     :name="name"
@@ -68,6 +69,13 @@ of the MIT license. See the LICENSE file for details. -->
           :aria-describedby="`fr-tags-list_${id}`">
       </template>
     </BFormTags>
+    <template
+      v-for="(key, slotName) in $scopedSlots"
+      #[slotName]="slotData">
+      <slot
+        :name="slotName"
+        v-bind="slotData" />
+    </template>
   </FrInputLayout>
 </template>
 
@@ -97,6 +105,7 @@ export default {
     return {
       inputValue: [],
       oldValue: [],
+      hasPrependBtn: Object.keys(this.$scopedSlots).includes('prependButton'),
     };
   },
   methods: {
@@ -131,6 +140,7 @@ export default {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
   min-height: calc(3rem + 2px);
+  border-radius: $border-radius !important;
 
   label,
   .input-group > label {
@@ -206,5 +216,19 @@ export default {
       transition: none;
     }
   }
+}
+
+.has-prepend-btn .b-form-tags {
+  padding-right: 56px;
+}
+
+:deep(.within-input-button) {
+  position: absolute;
+  right: 0;
+}
+
+:deep(.within-input-button .btn) {
+  border: none !important;
+  background: transparent !important;
 }
 </style>
