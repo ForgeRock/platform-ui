@@ -72,6 +72,7 @@
     "ManagedIdentities": "Managed Identities",
     "ManagedObjectSettings": "Managed Object Settings",
     "NotFound": "Not Found",
+    "OAuthClients": "OAuth2 Clients",
     "OAuthReturn": "OAuth Return",
     "pageTitle": "Platform Admin - {page}",
     "PasswordPolicy": "Password Policy",
@@ -109,6 +110,7 @@
     "journeys": "Journeys",
     "managed": "Manage",
     "nativeConsoles": "Native Consoles",
+    "oauthClients": "OAuth2 Clients",
     "pipelines": "Pipelines",
     "provider": "Provider",
     "provisioningRole": "External Role",
@@ -1037,6 +1039,15 @@
         "deleteAppFail": "Unable to delete application",
         "noDataTitle": "You haven't added any applications yet",
         "noDataSubtitle": "Set up an application to use ForgeRock authentication."
+      },
+      "listOauthClients": {
+        "deleteFail": "Unable to delete OAuth2 Client",
+        "deleteSuccess": "OAuth2 Client successfully deleted",
+        "noDataSubtitleOauth": "OAuth2 clients configured using the API or the native console will appear here.",
+        "noDataTitleOauth": "You haven't added any OAuth2 Clients yet",
+        "noSearchResults": "No OAuth2 Clients found.",
+        "subTitle": "Manage legacy and API-configured OAuth2 Clients",
+        "title": "OAuth2 Clients"
       },
       "nativeApp": {
         "alt": "Native App",
