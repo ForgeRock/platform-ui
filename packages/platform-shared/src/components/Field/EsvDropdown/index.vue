@@ -25,7 +25,9 @@ of the MIT license. See the LICENSE file for details. -->
         {{ secretsVisible ? $t('esvInput.secretsAndVariables') : $t('common.variables') }}
       </h5>
     </BDropdownText>
-    <BDropdownForm @submit.stop.prevent>
+    <BDropdownForm
+      @submit.stop.prevent
+      @click.stop.prevent>
       <FrSearchInput
         v-model="query"
         :placeholder="secretsVisible ? $t('esvInput.searchSecretsAndVariables') : $t('esvInput.searchVariables')"
