@@ -82,6 +82,13 @@ of the MIT license. See the LICENSE file for details. -->
         </BButton>
       </div>
     </template>
+    <template
+      v-for="(key, slotName) in $scopedSlots"
+      #[slotName]="slotData">
+      <slot
+        :name="slotName"
+        v-bind="slotData" />
+    </template>
   </FrSelectInput>
 </template>
 
