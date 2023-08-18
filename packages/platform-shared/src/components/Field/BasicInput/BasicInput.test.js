@@ -246,19 +246,6 @@ describe('BasicInput', () => {
         expect(showPasswordButton.exists()).toBeTruthy();
       });
 
-      it('supports custom aria labels for show button', () => {
-        const wrapper = setup({ type: 'password', ariaLabelShow: 'Show text', ariaLabelHide: 'Hide text' });
-        const showPasswordButton = findByTestId(wrapper, 'btn-show-password-stub-testid');
-        expect(showPasswordButton.attributes('aria-label')).toBe('Show text');
-      });
-
-      it('supports custom aria labels for hide button', () => {
-        const wrapper = setup({ type: 'password', ariaLabelShow: 'Show text', ariaLabelHide: 'Hide text' });
-        const showPasswordButton = findByTestId(wrapper, 'btn-show-password-stub-testid');
-        showPasswordButton.trigger('click');
-        expect(showPasswordButton.attributes('aria-label')).toBe('Hide text');
-      });
-
       it('when disabled', () => {
         const wrapper = setup({ type: 'password', disabled: true });
 
@@ -308,18 +295,18 @@ describe('BasicInput', () => {
 
   describe('@actions', () => {
     it('should reveal password', async () => {
-      const wrapper = setup({ type: 'password' });
+      const wrapper = setup({ type: 'password', label: 'My Input' });
       const input = findByTestId(wrapper, 'input-stub-testid');
       const showPasswordButton = findByTestId(wrapper, 'btn-show-password-stub-testid');
 
       expect(showPasswordButton.attributes('name')).toBe('revealButton');
       expect(input.attributes('type')).toBe('password');
-      expect(showPasswordButton.attributes('aria-label')).toBe('Show password');
+      expect(showPasswordButton.attributes('aria-label')).toBe('Show My Input');
 
       await showPasswordButton.trigger('click');
 
       expect(input.attributes('type')).toBe('text');
-      expect(showPasswordButton.attributes('aria-label')).toBe('Hide password');
+      expect(showPasswordButton.attributes('aria-label')).toBe('Hide My Input');
     });
 
     it('should not reveal password when input is disabled', async () => {
