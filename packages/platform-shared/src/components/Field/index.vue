@@ -5,7 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
     :class="[{'d-flex': booleanOrCheckbox}, 'fr-field']"
-    :id="fieldName"
+    :id="fieldWrapperId"
     :data-testid="`fr-field-${fieldName}`">
     <slot
       v-if="!checkboxField"
@@ -140,6 +140,12 @@ export default {
         return 'FrEsvInputWrapper';
       }
       return this.determineInputComponent();
+    },
+    fieldWrapperId() {
+      if (this.id) {
+        return `${this.id}_field_wrapper`;
+      }
+      return `${this.fieldName.replace(/\s/g, '')}_field_wrapper`;
     },
     /**
      * Component to be displayed together with extended ESV functionality when placeholders can be entered
