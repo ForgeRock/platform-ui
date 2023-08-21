@@ -53,7 +53,7 @@ describe('Field Component', () => {
       stubs,
     });
     await flush();
-    const input = wrapper.find('#testField input');
+    const input = wrapper.find(`#${wrapper.vm.fieldWrapperId}`).find('input');
     input.setValue('test');
     await flush();
     expect(input.element.value).toBe('test');
@@ -73,7 +73,7 @@ describe('Field Component', () => {
       stubs,
     });
     await flush();
-    const input = wrapper.find('#testField input');
+    const input = wrapper.find(`#${wrapper.vm.fieldWrapperId}`).find('input');
     input.setValue(5);
     await flush();
     expect(input.element.value).not.toBe('3');
@@ -96,7 +96,7 @@ describe('Field Component', () => {
       stubs,
     });
     await flush();
-    const input = wrapper.find('#testField input');
+    const input = wrapper.find(`#${wrapper.vm.fieldWrapperId}`).find('input');
     const passwordButton = wrapper.find('.input-group-append');
     expect(passwordButton.exists()).toBe(true);
     input.setValue('pass');
@@ -170,7 +170,7 @@ describe('Field Component', () => {
     });
     await flush();
     expect(wrapper.vm.$attrs.value).toStrictEqual([]);
-    const input = wrapper.find('#testField input');
+    const input = wrapper.find(`#${wrapper.vm.fieldWrapperId}`).find('input');
     input.setValue('should convert to empty array without hitting return');
     await flush();
     expect(wrapper.vm.$attrs.value).toStrictEqual([]);
