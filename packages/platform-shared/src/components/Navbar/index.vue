@@ -7,7 +7,8 @@ of the MIT license. See the LICENSE file for details. -->
     <BNavbar
       class="fr-main-navbar align-content-center"
       data-testid="fr-main-navbar"
-      toggleable>
+      toggleable
+      :aria-label="$t('sideMenu.headerNavigation')">
       <button
         v-show="!hideToggle"
         @click="toggleMenu"
