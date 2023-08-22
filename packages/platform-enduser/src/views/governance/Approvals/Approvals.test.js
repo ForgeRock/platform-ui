@@ -94,7 +94,7 @@ const openModalMock = {
       sn: 'Hertel',
       userName: 'andrew.hertel@test.com',
     },
-    type: 'governance.accessRequest.requestTypes.applicationRevoke',
+    type: 'Remove Application',
   },
   rawData: {
     application: {
@@ -190,7 +190,7 @@ describe('Approvals', () => {
     expect(pagination.exists()).toBeTruthy();
   });
 
-  fit('sets page size and gets approvals based on event from pagination component', async () => {
+  it('sets page size and gets approvals based on event from pagination component', async () => {
     AccessRequestApi.getUserApprovals = jest.fn().mockReturnValue(
       Promise.resolve({
         data: {
@@ -245,8 +245,18 @@ describe('Approvals', () => {
     expect(wrapper.vm.currentPage).toBe(2);
     expect(getApprovalsSpy).toHaveBeenCalledWith(
       undefined,
-      { pageNumber: 2, pageSize: 10, status: i18n.t('governance.status.pending') },
-      {},
+      {
+        _pagedResultsOffset: 10,
+        _pageSize: 10,
+        _sortKeys: 'decision.startDate',
+        _sortType: 'date',
+        _sortDir: 'desc',
+        actorStatus: 'active',
+      },
+      {
+        operator: 'AND',
+        operand: [],
+      },
     );
   });
 
@@ -266,11 +276,21 @@ describe('Approvals', () => {
     const getApprovalsSpy = jest.spyOn(AccessRequestApi, 'getUserApprovals');
 
     const toolbar = findByTestId(wrapper, 'approvals-toolbar');
-    toolbar.vm.$emit('status-change', 'newStatus');
+    toolbar.vm.$emit('status-change', 'complete');
     expect(getApprovalsSpy).toHaveBeenCalledWith(
       undefined,
-      { pageNumber: 1, pageSize: 10, status: 'newStatus' },
-      {},
+      {
+        _pagedResultsOffset: 0,
+        _pageSize: 10,
+        _sortKeys: 'decision.startDate',
+        _sortType: 'date',
+        _sortDir: 'desc',
+        actorStatus: 'inactive',
+      },
+      {
+        operator: 'AND',
+        operand: [],
+      },
     );
   });
 
@@ -290,11 +310,34 @@ describe('Approvals', () => {
     const getApprovalsSpy = jest.spyOn(AccessRequestApi, 'getUserApprovals');
 
     const toolbar = findByTestId(wrapper, 'approvals-toolbar');
-    toolbar.vm.$emit('filter-change', { filter: 'test' });
+    toolbar.vm.$emit('filter-change', {
+      requestId: 'testId',
+    });
+
+    await flushPromises();
+
     expect(getApprovalsSpy).toHaveBeenCalledWith(
       undefined,
-      { pageNumber: 1, pageSize: 10, status: i18n.t('governance.status.pending') },
-      { filter: 'test' },
+      {
+        _pagedResultsOffset: 0,
+        _pageSize: 10,
+        _sortKeys: 'decision.startDate',
+        _sortType: 'date',
+        _sortDir: 'desc',
+        actorStatus: 'active',
+      },
+      {
+        operator: 'AND',
+        operand: [
+          {
+            operator: 'EQUALS',
+            operand: {
+              targetName: 'id',
+              targetValue: 'testId',
+            },
+          },
+        ],
+      },
     );
   });
 
