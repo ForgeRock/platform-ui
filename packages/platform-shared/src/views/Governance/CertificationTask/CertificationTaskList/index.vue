@@ -199,7 +199,7 @@ of the MIT license. See the LICENSE file for details. -->
       <template #cell(entitlement)="{ item }">
         <div class="d-flex justify-content-between align-items-center">
           <BButton
-            class="text-dark"
+            class="text-dark pl-0"
             variant="link"
             data-testid="entitlement-cell"
             @click.stop="openEntitlementModal(item)">
@@ -210,12 +210,31 @@ of the MIT license. See the LICENSE file for details. -->
       <template #cell(account)="{ item }">
         <div class="d-flex justify-content-between align-items-center">
           <BButton
-            class="text-dark"
+            class="text-dark pl-0"
             data-testid="account-cell"
             variant="link"
             @click.stop="openAccountModal(item)">
             {{ getResourceDisplayName(item, '/account') }}
           </BButton>
+        </div>
+      </template>
+      <template #cell(flags)="{ item }">
+        <div class="d-flex align-items-center">
+          <div
+            v-for="(flag, index) in item.flags"
+            :key="`flags-${item.id}-${index}`"
+            class="cursor-pointer">
+            <FrIcon
+              :id="`flags-${item.id}-${index}`"
+              class="md-24 mr-3"
+              :name="flagIcons[flag]" />
+            <BTooltip
+              :target="`flags-${item.id}-${index}`"
+              triggers="hover"
+              placement="top">
+              {{ $t(`governance.flags.${flag}`) }}
+            </BTooltip>
+          </div>
         </div>
       </template>
       <template #cell(comments)="{ item }">
@@ -512,6 +531,7 @@ import {
 } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import { ADMIN_REVIEWER_PERMISSIONS } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { CampaignStates } from '@forgerock/platform-shared/src/utils/governance/types';
+import { getGrantFlags, isRoleBased, icons } from '@forgerock/platform-shared/src/utils/governance/flags';
 import FrGovernanceUserDetailsModal from '@forgerock/platform-shared/src/components/governance/UserDetailsModal';
 import FrCertificationActivityModal from './CertificationTaskActivityModal';
 import FrCertificationTaskAccountModal from './CertificationTaskAccountModal';
@@ -669,6 +689,7 @@ export default {
       currentUserPermissions: {},
       currentUserSelectedModal: {},
       enableAddComments: true,
+      flagIcons: icons,
       sortDir: 'asc',
       sortBy: 'user',
       totalRows: 0,
@@ -740,6 +761,13 @@ export default {
           label: this.$t('governance.certificationTask.account'),
           sortable: false,
           class: 'text-truncate fr-access-cell',
+          show: true,
+        },
+        {
+          key: 'flags',
+          label: this.$t('governance.certificationTask.flags'),
+          sortable: false,
+          class: 'w-175px text-truncate fr-access-cell',
           show: true,
         },
         {
@@ -1098,14 +1126,12 @@ export default {
       this.currentPage = page;
       const resultData = resourceData.data.result;
 
-      this.tasksData = resultData.map((task) => {
-        const grantTypes = task.relationship?.properties?.grantTypes;
-        return {
-          ...task,
-          selected: this.isTaskSelected(task.id),
-          isRoleBasedGrant: (grantTypes && grantTypes.findIndex((grant) => (grant.grantType === 'role')) !== -1) || false,
-        };
-      });
+      this.tasksData = resultData.map((task) => ({
+        ...task,
+        selected: this.isTaskSelected(task.id),
+        isRoleBasedGrant: isRoleBased(task) || false,
+        flags: getGrantFlags(task),
+      }));
 
       this.$emit('check-progress');
 
@@ -1581,6 +1607,9 @@ export default {
     }
     .w-140px {
       width: 140px;
+    }
+    .w-175px {
+      width: 175px;
     }
   }
 </style>
