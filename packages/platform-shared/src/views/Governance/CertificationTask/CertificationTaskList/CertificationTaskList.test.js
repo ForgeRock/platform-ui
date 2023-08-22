@@ -205,6 +205,16 @@ describe('CertificationTaskList', () => {
       wrapper.vm.loadTasksList(resource, 1);
       expect(wrapper.vm.tasksData).toEqual(expectedValue);
     });
+    it('should add flags to item', () => {
+      shallowMountComponent({}, {}, { isTaskSelected: jest.fn() });
+      const resource = {
+        data: {
+          result: [{}],
+        },
+      };
+      wrapper.vm.loadTasksList(resource, 1);
+      expect(wrapper.vm.tasksData[0].flags).toEqual(['NEW_ACCESS']);
+    });
     it('should emit check-progress if there is a task in status', () => {
       shallowMountComponent({}, {}, { isTaskSelected: jest.fn() });
       const resource = {

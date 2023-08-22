@@ -1213,6 +1213,7 @@
       "user": "User",
       "application": "Application",
       "account": "Account",
+      "flags": "Flags",
       "comments": "Comments",
       "entitlement": "Entitlement",
       "allUsers": "All Users",
@@ -1403,6 +1404,12 @@
       "toRole": "Users with assigned role",
       "toUser": "Another user",
       "title": " Forward Access Review"
+    },
+    "flags": {
+      "RECON": "Recon",
+      "ROLEBASED": "Role-based",
+      "NEW_ACCESS": "New Access",
+      "TEMPORAL": "Temporal Constraings"
     }
   },
   "esvInput": {
