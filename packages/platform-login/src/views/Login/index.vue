@@ -107,11 +107,13 @@ of the MIT license. See the LICENSE file for details. -->
                       </form>
                     </div>
                   </BCardBody>
-                  <BCardBody v-else>
+                  <BCardBody
+                    aria-live="polite"
+                    v-else>
                     <div class="h-100 d-flex">
                       <div
                         class="fr-center-card"
-                        aria-live="polite">
+                      >
                         <Spinner class="mb-4" />
                       </div>
                     </div>
