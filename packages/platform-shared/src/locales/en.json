@@ -839,12 +839,14 @@
   "sideMenu": {
     "dashboard": "Dashboard",
     "dataSources": "Data Sources",
+    "headerNavigation": "Header navigation",
     "pipelines": "Pipelines",
     "risk": "Risk",
     "riskConfig": "Risk Config",
     "riskAdministration": "Risk Administration",
     "riskDashboard": "Risk Dashboard",
     "selectIcon": "Please select icon in admin (Managed Object) settings",
+    "sidebarNavigation": "Sidebar navigation",
     "toggleSidebar": "Toggle sidebar"
   },
   "timezone": {
