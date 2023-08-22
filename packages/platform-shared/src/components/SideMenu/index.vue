@@ -6,8 +6,9 @@ of the MIT license. See the LICENSE file for details. -->
   <div>
     <nav
       id="fr-sidebar-nav"
+      class="fr-sidebar-wrapper"
       data-testid="fr-sidebar-nav"
-      class="fr-sidebar-wrapper">
+      :aria-label="$t('sideMenu.sidebarNavigation')">
       <div class="fr-sidebar-nav h-100 d-flex flex-column">
         <div class="fr-sidebar-brand">
           <FrDropdownMenu
