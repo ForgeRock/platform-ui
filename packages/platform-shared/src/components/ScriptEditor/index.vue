@@ -17,6 +17,7 @@ of the MIT license. See the LICENSE file for details. -->
         <FrField
           v-show="showScriptType"
           v-model="scriptType.value"
+          class="mt-2"
           name="scriptType"
           type="select"
           :options="scriptType.options"
