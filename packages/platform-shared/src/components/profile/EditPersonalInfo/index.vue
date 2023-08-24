@@ -8,30 +8,14 @@ of the MIT license. See the LICENSE file for details. -->
     ref="observer">
     <BModal
       id="userDetailsModal"
-      size="lg"
       cancel-variant="outline-secondary"
+      size="lg"
+      title-class="h5"
+      title-tag="h2"
+      :title="title"
       @show="setModal"
       @keydown.enter.native.prevent="saveForm"
       :static="isTesting">
-      <template #modal-header>
-        <div class="d-flex w-100 h-100">
-          <h5
-            class="modal-title align-self-center text-center"
-            data-testid="title-edit-personal-info">
-            {{ title }}
-          </h5>
-          <button
-            type="button"
-            :aria-label="$t('common.close')"
-            class="close"
-            @click="hideModal"
-            data-testid="btn-edit-personal-info-close">
-            <FrIcon
-              class="font-weight-bolder md-24"
-              name="close" />
-          </button>
-        </div>
-      </template>
       <!-- Editing profile currently only supports String, Number and Boolean-->
       <BContainer>
         <BRow>
@@ -116,7 +100,6 @@ import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrField from '@forgerock/platform-shared/src/components/Field';
-import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrListField from '@forgerock/platform-shared/src/components/ListField';
 import ListsMixin from '@forgerock/platform-shared/src/mixins/ListsMixin';
 
@@ -140,7 +123,6 @@ export default {
     BModal,
     BRow,
     FrField,
-    FrIcon,
     FrListField,
     ValidationObserver,
   },

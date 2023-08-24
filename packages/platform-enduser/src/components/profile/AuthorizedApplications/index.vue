@@ -100,6 +100,8 @@ of the MIT license. See the LICENSE file for details. -->
     <BModal
       id="authAppConfirmationModal"
       ref="fsModal"
+      title-class="h5"
+      title-tag="h2"
       :title="$t('pages.profile.oauthApplications.removeConfirmationTitle', {applicationName: confirmApplication.name})">
       {{ $t('pages.profile.oauthApplications.removeConfirmation', {applicationName: confirmApplication.name }) }}
       <template #modal-footer="{ cancel }">

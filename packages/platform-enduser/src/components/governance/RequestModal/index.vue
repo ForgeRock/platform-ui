@@ -7,13 +7,15 @@ of the MIT license. See the LICENSE file for details. -->
     v-slot="{ invalid }"
     ref="observer">
     <BModal
-      :body-class="modalType === REQUEST_MODAL_TYPES.DETAILS ? 'p-0' : ''"
-      :size="size"
-      :id="modalId"
-      :title="title"
-      :static="isTesting"
       ref="governance-request-modal"
+      title-class="h5"
+      title-tag="h2"
+      :body-class="modalType === REQUEST_MODAL_TYPES.DETAILS ? 'p-0' : ''"
       :hide-footer="loading"
+      :id="modalId"
+      :size="size"
+      :static="isTesting"
+      :title="title"
       @hidden="$emit('modal-closed')">
       <template v-if="loading">
         <FrSpinner
