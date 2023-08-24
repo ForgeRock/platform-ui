@@ -17,6 +17,8 @@ of the MIT license. See the LICENSE file for details. -->
         {{ $t('governance.requestModal.noComments') }}
       </h2>
       <BButton
+        v-if="!hideActions"
+        data-testid="btn-add-comments-no-data"
         variant="link"
         @click="$emit('change-modal-type', REQUEST_MODAL_TYPES.COMMENT)">
         <FrIcon
@@ -33,7 +35,9 @@ of the MIT license. See the LICENSE file for details. -->
           {{ $t('common.comments') }}
         </h2>
         <BButton
+          v-if="!hideActions"
           class="py-0 px-2"
+          data-testid="btn-add-comments"
           variant="link"
           @click="$emit('change-modal-type', REQUEST_MODAL_TYPES.COMMENT)">
           <FrIcon
@@ -129,6 +133,10 @@ export default {
     item: {
       type: Object,
       required: true,
+    },
+    hideActions: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
