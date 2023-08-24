@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -22,7 +22,8 @@ export const initServices = () => new Promise((resolve) => {
     .get('/jas/tenants', newHeaders)
     .then((tenantResponse) => {
       const tenants = tenantResponse.data;
-      resolve({ token, tenants });
+      // eslint-disable-next-line no-undef
+      resolve({ token, deployConfig, tenants });
     })
     .catch(() => resolve([]));
 });

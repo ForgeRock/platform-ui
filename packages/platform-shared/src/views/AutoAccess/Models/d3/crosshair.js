@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -65,7 +65,33 @@ export function updateCrosshairHover(key, x, y) {
     .style('opacity', 0.3);
 }
 
+export function updateSelectedCrosshair() {
+  [ChartKey.ROC, ChartKey.PR].forEach((key) => {
+    const scales = getScales(key);
+    // eslint-disable-next-line no-undef
+    const selectedVal = getSelected();
+
+    const x = scales.scaleX(selectedVal[chartMeta[key].x]);
+    const y = scales.scaleY(selectedVal[chartMeta[key].y]);
+
+    d3.select(`#${key}-chart`)
+      .select('.roc-pr-chart-selectedCrosshair[data-axis="x"]')
+      .attr('x1', x)
+      .attr('y1', scales.scaleY(scales.yMin))
+      .attr('x2', x)
+      .attr('y2', y);
+
+    d3.select(`#${key}-chart`)
+      .select('.roc-pr-chart-selectedCrosshair[data-axis="y"]')
+      .attr('x1', scales.scaleX(0))
+      .attr('y1', y)
+      .attr('x2', x)
+      .attr('y2', y);
+  });
+}
+
 export default {
   updateCrosshair,
   updateCrosshairHover,
+  updateSelectedCrosshair,
 };
