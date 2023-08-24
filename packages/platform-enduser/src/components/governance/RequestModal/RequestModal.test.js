@@ -282,4 +282,42 @@ describe('RequestModal', () => {
     expect(closeSpy).toHaveBeenCalled();
     expect(cancel).not.toHaveBeenCalled();
   });
+  describe('hideActions', () => {
+    it('hides approve action', async () => {
+      const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, hideActions: true });
+      await flushPromises();
+      const approve = findByTestId(wrapper, 'governance-request-modal-goto-approve-btn');
+      expect(approve.exists()).toBeFalsy();
+    });
+    it('hides reject action', async () => {
+      const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, hideActions: true });
+      await flushPromises();
+      const reject = findByTestId(wrapper, 'governance-request-modal-goto-reject-btn');
+      expect(reject.exists()).toBeFalsy();
+    });
+    it('hides forward action', async () => {
+      const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, hideActions: true });
+      await flushPromises();
+      const forward = findByTestId(wrapper, 'governance-request-modal-goto-forward-btn');
+      expect(forward.exists()).toBeFalsy();
+    });
+    it('hides cancel action', async () => {
+      const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, isMyRequests: true, hideActions: true });
+      await flushPromises();
+      const cancel = findByTestId(wrapper, 'governance-request-modal-goto-cancelrequest-btn');
+      expect(cancel.exists()).toBeFalsy();
+    });
+    it('still shows done button for approvals', async () => {
+      const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, hideActions: true });
+      await flushPromises();
+      const cancel = findByTestId(wrapper, 'governance-request-modal-done-btn');
+      expect(cancel.exists()).toBeTruthy();
+    });
+    it('still shows done button for my requests', async () => {
+      const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, isMyRequests: true, hideActions: true });
+      await flushPromises();
+      const cancel = findByTestId(wrapper, 'governance-request-modal-done-btn');
+      expect(cancel.exists()).toBeTruthy();
+    });
+  });
 });

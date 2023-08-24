@@ -30,6 +30,7 @@ of the MIT license. See the LICENSE file for details. -->
         <Component
           :is="tab.component"
           :item="item"
+          :hide-actions="hideActions"
           v-on="$listeners"
         />
       </BTab>
@@ -60,6 +61,10 @@ export default {
     item: {
       type: Object,
       required: true,
+    },
+    hideActions: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
