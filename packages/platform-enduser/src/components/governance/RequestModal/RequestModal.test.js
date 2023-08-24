@@ -11,6 +11,7 @@ import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import getPriorityImageSrc from '@/components/utils/governance/AccessRequestUtils';
 import RequestModal, { REQUEST_MODAL_TYPES } from './index';
 import i18n from '@/i18n';
+import * as AccessRequestApi from '../../../api/governance/AccessRequestApi';
 
 jest.mock('@/components/utils/governance/AccessRequestUtils');
 
@@ -74,6 +75,9 @@ describe('RequestModal', () => {
             },
             comment: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore.',
             action: 'comment',
+          }],
+          phases: [{
+            name: 'phaseTest',
           }],
         },
         request: {
@@ -239,5 +243,43 @@ describe('RequestModal', () => {
     await wrapper.vm.$nextTick();
     expect(loader.exists()).toBeTruthy();
     expect(loadingText.text()).toEqual('Rejecting Request...');
+  });
+
+  it('modalaction got called and called close function with undefined isSuccessfulAction, modaltype = DETAILS, and without previousModal', async () => {
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
+    const cancel = jest.fn();
+    jest.spyOn(AccessRequestApi, 'requestAction').mockImplementation(() => Promise.resolve({ data: 'results' }));
+    const closeSpy = jest.spyOn(wrapper.vm, 'close');
+    wrapper.vm.modalAction(wrapper.vm.item, cancel);
+    await wrapper.vm.$nextTick();
+    await flushPromises();
+    expect(closeSpy).toHaveBeenCalled();
+    expect(cancel).toHaveBeenCalled();
+  });
+  it('modalaction got called and called close function with undefined isSuccessfulAction, modaltype = COMMENT, and previousModal = DETAILS', async () => {
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
+    const cancel = jest.fn();
+    jest.spyOn(AccessRequestApi, 'requestAction').mockImplementation(() => Promise.resolve({ data: 'results' }));
+    const closeSpy = jest.spyOn(wrapper.vm, 'close');
+    wrapper.vm.modalType = 'COMMENT';
+    wrapper.vm.modalAction(wrapper.vm.item, cancel);
+    await wrapper.vm.$nextTick();
+    await flushPromises();
+    expect(wrapper.vm.modalType).toEqual('DETAILS');
+    expect(closeSpy).toHaveBeenCalled();
+    expect(cancel).not.toHaveBeenCalled();
+  });
+  it('modalaction got called and called close function with undefined isSuccessfulAction, modaltype = CANCEL, and previousModal = DETAILS', async () => {
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
+    const cancel = jest.fn();
+    jest.spyOn(AccessRequestApi, 'requestAction').mockImplementation(() => Promise.resolve({ data: 'results' }));
+    const closeSpy = jest.spyOn(wrapper.vm, 'close');
+    wrapper.vm.modalType = 'CANCEL';
+    wrapper.vm.modalAction(wrapper.vm.item, cancel);
+    await wrapper.vm.$nextTick();
+    await flushPromises();
+    expect(wrapper.vm.modalType).toEqual('DETAILS');
+    expect(closeSpy).toHaveBeenCalled();
+    expect(cancel).not.toHaveBeenCalled();
   });
 });

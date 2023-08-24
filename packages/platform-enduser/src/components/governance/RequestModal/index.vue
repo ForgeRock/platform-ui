@@ -338,11 +338,9 @@ export default {
     close(cancel, isSuccessfulAction = false) {
       if (isSuccessfulAction && !(this.modalType === REQUEST_MODAL_TYPES.COMMENT)) {
         cancel();
-      } else if (this.previousModal === REQUEST_MODAL_TYPES.DETAILS && this.modalType === REQUEST_MODAL_TYPES.COMMENT) {
-        this.modalType = REQUEST_MODAL_TYPES.DETAILS;
-      } else if (this.previousModal === REQUEST_MODAL_TYPES.DETAILS && this.modalType === REQUEST_MODAL_TYPES.REASSIGN) {
-        this.modalType = REQUEST_MODAL_TYPES.DETAILS;
-      } else if (this.modalType === REQUEST_MODAL_TYPES.CANCEL && this.previousModal === REQUEST_MODAL_TYPES.DETAILS) {
+      } else if (this.previousModal === REQUEST_MODAL_TYPES.DETAILS
+        && (this.modalType === REQUEST_MODAL_TYPES.COMMENT
+        || this.modalType === REQUEST_MODAL_TYPES.CANCEL)) {
         this.modalType = REQUEST_MODAL_TYPES.DETAILS;
       } else {
         cancel();
