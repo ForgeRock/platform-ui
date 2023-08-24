@@ -10,9 +10,9 @@ of the MIT license. See the LICENSE file for details. -->
     @keydown.enter.native.prevent="unshare">
     <template #modal-header>
       <div class="d-flex w-100 h-100">
-        <h6 class="my-0">
+        <h2 class="my-0 h6">
           {{ $t('pages.uma.resources.unshareResource', {resourceName: resourceName}) }}
-        </h6>
+        </h2>
         <button
           type="button"
           :aria-label="$t('common.close')"

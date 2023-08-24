@@ -9,11 +9,12 @@ of the MIT license. See the LICENSE file for details. -->
     no-close-on-backdrop
     no-close-on-esc
     cancel-variant="link"
+    title-class="h5"
+    title-tag="h2"
     :ok-title="$t('common.next')"
     :ok-disabled="invalid"
     :title="$t('governance.accessRequest.newRequest.title')"
-    @ok="requestAccess"
-  >
+    @ok="requestAccess">
     <div>
       <BRow class="mb-4">
         <BCol lg="4">

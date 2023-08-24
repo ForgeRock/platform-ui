@@ -105,6 +105,8 @@ of the MIT license. See the LICENSE file for details. -->
     <BModal
       dialog-class="fr-modal"
       id="confirmDisconnectModal"
+      title-class="h5"
+      title-tag="h2"
       :title="$t('pages.profile.social.deleteModalTitle', { providerName: selectedProvider })">
       {{ $t('pages.profile.social.deleteModalBody', { providerName: selectedProvider }) }}
       <template #modal-footer>
