@@ -27,11 +27,12 @@ of the MIT license. See the LICENSE file for details. -->
       <BDropdownItem @click="$router.push({ name: 'Profile' })">
         <BMedia class="text-left">
           <template #aside>
+            <!-- alt text purposefully set to empty string as this is considered a 'decorative image' in WCAG standards -->
             <img
-              :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')"
-              :alt="$t('common.avatar')"
+              alt=""
+              height="34"
               width="34"
-              height="34">
+              :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')">
           </template>
           <h5 class="my-0 text-truncate">
             {{ userDetails.name }}
