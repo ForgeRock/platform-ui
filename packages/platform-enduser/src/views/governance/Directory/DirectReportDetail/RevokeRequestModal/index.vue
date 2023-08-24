@@ -6,6 +6,8 @@ of the MIT license. See the LICENSE file for details. -->
   <BModal
     id="revoke-request-modal"
     size="lg"
+    title-class="h5"
+    title-tag="h2"
     :static="isTesting"
     :title="$t('governance.directReports.revokeRequest')"
     @hidden="$emit('hidden')">

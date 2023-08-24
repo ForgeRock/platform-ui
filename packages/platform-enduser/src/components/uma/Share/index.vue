@@ -5,9 +5,8 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <BModal
     id="shareModal"
-    class=""
-    ref="fsModal"
     cancel-variant="outline-secondary"
+    ref="fsModal"
     @keydown.enter.native.prevent="validateResource"
     @hide="resetModal">
     <template #modal-header>
@@ -19,9 +18,9 @@ of the MIT license. See the LICENSE file for details. -->
               fallback="description" />
           </div>
           <div class="media-body align-self-center">
-            <h6 class="my-0">
+            <h2 class="my-0 h6">
               {{ resource.name }}
-            </h6>
+            </h2>
             <small
               class="text-muted"
               v-if="!resource.policy">
@@ -105,9 +104,9 @@ of the MIT license. See the LICENSE file for details. -->
             :alt="$t('common.avatar')"
             class="mr-3" />
           <div class="media-body">
-            <h6 class="mt-2">
+            <h2 class="mt-2 h6">
               {{ permission.subject }}
-            </h6>
+            </h2>
           </div>
           <div class="d-flex ml-3 align-self-center">
             <BDropdown
