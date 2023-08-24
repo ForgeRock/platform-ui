@@ -1,18 +1,18 @@
-<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
-    :id="fieldModel.key"
+    :id="field.key"
     :class="[{'d-flex flex-row-reverse': appendTitle}, 'fr-field']"
     v-if="!loading">
     <label
       v-if="displayExternalTitle || appendTitle"
-      :class="[{'mb-0 mt-2': fieldModel.type === 'boolean'}, {'mb-1 align-top': fieldModel.type === 'checkbox'}, 'text-secondary w-100']">
+      :class="[{'mb-0 mt-2': this.field.type === 'boolean'}, {'mb-1 align-top': this.field.type === 'checkbox'}, 'text-secondary w-100']">
       <slot name="title">
         <span
-          :id="`helppopover-${fieldModel.key}`"
+          :id="`helppopover-${field.key}`"
           tabindex="0"
           class="fr-label-text">
           {{ externalTitle }}
@@ -41,57 +41,57 @@ of the MIT license. See the LICENSE file for details. -->
     <ValidationProvider
       v-else
       mode="aggressive"
-      :ref="fieldModel.key"
-      :vid="fieldModel.key"
-      :name="fieldModel.title"
-      :immediate="fieldModel.validationImmediate"
+      :ref="field.key"
+      :vid="field.key"
+      :name="field.title"
+      :immediate="field.validationImmediate"
       :bails="false"
-      :rules="fieldModel.validation"
+      :rules="field.validation"
       v-slot="{ errors }">
       <FrMultiselect
-        @input="$emit('valueChange', fieldModel.value)"
+        @input="$emit('valueChange', field.value)"
         :class="[{'fr-error': errors.length || failedPolicies.length}, 'floating-label-input']"
         v-if="fieldType === 'multiselect'"
         v-model="inputValue"
         v-bind="attrs"
         v-on="$listeners"
         :errors="failedPolicies.concat(errors)"
-        :field-name="fieldModel.title || fieldModel.key"
+        :field-name="field.title || field.key"
         :disabled="fieldDisabled"
         :help-text="fieldDescription"
-        :select-options="fieldModel.options"
+        :select-options="field.options"
         :label="fieldLabel">
         <template
           v-for="(key, slotName) in $scopedSlots"
-          #[slotName]="slotData">
+          v-slot:[slotName]="slotData">
           <!-- @slot passthrough slot -->
           <slot
             :name="slotName"
             v-bind="slotData" />
         </template>
       </FrMultiselect>
-      <FrSelectInput
-        @input="$emit('valueChange', fieldModel.value)"
+      <FrSelect
+        @input="$emit('valueChange', field.value)"
         v-if="fieldType === 'select'"
         class="floating-label-input"
         v-model="inputValue"
         v-bind="attrs"
         v-on="$listeners"
         :errors="failedPolicies.concat(errors)"
-        :field-name="fieldModel.key"
+        :field-name="field.key"
         :disabled="fieldDisabled"
         :help-text="fieldDescription"
-        :select-options="fieldModel.options"
+        :select-options="field.options"
         :label="fieldLabel">
         <template
           v-for="(key, slotName) in $scopedSlots"
-          #[slotName]="slotData">
+          v-slot:[slotName]="slotData">
           <!-- @slot passthrough slot -->
           <slot
             :name="slotName"
             v-bind="slotData" />
         </template>
-      </FrSelectInput>
+      </FrSelect>
       <FrBasicInput
         v-else-if="fieldType === 'password' || fieldType === 'string'"
         :type="fieldType"
@@ -101,7 +101,7 @@ of the MIT license. See the LICENSE file for details. -->
         v-on="$listeners"
         :disabled="fieldDisabled"
         :errors="failedPolicies.concat(errors)"
-        :field-name="fieldModel.key"
+        :field-name="field.key"
         :help-text="fieldDescription"
         :label="fieldLabel">
         <template slot="prepend">
@@ -113,14 +113,14 @@ of the MIT license. See the LICENSE file for details. -->
       </FrBasicInput>
       <FrBasicInput
         v-else-if="fieldType === 'number' || fieldType === 'integer'"
-        @input="$emit('valueChange', fieldModel.value)"
+        @input="$emit('valueChange', field.value)"
         :class="[{'fr-error': errors.length || failedPolicies.length}, 'floating-label-input']"
         v-model.number="inputValue"
         v-bind="attrs"
         v-on="$listeners"
         :disabled="fieldDisabled"
         :errors="failedPolicies.concat(errors)"
-        :field-name="fieldModel.key"
+        :field-name="field.key"
         :help-text="fieldDescription"
         :label="fieldLabel"
         type="number">
@@ -138,13 +138,13 @@ of the MIT license. See the LICENSE file for details. -->
         :disabled="fieldDisabled"
         :class="{'fr-error': errors.length || failedPolicies.length}" />
       <FrTag
-        @input="$emit('valueChange', fieldModel.value)"
+        @input="$emit('valueChange', field.value)"
         v-else-if="fieldType === 'tag'"
         v-model="inputValue"
         v-on="$listeners"
         :autofocus="autofocus"
         :errors="failedPolicies.concat(errors)"
-        :field-name="fieldModel.title || fieldModel.key"
+        :field-name="field.title || field.key"
         :disabled="fieldDisabled" />
       <FrTextArea
         v-else-if="fieldType === 'textarea'"
@@ -154,7 +154,7 @@ of the MIT license. See the LICENSE file for details. -->
         v-on="$listeners"
         :disabled="fieldDisabled"
         :errors="failedPolicies.concat(errors)"
-        :field-name="fieldModel.key"
+        :field-name="field.key"
         :help-text="fieldDescription"
         :label="fieldLabel" />
     </ValidationProvider>
@@ -169,28 +169,27 @@ import {
 } from 'lodash';
 import { BFormCheckbox } from 'bootstrap-vue';
 import { ValidationProvider } from 'vee-validate';
-import FrSelectInput from './SelectInput';
-import FrMultiselect from './Multiselect';
+import Select from './Select';
+import Multiselect from './Multiselect';
 import FrTag from './Tag';
-import FrTextArea from './TextArea';
-import FrBasicInput from './Basic';
-import FrKeyValueList from './KeyValueList';
+import TextArea from './TextArea';
+import BasicInput from './Basic';
+import KeyValueList from './KeyValueList';
 
 export default {
   name: 'FrField',
   components: {
     BFormCheckbox,
-    FrBasicInput,
-    FrTextArea,
-    FrSelectInput,
-    FrMultiselect,
-    FrKeyValueList,
+    FrBasicInput: BasicInput,
+    FrTextArea: TextArea,
+    FrSelect: Select,
+    FrMultiselect: Multiselect,
+    FrKeyValueList: KeyValueList,
     FrTag,
     ValidationProvider,
   },
   data() {
     return {
-      fieldModel: cloneDeep(this.field),
       inputValue: this.field.value,
       loading: true,
       oldField: {},
@@ -282,7 +281,7 @@ export default {
       return { ...this.$options.propsData, ...this.$attrs };
     },
     externalTitle() {
-      return this.fieldModel.title || (this.displayDescription ? this.fieldModel.description : '');
+      return this.field.title || (this.displayDescription ? this.field.description : '');
     },
     /**
      * Returns description to display below field if not shown in popup
@@ -290,13 +289,13 @@ export default {
      * @returns {String} The description text to display below the field
      */
     fieldDescription() {
-      if (!this.displayDescription || !this.fieldModel.title) {
+      if (!this.displayDescription || !this.field.title) {
         return '';
       }
-      return this.fieldModel.description;
+      return this.field.description;
     },
     fieldDisabled() {
-      return this.fieldModel.disabled || this.disabled;
+      return this.field.disabled || this.disabled;
     },
     /**
      * Returns the field label if we want to see it as a floating label
@@ -307,7 +306,7 @@ export default {
       if (this.displayExternalTitle) {
         return '';
       }
-      return this.fieldModel.title;
+      return this.field.title;
     },
     /**
      * Maps type aliases to known values
@@ -315,7 +314,7 @@ export default {
      * @returns {String} Final field type
      */
     fieldType() {
-      const { type } = this.fieldModel;
+      const { type } = this.field;
       if (!type) {
         return 'string';
       }
@@ -323,7 +322,7 @@ export default {
         text: 'string',
         array: 'tag',
       };
-      if (this.fieldModel.format === 'password') {
+      if (this.field.format === 'password') {
         return 'password';
       }
       if (typeMap[type]) {
@@ -336,42 +335,42 @@ export default {
     /**
      * Builds array of options if field metadata contains enum property
      *
-     * @param {String} fieldModel current field object
+     * @param {String} field current field object
      */
-    getOptions(fieldModel) {
+    getOptions(field) {
       const options = [];
-      fieldModel.enum.forEach((enumString, index) => {
-        options.push({ text: fieldModel.enumNames[index], value: enumString });
+      field.enum.forEach((enumString, index) => {
+        options.push({ text: field.enumNames[index], value: enumString });
       });
-      fieldModel.options = options;
+      field.options = options;
     },
   },
   mounted() {
-    if (!this.fieldModel.validation) {
-      this.fieldModel.validation = '';
+    if (!this.field.validation) {
+      this.field.validation = '';
     }
-    if (this.fieldModel.enum) {
-      this.getOptions(this.fieldModel);
+    if (this.field.enum) {
+      this.getOptions(this.field);
     }
-    if ((this.fieldType === 'object') && (this.fieldModel.validation.required || this.fieldModel.validation.includes('required'))) {
-      this.fieldModel.validation = {
-        minimumRequired: this.fieldModel.minItems !== undefined ? this.fieldModel.minItems : 1,
+    if ((this.fieldType === 'object') && (this.field.validation.required || this.field.validation.includes('required'))) {
+      this.field.validation = {
+        minimumRequired: this.field.minItems !== undefined ? this.field.minItems : 1,
         required: true,
       };
-    } else if ((this.fieldType === 'tag') && (this.fieldModel.validation.required || this.fieldModel.validation.includes('required'))) {
-      if (this.fieldModel.minItems !== undefined) {
-        this.fieldModel.validation = {
-          minimumRequired: this.fieldModel.minItems,
+    } else if ((this.fieldType === 'tag') && (this.field.validation.required || this.field.validation.includes('required'))) {
+      if (this.field.minItems !== undefined) {
+        this.field.validation = {
+          minimumRequired: this.field.minItems,
           required: true,
         };
       } else {
-        this.fieldModel.validation = '';
+        this.field.validation = '';
       }
     }
-    if (this.fieldModel.title === this.fieldModel.description) {
-      delete this.fieldModel.description;
+    if (this.field.title === this.field.description) {
+      delete this.field.description;
     }
-    this.oldField = cloneDeep(this.fieldModel);
+    this.oldField = cloneDeep(this.field);
     this.loading = false;
   },
   filters: {
@@ -390,18 +389,16 @@ export default {
     field: {
       handler(newField) {
         if (!isEqual(this.oldField.value, newField.value)) {
-          this.fieldModel = cloneDeep(this.field);
-          this.inputValue = this.fieldModel.value;
+          this.inputValue = this.field.value;
           this.oldField = cloneDeep(newField);
         }
       },
-      immediate: true,
       deep: true,
     },
     inputValue: {
       handler(event) {
-        this.fieldModel.value = event;
-        this.$emit('valueChange', this.fieldModel.value);
+        this.field.value = event;
+        this.$emit('valueChange', this.field.value);
       },
       deep: true,
     },
