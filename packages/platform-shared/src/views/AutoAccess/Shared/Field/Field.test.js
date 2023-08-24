@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2022 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -82,10 +82,10 @@ describe('FrField.vue', () => {
     const input = wrapper.find('#testField input');
     input.setValue('5');
     await flush();
-    expect(wrapper.vm.fieldModel.value).not.toBe('5');
+    expect(wrapper.vm.field.value).not.toBe('5');
     input.setValue('3');
     await flush();
-    expect(wrapper.vm.fieldModel.value).toBe(3);
+    expect(wrapper.vm.field.value).toBe(3);
   });
 
   it('uses password floating label input for password type', async () => {
@@ -109,7 +109,7 @@ describe('FrField.vue', () => {
     expect(passwordButton.exists()).toBe(true);
     input.setValue('pass');
     await flush();
-    expect(wrapper.vm.fieldModel.value).toBe('pass');
+    expect(wrapper.vm.field.value).toBe('pass');
   });
 
   it('uses select floating label input for select type', async () => {
@@ -129,13 +129,13 @@ describe('FrField.vue', () => {
       stubs,
     });
     // Ensure we get a failure when trying to select a value that is not in options
-    wrapper.vm.fieldModel.value = ['option3'];
+    wrapper.vm.field.value = ['option3'];
     await flush();
-    expect(wrapper.vm.fieldModel.value).not.toBe(['option3']);
+    expect(wrapper.vm.field.value).not.toBe(['option3']);
     // Ensure we get a success when trying to select a value that is in options
-    wrapper.vm.fieldModel.value = 'option2';
+    wrapper.vm.field.value = 'option2';
     await flush();
-    expect(wrapper.vm.fieldModel.value).toBe('option2');
+    expect(wrapper.vm.field.value).toBe('option2');
   });
 
   it('uses multiselect floating label input for multiselect type', async () => {
@@ -155,17 +155,17 @@ describe('FrField.vue', () => {
       stubs,
     });
     // Ensure we get a failure when trying to select a value that is not in options
-    wrapper.vm.fieldModel.value = ['option3'];
+    wrapper.vm.field.value = ['option3'];
     await flush();
-    expect(wrapper.vm.fieldModel.value).not.toBe(['option3']);
+    expect(wrapper.vm.field.value).not.toBe(['option3']);
     // Ensure we get a success when trying to select a value that is in options
-    wrapper.vm.fieldModel.value = ['option2'];
+    wrapper.vm.field.value = ['option2'];
     await flush();
-    expect(wrapper.vm.fieldModel.value).toStrictEqual(['option2']);
+    expect(wrapper.vm.field.value).toStrictEqual(['option2']);
     // Ensure we get a success when trying to select two values that are in options
     await flush();
-    wrapper.vm.fieldModel.value = ['option1', 'option2'];
-    expect(wrapper.vm.fieldModel.value).toStrictEqual(['option1', 'option2']);
+    wrapper.vm.field.value = ['option1', 'option2'];
+    expect(wrapper.vm.field.value).toStrictEqual(['option1', 'option2']);
   });
 
   it('uses bootstrap form tags component for tag type', async () => {
@@ -185,11 +185,11 @@ describe('FrField.vue', () => {
       stubs,
     });
     await flush();
-    expect(wrapper.vm.fieldModel.value).toStrictEqual([]);
+    expect(wrapper.vm.field.value).toStrictEqual([]);
     const input = wrapper.find('#testField input');
     input.setValue('should convert to empty array without hitting return');
     await flush();
-    expect(wrapper.vm.fieldModel.value).toStrictEqual([]);
+    expect(wrapper.vm.field.value).toStrictEqual([]);
   });
 
   it('uses key value list component for object type', async () => {
@@ -208,7 +208,7 @@ describe('FrField.vue', () => {
       stubs,
     });
     await flush();
-    expect(wrapper.vm.fieldModel.value).toStrictEqual({});
+    expect(wrapper.vm.field.value).toStrictEqual({});
     expect(wrapper.find('.fr-key-link')).toBeTruthy();
   });
 
@@ -240,14 +240,14 @@ describe('FrField.vue', () => {
       },
     });
     await flush();
-    expect(wrapper.vm.fieldModel.value).toBe(true);
+    expect(wrapper.vm.field.value).toBe(true);
   });
 
   // Need to figure out how to get vee-validate and jest working together
   // it('Checks for required on string type', async () => {
-  //   wrapper.vm.fieldModel.type = 'string';
-  //   wrapper.vm.fieldModel.value = '';
-  //   wrapper.vm.fieldModel.validation = 'required|email';
+  //   wrapper.vm.field.type = 'string';
+  //   wrapper.vm.field.value = '';
+  //   wrapper.vm.field.validation = 'required|email';
   //   await flush();
   //   const stringInput = wrapper.find('#testField input');
   //   stringInput.setValue('test');
