@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -583,8 +583,7 @@ export default {
             }
           }
           tempProp.value = this.formFields[createPriv.attribute];
-
-          if ((createPriv.readOnly && !this.isOpenidmAdmin) || tempProp.isVirtual) {
+          if ((createPriv.readOnly && !this.isOpenidmAdmin) || tempProp.isVirtual || tempProp.userEditable === false) {
             tempProp.disabled = true;
           } else {
             tempProp.disabled = false;
