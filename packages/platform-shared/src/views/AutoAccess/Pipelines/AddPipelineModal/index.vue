@@ -22,7 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
           <FrBasicInput
             label="Name"
             autocomplete="false"
-            :value="pipelineName"
+            :value="pipeline_name"
             @input="updateName"
             id="new-pipeline-name"
           />
@@ -155,7 +155,7 @@ export default {
   },
   data() {
     return {
-      pipelineName: '',
+      pipeline_name: '',
       type: null,
       loading: false,
       datasourceId: '',
@@ -175,7 +175,7 @@ export default {
         if (this.initialPipeline) {
           const initialParameters = _.cloneDeep(this.initialPipeline.pipeline_parameters);
 
-          this.pipelineName = this.initialPipeline.pipeline_name;
+          this.pipeline_name = this.initialPipeline.pipeline_name;
           this.type = this.types.find((type) => type.name === this.initialPipeline.pipeline_type) || {};
           this.datasourceId = initialParameters.datasourceId || '';
           this.trainingId = this.initialPipeline.training_pipeline_definition_id || '';
@@ -185,7 +185,7 @@ export default {
           delete initialParameters.datasourceId;
           this.parameters = initialParameters;
         } else {
-          this.pipelineName = '';
+          this.pipeline_name = '';
           this.type = null;
           this.datasourceId = '';
           this.trainingId = '';
@@ -260,14 +260,15 @@ export default {
   },
   methods: {
     updateName(val) {
-      this.pipelineName = val.trim();
+      this.pipeline_name = val.trim();
     },
     selectType(type) {
       this.type = type;
     },
     save() {
       const {
-        pipelineName, type, parameters, datasourceId, trainingId, executions,
+        // eslint-disable-next-line camelcase
+        pipeline_name, type, parameters, datasourceId, trainingId, executions,
       } = this;
       const pipelineType = type.name;
       const trainingPipelineId = pipelineType === 'Prediction' ? trainingId : null;
@@ -277,7 +278,7 @@ export default {
       this.loading = true;
       savePipeline({
         pipeline_definition_id: id,
-        pipeline_name: pipelineName,
+        pipeline_name,
         pipeline_type: pipelineType,
         pipeline_parameters: {
           ...trainingParameters,

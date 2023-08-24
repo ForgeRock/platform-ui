@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -6,7 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <div class="p-2">
     <div class="d-flex justify-content-end">
       <div class="w-25">
-        <FrSelectInput
+        <FrSelect
           :select-options="options"
           :value="model"
           :placeholder="$t('access.models.optionTitle')"
@@ -112,7 +112,7 @@ of the MIT license. See the LICENSE file for details. -->
                   <span class="mr-2">
                     Model:
                   </span>
-                  <FrSelectInput
+                  <FrSelect
                     :select-options="getModelSelectedOptions(row)"
                     :value="getModelSelected(row)"
                     :placeholder="$t('access.dashboard.modelOptions')"
@@ -208,7 +208,7 @@ of the MIT license. See the LICENSE file for details. -->
           <BThead>
             <BTr>
               <BTh class="cause-one">
-                <FrSelectInput
+                <FrSelect
                   size="sm"
                   :select-options="causeMap"
                   :value="causeArrayFields[0].key"
@@ -216,14 +216,14 @@ of the MIT license. See the LICENSE file for details. -->
                   @input="handleCauseOneChange" />
               </BTh>
               <BTh class="cause-two">
-                <FrSelectInput
+                <FrSelect
                   :select-options="causeMap"
                   :value="causeArrayFields[1].key"
                   :placeholder="$t('access.models.optionTitle')"
                   @input="handleCauseTwoChange" />
               </BTh>
               <BTh class="cause-three">
-                <FrSelectInput
+                <FrSelect
                   :select-options="[{ text: 'Frequency', value: 'frequency' }]"
                   value="frequency"
                   :disabled="true"
@@ -267,7 +267,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 /* eslint-disable import/no-extraneous-dependencies, import/named */
-import FrSelectInput from '@forgerock/platform-shared/src/components/Field/SelectInput';
+import FrSelect from '@forgerock/platform-shared/src/components/Field/Select';
 import FrAccordion from '@forgerock/platform-shared/src/components/Accordion';
 import {
   BTableSimple, BTbody, BThead, BTr, BTh, BTd, BLink, BModal, BCard, BTooltip,
@@ -289,7 +289,7 @@ require('brace/mode/json');
 export default {
   name: 'Analysis',
   components: {
-    FrSelectInput,
+    FrSelect,
     BTableSimple,
     BTbody,
     BThead,
