@@ -41,6 +41,8 @@ of the MIT license. See the LICENSE file for details. -->
     <BModal
       dialog-class="fr-modal"
       id="deleteModal"
+      title-class="h5"
+      title-tag="h2"
       :title="$t('pages.profile.accountControls.deleteModalTitle')">
       {{ $t('pages.profile.accountControls.deleteModalBody') }}
       <strong>

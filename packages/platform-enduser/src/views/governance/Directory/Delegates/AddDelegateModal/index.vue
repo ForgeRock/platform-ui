@@ -10,6 +10,8 @@ of the MIT license. See the LICENSE file for details. -->
       cancel-variant="link"
       id="add-delegate-modal"
       size="lg"
+      title-class="h5"
+      title-tag="h2"
       :static="isTesting"
       :title="$t('governance.delegates.addDelegates')"
       :ok-function="okHandler">
