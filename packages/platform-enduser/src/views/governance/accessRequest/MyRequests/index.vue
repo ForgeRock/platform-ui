@@ -102,6 +102,7 @@ of the MIT license. See the LICENSE file for details. -->
     </BContainer>
     <FrRequestModal
       :type="modalType"
+      :hide-actions="status !== 'in-progress'"
       :item="modalItem"
       :is-my-requests="true"
       @modal-closed="modalType = null; modalItem = null"

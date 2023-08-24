@@ -31,6 +31,7 @@ of the MIT license. See the LICENSE file for details. -->
         v-else
         :is="component"
         :item="item"
+        :hide-actions="hideActions"
         @change-modal-type="modalType = REQUEST_MODAL_TYPES[$event]"
         @request-comment="updateComment"
         @request-update-actors="updateActors"
@@ -40,50 +41,49 @@ of the MIT license. See the LICENSE file for details. -->
           v-if="component === 'FrRequestDetailTabs'"
           data-testid="details-footer">
           <BRow class="justify-content-between">
-            <BCol
-              v-if="isApprovals"
-              class="pl-0">
-              <BButton
-                variant="outline-secondary"
-                class="mx-1 mb-2 mb-lg-0"
-                @click="modalType = REQUEST_MODAL_TYPES.APPROVE"
-                data-testid="governance-request-modal-goto-approve-btn">
-                <FrIcon
-                  class="text-success mr-2"
-                  name="check" />
-                {{ $t('common.approve') }}
-              </BButton>
-              <BButton
-                variant="outline-secondary"
-                class="mx-1 mb-2 mb-lg-0"
-                @click="modalType = REQUEST_MODAL_TYPES.REJECT"
-                data-testid="governance-request-modal-goto-reject-btn">
-                <FrIcon
-                  class="text-danger mr-2"
-                  name="block" />
-                {{ $t('common.reject') }}
-              </BButton>
-              <BButton
-                variant="outline-secondary"
-                class="mx-1"
-                @click="modalType = REQUEST_MODAL_TYPES.REASSIGN"
-                data-testid="governance-request-modal-goto-forward-btn">
-                <FrIcon
-                  class="mr-2"
-                  name="redo" />
-                {{ $t('common.forward') }}
-              </BButton>
-            </BCol>
-            <BCol
-              v-else-if="isMyRequests"
-              class="pl-0">
-              <BButton
-                variant="outline-danger"
-                @click="modalType = REQUEST_MODAL_TYPES.CANCEL"
-                data-testid="governance-request-modal-goto-cancelrequest-btn">
-                <FrIcon name="cancel" />
-                {{ $t('governance.requestModal.cancelRequest') }}
-              </BButton>
+            <BCol class="pl-0">
+              <template v-if="!hideActions">
+                <template v-if="isApprovals">
+                  <BButton
+                    variant="outline-secondary"
+                    class="mx-1 mb-2 mb-lg-0"
+                    @click="modalType = REQUEST_MODAL_TYPES.APPROVE"
+                    data-testid="governance-request-modal-goto-approve-btn">
+                    <FrIcon
+                      class="text-success mr-2"
+                      name="check" />
+                    {{ $t('common.approve') }}
+                  </BButton>
+                  <BButton
+                    variant="outline-secondary"
+                    class="mx-1 mb-2 mb-lg-0"
+                    @click="modalType = REQUEST_MODAL_TYPES.REJECT"
+                    data-testid="governance-request-modal-goto-reject-btn">
+                    <FrIcon
+                      class="text-danger mr-2"
+                      name="block" />
+                    {{ $t('common.reject') }}
+                  </BButton>
+                  <BButton
+                    variant="outline-secondary"
+                    class="mx-1"
+                    @click="modalType = REQUEST_MODAL_TYPES.REASSIGN"
+                    data-testid="governance-request-modal-goto-forward-btn">
+                    <FrIcon
+                      class="mr-2"
+                      name="redo" />
+                    {{ $t('common.forward') }}
+                  </BButton>
+                </template>
+                <BButton
+                  v-if="isMyRequests"
+                  variant="outline-danger"
+                  @click="modalType = REQUEST_MODAL_TYPES.CANCEL"
+                  data-testid="governance-request-modal-goto-cancelrequest-btn">
+                  <FrIcon name="cancel" />
+                  {{ $t('governance.requestModal.cancelRequest') }}
+                </BButton>
+              </template>
             </BCol>
             <BButton
               variant="outline-primary"
@@ -94,7 +94,7 @@ of the MIT license. See the LICENSE file for details. -->
           </BRow>
         </BCol>
         <BCol
-          v-else
+          v-else-if="!hideActions"
           data-testid="others-footer">
           <BRow class="justify-content-between">
             <BCol class="pl-0">
@@ -181,6 +181,10 @@ export default {
     type: {
       type: String,
       default: null,
+    },
+    hideActions: {
+      type: Boolean,
+      default: false,
     },
     item: {
       type: Object,
