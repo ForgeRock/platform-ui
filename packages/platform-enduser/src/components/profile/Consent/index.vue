@@ -62,9 +62,9 @@ of the MIT license. See the LICENSE file for details. -->
           cancel-variant="outline-secondary">
           <template #modal-header>
             <div class="d-flex w-100 h-100">
-              <h5 class="modal-title align-self-center text-center">
+              <h2 class="modal-title align-self-center text-center h5">
                 {{ mapping.modalHeader }}
-              </h5>
+              </h2>
               <button
                 type="button"
                 :aria-label="$t('common.close')"

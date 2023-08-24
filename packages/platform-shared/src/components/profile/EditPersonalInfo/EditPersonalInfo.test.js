@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { createWrapper, mount, shallowMount } from '@vue/test-utils';
+import { mount, shallowMount } from '@vue/test-utils';
 import { first } from 'lodash';
 import i18n from '@/i18n';
 import EditPersonalInfo from './index';
@@ -68,11 +68,8 @@ describe('EditPersonalInfo', () => {
   describe('@renders', () => {
     it('renders header', () => {
       const wrapper = setup();
-      const title = findByTestId(wrapper, 'title-edit-personal-info');
+      const title = wrapper.find('h2');
       expect(title.text()).toBe('Edit personal info');
-
-      const closeModalButton = findByTestId(wrapper, 'btn-edit-personal-info-close');
-      expect(closeModalButton.exists()).toBeTruthy();
     });
 
     describe('given no fields', () => {
@@ -102,16 +99,6 @@ describe('EditPersonalInfo', () => {
   });
 
   describe('@actions', () => {
-    it('should hide modal', async () => {
-      const wrapper = setup();
-      const closeButton = findByTestId(wrapper, 'btn-edit-personal-info-close');
-      const rootWrapper = createWrapper(wrapper.vm.$root);
-
-      expect(rootWrapper.emitted('bv::hide::modal')).toBeFalsy();
-      await closeButton.trigger('click');
-      expect(rootWrapper.emitted('bv::hide::modal')[0][0]).toBe('userDetailsModal');
-    });
-
     describe('when form is valid', () => {
       it('should save form', async () => {
         const wrapper = setup();

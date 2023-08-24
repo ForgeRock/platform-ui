@@ -4,10 +4,12 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BModal
-    size="lg"
+    id="frProfileImageModal"
     ref="profileImageModal"
-    :title="$t('pages.profile.editProfile.profileImageModal.title')"
-    id="frProfileImageModal">
+    size="lg"
+    title-class="h5"
+    title-tag="h2"
+    :title="$t('pages.profile.editProfile.profileImageModal.title')">
     <div class="mb-3">
       <div class="d-flex align-items-center justify-content-center py-4 mb-4">
         <BAvatar
