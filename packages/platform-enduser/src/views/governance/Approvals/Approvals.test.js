@@ -16,7 +16,10 @@ import i18n from '@/i18n';
 const mountComponent = () => mount(Approvals, {
   i18n,
   mocks: {
-    $store: { state: { UserStore: {} } },
+    $store: {
+      state: { UserStore: {} },
+      commit: jest.fn(),
+    },
   },
 });
 
@@ -202,7 +205,6 @@ describe('Approvals', () => {
 
     wrapper = mountComponent();
     await flushPromises();
-
     const getApprovalsSpy = jest.spyOn(AccessRequestApi, 'getUserApprovals');
 
     const pagination = findByTestId(wrapper, 'approvals-pagination');
@@ -425,5 +427,20 @@ describe('Approvals', () => {
     findByTestId(wrapper, 'dropdown-action-reassign').trigger('click');
     await wrapper.vm.$nextTick();
     expect(showModalSpy).toHaveBeenCalledWith(openModalMock, 'REASSIGN');
+  });
+
+  it('sets approval count to show in side nav bar badge', async () => {
+    AccessRequestApi.getUserApprovals = jest.fn().mockReturnValue(
+      Promise.resolve({
+        data: {
+          result: [mockRequest],
+          totalCount: 1,
+        },
+      }),
+    );
+
+    wrapper = mountComponent();
+    await flushPromises();
+    expect(wrapper.vm.$store.commit).toHaveBeenCalledWith('setApprovalsCount', 1);
   });
 });

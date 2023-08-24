@@ -328,7 +328,8 @@
     },
     "approval":{
       "subtitle": "View and take action on your pending access requests.",
-      "errorGettingApprovals": "Error getting user approvals"
+      "errorGettingApprovals": "Error getting user approvals",
+      "errorGettingPendingApprovals": "Error getting pending approvals number"
     },
     "delegates": {
       "addDelegates": "Add Delegates",

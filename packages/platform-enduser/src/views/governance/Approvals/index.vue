@@ -139,7 +139,7 @@ of the MIT license. See the LICENSE file for details. -->
       :item="modalItem"
       :is-approvals="true"
       @modal-closed="modalType = null; modalItem = null"
-      @update-list="loadRequests" />
+      @update-list="loadRequestAndUpdateBadge" />
   </BContainer>
 </template>
 
@@ -211,10 +211,26 @@ export default {
     };
   },
   mounted() {
-    this.loadRequests();
+    this.loadRequestAndUpdateBadge();
   },
   methods: {
     getStatusText,
+    loadRequestAndUpdateBadge() {
+      this.loadRequests();
+      this.updateBadge();
+    },
+    async updateBadge() {
+      const queryParams = {
+        pageSize: 0,
+        status: 'in-progress',
+      };
+      try {
+        const { data } = await getUserApprovals(this.$store.state.UserStore.userId, queryParams);
+        this.$store.commit('setApprovalsCount', data.totalCount);
+      } catch (error) {
+        this.showErrorMessage(error, this.$t('governance.approval.errorGettingPendingApprovals'));
+      }
+    },
     /**
      * Get access requests based on query params and target filter
      */
