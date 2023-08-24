@@ -136,6 +136,7 @@ of the MIT license. See the LICENSE file for details. -->
     </div>
     <FrRequestModal
       :type="modalType"
+      :hide-actions="status !== 'pending'"
       :item="modalItem"
       :is-approvals="true"
       @modal-closed="modalType = null; modalItem = null"
