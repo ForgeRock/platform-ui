@@ -24,10 +24,12 @@ of the MIT license. See the LICENSE file for details. -->
       </div>
       <BFormGroup
         class="mb-0"
+        :label-for="`floatingLabelInput${_uid}`"
         :invalid-feedback="$t('pages.profile.editProfile.profileImageModal.validUrl')"
         :state="!imageError">
         <FrField
           v-model="imageURL"
+          describedby-id="profile-image-tips"
           debounce="300"
           name="profileImage"
           :label="$t('pages.profile.editProfile.profileImageModal.profileImageUrl')"
@@ -36,8 +38,10 @@ of the MIT license. See the LICENSE file for details. -->
       <small class="text-muted">
         {{ $t('pages.profile.editProfile.profileImageModal.formHelp') }}
       </small>
-      <div class="p-4 mt-4 bg-light">
-        <h6 class="text-muted">
+      <div
+        id="profile-image-tips"
+        class="p-4 mt-4 bg-light">
+        <h6>
           {{ $t('pages.profile.editProfile.profileImageModal.tips') }}
         </h6>
         <BRow>
