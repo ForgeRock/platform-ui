@@ -346,6 +346,7 @@ import {
   addTreeResumeDataToStorage,
   getResumeDataFromStorageAndClear,
 } from '../../utils/authResumptionUtil';
+import getAutocompleteValue from '../../utils/loginUtils';
 import { getCurrentQueryString, parseParameters, replaceUrlParams } from '../../utils/urlUtil';
 
 export default {
@@ -649,10 +650,12 @@ export default {
           const {
             fieldType, label, name, value,
           } = this.getField(callback, index);
+
           const errors = this.getTranslatedPolicyFailures(callback);
           component.callbackSpecificProps = {
-            errors, label, name, type: fieldType, value,
+            errors, label, name, type: fieldType, value, autocomplete: getAutocompleteValue(label),
           };
+
           component.listeners = this.getListeners({ callback, index }, ['input']);
         }
 
