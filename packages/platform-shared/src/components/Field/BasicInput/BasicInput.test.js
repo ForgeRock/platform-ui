@@ -142,6 +142,15 @@ describe('BasicInput', () => {
         expect(input.attributes('aria-describedby')).toBe('stub-describedbyid');
       });
 
+      it('when describedbyId is not given', () => {
+        const createAriaDescribedByListSpy = jest.spyOn(AccessibilityUtils, 'createAriaDescribedByList');
+        const wrapper = setup();
+        expect(createAriaDescribedByListSpy).not.toHaveBeenCalled();
+
+        const input = findByTestId(wrapper, 'input-stub-testid');
+        expect(input.attributes('aria-describedby')).toBeUndefined();
+      });
+
       describe('when placeholder', () => {
         it('when no floatLabel', async () => {
           const wrapper = setup({ floatingLabel: false, placeholder: 'stub-placeholder' });
