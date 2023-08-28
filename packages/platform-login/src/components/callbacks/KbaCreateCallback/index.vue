@@ -38,6 +38,7 @@ of the MIT license. See the LICENSE file for details. -->
           :name="callback.getPrompt()"
           :placeholder="callback.getPrompt()"
           :id="questionModel.key + '_selector'"
+          :option-height-calculation="48"
           :options="options"
           :validation="questionSelectValidation"
           :floating-label="floatingLabel"
@@ -200,7 +201,6 @@ export default {
      */
     validateAnswer() {
       this.callback.setAnswer(this.answerModel);
-
       this.setSubmitButton();
     },
     /**
