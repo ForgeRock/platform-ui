@@ -5,11 +5,10 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import Vue from 'vue';
 import { mount } from '@vue/test-utils';
+import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import i18n from '@/i18n';
 import SelectInput from './index';
-import { findByTestId } from '../../../utils/testHelpers';
 
 describe('SelectInput', () => {
   const defaultProps = {
@@ -54,10 +53,8 @@ describe('SelectInput', () => {
   describe('@actions', () => {
     it('when open, should have aria-expanded attribute', async () => {
       const wrapper = setup();
-
       const multiselect = findByTestId(wrapper, 'stub-testid');
-      // Note: not ideal to be calling directly but the triggering the `open` event doesn't seem to work
-      await wrapper.vm.openHandler();
+      await multiselect.trigger('focus');
       expect(multiselect.attributes('aria-expanded')).toBe('true');
     });
   });
@@ -219,12 +216,11 @@ describe('SelectInput', () => {
         append: '<span class="test_append">append</span>', // Will match <slot name="FooBar" />,
       },
     });
-    expect(document.activeElement).toEqual(document.body);
-    document.activeElement.blur();
-    wrapper.destroy();
+
+    const multiselect = findByTestId(wrapper, 'stub-testid');
+    expect(multiselect.attributes('aria-expanded')).toBe('false');
   });
 
-  // TODO: to make this test work, follow guide to upgrade vue-test-utils https://vue-test-utils.vuejs.org/upgrading-to-v1/
   it('SelectInput is autofocused on prop "autofocus"', async () => {
     const wrapper = mount(SelectInput, {
       i18n,
@@ -239,11 +235,79 @@ describe('SelectInput', () => {
         append: '<span class="test_append">append</span>', // Will match <slot name="FooBar" />,
       },
     });
-    try {
-      await Vue.nextTick();
-      expect(document.activeElement).toEqual(wrapper.element.querySelector('input'));
-    } finally {
-      wrapper.destroy();
-    }
+
+    const multiselect = findByTestId(wrapper, 'stub-testid');
+    expect(multiselect.attributes('aria-expanded')).toBe('true');
+  });
+
+  it('Maintains focus on the multiselect component after selecting an option', async () => {
+    const wrapper = setup({ options: ['a', 'b', 'c'] });
+
+    // The internals of vue-test-utils does not update the DOM with focused element states
+    // when triggering event listeners, so it wasn't possible to test the actual DOM element
+    // when it was focused, but we are able to deduce that the menu is still focused by being
+    // able to immediately trigger it using a keyboard event after making a selection.
+    const multiselect = findByTestId(wrapper, 'stub-testid');
+    const options = wrapper.findAll('.multiselect__option');
+
+    // Menu is opened initially
+    await multiselect.trigger('focus');
+    expect(multiselect.attributes('aria-expanded')).toBe('true');
+
+    // Option selected, menu closes, menu expected to remain focused
+    await options.at(0).trigger('click');
+    expect(multiselect.attributes('aria-expanded')).toBe('false');
+
+    // We can deduce that the menu is still focused because we can
+    // immediately trigger it again using the down arrow.
+    await multiselect.trigger('keydown', { key: 'ArrowDown' });
+    expect(multiselect.attributes('aria-expanded')).toBe('true');
+  });
+
+  it('Displays the multiselect menu options if the "up arrow" is clicked', async () => {
+    const wrapper = setup({ options: ['a', 'b', 'c'] });
+
+    const multiselect = findByTestId(wrapper, 'stub-testid');
+    await multiselect.trigger('keydown', { key: 'ArrowUp' });
+    expect(multiselect.attributes('aria-expanded')).toBe('true');
+  });
+
+  it('Displays the multiselect menu options if the "down arrow" is clicked', async () => {
+    const wrapper = setup({ options: ['a', 'b', 'c'] });
+
+    const multiselect = findByTestId(wrapper, 'stub-testid');
+    await multiselect.trigger('keydown', { key: 'ArrowDown' });
+    expect(multiselect.attributes('aria-expanded')).toBe('true');
+  });
+
+  it('Keeps the previously selected option highlighted after revealing the menu using the "up arrow" or "down arrow"', async () => {
+    const wrapper = setup({ options: ['a', 'b', 'c'] });
+    const multiselect = findByTestId(wrapper, 'stub-testid');
+    const options = wrapper.findAll('.multiselect__option');
+
+    // When the menu is initially opened, we expect the first option to always be highlighted
+    await multiselect.trigger('focus');
+    expect(options.at(0).find('span').classes('multiselect__option--highlight')).toBe(true);
+
+    // The second option selected, menu closes, menu remains focused
+    await options.at(1).trigger('click');
+    expect(multiselect.attributes('aria-expanded')).toBe('false');
+
+    // We trigger the menu to show again by clicking on the "down arrow" and the second option should now be highlighted
+    await multiselect.trigger('keydown', { key: 'ArrowDown' });
+    expect(multiselect.attributes('aria-expanded')).toBe('true');
+    expect(options.at(0).find('span').classes('multiselect__option--highlight')).toBe(false);
+    expect(options.at(1).find('span').classes('multiselect__option--highlight')).toBe(true);
+
+    // The third option selected, menu closes, menu remains focused
+    await options.at(2).trigger('click');
+    expect(multiselect.attributes('aria-expanded')).toBe('false');
+
+    // We trigger the menu once more by clicking on the "up arrow" this time and the third option should remain highlighted
+    await multiselect.trigger('keydown', { key: 'ArrowUp' });
+    expect(multiselect.attributes('aria-expanded')).toBe('true');
+    expect(options.at(0).find('span').classes('multiselect__option--highlight')).toBe(false);
+    expect(options.at(1).find('span').classes('multiselect__option--highlight')).toBe(false);
+    expect(options.at(2).find('span').classes('multiselect__option--highlight')).toBe(true);
   });
 });

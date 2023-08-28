@@ -298,11 +298,11 @@ export default {
      * @param {Array} parentErrors the errors given to the component by its parent on load
      */
     getAriaDescribedBy({ errors: componentErrors, invalid }, parentErrors) {
-      if ((!invalid && !parentErrors.length) || !componentErrors) return this.describedbyId;
+      if ((!invalid && !parentErrors.length) || !componentErrors) return this.describedbyId || false;
 
       const fieldErrors = componentErrors[this.name];
       const combinedErrors = parentErrors.concat(fieldErrors);
-      if (!combinedErrors) return this.describedbyId;
+      if (!combinedErrors) return this.describedbyId || false;
 
       return createAriaDescribedByList(this.name, combinedErrors);
     },

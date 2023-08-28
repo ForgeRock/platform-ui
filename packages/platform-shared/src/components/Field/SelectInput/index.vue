@@ -28,6 +28,7 @@ of the MIT license. See the LICENSE file for details. -->
       :name="name"
       :disabled="disabled"
       :options="selectOptions"
+      :option-height="optionHeightCalculation"
       :searchable="searchable"
       :show-labels="false"
       :allow-empty="allowEmpty"
@@ -65,8 +66,14 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import {
+  onBeforeUnmount,
+  onMounted,
+  ref,
+} from 'vue';
+import {
   find,
 } from 'lodash';
+import vueMultiSelectOverrides from '@forgerock/platform-shared/src/composables/vueMultiSelectOverrides';
 // import vue-multiselect from src because dist min/uglified package gets removed in build
 import VueMultiSelect from '../../../../../../node_modules/vue-multiselect/src/index';
 import FrInputLayout from '../Wrapper/InputLayout';
@@ -101,6 +108,14 @@ export default {
       default: true,
     },
     /**
+     * Height of the individual option items. Important to
+     * set accurately so the options menu aligns correctly.
+     */
+    optionHeightCalculation: {
+      type: Number,
+      default: 40,
+    },
+    /**
      * Options for select input.
      */
     options: {
@@ -133,21 +148,74 @@ export default {
       default: '',
     },
   },
-  data() {
+  setup(props, context) {
+    const hasPrependBtn = ref(Object.keys(context.slots).includes('prependButton'));
+    const isExpanded = ref(false);
+    const vms = ref(null);
+    const floatLabels = ref(false);
+
+    /**
+     * Focus the Vue Multi Select component (vms) and floats the label
+     * Also scrolls the selected option into view if showSelectedOptionOnOpen is true
+     */
+    function openHandler() {
+      isExpanded.value = true;
+      context.emit('open');
+
+      if (props.searchable && vms.value?.$el) {
+        vms.value.$el.querySelector('input').focus();
+      }
+      floatLabels.value = props.floatingLabel;
+
+      // Scroll the select list to show the selected option
+      if (props.showSelectedOptionOnOpen && props.value && vms.value?.$el) {
+        setTimeout(() => {
+          vms.value.$el.querySelector('.multiselect__option--selected').scrollIntoView({ block: 'center' });
+        }, 20);
+      }
+    }
+
+    function arrowKeyEvent(event, addPointerElementOverride) {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+        addPointerElementOverride(event);
+      }
+    }
+
+    onMounted(() => {
+      if (props.searchable) {
+        vms.value.$refs.search.setAttribute('autocomplete', 'off');
+      }
+
+      if (props.autofocus) {
+        openHandler();
+      }
+
+      if (vms.value?.$el) {
+        const {
+          addPointerElementOverride,
+          deactivateOverride,
+          pointerResetOverride,
+        } = vueMultiSelectOverrides(vms.value);
+        vms.value.addPointerElement = addPointerElementOverride;
+        vms.value.pointerReset = pointerResetOverride;
+        vms.value.deactivate = deactivateOverride;
+        vms.value.$el.addEventListener('keydown', (event) => arrowKeyEvent(event, addPointerElementOverride), false);
+      }
+    });
+
+    onBeforeUnmount(() => {
+      vms.value.$el.removeEventListener('keydown', arrowKeyEvent, false);
+    });
+
     return {
-      isExpanded: false,
-      hasPrependBtn: Object.keys(this.$scopedSlots).includes('prependButton'),
+      floatLabels,
+      hasPrependBtn,
+      isExpanded,
+      openHandler,
+      vms,
     };
   },
   mounted() {
-    if (this.searchable) {
-      this.$refs.vms.$refs.search.setAttribute('autocomplete', 'off');
-    }
-
-    if (this.autofocus) {
-      this.openHandler();
-    }
-
     this.setInputValue(this.value);
   },
   updated() {
@@ -191,6 +259,7 @@ export default {
         const value = typeof newVal === 'object' && Object.hasOwnProperty.call(newVal, 'value') ? newVal.value : newVal;
         this.floatLabels = value !== undefined && value !== null && (value.toString().length > 0 || (this.value !== null && this.value.length > 0)) && !!this.label;
       }
+
       this.$emit('close');
     },
     inputValueHandler(inputValue) {
@@ -199,26 +268,6 @@ export default {
     setInputValue(newVal) {
       if (newVal !== undefined && newVal !== null) {
         this.inputValue = find(this.selectOptions, { value: newVal });
-      }
-    },
-    /**
-     * @description focus the Vue Multi Select component (vms) and floats the label
-     * Also scrolls the selected option into view if showSelectedOptionOnOpen is true
-     */
-    openHandler() {
-      this.isExpanded = true;
-      this.$emit('open');
-
-      if (this.searchable) {
-        this.$refs.vms.$el.querySelector('input').focus();
-      }
-      this.floatLabels = this.floatingLabel;
-
-      // Scroll the select list to show the selected option
-      if (this.showSelectedOptionOnOpen && this.value) {
-        setTimeout(() => {
-          this.$refs.vms.$el.querySelector('.multiselect__option--selected').scrollIntoView({ block: 'center' });
-        }, 20);
       }
     },
   },
