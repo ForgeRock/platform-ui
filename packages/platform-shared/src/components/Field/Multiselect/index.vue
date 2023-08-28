@@ -30,6 +30,7 @@ of the MIT license. See the LICENSE file for details. -->
       :hide-selected="true"
       :multiple="true"
       :name="name"
+      :option-height="optionHeightCalculation"
       :options="selectOptions"
       :placeholder="defaultPlaceholder"
       :searchable="defaultSearchable"
@@ -121,6 +122,14 @@ export default {
     placeholder: {
       type: String,
       default: '',
+    },
+    /**
+     * Height of the individual option items. Important to
+     * set accurately so the options menu aligns correctly.
+     */
+    optionHeightCalculation: {
+      type: Number,
+      default: 40,
     },
     /**
      * Options for select input.
