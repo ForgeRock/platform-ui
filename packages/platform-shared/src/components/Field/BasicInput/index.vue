@@ -337,6 +337,10 @@ export default {
     padding: 0.75rem !important;
   }
 
+  :deep(.within-input-button:not(.floating-label .within-input-button)) {
+    align-self: flex-end;
+  }
+
   :deep(.within-input-button .btn) {
     background-color: $white !important;
     border-top-left-radius: 0 !important;
