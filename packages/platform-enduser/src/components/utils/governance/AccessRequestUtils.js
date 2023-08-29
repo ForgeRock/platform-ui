@@ -6,6 +6,8 @@
  */
 
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
+import { getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
+import i18n from '@/i18n';
 
 /**
  * Gets image source for the priority icons based on priority level
@@ -73,11 +75,10 @@ export function getRequestFilter(filter, status) {
     if (filter.priorities.medium) priorities.push('medium');
     if (filter.priorities.low) priorities.push('low');
 
-    if (!priorities.length) allFilters.push(getBasicFilter('EQUALS', 'request.common.priority', 'none'));
-    else {
-      const priorityFilters = priorities.map((priority) => (
-        getBasicFilter('EQUALS', 'request.common.priority', priority)
-      ));
+    if (!priorities.length) {
+      allFilters.push(getBasicFilter('EQUALS', 'request.common.priority', 'none'));
+    } else {
+      const priorityFilters = priorities.map((priority) => getBasicFilter('EQUALS', 'request.common.priority', priority));
       allFilters.push({
         operator: 'OR',
         operand: priorityFilters,
@@ -102,13 +103,15 @@ export function getRequestFilter(filter, status) {
         allFilters.push(getBasicFilter('EQUALS', 'decision.status', status));
         allFilters.push({
           operator: 'NOT',
-          operand: [{
-            operator: 'EQUALS',
-            operand: {
-              targetName: 'decision.outcome',
-              targetValue: 'cancelled',
+          operand: [
+            {
+              operator: 'EQUALS',
+              operand: {
+                targetName: 'decision.outcome',
+                targetValue: 'cancelled',
+              },
             },
-          }],
+          ],
         });
         break;
       default:
@@ -123,5 +126,60 @@ export function getRequestFilter(filter, status) {
 }
 
 export function getStatusText(statusOptions, status) {
-  return statusOptions.find((option) => (option.value === status))?.text;
+  return statusOptions.find((option) => option.value === status)?.text;
+}
+/**
+ * Get the base object type of the access request
+ * @param {String} requestType the request type of the access request
+ * @returns {String} the base object type of the request: application, entitlment, role.
+ */
+export function getRequestObjectType(requestType) {
+  if (requestType.includes('application')) return 'application';
+  if (requestType.includes('entitlement')) return 'entitlement';
+  if (requestType.includes('role')) return 'role';
+  return '';
+}
+
+/**
+ * Get translated text of the request type
+ * @param {String} requestType access request type: accountGrant, roleGrant, etc.
+ * @returns {String} text to display as the request type
+ */
+export function getTypeString(requestType) {
+  return i18n.t(`governance.accessRequest.requestTypes.${requestType}`);
+}
+
+/**
+ * Given any access request, return the object for displaying in the table
+ * @param {Object} request access request
+ * @param {String} objectType the type of object the request is for: application, entitlment, role.
+ * @returns {Object} access request that is formatted for display
+ */
+export function getFormattedRequest(request, objectType) {
+  return {
+    details: {
+      id: request.id,
+      type: getTypeString(request.requestType),
+      name: objectType === 'entitlement' ? request[objectType].displayName : request[objectType]?.name,
+      description: request[objectType]?.description,
+      priority: request.request?.common?.priority,
+      date: request.decision?.startDate,
+      requesteeInfo: request.user,
+      icon: objectType === 'role' ? 'assignment_ind' : getApplicationLogo(request.application),
+    },
+    rawData: request,
+  };
+}
+/**
+ * Converts access request objects to have information at the top level
+ * that is necessary for the table display
+ * @param {Object[]} requests Access request objects
+ * @returns {Object[]} request objects
+ */
+export function buildRequestDisplay(requests) {
+  const objectTypeList = ['application', 'entitlement', 'role'];
+  return requests.map((request) => {
+    const objectType = getRequestObjectType(request.requestType);
+    return objectTypeList.includes(objectType) ? getFormattedRequest(request, objectType) : null;
+  });
 }

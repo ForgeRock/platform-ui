@@ -1,8 +1,10 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+/**
+ * Copyright (c) 2023 ForgeRock. All rights reserved.
+ *
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
+ */
 
-This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details. -->
-<script>
 import resolveImage from '@forgerock/platform-shared/src/utils/applicationImageResolver';
 
 const logoMap = {
@@ -45,20 +47,18 @@ const displayNameMap = {
   workday: 'Workday',
 };
 
-export default {
-  name: 'AppSharedUtilsMixin',
-  methods: {
-    getApplicationDisplayName(application) {
-      if (application.templateName) return displayNameMap[application.templateName];
-      return application.name;
-    },
-    getApplicationLogo(application) {
-      if (application.icon) return application.icon;
-      const imagePath = application.templateName
-        ? logoMap[application.templateName]
-        : '';
-      return resolveImage(imagePath);
-    },
-  },
-};
-</script>
+export function getApplicationDisplayName(application) {
+  if (application.templateName) {
+    return displayNameMap[application.templateName];
+  }
+  return application.name;
+}
+export function getApplicationLogo(application) {
+  if (application.icon) {
+    return application.icon;
+  }
+  const imagePath = application.templateName
+    ? logoMap[application.templateName]
+    : '';
+  return resolveImage(imagePath);
+}

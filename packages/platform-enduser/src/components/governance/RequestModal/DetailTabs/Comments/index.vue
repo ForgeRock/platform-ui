@@ -142,14 +142,13 @@ export default {
   data() {
     return {
       REQUEST_MODAL_TYPES,
-      comments: this.item.rawData.decision.comments,
       currentPage: 1,
       entriesPerPage: 10,
     };
   },
   computed: {
     filteredComments() {
-      return this.comments.filter(({ action }) => action === 'comment');
+      return this.item.rawData.decision.comments.filter(({ action }) => action === 'comment');
     },
     // All comment's are included in the object but we only want to show a portion of them
     pagedComments() {

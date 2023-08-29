@@ -75,8 +75,8 @@ import {
   BTabs,
 } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import AppSharedUtilsMixin from '@forgerock/platform-shared/src/mixins/AppSharedUtilsMixin';
 import FrGlossaryDisplayForm from '@forgerock/platform-shared/src/components/governance/GlossaryDisplayForm';
+import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import FrEntitlementDetailsTab from './EntitlementDetailsTab';
 
 /**
@@ -101,7 +101,6 @@ export default {
     FrGlossaryDisplayForm,
     FrIcon,
   },
-  mixins: [AppSharedUtilsMixin],
   props: {
     application: {
       type: Object,
@@ -127,10 +126,10 @@ export default {
   },
   computed: {
     logo() {
-      return this.getApplicationLogo(this.application);
+      return getApplicationLogo(this.application);
     },
     displayName() {
-      return this.$t('governance.certificationTask.entitlementModal.name', { entitlementName: this.getApplicationDisplayName(this.application) });
+      return this.$t('governance.certificationTask.entitlementModal.name', { entitlementName: getApplicationDisplayName(this.application) });
     },
     glossaryValues() {
       return this.entitlement?.glossary?.idx?.['/entitlement'] || {};

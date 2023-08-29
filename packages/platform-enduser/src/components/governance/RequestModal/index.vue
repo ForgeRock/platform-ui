@@ -87,7 +87,7 @@ of the MIT license. See the LICENSE file for details. -->
             </BCol>
             <BButton
               variant="outline-primary"
-              @click="close(cancel)"
+              @click="cancel()"
               data-testid="governance-request-modal-done-btn">
               {{ $t('common.done') }}
             </BButton>
@@ -339,14 +339,17 @@ export default {
     * @param {Function} cancel close modal function
     * @param {Function} cancel close modal function
     */
-    close(cancel, isSuccessfulAction = false) {
-      if (isSuccessfulAction && !(this.modalType === REQUEST_MODAL_TYPES.COMMENT)) {
-        cancel();
+    close(cancel) {
+      if (this.modalType === REQUEST_MODAL_TYPES.COMMENT) {
+        this.$emit('update-item', this.item.details.id);
+        if (this.previousModal === REQUEST_MODAL_TYPES.DETAILS) {
+          this.modalType = REQUEST_MODAL_TYPES.DETAILS;
+        }
       } else if (this.previousModal === REQUEST_MODAL_TYPES.DETAILS
-        && (this.modalType === REQUEST_MODAL_TYPES.COMMENT
-        || this.modalType === REQUEST_MODAL_TYPES.CANCEL)) {
+        && this.modalType === REQUEST_MODAL_TYPES.CANCEL) {
         this.modalType = REQUEST_MODAL_TYPES.DETAILS;
       } else {
+        this.$emit('update-list');
         cancel();
       }
     },
@@ -367,7 +370,6 @@ export default {
       }).finally(() => {
         this.loading = false;
         this.close(cancel);
-        this.$emit('update-list');
       });
     },
     /**
