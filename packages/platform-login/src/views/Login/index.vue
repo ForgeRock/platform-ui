@@ -71,29 +71,6 @@ of the MIT license. See the LICENSE file for details. -->
                           </div>
                           <div id="callback_0" />
                         </template>
-                        <!-- IDP logins are grouped within their own fieldset to logically separate them from the standard login flow. This is an accessibility change to more logically structure the page.  -->
-                        <template v-if="idpComponent">
-                          <fieldset>
-                            <legend
-                              class="legend-hidden"
-                              id="idp-legend">
-                              {{ $t('login.social.legend') }}
-                            </legend>
-                            <FrSelectIdPCallback
-                              class="callback-component"
-                              :callback="idpComponent.callback"
-                              :index="idpComponent.index"
-                              :key="idpComponent.key"
-                              :floating-label="journeyFloatingLabels"
-                              aria-describedby="idp-legend"
-                              v-bind="{...idpComponent.callbackSpecificProps}"
-                              v-on="{
-                                'next-step': (event, preventClear) => {
-                                  nextStep(event, preventClear);
-                                },
-                                ...idpComponent.listeners}" />
-                          </fieldset>
-                        </template>
                         <template v-for="(component) in componentList ">
                           <Component
                             class="callback-component"
@@ -102,8 +79,7 @@ of the MIT license. See the LICENSE file for details. -->
                             :is="component.type"
                             :key="component.key"
                             :step="step"
-                            :floating-label="journeyFloatingLabels"
-                            v-bind="{...component.callbackSpecificProps}"
+                            v-bind="{...component.callbackSpecificProps, floatingLabel: journeyFloatingLabels}"
                             v-on="{
                               'next-step': (event, preventClear) => {
                                 nextStep(event, preventClear);
@@ -478,7 +454,6 @@ export default {
       treeId: undefined,
       svgShapesSanitizerConfig,
       screenReaderMessage: '',
-      idpComponent: undefined,
     };
   },
   computed: {
@@ -593,6 +568,18 @@ export default {
 
       this.checkNodeForThemeOverride(this.stage);
 
+      // Ensure that Social Buttons appear at top of Page Node
+      const pullToTop = this.FrCallbackType.SelectIdPCallback;
+      this.step.callbacks.sort((currentCallback, otherCallback) => {
+        if (currentCallback.payload.type === pullToTop) {
+          return -1;
+        }
+        if (otherCallback.payload.type === pullToTop) {
+          return 1;
+        }
+        return 0;
+      });
+
       // Some callbacks don't need to render anything so forEach is used instead of map
       const componentList = [];
       let keyFromDate = Date.now();
@@ -671,20 +658,7 @@ export default {
 
         componentList.push(component);
       });
-
-      const idpComponentIndex = componentList.findIndex((component) => component.callback.getType() === this.FrCallbackType.SelectIdPCallback);
-      // Note: if there is an idp component in the componentList
-      if (idpComponentIndex !== -1) {
-        this.handleIdpComponent(componentList, idpComponentIndex);
-      }
-
       this.componentList = componentList;
-    },
-    handleIdpComponent(componentList, idpComponentIndex) {
-      if (!Array.isArray(componentList)) return;
-
-      this.idpComponent = componentList[idpComponentIndex]; // Note: this is to be rendered in its own fieldset
-      componentList.splice(idpComponentIndex, 1); // Note: we first remove the idp from the component list so the rest of the login components can be rendered on their own
     },
     // needs to happen before other query params are processed
     checkNewSession() {
@@ -1278,12 +1252,5 @@ export default {
       height: 100%;
     }
   }
-}
-
-// The NVDA screen reader struggles to read elements with the 'hidden' attribute. This behaves the same but allows the screen reader to read out the legend.
-.legend-hidden {
-  position: absolute !important;
-  height: 1px; width: 1px;
-  overflow: hidden;
 }
 </style>
