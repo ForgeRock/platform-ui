@@ -71,7 +71,7 @@ of the MIT license. See the LICENSE file for details. -->
                 class="mr-4">
                 <BImg
                   :alt="$t('common.logo')"
-                  :src="getApplicationLogo(item.application) || require('@forgerock/platform-shared/src/assets/images/placeholder.svg')"
+                  :src="getLogo(item.application) || require('@forgerock/platform-shared/src/assets/images/placeholder.svg')"
                   :aria-hidden="true"
                   width="36"
                   height="36"
@@ -197,8 +197,8 @@ import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
-import AppSharedUtilsMixin from '@forgerock/platform-shared/src/mixins/AppSharedUtilsMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
+import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { getMyAccess } from '@/api/governance/MyAccessApi';
 
@@ -225,7 +225,6 @@ export default {
     FrNoData,
   },
   mixins: [
-    AppSharedUtilsMixin,
     NotificationMixin,
   ],
   props: {
@@ -329,7 +328,10 @@ export default {
       if (this.grantType === 'account') {
         return this.getResourceDisplayName(item, '/account');
       }
-      return this.getApplicationDisplayName(item.application);
+      return getApplicationDisplayName(item.application);
+    },
+    getLogo(item) {
+      return getApplicationLogo(item);
     },
     /**
      * Loads a list for MyAccess (accounts/entitlements/roles) based on the current path

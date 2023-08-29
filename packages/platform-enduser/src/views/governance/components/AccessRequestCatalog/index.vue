@@ -278,8 +278,8 @@ import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import PluralizeFilter from '@forgerock/platform-shared/src/filters/PluralizeFilter';
-import AppSharedUtilsMixin from '@forgerock/platform-shared/src/mixins/AppSharedUtilsMixin';
 import { getGovernanceFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
+import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import FrSortDropdown from '@/components/governance/SortDropdown';
 
 /**
@@ -314,9 +314,6 @@ export default {
     FrSpinner,
     ValidationObserver,
   },
-  mixins: [
-    AppSharedUtilsMixin,
-  ],
   props: {
     applicationSearchResults: {
       type: Array,
@@ -379,8 +376,8 @@ export default {
       return this.applicationSearchResults.map((application) => ({
         value: application.id,
         title: application.name,
-        subtitle: this.getApplicationDisplayName(application),
-        icon: this.getApplicationLogo(application),
+        subtitle: getApplicationDisplayName(application),
+        icon: getApplicationLogo(application),
       }));
     },
     filterOptions() {

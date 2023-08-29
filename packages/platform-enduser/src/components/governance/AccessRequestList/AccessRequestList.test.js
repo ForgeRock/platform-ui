@@ -104,7 +104,7 @@ describe('AccessReviews', () => {
       });
 
       let requestType = findByTestId(wrapper, 'request-type');
-      expect(requestType.text()).toBe('governance.accessRequest.requestTypes.applicationGrant');
+      expect(requestType.text()).toBe('Grant Application');
 
       app.requestType = 'applicationRevoke';
 
@@ -115,7 +115,7 @@ describe('AccessReviews', () => {
       });
 
       requestType = findByTestId(wrapper, 'request-type');
-      expect(requestType.text()).toBe('governance.accessRequest.requestTypes.applicationRevoke');
+      expect(requestType.text()).toBe('Remove Application');
     });
 
     it('should display application name', () => {
@@ -151,7 +151,7 @@ describe('AccessReviews', () => {
       });
 
       let requestType = findByTestId(wrapper, 'request-type');
-      expect(requestType.text()).toBe('governance.accessRequest.requestTypes.entitlementGrant');
+      expect(requestType.text()).toBe('Grant Entitlement');
 
       ent.requestType = 'entitlementRevoke';
 
@@ -162,7 +162,7 @@ describe('AccessReviews', () => {
       });
 
       requestType = findByTestId(wrapper, 'request-type');
-      expect(requestType.text()).toBe('governance.accessRequest.requestTypes.entitlementRevoke');
+      expect(requestType.text()).toBe('Remove Entitlement');
     });
 
     it('should display entitlement name', async () => {
@@ -198,7 +198,7 @@ describe('AccessReviews', () => {
       });
 
       let requestType = findByTestId(wrapper, 'request-type');
-      expect(requestType.text()).toBe('governance.accessRequest.requestTypes.roleGrant');
+      expect(requestType.text()).toBe('Grant Role');
 
       myRole.requestType = 'roleRevoke';
 
@@ -209,7 +209,7 @@ describe('AccessReviews', () => {
       });
 
       requestType = findByTestId(wrapper, 'request-type');
-      expect(requestType.text()).toBe('governance.accessRequest.requestTypes.roleRevoke');
+      expect(requestType.text()).toBe('Remove Role');
     });
 
     it('should display role name', async () => {

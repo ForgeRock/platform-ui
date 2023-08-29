@@ -282,6 +282,26 @@ describe('RequestModal', () => {
     expect(closeSpy).toHaveBeenCalled();
     expect(cancel).not.toHaveBeenCalled();
   });
+  it('close got called with comment and previousModal = DETAILS, should not call cancel', async () => {
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
+    const cancel = jest.fn();
+    wrapper.vm.modalType = 'COMMENT';
+    await flushPromises();
+    wrapper.vm.close(cancel);
+    await flushPromises();
+    expect(wrapper.vm.modalType).toEqual('DETAILS');
+    expect(cancel).not.toHaveBeenCalled();
+    expect(wrapper.emitted()['update-item'][0]).toEqual([1]);
+  });
+  it('close got called with reassign and should update list, after calling Cancel', async () => {
+    const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
+    const cancel = jest.fn();
+    wrapper.vm.modalType = 'REASSIGN';
+    wrapper.vm.close(cancel);
+    await flushPromises();
+    expect(wrapper.emitted()['update-list']).toBeTruthy();
+    expect(cancel).toHaveBeenCalled();
+  });
   describe('hideActions', () => {
     it('hides approve action', async () => {
       const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, hideActions: true });
