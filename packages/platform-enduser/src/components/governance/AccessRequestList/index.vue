@@ -28,7 +28,7 @@ of the MIT license. See the LICENSE file for details. -->
           class="mb-2">
           <BMediaAside class="align-self-center">
             <FrIcon
-              v-if="getRequestObjectType(item.rawData.requestType) === 'role'"
+              v-if="isTypeRole(item.rawData.requestType)"
               class="mr-1 md-28 rounded-circle"
               :name="item.details.icon" />
             <BImg
@@ -123,8 +123,7 @@ import {
 import dayjs from 'dayjs';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
-import AppSharedUtilsMixin from '@forgerock/platform-shared/src/mixins/AppSharedUtilsMixin';
-import getPriorityImageSrc from '@/components/utils/governance/AccessRequestUtils';
+import getPriorityImageSrc, { buildRequestDisplay, getRequestObjectType } from '@/components/utils/governance/AccessRequestUtils';
 
 /**
  * A table that displays an array of access request objects
@@ -140,7 +139,6 @@ export default {
     FrIcon,
     FrSpinner,
   },
-  mixins: [AppSharedUtilsMixin],
   props: {
     isLoading: {
       type: Boolean,
@@ -172,109 +170,12 @@ export default {
     requests: {
       immediate: true,
       handler(requestList) {
-        this.items = this.buildRequestDisplay(requestList);
+        this.items = buildRequestDisplay(requestList);
       },
     },
   },
   methods: {
     getPriorityImageSrc,
-    /**
-     * Converts access request objects to have information at the top level
-     * that is necessary for the table display
-     * @param {Object[]} requests Access request objects
-     * @returns {Object[]} request objects
-     */
-    buildRequestDisplay(requests) {
-      const requestDisplay = requests.map((request) => {
-        const objectType = this.getRequestObjectType(request.requestType);
-        const formattedRequest = this.getFormattedRequest(request, objectType);
-        return formattedRequest;
-      });
-      return requestDisplay;
-    },
-    /**
-     * Given any access request, return the relevant request display object
-     * @param {Object} request access request
-     * @param {String} objectType the type of object the request is for: application, entitlment, role.
-     * @returns {Object} access request that is formatted for display
-     */
-    getFormattedRequest(request, objectType) {
-      if ((objectType) === 'application') return this.getApplicationRequest(request);
-      if ((objectType) === 'entitlement') return this.getEntitlementRequest(request);
-      if ((objectType) === 'role') return this.getRoleRequest(request);
-      return null;
-    },
-    /**
-     * Get the base object type of the access request
-     * @param {String} requestType the request type of the access request
-     * @returns {String} the base object type of the request: application, entitlment, role.
-     */
-    getRequestObjectType(requestType) {
-      if (requestType.includes('application')) return 'application';
-      if (requestType.includes('entitlement')) return 'entitlement';
-      if (requestType.includes('role')) return 'role';
-      return '';
-    },
-    /**
-     * Given an application access request, return the object used for displaying in the table
-     * @param {Object} request application access request
-     * @returns {Object} application request formatted for display
-     */
-    getApplicationRequest(request) {
-      return {
-        details: {
-          id: request.id,
-          type: this.getTypeString(request.requestType),
-          name: request.application?.name,
-          description: request.application?.description,
-          priority: request.request?.common?.priority,
-          date: request.decision?.startDate,
-          requesteeInfo: request.user,
-          icon: this.getApplicationLogo(request.application),
-        },
-        rawData: request,
-      };
-    },
-    /**
-     * Given an entitlement access request, return the object used for displaying in the table
-     * @param {Object} request entitlement access request
-     * @returns {Object} entitilement request formatted for display
-     */
-    getEntitlementRequest(request) {
-      return {
-        details: {
-          id: request.id,
-          type: this.getTypeString(request.requestType),
-          name: request.entitlement?.displayName,
-          description: request.entitlement?.description,
-          priority: request.request?.common?.priority,
-          date: request.decision?.startDate,
-          requesteeInfo: request.user,
-          icon: this.getApplicationLogo(request.application),
-        },
-        rawData: request,
-      };
-    },
-    /**
-     * Given a role access request, return the object used for displaying in the table
-     * @param {Object} request role access request
-     * @returns {Object} role request formatted for display
-     */
-    getRoleRequest(request) {
-      return {
-        details: {
-          id: request.id,
-          type: this.getTypeString(request.requestType),
-          name: request.role?.name,
-          description: request.role?.description,
-          priority: request.request?.common?.priority,
-          date: request.decision?.startDate,
-          requesteeInfo: request.user,
-          icon: 'assignment_ind',
-        },
-        rawData: request,
-      };
-    },
     /**
      * Gets a user friendly date string from an ISO date
      * @param {String} date ISO formatted date string
@@ -284,13 +185,8 @@ export default {
       if (!date) return '';
       return dayjs(date).format('MMM D, YYYY');
     },
-    /**
-     * Get translated text of the request type
-     * @param {String} requestType access request type: accountGrant, roleGrant, etc.
-     * @returns {String} text to display as the request type
-     */
-    getTypeString(requestType) {
-      return this.$t(`governance.accessRequest.requestTypes.${requestType}`);
+    isTypeRole(requestType) {
+      return getRequestObjectType(requestType) === 'role';
     },
   },
 };

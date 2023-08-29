@@ -13,6 +13,9 @@ export function getUserRequests(userId, params, filter) {
   const queryString = encodeQueryString(params, true);
   return generateIgaApi().post(`/governance/user/${userId}/requests${queryString}`, { targetFilter: filter });
 }
+export function getRequest(requestId) {
+  return generateIgaApi().get(`/governance/requests/${requestId}`);
+}
 
 export function getUserApprovals(userId, params, filter) {
   params._action = 'search';
