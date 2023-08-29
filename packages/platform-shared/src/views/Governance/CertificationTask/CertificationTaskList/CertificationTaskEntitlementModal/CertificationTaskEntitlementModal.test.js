@@ -6,16 +6,15 @@
  */
 
 import { mount, createLocalVue } from '@vue/test-utils';
+import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import BootstrapVue from 'bootstrap-vue';
 import CertificationTaskEntitlementModal from './index';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/CertificationApi');
-
+jest.mock('@forgerock/platform-shared/src/utils/appSharedUtils');
 describe('CertificationTaskEntitlementModal', () => {
   let application;
   let wrapper;
-  let getApplicationLogo;
-  let getApplicationDisplayName;
   beforeEach(() => {
     const localVue = createLocalVue();
     localVue.use(BootstrapVue);
@@ -26,14 +25,8 @@ describe('CertificationTaskEntitlementModal', () => {
       templateName: 'salesforce',
     };
 
-    getApplicationLogo = jest.fn(() => 'testlogo');
-    getApplicationDisplayName = jest.fn(() => 'testname');
-    const AppSharedUtilsMixin = {
-      methods: {
-        getApplicationLogo,
-        getApplicationDisplayName,
-      },
-    };
+    getApplicationLogo.mockImplementation(() => 'testlogo');
+    getApplicationDisplayName.mockImplementation(() => 'testname');
 
     wrapper = mount(CertificationTaskEntitlementModal, {
       mocks: {
@@ -43,7 +36,6 @@ describe('CertificationTaskEntitlementModal', () => {
         entitlement,
         application,
       },
-      mixins: [AppSharedUtilsMixin],
       localVue,
       attachTo: document.body,
     });

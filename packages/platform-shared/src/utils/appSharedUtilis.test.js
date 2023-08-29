@@ -5,9 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount } from '@vue/test-utils';
 import resolveImage from '@forgerock/platform-shared/src/utils/applicationImageResolver';
-import AppSharedUtilsMixin from './index';
+import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 
 jest.mock('@forgerock/platform-shared/src/utils/applicationImageResolver', () => ({
   __esModule: true,
@@ -17,27 +16,14 @@ jest.mock('@forgerock/platform-shared/src/utils/applicationImageResolver', () =>
 const logoMap = {
 };
 
-let wrapper;
-describe('AppSharedUtilsMixin', () => {
-  beforeEach(() => {
-    wrapper = shallowMount({}, {
-      render() {},
-      mixins: [AppSharedUtilsMixin],
-      mocks: {
-        $store: {
-          state: { fraasAdminManagedObjectName: 'team', realm: 'alpha' },
-        },
-      },
-    });
-  });
-
+describe('AppSharedUtils', () => {
   describe('getApplicationLogo', () => {
     it('should return application icon if it exists', () => {
       const application = {
         icon: 'path/to/applicationIcon.png',
         templateName: '',
       };
-      const result = wrapper.vm.getApplicationLogo(application);
+      const result = getApplicationLogo(application);
       expect(result).toBe(application.icon);
     });
 
@@ -47,7 +33,7 @@ describe('AppSharedUtilsMixin', () => {
         templateName: 'template1',
       };
       const expectedImagePath = logoMap[application.templateName];
-      const result = wrapper.vm.getApplicationLogo(application);
+      const result = getApplicationLogo(application);
       expect(result).toBe(resolveImage(expectedImagePath));
     });
 
@@ -56,7 +42,7 @@ describe('AppSharedUtilsMixin', () => {
         icon: '',
         templateName: null,
       };
-      const result = wrapper.vm.getApplicationLogo(application);
+      const result = getApplicationLogo(application);
       expect(result).toBe('');
     });
   });
@@ -70,7 +56,7 @@ describe('AppSharedUtilsMixin', () => {
       const displayNameMap = {
         workday: 'Workday',
       };
-      const result = wrapper.vm.getApplicationDisplayName(application);
+      const result = getApplicationDisplayName(application);
       expect(result).toBe(displayNameMap[application.templateName]);
     });
 
@@ -79,7 +65,7 @@ describe('AppSharedUtilsMixin', () => {
         templateName: '',
         name: 'Application 2',
       };
-      const result = wrapper.vm.getApplicationDisplayName(application);
+      const result = getApplicationDisplayName(application);
       expect(result).toBe(application.name);
     });
   });

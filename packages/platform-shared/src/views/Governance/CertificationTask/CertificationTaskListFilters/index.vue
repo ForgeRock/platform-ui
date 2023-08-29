@@ -151,7 +151,7 @@ of the MIT license. See the LICENSE file for details. -->
                     class="mr-4"
                     width="28"
                     height="28"
-                    :src="getApplicationLogo(option)"
+                    :src="getLogo(option)"
                     :alt="$t('common.logo')" />
                   <div class="media-body align-self-center overflow-hidden text-nowrap">
                     <span class="text-dark">
@@ -175,7 +175,7 @@ of the MIT license. See the LICENSE file for details. -->
                     class="mr-4"
                     width="28"
                     height="28"
-                    :src="getApplicationLogo(option)"
+                    :src="getLogo(option)"
                     :alt="$t('common.logo')" />
                   <div class="media-body align-self-center overflow-hidden text-nowrap">
                     <span class="text-dark">
@@ -198,7 +198,7 @@ import {
   BMedia,
   BFormGroup,
 } from 'bootstrap-vue';
-import AppSharedUtilsMixin from '@forgerock/platform-shared/src/mixins/AppSharedUtilsMixin';
+import { getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
@@ -217,7 +217,6 @@ export default {
     BImg,
   },
   mixins: [
-    AppSharedUtilsMixin,
     NotificationMixin,
   ],
   data() {
@@ -283,6 +282,9 @@ export default {
         }).catch((error) => {
           this.showErrorMessage(error, this.$t('governance.certificationTask.errors.filterError'));
         });
+    },
+    getLogo(item) {
+      return getApplicationLogo(item);
     },
   },
   mounted() {

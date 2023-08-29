@@ -157,7 +157,7 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrNavbar from '@forgerock/platform-shared/src/components/Navbar';
 import MediaMixin from '@forgerock/platform-shared/src/mixins/MediaMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import AppSharedUtilsMixin from '@forgerock/platform-shared/src/mixins/AppSharedUtilsMixin';
+import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import {
   // getUserGrants,
   getResource,
@@ -203,7 +203,6 @@ export default {
     FrRequestCart,
   },
   mixins: [
-    AppSharedUtilsMixin,
     BreadcrumbMixin,
     MediaMixin,
     NotificationMixin,
@@ -241,7 +240,7 @@ export default {
       if (this.catalogResults[0]?.entitlement) {
         return this.catalogResults.map((catalogItem) => ({
           description: catalogItem.entitlement.description,
-          icon: this.getApplicationLogo(catalogItem.application),
+          icon: getApplicationLogo(catalogItem.application),
           name: catalogItem.entitlement.displayName,
           appType: catalogItem.entitlement.name,
           templateName: catalogItem.application.templateName,
@@ -252,9 +251,9 @@ export default {
       if (this.catalogResults[0]?.application) {
         return this.catalogResults.map((catalogItem) => ({
           description: catalogItem.application.description,
-          icon: this.getApplicationLogo(catalogItem.application),
+          icon: getApplicationLogo(catalogItem.application),
           name: catalogItem.application.name,
-          appType: this.getApplicationDisplayName(catalogItem.application),
+          appType: getApplicationDisplayName(catalogItem.application),
           templateName: catalogItem.application.templateName,
           id: catalogItem.id,
           requested: this.isRequested(catalogItem.id),

@@ -187,7 +187,7 @@ of the MIT license. See the LICENSE file for details. -->
               class="mr-4"
               width="28"
               height="28"
-              :src="getApplicationLogo(item.application)"
+              :src="getLogo(item.application)"
               :alt="$t('common.logo')" />
             <div class="media-body align-self-center overflow-hidden text-nowrap">
               <span class="text-dark">
@@ -516,7 +516,7 @@ import FrCertificationTaskReassignModal from '@forgerock/platform-shared/src/vie
 import FrCertificationTaskActionConfirmModal from '@forgerock/platform-shared/src/views/Governance/CertificationTask/CertificationTaskActionConfirmModal';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import AppSharedUtilsMixin from '@forgerock/platform-shared/src/mixins/AppSharedUtilsMixin';
+import { getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import {
   certifyCertificationTasks,
   certifyLineItem,
@@ -619,7 +619,6 @@ export default {
     FrSpinner,
   },
   mixins: [
-    AppSharedUtilsMixin,
     NotificationMixin,
   ],
   props: {
@@ -1553,6 +1552,9 @@ export default {
     },
     getResourceDisplayName(item, resource) {
       return item.descriptor?.idx?.[resource]?.displayName;
+    },
+    getLogo(item) {
+      return getApplicationLogo(item);
     },
   },
   watch: {

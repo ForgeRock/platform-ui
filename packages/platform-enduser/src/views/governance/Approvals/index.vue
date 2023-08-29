@@ -140,6 +140,7 @@ of the MIT license. See the LICENSE file for details. -->
       :item="modalItem"
       :is-approvals="true"
       @modal-closed="modalType = null; modalItem = null"
+      @update-item="loadItem($event)"
       @update-list="loadRequestAndUpdateBadge" />
   </BContainer>
 </template>
@@ -160,8 +161,14 @@ import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrAccessRequestList from '@/components/governance/AccessRequestList';
 import FrRequestToolbar from '@/components/governance/RequestToolbar';
-import { getRequestFilter, getStatusText, sortKeysMap } from '@/components/utils/governance/AccessRequestUtils';
-import { getUserApprovals } from '@/api/governance/AccessRequestApi';
+import {
+  getRequestFilter,
+  getStatusText,
+  sortKeysMap,
+  getRequestObjectType,
+  getFormattedRequest,
+} from '@/components/utils/governance/AccessRequestUtils';
+import { getUserApprovals, getRequest } from '@/api/governance/AccessRequestApi';
 import FrRequestModal, { REQUEST_MODAL_TYPES } from '@/components/governance/RequestModal';
 
 /**
@@ -230,6 +237,24 @@ export default {
         this.$store.commit('setApprovalsCount', data.totalCount);
       } catch (error) {
         this.showErrorMessage(error, this.$t('governance.approval.errorGettingPendingApprovals'));
+      }
+    },
+    /**
+     * Update current item being displayed on the modal
+     */
+    async loadItem(id) {
+      try {
+        const updatedItem = await getRequest(id);
+        if (this.accessRequests) {
+          const index = this.accessRequests.findIndex((request) => request.id === id);
+          this.$set(this.accessRequests, index, updatedItem.data);
+
+          const objectType = getRequestObjectType(updatedItem.data.requestType);
+          const newItem = getFormattedRequest(updatedItem.data, objectType);
+          this.modalItem = newItem;
+        }
+      } catch (error) {
+        this.showErrorMessage(error, this.$t('governance.approval.errorGettingUpdatedItem'));
       }
     },
     /**

@@ -54,7 +54,7 @@ of the MIT license. See the LICENSE file for details. -->
               width="24"
               :alt="$t('common.logo')"
               :aria-hidden="true"
-              :src="getApplicationLogo(selectedItem.application)"
+              :src="getLogo(selectedItem.application)"
             />
           </template>
           <BMediaBody>
@@ -99,7 +99,7 @@ import {
   BImg,
 } from 'bootstrap-vue';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
-import AppSharedUtilsMixin from '@forgerock/platform-shared/src/mixins/AppSharedUtilsMixin';
+import { getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import FrCertificationTaskList from '../CertificationTaskList';
 
 export default {
@@ -113,7 +113,6 @@ export default {
     FrCertificationTaskList,
     FrSpinner,
   },
-  mixins: [AppSharedUtilsMixin],
   data() {
     return {
       selectedItem: null,
@@ -191,6 +190,9 @@ export default {
       this.selectedItem = item;
       this.isLoading = false;
       this.refreshGroupByEntitlementTasks = true;
+    },
+    getLogo(item) {
+      return getApplicationLogo(item);
     },
   },
 };
