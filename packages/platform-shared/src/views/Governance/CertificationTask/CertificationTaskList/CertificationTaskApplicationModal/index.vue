@@ -108,8 +108,8 @@ import {
   BTab,
   BTabs,
 } from 'bootstrap-vue';
-import AppSharedUtilsMixin from '@forgerock/platform-shared/src/mixins/AppSharedUtilsMixin';
 import FrGlossaryDisplayForm from '@forgerock/platform-shared/src/components/governance/GlossaryDisplayForm';
+import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 
@@ -125,7 +125,6 @@ export default {
     FrGlossaryDisplayForm,
     FrIcon,
   },
-  mixins: [AppSharedUtilsMixin],
   props: {
     application: {
       type: Object,
@@ -143,10 +142,10 @@ export default {
   },
   computed: {
     logo() {
-      return this.getApplicationLogo(this.application);
+      return getApplicationLogo(this.application);
     },
     displayName() {
-      return this.getApplicationDisplayName(this.application);
+      return getApplicationDisplayName(this.application);
     },
     glossaryValues() {
       return this.application.glossary?.idx?.['/application'] || {};

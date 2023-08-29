@@ -9,11 +9,9 @@ import { mount } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import flushPromises from 'flush-promises';
 import * as AccessRequestApi from '@/api/governance/AccessRequestApi';
-import getPriorityImageSrc from '@/components/utils/governance/AccessRequestUtils';
 import i18n from '@/i18n';
 import MyRequests from './index';
 
-jest.mock('@/components/utils/governance/AccessRequestUtils');
 jest.mock('@/api/governance/AccessRequestApi');
 
 const accessRequests = [{
@@ -81,10 +79,6 @@ describe('MyRequests', () => {
       result: accessRequests,
     },
   }));
-
-  beforeEach(() => {
-    getPriorityImageSrc.mockClear();
-  });
 
   describe('@Component Tests', () => {
     it('Executes the request details modal after clicking on "View Details"', async () => {

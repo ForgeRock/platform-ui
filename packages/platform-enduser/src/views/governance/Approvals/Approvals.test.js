@@ -9,6 +9,7 @@ import { mount } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import { clone } from 'lodash';
 import * as AccessRequestApi from '@/api/governance/AccessRequestApi';
 import Approvals from './index';
 import i18n from '@/i18n';
@@ -442,5 +443,28 @@ describe('Approvals', () => {
     wrapper = mountComponent();
     await flushPromises();
     expect(wrapper.vm.$store.commit).toHaveBeenCalledWith('setApprovalsCount', 1);
+  });
+
+  it('Loaditem function updates the list item correctly', async () => {
+    const newMockRequest = clone(mockRequest);
+    newMockRequest.decision.comments = [{ comment: 'test' }];
+    const newOpenModalMock = clone(openModalMock);
+    newOpenModalMock.rawData.decision.comments = [{ comment: 'test' }];
+    AccessRequestApi.getUserApprovals = jest.fn().mockReturnValue(
+      Promise.resolve({
+        data: {
+          result: [mockRequest],
+        },
+      }),
+    );
+    AccessRequestApi.getRequest = jest.fn().mockReturnValue(
+      Promise.resolve({
+        data: newMockRequest,
+      }),
+    );
+    wrapper = mountComponent();
+    wrapper.vm.loadItem(1);
+    await flushPromises();
+    expect(wrapper.vm.modalItem).toMatchObject(newOpenModalMock);
   });
 });

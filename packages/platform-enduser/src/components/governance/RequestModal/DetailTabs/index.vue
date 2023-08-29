@@ -84,9 +84,12 @@ export default {
         },
       ],
       tabIndex: 0,
-      commentsCount: this.item.rawData.decision.comments
-        .filter(({ action }) => action === 'comment').length,
     };
+  },
+  computed: {
+    commentsCount() {
+      return this.item.rawData.decision.comments.filter(({ action }) => action === 'comment').length;
+    },
   },
 };
 </script>
