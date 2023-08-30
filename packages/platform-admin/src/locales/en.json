@@ -1037,10 +1037,11 @@
         "resetSecretFail": "Unable to reset client secret"
       },
       "listApps": {
-        "getAppsDataFail": "Unable to retrieve applications data",
         "deleteAppFail": "Unable to delete application",
+        "getAppsDataFail": "Unable to retrieve applications data",
         "noDataTitle": "You haven't added any applications yet",
-        "noDataSubtitle": "Set up an application to use ForgeRock authentication."
+        "noDataSubtitle": "Set up an application to use ForgeRock authentication.",
+        "noSearchResults": "No Applications found."
       },
       "listOauthClients": {
         "deleteFail": "Unable to delete OAuth2 Client",
