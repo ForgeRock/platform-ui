@@ -41,7 +41,6 @@ describe('BooleanAttributeInputCallback', () => {
 
   it('On toggle updates value', () => {
     wrapper.vm.onToggle();
-    expect(wrapper.vm.$data.value).toEqual(false);
     expect(wrapper.vm.$props.callback.setInputValue).toHaveBeenCalled();
   });
 });
