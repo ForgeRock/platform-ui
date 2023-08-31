@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -10,11 +10,11 @@ of the MIT license. See the LICENSE file for details. -->
     :disable-branch-nodes="true"
     value-format="object"
     :placeholder="$t('access.dashboard.selectLabels')">
-    <div
-      slot="value-label"
-      slot-scope="{ node }">
-      {{ node.raw.fullLabel }}
-    </div>
+    <template #value-label="{ node }">
+      <div>
+        {{ node.raw.fullLabel }}
+      </div>
+    </template>
   </Treeselect>
 </template>
 
