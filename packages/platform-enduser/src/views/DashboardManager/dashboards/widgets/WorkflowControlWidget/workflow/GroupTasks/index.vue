@@ -16,53 +16,53 @@ of the MIT license. See the LICENSE file for details. -->
             :ref="`collapse-${id}`"
             @shown="setShown(id)"
             @hidden="setHidden(id)">
-            <div
-              slot="list-item-header"
-              class="d-inline-flex w-100 media">
-              <div class="media-body align-self-center">
-                <h6 class="mb-1 mt-0">
-                  {{ taskDefinition.name }}
-                </h6>
-                <small class="text-muted d-block mb-2">
-                  {{ $t('pages.workflow.notAssigned') }}
-                </small>
+            <template #list-item-header>
+              <div class="d-inline-flex w-100 media">
+                <div class="media-body align-self-center">
+                  <h6 class="mb-1 mt-0">
+                    {{ taskDefinition.name }}
+                  </h6>
+                  <small class="text-muted d-block mb-2">
+                    {{ $t('pages.workflow.notAssigned') }}
+                  </small>
+                </div>
+                <div class="d-flex mb-3 ml-3 align-self-center">
+                  <BButton
+                    v-if="panelShown[id] === true"
+                    variant="link"
+                    size="sm"
+                    class="btn-cancel mb-2"
+                    :ref="`cancel-${id}`">
+                    {{ $t('common.cancel') }}
+                  </BButton>
+                  <BButton
+                    v-else
+                    variant="link"
+                    size="sm"
+                    class="btn-edit">
+                    {{ $t('pages.workflow.assign') }}
+                  </BButton>
+                </div>
               </div>
-              <div class="d-flex mb-3 ml-3 align-self-center">
-                <BButton
-                  v-if="panelShown[id] === true"
-                  variant="link"
-                  size="sm"
-                  class="btn-cancel mb-2"
-                  :ref="`cancel-${id}`">
-                  {{ $t('common.cancel') }}
-                </BButton>
-                <BButton
-                  v-else
-                  variant="link"
-                  size="sm"
-                  class="btn-edit">
-                  {{ $t('pages.workflow.assign') }}
-                </BButton>
+            </template>
+            <template #list-item-collapse-body>
+              <div class="d-inline-flex w-100">
+                <FrAssignTask
+                  :shown="panelShown[id]"
+                  :task-definition="taskDefinition"
+                  @loadProcess="(process) => $emit('loadProcess', process)"
+                  @assignTask="assignTask" />
               </div>
-            </div>
-            <div
-              slot="list-item-collapse-body"
-              class="d-inline-flex w-100">
-              <FrAssignTask
-                :shown="panelShown[id]"
-                :task-definition="taskDefinition"
-                @loadProcess="(process) => $emit('loadProcess', process)"
-                @assignTask="assignTask" />
-            </div>
+            </template>
           </FrListItem>
         </TransitionGroup>
       </template>
       <FrListItem v-else>
-        <div
-          slot="list-item-header"
-          class="text-muted text-center w-100">
-          {{ $t('pages.workflow.noGroupTasks') }}
-        </div>
+        <template #list-item-header>
+          <div class="text-muted text-center w-100">
+            {{ $t('pages.workflow.noGroupTasks') }}
+          </div>
+        </template>
       </FrListItem>
     </FrListGroup>
   </div>

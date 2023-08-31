@@ -12,11 +12,12 @@ of the MIT license. See the LICENSE file for details. -->
     <span class="sr-only">
       {{ $t('queryFilterBuilder.queryFilterAddDropDown') }}
     </span>
-    <FrIcon
-      class="text-dark"
-      slot="button-content"
-      name="add"
-    />
+    <template #button-content>
+      <FrIcon
+        class="text-dark"
+        name="add"
+      />
+    </template>
     <BDropdownItem @click="$emit('add-rule', 'row')">
       {{ $t('queryFilterBuilder.addRuleButton') }}
     </BDropdownItem>
