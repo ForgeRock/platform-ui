@@ -636,13 +636,15 @@ export default {
         };
 
         if (component.type === 'FrField' || component.type === 'FrPasswordCallback') {
+          const policyRequirements = callback.getOutputByName('policies')?.policyRequirements || [];
           const {
             fieldType, label, name, value,
           } = this.getField(callback, index);
+          const fieldDataType = this.getAlternateFieldType(policyRequirements) || fieldType;
 
           const errors = this.getTranslatedPolicyFailures(callback);
           component.callbackSpecificProps = {
-            errors, label, name, type: fieldType, value, autocomplete: getAutocompleteValue(label),
+            errors, label, name, type: fieldDataType, value, autocomplete: getAutocompleteValue(label),
           };
 
           component.listeners = this.getListeners({ callback, index }, ['input']);
@@ -1206,6 +1208,24 @@ export default {
           window.opener.postMessage('loginSuccess', this.$store.state.SharedStore.fraasPromotionIngressUrl);
         }
       }
+    },
+    /**
+     * Gets an alternate field type based on policy requirments
+     *
+     * @param {Array} policyRequirements
+     * @returns {String} - dataType string
+     */
+    getAlternateFieldType(policyRequirements) {
+      let dataType = '';
+      // Check policyRequirements for date policies and set dataType accordingly
+      if (policyRequirements.includes('VALID_DATE_TIME_FORMAT')) {
+        dataType = 'datetime';
+      } else if (policyRequirements.includes('VALID_DATE') || policyRequirements.includes('VALID_DATE_FORMAT')) {
+        dataType = 'date';
+      } else if (policyRequirements.includes('VALID_TIME_FORMAT')) {
+        dataType = 'time';
+      }
+      return dataType;
     },
   },
 };
