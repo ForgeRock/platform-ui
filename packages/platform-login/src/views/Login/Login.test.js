@@ -195,6 +195,13 @@ describe('Login.vue', () => {
 
     expect(wrapper.vm.getStepParams()).toEqual(expectedStepParams);
   });
+
+  it('Sets the correct field data type based on policyRequirements', () => {
+    expect(wrapper.vm.getAlternateFieldType(['VALID_DATE_TIME_FORMAT'])).toEqual('datetime');
+    expect(wrapper.vm.getAlternateFieldType(['VALID_DATE'])).toEqual('date');
+    expect(wrapper.vm.getAlternateFieldType(['VALID_DATE_FORMAT'])).toEqual('date');
+    expect(wrapper.vm.getAlternateFieldType(['VALID_TIME_FORMAT'])).toEqual('time');
+  });
 });
 
 describe('Component Test', () => {
