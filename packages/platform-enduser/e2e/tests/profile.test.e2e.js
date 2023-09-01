@@ -59,7 +59,7 @@ filterTests(['forgeops', 'cloud'], () => {
       cy.get('button.btn-danger:last')
         .should('exist')
         .click();
-      cy.get('h2.modal-title').should('contain', 'Permanently Delete Your Account?');
+      cy.get('.modal-title').should('contain', 'Permanently Delete Your Account?');
 
       // Watch for the user being deleted
       cy.intercept('DELETE', `**/openidm/managed/${userObject}/${userId}`).as('deleteUser');
