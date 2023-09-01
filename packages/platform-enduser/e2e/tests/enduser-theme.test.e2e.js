@@ -35,7 +35,8 @@ filterTests(['forgeops', 'cloud'], () => {
           setBaseTheme().then(() => {
             // Visit the edit page for the theme used in the test
             cy.visit(`${Cypress.config().baseUrl}/platform/?realm=${enduserRealm}#/hosted-pages/Starter%20Theme`);
-            cy.findByRole('heading', { name: 'Starter Theme' }).should('not.exist');
+            // Verify that the title is present on the page, this step depends on a request that is executed in the background and the timeout is required.
+            cy.findByRole('heading', { name: 'Starter Theme', timeout: 10000 }).should('exist');
           });
         });
       });
