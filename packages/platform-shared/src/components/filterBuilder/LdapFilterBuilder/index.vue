@@ -27,10 +27,14 @@ of the MIT license. See the LICENSE file for details. -->
       </BButton>
     </template>
     <template v-else>
-      <FrFilterBuilderAdvanced
-        :disabled="disabled"
-        v-model="filterString"
-        @input="setFilterObject" />
+      <FrScriptEditor
+        :value="{ source: filterString.toString() }"
+        :script-title="$t('queryFilterBuilder.basicEditorHeadline')"
+        :show-file-upload="false"
+        :show-variables="false"
+        @input="setFilterObject($event.source)"
+        :readonly="disabled"
+      />
       <BButton
         :disabled="!allowBasic"
         class="px-0"
@@ -53,7 +57,7 @@ import {
   map,
 } from 'lodash';
 import { parse } from 'ldap-filter';
-import FrFilterBuilderAdvanced from '../components/FilterBuilderAdvanced';
+import FrScriptEditor from '@forgerock/platform-shared/src/components/ScriptEditor';
 import FrFilterBuilderGroup from '../components/FilterBuilderGroup';
 import { checkIfWithinThreeLayers, findGroup } from '../utils/filterBuilderUtils';
 import { ldapDefaultConditionOptions, conditionMap, ldapOperatorOptions } from '../utils/LdapFilterDefaults';
@@ -63,8 +67,8 @@ export default {
   components: {
     BButton,
     BCard,
-    FrFilterBuilderAdvanced,
     FrFilterBuilderGroup,
+    FrScriptEditor,
   },
   props: {
     disabled: {

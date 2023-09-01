@@ -32,10 +32,14 @@ of the MIT license. See the LICENSE file for details. -->
       </BButton>
     </template>
     <template v-else-if="isBasic === false">
-      <FrFilterBuilderAdvanced
-        :disabled="disabled"
-        v-model="filterString"
-        @input="checkFilterString" />
+      <FrScriptEditor
+        :value="{ source: filterString.toString() }"
+        :script-title="$t('queryFilterBuilder.basicEditorHeadline')"
+        :show-file-upload="false"
+        :show-variables="false"
+        @input="checkFilterString($event.source)"
+        :readonly="disabled"
+      />
       <BButton
         :disabled="!allowBasicMode"
         class="px-0"
@@ -51,7 +55,7 @@ of the MIT license. See the LICENSE file for details. -->
 import { BButton, BCard } from 'bootstrap-vue';
 import { cloneDeep } from 'lodash';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
-import FrFilterBuilderAdvanced from '../components/FilterBuilderAdvanced';
+import FrScriptEditor from '@forgerock/platform-shared/src/components/ScriptEditor';
 import FrFilterBuilderGroup from '../components/FilterBuilderGroup';
 import { defaultConditionOptions, operatorOptions, getTypeFromValue } from '../utils/QueryFilterDefaults';
 import { findGroup, checkIfWithinThreeLayers } from '../utils/filterBuilderUtils';
@@ -63,8 +67,8 @@ export default {
   components: {
     BButton,
     BCard,
-    FrFilterBuilderAdvanced,
     FrFilterBuilderGroup,
+    FrScriptEditor,
   },
   mixins: [RestMixin],
   computed: {

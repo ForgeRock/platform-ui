@@ -39,6 +39,7 @@ of the MIT license. See the LICENSE file for details. -->
           :aria-label="$t('editor.accessibilityHelp')"
           :language="scriptType.value.split('/')[1]"
           :line-numbers="showLineNumbers"
+          :readonly="readonly"
           @input="emitScriptValue"
           @keydown="blurOnEscape" />
       </div>
@@ -92,6 +93,7 @@ of the MIT license. See the LICENSE file for details. -->
               language="json"
               :aria-label="$t('editor.accessibilityHelp')"
               :line-numbers="true"
+              :readonly="readonly"
               @input="checkIfCodeIsParsable($event.target.innerText)"
               @keydown="blurOnEscape" />
           </template>
@@ -213,6 +215,10 @@ export default {
     showVariables: {
       type: Boolean,
       default: true,
+    },
+    readonly: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
