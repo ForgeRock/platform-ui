@@ -3,7 +3,7 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div>
+  <div class="esv-input-wrapper">
     <template v-if="dropdownWithinInput">
       <Component
         v-bind="$attrs"
@@ -156,3 +156,42 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+// Fix for text input with esv dropdown having no border radius on the right hand side
+.esv-input-wrapper :deep(.form-label-group input[type="text"]) {
+  border-top-right-radius: $border-radius !important;
+  border-bottom-right-radius: $border-radius !important;
+}
+
+.esv-input-wrapper :deep(.form-label-group) {
+  &:hover,
+  &:active,
+  &:focus,
+  &:focus-within {
+    input[type="text"] {
+      border-top-right-radius: 0 !important;
+      border-bottom-right-radius: 0 !important;
+    }
+  }
+}
+
+.esv-input-wrapper :deep(.b-dropdown) {
+  display: none;
+}
+
+.esv-input-wrapper {
+  &:hover,
+  &:active,
+  &:focus,
+  &:focus-within {
+    :deep(.b-dropdown) {
+      display: inline-flex;
+    }
+  }
+}
+
+:deep(.field-type-checkbox.dropdown .btn) {
+  height: 23px;
+}
+</style>
