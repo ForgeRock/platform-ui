@@ -6,6 +6,7 @@
  */
 
 import { shallowMount } from '@vue/test-utils';
+import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import ResourceMixin from './index';
 
 let wrapper;
@@ -15,7 +16,23 @@ describe('ResourceMixin', () => {
     wrapper = shallowMount({}, {
       render() {},
       mixins: [ResourceMixin],
-      mocks: { $t: (id) => id },
+      mocks: {
+        $t: (id) => id,
+        $store: {
+          commit: jest.fn(),
+          state: {
+            SharedStore: {
+              uiConfig: {
+
+              },
+              managedObjectMinimumUIFilterLength: {},
+            },
+            UserStore: {
+              adminUser: true,
+            },
+          },
+        },
+      },
     });
   });
 
@@ -142,5 +159,27 @@ describe('ResourceMixin', () => {
     wrapper.vm.removeHelpText();
     expect(wrapper.vm.hasFocus).toEqual(false);
     expect(wrapper.vm.searchHelpText).toEqual('');
+  });
+
+  describe('Getting the minimum UI filter length for an object', () => {
+    describe('Calling the count api to determine whether to set a minimum filter length', () => {
+      it('Uses the default minimum length if the response from the API is over 1000', async () => {
+        jest.spyOn(ManagedResourceApi, 'getManagedResourceCount').mockResolvedValue({ data: { resultCount: 1000000 } });
+        const minFilterLength = await wrapper.vm.getMinimumUIFilterLength('test');
+        expect(minFilterLength).toBe(3);
+      });
+
+      it('Uses the 0 as the length if the response from the API is 1000 or under', async () => {
+        jest.spyOn(ManagedResourceApi, 'getManagedResourceCount').mockResolvedValue({ data: { resultCount: 1 } });
+        const minFilterLength = await wrapper.vm.getMinimumUIFilterLength('test');
+        expect(minFilterLength).toBe(0);
+      });
+
+      it('Uses the default minimum length if the API request encounters an error', async () => {
+        jest.spyOn(ManagedResourceApi, 'getManagedResourceCount').mockRejectedValue({ message: 'Unsupported object type for count query' });
+        const minFilterLength = await wrapper.vm.getMinimumUIFilterLength('test');
+        expect(minFilterLength).toBe(3);
+      });
+    });
   });
 });

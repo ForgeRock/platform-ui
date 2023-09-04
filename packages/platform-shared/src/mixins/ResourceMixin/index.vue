@@ -207,20 +207,26 @@ export default {
         // set it to zero
         minimumUIFilterLength = 0;
       } else if (this.$store.state.UserStore.adminUser) {
-        // this user has openidm-admin role so they are allowed to get the count of the whole managed object's dataset
-        const result = await getManagedResourceCount(managedObjectName);
-        // based on resultCount set a value in SharedStore.managedObjectMinimumUIFilterLength for this managed object
-        // this will keep the number of calls to getManagedResourceCount() to a minimum
-        if (result?.data.resultCount > numRecordsForIntervention) {
-          // the object meets the criteria for intervention
-          // set it to defaultMinimumUIFilterLength
+        try {
+          // this user has openidm-admin role so they are allowed to get the count of the whole managed object's dataset
+          const result = await getManagedResourceCount(managedObjectName);
+          // based on resultCount set a value in SharedStore.managedObjectMinimumUIFilterLength for this managed object
+          // this will keep the number of calls to getManagedResourceCount() to a minimum
+          if (result?.data.resultCount > numRecordsForIntervention) {
+            // the object meets the criteria for intervention
+            // set it to defaultMinimumUIFilterLength
+            this.$store.commit('SharedStore/setManagedObjectMinimumUIFilterLength', { managedObjectName, val: defaultMinimumUIFilterLength });
+            minimumUIFilterLength = defaultMinimumUIFilterLength;
+          } else {
+            // the object does not have enough records to cause a performance degredation
+            // set it to zero
+            this.$store.commit('SharedStore/setManagedObjectMinimumUIFilterLength', { managedObjectName, val: 0 });
+            minimumUIFilterLength = 0;
+          }
+        } catch (error) {
+          // Unable to retrieve a count for the object, fall back to the default value
           this.$store.commit('SharedStore/setManagedObjectMinimumUIFilterLength', { managedObjectName, val: defaultMinimumUIFilterLength });
           minimumUIFilterLength = defaultMinimumUIFilterLength;
-        } else {
-          // the object does not have enough records to cause a performance degredation
-          // set it to zero
-          this.$store.commit('SharedStore/setManagedObjectMinimumUIFilterLength', { managedObjectName, val: 0 });
-          minimumUIFilterLength = 0;
         }
       } else {
         // this is a delegated admin user who does not have access to the getManagedResourceCount request above and there is no uiConfig setting
