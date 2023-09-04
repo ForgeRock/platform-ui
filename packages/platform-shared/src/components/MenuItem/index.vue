@@ -26,6 +26,7 @@ of the MIT license. See the LICENSE file for details. -->
   <!-- Item will change route or open a new tab -->
   <Component
     v-else-if="(url || routeTo && routeTo.name) && showItemForUser && showItemForStoreValues"
+    :link-attrs="{'aria-label': $t(displayName)}"
     :is="bootstrapComponent"
     :href="url"
     :link-class="'d-flex align-items-center'"
@@ -68,6 +69,7 @@ of the MIT license. See the LICENSE file for details. -->
   <li
     v-else-if="subItems.length && showItemForUser"
     class="fr-menu-item-group"
+    :aria-label="$t(displayName)"
     :role="isNav ? '' : 'presentation'">
     <BButton
       v-b-toggle="`collapse-${displayName.split(' ').join('-')}`"
