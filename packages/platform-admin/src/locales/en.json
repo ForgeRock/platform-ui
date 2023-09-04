@@ -148,6 +148,7 @@
       "createMappingsError": "Error creating application mappings",
       "createMappingsSuccess": "Application mappings successfully created",
       "errorLoadingConnectorTemplate": "Error loading connector template",
+      "genericHTMLReplacementError": "Unable to connect to remote system",
       "noConnectorsTitle": "No Connector Servers available",
       "noConnectorsSubtitle": "Connecting to your {type} with ForgeRock involves deploying and running a piece of software called a “Connector Server” on your side.",
       "noProvisioning": "You haven't set up provisioning yet",
