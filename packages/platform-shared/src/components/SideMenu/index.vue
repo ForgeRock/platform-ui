@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -108,7 +108,8 @@ of the MIT license. See the LICENSE file for details. -->
             <li>
               <button
                 @click="toggleMenu"
-                class="d-flex align-items-center">
+                class="d-flex align-items-center"
+                :aria-label="$t('sideMenu.toggleSidebar')">
                 <FrIcon
                   class="icon-flipped mr-3 toggle-side-menu"
                   name="chrome_reader_mode"
