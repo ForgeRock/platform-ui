@@ -83,9 +83,8 @@ describe('App.vue', () => {
     expect(wrapper.vm.menuItems.length).toEqual(8);
   });
 
-  it('Loaded Menus File with governance V3 Enabled', async () => {
+  it('Loaded Menus File with governance', async () => {
     store.state.SharedStore.governanceEnabled = true;
-    store.state.SharedStore.governanceEnabledV3 = true;
     shallowMountComponent(store);
     await wrapper.vm.$nextTick();
     const inbox = wrapper.vm.menuItems.find((item) => item.displayName === 'sideMenu.inbox');
