@@ -88,6 +88,7 @@ describe('GovernanceDashboard', () => {
             pageSize: 0,
             status: 'in-progress',
           },
+          { operand: [{ operand: { targetName: 'decision.status', targetValue: 'in-progress' }, operator: 'EQUALS' }], operator: 'AND' },
         );
     });
   });
@@ -104,7 +105,7 @@ describe('GovernanceDashboard', () => {
           USER_STORE.userId,
           {
             pageSize: 0,
-            status: 'in-progress',
+            actorStatus: 'active',
           },
         );
     });
