@@ -44,7 +44,7 @@ describe('GovernanceDashboard', () => {
   AccessRequestApi.getUserRequests = jest.fn().mockReturnValue(Promise.resolve({ data: {} }));
   AccessRequestApi.getUserApprovals = jest.fn().mockReturnValue(Promise.resolve({ data: {} }));
 
-  function shallowMountComponent(governanceEnabledV3 = false) {
+  function shallowMountComponent() {
     wrapper = shallowMount(GovernanceDashboard, {
       localVue,
       mocks: {
@@ -53,7 +53,6 @@ describe('GovernanceDashboard', () => {
           state: {
             UserStore: USER_STORE,
             SharedStore: {
-              isGovernanceEnabledV3: governanceEnabledV3,
             },
           },
         },
@@ -76,7 +75,7 @@ describe('GovernanceDashboard', () => {
   });
 
   describe('getPendingRequestsCount', () => {
-    shallowMountComponent(true);
+    shallowMountComponent();
     it('should call getUserRequests', async () => {
       const getCertSpy = jest.spyOn(AccessRequestApi, 'getUserRequests').mockImplementation(() => Promise.resolve({ data: { objectTypes: {} } }));
       wrapper.vm.getPendingRequestsCount();
@@ -94,7 +93,7 @@ describe('GovernanceDashboard', () => {
   });
 
   describe('getPendingApprovalsCount', () => {
-    shallowMountComponent(true);
+    shallowMountComponent();
     it('should call getUserApprovals', async () => {
       const getCertSpy = jest.spyOn(AccessRequestApi, 'getUserApprovals').mockImplementation(() => Promise.resolve({ data: { objectTypes: {} } }));
       wrapper.vm.getPendingApprovalsCount();
