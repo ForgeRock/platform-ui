@@ -93,26 +93,11 @@ export function getRequestFilter(filter, status) {
       case 'in-progress':
         allFilters.push(getBasicFilter('EQUALS', 'decision.status', status));
         break;
-      // TODO: API will change all of these states to be reflected in decision.status
-      // we can remove this logic once the API supports it
       case 'cancelled':
-        allFilters.push(getBasicFilter('EQUALS', 'decision.status', 'complete'));
-        allFilters.push(getBasicFilter('EQUALS', 'decision.outcome', 'cancelled'));
+        allFilters.push(getBasicFilter('EQUALS', 'decision.status', 'cancelled'));
         break;
       case 'complete':
-        allFilters.push(getBasicFilter('EQUALS', 'decision.status', status));
-        allFilters.push({
-          operator: 'NOT',
-          operand: [
-            {
-              operator: 'EQUALS',
-              operand: {
-                targetName: 'decision.outcome',
-                targetValue: 'cancelled',
-              },
-            },
-          ],
-        });
+        allFilters.push(getBasicFilter('EQUALS', 'decision.status', 'complete'));
         break;
       default:
         break;

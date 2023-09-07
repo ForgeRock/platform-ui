@@ -201,6 +201,7 @@
     "submitting": "Submitting",
     "success": "Success",
     "tableNavigation": "Table Navigation",
+    "temporalConstraint": "{startDate} to {endDate}",
     "tenant": "Tenant",
     "text": "Text",
     "time": "Time",
