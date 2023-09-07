@@ -57,6 +57,7 @@ import FrCountCard from '@forgerock/platform-shared/src/components/CountCard';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import Welcome from '@/views/DashboardManager/dashboards/widgets/WelcomeWidget';
 import { getCertificationItems } from '@/api/governance/AccessReviewApi';
+import { getRequestFilter } from '@/components/utils/governance/AccessRequestUtils';
 import { getUserRequests, getUserApprovals } from '@/api/governance/AccessRequestApi';
 
 /**
@@ -116,7 +117,10 @@ export default {
     },
     getPendingRequestsCount() {
       this.loadingPendingRequests = true;
-      getUserRequests(this.userId, this.queryParams)
+
+      const filter = getRequestFilter({}, 'in-progress');
+
+      getUserRequests(this.userId, this.queryParams, filter)
         .then((resourceData) => {
           this.pendingRequestsCount = get(resourceData, 'data.totalCount', 0) || 0;
         })
@@ -129,7 +133,13 @@ export default {
     },
     getPendingApprovalsCount() {
       this.loadingPendingApprovals = true;
-      getUserApprovals(this.userId, this.queryParams)
+
+      const params = {
+        pageSize: 0,
+        actorStatus: 'active',
+      };
+
+      getUserApprovals(this.userId, params)
         .then((resourceData) => {
           this.pendingApprovalsCount = get(resourceData, 'data.totalCount', 0) || 0;
           this.$store.commit('setApprovalsCount', this.pendingApprovalsCount);

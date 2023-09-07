@@ -126,7 +126,6 @@
         "noResultsUser": "No Roles for this user.",
         "subtitle": "View all your application roles.",
         "tabTitle": "Roles",
-        "temporalConstraint": "{startDate} to {endDate}.",
         "title": "My Roles"
       }
     },
