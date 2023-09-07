@@ -75,7 +75,7 @@ const router = new Router({
       name: 'Approvals',
       component: () => import('@/views/governance/Approvals'),
       meta: { authenticate: true },
-      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled, store.state.SharedStore.governanceEnabledV3]),
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
     },
     {
       path: '/access-reviews',
@@ -89,14 +89,14 @@ const router = new Router({
       name: 'MyRequests',
       component: () => import(/* webpackChunkName: "MyRequests" */ '@/views/governance/accessRequest/MyRequests'),
       meta: { authenticate: true },
-      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled, store.state.SharedStore.governanceEnabledV3]),
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
     },
     {
       path: '/my-requests/new-request',
       name: 'AccessRequestNew',
       component: () => import(/* webpackChunkName: "AccessRequestNew" */ '@/views/governance/accessRequest/NewRequest'),
       meta: { hideNavBar: true, hideSideMenu: true },
-      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabledV3, to.params.requestingFor], { path: '/my-requests' }),
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled, to.params.requestingFor], { path: '/my-requests' }),
     },
     {
       path: '/certification/certification-task/:campaignId',

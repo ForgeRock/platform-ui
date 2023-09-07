@@ -25,7 +25,7 @@ const defaultState = {
   googleFontsApiKey: '',
   googleMapsApiKey: '',
   governanceEnabled: false,
-  governanceEnabledV3: false,
+  governanceEnabledV4: false,
   igaApiUrl: null,
   logoutScreen: false,
   returnRoute: '',
@@ -74,7 +74,7 @@ const mutations = {
           state.autoAccessJasUrl = env.VUE_APP_AUTO_ACCESS_JAS_URL;
         }
       }
-      if (env.VUE_APP_ENABLE_GOVERNANCE === 'true' || env.VUE_APP_ENABLE_GOVERNANCE === true || env.VUE_APP_ENABLE_GOVERNANCE_V3 === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_V3 === true) {
+      if (env.VUE_APP_ENABLE_GOVERNANCE === 'true' || env.VUE_APP_ENABLE_GOVERNANCE === true || env.VUE_APP_ENABLE_GOVERNANCE_V4 === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_V4 === true) {
         if (env.VUE_APP_IGA_API_URL) {
           state.igaApiUrl = env.VUE_APP_IGA_API_URL;
         }
@@ -135,9 +135,9 @@ const mutations = {
       if (env.VUE_APP_ENABLE_GOVERNANCE === 'true' || env.VUE_APP_ENABLE_GOVERNANCE === true) {
         state.governanceEnabled = true;
       }
-      if (env.VUE_APP_ENABLE_GOVERNANCE_V3 === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_V3 === true) {
+      if (env.VUE_APP_ENABLE_GOVERNANCE_V4 === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_V4 === true) {
         state.governanceEnabled = true;
-        state.governanceEnabledV3 = true;
+        state.governanceEnabledV4 = true;
       }
     }
 
