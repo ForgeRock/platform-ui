@@ -11,19 +11,21 @@ import CertificationFilter from './index';
 describe('CertificationFilter', () => {
   let wrapper;
 
-  function mountComponent({ propsData }) {
+  function mountComponent({ props }) {
     return shallowMount(CertificationFilter, {
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData,
+      props,
     });
   }
 
   describe('no filter, default behaviour', () => {
     beforeEach(() => {
       wrapper = mountComponent({
-        propsData: {
+        props: {
           resourceName: 'test',
           filter: {},
         },
@@ -77,7 +79,7 @@ describe('CertificationFilter', () => {
   describe('with filter', () => {
     beforeEach(() => {
       wrapper = mountComponent({
-        propsData: {
+        props: {
           resourceName: 'test',
           filter: {
             operator: 'OR',

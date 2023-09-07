@@ -5,13 +5,9 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import i18n from '@/i18n';
 import Requests from '@/components/uma/Requests';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 Requests.components['fr-fallback-image'] = jest.fn();
 
@@ -45,16 +41,17 @@ describe('UMA Requests Component', () => {
 
   beforeEach(() => {
     wrapper = shallowMount(Requests, {
-      localVue,
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         requests,
       },
     });
   });
 
   afterEach(() => {
-    wrapper.destroy();
+    wrapper.unmount();
   });
 
   it('should use actual time for events on previous days', () => {

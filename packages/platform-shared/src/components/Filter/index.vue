@@ -185,7 +185,9 @@ export default {
   },
   mounted() {
     this.pendingCategories = [...this.activeCategories];
-    this.pendingFilters = [...this.activeFilters];
+    setTimeout(() => {
+      this.pendingFilters = [...this.activeFilters];
+    });
   },
   watch: {
     pendingCategories(newVal) {

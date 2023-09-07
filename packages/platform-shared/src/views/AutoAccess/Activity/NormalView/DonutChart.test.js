@@ -24,8 +24,10 @@ describe('DonutChart', () => {
 
   function setup(props) {
     return mount(DonutChart, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         ...defaultProps,
         ...props,
       },

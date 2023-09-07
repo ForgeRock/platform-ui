@@ -12,10 +12,12 @@ describe('MarkdownEditor', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = shallowMount(MarkdownEditor, {
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         styles: '',
         isMarkdown: true,
       },

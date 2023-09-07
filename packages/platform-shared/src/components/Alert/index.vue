@@ -169,7 +169,7 @@ export default {
       background-color: $fr-alert-dark-bg-color;
     }
 
-    ::v-deep .close {
+    :deep(.close) {
       height: 24px;
       padding: 0 12px 4px 0;
       outline: none;

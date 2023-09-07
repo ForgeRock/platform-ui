@@ -12,8 +12,11 @@ describe('TimezoneOffset Component', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = shallowMount(TimezoneOffset, {
-      mocks: {
-        $t(val) { return val; },
+      global: {
+        mocks: {
+          $t(val) { return val; },
+        },
+        renderStubDefaultSlot: true,
       },
     });
   });

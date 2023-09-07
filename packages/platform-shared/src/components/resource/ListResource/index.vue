@@ -100,7 +100,7 @@ of the MIT license. See the LICENSE file for details. -->
         </template>
       </template>
       <template
-        v-for="(key, slotName) in $scopedSlots"
+        v-for="(key, slotName) in $slots"
         #[slotName]="slotData">
         <!-- @slot Custom cell slot -->
         <slot
@@ -547,7 +547,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-  ::v-deep .table tr:not(.b-table-empty-row) td {
+  :deep(.table tr:not(.b-table-empty-row) td) {
     cursor: pointer;
   }
 

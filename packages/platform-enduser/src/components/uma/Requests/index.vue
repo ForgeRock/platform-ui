@@ -83,6 +83,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import { BCard, BListGroup, BListGroupItem } from 'bootstrap-vue';
 import dayjs from 'dayjs';
 import LocalizedFormat from 'dayjs/plugin/localizedFormat';
 import DateMixin from '@forgerock/platform-shared/src/mixins/DateMixin/';
@@ -97,6 +98,9 @@ dayjs.extend(LocalizedFormat);
 export default {
   name: 'Requests',
   components: {
+    BCard,
+    BListGroup,
+    BListGroupItem,
     FrFallbackImage,
     FrIcon,
   },

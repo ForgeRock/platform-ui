@@ -5,13 +5,9 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import { setupTestPinia } from '../../utils/testPiniaHelpers';
 import ToolbarNotification from './index';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 describe('ToolbarNotification', () => {
   let wrapper;
@@ -34,9 +30,10 @@ describe('ToolbarNotification', () => {
   beforeEach(() => {
     setupTestPinia();
     wrapper = shallowMount(ToolbarNotification, {
-      localVue,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
     });
 

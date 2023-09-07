@@ -5,8 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
+import { mount, flushPromises } from '@vue/test-utils';
 import i18n from '@/i18n';
 import Tag from './index';
 import { findByTestId } from '../../../utils/testHelpers';
@@ -21,8 +20,10 @@ describe('Tag', () => {
   function setup(props) {
     return mount(Tag, {
       attachTo: document.body,
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         ...defaultProps,
         ...props,
       },

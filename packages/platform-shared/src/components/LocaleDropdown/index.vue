@@ -149,12 +149,12 @@ export default {
       display: block;
     }
 
-    ::v-deep .dropdown-item::after {
+    :deep(.dropdown-item::after) {
       display: none;
     }
   }
 
-  ::v-deep .dropdown-item {
+  :deep(.dropdown-item) {
     padding: 0;
   }
 }

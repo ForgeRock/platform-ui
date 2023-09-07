@@ -5,8 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import flushPromises from 'flush-promises';
-import { mount } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
 import i18n from '@/i18n';
 import MultiSelect from './index';
 import { findByTestId } from '../../../utils/testHelpers';
@@ -19,8 +18,10 @@ describe('Multiselect', () => {
 
   function setup(props) {
     return mount(MultiSelect, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         ...defaultProps,
         ...props,
       },
@@ -33,7 +34,7 @@ describe('Multiselect', () => {
 
       const multiselect = findByTestId(wrapper, 'stub-testid');
       expect(multiselect.attributes('aria-expanded')).toBe('false');
-      expect(multiselect.attributes('aria-labelledby')).toBe('floatingLabelInput4-label');
+      expect(multiselect.attributes('aria-labelledby')).toBe('floatingLabelInput1-label');
     });
   });
 
@@ -139,7 +140,7 @@ describe('Multiselect', () => {
     const elements = () => multiselect.findAll('.multiselect__option');
 
     multiselect.trigger('click');
-    elements().at(1).trigger('click');
+    elements()[1].trigger('click');
     await flushPromises();
     expect(wrapper.vm.inputValue).toEqual([{
       multiselectId: 1,
@@ -149,7 +150,7 @@ describe('Multiselect', () => {
     expect(wrapper.emitted().input).toEqual([[['b']]]);
 
     multiselect.trigger('click');
-    elements().at(0).trigger('click');
+    elements()[0].trigger('click');
     expect(wrapper.vm.inputValue).toEqual([{
       multiselectId: 1,
       text: 'b',
@@ -164,8 +165,10 @@ describe('Multiselect', () => {
 
   it('MultiSelect passes through component slots', () => {
     const wrapper = mount(MultiSelect, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         ...defaultProps,
       },
       slots: {
@@ -180,9 +183,11 @@ describe('Multiselect', () => {
 
   it('Multiselect is not autofocused on absence of prop "autofocus"', async () => {
     const wrapper = mount(MultiSelect, {
-      i18n,
+      global: {
+        plugins: [i18n],
+      },
       attachTo: document.body,
-      propsData: {
+      props: {
         ...defaultProps,
         autofocus: false,
       },
@@ -196,15 +201,17 @@ describe('Multiselect', () => {
       await wrapper.vm.$nextTick();
       expect(document.activeElement).toEqual(document.body);
     } finally {
-      wrapper.destroy();
+      wrapper.unmount();
     }
   });
 
   it('Multiselect is autofocused on prop "autofocus"', async () => {
     const wrapper = mount(MultiSelect, {
-      i18n,
+      global: {
+        plugins: [i18n],
+      },
       attachTo: document.body,
-      propsData: {
+      props: {
         ...defaultProps,
         autofocus: true,
       },
@@ -218,7 +225,7 @@ describe('Multiselect', () => {
       await wrapper.vm.$nextTick();
       expect(document.activeElement).toEqual(wrapper.element.querySelector('input'));
     } finally {
-      wrapper.destroy();
+      wrapper.unmount();
     }
   });
 

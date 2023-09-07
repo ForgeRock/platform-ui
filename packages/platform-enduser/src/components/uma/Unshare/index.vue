@@ -41,6 +41,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import { BButton, BModal } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 /**
  * @description Dialog for warning a user and confirming they want to stop sharing a resource
@@ -49,6 +50,8 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 export default {
   name: 'Unshare',
   components: {
+    BButton,
+    BModal,
     FrIcon,
   },
   data() {

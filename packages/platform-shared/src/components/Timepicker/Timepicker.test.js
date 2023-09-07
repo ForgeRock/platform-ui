@@ -16,7 +16,7 @@ describe('Timepicker Component', () => {
 
   it('has placeholder text', () => {
     const wrapper = shallowMount(Timepicker, {
-      propsData: {
+      props: {
         placeholder: 'test',
       },
     });
@@ -25,7 +25,7 @@ describe('Timepicker Component', () => {
 
   it('floats placeholder text when a value is set', async () => {
     const wrapper = shallowMount(Timepicker, {
-      propsData: {
+      props: {
         placeholder: 'test',
       },
     });

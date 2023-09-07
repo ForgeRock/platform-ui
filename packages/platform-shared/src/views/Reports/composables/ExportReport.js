@@ -5,13 +5,15 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { getCurrentInstance, ref } from 'vue';
+import { ref } from 'vue';
+import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import { downloadFile, getFileNameFromContentDisposition } from '@forgerock/platform-shared/src/utils/downloadFile';
 import { getReportRuns, exportReport } from '@forgerock/platform-shared/src/api/AutoApi';
 import { showErrorMessage, displayNotification } from '@forgerock/platform-shared/src/utils/notification';
 import i18n from '@/i18n';
 
 export default function useExportReport() {
+  const { bvModal } = useBvModal();
   const csvStatus = ref(null);
   const isExported = ref(false);
   const jsonStatus = ref(null);
@@ -20,8 +22,6 @@ export default function useExportReport() {
   const loadingJson = ref(false);
   const status = ref('exporting');
   const type = ref('');
-
-  const { proxy: { _bv__modal: $bvModal } } = getCurrentInstance();
 
   /**
    * Calls the endpoint to get the export status from the Report data.
@@ -55,7 +55,7 @@ export default function useExportReport() {
       const action = fileStatus ? 'download' : 'export';
       if (action === 'export') {
         status.value = 'exporting';
-        $bvModal.show('export-modal');
+        bvModal.show('export-modal');
       } else {
         status.value = 'downloading';
       }

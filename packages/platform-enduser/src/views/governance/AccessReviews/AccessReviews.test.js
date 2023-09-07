@@ -5,8 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
+import { shallowMount, mount, flushPromises } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as CertificationApi from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import AccessReviews from './index';
@@ -28,14 +27,16 @@ describe('AccessReviews', () => {
   });
 
   it('should display noData component when no access reviews are found', async () => {
-    wrapper = shallowMount(AccessReviews, {
-      mocks: {
-        $t: (id) => id,
-        getItems: () => jest.fn().mockReturnValue(Promise.resolve({
-          data: {
-            test: 'test',
-          },
-        })),
+    wrapper = mount(AccessReviews, {
+      global: {
+        mocks: {
+          $t: (id) => id,
+          getItems: () => jest.fn().mockReturnValue(Promise.resolve({
+            data: {
+              test: 'test',
+            },
+          })),
+        },
       },
     });
     wrapper.vm.setAccessReviewList({ result: [], totalCount: 0 });
@@ -47,13 +48,15 @@ describe('AccessReviews', () => {
 
   it('Calling getList with not search params calls getCertificationItems', () => {
     wrapper = shallowMount(AccessReviews, {
-      mocks: {
-        $t: (id) => id,
-        getItems: () => jest.fn().mockReturnValue(Promise.resolve({
-          data: {
-            test: 'test',
-          },
-        })),
+      global: {
+        mocks: {
+          $t: (id) => id,
+          getItems: () => jest.fn().mockReturnValue(Promise.resolve({
+            data: {
+              test: 'test',
+            },
+          })),
+        },
       },
     });
     expect(CertificationApi.searchCertificates).not.toHaveBeenCalled();
@@ -69,13 +72,15 @@ describe('AccessReviews', () => {
           searchQuery: 'test search',
         };
       },
-      mocks: {
-        $t: (id) => id,
-        getItems: () => jest.fn().mockReturnValue(Promise.resolve({
-          data: {
-            test: 'test',
-          },
-        })),
+      global: {
+        mocks: {
+          $t: (id) => id,
+          getItems: () => jest.fn().mockReturnValue(Promise.resolve({
+            data: {
+              test: 'test',
+            },
+          })),
+        },
       },
     });
     expect(CertificationApi.getCertificationItems).not.toHaveBeenCalled();

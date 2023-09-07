@@ -13,10 +13,10 @@ import RunHistoryExportButtons from './RunHistoryExportButtons';
 describe('Run History Export Buttons component', () => {
   function setup(props) {
     return mount(RunHistoryExportButtons, {
-      i18n,
-      propsData: {
-        ...props,
+      global: {
+        plugins: [i18n],
       },
+      props,
     });
   }
 

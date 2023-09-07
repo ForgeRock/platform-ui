@@ -5,8 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
+import { mount, flushPromises } from '@vue/test-utils';
 import FilterModal from './index';
 
 describe('Filter.test.js', () => {
@@ -73,14 +72,16 @@ describe('Filter.test.js', () => {
 
   const categories = ['Cat1', 'Cat2', 'Cat3', 'Cat4', 'Cat5'];
 
-  const factory = (propsData) => {
+  const factory = (props) => {
     const component = mount(FilterModal, {
       attachTo: document.body,
-      mocks: {
-        $t: () => {},
-        $tc: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+          $tc: () => {},
+        },
       },
-      propsData,
+      props,
     });
     component.vm.$root.$emit('bv::show::modal', 'FilterModal');
     return component;
@@ -137,7 +138,6 @@ describe('Filter.test.js', () => {
     wrapper.vm.show = true;
     wrapper.vm.filterTypeSelected = 'categories';
     await flushPromises();
-    wrapper.vm.$emit = jest.fn();
 
     // Check active categories
     const selectedRenderedCategories = [];
@@ -159,13 +159,10 @@ describe('Filter.test.js', () => {
     wrapper = factory({ filters: filtersStringArray, activeFilters });
     wrapper.vm.show = true;
     await flushPromises();
-    wrapper.vm.$emit = jest.fn();
 
     const selectedRenderedOptions = [];
     wrapper.findAll('#filter-list .multiselect__tag').filter((filterItem) => selectedRenderedOptions.push(filterItem.text().trim()));
     expect(selectedRenderedOptions).toEqual(activeFilters);
-
-    // expect(wrapper.vm.$emit).toHaveBeenCalledWith('update', wrapper.vm.pendingFilters, wrapper.vm.pendingCategories);
   });
 
   it('Loads with active object array filters', async () => {
@@ -182,20 +179,21 @@ describe('Filter.test.js', () => {
 
     wrapper = factory({ filters: filtersObjectArray, activeFilters });
     wrapper.vm.show = true;
-    wrapper.vm.$emit = jest.fn();
   });
 
   it('Emits pending values when options are selected', async () => {
     wrapper = factory({ filters: filtersStringArray });
     wrapper.vm.show = true;
     await flushPromises();
-    wrapper.vm.$emit = jest.fn();
 
     // Check emitted value
-    wrapper.findAll('#filter-list .multiselect__element .multiselect__option').at(1).trigger('click');
-    wrapper.findAll('#filter-list .multiselect__element .multiselect__option').at(3).trigger('click');
+    wrapper.findAll('#filter-list .multiselect__element .multiselect__option')[1].trigger('click');
+    wrapper.findAll('#filter-list .multiselect__element .multiselect__option')[3].trigger('click');
     await flushPromises();
-    expect(wrapper.vm.$emit).toHaveBeenCalledWith('update', wrapper.vm.pendingFilters, wrapper.vm.pendingCategories);
+    expect(wrapper.emitted()).toHaveProperty('update');
+    expect(wrapper.emitted().update).toHaveLength(2);
+    expect(wrapper.emitted().update[1][0]).toEqual(wrapper.vm.pendingFilters);
+    expect(wrapper.emitted().update[1][1]).toEqual(wrapper.vm.pendingCategories);
   });
 
   it('Emits pending values when category options are selected', async () => {
@@ -203,13 +201,15 @@ describe('Filter.test.js', () => {
     wrapper.vm.show = true;
     wrapper.vm.filterTypeSelected = 'categories';
     await flushPromises();
-    wrapper.vm.$emit = jest.fn();
 
     // Check emitted value
-    wrapper.findAll('#categories-list .multiselect__element .multiselect__option').at(0).trigger('click');
-    wrapper.findAll('#categories-list .multiselect__element .multiselect__option').at(2).trigger('click');
+    wrapper.findAll('#categories-list .multiselect__element .multiselect__option')[0].trigger('click');
+    wrapper.findAll('#categories-list .multiselect__element .multiselect__option')[2].trigger('click');
     await flushPromises();
-    expect(wrapper.vm.$emit).toHaveBeenCalledWith('update', wrapper.vm.pendingFilters, wrapper.vm.pendingCategories);
+    expect(wrapper.emitted()).toHaveProperty('update');
+    expect(wrapper.emitted().update).toHaveLength(2);
+    expect(wrapper.emitted().update[1][0]).toEqual(wrapper.vm.pendingFilters);
+    expect(wrapper.emitted().update[1][1]).toEqual(wrapper.vm.pendingCategories);
   });
 
   it('Clears the filters', () => {

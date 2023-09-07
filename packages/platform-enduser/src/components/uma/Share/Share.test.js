@@ -5,20 +5,18 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { nextTick } from 'vue';
+import { shallowMount } from '@vue/test-utils';
+import Notifications from '@kyvg/vue3-notification';
 import i18n from '@/i18n';
 import Share from '@/components/uma/Share';
 
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
-
-let propsData;
+let props;
 let wrapper;
 
 describe('Sharing.vue', () => {
   beforeEach(() => {
-    propsData = {
+    props = {
       resource: {
         _id: '12345',
         name: 'test resource',
@@ -38,50 +36,51 @@ describe('Sharing.vue', () => {
     };
 
     wrapper = shallowMount(Share, {
-      localVue,
-      i18n,
-      propsData,
-      stubs: { BFormInput: true },
+      global: {
+        plugins: [i18n, Notifications],
+        stubs: { BFormInput: true },
+      },
+      props,
     });
 
     wrapper.vm.$refs.fsModal.hide = jest.fn();
   });
 
   afterEach(() => {
-    wrapper.destroy();
+    wrapper.unmount();
   });
 
-  it('Emits "modifyResource" event', () => {
+  it('Emits "modifyResource" event', async () => {
     wrapper.vm.shareResource();
 
-    localVue.nextTick(() => {
-      expect(wrapper.emitted('modifyResource').length).toBe(1);
-    });
+    await nextTick();
+
+    expect(wrapper.emitted('modifyResource').length).toBe(1);
   });
 
-  it('Emits "shareResource" event', () => {
+  it('Emits "shareResource" event', async () => {
     wrapper.vm.$refs.fsModal.hide = jest.fn();
     wrapper.vm.shareResource();
 
-    localVue.nextTick(() => {
-      expect(wrapper.emitted('modifyResource').length).toBe(1);
-    });
+    await nextTick();
+
+    expect(wrapper.emitted('modifyResource').length).toBe(1);
   });
 
-  it('Emits "renderUnshareModal" event', () => {
+  it('Emits "renderUnshareModal" event', async () => {
     wrapper.vm.unshareAll();
 
-    localVue.nextTick(() => {
-      expect(wrapper.emitted('renderUnshareModal').length).toBe(1);
-    });
+    await nextTick();
+
+    expect(wrapper.emitted('renderUnshareModal').length).toBe(1);
   });
 
-  it('Emits "unshareOne" event', () => {
+  it('Emits "unshareOne" event', async () => {
     wrapper.vm.unshareOne('testUser');
 
-    localVue.nextTick(() => {
-      expect(wrapper.emitted('modifyResource').length).toBe(1);
-    });
+    await nextTick();
+
+    expect(wrapper.emitted('modifyResource').length).toBe(1);
   });
 
   it('Validates resource', () => {
@@ -93,13 +92,13 @@ describe('Sharing.vue', () => {
     expect(spy).toBeCalled();
   });
 
-  it('Validates resource without policy', () => {
+  it('Validates resource without policy', async () => {
     wrapper.vm.$refs.fsModal.hide = jest.fn();
     wrapper.vm.validateResource();
 
-    localVue.nextTick(() => {
-      expect(typeof wrapper.emitted()).toBe('object');
-    });
+    await nextTick();
+
+    expect(typeof wrapper.emitted()).toBe('object');
   });
 
   it('Prevents sharing with same user', () => {

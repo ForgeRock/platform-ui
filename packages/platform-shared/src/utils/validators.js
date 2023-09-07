@@ -6,7 +6,7 @@
  */
 
 import { has, isArray } from 'lodash';
-import * as rules from 'vee-validate/dist/rules';
+import { email } from '@vee-validate/rules';
 
 const urlHasPath = (url) => url.pathname && url.pathname !== '/';
 
@@ -15,12 +15,12 @@ export const urlWithoutPath = (value, i18n) => {
     const url = new URL(value);
 
     if (urlHasPath(url)) {
-      return i18n.t('common.policyValidationMessages.urlWithoutPath');
+      return i18n.global.t('common.policyValidationMessages.urlWithoutPath');
     }
 
     return true;
   } catch (e) {
-    return i18n.t('common.policyValidationMessages.urlWithoutPath');
+    return i18n.global.t('common.policyValidationMessages.urlWithoutPath');
   }
 };
 
@@ -36,18 +36,18 @@ export const urlWithPath = (value, i18n) => {
         }
       });
       if (invalid) {
-        return i18n.t('common.policyValidationMessages.urlWithPath');
+        return i18n.global.t('common.policyValidationMessages.urlWithPath');
       }
     } else {
       const url = new URL(value);
       if (!urlHasPath(url)) {
-        return i18n.t('common.policyValidationMessages.urlWithPath');
+        return i18n.global.t('common.policyValidationMessages.urlWithPath');
       }
     }
 
     return true;
   } catch (e) {
-    return i18n.t('common.policyValidationMessages.urlWithPath');
+    return i18n.global.t('common.policyValidationMessages.urlWithPath');
   }
 };
 /**
@@ -87,7 +87,7 @@ export function testUniqueness(value, { otherValues }) {
   }
   let returnValue = true;
 
-  if (uniqueValues) {
+  if (uniqueValues && value) {
     uniqueValues.forEach((uniqueValue) => {
       if (uniqueValue.toLowerCase().trim() === value.toLowerCase().trim()) {
         returnValue = false;
@@ -102,14 +102,14 @@ export function validEmail(value) {
     let valid = true;
     value.forEach((arrayValue) => {
       if (has(arrayValue, 'value')) {
-        valid = valid && rules.email.validate(arrayValue.value);
+        valid = valid && email(arrayValue.value);
       } else {
-        valid = valid && rules.email.validate(arrayValue);
+        valid = valid && email(arrayValue);
       }
     });
     return valid;
   }
-  return rules.email.validate(value);
+  return email(value);
 }
 
 export function minimumItems(value, { minItems }) {

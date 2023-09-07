@@ -276,9 +276,9 @@ const applicationsDisableSubmit = computed(() => (showApplications.value && !app
  * (3) Outcome field
  */
 const outcomeOptions = [
-  { label: i18n.t('common.successful'), color: 'success', icon: 'check' },
-  { label: i18n.t('common.failed'), color: 'danger', icon: 'block' },
-  { label: i18n.t('common.continue'), color: 'muted', icon: 'arrow_forward' },
+  { label: i18n.global.t('common.successful'), color: 'success', icon: 'check' },
+  { label: i18n.global.t('common.failed'), color: 'danger', icon: 'block' },
+  { label: i18n.global.t('common.continue'), color: 'muted', icon: 'arrow_forward' },
 ];
 const outcomeFieldValue = ref([]);
 const showOutcome = computed(() => _PARAMETER_KEYS.value.includes('treeResult'));
@@ -301,9 +301,9 @@ const usersDisableSubmit = computed(() => !!(showUsers.value && !usersModel.valu
  * (5) Status field
  */
 const statusOptions = [
-  { label: i18n.t('reports.tabs.runReport.status.active'), color: 'success', icon: 'check' },
-  { label: i18n.t('reports.tabs.runReport.status.inactive'), color: 'muted', icon: 'cancel' },
-  { label: i18n.t('reports.tabs.runReport.status.blocked'), color: 'danger', icon: 'block' },
+  { label: i18n.global.t('reports.tabs.runReport.status.active'), color: 'success', icon: 'check' },
+  { label: i18n.global.t('reports.tabs.runReport.status.inactive'), color: 'muted', icon: 'cancel' },
+  { label: i18n.global.t('reports.tabs.runReport.status.blocked'), color: 'danger', icon: 'block' },
 ];
 const statusFieldValue = ref([]);
 const showStatus = computed(() => _PARAMETER_KEYS.value.includes('status') || _PARAMETER_KEYS.value.includes('accountStatus'));
@@ -316,10 +316,10 @@ const statusModel = computed(() => {
  * (6) Events field
  */
 const eventTypeOptions = [
-  i18n.t('reports.tabs.runReport.events.tokenGrant'),
-  i18n.t('reports.tabs.runReport.events.tokenRefresh'),
-  i18n.t('common.authorize'),
-  i18n.t('reports.tabs.runReport.events.sso'),
+  i18n.global.t('reports.tabs.runReport.events.tokenGrant'),
+  i18n.global.t('reports.tabs.runReport.events.tokenRefresh'),
+  i18n.global.t('common.authorize'),
+  i18n.global.t('reports.tabs.runReport.events.sso'),
 ];
 const eventTypesValue = ref([]);
 const showEventTypes = computed(() => _PARAMETER_KEYS.value.includes('events'));
@@ -433,9 +433,9 @@ async function submitRunReport() {
     isSubmitting.value = true;
     const { id } = await runAnalyticsTemplate(props.templateName, payload);
     emit('update-tab', 'report-history', id);
-    displayNotification('success', i18n.t('reports.tabs.runReport.success'));
+    displayNotification('success', i18n.global.t('reports.tabs.runReport.success'));
   } catch (error) {
-    showErrorMessage(error, i18n.t('reports.tabs.runReport.errors.errorRunningReport'));
+    showErrorMessage(error, i18n.global.t('reports.tabs.runReport.errors.errorRunningReport'));
   } finally {
     isSubmitting.value = false;
   }

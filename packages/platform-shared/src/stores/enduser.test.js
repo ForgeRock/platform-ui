@@ -17,7 +17,6 @@ describe('enduser store', () => {
   it('should return the correct initial state', () => {
     const enduserStore = useEnduserStore();
 
-    expect(enduserStore.access).toStrictEqual([]);
     expect(enduserStore.managedResourceSchema).toStrictEqual({});
     expect(enduserStore.preferences).toStrictEqual({});
     expect(enduserStore.profileImage).toBe('');

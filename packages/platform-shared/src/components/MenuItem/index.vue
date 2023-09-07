@@ -340,7 +340,7 @@ li {
   }
 }
 
-::v-deep a.nav-link,
+:deep(a.nav-link),
 button.btn.btn-secondary.nav-link,
 button.btn.btn-secondary.dropdown-toggle {
   color: $fr-sidemenu-font-color;
@@ -388,7 +388,7 @@ button.btn.btn-secondary.dropdown-toggle {
     padding: 15px 60px 15px 19px;
   }
 
-  ::v-deep a {
+  :deep(a) {
     padding: 10px 5px 10px 49px;
     height: 41px;
   }

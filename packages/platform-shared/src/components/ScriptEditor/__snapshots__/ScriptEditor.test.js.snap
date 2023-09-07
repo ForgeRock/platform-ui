@@ -1,0 +1,705 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ScriptEditor script editor sets values given as props into component: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) v-model usage on component has changed in Vue 3. Component that expects to work with v-model should now use the "modelValue" prop and emit the "update:modelValue" event. You can update the usage and then opt-in to Vue 3 behavior on a per-component basis with \`compatConfig: { COMPONENT_V_MODEL: false }\`.
+  Details: https://v3-migration.vuejs.org/breaking-changes/v-model.html",
+    "
+",
+    " at <FrField",
+    "key=0",
+    "modelValue=false",
+    "onUpdate:modelValue=fn",
+    " ...",
+    ">",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (2)",
+    "
+",
+    " at <ScriptEditor",
+    "closeModal=fn<closeModal>",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "canEnterPlaceholders" with v-bind value \`false\` will render canEnterPlaceholders="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <FrField",
+    "value="text/javascript"",
+    "onInput=fn",
+    "class="mt-2"",
+    " ...",
+    ">",
+    "
+",
+    " at <ScriptEditor",
+    "closeModal=fn<closeModal>",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "disabled" with v-bind value \`false\` will render disabled="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <FrField",
+    "value="text/javascript"",
+    "onInput=fn",
+    "class="mt-2"",
+    " ...",
+    ">",
+    "
+",
+    " at <ScriptEditor",
+    "closeModal=fn<closeModal>",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "searchable" with v-bind value \`false\` will render searchable="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <FrField",
+    "value="text/javascript"",
+    "onInput=fn",
+    "class="mt-2"",
+    " ...",
+    ">",
+    "
+",
+    " at <ScriptEditor",
+    "closeModal=fn<closeModal>",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "value" with v-bind value \`false\` will render value="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <FrField",
+    "key=0",
+    "disabled=false",
+    "type="boolean"",
+    " ...",
+    ">",
+    "
+",
+    " at <ScriptEditor",
+    "closeModal=fn<closeModal>",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "emitEvents" with v-bind value \`false\` will render emitEvents="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <VuePrismEditor",
+    "key=0",
+    "code=""",
+    "onChange=fn",
+    " ...",
+    ">",
+    "
+",
+    " at <ScriptEditor",
+    "closeModal=fn<closeModal>",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "lineNumbers" with v-bind value \`false\` will render lineNumbers="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <VuePrismEditor",
+    "key=0",
+    "code=""",
+    "onChange=fn",
+    " ...",
+    ">",
+    "
+",
+    " at <ScriptEditor",
+    "closeModal=fn<closeModal>",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "autofocus" with v-bind value \`false\` will render autofocus="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BFormFile",
+    "disabled=false",
+    "onChange=fn<bound onFileChange>",
+    "accept=".js, .groovy"",
+    " ...",
+    ">",
+    "
+",
+    " at <ScriptEditor",
+    "closeModal=fn<closeModal>",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) (2)",
+    "
+",
+    " at <BFormFile",
+    "disabled=false",
+    "onChange=fn<bound onFileChange>",
+    "accept=".js, .groovy"",
+    " ...",
+    ">",
+    "
+",
+    " at <ScriptEditor",
+    "closeModal=fn<closeModal>",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "required" with v-bind value \`false\` will render required="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BFormFile",
+    "disabled=false",
+    "onChange=fn<bound onFileChange>",
+    "accept=".js, .groovy"",
+    " ...",
+    ">",
+    "
+",
+    " at <ScriptEditor",
+    "closeModal=fn<closeModal>",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "plain" with v-bind value \`false\` will render plain="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BFormFile",
+    "disabled=false",
+    "onChange=fn<bound onFileChange>",
+    "accept=".js, .groovy"",
+    " ...",
+    ">",
+    "
+",
+    " at <ScriptEditor",
+    "closeModal=fn<closeModal>",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "capture" with v-bind value \`false\` will render capture="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BFormFile",
+    "disabled=false",
+    "onChange=fn<bound onFileChange>",
+    "accept=".js, .groovy"",
+    " ...",
+    ">",
+    "
+",
+    " at <ScriptEditor",
+    "closeModal=fn<closeModal>",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "directory" with v-bind value \`false\` will render directory="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BFormFile",
+    "disabled=false",
+    "onChange=fn<bound onFileChange>",
+    "accept=".js, .groovy"",
+    " ...",
+    ">",
+    "
+",
+    " at <ScriptEditor",
+    "closeModal=fn<closeModal>",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "multiple" with v-bind value \`false\` will render multiple="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BFormFile",
+    "disabled=false",
+    "onChange=fn<bound onFileChange>",
+    "accept=".js, .groovy"",
+    " ...",
+    ">",
+    "
+",
+    " at <ScriptEditor",
+    "closeModal=fn<closeModal>",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noDrop" with v-bind value \`false\` will render noDrop="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BFormFile",
+    "disabled=false",
+    "onChange=fn<bound onFileChange>",
+    "accept=".js, .groovy"",
+    " ...",
+    ">",
+    "
+",
+    " at <ScriptEditor",
+    "closeModal=fn<closeModal>",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noTraverse" with v-bind value \`false\` will render noTraverse="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BFormFile",
+    "disabled=false",
+    "onChange=fn<bound onFileChange>",
+    "accept=".js, .groovy"",
+    " ...",
+    ">",
+    "
+",
+    " at <ScriptEditor",
+    "closeModal=fn<closeModal>",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "active" with v-bind value \`false\` will render active="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "key=0",
+    "class="my-2 float-right"",
+    "disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <ScriptEditor",
+    "closeModal=fn<closeModal>",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "block" with v-bind value \`false\` will render block="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "key=0",
+    "class="my-2 float-right"",
+    "disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <ScriptEditor",
+    "closeModal=fn<closeModal>",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) (3)",
+    "
+",
+    " at <BButton",
+    "key=0",
+    "class="my-2 float-right"",
+    "disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <ScriptEditor",
+    "closeModal=fn<closeModal>",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "exact" with v-bind value \`false\` will render exact="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "key=0",
+    "class="my-2 float-right"",
+    "disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <ScriptEditor",
+    "closeModal=fn<closeModal>",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "exactPath" with v-bind value \`false\` will render exactPath="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "key=0",
+    "class="my-2 float-right"",
+    "disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <ScriptEditor",
+    "closeModal=fn<closeModal>",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noPrefetch" with v-bind value \`false\` will render noPrefetch="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "key=0",
+    "class="my-2 float-right"",
+    "disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <ScriptEditor",
+    "closeModal=fn<closeModal>",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "pill" with v-bind value \`false\` will render pill="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "key=0",
+    "class="my-2 float-right"",
+    "disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <ScriptEditor",
+    "closeModal=fn<closeModal>",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "replace" with v-bind value \`false\` will render replace="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "key=0",
+    "class="my-2 float-right"",
+    "disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <ScriptEditor",
+    "closeModal=fn<closeModal>",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "squared" with v-bind value \`false\` will render squared="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "key=0",
+    "class="my-2 float-right"",
+    "disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <ScriptEditor",
+    "closeModal=fn<closeModal>",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "validateOnMount" with v-bind value \`false\` will render validateOnMount="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <VeeForm",
+    "ref="validationObserver"",
+    "as="span"",
+    ">",
+    "
+",
+    " at <ScriptEditor",
+    "closeModal=fn<closeModal>",
+    "ref="VTU_COMPONENT"",
+    "value=",
+    {
+      "file": "/file/path.js",
+      "globals": {
+        "array_test": [
+          "array1",
+          {
+            "second": [
+              "array2",
+            ],
+            "third": "array3",
+          },
+        ],
+        "boolean_test": true,
+        "number_test": 3,
+        "object_test": {
+          "second": [
+            "object1",
+            "object2",
+          ],
+          "third": "object3",
+        },
+        "string_test": "test",
+      },
+      "type": "text/groovy",
+    },
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "keepValues" with v-bind value \`false\` will render keepValues="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <VeeForm",
+    "ref="validationObserver"",
+    "as="span"",
+    ">",
+    "
+",
+    " at <ScriptEditor",
+    "closeModal=fn<closeModal>",
+    "ref="VTU_COMPONENT"",
+    "value=",
+    {
+      "file": "/file/path.js",
+      "globals": {
+        "array_test": [
+          "array1",
+          {
+            "second": [
+              "array2",
+            ],
+            "third": "array3",
+          },
+        ],
+        "boolean_test": true,
+        "number_test": 3,
+        "object_test": {
+          "second": [
+            "object1",
+            "object2",
+          ],
+          "third": "object3",
+        },
+        "string_test": "test",
+      },
+      "type": "text/groovy",
+    },
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;

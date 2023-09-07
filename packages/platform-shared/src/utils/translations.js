@@ -17,7 +17,7 @@ const overridePrefix = 'overrides';
  * @returns {Boolean} if the key exists
  */
 export function translationExists(path) {
-  return i18n.$t(path) !== path;
+  return i18n.global.$t(path) !== path;
 }
 /**
  * Remove non alphanumeric characters from string

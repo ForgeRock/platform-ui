@@ -3,7 +3,9 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <ValidationObserver v-slot="{ invalid }">
+  <VeeForm
+    v-slot="{ meta: { valid } }"
+    as="span">
     <BFormGroup class="mb-3">
       <FrSelectInput
         ref="select"
@@ -42,7 +44,7 @@ of the MIT license. See the LICENSE file for details. -->
     <div class="d-flex flex-row-reverse">
       <BButton
         @click.stop="saveKeyValue"
-        :disabled="invalid"
+        :disabled="!valid"
         variant="outline-primary">
         {{ $t('common.done') }}
       </BButton>
@@ -52,7 +54,7 @@ of the MIT license. See the LICENSE file for details. -->
         {{ $t('common.cancel') }}
       </BButton>
     </div>
-  </ValidationObserver>
+  </VeeForm>
 </template>
 
 <script>
@@ -65,7 +67,7 @@ import {
   xor,
   union,
 } from 'lodash';
-import { ValidationObserver } from 'vee-validate';
+import { Form as VeeForm } from 'vee-validate';
 import FrBasicInput from '@forgerock/platform-shared/src/components/Field/BasicInput';
 import FrSelectInput from '@forgerock/platform-shared/src/components/Field/SelectInput';
 import FrTextArea from '@forgerock/platform-shared/src/components/Field/TextArea';
@@ -82,7 +84,7 @@ export default {
     FrBasicInput,
     FrSelectInput,
     FrTextArea,
-    ValidationObserver,
+    VeeForm,
   },
   props: {
     /**

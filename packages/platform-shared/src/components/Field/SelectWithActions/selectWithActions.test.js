@@ -5,12 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, mount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import SelectWithActions from './index';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 const defaultProps = {
   addRowText: 'addRow?',
@@ -31,11 +27,12 @@ const defaultProps = {
 describe('SelectWithActions input', () => {
   it('emits add and edit events', () => {
     const wrapper = mount(SelectWithActions, {
-      localVue,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         ...defaultProps,
       },
     });
@@ -54,17 +51,18 @@ describe('SelectWithActions input', () => {
 
   it('sets default props', () => {
     const wrapper = mount(SelectWithActions, {
-      localVue,
-      mocks: {
-        $t: (string) => {
-          const translations = {
-            'common.add': 'add',
-            'common.edit': 'edit',
-          };
-          return translations[string];
+      global: {
+        mocks: {
+          $t: (string) => {
+            const translations = {
+              'common.add': 'add',
+              'common.edit': 'edit',
+            };
+            return translations[string];
+          },
         },
       },
-      propsData: {
+      props: {
         id: '',
         errorMessages: [],
         name: '',
@@ -75,8 +73,8 @@ describe('SelectWithActions input', () => {
       },
     });
 
-    expect(wrapper.vm.addRowText).toBe('add');
-    expect(wrapper.vm.addLabel).toBe('add');
-    expect(wrapper.vm.editLabel).toBe('edit');
+    expect(wrapper.vm.addRowTextOrFallback).toBe('add');
+    expect(wrapper.vm.addLabelOrFallback).toBe('add');
+    expect(wrapper.vm.editLabelOrFallback).toBe('edit');
   });
 });

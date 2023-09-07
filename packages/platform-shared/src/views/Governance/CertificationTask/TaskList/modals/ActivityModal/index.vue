@@ -93,6 +93,8 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import dayjs from 'dayjs';
 import {
+  BImg,
+  BMedia,
   BMediaBody,
   BModal,
   BTable,
@@ -120,6 +122,8 @@ const ICONS = new Map([
 export default {
   name: 'ActivityModal',
   components: {
+    BImg,
+    BMedia,
     BMediaBody,
     BModal,
     BTable,
@@ -186,7 +190,7 @@ export default {
   }
 }
 
-::v-deep {
+:deep {
   .modal-body {
     min-height: 200px;
   }

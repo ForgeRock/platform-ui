@@ -44,19 +44,19 @@ const emit = defineEmits(['applications-update', 'relationship-property-update']
 const AM_TEMPLATE_IDS = ['web', 'native', 'service', 'saml', 'bookmark'];
 
 const applicationOptions = [
-  i18n.t('reports.tabs.runReport.applications.allApplications'),
-  i18n.t('reports.tabs.runReport.applications.allOIDCApplications'),
-  i18n.t('reports.tabs.runReport.applications.allSAMLApplications'),
-  i18n.t('reports.tabs.runReport.applications.specificApplications'),
+  i18n.global.t('reports.tabs.runReport.applications.allApplications'),
+  i18n.global.t('reports.tabs.runReport.applications.allOIDCApplications'),
+  i18n.global.t('reports.tabs.runReport.applications.allSAMLApplications'),
+  i18n.global.t('reports.tabs.runReport.applications.specificApplications'),
 ];
-const applicationsFieldValue = ref([i18n.t('reports.tabs.runReport.applications.allApplications')]);
+const applicationsFieldValue = ref([i18n.global.t('reports.tabs.runReport.applications.allApplications')]);
 const applicationsRelationshipPropertyValue = ref([]);
 
 const customClause = AM_TEMPLATE_IDS.map((a) => `templateName eq '${a}'`).join(' or ');
 const appsQueryFilterExtension = `((${customClause}) or (!(authoritative eq true) and (mappingNames sw '')))`;
 const showSpecificApplications = computed(() => {
   const [applicationsFieldSelection] = applicationsFieldValue.value;
-  return applicationsFieldSelection === i18n.t('reports.tabs.runReport.applications.specificApplications');
+  return applicationsFieldSelection === i18n.global.t('reports.tabs.runReport.applications.specificApplications');
 });
 const applicationsModel = computed(() => {
   const relationshipProperty = applicationsRelationshipPropertyValue.value;

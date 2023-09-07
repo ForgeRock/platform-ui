@@ -14,6 +14,10 @@
   </p>
 </p>
 
+> `Note:` The ForgeRock UI projects have now been migrated to Vue 3. This has required a change in many installed packages and across the codebase which will require rework to any cusom UIs based upon this repo. Additionally, there are still several open issues regarding behaviour of the Vue 3 applications which the team is working to resolve in Q1 2024, so there may be some defects and instability in the applications for a short while.
+> 
+>If you are using the `master` branch for development purposes it is recommended that you consider switching to use our [stable Vue 2 version](https://github.com/ForgeRock/platform-ui/tree/vue2) until the Vue 3 apps are stable and you are ready to switch.
+
 ## Table of contents
 
 - [Quick start](#quick-start)
@@ -75,13 +79,14 @@ The following testing tools are installed when you install the project dependenc
 
 The following application tools are installed when you install the project dependencies:
 - [Vue](https://vuejs.org/v2/api/) - Primary JavaScript framework for the project
+- [Vue compat](https://github.com/vuejs/core/tree/main/packages/vue-compat#readme) - Vue 3 migration build
 - [Vue Router](https://router.vuejs.org/en/) - Application routing Vue library
 - [Vue Bootstrap](https://bootstrap-vue.js.org/) - Bootstrap 4 Vue components
 - [Axios](https://github.com/axios/axios) - JavaScript Promise Library
 - [Vue i18n](https://kazupon.github.io/vue-i18n/en/) - Translation library for Vue
 - [Vee Validate](https://github.com/baianat/vee-validate) - Form validation for Vue
 - [lodash](https://lodash.com/) - Util library for preforming various efficient calculations
-- [VueX](https://vuex.vuejs.org/) - State management
+- [Pinia](https://pinia.vuejs.org/) / [VueX](https://vuex.vuejs.org/) - State management
 
 <a name="code-style"></a>
 ## Code style

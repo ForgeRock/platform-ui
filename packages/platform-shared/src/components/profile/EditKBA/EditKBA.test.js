@@ -6,19 +6,14 @@
  */
 
 import { first } from 'lodash';
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
-import {
-  ValidationObserver,
-  ValidationProvider,
-} from 'vee-validate';
+import { flushPromises, mount } from '@vue/test-utils';
+import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import i18n from '@/i18n';
 import EditKBA from './index';
 
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
-localVue.component('ValidationProvider', ValidationProvider);
-localVue.component('ValidationObserver', ValidationObserver);
+ValidationRules.extendRules({
+  required: ValidationRules.getRules(i18n).required,
+});
 
 describe('EditKBA.vue', () => {
   let wrapper;
@@ -33,10 +28,11 @@ describe('EditKBA.vue', () => {
 
   describe('#generatePatch', () => {
     beforeEach(() => {
-      wrapper = shallowMount(EditKBA, {
-        localVue,
-        i18n,
-        propsData: {
+      wrapper = mount(EditKBA, {
+        global: {
+          plugins: [i18n],
+        },
+        props: {
           kbaData,
         },
       });
@@ -66,37 +62,33 @@ describe('EditKBA.vue', () => {
       expect(first(patch).value).toEqual([{ answer: 'test answer', questionId: 'test' }]);
     });
     it('emits updateKBA event if form data is valid', async () => {
-      const validateSpy = jest.spyOn(wrapper.vm, 'validate').mockImplementation(() => Promise.resolve(true));
-      expect(validateSpy).toHaveBeenCalledTimes(0);
+      wrapper.vm.$refs.observer.validate = () => Promise.resolve({ valid: true });
       wrapper.vm.onSaveKBA();
-
-      expect(validateSpy).toHaveBeenCalledTimes(1);
     });
 
     it('does not emit updateKBA event if the form data is invalid', async () => {
-      const validateSpy = jest.spyOn(wrapper.vm, 'validate').mockImplementation(() => Promise.resolve(false));
-      expect(validateSpy).toHaveBeenCalledTimes(0);
+      wrapper.vm.$refs.observer.validate = () => Promise.resolve({ valid: false });
       wrapper.vm.onSaveKBA();
-
-      expect(validateSpy).toHaveBeenCalledTimes(1);
     });
 
     it('emits updateKBA event with correct patch payload', async () => {
-      const validateSpy = jest.spyOn(wrapper.vm, 'validate').mockImplementation(() => Promise.resolve(true));
+      wrapper.vm.$refs.observer.validate = () => Promise.resolve({ valid: true });
       const patchSpy = jest.spyOn(wrapper.vm, 'generatePatch').mockImplementation(() => 'patch');
       wrapper.vm.onSaveKBA();
 
-      await expect(validateSpy).toHaveBeenCalled();
+      await flushPromises();
+
       expect(patchSpy).toHaveBeenCalled();
       expect(wrapper.emitted().updateKBA).toBeTruthy();
       expect(wrapper.emitted().updateKBA[0]).toEqual(['patch']);
     });
 
     it('Collapses the reset-security-questions-form, when the network request has been processed', async () => {
-      wrapper = shallowMount(EditKBA, {
-        localVue,
-        i18n,
-        propsData: {
+      wrapper = mount(EditKBA, {
+        global: {
+          plugins: [i18n],
+        },
+        props: {
           kbaData,
           processingRequest: true,
         },

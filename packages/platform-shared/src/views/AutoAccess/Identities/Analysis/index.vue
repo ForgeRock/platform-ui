@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -267,7 +267,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 /* eslint-disable import/no-extraneous-dependencies, import/named */
-import FrSelect from '@forgerock/platform-shared/src/components/Field/Select';
+import FrSelect from '@forgerock/platform-shared/src/components/Field/SelectInput';
 import FrAccordion from '@forgerock/platform-shared/src/components/Accordion';
 import {
   BTableSimple, BTbody, BThead, BTr, BTh, BTd, BLink, BModal, BCard, BTooltip,
@@ -729,11 +729,11 @@ export default {
   width: 20%;
 }
 
-::v-deep .accordion .card {
+:deep(.accordion .card) {
   overflow: visible;
 }
 
-::v-deep .card-header {
+:deep(.card-header) {
   padding: 10px;
 }
 

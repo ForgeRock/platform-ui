@@ -60,7 +60,7 @@ of the MIT license. See the LICENSE file for details. -->
           </template>
           <BDropdownItem
             data-testid="forward-review-button"
-            @click="$root.$emit('bv::show::modal', 'task-header-forward');">
+            @click="$bvModal.show('task-header-forward');">
             <FrIcon
               class="mr-2"
               name="redo" />

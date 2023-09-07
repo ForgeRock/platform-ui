@@ -20,10 +20,9 @@ of the MIT license. See the LICENSE file for details. -->
               class="card"
               v-if="authenticationDevicesArray.length">
               <template
-                v-for="device in authenticationDevicesArray">
-                <div
-                  :key="device.uuid"
-                  class="card-body border-bottom">
+                v-for="device in authenticationDevicesArray"
+                :key="device.uuid">
+                <div class="card-body border-bottom">
                   <BRow class="px-4">
                     <div class="w-100 media align-items-center">
                       <FrIcon
@@ -47,9 +46,9 @@ of the MIT license. See the LICENSE file for details. -->
                           />
                         </template>
                         <template
-                          v-for="(button, index) in device.dropdown">
-                          <div
-                            :key="button.text">
+                          v-for="(button, index) in device.dropdown"
+                          :key="button.text">
+                          <div>
                             <BDropdownDivider v-if="index > 0" />
                             <BDropdownItemButton @click="button.action">
                               <FrIcon

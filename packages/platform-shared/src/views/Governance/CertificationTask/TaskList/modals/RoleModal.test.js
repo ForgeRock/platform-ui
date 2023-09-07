@@ -13,10 +13,12 @@ describe('AccountModal', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = mount(RoleModal, {
-      mocks: {
-        $t: (t) => t,
+      global: {
+        mocks: {
+          $t: (t) => t,
+        },
       },
-      propsData: {
+      props: {
         isTesting: true,
         role: {
           name: 'test role',

@@ -11,7 +11,7 @@ import ListField from './index';
 describe('ListField', () => {
   it('ListField sets inputValue to array when value is empty', () => {
     const wrapper = shallowMount(ListField, {
-      propsData: {
+      props: {
         name: 'test',
         value: '',
       },
@@ -21,7 +21,7 @@ describe('ListField', () => {
 
   it('ListField sets inputValue to value when value is not empty', () => {
     const wrapper = shallowMount(ListField, {
-      propsData: {
+      props: {
         name: 'test',
         value: 'test',
       },
@@ -31,7 +31,7 @@ describe('ListField', () => {
 
   it('ListField sets validation', async () => {
     const wrapper = shallowMount(ListField, {
-      propsData: {
+      props: {
         name: 'test',
         type: '',
       },

@@ -43,8 +43,10 @@ of the MIT license. See the LICENSE file for details. -->
                   }}
                 </small>
               </dt>
-              <template v-for="(scope, i) in slotData.scopes">
-                <dd :key="i">
+              <template
+                v-for="(scope, i) in slotData.scopes"
+                :key="i">
+                <dd>
                   <div class="media">
                     <FrIcon
                       class="mr-2 mt-1 text-success"
@@ -122,6 +124,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import { BButton, BImg, BModal } from 'bootstrap-vue';
 import { mapState } from 'pinia';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import FrAccordion from '@forgerock/platform-shared/src/components/Accordion';
@@ -134,6 +137,9 @@ export default {
   name: 'AuthorizedApplications',
   mixins: [RestMixin, NotificationMixin],
   components: {
+    BButton,
+    BImg,
+    BModal,
     FrAccordion,
     FrIcon,
   },

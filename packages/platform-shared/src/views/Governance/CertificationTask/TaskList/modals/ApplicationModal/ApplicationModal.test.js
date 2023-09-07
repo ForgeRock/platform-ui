@@ -12,10 +12,12 @@ describe('ApplicationModal', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = shallowMount(ApplicationModal, {
-      mocks: {
-        $t: (t) => t,
+      global: {
+        mocks: {
+          $t: (t) => t,
+        },
       },
-      propsData: {
+      props: {
         application: {
           id: 'test',
         },

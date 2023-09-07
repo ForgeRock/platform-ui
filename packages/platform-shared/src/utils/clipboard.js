@@ -17,8 +17,8 @@ import i18n from '@/i18n';
 // eslint-disable-next-line import/prefer-default-export
 export function copyValueToClipboard(payload) {
   clipboard.writeText(payload).then(() => {
-    displayNotification('success', i18n.t('common.copySuccess'));
+    displayNotification('success', i18n.global.t('common.copySuccess'));
   }, (error) => {
-    showErrorMessage(error, i18n.t('common.copyFail'));
+    showErrorMessage(error, i18n.global.t('common.copyFail'));
   });
 }

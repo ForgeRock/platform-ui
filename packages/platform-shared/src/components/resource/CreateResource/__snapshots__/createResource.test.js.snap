@@ -1,0 +1,143 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CreateResource.vue sets errors: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "validateOnMount" with v-bind value \`false\` will render validateOnMount="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <VeeForm",
+    "ref="observer"",
+    "as="span"",
+    ">",
+    "
+",
+    " at <CreateResource",
+    "createProperties=",
+    [
+      {
+        "default": "testDefault",
+        "field": "password",
+        "isConditional": false,
+        "isTemporalConstraint": false,
+        "key": "privileges",
+        "type": "string",
+        "value": "privilegesValue",
+      },
+      {
+        "encryption": {},
+        "isConditional": true,
+        "isTemporalConstraint": false,
+        "key": "password",
+        "title": "password",
+        "type": "string",
+        "value": null,
+      },
+      {
+        "isConditional": false,
+        "isTemporalConstraint": true,
+        "key": "boolTest",
+        "title": "boolTest",
+        "type": "boolean",
+        "value": false,
+      },
+      {
+        "isConditional": false,
+        "isTemporalConstraint": false,
+        "items": {
+          "type": "test",
+        },
+        "key": "arrayTest",
+        "title": "arrayTest",
+        "type": "array",
+        "value": [],
+      },
+    ],
+    "resourceName="testName"",
+    "resourceType="testType"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "keepValues" with v-bind value \`false\` will render keepValues="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <VeeForm",
+    "ref="observer"",
+    "as="span"",
+    ">",
+    "
+",
+    " at <CreateResource",
+    "createProperties=",
+    [
+      {
+        "default": "testDefault",
+        "field": "password",
+        "isConditional": false,
+        "isTemporalConstraint": false,
+        "key": "privileges",
+        "type": "string",
+        "value": "privilegesValue",
+      },
+      {
+        "encryption": {},
+        "isConditional": true,
+        "isTemporalConstraint": false,
+        "key": "password",
+        "title": "password",
+        "type": "string",
+        "value": null,
+      },
+      {
+        "isConditional": false,
+        "isTemporalConstraint": true,
+        "key": "boolTest",
+        "title": "boolTest",
+        "type": "boolean",
+        "value": false,
+      },
+      {
+        "isConditional": false,
+        "isTemporalConstraint": false,
+        "items": {
+          "type": "test",
+        },
+        "key": "arrayTest",
+        "title": "arrayTest",
+        "type": "array",
+        "value": [],
+      },
+    ],
+    "resourceName="testName"",
+    "resourceType="testType"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;

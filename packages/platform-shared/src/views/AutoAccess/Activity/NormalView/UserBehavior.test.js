@@ -6,7 +6,7 @@
  */
 
 import Vue from 'vue';
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import i18n from '@/i18n';
@@ -106,7 +106,7 @@ describe('UserBehavior', () => {
       },
       writable: true,
     });
-    return mount(UserBehavior, { i18n });
+    return mount(UserBehavior, { global: { plugins: [i18n] } });
   }
 
   async function initLoad() {
@@ -114,15 +114,9 @@ describe('UserBehavior', () => {
     const getAutoAccessReportResult = jest.spyOn(AutoApi, 'getAutoAccessReportResult').mockResolvedValue(userData);
 
     const wrapper = setup();
+    await flushPromises();
 
     expect(getManagedResourceList).toHaveBeenCalled();
-
-    // First tick for userInfo and userData
-    await Vue.nextTick();
-
-    // Second tick for template rerender
-    await Vue.nextTick();
-
     expect(getAutoAccessReportResult).toHaveBeenCalled();
 
     return wrapper;
@@ -175,7 +169,12 @@ describe('UserBehavior', () => {
   describe('@actions', () => {
     it('can launch compare charts', async () => {
       const wrapper = await initLoad();
-      wrapper.vm._setupProxy.handleCompare(true);
+
+      const normalViewToolbar = wrapper.findComponent(NormalViewToolbar);
+      const compareCheckbox = normalViewToolbar.find('.custom-switch');
+      compareCheckbox.trigger('click');
+      const compareCheckboxInput = normalViewToolbar.find('.custom-switch input');
+      compareCheckboxInput.setChecked(true);
 
       // Wait another tick for final render
       await Vue.nextTick();

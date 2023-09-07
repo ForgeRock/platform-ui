@@ -13,14 +13,16 @@ describe('ForwardReviewModal', () => {
   it('Handles forwarding to user', async () => {
     const wrapper = shallowMount(ForwardReviewModal,
       {
-        i18n,
+        global: {
+          plugins: [i18n],
+        },
         data: () => ({
           forwardToUser: 'TestUser',
           forwardToRole: 'TestRole',
           forwardToType: 'user',
           comment: 'test comment',
         }),
-        propsData: {
+        props: {
           certId: 'testId',
         },
       });
@@ -39,14 +41,16 @@ describe('ForwardReviewModal', () => {
   it('Handles forwarding to role', async () => {
     const wrapper = shallowMount(ForwardReviewModal,
       {
-        i18n,
+        global: {
+          plugins: [i18n],
+        },
         data: () => ({
           forwardToUser: 'TestUser',
           forwardToRole: 'TestRole',
           forwardToType: 'role',
           comment: 'test comment',
         }),
-        propsData: {
+        props: {
           certId: 'testId',
         },
       });

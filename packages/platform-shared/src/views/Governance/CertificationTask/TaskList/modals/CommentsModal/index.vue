@@ -202,7 +202,7 @@ export default {
   }
 }
 
-::v-deep {
+:deep {
   .modal-body {
     min-height: 200px;
   }

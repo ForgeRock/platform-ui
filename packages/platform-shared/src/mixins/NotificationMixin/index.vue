@@ -1,15 +1,11 @@
-<!-- Copyright (c) 2019-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <script>
-import Notifications from 'vue-notification';
-import velocity from 'velocity-animate';
-import Vue from 'vue';
 import { has } from 'lodash';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
-
-Vue.use(Notifications, { velocity });
+import { notify } from '@kyvg/vue3-notification';
 
 /**
  * @description Notification mixin used for generating messages to users to convey information
@@ -29,7 +25,7 @@ export default {
         type = 'danger';
       }
 
-      this.$notify({
+      notify({
         type,
         text: this.getTranslation(message),
       });

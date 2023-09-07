@@ -13,7 +13,7 @@ describe('Accordion Component', () => {
 
   it('Accordion successfully loaded', () => {
     wrapper = shallowMount(Accordion, {
-      propsData: {
+      props: {
         accordionGroup: 'my-accordion',
         items: [],
       },

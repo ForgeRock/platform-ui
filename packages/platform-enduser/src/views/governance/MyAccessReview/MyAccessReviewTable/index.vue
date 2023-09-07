@@ -415,7 +415,7 @@ export default {
     width: 100px;
   }
 }
-::v-deep {
+:deep {
   .w-100px {
     width: 100px;
   }

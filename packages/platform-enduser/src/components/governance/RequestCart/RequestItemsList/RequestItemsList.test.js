@@ -38,8 +38,10 @@ describe('RequestItemsList', () => {
   }];
 
   const stubProps = {
-    i18n,
-    propsData: {
+    global: {
+      plugins: [i18n],
+    },
+    props: {
       requestItems: entitlementRequestStub,
     },
   };
@@ -52,7 +54,7 @@ describe('RequestItemsList', () => {
   describe('@Component Tests', () => {
     it('request item delete event emits "remove-requested-item" event', () => {
       const wrapper = setup({
-        propsData: {
+        props: {
           requestItems: requestCartUsersStub,
         },
       });
@@ -69,7 +71,7 @@ describe('RequestItemsList', () => {
 
     it('shows the roles icon if request items "itemType" property is equal to "role" and context is "accessItem"', () => {
       const wrapper = setup({
-        propsData: {
+        props: {
           requestItems: roleRequestStub,
           context: 'accessItem',
         },
@@ -95,7 +97,7 @@ describe('RequestItemsList', () => {
 
     it('hides the description container if the request item does not have the "description" property', () => {
       const wrapper = setup({
-        propsData: {
+        props: {
           requestItems: roleRequestStub,
         },
       });
@@ -105,7 +107,7 @@ describe('RequestItemsList', () => {
 
     it('shows the description container if the request item has the "description" property and context is "accessItem"', () => {
       const wrapper = setup({
-        propsData: {
+        props: {
           requestItems: entitlementRequestStub,
           context: 'accessItem',
         },
@@ -116,7 +118,7 @@ describe('RequestItemsList', () => {
 
     it('displays the "Requested Access" empty state container when there are no request access items and context is "accessItem"', () => {
       const wrapper = setup({
-        propsData: {
+        props: {
           requestItems: [],
           context: 'accessItem',
         },
@@ -135,7 +137,7 @@ describe('RequestItemsList', () => {
 
     it('emits the "requested-item-click" event when an access list item is clicked', () => {
       const wrapper = setup({
-        propsData: {
+        props: {
           requestItems: entitlementRequestStub,
           frHover: true,
         },

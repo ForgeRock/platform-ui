@@ -246,7 +246,7 @@ export default {
       const delegateId = `managed/user/${this.selectedDelegate._refResourceId}`;
 
       deleteTaskProxy(this.userId, [delegateId]).then(() => {
-        this.$root.$emit('bv::hide::modal', 'delegate-delete-modal');
+        this.$bvModal.hide('delegate-delete-modal');
         this.displayNotification('success', this.$t('governance.delegates.delegateRemoved'));
         this.loadData();
       }).catch((err) => {
@@ -254,11 +254,11 @@ export default {
       });
     },
     showAddModal() {
-      this.$root.$emit('bv::show::modal', 'add-delegate-modal');
+      this.$bvModal.show('add-delegate-modal');
     },
     showRemoveDelegateModal(delegate) {
       this.selectedDelegate = delegate;
-      this.$root.$emit('bv::show::modal', 'delegate-delete-modal');
+      this.$bvModal.show('delegate-delete-modal');
     },
     sortChanged(event) {
       this.sortDesc = event.sortDesc;
@@ -277,7 +277,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep {
+:deep {
   .w-96px {
     width: 96px;
   }

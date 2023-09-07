@@ -8,21 +8,25 @@
 import { shallowMount } from '@vue/test-utils';
 import ReCaptchaCallback from '@/components/callbacks/ReCaptchaCallback/ReCaptchaV3';
 import i18n from '@/i18n';
+import vueReCaptcha from '../../../plugins/vueReCaptcha';
 
 describe('ReCaptchaV3.vue', () => {
   let wrapper;
 
   beforeEach(() => {
     wrapper = shallowMount(ReCaptchaCallback, {
-      i18n,
-      mocks: {
-        $recaptchaLoaded: () => Promise.resolve(),
-        $recaptcha: () => Promise.resolve('token'),
+      global: {
+        mocks: {
+          $recaptchaLoaded: () => Promise.resolve(),
+          $recaptcha: () => Promise.resolve('token'),
+          $t: () => {},
+        },
+        stubs: {
+          'router-link': true,
+        },
+        plugins: [i18n, vueReCaptcha],
       },
-      stubs: {
-        'router-link': true,
-      },
-      propsData: {
+      props: {
         callback: {
           getSiteKey: jest.fn(() => 'siteKey'),
           setInputValue: jest.fn(),

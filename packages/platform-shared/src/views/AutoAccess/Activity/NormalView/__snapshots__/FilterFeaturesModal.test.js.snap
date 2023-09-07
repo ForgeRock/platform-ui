@@ -1,0 +1,1888 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FilterFeaturesModal @renders should render the component: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) (2)",
+    "
+",
+    " at <FilterFeaturesModal",
+    "isTesting=true",
+    "filters=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    "modalId="testModal"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (2)",
+    "
+",
+    " at <FilterFeaturesModal",
+    "isTesting=true",
+    "filters=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    "modalId="testModal"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (2)",
+    "
+",
+    " at <BModal",
+    "ref="modal"",
+    "id="testModal"",
+    "ok-disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FilterFeaturesModal",
+    "isTesting=true",
+    "filters=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    "modalId="testModal"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) \`beforeDestroy\` has been renamed to \`beforeUnmount\`.",
+    "
+",
+    " at <BModal",
+    "ref="modal"",
+    "id="testModal"",
+    "ok-disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FilterFeaturesModal",
+    "isTesting=true",
+    "filters=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    "modalId="testModal"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) vm.$scopedSlots has been removed. Use vm.$slots instead.
+  Details: https://v3-migration.vuejs.org/breaking-changes/slots-unification.html",
+    "
+",
+    " at <BModal",
+    "ref="modal"",
+    "id="testModal"",
+    "ok-disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FilterFeaturesModal",
+    "isTesting=true",
+    "filters=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    "modalId="testModal"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (3)",
+    "
+",
+    " at <BModal",
+    "ref="modal"",
+    "id="testModal"",
+    "ok-disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FilterFeaturesModal",
+    "isTesting=true",
+    "filters=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    "modalId="testModal"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) Functional component <BButtonClose> should be defined as a plain function in Vue 3. The "functional" option has been removed. NOTE: Before migrating to use plain functions for functional components, first make sure that all async components usage have been migrated and its compat behavior has been disabled.
+  Details: https://v3-migration.vuejs.org/breaking-changes/functional-components.html",
+    "
+",
+    " at <BModal",
+    "ref="modal"",
+    "id="testModal"",
+    "ok-disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FilterFeaturesModal",
+    "isTesting=true",
+    "filters=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    "modalId="testModal"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) (2)",
+    "
+",
+    " at <BModal",
+    "ref="modal"",
+    "id="testModal"",
+    "ok-disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FilterFeaturesModal",
+    "isTesting=true",
+    "filters=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    "modalId="testModal"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) vm.$listeners has been removed. In Vue 3, parent v-on listeners are included in vm.$attrs and it is no longer necessary to separately use v-on="$listeners" if you are already using v-bind="$attrs". (Note: the Vue 3 behavior only applies if this compat config is disabled)
+  Details: https://v3-migration.vuejs.org/breaking-changes/listeners-removed.html",
+    "
+",
+    " at <BButtonClose",
+    "onClick=fn<bound onClose>",
+    "ref="close-button"",
+    "content="&times;"",
+    " ...",
+    ">",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "ref="modal"",
+    "id="testModal"",
+    "ok-disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FilterFeaturesModal",
+    "isTesting=true",
+    "filters=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    "modalId="testModal"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (2)",
+    "
+",
+    " at <BListGroup>",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "ref="modal"",
+    "id="testModal"",
+    "ok-disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FilterFeaturesModal",
+    "isTesting=true",
+    "filters=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    "modalId="testModal"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (3)",
+    "
+",
+    " at <Draggable",
+    "class="d-flex flex-column w-100"",
+    "ghost-class="ghost-tag"",
+    "list=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    ">",
+    "
+",
+    " at <BListGroup>",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "ref="modal"",
+    "id="testModal"",
+    "ok-disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FilterFeaturesModal",
+    "isTesting=true",
+    "filters=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    "modalId="testModal"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) (3)",
+    "
+",
+    " at <Draggable",
+    "class="d-flex flex-column w-100"",
+    "ghost-class="ghost-tag"",
+    "list=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    ">",
+    "
+",
+    " at <BListGroup>",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "ref="modal"",
+    "id="testModal"",
+    "ok-disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FilterFeaturesModal",
+    "isTesting=true",
+    "filters=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    "modalId="testModal"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) (2)",
+    "
+",
+    " at <Draggable",
+    "class="d-flex flex-column w-100"",
+    "ghost-class="ghost-tag"",
+    "list=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    ">",
+    "
+",
+    " at <BListGroup>",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "ref="modal"",
+    "id="testModal"",
+    "ok-disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FilterFeaturesModal",
+    "isTesting=true",
+    "filters=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    "modalId="testModal"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (2)",
+    "
+",
+    " at <Draggable",
+    "class="d-flex flex-column w-100"",
+    "ghost-class="ghost-tag"",
+    "list=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    ">",
+    "
+",
+    " at <BListGroup>",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "ref="modal"",
+    "id="testModal"",
+    "ok-disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FilterFeaturesModal",
+    "isTesting=true",
+    "filters=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    "modalId="testModal"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_ATTRS_CLASS_STYLE) Component <draggable> has \`inheritAttrs: false\` but is relying on class/style fallthrough from parent. In Vue 3, class/style are now included in $attrs and will no longer fallthrough when inheritAttrs is false. If you are already using v-bind="$attrs" on component root it should render the same end result. If you are binding $attrs to a non-root element and expecting class/style to fallthrough on root, you will need to now manually bind them on root via :class="$attrs.class".
+  Details: https://v3-migration.vuejs.org/breaking-changes/attrs-includes-class-style.html",
+    "
+",
+    " at <Draggable",
+    "class="d-flex flex-column w-100"",
+    "ghost-class="ghost-tag"",
+    "list=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    ">",
+    "
+",
+    " at <BListGroup>",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "ref="modal"",
+    "id="testModal"",
+    "ok-disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FilterFeaturesModal",
+    "isTesting=true",
+    "filters=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    "modalId="testModal"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (3)",
+    "
+",
+    " at <BListGroupItem",
+    "class="py-1 p-2 justify-content-between align-items-center d-flex"",
+    "key="time_of_day"",
+    "id="fr-columns-task-time_of_day"",
+    ">",
+    "
+",
+    " at <Draggable",
+    "class="d-flex flex-column w-100"",
+    "ghost-class="ghost-tag"",
+    "list=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    ">",
+    "
+",
+    " at <BListGroup>",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "ref="modal"",
+    "id="testModal"",
+    "ok-disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FilterFeaturesModal",
+    "isTesting=true",
+    "filters=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    "modalId="testModal"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) v-model usage on component has changed in Vue 3. Component that expects to work with v-model should now use the "modelValue" prop and emit the "update:modelValue" event. You can update the usage and then opt-in to Vue 3 behavior on a per-component basis with \`compatConfig: { COMPONENT_V_MODEL: false }\`.
+  Details: https://v3-migration.vuejs.org/breaking-changes/v-model.html",
+    "
+",
+    " at <FrField",
+    "modelValue=false",
+    "onUpdate:modelValue=fn<onUpdateModelValue>",
+    "name="filter"",
+    " ...",
+    ">",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (4)",
+    "
+",
+    " at <FrField",
+    "name="filter"",
+    "type="checkbox"",
+    "value=false",
+    " ...",
+    ">",
+    "
+",
+    " at <BListGroupItem",
+    "class="py-1 p-2 justify-content-between align-items-center d-flex"",
+    "key="time_of_day"",
+    "id="fr-columns-task-time_of_day"",
+    ">",
+    "
+",
+    " at <Draggable",
+    "class="d-flex flex-column w-100"",
+    "ghost-class="ghost-tag"",
+    "list=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    ">",
+    "
+",
+    " at <BListGroup>",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "ref="modal"",
+    "id="testModal"",
+    "ok-disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FilterFeaturesModal",
+    "isTesting=true",
+    "filters=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    "modalId="testModal"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) (4)",
+    "
+",
+    " at <FrCheckbox",
+    "name="filter"",
+    "type="checkbox"",
+    "value=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "name="filter"",
+    "type="checkbox"",
+    "value=false",
+    " ...",
+    ">",
+    "
+",
+    " at <BListGroupItem",
+    "class="py-1 p-2 justify-content-between align-items-center d-flex"",
+    "key="time_of_day"",
+    "id="fr-columns-task-time_of_day"",
+    ">",
+    "
+",
+    " at <Draggable",
+    "class="d-flex flex-column w-100"",
+    "ghost-class="ghost-tag"",
+    "list=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    ">",
+    "
+",
+    " at <BListGroup>",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "ref="modal"",
+    "id="testModal"",
+    "ok-disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FilterFeaturesModal",
+    "isTesting=true",
+    "filters=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    "modalId="testModal"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (5)",
+    "
+",
+    " at <FrCheckbox",
+    "name="filter"",
+    "type="checkbox"",
+    "value=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "name="filter"",
+    "type="checkbox"",
+    "value=false",
+    " ...",
+    ">",
+    "
+",
+    " at <BListGroupItem",
+    "class="py-1 p-2 justify-content-between align-items-center d-flex"",
+    "key="time_of_day"",
+    "id="fr-columns-task-time_of_day"",
+    ">",
+    "
+",
+    " at <Draggable",
+    "class="d-flex flex-column w-100"",
+    "ghost-class="ghost-tag"",
+    "list=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    ">",
+    "
+",
+    " at <BListGroup>",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "ref="modal"",
+    "id="testModal"",
+    "ok-disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FilterFeaturesModal",
+    "isTesting=true",
+    "filters=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    "modalId="testModal"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (4)",
+    "
+",
+    " at <FrCheckbox",
+    "name="filter"",
+    "type="checkbox"",
+    "value=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "name="filter"",
+    "type="checkbox"",
+    "value=false",
+    " ...",
+    ">",
+    "
+",
+    " at <BListGroupItem",
+    "class="py-1 p-2 justify-content-between align-items-center d-flex"",
+    "key="time_of_day"",
+    "id="fr-columns-task-time_of_day"",
+    ">",
+    "
+",
+    " at <Draggable",
+    "class="d-flex flex-column w-100"",
+    "ghost-class="ghost-tag"",
+    "list=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    ">",
+    "
+",
+    " at <BListGroup>",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "ref="modal"",
+    "id="testModal"",
+    "ok-disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FilterFeaturesModal",
+    "isTesting=true",
+    "filters=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    "modalId="testModal"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) (2)",
+    "
+",
+    " at <BFormCheckbox",
+    "modelValue=""",
+    "onUpdate:modelValue=fn",
+    "onModelCompat:input=fn<onUpdateModelValue>",
+    " ...",
+    ">",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (4)",
+    "
+",
+    " at <BFormCheckbox",
+    "onModelCompat:input=fn",
+    "onInput=fn<bound handleInput>",
+    "class="mr-0 zindex-1 align-middle"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrCheckbox",
+    "name="filter"",
+    "type="checkbox"",
+    "value=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "name="filter"",
+    "type="checkbox"",
+    "value=false",
+    " ...",
+    ">",
+    "
+",
+    " at <BListGroupItem",
+    "class="py-1 p-2 justify-content-between align-items-center d-flex"",
+    "key="time_of_day"",
+    "id="fr-columns-task-time_of_day"",
+    ">",
+    "
+",
+    " at <Draggable",
+    "class="d-flex flex-column w-100"",
+    "ghost-class="ghost-tag"",
+    "list=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    ">",
+    "
+",
+    " at <BListGroup>",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "ref="modal"",
+    "id="testModal"",
+    "ok-disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FilterFeaturesModal",
+    "isTesting=true",
+    "filters=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    "modalId="testModal"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (3)",
+    "
+",
+    " at <BFormCheckbox",
+    "onModelCompat:input=fn",
+    "onInput=fn<bound handleInput>",
+    "class="mr-0 zindex-1 align-middle"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrCheckbox",
+    "name="filter"",
+    "type="checkbox"",
+    "value=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "name="filter"",
+    "type="checkbox"",
+    "value=false",
+    " ...",
+    ">",
+    "
+",
+    " at <BListGroupItem",
+    "class="py-1 p-2 justify-content-between align-items-center d-flex"",
+    "key="time_of_day"",
+    "id="fr-columns-task-time_of_day"",
+    ">",
+    "
+",
+    " at <Draggable",
+    "class="d-flex flex-column w-100"",
+    "ghost-class="ghost-tag"",
+    "list=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    ">",
+    "
+",
+    " at <BListGroup>",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "ref="modal"",
+    "id="testModal"",
+    "ok-disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FilterFeaturesModal",
+    "isTesting=true",
+    "filters=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    "modalId="testModal"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_ATTRS_CLASS_STYLE) Component <BFormCheckbox> has \`inheritAttrs: false\` but is relying on class/style fallthrough from parent. In Vue 3, class/style are now included in $attrs and will no longer fallthrough when inheritAttrs is false. If you are already using v-bind="$attrs" on component root it should render the same end result. If you are binding $attrs to a non-root element and expecting class/style to fallthrough on root, you will need to now manually bind them on root via :class="$attrs.class".
+  Details: https://v3-migration.vuejs.org/breaking-changes/attrs-includes-class-style.html",
+    "
+",
+    " at <BFormCheckbox",
+    "onModelCompat:input=fn",
+    "onInput=fn<bound handleInput>",
+    "class="mr-0 zindex-1 align-middle"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrCheckbox",
+    "name="filter"",
+    "type="checkbox"",
+    "value=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "name="filter"",
+    "type="checkbox"",
+    "value=false",
+    " ...",
+    ">",
+    "
+",
+    " at <BListGroupItem",
+    "class="py-1 p-2 justify-content-between align-items-center d-flex"",
+    "key="time_of_day"",
+    "id="fr-columns-task-time_of_day"",
+    ">",
+    "
+",
+    " at <Draggable",
+    "class="d-flex flex-column w-100"",
+    "ghost-class="ghost-tag"",
+    "list=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    ">",
+    "
+",
+    " at <BListGroup>",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "ref="modal"",
+    "id="testModal"",
+    "ok-disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FilterFeaturesModal",
+    "isTesting=true",
+    "filters=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    "modalId="testModal"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "value" with v-bind value \`false\` will render value="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <FrField",
+    "name="filter"",
+    "type="checkbox"",
+    "value=false",
+    " ...",
+    ">",
+    "
+",
+    " at <BListGroupItem",
+    "class="py-1 p-2 justify-content-between align-items-center d-flex"",
+    "key="time_of_day"",
+    "id="fr-columns-task-time_of_day"",
+    ">",
+    "
+",
+    " at <Draggable",
+    "class="d-flex flex-column w-100"",
+    "ghost-class="ghost-tag"",
+    "list=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    ">",
+    "
+",
+    " at <BListGroup>",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "ref="modal"",
+    "id="testModal"",
+    "ok-disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FilterFeaturesModal",
+    "isTesting=true",
+    "filters=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    "modalId="testModal"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (6)",
+    "
+",
+    " at <BButton",
+    "variant="link"",
+    "onClick=fn<onClick>",
+    ">",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "ref="modal"",
+    "id="testModal"",
+    "ok-disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FilterFeaturesModal",
+    "isTesting=true",
+    "filters=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    "modalId="testModal"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "appear" with v-bind value \`false\` will render appear="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "ref="modal"",
+    "id="testModal"",
+    "ok-disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FilterFeaturesModal",
+    "isTesting=true",
+    "filters=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    "modalId="testModal"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "persisted" with v-bind value \`false\` will render persisted="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "ref="modal"",
+    "id="testModal"",
+    "ok-disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FilterFeaturesModal",
+    "isTesting=true",
+    "filters=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    "modalId="testModal"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (7)",
+    "
+",
+    " at <BVTransition",
+    "noFade=false",
+    ">",
+    "
+",
+    " at <BModal",
+    "ref="modal"",
+    "id="testModal"",
+    "ok-disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FilterFeaturesModal",
+    "isTesting=true",
+    "filters=",
+    [
+      {
+        "show": false,
+        "text": "time_of_day",
+        "title": "Time of Day",
+      },
+      {
+        "show": true,
+        "text": "os",
+        "title": "OS",
+      },
+      {
+        "show": true,
+        "text": "device",
+        "title": "Device",
+      },
+    ],
+    "modalId="testModal"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_EVENT_EMITTER) vm.$on/$once/$off() have been removed. Use an external event emitter library instead.
+  Details: https://v3-migration.vuejs.org/breaking-changes/events-api.html",
+  ],
+]
+`;

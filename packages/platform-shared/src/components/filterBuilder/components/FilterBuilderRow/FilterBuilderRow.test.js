@@ -5,22 +5,23 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
+import { mount, flushPromises } from '@vue/test-utils';
 import FilterBuilderRow from './index';
 import { defaultConditionOptions } from '../../utils/QueryFilterDefaults';
 import * as CertFilterDefaults from '../../CertificationFilter/CertFilterDefaults';
 
 const mountProps = {
-  mocks: {
-    $t: () => {},
-    $store: {
-      state: {
-        userId: 'foo',
+  global: {
+    mocks: {
+      $t: () => {},
+      $store: {
+        state: {
+          userId: 'foo',
+        },
       },
     },
   },
-  propsData: {
+  props: {
     conditionOptions: defaultConditionOptions,
     depth: 0,
     index: 0,
@@ -167,8 +168,8 @@ describe('FilterBuilderRow', () => {
   it('Initial rule renders without a value', () => {
     const presentWrapper = mount(FilterBuilderRow, {
       ...mountProps,
-      propsData: {
-        ...mountProps.propsData,
+      props: {
+        ...mountProps.props,
         rule: {
           field: '/userName', operator: 'pr', uniqueIndex: 2, value: '',
         },

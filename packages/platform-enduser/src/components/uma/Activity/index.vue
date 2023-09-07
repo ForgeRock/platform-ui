@@ -4,8 +4,10 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
-    <template v-for="(activityGroup, index) in activityGroups">
-      <FrListGroup :key="`activityGroup-${index}`">
+    <template
+      v-for="(activityGroup, index) in activityGroups"
+      :key="`activityGroup-${index}`">
+      <FrListGroup>
         <template #list-group-header>
           <div class="card-body m-0 py-4">
             <h6 class="card-title mb-0">

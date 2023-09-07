@@ -11,10 +11,12 @@ import DeletePanel from './index';
 describe('DeletePanel', () => {
   it('DeletePanel successfully loaded', () => {
     const wrapper = shallowMount(DeletePanel, {
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         isDeleting: true,
       },
     });

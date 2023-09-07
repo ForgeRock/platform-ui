@@ -10,8 +10,10 @@ import StateCard from './index';
 
 describe('StateCard', () => {
   const wrapper = shallowMount(StateCard, {
-    mocks: { $t: () => {} },
-    propsData: { enabled: false },
+    global: {
+      mocks: { $t: () => {} },
+    },
+    props: { enabled: false },
   });
 
   it('Emits change event with new value', () => {

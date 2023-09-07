@@ -261,7 +261,7 @@ export default {
     height: 80px;
     border-bottom: 1px solid $gray-200;
 }
-::v-deep .decisions-legend {
+:deep(.decisions-legend) {
   position: absolute;
   top: 0px;
   left: 100px;

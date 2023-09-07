@@ -11,10 +11,12 @@ import ButtonWithSpinner from './index';
 describe('ButtonWithSpinner', () => {
   it('ButtonWithSpinner successfully loaded', () => {
     const wrapper = shallowMount(ButtonWithSpinner, {
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         disabled: true,
       },
     });

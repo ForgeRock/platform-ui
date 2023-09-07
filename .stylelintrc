@@ -106,7 +106,8 @@
       "disabled",
       "only-child",
       "focus-visible",
-      "placeholder-shown"
+      "placeholder-shown",
+      "deep"
     ],
     "value-keyword-case": [
       "lower",
@@ -128,7 +129,7 @@
       true,
       {
         "ignorePseudoElements": [
-          "v-deep"
+          "deep"
         ]
       }
     ],

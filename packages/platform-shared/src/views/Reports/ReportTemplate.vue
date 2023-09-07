@@ -35,13 +35,13 @@ of the MIT license. See the LICENSE file for details. -->
  * @description Displays the report template tabs for running reports and viewing reports history.
  */
 import {
-  getCurrentInstance,
   ref,
   watch,
 } from 'vue';
 import { BContainer, BTabs, BTab } from 'bootstrap-vue';
 import { getReportTemplates } from '@forgerock/platform-shared/src/api/AutoApi';
 import { displayNotification } from '@forgerock/platform-shared/src/utils/notification';
+import { useRoute, useRouter } from 'vue-router';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrRunReport from './RunReport';
@@ -51,27 +51,30 @@ import i18n from '@/i18n';
 /**
  * LOCALS
  */
-useBreadcrumb().setBreadcrumb('/reports', i18n.t('routeNames.Reports'));
+useBreadcrumb().setBreadcrumb('/reports', i18n.global.t('routeNames.Reports'));
+
+// Composables
+const router = useRouter();
+const route = useRoute();
 
 /**
  * GLOBALS
  */
-const { proxy: { $route, $router } } = getCurrentInstance();
 const reportConfigData = ref(null);
 const newReportJobId = ref(null);
 const routerMap = ['ReportTemplate', 'ReportTemplateHistory'];
-const templateName = $route.params.template;
+const templateName = route.params.template;
 const prettyTemplateName = templateName.toLowerCase().replace(/-/g, ' ');
-const tabIndex = ref(routerMap.indexOf($route.name));
+const tabIndex = ref(routerMap.indexOf(router.name));
 const tabItems = [
   {
     id: 'run-report',
-    displayName: i18n.t('reports.tabs.runReport.title'),
+    displayName: i18n.global.t('reports.tabs.runReport.title'),
     component: FrRunReport,
   },
   {
     id: 'report-history',
-    displayName: i18n.t('reports.tabs.runHistory.title'),
+    displayName: i18n.global.t('reports.tabs.runHistory.title'),
     component: FrRunHistory,
   },
 ];
@@ -109,11 +112,11 @@ async function getReportTemplate() {
     return reportTemplate;
   } catch (error) {
     const errorData = error.message === '404'
-      ? { type: 'warning', message: i18n.t('reports.tabs.runReport.errors.templateDoesNotExist') }
-      : { type: 'danger', message: i18n.t('reports.tabs.runReport.errors.errorRetrievingTemplate') };
+      ? { type: 'warning', message: i18n.global.t('reports.tabs.runReport.errors.templateDoesNotExist') }
+      : { type: 'danger', message: i18n.global.t('reports.tabs.runReport.errors.errorRetrievingTemplate') };
 
     displayNotification(errorData.type, errorData.message);
-    $router.push({ name: 'Reports' });
+    router.push({ name: 'Reports' });
     return {};
   }
 }

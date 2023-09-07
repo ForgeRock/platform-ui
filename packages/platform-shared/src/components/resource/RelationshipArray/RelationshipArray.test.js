@@ -5,8 +5,9 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
+import { mount, flushPromises } from '@vue/test-utils';
+import Notifications from '@kyvg/vue3-notification';
+import { nextTick } from 'vue';
 import { setupTestPinia } from '../../../utils/testPiniaHelpers';
 import RelationshipArray from './index';
 import * as SchemaApi from '@/api/SchemaApi';
@@ -89,38 +90,41 @@ describe('RelationshipArray', () => {
 
   beforeEach(() => {
     setupTestPinia();
-    wrapper = shallowMount(RelationshipArray, {
-      mocks: {
-        $t: (key) => key,
-        $router: { push: jest.fn() },
-        $store: {
-          state: {
-            userId: 'foo',
-            SharedStore: {
-              uiConfig: {
-                configuration: {
-                  platformSettings: {
-                    managedObjectsSettings: {
-                      user: {
-                        disableRelationshipSortAndSearch: true,
-                        minimumUIFilterLength: 3,
-                      },
-                      internalrole: {
-                        minimumUIFilterLength: 1,
+    wrapper = mount(RelationshipArray, {
+      global: {
+        mocks: {
+          $t: (key) => key,
+          $router: { push: jest.fn() },
+          $store: {
+            state: {
+              userId: 'foo',
+              SharedStore: {
+                uiConfig: {
+                  configuration: {
+                    platformSettings: {
+                      managedObjectsSettings: {
+                        user: {
+                          disableRelationshipSortAndSearch: true,
+                          minimumUIFilterLength: 3,
+                        },
+                        internalrole: {
+                          minimumUIFilterLength: 1,
+                        },
                       },
                     },
                   },
                 },
-              },
-              managedObjectMinimumUIFilterLength: {
-                user: 3,
+                managedObjectMinimumUIFilterLength: {
+                  user: 3,
+                },
               },
             },
+            commit: () => {},
           },
-          commit: () => {},
         },
+        plugins: [Notifications],
       },
-      propsData: {
+      props: {
         parentId: 'bjensen',
         parentResource: 'user',
         relationshipArrayProperty: {
@@ -197,20 +201,6 @@ describe('RelationshipArray', () => {
     }));
     wrapper.vm.createModalId = 'testId';
     wrapper.vm.removeModalId = 'testId';
-    wrapper.vm.$refs = {
-      testId: {
-        show: () => { },
-        hide: () => { },
-      },
-      relationshipArrayGrid: {
-        clearSelected: () => {
-          wrapper.vm.allRowsSelected = false;
-        },
-        selectAllRows: () => {
-          wrapper.vm.allRowsSelected = true;
-        },
-      },
-    };
   });
 
   it('Correctly builds grid url', async () => {
@@ -310,14 +300,24 @@ describe('RelationshipArray', () => {
     expect(wrapper.vm.newRelationships).toEqual(sampleRelationshipsData);
   });
 
-  it('Correctly sets selected and allRowsSelected', () => {
+  it('Correctly sets selected and allRowsSelected', async () => {
     wrapper.vm.gridData = [1, 2, 3, 4];
-    wrapper.vm.onRowSelected([1, 2, 3, 4]);
+    await nextTick();
+
+    wrapper.vm.$refs.relationshipArrayGrid.selectAllRows();
+    await nextTick();
+
     expect(wrapper.vm.selected[0]).toEqual(1);
     expect(wrapper.vm.allRowsSelected).toEqual(true);
+
     wrapper.vm.toggleSelectAll();
+    await nextTick();
+
     expect(wrapper.vm.allRowsSelected).toEqual(false);
+
     wrapper.vm.toggleSelectAll();
+    await nextTick();
+
     expect(wrapper.vm.allRowsSelected).toEqual(true);
   });
 

@@ -6,16 +6,20 @@
  */
 
 import { shallowMount } from '@vue/test-utils';
+import Notifications from '@kyvg/vue3-notification';
 import ResetPasswordModal from './index';
 
 describe('ResetPasswordModal', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = shallowMount(ResetPasswordModal, {
-      mocks: {
-        $t: () => { },
+      global: {
+        mocks: {
+          $t: () => { },
+        },
+        plugins: [Notifications],
       },
-      propsData: {
+      props: {
         resourceType: 'resourceType',
         resourceName: 'resourceName',
         resourceId: 'resourceId',
@@ -24,7 +28,7 @@ describe('ResetPasswordModal', () => {
   });
 
   afterEach(() => {
-    wrapper.destroy();
+    wrapper.unmount();
   });
 
   it('saves password', async () => {

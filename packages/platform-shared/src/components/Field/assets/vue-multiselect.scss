@@ -1,11 +1,12 @@
 /**
- * Copyright 2020-2021 ForgeRock AS. All Rights Reserved
+ * Copyright 2020-2023 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS.
  * or with one of its affiliates. All use shall be exclusively subject
  * to such license between the licensee and ForgeRock AS.
  */
-::v-deep .multiselect {
+
+:deep .multiselect {
   cursor: pointer;
   box-sizing: border-box;
   min-height: 48px;
@@ -233,7 +234,7 @@
   }
 }
 
-::v-deep .fr-field-error {
+:deep(.fr-field-error) {
   .multiselect__select {
     right: 1px;
     top: 1px;
@@ -251,7 +252,7 @@
   }
 }
 
-::v-deep .polyfill-placeholder {
+:deep .polyfill-placeholder {
   .multiselect__tags {
     padding: 1.1rem 50px 0.1rem 0.75rem;
 

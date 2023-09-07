@@ -5,13 +5,10 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import Vue from 'vue';
-import Vuex from 'vuex';
+import { createStore } from 'vuex';
 import Shared from '@forgerock/platform-shared/src/store/modules/Shared';
 
-Vue.use(Vuex);
-
-export default new Vuex.Store({
+export default createStore({
   mutations: {
     setHostedJourneyPagesState(state, enabled) {
       state.hostedJourneyPages = enabled;

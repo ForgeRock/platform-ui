@@ -11,16 +11,18 @@ import i18n from '@/i18n';
 
 describe('ExplainabilityBadge', () => {
   let wrapper;
-  const propsData = {
+  const props = {
     title: 'is_automated_user_agent',
   };
 
   beforeEach(() => {
     wrapper = mount(Badge, {
-      mocks: {
-        $t: (key) => i18n.t(key),
+      global: {
+        mocks: {
+          $t: (key) => i18n.global.t(key),
+        },
       },
-      propsData,
+      props,
     });
   });
 
@@ -30,6 +32,6 @@ describe('ExplainabilityBadge', () => {
 
   it('Badge should contain the title prop text value', () => {
     const badgeTitle = wrapper.find('.badgeTitle').text();
-    expect(badgeTitle).toBe(i18n.t(`autoAccess.access.heuristics['${propsData.title}']`));
+    expect(badgeTitle).toBe(i18n.global.t(`autoAccess.access.heuristics['${props.title}']`));
   });
 });

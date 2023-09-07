@@ -276,14 +276,14 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-#dropdown-status::v-deep {
+#dropdown-status:deep {
   button {
     color: $black;
     padding-left: 0;
     padding-right: 0;
   }
 }
-::v-deep {
+:deep {
   .w-140px {
     width: 140px;
   }

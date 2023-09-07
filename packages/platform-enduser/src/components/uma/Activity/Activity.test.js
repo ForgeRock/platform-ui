@@ -5,13 +5,9 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import i18n from '@/i18n';
 import Activity from '@/components/uma/Activity';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 Activity.components['fr-fallback-image'] = jest.fn();
 
@@ -26,16 +22,17 @@ describe('Uma Activity Component', () => {
 
   beforeEach(() => {
     wrapper = shallowMount(Activity, {
-      localVue,
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         umaHistory: history,
       },
     });
   });
 
   afterEach(() => {
-    wrapper.destroy();
+    wrapper.unmount();
   });
 
   describe('activityGroups', () => {

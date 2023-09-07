@@ -15,8 +15,10 @@ const fieldOptions = [{ label: 'field-label', color: 'success', icon: 'check' }]
 describe('Default field, with custom tags, for running reports', () => {
   function setup(props) {
     return mount(DefaultRunReportCustomTagField, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         ...props,
         fieldOptions,
         name: 'my-basic-field',
@@ -33,7 +35,7 @@ describe('Default field, with custom tags, for running reports', () => {
       const myField = findByTestId(wrapper, 'fr-field-my-basic-field');
       await myField.trigger('click');
 
-      const firstFieldOption = myField.findAll('li').at(0).find('span');
+      const firstFieldOption = myField.findAll('li')[0].find('span');
       await firstFieldOption.trigger('click');
 
       expect(wrapper.emitted('field-value-update')).toEqual([[[fieldOptions[0]]]]);

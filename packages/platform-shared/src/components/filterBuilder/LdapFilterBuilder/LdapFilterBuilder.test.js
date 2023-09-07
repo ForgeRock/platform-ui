@@ -75,10 +75,12 @@ describe('LdapFilterBuilder', () => {
 
   beforeEach(() => {
     wrapper = shallowMount(LdapFilterBuilder, {
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         value: '(1=one)',
       },
     });

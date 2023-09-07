@@ -5,14 +5,13 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { createLocalVue, shallowMount } from '@vue/test-utils';
-import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
-import Vuex from 'vuex';
+import { shallowMount } from '@vue/test-utils';
+import { createStore } from 'vuex';
+import { getUserPrivileges } from '@forgerock/platform-shared/src/api/PrivilegeApi';
 import i18n from '@/i18n';
 import App from '@/App';
 
-const localVue = createLocalVue();
-localVue.use(Vuex);
+jest.mock('@forgerock/platform-shared/src/api/PrivilegeApi');
 
 let store;
 let wrapper;
@@ -23,24 +22,23 @@ function shallowMountComponent(storeMock) {
     meta: { hideSideMenu: true },
   };
 
+  const storePlugin = createStore(storeMock);
+
   wrapper = shallowMount(App, {
-    localVue,
-    store: storeMock,
-    i18n,
-    mocks: {
-      $route,
-    },
-    stubs: {
-      RouterLink: true,
-      RouterView: true,
-      Notifications: true,
+    global: {
+      plugins: [i18n, storePlugin],
+      stubs: ['RouterLink', 'RouterView'],
+      mocks: {
+        $route,
+      },
     },
   });
 }
 
 describe('App.vue', () => {
   beforeEach(async () => {
-    store = new Vuex.Store({
+    getUserPrivileges.mockImplementation(() => Promise.resolve({ data: [] }));
+    store = {
       state: {
         SharedStore: { workforceEnabled: false },
         menusFile: 'menus.platform',
@@ -48,12 +46,11 @@ describe('App.vue', () => {
       getters: {
         menusFile: (state) => state.menusFile,
       },
-    });
-    setupTestPinia({ enduser: { access: {} } });
+    };
   });
 
   afterAll(() => {
-    wrapper.destroy();
+    wrapper.unmount();
   });
 
   it('Loaded Menus File should load default items', async () => {
@@ -77,7 +74,7 @@ describe('App.vue', () => {
     store.state.SharedStore.logoutScreen = false;
     shallowMountComponent(store);
     await wrapper.vm.$nextTick();
-    const logoutText = wrapper.find('frlayout-stub');
+    const logoutText = wrapper.find('fr-layout-stub');
     expect(logoutText.exists()).toBeTruthy();
   });
 });

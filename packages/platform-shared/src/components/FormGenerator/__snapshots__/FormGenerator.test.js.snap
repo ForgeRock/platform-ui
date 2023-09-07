@@ -1,0 +1,128 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Form Generator Renders each of the sub components: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) Functional component <BRow> should be defined as a plain function in Vue 3. The "functional" option has been removed. NOTE: Before migrating to use plain functions for functional components, first make sure that all async components usage have been migrated and its compat behavior has been disabled.
+  Details: https://v3-migration.vuejs.org/breaking-changes/functional-components.html",
+    "
+",
+    " at <FormGenerator",
+    "ref="VTU_COMPONENT"",
+    "schema=",
+    [
+      [
+        {
+          "columns": 6,
+          "description": "testStringDescription",
+          "label": "StringLabel",
+          "model": "core.testString",
+          "title": "testStringTitle",
+          "type": "string",
+        },
+        {
+          "arrayType": "addMany",
+          "columns": 6,
+          "description": "testArrayDescription",
+          "label": "ArrayLabel",
+          "model": "core.testArray",
+          "title": "testArrayTitle",
+          "type": "array",
+        },
+      ],
+      [
+        {
+          "description": "testBooleanDescription",
+          "label": "BooleanLabel",
+          "model": "core.testBoolean",
+          "title": "testBooleanTitle",
+          "type": "boolean",
+        },
+      ],
+      [
+        {
+          "description": "testNumberDescription",
+          "label": "NumberLabel",
+          "model": "core.testNumber",
+          "title": "testNumberTitle",
+          "type": "integer",
+        },
+        {
+          "description": "testRadioDescription",
+          "label": "RadioLabel",
+          "model": "core.testRadio",
+          "title": "testRadioTitle",
+          "type": "radio",
+        },
+      ],
+      [
+        {
+          "description": "testPasswordDescription",
+          "label": "PasswordLabel",
+          "model": "core.testPassword",
+          "title": "testPasswordTitle",
+          "type": "password",
+        },
+      ],
+      [
+        {
+          "description": "testDateDescription",
+          "label": "DateLabel",
+          "model": "core.testDate",
+          "title": "testDateTile",
+          "type": "date",
+        },
+      ],
+    ],
+    "model=",
+    {
+      "core": {
+        "testArray": {
+          "value": [
+            "one",
+            "two",
+          ],
+        },
+        "testBoolean": {
+          "value": false,
+        },
+        "testDate": {
+          "value": "2023-04-12T00:00:00+00:00",
+        },
+        "testNumber": {
+          "value": 1,
+        },
+        "testPassword": {
+          "value": "initialPassword",
+        },
+        "testRadio": {
+          "options": [
+            1,
+            2,
+            3,
+          ],
+          "value": 1,
+        },
+        "testString": {
+          "value": "initialValue",
+        },
+      },
+    },
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;

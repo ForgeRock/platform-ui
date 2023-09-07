@@ -108,7 +108,7 @@ export default {
     overflow: auto;
   }
 
-  .fr-center-card {
+  :deep(.fr-center-card) {
     width: 100%;
     text-align: center;
 

@@ -84,13 +84,13 @@ export default function useRunHistoryTable() {
       statusLabel(_exportStatus, fileType) {
         switch (_exportStatus) {
           case 'exporting':
-            return i18n.t('reports.tabs.runHistory.table.exportingFile', { fileType });
+            return i18n.global.t('reports.tabs.runHistory.table.exportingFile', { fileType });
           case 'download':
-            return i18n.t('reports.tabs.runHistory.table.downloadFile', { fileType });
+            return i18n.global.t('reports.tabs.runHistory.table.downloadFile', { fileType });
           case 'downloading':
-            return i18n.t('reports.tabs.runHistory.table.downloadingFile', { fileType });
+            return i18n.global.t('reports.tabs.runHistory.table.downloadingFile', { fileType });
           default:
-            return i18n.t('reports.tabs.runHistory.table.exportFile', { fileType });
+            return i18n.global.t('reports.tabs.runHistory.table.exportFile', { fileType });
         }
       },
       tooltipId() {
@@ -98,12 +98,12 @@ export default function useRunHistoryTable() {
       },
       tooltipLabel() {
         if (this.hasAnyActiveExports()) {
-          return i18n.t('reports.tabs.runHistory.table.exportingFile', { fileType: '' });
+          return i18n.global.t('reports.tabs.runHistory.table.exportingFile', { fileType: '' });
         }
         if (this.hasAnyActiveDownloads()) {
-          return i18n.t('reports.tabs.runHistory.table.downloadingFile', { fileType: '' });
+          return i18n.global.t('reports.tabs.runHistory.table.downloadingFile', { fileType: '' });
         }
-        return i18n.t('reports.tabs.runHistory.table.exportFile', { fileType: '' });
+        return i18n.global.t('reports.tabs.runHistory.table.exportFile', { fileType: '' });
       },
     }));
   }
@@ -114,13 +114,13 @@ export default function useRunHistoryTable() {
   const tableColumns = [
     {
       key: 'date',
-      label: i18n.t('common.started'),
+      label: i18n.global.t('common.started'),
       class: 'fr-report-history-start-date fr-bg-none',
       sortable: true,
     },
     {
       key: 'reportStatus',
-      label: i18n.t('common.status'),
+      label: i18n.global.t('common.status'),
       class: 'd-none d-lg-table-cell fr-report-history-status fr-bg-none',
       sortable: true,
     },

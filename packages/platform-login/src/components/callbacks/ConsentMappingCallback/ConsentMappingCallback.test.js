@@ -5,8 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
+import { mount, flushPromises } from '@vue/test-utils';
 import ConsentContainer from '@/components/callbacks/ConsentMappingCallback';
 import i18n from '@/i18n';
 
@@ -14,8 +13,10 @@ describe('ConsentMappingCallback', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = mount(ConsentContainer, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         callbacks: [{
           getOutputByName: (type) => {
             switch (type) {

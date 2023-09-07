@@ -1,0 +1,2017 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RequestToolbar clicking the button to show filters will expand the filter section: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (2)",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) v-model usage on component has changed in Vue 3. Component that expects to work with v-model should now use the "modelValue" prop and emit the "update:modelValue" event. You can update the usage and then opt-in to Vue 3 behavior on a per-component basis with \`compatConfig: { COMPONENT_V_MODEL: false }\`.
+  Details: https://v3-migration.vuejs.org/breaking-changes/v-model.html",
+    "
+",
+    " at <BCollapse",
+    "modelValue=false",
+    "onUpdate:modelValue=fn",
+    "data-testid="filter-collapse"",
+    " ...",
+    ">",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (2)",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) vm.$scopedSlots has been removed. Use vm.$slots instead.
+  Details: https://v3-migration.vuejs.org/breaking-changes/slots-unification.html",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) Functional component <BButton> should be defined as a plain function in Vue 3. The "functional" option has been removed. NOTE: Before migrating to use plain functions for functional components, first make sure that all async components usage have been migrated and its compat behavior has been disabled.
+  Details: https://v3-migration.vuejs.org/breaking-changes/functional-components.html",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (3)",
+    "
+",
+    " at <BDropdown",
+    "data-testid="status-dropdown"",
+    "variant="link"",
+    "toggle-class="px-0"",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) \`beforeDestroy\` has been renamed to \`beforeUnmount\`.",
+    "
+",
+    " at <BDropdown",
+    "data-testid="status-dropdown"",
+    "variant="link"",
+    "toggle-class="px-0"",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (2)",
+    "
+",
+    " at <BDropdown",
+    "data-testid="status-dropdown"",
+    "variant="link"",
+    "toggle-class="px-0"",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (3)",
+    "
+",
+    " at <BDropdown",
+    "data-testid="status-dropdown"",
+    "variant="link"",
+    "toggle-class="px-0"",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) (2)",
+    "
+",
+    " at <BDropdown",
+    "data-testid="status-dropdown"",
+    "variant="link"",
+    "toggle-class="px-0"",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) vm.$listeners has been removed. In Vue 3, parent v-on listeners are included in vm.$attrs and it is no longer necessary to separately use v-on="$listeners" if you are already using v-bind="$attrs". (Note: the Vue 3 behavior only applies if this compat config is disabled)
+  Details: https://v3-migration.vuejs.org/breaking-changes/listeners-removed.html",
+    "
+",
+    " at <BButton",
+    "class="dropdown-toggle px-0"",
+    "onMousedown=fn<bound onMousedown>",
+    "onClick=fn<bound toggle>",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "data-testid="status-dropdown"",
+    "variant="link"",
+    "toggle-class="px-0"",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (4)",
+    "
+",
+    " at <BDropdownItem",
+    "active=false",
+    "onClick=fn<onClick>",
+    "key="stat1"",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "data-testid="status-dropdown"",
+    "variant="link"",
+    "toggle-class="px-0"",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (3)",
+    "
+",
+    " at <BDropdownItem",
+    "active=false",
+    "onClick=fn<onClick>",
+    "key="stat1"",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "data-testid="status-dropdown"",
+    "variant="link"",
+    "toggle-class="px-0"",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (4)",
+    "
+",
+    " at <BDropdownItem",
+    "active=false",
+    "onClick=fn<onClick>",
+    "key="stat1"",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "data-testid="status-dropdown"",
+    "variant="link"",
+    "toggle-class="px-0"",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (5)",
+    "
+",
+    " at <BLink",
+    "class="dropdown-item"",
+    "onClick=fn<bound onClick>",
+    "ref="item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "active=false",
+    "onClick=fn<onClick>",
+    "key="stat1"",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "data-testid="status-dropdown"",
+    "variant="link"",
+    "toggle-class="px-0"",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_DATA_MERGE) Detected conflicting key "bvListeners" when merging data option values. In Vue 3, data keys are merged shallowly and will override one another.
+  Details: https://v3-migration.vuejs.org/breaking-changes/data-option.html#mixin-merge-behavior-change",
+    "
+",
+    " at <BLink",
+    "class="dropdown-item"",
+    "onClick=fn<bound onClick>",
+    "ref="item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "active=false",
+    "onClick=fn<onClick>",
+    "key="stat1"",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "data-testid="status-dropdown"",
+    "variant="link"",
+    "toggle-class="px-0"",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (2)",
+    "
+",
+    " at <BLink",
+    "class="dropdown-item"",
+    "onClick=fn<bound onClick>",
+    "ref="item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "active=false",
+    "onClick=fn<onClick>",
+    "key="stat1"",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "data-testid="status-dropdown"",
+    "variant="link"",
+    "toggle-class="px-0"",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) (2)",
+    "
+",
+    " at <BLink",
+    "class="dropdown-item"",
+    "onClick=fn<bound onClick>",
+    "ref="item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "active=false",
+    "onClick=fn<onClick>",
+    "key="stat1"",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "data-testid="status-dropdown"",
+    "variant="link"",
+    "toggle-class="px-0"",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (4)",
+    "
+",
+    " at <BLink",
+    "class="dropdown-item"",
+    "onClick=fn<bound onClick>",
+    "ref="item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "active=false",
+    "onClick=fn<onClick>",
+    "key="stat1"",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "data-testid="status-dropdown"",
+    "variant="link"",
+    "toggle-class="px-0"",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_ATTRS_CLASS_STYLE) Component <BLink> has \`inheritAttrs: false\` but is relying on class/style fallthrough from parent. In Vue 3, class/style are now included in $attrs and will no longer fallthrough when inheritAttrs is false. If you are already using v-bind="$attrs" on component root it should render the same end result. If you are binding $attrs to a non-root element and expecting class/style to fallthrough on root, you will need to now manually bind them on root via :class="$attrs.class".
+  Details: https://v3-migration.vuejs.org/breaking-changes/attrs-includes-class-style.html",
+    "
+",
+    " at <BLink",
+    "class="dropdown-item"",
+    "onClick=fn<bound onClick>",
+    "ref="item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "active=false",
+    "onClick=fn<onClick>",
+    "key="stat1"",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "data-testid="status-dropdown"",
+    "variant="link"",
+    "toggle-class="px-0"",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (5)",
+    "
+",
+    " at <SortDropdown",
+    "class="px-3"",
+    "selected-item="date"",
+    "hide-labels-on-mobile=true",
+    " ...",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) (3)",
+    "
+",
+    " at <BDropdown",
+    "id="sortBy"",
+    "toggle-class="text-dark px-0 d-flex"",
+    "variant="link"",
+    " ...",
+    ">",
+    "
+",
+    " at <SortDropdown",
+    "class="px-3"",
+    "selected-item="date"",
+    "hide-labels-on-mobile=true",
+    " ...",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (3)",
+    "
+",
+    " at <BDropdownText",
+    "style=",
+    {
+      "width": "250px",
+    },
+    ">",
+    "
+",
+    " at <BDropdown",
+    "id="sortBy"",
+    "toggle-class="text-dark px-0 d-flex"",
+    "variant="link"",
+    " ...",
+    ">",
+    "
+",
+    " at <SortDropdown",
+    "class="px-3"",
+    "selected-item="date"",
+    "hide-labels-on-mobile=true",
+    " ...",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (4)",
+    "
+",
+    " at <BDropdownForm>",
+    "
+",
+    " at <BDropdown",
+    "id="sortBy"",
+    "toggle-class="text-dark px-0 d-flex"",
+    "variant="link"",
+    " ...",
+    ">",
+    "
+",
+    " at <SortDropdown",
+    "class="px-3"",
+    "selected-item="date"",
+    "hide-labels-on-mobile=true",
+    " ...",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) (2)",
+    "
+",
+    " at <FrField",
+    "modelValue="date"",
+    "onUpdate:modelValue=fn",
+    "class="mb-2"",
+    " ...",
+    ">",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (6)",
+    "
+",
+    " at <BDropdownForm>",
+    "
+",
+    " at <BDropdown",
+    "id="sortBy"",
+    "toggle-class="text-dark px-0 d-flex"",
+    "variant="link"",
+    " ...",
+    ">",
+    "
+",
+    " at <SortDropdown",
+    "class="px-3"",
+    "selected-item="date"",
+    "hide-labels-on-mobile=true",
+    " ...",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) (4)",
+    "
+",
+    " at <BDropdownForm>",
+    "
+",
+    " at <BDropdown",
+    "id="sortBy"",
+    "toggle-class="text-dark px-0 d-flex"",
+    "variant="link"",
+    " ...",
+    ">",
+    "
+",
+    " at <SortDropdown",
+    "class="px-3"",
+    "selected-item="date"",
+    "hide-labels-on-mobile=true",
+    " ...",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (5)",
+    "
+",
+    " at <BForm",
+    "class="b-dropdown-form"",
+    "ref="form"",
+    "disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownForm>",
+    "
+",
+    " at <BDropdown",
+    "id="sortBy"",
+    "toggle-class="text-dark px-0 d-flex"",
+    "variant="link"",
+    " ...",
+    ">",
+    "
+",
+    " at <SortDropdown",
+    "class="px-3"",
+    "selected-item="date"",
+    "hide-labels-on-mobile=true",
+    " ...",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (6)",
+    "
+",
+    " at <FrField",
+    "class="mb-2"",
+    "name="sortField"",
+    "type="select"",
+    " ...",
+    ">",
+    "
+",
+    " at <BForm",
+    "class="b-dropdown-form"",
+    "ref="form"",
+    "disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownForm>",
+    "
+",
+    " at <BDropdown",
+    "id="sortBy"",
+    "toggle-class="text-dark px-0 d-flex"",
+    "variant="link"",
+    " ...",
+    ">",
+    "
+",
+    " at <SortDropdown",
+    "class="px-3"",
+    "selected-item="date"",
+    "hide-labels-on-mobile=true",
+    " ...",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) (2)",
+    "
+",
+    " at <SelectInput",
+    "name="sortField"",
+    "type="select"",
+    "options=",
+    [
+      {
+        "text": "governance.accessRequest.requestDate",
+        "value": "date",
+      },
+      {
+        "text": "governance.accessRequest.requestedFor",
+        "value": "requestedFor",
+      },
+      {
+        "text": "common.priority",
+        "value": "priority",
+      },
+      {
+        "text": "governance.accessRequest.requestId",
+        "value": "id",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "class="mb-2"",
+    "name="sortField"",
+    "type="select"",
+    " ...",
+    ">",
+    "
+",
+    " at <BForm",
+    "class="b-dropdown-form"",
+    "ref="form"",
+    "disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownForm>",
+    "
+",
+    " at <BDropdown",
+    "id="sortBy"",
+    "toggle-class="text-dark px-0 d-flex"",
+    "variant="link"",
+    " ...",
+    ">",
+    "
+",
+    " at <SortDropdown",
+    "class="px-3"",
+    "selected-item="date"",
+    "hide-labels-on-mobile=true",
+    " ...",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) (3)",
+    "
+",
+    " at <VueMultiselect",
+    "id="floatingLabelInput20"",
+    "ref="vms"",
+    "value=""",
+    " ...",
+    ">",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput20"",
+    "name="sortField"",
+    "description=""",
+    " ...",
+    ">",
+    "
+",
+    " at <SelectInput",
+    "name="sortField"",
+    "type="select"",
+    "options=",
+    [
+      {
+        "text": "governance.accessRequest.requestDate",
+        "value": "date",
+      },
+      {
+        "text": "governance.accessRequest.requestedFor",
+        "value": "requestedFor",
+      },
+      {
+        "text": "common.priority",
+        "value": "priority",
+      },
+      {
+        "text": "governance.accessRequest.requestId",
+        "value": "id",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "class="mb-2"",
+    "name="sortField"",
+    "type="select"",
+    " ...",
+    ">",
+    "
+",
+    " at <BForm",
+    "class="b-dropdown-form"",
+    "ref="form"",
+    "disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownForm>",
+    "
+",
+    " at <BDropdown",
+    "id="sortBy"",
+    "toggle-class="text-dark px-0 d-flex"",
+    "variant="link"",
+    " ...",
+    ">",
+    "
+",
+    " at <SortDropdown",
+    "class="px-3"",
+    "selected-item="date"",
+    "hide-labels-on-mobile=true",
+    " ...",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "appear" with v-bind value \`false\` will render appear="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <Transition",
+    "name="multiselect__loading"",
+    ">",
+    "
+",
+    " at <VueMultiselect",
+    "id="floatingLabelInput20"",
+    "ref="vms"",
+    "value=""",
+    " ...",
+    ">",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput20"",
+    "name="sortField"",
+    "description=""",
+    " ...",
+    ">",
+    "
+",
+    " at <SelectInput",
+    "name="sortField"",
+    "type="select"",
+    "options=",
+    [
+      {
+        "text": "governance.accessRequest.requestDate",
+        "value": "date",
+      },
+      {
+        "text": "governance.accessRequest.requestedFor",
+        "value": "requestedFor",
+      },
+      {
+        "text": "common.priority",
+        "value": "priority",
+      },
+      {
+        "text": "governance.accessRequest.requestId",
+        "value": "id",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "class="mb-2"",
+    "name="sortField"",
+    "type="select"",
+    " ...",
+    ">",
+    "
+",
+    " at <BForm",
+    "class="b-dropdown-form"",
+    "ref="form"",
+    "disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownForm>",
+    "
+",
+    " at <BDropdown",
+    "id="sortBy"",
+    "toggle-class="text-dark px-0 d-flex"",
+    "variant="link"",
+    " ...",
+    ">",
+    "
+",
+    " at <SortDropdown",
+    "class="px-3"",
+    "selected-item="date"",
+    "hide-labels-on-mobile=true",
+    " ...",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "persisted" with v-bind value \`false\` will render persisted="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <Transition",
+    "name="multiselect__loading"",
+    ">",
+    "
+",
+    " at <VueMultiselect",
+    "id="floatingLabelInput20"",
+    "ref="vms"",
+    "value=""",
+    " ...",
+    ">",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput20"",
+    "name="sortField"",
+    "description=""",
+    " ...",
+    ">",
+    "
+",
+    " at <SelectInput",
+    "name="sortField"",
+    "type="select"",
+    "options=",
+    [
+      {
+        "text": "governance.accessRequest.requestDate",
+        "value": "date",
+      },
+      {
+        "text": "governance.accessRequest.requestedFor",
+        "value": "requestedFor",
+      },
+      {
+        "text": "common.priority",
+        "value": "priority",
+      },
+      {
+        "text": "governance.accessRequest.requestId",
+        "value": "id",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "class="mb-2"",
+    "name="sortField"",
+    "type="select"",
+    " ...",
+    ">",
+    "
+",
+    " at <BForm",
+    "class="b-dropdown-form"",
+    "ref="form"",
+    "disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownForm>",
+    "
+",
+    " at <BDropdown",
+    "id="sortBy"",
+    "toggle-class="text-dark px-0 d-flex"",
+    "variant="link"",
+    " ...",
+    ">",
+    "
+",
+    " at <SortDropdown",
+    "class="px-3"",
+    "selected-item="date"",
+    "hide-labels-on-mobile=true",
+    " ...",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_ENUMERATED_COERCION) Enumerated attribute "spellcheck" with v-bind value \`false\` will render the value as-is instead of coercing the value to "true" in Vue 3. Always use explicit "true" or "false" values for enumerated attributes. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_ENUMERATED_COERCION: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <VueMultiselect",
+    "id="floatingLabelInput20"",
+    "ref="vms"",
+    "value=""",
+    " ...",
+    ">",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput20"",
+    "name="sortField"",
+    "description=""",
+    " ...",
+    ">",
+    "
+",
+    " at <SelectInput",
+    "name="sortField"",
+    "type="select"",
+    "options=",
+    [
+      {
+        "text": "governance.accessRequest.requestDate",
+        "value": "date",
+      },
+      {
+        "text": "governance.accessRequest.requestedFor",
+        "value": "requestedFor",
+      },
+      {
+        "text": "common.priority",
+        "value": "priority",
+      },
+      {
+        "text": "governance.accessRequest.requestId",
+        "value": "id",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "class="mb-2"",
+    "name="sortField"",
+    "type="select"",
+    " ...",
+    ">",
+    "
+",
+    " at <BForm",
+    "class="b-dropdown-form"",
+    "ref="form"",
+    "disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownForm>",
+    "
+",
+    " at <BDropdown",
+    "id="sortBy"",
+    "toggle-class="text-dark px-0 d-flex"",
+    "variant="link"",
+    " ...",
+    ">",
+    "
+",
+    " at <SortDropdown",
+    "class="px-3"",
+    "selected-item="date"",
+    "hide-labels-on-mobile=true",
+    " ...",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "disabled" with v-bind value \`false\` will render disabled="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BForm",
+    "class="b-dropdown-form"",
+    "ref="form"",
+    "disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownForm>",
+    "
+",
+    " at <BDropdown",
+    "id="sortBy"",
+    "toggle-class="text-dark px-0 d-flex"",
+    "variant="link"",
+    " ...",
+    ">",
+    "
+",
+    " at <SortDropdown",
+    "class="px-3"",
+    "selected-item="date"",
+    "hide-labels-on-mobile=true",
+    " ...",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (6)",
+    "
+",
+    " at <BCollapse",
+    "data-testid="filter-collapse"",
+    "id="filter-collapse"",
+    "visible=false",
+    " ...",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) (3)",
+    "
+",
+    " at <BCollapse",
+    "data-testid="filter-collapse"",
+    "id="filter-collapse"",
+    "visible=false",
+    " ...",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (5)",
+    "
+",
+    " at <BCollapse",
+    "data-testid="filter-collapse"",
+    "id="filter-collapse"",
+    "visible=false",
+    " ...",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (7)",
+    "
+",
+    " at <BCollapse",
+    "data-testid="filter-collapse"",
+    "id="filter-collapse"",
+    "visible=false",
+    " ...",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) (5)",
+    "
+",
+    " at <BCollapse",
+    "data-testid="filter-collapse"",
+    "id="filter-collapse"",
+    "visible=false",
+    " ...",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (7)",
+    "
+",
+    " at <BVCollapse",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    "onLeave=fn<bound onLeave>",
+    " ...",
+    ">",
+    "
+",
+    " at <BCollapse",
+    "data-testid="filter-collapse"",
+    "id="filter-collapse"",
+    "visible=false",
+    " ...",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_EVENT_EMITTER) vm.$on/$once/$off() have been removed. Use an external event emitter library instead.
+  Details: https://v3-migration.vuejs.org/breaking-changes/events-api.html",
+  ],
+]
+`;
+
+exports[`RequestToolbar the badge reflects the number of filters applied: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (8)",
+    "
+",
+    " at <BBadge",
+    "key=0",
+    "pill=""",
+    "class="ml-1"",
+    " ...",
+    ">",
+    "
+",
+    " at <BButton",
+    "onClick=fn",
+    "class="toolbar-link-text"",
+    "data-testid="filter-toggle"",
+    " ...",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "justify=""",
+    "class="px-4 py-3 border-bottom-0"",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;

@@ -5,8 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
+import { shallowMount, flushPromises } from '@vue/test-utils';
 import CertificationForwardModal from './index';
 
 describe('CertificationForwardModal', () => {
@@ -15,8 +14,10 @@ describe('CertificationForwardModal', () => {
   describe('component shallow mounted', () => {
     beforeEach(() => {
       wrapper = shallowMount(CertificationForwardModal, {
-        mocks: {
-          $t: (t) => t,
+        global: {
+          mocks: {
+            $t: (t) => t,
+          },
         },
       });
     });

@@ -14,8 +14,10 @@ describe('TenantTierBadge', () => {
   it('renders correct abbreviation: "Dev", and associated css classes for a "development" badge: "blue-tenant, tenant-badge"', () => {
     const tenantTier = 'development';
     const wrapper = mount(TenantTierBadge, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         tenantTier,
       },
     });

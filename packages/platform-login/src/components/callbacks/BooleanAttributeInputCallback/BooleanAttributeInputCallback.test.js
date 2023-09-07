@@ -13,8 +13,10 @@ describe('BooleanAttributeInputCallback', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = mount(BooleanAttributeInputCallback, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         callback: {
           getInputValue: () => true,
           getPrompt: () => 'option',

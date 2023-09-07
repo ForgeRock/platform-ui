@@ -51,6 +51,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import { BCol, BContainer, BRow } from 'bootstrap-vue';
 import { mapState } from 'pinia';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
@@ -86,6 +87,9 @@ export default {
     };
   },
   components: {
+    BCol,
+    BContainer,
+    BRow,
     FrAccountControls,
     FrAccountSecurity,
     FrAuthorizedApplications,

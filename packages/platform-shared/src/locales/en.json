@@ -459,7 +459,7 @@
     "yearsAgo": "{elapsed} years ago"
   },
   "editor": {
-    "accessibilityHelp": "Press ESC for keyboard navigation out of editor"
+    "accessibilityHelp": "Press ESC followed by tab for keyboard navigation out of editor"
   },
   "errors": {
     "errorSaving": "Error saving list",

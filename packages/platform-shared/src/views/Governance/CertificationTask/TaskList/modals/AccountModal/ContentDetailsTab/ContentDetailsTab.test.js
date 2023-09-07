@@ -12,10 +12,12 @@ describe('contentDetailsTab', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = shallowMount(ContentDetailsTab, {
-      mocks: {
-        $t: (t) => t,
+      global: {
+        mocks: {
+          $t: (t) => t,
+        },
       },
-      propsData: {
+      props: {
         content: {
           id: 'test',
         },

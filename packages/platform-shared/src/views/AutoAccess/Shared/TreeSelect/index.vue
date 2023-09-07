@@ -55,16 +55,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep .vue-treeselect__multi-value-item {
+:deep(.vue-treeselect__multi-value-item) {
   color: inherit;
   background: #e4f4fd;
 }
 
-::v-deep .vue-treeselect__value-remove {
+:deep(.vue-treeselect__value-remove) {
   color: inherit;
 }
 
-::v-deep .vue-treeselect__value-container {
+:deep(.vue-treeselect__value-container) {
   padding: 5px;
 }
 </style>

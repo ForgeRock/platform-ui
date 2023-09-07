@@ -67,7 +67,7 @@ async function getManagedResourceProperties(managedObjectName) {
     const managedResourceProperties = data.result;
     return managedResourceProperties;
   } catch (error) {
-    showErrorMessage(error, i18n.t('reports.tabs.runReport.errors.errorRetrievingTemplate'));
+    showErrorMessage(error, i18n.global.t('reports.tabs.runReport.errors.errorRetrievingTemplate'));
     return error;
   }
 }
@@ -83,7 +83,7 @@ async function getTrees(actionGetAllTrees) {
     const trees = data.result;
     return trees;
   } catch (error) {
-    showErrorMessage(error, i18n.t('reports.tabs.runReport.errors.errorRetrievingTemplate'));
+    showErrorMessage(error, i18n.global.t('reports.tabs.runReport.errors.errorRetrievingTemplate'));
     return error;
   }
 }
@@ -105,7 +105,7 @@ export async function requestExport(runId, exportStatus, template, format) {
     return response;
   } catch (error) {
     if (exportStatus === 'download') {
-      showErrorMessage(error, i18n.t('reports.tabs.runHistory.errors.errorDownload'));
+      showErrorMessage(error, i18n.global.t('reports.tabs.runHistory.errors.errorDownload'));
     }
     return error.name;
   }
@@ -123,7 +123,7 @@ export async function requestReportRuns(params) {
     const { result: reportRunsData } = await getReportRuns(params);
     return reportRunsData?.length ? reportRunsData : [];
   } catch (error) {
-    showErrorMessage(error, i18n.t('reports.tabs.runHistory.table.runHistory.errors.errorRetrievingHistory'));
+    showErrorMessage(error, i18n.global.t('reports.tabs.runHistory.table.runHistory.errors.errorRetrievingHistory'));
     return [];
   }
 }
@@ -135,8 +135,8 @@ export async function requestReportRuns(params) {
  */
 export async function relationshipPropertyRequest(config) {
   const { schemaProperty, managedObject } = config;
-  const { name: resourceName } = await getManagedObject(managedObject, i18n.t('reports.tabs.runReport.errors.errorRetrievingTemplate'));
-  const { properties } = await getManagedSchema(resourceName, i18n.t('reports.tabs.runReport.errors.errorRetrievingTemplate'));
+  const { name: resourceName } = await getManagedObject(managedObject, i18n.global.t('reports.tabs.runReport.errors.errorRetrievingTemplate'));
+  const { properties } = await getManagedSchema(resourceName, i18n.global.t('reports.tabs.runReport.errors.errorRetrievingTemplate'));
   return properties[schemaProperty];
 }
 

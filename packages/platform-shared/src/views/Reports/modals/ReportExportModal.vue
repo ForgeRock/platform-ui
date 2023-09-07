@@ -67,7 +67,7 @@ of the MIT license. See the LICENSE file for details. -->
               :disabled="props.status === 'downloading'"
               :show-spinner="props.status === 'downloading'"
               :spinner-text="downloadButtonText"
-              @click="emit('download-report', props.fileType, props.data);" />
+              @click="emit('download-report', { fileType: props.fileType, item: props.data });" />
           </div>
         </BCol>
       </BRow>
@@ -112,38 +112,38 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['download-report', 'show']);
-const heading = computed(() => i18n.t('reports.modal.heading', { fileType: props.fileType }));
+const heading = computed(() => i18n.global.t('reports.modal.heading', { fileType: props.fileType }));
 const modalTitle = computed(() => {
   switch (props.status) {
     case 'error':
-      return i18n.t('reports.modal.errorTitle', { fileType: props.fileType });
+      return i18n.global.t('reports.modal.errorTitle', { fileType: props.fileType });
     case 'exporting':
-      return i18n.t('reports.modal.title', { fileType: props.fileType });
+      return i18n.global.t('reports.modal.title', { fileType: props.fileType });
     default:
-      return i18n.t('reports.modal.success.title');
+      return i18n.global.t('reports.modal.success.title');
   }
 });
 
 const modalMessage = computed(() => {
   switch (props.status) {
     case 'error':
-      return i18n.t('reports.modal.errorMessage');
+      return i18n.global.t('reports.modal.errorMessage');
     case 'exporting':
-      return i18n.t('reports.modal.exportReportMessage');
+      return i18n.global.t('reports.modal.exportReportMessage');
     case 'download':
     case 'downloading':
-      return i18n.t('reports.modal.success.subtitle');
+      return i18n.global.t('reports.modal.success.subtitle');
     default:
-      return i18n.t('reports.modal.errorMessage');
+      return i18n.global.t('reports.modal.errorMessage');
   }
 });
 
 const downloadButtonText = computed(() => {
   switch (props.status) {
     case 'downloading':
-      return i18n.t(i18n.t('reports.downloading'));
+      return i18n.global.t(i18n.global.t('reports.downloading'));
     default:
-      return i18n.t('reports.modal.downloadReport', { fileType: props.fileType });
+      return i18n.global.t('reports.modal.downloadReport', { fileType: props.fileType });
   }
 });
 </script>

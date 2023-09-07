@@ -40,7 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
         v-if="isActive"
         class="mb-4">
         <BButton
-          @click="openModal('APPROVE', $bvModal)"
+          @click="openModal('APPROVE')"
           class="mr-1"
           variant="outline-secondary">
           <FrIcon
@@ -49,7 +49,7 @@ of the MIT license. See the LICENSE file for details. -->
           {{ $t('common.approve') }}
         </BButton>
         <BButton
-          @click="openModal('REJECT', $bvModal)"
+          @click="openModal('REJECT')"
           class="mr-1"
           variant="outline-secondary">
           <FrIcon
@@ -58,7 +58,7 @@ of the MIT license. See the LICENSE file for details. -->
           {{ $t('common.reject') }}
         </BButton>
         <BButton
-          @click="openModal('REASSIGN', $bvModal)"
+          @click="openModal('REASSIGN')"
           class="mr-1"
           variant="outline-secondary">
           <FrIcon
@@ -74,7 +74,7 @@ of the MIT license. See the LICENSE file for details. -->
         class="mb-3"
         no-body>
         <FrRequestDetails
-          @add-comment="openModal('COMMENT', $bvModal)"
+          @add-comment="openModal('COMMENT')"
           :item="item" />
       </BCard>
     </template>
@@ -90,7 +90,6 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script setup>
 import {
-  getCurrentInstance,
   onMounted,
   ref,
   computed,
@@ -109,20 +108,22 @@ import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notificat
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
-import router from '@/router';
+import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import { useRoute, useRouter } from 'vue-router';
 import FrRequestDetails from '@/components/governance/RequestDetails';
 import FrRequestModal, { REQUEST_MODAL_TYPES } from '@/components/governance/RequestModal';
 import { getRequest, getUserApprovals } from '@/api/governance/AccessRequestApi';
 import { getFormattedRequest, getRequestObjectType, isTypeRole } from '@/components/utils/governance/AccessRequestUtils';
 import i18n from '@/i18n';
 
-const { proxy: { $route } } = getCurrentInstance();
-
 // Composables
+const router = useRouter();
+const route = useRoute();
+const { bvModal } = useBvModal();
 const { setBreadcrumb } = useBreadcrumb();
 
 // Data
-const { requestId } = $route.params;
+const { requestId } = route.params;
 const isActive = ref(false);
 const item = ref({});
 const modalType = ref('');
@@ -135,7 +136,7 @@ async function getBaseRequest() {
     item.value = getFormattedRequest(data, getRequestObjectType(data.requestType));
     isActive.value = false;
   } catch (error) {
-    showErrorMessage(error, i18n.t('governance.approval.errorGettingApprovals'));
+    showErrorMessage(error, i18n.global.t('governance.approval.errorGettingApprovals'));
   }
 }
 
@@ -153,7 +154,7 @@ async function getApproval() {
       isActive.value = true;
     }
   } catch (error) {
-    showErrorMessage('error', i18n.t('governance.approval.errorGettingApprovals'));
+    showErrorMessage('error', i18n.global.t('governance.approval.errorGettingApprovals'));
   }
 }
 
@@ -167,12 +168,12 @@ async function getRequestData() {
 }
 
 onMounted(async () => {
-  setBreadcrumb('/approvals', i18n.t('sideMenu.approvals'));
+  setBreadcrumb('/approvals', i18n.global.t('sideMenu.approvals'));
 
   await getRequestData();
 });
 
-function openModal(type, bvModal) {
+function openModal(type) {
   modalType.value = REQUEST_MODAL_TYPES[type];
   bvModal.show('request_modal');
 }

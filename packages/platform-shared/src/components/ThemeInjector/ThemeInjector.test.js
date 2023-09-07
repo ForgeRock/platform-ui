@@ -12,7 +12,7 @@ const fontProvider = 'https://fonts.bunny.net';
 describe('Theme Injector Component', () => {
   it('Constructs google font url from object', () => {
     const wrapper = shallowMount(ThemeInjector, {
-      propsData: {
+      props: {
         theme: {
           fontFamily: {
             family: 'Luxurious Script',
@@ -32,7 +32,7 @@ describe('Theme Injector Component', () => {
 
   it('Returns google font url from string', () => {
     const wrapper = shallowMount(ThemeInjector, {
-      propsData: {
+      props: {
         theme: {
           fontFamily: 'Open Sans',
         },
@@ -43,7 +43,7 @@ describe('Theme Injector Component', () => {
 
   it('Returns null if font is ignored', () => {
     const wrapper = shallowMount(ThemeInjector, {
-      propsData: {
+      props: {
         theme: {
           fontFamily: 'Helvetica',
         },

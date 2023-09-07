@@ -11,7 +11,7 @@ import i18n from '@/i18n';
 
 describe('PieChart', () => {
   function setup() {
-    return mount(PieChart, { i18n });
+    return mount(PieChart, { global: { plugins: [i18n] } });
   }
 
   describe('@renders', () => {

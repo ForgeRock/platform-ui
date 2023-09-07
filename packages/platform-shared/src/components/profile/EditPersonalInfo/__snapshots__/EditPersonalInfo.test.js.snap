@@ -1,0 +1,2706 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EditPersonalInfo @actions when form is valid should save form: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: Property "$pinia" was accessed during render but is not defined on instance.",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`EditPersonalInfo @renders given form fields should render fields: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: Property "$pinia" was accessed during render but is not defined on instance.",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (3)",
+    "
+",
+    " at <BFormGroup",
+    "key=0",
+    "class="w-100"",
+    "label="Edit personal info"",
+    " ...",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <BContainer>",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (2)",
+    "
+",
+    " at <BFormGroup",
+    "key=0",
+    "class="w-100"",
+    "label="Edit personal info"",
+    " ...",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <BContainer>",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) v-model usage on component has changed in Vue 3. Component that expects to work with v-model should now use the "modelValue" prop and emit the "update:modelValue" event. You can update the usage and then opt-in to Vue 3 behavior on a per-component basis with \`compatConfig: { COMPONENT_V_MODEL: false }\`.
+  Details: https://v3-migration.vuejs.org/breaking-changes/v-model.html",
+    "
+",
+    " at <FrField",
+    "key=0",
+    "modelValue=null",
+    "onUpdate:modelValue=fn<onUpdateModelValue>",
+    " ...",
+    ">",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (5)",
+    "
+",
+    " at <FrField",
+    "key=0",
+    "class="personal-info-field"",
+    "label="First Name"",
+    " ...",
+    ">",
+    "
+",
+    " at <BFormGroup",
+    "key=0",
+    "class="w-100"",
+    "label="Edit personal info"",
+    " ...",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <BContainer>",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "placeholder" with v-bind value \`false\` will render placeholder="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput37"",
+    "name="givenName"",
+    "description=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BasicInput",
+    "key=0",
+    "label="First Name"",
+    "name="givenName"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "key=0",
+    "class="personal-info-field"",
+    "label="First Name"",
+    " ...",
+    ">",
+    "
+",
+    " at <BFormGroup",
+    "key=0",
+    "class="w-100"",
+    "label="Edit personal info"",
+    " ...",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <BContainer>",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "aria-describedby" with v-bind value \`false\` will render aria-describedby="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput37"",
+    "name="givenName"",
+    "description=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BasicInput",
+    "key=0",
+    "label="First Name"",
+    "name="givenName"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "key=0",
+    "class="personal-info-field"",
+    "label="First Name"",
+    " ...",
+    ">",
+    "
+",
+    " at <BFormGroup",
+    "key=0",
+    "class="w-100"",
+    "label="Edit personal info"",
+    " ...",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <BContainer>",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "disabled" with v-bind value \`false\` will render disabled="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <FrField",
+    "key=0",
+    "class="personal-info-field"",
+    "label="First Name"",
+    " ...",
+    ">",
+    "
+",
+    " at <BFormGroup",
+    "key=0",
+    "class="w-100"",
+    "label="Edit personal info"",
+    " ...",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <BContainer>",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`EditPersonalInfo @renders given no fields renders no fields text: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: Property "$pinia" was accessed during render but is not defined on instance.",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {},
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`EditPersonalInfo @renders renders header: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (2)",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (2)",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) \`beforeDestroy\` has been renamed to \`beforeUnmount\`.",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) vm.$scopedSlots has been removed. Use vm.$slots instead.
+  Details: https://v3-migration.vuejs.org/breaking-changes/slots-unification.html",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (3)",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) Functional component <BButtonClose> should be defined as a plain function in Vue 3. The "functional" option has been removed. NOTE: Before migrating to use plain functions for functional components, first make sure that all async components usage have been migrated and its compat behavior has been disabled.
+  Details: https://v3-migration.vuejs.org/breaking-changes/functional-components.html",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) (2)",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: Property "$pinia" was accessed during render but is not defined on instance.",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) vm.$listeners has been removed. In Vue 3, parent v-on listeners are included in vm.$attrs and it is no longer necessary to separately use v-on="$listeners" if you are already using v-bind="$attrs". (Note: the Vue 3 behavior only applies if this compat config is disabled)
+  Details: https://v3-migration.vuejs.org/breaking-changes/listeners-removed.html",
+    "
+",
+    " at <BButtonClose",
+    "onClick=fn<bound onClose>",
+    "ref="close-button"",
+    "content="&times;"",
+    " ...",
+    ">",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (2)",
+    "
+",
+    " at <BContainer>",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (3)",
+    "
+",
+    " at <BButton",
+    "variant="link mr-2"",
+    "onClick=fn<onClick>",
+    "data-testid="btn-edit-personal-info-cancel"",
+    ">",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "appear" with v-bind value \`false\` will render appear="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "persisted" with v-bind value \`false\` will render persisted="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (4)",
+    "
+",
+    " at <BVTransition",
+    "noFade=false",
+    ">",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_EVENT_EMITTER) vm.$on/$once/$off() have been removed. Use an external event emitter library instead.
+  Details: https://v3-migration.vuejs.org/breaking-changes/events-api.html",
+  ],
+]
+`;
+
+exports[`EditPersonalInfo @unit generateFormFields should create the proper fields based on schema: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "visible" with v-bind value \`false\` will render visible="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "busy" with v-bind value \`false\` will render busy="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "cancelDisabled" with v-bind value \`false\` will render cancelDisabled="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "centered" with v-bind value \`false\` will render centered="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "hideBackdrop" with v-bind value \`false\` will render hideBackdrop="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "hideFooter" with v-bind value \`false\` will render hideFooter="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "hideHeader" with v-bind value \`false\` will render hideHeader="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "hideHeaderClose" with v-bind value \`false\` will render hideHeaderClose="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "lazy" with v-bind value \`false\` will render lazy="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noCloseOnBackdrop" with v-bind value \`false\` will render noCloseOnBackdrop="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noCloseOnEsc" with v-bind value \`false\` will render noCloseOnEsc="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noEnforceFocus" with v-bind value \`false\` will render noEnforceFocus="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noFade" with v-bind value \`false\` will render noFade="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noStacking" with v-bind value \`false\` will render noStacking="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "okDisabled" with v-bind value \`false\` will render okDisabled="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "okOnly" with v-bind value \`false\` will render okOnly="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "scrollable" with v-bind value \`false\` will render scrollable="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "titleSrOnly" with v-bind value \`false\` will render titleSrOnly="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "id="userDetailsModal"",
+    "cancel-variant="outline-secondary"",
+    "size="lg"",
+    " ...",
+    ">",
+    "
+",
+    " at <EditPersonalInfo",
+    "schema=",
+    {
+      "order": [
+        "givenName",
+        "sn",
+      ],
+      "properties": {
+        "givenName": {
+          "description": "First Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "First Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+        "sn": {
+          "description": "Last Name",
+          "isPersonal": true,
+          "searchable": true,
+          "title": "Last Name",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": true,
+          "viewable": true,
+        },
+      },
+      "required": [
+        "givenName",
+      ],
+    },
+    "profile=",
+    {
+      "first": "test",
+      "second": "second",
+    },
+    "isTesting=true",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;

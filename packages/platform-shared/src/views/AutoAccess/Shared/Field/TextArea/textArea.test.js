@@ -5,12 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import TextArea from './index';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 const defaultMixinProps = {
   id: '',
@@ -30,8 +26,10 @@ const defaultProps = {
 describe('TextArea input', () => {
   it('TextArea input component has correct attributes', () => {
     const wrapper = shallowMount(TextArea, {
-      localVue,
-      propsData: {
+      global: {
+        renderStubDefaultSlot: true,
+      },
+      props: {
         ...defaultMixinProps,
         ...defaultProps,
         cols: 5,

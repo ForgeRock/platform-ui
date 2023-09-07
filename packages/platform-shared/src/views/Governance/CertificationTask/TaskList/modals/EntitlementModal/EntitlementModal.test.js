@@ -5,9 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount, createLocalVue } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
-import BootstrapVue from 'bootstrap-vue';
 import EntitlementModal from './index';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/CertificationApi');
@@ -16,8 +15,6 @@ describe('EntitlementModal', () => {
   let application;
   let wrapper;
   beforeEach(() => {
-    const localVue = createLocalVue();
-    localVue.use(BootstrapVue);
     const entitlement = {
       id: '9986d9a5-5ffd-4046-8643-c34a60cddb6e',
     };
@@ -29,15 +26,16 @@ describe('EntitlementModal', () => {
     getApplicationDisplayName.mockImplementation(() => 'testname');
 
     wrapper = mount(EntitlementModal, {
-      mocks: {
-        $t: (t) => t,
+      global: {
+        attachTo: document.body,
+        mocks: {
+          $t: (t) => t,
+        },
       },
       propsData: {
         entitlement,
         application,
       },
-      localVue,
-      attachTo: document.body,
     });
     wrapper.vm.isTest = true;
   });

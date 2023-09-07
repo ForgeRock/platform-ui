@@ -119,11 +119,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep .list-group-flush .list-group-item:first-child {
+:deep(.list-group-flush .list-group-item:first-child) {
   border-top-width: 0 !important;
 }
 
-::v-deep .list-group-flush:last-child .list-group-item:last-child {
+:deep(.list-group-flush:last-child .list-group-item:last-child) {
   border-bottom-width: 0 !important;
 }
 

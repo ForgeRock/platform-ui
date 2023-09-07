@@ -11,11 +11,14 @@ import DateRangePicker from './index';
 describe('Date Range Picker Component', () => {
   let wrapper;
   beforeEach(() => {
+    jest.useFakeTimers().setSystemTime(new Date('2077-01-01'));
     wrapper = shallowMount(DateRangePicker, {
-      mocks: {
-        $t: (text) => text,
+      global: {
+        mocks: {
+          $t: (text) => text,
+        },
       },
-      propsData: {
+      props: {
         dateRange: {
           endDate: '2023-01-27T23:59:59-05:00',
           startDate: '2022-12-28T00:00:00-05:00',
@@ -27,10 +30,13 @@ describe('Date Range Picker Component', () => {
       },
     });
   });
-  it('get/set in inputVal computed property works propertly', () => {
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+  it('get/set in inputVal computed property works propertly', async () => {
     expect(wrapper.vm.inputVal.startDate).toEqual('2022-12-28T00:00:00-05:00');
     expect(wrapper.vm.inputVal.endDate).toEqual('2023-01-27T23:59:59-05:00');
-    wrapper.setData({
+    await wrapper.setProps({
       value: {
         endDate: '2023-01-27T23:59:59-05:00',
         startDate: '2021-12-28T00:00:00-05:00',

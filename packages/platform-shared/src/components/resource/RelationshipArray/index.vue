@@ -31,7 +31,7 @@ of the MIT license. See the LICENSE file for details. -->
               @click="$refs[removeModalId].show()"
               :id="'delete_' + relationshipArrayProperty.key"
               block>
-              {{ removeRelationshipButtonText }}
+              {{ removeRelationshipButtonTextFallback }}
             </BButton>
           </div>
         </BCol>
@@ -300,9 +300,7 @@ export default {
     },
     removeRelationshipButtonText: {
       type: String,
-      default() {
-        return this.$t('common.remove');
-      },
+      default: '',
     },
     revision: {
       type: String,
@@ -361,6 +359,11 @@ export default {
     },
     filter() {
       this.setColumnSorting();
+    },
+  },
+  computed: {
+    removeRelationshipButtonTextFallback() {
+      return this.removeRelationshipButtonText || this.$t('common.remove');
     },
   },
   methods: {
@@ -755,7 +758,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-    ::v-deep {
+    :deep {
       .fr-resource-paginator {
         a[role='menuitemradio'] {
           display: none !important;

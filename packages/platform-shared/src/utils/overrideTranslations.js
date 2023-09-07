@@ -47,12 +47,12 @@ export function setLocales(i18n, localeString, finalFallback) {
   locales = getFallbacks(locales);
 
   // first locale is the primary locale
-  i18n.locale = locales.shift();
+  i18n.global.locale = locales.shift();
 
   if (locales.length) {
     // fallback locale must contain a default
-    if (finalFallback && i18n.locale !== finalFallback && !locales.includes(finalFallback)) locales.push(finalFallback);
-    i18n.fallbackLocale = locales;
+    if (finalFallback && i18n.global.locale !== finalFallback && !locales.includes(finalFallback)) locales.push(finalFallback);
+    i18n.global.fallbackLocale = locales;
   }
 }
 
@@ -64,9 +64,9 @@ export function setLocales(i18n, localeString, finalFallback) {
  * @param {Object} overrides message overrides
  */
 function mergeMessages(i18n, locale, overrides) {
-  const { messages } = i18n;
+  const { messages } = i18n.global;
   const combined = merge(messages[locale], overrides);
-  i18n.setLocaleMessage(locale, combined);
+  i18n.global.setLocaleMessage(locale, combined);
 }
 
 /**
@@ -134,7 +134,7 @@ function getTranslationOverrides(idmContext, locale, fallbackLocales, packageNam
  * @returns a resolved promise, after the translations have been overridden for main locale and fallback locale
  */
 export default function overrideTranslations(idmContext, i18n, packageName) {
-  const { locale, fallbackLocale } = i18n;
+  const { locale, fallbackLocale } = i18n.global;
 
   // i18n fallback locale can be an array of strings or a single string
   // we reconcile that here to make it simpler to handle

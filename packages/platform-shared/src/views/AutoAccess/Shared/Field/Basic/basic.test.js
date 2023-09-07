@@ -5,13 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, mount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
+import { mount, flushPromises } from '@vue/test-utils';
 import BasicInput from './index';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 const defaultMixinProps = {
   id: '',
@@ -32,8 +27,7 @@ const defaultProps = {
 describe('BasicInput', () => {
   it('BasicInput component renders reveal button for password', async () => {
     const wrapper = mount(BasicInput, {
-      localVue,
-      propsData: {
+      props: {
         ...defaultMixinProps,
         ...defaultProps,
         type: 'password',
@@ -56,8 +50,7 @@ describe('BasicInput', () => {
 
   it('BasicInput passes through component slots', () => {
     const wrapper = mount(BasicInput, {
-      localVue,
-      propsData: {
+      props: {
         ...defaultMixinProps,
         ...defaultProps,
       },

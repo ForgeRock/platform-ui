@@ -5,10 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import DurationInput from './index';
-
-const localVue = createLocalVue();
 
 const defaultProps = {
   id: '',
@@ -25,12 +23,13 @@ const defaultProps = {
 describe('DurationInput', () => {
   it('builds a formatted duration', () => {
     const wrapper = shallowMount(DurationInput, {
-      localVue,
-      propsData: {
+      props: {
         ...defaultProps,
       },
-      mocks: {
-        $t: (text) => (text),
+      global: {
+        mocks: {
+          $t: (text) => (text),
+        },
       },
     });
 
@@ -40,21 +39,22 @@ describe('DurationInput', () => {
     expect(wrapper.emitted().input[0][0]).toEqual('PT1S');
   });
 
-  it('builds a formatted duration', () => {
+  it('builds a formatted duration', async () => {
     const wrapper = shallowMount(DurationInput, {
-      localVue,
-      propsData: {
+      props: {
         ...defaultProps,
       },
-      mocks: {
-        $t: (text) => (text),
+      global: {
+        mocks: {
+          $t: (text) => (text),
+        },
       },
     });
 
-    wrapper.setData({
-      durationValue: 3,
+    await wrapper.setData({
       durationUnit: 'years',
     });
+    wrapper.vm.durationValue = 3;
 
     expect(wrapper.vm.durationUnit).toBe('years');
     wrapper.vm.setDurationUnit('hours');
@@ -64,13 +64,14 @@ describe('DurationInput', () => {
 
   it('sets month input', () => {
     const wrapper = shallowMount(DurationInput, {
-      localVue,
-      propsData: {
+      props: {
         ...defaultProps,
         value: 'P1M',
       },
-      mocks: {
-        $t: (text) => (text),
+      global: {
+        mocks: {
+          $t: (text) => (text),
+        },
       },
     });
 

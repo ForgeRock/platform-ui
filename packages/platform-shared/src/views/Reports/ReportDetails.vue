@@ -4,10 +4,10 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="d-flex flex-row flex-wrap bg-light mt-2">
-    <template v-for="({label, value}, index) in runData">
-      <div
-        class="px-4 py-3"
-        :key="index">
+    <template
+      v-for="({label, value}, index) in runData"
+      :key="index">
+      <div class="px-4 py-3">
         <small class="text-muted">
           {{ label }}
         </small>

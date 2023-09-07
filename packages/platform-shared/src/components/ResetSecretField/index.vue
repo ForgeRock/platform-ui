@@ -19,9 +19,10 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
     </FrField>
 
-    <ValidationObserver
+    <VeeForm
       ref="observer"
-      v-slot="{ invalid }">
+      v-slot="{ meta: { valid } }"
+      as="span">
       <BModal
         size="lg"
         id="resetSecretModal"
@@ -30,7 +31,7 @@ of the MIT license. See the LICENSE file for details. -->
         cancel-variant="link"
         @hidden="newSecret = ''"
         @ok="resetSecret"
-        :ok-disabled="invalid"
+        :ok-disabled="!valid"
         :ok-title="$t('common.save')"
         :cancel-title="$t('common.cancel')">
         <p>{{ $t('schemaResetSecret.modalBody', { field: effectiveLabel.toLowerCase() }) }}</p>
@@ -48,7 +49,7 @@ of the MIT license. See the LICENSE file for details. -->
           <span>{{ $t('schemaResetSecret.secretResetWarning', { field: effectiveLabel.toLowerCase() }) }}</span>
         </FrAlert>
       </BModal>
-    </ValidationObserver>
+    </VeeForm>
   </div>
 </template>
 
@@ -62,7 +63,7 @@ import {
 } from 'bootstrap-vue';
 import FrAlert from '@forgerock/platform-shared/src/components/Alert';
 import FrField from '@forgerock/platform-shared/src/components/Field';
-import { ValidationObserver } from 'vee-validate';
+import { Form as VeeForm } from 'vee-validate';
 
 /**
  * Input that allows resetting of a secret field. Main input is disabled and dots are shown as a value.
@@ -77,7 +78,7 @@ export default {
     BModal,
     FrAlert,
     FrField,
-    ValidationObserver,
+    VeeForm,
   },
   directives: {
     'b-modal': VBModal,

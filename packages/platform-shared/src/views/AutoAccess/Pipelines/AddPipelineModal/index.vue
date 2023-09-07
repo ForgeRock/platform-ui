@@ -22,7 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
           <FrBasicInput
             label="Name"
             autocomplete="false"
-            :value="pipeline_name"
+            :value="pipelineName"
             @input="updateName"
             id="new-pipeline-name"
           />
@@ -155,7 +155,7 @@ export default {
   },
   data() {
     return {
-      pipeline_name: '',
+      pipelineName: '',
       type: null,
       loading: false,
       datasourceId: '',
@@ -175,7 +175,7 @@ export default {
         if (this.initialPipeline) {
           const initialParameters = _.cloneDeep(this.initialPipeline.pipeline_parameters);
 
-          this.pipeline_name = this.initialPipeline.pipeline_name;
+          this.pipelineName = this.initialPipeline.pipeline_name;
           this.type = this.types.find((type) => type.name === this.initialPipeline.pipeline_type) || {};
           this.datasourceId = initialParameters.datasourceId || '';
           this.trainingId = this.initialPipeline.training_pipeline_definition_id || '';
@@ -185,7 +185,7 @@ export default {
           delete initialParameters.datasourceId;
           this.parameters = initialParameters;
         } else {
-          this.pipeline_name = '';
+          this.pipelineName = '';
           this.type = null;
           this.datasourceId = '';
           this.trainingId = '';
@@ -237,7 +237,7 @@ export default {
     },
     validForm() {
       if (this.type) {
-        if (!this.pipeline_name || !this.datasourceId) {
+        if (!this.pipelineName || !this.datasourceId) {
           return false;
         }
         if (this.type.name === 'Training') {
@@ -260,7 +260,7 @@ export default {
   },
   methods: {
     updateName(val) {
-      this.pipeline_name = val.trim();
+      this.pipelineName = val.trim();
     },
     selectType(type) {
       this.type = type;
@@ -268,7 +268,7 @@ export default {
     save() {
       const {
         // eslint-disable-next-line camelcase
-        pipeline_name, type, parameters, datasourceId, trainingId, executions,
+        pipelineName, type, parameters, datasourceId, trainingId, executions,
       } = this;
       const pipelineType = type.name;
       const trainingPipelineId = pipelineType === 'Prediction' ? trainingId : null;
@@ -278,7 +278,7 @@ export default {
       this.loading = true;
       savePipeline({
         pipeline_definition_id: id,
-        pipeline_name,
+        pipelineName,
         pipeline_type: pipelineType,
         pipeline_parameters: {
           ...trainingParameters,

@@ -13,8 +13,10 @@ describe('ListGroup Component', () => {
 
   function mountListGroup(extraProps) {
     wrapper = mount(ListGroup, {
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
       ...extraProps,
     });
@@ -27,7 +29,7 @@ describe('ListGroup Component', () => {
 
   it('Does not add a bottom margin to the top level card when the borderless prop is true', () => {
     mountListGroup({
-      propsData: {
+      props: {
         noMargin: true,
       },
     });

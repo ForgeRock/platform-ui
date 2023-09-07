@@ -182,7 +182,7 @@ ul {
   }
 }
 
-::v-deep .material-icons-outlined {
+:deep(.material-icons-outlined) {
   line-height: 1.13rem;
 }
 </style>

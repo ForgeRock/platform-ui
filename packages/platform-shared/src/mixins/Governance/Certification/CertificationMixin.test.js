@@ -5,13 +5,11 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount, createLocalVue } from '@vue/test-utils';
-import Vuex from 'vuex';
+import { shallowMount } from '@vue/test-utils';
+import { createStore } from 'vuex';
 import CertificationMixin from './index';
 
-const localVue = createLocalVue();
-localVue.use(Vuex);
-const store = new Vuex.Store({
+const store = createStore({
   state: {
     setCertificationCount: 0,
   },
@@ -28,9 +26,6 @@ describe('CertificationMixin', () => {
   beforeEach(() => {
     wrapper = shallowMount({}, {
       render() {},
-      localVue,
-      store,
-      mixins: [CertificationMixin],
       data() {
         return {
           currentPage: 1,
@@ -39,14 +34,18 @@ describe('CertificationMixin', () => {
           },
         };
       },
-      mocks: {
-        $t: (id) => id,
-        getItems: jest.fn().mockReturnValue(Promise.resolve({
-          data: {
-            result: ['test'],
-            totalCount: 2,
-          },
-        })),
+      global: {
+        mocks: {
+          $t: (id) => id,
+          getItems: jest.fn().mockReturnValue(Promise.resolve({
+            data: {
+              result: ['test'],
+              totalCount: 2,
+            },
+          })),
+        },
+        plugins: [store],
+        mixins: [CertificationMixin],
       },
     });
   });

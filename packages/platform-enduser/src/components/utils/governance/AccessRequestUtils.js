@@ -131,7 +131,7 @@ export function getRequestObjectType(requestType) {
  * @returns {String} text to display as the request type
  */
 export function getTypeString(requestType) {
-  return i18n.t(`governance.accessRequest.requestTypes.${requestType}`);
+  return i18n.global.t(`governance.accessRequest.requestTypes.${requestType}`);
 }
 
 /**

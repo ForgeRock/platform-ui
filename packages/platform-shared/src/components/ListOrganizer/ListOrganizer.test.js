@@ -13,10 +13,13 @@ describe('ListOrganizer Component', () => {
 
   beforeEach(() => {
     wrapper = shallowMount(ListOrganizer, {
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
+        renderStubDefaultSlot: true,
       },
-      propsData: {
+      props: {
         value: [
           {
             key: 1,
@@ -39,7 +42,7 @@ describe('ListOrganizer Component', () => {
   });
 
   it('has a list of fields for each element in value prop', () => {
-    const wrapperArray = wrapper.findAll('frfield-stub');
+    const wrapperArray = wrapper.findAll('fr-field-stub');
 
     expect(wrapperArray.at(0).attributes('label')).toBe('1');
     expect(wrapperArray.at(1).attributes('label')).toBe('2');
@@ -47,7 +50,7 @@ describe('ListOrganizer Component', () => {
   });
 
   it('has checkboxes checked for fields that are enabled', () => {
-    const wrapperArray = wrapper.findAll('frfield-stub');
+    const wrapperArray = wrapper.findAll('fr-field-stub');
 
     expect(wrapperArray.at(0).attributes('value')).toBe('true');
     expect(wrapperArray.at(1).attributes('value')).toBe('true');
@@ -74,7 +77,7 @@ describe('ListOrganizer Component', () => {
         },
       ],
     });
-    const wrapperArray = wrapper.findAll('frfield-stub');
+    const wrapperArray = wrapper.findAll('fr-field-stub');
 
     expect(wrapperArray.at(0).attributes('value')).toBe('true');
     expect(wrapperArray.at(1).attributes('value')).toBe(undefined);

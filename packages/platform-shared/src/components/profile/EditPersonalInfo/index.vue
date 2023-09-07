@@ -3,82 +3,79 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <ValidationObserver
-    v-slot="{ invalid }"
-    ref="observer">
-    <BModal
-      id="userDetailsModal"
-      cancel-variant="outline-secondary"
-      size="lg"
-      title-class="h5"
-      title-tag="h2"
-      :title="title"
-      @show="setModal"
-      @keydown.enter.native.prevent="saveForm"
-      :static="isTesting">
-      <!-- Editing profile currently only supports String, Number and Boolean-->
-      <BContainer>
-        <BRow>
-          <template v-if="formFields.length">
-            <BFormGroup
-              class="w-100"
-              :label="title"
-              label-sr-only>
-              <template v-for="(field, index) in formFields">
-                <div
-                  :key="index">
-                  <FrField
-                    v-model="field.value"
-                    class="personal-info-field"
-                    :label="field.title"
-                    :name="field.name"
-                    :type="field.format ? field.format : field.type"
-                    :validation="field.validation"
-                    :testid="`edit-personal-info-${index}`"
-                    :disabled="!field.userEditable"
-                    v-if="field.type === 'string' || field.type === 'number' || field.type === 'boolean'" />
-                  <FrListField
-                    v-else-if="field.type === 'array' && field.name !== 'privileges'"
-                    v-model="field.value"
-                    class="w-100 personal-info-field"
-                    :description="field.description"
-                    :items="field.items"
-                    :label="field.title"
-                    :name="field.name"
-                    :required="field.required"
-                    :index="index"
-                    :disabled="!field.userEditable"
-                    v-on="$listeners"
-                    @input="updateField(index, $event)" />
-                </div>
-              </template>
-            </BFormGroup>
-          </template>
-          <h1
-            v-else
-            class="text-center h3"
-            data-testid="edit-personal-info-no-fields">
-            {{ $t('pages.profile.editProfile.noFields') }}
-          </h1>
-        </BRow>
-      </BContainer>
-      <template #modal-footer="{ cancel }">
-        <BButton
-          variant="link mr-2"
-          @click="cancel()"
-          data-testid="btn-edit-personal-info-cancel">
-          {{ $t('common.cancel') }}
-        </BButton>
-        <BButton
-          variant="primary"
-          :disabled="isInternalUser || invalid"
-          @click="saveForm"
-          data-testid="btn-edit-personal-info-save">
-          {{ $t('common.save') }}
-        </BButton>
-      </template>
-    </BModal>
-  </ValidationObserver>
+  <BModal
+    id="userDetailsModal"
+    cancel-variant="outline-secondary"
+    size="lg"
+    title-class="h5"
+    title-tag="h2"
+    :title="title"
+    @show="setModal"
+    @keydown.enter.native.prevent="saveForm()"
+    :static="isTesting">
+    <!-- Editing profile currently only supports String, Number and Boolean-->
+    <BContainer>
+      <BRow>
+        <template v-if="formFields.length">
+          <BFormGroup
+            class="w-100"
+            :label="title"
+            label-sr-only>
+            <template
+              v-for="(field, index) in formFields"
+              :key="index">
+              <div>
+                <FrField
+                  v-model="field.value"
+                  class="personal-info-field"
+                  :label="field.title"
+                  :name="field.name"
+                  :type="field.format ? field.format : field.type"
+                  :validation="field.validation"
+                  :testid="`edit-personal-info-${index}`"
+                  :disabled="!field.userEditable"
+                  v-if="field.type === 'string' || field.type === 'number' || field.type === 'boolean'" />
+                <FrListField
+                  v-else-if="field.type === 'array' && field.name !== 'privileges'"
+                  v-model="field.value"
+                  class="w-100 personal-info-field"
+                  :description="field.description"
+                  :items="field.items"
+                  :label="field.title"
+                  :name="field.name"
+                  :required="field.required"
+                  :index="index"
+                  :disabled="!field.userEditable"
+                  v-on="$listeners"
+                  @input="updateField(index, $event)" />
+              </div>
+            </template>
+          </BFormGroup>
+        </template>
+        <h1
+          v-else
+          class="text-center h3"
+          data-testid="edit-personal-info-no-fields">
+          {{ $t('pages.profile.editProfile.noFields') }}
+        </h1>
+      </BRow>
+    </BContainer>
+    <template #modal-footer="{ cancel }">
+      <BButton
+        variant="link mr-2"
+        @click="cancel()"
+        data-testid="btn-edit-personal-info-cancel">
+        {{ $t('common.cancel') }}
+      </BButton>
+      <BButton
+        variant="primary"
+        :disabled="isInternalUser || !meta.valid"
+        @click="saveForm()"
+        data-testid="btn-edit-personal-info-save">
+        {{ $t('common.save') }}
+      </BButton>
+    </template>
+  </BModal>
 </template>
 
 <script>
@@ -96,7 +93,7 @@ import {
   BModal,
   BRow,
 } from 'bootstrap-vue';
-import { ValidationObserver } from 'vee-validate';
+import { useForm } from 'vee-validate';
 import { mapState } from 'pinia';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
@@ -128,7 +125,6 @@ export default {
     BRow,
     FrField,
     FrListField,
-    ValidationObserver,
   },
   computed: {
     ...mapState(useUserStore, ['userId', 'managedResource']),
@@ -165,6 +161,10 @@ export default {
       title: this.$t('pages.profile.editProfile.userDetailsTitle'),
     };
   },
+  setup() {
+    const { meta, setErrors } = useForm();
+    return { meta, setErrors };
+  },
   methods: {
     /**
      * Get form fields from schema and profile data
@@ -194,7 +194,7 @@ export default {
      * Hide the modal
      */
     hideModal() {
-      this.$root.$emit('bv::hide::modal', 'userDetailsModal');
+      this.$bvModal.hide('userDetailsModal');
     },
     /**
      * Set the form fields for the modal. Maintain the original values for patch
@@ -210,8 +210,7 @@ export default {
      * Values are validated by backend before saving.
      */
     async saveForm() {
-      const isValid = await this.$refs.observer.validate();
-      if (isValid) {
+      if (this.meta.valid) {
         const idmInstance = this.getRequestService();
         const policyFields = {};
 
@@ -227,7 +226,6 @@ export default {
 
           if (policyResult.data.failedPolicyRequirements.length === 0) {
             this.$emit('updateProfile', this.generateUpdatePatch(this.originalFormFields, this.formFields));
-            this.$refs.observer.reset();
             this.hideModal();
           } else {
             const generatedErrors = this.findPolicyError({
@@ -238,11 +236,10 @@ export default {
               },
             }, this.formFields);
 
-            this.$refs.observer.reset();
             if (generatedErrors.length > 0) {
               each(generatedErrors, (generatedError) => {
                 if (generatedError.exists) {
-                  this.$refs.observer.setErrors({
+                  this.setErrors({
                     [generatedError.field]: [generatedError.msg],
                   });
                 }
