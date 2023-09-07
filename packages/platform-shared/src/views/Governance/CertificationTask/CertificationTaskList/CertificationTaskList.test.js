@@ -182,6 +182,7 @@ describe('CertificationTaskList', () => {
       expect(wrapper.vm.currentPage).toEqual(1);
     });
     it('should set the tasks data with the mapped data with selected property', () => {
+      shallowMountComponent();
       wrapper.vm.selectedTasks = ['test-id'];
       const resource = {
         data: {
@@ -193,6 +194,10 @@ describe('CertificationTaskList', () => {
       const expectedValue = [{
         id: 'test-id',
         selected: true,
+        isRoleBasedGrant: false,
+        flags: [
+          'NEW_ACCESS',
+        ],
       }];
       wrapper.vm.loadTasksList(resource, 1);
       expect(wrapper.vm.tasksData).toEqual(expectedValue);
@@ -235,7 +240,6 @@ describe('CertificationTaskList', () => {
   describe('getCertificationTaskList', () => {
     let loadTasksListSpy;
     let buildUrlParamsSpy;
-    let addCertificationTaskAccountDetailsSpy;
 
     beforeEach(() => {
       shallowMountComponent({}, {
@@ -252,7 +256,6 @@ describe('CertificationTaskList', () => {
       wrapper.vm.getCertificationTaskList(2);
 
       await flushPromises();
-      expect(addCertificationTaskAccountDetailsSpy).toHaveBeenCalled();
       expect(loadTasksListSpy).toHaveBeenCalled();
     });
     it('should call buildUrlParams with the required params', () => {
@@ -651,7 +654,7 @@ describe('CertificationTaskList', () => {
     });
   });
 
-  fdescribe(('Role based grants'), () => {
+  describe(('Role based grants'), () => {
     const nonRoleBased = {
       data: {
         result: [
@@ -1457,7 +1460,6 @@ describe('CertificationTaskList', () => {
 
   describe('Scenarios For Entitlements Tab', () => {
     let loadTasksListSpy;
-    let addCertificationTaskAccountDetailsSpy;
 
     beforeEach(() => {
       wrapper.vm.currentPage = 2;
@@ -1474,7 +1476,6 @@ describe('CertificationTaskList', () => {
       wrapper.vm.getCertificationTaskList(2);
 
       await flushPromises();
-      expect(addCertificationTaskAccountDetailsSpy).toHaveBeenCalled();
       expect(loadTasksListSpy).toHaveBeenCalled();
     });
     it('should show the right columns for entilements tab', () => {
@@ -1486,6 +1487,8 @@ describe('CertificationTaskList', () => {
         key: 'entitlement', label: 'governance.certificationTask.entitlement', sortable: false, class: 'text-truncate fr-access-cell', show: true,
       }, {
         key: 'account', label: 'governance.certificationTask.account', sortable: false, class: 'text-truncate fr-access-cell', show: true,
+      }, {
+        key: 'flags', label: 'governance.certificationTask.flags', sortable: false, class: 'w-175px text-truncate fr-access-cell', show: true,
       }, {
         key: 'comments', label: 'governance.certificationTask.comments', sortable: false, class: 'w-140px fr-access-cell', show: true,
       }, {
@@ -1730,6 +1733,8 @@ describe('CertificationTaskList', () => {
       }, {
         key: 'account', label: 'governance.certificationTask.account', sortable: false, class: 'text-truncate fr-access-cell', show: true,
       }, {
+        key: 'flags', label: 'governance.certificationTask.flags', sortable: false, class: 'w-175px text-truncate fr-access-cell', show: true,
+      }, {
         key: 'comments', label: 'governance.certificationTask.comments', sortable: false, class: 'w-140px fr-access-cell', show: true,
       }, {
         key: 'actions', class: 'w-208px border-left fr-access-cell', label: '', sortable: false, show: true,
@@ -1837,6 +1842,8 @@ describe('CertificationTaskList', () => {
       expect(wrapper.vm.certificationListColumns).toEqual([{
         key: 'entitlement', label: 'governance.certificationTask.entitlement', sortable: false, class: 'text-truncate fr-access-cell', show: true,
       }, {
+        key: 'flags', label: 'governance.certificationTask.flags', sortable: false, class: 'w-175px text-truncate fr-access-cell', show: true,
+      }, {
         key: 'comments', label: 'governance.certificationTask.comments', sortable: false, class: 'w-140px fr-access-cell', show: true,
       }, {
         key: 'actions', class: 'w-208px border-left fr-access-cell', label: '', sortable: false, show: true,
@@ -1940,14 +1947,14 @@ describe('CertificationTaskList', () => {
         certificationGrantType: 'test',
         showGroupBy: true,
       });
-      await flushPromises();
       wrapper.vm.loadTasksList(resource, 1);
+      await flushPromises();
 
       const bulkSelectBtn = findByTestId(wrapper, 'bulk-select-btn');
       expect(bulkSelectBtn.exists()).toBeFalsy();
       const bulkSelectDropdown = findByTestId(wrapper, 'bulk-select-dropdown');
       expect(bulkSelectDropdown.exists()).toBeFalsy();
-      const itemSelectCheckbox = findByTestId(wrapper, 'item-select-checkbox-test-id-0');
+      const itemSelectCheckbox = findByTestId(wrapper, 'multiselect-test-id-0');
       expect(itemSelectCheckbox.exists()).toBeFalsy();
 
       const revokeBtn = findByTestId(wrapper, 'btnRevoke-test-id-0');
@@ -1972,14 +1979,14 @@ describe('CertificationTaskList', () => {
         certificationGrantType: 'test',
         showGroupBy: true,
       });
-      await flushPromises();
       wrapper.vm.loadTasksList(resource, 1);
+      await flushPromises();
 
       const bulkSelectBtn = findByTestId(wrapper, 'bulk-select-btn');
       expect(bulkSelectBtn.exists()).toBeTruthy();
       const bulkSelectDropdown = findByTestId(wrapper, 'bulk-select-dropdown');
       expect(bulkSelectDropdown.exists()).toBeTruthy();
-      const itemSelectCheckbox = findByTestId(wrapper, 'item-select-checkbox-test-id-0');
+      const itemSelectCheckbox = findByTestId(wrapper, 'multiselect-test-id-0');
       expect(itemSelectCheckbox.exists()).toBeTruthy();
 
       const revokeBtn = findByTestId(wrapper, 'btnRevoke-test-id-0');
@@ -2004,8 +2011,8 @@ describe('CertificationTaskList', () => {
         certificationGrantType: 'accounts',
         showGroupBy: true,
       });
-      await flushPromises();
       wrapper.vm.loadTasksList(resource, 1);
+      await flushPromises();
       const selectEntitlementBtn = findByTestId(wrapper, 'btnSelectEntitlement-test-id-0');
       expect(selectEntitlementBtn.exists()).toBeTruthy();
     });
