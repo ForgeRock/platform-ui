@@ -16,6 +16,11 @@ of the MIT license. See the LICENSE file for details. -->
         <template #cell(name)="{ item }">
           <p>{{ nameValue(item.role) }}</p>
         </template>
+        <template #cell(timeConstraint)="{ item }">
+          <p class="mb-0">
+            {{ formatConstraintDate(item.relationship.temporalConstraints) || blankValueIndicator }}
+          </p>
+        </template>
       </BTable>
       <BPagination
         v-model="paginationPage"
@@ -33,8 +38,9 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { get } from 'lodash';
+import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
+import formatConstraintDate from '@forgerock/platform-shared/src/utils/governance/temporalConstraints';
 import { BPagination, BTable } from 'bootstrap-vue';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 
@@ -64,12 +70,16 @@ export default {
           key: 'name',
           label: this.$t('common.name'),
           class: 'text-truncate',
-          show: true,
+        },
+        {
+          key: 'timeConstraint',
+          label: this.$t('pages.access.timeConstraint'),
         },
       ],
     };
   },
   methods: {
+    formatConstraintDate,
     /**
      * Return name value for list item
      * @param {Object} roleObject - information object returned from API

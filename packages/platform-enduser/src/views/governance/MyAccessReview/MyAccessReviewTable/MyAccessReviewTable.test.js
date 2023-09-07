@@ -428,25 +428,4 @@ describe('MyAccessReviewTable', () => {
       expect(resourceDisplayName).toBeUndefined();
     });
   });
-
-  describe('method formatConstraintDate should return correct temporal constraint', () => {
-    it('method should return undefined when role has no temporal constraint', () => {
-      const temporalConstraints = [];
-      const parsedDate = wrapper.vm.formatConstraintDate(temporalConstraints);
-
-      expect(parsedDate).toBeUndefined();
-    });
-
-    it('method should return parsed date when role has temporal constraint', () => {
-      const temporalConstraints = [
-        {
-          duration: '2023-06-22/2023-07-01',
-        },
-      ];
-      const translatedDate = 'June 22, 2023 12:00 AM to July 1, 2023 12:00 AM.';
-
-      const parsedDate = wrapper.vm.formatConstraintDate(temporalConstraints);
-      expect(parsedDate).toBe(translatedDate);
-    });
-  });
 });

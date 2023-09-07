@@ -121,15 +121,9 @@ of the MIT license. See the LICENSE file for details. -->
         </template>
         <template #cell(status)="{}" />
         <template #cell(timeConstraint)="{ item }">
-          <BMedia
-            no-body
-            class="text-truncate">
-            <BMediaBody class="text-truncate">
-              <p class="mb-0 text-truncate">
-                {{ formatConstraintDate(item.role.temporalConstraints) || blankValueIndicator }}
-              </p>
-            </BMediaBody>
-          </BMedia>
+          <p class="mb-0">
+            {{ formatConstraintDate(item.relationship.temporalConstraints) || blankValueIndicator }}
+          </p>
         </template>
         <template
           v-if="resourceName === 'directReportDetail'"
@@ -175,8 +169,6 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import dayjs from 'dayjs';
-import { map } from 'lodash';
 import {
   BBadge,
   BButtonToolbar,
@@ -200,6 +192,7 @@ import FrActionsCell from '@forgerock/platform-shared/src/components/cells/Actio
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
+import formatConstraintDate from '@forgerock/platform-shared/src/utils/governance/temporalConstraints';
 import { getMyAccess } from '@/api/governance/MyAccessApi';
 
 export default {
@@ -285,6 +278,7 @@ export default {
     },
   },
   methods: {
+    formatConstraintDate,
     assignmentHandler(membership) {
       switch (membership.item.type) {
         case 'accountGrant':
@@ -301,25 +295,6 @@ export default {
       this.paginationPage = 1;
       this.searchQuery = '';
       this.loadData();
-    },
-    /**
-     * Parse the temporal constraints of the role in case it has
-     * @param {Object[]} temporalConstraints temporal constraints info
-     * @returns {String} Parsed date
-     */
-    formatConstraintDate(temporalConstraints = []) {
-      const value = temporalConstraints[0]?.duration;
-      if (value) {
-        const dates = map(value.split('/'), (date) => {
-          const retVal = dayjs(date).format('MMMM D, YYYY h:mm A');
-
-          return retVal;
-        });
-
-        return this.$t('pages.myAccess.role.temporalConstraint', { startDate: dates[0], endDate: dates[1] });
-      }
-
-      return value;
     },
     getResourceDisplayName(item, resource) {
       return item.descriptor?.idx?.[resource]?.displayName;
