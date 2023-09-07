@@ -87,31 +87,22 @@ export default {
             menuGroup: true,
             displayName: 'sideMenu.inbox',
             icon: 'inbox',
-            subItems: (this.$store.state.SharedStore.governanceEnabledV3 === true
-              ? [
-                {
-                  showBadgeWithContentFromStore: 'approvalsCount',
-                  displayName: 'sideMenu.approvals',
-                  routeTo: {
-                    name: 'Approvals',
-                  },
+            subItems: [
+              {
+                showBadgeWithContentFromStore: 'approvalsCount',
+                displayName: 'sideMenu.approvals',
+                routeTo: {
+                  name: 'Approvals',
                 },
-                {
-                  showBadgeWithContentFromStore: 'certificationCount',
-                  displayName: 'sideMenu.accessReviews',
-                  routeTo: {
-                    name: 'AccessReviews',
-                  },
+              },
+              {
+                showBadgeWithContentFromStore: 'certificationCount',
+                displayName: 'sideMenu.accessReviews',
+                routeTo: {
+                  name: 'AccessReviews',
                 },
-              ] : [
-                {
-                  showBadgeWithContentFromStore: 'certificationCount',
-                  displayName: 'sideMenu.accessReviews',
-                  routeTo: {
-                    name: 'AccessReviews',
-                  },
-                },
-              ]),
+              },
+            ],
           }
           : {}),
         (this.$store.state.SharedStore.workforceEnabled === true
@@ -163,7 +154,7 @@ export default {
             ],
           }
           : {}),
-        (this.$store.state.SharedStore.governanceEnabledV3 === true
+        (this.$store.state.SharedStore.governanceEnabled === true
           ? {
             routeTo: { name: 'MyRequests' },
             displayName: 'sideMenu.requests',

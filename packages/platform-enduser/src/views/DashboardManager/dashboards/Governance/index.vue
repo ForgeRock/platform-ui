@@ -26,26 +26,24 @@ of the MIT license. See the LICENSE file for details. -->
             :loading="loadingAccessReviews"
             :title="$t('pages.dashboard.cardCount.accessReviews')" />
         </BCol>
-        <template v-if="isGovernanceEnabledV3">
-          <BCol lg="4">
-            <FrCountCard
-              class="mb-4"
-              link-path="my-requests"
-              :count="pendingRequestsCount"
-              :link-text="$t('pages.dashboard.cardCount.viewPendingRequests')"
-              :loading="loadingPendingRequests"
-              :title="$t('pages.dashboard.cardCount.pendingRequests')" />
-          </BCol>
-          <BCol lg="4">
-            <FrCountCard
-              class="mb-4"
-              link-path="approvals"
-              :count="pendingApprovalsCount"
-              :link-text="$t('pages.dashboard.cardCount.viewPendingApprovals')"
-              :loading="loadingPendingApprovals"
-              :title="$t('pages.dashboard.cardCount.pendingApprovals')" />
-          </BCol>
-        </template>
+        <BCol lg="4">
+          <FrCountCard
+            class="mb-4"
+            link-path="my-requests"
+            :count="pendingRequestsCount"
+            :link-text="$t('pages.dashboard.cardCount.viewPendingRequests')"
+            :loading="loadingPendingRequests"
+            :title="$t('pages.dashboard.cardCount.pendingRequests')" />
+        </BCol>
+        <BCol lg="4">
+          <FrCountCard
+            class="mb-4"
+            link-path="approvals"
+            :count="pendingApprovalsCount"
+            :link-text="$t('pages.dashboard.cardCount.viewPendingApprovals')"
+            :loading="loadingPendingApprovals"
+            :title="$t('pages.dashboard.cardCount.pendingApprovals')" />
+        </BCol>
       </BRow>
     </BContainer>
   </div>
@@ -88,17 +86,14 @@ export default {
   },
   computed: {
     ...mapState({
-      isGovernanceEnabledV3: (state) => state.SharedStore.governanceEnabledV3,
       userDetails: (state) => state.UserStore,
       userId: (state) => state.UserStore.userId,
     }),
   },
   mounted() {
     this.getAccessReviewsCount();
-    if (this.isGovernanceEnabledV3) {
-      this.getPendingRequestsCount();
-      this.getPendingApprovalsCount();
-    }
+    this.getPendingRequestsCount();
+    this.getPendingApprovalsCount();
   },
   methods: {
     /**
