@@ -1253,7 +1253,7 @@ export default {
             this.currentCommentsSelectedModal = comments;
           });
         this.displayNotification('success', this.$t('governance.certificationTask.lineItemAddCommentModal.addCommentSuccessfullyMessage'));
-        this.$root.$emit('bv::hide::modal', this.getModalId('add-comment'));
+        this.$bvModal.hide(this.getModalId('add-comment'));
       }).catch((error) => {
         this.showErrorMessage(error, this.$t('governance.certificationTask.error.addCommentErrorDefaultMessage'));
       });
@@ -1328,7 +1328,7 @@ export default {
           this.openActionConfirmModal(this.bulkExceptionModalProps);
           break;
         case 'reassign':
-          this.$root.$emit('bv::show::modal', this.getModalId('reassign'));
+          this.$bvModal.show(this.getModalId('reassign'));
           break;
         case 'forward':
           this.openForwardModal(null, true, true);
@@ -1361,7 +1361,6 @@ export default {
     bulkRevoke(comment) {
       this.toggleSaving();
       const payload = { comment, ids: this.selectedItems.map((task) => (task.id)) };
-      this.toggleSaving();
       if (this.allSelected) {
         delete payload.ids;
         revokeAllItems(this.campaignId, this.actorId, payload)
@@ -1474,13 +1473,13 @@ export default {
         okFunction,
         initialStep: initialStep || STEPS.DETAILS,
       };
-      this.$root.$emit('bv::show::modal', this.getModalId('confirm-action'));
+      this.$bvModal.show(this.getModalId('confirm-action'));
     },
     openActivityModal(item) {
       const lineItemActivity = item?.decision?.certification?.comments;
       const activityList = filter(lineItemActivity, (activity) => (activity.action !== 'comment'));
       this.currentLineItemActivity = activityList;
-      this.$root.$emit('bv::show::modal', this.getModalId('activity'));
+      this.$bvModal.show(this.getModalId('activity'));
     },
     openViewCommentsModal(activity, lineItem) {
       this.enableAddComments = lineItem.permissions?.comment;
@@ -1488,34 +1487,34 @@ export default {
       this.currentCommentsSelectedModal = comments;
       this.currentLineItemIdSelectedModal = lineItem.id;
       this.$nextTick(() => {
-        this.$root.$emit('bv::show::modal', this.getModalId('view-comments'));
+        this.$bvModal.show(this.getModalId('view-comments'));
       });
     },
     openAddCommentModal(lineItemId) {
       this.currentLineItemIdSelectedModal = lineItemId;
-      this.$root.$emit('bv::show::modal', this.getModalId('add-comment'));
+      this.$bvModal.show(this.getModalId('add-comment'));
     },
     openAddCommentModalFromCommentsModal() {
-      this.$root.$emit('bv::hide::modal', this.getModalId('view-comments'));
-      this.$root.$emit('bv::show::modal', this.getModalId('add-comment'));
+      this.$bvModal.hide(this.getModalId('view-comments'));
+      this.$bvModal.show(this.getModalId('add-comment'));
     },
     openReviewersModal({ id, decision: { certification: { actors } }, permissions: { reassign } }) {
       this.currentLineItemIdSelectedModal = id;
       this.currentReviewersSelectedModal = actors;
       this.currentLineItemReassignPermission = reassign;
-      this.$root.$emit('bv::show::modal', this.getModalId('view-reviewers'));
+      this.$bvModal.show(this.getModalId('view-reviewers'));
     },
     openEditReviewerModal(reviewer) {
       this.currentReviewerSelectedModal = reviewer;
       this.currentUserPermissions = this.isAdmin
         ? ADMIN_REVIEWER_PERMISSIONS
         : this.currentReviewersSelectedModal.find((currentReviewer) => currentReviewer.id === this.actorId)?.permissions;
-      this.$root.$emit('bv::hide::modal', this.getModalId('view-reviewers'));
-      this.$root.$emit('bv::show::modal', this.getModalId('edit-reviewers'));
+      this.$bvModal.hide(this.getModalId('view-reviewers'));
+      this.$bvModal.show(this.getModalId('edit-reviewers'));
     },
     closeEditReviewerModal() {
-      this.$root.$emit('bv::hide::modal', this.getModalId('edit-reviewers'));
-      this.$root.$emit('bv::show::modal', this.getModalId('view-reviewers'));
+      this.$bvModal.hide(this.getModalId('edit-reviewers'));
+      this.$bvModal.show(this.getModalId('view-reviewers'));
       this.currentReviewerSelectedModal = null;
       this.currentUserPermissions = {};
     },
@@ -1523,14 +1522,14 @@ export default {
       this.currentItemId = id;
       this.isBulk = isBulk;
       this.showConfirm = showConfirm;
-      this.$root.$emit('bv::show::modal', this.getModalId('forward'));
+      this.$bvModal.show(this.getModalId('forward'));
     },
     openSortModal() {
       this.tasksFieldsToSort = cloneDeep(this.certificationListColumns);
       this.availableColumns = isEmpty(this.updatedColumCategories)
         ? cloneDeep(this.columnCategories)
         : cloneDeep(this.updatedColumCategories);
-      this.$root.$emit('bv::show::modal', this.getModalId('sort'));
+      this.$bvModal.show(this.getModalId('sort'));
     },
     closeSortModal() {
       this.tasksFieldsToSort = [];
@@ -1541,7 +1540,7 @@ export default {
         .then(({ data }) => {
           this.manager = manager;
           this.currentUserSelectedModal = pick(data, userRequiredParams);
-          this.$root.$emit('bv::show::modal', 'GovernanceUserDetailsModal');
+          this.$bvModal.show('GovernanceUserDetailsModal');
         })
         .catch((error) => {
           this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserError'));
@@ -1582,7 +1581,7 @@ export default {
         delete this.contentAccountSelectedModal?.proxyAddresses;
 
         this.$nextTick(() => {
-          this.$root.$emit('bv::show::modal', 'CertificationTaskAccountModal');
+          this.$bvModal.show('CertificationTaskAccountModal');
         });
       } catch (error) {
         this.showErrorMessage(error, this.$t('governance.certificationTask.entitlementModal.loadErrorMessage'));
@@ -1595,7 +1594,7 @@ export default {
         glossary,
       };
       this.$nextTick(() => {
-        this.$root.$emit('bv::show::modal', 'CertificationTaskApplicationModal');
+        this.$bvModal.show('CertificationTaskApplicationModal');
       });
     },
     async openEntitlementModal({
@@ -1612,7 +1611,7 @@ export default {
           entitlementOwner,
           glossary,
         };
-        this.$root.$emit('bv::show::modal', this.getModalId('entitlement'));
+        this.$bvModal.show(this.getModalId('entitlement'));
       } catch (error) {
         this.showErrorMessage(error, this.$t('governance.certificationTask.entitlementModal.loadErrorMessage'));
       }
@@ -1623,7 +1622,7 @@ export default {
         glossary: item.glossary,
         roleOwner: item.roleOwner,
       };
-      this.$root.$emit('bv::show::modal', this.getModalId('role'));
+      this.$bvModal.show(this.getModalId('role'));
     },
     /**
      * Parse the column information to a format to be rendered by the component.
@@ -1735,7 +1734,7 @@ export default {
   padding-bottom: 120px !important;
 }
 
-::v-deep {
+:deep {
   .fr-access-cell {
     padding: 0.5rem 1.5rem !important;
   }

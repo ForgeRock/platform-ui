@@ -6,7 +6,6 @@
  */
 
 import axios from 'axios';
-import _ from 'lodash';
 import store from '@/store';
 
 export const initServices = () => new Promise((resolve) => {

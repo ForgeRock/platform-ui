@@ -84,13 +84,14 @@ of the MIT license. See the LICENSE file for details. -->
             </template>
             <BDropdownGroup
               v-if="item.reportStatus === 'complete' || item.reportIsExpiredAndHasAtLeastOneDownload()">
-              <template v-for="(exportStatus, fileType) in item.export">
+              <template
+                v-for="(exportStatus, fileType) in item.export"
+                :key="fileType">
                 <BDropdownItem
                   v-if="item.reportStatus === 'complete' || item.reportIsExpiredAndFileTypeHasDownload(exportStatus)"
                   class="fr-run-history-table-options"
                   :disabled="exportStatus === 'downloading' || ((exportStatus === 'export' || exportStatus === 'error') && item.hasAnyActiveExports())"
                   :data-testid="`${fileType}-${exportStatus}-button`"
-                  :key="fileType"
                   @click="exportHandler(fileType, item, exportStatus)">
                   <FrReportExportButtons
                     :file-type="fileType"
@@ -234,9 +235,9 @@ function paginationChange(page) {
  */
 function exportHandler(fileType, item, exportStatus) {
   if (exportStatus === 'download' || exportStatus === 'downloading') {
-    emit('download-report', fileType, item, exportStatus);
+    emit('download-report', { fileType, item, exportStatus });
   } else {
-    emit('export-report', fileType, item, exportStatus);
+    emit('export-report', { fileType, item, exportStatus });
   }
 }
 

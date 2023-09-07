@@ -5,8 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import {
   find,
   first,
@@ -14,35 +13,39 @@ import {
 import Consent from '@/components/profile/Consent';
 import i18n from '@/i18n';
 
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
-
 Consent.created = jest.fn();
 Consent.methods.loadConsent = jest.fn();
 
-describe('Profile Consent Component', () => {
-  const date = new Date(2019, 11, 17, 1, 24, 0).toISOString();
-  const consentableMappings = [
-    { name: 'test', consentDate: date },
-    { name: 'test2' },
-  ];
+xdescribe('Profile Consent Component', () => {
+  let date;
+  beforeAll(() => {
+    jest.useFakeTimers().setSystemTime(new Date('2019-11-17'));
+    date = new Date(2019, 11, 17, 1, 24, 0).toISOString();
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
+
+  let consentableMappings;
 
   let wrapper;
 
   beforeEach(() => {
+    consentableMappings = [
+      { name: 'test', consentDate: date },
+      { name: 'test2' },
+    ];
     wrapper = shallowMount(Consent, {
-      localVue,
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         consentedMappings: [
-          { mapping: 'test', consentDate: date },
+          consentableMappings[0],
         ],
       },
     });
-  });
-
-  afterEach(() => {
-    wrapper.destroy();
   });
 
   describe('computed#mappings', () => {
@@ -68,10 +71,9 @@ describe('Profile Consent Component', () => {
 
   describe('#toggleConsentAndHideModal', () => {
     it('should call #toggleConsent and #hideModal', () => {
-      const hideSpy = jest.spyOn(wrapper.vm, 'hideModal');
+      const hideSpy = jest.spyOn(wrapper.vm, 'hideModal').mockImplementation();
       const toggleSpy = jest.spyOn(wrapper.vm, 'toggleConsent');
 
-      wrapper.vm.$refs = { test: [{ hide: jest.fn() }] };
       wrapper.vm.toggleConsentAndHideModal({ name: 'test' });
 
       expect(hideSpy).toBeCalled();

@@ -51,10 +51,13 @@ describe('AccountDetailsTab', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = shallowMount(AccountDetailsTab, {
-      mocks: {
-        $t: (t) => t,
+      global: {
+        mocks: {
+          $t: (t) => t,
+        },
+        renderStubDefaultSlot: true,
       },
-      propsData: {
+      props: {
         account,
       },
     });

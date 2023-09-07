@@ -5,7 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount } from '@vue/test-utils';
+import { flushPromises, shallowMount } from '@vue/test-utils';
+import Notifications from '@kyvg/vue3-notification';
 import {
   getCertificationUserFilter,
   getCertificationApplicationFilter,
@@ -18,10 +19,13 @@ let wrapper;
 
 function mountComponent() {
   wrapper = shallowMount(TaskFilters, {
-    mocks: {
-      $t: (t) => t,
+    global: {
+      mocks: {
+        $t: (t) => t,
+      },
+      plugins: [Notifications],
     },
-    propsData: {
+    props: {
       certId: 'certification-id',
       actorId: 'certifier-test',
     },
@@ -42,8 +46,8 @@ describe('TaskFilters', () => {
       const showErrorMessage = jest.spyOn(wrapper.vm, 'showErrorMessage');
       wrapper.vm.getUserInfoFilter();
 
-      await wrapper.vm.$nextTick();
-      expect(showErrorMessage).toBeCalled();
+      await flushPromises();
+      expect(showErrorMessage).toHaveBeenCalled();
     });
     it('should set the user response to the user variable', async () => {
       getCertificationUserFilter.mockImplementation(() => Promise.resolve({ data: [{ id: 'user' }] }));
@@ -72,8 +76,8 @@ describe('TaskFilters', () => {
       const showErrorMessage = jest.spyOn(wrapper.vm, 'showErrorMessage');
       wrapper.vm.getApplicationInfoFilter();
 
-      await wrapper.vm.$nextTick();
-      expect(showErrorMessage).toBeCalled();
+      await flushPromises();
+      expect(showErrorMessage).toHaveBeenCalled();
     });
     it('should set the applications response to the application variable', async () => {
       getCertificationApplicationFilter.mockImplementation(() => Promise.resolve({ data: [{ id: 'application' }] }));

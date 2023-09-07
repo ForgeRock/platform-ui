@@ -1,0 +1,1122 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DefaultDashboard.vue loading dashboard data executes loadConsumerApplications method: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (6)",
+    "
+",
+    " at <ListGroup",
+    "title="pages.dashboard.applications.heading"",
+    ">",
+    "
+",
+    " at <BCol>",
+    "
+",
+    " at <BContainer",
+    "key=0",
+    ">",
+    "
+",
+    " at <DefaultDashboard",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) (5)",
+    "
+",
+    " at <ListGroup",
+    "title="pages.dashboard.applications.heading"",
+    ">",
+    "
+",
+    " at <BCol>",
+    "
+",
+    " at <BContainer",
+    "key=0",
+    ">",
+    "
+",
+    " at <DefaultDashboard",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (6)",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    "class="mb-3"",
+    ">",
+    "
+",
+    " at <ListGroup",
+    "title="pages.dashboard.applications.heading"",
+    ">",
+    "
+",
+    " at <BCol>",
+    "
+",
+    " at <BContainer",
+    "key=0",
+    ">",
+    "
+",
+    " at <DefaultDashboard",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (7)",
+    "
+",
+    " at <BCardBody",
+    "key=0",
+    "class="py-4 list-group-header-card"",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    "class="mb-3"",
+    ">",
+    "
+",
+    " at <ListGroup",
+    "title="pages.dashboard.applications.heading"",
+    ">",
+    "
+",
+    " at <BCol>",
+    "
+",
+    " at <BContainer",
+    "key=0",
+    ">",
+    "
+",
+    " at <DefaultDashboard",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (8)",
+    "
+",
+    " at <BListGroup",
+    "flush=""",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    "class="mb-3"",
+    ">",
+    "
+",
+    " at <ListGroup",
+    "title="pages.dashboard.applications.heading"",
+    ">",
+    "
+",
+    " at <BCol>",
+    "
+",
+    " at <BContainer",
+    "key=0",
+    ">",
+    "
+",
+    " at <DefaultDashboard",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (7)",
+    "
+",
+    " at <ListItem",
+    "collapsible=false",
+    ">",
+    "
+",
+    " at <ConsumerApplications",
+    "key="a"",
+    "application-details=",
+    {
+      "dashboardDisplayName": "a",
+      "dashboardIcon": [
+        "test",
+      ],
+      "dashboardLogin": [
+        "test",
+      ],
+    },
+    ">",
+    "
+",
+    " at <BListGroup",
+    "flush=""",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    "class="mb-3"",
+    ">",
+    "
+",
+    " at <ListGroup",
+    "title="pages.dashboard.applications.heading"",
+    ">",
+    "
+",
+    " at <BCol>",
+    "
+",
+    " at <BContainer",
+    "key=0",
+    ">",
+    "
+",
+    " at <DefaultDashboard",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) (6)",
+    "
+",
+    " at <ListItem",
+    "collapsible=false",
+    ">",
+    "
+",
+    " at <ConsumerApplications",
+    "key="a"",
+    "application-details=",
+    {
+      "dashboardDisplayName": "a",
+      "dashboardIcon": [
+        "test",
+      ],
+      "dashboardLogin": [
+        "test",
+      ],
+    },
+    ">",
+    "
+",
+    " at <BListGroup",
+    "flush=""",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    "class="mb-3"",
+    ">",
+    "
+",
+    " at <ListGroup",
+    "title="pages.dashboard.applications.heading"",
+    ">",
+    "
+",
+    " at <BCol>",
+    "
+",
+    " at <BContainer",
+    "key=0",
+    ">",
+    "
+",
+    " at <DefaultDashboard",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (9)",
+    "
+",
+    " at <BListGroupItem",
+    "class="noncollapse"",
+    ">",
+    "
+",
+    " at <ListItem",
+    "collapsible=false",
+    ">",
+    "
+",
+    " at <ConsumerApplications",
+    "key="a"",
+    "application-details=",
+    {
+      "dashboardDisplayName": "a",
+      "dashboardIcon": [
+        "test",
+      ],
+      "dashboardLogin": [
+        "test",
+      ],
+    },
+    ">",
+    "
+",
+    " at <BListGroup",
+    "flush=""",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    "class="mb-3"",
+    ">",
+    "
+",
+    " at <ListGroup",
+    "title="pages.dashboard.applications.heading"",
+    ">",
+    "
+",
+    " at <BCol>",
+    "
+",
+    " at <BContainer",
+    "key=0",
+    ">",
+    "
+",
+    " at <DefaultDashboard",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: Failed to resolve component: BImg
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement.",
+    "
+",
+    " at <ImageFallback",
+    "fallback="exit_to_app"",
+    "src="test"",
+    "alt="pages.dashboard.applications.listItemBrandIconAltText"",
+    ">",
+    "
+",
+    " at <BListGroupItem",
+    "class="noncollapse"",
+    ">",
+    "
+",
+    " at <ListItem",
+    "collapsible=false",
+    ">",
+    "
+",
+    " at <ConsumerApplications",
+    "key="a"",
+    "application-details=",
+    {
+      "dashboardDisplayName": "a",
+      "dashboardIcon": [
+        "test",
+      ],
+      "dashboardLogin": [
+        "test",
+      ],
+    },
+    ">",
+    "
+",
+    " at <BListGroup",
+    "flush=""",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    "class="mb-3"",
+    ">",
+    "
+",
+    " at <ListGroup",
+    "title="pages.dashboard.applications.heading"",
+    ">",
+    "
+",
+    " at <BCol>",
+    "
+",
+    " at <BContainer",
+    "key=0",
+    ">",
+    "
+",
+    " at <DefaultDashboard",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: Failed to resolve component: BImg
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement.",
+    "
+",
+    " at <ImageFallback",
+    "fallback="exit_to_app"",
+    "src="test"",
+    "alt="pages.dashboard.applications.listItemBrandIconAltText"",
+    ">",
+    "
+",
+    " at <BListGroupItem",
+    "class="noncollapse"",
+    ">",
+    "
+",
+    " at <ListItem",
+    "collapsible=false",
+    ">",
+    "
+",
+    " at <ConsumerApplications",
+    "key="b"",
+    "application-details=",
+    {
+      "dashboardDisplayName": "b",
+      "dashboardIcon": [
+        "test",
+      ],
+      "dashboardLogin": [
+        "test",
+      ],
+    },
+    ">",
+    "
+",
+    " at <BListGroup",
+    "flush=""",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    "class="mb-3"",
+    ">",
+    "
+",
+    " at <ListGroup",
+    "title="pages.dashboard.applications.heading"",
+    ">",
+    "
+",
+    " at <BCol>",
+    "
+",
+    " at <BContainer",
+    "key=0",
+    ">",
+    "
+",
+    " at <DefaultDashboard",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: Failed to resolve component: BImg
+If this is a native custom element, make sure to exclude it from component resolution via compilerOptions.isCustomElement.",
+    "
+",
+    " at <ImageFallback",
+    "fallback="exit_to_app"",
+    "src="test"",
+    "alt="pages.dashboard.applications.listItemBrandIconAltText"",
+    ">",
+    "
+",
+    " at <BListGroupItem",
+    "class="noncollapse"",
+    ">",
+    "
+",
+    " at <ListItem",
+    "collapsible=false",
+    ">",
+    "
+",
+    " at <ConsumerApplications",
+    "key="c"",
+    "application-details=",
+    {
+      "dashboardDisplayName": "c",
+      "dashboardIcon": [
+        "test",
+      ],
+      "dashboardLogin": [
+        "test",
+      ],
+    },
+    ">",
+    "
+",
+    " at <BListGroup",
+    "flush=""",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    "class="mb-3"",
+    ">",
+    "
+",
+    " at <ListGroup",
+    "title="pages.dashboard.applications.heading"",
+    ">",
+    "
+",
+    " at <BCol>",
+    "
+",
+    " at <BContainer",
+    "key=0",
+    ">",
+    "
+",
+    " at <DefaultDashboard",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`DefaultDashboard.vue loading dashboard data executes loadWidgets method: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (2)",
+    "
+",
+    " at <DefaultDashboard",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) Functional component <BContainer> should be defined as a plain function in Vue 3. The "functional" option has been removed. NOTE: Before migrating to use plain functions for functional components, first make sure that all async components usage have been migrated and its compat behavior has been disabled.
+  Details: https://v3-migration.vuejs.org/breaking-changes/functional-components.html",
+    "
+",
+    " at <DefaultDashboard",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) vm.$listeners has been removed. In Vue 3, parent v-on listeners are included in vm.$attrs and it is no longer necessary to separately use v-on="$listeners" if you are already using v-bind="$attrs". (Note: the Vue 3 behavior only applies if this compat config is disabled)
+  Details: https://v3-migration.vuejs.org/breaking-changes/listeners-removed.html",
+    "
+",
+    " at <BContainer",
+    "fluid="true"",
+    ">",
+    "
+",
+    " at <DefaultDashboard",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (2)",
+    "
+",
+    " at <BJumbotron",
+    "key=1",
+    "class="mt-4 text-center"",
+    ">",
+    "
+",
+    " at <BContainer",
+    "fluid="true"",
+    ">",
+    "
+",
+    " at <DefaultDashboard",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (3)",
+    "
+",
+    " at <WelcomeWidget",
+    "details=undefined",
+    "display-compact-header=false",
+    ">",
+    "
+",
+    " at <BRow",
+    "key=0",
+    "class="mx-4"",
+    ">",
+    "
+",
+    " at <BContainer",
+    "fluid="true"",
+    ">",
+    "
+",
+    " at <DefaultDashboard",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) (2)",
+    "
+",
+    " at <WelcomeWidget",
+    "details=undefined",
+    "display-compact-header=false",
+    ">",
+    "
+",
+    " at <BRow",
+    "key=0",
+    "class="mx-4"",
+    ">",
+    "
+",
+    " at <BContainer",
+    "fluid="true"",
+    ">",
+    "
+",
+    " at <DefaultDashboard",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: Property "$pinia" was accessed during render but is not defined on instance.",
+    "
+",
+    " at <BJumbotron",
+    "class="text-center"",
+    ">",
+    "
+",
+    " at <WelcomeWidget",
+    "details=undefined",
+    "display-compact-header=false",
+    ">",
+    "
+",
+    " at <BRow",
+    "key=0",
+    "class="mx-4"",
+    ">",
+    "
+",
+    " at <BContainer",
+    "fluid="true"",
+    ">",
+    "
+",
+    " at <DefaultDashboard",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: Property "$pinia" was accessed during render but is not defined on instance.",
+    "
+",
+    " at <BJumbotron",
+    "class="text-center"",
+    ">",
+    "
+",
+    " at <WelcomeWidget",
+    "details=undefined",
+    "display-compact-header=false",
+    ">",
+    "
+",
+    " at <BRow",
+    "key=0",
+    "class="mx-4"",
+    ">",
+    "
+",
+    " at <BContainer",
+    "fluid="true"",
+    ">",
+    "
+",
+    " at <DefaultDashboard",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (2)",
+    "
+",
+    " at <BAvatar",
+    "variant="link"",
+    "size="112px"",
+    "src=""",
+    ">",
+    "
+",
+    " at <BJumbotron",
+    "class="text-center"",
+    ">",
+    "
+",
+    " at <WelcomeWidget",
+    "details=undefined",
+    "display-compact-header=false",
+    ">",
+    "
+",
+    " at <BRow",
+    "key=0",
+    "class="mx-4"",
+    ">",
+    "
+",
+    " at <BContainer",
+    "fluid="true"",
+    ">",
+    "
+",
+    " at <DefaultDashboard",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) vm.$scopedSlots has been removed. Use vm.$slots instead.
+  Details: https://v3-migration.vuejs.org/breaking-changes/slots-unification.html",
+    "
+",
+    " at <BAvatar",
+    "variant="link"",
+    "size="112px"",
+    "src=""",
+    ">",
+    "
+",
+    " at <BJumbotron",
+    "class="text-center"",
+    ">",
+    "
+",
+    " at <WelcomeWidget",
+    "details=undefined",
+    "display-compact-header=false",
+    ">",
+    "
+",
+    " at <BRow",
+    "key=0",
+    "class="mx-4"",
+    ">",
+    "
+",
+    " at <BContainer",
+    "fluid="true"",
+    ">",
+    "
+",
+    " at <DefaultDashboard",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (4)",
+    "
+",
+    " at <BAvatar",
+    "variant="link"",
+    "size="112px"",
+    "src=""",
+    ">",
+    "
+",
+    " at <BJumbotron",
+    "class="text-center"",
+    ">",
+    "
+",
+    " at <WelcomeWidget",
+    "details=undefined",
+    "display-compact-header=false",
+    ">",
+    "
+",
+    " at <BRow",
+    "key=0",
+    "class="mx-4"",
+    ">",
+    "
+",
+    " at <BContainer",
+    "fluid="true"",
+    ">",
+    "
+",
+    " at <DefaultDashboard",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) (3)",
+    "
+",
+    " at <BAvatar",
+    "variant="link"",
+    "size="112px"",
+    "src=""",
+    ">",
+    "
+",
+    " at <BJumbotron",
+    "class="text-center"",
+    ">",
+    "
+",
+    " at <WelcomeWidget",
+    "details=undefined",
+    "display-compact-header=false",
+    ">",
+    "
+",
+    " at <BRow",
+    "key=0",
+    "class="mx-4"",
+    ">",
+    "
+",
+    " at <BContainer",
+    "fluid="true"",
+    ">",
+    "
+",
+    " at <DefaultDashboard",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (3)",
+    "
+",
+    " at <BIconPersonFill",
+    "aria-hidden="true"",
+    "alt="avatar"",
+    ">",
+    "
+",
+    " at <BAvatar",
+    "variant="link"",
+    "size="112px"",
+    "src=""",
+    ">",
+    "
+",
+    " at <BJumbotron",
+    "class="text-center"",
+    ">",
+    "
+",
+    " at <WelcomeWidget",
+    "details=undefined",
+    "display-compact-header=false",
+    ">",
+    "
+",
+    " at <BRow",
+    "key=0",
+    "class="mx-4"",
+    ">",
+    "
+",
+    " at <BContainer",
+    "fluid="true"",
+    ">",
+    "
+",
+    " at <DefaultDashboard",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (5)",
+    "
+",
+    " at <BIconPersonFill",
+    "aria-hidden="true"",
+    "alt="avatar"",
+    ">",
+    "
+",
+    " at <BAvatar",
+    "variant="link"",
+    "size="112px"",
+    "src=""",
+    ">",
+    "
+",
+    " at <BJumbotron",
+    "class="text-center"",
+    ">",
+    "
+",
+    " at <WelcomeWidget",
+    "details=undefined",
+    "display-compact-header=false",
+    ">",
+    "
+",
+    " at <BRow",
+    "key=0",
+    "class="mx-4"",
+    ">",
+    "
+",
+    " at <BContainer",
+    "fluid="true"",
+    ">",
+    "
+",
+    " at <DefaultDashboard",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) (4)",
+    "
+",
+    " at <BIconPersonFill",
+    "aria-hidden="true"",
+    "alt="avatar"",
+    ">",
+    "
+",
+    " at <BAvatar",
+    "variant="link"",
+    "size="112px"",
+    "src=""",
+    ">",
+    "
+",
+    " at <BJumbotron",
+    "class="text-center"",
+    ">",
+    "
+",
+    " at <WelcomeWidget",
+    "details=undefined",
+    "display-compact-header=false",
+    ">",
+    "
+",
+    " at <BRow",
+    "key=0",
+    "class="mx-4"",
+    ">",
+    "
+",
+    " at <BContainer",
+    "fluid="true"",
+    ">",
+    "
+",
+    " at <DefaultDashboard",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (4)",
+    "
+",
+    " at <BIconBase",
+    "aria-label="person fill"",
+    "aria-hidden="true"",
+    "alt="avatar"",
+    " ...",
+    ">",
+    "
+",
+    " at <BIconPersonFill",
+    "aria-hidden="true"",
+    "alt="avatar"",
+    ">",
+    "
+",
+    " at <BAvatar",
+    "variant="link"",
+    "size="112px"",
+    "src=""",
+    ">",
+    "
+",
+    " at <BJumbotron",
+    "class="text-center"",
+    ">",
+    "
+",
+    " at <WelcomeWidget",
+    "details=undefined",
+    "display-compact-header=false",
+    ">",
+    "
+",
+    " at <BRow",
+    "key=0",
+    "class="mx-4"",
+    ">",
+    "
+",
+    " at <BContainer",
+    "fluid="true"",
+    ">",
+    "
+",
+    " at <DefaultDashboard",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (5)",
+    "
+",
+    " at <BButton",
+    "onClick=fn",
+    "variant="primary"",
+    "class="mt-2"",
+    ">",
+    "
+",
+    " at <BJumbotron",
+    "class="text-center"",
+    ">",
+    "
+",
+    " at <WelcomeWidget",
+    "details=undefined",
+    "display-compact-header=false",
+    ">",
+    "
+",
+    " at <BRow",
+    "key=0",
+    "class="mx-4"",
+    ">",
+    "
+",
+    " at <BContainer",
+    "fluid="true"",
+    ">",
+    "
+",
+    " at <DefaultDashboard",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;

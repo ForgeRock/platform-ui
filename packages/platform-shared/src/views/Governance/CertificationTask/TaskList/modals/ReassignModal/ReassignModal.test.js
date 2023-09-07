@@ -6,6 +6,7 @@
  */
 
 import { shallowMount } from '@vue/test-utils';
+import Notifications from '@kyvg/vue3-notification';
 import { reassignCertificationTasks } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import ReassignModal from './index';
 
@@ -15,11 +16,14 @@ let wrapper;
 
 function mountComponent(mocks = {}, propsData = {}) {
   wrapper = shallowMount(ReassignModal, {
-    mocks: {
-      $t: (t) => t,
-      ...mocks,
+    global: {
+      mocks: {
+        $t: (t) => t,
+        ...mocks,
+      },
+      plugins: [Notifications],
     },
-    propsData: {
+    props: {
       isLoading: false,
       ...propsData,
     },

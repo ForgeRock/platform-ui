@@ -5,8 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import flushPromises from 'flush-promises';
-import { mount } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import i18n from '@/i18n';
 import SelectInput from './index';
@@ -20,8 +19,10 @@ describe('SelectInput', () => {
 
   function setup(props) {
     return mount(SelectInput, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         ...defaultProps,
         ...props,
       },
@@ -35,7 +36,7 @@ describe('SelectInput', () => {
       const multiselect = findByTestId(wrapper, 'stub-testid');
       expect(wrapper.vm.floatLabels).toBe(false);
       expect(multiselect.attributes('aria-expanded')).toBe('false');
-      expect(multiselect.attributes('aria-labelledby')).toBe('floatingLabelInput3-label');
+      expect(multiselect.attributes('aria-labelledby')).toBe('floatingLabelInput1-label');
 
       const multiSelectInput = multiselect.find(`[id=floatingLabelInput${wrapper.vm._uid}]`);
       expect(multiSelectInput.attributes('aria-labelledby')).not.toBeDefined();
@@ -122,18 +123,20 @@ describe('SelectInput', () => {
     const elements = () => select.findAll('.multiselect__option');
 
     select.trigger('click');
-    elements().at(1).trigger('click');
+    elements()[1].trigger('click');
     expect(wrapper.vm.inputValue).toEqual({ text: 'b', value: 'b' });
 
     select.trigger('click');
-    elements().at(0).trigger('click');
+    elements()[0].trigger('click');
     expect(wrapper.vm.inputValue).toEqual({ text: 'a', value: 'a' });
   });
 
   it('SelectInput passes through component slots', () => {
     const wrapper = mount(SelectInput, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         ...defaultProps,
       },
       slots: {
@@ -204,8 +207,10 @@ describe('SelectInput', () => {
 
   it('SelectInput is not autofocused on absence of prop "autofocus"', () => {
     const wrapper = mount(SelectInput, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         ...defaultProps,
         autofocus: false,
       },
@@ -221,9 +226,11 @@ describe('SelectInput', () => {
 
   it('SelectInput is autofocused on prop "autofocus"', async () => {
     const wrapper = mount(SelectInput, {
-      i18n,
+      global: {
+        plugins: [i18n],
+      },
       attachTo: document.body,
-      propsData: {
+      props: {
         ...defaultProps,
         autofocus: true,
         searchable: true,
@@ -253,7 +260,7 @@ describe('SelectInput', () => {
     multiselect.trigger('focus');
 
     // Option selected, menu closes, menu expected to remain focused
-    options.at(0).trigger('click');
+    options[0].trigger('click');
     expect(multiselect.attributes('aria-expanded')).toBe('false');
 
     // We can deduce that the menu is still focused because we can
@@ -286,27 +293,27 @@ describe('SelectInput', () => {
 
     // When the menu is initially opened, we expect the first option to always be highlighted
     await multiselect.trigger('focus');
-    expect(options.at(0).find('span').classes('multiselect__option--highlight')).toBe(true);
+    expect(options[0].classes('multiselect__option--highlight')).toBe(true);
 
     // The second option selected, menu closes, menu remains focused
-    await options.at(1).trigger('click');
+    await options[1].trigger('click');
     expect(multiselect.attributes('aria-expanded')).toBe('false');
 
     // We trigger the menu to show again by clicking on the "down arrow" and the second option should now be highlighted
     await multiselect.trigger('keydown', { key: 'ArrowDown' });
     expect(multiselect.attributes('aria-expanded')).toBe('true');
-    expect(options.at(0).find('span').classes('multiselect__option--highlight')).toBe(false);
-    expect(options.at(1).find('span').classes('multiselect__option--highlight')).toBe(true);
+    expect(options[0].classes('multiselect__option--highlight')).toBe(false);
+    expect(options[1].classes('multiselect__option--highlight')).toBe(true);
 
     // The third option selected, menu closes, menu remains focused
-    await options.at(2).trigger('click');
+    await options[2].trigger('click');
     expect(multiselect.attributes('aria-expanded')).toBe('false');
 
     // We trigger the menu once more by clicking on the "up arrow" this time and the third option should remain highlighted
     await multiselect.trigger('keydown', { key: 'ArrowUp' });
     expect(multiselect.attributes('aria-expanded')).toBe('true');
-    expect(options.at(0).find('span').classes('multiselect__option--highlight')).toBe(false);
-    expect(options.at(1).find('span').classes('multiselect__option--highlight')).toBe(false);
-    expect(options.at(2).find('span').classes('multiselect__option--highlight')).toBe(true);
+    expect(options[0].classes('multiselect__option--highlight')).toBe(false);
+    expect(options[1].classes('multiselect__option--highlight')).toBe(false);
+    expect(options[2].classes('multiselect__option--highlight')).toBe(true);
   });
 });

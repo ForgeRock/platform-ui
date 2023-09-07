@@ -7,17 +7,16 @@ of the MIT license. See the LICENSE file for details. -->
     :id="id"
     :name="name"
     :description="description"
-    :errors="errors"
+    :errors="combinedErrors"
     :is-html="isHtml"
     :label="label"
-    :validation="validation"
-    :validation-immediate="validationImmediate"
     :show-length-count="showLengthCount"
-    :current-length="inputValue.length"
+    :current-length="inputValue?.length"
     :max-length="maxLength">
     <textarea
       :value="inputValue"
       @input="inputValue = $event.target.value; $emit('input', inputValue)"
+      v-on="validationListeners"
       :autofocus="autofocus"
       :class="[{'polyfill-placeholder': floatLabels }, 'form-control', addClass]"
       :cols="cols"
@@ -36,6 +35,8 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import { useField } from 'vee-validate';
+import { toRef } from 'vue';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
 
@@ -96,6 +97,20 @@ export default {
       default: '',
     },
   },
+  setup(props) {
+    const {
+      value: inputValue, errors: fieldErrors, handleBlur,
+    } = useField(() => props.name, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: '', bails: false });
+
+    // validationListeners: Contains custom event listeners for validation.
+    // Since vee-validate +4 removes the interaction modes, this custom listener is added
+    // to validate on blur to perform a similar aggressive validation in addition to the validateOnValueUpdate.
+    const validationListeners = {
+      blur: (evt) => handleBlur(evt, true),
+    };
+
+    return { inputValue, fieldErrors, validationListeners };
+  },
   methods: {
     /**
      * Handler for clicking the text area. Floats the label if possible
@@ -114,6 +129,11 @@ export default {
       if (inputValue !== null) {
         this.floatLabels = inputValue.toString().length > 0 && !!this.label;
       }
+    },
+  },
+  computed: {
+    combinedErrors() {
+      return this.errors.concat(this.fieldErrors);
     },
   },
 };

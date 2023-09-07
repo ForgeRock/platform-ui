@@ -6,16 +6,23 @@
  */
 
 import { mount } from '@vue/test-utils';
+import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import RejectRequest from './index';
 import i18n from '@/i18n';
+
+ValidationRules.extendRules({
+  required: ValidationRules.getRules(i18n).required,
+});
 
 describe('RejectRequest', () => {
   let wrapper;
 
   beforeEach(() => {
     wrapper = mount(RejectRequest, {
-      mocks: {
-        $t: (text, prop) => i18n.t(text, prop),
+      global: {
+        mocks: {
+          $t: (text, prop) => i18n.global.t(text, prop),
+        },
       },
     });
   });

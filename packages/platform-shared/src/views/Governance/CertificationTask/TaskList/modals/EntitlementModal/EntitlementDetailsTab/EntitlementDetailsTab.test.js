@@ -13,10 +13,13 @@ import EntitlementDetailsTab from './index';
 describe('EntitlementDetailsTab', () => {
   function mountComponent(entitlement) {
     return shallowMount(EntitlementDetailsTab, {
-      mocks: {
-        $t: (t) => t,
+      global: {
+        mocks: {
+          $t: (t) => t,
+        },
+        renderStubDefaultSlot: true,
       },
-      propsData: {
+      props: {
         entitlement,
       },
     });
@@ -37,12 +40,12 @@ describe('EntitlementDetailsTab', () => {
       });
     });
 
-    it('entitlement data loaded correctly on template', () => {
+    it('entitlement data loaded correctly on template', async () => {
       const owner = findByTestId(wrapper, 'owner');
-      expect(owner.find('dd').text()).toBe(blankValueIndicator);
+      expect(owner.text()).toBe(blankValueIndicator);
 
       const description = findByTestId(wrapper, 'entDescription');
-      expect(description.find('dd').text()).toBe('Zoran Admin');
+      expect(description.text()).toBe('Zoran Admin');
     });
   });
 

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -466,7 +466,7 @@ export default {
 <style lang="scss" scoped>
   /* stylelint-disable */
   .add-data-source-modal {
-    ::v-deep {
+    :deep {
       .fr-datatable {
         td {
           &:nth-child(2) {
@@ -503,8 +503,7 @@ export default {
       }
     }
 
-    ::v-deep
-    &-define-form {
+    :deep(.add-data-source-modal-define-form) {
       .data-source-preview-container {
         max-height: calc(100vh - 42rem);
       }

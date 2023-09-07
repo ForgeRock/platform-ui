@@ -5,13 +5,9 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { shallowMount, createLocalVue } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import CountCard from './index';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 describe('CountCard Component', () => {
   let wrapper;
@@ -23,12 +19,16 @@ describe('CountCard Component', () => {
 
   it('CountCard to show loader and hide count when loader prop set to true', () => {
     wrapper = shallowMount(CountCard, {
-      propsData: {
+      props: {
         ...propsData,
         loading: true,
       },
-      mocks: {
-        $t: () => {},
+      global: {
+        stubs: ['RouterLink'],
+        mocks: {
+          $t: () => {},
+        },
+        renderStubDefaultSlot: true,
       },
     });
 
@@ -38,12 +38,16 @@ describe('CountCard Component', () => {
 
   it('CountCard to hide loader and show correct count when loader prop set to false', () => {
     wrapper = shallowMount(CountCard, {
-      propsData: {
+      props: {
         ...propsData,
         loading: false,
       },
-      mocks: {
-        $t: () => {},
+      global: {
+        stubs: ['RouterLink'],
+        mocks: {
+          $t: () => {},
+        },
+        renderStubDefaultSlot: true,
       },
     });
 

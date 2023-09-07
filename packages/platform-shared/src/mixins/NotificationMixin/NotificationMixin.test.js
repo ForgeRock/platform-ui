@@ -1,12 +1,15 @@
 /**
- * Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { shallowMount } from '@vue/test-utils';
+import { notify } from '@kyvg/vue3-notification';
 import NotificationMixin from './index';
+
+jest.mock('@kyvg/vue3-notification');
 
 let wrapper;
 
@@ -15,24 +18,24 @@ describe('NotificationMixin', () => {
     jest.clearAllMocks();
     wrapper = shallowMount({}, {
       render() { },
-      mixins: [NotificationMixin],
-      mocks: {
-        $t: (id) => id,
-        getTranslation: (id) => id,
+      global: {
+        mixins: [NotificationMixin],
+        mocks: {
+          $t: (id) => id,
+          getTranslation: (id) => id,
+        },
       },
     });
   });
 
-  it('Displays a non-error notification', () => {
-    const notifySpy = jest.spyOn(wrapper.vm, '$notify').mockImplementation();
+  it('Displays a non-error notification', async () => {
     wrapper.vm.displayNotification('foo', 'message');
-    expect(notifySpy).toHaveBeenCalledWith({ type: 'foo', text: 'message' });
+    expect(notify).toHaveBeenCalledWith({ type: 'foo', text: 'message' });
   });
 
   it('Displays an error notification', () => {
-    const notifySpy = jest.spyOn(wrapper.vm, '$notify').mockImplementation();
     wrapper.vm.displayNotification('error', 'message');
-    expect(notifySpy).toHaveBeenCalledWith({ type: 'danger', text: 'message' });
+    expect(notify).toHaveBeenCalledWith({ type: 'danger', text: 'message' });
   });
 
   it('Shows an error message with a default message', () => {

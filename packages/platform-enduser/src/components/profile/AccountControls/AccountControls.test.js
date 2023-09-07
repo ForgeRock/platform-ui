@@ -5,19 +5,16 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, mount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import AccountControls from '@/components/profile/AccountControls';
 import i18n from '@/i18n';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 describe('AccountControls', () => {
   it('Account Controls page loaded', () => {
     const wrapper = mount(AccountControls, {
-      localVue,
-      i18n,
+      global: {
+        plugins: [i18n],
+      },
     });
 
     expect(wrapper.vm.items[0].name).toBe('download');

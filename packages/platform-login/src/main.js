@@ -10,36 +10,33 @@ import 'core-js/stable';
 import '@forgerock/platform-shared/src/utils/domCollectionsForEach';
 import 'regenerator-runtime/runtime';
 
-import Vue from 'vue';
-import Notifications from 'vue-notification';
+import { createApp } from 'vue';
+import Notifications from '@kyvg/vue3-notification';
 import PromisePoly from 'es6-promise';
 import {
   Config,
   SessionManager,
 } from '@forgerock/javascript-sdk';
-import { setInteractionMode } from 'vee-validate';
 import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 import isWebStorageAvailable from '@forgerock/platform-shared/src/utils/webStorageTest';
 import overrideTranslations, { setLocales } from '@forgerock/platform-shared/src/utils/overrideTranslations';
-import VueSanitize from 'vue-sanitize';
+import Vue3Sanitize from 'vue-3-sanitize';
 import uuid from 'uuid/v4';
 import { baseSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
+import { createPinia } from 'pinia';
 import { generateAmApi } from '@forgerock/platform-shared/src/api/BaseApi';
 import { getUiConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
 import { getAmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
+import velocity from 'velocity-animate';
 import store from '@/store';
 import i18n from './i18n';
 import router from './router';
 import App from './App';
-
-Vue.config.productionTip = false;
-
-Vue.use(Notifications);
-Vue.use(VueSanitize, baseSanitizerConfig);
+import VueReCaptcha from './plugins/vueReCaptcha';
 
 PromisePoly.polyfill();
 
-setInteractionMode('passive');
+const pinia = createPinia();
 
 store.commit('SharedStore/setBaseURLs', process.env);
 store.commit('SharedStore/setWebStorageAvailable', isWebStorageAvailable());
@@ -125,12 +122,15 @@ router.beforeEach((to, _from, next) => {
 });
 
 const loadApp = () => {
-  new Vue({
-    router,
-    i18n,
-    store,
-    render: (h) => h(App),
-  }).$mount('#app');
+  const app = createApp(App);
+  app.use(Notifications, { velocity });
+  app.use(Vue3Sanitize, baseSanitizerConfig);
+  app.use(VueReCaptcha);
+  app.use(router);
+  app.use(i18n);
+  app.use(store);
+  app.use(pinia);
+  router.isReady().then(() => app.mount('#appRoot'));
 };
 
 /**

@@ -5,20 +5,18 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import Router from 'vue-router';
-import Vue from 'vue';
+import { createRouter, createWebHashHistory } from 'vue-router';
 import checkIfRouteCanBeAccessed from '@forgerock/platform-shared/src/utils/routerGuard';
 import i18n from './i18n';
 import store from '@/store';
-
-Vue.use(Router);
 
 /**
  * Available configuration
  * hideSideMenu - Will hide left-hand navigation when route accessed
  * hideNavBar - Will hide top toolbar when route accessed
  */
-const router = new Router({
+const router = createRouter({
+  history: createWebHashHistory(),
   routes: [
     {
       path: '/',
@@ -232,7 +230,7 @@ const router = new Router({
       component: () => import(/* webpackChunkName: "forbidden" */ '@/components/forbidden'),
     },
     {
-      path: '*',
+      path: '/:pathMatch(.*)*',
       name: 'NotFound',
       component: () => import('@forgerock/platform-shared/src/views/NotFound'),
     },
@@ -240,8 +238,8 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
-  const page = to.name ? i18n.t(`pageTitles.${to.name}`) : '';
-  document.title = i18n.t('pageTitles.pageTitle', { page });
+  const page = to.name ? i18n.global.t(`pageTitles.${to.name}`) : '';
+  document.title = i18n.global.t('pageTitles.pageTitle', { page });
   const url = new URL(window.location);
   const realm = url.searchParams.get('realm');
 

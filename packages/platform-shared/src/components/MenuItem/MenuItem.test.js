@@ -11,12 +11,14 @@ import MenuItem from './index';
 
 let wrapper;
 
-function mountComponent(propsData, mocks = { $route: { name: 'daniel' } }) {
+function mountComponent(props, mocks = { $route: { name: 'daniel' } }) {
   wrapper = shallowMount(MenuItem, {
-    propsData,
-    mocks: {
-      $t: () => {},
-      ...mocks,
+    props,
+    global: {
+      mocks: {
+        $t: () => {},
+        ...mocks,
+      },
     },
   });
 }

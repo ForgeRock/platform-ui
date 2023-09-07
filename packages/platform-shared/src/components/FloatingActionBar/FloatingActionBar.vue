@@ -29,9 +29,10 @@ of the MIT license. See the LICENSE file for details. -->
             </BButton>
           </div>
           <div>
-            <template v-for="button in buttons">
+            <template
+              v-for="button in buttons"
+              :key="button.event">
               <BButton
-                :key="button.event"
                 class="ml-1"
                 variant="dark"
                 @click="$emit(button.event, $event)">
@@ -53,8 +54,9 @@ of the MIT license. See the LICENSE file for details. -->
                   name="more_horiz" />
               </template>
               <template
-                v-for="(item, index) in menuItems">
-                <div :key="index">
+                v-for="(item, index) in menuItems"
+                :key="index">
+                <div>
                   <BDropdownDivider
                     v-if="item.divider" />
                   <BDropdownItem
@@ -81,7 +83,7 @@ import {
   BButton, BCol, BDropdown, BDropdownDivider, BDropdownItem, BRow,
 } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import { defineProps } from 'vue';
+import i18n from '@/i18n';
 
 defineProps({
   count: {
@@ -95,13 +97,13 @@ defineProps({
         event: 'certify',
         icon: 'check',
         iconClass: 'text-success',
-        label: this.$t('governance.certificationTask.actions.certify'),
+        label: i18n.global.t('governance.certificationTask.actions.certify'),
       },
       {
         event: 'revoke',
         icon: 'close',
         iconClass: 'text-danger',
-        label: this.$t('governance.certificationTask.actions.revoke'),
+        label: i18n.global.t('governance.certificationTask.actions.revoke'),
       }];
     },
   },
@@ -111,17 +113,17 @@ defineProps({
       return [{
         event: 'exception',
         icon: 'schedule',
-        label: this.$t('governance.certificationTask.actions.allowException'),
+        label: i18n.global.t('governance.certificationTask.actions.allowException'),
       },
       {
         event: 'reassign',
         icon: 'people',
-        label: this.$t('governance.certificationTask.actions.reassign'),
+        label: i18n.global.t('governance.certificationTask.actions.reassign'),
       },
       {
         event: 'forward',
         icon: 'redo',
-        label: this.$t('governance.certificationTask.actions.forward'),
+        label: i18n.global.t('governance.certificationTask.actions.forward'),
       },
       {
         divider: true,
@@ -129,7 +131,7 @@ defineProps({
       {
         event: 'clearDecisions',
         icon: 'close',
-        label: this.$t('governance.certificationTask.actions.reset'),
+        label: i18n.global.t('governance.certificationTask.actions.reset'),
       }];
     },
   },

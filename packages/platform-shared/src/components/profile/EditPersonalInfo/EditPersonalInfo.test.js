@@ -5,13 +5,17 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount, shallowMount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
+import { mount, shallowMount, flushPromises } from '@vue/test-utils';
 import { first } from 'lodash';
+import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import { setupTestPinia } from '../../../utils/testPiniaHelpers';
 import i18n from '@/i18n';
 import EditPersonalInfo from './index';
 import { findByTestId } from '../../../utils/testHelpers';
+
+ValidationRules.extendRules({
+  required: ValidationRules.getRules(i18n).required,
+});
 
 describe('EditPersonalInfo', () => {
   const defaultProps = {
@@ -53,15 +57,20 @@ describe('EditPersonalInfo', () => {
       },
     });
     return mount(EditPersonalInfo, {
-      i18n,
-      mocks: {
-        $store: {
-          state: {
-            isFraas: true,
+      global: {
+        plugins: [i18n],
+        mocks: {
+          $store: {
+            state: {
+              isFraas: true,
+            },
+          },
+          $bvModal: {
+            hide: () => {},
           },
         },
       },
-      propsData: {
+      props: {
         ...defaultProps,
         ...props,
       },
@@ -78,8 +87,6 @@ describe('EditPersonalInfo', () => {
     describe('given no fields', () => {
       it('renders no fields text', () => {
         const wrapper = setup({ schema: {} });
-        // Note: must trigger the 'show' event as when we mount the modal manually it doesn't trigger bootstrap @shown event
-        wrapper.vm.$root.$emit('bv::show::modal', 'userDetailsModal');
 
         const noFieldsHeader = findByTestId(wrapper, 'edit-personal-info-no-fields');
         expect(noFieldsHeader.text()).toBe('No profile fields available');
@@ -89,8 +96,8 @@ describe('EditPersonalInfo', () => {
     describe('given form fields', () => {
       it('should render fields', async () => {
         const wrapper = setup();
-        // Note: must trigger the 'show' event as when we mount the modal manually it doesn't trigger bootstrap @shown event
-        wrapper.vm.$root.$emit('bv::show::modal', 'userDetailsModal');
+        // Note: must trigger the 'show' event logic as when we mount the modal using the test it doesn't trigger bootstrap @shown event
+        wrapper.vm.setModal();
         await flushPromises();
 
         const firstField = findByTestId(wrapper, 'input-edit-personal-info-0');
@@ -113,8 +120,8 @@ describe('EditPersonalInfo', () => {
             },
           }),
         }));
-        // Note: must trigger the 'show' event as when we mount the modal manually it doesn't trigger bootstrap @shown event
-        wrapper.vm.$root.$emit('bv::show::modal', 'userDetailsModal');
+        // Note: must trigger the 'show' event logic as when we mount the modal using the test it doesn't trigger bootstrap @shown event
+        wrapper.vm.setModal();
 
         const saveButton = findByTestId(wrapper, 'btn-edit-personal-info-save');
         await saveButton.trigger('click');
@@ -126,8 +133,10 @@ describe('EditPersonalInfo', () => {
     describe('generateFormFields', () => {
       it('should create the proper fields based on schema', () => {
         const wrapper = shallowMount(EditPersonalInfo, {
-          i18n,
-          propsData: {
+          global: {
+            plugins: [i18n],
+          },
+          props: {
             ...defaultProps,
           },
         });

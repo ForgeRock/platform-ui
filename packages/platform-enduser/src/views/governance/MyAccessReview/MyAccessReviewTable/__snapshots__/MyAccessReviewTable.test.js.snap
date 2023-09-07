@@ -1,0 +1,4550 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MyAccessReviewTable loadData() displays an error notifcation if API fails: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation INSTANCE_EVENT_EMITTER) (2)",
+  ],
+]
+`;
+
+exports[`MyAccessReviewTable should have a loading spinner then have a table: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (2)",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) Functional component <BContainer> should be defined as a plain function in Vue 3. The "functional" option has been removed. NOTE: Before migrating to use plain functions for functional components, first make sure that all async components usage have been migrated and its compat behavior has been disabled.
+  Details: https://v3-migration.vuejs.org/breaking-changes/functional-components.html",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) vm.$listeners has been removed. In Vue 3, parent v-on listeners are included in vm.$attrs and it is no longer necessary to separately use v-on="$listeners" if you are already using v-bind="$attrs". (Note: the Vue 3 behavior only applies if this compat config is disabled)
+  Details: https://v3-migration.vuejs.org/breaking-changes/listeners-removed.html",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (2)",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) v-model usage on component has changed in Vue 3. Component that expects to work with v-model should now use the "modelValue" prop and emit the "update:modelValue" event. You can update the usage and then opt-in to Vue 3 behavior on a per-component basis with \`compatConfig: { COMPONENT_V_MODEL: false }\`.
+  Details: https://v3-migration.vuejs.org/breaking-changes/v-model.html",
+    "
+",
+    " at <Pagination",
+    "modelValue=1",
+    "onUpdate:modelValue=fn",
+    "aria-controls="my-access-review-table"",
+    " ...",
+    ">",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (3)",
+    "
+",
+    " at <BCardHeader",
+    "class="p-0"",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (2)",
+    "
+",
+    " at <BButtonToolbar",
+    "key=0",
+    "class="justify-content-end p-3 border-bottom-0"",
+    "data-testid="my-access-review-table-search-container"",
+    ">",
+    "
+",
+    " at <BCardHeader",
+    "class="p-0"",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) vm.$scopedSlots has been removed. Use vm.$slots instead.
+  Details: https://v3-migration.vuejs.org/breaking-changes/slots-unification.html",
+    "
+",
+    " at <BButtonToolbar",
+    "key=0",
+    "class="justify-content-end p-3 border-bottom-0"",
+    "data-testid="my-access-review-table-search-container"",
+    ">",
+    "
+",
+    " at <BCardHeader",
+    "class="p-0"",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) (2)",
+    "
+",
+    " at <SearchInput",
+    "modelValue=""",
+    "onUpdate:modelValue=fn",
+    "class="col-12 col-lg-auto p-0"",
+    " ...",
+    ">",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (3)",
+    "
+",
+    " at <SearchInput",
+    "class="col-12 col-lg-auto p-0"",
+    "data-testid="search-my-access-review-table"",
+    "placeholder="Search"",
+    " ...",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "key=0",
+    "class="justify-content-end p-3 border-bottom-0"",
+    "data-testid="my-access-review-table-search-container"",
+    ">",
+    "
+",
+    " at <BCardHeader",
+    "class="p-0"",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) (2)",
+    "
+",
+    " at <SearchInput",
+    "class="col-12 col-lg-auto p-0"",
+    "data-testid="search-my-access-review-table"",
+    "placeholder="Search"",
+    " ...",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "key=0",
+    "class="justify-content-end p-3 border-bottom-0"",
+    "data-testid="my-access-review-table-search-container"",
+    ">",
+    "
+",
+    " at <BCardHeader",
+    "class="p-0"",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (4)",
+    "
+",
+    " at <BInputGroup>",
+    "
+",
+    " at <SearchInput",
+    "class="col-12 col-lg-auto p-0"",
+    "data-testid="search-my-access-review-table"",
+    "placeholder="Search"",
+    " ...",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "key=0",
+    "class="justify-content-end p-3 border-bottom-0"",
+    "data-testid="my-access-review-table-search-container"",
+    ">",
+    "
+",
+    " at <BCardHeader",
+    "class="p-0"",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) (3)",
+    "
+",
+    " at <BFormInput",
+    "ref="searchInput"",
+    "placeholder="Search"",
+    "aria-label="Search"",
+    " ...",
+    ">",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (5)",
+    "
+",
+    " at <BInputGroupPrepend>",
+    "
+",
+    " at <BInputGroup>",
+    "
+",
+    " at <SearchInput",
+    "class="col-12 col-lg-auto p-0"",
+    "data-testid="search-my-access-review-table"",
+    "placeholder="Search"",
+    " ...",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "key=0",
+    "class="justify-content-end p-3 border-bottom-0"",
+    "data-testid="my-access-review-table-search-container"",
+    ">",
+    "
+",
+    " at <BCardHeader",
+    "class="p-0"",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (4)",
+    "
+",
+    " at <BInputGroupPrepend>",
+    "
+",
+    " at <BInputGroup>",
+    "
+",
+    " at <SearchInput",
+    "class="col-12 col-lg-auto p-0"",
+    "data-testid="search-my-access-review-table"",
+    "placeholder="Search"",
+    " ...",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "key=0",
+    "class="justify-content-end p-3 border-bottom-0"",
+    "data-testid="my-access-review-table-search-container"",
+    ">",
+    "
+",
+    " at <BCardHeader",
+    "class="p-0"",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) (3)",
+    "
+",
+    " at <BInputGroupPrepend>",
+    "
+",
+    " at <BInputGroup>",
+    "
+",
+    " at <SearchInput",
+    "class="col-12 col-lg-auto p-0"",
+    "data-testid="search-my-access-review-table"",
+    "placeholder="Search"",
+    " ...",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "key=0",
+    "class="justify-content-end p-3 border-bottom-0"",
+    "data-testid="my-access-review-table-search-container"",
+    ">",
+    "
+",
+    " at <BCardHeader",
+    "class="p-0"",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (6)",
+    "
+",
+    " at <BInputGroupAddon",
+    "id=undefined",
+    "isText=false",
+    "tag="div"",
+    " ...",
+    ">",
+    "
+",
+    " at <BInputGroupPrepend>",
+    "
+",
+    " at <BInputGroup>",
+    "
+",
+    " at <SearchInput",
+    "class="col-12 col-lg-auto p-0"",
+    "data-testid="search-my-access-review-table"",
+    "placeholder="Search"",
+    " ...",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "key=0",
+    "class="justify-content-end p-3 border-bottom-0"",
+    "data-testid="my-access-review-table-search-container"",
+    ">",
+    "
+",
+    " at <BCardHeader",
+    "class="p-0"",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (7)",
+    "
+",
+    " at <BInputGroupText",
+    "class="border-0"",
+    ">",
+    "
+",
+    " at <BInputGroupAddon",
+    "id=undefined",
+    "isText=false",
+    "tag="div"",
+    " ...",
+    ">",
+    "
+",
+    " at <BInputGroupPrepend>",
+    "
+",
+    " at <BInputGroup>",
+    "
+",
+    " at <SearchInput",
+    "class="col-12 col-lg-auto p-0"",
+    "data-testid="search-my-access-review-table"",
+    "placeholder="Search"",
+    " ...",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "key=0",
+    "class="justify-content-end p-3 border-bottom-0"",
+    "data-testid="my-access-review-table-search-container"",
+    ">",
+    "
+",
+    " at <BCardHeader",
+    "class="p-0"",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (3)",
+    "
+",
+    " at <BFormInput",
+    "ref="searchInput"",
+    "placeholder="Search"",
+    "aria-label="Search"",
+    " ...",
+    ">",
+    "
+",
+    " at <BInputGroup>",
+    "
+",
+    " at <SearchInput",
+    "class="col-12 col-lg-auto p-0"",
+    "data-testid="search-my-access-review-table"",
+    "placeholder="Search"",
+    " ...",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "key=0",
+    "class="justify-content-end p-3 border-bottom-0"",
+    "data-testid="my-access-review-table-search-container"",
+    ">",
+    "
+",
+    " at <BCardHeader",
+    "class="p-0"",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_DATA_MERGE) Detected conflicting key "bvListeners" when merging data option values. In Vue 3, data keys are merged shallowly and will override one another.
+  Details: https://v3-migration.vuejs.org/breaking-changes/data-option.html#mixin-merge-behavior-change",
+    "
+",
+    " at <BFormInput",
+    "ref="searchInput"",
+    "placeholder="Search"",
+    "aria-label="Search"",
+    " ...",
+    ">",
+    "
+",
+    " at <BInputGroup>",
+    "
+",
+    " at <SearchInput",
+    "class="col-12 col-lg-auto p-0"",
+    "data-testid="search-my-access-review-table"",
+    "placeholder="Search"",
+    " ...",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "key=0",
+    "class="justify-content-end p-3 border-bottom-0"",
+    "data-testid="my-access-review-table-search-container"",
+    ">",
+    "
+",
+    " at <BCardHeader",
+    "class="p-0"",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (8)",
+    "
+",
+    " at <BFormInput",
+    "ref="searchInput"",
+    "placeholder="Search"",
+    "aria-label="Search"",
+    " ...",
+    ">",
+    "
+",
+    " at <BInputGroup>",
+    "
+",
+    " at <SearchInput",
+    "class="col-12 col-lg-auto p-0"",
+    "data-testid="search-my-access-review-table"",
+    "placeholder="Search"",
+    " ...",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "key=0",
+    "class="justify-content-end p-3 border-bottom-0"",
+    "data-testid="my-access-review-table-search-container"",
+    ">",
+    "
+",
+    " at <BCardHeader",
+    "class="p-0"",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) \`beforeDestroy\` has been renamed to \`beforeUnmount\`.",
+    "
+",
+    " at <BFormInput",
+    "ref="searchInput"",
+    "placeholder="Search"",
+    "aria-label="Search"",
+    " ...",
+    ">",
+    "
+",
+    " at <BInputGroup>",
+    "
+",
+    " at <SearchInput",
+    "class="col-12 col-lg-auto p-0"",
+    "data-testid="search-my-access-review-table"",
+    "placeholder="Search"",
+    " ...",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "key=0",
+    "class="justify-content-end p-3 border-bottom-0"",
+    "data-testid="my-access-review-table-search-container"",
+    ">",
+    "
+",
+    " at <BCardHeader",
+    "class="p-0"",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "aria-invalid" with v-bind value \`false\` will render aria-invalid="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BFormInput",
+    "ref="searchInput"",
+    "placeholder="Search"",
+    "aria-label="Search"",
+    " ...",
+    ">",
+    "
+",
+    " at <BInputGroup>",
+    "
+",
+    " at <SearchInput",
+    "class="col-12 col-lg-auto p-0"",
+    "data-testid="search-my-access-review-table"",
+    "placeholder="Search"",
+    " ...",
+    ">",
+    "
+",
+    " at <BButtonToolbar",
+    "key=0",
+    "class="justify-content-end p-3 border-bottom-0"",
+    "data-testid="my-access-review-table-search-container"",
+    ">",
+    "
+",
+    " at <BCardHeader",
+    "class="p-0"",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (5)",
+    "
+",
+    " at <Pagination",
+    "aria-controls="my-access-review-table"",
+    "per-page=10",
+    "total-rows=0",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (4)",
+    "
+",
+    " at <BDropdown",
+    "key=0",
+    "data-testid="page_size-button"",
+    "class="mr-1 pagination-dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <Pagination",
+    "aria-controls="my-access-review-table"",
+    "per-page=10",
+    "total-rows=0",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) (2)",
+    "
+",
+    " at <BDropdown",
+    "key=0",
+    "data-testid="page_size-button"",
+    "class="mr-1 pagination-dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <Pagination",
+    "aria-controls="my-access-review-table"",
+    "per-page=10",
+    "total-rows=0",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (2)",
+    "
+",
+    " at <BDropdown",
+    "key=0",
+    "data-testid="page_size-button"",
+    "class="mr-1 pagination-dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <Pagination",
+    "aria-controls="my-access-review-table"",
+    "per-page=10",
+    "total-rows=0",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (6)",
+    "
+",
+    " at <BDropdown",
+    "key=0",
+    "data-testid="page_size-button"",
+    "class="mr-1 pagination-dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <Pagination",
+    "aria-controls="my-access-review-table"",
+    "per-page=10",
+    "total-rows=0",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) (4)",
+    "
+",
+    " at <BDropdown",
+    "key=0",
+    "data-testid="page_size-button"",
+    "class="mr-1 pagination-dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <Pagination",
+    "aria-controls="my-access-review-table"",
+    "per-page=10",
+    "total-rows=0",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (9)",
+    "
+",
+    " at <BButton",
+    "class="dropdown-toggle btn btn-link text-dark border-0 toggle-dropdown-button"",
+    "textContent="1-10"",
+    "onMousedown=fn<bound onMousedown>",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "key=0",
+    "data-testid="page_size-button"",
+    "class="mr-1 pagination-dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <Pagination",
+    "aria-controls="my-access-review-table"",
+    "per-page=10",
+    "total-rows=0",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (5)",
+    "
+",
+    " at <BDropdownItem",
+    "data-testid="page_size-10"",
+    "key=0",
+    "active=true",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "key=0",
+    "data-testid="page_size-button"",
+    "class="mr-1 pagination-dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <Pagination",
+    "aria-controls="my-access-review-table"",
+    "per-page=10",
+    "total-rows=0",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (3)",
+    "
+",
+    " at <BDropdownItem",
+    "data-testid="page_size-10"",
+    "key=0",
+    "active=true",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "key=0",
+    "data-testid="page_size-button"",
+    "class="mr-1 pagination-dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <Pagination",
+    "aria-controls="my-access-review-table"",
+    "per-page=10",
+    "total-rows=0",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (7)",
+    "
+",
+    " at <BDropdownItem",
+    "data-testid="page_size-10"",
+    "key=0",
+    "active=true",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "key=0",
+    "data-testid="page_size-button"",
+    "class="mr-1 pagination-dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <Pagination",
+    "aria-controls="my-access-review-table"",
+    "per-page=10",
+    "total-rows=0",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (6)",
+    "
+",
+    " at <BLink",
+    "class="dropdown-item"",
+    "onClick=fn<bound onClick>",
+    "ref="item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "data-testid="page_size-10"",
+    "key=0",
+    "active=true",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "key=0",
+    "data-testid="page_size-button"",
+    "class="mr-1 pagination-dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <Pagination",
+    "aria-controls="my-access-review-table"",
+    "per-page=10",
+    "total-rows=0",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_DATA_MERGE) (2)",
+    "
+",
+    " at <BLink",
+    "class="dropdown-item"",
+    "onClick=fn<bound onClick>",
+    "ref="item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "data-testid="page_size-10"",
+    "key=0",
+    "active=true",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "key=0",
+    "data-testid="page_size-button"",
+    "class="mr-1 pagination-dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <Pagination",
+    "aria-controls="my-access-review-table"",
+    "per-page=10",
+    "total-rows=0",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (10)",
+    "
+",
+    " at <BLink",
+    "class="dropdown-item"",
+    "onClick=fn<bound onClick>",
+    "ref="item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "data-testid="page_size-10"",
+    "key=0",
+    "active=true",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "key=0",
+    "data-testid="page_size-button"",
+    "class="mr-1 pagination-dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <Pagination",
+    "aria-controls="my-access-review-table"",
+    "per-page=10",
+    "total-rows=0",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) (3)",
+    "
+",
+    " at <BLink",
+    "class="dropdown-item"",
+    "onClick=fn<bound onClick>",
+    "ref="item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "data-testid="page_size-10"",
+    "key=0",
+    "active=true",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "key=0",
+    "data-testid="page_size-button"",
+    "class="mr-1 pagination-dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <Pagination",
+    "aria-controls="my-access-review-table"",
+    "per-page=10",
+    "total-rows=0",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (4)",
+    "
+",
+    " at <BLink",
+    "class="dropdown-item"",
+    "onClick=fn<bound onClick>",
+    "ref="item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "data-testid="page_size-10"",
+    "key=0",
+    "active=true",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "key=0",
+    "data-testid="page_size-button"",
+    "class="mr-1 pagination-dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <Pagination",
+    "aria-controls="my-access-review-table"",
+    "per-page=10",
+    "total-rows=0",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_ATTRS_CLASS_STYLE) Component <BLink> has \`inheritAttrs: false\` but is relying on class/style fallthrough from parent. In Vue 3, class/style are now included in $attrs and will no longer fallthrough when inheritAttrs is false. If you are already using v-bind="$attrs" on component root it should render the same end result. If you are binding $attrs to a non-root element and expecting class/style to fallthrough on root, you will need to now manually bind them on root via :class="$attrs.class".
+  Details: https://v3-migration.vuejs.org/breaking-changes/attrs-includes-class-style.html",
+    "
+",
+    " at <BLink",
+    "class="dropdown-item"",
+    "onClick=fn<bound onClick>",
+    "ref="item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "data-testid="page_size-10"",
+    "key=0",
+    "active=true",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "key=0",
+    "data-testid="page_size-button"",
+    "class="mr-1 pagination-dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <Pagination",
+    "aria-controls="my-access-review-table"",
+    "per-page=10",
+    "total-rows=0",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (7)",
+    "
+",
+    " at <BPagination",
+    "class="m-0 pagination-buttons"",
+    "id="pagination"",
+    "tabindex="0"",
+    " ...",
+    ">",
+    "
+",
+    " at <Pagination",
+    "aria-controls="my-access-review-table"",
+    "per-page=10",
+    "total-rows=0",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (5)",
+    "
+",
+    " at <BPagination",
+    "class="m-0 pagination-buttons"",
+    "id="pagination"",
+    "tabindex="0"",
+    " ...",
+    ">",
+    "
+",
+    " at <Pagination",
+    "aria-controls="my-access-review-table"",
+    "per-page=10",
+    "total-rows=0",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (8)",
+    "
+",
+    " at <BTable",
+    "key=2",
+    "id="my-access-review-table"",
+    "data-testid="my-access-review-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) (2)",
+    "
+",
+    " at <BTable",
+    "key=2",
+    "id="my-access-review-table"",
+    "data-testid="my-access-review-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) (4)",
+    "
+",
+    " at <BTable",
+    "key=2",
+    "id="my-access-review-table"",
+    "data-testid="my-access-review-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (6)",
+    "
+",
+    " at <BTable",
+    "key=2",
+    "id="my-access-review-table"",
+    "data-testid="my-access-review-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (8)",
+    "
+",
+    " at <BTable",
+    "key=2",
+    "id="my-access-review-table"",
+    "data-testid="my-access-review-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (11)",
+    "
+",
+    " at <BTable",
+    "key=2",
+    "id="my-access-review-table"",
+    "data-testid="my-access-review-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (9)",
+    "
+",
+    " at <BThead",
+    "class=null",
+    "headVariant=null",
+    "key="bv-thead"",
+    ">",
+    "
+",
+    " at <BTable",
+    "key=2",
+    "id="my-access-review-table"",
+    "data-testid="my-access-review-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_DATA_MERGE) (3)",
+    "
+",
+    " at <BThead",
+    "class=null",
+    "headVariant=null",
+    "key="bv-thead"",
+    ">",
+    "
+",
+    " at <BTable",
+    "key=2",
+    "id="my-access-review-table"",
+    "data-testid="my-access-review-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (12)",
+    "
+",
+    " at <BThead",
+    "class=null",
+    "headVariant=null",
+    "key="bv-thead"",
+    ">",
+    "
+",
+    " at <BTable",
+    "key=2",
+    "id="my-access-review-table"",
+    "data-testid="my-access-review-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (7)",
+    "
+",
+    " at <BThead",
+    "class=null",
+    "headVariant=null",
+    "key="bv-thead"",
+    ">",
+    "
+",
+    " at <BTable",
+    "key=2",
+    "id="my-access-review-table"",
+    "data-testid="my-access-review-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (10)",
+    "
+",
+    " at <BTr",
+    "class=undefined",
+    "variant=undefined",
+    ">",
+    "
+",
+    " at <BThead",
+    "class=null",
+    "headVariant=null",
+    "key="bv-thead"",
+    ">",
+    "
+",
+    " at <BTable",
+    "key=2",
+    "id="my-access-review-table"",
+    "data-testid="my-access-review-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_DATA_MERGE) (4)",
+    "
+",
+    " at <BTr",
+    "class=undefined",
+    "variant=undefined",
+    ">",
+    "
+",
+    " at <BThead",
+    "class=null",
+    "headVariant=null",
+    "key="bv-thead"",
+    ">",
+    "
+",
+    " at <BTable",
+    "key=2",
+    "id="my-access-review-table"",
+    "data-testid="my-access-review-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (13)",
+    "
+",
+    " at <BTr",
+    "class=undefined",
+    "variant=undefined",
+    ">",
+    "
+",
+    " at <BThead",
+    "class=null",
+    "headVariant=null",
+    "key="bv-thead"",
+    ">",
+    "
+",
+    " at <BTable",
+    "key=2",
+    "id="my-access-review-table"",
+    "data-testid="my-access-review-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (8)",
+    "
+",
+    " at <BTr",
+    "class=undefined",
+    "variant=undefined",
+    ">",
+    "
+",
+    " at <BThead",
+    "class=null",
+    "headVariant=null",
+    "key="bv-thead"",
+    ">",
+    "
+",
+    " at <BTable",
+    "key=2",
+    "id="my-access-review-table"",
+    "data-testid="my-access-review-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (11)",
+    "
+",
+    " at <BTh",
+    "class=""",
+    "variant=undefined",
+    "stickyColumn=undefined",
+    " ...",
+    ">",
+    "
+",
+    " at <BTr",
+    "class=undefined",
+    "variant=undefined",
+    ">",
+    "
+",
+    " at <BThead",
+    "class=null",
+    "headVariant=null",
+    "key="bv-thead"",
+    ">",
+    "
+",
+    " at <BTable",
+    "key=2",
+    "id="my-access-review-table"",
+    "data-testid="my-access-review-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_DATA_MERGE) (5)",
+    "
+",
+    " at <BTh",
+    "class=""",
+    "variant=undefined",
+    "stickyColumn=undefined",
+    " ...",
+    ">",
+    "
+",
+    " at <BTr",
+    "class=undefined",
+    "variant=undefined",
+    ">",
+    "
+",
+    " at <BThead",
+    "class=null",
+    "headVariant=null",
+    "key="bv-thead"",
+    ">",
+    "
+",
+    " at <BTable",
+    "key=2",
+    "id="my-access-review-table"",
+    "data-testid="my-access-review-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (14)",
+    "
+",
+    " at <BTh",
+    "class=""",
+    "variant=undefined",
+    "stickyColumn=undefined",
+    " ...",
+    ">",
+    "
+",
+    " at <BTr",
+    "class=undefined",
+    "variant=undefined",
+    ">",
+    "
+",
+    " at <BThead",
+    "class=null",
+    "headVariant=null",
+    "key="bv-thead"",
+    ">",
+    "
+",
+    " at <BTable",
+    "key=2",
+    "id="my-access-review-table"",
+    "data-testid="my-access-review-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (9)",
+    "
+",
+    " at <BTh",
+    "class=""",
+    "variant=undefined",
+    "stickyColumn=undefined",
+    " ...",
+    ">",
+    "
+",
+    " at <BTr",
+    "class=undefined",
+    "variant=undefined",
+    ">",
+    "
+",
+    " at <BThead",
+    "class=null",
+    "headVariant=null",
+    "key="bv-thead"",
+    ">",
+    "
+",
+    " at <BTable",
+    "key=2",
+    "id="my-access-review-table"",
+    "data-testid="my-access-review-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_ATTRS_CLASS_STYLE) Component <BTh> has \`inheritAttrs: false\` but is relying on class/style fallthrough from parent. In Vue 3, class/style are now included in $attrs and will no longer fallthrough when inheritAttrs is false. If you are already using v-bind="$attrs" on component root it should render the same end result. If you are binding $attrs to a non-root element and expecting class/style to fallthrough on root, you will need to now manually bind them on root via :class="$attrs.class".
+  Details: https://v3-migration.vuejs.org/breaking-changes/attrs-includes-class-style.html",
+    "
+",
+    " at <BTh",
+    "class=""",
+    "variant=undefined",
+    "stickyColumn=undefined",
+    " ...",
+    ">",
+    "
+",
+    " at <BTr",
+    "class=undefined",
+    "variant=undefined",
+    ">",
+    "
+",
+    " at <BThead",
+    "class=null",
+    "headVariant=null",
+    "key="bv-thead"",
+    ">",
+    "
+",
+    " at <BTable",
+    "key=2",
+    "id="my-access-review-table"",
+    "data-testid="my-access-review-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (12)",
+    "
+",
+    " at <BTbody",
+    "class=null",
+    "tbodyTransitionHandlers=undefined",
+    "tbodyTransitionProps=undefined",
+    " ...",
+    ">",
+    "
+",
+    " at <BTable",
+    "key=2",
+    "id="my-access-review-table"",
+    "data-testid="my-access-review-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_DATA_MERGE) (6)",
+    "
+",
+    " at <BTbody",
+    "class=null",
+    "tbodyTransitionHandlers=undefined",
+    "tbodyTransitionProps=undefined",
+    " ...",
+    ">",
+    "
+",
+    " at <BTable",
+    "key=2",
+    "id="my-access-review-table"",
+    "data-testid="my-access-review-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (15)",
+    "
+",
+    " at <BTbody",
+    "class=null",
+    "tbodyTransitionHandlers=undefined",
+    "tbodyTransitionProps=undefined",
+    " ...",
+    ">",
+    "
+",
+    " at <BTable",
+    "key=2",
+    "id="my-access-review-table"",
+    "data-testid="my-access-review-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (10)",
+    "
+",
+    " at <BTbody",
+    "class=null",
+    "tbodyTransitionHandlers=undefined",
+    "tbodyTransitionProps=undefined",
+    " ...",
+    ">",
+    "
+",
+    " at <BTable",
+    "key=2",
+    "id="my-access-review-table"",
+    "data-testid="my-access-review-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (16)",
+    "
+",
+    " at <BMedia",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BTr",
+    "class=""",
+    "variant=null",
+    "id=null",
+    " ...",
+    ">",
+    "
+",
+    " at <BTbody",
+    "class=null",
+    "tbodyTransitionHandlers=undefined",
+    "tbodyTransitionProps=undefined",
+    " ...",
+    ">",
+    "
+",
+    " at <BTable",
+    "key=2",
+    "id="my-access-review-table"",
+    "data-testid="my-access-review-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (17)",
+    "
+",
+    " at <BMediaAside",
+    "vertical-align="center"",
+    "class="mr-4"",
+    ">",
+    "
+",
+    " at <BMedia",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BTr",
+    "class=""",
+    "variant=null",
+    "id=null",
+    " ...",
+    ">",
+    "
+",
+    " at <BTbody",
+    "class=null",
+    "tbodyTransitionHandlers=undefined",
+    "tbodyTransitionProps=undefined",
+    " ...",
+    ">",
+    "
+",
+    " at <BTable",
+    "key=2",
+    "id="my-access-review-table"",
+    "data-testid="my-access-review-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (18)",
+    "
+",
+    " at <BImg",
+    "alt="Logo"",
+    "src=""",
+    "aria-hidden=true",
+    " ...",
+    ">",
+    "
+",
+    " at <BMediaAside",
+    "vertical-align="center"",
+    "class="mr-4"",
+    ">",
+    "
+",
+    " at <BMedia",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BTr",
+    "class=""",
+    "variant=null",
+    "id=null",
+    " ...",
+    ">",
+    "
+",
+    " at <BTbody",
+    "class=null",
+    "tbodyTransitionHandlers=undefined",
+    "tbodyTransitionProps=undefined",
+    " ...",
+    ">",
+    "
+",
+    " at <BTable",
+    "key=2",
+    "id="my-access-review-table"",
+    "data-testid="my-access-review-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (19)",
+    "
+",
+    " at <BMediaBody",
+    "class="text-truncate"",
+    ">",
+    "
+",
+    " at <BMedia",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BTr",
+    "class=""",
+    "variant=null",
+    "id=null",
+    " ...",
+    ">",
+    "
+",
+    " at <BTbody",
+    "class=null",
+    "tbodyTransitionHandlers=undefined",
+    "tbodyTransitionProps=undefined",
+    " ...",
+    ">",
+    "
+",
+    " at <BTable",
+    "key=2",
+    "id="my-access-review-table"",
+    "data-testid="my-access-review-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_EVENT_EMITTER) vm.$on/$once/$off() have been removed. Use an external event emitter library instead.
+  Details: https://v3-migration.vuejs.org/breaking-changes/events-api.html",
+  ],
+]
+`;
+
+exports[`MyAccessReviewTable shows the actions menu if the resourceName is "directReportDetail" and account assignment is direct: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (20)",
+    "
+",
+    " at <BBadge",
+    "class="font-weight-normal"",
+    "data-testid="status-badge"",
+    "style=",
+    {
+      "width": "100px",
+    },
+    " ...",
+    ">",
+    "
+",
+    " at <BTr",
+    "class=""",
+    "variant=null",
+    "id=null",
+    " ...",
+    ">",
+    "
+",
+    " at <BTbody",
+    "class=null",
+    "tbodyTransitionHandlers=undefined",
+    "tbodyTransitionProps=undefined",
+    " ...",
+    ">",
+    "
+",
+    " at <BTable",
+    "key=2",
+    "id="my-access-review-table"",
+    "data-testid="my-access-review-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (9)",
+    "
+",
+    " at <ActionsCell",
+    "key=0",
+    "test-id="relationship-menu"",
+    "delete-option=false",
+    " ...",
+    ">",
+    "
+",
+    " at <BTr",
+    "class=""",
+    "variant=null",
+    "id=null",
+    " ...",
+    ">",
+    "
+",
+    " at <BTbody",
+    "class=null",
+    "tbodyTransitionHandlers=undefined",
+    "tbodyTransitionProps=undefined",
+    " ...",
+    ">",
+    "
+",
+    " at <BTable",
+    "key=2",
+    "id="my-access-review-table"",
+    "data-testid="my-access-review-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "no-body=""",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="my-5 my-access"",
+    ">",
+    "
+",
+    " at <MyAccessReviewTable",
+    "grantType="account"",
+    "defaultSort="application.name"",
+    "fields=",
+    [
+      {
+        "key": "appName",
+        "label": "",
+      },
+      {
+        "key": "entitlementName",
+        "label": "",
+      },
+      {
+        "key": "accountName",
+        "label": "",
+      },
+      {
+        "key": "assignment",
+        "label": "",
+      },
+      {
+        "key": "actions",
+        "label": "",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;

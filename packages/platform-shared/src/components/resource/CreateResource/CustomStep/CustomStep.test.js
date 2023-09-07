@@ -5,14 +5,10 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { BootstrapVue } from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import { setupTestPinia } from '../../../../utils/testPiniaHelpers';
 import * as SchemaApi from '@/api/SchemaApi';
 import CustomStep from './index';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 describe('CustomStep.vue', () => {
   let wrapper;
@@ -56,19 +52,20 @@ describe('CustomStep.vue', () => {
   beforeEach(() => {
     setupTestPinia({ user: { idmRoles: ['openidm-admin'] } });
     wrapper = shallowMount(CustomStep, {
-      localVue,
-      mocks: {
-        $t: (key) => key,
-        $store: {
-          state: {
-            realm: 'test',
-            SharedStore: {
-              workforceEnabled: false,
+      global: {
+        mocks: {
+          $t: (key) => key,
+          $store: {
+            state: {
+              realm: 'test',
+              SharedStore: {
+                workforceEnabled: false,
+              },
             },
           },
         },
       },
-      propsData: {
+      props: {
         property: {
           key: 'privileges',
           default: 'testDefault',
@@ -83,7 +80,7 @@ describe('CustomStep.vue', () => {
     });
   });
   afterEach(() => {
-    wrapper.destroy();
+    wrapper.unmount();
   });
 
   it('handles changes to query filter', async () => {

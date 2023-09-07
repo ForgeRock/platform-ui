@@ -1,0 +1,1487 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PrivilegeEditor.vue checks for unique names: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (2)",
+    "
+",
+    " at <PrivilegeEditor",
+    "privilege=",
+    {
+      "accessFlags": [
+        {
+          "attribute": "accountStatus",
+          "readOnly": true,
+        },
+      ],
+      "attribute": "testPropertyName",
+      "filter": "privilegeFilter",
+      "permissions": [
+        "CREATE",
+      ],
+    },
+    "identityObjectSchema=",
+    {
+      "order": [
+        "accountStatus",
+      ],
+      "properties": {
+        "accountStatus": {
+          "default": "active",
+          "description": "Status",
+          "isPersonal": false,
+          "key": "accountStatus",
+          "searchable": true,
+          "status": "common.none",
+          "title": "Status",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": false,
+        },
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "bordered" with v-bind value \`false\` will render bordered="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BTable",
+    "class="p-0 mb-0"",
+    "no-border=""",
+    "show-empty=""",
+    " ...",
+    ">",
+    "
+",
+    " at <PrivilegeEditor",
+    "privilege=",
+    {
+      "accessFlags": [
+        {
+          "attribute": "accountStatus",
+          "readOnly": true,
+        },
+      ],
+      "attribute": "testPropertyName",
+      "filter": "privilegeFilter",
+      "permissions": [
+        "CREATE",
+      ],
+    },
+    "identityObjectSchema=",
+    {
+      "order": [
+        "accountStatus",
+      ],
+      "properties": {
+        "accountStatus": {
+          "default": "active",
+          "description": "Status",
+          "isPersonal": false,
+          "key": "accountStatus",
+          "searchable": true,
+          "status": "common.none",
+          "title": "Status",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": false,
+        },
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "borderless" with v-bind value \`false\` will render borderless="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BTable",
+    "class="p-0 mb-0"",
+    "no-border=""",
+    "show-empty=""",
+    " ...",
+    ">",
+    "
+",
+    " at <PrivilegeEditor",
+    "privilege=",
+    {
+      "accessFlags": [
+        {
+          "attribute": "accountStatus",
+          "readOnly": true,
+        },
+      ],
+      "attribute": "testPropertyName",
+      "filter": "privilegeFilter",
+      "permissions": [
+        "CREATE",
+      ],
+    },
+    "identityObjectSchema=",
+    {
+      "order": [
+        "accountStatus",
+      ],
+      "properties": {
+        "accountStatus": {
+          "default": "active",
+          "description": "Status",
+          "isPersonal": false,
+          "key": "accountStatus",
+          "searchable": true,
+          "status": "common.none",
+          "title": "Status",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": false,
+        },
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "captionTop" with v-bind value \`false\` will render captionTop="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BTable",
+    "class="p-0 mb-0"",
+    "no-border=""",
+    "show-empty=""",
+    " ...",
+    ">",
+    "
+",
+    " at <PrivilegeEditor",
+    "privilege=",
+    {
+      "accessFlags": [
+        {
+          "attribute": "accountStatus",
+          "readOnly": true,
+        },
+      ],
+      "attribute": "testPropertyName",
+      "filter": "privilegeFilter",
+      "permissions": [
+        "CREATE",
+      ],
+    },
+    "identityObjectSchema=",
+    {
+      "order": [
+        "accountStatus",
+      ],
+      "properties": {
+        "accountStatus": {
+          "default": "active",
+          "description": "Status",
+          "isPersonal": false,
+          "key": "accountStatus",
+          "searchable": true,
+          "status": "common.none",
+          "title": "Status",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": false,
+        },
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "dark" with v-bind value \`false\` will render dark="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BTable",
+    "class="p-0 mb-0"",
+    "no-border=""",
+    "show-empty=""",
+    " ...",
+    ">",
+    "
+",
+    " at <PrivilegeEditor",
+    "privilege=",
+    {
+      "accessFlags": [
+        {
+          "attribute": "accountStatus",
+          "readOnly": true,
+        },
+      ],
+      "attribute": "testPropertyName",
+      "filter": "privilegeFilter",
+      "permissions": [
+        "CREATE",
+      ],
+    },
+    "identityObjectSchema=",
+    {
+      "order": [
+        "accountStatus",
+      ],
+      "properties": {
+        "accountStatus": {
+          "default": "active",
+          "description": "Status",
+          "isPersonal": false,
+          "key": "accountStatus",
+          "searchable": true,
+          "status": "common.none",
+          "title": "Status",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": false,
+        },
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "fixed" with v-bind value \`false\` will render fixed="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BTable",
+    "class="p-0 mb-0"",
+    "no-border=""",
+    "show-empty=""",
+    " ...",
+    ">",
+    "
+",
+    " at <PrivilegeEditor",
+    "privilege=",
+    {
+      "accessFlags": [
+        {
+          "attribute": "accountStatus",
+          "readOnly": true,
+        },
+      ],
+      "attribute": "testPropertyName",
+      "filter": "privilegeFilter",
+      "permissions": [
+        "CREATE",
+      ],
+    },
+    "identityObjectSchema=",
+    {
+      "order": [
+        "accountStatus",
+      ],
+      "properties": {
+        "accountStatus": {
+          "default": "active",
+          "description": "Status",
+          "isPersonal": false,
+          "key": "accountStatus",
+          "searchable": true,
+          "status": "common.none",
+          "title": "Status",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": false,
+        },
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "hover" with v-bind value \`false\` will render hover="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BTable",
+    "class="p-0 mb-0"",
+    "no-border=""",
+    "show-empty=""",
+    " ...",
+    ">",
+    "
+",
+    " at <PrivilegeEditor",
+    "privilege=",
+    {
+      "accessFlags": [
+        {
+          "attribute": "accountStatus",
+          "readOnly": true,
+        },
+      ],
+      "attribute": "testPropertyName",
+      "filter": "privilegeFilter",
+      "permissions": [
+        "CREATE",
+      ],
+    },
+    "identityObjectSchema=",
+    {
+      "order": [
+        "accountStatus",
+      ],
+      "properties": {
+        "accountStatus": {
+          "default": "active",
+          "description": "Status",
+          "isPersonal": false,
+          "key": "accountStatus",
+          "searchable": true,
+          "status": "common.none",
+          "title": "Status",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": false,
+        },
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noBorderCollapse" with v-bind value \`false\` will render noBorderCollapse="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BTable",
+    "class="p-0 mb-0"",
+    "no-border=""",
+    "show-empty=""",
+    " ...",
+    ">",
+    "
+",
+    " at <PrivilegeEditor",
+    "privilege=",
+    {
+      "accessFlags": [
+        {
+          "attribute": "accountStatus",
+          "readOnly": true,
+        },
+      ],
+      "attribute": "testPropertyName",
+      "filter": "privilegeFilter",
+      "permissions": [
+        "CREATE",
+      ],
+    },
+    "identityObjectSchema=",
+    {
+      "order": [
+        "accountStatus",
+      ],
+      "properties": {
+        "accountStatus": {
+          "default": "active",
+          "description": "Status",
+          "isPersonal": false,
+          "key": "accountStatus",
+          "searchable": true,
+          "status": "common.none",
+          "title": "Status",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": false,
+        },
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "outlined" with v-bind value \`false\` will render outlined="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BTable",
+    "class="p-0 mb-0"",
+    "no-border=""",
+    "show-empty=""",
+    " ...",
+    ">",
+    "
+",
+    " at <PrivilegeEditor",
+    "privilege=",
+    {
+      "accessFlags": [
+        {
+          "attribute": "accountStatus",
+          "readOnly": true,
+        },
+      ],
+      "attribute": "testPropertyName",
+      "filter": "privilegeFilter",
+      "permissions": [
+        "CREATE",
+      ],
+    },
+    "identityObjectSchema=",
+    {
+      "order": [
+        "accountStatus",
+      ],
+      "properties": {
+        "accountStatus": {
+          "default": "active",
+          "description": "Status",
+          "isPersonal": false,
+          "key": "accountStatus",
+          "searchable": true,
+          "status": "common.none",
+          "title": "Status",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": false,
+        },
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "responsive" with v-bind value \`false\` will render responsive="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BTable",
+    "class="p-0 mb-0"",
+    "no-border=""",
+    "show-empty=""",
+    " ...",
+    ">",
+    "
+",
+    " at <PrivilegeEditor",
+    "privilege=",
+    {
+      "accessFlags": [
+        {
+          "attribute": "accountStatus",
+          "readOnly": true,
+        },
+      ],
+      "attribute": "testPropertyName",
+      "filter": "privilegeFilter",
+      "permissions": [
+        "CREATE",
+      ],
+    },
+    "identityObjectSchema=",
+    {
+      "order": [
+        "accountStatus",
+      ],
+      "properties": {
+        "accountStatus": {
+          "default": "active",
+          "description": "Status",
+          "isPersonal": false,
+          "key": "accountStatus",
+          "searchable": true,
+          "status": "common.none",
+          "title": "Status",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": false,
+        },
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "small" with v-bind value \`false\` will render small="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BTable",
+    "class="p-0 mb-0"",
+    "no-border=""",
+    "show-empty=""",
+    " ...",
+    ">",
+    "
+",
+    " at <PrivilegeEditor",
+    "privilege=",
+    {
+      "accessFlags": [
+        {
+          "attribute": "accountStatus",
+          "readOnly": true,
+        },
+      ],
+      "attribute": "testPropertyName",
+      "filter": "privilegeFilter",
+      "permissions": [
+        "CREATE",
+      ],
+    },
+    "identityObjectSchema=",
+    {
+      "order": [
+        "accountStatus",
+      ],
+      "properties": {
+        "accountStatus": {
+          "default": "active",
+          "description": "Status",
+          "isPersonal": false,
+          "key": "accountStatus",
+          "searchable": true,
+          "status": "common.none",
+          "title": "Status",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": false,
+        },
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "stickyHeader" with v-bind value \`false\` will render stickyHeader="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BTable",
+    "class="p-0 mb-0"",
+    "no-border=""",
+    "show-empty=""",
+    " ...",
+    ">",
+    "
+",
+    " at <PrivilegeEditor",
+    "privilege=",
+    {
+      "accessFlags": [
+        {
+          "attribute": "accountStatus",
+          "readOnly": true,
+        },
+      ],
+      "attribute": "testPropertyName",
+      "filter": "privilegeFilter",
+      "permissions": [
+        "CREATE",
+      ],
+    },
+    "identityObjectSchema=",
+    {
+      "order": [
+        "accountStatus",
+      ],
+      "properties": {
+        "accountStatus": {
+          "default": "active",
+          "description": "Status",
+          "isPersonal": false,
+          "key": "accountStatus",
+          "searchable": true,
+          "status": "common.none",
+          "title": "Status",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": false,
+        },
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "striped" with v-bind value \`false\` will render striped="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BTable",
+    "class="p-0 mb-0"",
+    "no-border=""",
+    "show-empty=""",
+    " ...",
+    ">",
+    "
+",
+    " at <PrivilegeEditor",
+    "privilege=",
+    {
+      "accessFlags": [
+        {
+          "attribute": "accountStatus",
+          "readOnly": true,
+        },
+      ],
+      "attribute": "testPropertyName",
+      "filter": "privilegeFilter",
+      "permissions": [
+        "CREATE",
+      ],
+    },
+    "identityObjectSchema=",
+    {
+      "order": [
+        "accountStatus",
+      ],
+      "properties": {
+        "accountStatus": {
+          "default": "active",
+          "description": "Status",
+          "isPersonal": false,
+          "key": "accountStatus",
+          "searchable": true,
+          "status": "common.none",
+          "title": "Status",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": false,
+        },
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "stacked" with v-bind value \`false\` will render stacked="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BTable",
+    "class="p-0 mb-0"",
+    "no-border=""",
+    "show-empty=""",
+    " ...",
+    ">",
+    "
+",
+    " at <PrivilegeEditor",
+    "privilege=",
+    {
+      "accessFlags": [
+        {
+          "attribute": "accountStatus",
+          "readOnly": true,
+        },
+      ],
+      "attribute": "testPropertyName",
+      "filter": "privilegeFilter",
+      "permissions": [
+        "CREATE",
+      ],
+    },
+    "identityObjectSchema=",
+    {
+      "order": [
+        "accountStatus",
+      ],
+      "properties": {
+        "accountStatus": {
+          "default": "active",
+          "description": "Status",
+          "isPersonal": false,
+          "key": "accountStatus",
+          "searchable": true,
+          "status": "common.none",
+          "title": "Status",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": false,
+        },
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "footClone" with v-bind value \`false\` will render footClone="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BTable",
+    "class="p-0 mb-0"",
+    "no-border=""",
+    "show-empty=""",
+    " ...",
+    ">",
+    "
+",
+    " at <PrivilegeEditor",
+    "privilege=",
+    {
+      "accessFlags": [
+        {
+          "attribute": "accountStatus",
+          "readOnly": true,
+        },
+      ],
+      "attribute": "testPropertyName",
+      "filter": "privilegeFilter",
+      "permissions": [
+        "CREATE",
+      ],
+    },
+    "identityObjectSchema=",
+    {
+      "order": [
+        "accountStatus",
+      ],
+      "properties": {
+        "accountStatus": {
+          "default": "active",
+          "description": "Status",
+          "isPersonal": false,
+          "key": "accountStatus",
+          "searchable": true,
+          "status": "common.none",
+          "title": "Status",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": false,
+        },
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noFooterSorting" with v-bind value \`false\` will render noFooterSorting="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BTable",
+    "class="p-0 mb-0"",
+    "no-border=""",
+    "show-empty=""",
+    " ...",
+    ">",
+    "
+",
+    " at <PrivilegeEditor",
+    "privilege=",
+    {
+      "accessFlags": [
+        {
+          "attribute": "accountStatus",
+          "readOnly": true,
+        },
+      ],
+      "attribute": "testPropertyName",
+      "filter": "privilegeFilter",
+      "permissions": [
+        "CREATE",
+      ],
+    },
+    "identityObjectSchema=",
+    {
+      "order": [
+        "accountStatus",
+      ],
+      "properties": {
+        "accountStatus": {
+          "default": "active",
+          "description": "Status",
+          "isPersonal": false,
+          "key": "accountStatus",
+          "searchable": true,
+          "status": "common.none",
+          "title": "Status",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": false,
+        },
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noSortReset" with v-bind value \`false\` will render noSortReset="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BTable",
+    "class="p-0 mb-0"",
+    "no-border=""",
+    "show-empty=""",
+    " ...",
+    ">",
+    "
+",
+    " at <PrivilegeEditor",
+    "privilege=",
+    {
+      "accessFlags": [
+        {
+          "attribute": "accountStatus",
+          "readOnly": true,
+        },
+      ],
+      "attribute": "testPropertyName",
+      "filter": "privilegeFilter",
+      "permissions": [
+        "CREATE",
+      ],
+    },
+    "identityObjectSchema=",
+    {
+      "order": [
+        "accountStatus",
+      ],
+      "properties": {
+        "accountStatus": {
+          "default": "active",
+          "description": "Status",
+          "isPersonal": false,
+          "key": "accountStatus",
+          "searchable": true,
+          "status": "common.none",
+          "title": "Status",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": false,
+        },
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "sortDesc" with v-bind value \`false\` will render sortDesc="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BTable",
+    "class="p-0 mb-0"",
+    "no-border=""",
+    "show-empty=""",
+    " ...",
+    ">",
+    "
+",
+    " at <PrivilegeEditor",
+    "privilege=",
+    {
+      "accessFlags": [
+        {
+          "attribute": "accountStatus",
+          "readOnly": true,
+        },
+      ],
+      "attribute": "testPropertyName",
+      "filter": "privilegeFilter",
+      "permissions": [
+        "CREATE",
+      ],
+    },
+    "identityObjectSchema=",
+    {
+      "order": [
+        "accountStatus",
+      ],
+      "properties": {
+        "accountStatus": {
+          "default": "active",
+          "description": "Status",
+          "isPersonal": false,
+          "key": "accountStatus",
+          "searchable": true,
+          "status": "common.none",
+          "title": "Status",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": false,
+        },
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "sortIconLeft" with v-bind value \`false\` will render sortIconLeft="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BTable",
+    "class="p-0 mb-0"",
+    "no-border=""",
+    "show-empty=""",
+    " ...",
+    ">",
+    "
+",
+    " at <PrivilegeEditor",
+    "privilege=",
+    {
+      "accessFlags": [
+        {
+          "attribute": "accountStatus",
+          "readOnly": true,
+        },
+      ],
+      "attribute": "testPropertyName",
+      "filter": "privilegeFilter",
+      "permissions": [
+        "CREATE",
+      ],
+    },
+    "identityObjectSchema=",
+    {
+      "order": [
+        "accountStatus",
+      ],
+      "properties": {
+        "accountStatus": {
+          "default": "active",
+          "description": "Status",
+          "isPersonal": false,
+          "key": "accountStatus",
+          "searchable": true,
+          "status": "common.none",
+          "title": "Status",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": false,
+        },
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "sortNullLast" with v-bind value \`false\` will render sortNullLast="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BTable",
+    "class="p-0 mb-0"",
+    "no-border=""",
+    "show-empty=""",
+    " ...",
+    ">",
+    "
+",
+    " at <PrivilegeEditor",
+    "privilege=",
+    {
+      "accessFlags": [
+        {
+          "attribute": "accountStatus",
+          "readOnly": true,
+        },
+      ],
+      "attribute": "testPropertyName",
+      "filter": "privilegeFilter",
+      "permissions": [
+        "CREATE",
+      ],
+    },
+    "identityObjectSchema=",
+    {
+      "order": [
+        "accountStatus",
+      ],
+      "properties": {
+        "accountStatus": {
+          "default": "active",
+          "description": "Status",
+          "isPersonal": false,
+          "key": "accountStatus",
+          "searchable": true,
+          "status": "common.none",
+          "title": "Status",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": false,
+        },
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noSelectOnClick" with v-bind value \`false\` will render noSelectOnClick="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BTable",
+    "class="p-0 mb-0"",
+    "no-border=""",
+    "show-empty=""",
+    " ...",
+    ">",
+    "
+",
+    " at <PrivilegeEditor",
+    "privilege=",
+    {
+      "accessFlags": [
+        {
+          "attribute": "accountStatus",
+          "readOnly": true,
+        },
+      ],
+      "attribute": "testPropertyName",
+      "filter": "privilegeFilter",
+      "permissions": [
+        "CREATE",
+      ],
+    },
+    "identityObjectSchema=",
+    {
+      "order": [
+        "accountStatus",
+      ],
+      "properties": {
+        "accountStatus": {
+          "default": "active",
+          "description": "Status",
+          "isPersonal": false,
+          "key": "accountStatus",
+          "searchable": true,
+          "status": "common.none",
+          "title": "Status",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": false,
+        },
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "selectable" with v-bind value \`false\` will render selectable="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BTable",
+    "class="p-0 mb-0"",
+    "no-border=""",
+    "show-empty=""",
+    " ...",
+    ">",
+    "
+",
+    " at <PrivilegeEditor",
+    "privilege=",
+    {
+      "accessFlags": [
+        {
+          "attribute": "accountStatus",
+          "readOnly": true,
+        },
+      ],
+      "attribute": "testPropertyName",
+      "filter": "privilegeFilter",
+      "permissions": [
+        "CREATE",
+      ],
+    },
+    "identityObjectSchema=",
+    {
+      "order": [
+        "accountStatus",
+      ],
+      "properties": {
+        "accountStatus": {
+          "default": "active",
+          "description": "Status",
+          "isPersonal": false,
+          "key": "accountStatus",
+          "searchable": true,
+          "status": "common.none",
+          "title": "Status",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": false,
+        },
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "busy" with v-bind value \`false\` will render busy="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BTable",
+    "class="p-0 mb-0"",
+    "no-border=""",
+    "show-empty=""",
+    " ...",
+    ">",
+    "
+",
+    " at <PrivilegeEditor",
+    "privilege=",
+    {
+      "accessFlags": [
+        {
+          "attribute": "accountStatus",
+          "readOnly": true,
+        },
+      ],
+      "attribute": "testPropertyName",
+      "filter": "privilegeFilter",
+      "permissions": [
+        "CREATE",
+      ],
+    },
+    "identityObjectSchema=",
+    {
+      "order": [
+        "accountStatus",
+      ],
+      "properties": {
+        "accountStatus": {
+          "default": "active",
+          "description": "Status",
+          "isPersonal": false,
+          "key": "accountStatus",
+          "searchable": true,
+          "status": "common.none",
+          "title": "Status",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": false,
+        },
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noProviderFiltering" with v-bind value \`false\` will render noProviderFiltering="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BTable",
+    "class="p-0 mb-0"",
+    "no-border=""",
+    "show-empty=""",
+    " ...",
+    ">",
+    "
+",
+    " at <PrivilegeEditor",
+    "privilege=",
+    {
+      "accessFlags": [
+        {
+          "attribute": "accountStatus",
+          "readOnly": true,
+        },
+      ],
+      "attribute": "testPropertyName",
+      "filter": "privilegeFilter",
+      "permissions": [
+        "CREATE",
+      ],
+    },
+    "identityObjectSchema=",
+    {
+      "order": [
+        "accountStatus",
+      ],
+      "properties": {
+        "accountStatus": {
+          "default": "active",
+          "description": "Status",
+          "isPersonal": false,
+          "key": "accountStatus",
+          "searchable": true,
+          "status": "common.none",
+          "title": "Status",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": false,
+        },
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noProviderPaging" with v-bind value \`false\` will render noProviderPaging="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BTable",
+    "class="p-0 mb-0"",
+    "no-border=""",
+    "show-empty=""",
+    " ...",
+    ">",
+    "
+",
+    " at <PrivilegeEditor",
+    "privilege=",
+    {
+      "accessFlags": [
+        {
+          "attribute": "accountStatus",
+          "readOnly": true,
+        },
+      ],
+      "attribute": "testPropertyName",
+      "filter": "privilegeFilter",
+      "permissions": [
+        "CREATE",
+      ],
+    },
+    "identityObjectSchema=",
+    {
+      "order": [
+        "accountStatus",
+      ],
+      "properties": {
+        "accountStatus": {
+          "default": "active",
+          "description": "Status",
+          "isPersonal": false,
+          "key": "accountStatus",
+          "searchable": true,
+          "status": "common.none",
+          "title": "Status",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": false,
+        },
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noProviderSorting" with v-bind value \`false\` will render noProviderSorting="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BTable",
+    "class="p-0 mb-0"",
+    "no-border=""",
+    "show-empty=""",
+    " ...",
+    ">",
+    "
+",
+    " at <PrivilegeEditor",
+    "privilege=",
+    {
+      "accessFlags": [
+        {
+          "attribute": "accountStatus",
+          "readOnly": true,
+        },
+      ],
+      "attribute": "testPropertyName",
+      "filter": "privilegeFilter",
+      "permissions": [
+        "CREATE",
+      ],
+    },
+    "identityObjectSchema=",
+    {
+      "order": [
+        "accountStatus",
+      ],
+      "properties": {
+        "accountStatus": {
+          "default": "active",
+          "description": "Status",
+          "isPersonal": false,
+          "key": "accountStatus",
+          "searchable": true,
+          "status": "common.none",
+          "title": "Status",
+          "type": "string",
+          "usageDescription": "",
+          "userEditable": false,
+        },
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;

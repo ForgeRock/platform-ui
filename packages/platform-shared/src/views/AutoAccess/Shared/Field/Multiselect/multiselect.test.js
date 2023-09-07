@@ -5,14 +5,9 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import Vue from 'vue';
-import BootstrapVue from 'bootstrap-vue';
-import flushPromises from 'flush-promises';
-import { createLocalVue, mount } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
+import { nextTick } from 'vue';
 import MultiSelect from './index';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 const defaultMixinProps = {
   multiselectId: '',
@@ -31,11 +26,12 @@ const defaultProps = {
 describe('MultiSelect input', () => {
   it('MultiSelect input component process selectOptions prop from array', () => {
     const wrapper = mount(MultiSelect, {
-      localVue,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         ...defaultMixinProps,
         ...defaultProps,
         selectOptions: ['a', 'b', 'c'],
@@ -77,11 +73,12 @@ describe('MultiSelect input', () => {
     ];
 
     const wrapper = mount(MultiSelect, {
-      localVue,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         ...defaultMixinProps,
         ...defaultProps,
         selectOptions,
@@ -93,11 +90,12 @@ describe('MultiSelect input', () => {
 
   it('MultiSelect input component renders the options', () => {
     const wrapper = mount(MultiSelect, {
-      localVue,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         ...defaultMixinProps,
         ...defaultProps,
         selectOptions: ['a', 'b', 'c'],
@@ -113,11 +111,12 @@ describe('MultiSelect input', () => {
 
   it('MultiSelect input component allows multiple selections', async () => {
     const wrapper = mount(MultiSelect, {
-      localVue,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         ...defaultMixinProps,
         ...defaultProps,
         selectOptions: ['a', 'b', 'c'],
@@ -157,11 +156,12 @@ describe('MultiSelect input', () => {
 
   it('MultiSelect passes through component slots', () => {
     const wrapper = mount(MultiSelect, {
-      localVue,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         ...defaultMixinProps,
         ...defaultProps,
       },
@@ -177,12 +177,13 @@ describe('MultiSelect input', () => {
 
   it('Multiselect is not autofocused on absence of prop "autofocus"', async () => {
     const wrapper = mount(MultiSelect, {
-      localVue,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
+        attachTo: document.body,
       },
-      attachTo: document.body,
-      propsData: {
+      props: {
         ...defaultMixinProps,
         ...defaultProps,
         autofocus: false,
@@ -194,10 +195,10 @@ describe('MultiSelect input', () => {
     });
 
     try {
-      await Vue.nextTick();
+      await nextTick();
       expect(document.activeElement).toEqual(document.body);
     } finally {
-      wrapper.destroy();
+      wrapper.unmount();
     }
   });
 

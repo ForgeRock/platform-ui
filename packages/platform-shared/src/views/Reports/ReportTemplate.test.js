@@ -1,40 +1,41 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright 2023 ForgeRock AS. All Rights Reserved
  *
- * This software may be modified and distributed under the terms
- * of the MIT license. See the LICENSE file for details.
+ * Use of this code requires a commercial software license with ForgeRock AS
+ * or with one of its affiliates. All use shall be exclusively subject
+ * to such license between the licensee and ForgeRock AS.
  */
 
-import { mount } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import { findByRole } from '@forgerock/platform-shared/src/utils/testHelpers';
-import flushPromises from 'flush-promises';
 import * as configApi from '@forgerock/platform-shared/src/api/ConfigApi';
 import * as schemaApi from '@forgerock/platform-shared/src/api/SchemaApi';
 import * as managedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import * as autoApi from '@forgerock/platform-shared/src/api/AutoApi';
+import i18n from '@/i18n';
 import ReportTemplate from './ReportTemplate';
 import {
   getSchemaStub,
   getConfigStub,
   getManagedResourceListStub,
 } from './RunReportStubs';
-import i18n from '@/i18n';
+
+jest.mock('vue-router', () => ({
+  useRoute: jest.fn(() => ({ params: { template: 'template-name' } })),
+  useRouter: jest.fn(() => ({
+    push: jest.fn(),
+  })),
+}));
 
 describe('Report Template component', () => {
   function setup(props) {
     setupTestPinia();
     return mount(ReportTemplate, {
-      i18n,
-      mocks: {
-        $route: {
-          params: {
-            template: 'template-name',
-          },
-        },
-        $router: { push: jest.fn() },
+      global: {
+        plugins: [i18n],
       },
-      propsData: {
+      props: {
         ...props,
       },
     });
@@ -77,8 +78,8 @@ describe('Report Template component', () => {
       await flushPromises();
 
       const tabs = findByRole(wrapper, 'tablist');
-      const runReportTab = tabs.findAll('li').at(0).find('a');
-      const runHistoryTab = tabs.findAll('li').at(1).find('a');
+      const runReportTab = tabs.findAll('li')[0].find('a');
+      const runHistoryTab = tabs.findAll('li')[1].find('a');
 
       expect(window.location.hash.includes('/history')).toBe(false);
       await runHistoryTab.trigger('click');

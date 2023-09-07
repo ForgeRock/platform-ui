@@ -243,7 +243,7 @@ export default {
   width: 36px;
   height: 36px;
 }
-::v-deep {
+:deep {
   .w-114px {
     width: 114px;
   }

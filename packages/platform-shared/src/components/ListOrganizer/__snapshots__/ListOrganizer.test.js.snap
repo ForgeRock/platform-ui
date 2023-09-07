@@ -1,0 +1,2039 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ListOrganizer Component has a list of fields for each element in value prop: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) (2)",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (2)",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) v-model usage on component has changed in Vue 3. Component that expects to work with v-model should now use the "modelValue" prop and emit the "update:modelValue" event. You can update the usage and then opt-in to Vue 3 behavior on a per-component basis with \`compatConfig: { COMPONENT_V_MODEL: false }\`.
+  Details: https://v3-migration.vuejs.org/breaking-changes/v-model.html",
+    "
+",
+    " at <BModal",
+    "modelValue=false",
+    "onUpdate:modelValue=fn",
+    "body-class="p-0"",
+    " ...",
+    ">",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "active" with v-bind value \`false\` will render active="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "variant="outline-secondary"",
+    "onClick=fn",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "block" with v-bind value \`false\` will render block="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "variant="outline-secondary"",
+    "onClick=fn",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "disabled" with v-bind value \`false\` will render disabled="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "variant="outline-secondary"",
+    "onClick=fn",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "exact" with v-bind value \`false\` will render exact="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "variant="outline-secondary"",
+    "onClick=fn",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "exactPath" with v-bind value \`false\` will render exactPath="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "variant="outline-secondary"",
+    "onClick=fn",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noPrefetch" with v-bind value \`false\` will render noPrefetch="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "variant="outline-secondary"",
+    "onClick=fn",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "pill" with v-bind value \`false\` will render pill="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "variant="outline-secondary"",
+    "onClick=fn",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "replace" with v-bind value \`false\` will render replace="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "variant="outline-secondary"",
+    "onClick=fn",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "squared" with v-bind value \`false\` will render squared="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "variant="outline-secondary"",
+    "onClick=fn",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) (2)",
+    "
+",
+    " at <FrField",
+    "modelValue=true",
+    "onUpdate:modelValue=fn<onUpdateModelValue>",
+    "type="checkbox"",
+    " ...",
+    ">",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "canEnterPlaceholders" with v-bind value \`false\` will render canEnterPlaceholders="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <FrField",
+    "type="checkbox"",
+    "label=1",
+    "value=true",
+    " ...",
+    ">",
+    "
+",
+    " at <BListGroupItem",
+    "key=1",
+    ">",
+    "
+",
+    " at <Draggable",
+    "ghost-class="ghost-item"",
+    "list=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    ">",
+    "
+",
+    " at <BListGroup",
+    "flush=""",
+    ">",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "action" with v-bind value \`false\` will render action="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BListGroupItem",
+    "key=1",
+    ">",
+    "
+",
+    " at <Draggable",
+    "ghost-class="ghost-item"",
+    "list=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    ">",
+    "
+",
+    " at <BListGroup",
+    "flush=""",
+    ">",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) (2)",
+    "
+",
+    " at <BListGroupItem",
+    "key=1",
+    ">",
+    "
+",
+    " at <Draggable",
+    "ghost-class="ghost-item"",
+    "list=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    ">",
+    "
+",
+    " at <BListGroup",
+    "flush=""",
+    ">",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "button" with v-bind value \`false\` will render button="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BListGroupItem",
+    "key=1",
+    ">",
+    "
+",
+    " at <Draggable",
+    "ghost-class="ghost-item"",
+    "list=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    ">",
+    "
+",
+    " at <BListGroup",
+    "flush=""",
+    ">",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) (2)",
+    "
+",
+    " at <BListGroupItem",
+    "key=1",
+    ">",
+    "
+",
+    " at <Draggable",
+    "ghost-class="ghost-item"",
+    "list=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    ">",
+    "
+",
+    " at <BListGroup",
+    "flush=""",
+    ">",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) (2)",
+    "
+",
+    " at <BListGroupItem",
+    "key=1",
+    ">",
+    "
+",
+    " at <Draggable",
+    "ghost-class="ghost-item"",
+    "list=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    ">",
+    "
+",
+    " at <BListGroup",
+    "flush=""",
+    ">",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) (2)",
+    "
+",
+    " at <BListGroupItem",
+    "key=1",
+    ">",
+    "
+",
+    " at <Draggable",
+    "ghost-class="ghost-item"",
+    "list=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    ">",
+    "
+",
+    " at <BListGroup",
+    "flush=""",
+    ">",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) (2)",
+    "
+",
+    " at <BListGroupItem",
+    "key=1",
+    ">",
+    "
+",
+    " at <Draggable",
+    "ghost-class="ghost-item"",
+    "list=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    ">",
+    "
+",
+    " at <BListGroup",
+    "flush=""",
+    ">",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) (2)",
+    "
+",
+    " at <BListGroupItem",
+    "key=1",
+    ">",
+    "
+",
+    " at <Draggable",
+    "ghost-class="ghost-item"",
+    "list=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    ">",
+    "
+",
+    " at <BListGroup",
+    "flush=""",
+    ">",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noTransitionOnDrag" with v-bind value \`false\` will render noTransitionOnDrag="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <Draggable",
+    "ghost-class="ghost-item"",
+    "list=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    ">",
+    "
+",
+    " at <BListGroup",
+    "flush=""",
+    ">",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "horizontal" with v-bind value \`false\` will render horizontal="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BListGroup",
+    "flush=""",
+    ">",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "visible" with v-bind value \`false\` will render visible="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "busy" with v-bind value \`false\` will render busy="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "cancelDisabled" with v-bind value \`false\` will render cancelDisabled="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "centered" with v-bind value \`false\` will render centered="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "hideBackdrop" with v-bind value \`false\` will render hideBackdrop="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "hideFooter" with v-bind value \`false\` will render hideFooter="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "hideHeader" with v-bind value \`false\` will render hideHeader="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "hideHeaderClose" with v-bind value \`false\` will render hideHeaderClose="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "lazy" with v-bind value \`false\` will render lazy="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noCloseOnBackdrop" with v-bind value \`false\` will render noCloseOnBackdrop="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noCloseOnEsc" with v-bind value \`false\` will render noCloseOnEsc="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noEnforceFocus" with v-bind value \`false\` will render noEnforceFocus="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noFade" with v-bind value \`false\` will render noFade="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noStacking" with v-bind value \`false\` will render noStacking="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "okDisabled" with v-bind value \`false\` will render okDisabled="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "okOnly" with v-bind value \`false\` will render okOnly="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "static" with v-bind value \`false\` will render static="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "titleSrOnly" with v-bind value \`false\` will render titleSrOnly="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": true,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`ListOrganizer Component has checkboxes unchecked for fields that are disabled: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "value" with v-bind value \`false\` will render value="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <FrField",
+    "type="checkbox"",
+    "label=2",
+    "value=false",
+    " ...",
+    ">",
+    "
+",
+    " at <BListGroupItem",
+    "key=2",
+    ">",
+    "
+",
+    " at <Draggable",
+    "ghost-class="ghost-item"",
+    "list=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": false,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    ">",
+    "
+",
+    " at <BListGroup",
+    "flush=""",
+    ">",
+    "
+",
+    " at <BModal",
+    "body-class="p-0"",
+    "cancel-variant="link"",
+    "scrollable=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ListOrganizer",
+    "value=",
+    [
+      {
+        "enabled": true,
+        "key": 1,
+        "label": 1,
+      },
+      {
+        "enabled": false,
+        "key": 2,
+        "label": 2,
+      },
+      {
+        "enabled": true,
+        "key": 3,
+        "label": 3,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;

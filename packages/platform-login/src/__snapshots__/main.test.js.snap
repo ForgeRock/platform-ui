@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`main.js /logout url flow does not call sdk logout if route is not logout: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) Vue.extend() has been removed in Vue 3. Use defineComponent() instead.
+  Details: https://vuejs.org/api/general.html#definecomponent",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_MOUNT) The global app bootstrapping API has changed: vm.$mount() and the "el" option have been removed. Use createApp(RootComponent).mount() instead.
+  Details: https://v3-migration.vuejs.org/breaking-changes/global-api.html#mounting-app-instance",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) "watch" option or vm.$watch on an array value will no longer trigger on array mutation unless the "deep" option is specified. If current usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ WATCH_ARRAY: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/watch.html",
+  ],
+  [
+    "[Vue warn]: Failed to mount app: mount target selector "#appRoot" returned null.",
+  ],
+]
+`;

@@ -11,10 +11,12 @@ import LocaleDropdown from './index';
 describe('LocaleDropdown', () => {
   it('Does not show "Add Button" when prop not set', () => {
     const wrapper = shallowMount(LocaleDropdown, {
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         dropdownItems: [{
           locale: 'one',
           active: true,
@@ -30,10 +32,13 @@ describe('LocaleDropdown', () => {
 
   it('Shows "Add Button" when prop set to true', () => {
     const wrapper = shallowMount(LocaleDropdown, {
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
+        renderStubDefaultSlot: true,
       },
-      propsData: {
+      props: {
         showAdd: true,
         dropdownItems: [{
           locale: 'one',
@@ -57,10 +62,12 @@ describe('LocaleDropdown', () => {
       active: false,
     }];
     const wrapper = mount(LocaleDropdown, {
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         showAdd: true,
         dropdownItems,
         title: 'Locale Dropdown',
@@ -78,10 +85,12 @@ describe('LocaleDropdown', () => {
       active: true,
     }];
     const wrapper = mount(LocaleDropdown, {
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         showAdd: true,
         dropdownItems,
         title: 'Locale Dropdown',

@@ -17,8 +17,10 @@ describe('DeleteModal', () => {
 
   function setup(props) {
     return mount(DeleteModal, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         ...stubPropsData,
         ...props,
       },
@@ -60,7 +62,7 @@ describe('DeleteModal', () => {
     });
 
     const deleteButton = findByTestId(wrapper, 'btn-confirm-delete-modal');
-    expect(deleteButton.attributes('disabled')).toBeTruthy();
+    expect(deleteButton.attributes('disabled')).toBe('');
   });
 
   describe('@actions', () => {

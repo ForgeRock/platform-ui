@@ -37,15 +37,13 @@ of the MIT license. See the LICENSE file for details. -->
           <div class="col-sm-10">
             <BCard>
               <dl class="row m-0">
-                <template v-for="(detail, index) in taskDetailsList">
-                  <dt
-                    :key="`taskname-${index}-${uniqueId}`"
-                    class="col-6">
+                <template
+                  v-for="(detail, index) in taskDetailsList"
+                  :key="`taskname-${index}-${uniqueId}`">
+                  <dt class="col-6">
                     {{ detail.name }}
                   </dt>
-                  <dd
-                    :key="`taskvalue-${index}-${uniqueId}`"
-                    class="col-6">
+                  <dd class="col-6">
                     {{ detail.value || $t('pages.workflow.notAvailable') }}
                   </dd>
                 </template>
@@ -59,6 +57,14 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import {
+  BButton,
+  BCard,
+  BCardBody,
+  BCol,
+  BFormSelect,
+  BRow,
+} from 'bootstrap-vue';
 import { mapState } from 'pinia';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { isEmpty } from 'lodash';
@@ -71,6 +77,14 @@ import axios from 'axios';
 * */
 export default {
   name: 'AssignTask',
+  components: {
+    BButton,
+    BCard,
+    BCardBody,
+    BCol,
+    BFormSelect,
+    BRow,
+  },
   props: {
     taskDefinition: {
       type: Object,

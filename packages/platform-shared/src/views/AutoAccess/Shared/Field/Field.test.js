@@ -1,17 +1,11 @@
 /**
- * Copyright (c) 2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2023 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import {
-  createLocalVue, mount,
-} from '@vue/test-utils';
-import flushPromises from 'flush-promises';
-import { extend, ValidationObserver, ValidationProvider } from 'vee-validate';
-import { required, email } from 'vee-validate/dist/rules.umd';
+import { mount, flushPromises } from '@vue/test-utils';
 import FrField from './index';
 
 // function to clear promises and trigger timers (validation runs every 16ms)
@@ -20,41 +14,27 @@ async function flush() {
   jest.runAllTimers();
 }
 
-const stubs = {
-  ValidationObserver,
-  ValidationProvider,
-};
-
-let localVue;
-
 describe('FrField.vue', () => {
   let wrapper;
   beforeEach(() => {
-    localVue = createLocalVue();
-    localVue.use(BootstrapVue);
     jest.useFakeTimers();
-    extend('required', {
-      ...required,
-    });
-    // Note: not testing the validation rules, just that validation happens
-    extend('email', {
-      ...email,
-    });
   });
 
   it('uses string floating label input for string type', async () => {
     wrapper = mount(FrField, {
       sync: false,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         field: {
           key: 'testField',
           value: '',
+          title: 'testField',
         },
       },
-      stubs,
     });
     await flush();
     const input = wrapper.find('#testField input');
@@ -66,17 +46,19 @@ describe('FrField.vue', () => {
   it('uses number floating label input for integer type', async () => {
     wrapper = mount(FrField, {
       sync: false,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         field: {
           type: 'number',
           key: 'testField',
           value: '',
+          title: 'testField',
         },
       },
-      stubs,
     });
     await flush();
     const input = wrapper.find('#testField input');
@@ -91,17 +73,19 @@ describe('FrField.vue', () => {
   it('uses password floating label input for password type', async () => {
     wrapper = mount(FrField, {
       sync: false,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         field: {
           type: 'password',
           key: 'testField',
           value: '',
+          title: 'testField',
         },
       },
-      stubs,
     });
     await flush();
     const input = wrapper.find('#testField input');
@@ -115,18 +99,20 @@ describe('FrField.vue', () => {
   it('uses select floating label input for select type', async () => {
     wrapper = mount(FrField, {
       sync: false,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         field: {
           type: 'select',
           key: 'testField',
           enum: ['enum1', 'enum2'],
           enumNames: ['option1', 'option2'],
+          title: 'testField',
         },
       },
-      stubs,
     });
     // Ensure we get a failure when trying to select a value that is not in options
     wrapper.vm.field.value = ['option3'];
@@ -141,18 +127,20 @@ describe('FrField.vue', () => {
   it('uses multiselect floating label input for multiselect type', async () => {
     wrapper = mount(FrField, {
       sync: false,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         field: {
           type: 'multiselect',
           key: 'testField',
           enum: ['enum1', 'enum2'],
           enumNames: ['option1', 'option2'],
+          title: 'testField',
         },
       },
-      stubs,
     });
     // Ensure we get a failure when trying to select a value that is not in options
     wrapper.vm.field.value = ['option3'];
@@ -171,18 +159,20 @@ describe('FrField.vue', () => {
   it('uses bootstrap form tags component for tag type', async () => {
     wrapper = mount(FrField, {
       sync: false,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         field: {
           type: 'tag',
           key: 'testField',
           value: [],
           options: ['option1', 'option2'],
+          title: 'testField',
         },
       },
-      stubs,
     });
     await flush();
     expect(wrapper.vm.field.value).toStrictEqual([]);
@@ -195,17 +185,19 @@ describe('FrField.vue', () => {
   it('uses key value list component for object type', async () => {
     wrapper = mount(FrField, {
       sync: false,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         field: {
           type: 'object',
           key: 'testField',
           value: {},
+          title: 'testField',
         },
       },
-      stubs,
     });
     await flush();
     expect(wrapper.vm.field.value).toStrictEqual({});
@@ -215,17 +207,19 @@ describe('FrField.vue', () => {
   it('uses toggle button component for boolean type', async () => {
     wrapper = mount(FrField, {
       sync: false,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         field: {
           type: 'boolean',
           key: 'testField',
           value: true,
+          title: 'testField',
         },
       },
-      stubs,
     });
     await flush();
     expect(wrapper.find('.fr-toggle-primary').isVisible()).toBeTruthy();
@@ -237,6 +231,7 @@ describe('FrField.vue', () => {
         type: 'checkbox',
         key: 'testField',
         value: true,
+        title: 'testField',
       },
     });
     expect(wrapper.vm.field.value).toBe(true);

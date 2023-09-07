@@ -5,15 +5,21 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount } from '@vue/test-utils';
+import { flushPromises, shallowMount } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
-import { ValidationProvider } from 'vee-validate';
+import { Field } from 'vee-validate';
+import uuid from 'uuid/v4';
 import ListOfObjects from './index';
 
-const stubs = { ValidationProvider };
+jest.mock('uuid/v4');
+
+const stubs = { Field };
 const wrapperNoValue = {
-  mocks: { $t: () => {} },
-  propsData: {
+  global: {
+    mocks: { $t: () => {} },
+    stubs,
+  },
+  props: {
     properties: {
       testPropertyKey: {
         type: 'boolean',
@@ -26,14 +32,16 @@ const wrapperNoValue = {
     },
     label: 'test',
   },
-  stubs,
 };
 
 describe('ListOfObjects', () => {
   it('ListOfObjects sets listValues when there is an array value', () => {
     const wrapper = shallowMount(ListOfObjects, {
-      mocks: { $t: () => {} },
-      propsData: {
+      global: {
+        mocks: { $t: () => {} },
+        stubs,
+      },
+      props: {
         properties: {
           testPropertyKey: {
             type: 'boolean',
@@ -47,7 +55,6 @@ describe('ListOfObjects', () => {
         label: 'test',
         value: [{ test: 'test' }],
       },
-      stubs,
     });
     expect(wrapper.vm.listValues).toStrictEqual([{
       listUniqueIndex: 1,
@@ -57,8 +64,11 @@ describe('ListOfObjects', () => {
 
   it('ListOfObjects sets listValues and converts to array when there is an object value', () => {
     const wrapper = shallowMount(ListOfObjects, {
-      mocks: { $t: () => {} },
-      propsData: {
+      global: {
+        mocks: { $t: () => {} },
+        stubs,
+      },
+      props: {
         properties: {
           testPropertyKey: {
             type: 'boolean',
@@ -73,7 +83,6 @@ describe('ListOfObjects', () => {
         multiValued: false,
         value: { test: 'test' },
       },
-      stubs,
     });
     expect(wrapper.vm.listValues).toStrictEqual([{
       listUniqueIndex: 1,
@@ -106,8 +115,11 @@ describe('ListOfObjects', () => {
 
   it('ListOfObjects checks if field is valid', async () => {
     const wrapper = shallowMount(ListOfObjects, {
-      mocks: { $t: () => {} },
-      propsData: {
+      global: {
+        mocks: { $t: () => {} },
+        stubs,
+      },
+      props: {
         properties: {
           testPropertyKey: {
             type: 'array',
@@ -116,7 +128,6 @@ describe('ListOfObjects', () => {
         },
         label: 'test',
       },
-      stubs,
     });
     expect(wrapper.vm.isValidField()).toBe(false);
     await wrapper.setProps({
@@ -144,13 +155,16 @@ describe('ListOfObjects', () => {
     await wrapper.setProps({ disabled: true });
 
     const addButton = findByTestId(wrapper, 'list-objects-none-add');
-    expect(addButton.attributes('disabled')).toBeTruthy();
+    expect(addButton.attributes('disabled')).toBeDefined();
   });
 
-  it('If all fields are empty or null, remove the object', () => {
+  it('If all fields are empty or null, remove the object', async () => {
     const wrapper = shallowMount(ListOfObjects, {
-      mocks: { $t: () => {} },
-      propsData: {
+      global: {
+        mocks: { $t: () => {} },
+        stubs,
+      },
+      props: {
         label: 'test',
         properties: {
           test: {
@@ -163,10 +177,36 @@ describe('ListOfObjects', () => {
           },
         },
       },
-      stubs,
     });
     const emptyObj = [{ test: '', testtwo: null }];
     wrapper.vm.emitInput(emptyObj);
+    await flushPromises();
     expect(wrapper.emitted().input[0]).toEqual([[]]);
+  });
+
+  it('Generates an uuid as a name for the useField method', () => {
+    const uuidValue = '48e64f6b-f946-485e-af17-2d703cfe7d42';
+    uuid.mockImplementation(() => uuidValue);
+    shallowMount(ListOfObjects, {
+      global: {
+        mocks: { $t: () => {} },
+        stubs,
+      },
+      props: {
+        properties: {
+          testPropertyKey: {
+            type: 'boolean',
+            title: 'testPropertyValue',
+          },
+          test: {
+            type: 'string',
+            title: 'test',
+          },
+        },
+        value: [{ test: 'test' }],
+      },
+    });
+
+    expect(uuid).toHaveBeenCalled();
   });
 });

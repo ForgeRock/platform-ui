@@ -5,10 +5,9 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
-import flushPromises from 'flush-promises';
 import * as AccessRequestApi from '@/api/governance/AccessRequestApi';
 import i18n from '@/i18n';
 import MyRequests from './index';
@@ -64,7 +63,9 @@ const accessRequests = [{
 
 describe('MyRequests', () => {
   const stubProps = {
-    i18n,
+    global: {
+      plugins: [i18n],
+    },
   };
 
   const setup = (props) => {

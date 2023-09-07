@@ -1,9 +1,7 @@
-<!--
-Copyright (c) 2020 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
-of the MIT license. See the LICENSE file for details.
--->
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <BContainer
     fluid
@@ -17,6 +15,7 @@ of the MIT license. See the LICENSE file for details.
 </template>
 
 <script>
+import { BContainer } from 'bootstrap-vue';
 import { each } from 'lodash';
 import { BounceLoader } from 'vue-spinner/dist/vue-spinner.min';
 import styles from '@/scss/main.scss';
@@ -30,6 +29,7 @@ import styles from '@/scss/main.scss';
 export default {
   name: 'OAuthReturn',
   components: {
+    BContainer,
     BounceLoader,
   },
   data() {

@@ -5,9 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
 import { cloneDeep } from 'lodash';
-import flushPromises from 'flush-promises';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import RequestFilter from './index';
@@ -39,8 +38,10 @@ describe('RequestFilter', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = mount(RequestFilter, {
-      mocks: {
-        $t: (text) => text,
+      global: {
+        mocks: {
+          $t: (text) => text,
+        },
       },
     });
   });
@@ -97,8 +98,7 @@ describe('RequestFilter', () => {
     expectedFilter.requestType = wrapper.vm.requestTypeOptions[1].value;
 
     findByTestId(wrapper, 'request-type')
-      .findAll('li')
-      .at(1)
+      .findAll('li')[1]
       .find('span')
       .trigger('click');
     await flushPromises();
@@ -114,8 +114,7 @@ describe('RequestFilter', () => {
     expectedFilter.requestedFor = 'managed/user/testId';
 
     findByTestId(wrapper, 'requested-for')
-      .findAll('li')
-      .at(1)
+      .findAll('li')[1]
       .find('span')
       .trigger('click');
     await flushPromises();
@@ -131,8 +130,7 @@ describe('RequestFilter', () => {
     expectedFilter.requester = 'managed/user/testId';
 
     findByTestId(wrapper, 'requester')
-      .findAll('li')
-      .at(1)
+      .findAll('li')[1]
       .find('span')
       .trigger('click');
     await flushPromises();

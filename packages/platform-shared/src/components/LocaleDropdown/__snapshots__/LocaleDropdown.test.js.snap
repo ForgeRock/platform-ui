@@ -1,0 +1,1821 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LocaleDropdown Does not show "Add Button" when prop not set: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (2)",
+    "
+",
+    " at <LocaleDropdown",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "disabled" with v-bind value \`false\` will render disabled="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "dropleft" with v-bind value \`false\` will render dropleft="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "dropright" with v-bind value \`false\` will render dropright="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "dropup" with v-bind value \`false\` will render dropup="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noFlip" with v-bind value \`false\` will render noFlip="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "right" with v-bind value \`false\` will render right="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "block" with v-bind value \`false\` will render block="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "lazy" with v-bind value \`false\` will render lazy="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noCaret" with v-bind value \`false\` will render noCaret="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "split" with v-bind value \`false\` will render split="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`LocaleDropdown Shows "Add Button" when prop set to true: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "active" with v-bind value \`false\` will render active="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "type="button"",
+    "class="btn-sm btn-edit"",
+    "variant="primary"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "active=true",
+    "key=0",
+    "class="dropdown-locale-item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) (2)",
+    "
+",
+    " at <BButton",
+    "type="button"",
+    "class="btn-sm btn-edit"",
+    "variant="primary"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "active=true",
+    "key=0",
+    "class="dropdown-locale-item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) (2)",
+    "
+",
+    " at <BButton",
+    "type="button"",
+    "class="btn-sm btn-edit"",
+    "variant="primary"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "active=true",
+    "key=0",
+    "class="dropdown-locale-item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "exact" with v-bind value \`false\` will render exact="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "type="button"",
+    "class="btn-sm btn-edit"",
+    "variant="primary"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "active=true",
+    "key=0",
+    "class="dropdown-locale-item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "exactPath" with v-bind value \`false\` will render exactPath="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "type="button"",
+    "class="btn-sm btn-edit"",
+    "variant="primary"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "active=true",
+    "key=0",
+    "class="dropdown-locale-item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noPrefetch" with v-bind value \`false\` will render noPrefetch="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "type="button"",
+    "class="btn-sm btn-edit"",
+    "variant="primary"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "active=true",
+    "key=0",
+    "class="dropdown-locale-item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "pill" with v-bind value \`false\` will render pill="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "type="button"",
+    "class="btn-sm btn-edit"",
+    "variant="primary"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "active=true",
+    "key=0",
+    "class="dropdown-locale-item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "replace" with v-bind value \`false\` will render replace="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "type="button"",
+    "class="btn-sm btn-edit"",
+    "variant="primary"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "active=true",
+    "key=0",
+    "class="dropdown-locale-item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "squared" with v-bind value \`false\` will render squared="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "type="button"",
+    "class="btn-sm btn-edit"",
+    "variant="primary"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "active=true",
+    "key=0",
+    "class="dropdown-locale-item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) (3)",
+    "
+",
+    " at <BDropdownItem",
+    "active=true",
+    "key=0",
+    "class="dropdown-locale-item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) (2)",
+    "
+",
+    " at <BDropdownItem",
+    "active=true",
+    "key=0",
+    "class="dropdown-locale-item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) (2)",
+    "
+",
+    " at <BDropdownItem",
+    "active=true",
+    "key=0",
+    "class="dropdown-locale-item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) (2)",
+    "
+",
+    " at <BDropdownItem",
+    "active=true",
+    "key=0",
+    "class="dropdown-locale-item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) (2)",
+    "
+",
+    " at <BDropdownItem",
+    "active=true",
+    "key=0",
+    "class="dropdown-locale-item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) (2)",
+    "
+",
+    " at <BDropdownItem",
+    "active=false",
+    "key=1",
+    "class="dropdown-locale-item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`LocaleDropdown Shows the correct number of dropdown items: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (2)",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) \`beforeDestroy\` has been renamed to \`beforeUnmount\`.",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) vm.$scopedSlots has been removed. Use vm.$slots instead.
+  Details: https://v3-migration.vuejs.org/breaking-changes/slots-unification.html",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (3)",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) Functional component <BButton> should be defined as a plain function in Vue 3. The "functional" option has been removed. NOTE: Before migrating to use plain functions for functional components, first make sure that all async components usage have been migrated and its compat behavior has been disabled.
+  Details: https://v3-migration.vuejs.org/breaking-changes/functional-components.html",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) (2)",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) vm.$listeners has been removed. In Vue 3, parent v-on listeners are included in vm.$attrs and it is no longer necessary to separately use v-on="$listeners" if you are already using v-bind="$attrs". (Note: the Vue 3 behavior only applies if this compat config is disabled)
+  Details: https://v3-migration.vuejs.org/breaking-changes/listeners-removed.html",
+    "
+",
+    " at <BButton",
+    "class="dropdown-toggle pl-0 text-dark"",
+    "onMousedown=fn<bound onMousedown>",
+    "onClick=fn<bound toggle>",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (3)",
+    "
+",
+    " at <BDropdownItem",
+    "active=true",
+    "key=0",
+    "class="dropdown-locale-item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (2)",
+    "
+",
+    " at <BDropdownItem",
+    "active=true",
+    "key=0",
+    "class="dropdown-locale-item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (4)",
+    "
+",
+    " at <BDropdownItem",
+    "active=true",
+    "key=0",
+    "class="dropdown-locale-item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_ATTRS_CLASS_STYLE) Component <BDropdownItem> has \`inheritAttrs: false\` but is relying on class/style fallthrough from parent. In Vue 3, class/style are now included in $attrs and will no longer fallthrough when inheritAttrs is false. If you are already using v-bind="$attrs" on component root it should render the same end result. If you are binding $attrs to a non-root element and expecting class/style to fallthrough on root, you will need to now manually bind them on root via :class="$attrs.class".
+  Details: https://v3-migration.vuejs.org/breaking-changes/attrs-includes-class-style.html",
+    "
+",
+    " at <BDropdownItem",
+    "active=true",
+    "key=0",
+    "class="dropdown-locale-item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (4)",
+    "
+",
+    " at <BLink",
+    "class="dropdown-item"",
+    "onClick=fn<bound onClick>",
+    "ref="item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "active=true",
+    "key=0",
+    "class="dropdown-locale-item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_DATA_MERGE) Detected conflicting key "bvListeners" when merging data option values. In Vue 3, data keys are merged shallowly and will override one another.
+  Details: https://v3-migration.vuejs.org/breaking-changes/data-option.html#mixin-merge-behavior-change",
+    "
+",
+    " at <BLink",
+    "class="dropdown-item"",
+    "onClick=fn<bound onClick>",
+    "ref="item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "active=true",
+    "key=0",
+    "class="dropdown-locale-item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (2)",
+    "
+",
+    " at <BLink",
+    "class="dropdown-item"",
+    "onClick=fn<bound onClick>",
+    "ref="item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "active=true",
+    "key=0",
+    "class="dropdown-locale-item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) (2)",
+    "
+",
+    " at <BLink",
+    "class="dropdown-item"",
+    "onClick=fn<bound onClick>",
+    "ref="item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "active=true",
+    "key=0",
+    "class="dropdown-locale-item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (3)",
+    "
+",
+    " at <BLink",
+    "class="dropdown-item"",
+    "onClick=fn<bound onClick>",
+    "ref="item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "active=true",
+    "key=0",
+    "class="dropdown-locale-item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_ATTRS_CLASS_STYLE) Component <BLink> has \`inheritAttrs: false\` but is relying on class/style fallthrough from parent. In Vue 3, class/style are now included in $attrs and will no longer fallthrough when inheritAttrs is false. If you are already using v-bind="$attrs" on component root it should render the same end result. If you are binding $attrs to a non-root element and expecting class/style to fallthrough on root, you will need to now manually bind them on root via :class="$attrs.class".
+  Details: https://v3-migration.vuejs.org/breaking-changes/attrs-includes-class-style.html",
+    "
+",
+    " at <BLink",
+    "class="dropdown-item"",
+    "onClick=fn<bound onClick>",
+    "ref="item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "active=true",
+    "key=0",
+    "class="dropdown-locale-item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (3)",
+    "
+",
+    " at <BDropdownDivider>",
+    "
+",
+    " at <BDropdown",
+    "id="dropdown-locale"",
+    "ref="locale"",
+    "toggle-class="pl-0 text-dark"",
+    " ...",
+    ">",
+    "
+",
+    " at <LocaleDropdown",
+    "showAdd=true",
+    "dropdownItems=",
+    [
+      {
+        "active": true,
+        "locale": "one",
+      },
+      {
+        "active": false,
+        "locale": "two",
+      },
+    ],
+    "title="Locale Dropdown"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;

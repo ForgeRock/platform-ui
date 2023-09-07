@@ -13,8 +13,10 @@ describe('ChoiceCallback', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = mount(ChoiceCallback, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         callback: {
           getChoices: () => ['a', 'b', 'c', 'd'],
           getDefaultChoice: () => 0,
@@ -41,12 +43,12 @@ describe('ChoiceCallback', () => {
     );
   });
 
-  it('Sets prompt on DOM', () => {
+  it('Sets prompt on DOM', async () => {
     const select = wrapper.find('.multiselect');
     const elements = () => select.findAll('.multiselect__option');
 
-    select.trigger('click');
-    elements().at(2).trigger('click');
+    await select.trigger('click');
+    await elements()[2].trigger('click');
 
     expect(wrapper.vm.$data.selected).toMatchObject({ value: 2 });
     expect(wrapper.vm.$props.callback.setInputValue).toHaveBeenLastCalledWith(2);

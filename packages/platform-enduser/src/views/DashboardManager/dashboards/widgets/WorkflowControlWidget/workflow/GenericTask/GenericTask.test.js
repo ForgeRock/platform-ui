@@ -5,20 +5,15 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import GenericTask from './index';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 describe('GenericTask.vue', () => {
   let wrapper;
   beforeEach(() => {
     jest.clearAllMocks();
     wrapper = shallowMount(GenericTask, {
-      localVue,
-      propsData: {
+      props: {
         variables: {
           123: '123var',
         },
@@ -37,8 +32,10 @@ describe('GenericTask.vue', () => {
           }],
         },
       },
-      mocks: {
-        $t: (key) => (key),
+      global: {
+        mocks: {
+          $t: (key) => (key),
+        },
       },
     });
   });

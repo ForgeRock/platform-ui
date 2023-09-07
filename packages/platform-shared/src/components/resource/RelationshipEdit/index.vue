@@ -70,23 +70,21 @@ of the MIT license. See the LICENSE file for details. -->
       <template #tag="{ option, remove }">
         <div class="multiselect__tag">
           <div>
-            <span
-              v-for="(displayField, idx) in option.displayFields"
-              :key="`displayField_${displayField}_${idx}`"
-              v-show="idx !== 0"
-              class="pr-1 font-weight-bold">
-              {{ option.resource[displayField] }}
+            <span tabindex="0">
+              <span
+                v-for="(displayField, idx) in option.displayFields"
+                :key="`displayField_${displayField}_${idx}`"
+                v-show="idx !== 0"
+                class="pr-1 font-weight-bold">
+                {{ option.resource[displayField] }}
+              </span>
             </span>
-            <BButton
-              variant="link"
+            <span
+              class="multiselect__tag-icon"
+              tabindex="0"
               :aria-label="$t('common.remove')"
-              class="p-0 close-button float-right"
-              @click="remove(option)">
-              <FrIcon
-                class="md-14 multiselect__tag-icon"
-                name="close"
-              />
-            </BButton>
+              @click.prevent="remove(option)"
+              @keydown.enter="remove(option)" />
           </div>
           {{ option.resource[option.displayFields[0]] }}
         </div>
@@ -135,12 +133,11 @@ import {
   has,
   map,
 } from 'lodash';
-import { BFormGroup, BButton } from 'bootstrap-vue';
+import { BFormGroup } from 'bootstrap-vue';
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { getInternalResourceList } from '@forgerock/platform-shared/src/api/InternalResourceApi';
 import TimeConstraint from '@forgerock/platform-shared/src/components/TimeConstraint';
 import FrField from '@forgerock/platform-shared/src/components/Field';
-import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 // import vue-multiselect from src because dist min/uglified package gets removed in build
@@ -151,9 +148,7 @@ export default {
   components: {
     VueMultiSelect,
     BFormGroup,
-    BButton,
     FrField,
-    FrIcon,
     FrTimeConstraint: TimeConstraint,
   },
   mixins: [

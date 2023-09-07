@@ -11,10 +11,12 @@ import CertificationDetailsModal from './index';
 let wrapper;
 function mountComponent() {
   wrapper = shallowMount(CertificationDetailsModal, {
-    mocks: {
-      $t: (t) => t,
+    global: {
+      mocks: {
+        $t: (t) => t,
+      },
     },
-    propsData: {
+    props: {
       campaignDetails: {
         userName: 'test',
         stageDuration: '12',
