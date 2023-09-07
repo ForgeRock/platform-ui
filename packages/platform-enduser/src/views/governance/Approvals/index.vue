@@ -230,7 +230,7 @@ export default {
     async updateBadge() {
       const queryParams = {
         pageSize: 0,
-        status: 'in-progress',
+        actorStatus: 'active',
       };
       try {
         const { data } = await getUserApprovals(this.$store.state.UserStore.userId, queryParams);
