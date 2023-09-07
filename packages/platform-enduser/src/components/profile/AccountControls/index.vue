@@ -67,6 +67,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import { BButton, BModal } from 'bootstrap-vue';
 import {
   each,
   isNull,
@@ -87,6 +88,8 @@ export default {
     LoginMixin,
   ],
   components: {
+    BButton,
+    BModal,
     FrAccordion: Accordion,
     FrIcon,
   },

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -9,6 +9,7 @@ import {
   cloneDeep,
   isEqual,
 } from 'lodash';
+import uuid from 'uuid/v4';
 
 export default {
   name: 'InputMixin',
@@ -40,6 +41,7 @@ export default {
     name: {
       type: String,
       required: true,
+      default: () => uuid(),
     },
     /**
      * Related text that displays underneath field.
@@ -110,8 +112,7 @@ export default {
       errorMessages: [],
       floatLabels: false,
       id: null,
-      inputValue: '',
-      oldValue: null,
+      oldValue: '',
     };
   },
   beforeMount() {
@@ -163,11 +164,19 @@ export default {
     */
     setInputValue(newVal) {
       if (newVal !== undefined && newVal !== null) {
-        if (!isEqual(this.oldValue, newVal)) {
+        if (this.valueIsDifferent(newVal)) {
           this.inputValue = newVal;
           this.oldValue = cloneDeep(newVal);
         }
       }
+    },
+    /**
+     * Determines whether a new value differs from the previously set inputValue
+     * @param {Array|Object|Number|String} newVal value to be set for internal model
+     * @returns {Boolean} whether the new value is different to the previous value
+     */
+    valueIsDifferent(newVal) {
+      return !isEqual(this.oldValue, newVal);
     },
   },
 };

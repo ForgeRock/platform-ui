@@ -5,44 +5,45 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount, shallowMount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
+import { mount, shallowMount, flushPromises } from '@vue/test-utils';
+import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import i18n from '@/i18n';
 import KeyValueList from './index';
+
+ValidationRules.extendRules({
+  required: ValidationRules.getRules(i18n).required,
+});
 
 describe('KeyValueList', () => {
   describe('unit tests', () => {
     let wrapper;
-    beforeEach(() => {
+    function setup(props) {
       wrapper = shallowMount(KeyValueList, {
-        mocks: {
-          $t: (key) => key,
-        },
-        $refs: {
-          testField: {
-            setErrors: () => Promise.resolve(true),
+        global: {
+          mocks: {
+            $t: (key) => key,
           },
         },
-        propsData: {
+        props: {
           value: '',
           name: 'testField',
+          ...props,
         },
       });
-      wrapper.vm.$refs.testField.setErrors = jest.fn();
-    });
+      wrapper.vm.validateField = jest.fn();
+    }
 
-    it('Saves new key value pair', () => {
-      wrapper.setData({
-        keyValues: {
+    it('Saves new key value pair', async () => {
+      setup({
+        value: {
           en: 'value',
         },
-        currentKey: '',
       });
 
       wrapper.vm.saveKeyValue({ key: 'fr', value: 'frValue' });
 
-      expect(wrapper.emitted()).toEqual({
-        input: [
+      expect(wrapper.emitted().input).toEqual(
+        [
           [
             {
               en: 'value',
@@ -50,67 +51,72 @@ describe('KeyValueList', () => {
             },
           ],
         ],
-      });
+      );
     });
 
     it('deletes item', () => {
-      wrapper.setData({
-        keyValues: {
+      setup({
+        value: {
           en: 'value',
         },
       });
 
       wrapper.vm.deleteItem('en');
 
-      expect(wrapper.emitted()).toEqual({
-        input: [
+      expect(wrapper.emitted().input).toEqual(
+        [
           [
             {},
           ],
         ],
-      });
+      );
     });
 
-    it('does not delete item if currently editing an item', () => {
-      wrapper.setData({
-        keyValues: {
+    it('does not delete item if currently editing an item', async () => {
+      setup({
+        value: {
           en: 'value',
         },
+      });
+
+      await wrapper.setData({
         currentKey: '',
       });
 
       wrapper.vm.deleteItem('en');
 
-      expect(wrapper.emitted()).toEqual({});
+      expect(wrapper.emitted().input).toBeUndefined();
     });
 
-    it('Edits existing value when key is left the same', () => {
-      wrapper.setData({
-        keyValues: {
+    it('Edits existing value when key is left the same', async () => {
+      setup({
+        value: {
           en: 'value',
         },
+      });
+
+      await wrapper.setData({
         currentKey: 'en',
       });
 
       wrapper.vm.saveKeyValue({ key: 'en', value: 'enValue' });
 
-      expect(wrapper.emitted()).toEqual({
-        input: [
+      expect(wrapper.emitted().input).toEqual(
+        [
           [
             {
               en: 'enValue',
             },
           ],
         ],
-      });
+      );
     });
 
     it('Edits key when editItem is called', () => {
-      wrapper.setData({
-        keyValues: {
+      setup({
+        value: {
           en: 'value',
         },
-        currentKey: null,
       });
 
       expect(wrapper.vm.keyValueObject.value).toBe('');
@@ -121,11 +127,13 @@ describe('KeyValueList', () => {
       expect(wrapper.vm.keyValueObject.key).toBe('en');
     });
 
-    it('Hides the text indicating it is empty when it has saved values', () => {
-      wrapper.setData({
-        keyValues: {
+    it('Hides the text indicating it is empty when it has saved values', async () => {
+      setup({
+        value: {
           en: 'value',
         },
+      });
+      await wrapper.setData({
         currentKey: 'en',
       });
 
@@ -135,16 +143,17 @@ describe('KeyValueList', () => {
   });
 
   describe('component tests', () => {
-    function mountComponent(propsData, overrideData = {}) {
+    function mountComponent(propsData) {
       const wrapper = mount(KeyValueList, {
-        i18n,
-        propsData: {
+        global: {
+          plugins: [i18n],
+        },
+        props: {
           value: '',
           name: 'testField',
           ...propsData,
         },
       });
-      wrapper.setData(overrideData);
       return wrapper;
     }
 
@@ -154,10 +163,9 @@ describe('KeyValueList', () => {
       expect(wrapper.find('.list-group-item').exists()).toBe(true);
       expect(wrapper.find('#testfield0-error').exists()).toBe(false);
       const deleteButton = wrapper.find('.material-icons-outlined');
-      deleteButton.trigger('click');
-      await flushPromises();
+      await deleteButton.trigger('click');
       expect(wrapper.find('.list-group-item').exists()).toBe(false);
-      expect(wrapper.find('#testfield0-error').text()).toBe(i18n.t('common.policyValidationMessages.REQUIRED'));
+      expect(wrapper.find('#testfield0-error').text()).toBe(i18n.global.t('common.policyValidationMessages.REQUIRED'));
     });
   });
 });

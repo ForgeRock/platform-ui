@@ -1,0 +1,1875 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FrField.vue uses bootstrap form tags component for tag type: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) (5)",
+    "
+",
+    " at <FrTag",
+    "key=5",
+    "onInput=fn",
+    "modelValue=",
+    [],
+    " ...",
+    ">",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) (6)",
+    "
+",
+    " at <FrTag",
+    "key=5",
+    "onInput=fn",
+    "autofocus=false",
+    " ...",
+    ">",
+    "
+",
+    " at <Field",
+    "key=3",
+    "as="span"",
+    "ref="testField"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "key": "testField",
+      "options": [
+        "option1",
+        "option2",
+      ],
+      "title": "testField",
+      "type": "tag",
+      "validation": "",
+      "value": [],
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (4)",
+    "
+",
+    " at <FrTag",
+    "key=5",
+    "onInput=fn",
+    "autofocus=false",
+    " ...",
+    ">",
+    "
+",
+    " at <Field",
+    "key=3",
+    "as="span"",
+    "ref="testField"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "key": "testField",
+      "options": [
+        "option1",
+        "option2",
+      ],
+      "title": "testField",
+      "type": "tag",
+      "validation": "",
+      "value": [],
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) (6)",
+    "
+",
+    " at <BFormTags",
+    "modelValue=",
+    [],
+    "onUpdate:modelValue=fn",
+    "autofocus=false",
+    " ...",
+    ">",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (2)",
+    "
+",
+    " at <BFormTags",
+    "autofocus=false",
+    "disabled=false",
+    "class="fr-tags"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrTag",
+    "key=5",
+    "onInput=fn",
+    "autofocus=false",
+    " ...",
+    ">",
+    "
+",
+    " at <Field",
+    "key=3",
+    "as="span"",
+    "ref="testField"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "key": "testField",
+      "options": [
+        "option1",
+        "option2",
+      ],
+      "title": "testField",
+      "type": "tag",
+      "validation": "",
+      "value": [],
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_DATA_MERGE) Detected conflicting key "bvListeners" when merging data option values. In Vue 3, data keys are merged shallowly and will override one another.
+  Details: https://v3-migration.vuejs.org/breaking-changes/data-option.html#mixin-merge-behavior-change",
+    "
+",
+    " at <BFormTags",
+    "autofocus=false",
+    "disabled=false",
+    "class="fr-tags"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrTag",
+    "key=5",
+    "onInput=fn",
+    "autofocus=false",
+    " ...",
+    ">",
+    "
+",
+    " at <Field",
+    "key=3",
+    "as="span"",
+    "ref="testField"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "key": "testField",
+      "options": [
+        "option1",
+        "option2",
+      ],
+      "title": "testField",
+      "type": "tag",
+      "validation": "",
+      "value": [],
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) (7)",
+    "
+",
+    " at <BFormTags",
+    "autofocus=false",
+    "disabled=false",
+    "class="fr-tags"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrTag",
+    "key=5",
+    "onInput=fn",
+    "autofocus=false",
+    " ...",
+    ">",
+    "
+",
+    " at <Field",
+    "key=3",
+    "as="span"",
+    "ref="testField"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "key": "testField",
+      "options": [
+        "option1",
+        "option2",
+      ],
+      "title": "testField",
+      "type": "tag",
+      "validation": "",
+      "value": [],
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (6)",
+    "
+",
+    " at <BFormTags",
+    "autofocus=false",
+    "disabled=false",
+    "class="fr-tags"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrTag",
+    "key=5",
+    "onInput=fn",
+    "autofocus=false",
+    " ...",
+    ">",
+    "
+",
+    " at <Field",
+    "key=3",
+    "as="span"",
+    "ref="testField"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "key": "testField",
+      "options": [
+        "option1",
+        "option2",
+      ],
+      "title": "testField",
+      "type": "tag",
+      "validation": "",
+      "value": [],
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) \`beforeDestroy\` has been renamed to \`beforeUnmount\`.",
+    "
+",
+    " at <BFormTags",
+    "autofocus=false",
+    "disabled=false",
+    "class="fr-tags"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrTag",
+    "key=5",
+    "onInput=fn",
+    "autofocus=false",
+    " ...",
+    ">",
+    "
+",
+    " at <Field",
+    "key=3",
+    "as="span"",
+    "ref="testField"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "key": "testField",
+      "options": [
+        "option1",
+        "option2",
+      ],
+      "title": "testField",
+      "type": "tag",
+      "validation": "",
+      "value": [],
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) vm.$scopedSlots has been removed. Use vm.$slots instead.
+  Details: https://v3-migration.vuejs.org/breaking-changes/slots-unification.html",
+    "
+",
+    " at <BFormTags",
+    "autofocus=false",
+    "disabled=false",
+    "class="fr-tags"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrTag",
+    "key=5",
+    "onInput=fn",
+    "autofocus=false",
+    " ...",
+    ">",
+    "
+",
+    " at <Field",
+    "key=3",
+    "as="span"",
+    "ref="testField"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "key": "testField",
+      "options": [
+        "option1",
+        "option2",
+      ],
+      "title": "testField",
+      "type": "tag",
+      "validation": "",
+      "value": [],
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) (7)",
+    "
+",
+    " at <Draggable",
+    "modelValue=",
+    [],
+    "onUpdate:modelValue=fn",
+    "class="d-flex flex-wrap w-100"",
+    " ...",
+    ">",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (3)",
+    "
+",
+    " at <Draggable",
+    "class="d-flex flex-wrap w-100"",
+    "ghost-class="ghost-tag"",
+    "value=",
+    [],
+    " ...",
+    ">",
+    "
+",
+    " at <BFormTags",
+    "autofocus=false",
+    "disabled=false",
+    "class="fr-tags"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrTag",
+    "key=5",
+    "onInput=fn",
+    "autofocus=false",
+    " ...",
+    ">",
+    "
+",
+    " at <Field",
+    "key=3",
+    "as="span"",
+    "ref="testField"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "key": "testField",
+      "options": [
+        "option1",
+        "option2",
+      ],
+      "title": "testField",
+      "type": "tag",
+      "validation": "",
+      "value": [],
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) (8)",
+    "
+",
+    " at <Draggable",
+    "class="d-flex flex-wrap w-100"",
+    "ghost-class="ghost-tag"",
+    "value=",
+    [],
+    " ...",
+    ">",
+    "
+",
+    " at <BFormTags",
+    "autofocus=false",
+    "disabled=false",
+    "class="fr-tags"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrTag",
+    "key=5",
+    "onInput=fn",
+    "autofocus=false",
+    " ...",
+    ">",
+    "
+",
+    " at <Field",
+    "key=3",
+    "as="span"",
+    "ref="testField"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "key": "testField",
+      "options": [
+        "option1",
+        "option2",
+      ],
+      "title": "testField",
+      "type": "tag",
+      "validation": "",
+      "value": [],
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) (2)",
+    "
+",
+    " at <Draggable",
+    "class="d-flex flex-wrap w-100"",
+    "ghost-class="ghost-tag"",
+    "value=",
+    [],
+    " ...",
+    ">",
+    "
+",
+    " at <BFormTags",
+    "autofocus=false",
+    "disabled=false",
+    "class="fr-tags"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrTag",
+    "key=5",
+    "onInput=fn",
+    "autofocus=false",
+    " ...",
+    ">",
+    "
+",
+    " at <Field",
+    "key=3",
+    "as="span"",
+    "ref="testField"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "key": "testField",
+      "options": [
+        "option1",
+        "option2",
+      ],
+      "title": "testField",
+      "type": "tag",
+      "validation": "",
+      "value": [],
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (2)",
+    "
+",
+    " at <Draggable",
+    "class="d-flex flex-wrap w-100"",
+    "ghost-class="ghost-tag"",
+    "value=",
+    [],
+    " ...",
+    ">",
+    "
+",
+    " at <BFormTags",
+    "autofocus=false",
+    "disabled=false",
+    "class="fr-tags"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrTag",
+    "key=5",
+    "onInput=fn",
+    "autofocus=false",
+    " ...",
+    ">",
+    "
+",
+    " at <Field",
+    "key=3",
+    "as="span"",
+    "ref="testField"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "key": "testField",
+      "options": [
+        "option1",
+        "option2",
+      ],
+      "title": "testField",
+      "type": "tag",
+      "validation": "",
+      "value": [],
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_ATTRS_CLASS_STYLE) Component <draggable> has \`inheritAttrs: false\` but is relying on class/style fallthrough from parent. In Vue 3, class/style are now included in $attrs and will no longer fallthrough when inheritAttrs is false. If you are already using v-bind="$attrs" on component root it should render the same end result. If you are binding $attrs to a non-root element and expecting class/style to fallthrough on root, you will need to now manually bind them on root via :class="$attrs.class".
+  Details: https://v3-migration.vuejs.org/breaking-changes/attrs-includes-class-style.html",
+    "
+",
+    " at <Draggable",
+    "class="d-flex flex-wrap w-100"",
+    "ghost-class="ghost-tag"",
+    "value=",
+    [],
+    " ...",
+    ">",
+    "
+",
+    " at <BFormTags",
+    "autofocus=false",
+    "disabled=false",
+    "class="fr-tags"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrTag",
+    "key=5",
+    "onInput=fn",
+    "autofocus=false",
+    " ...",
+    ">",
+    "
+",
+    " at <Field",
+    "key=3",
+    "as="span"",
+    "ref="testField"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "key": "testField",
+      "options": [
+        "option1",
+        "option2",
+      ],
+      "title": "testField",
+      "type": "tag",
+      "validation": "",
+      "value": [],
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`FrField.vue uses key value list component for object type: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) (8)",
+    "
+",
+    " at <KeyValueList",
+    "key=4",
+    "modelValue=",
+    {},
+    "onUpdate:modelValue=fn",
+    " ...",
+    ">",
+  ],
+]
+`;
+
+exports[`FrField.vue uses multiselect floating label input for multiselect type: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) (4)",
+    "
+",
+    " at <MultiSelect",
+    "key=0",
+    "onInput=fn",
+    "class="floating-label-input"",
+    " ...",
+    ">",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) (5)",
+    "
+",
+    " at <MultiSelect",
+    "key=0",
+    "onInput=fn",
+    "class="floating-label-input"",
+    " ...",
+    ">",
+    "
+",
+    " at <Field",
+    "key=3",
+    "as="span"",
+    "ref="testField"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "enum": [
+        "enum1",
+        "enum2",
+      ],
+      "enumNames": [
+        "option1",
+        "option2",
+      ],
+      "key": "testField",
+      "options": [
+        {
+          "text": "option1",
+          "value": "enum1",
+        },
+        {
+          "text": "option2",
+          "value": "enum2",
+        },
+      ],
+      "title": "testField",
+      "type": "multiselect",
+      "validation": "",
+      "value": [
+        "option1",
+        "option2",
+      ],
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (5)",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput35"",
+    "field-name="testField"",
+    "help-text=""",
+    " ...",
+    ">",
+    "
+",
+    " at <MultiSelect",
+    "key=0",
+    "onInput=fn",
+    "class="floating-label-input"",
+    " ...",
+    ">",
+    "
+",
+    " at <Field",
+    "key=3",
+    "as="span"",
+    "ref="testField"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "enum": [
+        "enum1",
+        "enum2",
+      ],
+      "enumNames": [
+        "option1",
+        "option2",
+      ],
+      "key": "testField",
+      "options": [
+        {
+          "text": "option1",
+          "value": "enum1",
+        },
+        {
+          "text": "option2",
+          "value": "enum2",
+        },
+      ],
+      "title": "testField",
+      "type": "multiselect",
+      "validation": "",
+      "value": [
+        "option1",
+        "option2",
+      ],
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`FrField.vue uses password floating label input for password type: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (2)",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput17"",
+    "field-name="testField"",
+    "help-text=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BasicInput",
+    "key=2",
+    "type="password"",
+    "class="floating-label-input"",
+    " ...",
+    ">",
+    "
+",
+    " at <Field",
+    "key=3",
+    "as="span"",
+    "ref="testField"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "key": "testField",
+      "title": "testField",
+      "type": "password",
+      "validation": "",
+      "value": "pass",
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) Functional component <BInputGroupAppend> should be defined as a plain function in Vue 3. The "functional" option has been removed. NOTE: Before migrating to use plain functions for functional components, first make sure that all async components usage have been migrated and its compat behavior has been disabled.
+  Details: https://v3-migration.vuejs.org/breaking-changes/functional-components.html",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput17"",
+    "field-name="testField"",
+    "help-text=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BasicInput",
+    "key=2",
+    "type="password"",
+    "class="floating-label-input"",
+    " ...",
+    ">",
+    "
+",
+    " at <Field",
+    "key=3",
+    "as="span"",
+    "ref="testField"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "key": "testField",
+      "title": "testField",
+      "type": "password",
+      "validation": "",
+      "value": "pass",
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (2)",
+    "
+",
+    " at <BInputGroupAppend",
+    "key=0",
+    "class="fr-hide-input"",
+    ">",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput17"",
+    "field-name="testField"",
+    "help-text=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BasicInput",
+    "key=2",
+    "type="password"",
+    "class="floating-label-input"",
+    " ...",
+    ">",
+    "
+",
+    " at <Field",
+    "key=3",
+    "as="span"",
+    "ref="testField"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "key": "testField",
+      "title": "testField",
+      "type": "password",
+      "validation": "",
+      "value": "pass",
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (3)",
+    "
+",
+    " at <BInputGroupAppend",
+    "key=0",
+    "class="fr-hide-input"",
+    ">",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput17"",
+    "field-name="testField"",
+    "help-text=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BasicInput",
+    "key=2",
+    "type="password"",
+    "class="floating-label-input"",
+    " ...",
+    ">",
+    "
+",
+    " at <Field",
+    "key=3",
+    "as="span"",
+    "ref="testField"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "key": "testField",
+      "title": "testField",
+      "type": "password",
+      "validation": "",
+      "value": "pass",
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) (2)",
+    "
+",
+    " at <BInputGroupAppend",
+    "key=0",
+    "class="fr-hide-input"",
+    ">",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput17"",
+    "field-name="testField"",
+    "help-text=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BasicInput",
+    "key=2",
+    "type="password"",
+    "class="floating-label-input"",
+    " ...",
+    ">",
+    "
+",
+    " at <Field",
+    "key=3",
+    "as="span"",
+    "ref="testField"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "key": "testField",
+      "title": "testField",
+      "type": "password",
+      "validation": "",
+      "value": "pass",
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (3)",
+    "
+",
+    " at <BInputGroupAddon",
+    "key=0",
+    "class="fr-hide-input"",
+    "id=undefined",
+    " ...",
+    ">",
+    "
+",
+    " at <BInputGroupAppend",
+    "key=0",
+    "class="fr-hide-input"",
+    ">",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput17"",
+    "field-name="testField"",
+    "help-text=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BasicInput",
+    "key=2",
+    "type="password"",
+    "class="floating-label-input"",
+    " ...",
+    ">",
+    "
+",
+    " at <Field",
+    "key=3",
+    "as="span"",
+    "ref="testField"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "key": "testField",
+      "title": "testField",
+      "type": "password",
+      "validation": "",
+      "value": "pass",
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (4)",
+    "
+",
+    " at <BButton",
+    "onClick=fn<bound revealText>",
+    "class=""",
+    "name="revealButton"",
+    " ...",
+    ">",
+    "
+",
+    " at <BInputGroupAddon",
+    "key=0",
+    "class="fr-hide-input"",
+    "id=undefined",
+    " ...",
+    ">",
+    "
+",
+    " at <BInputGroupAppend",
+    "key=0",
+    "class="fr-hide-input"",
+    ">",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput17"",
+    "field-name="testField"",
+    "help-text=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BasicInput",
+    "key=2",
+    "type="password"",
+    "class="floating-label-input"",
+    " ...",
+    ">",
+    "
+",
+    " at <Field",
+    "key=3",
+    "as="span"",
+    "ref="testField"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "key": "testField",
+      "title": "testField",
+      "type": "password",
+      "validation": "",
+      "value": "pass",
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`FrField.vue uses select floating label input for select type: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) (2)",
+    "
+",
+    " at <FrSelect",
+    "key=1",
+    "onInput=fn",
+    "class="floating-label-input"",
+    " ...",
+    ">",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) (3)",
+    "
+",
+    " at <FrSelect",
+    "key=1",
+    "onInput=fn",
+    "class="floating-label-input"",
+    " ...",
+    ">",
+    "
+",
+    " at <Field",
+    "key=3",
+    "as="span"",
+    "ref="testField"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "enum": [
+        "enum1",
+        "enum2",
+      ],
+      "enumNames": [
+        "option1",
+        "option2",
+      ],
+      "key": "testField",
+      "options": [
+        {
+          "text": "option1",
+          "value": "enum1",
+        },
+        {
+          "text": "option2",
+          "value": "enum2",
+        },
+      ],
+      "title": "testField",
+      "type": "select",
+      "validation": "",
+      "value": "option2",
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) (3)",
+    "
+",
+    " at <VueMultiselect",
+    "id="floatingLabelInput26"",
+    "ref="vms"",
+    "modelValue=""",
+    " ...",
+    ">",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) (4)",
+    "
+",
+    " at <VueMultiselect",
+    "id="floatingLabelInput26"",
+    "ref="vms"",
+    "field=",
+    {
+      "enum": [
+        "enum1",
+        "enum2",
+      ],
+      "enumNames": [
+        "option1",
+        "option2",
+      ],
+      "key": "testField",
+      "options": [
+        {
+          "text": "option1",
+          "value": "enum1",
+        },
+        {
+          "text": "option2",
+          "value": "enum2",
+        },
+      ],
+      "title": "testField",
+      "type": "select",
+      "validation": "",
+      "value": "option2",
+    },
+    " ...",
+    ">",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput26"",
+    "field-name="testField"",
+    "help-text=""",
+    " ...",
+    ">",
+    "
+",
+    " at <FrSelect",
+    "key=1",
+    "onInput=fn",
+    "class="floating-label-input"",
+    " ...",
+    ">",
+    "
+",
+    " at <Field",
+    "key=3",
+    "as="span"",
+    "ref="testField"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "enum": [
+        "enum1",
+        "enum2",
+      ],
+      "enumNames": [
+        "option1",
+        "option2",
+      ],
+      "key": "testField",
+      "options": [
+        {
+          "text": "option1",
+          "value": "enum1",
+        },
+        {
+          "text": "option2",
+          "value": "enum2",
+        },
+      ],
+      "title": "testField",
+      "type": "select",
+      "validation": "",
+      "value": "option2",
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "appear" with v-bind value \`false\` will render appear="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <Transition",
+    "name="multiselect__loading"",
+    ">",
+    "
+",
+    " at <VueMultiselect",
+    "id="floatingLabelInput26"",
+    "ref="vms"",
+    "field=",
+    {
+      "enum": [
+        "enum1",
+        "enum2",
+      ],
+      "enumNames": [
+        "option1",
+        "option2",
+      ],
+      "key": "testField",
+      "options": [
+        {
+          "text": "option1",
+          "value": "enum1",
+        },
+        {
+          "text": "option2",
+          "value": "enum2",
+        },
+      ],
+      "title": "testField",
+      "type": "select",
+      "validation": "",
+      "value": "option2",
+    },
+    " ...",
+    ">",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput26"",
+    "field-name="testField"",
+    "help-text=""",
+    " ...",
+    ">",
+    "
+",
+    " at <FrSelect",
+    "key=1",
+    "onInput=fn",
+    "class="floating-label-input"",
+    " ...",
+    ">",
+    "
+",
+    " at <Field",
+    "key=3",
+    "as="span"",
+    "ref="testField"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "enum": [
+        "enum1",
+        "enum2",
+      ],
+      "enumNames": [
+        "option1",
+        "option2",
+      ],
+      "key": "testField",
+      "options": [
+        {
+          "text": "option1",
+          "value": "enum1",
+        },
+        {
+          "text": "option2",
+          "value": "enum2",
+        },
+      ],
+      "title": "testField",
+      "type": "select",
+      "validation": "",
+      "value": "option2",
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "persisted" with v-bind value \`false\` will render persisted="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <Transition",
+    "name="multiselect__loading"",
+    ">",
+    "
+",
+    " at <VueMultiselect",
+    "id="floatingLabelInput26"",
+    "ref="vms"",
+    "field=",
+    {
+      "enum": [
+        "enum1",
+        "enum2",
+      ],
+      "enumNames": [
+        "option1",
+        "option2",
+      ],
+      "key": "testField",
+      "options": [
+        {
+          "text": "option1",
+          "value": "enum1",
+        },
+        {
+          "text": "option2",
+          "value": "enum2",
+        },
+      ],
+      "title": "testField",
+      "type": "select",
+      "validation": "",
+      "value": "option2",
+    },
+    " ...",
+    ">",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput26"",
+    "field-name="testField"",
+    "help-text=""",
+    " ...",
+    ">",
+    "
+",
+    " at <FrSelect",
+    "key=1",
+    "onInput=fn",
+    "class="floating-label-input"",
+    " ...",
+    ">",
+    "
+",
+    " at <Field",
+    "key=3",
+    "as="span"",
+    "ref="testField"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "enum": [
+        "enum1",
+        "enum2",
+      ],
+      "enumNames": [
+        "option1",
+        "option2",
+      ],
+      "key": "testField",
+      "options": [
+        {
+          "text": "option1",
+          "value": "enum1",
+        },
+        {
+          "text": "option2",
+          "value": "enum2",
+        },
+      ],
+      "title": "testField",
+      "type": "select",
+      "validation": "",
+      "value": "option2",
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_ENUMERATED_COERCION) Enumerated attribute "spellcheck" with v-bind value \`false\` will render the value as-is instead of coercing the value to "true" in Vue 3. Always use explicit "true" or "false" values for enumerated attributes. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_ENUMERATED_COERCION: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <VueMultiselect",
+    "id="floatingLabelInput26"",
+    "ref="vms"",
+    "field=",
+    {
+      "enum": [
+        "enum1",
+        "enum2",
+      ],
+      "enumNames": [
+        "option1",
+        "option2",
+      ],
+      "key": "testField",
+      "options": [
+        {
+          "text": "option1",
+          "value": "enum1",
+        },
+        {
+          "text": "option2",
+          "value": "enum2",
+        },
+      ],
+      "title": "testField",
+      "type": "select",
+      "validation": "",
+      "value": "option2",
+    },
+    " ...",
+    ">",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput26"",
+    "field-name="testField"",
+    "help-text=""",
+    " ...",
+    ">",
+    "
+",
+    " at <FrSelect",
+    "key=1",
+    "onInput=fn",
+    "class="floating-label-input"",
+    " ...",
+    ">",
+    "
+",
+    " at <Field",
+    "key=3",
+    "as="span"",
+    "ref="testField"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "enum": [
+        "enum1",
+        "enum2",
+      ],
+      "enumNames": [
+        "option1",
+        "option2",
+      ],
+      "key": "testField",
+      "options": [
+        {
+          "text": "option1",
+          "value": "enum1",
+        },
+        {
+          "text": "option2",
+          "value": "enum2",
+        },
+      ],
+      "title": "testField",
+      "type": "select",
+      "validation": "",
+      "value": "option2",
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`FrField.vue uses string floating label input for string type: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) (2)",
+    "
+",
+    " at <Field",
+    "key=3",
+    "as="span"",
+    "ref="testField"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "key": "testField",
+      "title": "testField",
+      "validation": "",
+      "value": "test",
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) vm.$listeners has been removed. In Vue 3, parent v-on listeners are included in vm.$attrs and it is no longer necessary to separately use v-on="$listeners" if you are already using v-bind="$attrs". (Note: the Vue 3 behavior only applies if this compat config is disabled)
+  Details: https://v3-migration.vuejs.org/breaking-changes/listeners-removed.html",
+    "
+",
+    " at <Field",
+    "key=3",
+    "as="span"",
+    "ref="testField"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "key": "testField",
+      "title": "testField",
+      "validation": "",
+      "value": "test",
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) v-model usage on component has changed in Vue 3. Component that expects to work with v-model should now use the "modelValue" prop and emit the "update:modelValue" event. You can update the usage and then opt-in to Vue 3 behavior on a per-component basis with \`compatConfig: { COMPONENT_V_MODEL: false }\`.
+  Details: https://v3-migration.vuejs.org/breaking-changes/v-model.html",
+    "
+",
+    " at <BasicInput",
+    "key=2",
+    "type="string"",
+    "class="floating-label-input"",
+    " ...",
+    ">",
+  ],
+]
+`;
+
+exports[`FrField.vue uses toggle button component for boolean type: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (5)",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "key": "testField",
+      "title": "testField",
+      "type": "boolean",
+      "validation": "",
+      "value": true,
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) (9)",
+    "
+",
+    " at <BFormCheckbox",
+    "key=1",
+    "role="switch"",
+    "switch=""",
+    " ...",
+    ">",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (4)",
+    "
+",
+    " at <BFormCheckbox",
+    "key=1",
+    "role="switch"",
+    "switch=""",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "key": "testField",
+      "title": "testField",
+      "type": "boolean",
+      "validation": "",
+      "value": true,
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (3)",
+    "
+",
+    " at <BFormCheckbox",
+    "key=1",
+    "role="switch"",
+    "switch=""",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "key": "testField",
+      "title": "testField",
+      "type": "boolean",
+      "validation": "",
+      "value": true,
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_ATTRS_CLASS_STYLE) Component <BFormCheckbox> has \`inheritAttrs: false\` but is relying on class/style fallthrough from parent. In Vue 3, class/style are now included in $attrs and will no longer fallthrough when inheritAttrs is false. If you are already using v-bind="$attrs" on component root it should render the same end result. If you are binding $attrs to a non-root element and expecting class/style to fallthrough on root, you will need to now manually bind them on root via :class="$attrs.class".
+  Details: https://v3-migration.vuejs.org/breaking-changes/attrs-includes-class-style.html",
+    "
+",
+    " at <BFormCheckbox",
+    "key=1",
+    "role="switch"",
+    "switch=""",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "field=",
+    {
+      "key": "testField",
+      "title": "testField",
+      "type": "boolean",
+      "validation": "",
+      "value": true,
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;

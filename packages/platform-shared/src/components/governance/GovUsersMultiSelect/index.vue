@@ -23,23 +23,21 @@ of the MIT license. See the LICENSE file for details. -->
             class="mr-2 align-self-center"
             :src="option.value.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
           <BMediaBody class="pl-1">
-            <div class="mb-1 text-dark">
+            <div
+              class="mb-1 text-dark"
+              tabindex="0">
               {{ option.value.name }}
             </div>
             <small class="text-muted">
               {{ option.value.userName }}
             </small>
           </BMediaBody>
-          <BButton
-            variant="link"
+          <span
+            class="multiselect__tag-icon"
+            tabindex="0"
             :aria-label="$t('common.remove')"
-            class="p-0 close-button float-right"
-            @click="remove(option)">
-            <FrIcon
-              class="md-14 multiselect__tag-icon"
-              name="close"
-            />
-          </BButton>
+            @click.prevent="remove(option)"
+            @keydown.enter="remove(option)" />
         </BMedia>
       </span>
     </template>
@@ -69,26 +67,18 @@ import {
   filter,
   some,
 } from 'lodash';
-import {
-  BButton,
-  BImg,
-  BMedia,
-  BMediaBody,
-} from 'bootstrap-vue';
+import { BImg, BMedia, BMediaBody } from 'bootstrap-vue';
 import { getResource } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import FrField from '@forgerock/platform-shared/src/components/Field';
-import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 
 export default {
   name: 'GovUsersMultiSelect',
   components: {
-    BButton,
     BImg,
     BMedia,
     BMediaBody,
     FrField,
-    FrIcon,
   },
   mixins: [
     NotificationMixin,

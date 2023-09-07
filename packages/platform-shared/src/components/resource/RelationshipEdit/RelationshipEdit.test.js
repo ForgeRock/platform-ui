@@ -5,9 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount } from '@vue/test-utils';
+import { shallowMount, flushPromises } from '@vue/test-utils';
 import { map } from 'lodash';
-import flushPromises from 'flush-promises';
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { setupTestPinia } from '../../../utils/testPiniaHelpers';
 import * as schemaApi from '@/api/SchemaApi';
@@ -35,31 +34,33 @@ describe('RelationshipEdit', () => {
   beforeEach(() => {
     setupTestPinia();
     wrapper = shallowMount(RelationshipEdit, {
-      mocks: {
-        $t: () => { },
-        $store: {
-          state: {
-            SharedStore: {
-              uiConfig: {
-                configuration: {
-                  platformSettings: {
-                    managedObjectsSettings: {
-                      user: {
-                        minimumUIFilterLength: 2,
+      global: {
+        mocks: {
+          $t: () => { },
+          $store: {
+            state: {
+              SharedStore: {
+                uiConfig: {
+                  configuration: {
+                    platformSettings: {
+                      managedObjectsSettings: {
+                        user: {
+                          minimumUIFilterLength: 2,
+                        },
                       },
                     },
                   },
                 },
-              },
-              managedObjectMinimumUIFilterLength: {
-                user: 2,
+                managedObjectMinimumUIFilterLength: {
+                  user: 2,
+                },
               },
             },
+            commit: () => {},
           },
-          commit: () => {},
         },
       },
-      propsData: {
+      props: {
         value: {
           _id: 'testy',
           userName: 'testy.testerton',

@@ -40,7 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
         class="mb-3"
         no-body>
         <FrRequestDetails
-          @add-comment="openModal('COMMENT', $bvModal)"
+          @add-comment="openModal('COMMENT')"
           :item="item" />
       </BCard>
 
@@ -57,7 +57,7 @@ of the MIT license. See the LICENSE file for details. -->
         </p>
         <BButton
           variant="danger"
-          @click="openModal('CANCEL', $bvModal)">
+          @click="openModal('CANCEL')">
           {{ $t('governance.requestModal.cancelRequest') }}
         </BButton>
       </BCard>
@@ -74,7 +74,6 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script setup>
 import {
-  getCurrentInstance,
   onMounted,
   ref,
 } from 'vue';
@@ -89,20 +88,22 @@ import {
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import router from '@/router';
+import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import { useRoute, useRouter } from 'vue-router';
 import { getRequest } from '@/api/governance/AccessRequestApi';
 import { getFormattedRequest, getRequestObjectType, isTypeRole } from '@/components/utils/governance/AccessRequestUtils';
 import FrRequestDetails from '@/components/governance/RequestDetails';
 import FrRequestModal, { REQUEST_MODAL_TYPES } from '@/components/governance/RequestModal';
 import i18n from '@/i18n';
 
-const { proxy: { $route } } = getCurrentInstance();
-
 // Composables
+const router = useRouter();
+const route = useRoute();
+const { bvModal } = useBvModal();
 const { setBreadcrumb } = useBreadcrumb();
 
 // Data
-const { requestId } = $route.params;
+const { requestId } = route.params;
 const item = ref({});
 const isLoading = ref(true);
 const modalType = ref('');
@@ -113,19 +114,19 @@ async function getRequestData() {
     const { data } = await getRequest(requestId);
     item.value = getFormattedRequest(data, getRequestObjectType(data.requestType));
   } catch (error) {
-    showErrorMessage(error, i18n.t('governance.accessRequest.myRequests.errorGettingRequests'));
+    showErrorMessage(error, i18n.global.t('governance.accessRequest.myRequests.errorGettingRequests'));
   } finally {
     isLoading.value = false;
   }
 }
 
 onMounted(async () => {
-  setBreadcrumb('/my-requests', i18n.t('sideMenu.requests'));
+  setBreadcrumb('/my-requests', i18n.global.t('sideMenu.requests'));
 
   await getRequestData();
 });
 
-function openModal(type, bvModal) {
+function openModal(type) {
   modalType.value = REQUEST_MODAL_TYPES[type];
   bvModal.show('request_modal');
 }

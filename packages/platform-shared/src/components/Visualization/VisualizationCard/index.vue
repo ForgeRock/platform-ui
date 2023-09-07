@@ -217,7 +217,7 @@ export default {
       attributes: false, childList: true, characterData: false, subtree: true,
     });
   },
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener('resize', this.onResize);
   },
 };

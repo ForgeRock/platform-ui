@@ -103,7 +103,7 @@ of the MIT license. See the LICENSE file for details. -->
                 @disable-save-button="disableSaveButton = $event"
                 @refresh-data="$emit('save-clicked', refreshData)">
                 <template
-                  v-for="(key, slotName) in $scopedSlots"
+                  v-for="(key, slotName) in $slots"
                   #[slotName]="slotData">
                   <slot
                     :name="slotName"
@@ -116,10 +116,10 @@ of the MIT license. See the LICENSE file for details. -->
             </span>
           </BTab>
           <!-- Add a tab for each viewable/editable object type property -->
-          <template v-for="(objectTypeProperty) in objectTypeProperties">
-            <BTab
-              :title="getTranslation(objectTypeProperty.title)"
-              :key="`${objectTypeProperty.propName}_tab`">
+          <template
+            v-for="(objectTypeProperty) in objectTypeProperties"
+            :key="`${objectTypeProperty.propName}_tab`">
+            <BTab :title="getTranslation(objectTypeProperty.title)">
               <FrObjectTypeEditor
                 @refresh-data="refreshData"
                 :revision="revision"
@@ -141,10 +141,10 @@ of the MIT license. See the LICENSE file for details. -->
             :revision="revision"
             @refresh-data="refreshData" />
           <!-- Add a tab for each viewable/editable relationship array property -->
-          <template v-for="(relationshipProperty) in viewableRelationshipArrayProperties">
-            <BTab
-              :title="getTranslation(relationshipProperty.title)"
-              :key="`${relationshipProperty.propName}_tab`">
+          <template
+            v-for="(relationshipProperty) in viewableRelationshipArrayProperties"
+            :key="`${relationshipProperty.propName}_tab`">
+            <BTab :title="getTranslation(relationshipProperty.title)">
               <FrRelationshipArray
                 :additional-query-filter="relationshipProperty.key === 'assignments' ? assignmentsQueryFilter : ''"
                 :parent-resource="relationshipProperty.key === 'assignments' ? assignmentsParentResource : `${resourceType}/${resourceName}`"
@@ -788,7 +788,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep .card-tabs-vertical {
+:deep(.card-tabs-vertical) {
   .card-body {
     padding: 0;
   }
@@ -798,7 +798,7 @@ export default {
   }
 }
 
-::v-deep .fr-tag {
+:deep(.fr-tag) {
   max-width: 230px;
 }
 
@@ -808,7 +808,7 @@ export default {
   z-index: 1020;
 }
 
-::v-deep .dropdown-item.active {
+:deep(.dropdown-item.active) {
   position: relative;
 
   &::after {

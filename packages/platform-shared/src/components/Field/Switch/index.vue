@@ -67,6 +67,11 @@ export default {
       default: 'lg',
     },
   },
+  data() {
+    return {
+      inputValue: '',
+    };
+  },
   computed: {
     switchLabel() {
       return this.label || this.description;

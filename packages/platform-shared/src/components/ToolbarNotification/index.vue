@@ -86,6 +86,7 @@ import {
   sortBy,
 } from 'lodash';
 import {
+  BButton,
   BNavItemDropdown,
   BDropdownHeader,
 } from 'bootstrap-vue';
@@ -116,6 +117,7 @@ dayjs.extend(utc);
 export default {
   name: 'ToolbarNotification',
   components: {
+    BButton,
     BNavItemDropdown,
     BDropdownHeader,
     FrIcon,

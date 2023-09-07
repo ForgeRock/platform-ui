@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
 import { nextTick } from 'vue';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as configApi from '@forgerock/platform-shared/src/api/ConfigApi';
@@ -15,7 +15,6 @@ import dateRanges from '@forgerock/platform-shared/src/utils/date';
 import * as notification from '@forgerock/platform-shared/src/utils/notification';
 import * as autoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import * as reportUtils from '@forgerock/platform-shared/src/utils/reportsUtils';
-import flushPromises from 'flush-promises';
 import i18n from '@/i18n';
 import RunReport from './RunReport';
 import {
@@ -25,11 +24,21 @@ import {
 } from './RunReportStubs';
 import store from '../../store';
 
+jest.mock('vue-router', () => ({
+  useRoute: jest.fn(() => ({ params: { template: 'template-name' } })),
+  useRouter: jest.fn(() => ({
+    push: jest.fn(),
+  })),
+}));
+
 describe('Run Report component', () => {
   function setup(props) {
     return mount(RunReport, {
-      i18n,
-      propsData: {
+
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         ...props,
       },
     });
@@ -96,24 +105,27 @@ describe('Run Report component', () => {
       it('ensures that the "Last 7 days" datepicker values are the default values', () => {
         const dateFormat = 'YYYY-MM-DD';
         const [last7DaysStart, last7DaysEnd] = dateRanges(dateFormat, dateFormat)['Last 7 Days'];
-        expect(wrapper.vm._setupProxy.startDateModel).toEqual(last7DaysStart);
-        expect(wrapper.vm._setupProxy.endDateModel).toEqual(last7DaysEnd);
+        expect(wrapper.vm.startDateModel).toEqual(last7DaysStart);
+        expect(wrapper.vm.endDateModel).toEqual(last7DaysEnd);
       });
 
       it('reveals the datepicker components if the "custom" option is selected', async () => {
-        const datepickerField = findByTestId(wrapper, 'datepicker');
-        expect(datepickerField.isVisible()).toBe(false);
+        const datePickerStart = findByTestId(wrapper, 'datepicker-start');
+        const datePickerEnd = findByTestId(wrapper, 'datepicker-end');
+        expect(datePickerStart.isVisible()).toBe(false);
+        expect(datePickerEnd.isVisible()).toBe(false);
 
         const timeFrameField = findByTestId(wrapper, 'fr-field-timeframe');
         await timeFrameField.trigger('click');
 
-        const customTimeframeOption = timeFrameField.findAll('li').at(4).find('span');
+        const customTimeframeOption = timeFrameField.findAll('li')[4].find('span');
         expect(customTimeframeOption.text()).toBe('Custom');
 
         await customTimeframeOption.trigger('click');
         await nextTick();
 
-        expect(datepickerField.isVisible()).toBe(true);
+        expect(datePickerStart.isVisible()).toBe(true);
+        expect(datePickerEnd.isVisible()).toBe(true);
       });
 
       it('disables the submit button if there are no values for the datepicker fields', async () => {
@@ -127,20 +139,20 @@ describe('Run Report component', () => {
         const timeFrameField = findByTestId(wrapper, 'fr-field-timeframe');
         await timeFrameField.trigger('click');
 
-        const customTimeframeOption = timeFrameField.findAll('li').at(4).find('span');
+        const customTimeframeOption = timeFrameField.findAll('li')[4].find('span');
         await customTimeframeOption.trigger('click');
 
-        expect(submitButton.attributes('disabled')).toBe('disabled');
+        expect(submitButton.attributes().disabled).toBeDefined();
 
         // I couldnt find a way to get the DOM to display the datepicker calendar popup to
         // interact with it, so I had to inject the values into the datepicker variable directly.
-        wrapper.vm._setupProxy.startDateModel = '2023-10-10';
-        expect(submitButton.attributes('disabled')).toBe('disabled');
+        wrapper.vm.startDateModel = '2023-10-10';
+        expect(submitButton.attributes('disabled')).toBeDefined();
 
-        wrapper.vm._setupProxy.endDateModel = '2023-10-11';
+        wrapper.vm.endDateModel = '2023-10-11';
         await nextTick();
 
-        expect(submitButton.attributes('disabled')).toBeFalsy();
+        expect(submitButton.attributes().disabled).toBeUndefined();
       });
 
       it('disables the submit button if there are no valid report parameters', async () => {
@@ -149,7 +161,7 @@ describe('Run Report component', () => {
         await flushPromises();
 
         const submitButton = findByTestId(wrapper, 'run-report-button');
-        expect(submitButton.attributes('disabled')).toBe('disabled');
+        expect(submitButton.attributes('disabled')).toBeDefined();
 
         const fieldsContainer = findByTestId(wrapper, 'fr-run-report-container');
         expect(fieldsContainer.text()).toBe('Report does not contain any valid parameters');
@@ -165,7 +177,7 @@ describe('Run Report component', () => {
       });
 
       it('ensures that the default value for the applications field is set to "All applications"', () => {
-        expect(wrapper.vm._setupProxy.applicationsModel).toEqual([i18n.t('reports.tabs.runReport.applications.allApplications')]);
+        expect(wrapper.vm.applicationsModel).toEqual([i18n.global.t('reports.tabs.runReport.applications.allApplications')]);
       });
 
       it('reveals the all applications field if the "Specific Applications" option is selected', async () => {
@@ -177,7 +189,7 @@ describe('Run Report component', () => {
 
         const collapseWrapper = findByTestId(wrapper, 'all-applications-field');
         expect(collapseWrapper.classes()).not.toContain('show');
-        const specificApplicationsOption = applicationsField.findAll('li').at(3).find('span');
+        const specificApplicationsOption = applicationsField.findAll('li')[3].find('span');
         expect(specificApplicationsOption.text()).toBe('Specific applications');
 
         await specificApplicationsOption.trigger('click');
@@ -188,20 +200,20 @@ describe('Run Report component', () => {
       it('disables the submit button if there is no value for the "Specific applications" field', async () => {
         // Submit button should be enabled on-load since field has default value
         const submitButton = findByTestId(wrapper, 'run-report-button');
-        expect(submitButton.attributes('disabled')).toBeFalsy();
+        expect(submitButton.attributes().disabled).not.toBeDefined();
 
         const applicationsField = findByTestId(wrapper, 'fr-field-applications');
         await applicationsField.trigger('click');
 
-        const specificApplicationsOption = applicationsField.findAll('li').at(3).find('span');
+        const specificApplicationsOption = applicationsField.findAll('li')[3].find('span');
         await specificApplicationsOption.trigger('click');
 
-        expect(submitButton.attributes('disabled')).toBe('disabled');
+        expect(submitButton.attributes().disabled).toBeDefined();
 
-        wrapper.vm._setupProxy.applicationsModel = ['my-specific-app'];
+        wrapper.vm.applicationsModel = ['my-specific-app'];
         await nextTick();
 
-        expect(submitButton.attributes('disabled')).toBeFalsy();
+        expect(submitButton.attributes().disabled).not.toBeDefined();
       });
     });
 
@@ -253,7 +265,7 @@ describe('Run Report component', () => {
 
       it('ensures that unexpected parameters disable the submit button if they do not have a value', () => {
         const submitButton = findByTestId(wrapper, 'run-report-button');
-        expect(submitButton.attributes('disabled')).toBe('disabled');
+        expect(submitButton.attributes('disabled')).toBeDefined();
       });
 
       it('ensures that unexpected parameters enable the submit button if they have a value', async () => {
@@ -262,7 +274,7 @@ describe('Run Report component', () => {
         await unexpectedParameterInput.setValue('My unexpected parameter input value');
 
         const submitButton = findByTestId(wrapper, 'run-report-button');
-        expect(submitButton.attributes('disabled')).toBeFalsy();
+        expect(submitButton.attributes('disabled')).toBeUndefined();
       });
 
       it('submits a run report for the my_unexpected_parameter field', async () => {
@@ -312,23 +324,23 @@ describe('Run Report component', () => {
 
       // Sets default values for required fields so submit button can be enabled
       if (model) {
-        wrapper.vm._setupProxy[model] = defaultValue;
+        wrapper.vm[model] = defaultValue;
       }
 
       // Value and model property must be different for the user_names payload
       // so this specific condition exception needs to exist for this field.
       if (parameter === 'user_names') {
-        wrapper.vm._setupProxy.usersValue = [{ userName: userNamesDefaultValue }];
+        wrapper.vm.usersValue = [{ userName: userNamesDefaultValue }];
       }
 
       await nextTick();
-      expect(submitButton.attributes('disabled')).toBeFalsy();
+      expect(submitButton.attributes().disabled).not.toBeDefined();
       await submitButton.trigger('click');
 
       expect(runReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', { [parameter]: defaultValue });
       expect(wrapper.emitted('update-tab')).toEqual([['report-history']]);
       expect(successSpy).toHaveBeenCalled();
-      expect(wrapper.vm._setupProxy.isSubmitting).toBe(false);
+      expect(wrapper.vm.isSubmitting).toBe(false);
     });
 
     it('submits the Run Report with a rejected response', async () => {
@@ -343,13 +355,13 @@ describe('Run Report component', () => {
       const errorSpy = jest.spyOn(notification, 'showErrorMessage');
       const submitButton = findByTestId(wrapper, 'run-report-button');
 
-      expect(submitButton.attributes('disabled')).toBeFalsy();
+      expect(submitButton.attributes().disabled).not.toBeDefined();
       await submitButton.trigger('click');
 
       expect(runReportSpyReject).toHaveBeenCalled();
-      expect(wrapper.emitted()).toEqual({});
+      expect(wrapper.emitted('tab-update')).not.toBeDefined();
       expect(errorSpy).toHaveBeenCalled();
-      expect(wrapper.vm._setupProxy.isSubmitting).toBe(false);
+      expect(wrapper.vm.isSubmitting).toBe(false);
     });
   });
 });

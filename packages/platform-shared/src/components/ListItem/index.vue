@@ -168,7 +168,7 @@ export default {
   cursor: initial;
 }
 
-::v-deep .list-group-item-action {
+:deep(.list-group-item-action) {
   color: inherit;
   border-bottom: 1px solid rgba(0, 0, 0, 0.125);
   margin: 0;

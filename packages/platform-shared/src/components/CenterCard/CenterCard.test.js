@@ -5,19 +5,17 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { mount, shallowMount, createLocalVue } from '@vue/test-utils';
+import { mount, shallowMount } from '@vue/test-utils';
 import CenterCard from './index';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 describe('CenterCard Component', () => {
   it('Center Card component loaded with header images', () => {
     const wrapper = shallowMount(CenterCard, {
-      localVue,
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
+        renderStubDefaultSlot: true,
       },
     });
 
@@ -26,10 +24,12 @@ describe('CenterCard Component', () => {
 
   it('CenterCard has a logo with default props', () => {
     const wrapper = mount(CenterCard, {
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         showLogo: true,
       },
     });
@@ -40,10 +40,12 @@ describe('CenterCard Component', () => {
 
   it('CenterCard slots have the correct items', () => {
     const wrapper = mount(CenterCard, {
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         hideHeader: false,
         hideFooter: false,
       },

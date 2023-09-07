@@ -5,16 +5,13 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
+import Notifications from '@kyvg/vue3-notification';
 import * as SessionsApi from '@/api/SessionsApi';
 import * as SchemaApi from '@/api/SchemaApi';
 import * as ManagedResourceApi from '@/api/ManagedResourceApi';
 import { setupTestPinia } from '../../../utils/testPiniaHelpers';
 import EditResource from './index';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 describe('EditResource.vue', () => {
   const $route = {
@@ -32,29 +29,31 @@ describe('EditResource.vue', () => {
   function mountComponent(governanceEnabled = false) {
     setupTestPinia({ user: { idmRoles: ['openidm-admin'] } });
     return shallowMount(EditResource, {
-      localVue,
-      stubs: {
-        'router-link': true,
-      },
-      mocks: {
-        $route,
-        $t: () => { },
-        $store: {
-          state: {
-            isFraas: false,
-            userId: 'foo',
-            SharedStore: {
-              hasAmUrl: true,
-              workforceEnabled: true,
-              governanceEnabled,
+      global: {
+        stubs: {
+          'router-link': true,
+        },
+        mocks: {
+          $route,
+          $t: () => { },
+          $store: {
+            state: {
+              isFraas: false,
+              userId: 'foo',
+              SharedStore: {
+                hasAmUrl: true,
+                workforceEnabled: true,
+                governanceEnabled,
+              },
             },
           },
+          $router: {
+            push: jest.fn(),
+          },
         },
-        $router: {
-          push: jest.fn(),
-        },
+        plugins: [Notifications],
       },
-      propsData: {
+      props: {
         canClearSessions: true,
       },
     });

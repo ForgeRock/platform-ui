@@ -5,22 +5,26 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
+import { nextTick } from 'vue';
+import { shallowMount } from '@vue/test-utils';
 import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import Notifications from '@kyvg/vue3-notification';
 import i18n from '@/i18n';
 import Uma from '@/components/uma';
 
-const localVue = createLocalVue();
-
 let wrapper;
-
-localVue.use(BootstrapVue);
 
 describe('uma.vue', () => {
   beforeEach(() => {
     wrapper = shallowMount(Uma, {
-      localVue,
-      i18n,
+      global: {
+        mocks: {
+          $bvModal: {
+            show: jest.fn(),
+          },
+        },
+        plugins: [i18n, BootstrapVue, Notifications],
+      },
     });
     jest.spyOn(wrapper.vm, 'getRequestService').mockReturnValue({
       get: () => Promise.resolve(),
@@ -31,31 +35,30 @@ describe('uma.vue', () => {
   });
 
   afterEach(() => {
-    wrapper.destroy();
+    wrapper.unmount();
   });
 
-  it('Emits "renderShareModal" event', () => {
+  it('Emits "renderShareModal" event', async () => {
     wrapper.vm.$emit('renderShareModal');
 
     expect(wrapper.emitted().renderShareModal.length).toBe(1);
 
     wrapper.vm.renderShareModal();
 
-    localVue.nextTick(() => {
-      /* eslint no-underscore-dangle: ["error", { "allow": ["__emitted"] }] */
-      expect(wrapper.vm.$root.__emitted['bv::show::modal'].length).toBe(1);
-    });
+    await nextTick();
+
+    expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('shareModal');
   });
 
-  it('Emits "renderUnshareModal" event', () => {
+  it('Emits "renderUnshareModal" event', async () => {
     wrapper.vm.$emit('renderUnshareModal');
 
     expect(wrapper.emitted().renderUnshareModal.length).toBe(1);
 
     wrapper.vm.renderUnshareModal();
 
-    localVue.nextTick(() => {
-      expect(wrapper.vm.$root.__emitted['bv::show::modal'].length).toBe(1);
-    });
+    await nextTick();
+
+    expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('unshareModal');
   });
 });

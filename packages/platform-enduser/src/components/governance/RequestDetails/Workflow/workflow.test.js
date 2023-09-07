@@ -22,10 +22,12 @@ describe('Workflow', () => {
         },
       },
     };
-    const createWrapper = (propsData) => mount(Workflow, {
-      propsData,
-      mocks: {
-        $t: (t) => t,
+    const createWrapper = (props) => mount(Workflow, {
+      props,
+      global: {
+        mocks: {
+          $t: (t) => t,
+        },
       },
     });
 
@@ -33,20 +35,20 @@ describe('Workflow', () => {
       const wrapper = createWrapper(defaultPropsData);
       const listItems = wrapper.findAll('.list-workflow-item');
       expect(listItems.length).toBe(4);
-      expect(listItems.at(0).text()).toContain('requestSubmitted');
-      expect(listItems.at(1).text()).toContain('awaitingApproval');
-      expect(listItems.at(2).text()).toContain('provisioning');
-      expect(listItems.at(3).text()).toContain('requestComplete');
+      expect(listItems[0].text()).toContain('requestSubmitted');
+      expect(listItems[1].text()).toContain('awaitingApproval');
+      expect(listItems[2].text()).toContain('provisioning');
+      expect(listItems[3].text()).toContain('requestComplete');
     });
 
     it('component should show 1 complete and 3 pending steps when status is provisioning', () => {
       const wrapper = createWrapper(defaultPropsData);
       const listItems = wrapper.findAll('.list-workflow-item');
       expect(listItems.length).toBe(4);
-      expect(listItems.at(0).text()).toContain('Jun 22, 2023'); // shows date completed
-      expect(listItems.at(1).text()).toContain('pending');
-      expect(listItems.at(2).text()).toContain('pending');
-      expect(listItems.at(3).text()).toContain('pending');
+      expect(listItems[0].text()).toContain('Jun 22, 2023'); // shows date completed
+      expect(listItems[1].text()).toContain('pending');
+      expect(listItems[2].text()).toContain('pending');
+      expect(listItems[3].text()).toContain('pending');
     });
 
     it('component should show 2 complete and 2 pending steps when status is provisioning', () => {
@@ -65,10 +67,10 @@ describe('Workflow', () => {
       const wrapper = createWrapper(propsData);
       const listItems = wrapper.findAll('.list-workflow-item');
       expect(listItems.length).toBe(4);
-      expect(listItems.at(0).text()).toContain('Jun 22, 2023'); // shows date completed
-      expect(listItems.at(1).text()).toContain('complete');
-      expect(listItems.at(2).text()).toContain('pending');
-      expect(listItems.at(3).text()).toContain('pending');
+      expect(listItems[0].text()).toContain('Jun 22, 2023'); // shows date completed
+      expect(listItems[1].text()).toContain('complete');
+      expect(listItems[2].text()).toContain('pending');
+      expect(listItems[3].text()).toContain('pending');
     });
 
     it('component should show 4 complete steps when status is complete', () => {
@@ -88,10 +90,10 @@ describe('Workflow', () => {
       const wrapper = createWrapper(propsData);
       const listItems = wrapper.findAll('.list-workflow-item');
       expect(listItems.length).toBe(4);
-      expect(listItems.at(0).text()).toContain('Jun 22, 2023'); // shows date completed
-      expect(listItems.at(1).text()).toContain('complete');
-      expect(listItems.at(2).text()).toContain('complete');
-      expect(listItems.at(3).text()).toContain('Jun 24, 2023');
+      expect(listItems[0].text()).toContain('Jun 22, 2023'); // shows date completed
+      expect(listItems[1].text()).toContain('complete');
+      expect(listItems[2].text()).toContain('complete');
+      expect(listItems[3].text()).toContain('Jun 24, 2023');
     });
   });
 });

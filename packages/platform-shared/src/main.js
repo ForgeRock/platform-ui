@@ -6,21 +6,16 @@
  */
 
 import Vue from 'vue';
-import { extend, setInteractionMode } from 'vee-validate';
-import { required } from 'vee-validate/dist/rules';
-import i18n from './i18n';
 import 'core-js/stable';
+import { defineRule } from 'vee-validate';
+import { required } from '@vee-validate/rules';
+import i18n from './i18n';
 
 // Add the required rule
-extend('required', {
-  ...required,
-  message: i18n.t('common.policyValidationMessages.REQUIRED'),
-});
-
-setInteractionMode('passive');
+defineRule('required', (value) => required(value) || i18n.global.t('common.policyValidationMessages.REQUIRED'));
 
 Vue.config.productionTip = false;
 new Vue({
   i18n,
   render: (h) => h(),
-}).$mount('#app');
+}).$mount('#appRoot');

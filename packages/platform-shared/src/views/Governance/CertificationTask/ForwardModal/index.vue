@@ -3,9 +3,10 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <ValidationObserver
-    v-slot="{ invalid }"
-    ref="observer">
+  <VeeForm
+    v-slot="{ meta: { valid } }"
+    ref="observer"
+    as="span">
     <BModal
       :id="modalId"
       :title="$t('governance.certificationTask.actionsModal.forwardItem')"
@@ -50,18 +51,18 @@ of the MIT license. See the LICENSE file for details. -->
         <BButton
           variant="primary"
           data-testid="btn-adv-step"
-          :disabled="invalid"
+          :disabled="!valid"
           @click="okHandler(ok)">
           {{ step === STEPS.DETAILS && showConfirm ? $t('common.next') : $t('governance.certificationTask.actionsModal.forwardItem') }}
         </BButton>
       </template>
     </BModal>
-  </ValidationObserver>
+  </VeeForm>
 </template>
 
 <script>
 import { BButton, BModal } from 'bootstrap-vue';
-import { ValidationObserver } from 'vee-validate';
+import { Form as VeeForm } from 'vee-validate';
 import FrForwardModalContent from '@forgerock/platform-shared/src/views/Governance/ForwardModalContent';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 
@@ -77,7 +78,7 @@ export default {
     BModal,
     FrForwardModalContent,
     FrIcon,
-    ValidationObserver,
+    VeeForm,
   },
   props: {
     id: {

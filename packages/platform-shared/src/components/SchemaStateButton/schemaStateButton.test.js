@@ -12,10 +12,12 @@ let wrapper;
 
 beforeEach(() => {
   wrapper = mount(SchemaStateButton, {
-    mocks: {
-      $t: () => {},
+    global: {
+      mocks: {
+        $t: () => {},
+      },
     },
-    propsData: {
+    props: {
       schema: {
         status: {
           options: [

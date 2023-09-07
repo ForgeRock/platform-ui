@@ -7,12 +7,10 @@ of the MIT license. See the LICENSE file for details. -->
     :description="description"
     :id="`${id}___input__`"
     :class="{ 'has-prepend-btn': hasPrependBtn }"
-    :errors="errors"
+    :errors="combinedErrors"
     :label="label"
     :name="name"
-    :is-html="isHtml"
-    :validation="validation"
-    :validation-immediate="validationImmediate">
+    :is-html="isHtml">
     <BFormTags
       @click.native="$refs.input.focus()"
       v-model="inputValue"
@@ -61,7 +59,7 @@ of the MIT license. See the LICENSE file for details. -->
         </ul>
         <input
           v-bind="inputAttrs"
-          v-on="inputHandlers"
+          v-on="{...inputHandlers, ...validationListeners}"
           ref="input"
           :data-testid="`inp-${name}`"
           :class="[{'has-values': tags.length}, 'fr-tag-input']"
@@ -71,7 +69,7 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
     </BFormTags>
     <template
-      v-for="(key, slotName) in $scopedSlots"
+      v-for="(key, slotName) in $slots"
       #[slotName]="slotData">
       <slot
         :name="slotName"
@@ -83,8 +81,10 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import { cloneDeep, isEqual } from 'lodash';
 import { BFormTags, VBTooltip } from 'bootstrap-vue';
+import { useField } from 'vee-validate';
 import Draggable from 'vuedraggable';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import { toRef } from 'vue';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
 
@@ -102,12 +102,30 @@ export default {
   directives: {
     'b-tooltip': VBTooltip,
   },
+  setup(props) {
+    const {
+      value: inputValue, errors: fieldErrors, handleBlur,
+    } = useField(() => props.name, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: [], bails: false });
+
+    // validationListeners: Contains custom event listeners for validation.
+    // Since vee-validate +4 removes the interaction modes, this custom listener is added
+    // to validate on blur to perform a similar aggressive validation in addition to the validateOnValueUpdate.
+    const validationListeners = {
+      blur: (evt) => handleBlur(evt, true),
+    };
+
+    return { inputValue, fieldErrors, validationListeners };
+  },
   data() {
     return {
-      inputValue: [],
       oldValue: [],
-      hasPrependBtn: Object.keys(this.$scopedSlots).includes('prependButton'),
+      hasPrependBtn: Object.keys(this.$slots).includes('prependButton'),
     };
+  },
+  computed: {
+    combinedErrors() {
+      return this.errors.concat(this.fieldErrors);
+    },
   },
   methods: {
     inputValueHandler(inputValue, toggle) {

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -8,14 +8,13 @@ of the MIT license. See the LICENSE file for details. -->
     :id="id"
     :name="name"
     :description="description"
-    :errors="errors"
+    :errors="combinedErrors"
     :is-html="isHtml"
-    :label="label"
-    :validation="validation"
-    :validation-immediate="validationImmediate">
+    :label="label">
     <input
       :value="durationValue"
       @input="durationValue = $event.target.value; emitDurationValue(durationValue, durationUnit)"
+      v-on="validationListeners"
       ref="input"
       type="number"
       :class="[{'is-invalid': errorMessages && errorMessages.length, 'polyfill-placeholder': durationValue !== null && durationValue !== '' }, 'form-control']"
@@ -51,6 +50,8 @@ import {
   BInputGroupAppend,
 } from 'bootstrap-vue';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
+import { useField } from 'vee-validate';
+import { toRef } from 'vue';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
 
@@ -71,7 +72,6 @@ export default {
   },
   data() {
     return {
-      durationValue: null,
       durationUnit: null,
       durationUnitOptions: [
         { text: this.$t('date.years'), value: 'years' },
@@ -89,6 +89,20 @@ export default {
       default: 'days',
       type: String,
     },
+  },
+  setup(props) {
+    const {
+      value: durationValue, errors: fieldErrors, handleBlur,
+    } = useField(() => props.name, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: '', bails: false });
+
+    // validationListeners: Contains custom event listeners for validation.
+    // Since vee-validate +4 removes the interaction modes, this custom listener is added
+    // to validate on blur to perform a similar aggressive validation in addition to the validateOnValueUpdate.
+    const validationListeners = {
+      blur: (evt) => handleBlur(evt, true),
+    };
+
+    return { durationValue, fieldErrors, validationListeners };
   },
   mounted() {
     if (!this.durationUnit) {
@@ -174,6 +188,11 @@ export default {
       }
     },
   },
+  computed: {
+    combinedErrors() {
+      return this.errors.concat(this.fieldErrors);
+    },
+  },
 };
 </script>
 
@@ -182,7 +201,7 @@ export default {
     background-image: none;
   }
 
-  ::v-deep .form-label-group {
+  :deep(.form-label-group) {
     .form-label-group-input input {
       border-top-right-radius: 0;
       border-bottom-right-radius: 0;

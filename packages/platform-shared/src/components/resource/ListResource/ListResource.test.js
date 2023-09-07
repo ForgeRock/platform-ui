@@ -5,8 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount, createLocalVue } from '@vue/test-utils';
-import BootstrapVue from 'bootstrap-vue';
+import { shallowMount } from '@vue/test-utils';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import { generateSearchQuery } from '@forgerock/platform-shared/src/utils/queryFilterUtils';
 import generateIDMAPI from './__mocks__/generateIDMAPI';
@@ -25,34 +24,32 @@ describe('ListResource Component', () => {
   };
 
   beforeEach(() => {
-    const localVue = createLocalVue();
-    localVue.use(BootstrapVue);
-
     wrapper = shallowMount(ListResource, {
-      localVue,
-      stubs: {
-        'router-link': true,
-      },
-      mocks: {
-        $route,
-        $t: (translation) => translation,
-        generateIDMAPI: () => {
-          const retv = {
-            data: {
-              pagedResultsCookie: {},
-            },
-            get: () => {
-              const retva = {
-                then: () => {},
-              };
-              return retva;
-            },
-          };
-          return retv;
+      global: {
+        stubs: {
+          'router-link': true,
         },
-        pluralizeFilter: () => {},
+        mocks: {
+          $route,
+          $t: (translation) => translation,
+          generateIDMAPI: () => {
+            const retv = {
+              data: {
+                pagedResultsCookie: {},
+              },
+              get: () => {
+                const retva = {
+                  then: () => {},
+                };
+                return retva;
+              },
+            };
+            return retv;
+          },
+          pluralizeFilter: () => {},
+        },
       },
-      propsData: {
+      props: {
         routerParameters: {
           resourceName: 'resourceName',
           icon: 'testIcon',

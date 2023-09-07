@@ -5,18 +5,19 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
+import { shallowMount, flushPromises } from '@vue/test-utils';
 import KeyValueList from './index';
 
 describe('KeyValueList', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = shallowMount(KeyValueList, {
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         schema: {
           properties: {},
         },
@@ -24,7 +25,7 @@ describe('KeyValueList', () => {
     });
   });
 
-  it('Saves new key value pair', () => {
+  it('Saves new key value pair', async () => {
     wrapper.setData({
       keyValues: {
         en: 'value',
@@ -34,16 +35,14 @@ describe('KeyValueList', () => {
 
     wrapper.vm.saveKeyValue({ key: 'fr', value: 'frValue' });
 
-    expect(wrapper.emitted()).toEqual({
-      input: [
-        [
-          {
-            en: 'value',
-            fr: 'frValue',
-          },
-        ],
+    expect(wrapper.emitted().input).toEqual([
+      [
+        {
+          en: 'value',
+          fr: 'frValue',
+        },
       ],
-    });
+    ]);
   });
 
   it('Edits existing value when key is left the same', () => {
@@ -56,15 +55,13 @@ describe('KeyValueList', () => {
 
     wrapper.vm.saveKeyValue({ key: 'en', value: 'enValue' });
 
-    expect(wrapper.emitted()).toEqual({
-      input: [
-        [
-          {
-            en: 'enValue',
-          },
-        ],
+    expect(wrapper.emitted().input).toEqual([
+      [
+        {
+          en: 'enValue',
+        },
       ],
-    });
+    ]);
   });
 
   it('Edits existing key when key is changed', () => {
@@ -77,15 +74,13 @@ describe('KeyValueList', () => {
 
     wrapper.vm.saveKeyValue({ key: 'fr', value: 'frValue' });
 
-    expect(wrapper.emitted()).toEqual({
-      input: [
-        [
-          {
-            fr: 'frValue',
-          },
-        ],
+    expect(wrapper.emitted().input).toEqual([
+      [
+        {
+          fr: 'frValue',
+        },
       ],
-    });
+    ]);
   });
 
   it('Displays text indicating when it is empty', () => {

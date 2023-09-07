@@ -5,17 +5,20 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import TimeConstraint from './index';
 
 describe('TimeConstraint Component', () => {
   let wrapper;
   beforeEach(() => {
-    wrapper = shallowMount(TimeConstraint, {
-      mocks: {
-        $t(val) { return val; },
+    wrapper = mount(TimeConstraint, {
+      global: {
+        mocks: {
+          $t(val) { return val; },
+        },
+        renderStubDefaultSlot: true,
       },
-      propsData: {
+      props: {
         value: '2020-01-02T12:00:00.000Z/2020-01-03T13:00:00.000Z',
       },
     });
@@ -23,11 +26,11 @@ describe('TimeConstraint Component', () => {
 
   it('contains two datepickers, two timepickers, and one offset selector', () => {
     const datepickers = wrapper.findAllComponents({ name: 'Datepicker' });
-    expect(datepickers.at(0).exists()).toBe(true);
-    expect(datepickers.at(1).exists()).toBe(true);
+    expect(datepickers[0].exists()).toBe(true);
+    expect(datepickers[1].exists()).toBe(true);
     const timepickers = wrapper.findAllComponents({ name: 'Timepicker' });
-    expect(timepickers.at(0).exists()).toBe(true);
-    expect(timepickers.at(1).exists()).toBe(true);
+    expect(timepickers[0].exists()).toBe(true);
+    expect(timepickers[1].exists()).toBe(true);
     expect(wrapper.findComponent({ name: 'TimezoneOffset' }).exists()).toBe(true);
   });
 

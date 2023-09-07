@@ -36,12 +36,10 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
       </BJumbotron>
     </BContainer>
-    <BContainer
-      v-if="myApplications.length">
+    <BContainer v-if="myApplications.length">
       <BCol>
         <section class="my-applications-wrapper">
-          <ListGroup
-            :title="$t('pages.dashboard.applications.heading')">
+          <ListGroup :title="$t('pages.dashboard.applications.heading')">
             <ul class="list-unstyled ml-4 mr-4 mb-4 my-applications-tiles">
               <FrConsumerApplications
                 v-for="application in myApplications"
@@ -56,13 +54,19 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import {
+  BCol,
+  BContainer,
+  BJumbotron,
+  BRow,
+} from 'bootstrap-vue';
 import { omit } from 'lodash';
 import { mapState } from 'vuex';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import ListGroup from '@forgerock/platform-shared/src/components/ListGroup/';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import FrConsumerApplications from '@/views/DashboardManager/dashboards/Default/ConsumerApplications/';
+import FrConsumerApplications from '@/views/DashboardManager/dashboards/Default/ConsumerApplications';
 import Welcome from '@/views/DashboardManager/dashboards/widgets/WelcomeWidget';
 import Workflow from '@/views/DashboardManager/dashboards/widgets/WorkflowControlWidget';
 
@@ -77,6 +81,10 @@ export default {
     NotificationMixin,
   ],
   components: {
+    BCol,
+    BContainer,
+    BJumbotron,
+    BRow,
     FrConsumerApplications,
     FrIcon,
     ListGroup,

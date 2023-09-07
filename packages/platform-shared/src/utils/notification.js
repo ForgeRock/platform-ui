@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import Vue from 'vue';
+import { notify } from '@kyvg/vue3-notification';
 import { has } from 'lodash';
 import { getTranslation } from './translations';
 
@@ -16,7 +16,7 @@ export function displayNotification(notificationType, message) {
     type = 'danger';
   }
 
-  Vue.notify({
+  notify({
     type,
     text: getTranslation(message),
   });

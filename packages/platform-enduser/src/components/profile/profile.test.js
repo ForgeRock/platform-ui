@@ -5,14 +5,10 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import i18n from '@/i18n';
 import Profile from '@/components/profile';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 Profile.components['fr-consent'] = jest.fn();
 Profile.components['fr-account-controls'] = jest.fn();
@@ -36,9 +32,10 @@ describe('Profile.vue', () => {
     });
 
     wrapper = shallowMount(Profile, {
-      localVue,
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         theme: {},
       },
       mixins: [RestMixin],

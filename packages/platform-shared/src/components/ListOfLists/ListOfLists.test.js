@@ -11,10 +11,12 @@ import ListOfLists from './index';
 describe('ListOfLists', () => {
   it('ListOfLists sets listValues when there is a value', () => {
     const wrapper = shallowMount(ListOfLists, {
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         items: {},
         name: 'test',
         value: ['test'],
@@ -28,10 +30,12 @@ describe('ListOfLists', () => {
 
   it('ListOfLists adds elements to list', async () => {
     const wrapper = shallowMount(ListOfLists, {
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         items: {
           type: 'boolean',
         },
@@ -61,10 +65,12 @@ describe('ListOfLists', () => {
 
   it('ListOfLists removes elements from list', () => {
     const wrapper = shallowMount(ListOfLists, {
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         items: {
           type: 'boolean',
         },
@@ -84,10 +90,12 @@ describe('ListOfLists', () => {
 
   it('ListOfLists checks if field is valid', () => {
     const wrapper = shallowMount(ListOfLists, {
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
         items: {
           type: 'boolean',
         },

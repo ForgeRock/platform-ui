@@ -5,10 +5,10 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { findByTestId, findComponentByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
-import { mount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
+import { mount, flushPromises } from '@vue/test-utils';
+import Notifications from '@kyvg/vue3-notification';
 import * as MyAccessApi from '@/api/governance/MyAccessApi';
 import i18n from '@/i18n';
 import MyAccessReviewTable from './index';
@@ -53,10 +53,13 @@ describe('MyAccessReviewTable', () => {
     }));
     setupTestPinia({ user: { userId: 'testId' } });
     wrapper = mount(MyAccessReviewTable, {
-      mocks: {
-        $t: (text, prop) => i18n.t(text, prop),
+      global: {
+        plugins: [Notifications],
+        mocks: {
+          $t: (text, prop) => i18n.global.t(text, prop),
+        },
       },
-      propsData: {
+      props: {
         grantType: 'account',
         defaultSort: 'application.name',
         fields: [
@@ -219,7 +222,7 @@ describe('MyAccessReviewTable', () => {
   it('clearing the search input resets the query params', async () => {
     const clearSpy = jest.spyOn(wrapper.vm, 'clear');
     const loadSpy = jest.spyOn(wrapper.vm, 'loadData');
-    const searchMyAccessReviewTable = findByTestId(wrapper, 'search-my-access-review-table');
+    const searchMyAccessReviewTable = findComponentByTestId(wrapper, 'search-my-access-review-table');
     await searchMyAccessReviewTable.vm.$emit('input', 'test');
     await searchMyAccessReviewTable.vm.$emit('clear');
 

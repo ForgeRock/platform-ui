@@ -5,8 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
+import { mount, flushPromises } from '@vue/test-utils';
 import SearchInput from './index';
 
 describe('SearchInput Component', () => {
@@ -20,7 +19,7 @@ describe('SearchInput Component', () => {
 
   it('Can set icon and placeholder text with props', () => {
     const wrapper = mount(SearchInput, {
-      propsData: {
+      props: {
         prependIcon: 'settings',
         placeholder: 'this is a test',
       },

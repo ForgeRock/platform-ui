@@ -5,26 +5,26 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
-import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { mount, flushPromises } from '@vue/test-utils';
+import { findByTestId, findComponentByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { clone } from 'lodash';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as AccessRequestApi from '@/api/governance/AccessRequestApi';
-import Approvals from './index';
 import i18n from '@/i18n';
 import router from '@/router';
+import Approvals from './index';
 
 const mountComponent = () => {
   setupTestPinia({ user: { userId: '1234' } });
   return mount(Approvals, {
-    router,
-    i18n,
-    mocks: {
-      $store: {
-        commit: jest.fn(),
-        state: { SharedStore: { governanceEnabled: true } },
+    global: {
+      plugins: [i18n, router],
+      mocks: {
+        $store: {
+          commit: jest.fn(),
+          state: { SharedStore: { governanceEnabled: true } },
+        },
       },
     },
   });
@@ -214,7 +214,7 @@ describe('Approvals', () => {
     await flushPromises();
     const getApprovalsSpy = jest.spyOn(AccessRequestApi, 'getUserApprovals');
 
-    const pagination = findByTestId(wrapper, 'approvals-pagination');
+    const pagination = findComponentByTestId(wrapper, 'approvals-pagination');
     pagination.vm.$emit('on-page-size-change', 2);
     expect(wrapper.vm.pageSize).toBe(2);
     expect(getApprovalsSpy).toHaveBeenCalledWith(
@@ -249,7 +249,7 @@ describe('Approvals', () => {
 
     const getApprovalsSpy = jest.spyOn(AccessRequestApi, 'getUserApprovals');
 
-    const pagination = findByTestId(wrapper, 'approvals-pagination');
+    const pagination = findComponentByTestId(wrapper, 'approvals-pagination');
     pagination.vm.$emit('input', 2);
     expect(wrapper.vm.currentPage).toBe(2);
     expect(getApprovalsSpy).toHaveBeenCalledWith(
@@ -284,7 +284,7 @@ describe('Approvals', () => {
 
     const getApprovalsSpy = jest.spyOn(AccessRequestApi, 'getUserApprovals');
 
-    const toolbar = findByTestId(wrapper, 'approvals-toolbar');
+    const toolbar = findComponentByTestId(wrapper, 'approvals-toolbar');
     toolbar.vm.$emit('status-change', 'complete');
     expect(getApprovalsSpy).toHaveBeenCalledWith(
       '1234',
@@ -318,7 +318,7 @@ describe('Approvals', () => {
 
     const getApprovalsSpy = jest.spyOn(AccessRequestApi, 'getUserApprovals');
 
-    const toolbar = findByTestId(wrapper, 'approvals-toolbar');
+    const toolbar = findComponentByTestId(wrapper, 'approvals-toolbar');
     toolbar.vm.$emit('filter-change', {
       requestId: 'testId',
     });

@@ -6,6 +6,8 @@
  */
 
 import { shallowMount } from '@vue/test-utils';
+import { BModal } from 'bootstrap-vue';
+import Notifications from '@kyvg/vue3-notification';
 import SettingsTab from './index';
 import * as SchemaApi from '@/api/SchemaApi';
 
@@ -13,16 +15,21 @@ let wrapper;
 describe('SettingsTab', () => {
   beforeEach(() => {
     wrapper = shallowMount(SettingsTab, {
-      mocks: {
-        $t: () => {},
-        $store: {
-          state: {
-            isFraas: true,
-            realm: 'realm',
+      global: {
+        mocks: {
+          $t: () => {},
+          $store: {
+            state: {
+              isFraas: true,
+              realm: 'realm',
+            },
           },
         },
+        plugins: [Notifications],
+        stubs: { BModal },
+        renderStubDefaultSlot: true,
       },
-      propsData: {
+      props: {
         properties: {
           temporalConstraints: {
             disabled: true,
@@ -42,12 +49,6 @@ describe('SettingsTab', () => {
         value: 'test',
       },
     });
-    wrapper.vm.$refs = {
-      settingsModal: {
-        hide: () => {},
-        show: () => {},
-      },
-    };
     jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => (
       {
         patch: () => Promise.resolve(),

@@ -12,8 +12,10 @@ describe('ActivityModal', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = shallowMount(ActivityModal, {
-      mocks: {
-        $t: (t) => t,
+      global: {
+        mocks: {
+          $t: (t) => t,
+        },
       },
     });
   });
@@ -87,10 +89,12 @@ describe('ActivityModal', () => {
 
   it('should render prop modalId', () => {
     wrapper = shallowMount(ActivityModal, {
-      mocks: {
-        $t: (t) => t,
+      global: {
+        mocks: {
+          $t: (t) => t,
+        },
       },
-      propsData: {
+      props: {
         modalId: 'CertificationTaskActivityEntitlementModal',
       },
     });

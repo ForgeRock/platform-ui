@@ -25,23 +25,25 @@ of the MIT license. See the LICENSE file for details. -->
     </BRow>
     <BRow>
       <BCol v-if="isUserDataLoading">
-        <template v-for="i in 5">
+        <template
+          v-for="i in 5"
+          :key="i">
           <FrDonutChartCard
             class="mb-4"
-            :key="i"
             :is-user-data-loading="true" />
         </template>
       </BCol>
       <br>
       <BCol v-if="!isUserDataLoading">
-        <template v-for="(feature) in selectedFeatures">
+        <template
+          v-for="(feature) in selectedFeatures"
+          :key="feature.text">
           <FrDonutChartCard
             :is-tenant-data-loading="isTenantDataLoading"
             :is-user-data-loading="isUserDataLoading"
             :tenant-data="tenantData[feature.text]"
             :user-info="userInfo"
             :user-data="userData[feature.text]"
-            :key="feature.text"
             :feature="feature.text"
             :should-compare="shouldCompare"
             :title="feature.title"
@@ -111,7 +113,7 @@ async function getUserInfo(userName) {
     }
     throw new Error();
   } catch (e) {
-    showErrorMessage(e, i18n.t('autoAccess.access.normalView.userQueryNotFound'));
+    showErrorMessage(e, i18n.global.t('autoAccess.access.normalView.userQueryNotFound'));
   }
   return {};
 }
@@ -129,7 +131,7 @@ async function getData(isUser, loadingState) {
     loadingState.value = false;
     return parsedResponse;
   } catch (e) {
-    showErrorMessage(e, i18n.t('autoAccess.access.normalView.retrievingDataError'));
+    showErrorMessage(e, i18n.global.t('autoAccess.access.normalView.retrievingDataError'));
   }
   return {};
 }

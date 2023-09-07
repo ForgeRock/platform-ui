@@ -31,8 +31,10 @@ describe('FilterFeaturesModal', () => {
 
   function setup(props) {
     return mount(FilterFeaturesModal, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         ...defaultProps,
         ...props,
       },

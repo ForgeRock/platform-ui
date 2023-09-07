@@ -41,7 +41,8 @@ of the MIT license. See the LICENSE file for details. -->
       ok-only
       ok-variant="outline-primary"
       :ok-title="$t('common.done')"
-      data-testid="system-notification-modal">
+      data-testid="system-notification-modal"
+      :static="isTesting">
       <template #modal-title>
         <span
           data-testid="system-notification-modal-title"
@@ -79,10 +80,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    isTesting: {
+      type: Boolean,
+      default: false,
+    },
   },
   methods: {
     showModal() {
-      this.$root.$emit('bv::show::modal', 'SystemNotificationModal');
+      this.$bvModal.show('SystemNotificationModal');
     },
   },
 };

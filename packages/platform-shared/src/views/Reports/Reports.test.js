@@ -7,15 +7,16 @@
 
 import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
-import flushPromises from 'flush-promises';
-import { mount } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
 import i18n from '@/i18n';
 import Reports from './Reports';
 
 describe('Reports', () => {
   function setup() {
     return mount(Reports, {
-      i18n,
+      global: {
+        plugins: [i18n],
+      },
     });
   }
   const returnDataSuccess = {

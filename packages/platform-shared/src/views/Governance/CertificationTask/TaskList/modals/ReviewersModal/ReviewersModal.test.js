@@ -29,8 +29,10 @@ describe('ReviewersModal', () => {
 
   beforeEach(() => {
     wrapper = shallowMount(ReviewersModal, {
-      mocks: {
-        $t: (t) => t,
+      global: {
+        mocks: {
+          $t: (t) => t,
+        },
       },
     });
   });
@@ -107,10 +109,12 @@ describe('ReviewersModal', () => {
 
   it('should render prop modalId', () => {
     wrapper = shallowMount(ReviewersModal, {
-      mocks: {
-        $t: (t) => t,
+      global: {
+        mocks: {
+          $t: (t) => t,
+        },
       },
-      propsData: {
+      props: {
         modalId: 'CertificationTaskReviewersEntitlementModal',
       },
     });

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -8,13 +8,12 @@ of the MIT license. See the LICENSE file for details. -->
       :id="id"
       :name="name"
       :description="description"
-      :errors="errors"
+      :errors="combinedErrors"
       :is-html="isHtml"
-      :label="label"
-      :validation="validation"
-      :validation-immediate="validationImmediate">
+      :label="label">
       <input
         v-model="inputValue"
+        v-on="validationListeners"
         ref="input"
         type="date"
         :class="[{'is-invalid': errorMessages && errorMessages.length, 'polyfill-placeholder': label }, 'form-control']"
@@ -22,8 +21,7 @@ of the MIT license. See the LICENSE file for details. -->
         :disabled="disabled"
         :id="id"
         :name="name"
-        :readonly="readonly"
-        @input="emitDateValue(inputValue)">
+        :readonly="readonly">
     </FrInputLayout>
     <BFormDatepicker
       v-model="inputValue"
@@ -35,8 +33,7 @@ of the MIT license. See the LICENSE file for details. -->
       :disabled="disabled"
       :id="id"
       :name="name"
-      :aria-label="getTranslation(label)"
-      @input="emitDateValue(inputValue)" />
+      :aria-label="labelTranslation" />
   </div>
 </template>
 
@@ -46,6 +43,8 @@ import {
   BFormDatepicker,
 } from 'bootstrap-vue';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
+import { useField } from 'vee-validate';
+import { toRef } from 'vue';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
 
@@ -67,6 +66,20 @@ export default {
       default: true,
       type: Boolean,
     },
+  },
+  setup(props) {
+    const {
+      value: inputValue, errors: fieldErrors, handleBlur,
+    } = useField(() => props.name, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: '', bails: false });
+
+    // validationListeners: Contains custom event listeners for validation.
+    // Since vee-validate +4 removes the interaction modes, this custom listener is added
+    // to validate on blur to perform a similar aggressive validation in addition to the validateOnValueUpdate.
+    const validationListeners = {
+      blur: (evt) => handleBlur(evt, true),
+    };
+
+    return { inputValue, fieldErrors, validationListeners };
   },
   methods: {
     /**
@@ -118,6 +131,19 @@ export default {
       }
     },
   },
+  computed: {
+    labelTranslation() {
+      return this.getTranslation(this.label);
+    },
+    combinedErrors() {
+      return this.errors.concat(this.fieldErrors);
+    },
+  },
+  watch: {
+    inputValue(newVal) {
+      this.emitDateValue(newVal);
+    },
+  },
 };
 </script>
 
@@ -129,16 +155,16 @@ export default {
     top: 1px;
     height: calc(100% - 2px);
 
-    ::v-deep button {
+    :deep(button) {
       background-color: initial;
       color: $gray-500;
       padding: 0.85rem 0.5rem;
     }
+  }
 
-    ::v-deep &.show > .btn-secondary.dropdown-toggle {
-      background-color: initial;
-      color: $gray-500;
-    }
+  :deep(.date-button.show > .btn-secondary.dropdown-toggle) {
+    background-color: initial;
+    color: $gray-500;
   }
 
   .form-control.is-invalid {

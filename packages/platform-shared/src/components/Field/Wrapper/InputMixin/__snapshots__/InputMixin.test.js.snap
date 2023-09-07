@@ -1,0 +1,245 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`InputMixin Generates an uuid name prop if the name attribute is empty: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: Missing required prop: "name"",
+    "
+",
+    " at <Anonymous",
+    "value=5",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (12)",
+    "
+",
+    " at <Anonymous",
+    "value=5",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`InputMixin Initial value calls setter method setInputValue: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (5)",
+    "
+",
+    " at <Anonymous",
+    "name="testMixin"",
+    "value="test"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`InputMixin Initial value can be set as Array: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (8)",
+    "
+",
+    " at <Anonymous",
+    "name="testMixin"",
+    "value=",
+    [
+      "test",
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) "watch" option or vm.$watch on an array value will no longer trigger on array mutation unless the "deep" option is specified. If current usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ WATCH_ARRAY: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/watch.html",
+    "
+",
+    " at <Anonymous",
+    "name="testMixin"",
+    "value=",
+    [
+      "test",
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`InputMixin Initial value can be set as Number: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (10)",
+    "
+",
+    " at <Anonymous",
+    "name="testMixin"",
+    "value=5",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`InputMixin Initial value can be set as Object: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (9)",
+    "
+",
+    " at <Anonymous",
+    "name="testMixin"",
+    "value=",
+    {
+      "test": "test",
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`InputMixin Initial value can be set as String: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (7)",
+    "
+",
+    " at <Anonymous",
+    "name="testMixin"",
+    "value="test"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`InputMixin Initial value defaults to empty string: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (6)",
+    "
+",
+    " at <Anonymous",
+    "name="testMixin"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`InputMixin InputMixin sets floating label on Chrome: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (3)",
+    "
+",
+    " at <Anonymous",
+    "name="testMixin"",
+    "label="test"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`InputMixin InputMixin sets floating label on Edge: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (4)",
+    "
+",
+    " at <Anonymous",
+    "name="testMixin"",
+    "label="test"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`InputMixin InputMixin uid is set: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (2)",
+    "
+",
+    " at <Anonymous",
+    "name="testMixin"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`InputMixin TestComponent without float labels: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (11)",
+    "
+",
+    " at <Anonymous",
+    "name="testMixin"",
+    "floatingLabel=false",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;

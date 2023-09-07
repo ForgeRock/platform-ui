@@ -10,15 +10,17 @@ import FilterBuilderGroup from './index';
 import { defaultConditionOptions, operatorOptions } from '../../utils/QueryFilterDefaults';
 
 const mountProps = {
-  mocks: {
-    $t: () => {},
-    $store: {
-      state: {
-        userId: 'foo',
+  global: {
+    mocks: {
+      $t: () => {},
+      $store: {
+        state: {
+          userId: 'foo',
+        },
       },
     },
   },
-  propsData: {
+  props: {
     conditionOptions: defaultConditionOptions,
     depth: 0,
     disabled: false,

@@ -11,7 +11,7 @@ import CircleProgressBar from './index';
 describe('CircleProgressBar Component', () => {
   it('Component loaded with properly params', () => {
     const wrapper = shallowMount(CircleProgressBar, {
-      propsData: {
+      props: {
         progress: 50,
         size: 250,
       },

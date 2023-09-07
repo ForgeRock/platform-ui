@@ -8,14 +8,13 @@ of the MIT license. See the LICENSE file for details. -->
       :id="id"
       :name="name"
       :description="description"
-      :errors="errors"
+      :errors="combinedErrors"
       :is-html="isHtml"
-      :label="label"
-      :validation="validation"
-      :validation-immediate="validationImmediate">
+      :label="label">
       <input
         :value="inputValue"
         @input="inputValue = $event.target.value; debounceEmitValidTime(inputValue)"
+        v-on="validationListeners"
         ref="input"
         type="time"
         :class="[{'is-invalid': errorMessages && errorMessages.length, 'polyfill-placeholder': label }, 'form-control']"
@@ -37,7 +36,7 @@ of the MIT license. See the LICENSE file for details. -->
       :disabled="disabled"
       :id="id"
       :name="name"
-      :aria-label="getTranslation(label)"
+      :aria-label="labelTranslation"
       @context="debounceEmitValidTime" />
   </div>
 </template>
@@ -51,6 +50,8 @@ import {
 import dayjs from 'dayjs';
 import { BFormTimepicker } from 'bootstrap-vue';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
+import { useField } from 'vee-validate';
+import { toRef } from 'vue';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
 
@@ -89,6 +90,20 @@ export default {
     return {
       debounceEmitValidTime: debounce(this.emitValidTime, 100),
     };
+  },
+  setup(props) {
+    const {
+      value: inputValue, errors: fieldErrors, handleBlur,
+    } = useField(() => props.name, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: '', bails: false });
+
+    // validationListeners: Contains custom event listeners for validation.
+    // Since vee-validate +4 removes the interaction modes, this custom listener is added
+    // to validate on blur to perform a similar aggressive validation in addition to the validateOnValueUpdate.
+    const validationListeners = {
+      blur: (evt) => handleBlur(evt, true),
+    };
+
+    return { inputValue, fieldErrors, validationListeners };
   },
   methods: {
     /**
@@ -165,6 +180,19 @@ export default {
       }
     },
   },
+  computed: {
+    labelTranslation() {
+      return this.getTranslation(this.label);
+    },
+    combinedErrors() {
+      return this.errors.concat(this.fieldErrors);
+    },
+  },
+  watch: {
+    inputValue(newVal) {
+      this.debounceEmitValidTime(newVal);
+    },
+  },
 };
 </script>
 
@@ -176,13 +204,13 @@ export default {
     top: 1px;
     height: calc(100% - 2px);
 
-    ::v-deep button {
+    :deep(button) {
       background-color: initial;
       color: $gray-500;
       padding: 0.85rem 0.5rem;
     }
 
-    ::v-deep &.show > .btn-secondary.dropdown-toggle {
+    :deep(&.show > .btn-secondary.dropdown-toggle) {
       background-color: initial;
       color: $gray-500;
     }

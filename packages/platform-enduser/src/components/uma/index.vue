@@ -72,6 +72,13 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import {
+  BBadge,
+  BCardBody,
+  BContainer,
+  BTab,
+  BTabs,
+} from 'bootstrap-vue';
+import {
   cloneDeep,
   find,
   has,
@@ -97,6 +104,11 @@ export default {
     NotificationMixin,
   ],
   components: {
+    BBadge,
+    BCardBody,
+    BContainer,
+    BTab,
+    BTabs,
     FrActivity,
     FrCenterCard,
     FrRequests,
@@ -219,14 +231,14 @@ export default {
     renderShareModal(resource) {
       this.resource = resource;
       this.$nextTick(() => {
-        this.$root.$emit('bv::show::modal', 'shareModal');
+        this.$bvModal.show('shareModal');
       });
     },
     renderUnshareModal(resourceName, resourceId) {
       this.resourceName = resourceName;
       this.resourceId = resourceId;
       this.$nextTick(() => {
-        this.$root.$emit('bv::show::modal', 'unshareModal');
+        this.$bvModal.show('unshareModal');
       });
     },
     shareResource(payload, config = {}) {

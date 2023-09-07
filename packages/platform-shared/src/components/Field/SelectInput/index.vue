@@ -7,12 +7,10 @@ of the MIT license. See the LICENSE file for details. -->
     :id="id"
     :name="name"
     :description="description"
-    :errors="errors"
+    :errors="combinedErrors"
     :is-html="isHtml"
     :label="label"
     :floating-label="floatingLabel"
-    :validation="validation"
-    :validation-immediate="validationImmediate"
     :readonly-label="disabled">
     <VueMultiSelect
       :id="id"
@@ -34,7 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
       :show-labels="false"
       :allow-empty="allowEmpty"
       :class="[{'polyfill-placeholder': floatLabels, 'h-100': floatingLabel, 'has-prepend-button': hasPrependBtn}, 'white-label-background form-control p-0', {'no-multiselect-label': !this.label }]"
-      :placeholder="placeholder"
+      :placeholder="internalPlaceholder"
       :data-testid="testid"
       @search-change="$emit('search-change', $event)"
       @open="openHandler"
@@ -45,7 +43,7 @@ of the MIT license. See the LICENSE file for details. -->
         {{ $t('common.noResult') }}
       </template>
       <template
-        v-for="(key, slotName) in $scopedSlots"
+        v-for="(key, slotName) in $slots"
         #[slotName]="slotData">
         <!-- @slot passthrough slot -->
         <slot
@@ -54,7 +52,7 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
     </VueMultiSelect>
     <template
-      v-for="(key, slotName) in $scopedSlots"
+      v-for="(key, slotName) in $slots"
       #[slotName]="slotData">
       <!-- @slot passthrough slot -->
       <slot
@@ -69,16 +67,18 @@ import {
   onBeforeUnmount,
   onMounted,
   ref,
+  toRef,
 } from 'vue';
 import {
   find,
 } from 'lodash';
 import vueMultiSelectOverrides from '@forgerock/platform-shared/src/composables/vueMultiSelectOverrides';
+
+import { useField } from 'vee-validate';
 // import vue-multiselect from src because dist min/uglified package gets removed in build
 import VueMultiSelect from '../../../../../../node_modules/vue-multiselect/src/index';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
-
 /**
  *  Single select input. Allows selection of one element in a dropdown
  *
@@ -99,9 +99,7 @@ export default {
     },
     placeholder: {
       type: String,
-      default() {
-        return this.$t('common.typeToSearch');
-      },
+      default: '',
     },
     searchable: {
       type: Boolean,
@@ -149,6 +147,10 @@ export default {
     },
   },
   setup(props, context) {
+    const {
+      value: inputValue, errors: fieldErrors,
+    } = useField(() => props.name, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: '', bails: false });
+
     const hasPrependBtn = ref(Object.keys(context.slots).includes('prependButton'));
     const isExpanded = ref(false);
     const vms = ref(null);
@@ -185,6 +187,8 @@ export default {
       hasPrependBtn,
       isExpanded,
       vms,
+      inputValue,
+      fieldErrors,
     };
   },
   mounted() {
@@ -193,16 +197,11 @@ export default {
     }
 
     this.setInputValue(this.value);
+
+    this.addAriaLabelForLegend();
   },
   updated() {
-    // Note: in certain browsers, screen readers are unable to associate a <legend> with the select component
-    // this fix tells the input what it's labelledby, which is the id of that <legend> element
-    if (this.inputLabelledby) {
-      const multiselectInput = this.$el.querySelector('.multiselect__input');
-      if (multiselectInput) {
-        multiselectInput.setAttribute('aria-labelledby', this.inputLabelledby);
-      }
-    }
+    this.addAriaLabelForLegend();
   },
   computed: {
     selectOptions() {
@@ -225,8 +224,26 @@ export default {
       }
       return formattedOptions;
     },
+    internalPlaceholder() {
+      return this.placeholder || this.$t('common.typeToSearch');
+    },
+    combinedErrors() {
+      return this.errors.concat(this.fieldErrors);
+    },
   },
   methods: {
+    /**
+     * In certain browsers, screen readers are unable to associate a <legend> with the select component
+     * this method updates the select html to refer to the correct <legend> element
+     */
+    addAriaLabelForLegend() {
+      if (this.inputLabelledby) {
+        const multiselectInput = this.$el.querySelector?.('.multiselect__input');
+        if (multiselectInput) {
+          multiselectInput.setAttribute('aria-labelledby', this.inputLabelledby);
+        }
+      }
+    },
     closeDropDown(newVal) {
       this.isExpanded = false;
       if (newVal === null) {
@@ -243,7 +260,10 @@ export default {
     },
     setInputValue(newVal) {
       if (newVal !== undefined && newVal !== null) {
-        this.inputValue = find(this.selectOptions, { value: newVal });
+        const optionBeingSet = find(this.selectOptions, { value: newVal });
+        if (optionBeingSet || this.valueIsDifferent(newVal)) {
+          this.inputValue = optionBeingSet;
+        }
       }
     },
     /**

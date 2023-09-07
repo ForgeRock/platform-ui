@@ -12,8 +12,10 @@ describe('Spinner Component', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = shallowMount(Spinner, {
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
     });
   });

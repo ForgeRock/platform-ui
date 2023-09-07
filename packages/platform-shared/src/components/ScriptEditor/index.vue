@@ -114,7 +114,9 @@ of the MIT license. See the LICENSE file for details. -->
                 <small>{{ $t('scriptEditor.value') }}</small>
               </div>
             </div>
-            <ValidationObserver ref="validationObserver">
+            <VeeForm
+              ref="validationObserver"
+              as="span">
               <div
                 v-for="(selectedVariable, index) in selectedVariables"
                 :key="selectedVariable.index"
@@ -163,7 +165,7 @@ of the MIT license. See the LICENSE file for details. -->
                   </BButton>
                 </div>
               </div>
-            </ValidationObserver>
+            </VeeForm>
           </template>
         </template>
       </div>
@@ -177,7 +179,7 @@ import {
   BFormFile,
 } from 'bootstrap-vue';
 import { debounce } from 'lodash';
-import { ValidationObserver } from 'vee-validate';
+import { Form as VeeForm } from 'vee-validate';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import blurOnEscape from '@forgerock/platform-shared/src/utils/codeEditor';
@@ -200,7 +202,7 @@ export default {
     VuePrismEditor,
     FrField,
     FrIcon,
-    ValidationObserver,
+    VeeForm,
   },
   props: {
     /**
@@ -331,8 +333,8 @@ export default {
      * Checks if variables are filled in properly and calls emit if so
      */
     emitScriptValue() {
-      if (this.$refs.validationObserver) {
-        this.$refs.validationObserver.validate().then((isValid) => {
+      if (this.$refs.Field) {
+        this.$refs.Field.validate().then((isValid) => {
           if (isValid) {
             const globals = {};
             this.selectedVariables.forEach((variable) => {
@@ -492,7 +494,7 @@ export default {
   max-height: 50px;
 }
 
-::v-deep {
+:deep {
   .file-import-floating-label {
     margin: -13px;
   }

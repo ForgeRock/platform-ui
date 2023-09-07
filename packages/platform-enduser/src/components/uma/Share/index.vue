@@ -188,6 +188,15 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import {
+  BButton,
+  BDropdown,
+  BDropdownDivider,
+  BDropdownItem,
+  BImg,
+  BInputGroup,
+  BModal,
+} from 'bootstrap-vue';
+import {
   cloneDeep, filter, findIndex, each, keys, map, pickBy,
 } from 'lodash';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
@@ -204,6 +213,13 @@ export default {
     NotificationMixin,
   ],
   components: {
+    BButton,
+    BDropdown,
+    BDropdownDivider,
+    BDropdownItem,
+    BImg,
+    BInputGroup,
+    BModal,
     FrFallbackImage: FallbackImage,
     FrIcon,
   },

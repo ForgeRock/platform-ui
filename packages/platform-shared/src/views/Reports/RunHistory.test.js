@@ -6,8 +6,9 @@
  */
 
 import { nextTick } from 'vue';
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import { createTooltipContainer, findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 
 import * as ReportsUtils from '@forgerock/platform-shared/src/utils/reportsUtils';
 import * as DownloadFile from '@forgerock/platform-shared/src/utils/downloadFile';
@@ -16,20 +17,24 @@ import i18n from '@/i18n';
 import RunHistory from './RunHistory';
 import HistoryStubs from './ReportHistoryStubs';
 
+jest.mock('vue-router', () => ({
+  useRouter: jest.fn(() => ({
+    push: jest.fn(),
+  })),
+}));
+
+jest.mock('@forgerock/platform-shared/src/composables/bvModal');
+
 describe('Run History component', () => {
   function setup(props) {
+    useBvModal.mockReturnValue({ bvModal: { show: jest.fn(), hide: jest.fn() } });
     return mount(RunHistory, {
       attachTo: createTooltipContainer(['tooltip-job_0123', 'tooltip-job_1112', 'tooltip-job_4567']),
-      i18n,
-      propsData: {
-        ...props,
+      global: {
+        plugins: [i18n],
       },
-      mocks: {
-        $router: { push: jest.fn() },
-        _bv__modal: {
-          hide: jest.fn(),
-          show: jest.fn(),
-        },
+      props: {
+        ...props,
       },
     });
   }
@@ -155,7 +160,7 @@ describe('Run History component', () => {
       const tableRows = table.find('tbody').findAll('tr[role="row"]');
       const tableRowComplete = tableRows.at(3);
       const tableRowViewReportButton = tableRowComplete.find('.fr-view-report').find('button');
-      const routerPushSpy = jest.spyOn(wrapper.vm._setupProxy.$router, 'push');
+      const routerPushSpy = jest.spyOn(wrapper.vm.router, 'push');
 
       await tableRowViewReportButton.trigger('click');
       expect(routerPushSpy).toHaveBeenCalledWith({ name: 'ReportView', params: { id: 'job_4567', template: 'template-name' } });
@@ -177,12 +182,13 @@ describe('Run History component', () => {
       const requestExportSpy = jest.spyOn(ReportsUtils, 'requestExport');
       const requestReportRunsSpy = jest.spyOn(ReportsUtils, 'requestReportRuns');
 
-      await JSONExportButton.trigger('click');
+      JSONExportButton.trigger('click');
+      await nextTick();
       expect(requestExportSpy).toHaveBeenCalledWith('job_0123', 'export', 'TEMPLATE-NAME', 'jsonl');
       expect(requestReportRunsSpy).toHaveBeenCalledWith({ name: 'TEMPLATE-NAME', runId: 'job_0123' });
       expect(JSONExportButton.text()).toMatch(/(Loading...)/i); // loading (spinner) button state
 
-      await nextTick();
+      await flushPromises();
       const downloadIconAfterResolution = JSONExportButton.find('.material-icons-outlined');
       expect(downloadIconAfterResolution.text()).toBe('file_download');
     });
@@ -202,7 +208,8 @@ describe('Run History component', () => {
       ReportsUtils.requestReportRuns = jest.fn().mockReturnValue(Promise.resolve(requestReportResponseStub));
       Notifications.displayNotification = jest.fn();
 
-      await JSONExportButton.trigger('click');
+      JSONExportButton.trigger('click');
+      await wrapper.vm.$nextTick();
       expect(CSVExportButton.classes()).toContain('disabled');
     });
 
@@ -233,8 +240,8 @@ describe('Run History component', () => {
       const RunDetailsDropdownOption = firstTableRow.find('[data-testid="view-run-option"]');
 
       await RunDetailsDropdownOption.trigger('click');
-      expect(wrapper.vm._setupProxy.parametersForDetailsModal).toEqual({ org_names: ['Sales'] });
-      expect(wrapper.vm._setupProxy.showDetailsModal).toEqual(true);
+      expect(wrapper.vm.parametersForDetailsModal).toEqual({ org_names: ['Sales'] });
+      expect(wrapper.vm.showDetailsModal).toEqual(true);
     });
   });
 });

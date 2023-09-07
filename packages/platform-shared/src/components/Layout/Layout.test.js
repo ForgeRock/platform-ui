@@ -27,13 +27,16 @@ describe('Layout Component', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = shallowMount(Layout, {
-      mocks: {
-        $t: () => {},
-        $route: {
-          meta: { hideSideMenu: false },
+      global: {
+        stubs: ['notifications'],
+        mocks: {
+          $t: () => {},
+          $route: {
+            meta: { hideSideMenu: false },
+          },
         },
       },
-      propsData: {
+      props: {
         menuItems: [
           {
             columns: 'testColumns',

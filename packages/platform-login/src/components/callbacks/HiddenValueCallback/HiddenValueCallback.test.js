@@ -13,8 +13,10 @@ describe('HiddenValueCallback', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = shallowMount(HiddenValueCallback, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         callback: {
           getInputValue: () => 'a',
           setInputValue: jest.fn(),

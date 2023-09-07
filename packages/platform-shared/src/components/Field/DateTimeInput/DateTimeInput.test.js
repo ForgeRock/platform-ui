@@ -5,12 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import DateTimeInput from './index';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 const defaultMixinProps = {
   id: '',
@@ -30,14 +26,15 @@ const defaultProps = {
 describe('DateTimeInput', () => {
   it('sets date and time from formatted string', () => {
     const wrapper = shallowMount(DateTimeInput, {
-      localVue,
-      propsData: {
+      props: {
         ...defaultMixinProps,
         ...defaultProps,
         label: 'test',
       },
-      mocks: {
-        $t: (text) => (text),
+      global: {
+        mocks: {
+          $t: (text) => (text),
+        },
       },
     });
 
@@ -54,14 +51,15 @@ describe('DateTimeInput', () => {
 
   it('builds a formatted datetime', () => {
     const wrapper = shallowMount(DateTimeInput, {
-      localVue,
-      propsData: {
+      props: {
         ...defaultMixinProps,
         ...defaultProps,
         label: 'test',
       },
-      mocks: {
-        $t: (text) => (text),
+      global: {
+        mocks: {
+          $t: (text) => (text),
+        },
       },
     });
 

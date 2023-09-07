@@ -54,10 +54,11 @@ of the MIT license. See the LICENSE file for details. -->
     </div>
   </BContainer>
 </template>
-<script>
 
+<script>
 import axios from 'axios';
 import {
+  BButton,
   BCard,
   BContainer,
   VBModal,
@@ -96,6 +97,7 @@ export default {
     TranslationMixin,
   ],
   components: {
+    BButton,
     BCard,
     BContainer,
     FrCreateResource,

@@ -5,16 +5,17 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
 import i18n from '@forgerock/platform-shared/src/i18n';
-import flushPromises from 'flush-promises';
 import LazyLoadList from './index';
 
 describe('LazyLoadList', () => {
   function mountComponent(propsData, overrideData = {}) {
     const wrapper = mount(LazyLoadList, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         additionalItemsAvailable: false,
         listItems: [],
         ...propsData,
