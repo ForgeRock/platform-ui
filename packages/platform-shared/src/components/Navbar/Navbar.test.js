@@ -15,13 +15,15 @@ describe('Navbar Component', () => {
   beforeEach(() => {
     setupTestPinia();
     wrapper = shallowMount(Navbar, {
-      mocks: {
-        $t: () => {},
-        $store: {
-          state: {},
+      global: {
+        mocks: {
+          $t: () => {},
+          $store: {
+            state: {},
+          },
         },
+        stubs: ['RouterLink'],
       },
-      stubs: ['RouterLink'],
     });
   });
 

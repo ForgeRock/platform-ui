@@ -1,10 +1,12 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="fr-key-value-panel p-3">
-    <ValidationObserver v-slot="{ invalid }">
+    <Field
+      name="panelField"
+      v-slot="{ meta: { valid } }">
       <FrField
         :autofocus="autofocus"
         :display-description="false"
@@ -25,12 +27,12 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
         <BButton
           @click="saveKeyValue"
-          :disabled="invalid"
+          :disabled="!valid"
           variant="outline-primary">
           {{ $t('common.save') }}
         </BButton>
       </div>
-    </ValidationObserver>
+    </Field>
   </div>
 </template>
 
@@ -38,7 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   BButton,
 } from 'bootstrap-vue';
-import { ValidationObserver } from 'vee-validate';
+import { Field } from 'vee-validate';
 
 /**
  * New/Edit Key value pair component
@@ -47,8 +49,8 @@ export default {
   name: 'KeyValuePanel',
   components: {
     BButton,
-    FrField: () => import ('@forgerock/platform-shared/src/components/Field'),
-    ValidationObserver,
+    FrField: () => import('@forgerock/platform-shared/src/components/Field'),
+    Field,
   },
   props: {
     /**

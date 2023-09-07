@@ -44,16 +44,18 @@ describe('Comments', () => {
   const noCommentsPropsData = cloneDeep(defaultPropsData);
   noCommentsPropsData.item.rawData.decision.comments = [];
 
-  const createWrapper = (propsData) => mount(Comments, {
-    propsData,
-    mocks: {
-      $t: (t, e) => {
-        switch (t) {
-          case 'pagination.dropdown.text':
-            return JSON.stringify(e);
-          default:
-            return t;
-        }
+  const createWrapper = (props) => mount(Comments, {
+    props,
+    global: {
+      mocks: {
+        $t: (t, e) => {
+          switch (t) {
+            case 'pagination.dropdown.text':
+              return JSON.stringify(e);
+            default:
+              return t;
+          }
+        },
       },
     },
   });
@@ -62,7 +64,7 @@ describe('Comments', () => {
     const wrapper = createWrapper(defaultPropsData);
     const listItems = wrapper.findAll('.list-feed-item');
     expect(listItems.length).toBe(1);
-    const itemText = listItems.at(0).text();
+    const itemText = listItems[0].text();
     expect(itemText).toContain('mariotest');
     expect(itemText).toContain(dayjs(defaultPropsData.item.rawData.decision.comments[0].timeStamp).format('MMM D, YYYY h:mm A'));
     expect(itemText).toContain('AddThisTestComment');
@@ -74,7 +76,7 @@ describe('Comments', () => {
     const wrapper = createWrapper(paginatedCommentsPropsData);
     const listItems = wrapper.findAll('.list-feed-item');
     expect(listItems.length).toBe(10);
-    const itemText = listItems.at(9).text();
+    const itemText = listItems[9].text();
     expect(itemText).toContain('mariotest');
     expect(itemText).toContain(dayjs(paginatedCommentsPropsData.item.rawData.decision.comments[9].timeStamp).format('MMM D, YYYY h:mm A'));
     expect(itemText).toContain('AddThisTestComment');

@@ -1,0 +1,445 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CertificationMixin Gets items list page 4: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (8)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_DATA_MERGE) (7)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`CertificationMixin Gets items list: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (7)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_DATA_MERGE) (6)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`CertificationMixin Gets resets page with search: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (9)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_DATA_MERGE) (8)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`CertificationMixin Handles status sort: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (6)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_DATA_MERGE) (5)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`CertificationMixin Reset view when search is cleared: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (5)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_DATA_MERGE) (4)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`CertificationMixin Should return governance.status.complete if the status is completed : console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (3)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_DATA_MERGE) (2)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`CertificationMixin Should return governance.status.complete if the status is signed-off : console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (2)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_DATA_MERGE) Detected conflicting key "statusSort" when merging data option values. In Vue 3, data keys are merged shallowly and will override one another.
+  Details: https://v3-migration.vuejs.org/breaking-changes/data-option.html#mixin-merge-behavior-change",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`CertificationMixin Should return the status param nested with the governance.status: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (4)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_DATA_MERGE) (3)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`CertificationMixin isActiveLikeStatus computed prop true by default: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (15)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_DATA_MERGE) (14)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`CertificationMixin isActiveLikeStatus computed prop true when statuses are in-progress, active, expiring, creating and overdue: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (16)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_DATA_MERGE) (15)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`CertificationMixin isClosedLikeStatus computed prop true when statuses are closed, expired, cancelled and completed: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (17)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_DATA_MERGE) (16)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`CertificationMixin setAccessReviewList handles totals for admin: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (11)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_DATA_MERGE) (10)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`CertificationMixin setAccessReviewList handles totals for enduser: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (10)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_DATA_MERGE) (9)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`CertificationMixin sortingChanged should normalize sort by when is formattedDeadline: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (12)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_DATA_MERGE) (11)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`CertificationMixin sortingChanged should sort items by name in ascending order and update getItems query with correct parameters: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (14)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_DATA_MERGE) (13)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`CertificationMixin sortingChanged should sort items by name in descending order and update getItems query with correct parameters: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (13)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_DATA_MERGE) (12)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;

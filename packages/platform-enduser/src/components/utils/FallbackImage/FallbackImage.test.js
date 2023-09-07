@@ -5,12 +5,9 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
+import { nextTick } from 'vue';
 import FallbackImage from '@/components/utils/FallbackImage';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 jest.spyOn(FallbackImage, 'mounted');
 
@@ -19,30 +16,32 @@ describe('utils/FallbackImage.vue', () => {
 
   beforeEach(() => {
     wrapper = shallowMount(FallbackImage, {
-      stubs: { BImg: true },
+      global: {
+        stubs: { BImg: true },
+      },
     });
     wrapper.setData({ imageFound: true });
   });
 
   afterEach(() => {
-    wrapper.destroy();
+    wrapper.unmount();
   });
 
-  it('should display an image when "imageFound"', () => {
+  it('should display an image when "imageFound"', async () => {
     wrapper.setData({ imageFound: true });
 
-    localVue.nextTick(() => {
-      expect(wrapper.findAll('bimg-stub').isVisible()).toBe(true);
-      expect(wrapper.findAll('i').exists()).toBe(false);
-    });
+    await nextTick();
+
+    expect(wrapper.find('b-img-stub').isVisible()).toBe(true);
+    expect(wrapper.find('i').exists()).toBe(false);
   });
 
-  it('should display an icon when not "imageFound"', () => {
+  it('should display an icon when not "imageFound"', async () => {
     wrapper.setData({ imageFound: false });
 
-    localVue.nextTick(() => {
-      expect(wrapper.findAll('.text-dark').isVisible()).toBe(true);
-      expect(wrapper.find('img').exists()).toBe(false);
-    });
+    await nextTick();
+
+    expect(wrapper.find('.text-dark').isVisible()).toBe(true);
+    expect(wrapper.find('img').exists()).toBe(false);
   });
 });

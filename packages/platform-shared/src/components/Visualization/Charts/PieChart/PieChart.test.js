@@ -6,9 +6,8 @@
  */
 
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
-import { shallowMount } from '@vue/test-utils';
+import { shallowMount, flushPromises } from '@vue/test-utils';
 import * as d3 from 'd3';
-import flushPromises from 'flush-promises';
 import PieChart from './index';
 
 const mockData = [
@@ -47,8 +46,10 @@ const emptyMockData = [
 ];
 
 const mountComponent = (props, testData = mockData) => shallowMount(PieChart, {
-  mocks: { $t: () => {} },
-  propsData: {
+  global: {
+    mocks: { $t: () => {} },
+  },
+  props: {
     data: testData,
     ...props,
   },
@@ -108,7 +109,7 @@ describe('PieChart', () => {
       wrapper = mountComponent();
       const legend = findByTestId(wrapper, 'legend');
       const items = legend.findAll('li');
-      items.wrappers.forEach((item, index) => {
+      items.forEach((item, index) => {
         expect(item.text()).toBe(mockData[index].label);
       });
     });
@@ -117,7 +118,7 @@ describe('PieChart', () => {
       wrapper = mountComponent();
       const legend = findByTestId(wrapper, 'legend');
       const items = legend.findAll('span');
-      items.wrappers.forEach((item, index) => {
+      items.forEach((item, index) => {
         const bullet = item.find('.rounded-pill');
         expect(bullet.attributes('style')).toBe(`height: 10px; width: 24px; background-color: ${mockData[index].color};`);
       });
@@ -127,7 +128,7 @@ describe('PieChart', () => {
       wrapper = mountComponent({ showLegendCount: true });
       const legend = findByTestId(wrapper, 'legend');
       const items = legend.findAll('li');
-      items.wrappers.forEach((item, index) => {
+      items.forEach((item, index) => {
         expect(item.text()).toBe(`${mockData[index].label} (${mockData[index].value})`);
       });
     });

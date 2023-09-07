@@ -171,11 +171,11 @@ const modalProps = computed(() => {
   const type = capitalize(props.itemType);
   const isRequested = props.item.requested;
   const okTitle = isRequested
-    ? i18n.t('governance.accessRequest.newRequest.removeFromRequest')
-    : i18n.t('governance.accessRequest.newRequest.addToRequest');
+    ? i18n.global.t('governance.accessRequest.newRequest.removeFromRequest')
+    : i18n.global.t('governance.accessRequest.newRequest.addToRequest');
   const okVariant = isRequested ? 'outline-danger' : 'primary';
   const cancelVariant = isRequested ? 'outline-primary' : 'link';
-  const cancelTitle = isRequested ? i18n.t('common.done') : i18n.t('common.cancel');
+  const cancelTitle = isRequested ? i18n.global.t('common.done') : i18n.global.t('common.cancel');
   const footerClass = isRequested ? 'justify-content-between' : 'flex-row-reverse';
   return {
     cancelTitle,
@@ -183,7 +183,7 @@ const modalProps = computed(() => {
     footerClass,
     isRequested,
     isRole: props.itemType === 'role',
-    modalTitle: i18n.t('governance.accessRequest.newRequest.requestTypeAccess', { type }),
+    modalTitle: i18n.global.t('governance.accessRequest.newRequest.requestTypeAccess', { type }),
     okTitle,
     okVariant,
   };
@@ -202,7 +202,7 @@ function getUserFullName(rawId) {
   getUserDetails(id)
     .then(({ data }) => {
       const userData = get(data, 'result[0]', {});
-      ownerName.value = i18n.t('common.userFullName', {
+      ownerName.value = i18n.global.t('common.userFullName', {
         givenName: userData?.givenName,
         sn: userData?.sn,
       });

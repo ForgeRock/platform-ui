@@ -13,7 +13,6 @@ import { useUserStore } from './user';
 export const useEnduserStore = defineStore('enduser', () => {
   const userStore = useUserStore();
 
-  const access = ref([]);
   const managedResourceSchema = ref({});
   const preferences = ref({});
   const profileImage = ref('');
@@ -33,7 +32,6 @@ export const useEnduserStore = defineStore('enduser', () => {
   }
 
   return {
-    access,
     isInternalUser,
     managedResourceSchema,
     aliasList,

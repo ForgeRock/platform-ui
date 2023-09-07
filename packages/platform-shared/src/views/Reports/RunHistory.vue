@@ -12,16 +12,16 @@ of the MIT license. See the LICENSE file for details. -->
       :export-in-progress="exportInProgress"
       :report-runs="reportRuns"
       :updated-row="updateSingleTableRow"
-      @download-report="downloadReport"
-      @export-report="exportReport"
+      @download-report="downloadReport($event)"
+      @export-report="exportReport($event)"
       @table-data-ready="$emit('table-data-ready')"
-      @view-report="viewReport"
+      @view-report="viewReport($event)"
       @view-run-details="viewReportRequestSummary" />
     <FrReportExportModal
       :file-type="exportModalFileType"
       :data="exportModalData"
       :status="exportModalStatus"
-      @download-report="downloadReport"
+      @download-report="downloadReport($event)"
       @show="exportModalStatus = 'exporting'" />
     <FrRunHistoryDetailsModal
       :table-item="tableItemForDetailsModal"
@@ -36,7 +36,6 @@ of the MIT license. See the LICENSE file for details. -->
  * @description Displays analytics reports history
  */
 import {
-  getCurrentInstance,
   ref,
   watch,
 } from 'vue';
@@ -44,6 +43,8 @@ import { BCard } from 'bootstrap-vue';
 import { displayNotification } from '@forgerock/platform-shared/src/utils/notification';
 import { requestExport, requestReportRuns } from '@forgerock/platform-shared/src/utils/reportsUtils';
 import { downloadFile, getFileNameFromContentDisposition } from '@forgerock/platform-shared/src/utils/downloadFile';
+import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import { useRouter } from 'vue-router';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import FrRunHistoryTable from './RunHistoryTable';
 import FrReportExportModal from './modals/ReportExportModal';
@@ -52,7 +53,11 @@ import useRunHistoryTable from './composables/RunHistoryTable';
 import i18n from '@/i18n';
 
 defineEmits(['table-data-ready']);
-const { proxy: { $router, _bv__modal: $bvModal } } = getCurrentInstance();
+
+// Composables
+const router = useRouter();
+const { bvModal } = useBvModal();
+
 const props = defineProps({
   newReportJobId: {
     type: String,
@@ -110,7 +115,7 @@ const {
  * @param {String} runId Report job run ID
  */
 function viewReport(runId) {
-  $router.push({ name: 'ReportView', params: { template: props.templateName, id: runId } });
+  router.push({ name: 'ReportView', params: { template: props.templateName, id: runId } });
 }
 
 /**
@@ -198,7 +203,7 @@ function handleExportQueue(item, fileType, newStatus) {
  * @param {Object} item Report run table item
  * @param {String} exportStatus Report status: 'download' || 'downloading'
  */
-async function downloadReport(fileType, item, exportStatus) {
+async function downloadReport({ fileType, item, exportStatus }) {
   // update globals
   updateSingleTableRow.value = updateExportButtonStatus(item, fileType, 'downloading');
   exportModalStatus.value = 'downloading';
@@ -218,7 +223,7 @@ async function downloadReport(fileType, item, exportStatus) {
         file = new TextEncoder().encode(str);
       }
       downloadFile(file, `${JSON_CSV};charset=utf-8`, fileName);
-      $bvModal.hide('export-modal');
+      bvModal.hide('export-modal');
     }
 
     // We need to reference the queue here since there could be an export request for the
@@ -235,7 +240,7 @@ async function downloadReport(fileType, item, exportStatus) {
  * @param {Object} item Report run table item
  * @param {String} exportStatus Report status: 'export' || 'exporting' || 'error'
  */
-async function exportReport(fileType, item, exportStatus) {
+async function exportReport({ fileType, item, exportStatus }) {
   const { runId } = item;
   const templateName = props.templateName.toUpperCase();
   const startTimer = Date.now();
@@ -244,7 +249,7 @@ async function exportReport(fileType, item, exportStatus) {
   // updates globals
   updateExportModalState(item, 'exporting', fileType, endTimer);
   exportInProgress.value = true;
-  $bvModal.show('export-modal');
+  bvModal.show('export-modal');
 
   if (exportStatus !== 'exporting') {
     const newItemWithExportingStatus = handleExportQueue(item, fileType, 'exporting');
@@ -262,7 +267,7 @@ async function exportReport(fileType, item, exportStatus) {
       updateSingleTableRow.value = [newItemWithFetchedStatus];
       endTimer = Date.now();
       if (newExportStatus !== 'error') {
-        displayNotification('success', i18n.t('reports.tabs.runHistory.downloadReady'));
+        displayNotification('success', i18n.global.t('reports.tabs.runHistory.downloadReady'));
       }
     } else {
       const newItemWithErrorStatus = handleExportQueue(item, fileType, 'error');

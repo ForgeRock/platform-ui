@@ -5,12 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, mount, shallowMount } from '@vue/test-utils';
+import { mount, shallowMount } from '@vue/test-utils';
 import InputLayout from './index';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 const defaultProps = {
   id: '',
@@ -23,8 +19,7 @@ const defaultProps = {
 describe('InputLayout', () => {
   it('InputLayout component loaded no floating label', () => {
     const wrapper = shallowMount(InputLayout, {
-      localVue,
-      propsData: {
+      props: {
         ...defaultProps,
         floatingLabel: false,
       },
@@ -35,9 +30,10 @@ describe('InputLayout', () => {
 
   it('InputLayout component renders help text and label', () => {
     const wrapper = mount(InputLayout, {
-      localVue,
-      mocks: { $t: (id) => id },
-      propsData: {
+      global: {
+        mocks: { $t: (id) => id },
+      },
+      props: {
         ...defaultProps,
         description: 'Help text',
         label: 'Label',
@@ -54,8 +50,7 @@ describe('InputLayout', () => {
 
   it('InputLayout component renders slots', () => {
     const wrapper = mount(InputLayout, {
-      localVue,
-      propsData: {
+      props: {
         ...defaultProps,
       },
       slots: {
@@ -72,12 +67,13 @@ describe('InputLayout', () => {
 
   it('InputLayout must contains floting-label class by default', () => {
     const wrapper = mount(InputLayout, {
-      localVue,
-      propsData: {
+      props: {
         ...defaultProps,
       },
-      mocks: {
-        $t: (text) => (text),
+      global: {
+        mocks: {
+          $t: (text) => (text),
+        },
       },
     });
 
@@ -86,13 +82,14 @@ describe('InputLayout', () => {
 
   it('InputLayout without floating labels must not contains floting-label', () => {
     const wrapper = mount(InputLayout, {
-      localVue,
-      propsData: {
+      props: {
         ...defaultProps,
         floatingLabel: false,
       },
-      mocks: {
-        $t: (text) => (text),
+      global: {
+        mocks: {
+          $t: (text) => (text),
+        },
       },
     });
 

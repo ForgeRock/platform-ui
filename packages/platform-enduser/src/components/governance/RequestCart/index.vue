@@ -32,6 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
     <!-- Justification textarea -->
     <BFormGroup>
       <FrField
+        name="justificationText"
         v-model="justificationText"
         type="textarea"
         :label="$t('governance.accessRequest.newRequest.justification')"
@@ -53,10 +54,9 @@ of the MIT license. See the LICENSE file for details. -->
         :searchable="false">
         <template
           v-for="(slotName, index) in ['option', 'singleLabel']"
+          :key="index"
           #[slotName]="{ option }">
-          <span
-            :key="index"
-            class="d-flex align-items-center">
+          <span class="d-flex align-items-center">
             <BImg
               class="mr-2"
               width="24"
@@ -73,6 +73,7 @@ of the MIT license. See the LICENSE file for details. -->
         {{ $t('governance.accessRequest.newRequest.applyExpirationDate') }}
       </div>
       <FrDatepicker
+        name="expirationDate"
         v-model="expirationDate"
         :date-format-options="{ year: 'numeric', month: 'numeric', day: 'numeric' }"
         :placeholder="$t('governance.accessRequest.newRequest.expiryDate')" />
@@ -176,7 +177,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep .multiselect .multiselect__option--selected:after {
+:deep(.multiselect .multiselect__option--selected:after) {
   content: 'check';
   font-family: 'Material Icons Outlined', Serif;
   font-size: 15px;

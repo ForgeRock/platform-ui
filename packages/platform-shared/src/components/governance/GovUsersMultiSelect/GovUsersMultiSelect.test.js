@@ -5,19 +5,20 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
+import { mount, flushPromises } from '@vue/test-utils';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import i18n from '@/i18n';
 import GovUsersMultiSelect from './index';
 
 const mountComponent = () => mount(GovUsersMultiSelect, {
-  i18n,
-  mocks: {
-    $store: {
-      state: {
-        SharedStore: {
-          uiConfig: {},
+  global: {
+    plugins: [i18n],
+    mocks: {
+      $store: {
+        state: {
+          SharedStore: {
+            uiConfig: {},
+          },
         },
       },
     },

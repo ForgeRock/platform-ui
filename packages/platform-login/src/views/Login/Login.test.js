@@ -5,9 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount, shallowMount } from '@vue/test-utils';
+import { mount, shallowMount, flushPromises } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
-import flushPromises from 'flush-promises';
 import { sanitize } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 import { URLSearchParams } from 'url';
 import {
@@ -15,7 +14,6 @@ import {
 } from '@forgerock/javascript-sdk';
 import * as urlUtil from '../../utils/urlUtil';
 import * as authResumptionUtil from '../../utils/authResumptionUtil';
-import i18n from '@/i18n';
 import Login from './index';
 
 const LoginMixin = {
@@ -34,28 +32,29 @@ describe('Login.vue', () => {
 
   beforeEach(() => {
     wrapper = shallowMount(Login, {
-      i18n,
-      stubs: {
-        'router-link': true,
-      },
-      mocks: {
-        $route,
-        $t: () => { },
-        $store: {
-          state: {
-            SharedStore: {
-              webStorageAvailable: true,
+      global: {
+        stubs: {
+          'router-link': true,
+        },
+        mocks: {
+          $route,
+          $sanitize: (message, config) => sanitize(message, config),
+          $t: () => {},
+          $store: {
+            state: {
+              SharedStore: {
+                webStorageAvailable: true,
+              },
             },
           },
         },
-        $sanitize: (message, config) => sanitize(message, config),
+        mixins: [LoginMixin],
       },
-      mixins: [LoginMixin],
     });
   });
 
   afterAll(() => {
-    jest.resetAllMocks();
+    jest.restoreAllMocks();
   });
 
   it('Removes undefined and "undefined" tree from stepParams', () => {
@@ -338,29 +337,30 @@ describe('Component Test', () => {
     };
 
     const mountLogin = () => mount(Login, {
-      i18n,
-      stubs: {
-        'router-link': true,
-        FrField: true,
-        FrPasswordCallback: true,
-      },
-      mocks: {
-        $route: {
-          params: {
-            tree: undefined,
-          },
+      global: {
+        stubs: {
+          'router-link': true,
+          FrField: true,
+          FrPasswordCallback: true,
         },
-        $t: () => { },
-        $store: {
-          state: {
-            SharedStore: {
-              webStorageAvailable: true,
+        mocks: {
+          $route: {
+            params: {
+              tree: undefined,
             },
           },
+          $t: () => {},
+          $store: {
+            state: {
+              SharedStore: {
+                webStorageAvailable: true,
+              },
+            },
+          },
+          $sanitize: (message, config) => sanitize(message, config),
         },
-        $sanitize: (message, config) => sanitize(message, config),
+        mixins: [LoginMixin],
       },
-      mixins: [LoginMixin],
     });
 
     let replaceState;
@@ -394,7 +394,7 @@ describe('Component Test', () => {
       const resumingSpy = jest.spyOn(authResumptionUtil, 'resumingTreeFollowingRedirect').mockReturnValue(true);
       const getStepSpy = jest.spyOn(authResumptionUtil, 'getResumeDataFromStorageAndClear').mockReturnValue({ urlAtRedirect: 'blah', step: { payload: {} } });
 
-      const wrapper = await mountLogin();
+      const wrapper = mountLogin();
       await flushPromises();
 
       expect(replaceState).toBeCalledWith(null, null, '?realm=/');
@@ -410,7 +410,7 @@ describe('Component Test', () => {
       // indicate that the tree is being resumed following a redirect
       const resumingSpy = jest.spyOn(authResumptionUtil, 'resumingTreeFollowingRedirect').mockReturnValue(false);
 
-      const wrapper = await mountLogin();
+      const wrapper = mountLogin();
       await flushPromises();
 
       expect(replaceState).toBeCalledWith(null, null, '?realm=/&code=aCode&notRemoved=here');
@@ -425,20 +425,23 @@ describe('Component Test', () => {
         step: new FRStep(stepPayload),
       };
 
-      const wrapper = await mountLogin();
+      const wrapper = mountLogin();
       await flushPromises();
 
-      wrapper.setData(data);
-      wrapper.vm.buildTreeForm();
+      await wrapper.setData(data);
+      await flushPromises();
 
+      wrapper.vm.buildTreeForm();
       await flushPromises();
 
       expect(wrapper.vm.componentList[0].callbackSpecificProps.autofocus).toBeFalsy();
       expect(wrapper.vm.componentList[1].callbackSpecificProps.autofocus).toBeFalsy();
 
-      wrapper.setData(data);
-      wrapper.setProps({ journeyFocusFirstFocusableItemEnabled: true });
+      await wrapper.setData(data);
+      await flushPromises();
 
+      wrapper.vm.step = new FRStep(stepPayload);
+      await wrapper.setProps({ journeyFocusFirstFocusableItemEnabled: true });
       await flushPromises();
 
       expect(wrapper.vm.componentList[0].callbackSpecificProps.autofocus).toBeTruthy();

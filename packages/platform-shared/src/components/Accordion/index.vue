@@ -14,7 +14,9 @@ of the MIT license. See the LICENSE file for details. -->
         <!-- @slot Accordion header -->
         <slot name="accordionHeader" />
       </header>
-      <template v-for="(data, key) in items">
+      <template
+        v-for="(data, key) in items"
+        :key="key">
         <!--
           triggered on click
           @event section-expanded
@@ -23,7 +25,6 @@ of the MIT license. See the LICENSE file for details. -->
         -->
         <div
           :class="`border-top ${data.accordionItemClass ? data.accordionItemClass : ''}`"
-          :key="key"
           data-testid="accordion-item-wrapper"
           no-body
           @click="$emit('section-expanded', {key, data})">

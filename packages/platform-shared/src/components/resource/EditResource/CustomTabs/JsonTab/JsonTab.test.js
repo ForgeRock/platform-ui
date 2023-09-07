@@ -6,14 +6,18 @@
  */
 
 import { shallowMount } from '@vue/test-utils';
+import Notifications from '@kyvg/vue3-notification';
 import * as clipboard from 'clipboard-polyfill/text';
 import JsonTab from './index';
 
 describe('JsonTab', () => {
   it('copies values to clipboard', async () => {
     const wrapper = shallowMount(JsonTab, {
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
+        plugins: [Notifications],
       },
       mounted: () => {},
     });

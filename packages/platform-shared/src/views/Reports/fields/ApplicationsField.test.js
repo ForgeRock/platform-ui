@@ -14,8 +14,10 @@ import { getSchemaStub } from '../RunReportStubs';
 describe('Applications Field for running reports', () => {
   function setup(props) {
     return mount(ApplicationsField, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         ...props,
         relationshipProperty: getSchemaStub.data.properties.applications,
       },
@@ -31,7 +33,7 @@ describe('Applications Field for running reports', () => {
       const applicationsField = findByTestId(wrapper, 'fr-field-applications');
       await applicationsField.trigger('click');
 
-      const firstApplicationsFieldOption = applicationsField.findAll('li').at(0).find('span');
+      const firstApplicationsFieldOption = applicationsField.findAll('li')[0].find('span');
       await firstApplicationsFieldOption.trigger('click');
 
       expect(wrapper.emitted('applications-update')[0]).toEqual([['All applications']]);
@@ -49,7 +51,7 @@ describe('Applications Field for running reports', () => {
       const specificApplicationsFieldOption = applicationsField.findAll('li').at(3).find('span');
       await specificApplicationsFieldOption.trigger('click');
 
-      expect(wrapper.vm._setupProxy.showSpecificApplications).toEqual(true);
+      expect(wrapper.vm.showSpecificApplications).toEqual(true);
       expect(collapseWrapper.isVisible()).toBe(true);
     });
   });

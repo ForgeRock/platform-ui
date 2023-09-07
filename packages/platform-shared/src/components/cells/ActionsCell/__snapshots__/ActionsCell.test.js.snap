@@ -1,0 +1,498 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Actions cell actions and renders renders "Delete" and "Edit" by default if no props are passed: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (2)",
+    "
+",
+    " at <ActionsCell",
+    "testId="0"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (2)",
+    "
+",
+    " at <BDropdown",
+    "boundary="window"",
+    "class="p-0"",
+    "no-caret=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ActionsCell",
+    "testId="0"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) \`beforeDestroy\` has been renamed to \`beforeUnmount\`.",
+    "
+",
+    " at <BDropdown",
+    "boundary="window"",
+    "class="p-0"",
+    "no-caret=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ActionsCell",
+    "testId="0"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) vm.$scopedSlots has been removed. Use vm.$slots instead.
+  Details: https://v3-migration.vuejs.org/breaking-changes/slots-unification.html",
+    "
+",
+    " at <BDropdown",
+    "boundary="window"",
+    "class="p-0"",
+    "no-caret=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ActionsCell",
+    "testId="0"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (3)",
+    "
+",
+    " at <BDropdown",
+    "boundary="window"",
+    "class="p-0"",
+    "no-caret=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ActionsCell",
+    "testId="0"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) Functional component <BButton> should be defined as a plain function in Vue 3. The "functional" option has been removed. NOTE: Before migrating to use plain functions for functional components, first make sure that all async components usage have been migrated and its compat behavior has been disabled.
+  Details: https://v3-migration.vuejs.org/breaking-changes/functional-components.html",
+    "
+",
+    " at <BDropdown",
+    "boundary="window"",
+    "class="p-0"",
+    "no-caret=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ActionsCell",
+    "testId="0"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) (2)",
+    "
+",
+    " at <BDropdown",
+    "boundary="window"",
+    "class="p-0"",
+    "no-caret=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ActionsCell",
+    "testId="0"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) vm.$listeners has been removed. In Vue 3, parent v-on listeners are included in vm.$attrs and it is no longer necessary to separately use v-on="$listeners" if you are already using v-bind="$attrs". (Note: the Vue 3 behavior only applies if this compat config is disabled)
+  Details: https://v3-migration.vuejs.org/breaking-changes/listeners-removed.html",
+    "
+",
+    " at <BButton",
+    "class="dropdown-toggle text-decoration-none p-0 dropdown-toggle-no-caret"",
+    "onMousedown=fn<bound onMousedown>",
+    "onClick=fn<bound toggle>",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "boundary="window"",
+    "class="p-0"",
+    "no-caret=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ActionsCell",
+    "testId="0"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (3)",
+    "
+",
+    " at <BDropdownItem",
+    "key=0",
+    "data-testid="dropdown-edit-0"",
+    "onClick=fn",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "boundary="window"",
+    "class="p-0"",
+    "no-caret=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ActionsCell",
+    "testId="0"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (2)",
+    "
+",
+    " at <BDropdownItem",
+    "key=0",
+    "data-testid="dropdown-edit-0"",
+    "onClick=fn",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "boundary="window"",
+    "class="p-0"",
+    "no-caret=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ActionsCell",
+    "testId="0"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (4)",
+    "
+",
+    " at <BDropdownItem",
+    "key=0",
+    "data-testid="dropdown-edit-0"",
+    "onClick=fn",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "boundary="window"",
+    "class="p-0"",
+    "no-caret=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ActionsCell",
+    "testId="0"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (4)",
+    "
+",
+    " at <BLink",
+    "class="dropdown-item"",
+    "onClick=fn<bound onClick>",
+    "ref="item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "key=0",
+    "data-testid="dropdown-edit-0"",
+    "onClick=fn",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "boundary="window"",
+    "class="p-0"",
+    "no-caret=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ActionsCell",
+    "testId="0"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_DATA_MERGE) Detected conflicting key "bvListeners" when merging data option values. In Vue 3, data keys are merged shallowly and will override one another.
+  Details: https://v3-migration.vuejs.org/breaking-changes/data-option.html#mixin-merge-behavior-change",
+    "
+",
+    " at <BLink",
+    "class="dropdown-item"",
+    "onClick=fn<bound onClick>",
+    "ref="item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "key=0",
+    "data-testid="dropdown-edit-0"",
+    "onClick=fn",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "boundary="window"",
+    "class="p-0"",
+    "no-caret=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ActionsCell",
+    "testId="0"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (2)",
+    "
+",
+    " at <BLink",
+    "class="dropdown-item"",
+    "onClick=fn<bound onClick>",
+    "ref="item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "key=0",
+    "data-testid="dropdown-edit-0"",
+    "onClick=fn",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "boundary="window"",
+    "class="p-0"",
+    "no-caret=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ActionsCell",
+    "testId="0"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) (2)",
+    "
+",
+    " at <BLink",
+    "class="dropdown-item"",
+    "onClick=fn<bound onClick>",
+    "ref="item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "key=0",
+    "data-testid="dropdown-edit-0"",
+    "onClick=fn",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "boundary="window"",
+    "class="p-0"",
+    "no-caret=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ActionsCell",
+    "testId="0"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (3)",
+    "
+",
+    " at <BLink",
+    "class="dropdown-item"",
+    "onClick=fn<bound onClick>",
+    "ref="item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "key=0",
+    "data-testid="dropdown-edit-0"",
+    "onClick=fn",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "boundary="window"",
+    "class="p-0"",
+    "no-caret=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ActionsCell",
+    "testId="0"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_ATTRS_CLASS_STYLE) Component <BLink> has \`inheritAttrs: false\` but is relying on class/style fallthrough from parent. In Vue 3, class/style are now included in $attrs and will no longer fallthrough when inheritAttrs is false. If you are already using v-bind="$attrs" on component root it should render the same end result. If you are binding $attrs to a non-root element and expecting class/style to fallthrough on root, you will need to now manually bind them on root via :class="$attrs.class".
+  Details: https://v3-migration.vuejs.org/breaking-changes/attrs-includes-class-style.html",
+    "
+",
+    " at <BLink",
+    "class="dropdown-item"",
+    "onClick=fn<bound onClick>",
+    "ref="item"",
+    " ...",
+    ">",
+    "
+",
+    " at <BDropdownItem",
+    "key=0",
+    "data-testid="dropdown-edit-0"",
+    "onClick=fn",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "boundary="window"",
+    "class="p-0"",
+    "no-caret=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ActionsCell",
+    "testId="0"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (3)",
+    "
+",
+    " at <BDropdownDivider",
+    "key=3",
+    ">",
+    "
+",
+    " at <BDropdown",
+    "boundary="window"",
+    "class="p-0"",
+    "no-caret=""",
+    " ...",
+    ">",
+    "
+",
+    " at <ActionsCell",
+    "testId="0"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;

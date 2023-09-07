@@ -5,20 +5,15 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import GenericProcess from './index';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 describe('GenericProcess.vue', () => {
   let wrapper;
   beforeEach(() => {
     jest.clearAllMocks();
     wrapper = shallowMount(GenericProcess, {
-      localVue,
-      propsData: {
+      props: {
         workflowDetails: [{
           name: 'myWorkflow',
           type: {
@@ -28,8 +23,10 @@ describe('GenericProcess.vue', () => {
         }],
         id: 'workflow_id',
       },
-      mocks: {
-        $t: (key) => (key),
+      global: {
+        mocks: {
+          $t: (key) => (key),
+        },
       },
     });
   });

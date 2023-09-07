@@ -20,9 +20,9 @@ of the MIT license. See the LICENSE file for details. -->
       :original-type="type"
       :inner-component="innerComponent"
       :testid="testid"
-      @input="valueUpdated">
+      @input="handleInput">
       <template
-        v-for="(key, slotName) in $scopedSlots"
+        v-for="(key, slotName) in $slots"
         #[slotName]="slotData">
         <slot
           :name="slotName"
@@ -54,6 +54,7 @@ import {
   doesValueContainPlaceholder,
   isFieldTypeSupportedForPlaceholderEntry,
 } from '@forgerock/platform-shared/src/utils/esvUtils';
+import uuid from 'uuid/v4';
 
 export default {
   name: 'FrField',
@@ -119,7 +120,13 @@ export default {
   },
   computed: {
     attrs() {
-      return { ...this.$options.propsData, ...this.$attrs };
+      const newAttrs = { ...this.$options.propsData, ...this.$attrs };
+      // Don't pass through the attribute associated with v-model listener class, and style,
+      // as this causes Vue 3 compat to try and add duplicative listeners, classes, and styles through the component stack
+      if (Object.prototype.hasOwnProperty.call(newAttrs, 'onModelCompat:input')) delete newAttrs['onModelCompat:input'];
+      if (Object.prototype.hasOwnProperty.call(newAttrs, 'class')) delete newAttrs.class;
+      if (Object.prototype.hasOwnProperty.call(newAttrs, 'style')) delete newAttrs.style;
+      return newAttrs;
     },
     checkboxField() {
       if (this.fieldContainsPlaceholder) return false;
@@ -151,7 +158,7 @@ export default {
       return undefined;
     },
     fieldName() {
-      return this.name || this.$attrs.label;
+      return this.name || this.$attrs.label || uuid();
     },
     /**
      * Maps type aliases to known values
@@ -171,6 +178,14 @@ export default {
     },
   },
   methods: {
+    handleInput(newValue) {
+      // Converts input events emitted by v-models used with BootstrapVue into the modelCompat:input event that Vue 3 compat listens for with v-model
+      this.$emit('modelCompat:input', newValue);
+      this.valueUpdated(newValue);
+    },
+    /**
+     * Re-evaluate whether a field contains a placeholder on input
+     */
     valueUpdated(newVal) {
       // Only check value changes for placeholders in when the value can contain a placeholder change
       if (this.component === 'FrReadonlyPlaceholderInput' || this.canEnterPlaceholders) {

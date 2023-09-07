@@ -3,11 +3,12 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <ValidationObserver
-    v-slot="{ invalid }"
-    ref="observer">
+  <VeeForm
+    v-slot="{ meta: { valid } }"
+    ref="observer"
+    as="span">
     <BModal
-      :ok-disabled="invalid"
+      :ok-disabled="!valid"
       :id="modalId"
       size="lg"
       ok-variant="primary"
@@ -51,7 +52,7 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
       </div>
     </BModal>
-  </ValidationObserver>
+  </VeeForm>
 </template>
 
 <script>
@@ -63,7 +64,7 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
 import { reassignCertificationTasks, reassignAllCertificationTasks } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
-import { ValidationObserver } from 'vee-validate';
+import { Form as VeeForm } from 'vee-validate';
 
 /**
  * @constant {Object}
@@ -79,7 +80,7 @@ export default {
   components: {
     BModal,
     BFormRadioGroup,
-    ValidationObserver,
+    VeeForm,
     FrField,
     FrGovResourceSelect,
   },

@@ -15,8 +15,10 @@ global.document = jest.fn();
 describe('AccessibleHeader', () => {
   function setup(props) {
     return mount(AccessibleHeader, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         customHtml: '<p>stub custom html</p>',
         mainContentId: 'content',
         ...props,

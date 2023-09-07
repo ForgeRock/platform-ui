@@ -13,10 +13,12 @@ let wrapper;
 describe('PasswordCallback', () => {
   function mountComponent(label) {
     wrapper = mount(PasswordCallback, {
-      mocks: {
-        $t: (t) => t,
+      global: {
+        mocks: {
+          $t: (t) => t,
+        },
       },
-      propsData: {
+      props: {
         name: 'testField',
         type: 'password',
         label,

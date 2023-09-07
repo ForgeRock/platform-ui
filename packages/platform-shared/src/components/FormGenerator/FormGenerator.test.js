@@ -142,10 +142,16 @@ let wrapper;
 
 beforeEach(() => {
   wrapper = shallowMount(FormGenerator, {
-    mocks: {
-      $t: () => {},
+    global: {
+      mocks: {
+        $t: () => {},
+      },
+      mixins: [SchemaMixin],
+      stubs: {
+        BRow: false,
+        BCol: false,
+      },
     },
-    mixins: [SchemaMixin],
   });
 });
 
@@ -153,13 +159,13 @@ describe('Form Generator', () => {
   it('Renders each of the sub components', async () => {
     const combinedSchema = wrapper.vm.combineSchemas(schema, uiSchema);
     await wrapper.setProps({ schema: combinedSchema, model });
-    expect(wrapper.find('frstringdisplay-stub').exists()).toBe(true);
-    expect(wrapper.find('frarraydisplay-stub').exists()).toBe(true);
-    expect(wrapper.find('frbooleandisplay-stub').exists()).toBe(true);
-    expect(wrapper.find('frnumberdisplay-stub').exists()).toBe(true);
-    expect(wrapper.find('frradiodisplay-stub').exists()).toBe(true);
-    expect(wrapper.find('frpassworddisplay-stub').exists()).toBe(true);
-    expect(wrapper.find('frdatedisplay-stub').exists()).toBe(true);
+    expect(wrapper.find('fr-string-display-stub').exists()).toBe(true);
+    expect(wrapper.find('fr-array-display-stub').exists()).toBe(true);
+    expect(wrapper.find('fr-boolean-display-stub').exists()).toBe(true);
+    expect(wrapper.find('fr-number-display-stub').exists()).toBe(true);
+    expect(wrapper.find('fr-radio-display-stub').exists()).toBe(true);
+    expect(wrapper.find('fr-password-display-stub').exists()).toBe(true);
+    expect(wrapper.find('fr-date-display-stub').exists()).toBe(true);
   });
 
   describe('safeCompare method', () => {

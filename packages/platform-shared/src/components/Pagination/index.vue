@@ -89,6 +89,7 @@ of the MIT license. See the LICENSE file for details. -->
 import { BDropdown, BDropdownItem, BPagination } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { Position, DatasetSize } from './types';
+import i18n from '@/i18n';
 
 /**
  * @description pagination component used to interact with data tables, it is composed by a dropdown menu with a list
@@ -166,7 +167,7 @@ export default {
     },
     ariaLabel: {
       type: String,
-      default: () => this?.$t('pagination.label'),
+      default: () => i18n.global.t('pagination.label'),
     },
     boundary: {
       type: String,
@@ -213,23 +214,23 @@ export default {
     },
     labelFirstPage: {
       type: String,
-      default: () => this?.$t('pagination.gotoFirstPage'),
+      default: () => i18n.global.t('pagination.gotoFirstPage'),
     },
     labelLastPage: {
       type: String,
-      default: () => this?.$t('pagination.gotoLastPage'),
+      default: () => i18n.global.t('pagination.gotoLastPage'),
     },
     labelNextPage: {
       type: String,
-      default: () => this?.$t('pagination.gotoNextPage'),
+      default: () => i18n.global.t('pagination.gotoNextPage'),
     },
     labelPage: {
       type: String,
-      default: () => this?.$t('pagination.gotoPage'),
+      default: () => i18n.global.t('pagination.gotoPage'),
     },
     labelPrevPage: {
       type: String,
-      default: () => this?.$t('pagination.gotoPreviousPage'),
+      default: () => i18n.global.t('pagination.gotoPreviousPage'),
     },
     lastClass: {
       type: String,
@@ -325,7 +326,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.pagination-dropdown::v-deep {
+.pagination-dropdown:deep {
   .toggle-dropdown-button {
     background-color: transparent !important;
 
@@ -361,7 +362,7 @@ export default {
     outline: 2px solid $black;
   }
 
-  &::v-deep .page-item {
+  &:deep(.page-item) {
     &.active .page-link {
       background-color: $gray-100;
       pointer-events: none;

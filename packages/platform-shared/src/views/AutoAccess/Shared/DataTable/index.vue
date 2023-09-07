@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -16,8 +16,8 @@ of the MIT license. See the LICENSE file for details. -->
       :current-page="currentPage"
       v-on="$listeners">
       <template
-        v-for="(key, slotName) in $scopedSlots"
-        v-slot:[slotName]="slotData">
+        v-for="(key, slotName) in $slots"
+        #[slotName]="slotData">
         <!-- @slot Custom cell slot. -->
         <slot
           :name="slotName"
@@ -163,7 +163,6 @@ export default {
   },
   data() {
     return {
-      allSelected: this.initialSelected.length === this.pageRows,
       currentPage: this.initialPage,
       perPage: this.pagination ? this.initialPerPage : 0,
       selected: this.initialSelected,
@@ -181,6 +180,9 @@ export default {
     },
     multiplePages() {
       return this.totalRows > this.perPage;
+    },
+    allSelected() {
+      return this.selected.length === this.pageRows;
     },
   },
   methods: {
@@ -213,12 +215,7 @@ export default {
     currentPage() {
       this.selected = [];
     },
-    selected(newVal) {
-      if (newVal.length === this.pageRows) {
-        this.allSelected = true;
-      } else {
-        this.allSelected = false;
-      }
+    selected() {
       this.emitSelected();
     },
   },
@@ -226,14 +223,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  ::v-deep {
+  :deep {
     .table {
       table-layout: auto !important;
     }
   }
 
   .fr-datatable {
-    ::v-deep {
+    :deep {
       .table-responsive {
         margin-bottom: 0;
 

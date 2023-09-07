@@ -13,8 +13,10 @@ import RunReportBadges from './RunReportBadges';
 describe('Run Report Badges modal component', () => {
   function setup(props) {
     return mount(RunReportBadges, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         ...props,
       },
     });

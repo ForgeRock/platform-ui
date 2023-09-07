@@ -51,12 +51,14 @@ describe('QueryFilterBuilder', () => {
 
   beforeEach(() => {
     wrapper = shallowMount(QueryFilterBuilder, {
-      stubs: { 'router-link': true },
-      mocks: {
-        $t: () => {},
-        $store: { state: { userId: 'foo' } },
+      global: {
+        stubs: { 'router-link': true },
+        mocks: {
+          $t: () => {},
+          $store: { state: { userId: 'foo' } },
+        },
       },
-      propsData: { resourceName: 'user' },
+      props: { resourceName: 'user' },
     });
   });
 

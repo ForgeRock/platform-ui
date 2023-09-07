@@ -5,36 +5,30 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <div class="d-flex">
-      <ValidationProvider
-        :rules="validation"
+      <BFormCheckbox
+        v-model="inputValue"
+        v-on="$listeners"
+        class="mr-0 zindex-1 align-middle"
+        role="checkbox"
+        inline
+        :aria-label="switchLabel"
+        :disabled="disabled"
         :name="name"
-        v-slot="{ validate }">
-        <BFormCheckbox
-          v-model="inputValue"
-          v-on="$listeners"
-          @change="validate($event)"
-          class="mr-0 zindex-1 align-middle"
-          role="checkbox"
-          inline
-          :aria-label="switchLabel"
-          :disabled="disabled"
-          :name="name"
-          :data-testid="testid"
-          :value="$attrs.cbcheckedvalue"
-          :unchecked-value="$attrs.cbuncheckedvalue">
-          <slot name="prepend" />
-          <template v-if="switchLabel">
-            <div
-              class="mb-1 text-secondary"
-              :class="{'d-inline': inline}">
-              {{ switchLabel }}
-            </div>
-          </template>
-          <slot
-            name="label"
-            :is-inline-label="true" />
-        </BFormCheckbox>
-      </ValidationProvider>
+        :data-testid="testid"
+        :value="$attrs.cbcheckedvalue"
+        :unchecked-value="$attrs.cbuncheckedvalue">
+        <slot name="prepend" />
+        <template v-if="switchLabel">
+          <div
+            class="mb-1 text-secondary"
+            :class="{'d-inline': inline}">
+            {{ switchLabel }}
+          </div>
+        </template>
+        <slot
+          name="label"
+          :is-inline-label="true" />
+      </BFormCheckbox>
     </div>
     <template v-if="description">
       <small
@@ -53,9 +47,10 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import { ValidationProvider } from 'vee-validate';
+import { useField } from 'vee-validate';
 import { BFormCheckbox } from 'bootstrap-vue';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
+import { toRef } from 'vue';
 import InputMixin from '../Wrapper/InputMixin';
 
 /**
@@ -73,7 +68,6 @@ export default {
   ],
   components: {
     BFormCheckbox,
-    ValidationProvider,
   },
   props: {
     inline: {
@@ -84,6 +78,10 @@ export default {
       type: String,
       default: '',
     },
+  },
+  setup(props) {
+    const { value: inputValue } = useField(() => props.name, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, type: 'checkbox', initialValue: '' });
+    return { inputValue };
   },
   computed: {
     switchLabel() {

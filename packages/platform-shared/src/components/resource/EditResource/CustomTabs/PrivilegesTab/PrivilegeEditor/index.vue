@@ -548,7 +548,7 @@ export default {
   text-align: right;
 }
 
-::v-deep {
+:deep {
   #attributePermissionsContainer {
     max-height: 270px;
   }

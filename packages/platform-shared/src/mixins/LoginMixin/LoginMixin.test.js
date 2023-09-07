@@ -17,8 +17,10 @@ describe('LoginMixin', () => {
     jest.clearAllMocks();
     wrapper = shallowMount({}, {
       render() {},
-      mixins: [LoginMixin, RestMixin],
-      mocks: { $t: (id) => id },
+      global: {
+        mixins: [LoginMixin, RestMixin],
+        mocks: { $t: (id) => id },
+      },
     });
   });
   // Many methods in this mixin do not require unit testing:

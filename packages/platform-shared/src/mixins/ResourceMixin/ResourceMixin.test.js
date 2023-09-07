@@ -17,17 +17,19 @@ describe('ResourceMixin', () => {
     setupTestPinia({ user: { idmRoles: ['openidm-admin'] } });
     wrapper = shallowMount({}, {
       render() {},
-      mixins: [ResourceMixin],
-      mocks: {
-        $t: (id) => id,
-        $store: {
-          commit: jest.fn(),
-          state: {
-            SharedStore: {
-              uiConfig: {
+      global: {
+        mixins: [ResourceMixin],
+        mocks: {
+          $t: (id) => id,
+          $store: {
+            commit: jest.fn(),
+            state: {
+              SharedStore: {
+                uiConfig: {
 
+                },
+                managedObjectMinimumUIFilterLength: {},
               },
-              managedObjectMinimumUIFilterLength: {},
             },
           },
         },

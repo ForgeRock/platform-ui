@@ -3,110 +3,100 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <ValidationProvider
-    v-slot="validationObject"
-    mode="aggressive"
-    :bails="false"
-    :immediate="validationImmediate"
-    :name="name"
-    :ref="name"
-    :rules="validation"
-    :vid="name">
-    <div class="w-100">
+  <div class="w-100">
+    <div
+      :class="[{'fr-field-error': errors.length, 'floating-label': floatingLabel}, 'form-label-group']"
+      ref="floatingLabelGroup">
+      <!-- @slot Prepend buttons or elements to the input. -->
+      <slot name="prepend" />
       <div
-        :class="[{'fr-field-error': errors.concat(validationObject.errors).length, 'floating-label': floatingLabel}, 'form-label-group']"
-        ref="floatingLabelGroup">
-        <!-- @slot Prepend buttons or elements to the input. -->
-        <slot name="prepend" />
-        <div
-          v-if="floatingLabel"
-          class="form-label-group-input">
-          <slot :label-height="labelHeight" />
-          <label
-            v-if="label && isHtml"
-            v-html="label"
-            ref="inputLabel"
-            :id="labelId"
-            :for="id"
-            :class="['pe-none full-width', {'overflow-hidden text-nowrap': labelTextOverflowHidden, 'readonly-label': readonlyLabel}]" />
-          <label
-            v-else-if="label"
-            ref="inputLabel"
-            :id="labelId"
-            :for="id"
-            :class="['pe-none', {'overflow-hidden text-nowrap': labelTextOverflowHidden, 'readonly-label': readonlyLabel}]">
-            {{ getTranslation(label) }}
-          </label>
-        </div>
-        <div
-          v-else
-          class="form-label-group-input">
-          <label
-            v-if="label && isHtml"
-            v-html="label"
-            :id="labelId"
-            :for="id"
-            class="pe-none overflow-hidden text-nowrap full-width" />
-          <label
-            v-else-if="label"
-            :id="labelId"
-            :for="id"
-            class="pe-none overflow-hidden text-nowrap">
-            {{ getTranslation(label) }}
-          </label>
-          <slot />
-        </div>
-        <span
-          class="d-flex input-buttons"
-          v-if="$scopedSlots.prependButton || $scopedSlots.defaultButtons || $scopedSlots.append">
-          <div
-            class="prepend-button"
-            v-if="$scopedSlots.prependButton">
-            <slot name="prependButton" />
-          </div>
-          <slot name="defaultButtons" />
-          <!-- slot appends  buttons or elements to the input -->
-          <slot name="append" />
-        </span>
+        v-if="floatingLabel"
+        class="form-label-group-input">
+        <slot :label-height="labelHeight" />
+        <label
+          v-if="label && isHtml"
+          v-html="label"
+          ref="inputLabel"
+          :id="labelId"
+          :for="id"
+          :class="['pe-none full-width', {'overflow-hidden text-nowrap': labelTextOverflowHidden, 'readonly-label': readonlyLabel}]" />
+        <label
+          v-else-if="label"
+          ref="inputLabel"
+          :id="labelId"
+          :for="id"
+          :class="['pe-none', {'overflow-hidden text-nowrap': labelTextOverflowHidden, 'readonly-label': readonlyLabel}]">
+          {{ labelTranslation }}
+        </label>
       </div>
       <div
-        v-if="showLengthCount"
-        class="d-flex">
-        <!-- slot shows validation errors related to input -->
-        <FrValidationError
-          class="error-messages flex-grow-1"
-          :validator-errors="errors.concat(validationObject.errors)"
-          :field-name="name" />
-        <small :class="[{'text-danger': currentLength > maxLength}, 'form-text float-right']">
-          {{ `${currentLength} / ${maxLength}` }}
-        </small>
+        v-else
+        class="form-label-group-input">
+        <label
+          v-if="label && isHtml"
+          v-html="label"
+          :id="labelId"
+          :for="id"
+          class="pe-none overflow-hidden text-nowrap full-width" />
+        <label
+          v-else-if="label"
+          :id="labelId"
+          :for="id"
+          class="pe-none overflow-hidden text-nowrap">
+          {{ labelTranslation }}
+        </label>
+        <slot />
       </div>
+      <span
+        class="d-flex input-buttons"
+        v-if="$slots.prependButton || $slots.defaultButtons || $slots.append">
+        <div
+          class="prepend-button"
+          v-if="$slots.prependButton">
+          <slot name="prependButton" />
+        </div>
+        <slot name="defaultButtons" />
+        <!-- slot appends  buttons or elements to the input -->
+        <slot name="append" />
+      </span>
+    </div>
+    <div
+      v-if="showLengthCount"
+      class="d-flex">
       <!-- slot shows validation errors related to input -->
       <FrValidationError
-        v-else
-        class="error-messages"
-        :validator-errors="errors.concat(validationObject.errors)"
+        class="error-messages flex-grow-1"
+        :validator-errors="errors"
         :field-name="name" />
-      <template v-if="description">
-        <small
-          v-if="isHtml"
-          :id="`${id}_helpText`"
-          v-html="description"
-          class="form-text text-muted" />
-        <small
-          v-else
-          :id="`${id}_helpText`"
-          class="form-text text-muted">
-          {{ getTranslation(description) }}
-        </small>
-      </template>
+      <small :class="[{'text-danger': currentLength > maxLength}, 'form-text float-right']">
+        {{ `${currentLength} / ${maxLength}` }}
+      </small>
     </div>
-  </ValidationProvider>
+    <!-- slot shows validation errors related to input -->
+    <FrValidationError
+      v-else
+      class="error-messages"
+      :validator-errors="errors"
+      :field-name="name" />
+    <template v-if="description">
+      <small
+        v-if="isHtml"
+        :id="`${id}_helpText`"
+        v-html="description"
+        class="form-text text-muted" />
+      <small
+        v-else
+        :id="`${id}_helpText`"
+        class="form-text text-muted">
+        {{ descriptionTranslation }}
+      </small>
+    </template>
+  </div>
 </template>
 <script>
-import { ValidationProvider } from 'vee-validate';
 import FrValidationError from '@forgerock/platform-shared/src/components/ValidationErrorList';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
+
 /**
  * Input with a floating label in the center, this will move when a user types into the input (example can be found on the default login page).
  */
@@ -117,7 +107,6 @@ export default {
   ],
   components: {
     FrValidationError,
-    ValidationProvider,
   },
   props: {
     /**
@@ -174,20 +163,6 @@ export default {
       default: false,
     },
     /**
-     * Vee-validate validation types to check against
-     */
-    validation: {
-      type: [String, Object],
-      default: '',
-    },
-    /**
-     * Whether error validation should happen when this component renders
-     */
-    validationImmediate: {
-      type: Boolean,
-      default: false,
-    },
-    /**
      * Specifies whether to show an input length count under the input
      */
     showLengthCount: {
@@ -216,6 +191,14 @@ export default {
       labelTextOverflowHidden: false, // verifies if the label text is overflow hidden
     };
   },
+  computed: {
+    labelTranslation() {
+      return this.isHtml ? undefined : this.getTranslation(this.label);
+    },
+    descriptionTranslation() {
+      return this.isHtml ? undefined : this.getTranslation(this.description);
+    },
+  },
   mounted() {
     // get the input label height and update data
     const label = this.$refs.floatingLabelGroup;
@@ -231,7 +214,7 @@ export default {
 
 <style lang="scss" scoped>
 
-::v-deep .form-label-group {
+:deep(.form-label-group) {
   position: relative;
   display: flex;
 

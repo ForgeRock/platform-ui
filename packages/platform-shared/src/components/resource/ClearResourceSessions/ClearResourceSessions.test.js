@@ -13,10 +13,12 @@ describe('Clear Resource Sessions', () => {
 
   function createWrapper() {
     return mount(ClearResourceSessions, {
-      mocks: {
-        $t: (msg) => msg,
+      global: {
+        mocks: {
+          $t: (msg) => msg,
+        },
       },
-      propsData: {
+      props: {
         resourceName: 'Paul Daniels',
         isTesting: true,
       },
@@ -46,12 +48,8 @@ describe('Clear Resource Sessions', () => {
   });
 
   it('shows and hides modal', async () => {
-    wrapper.vm.$refs = {
-      clearSessionsModal: {
-        show: () => {},
-        hide: () => {},
-      },
-    };
+    wrapper = createWrapper();
+
     const showSpy = jest.spyOn(wrapper.vm.$refs.clearSessionsModal, 'show');
     await wrapper.setProps({
       show: true,

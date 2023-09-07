@@ -31,10 +31,10 @@ describe('EsvInputWrapper', () => {
               esvInput: { secrets: [], variables: [] },
             },
           }),
+          i18n,
         ],
       },
-      i18n,
-      propsData: {
+      props: {
         ...defaultProps,
         ...props,
       },

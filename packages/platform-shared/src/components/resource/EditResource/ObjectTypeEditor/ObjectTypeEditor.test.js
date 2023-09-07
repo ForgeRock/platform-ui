@@ -5,23 +5,28 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
+import Notifications from '@kyvg/vue3-notification';
 import ObjectTypeEditor from './index';
 
 describe('ObjectTypeEditor', () => {
   let wrapper;
   beforeEach(() => {
-    wrapper = shallowMount(ObjectTypeEditor, {
-      mocks: {
-        $t: () => {},
+    wrapper = mount(ObjectTypeEditor, {
+      global: {
+        mocks: {
+          $t: () => {},
+        },
+        plugins: [Notifications],
       },
-      propsData: {
+      props: {
         displayProperties: [
           {
             title: '',
             description: 'description',
             value: 'initialValue',
             key: 'testKey',
+            type: 'string',
           },
         ],
         formFields: {
@@ -33,7 +38,7 @@ describe('ObjectTypeEditor', () => {
   });
 
   afterEach(() => {
-    wrapper.destroy();
+    wrapper.unmount();
   });
 
   it('loads data', async () => {
@@ -65,13 +70,6 @@ describe('ObjectTypeEditor', () => {
         patch: () => Promise.resolve(),
       }
     ));
-    wrapper.vm.$refs = {
-      observer: {
-        reset: () => {},
-        validate: () => true,
-        setErrors: () => {},
-      },
-    };
     await wrapper.vm.saveResource();
     expect(wrapper.vm.oldFormFields.testKey).toBe('initialValue');
 
@@ -81,7 +79,6 @@ describe('ObjectTypeEditor', () => {
         patch: () => Promise.reject(error400),
       }
     ));
-    const resetSpy = jest.spyOn(wrapper.vm.$refs.observer, 'reset');
     const setErrorsSpy = jest.spyOn(wrapper.vm.$refs.observer, 'setErrors');
     jest.spyOn(wrapper.vm, 'findPolicyError').mockImplementation(() => ([
       {
@@ -91,7 +88,6 @@ describe('ObjectTypeEditor', () => {
       },
     ]));
     await wrapper.vm.saveResource();
-    expect(resetSpy).toHaveBeenCalled();
     expect(setErrorsSpy).toHaveBeenCalledWith({ field: ['errorMessage'] });
   });
 

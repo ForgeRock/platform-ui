@@ -11,9 +11,16 @@ of the MIT license. See the LICENSE file for details. -->
       :menu-items="menuItems"
       :version="version"
       :class="{invisible: theme === null}">
-      <RouterView
-        :key="$route.fullPath"
-        :theme="theme" />
+      <RouterView v-slot="{ Component }">
+        <Transition
+          name="fade"
+          mode="out-in">
+          <Component
+            :is="Component"
+            :key="$route.fullPath"
+            :theme="theme" />
+        </Transition>
+      </RouterView>
     </FrLayout>
     <ThemeInjector
       :theme="theme"
@@ -26,10 +33,7 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import {
   capitalize,
-  cloneDeep,
 } from 'lodash';
-import { mapState } from 'pinia';
-import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import ThemeMixin from '@forgerock/platform-shared/src/mixins/ThemeMixin';
@@ -39,6 +43,7 @@ import createScriptTags from '@forgerock/platform-shared/src/utils/externalScrip
 import FrLayout from '@forgerock/platform-shared/src/components/Layout';
 import FrSessionTimeoutWarning from '@forgerock/platform-shared/src/components/SessionTimeoutWarning/SessionTimeoutWarning';
 import { getIdmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
+import { getUserPrivileges } from '@forgerock/platform-shared/src/api/PrivilegeApi';
 import ThemeInjector from '@forgerock/platform-shared/src/components/ThemeInjector/';
 import { getDefaultProcess } from '@forgerock/platform-shared/src/views/AutoAccess/RiskConfig/api/RiskConfigAPI';
 import { getConfig } from '@forgerock/platform-shared/src/views/AutoAccess/Shared/utils/api';
@@ -65,7 +70,6 @@ export default {
       }
       return '';
     },
-    ...mapState(useEnduserStore, { accessObj: 'access' }),
   },
   data() {
     return {
@@ -85,7 +89,6 @@ export default {
           : {}),
         (this.$store.state.SharedStore.governanceEnabled === true
           ? {
-            menuGroup: true,
             displayName: 'sideMenu.inbox',
             icon: 'inbox',
             subItems: [
@@ -140,7 +143,6 @@ export default {
           : {}),
         (this.$store.state.SharedStore.governanceEnabled === true
           ? {
-            menuGroup: true,
             displayName: 'sideMenu.directory',
             icon: 'people',
             subItems: [
@@ -184,6 +186,10 @@ export default {
     }).catch((error) => {
       this.showErrorMessage(error, this.$t('errors.themeSetError'));
     });
+
+    getUserPrivileges().then(({ data }) => {
+      this.setupDelegatedAdminMenuItems(data);
+    });
   },
   mounted() {
     getIdmServerInfo().then((results) => {
@@ -199,33 +205,6 @@ export default {
     }
   },
   watch: {
-    /**
-     * when we receive user-saved data of managed resources,
-     * add them to iterated selectable menu items (Mainly used for Delegated Admin)
-     */
-    accessObj() {
-      const accessObj = cloneDeep(this.accessObj);
-      accessObj.sort((a, b) => {
-        if (a.title > b.title) {
-          return 1;
-        }
-        if (a.title < b.title) {
-          return -1;
-        }
-        return 0;
-      });
-      accessObj.forEach((obj) => {
-        const splitObj = obj.privilegePath.split('/');
-        this.menuItems.push({
-          displayName: this.getTranslation(capitalize(obj.title)),
-          icon: this.accessIcon(obj),
-          routeTo: {
-            name: 'ListResource',
-            params: { resourceName: splitObj[1], resourceType: splitObj[0] },
-          },
-        });
-      });
-    },
     /**
      * Adds the given script tags to the script container
      */
@@ -246,7 +225,33 @@ export default {
     },
   },
   methods: {
-    accessIcon(accessObject) {
+    /**
+     * Uses the passed privileges to extend the menu items (Mainly used for Delegated Admin)
+     * @param {Array} privileges - the privileges that dictate the additional mentu items to be shown
+     */
+    setupDelegatedAdminMenuItems(privileges) {
+      privileges.sort((a, b) => {
+        if (a.title > b.title) {
+          return 1;
+        }
+        if (a.title < b.title) {
+          return -1;
+        }
+        return 0;
+      });
+      privileges.forEach((obj) => {
+        const splitObj = obj.privilegePath.split('/');
+        this.menuItems.push({
+          displayName: this.getTranslation(capitalize(obj.title)),
+          icon: this.getMenuItemIcon(obj),
+          routeTo: {
+            name: 'ListResource',
+            params: { resourceName: splitObj[1], resourceType: splitObj[0] },
+          },
+        });
+      });
+    },
+    getMenuItemIcon(accessObject) {
       let matIcon = 'check_box_outline_blank';
       if (accessObject['mat-icon'] && accessObject['mat-icon'].length && accessObject['mat-icon'].substring(0, 3) !== 'fa-') {
         matIcon = accessObject['mat-icon'];
@@ -270,7 +275,6 @@ export default {
     showRiskAdministration() {
       const autoAccessAdminMenu = [
         {
-          menuGroup: true,
           displayName: 'sideMenu.riskAdministration',
           icon: 'settings',
           subItems: [

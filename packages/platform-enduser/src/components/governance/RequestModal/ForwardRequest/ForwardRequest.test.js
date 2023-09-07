@@ -14,8 +14,10 @@ describe('ForwardRequest', () => {
   describe('component shallow mounted', () => {
     beforeEach(() => {
       wrapper = shallowMount(ForwardRequest, {
-        mocks: {
-          $t: (t) => t,
+        global: {
+          mocks: {
+            $t: (t) => t,
+          },
         },
       });
     });

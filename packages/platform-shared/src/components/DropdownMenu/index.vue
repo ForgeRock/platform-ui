@@ -14,11 +14,11 @@ of the MIT license. See the LICENSE file for details. -->
     </template>
     <!-- @slot Dropdown header -->
     <slot name="dropdown-header" />
-    <template v-for="(item, index) in dropdownItems">
+    <template
+      v-for="(item, index) in dropdownItems"
+      :key="`sideDropdownItems_${index}`">
       <template>
-        <FrMenuItem
-          :key="`sideDropdownItems_${index}`"
-          v-bind="item" />
+        <FrMenuItem v-bind="item" />
       </template>
     </template>
     <template v-if="showProfileLink">
@@ -128,7 +128,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep {
+:deep {
   .b-dropdown {
     width: 100%;
   }
@@ -158,6 +158,9 @@ export default {
     span:not(.material-icons-outlined) {
       font-size: 0.875rem;
     }
+    .media-body {
+      overflow: hidden;
+    }
   }
 
   .dropdown-toggle::after {
@@ -169,9 +172,5 @@ export default {
       right: 0;
     }
   }
-}
-
-.media-body {
-  overflow: hidden;
 }
 </style>

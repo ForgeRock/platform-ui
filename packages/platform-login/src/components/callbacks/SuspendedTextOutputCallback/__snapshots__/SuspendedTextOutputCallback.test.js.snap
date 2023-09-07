@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SuspendedTextOutputCallback @renders with message: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;

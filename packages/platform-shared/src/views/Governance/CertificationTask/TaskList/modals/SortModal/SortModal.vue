@@ -8,7 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
     :ok-title="$t('common.apply')"
     :title="$t('governance.certificationTask.customizeColumns')"
     @hidden="$emit('hidden')"
-    @ok="applyCustomization($bvModal)"
+    @ok="applyCustomization()"
     body-class="p-0"
     cancel-variant="link"
     no-close-on-backdrop
@@ -121,6 +121,10 @@ import {
   find,
   findIndex,
 } from 'lodash';
+import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+
+// Composables
+const { bvModal } = useBvModal();
 
 const emit = defineEmits(['update-columns', 'hidden']);
 
@@ -202,9 +206,8 @@ function changeSelection(column, show) {
 
 /**
  * Apply columns customization
- * @param {Object} bvModal bootstrap-vue modal reference
  */
-function applyCustomization(bvModal) {
+function applyCustomization() {
   emit('update-columns', {
     activeColumns: activeColumnsList.value,
     availableColumns: availableColumnsList.value,

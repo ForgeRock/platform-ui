@@ -7,6 +7,7 @@
 
 import { mount } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { BModal, BButton } from 'bootstrap-vue';
 import ItemDetailsModal from './ItemDetailsModal';
 import i18n from '@/i18n';
 
@@ -43,8 +44,13 @@ describe('ItemDetailsModal', () => {
 
   function setup(props) {
     return mount(ItemDetailsModal, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+        components: {
+          BModal, BButton,
+        },
+      },
+      props: {
         ...propsData,
         ...props,
       },
@@ -75,16 +81,15 @@ describe('ItemDetailsModal', () => {
   it('emits the correct event on OK button click', async () => {
     wrapper = setup();
     await wrapper.vm.$nextTick();
-
-    // Mock the $emit method
-    const emitMock = jest.fn();
-    wrapper.vm.$emit = emitMock;
+    await wrapper.setProps({ visible: true });
 
     // Trigger OK button click
     await wrapper.find('.modal-footer button.btn-primary').trigger('click');
     await wrapper.vm.$nextTick();
 
     // Assert that the correct event is emitted
-    expect(emitMock).toHaveBeenCalledWith('toggle-item', propsData.item);
+    expect(wrapper.emitted()).toHaveProperty('toggle-item');
+    expect(wrapper.emitted()['toggle-item']).toHaveLength(1);
+    expect(wrapper.emitted()['toggle-item'][0]).toEqual([propsData.item]);
   });
 });

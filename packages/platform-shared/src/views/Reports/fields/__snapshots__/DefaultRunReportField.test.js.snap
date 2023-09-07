@@ -1,0 +1,563 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Default field for running reports @components emits "field-value-update" when the FrField input updated: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) (2)",
+    "
+",
+    " at <DefaultRunReportField",
+    "fieldOptions=",
+    [
+      "my-field-option",
+    ],
+    "name="my-basic-field"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) v-model usage on component has changed in Vue 3. Component that expects to work with v-model should now use the "modelValue" prop and emit the "update:modelValue" event. You can update the usage and then opt-in to Vue 3 behavior on a per-component basis with \`compatConfig: { COMPONENT_V_MODEL: false }\`.
+  Details: https://v3-migration.vuejs.org/breaking-changes/v-model.html",
+    "
+",
+    " at <FrField",
+    "modelValue=",
+    [],
+    "onUpdate:modelValue=fn",
+    "class="mb-3"",
+    " ...",
+    ">",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) (3)",
+    "
+",
+    " at <FrField",
+    "class="mb-3"",
+    "close-on-select=""",
+    "testid="default-run-report-field"",
+    " ...",
+    ">",
+    "
+",
+    " at <DefaultRunReportField",
+    "fieldOptions=",
+    [
+      "my-field-option",
+    ],
+    "name="my-basic-field"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) vm.$listeners has been removed. In Vue 3, parent v-on listeners are included in vm.$attrs and it is no longer necessary to separately use v-on="$listeners" if you are already using v-bind="$attrs". (Note: the Vue 3 behavior only applies if this compat config is disabled)
+  Details: https://v3-migration.vuejs.org/breaking-changes/listeners-removed.html",
+    "
+",
+    " at <FrField",
+    "class="mb-3"",
+    "close-on-select=""",
+    "testid="default-run-report-field"",
+    " ...",
+    ">",
+    "
+",
+    " at <DefaultRunReportField",
+    "fieldOptions=",
+    [
+      "my-field-option",
+    ],
+    "name="my-basic-field"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) (4)",
+    "
+",
+    " at <MultiSelect",
+    "close-on-select=""",
+    "testid="default-run-report-field"",
+    "internal-search=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "class="mb-3"",
+    "close-on-select=""",
+    "testid="default-run-report-field"",
+    " ...",
+    ">",
+    "
+",
+    " at <DefaultRunReportField",
+    "fieldOptions=",
+    [
+      "my-field-option",
+    ],
+    "name="my-basic-field"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) (5)",
+    "
+",
+    " at <VueMultiselect",
+    "key=0",
+    "id="floatingLabelInput5"",
+    "internal-search=false",
+    " ...",
+    ">",
+    "
+",
+    " at <InputLayout",
+    "description=""",
+    "id="floatingLabelInput5"",
+    "errors=",
+    [],
+    " ...",
+    ">",
+    "
+",
+    " at <MultiSelect",
+    "close-on-select=""",
+    "testid="default-run-report-field"",
+    "internal-search=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "class="mb-3"",
+    "close-on-select=""",
+    "testid="default-run-report-field"",
+    " ...",
+    ">",
+    "
+",
+    " at <DefaultRunReportField",
+    "fieldOptions=",
+    [
+      "my-field-option",
+    ],
+    "name="my-basic-field"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "appear" with v-bind value \`false\` will render appear="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <Transition",
+    "name="multiselect__loading"",
+    ">",
+    "
+",
+    " at <VueMultiselect",
+    "key=0",
+    "id="floatingLabelInput5"",
+    "internal-search=false",
+    " ...",
+    ">",
+    "
+",
+    " at <InputLayout",
+    "description=""",
+    "id="floatingLabelInput5"",
+    "errors=",
+    [],
+    " ...",
+    ">",
+    "
+",
+    " at <MultiSelect",
+    "close-on-select=""",
+    "testid="default-run-report-field"",
+    "internal-search=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "class="mb-3"",
+    "close-on-select=""",
+    "testid="default-run-report-field"",
+    " ...",
+    ">",
+    "
+",
+    " at <DefaultRunReportField",
+    "fieldOptions=",
+    [
+      "my-field-option",
+    ],
+    "name="my-basic-field"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "persisted" with v-bind value \`false\` will render persisted="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <Transition",
+    "name="multiselect__loading"",
+    ">",
+    "
+",
+    " at <VueMultiselect",
+    "key=0",
+    "id="floatingLabelInput5"",
+    "internal-search=false",
+    " ...",
+    ">",
+    "
+",
+    " at <InputLayout",
+    "description=""",
+    "id="floatingLabelInput5"",
+    "errors=",
+    [],
+    " ...",
+    ">",
+    "
+",
+    " at <MultiSelect",
+    "close-on-select=""",
+    "testid="default-run-report-field"",
+    "internal-search=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "class="mb-3"",
+    "close-on-select=""",
+    "testid="default-run-report-field"",
+    " ...",
+    ">",
+    "
+",
+    " at <DefaultRunReportField",
+    "fieldOptions=",
+    [
+      "my-field-option",
+    ],
+    "name="my-basic-field"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_ENUMERATED_COERCION) Enumerated attribute "spellcheck" with v-bind value \`false\` will render the value as-is instead of coercing the value to "true" in Vue 3. Always use explicit "true" or "false" values for enumerated attributes. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_ENUMERATED_COERCION: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <VueMultiselect",
+    "key=0",
+    "id="floatingLabelInput5"",
+    "internal-search=false",
+    " ...",
+    ">",
+    "
+",
+    " at <InputLayout",
+    "description=""",
+    "id="floatingLabelInput5"",
+    "errors=",
+    [],
+    " ...",
+    ">",
+    "
+",
+    " at <MultiSelect",
+    "close-on-select=""",
+    "testid="default-run-report-field"",
+    "internal-search=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "class="mb-3"",
+    "close-on-select=""",
+    "testid="default-run-report-field"",
+    " ...",
+    ">",
+    "
+",
+    " at <DefaultRunReportField",
+    "fieldOptions=",
+    [
+      "my-field-option",
+    ],
+    "name="my-basic-field"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "internal-search" with v-bind value \`false\` will render internal-search="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <InputLayout",
+    "description=""",
+    "id="floatingLabelInput5"",
+    "errors=",
+    [],
+    " ...",
+    ">",
+    "
+",
+    " at <MultiSelect",
+    "close-on-select=""",
+    "testid="default-run-report-field"",
+    "internal-search=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "class="mb-3"",
+    "close-on-select=""",
+    "testid="default-run-report-field"",
+    " ...",
+    ">",
+    "
+",
+    " at <DefaultRunReportField",
+    "fieldOptions=",
+    [
+      "my-field-option",
+    ],
+    "name="my-basic-field"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) (2)",
+    "
+",
+    " at <FrField",
+    "class="mb-3"",
+    "close-on-select=""",
+    "testid="default-run-report-field"",
+    " ...",
+    ">",
+    "
+",
+    " at <DefaultRunReportField",
+    "fieldOptions=",
+    [
+      "my-field-option",
+    ],
+    "name="my-basic-field"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`Default field for running reports @components emits an array even though the field could be a text field: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) (6)",
+    "
+",
+    " at <BasicInput",
+    "close-on-select=""",
+    "testid="default-run-report-field"",
+    "internal-search=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "class="mb-3"",
+    "close-on-select=""",
+    "testid="default-run-report-field"",
+    " ...",
+    ">",
+    "
+",
+    " at <DefaultRunReportField",
+    "fieldOptions=",
+    [],
+    "name="my-basic-field"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "placeholder" with v-bind value \`false\` will render placeholder="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput14"",
+    "name="my-basic-field"",
+    "description=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BasicInput",
+    "close-on-select=""",
+    "testid="default-run-report-field"",
+    "internal-search=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "class="mb-3"",
+    "close-on-select=""",
+    "testid="default-run-report-field"",
+    " ...",
+    ">",
+    "
+",
+    " at <DefaultRunReportField",
+    "fieldOptions=",
+    [],
+    "name="my-basic-field"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "aria-describedby" with v-bind value \`false\` will render aria-describedby="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput14"",
+    "name="my-basic-field"",
+    "description=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BasicInput",
+    "close-on-select=""",
+    "testid="default-run-report-field"",
+    "internal-search=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "class="mb-3"",
+    "close-on-select=""",
+    "testid="default-run-report-field"",
+    " ...",
+    ">",
+    "
+",
+    " at <DefaultRunReportField",
+    "fieldOptions=",
+    [],
+    "name="my-basic-field"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) (3)",
+    "
+",
+    " at <BasicInput",
+    "close-on-select=""",
+    "testid="default-run-report-field"",
+    "internal-search=false",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "class="mb-3"",
+    "close-on-select=""",
+    "testid="default-run-report-field"",
+    " ...",
+    ">",
+    "
+",
+    " at <DefaultRunReportField",
+    "fieldOptions=",
+    [],
+    "name="my-basic-field"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;

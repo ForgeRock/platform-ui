@@ -5,14 +5,10 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import Preferences from '@/components/profile/Preferences';
 import i18n from '@/i18n';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 describe('Preferences.vue', () => {
   let wrapper;
@@ -43,8 +39,9 @@ describe('Preferences.vue', () => {
       },
     });
     wrapper = shallowMount(Preferences, {
-      localVue,
-      i18n,
+      global: {
+        plugins: [i18n],
+      },
     });
   });
 

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -7,8 +7,6 @@ of the MIT license. See the LICENSE file for details. -->
     v-model="inputValue"
     v-on="$listeners"
     inline
-    :aria-label="switchLabel"
-    :disabled="disabled"
     :name="name"
     :min="min"
     :max="max" />
@@ -19,13 +17,14 @@ import { BFormSpinbutton } from 'bootstrap-vue';
 import InputMixin from '../Wrapper/InputMixin';
 
 /**
- * Checkbox with a label to the right
+ * Spinbutton - number with +/- buttons around it, lightly wrapped bootstrap vue component
  *
  *  @Mixes InputMixin - default props and methods for inputs
- *  @param {Boolean} value default ''
+ *  @param {Number} min Lowest available number
+ *  @param {Number} max Highest available number
  */
 export default {
-  name: 'FrCheckbox',
+  name: 'SpinButton',
   mixins: [
     InputMixin,
   ],
@@ -48,16 +47,10 @@ export default {
       default: 100,
     },
   },
-  computed: {
-    switchLabel() {
-      return this.label || this.description;
-    },
+  data() {
+    return {
+      inputValue: '',
+    };
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.zindex-1 {
-  z-index: 1;
-}
-</style>

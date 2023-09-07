@@ -5,18 +5,15 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
-import Vuex from 'vuex';
+import { createStore } from 'vuex';
 import i18n from '@/i18n';
 import AuthenticationDevices from './index';
 
-const localVue = createLocalVue();
-localVue.use(Vuex);
-
 describe('TrustedDevices.vue', () => {
   let wrapper;
-  const store = new Vuex.Store({
+  const store = createStore({
     state: {
       isFraas: false,
     },
@@ -29,14 +26,14 @@ describe('TrustedDevices.vue', () => {
     setupTestPinia();
 
     wrapper = shallowMount(AuthenticationDevices, {
-      localVue,
-      store,
-      mocks: {
-        $t: () => {},
-      },
-      i18n,
-      stubs: {
-        BModal: true,
+      global: {
+        mocks: {
+          $t: () => {},
+        },
+        plugins: [i18n, store],
+        stubs: {
+          BModal: true,
+        },
       },
     });
   });

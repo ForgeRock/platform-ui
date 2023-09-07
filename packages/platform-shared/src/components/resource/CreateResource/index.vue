@@ -3,9 +3,10 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <ValidationObserver
+  <VeeForm
     ref="observer"
-    v-slot="{ invalid }">
+    v-slot="{ meta: { valid } }"
+    as="span">
     <slot>
       <BModal
         id="createResourceModal"
@@ -112,20 +113,20 @@ of the MIT license. See the LICENSE file for details. -->
             v-if="!isLastStep"
             @click="loadNextStep"
             variant="primary"
-            :disabled="invalid">
+            :disabled="!valid">
             {{ $t('common.next') }}
           </BButton>
           <FrButtonWithSpinner
             v-if="isLastStep || !steps.length"
             :button-text="$t('common.save')"
-            :disabled="formFields.length === 0 || invalid || (passwordValue !== '' && !passwordValid) || isSaving"
+            :disabled="formFields.length === 0 || !valid || (passwordValue !== '' && !passwordValid) || isSaving"
             :show-spinner="isSaving"
             :spinner-text="$t('common.saving')"
             @click="saveForm" />
         </template>
       </BModal>
     </slot>
-  </ValidationObserver>
+  </VeeForm>
 </template>
 
 <script>
@@ -149,7 +150,7 @@ import {
   BCol,
   BModal,
 } from 'bootstrap-vue';
-import { ValidationObserver } from 'vee-validate';
+import { Form as VeeForm } from 'vee-validate';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
 import RelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
@@ -188,7 +189,7 @@ export default {
     BRow,
     BCol,
     BModal,
-    ValidationObserver,
+    VeeForm,
     FrListField,
     FrPolicyPasswordInput,
   },
@@ -286,8 +287,8 @@ export default {
       const idmInstance = this.getRequestService();
       const validateSave = this.$refs.observer.validate();
 
-      validateSave.then((isValid) => {
-        if (isValid) {
+      validateSave.then(({ valid }) => {
+        if (valid) {
           this.clonedCreateProperties.forEach((field) => {
             this.formFields[field.key] = field.value;
 
@@ -319,7 +320,6 @@ export default {
     setErrors(error) {
       const generatedErrors = this.findPolicyError(error, this.clonedCreateProperties);
       const passwordErrors = [];
-      this.$refs.observer.reset();
 
       if (generatedErrors.length > 0) {
         each(generatedErrors, (generatedError) => {
@@ -356,17 +356,17 @@ export default {
       if (this.stepIndex === -1) {
         const validateForm = this.$refs.observer.validate();
 
-        validateForm.then((isValid) => {
-          if (isValid) {
-            this.stepIndex = this.stepIndex + 1;
+        validateForm.then(({ valid }) => {
+          if (valid) {
+            this.stepIndex += 1;
           }
         });
       } else {
-        this.stepIndex = this.stepIndex + 1;
+        this.stepIndex += 1;
       }
     },
     loadPreviousStep() {
-      this.stepIndex = this.stepIndex - 1;
+      this.stepIndex -= 1;
     },
     updateStepPropertyValue(property, val) {
       const createProperty = find(this.clonedCreateProperties, { key: property });
@@ -425,10 +425,6 @@ export default {
       this.passwordFailures = [];
       this.clonedCreateProperties = cloneDeep(this.createProperties);
       this.setFormFields();
-
-      if (this.$refs.observer) {
-        this.$refs.observer.reset();
-      }
     },
     /**
      * change field value for valid fields

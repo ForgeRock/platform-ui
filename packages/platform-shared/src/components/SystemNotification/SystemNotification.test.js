@@ -5,41 +5,46 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount, createWrapper } from '@vue/test-utils';
+import { mount, DOMWrapper } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import i18n from '@/i18n';
 import FrSystemNotification from '@/components/SystemNotification';
 
 describe('SystemNotification', () => {
   const defaultProps = {
-    i18n,
-    propsData: {
-      data: {
-        content: 'Scheduled Tenant Migration',
-        variant: 'warning',
-      },
-      active: true,
+    data: {
+      content: 'Scheduled Tenant Migration',
+      variant: 'warning',
     },
+    active: true,
+    isTesting: true,
   };
 
   const propsWithModal = {
-    propsData: {
-      data: {
-        content: 'Scheduled Tenant Migration',
-        variant: 'warning',
-        modal: {
-          title: 'Scheduled Tenant Migration',
-          content: 'About this migration',
-        },
+    data: {
+      content: 'Scheduled Tenant Migration',
+      variant: 'warning',
+      modal: {
+        title: 'Scheduled Tenant Migration',
+        content: 'About this migration',
       },
-      active: true,
     },
+    active: true,
+    isTesting: true,
   };
 
-  function setup(props) {
+  function setup(props = defaultProps) {
     return mount(FrSystemNotification, {
-      ...defaultProps,
-      ...props,
+      attachTo: document.body,
+      global: {
+        plugins: [i18n],
+        mocks: {
+          $bvModal: {
+            show: () => {},
+          },
+        },
+      },
+      props,
     });
   }
 
@@ -92,15 +97,15 @@ describe('SystemNotification', () => {
 
     it('should display modal when view details is clicked', async () => {
       const wrapper = setup(propsWithModal);
-      const root = createWrapper(wrapper.vm.$root);
       const viewDetails = findByTestId(wrapper, 'notification-view-details');
 
-      expect(root.emitted()['bv::show::modal']).toBeFalsy();
+      const modalSpy = jest.spyOn(wrapper.vm.$bvModal, 'show');
+      expect(modalSpy).not.toHaveBeenCalled();
       viewDetails.trigger('click');
       await wrapper.vm.$nextTick();
-      expect(root.emitted()['bv::show::modal']).toEqual([['SystemNotificationModal']]);
+      expect(modalSpy).toHaveBeenCalledWith('SystemNotificationModal');
 
-      const bodyWrap = createWrapper(document.body);
+      const bodyWrap = new DOMWrapper(document.body);
       const modalTitle = findByTestId(bodyWrap, 'system-notification-modal-title');
       const modalContent = findByTestId(bodyWrap, 'system-notification-modal-content');
 

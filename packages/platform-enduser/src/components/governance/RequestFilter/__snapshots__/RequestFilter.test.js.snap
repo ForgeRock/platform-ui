@@ -1,0 +1,1323 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RequestFilter priorities changing priority emits filter-change event with filter and count: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "value" with v-bind value \`false\` will render value="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <FrField",
+    "inline=""",
+    "class="d-inline"",
+    "label="governance.accessRequest.priorities.highPriority"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "lg="12"",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <RequestFilter",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`RequestFilter priorities has three priority checkboxes: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) Functional component <BRow> should be defined as a plain function in Vue 3. The "functional" option has been removed. NOTE: Before migrating to use plain functions for functional components, first make sure that all async components usage have been migrated and its compat behavior has been disabled.
+  Details: https://v3-migration.vuejs.org/breaking-changes/functional-components.html",
+    "
+",
+    " at <RequestFilter",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) v-model usage on component has changed in Vue 3. Component that expects to work with v-model should now use the "modelValue" prop and emit the "update:modelValue" event. You can update the usage and then opt-in to Vue 3 behavior on a per-component basis with \`compatConfig: { COMPONENT_V_MODEL: false }\`.
+  Details: https://v3-migration.vuejs.org/breaking-changes/v-model.html",
+    "
+",
+    " at <FrField",
+    "modelValue=true",
+    "onUpdate:modelValue=fn",
+    "inline=""",
+    " ...",
+    ">",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) vm.$listeners has been removed. In Vue 3, parent v-on listeners are included in vm.$attrs and it is no longer necessary to separately use v-on="$listeners" if you are already using v-bind="$attrs". (Note: the Vue 3 behavior only applies if this compat config is disabled)
+  Details: https://v3-migration.vuejs.org/breaking-changes/listeners-removed.html",
+    "
+",
+    " at <FrField",
+    "inline=""",
+    "class="d-inline"",
+    "label="governance.accessRequest.priorities.highPriority"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "lg="12"",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <RequestFilter",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) (2)",
+    "
+",
+    " at <FrCheckbox",
+    "inline=""",
+    "label="governance.accessRequest.priorities.highPriority"",
+    "name="highPriority"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "inline=""",
+    "class="d-inline"",
+    "label="governance.accessRequest.priorities.highPriority"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "lg="12"",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <RequestFilter",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (2)",
+    "
+",
+    " at <FrCheckbox",
+    "inline=""",
+    "label="governance.accessRequest.priorities.highPriority"",
+    "name="highPriority"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "inline=""",
+    "class="d-inline"",
+    "label="governance.accessRequest.priorities.highPriority"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "lg="12"",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <RequestFilter",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (2)",
+    "
+",
+    " at <FrCheckbox",
+    "inline=""",
+    "label="governance.accessRequest.priorities.highPriority"",
+    "name="highPriority"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "inline=""",
+    "class="d-inline"",
+    "label="governance.accessRequest.priorities.highPriority"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "lg="12"",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <RequestFilter",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) (2)",
+    "
+",
+    " at <BFormCheckbox",
+    "modelValue=""",
+    "onUpdate:modelValue=fn",
+    "onInput=",
+    [
+      [Function],
+      [Function],
+    ],
+    " ...",
+    ">",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (2)",
+    "
+",
+    " at <BFormCheckbox",
+    "onInput=",
+    [
+      [Function],
+      [Function],
+    ],
+    "onModelCompat:input=fn",
+    "class="mr-0 zindex-1 align-middle"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrCheckbox",
+    "inline=""",
+    "label="governance.accessRequest.priorities.highPriority"",
+    "name="highPriority"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "inline=""",
+    "class="d-inline"",
+    "label="governance.accessRequest.priorities.highPriority"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "lg="12"",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <RequestFilter",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) vm.$scopedSlots has been removed. Use vm.$slots instead.
+  Details: https://v3-migration.vuejs.org/breaking-changes/slots-unification.html",
+    "
+",
+    " at <BFormCheckbox",
+    "onInput=",
+    [
+      [Function],
+      [Function],
+    ],
+    "onModelCompat:input=fn",
+    "class="mr-0 zindex-1 align-middle"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrCheckbox",
+    "inline=""",
+    "label="governance.accessRequest.priorities.highPriority"",
+    "name="highPriority"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "inline=""",
+    "class="d-inline"",
+    "label="governance.accessRequest.priorities.highPriority"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "lg="12"",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <RequestFilter",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (3)",
+    "
+",
+    " at <BFormCheckbox",
+    "onInput=",
+    [
+      [Function],
+      [Function],
+    ],
+    "onModelCompat:input=fn",
+    "class="mr-0 zindex-1 align-middle"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrCheckbox",
+    "inline=""",
+    "label="governance.accessRequest.priorities.highPriority"",
+    "name="highPriority"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "inline=""",
+    "class="d-inline"",
+    "label="governance.accessRequest.priorities.highPriority"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "lg="12"",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <RequestFilter",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_ATTRS_CLASS_STYLE) Component <BFormCheckbox> has \`inheritAttrs: false\` but is relying on class/style fallthrough from parent. In Vue 3, class/style are now included in $attrs and will no longer fallthrough when inheritAttrs is false. If you are already using v-bind="$attrs" on component root it should render the same end result. If you are binding $attrs to a non-root element and expecting class/style to fallthrough on root, you will need to now manually bind them on root via :class="$attrs.class".
+  Details: https://v3-migration.vuejs.org/breaking-changes/attrs-includes-class-style.html",
+    "
+",
+    " at <BFormCheckbox",
+    "onInput=",
+    [
+      [Function],
+      [Function],
+    ],
+    "onModelCompat:input=fn",
+    "class="mr-0 zindex-1 align-middle"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrCheckbox",
+    "inline=""",
+    "label="governance.accessRequest.priorities.highPriority"",
+    "name="highPriority"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "inline=""",
+    "class="d-inline"",
+    "label="governance.accessRequest.priorities.highPriority"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "lg="12"",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <RequestFilter",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (3)",
+    "
+",
+    " at <BImg",
+    "height="24"",
+    "src=""",
+    ">",
+    "
+",
+    " at <BFormCheckbox",
+    "onInput=",
+    [
+      [Function],
+      [Function],
+    ],
+    "onModelCompat:input=fn",
+    "class="mr-0 zindex-1 align-middle"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrCheckbox",
+    "inline=""",
+    "label="governance.accessRequest.priorities.highPriority"",
+    "name="highPriority"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "inline=""",
+    "class="d-inline"",
+    "label="governance.accessRequest.priorities.highPriority"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "lg="12"",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <RequestFilter",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) (3)",
+    "
+",
+    " at <SelectInput",
+    "label="governance.accessRequest.requestType"",
+    "options=",
+    [
+      {
+        "text": "governance.accessRequest.requestTypes.all",
+        "value": "all",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.applicationGrant",
+        "value": "applicationGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.applicationRemove",
+        "value": "applicationRemove",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.entitlementGrant",
+        "value": "entitlementGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.entitlementRemove",
+        "value": "entitlementRemove",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.roleGrant",
+        "value": "roleGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.roleRemove",
+        "value": "roleRemove",
+      },
+    ],
+    "testid="request-type"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "class="mb-4"",
+    "label="governance.accessRequest.requestType"",
+    "options=",
+    [
+      {
+        "text": "governance.accessRequest.requestTypes.all",
+        "value": "all",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.applicationGrant",
+        "value": "applicationGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.applicationRemove",
+        "value": "applicationRemove",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.entitlementGrant",
+        "value": "entitlementGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.entitlementRemove",
+        "value": "entitlementRemove",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.roleGrant",
+        "value": "roleGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.roleRemove",
+        "value": "roleRemove",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "lg="6"",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <RequestFilter",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) (4)",
+    "
+",
+    " at <VueMultiselect",
+    "id="floatingLabelInput20"",
+    "ref="vms"",
+    "value=""",
+    " ...",
+    ">",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput20"",
+    "name="governance.accessRequest.requestType"",
+    "description=""",
+    " ...",
+    ">",
+    "
+",
+    " at <SelectInput",
+    "label="governance.accessRequest.requestType"",
+    "options=",
+    [
+      {
+        "text": "governance.accessRequest.requestTypes.all",
+        "value": "all",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.applicationGrant",
+        "value": "applicationGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.applicationRemove",
+        "value": "applicationRemove",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.entitlementGrant",
+        "value": "entitlementGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.entitlementRemove",
+        "value": "entitlementRemove",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.roleGrant",
+        "value": "roleGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.roleRemove",
+        "value": "roleRemove",
+      },
+    ],
+    "testid="request-type"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "class="mb-4"",
+    "label="governance.accessRequest.requestType"",
+    "options=",
+    [
+      {
+        "text": "governance.accessRequest.requestTypes.all",
+        "value": "all",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.applicationGrant",
+        "value": "applicationGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.applicationRemove",
+        "value": "applicationRemove",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.entitlementGrant",
+        "value": "entitlementGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.entitlementRemove",
+        "value": "entitlementRemove",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.roleGrant",
+        "value": "roleGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.roleRemove",
+        "value": "roleRemove",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "lg="6"",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <RequestFilter",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "appear" with v-bind value \`false\` will render appear="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <Transition",
+    "name="multiselect__loading"",
+    ">",
+    "
+",
+    " at <VueMultiselect",
+    "id="floatingLabelInput20"",
+    "ref="vms"",
+    "value=""",
+    " ...",
+    ">",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput20"",
+    "name="governance.accessRequest.requestType"",
+    "description=""",
+    " ...",
+    ">",
+    "
+",
+    " at <SelectInput",
+    "label="governance.accessRequest.requestType"",
+    "options=",
+    [
+      {
+        "text": "governance.accessRequest.requestTypes.all",
+        "value": "all",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.applicationGrant",
+        "value": "applicationGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.applicationRemove",
+        "value": "applicationRemove",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.entitlementGrant",
+        "value": "entitlementGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.entitlementRemove",
+        "value": "entitlementRemove",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.roleGrant",
+        "value": "roleGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.roleRemove",
+        "value": "roleRemove",
+      },
+    ],
+    "testid="request-type"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "class="mb-4"",
+    "label="governance.accessRequest.requestType"",
+    "options=",
+    [
+      {
+        "text": "governance.accessRequest.requestTypes.all",
+        "value": "all",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.applicationGrant",
+        "value": "applicationGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.applicationRemove",
+        "value": "applicationRemove",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.entitlementGrant",
+        "value": "entitlementGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.entitlementRemove",
+        "value": "entitlementRemove",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.roleGrant",
+        "value": "roleGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.roleRemove",
+        "value": "roleRemove",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "lg="6"",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <RequestFilter",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "persisted" with v-bind value \`false\` will render persisted="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <Transition",
+    "name="multiselect__loading"",
+    ">",
+    "
+",
+    " at <VueMultiselect",
+    "id="floatingLabelInput20"",
+    "ref="vms"",
+    "value=""",
+    " ...",
+    ">",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput20"",
+    "name="governance.accessRequest.requestType"",
+    "description=""",
+    " ...",
+    ">",
+    "
+",
+    " at <SelectInput",
+    "label="governance.accessRequest.requestType"",
+    "options=",
+    [
+      {
+        "text": "governance.accessRequest.requestTypes.all",
+        "value": "all",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.applicationGrant",
+        "value": "applicationGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.applicationRemove",
+        "value": "applicationRemove",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.entitlementGrant",
+        "value": "entitlementGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.entitlementRemove",
+        "value": "entitlementRemove",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.roleGrant",
+        "value": "roleGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.roleRemove",
+        "value": "roleRemove",
+      },
+    ],
+    "testid="request-type"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "class="mb-4"",
+    "label="governance.accessRequest.requestType"",
+    "options=",
+    [
+      {
+        "text": "governance.accessRequest.requestTypes.all",
+        "value": "all",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.applicationGrant",
+        "value": "applicationGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.applicationRemove",
+        "value": "applicationRemove",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.entitlementGrant",
+        "value": "entitlementGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.entitlementRemove",
+        "value": "entitlementRemove",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.roleGrant",
+        "value": "roleGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.roleRemove",
+        "value": "roleRemove",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "lg="6"",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <RequestFilter",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_ENUMERATED_COERCION) Enumerated attribute "spellcheck" with v-bind value \`false\` will render the value as-is instead of coercing the value to "true" in Vue 3. Always use explicit "true" or "false" values for enumerated attributes. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_ENUMERATED_COERCION: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <VueMultiselect",
+    "id="floatingLabelInput20"",
+    "ref="vms"",
+    "value=""",
+    " ...",
+    ">",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput20"",
+    "name="governance.accessRequest.requestType"",
+    "description=""",
+    " ...",
+    ">",
+    "
+",
+    " at <SelectInput",
+    "label="governance.accessRequest.requestType"",
+    "options=",
+    [
+      {
+        "text": "governance.accessRequest.requestTypes.all",
+        "value": "all",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.applicationGrant",
+        "value": "applicationGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.applicationRemove",
+        "value": "applicationRemove",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.entitlementGrant",
+        "value": "entitlementGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.entitlementRemove",
+        "value": "entitlementRemove",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.roleGrant",
+        "value": "roleGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.roleRemove",
+        "value": "roleRemove",
+      },
+    ],
+    "testid="request-type"",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "class="mb-4"",
+    "label="governance.accessRequest.requestType"",
+    "options=",
+    [
+      {
+        "text": "governance.accessRequest.requestTypes.all",
+        "value": "all",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.applicationGrant",
+        "value": "applicationGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.applicationRemove",
+        "value": "applicationRemove",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.entitlementGrant",
+        "value": "entitlementGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.entitlementRemove",
+        "value": "entitlementRemove",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.roleGrant",
+        "value": "roleGrant",
+      },
+      {
+        "text": "governance.accessRequest.requestTypes.roleRemove",
+        "value": "roleRemove",
+      },
+    ],
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "lg="6"",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <RequestFilter",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) (3)",
+    "
+",
+    " at <GovResourceSelect",
+    "modelValue="managed/user/all"",
+    "onUpdate:modelValue=fn",
+    "class="mb-4"",
+    " ...",
+    ">",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) (5)",
+    "
+",
+    " at <BasicInput",
+    "label="governance.accessRequest.requestId"",
+    "testid="request-id"",
+    "value=""",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "class="mb-4"",
+    "label="governance.accessRequest.requestId"",
+    "testid="request-id"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "lg="6"",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <RequestFilter",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "placeholder" with v-bind value \`false\` will render placeholder="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput32"",
+    "name="governance.accessRequest.requestId"",
+    "description=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BasicInput",
+    "label="governance.accessRequest.requestId"",
+    "testid="request-id"",
+    "value=""",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "class="mb-4"",
+    "label="governance.accessRequest.requestId"",
+    "testid="request-id"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "lg="6"",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <RequestFilter",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "aria-describedby" with v-bind value \`false\` will render aria-describedby="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput32"",
+    "name="governance.accessRequest.requestId"",
+    "description=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BasicInput",
+    "label="governance.accessRequest.requestId"",
+    "testid="request-id"",
+    "value=""",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "class="mb-4"",
+    "label="governance.accessRequest.requestId"",
+    "testid="request-id"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "lg="6"",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <RequestFilter",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "internal-search" with v-bind value \`false\` will render internal-search="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput36"",
+    "name="resourceSelect"",
+    "description=""",
+    " ...",
+    ">",
+    "
+",
+    " at <SelectInput",
+    "onClose=fn",
+    "onInput=",
+    [
+      [Function],
+      [Function],
+    ],
+    "onOpen=fn",
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "onClose=fn",
+    "onInput=fn<bound handleInput>",
+    "onOpen=fn",
+    " ...",
+    ">",
+    "
+",
+    " at <GovResourceSelect",
+    "class="mb-4"",
+    "first-option=",
+    {
+      "text": "governance.accessRequest.allRequesters",
+      "value": "all",
+    },
+    "initial-data=",
+    {
+      "id": "all",
+    },
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "lg="6"",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <RequestFilter",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "disabled" with v-bind value \`false\` will render disabled="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <FrField",
+    "onClose=fn",
+    "onInput=fn<bound handleInput>",
+    "onOpen=fn",
+    " ...",
+    ">",
+    "
+",
+    " at <GovResourceSelect",
+    "class="mb-4"",
+    "first-option=",
+    {
+      "text": "governance.accessRequest.allRequesters",
+      "value": "all",
+    },
+    "initial-data=",
+    {
+      "id": "all",
+    },
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "lg="6"",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <RequestFilter",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) (2)",
+    "
+",
+    " at <FrField",
+    "onClose=fn",
+    "onInput=fn<bound handleInput>",
+    "onOpen=fn",
+    " ...",
+    ">",
+    "
+",
+    " at <GovResourceSelect",
+    "class="mb-4"",
+    "first-option=",
+    {
+      "text": "governance.accessRequest.allRequesters",
+      "value": "all",
+    },
+    "initial-data=",
+    {
+      "id": "all",
+    },
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "lg="6"",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <RequestFilter",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;

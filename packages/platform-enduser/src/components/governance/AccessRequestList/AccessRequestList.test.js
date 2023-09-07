@@ -77,15 +77,17 @@ describe('AccessReviews', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = mount(AccessRequestList, {
-      mocks: {
-        $t: (text, params) => {
-          if (text === 'governance.accessRequest.idLabel') {
-            return text + params.id;
-          }
-          return text;
+      global: {
+        mocks: {
+          $t: (text, params) => {
+            if (text === 'governance.accessRequest.idLabel') {
+              return text + params.id;
+            }
+            return text;
+          },
         },
       },
-      propsData: {
+      props: {
         requests: [
           application,
         ],

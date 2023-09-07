@@ -1,0 +1,555 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`KeyValueList component tests shows required error if field is required but not filled out: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) Functional component <BListGroup> should be defined as a plain function in Vue 3. The "functional" option has been removed. NOTE: Before migrating to use plain functions for functional components, first make sure that all async components usage have been migrated and its compat behavior has been disabled.
+  Details: https://v3-migration.vuejs.org/breaking-changes/functional-components.html",
+    "
+",
+    " at <KeyValueList",
+    "value=",
+    [
+      {
+        "key": "initialValue",
+      },
+    ],
+    "name="testField"",
+    "validation="required"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) vm.$listeners has been removed. In Vue 3, parent v-on listeners are included in vm.$attrs and it is no longer necessary to separately use v-on="$listeners" if you are already using v-bind="$attrs". (Note: the Vue 3 behavior only applies if this compat config is disabled)
+  Details: https://v3-migration.vuejs.org/breaking-changes/listeners-removed.html",
+    "
+",
+    " at <BListGroup",
+    "key=0",
+    "class="border-top border-bottom"",
+    "aria-describedby=false",
+    " ...",
+    ">",
+    "
+",
+    " at <KeyValueList",
+    "value=",
+    [
+      {
+        "key": "initialValue",
+      },
+    ],
+    "name="testField"",
+    "validation="required"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (2)",
+    "
+",
+    " at <BListGroupItem",
+    "onClick=fn<onClick>",
+    "key="floatingLabelInput34_keyvalue-0"",
+    "active=false",
+    " ...",
+    ">",
+    "
+",
+    " at <BListGroup",
+    "key=0",
+    "class="border-top border-bottom"",
+    "aria-describedby=false",
+    " ...",
+    ">",
+    "
+",
+    " at <KeyValueList",
+    "value=",
+    [
+      {
+        "key": "initialValue",
+      },
+    ],
+    "name="testField"",
+    "validation="required"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (3)",
+    "
+",
+    " at <BButtonGroup>",
+    "
+",
+    " at <BCol",
+    "md="2"",
+    ">",
+    "
+",
+    " at <BRow",
+    "class="w-100"",
+    ">",
+    "
+",
+    " at <BListGroupItem",
+    "onClick=fn<onClick>",
+    "key="floatingLabelInput34_keyvalue-0"",
+    "active=false",
+    " ...",
+    ">",
+    "
+",
+    " at <BListGroup",
+    "key=0",
+    "class="border-top border-bottom"",
+    "aria-describedby=false",
+    " ...",
+    ">",
+    "
+",
+    " at <KeyValueList",
+    "value=",
+    [
+      {
+        "key": "initialValue",
+      },
+    ],
+    "name="testField"",
+    "validation="required"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (4)",
+    "
+",
+    " at <BButton",
+    "style=",
+    {
+      "cursor": "pointer",
+    },
+    "variant="none"",
+    "class="py-0"",
+    " ...",
+    ">",
+    "
+",
+    " at <BButtonGroup>",
+    "
+",
+    " at <BCol",
+    "md="2"",
+    ">",
+    "
+",
+    " at <BRow",
+    "class="w-100"",
+    ">",
+    "
+",
+    " at <BListGroupItem",
+    "onClick=fn<onClick>",
+    "key="floatingLabelInput34_keyvalue-0"",
+    "active=false",
+    " ...",
+    ">",
+    "
+",
+    " at <BListGroup",
+    "key=0",
+    "class="border-top border-bottom"",
+    "aria-describedby=false",
+    " ...",
+    ">",
+    "
+",
+    " at <KeyValueList",
+    "value=",
+    [
+      {
+        "key": "initialValue",
+      },
+    ],
+    "name="testField"",
+    "validation="required"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`KeyValueList unit tests Saves new key value pair: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) (2)",
+    "
+",
+    " at <KeyValueList",
+    "value=",
+    {
+      "en": "value",
+    },
+    "name="testField"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (2)",
+    "
+",
+    " at <KeyValueList",
+    "value=",
+    {
+      "en": "value",
+    },
+    "name="testField"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "horizontal" with v-bind value \`false\` will render horizontal="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BListGroup",
+    "key=0",
+    "class="border-top border-bottom"",
+    "aria-describedby=false",
+    " ...",
+    ">",
+    "
+",
+    " at <KeyValueList",
+    "value=",
+    {
+      "en": "value",
+    },
+    "name="testField"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "aria-describedby" with v-bind value \`false\` will render aria-describedby="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BListGroup",
+    "key=0",
+    "class="border-top border-bottom"",
+    "aria-describedby=false",
+    " ...",
+    ">",
+    "
+",
+    " at <KeyValueList",
+    "value=",
+    {
+      "en": "value",
+    },
+    "name="testField"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "active" with v-bind value \`false\` will render active="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "variant="link"",
+    "class="p-0 text-decoration-none"",
+    "disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <KeyValueList",
+    "value=",
+    {
+      "en": "value",
+    },
+    "name="testField"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "block" with v-bind value \`false\` will render block="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "variant="link"",
+    "class="p-0 text-decoration-none"",
+    "disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <KeyValueList",
+    "value=",
+    {
+      "en": "value",
+    },
+    "name="testField"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "disabled" with v-bind value \`false\` will render disabled="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "variant="link"",
+    "class="p-0 text-decoration-none"",
+    "disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <KeyValueList",
+    "value=",
+    {
+      "en": "value",
+    },
+    "name="testField"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "exact" with v-bind value \`false\` will render exact="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "variant="link"",
+    "class="p-0 text-decoration-none"",
+    "disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <KeyValueList",
+    "value=",
+    {
+      "en": "value",
+    },
+    "name="testField"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "exactPath" with v-bind value \`false\` will render exactPath="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "variant="link"",
+    "class="p-0 text-decoration-none"",
+    "disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <KeyValueList",
+    "value=",
+    {
+      "en": "value",
+    },
+    "name="testField"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noPrefetch" with v-bind value \`false\` will render noPrefetch="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "variant="link"",
+    "class="p-0 text-decoration-none"",
+    "disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <KeyValueList",
+    "value=",
+    {
+      "en": "value",
+    },
+    "name="testField"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "pill" with v-bind value \`false\` will render pill="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "variant="link"",
+    "class="p-0 text-decoration-none"",
+    "disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <KeyValueList",
+    "value=",
+    {
+      "en": "value",
+    },
+    "name="testField"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "replace" with v-bind value \`false\` will render replace="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "variant="link"",
+    "class="p-0 text-decoration-none"",
+    "disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <KeyValueList",
+    "value=",
+    {
+      "en": "value",
+    },
+    "name="testField"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "squared" with v-bind value \`false\` will render squared="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "variant="link"",
+    "class="p-0 text-decoration-none"",
+    "disabled=false",
+    " ...",
+    ">",
+    "
+",
+    " at <KeyValueList",
+    "value=",
+    {
+      "en": "value",
+    },
+    "name="testField"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SET) vm.$set() has been removed as it is no longer needed in Vue 3. Simply use native JavaScript mutations.",
+  ],
+]
+`;

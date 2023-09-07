@@ -28,7 +28,7 @@ describe('Alert Component', () => {
 
   it('warning variant will have a warning icon', () => {
     wrapper = shallowMount(Alert, {
-      propsData: {
+      props: {
         variant: 'warning',
       },
     });

@@ -1,0 +1,148 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PolicyPanel.vue proper render should not show anything when "policyFailures" is loading: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) (2)",
+    "
+",
+    " at <PolicyPanel",
+    "policies=",
+    [
+      {
+        "params": {
+          "args": "test args",
+        },
+        "policyRequirement": "test",
+      },
+      {
+        "params": {
+          "args": "test args",
+        },
+        "policyRequirement": "test2",
+      },
+      {
+        "params": {
+          "args": "test args",
+        },
+        "policyRequirement": "test3",
+      },
+    ],
+    "policyFailures=",
+    [
+      "test",
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "col" with v-bind value \`false\` will render col="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BCol",
+    "key="password_policy_1"",
+    ">",
+    "
+",
+    " at <BRow",
+    "id=""",
+    ">",
+    "
+",
+    " at <PolicyPanel",
+    "policies=",
+    [
+      {
+        "params": {
+          "args": "test args",
+        },
+        "policyRequirement": "test",
+      },
+      {
+        "params": {
+          "args": "test args",
+        },
+        "policyRequirement": "test2",
+      },
+      {
+        "params": {
+          "args": "test args",
+        },
+        "policyRequirement": "test3",
+      },
+    ],
+    "policyFailures=",
+    [
+      "test",
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noGutters" with v-bind value \`false\` will render noGutters="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BRow",
+    "id=""",
+    ">",
+    "
+",
+    " at <PolicyPanel",
+    "policies=",
+    [
+      {
+        "params": {
+          "args": "test args",
+        },
+        "policyRequirement": "test",
+      },
+      {
+        "params": {
+          "args": "test args",
+        },
+        "policyRequirement": "test2",
+      },
+      {
+        "params": {
+          "args": "test args",
+        },
+        "policyRequirement": "test3",
+      },
+    ],
+    "policyFailures=",
+    [
+      "test",
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;

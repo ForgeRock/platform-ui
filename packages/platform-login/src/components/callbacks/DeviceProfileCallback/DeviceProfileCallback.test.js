@@ -23,8 +23,10 @@ describe('DeviceProfileCallback', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = shallowMount(DeviceProfileCallback, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         callback: {
           getMessage: () => 'Message',
           isLocationRequired: () => true,

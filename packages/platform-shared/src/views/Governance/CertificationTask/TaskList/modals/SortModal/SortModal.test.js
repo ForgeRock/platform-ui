@@ -12,11 +12,13 @@ let wrapper;
 
 function setup(options, propsData) {
   wrapper = shallowMount(SortModal, {
-    mocks: {
-      $t: (t) => t,
-      ...options,
+    global: {
+      mocks: {
+        $t: (t) => t,
+        ...options,
+      },
     },
-    propsData: {
+    props: {
       taskListColumns: [],
       ...propsData,
     },

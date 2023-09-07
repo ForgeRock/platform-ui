@@ -177,7 +177,6 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script setup>
 import {
-  getCurrentInstance,
   ref,
   watch,
 } from 'vue';
@@ -193,6 +192,7 @@ import {
 import { getReportRuns } from '@forgerock/platform-shared/src/api/AutoApi';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { startCase } from 'lodash';
+import { useRoute, useRouter } from 'vue-router';
 import dayjs from 'dayjs';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
@@ -206,9 +206,11 @@ import useViewReportTable from './composables/ViewReportTable';
 import useRunHistoryTable from './composables/RunHistoryTable';
 import i18n from '@/i18n';
 
-const { proxy: { $route, $router } } = getCurrentInstance();
+// Composables
+const router = useRouter();
+const route = useRoute();
 
-const { id, template } = $route.params;
+const { id, template } = route.params;
 const {
   fetchViewReport,
   expiredMessage,
@@ -305,7 +307,7 @@ function updateItems(items) {
  * Routes to the Report History page.
  */
 function returnToTemplate() {
-  $router.push({ name: 'ReportTemplateHistory', params: { template } });
+  router.push({ name: 'ReportTemplateHistory', params: { template } });
 }
 
 getRunInfo();

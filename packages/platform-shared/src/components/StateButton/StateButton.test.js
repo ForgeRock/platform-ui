@@ -11,8 +11,10 @@ import StateButton from './index';
 describe('StateButton', () => {
   it('StateButton successfully loaded', () => {
     const wrapper = shallowMount(StateButton, {
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
     });
 

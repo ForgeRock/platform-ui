@@ -93,9 +93,10 @@ of the MIT license. See the LICENSE file for details. -->
           </div>
         </div>
         <ul class="fr-sidebar-menuitems flex-grow-1">
-          <template v-for="(item, index) in menuItems">
+          <template
+            v-for="(item, index) in menuItems"
+            :key="`sidebarNav_${index}`">
             <FrMenuItem
-              :key="`sidebarNav_${index}`"
               v-bind="item"
               is-nav />
           </template>

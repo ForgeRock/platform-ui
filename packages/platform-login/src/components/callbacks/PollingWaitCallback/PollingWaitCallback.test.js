@@ -22,8 +22,10 @@ describe('PollingWaitCallback', () => {
   };
   function setup(props) {
     return mount(PollingWaitCallback, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         ...defaultProps,
         ...props,
       },

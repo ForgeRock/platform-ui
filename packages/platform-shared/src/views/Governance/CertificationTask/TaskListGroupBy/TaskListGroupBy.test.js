@@ -5,19 +5,34 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
-import flushPromises from 'flush-promises';
-import { mount, createWrapper } from '@vue/test-utils';
+import { createTooltipContainer, findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { mount, flushPromises } from '@vue/test-utils';
 import * as CertificationApi from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import Notifications from '@kyvg/vue3-notification';
 import { setupTestPinia } from '../../../../utils/testPiniaHelpers';
 import i18n from '@/i18n';
 import TaskListGroupBy from './index';
 
 describe('Glossary', () => {
+  createTooltipContainer([
+    'btnAllowException-01fec9de-a9e7-435b-8d16-2b2367714278',
+    'btnRevoke-01fec9de-a9e7-435b-8d16-2b2367714278',
+    'btnCertify-01fec9de-a9e7-435b-8d16-2b2367714278',
+    'flags-01fec9de-a9e7-435b-8d16-2b2367714278-1',
+    'flags-01fec9de-a9e7-435b-8d16-2b2367714278-0',
+    'btnCertify-01fec9de-a9e7-435b-8d16-2b2367714278',
+  ]);
   const setup = () => mount(TaskListGroupBy, {
-    i18n,
-    propsData: {
+    global: {
+      plugins: [i18n, Notifications],
+      mocks: {
+        $bvModal: {
+          show: jest.fn(),
+        },
+      },
+    },
+    props: {
       actorId: 'managed/user/b29d411e-987e-4f67-afc7-1c590718179b',
       campaignDetails: {
         status: 'in-progress',
@@ -538,8 +553,7 @@ describe('Glossary', () => {
       findByTestId(wrapper, 'account-cell').trigger('click');
       await flushPromises();
       await wrapper.vm.$nextTick();
-      const rootWrapper = createWrapper(wrapper.vm.$root);
-      expect(rootWrapper.emitted()['bv::show::modal'][0][0]).toEqual('CertificationTaskAccountModal');
+      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('CertificationTaskAccountModal');
     });
     it('should open application modal on application name click', async () => {
       const wrapper = setup();
@@ -547,8 +561,7 @@ describe('Glossary', () => {
       findByTestId(wrapper, 'application-cell').trigger('click');
       await flushPromises();
       await wrapper.vm.$nextTick();
-      const rootWrapper = createWrapper(wrapper.vm.$root);
-      expect(rootWrapper.emitted()['bv::show::modal'][0][0]).toEqual('CertificationTaskApplicationModal');
+      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('CertificationTaskApplicationModal');
     });
     it('should open entitlement modal from account table', async () => {
       const wrapper = setup();
@@ -556,56 +569,49 @@ describe('Glossary', () => {
       findByTestId(wrapper, 'entitlement-cell').trigger('click');
       await flushPromises();
       await wrapper.vm.$nextTick();
-      const rootWrapper = createWrapper(wrapper.vm.$root);
-      expect(rootWrapper.emitted()['bv::show::modal'][0][0]).toEqual('certification-entitlement-entitlement');
+      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-entitlement');
     });
     it('should open add comments for account table', async () => {
       const wrapper = setup();
       await flushPromises();
       findByTestId(wrapper, 'add-comment-button-01fec9de-a9e7-435b-8d16-2b2367714278').trigger('click');
       await wrapper.vm.$nextTick();
-      const rootWrapper = createWrapper(wrapper.vm.$root);
-      expect(rootWrapper.emitted()['bv::show::modal'][0][0]).toEqual('certification-account-add-comment');
+      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-account-add-comment');
     });
     it('should open add comments for entitlement table', async () => {
       const wrapper = setup();
       await flushPromises();
       wrapper.findAll('[data-testid="add-comment-button-01fec9de-a9e7-435b-8d16-2b2367714278"]').at(1).trigger('click');
       await wrapper.vm.$nextTick();
-      const rootWrapper = createWrapper(wrapper.vm.$root);
-      expect(rootWrapper.emitted()['bv::show::modal'][0][0]).toEqual('certification-entitlement-add-comment');
+      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-add-comment');
     });
     it('should open comments modal on accounts table', async () => {
       const wrapper = setup();
       await flushPromises();
       findByTestId(wrapper, 'cert-comments-button').trigger('click');
       await wrapper.vm.$nextTick();
-      const rootWrapper = createWrapper(wrapper.vm.$root);
-      expect(rootWrapper.emitted()['bv::show::modal'][0][0]).toEqual('certification-account-view-comments');
+      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-account-view-comments');
     });
     it('should open comments modal on entitlements table', async () => {
       const wrapper = setup();
       await flushPromises();
       wrapper.findAll('[data-testid="cert-comments-button"]').at(1).trigger('click');
       await wrapper.vm.$nextTick();
-      const rootWrapper = createWrapper(wrapper.vm.$root);
-      expect(rootWrapper.emitted()['bv::show::modal'][0][0]).toEqual('certification-entitlement-view-comments');
+      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-view-comments');
     });
     it('should open reviewers modal on accounts table', async () => {
       const wrapper = setup();
       await flushPromises();
       findByTestId(wrapper, 'cert-reviewers-button-accounts').trigger('click');
       await wrapper.vm.$nextTick();
-      const rootWrapper = createWrapper(wrapper.vm.$root);
-      expect(rootWrapper.emitted()['bv::show::modal'][0][0]).toEqual('certification-account-view-reviewers');
+      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-account-view-reviewers');
     });
     it('should open reviewers modal on entitlements table', async () => {
       const wrapper = setup();
       await flushPromises();
       findByTestId(wrapper, 'cert-reviewers-button-entitlements').trigger('click');
       await wrapper.vm.$nextTick();
-      const rootWrapper = createWrapper(wrapper.vm.$root);
-      expect(rootWrapper.emitted()['bv::show::modal'][0][0]).toEqual('certification-entitlement-view-reviewers');
+      expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('certification-entitlement-view-reviewers');
     });
   });
   describe('@units', () => {

@@ -15,11 +15,13 @@ describe('ReCaptchaV2.vue', () => {
   beforeEach(() => {
     window.document.head.appendChild = jest.fn();
     wrapper = shallowMount(ReCaptchaCallback, {
-      i18n,
-      stubs: {
-        'router-link': true,
+      global: {
+        plugins: [i18n],
+        stubs: {
+          'router-link': true,
+        },
       },
-      propsData: {
+      props: {
         callback: {
           getSiteKey: jest.fn(() => 'siteKey'),
           setInputValue: jest.fn(),

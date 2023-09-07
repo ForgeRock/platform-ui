@@ -51,7 +51,7 @@ export default {
         'is_distributed_attack',
         'is_impossible_travel',
         'is_ip_blocked',
-        'is_suspicious_ip'
+        'is_suspicious_ip',
       ];
       const uebaList = store.state.Dashboard.uebaClusteringReasons.map((reason) => (
         {

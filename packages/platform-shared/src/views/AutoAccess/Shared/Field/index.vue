@@ -38,15 +38,16 @@ of the MIT license. See the LICENSE file for details. -->
       :disabled="fieldDisabled"
       class="mr-0"
       inline />
-    <ValidationProvider
+    <Field
       v-else
-      mode="aggressive"
+      as="span"
       :ref="field.key"
-      :vid="field.key"
-      :name="field.title"
-      :immediate="field.validationImmediate"
+      :name="field.title || field.key"
+      :validate-on-input="true"
+      :validate-on-mount="field.validationImmediate"
       :bails="false"
       :rules="field.validation"
+      :model-value="inputValue"
       v-slot="{ errors }">
       <FrMultiselect
         @input="$emit('valueChange', field.value)"
@@ -62,8 +63,8 @@ of the MIT license. See the LICENSE file for details. -->
         :select-options="field.options"
         :label="fieldLabel">
         <template
-          v-for="(key, slotName) in $scopedSlots"
-          v-slot:[slotName]="slotData">
+          v-for="(key, slotName) in $slots"
+          #[slotName]="slotData">
           <!-- @slot passthrough slot -->
           <slot
             :name="slotName"
@@ -84,8 +85,8 @@ of the MIT license. See the LICENSE file for details. -->
         :select-options="field.options"
         :label="fieldLabel">
         <template
-          v-for="(key, slotName) in $scopedSlots"
-          v-slot:[slotName]="slotData">
+          v-for="(key, slotName) in $slots"
+          #[slotName]="slotData">
           <!-- @slot passthrough slot -->
           <slot
             :name="slotName"
@@ -113,9 +114,9 @@ of the MIT license. See the LICENSE file for details. -->
       </FrBasicInput>
       <FrBasicInput
         v-else-if="fieldType === 'number' || fieldType === 'integer'"
-        @input="$emit('valueChange', field.value)"
+        @input="emitNumber"
         :class="[{'fr-error': errors.length || failedPolicies.length}, 'floating-label-input']"
-        v-model.number="inputValue"
+        :value="inputValue"
         v-bind="attrs"
         v-on="$listeners"
         :disabled="fieldDisabled"
@@ -157,7 +158,7 @@ of the MIT license. See the LICENSE file for details. -->
         :field-name="field.key"
         :help-text="fieldDescription"
         :label="fieldLabel" />
-    </ValidationProvider>
+    </Field>
   </div>
 </template>
 
@@ -168,8 +169,8 @@ import {
   isEqual,
 } from 'lodash';
 import { BFormCheckbox } from 'bootstrap-vue';
-import { ValidationProvider } from 'vee-validate';
-import Select from './Select';
+import { Field } from 'vee-validate';
+import FrSelect from './Select';
 import Multiselect from './Multiselect';
 import FrTag from './Tag';
 import TextArea from './TextArea';
@@ -182,11 +183,11 @@ export default {
     BFormCheckbox,
     FrBasicInput: BasicInput,
     FrTextArea: TextArea,
-    FrSelect: Select,
+    FrSelect,
     FrMultiselect: Multiselect,
     FrKeyValueList: KeyValueList,
     FrTag,
-    ValidationProvider,
+    Field,
   },
   data() {
     return {
@@ -278,7 +279,13 @@ export default {
       return this.fieldType === 'boolean' || this.fieldType === 'checkbox';
     },
     attrs() {
-      return { ...this.$options.propsData, ...this.$attrs };
+      const newAttrs = { ...this.$options.propsData, ...this.$attrs };
+      // Don't pass through the attribute associated with v-model listener class, and style,
+      // as this causes Vue 3 compat to try and add duplicative listeners, classes, and styles through the component stack
+      if (Object.prototype.hasOwnProperty.call(newAttrs, 'onModelCompat:input')) delete newAttrs['onModelCompat:input'];
+      if (Object.prototype.hasOwnProperty.call(newAttrs, 'class')) delete newAttrs.class;
+      if (Object.prototype.hasOwnProperty.call(newAttrs, 'style')) delete newAttrs.style;
+      return newAttrs;
     },
     externalTitle() {
       return this.field.title || (this.displayDescription ? this.field.description : '');
@@ -343,6 +350,10 @@ export default {
         options.push({ text: field.enumNames[index], value: enumString });
       });
       field.options = options;
+    },
+    emitNumber(value) {
+      this.inputValue = Number(value);
+      this.$emit('valueChange', Number(value));
     },
   },
   mounted() {
@@ -410,7 +421,7 @@ export default {
   margin-bottom: 0 !important;
   border: none !important;
 
-  ::v-deep {
+  :deep {
     input:not(.multiselect__input),
     textarea {
       border: 1px solid $danger;

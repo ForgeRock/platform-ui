@@ -61,7 +61,6 @@ import FrFilterFeaturesModal from './FilterFeaturesModal';
 
 const emit = defineEmits(['compare', 'updateSelectedFeatures']);
 const compare = ref(false);
-const modal = ref(null);
 
 const prop = defineProps({
   filters: {
@@ -77,10 +76,6 @@ const prop = defineProps({
     default: true,
   },
 });
-
-function showModal() {
-  modal.value.show();
-}
 
 /**
  * Updates the active view options list
@@ -98,9 +93,9 @@ const filterButtonName = computed(() => {
   const { filters } = prop;
   const activeFeaturesCount = filters.filter((filter) => filter.show).length;
   if (filters.length === activeFeaturesCount) {
-    return i18n.t('autoAccess.access.normalView.featuresSelectedAll');
+    return i18n.global.t('autoAccess.access.normalView.featuresSelectedAll');
   }
-  return i18n.tc('autoAccess.access.normalView.featuresSelected', activeFeaturesCount, { count: activeFeaturesCount });
+  return i18n.global.tc('autoAccess.access.normalView.featuresSelected', activeFeaturesCount, { count: activeFeaturesCount });
 });
 
 /**

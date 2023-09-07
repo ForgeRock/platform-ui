@@ -5,12 +5,16 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <div class="card-body m-4">
-      <ValidationObserver ref="observer">
-        <template v-for="(field, index) in clonedDisplayProperties">
+      <VeeForm
+        ref="observer"
+        as="span">
+        <template
+          v-for="(field, index) in clonedDisplayProperties"
+          :key="'editResource' + index">
           <div
             v-if="(field.type === 'string' || field.type === 'number' || field.type === 'boolean') && field.encryption === undefined"
             class="mb-4"
-            :key="'editResource' + index">
+          >
             <FrField
               v-model="field.value"
               :disabled="field.disabled"
@@ -26,7 +30,6 @@ of the MIT license. See the LICENSE file for details. -->
             v-else-if="field.type === 'array' && field.key !== 'privileges' && !field.items.isRelationship"
             v-model="field.value"
             v-on="$listeners"
-            :key="'editResource' + index"
             :description="field.description"
             :index="index"
             :items="field.items"
@@ -37,8 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
 
           <div
             v-if="field.type === 'relationship'"
-            class="mb-4"
-            :key="'editResource' + index">
+            class="mb-4">
             <FrRelationshipEdit
               class="mb-4"
               v-if="field.type === 'relationship'"
@@ -50,7 +52,7 @@ of the MIT license. See the LICENSE file for details. -->
               @setValue="setSingletonRelationshipValue($event, field)" />
           </div>
         </template>
-      </ValidationObserver>
+      </VeeForm>
       <slot name="additionalFields" />
     </div>
     <div class="card-footer">
@@ -77,7 +79,7 @@ import {
 import {
   BButton,
 } from 'bootstrap-vue';
-import { ValidationObserver } from 'vee-validate';
+import { Form as VeeForm } from 'vee-validate';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrRelationshipEdit from '@forgerock/platform-shared/src/components/resource/RelationshipEdit';
 import FrListField from '@forgerock/platform-shared/src/components/ListField';
@@ -92,7 +94,7 @@ export default {
     FrField,
     FrRelationshipEdit,
     FrListField,
-    ValidationObserver,
+    VeeForm,
     BButton,
   },
   props: {
@@ -183,10 +185,8 @@ export default {
         },
       });
 
-      this.$refs.observer.reset();
-
-      const isValid = await this.$refs.observer.validate();
-      if (isValid) {
+      const { valid } = await this.$refs.observer.validate();
+      if (valid) {
         let saveData;
         const formFields = cloneDeep(this.formFields);
 
@@ -216,8 +216,6 @@ export default {
         },
         (error) => {
           const generatedErrors = this.findPolicyError(error.response, this.clonedDisplayProperties);
-
-          this.$refs.observer.reset();
 
           if (generatedErrors.length > 0) {
             generatedErrors.forEach((generatedError) => {

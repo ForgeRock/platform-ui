@@ -12,8 +12,10 @@ import RevokeRequestModal from './index';
 
 describe('RevokeRequestModal', () => {
   const stubProps = {
-    i18n,
-    propsData: {
+    global: {
+      plugins: [i18n],
+    },
+    props: {
       isTesting: true,
     },
   };

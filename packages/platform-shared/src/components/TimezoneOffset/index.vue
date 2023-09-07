@@ -29,7 +29,7 @@ of the MIT license. See the LICENSE file for details. -->
         </FrField>
       </template>
       <output class="timezone-output form-control form-control-sm text-center">
-        {{ offset | offsetString }}
+        {{ offsetString }}
       </output>
       <div class="pt-3 pb-0">
         <div class="marker" />
@@ -110,16 +110,16 @@ export default {
   data() {
     return {
       offset: this.value,
-      timezone: this.$options.filters.offsetString(this.value),
+      timezone: this.offsetToString(this.value),
     };
   },
-  filters: {
+  methods: {
     /**
      * Converts numerical offset in hours to string 'GMT +/- hh:mm'
      * @param {Number} value offset from GMT in hours
      * @returns {String} offset from GMT
      */
-    offsetString(value) {
+    offsetToString(value) {
       const numberVal = parseFloat(value);
       const isPositive = numberVal >= 0;
       const hours = parseInt(Math.abs(numberVal), 10);
@@ -131,9 +131,14 @@ export default {
       return timeString;
     },
   },
+  computed: {
+    offsetString() {
+      return this.offsetToString(this.offset);
+    },
+  },
   watch: {
     offset(newVal) {
-      this.timezone = this.$options.filters.offsetString(newVal);
+      this.timezone = this.offsetToString(newVal);
       /**
        * triggered whenever the offset is changed.
        * @property {Number} newVal new offset value
@@ -148,17 +153,17 @@ export default {
 </script>
 <style lang="scss" scoped>
 .timezone-dropdown {
-  ::v-deep .dropdown-menu.show {
+  :deep(.dropdown-menu.show) {
     min-width: 300px;
     padding: 0.5rem;
   }
 }
 
 .timezone-field {
-  ::v-deep .form-label-group-input {
+  :deep(.form-label-group-input) {
     margin-left: -10px;
 
-    ::v-deep input {
+    :deep(input) {
       border-left: none !important;
     }
   }

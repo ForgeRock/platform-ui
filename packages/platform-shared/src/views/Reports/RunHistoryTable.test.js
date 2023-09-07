@@ -22,8 +22,10 @@ describe('Run History Table component', () => {
   function setup(props) {
     return mount(RunHistoryTable, {
       attachTo: createTooltipContainer(['tooltip-job_0123', 'tooltip-job_1112', 'tooltip-job_4567']),
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         reportRuns: ReportHistoryStubs,
         ...props,
       },

@@ -13,8 +13,10 @@ import ReportExportModal from './ReportExportModal';
 describe('Report Export modal component', () => {
   function setup(props) {
     return mount(ReportExportModal, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         isTesting: true,
         ...props,
       },
@@ -80,7 +82,7 @@ describe('Report Export modal component', () => {
     it('disables the download button when the status prop is equal to "downloading"', () => {
       wrapper = setup({ status: 'downloading' });
       const downloadButton = findByTestId(wrapper, 'fr-history-export-download-button');
-      expect(downloadButton.attributes().disabled).toBe('disabled');
+      expect(downloadButton.attributes().disabled).toBeDefined();
     });
 
     it('emits "download-report" when the download button is clicked', async () => {
@@ -94,7 +96,7 @@ describe('Report Export modal component', () => {
       const downloadButton = findByTestId(wrapper, 'fr-history-export-download-button');
 
       await downloadButton.trigger('click');
-      expect(wrapper.emitted()['download-report'][0]).toEqual(['JSON', { runId: 'job_0123' }]);
+      expect(wrapper.emitted()['download-report'][0][0]).toEqual({ fileType: 'JSON', item: { runId: 'job_0123' } });
     });
   });
 });

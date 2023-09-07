@@ -5,18 +5,20 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount, shallowMount } from '@vue/test-utils';
+import { flushPromises, mount, shallowMount } from '@vue/test-utils';
 import ConfirmActionModal from './index';
 
 let wrapper;
 
 function mountComponent(options) {
   wrapper = shallowMount(ConfirmActionModal, {
-    mocks: {
-      $t: (t) => t,
-      ...options,
+    global: {
+      mocks: {
+        $t: (t) => t,
+        ...options,
+      },
     },
-    propsData: {
+    props: {
       modalOptions: {},
       isLoading: false,
     },
@@ -42,10 +44,12 @@ describe('ConfirmActionModal', () => {
   });
 
   describe('component mounted', () => {
-    it('reset method should reset the component data values and confirm message textarea', () => {
+    it('reset method should reset the component data values and confirm message textarea', async () => {
       wrapper = mount(ConfirmActionModal, {
-        mocks: {
-          $t: (t) => t,
+        global: {
+          mocks: {
+            $t: (t) => t,
+          },
         },
         data() {
           return {
@@ -58,6 +62,8 @@ describe('ConfirmActionModal', () => {
       const comment = 'test message';
       const commentTextarea = wrapper.find('textarea');
       commentTextarea.setValue(comment);
+
+      await flushPromises();
 
       expect(wrapper.vm.confirmMessage).toBe(comment);
       expect(commentTextarea.element.value).toBe(comment);

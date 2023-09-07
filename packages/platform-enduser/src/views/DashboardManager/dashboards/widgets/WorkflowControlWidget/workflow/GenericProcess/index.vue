@@ -62,12 +62,31 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import {
+  BButton,
+  BCol,
+  BContainer,
+  BFormCheckbox,
+  BFormGroup,
+  BFormInput,
+  BRow,
+} from 'bootstrap-vue';
+
 /**
  * @description Widget that provides generic fallback for a workflow process
  *
  * */
 export default {
   name: 'GenericProcess',
+  components: {
+    BButton,
+    BCol,
+    BContainer,
+    BFormCheckbox,
+    BFormGroup,
+    BFormInput,
+    BRow,
+  },
   props: {
     workflowDetails: {
       type: Array,

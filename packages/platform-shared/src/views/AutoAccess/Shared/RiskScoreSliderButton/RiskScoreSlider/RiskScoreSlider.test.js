@@ -6,7 +6,6 @@
  */
 
 import { shallowMount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
 import RiskScoreSlider from './index';
 
 describe('RiskScoreSlider', () => {

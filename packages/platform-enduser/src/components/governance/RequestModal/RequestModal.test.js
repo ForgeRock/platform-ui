@@ -5,13 +5,18 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
+import { mount, flushPromises } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
+import Notifications from '@kyvg/vue3-notification';
 import getPriorityImageSrc from '@/components/utils/governance/AccessRequestUtils';
-import RequestModal, { REQUEST_MODAL_TYPES } from './index';
 import i18n from '@/i18n';
+import RequestModal, { REQUEST_MODAL_TYPES } from './index';
 import * as AccessRequestApi from '../../../api/governance/AccessRequestApi';
+
+ValidationRules.extendRules({
+  required: ValidationRules.getRules(i18n).required,
+});
 
 jest.mock('@/components/utils/governance/AccessRequestUtils');
 
@@ -90,12 +95,15 @@ describe('RequestModal', () => {
     },
   };
 
-  const mountGovernanceRequestModal = (propsData) => mount(RequestModal, {
+  const mountGovernanceRequestModal = (props) => mount(RequestModal, {
     attachTo: document.body,
-    mocks: {
-      $t: (text, prop) => i18n.t(text, prop),
+    global: {
+      mocks: {
+        $t: (text, prop) => i18n.global.t(text, prop),
+      },
+      plugins: [Notifications],
     },
-    propsData,
+    props,
   });
 
   beforeEach(() => {

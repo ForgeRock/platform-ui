@@ -20,8 +20,10 @@ describe('NormalViewHeader', () => {
 
   function setup(props) {
     return mount(NormalViewHeader, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         ...defaultProps,
         ...props,
       },

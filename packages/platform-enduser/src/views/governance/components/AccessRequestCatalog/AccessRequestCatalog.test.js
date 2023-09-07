@@ -5,8 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
+import { mount, flushPromises } from '@vue/test-utils';
 import i18n from '@/i18n';
 import AccessRequestCatalog from './index';
 
@@ -34,8 +33,10 @@ const mockCatalogItems = [
 describe('AccessRequestCatalog Component', () => {
   function mountComponent(propsData, overrideData = { selectedTab: 2 }) {
     const wrapper = mount(AccessRequestCatalog, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         loading: false,
         ...propsData,
       },
@@ -115,8 +116,8 @@ describe('AccessRequestCatalog Component', () => {
     );
     await flushPromises();
     const catalogCards = wrapper.findAll('div.card');
-    expect(catalogCards.at(0).find('.card-footer').text()).toBe('check\nAdded');
-    expect(catalogCards.at(1).find('.card-footer').text()).toBe('add\nRequest');
+    expect(catalogCards[0].find('.card-footer').text()).toBe('checkAdded');
+    expect(catalogCards[1].find('.card-footer').text()).toBe('addRequest');
   });
 
   it('emits out event to open details modal when item is clicked', async () => {
@@ -129,7 +130,7 @@ describe('AccessRequestCatalog Component', () => {
     await flushPromises();
     wrapper.vm.selectedTab = 2;
     const catalogCards = wrapper.findAll('div.card');
-    catalogCards.at(1).trigger('click');
+    catalogCards[1].trigger('click');
     await flushPromises();
     expect(openItemDetailsSpy).toHaveBeenCalledWith({
       appType: 'role',

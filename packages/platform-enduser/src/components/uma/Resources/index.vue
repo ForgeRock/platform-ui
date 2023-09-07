@@ -242,6 +242,14 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import {
+  BCard,
+  BDropdown,
+  BDropdownHeader,
+  BDropdownItem,
+  BListGroup,
+  BListGroupItem,
+} from 'bootstrap-vue';
 import { filter } from 'lodash';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FallbackImage from '@/components/utils/FallbackImage';
@@ -253,6 +261,12 @@ import FallbackImage from '@/components/utils/FallbackImage';
 export default {
   name: 'Resources',
   components: {
+    BCard,
+    BDropdown,
+    BDropdownHeader,
+    BDropdownItem,
+    BListGroup,
+    BListGroupItem,
     FrFallbackImage: FallbackImage,
     FrIcon,
   },

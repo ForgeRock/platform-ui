@@ -26,22 +26,24 @@ of the MIT license. See the LICENSE file for details. -->
     <BRow>
       <!-- Component placeholders for showing the loading state on the page -->
       <BCol v-if="isTenantDataLoading">
-        <template v-for="i in 5">
+        <template
+          v-for="i in 5"
+          :key="i">
           <FrDonutChartCard
             class="mb-4"
-            :key="i"
             :is-user-data-loading="true"
           />
         </template>
       </BCol>
       <!-- Actual component used for showing the data -->
       <BCol v-if="!isTenantDataLoading">
-        <template v-for="(feature) in selectedFeatures">
+        <template
+          v-for="(feature) in selectedFeatures"
+          :key="feature.text">
           <FrDonutChartCard
             :is-tenant-data-loading="isTenantDataLoading"
             :tenant-data="tenantData[feature.text]"
             :user-data="tenantData[feature.text]"
-            :key="feature.text"
             :feature="feature.text"
             :title="feature.title"
             class="mb-4"
@@ -97,7 +99,7 @@ async function getData(isUser, loadingState) {
     loadingState.value = false;
     return parsedResponse;
   } catch (e) {
-    showErrorMessage(e, i18n.t('autoAccess.access.normalView.retrievingDataError'));
+    showErrorMessage(e, i18n.global.t('autoAccess.access.normalView.retrievingDataError'));
   }
   return {};
 }

@@ -16,7 +16,7 @@ describe('SuspendedTextOutputCallback', () => {
   const STUB_MESSAGE_HTML = '<p>test output message</p>';
 
   const defaultProps = {
-    propsData: {
+    props: {
       callback: {
         getOutputValue: jest.fn(() => STUB_MESSAGE_TEXT),
       },
@@ -25,7 +25,7 @@ describe('SuspendedTextOutputCallback', () => {
   };
 
   const propsWithHtmlMessage = {
-    propsData: {
+    props: {
       callback: {
         getOutputValue: jest.fn(() => STUB_MESSAGE_HTML),
       },
@@ -35,9 +35,11 @@ describe('SuspendedTextOutputCallback', () => {
 
   function setup(props) {
     return mount(SuspendedTextOutputCallback, {
-      i18n,
-      mocks: {
-        $sanitize: (message) => sanitize(message),
+      global: {
+        mocks: {
+          $sanitize: (message) => sanitize(message),
+        },
+        plugins: [i18n],
       },
       ...defaultProps,
       ...props,

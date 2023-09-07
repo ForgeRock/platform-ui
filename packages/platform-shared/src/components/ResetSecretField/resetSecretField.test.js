@@ -13,8 +13,10 @@ describe('ResetSecretField', () => {
   it('sets the effectiveLabel property to the label prop if it has a value', () => {
     const label = 'My Password';
     const wrapper = mount(ResetSecretField, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         label,
       },
     });
@@ -24,7 +26,9 @@ describe('ResetSecretField', () => {
 
   it('sets the effectiveLabel property to "Password" if the label prop is empty', () => {
     const wrapper = mount(ResetSecretField, {
-      i18n,
+      global: {
+        plugins: [i18n],
+      },
     });
 
     expect(wrapper.vm.effectiveLabel).toEqual('Password');
@@ -32,8 +36,10 @@ describe('ResetSecretField', () => {
 
   it('displays a label below the input field if description prop has a value', () => {
     const wrapper = mount(ResetSecretField, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         description: 'My Description',
       },
     });
@@ -44,8 +50,10 @@ describe('ResetSecretField', () => {
   it('displays an html label below the input field if description prop has a value and the isHtml prop is true', () => {
     const descriptionHtml = '<a href="#">html</a>';
     const wrapper = mount(ResetSecretField, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         description: descriptionHtml,
         isHtml: true,
       },

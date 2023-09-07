@@ -4,7 +4,7 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BButton
-    :aria-label="buttonText"
+    :aria-label="buttonText || $t('common.save')"
     :disabled="disabled"
     :variant="variant"
     @click="$emit('click')"
@@ -14,7 +14,7 @@ of the MIT license. See the LICENSE file for details. -->
         v-if="icon"
         :name="icon"
         :class="iconClass" />
-      {{ buttonText }}
+      {{ buttonText || $t('common.save') }}
     </div>
     <div
       v-else
@@ -24,7 +24,7 @@ of the MIT license. See the LICENSE file for details. -->
         class="spinner-border-sm mr-2"
         button-spinner />
       <span class="ml-1">
-        {{ spinnerText }}
+        {{ spinnerText || $t('common.saving') }}
       </span>
     </div>
   </BButton>
@@ -47,9 +47,7 @@ export default {
      */
     buttonText: {
       type: String,
-      default() {
-        return this.$t('common.save');
-      },
+      default: '',
     },
     /**
      * Disable button
@@ -70,9 +68,7 @@ export default {
      */
     spinnerText: {
       type: String,
-      default() {
-        return this.$t('common.saving');
-      },
+      default: '',
     },
     /**
      * Bootstrap variant

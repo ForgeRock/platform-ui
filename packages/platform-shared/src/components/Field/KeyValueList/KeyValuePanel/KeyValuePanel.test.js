@@ -5,33 +5,38 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
-import { extend } from 'vee-validate';
-import { required } from 'vee-validate/dist/rules.umd';
+import { flushPromises, mount } from '@vue/test-utils';
+import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
+import { findByText } from '../../../../utils/testHelpers';
+import i18n from '@/i18n';
 import KeyValuePanel from './index';
+
+ValidationRules.extendRules({
+  required: ValidationRules.getRules(i18n).required,
+});
 
 describe('KeyValuePanel', () => {
   let wrapper;
-  beforeEach(() => {
-    extend('required', {
-      ...required,
-    });
 
+  function setup(props) {
     wrapper = mount(KeyValuePanel, {
-      mocks: {
-        $t: (key) => (key),
+      global: {
+        mocks: {
+          $t: (text) => text,
+        },
       },
-      propsData: {
+      props: {
         value: {
           key: '',
           value: '',
         },
+        ...props,
       },
     });
-  });
+  }
 
   it('Can override default labels', async () => {
-    await wrapper.setProps({
+    setup({
       value: {
         key: '',
         value: '',
@@ -39,18 +44,20 @@ describe('KeyValuePanel', () => {
         valueLabel: 'test value label',
       },
     });
+    await flushPromises();
 
     expect(wrapper.find('label').text()).toBe('test key label');
     expect(wrapper.find('textarea').attributes('placeholder')).toBe('test value label');
   });
 
   it('Falls back to default labels when no labels in value prop', () => {
+    setup();
     expect(wrapper.find('label').text()).toBe('common.key');
     expect(wrapper.find('textarea').attributes('placeholder')).toBe('common.value');
   });
 
   it('Will have a select with options when keyOptions prop is provided', async () => {
-    await wrapper.setProps({
+    setup({
       value: {
         key: '',
         value: '',
@@ -60,23 +67,25 @@ describe('KeyValuePanel', () => {
         'option 2',
       ],
     });
+    await flushPromises();
 
     expect(wrapper.find('input').attributes('class')).toBe('multiselect__input');
-    const listElements = wrapper.findAll('li').wrappers;
+    const listElements = wrapper.findAll('li');
     expect(listElements[0].text()).toBe('option 1');
     expect(listElements[1].text()).toBe('option 2');
   });
 
   it('Emits save-key-value event with the current key/value when clicking done', async () => {
-    await wrapper.setProps({
+    setup({
       value: {
         key: 'test key',
         value: 'test value',
       },
     });
-    const saveKeyValue = jest.spyOn(wrapper.vm, 'saveKeyValue');
-    wrapper.find('button').trigger('click');
-    expect(saveKeyValue).toHaveBeenCalled();
+    await flushPromises();
+
+    await findByText(wrapper, 'button', 'common.done').trigger('click');
+    await flushPromises();
 
     expect(wrapper.emitted('save-key-value')).toBeTruthy();
     expect(wrapper.emitted('save-key-value')[0]).toEqual([{ key: 'test key', value: 'test value' }]);
@@ -84,7 +93,7 @@ describe('KeyValuePanel', () => {
 
   describe('validateKey method', () => {
     it('prevents tagging if new key is already present in KeyValueList', async () => {
-      await wrapper.setProps({
+      setup({
         value: {
           key: '',
           value: '',
@@ -108,7 +117,7 @@ describe('KeyValuePanel', () => {
     });
 
     it('allows tagging if new key is not present in KeyValueList', async () => {
-      await wrapper.setProps({
+      setup({
         value: {
           key: '',
           value: '',

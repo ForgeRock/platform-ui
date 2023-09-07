@@ -7,13 +7,14 @@ of the MIT license. See the LICENSE file for details. -->
     <BListGroup
       v-if="requestItems && requestItems.length"
       class="list-group-flush mb-0">
-      <template v-for="(item, index) in requestItems">
+      <template
+        v-for="(item, index) in requestItems"
+        :key="index">
         <BListGroupItem
           class="d-flex align-items-center px-3 "
           data-testid="request-item-list"
           :class="{'cursor-pointer fr-hover-item': frHover}"
           :style="context === 'accessItem' ? 'min-height: 100px' : ''"
-          :key="index"
           @click="frHover ? $emit('requested-item-click', item.id) : ''">
           <BMedia
             no-body

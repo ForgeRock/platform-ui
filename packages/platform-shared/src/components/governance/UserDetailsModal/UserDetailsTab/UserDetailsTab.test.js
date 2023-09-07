@@ -13,10 +13,12 @@ import UserDetailsTab from './index';
 describe('UserDetailsTab', () => {
   function mountComponent(user) {
     return shallowMount(UserDetailsTab, {
-      mocks: {
-        $t: (t) => t,
+      global: {
+        mocks: {
+          $t: (t) => t,
+        },
       },
-      propsData: {
+      props: {
         user,
       },
     });

@@ -73,6 +73,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import { BButton } from 'bootstrap-vue';
 import {
   isFunction, isEmpty, keys, difference, first, isUndefined, forEach,
 } from 'lodash';
@@ -105,6 +106,7 @@ export default {
     };
   },
   components: {
+    BButton,
     FrListGroup,
     FrListItem,
     FrTask: Task,

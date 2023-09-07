@@ -5,19 +5,14 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { BootstrapVue, BModal } from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
-import { ValidationProvider, ValidationObserver } from 'vee-validate';
+import { BModal } from 'bootstrap-vue';
+import { shallowMount } from '@vue/test-utils';
+import Notifications from '@kyvg/vue3-notification';
 import CreateResource from './index';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 describe('CreateResource.vue', () => {
   let wrapper;
   const stubs = {
-    ValidationProvider,
-    ValidationObserver,
     BModal,
   };
   const translationMap = {
@@ -29,16 +24,19 @@ describe('CreateResource.vue', () => {
   };
   beforeEach(() => {
     wrapper = shallowMount(CreateResource, {
-      localVue,
-      mocks: {
-        $t: (key) => {
-          if (translationMap[key]) {
-            return translationMap[key];
-          }
-          return key;
+      global: {
+        mocks: {
+          $t: (key) => {
+            if (translationMap[key]) {
+              return translationMap[key];
+            }
+            return key;
+          },
         },
+        stubs,
+        plugins: [Notifications],
       },
-      propsData: {
+      props: {
         createProperties: [
           {
             key: 'privileges',
@@ -80,19 +78,17 @@ describe('CreateResource.vue', () => {
         resourceType: 'testType',
         resourceTitle: 'testTitle',
       },
-      stubs,
     });
 
     wrapper.setData({
       formFields: {},
     });
 
-    wrapper.vm.$refs.observer.reset = jest.fn();
     wrapper.vm.$refs.observer.setErrors = jest.fn();
-    jest.spyOn(wrapper.vm.$refs.observer, 'validate').mockImplementation(() => Promise.resolve(false));
+    wrapper.vm.$refs.observer.validate = jest.fn().mockImplementation(() => Promise.resolve({ valid: false }));
   });
   afterEach(() => {
-    wrapper.destroy();
+    wrapper.unmount();
   });
 
   it('sets errors', () => {
@@ -187,7 +183,7 @@ describe('CreateResource.vue', () => {
   });
 
   it('loads next and previous step', async () => {
-    const validateFormSpy = jest.spyOn(wrapper.vm.$refs.observer, 'validate').mockImplementation(() => Promise.resolve(false));
+    const validateFormSpy = jest.spyOn(wrapper.vm.$refs.observer, 'validate').mockImplementation(() => Promise.resolve({ valid: false }));
     wrapper.vm.stepIndex = 0;
     wrapper.vm.loadNextStep();
     expect(validateFormSpy).not.toHaveBeenCalled();
@@ -196,7 +192,7 @@ describe('CreateResource.vue', () => {
     await wrapper.vm.loadNextStep();
     expect(validateFormSpy).toHaveBeenCalled();
     expect(wrapper.vm.stepIndex).toBe(-1);
-    jest.spyOn(wrapper.vm.$refs.observer, 'validate').mockImplementation(() => Promise.resolve(true));
+    jest.spyOn(wrapper.vm.$refs.observer, 'validate').mockImplementation(() => Promise.resolve({ valid: true }));
     await wrapper.vm.loadNextStep();
     expect(validateFormSpy).toHaveBeenCalled();
     expect(wrapper.vm.stepIndex).toBe(0);
@@ -236,7 +232,7 @@ describe('CreateResource.vue', () => {
     expect(displayNotificationSpy).toHaveBeenCalled();
 
     wrapper.vm.formFields = {};
-    jest.spyOn(wrapper.vm.$refs.observer, 'validate').mockImplementation(() => Promise.resolve(true));
+    jest.spyOn(wrapper.vm.$refs.observer, 'validate').mockImplementation(() => Promise.resolve({ valid: true }));
     wrapper.vm.isSaving = false;
     await wrapper.vm.saveForm();
 

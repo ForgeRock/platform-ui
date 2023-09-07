@@ -1,0 +1,54 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MarkdownEditor MarkdownEditor successfully loaded: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) v-model usage on component has changed in Vue 3. Component that expects to work with v-model should now use the "modelValue" prop and emit the "update:modelValue" event. You can update the usage and then opt-in to Vue 3 behavior on a per-component basis with \`compatConfig: { COMPONENT_V_MODEL: false }\`.
+  Details: https://v3-migration.vuejs.org/breaking-changes/v-model.html",
+    "
+",
+    " at <VuePrismEditor",
+    "key=1",
+    "role="textbox"",
+    "language="html"",
+    " ...",
+    ">",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "emitEvents" with v-bind value \`false\` will render emitEvents="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <VuePrismEditor",
+    "key=1",
+    "role="textbox"",
+    "language="html"",
+    " ...",
+    ">",
+    "
+",
+    " at <MarkdownEditor",
+    "styles=""",
+    "isMarkdown=true",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;

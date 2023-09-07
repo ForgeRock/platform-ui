@@ -1,0 +1,626 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Date Range Picker Component get/set in inputVal computed property works propertly: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) v-model usage on component has changed in Vue 3. Component that expects to work with v-model should now use the "modelValue" prop and emit the "update:modelValue" event. You can update the usage and then opt-in to Vue 3 behavior on a per-component basis with \`compatConfig: { COMPONENT_V_MODEL: false }\`.
+  Details: https://v3-migration.vuejs.org/breaking-changes/v-model.html",
+    "
+",
+    " at <Vue2DateRangePicker",
+    "locale-data=",
+    {
+      "applyLabel": "common.apply",
+      "cancelLabel": "common.cancel",
+      "daysOfWeek": [
+        "common.daysOfWeek.sundayShort",
+        "common.daysOfWeek.mondayShort",
+        "common.daysOfWeek.tuesdayShort",
+        "common.daysOfWeek.wednesdayShort",
+        "common.daysOfWeek.thursdayShort",
+        "common.daysOfWeek.fridayShort",
+        "common.daysOfWeek.saturdayShort",
+      ],
+      "direction": "ltr",
+      "firstDay": 1,
+      "format": "mm/dd/yyyy",
+      "monthNames": [
+        "common.months.january",
+        "common.months.february",
+        "common.months.march",
+        "common.months.april",
+        "common.months.may",
+        "common.months.june",
+        "common.months.july",
+        "common.months.august",
+        "common.months.september",
+        "common.months.october",
+        "common.months.november",
+        "common.months.december",
+      ],
+      "separator": " - ",
+      "weekLabel": "W",
+    },
+    "max-date=",
+    2077-01-01T00:00:00.000Z,
+    "dateRange=",
+    {
+      "endDate": "2023-01-27T23:59:59-05:00",
+      "startDate": "2022-12-28T00:00:00-05:00",
+    },
+    " ...",
+    ">",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "showWeekNumbers" with v-bind value \`false\` will render showWeekNumbers="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <Vue2DateRangePicker",
+    "locale-data=",
+    {
+      "applyLabel": "common.apply",
+      "cancelLabel": "common.cancel",
+      "daysOfWeek": [
+        "common.daysOfWeek.sundayShort",
+        "common.daysOfWeek.mondayShort",
+        "common.daysOfWeek.tuesdayShort",
+        "common.daysOfWeek.wednesdayShort",
+        "common.daysOfWeek.thursdayShort",
+        "common.daysOfWeek.fridayShort",
+        "common.daysOfWeek.saturdayShort",
+      ],
+      "direction": "ltr",
+      "firstDay": 1,
+      "format": "mm/dd/yyyy",
+      "monthNames": [
+        "common.months.january",
+        "common.months.february",
+        "common.months.march",
+        "common.months.april",
+        "common.months.may",
+        "common.months.june",
+        "common.months.july",
+        "common.months.august",
+        "common.months.september",
+        "common.months.october",
+        "common.months.november",
+        "common.months.december",
+      ],
+      "separator": " - ",
+      "weekLabel": "W",
+    },
+    "max-date=",
+    2077-01-01T00:00:00.000Z,
+    "dateRange=",
+    {
+      "endDate": "2023-01-27T23:59:59-05:00",
+      "startDate": "2022-12-28T00:00:00-05:00",
+    },
+    " ...",
+    ">",
+    "
+",
+    " at <DateRangePicker",
+    "dateRange=",
+    {
+      "endDate": "2023-01-27T23:59:59-05:00",
+      "startDate": "2022-12-28T00:00:00-05:00",
+    },
+    "value=",
+    {
+      "endDate": "2023-01-27T23:59:59-05:00",
+      "startDate": "2022-12-28T00:00:00-05:00",
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "singleDatePicker" with v-bind value \`false\` will render singleDatePicker="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <Vue2DateRangePicker",
+    "locale-data=",
+    {
+      "applyLabel": "common.apply",
+      "cancelLabel": "common.cancel",
+      "daysOfWeek": [
+        "common.daysOfWeek.sundayShort",
+        "common.daysOfWeek.mondayShort",
+        "common.daysOfWeek.tuesdayShort",
+        "common.daysOfWeek.wednesdayShort",
+        "common.daysOfWeek.thursdayShort",
+        "common.daysOfWeek.fridayShort",
+        "common.daysOfWeek.saturdayShort",
+      ],
+      "direction": "ltr",
+      "firstDay": 1,
+      "format": "mm/dd/yyyy",
+      "monthNames": [
+        "common.months.january",
+        "common.months.february",
+        "common.months.march",
+        "common.months.april",
+        "common.months.may",
+        "common.months.june",
+        "common.months.july",
+        "common.months.august",
+        "common.months.september",
+        "common.months.october",
+        "common.months.november",
+        "common.months.december",
+      ],
+      "separator": " - ",
+      "weekLabel": "W",
+    },
+    "max-date=",
+    2077-01-01T00:00:00.000Z,
+    "dateRange=",
+    {
+      "endDate": "2023-01-27T23:59:59-05:00",
+      "startDate": "2022-12-28T00:00:00-05:00",
+    },
+    " ...",
+    ">",
+    "
+",
+    " at <DateRangePicker",
+    "dateRange=",
+    {
+      "endDate": "2023-01-27T23:59:59-05:00",
+      "startDate": "2022-12-28T00:00:00-05:00",
+    },
+    "value=",
+    {
+      "endDate": "2023-01-27T23:59:59-05:00",
+      "startDate": "2022-12-28T00:00:00-05:00",
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "showDropdowns" with v-bind value \`false\` will render showDropdowns="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <Vue2DateRangePicker",
+    "locale-data=",
+    {
+      "applyLabel": "common.apply",
+      "cancelLabel": "common.cancel",
+      "daysOfWeek": [
+        "common.daysOfWeek.sundayShort",
+        "common.daysOfWeek.mondayShort",
+        "common.daysOfWeek.tuesdayShort",
+        "common.daysOfWeek.wednesdayShort",
+        "common.daysOfWeek.thursdayShort",
+        "common.daysOfWeek.fridayShort",
+        "common.daysOfWeek.saturdayShort",
+      ],
+      "direction": "ltr",
+      "firstDay": 1,
+      "format": "mm/dd/yyyy",
+      "monthNames": [
+        "common.months.january",
+        "common.months.february",
+        "common.months.march",
+        "common.months.april",
+        "common.months.may",
+        "common.months.june",
+        "common.months.july",
+        "common.months.august",
+        "common.months.september",
+        "common.months.october",
+        "common.months.november",
+        "common.months.december",
+      ],
+      "separator": " - ",
+      "weekLabel": "W",
+    },
+    "max-date=",
+    2077-01-01T00:00:00.000Z,
+    "dateRange=",
+    {
+      "endDate": "2023-01-27T23:59:59-05:00",
+      "startDate": "2022-12-28T00:00:00-05:00",
+    },
+    " ...",
+    ">",
+    "
+",
+    " at <DateRangePicker",
+    "dateRange=",
+    {
+      "endDate": "2023-01-27T23:59:59-05:00",
+      "startDate": "2022-12-28T00:00:00-05:00",
+    },
+    "value=",
+    {
+      "endDate": "2023-01-27T23:59:59-05:00",
+      "startDate": "2022-12-28T00:00:00-05:00",
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "timePicker" with v-bind value \`false\` will render timePicker="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <Vue2DateRangePicker",
+    "locale-data=",
+    {
+      "applyLabel": "common.apply",
+      "cancelLabel": "common.cancel",
+      "daysOfWeek": [
+        "common.daysOfWeek.sundayShort",
+        "common.daysOfWeek.mondayShort",
+        "common.daysOfWeek.tuesdayShort",
+        "common.daysOfWeek.wednesdayShort",
+        "common.daysOfWeek.thursdayShort",
+        "common.daysOfWeek.fridayShort",
+        "common.daysOfWeek.saturdayShort",
+      ],
+      "direction": "ltr",
+      "firstDay": 1,
+      "format": "mm/dd/yyyy",
+      "monthNames": [
+        "common.months.january",
+        "common.months.february",
+        "common.months.march",
+        "common.months.april",
+        "common.months.may",
+        "common.months.june",
+        "common.months.july",
+        "common.months.august",
+        "common.months.september",
+        "common.months.october",
+        "common.months.november",
+        "common.months.december",
+      ],
+      "separator": " - ",
+      "weekLabel": "W",
+    },
+    "max-date=",
+    2077-01-01T00:00:00.000Z,
+    "dateRange=",
+    {
+      "endDate": "2023-01-27T23:59:59-05:00",
+      "startDate": "2022-12-28T00:00:00-05:00",
+    },
+    " ...",
+    ">",
+    "
+",
+    " at <DateRangePicker",
+    "dateRange=",
+    {
+      "endDate": "2023-01-27T23:59:59-05:00",
+      "startDate": "2022-12-28T00:00:00-05:00",
+    },
+    "value=",
+    {
+      "endDate": "2023-01-27T23:59:59-05:00",
+      "startDate": "2022-12-28T00:00:00-05:00",
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "timePickerSeconds" with v-bind value \`false\` will render timePickerSeconds="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <Vue2DateRangePicker",
+    "locale-data=",
+    {
+      "applyLabel": "common.apply",
+      "cancelLabel": "common.cancel",
+      "daysOfWeek": [
+        "common.daysOfWeek.sundayShort",
+        "common.daysOfWeek.mondayShort",
+        "common.daysOfWeek.tuesdayShort",
+        "common.daysOfWeek.wednesdayShort",
+        "common.daysOfWeek.thursdayShort",
+        "common.daysOfWeek.fridayShort",
+        "common.daysOfWeek.saturdayShort",
+      ],
+      "direction": "ltr",
+      "firstDay": 1,
+      "format": "mm/dd/yyyy",
+      "monthNames": [
+        "common.months.january",
+        "common.months.february",
+        "common.months.march",
+        "common.months.april",
+        "common.months.may",
+        "common.months.june",
+        "common.months.july",
+        "common.months.august",
+        "common.months.september",
+        "common.months.october",
+        "common.months.november",
+        "common.months.december",
+      ],
+      "separator": " - ",
+      "weekLabel": "W",
+    },
+    "max-date=",
+    2077-01-01T00:00:00.000Z,
+    "dateRange=",
+    {
+      "endDate": "2023-01-27T23:59:59-05:00",
+      "startDate": "2022-12-28T00:00:00-05:00",
+    },
+    " ...",
+    ">",
+    "
+",
+    " at <DateRangePicker",
+    "dateRange=",
+    {
+      "endDate": "2023-01-27T23:59:59-05:00",
+      "startDate": "2022-12-28T00:00:00-05:00",
+    },
+    "value=",
+    {
+      "endDate": "2023-01-27T23:59:59-05:00",
+      "startDate": "2022-12-28T00:00:00-05:00",
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "autoApply" with v-bind value \`false\` will render autoApply="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <Vue2DateRangePicker",
+    "locale-data=",
+    {
+      "applyLabel": "common.apply",
+      "cancelLabel": "common.cancel",
+      "daysOfWeek": [
+        "common.daysOfWeek.sundayShort",
+        "common.daysOfWeek.mondayShort",
+        "common.daysOfWeek.tuesdayShort",
+        "common.daysOfWeek.wednesdayShort",
+        "common.daysOfWeek.thursdayShort",
+        "common.daysOfWeek.fridayShort",
+        "common.daysOfWeek.saturdayShort",
+      ],
+      "direction": "ltr",
+      "firstDay": 1,
+      "format": "mm/dd/yyyy",
+      "monthNames": [
+        "common.months.january",
+        "common.months.february",
+        "common.months.march",
+        "common.months.april",
+        "common.months.may",
+        "common.months.june",
+        "common.months.july",
+        "common.months.august",
+        "common.months.september",
+        "common.months.october",
+        "common.months.november",
+        "common.months.december",
+      ],
+      "separator": " - ",
+      "weekLabel": "W",
+    },
+    "max-date=",
+    2077-01-01T00:00:00.000Z,
+    "dateRange=",
+    {
+      "endDate": "2023-01-27T23:59:59-05:00",
+      "startDate": "2022-12-28T00:00:00-05:00",
+    },
+    " ...",
+    ">",
+    "
+",
+    " at <DateRangePicker",
+    "dateRange=",
+    {
+      "endDate": "2023-01-27T23:59:59-05:00",
+      "startDate": "2022-12-28T00:00:00-05:00",
+    },
+    "value=",
+    {
+      "endDate": "2023-01-27T23:59:59-05:00",
+      "startDate": "2022-12-28T00:00:00-05:00",
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "disabled" with v-bind value \`false\` will render disabled="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <Vue2DateRangePicker",
+    "locale-data=",
+    {
+      "applyLabel": "common.apply",
+      "cancelLabel": "common.cancel",
+      "daysOfWeek": [
+        "common.daysOfWeek.sundayShort",
+        "common.daysOfWeek.mondayShort",
+        "common.daysOfWeek.tuesdayShort",
+        "common.daysOfWeek.wednesdayShort",
+        "common.daysOfWeek.thursdayShort",
+        "common.daysOfWeek.fridayShort",
+        "common.daysOfWeek.saturdayShort",
+      ],
+      "direction": "ltr",
+      "firstDay": 1,
+      "format": "mm/dd/yyyy",
+      "monthNames": [
+        "common.months.january",
+        "common.months.february",
+        "common.months.march",
+        "common.months.april",
+        "common.months.may",
+        "common.months.june",
+        "common.months.july",
+        "common.months.august",
+        "common.months.september",
+        "common.months.october",
+        "common.months.november",
+        "common.months.december",
+      ],
+      "separator": " - ",
+      "weekLabel": "W",
+    },
+    "max-date=",
+    2077-01-01T00:00:00.000Z,
+    "dateRange=",
+    {
+      "endDate": "2023-01-27T23:59:59-05:00",
+      "startDate": "2022-12-28T00:00:00-05:00",
+    },
+    " ...",
+    ">",
+    "
+",
+    " at <DateRangePicker",
+    "dateRange=",
+    {
+      "endDate": "2023-01-27T23:59:59-05:00",
+      "startDate": "2022-12-28T00:00:00-05:00",
+    },
+    "value=",
+    {
+      "endDate": "2023-01-27T23:59:59-05:00",
+      "startDate": "2022-12-28T00:00:00-05:00",
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "appendToBody" with v-bind value \`false\` will render appendToBody="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <Vue2DateRangePicker",
+    "locale-data=",
+    {
+      "applyLabel": "common.apply",
+      "cancelLabel": "common.cancel",
+      "daysOfWeek": [
+        "common.daysOfWeek.sundayShort",
+        "common.daysOfWeek.mondayShort",
+        "common.daysOfWeek.tuesdayShort",
+        "common.daysOfWeek.wednesdayShort",
+        "common.daysOfWeek.thursdayShort",
+        "common.daysOfWeek.fridayShort",
+        "common.daysOfWeek.saturdayShort",
+      ],
+      "direction": "ltr",
+      "firstDay": 1,
+      "format": "mm/dd/yyyy",
+      "monthNames": [
+        "common.months.january",
+        "common.months.february",
+        "common.months.march",
+        "common.months.april",
+        "common.months.may",
+        "common.months.june",
+        "common.months.july",
+        "common.months.august",
+        "common.months.september",
+        "common.months.october",
+        "common.months.november",
+        "common.months.december",
+      ],
+      "separator": " - ",
+      "weekLabel": "W",
+    },
+    "max-date=",
+    2077-01-01T00:00:00.000Z,
+    "dateRange=",
+    {
+      "endDate": "2023-01-27T23:59:59-05:00",
+      "startDate": "2022-12-28T00:00:00-05:00",
+    },
+    " ...",
+    ">",
+    "
+",
+    " at <DateRangePicker",
+    "dateRange=",
+    {
+      "endDate": "2023-01-27T23:59:59-05:00",
+      "startDate": "2022-12-28T00:00:00-05:00",
+    },
+    "value=",
+    {
+      "endDate": "2023-01-27T23:59:59-05:00",
+      "startDate": "2022-12-28T00:00:00-05:00",
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;

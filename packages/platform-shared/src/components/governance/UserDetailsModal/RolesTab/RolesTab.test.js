@@ -13,10 +13,12 @@ import RolesTab from './index';
 describe('RolesTab', () => {
   function mountComponent(roles) {
     return shallowMount(RolesTab, {
-      mocks: {
-        $t: (t) => t,
+      global: {
+        mocks: {
+          $t: (t) => t,
+        },
       },
-      propsData: {
+      props: {
         roles,
       },
     });

@@ -1,0 +1,226 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`InputMixin Initial value calls setter method setInputValue: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (3)",
+    "
+",
+    " at <Anonymous",
+    "value="test"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`InputMixin Initial value can be set as Array: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (6)",
+    "
+",
+    " at <Anonymous",
+    "value=",
+    [
+      "test",
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) "watch" option or vm.$watch on an array value will no longer trigger on array mutation unless the "deep" option is specified. If current usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ WATCH_ARRAY: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/watch.html",
+    "
+",
+    " at <Anonymous",
+    "value=",
+    [
+      "test",
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`InputMixin Initial value can be set as Number: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (8)",
+    "
+",
+    " at <Anonymous",
+    "value=5",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`InputMixin Initial value can be set as Object: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (7)",
+    "
+",
+    " at <Anonymous",
+    "value=",
+    {
+      "test": "test",
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`InputMixin Initial value can be set as String: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (5)",
+    "
+",
+    " at <Anonymous",
+    "value="test"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`InputMixin Initial value defaults to empty string: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (4)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`InputMixin InputMixin uid is set: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (2)",
+    "
+",
+    " at <Anonymous",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`InputMixin Update to inputValue triggers handler and event: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (9)",
+    "
+",
+    " at <Anonymous",
+    "label="test label"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`InputMixin Update to inputValue triggers handler and event: console-warn-snapshot 2`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (10)",
+    "
+",
+    " at <Anonymous",
+    "label="test label"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`InputMixin floatLabels Object inputValue change updates floatLabels: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (12)",
+    "
+",
+    " at <Anonymous",
+    "label="test label"",
+    "value=",
+    {
+      "value": "",
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`InputMixin floatLabels String inputValue change updates floatLabels: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (11)",
+    "
+",
+    " at <Anonymous",
+    "label="test label"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;

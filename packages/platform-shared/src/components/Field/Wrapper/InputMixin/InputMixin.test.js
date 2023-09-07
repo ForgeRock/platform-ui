@@ -6,17 +6,25 @@
  */
 
 import { shallowMount } from '@vue/test-utils';
+import uuid from 'uuid/v4';
 import InputMixin from './index';
+
+jest.mock('uuid/v4');
 
 const TestComponent = {
   render() {},
   mixins: [InputMixin],
+  data() {
+    return {
+      inputValue: '',
+    };
+  },
 };
 
 describe('InputMixin', () => {
   it('InputMixin uid is set', () => {
     const wrapper = shallowMount(TestComponent, {
-      propsData: {
+      props: {
         name: 'testMixin',
       },
     });
@@ -30,25 +38,13 @@ describe('InputMixin', () => {
     navigator.__defineGetter__('userAgent', () => ['Chrome']);
 
     const wrapper = shallowMount(TestComponent, {
-      propsData: {
+      props: {
         name: 'testMixin',
         label: 'test',
       },
     });
 
-    wrapper.vm.$refs = {
-      input: {
-        matches: {
-          call: () => true,
-        },
-        msMatchesSelector: {
-          call: () => true,
-        },
-      },
-    };
-    setTimeout(() => {
-      expect(wrapper.vm.floatLabels).toEqual(true);
-    }, 1000);
+    expect(wrapper.vm.floatingLabel).toEqual(true);
     jest.runAllTimers();
   });
 
@@ -59,21 +55,19 @@ describe('InputMixin', () => {
     window.document.getElementById = () => ({ value: 'test' });
 
     const wrapper = shallowMount(TestComponent, {
-      propsData: {
+      props: {
         name: 'testMixin',
         label: 'test',
       },
     });
 
-    setTimeout(() => {
-      expect(wrapper.vm.floatLabels).toEqual(true);
-    }, 1000);
+    expect(wrapper.vm.floatingLabel).toEqual(true);
     jest.runAllTimers();
   });
 
   it('Initial value calls setter method setInputValue', () => {
     const wrapper = shallowMount(TestComponent, {
-      propsData: {
+      props: {
         name: 'testMixin',
         value: 'test',
       },
@@ -84,7 +78,7 @@ describe('InputMixin', () => {
 
   it('Initial value defaults to empty string', () => {
     const wrapper = shallowMount(TestComponent, {
-      propsData: {
+      props: {
         name: 'testMixin',
       },
     });
@@ -94,7 +88,7 @@ describe('InputMixin', () => {
 
   it('Initial value can be set as String', () => {
     const wrapper = shallowMount(TestComponent, {
-      propsData: {
+      props: {
         name: 'testMixin',
         value: 'test',
       },
@@ -105,7 +99,7 @@ describe('InputMixin', () => {
 
   it('Initial value can be set as Array', () => {
     const wrapper = shallowMount(TestComponent, {
-      propsData: {
+      props: {
         name: 'testMixin',
         value: ['test'],
       },
@@ -116,7 +110,7 @@ describe('InputMixin', () => {
 
   it('Initial value can be set as Object', () => {
     const wrapper = shallowMount(TestComponent, {
-      propsData: {
+      props: {
         name: 'testMixin',
         value: { test: 'test' },
       },
@@ -127,7 +121,7 @@ describe('InputMixin', () => {
 
   it('Initial value can be set as Number', () => {
     const wrapper = shallowMount(TestComponent, {
-      propsData: {
+      props: {
         name: 'testMixin',
         value: 5,
       },
@@ -138,7 +132,7 @@ describe('InputMixin', () => {
 
   it('TestComponent without float labels', () => {
     const wrapper = shallowMount(TestComponent, {
-      propsData: {
+      props: {
         name: 'testMixin',
         floatingLabel: false,
       },
@@ -148,5 +142,18 @@ describe('InputMixin', () => {
       expect(wrapper.vm.floatLabels).toEqual(false);
     }, 1000);
     jest.runAllTimers();
+  });
+
+  it('Generates an uuid name prop if the name attribute is empty', () => {
+    const uuidValue = '';
+    uuid.mockImplementation(() => uuidValue);
+
+    const wrapper = shallowMount(TestComponent, {
+      props: {
+        value: 5,
+      },
+    });
+
+    expect(wrapper.vm.name).toBe(uuidValue);
   });
 });

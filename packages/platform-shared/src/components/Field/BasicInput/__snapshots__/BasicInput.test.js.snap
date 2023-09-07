@@ -1,0 +1,405 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BasicInput @renders as number copy value button: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (2)",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput15"",
+    "name="stub-name"",
+    "description=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BasicInput",
+    "name="stub-name"",
+    "testid="stub-testid"",
+    "autofocus=false",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) Functional component <BInputGroupAppend> should be defined as a plain function in Vue 3. The "functional" option has been removed. NOTE: Before migrating to use plain functions for functional components, first make sure that all async components usage have been migrated and its compat behavior has been disabled.
+  Details: https://v3-migration.vuejs.org/breaking-changes/functional-components.html",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput15"",
+    "name="stub-name"",
+    "description=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BasicInput",
+    "name="stub-name"",
+    "testid="stub-testid"",
+    "autofocus=false",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) vm.$listeners has been removed. In Vue 3, parent v-on listeners are included in vm.$attrs and it is no longer necessary to separately use v-on="$listeners" if you are already using v-bind="$attrs". (Note: the Vue 3 behavior only applies if this compat config is disabled)
+  Details: https://v3-migration.vuejs.org/breaking-changes/listeners-removed.html",
+    "
+",
+    " at <BInputGroupAppend",
+    "key=1",
+    ">",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput15"",
+    "name="stub-name"",
+    "description=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BasicInput",
+    "name="stub-name"",
+    "testid="stub-testid"",
+    "autofocus=false",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (3)",
+    "
+",
+    " at <BInputGroupAppend",
+    "key=1",
+    ">",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput15"",
+    "name="stub-name"",
+    "description=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BasicInput",
+    "name="stub-name"",
+    "testid="stub-testid"",
+    "autofocus=false",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) (2)",
+    "
+",
+    " at <BInputGroupAppend",
+    "key=1",
+    ">",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput15"",
+    "name="stub-name"",
+    "description=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BasicInput",
+    "name="stub-name"",
+    "testid="stub-testid"",
+    "autofocus=false",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (2)",
+    "
+",
+    " at <BInputGroupAddon",
+    "key=1",
+    "id=undefined",
+    "isText=false",
+    " ...",
+    ">",
+    "
+",
+    " at <BInputGroupAppend",
+    "key=1",
+    ">",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput15"",
+    "name="stub-name"",
+    "description=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BasicInput",
+    "name="stub-name"",
+    "testid="stub-testid"",
+    "autofocus=false",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (2)",
+    "
+",
+    " at <BTooltip",
+    "target="copyButton-"",
+    "placement="top"",
+    "triggers="hover"",
+    " ...",
+    ">",
+    "
+",
+    " at <BInputGroupAddon",
+    "key=1",
+    "id=undefined",
+    "isText=false",
+    " ...",
+    ">",
+    "
+",
+    " at <BInputGroupAppend",
+    "key=1",
+    ">",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput15"",
+    "name="stub-name"",
+    "description=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BasicInput",
+    "name="stub-name"",
+    "testid="stub-testid"",
+    "autofocus=false",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) \`beforeDestroy\` has been renamed to \`beforeUnmount\`.",
+    "
+",
+    " at <BTooltip",
+    "target="copyButton-"",
+    "placement="top"",
+    "triggers="hover"",
+    " ...",
+    ">",
+    "
+",
+    " at <BInputGroupAddon",
+    "key=1",
+    "id=undefined",
+    "isText=false",
+    " ...",
+    ">",
+    "
+",
+    " at <BInputGroupAppend",
+    "key=1",
+    ">",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput15"",
+    "name="stub-name"",
+    "description=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BasicInput",
+    "name="stub-name"",
+    "testid="stub-testid"",
+    "autofocus=false",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) vm.$scopedSlots has been removed. Use vm.$slots instead.
+  Details: https://v3-migration.vuejs.org/breaking-changes/slots-unification.html",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) (3)",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_EVENT_EMITTER) vm.$on/$once/$off() have been removed. Use an external event emitter library instead.
+  Details: https://v3-migration.vuejs.org/breaking-changes/events-api.html",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) (2)",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_EVENT_EMITTER) (2)",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_EVENT_EMITTER) (3)",
+  ],
+]
+`;
+
+exports[`BasicInput @renders as number default: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) (2)",
+    "
+",
+    " at <BasicInput",
+    "name="stub-name"",
+    "testid="stub-testid"",
+    "autofocus=false",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "placeholder" with v-bind value \`false\` will render placeholder="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput3"",
+    "name="stub-name"",
+    "description=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BasicInput",
+    "name="stub-name"",
+    "testid="stub-testid"",
+    "autofocus=false",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "aria-describedby" with v-bind value \`false\` will render aria-describedby="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput3"",
+    "name="stub-name"",
+    "description=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BasicInput",
+    "name="stub-name"",
+    "testid="stub-testid"",
+    "autofocus=false",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`BasicInput @renders as password with show password button: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (3)",
+    "
+",
+    " at <BButton",
+    "onClick=fn<bound revealText>",
+    "class=""",
+    "name="revealButton"",
+    " ...",
+    ">",
+    "
+",
+    " at <BInputGroupAddon",
+    "key=0",
+    "class="within-input-button"",
+    "id=undefined",
+    " ...",
+    ">",
+    "
+",
+    " at <BInputGroupAppend",
+    "key=0",
+    "class="within-input-button"",
+    ">",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput69"",
+    "name="stub-name"",
+    "description=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BasicInput",
+    "name="stub-name"",
+    "testid="stub-testid"",
+    "autofocus=false",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;

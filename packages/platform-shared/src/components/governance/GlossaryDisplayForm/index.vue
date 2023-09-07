@@ -4,16 +4,16 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <BRow>
-    <template v-for="(prop, index) in glossary">
+    <template
+      v-for="(prop, index) in glossary"
+      :key="`prop-${index}`">
       <dt
         :data-testid="`prop-${index}`"
-        :key="`prop-${index}`"
         class="col-lg-4">
         {{ prop.name }}
       </dt>
       <dd
         :data-testid="`prop-value-${index}`"
-        :key="`prop-value-${index}`"
         class="col-lg-8 mb-4">
         {{ prop.value }}
       </dd>

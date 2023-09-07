@@ -1,0 +1,266 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Reason Filter Component should render: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) v-model usage on component has changed in Vue 3. Component that expects to work with v-model should now use the "modelValue" prop and emit the "update:modelValue" event. You can update the usage and then opt-in to Vue 3 behavior on a per-component basis with \`compatConfig: { COMPONENT_V_MODEL: false }\`.
+  Details: https://v3-migration.vuejs.org/breaking-changes/v-model.html",
+    "
+",
+    " at <FrField",
+    "options=",
+    [
+      {
+        "text": "Advanced Bot Detection",
+        "value": [
+          "is_advanced_bot_detection",
+        ],
+      },
+      {
+        "text": "Automated User Agent",
+        "value": [
+          "is_automated_user_agent",
+        ],
+      },
+      {
+        "text": "Brute Force",
+        "value": [
+          "is_brute_force",
+        ],
+      },
+      {
+        "text": "Credential Stuffing",
+        "value": [
+          "is_credential_stuffing",
+        ],
+      },
+      {
+        "text": "Distributed Attack",
+        "value": [
+          "is_distributed_attack",
+        ],
+      },
+      {
+        "text": "Impossible Travel",
+        "value": [
+          "is_impossible_travel",
+        ],
+      },
+      {
+        "text": "IP Blocklist",
+        "value": [
+          "is_ip_blocked",
+        ],
+      },
+      {
+        "text": "Suspicious IP",
+        "value": [
+          "is_suspicious_ip",
+        ],
+      },
+      {
+        "text": "Unusual Browser",
+        "value": [
+          "browser",
+        ],
+      },
+      {
+        "text": "Unusual Browser Family",
+        "value": [
+          "user_agent",
+        ],
+      },
+      {
+        "text": "Unusual City",
+        "value": [
+          "city",
+        ],
+      },
+      {
+        "text": "Unusual Country",
+        "value": [
+          "country",
+        ],
+      },
+      {
+        "text": "Unusual Day of Week",
+        "value": [
+          "day_of_week",
+          "weekday",
+        ],
+      },
+      {
+        "text": "Unusual Device",
+        "value": [
+          "model",
+          "device",
+        ],
+      },
+      {
+        "text": "Unusual OS",
+        "value": [
+          "os",
+        ],
+      },
+      {
+        "text": "Unusual OS Version",
+        "value": [
+          "os_version",
+          "osWithVersion",
+        ],
+      },
+      {
+        "text": "Unusual Time of Day",
+        "value": [
+          "dayparting",
+        ],
+      },
+    ],
+    "label="Reason"",
+    "type="multiselect"",
+    " ...",
+    ">",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "canEnterPlaceholders" with v-bind value \`false\` will render canEnterPlaceholders="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <FrField",
+    "options=",
+    [
+      {
+        "text": "Advanced Bot Detection",
+        "value": [
+          "is_advanced_bot_detection",
+        ],
+      },
+      {
+        "text": "Automated User Agent",
+        "value": [
+          "is_automated_user_agent",
+        ],
+      },
+      {
+        "text": "Brute Force",
+        "value": [
+          "is_brute_force",
+        ],
+      },
+      {
+        "text": "Credential Stuffing",
+        "value": [
+          "is_credential_stuffing",
+        ],
+      },
+      {
+        "text": "Distributed Attack",
+        "value": [
+          "is_distributed_attack",
+        ],
+      },
+      {
+        "text": "Impossible Travel",
+        "value": [
+          "is_impossible_travel",
+        ],
+      },
+      {
+        "text": "IP Blocklist",
+        "value": [
+          "is_ip_blocked",
+        ],
+      },
+      {
+        "text": "Suspicious IP",
+        "value": [
+          "is_suspicious_ip",
+        ],
+      },
+      {
+        "text": "Unusual Browser",
+        "value": [
+          "browser",
+        ],
+      },
+      {
+        "text": "Unusual Browser Family",
+        "value": [
+          "user_agent",
+        ],
+      },
+      {
+        "text": "Unusual City",
+        "value": [
+          "city",
+        ],
+      },
+      {
+        "text": "Unusual Country",
+        "value": [
+          "country",
+        ],
+      },
+      {
+        "text": "Unusual Day of Week",
+        "value": [
+          "day_of_week",
+          "weekday",
+        ],
+      },
+      {
+        "text": "Unusual Device",
+        "value": [
+          "model",
+          "device",
+        ],
+      },
+      {
+        "text": "Unusual OS",
+        "value": [
+          "os",
+        ],
+      },
+      {
+        "text": "Unusual OS Version",
+        "value": [
+          "os_version",
+          "osWithVersion",
+        ],
+      },
+      {
+        "text": "Unusual Time of Day",
+        "value": [
+          "dayparting",
+        ],
+      },
+    ],
+    "label="Reason"",
+    "type="multiselect"",
+    " ...",
+    ">",
+    "
+",
+    " at <ReasonFilter",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;

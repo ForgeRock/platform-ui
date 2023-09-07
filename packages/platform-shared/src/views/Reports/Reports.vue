@@ -83,17 +83,19 @@ import {
   BRow,
 } from 'bootstrap-vue';
 import { debounce } from 'lodash';
+import { useRouter } from 'vue-router';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import { getReportTemplates } from '@forgerock/platform-shared/src/api/AutoApi';
-import { getCurrentInstance, ref } from 'vue';
+import { ref } from 'vue';
 import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import i18n from '@/i18n';
 import ReportCard from './ReportCard/ReportCard';
 
-const { proxy: { $router } } = getCurrentInstance();
+// Composables
+const router = useRouter();
 
 const currentPage = ref(1);
 const displayedReports = ref([]);
@@ -123,7 +125,7 @@ async function retrieveReportTemplates(params = null) {
     const { result } = await getReportTemplates(params);
     reports.value = result;
   } catch (error) {
-    showErrorMessage(error, i18n.t('reports.noData'));
+    showErrorMessage(error, i18n.global.t('reports.noData'));
   } finally {
     loading.value = false;
     updateDisplayedReports();
@@ -168,7 +170,7 @@ function pageSizeChange(pageSize) {
  */
 function toTemplate({ name, toHistory }) {
   const path = toHistory ? `/reports/${name.toLowerCase()}/history` : `/reports/${name.toLowerCase()}`;
-  $router.push({ path });
+  router.push({ path });
 }
 
 retrieveReportTemplates();

@@ -1,0 +1,435 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ConsentMappingCallback Sets options data and emits "disable-next-button": console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (2)",
+    "
+",
+    " at <ConsentContainer",
+    "callbacks=",
+    [
+      {
+        "getOutputByName": [Function],
+        "payload": {
+          "type": "ConsentMappingCallback",
+        },
+        "setInputValue": [MockFunction],
+      },
+    ],
+    "index=1",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) v-model usage on component has changed in Vue 3. Component that expects to work with v-model should now use the "modelValue" prop and emit the "update:modelValue" event. You can update the usage and then opt-in to Vue 3 behavior on a per-component basis with \`compatConfig: { COMPONENT_V_MODEL: false }\`.
+  Details: https://v3-migration.vuejs.org/breaking-changes/v-model.html",
+    "
+",
+    " at <BFormCheckbox",
+    "data-testid="consent-mapping-checkbox"",
+    "modelValue=false",
+    "onUpdate:modelValue=fn",
+    " ...",
+    ">",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (3)",
+    "
+",
+    " at <ConsentMappingCallback",
+    "key="ConsentMappingCallback-0"",
+    "callback=",
+    {
+      "getOutputByName": [Function],
+      "payload": {
+        "type": "ConsentMappingCallback",
+      },
+      "setInputValue": [MockFunction],
+    },
+    ">",
+    "
+",
+    " at <ConsentContainer",
+    "callbacks=",
+    [
+      {
+        "getOutputByName": [Function],
+        "payload": {
+          "type": "ConsentMappingCallback",
+        },
+        "setInputValue": [MockFunction],
+      },
+    ],
+    "index=1",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) Functional component <BMedia> should be defined as a plain function in Vue 3. The "functional" option has been removed. NOTE: Before migrating to use plain functions for functional components, first make sure that all async components usage have been migrated and its compat behavior has been disabled.
+  Details: https://v3-migration.vuejs.org/breaking-changes/functional-components.html",
+    "
+",
+    " at <ConsentMappingCallback",
+    "key="ConsentMappingCallback-0"",
+    "callback=",
+    {
+      "getOutputByName": [Function],
+      "payload": {
+        "type": "ConsentMappingCallback",
+      },
+      "setInputValue": [MockFunction],
+    },
+    ">",
+    "
+",
+    " at <ConsentContainer",
+    "callbacks=",
+    [
+      {
+        "getOutputByName": [Function],
+        "payload": {
+          "type": "ConsentMappingCallback",
+        },
+        "setInputValue": [MockFunction],
+      },
+    ],
+    "index=1",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) vm.$listeners has been removed. In Vue 3, parent v-on listeners are included in vm.$attrs and it is no longer necessary to separately use v-on="$listeners" if you are already using v-bind="$attrs". (Note: the Vue 3 behavior only applies if this compat config is disabled)
+  Details: https://v3-migration.vuejs.org/breaking-changes/listeners-removed.html",
+    "
+",
+    " at <BMedia>",
+    "
+",
+    " at <ConsentMappingCallback",
+    "key="ConsentMappingCallback-0"",
+    "callback=",
+    {
+      "getOutputByName": [Function],
+      "payload": {
+        "type": "ConsentMappingCallback",
+      },
+      "setInputValue": [MockFunction],
+    },
+    ">",
+    "
+",
+    " at <ConsentContainer",
+    "callbacks=",
+    [
+      {
+        "getOutputByName": [Function],
+        "payload": {
+          "type": "ConsentMappingCallback",
+        },
+        "setInputValue": [MockFunction],
+      },
+    ],
+    "index=1",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (4)",
+    "
+",
+    " at <BMedia>",
+    "
+",
+    " at <ConsentMappingCallback",
+    "key="ConsentMappingCallback-0"",
+    "callback=",
+    {
+      "getOutputByName": [Function],
+      "payload": {
+        "type": "ConsentMappingCallback",
+      },
+      "setInputValue": [MockFunction],
+    },
+    ">",
+    "
+",
+    " at <ConsentContainer",
+    "callbacks=",
+    [
+      {
+        "getOutputByName": [Function],
+        "payload": {
+          "type": "ConsentMappingCallback",
+        },
+        "setInputValue": [MockFunction],
+      },
+    ],
+    "index=1",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) (2)",
+    "
+",
+    " at <BMedia>",
+    "
+",
+    " at <ConsentMappingCallback",
+    "key="ConsentMappingCallback-0"",
+    "callback=",
+    {
+      "getOutputByName": [Function],
+      "payload": {
+        "type": "ConsentMappingCallback",
+      },
+      "setInputValue": [MockFunction],
+    },
+    ">",
+    "
+",
+    " at <ConsentContainer",
+    "callbacks=",
+    [
+      {
+        "getOutputByName": [Function],
+        "payload": {
+          "type": "ConsentMappingCallback",
+        },
+        "setInputValue": [MockFunction],
+      },
+    ],
+    "index=1",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (2)",
+    "
+",
+    " at <BMediaAside",
+    "right=false",
+    "verticalAlign="top"",
+    ">",
+    "
+",
+    " at <BMedia>",
+    "
+",
+    " at <ConsentMappingCallback",
+    "key="ConsentMappingCallback-0"",
+    "callback=",
+    {
+      "getOutputByName": [Function],
+      "payload": {
+        "type": "ConsentMappingCallback",
+      },
+      "setInputValue": [MockFunction],
+    },
+    ">",
+    "
+",
+    " at <ConsentContainer",
+    "callbacks=",
+    [
+      {
+        "getOutputByName": [Function],
+        "payload": {
+          "type": "ConsentMappingCallback",
+        },
+        "setInputValue": [MockFunction],
+      },
+    ],
+    "index=1",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (3)",
+    "
+",
+    " at <BImg",
+    "alt=""",
+    "src=""",
+    "height="24"",
+    " ...",
+    ">",
+    "
+",
+    " at <BMediaAside",
+    "right=false",
+    "verticalAlign="top"",
+    ">",
+    "
+",
+    " at <BMedia>",
+    "
+",
+    " at <ConsentMappingCallback",
+    "key="ConsentMappingCallback-0"",
+    "callback=",
+    {
+      "getOutputByName": [Function],
+      "payload": {
+        "type": "ConsentMappingCallback",
+      },
+      "setInputValue": [MockFunction],
+    },
+    ">",
+    "
+",
+    " at <ConsentContainer",
+    "callbacks=",
+    [
+      {
+        "getOutputByName": [Function],
+        "payload": {
+          "type": "ConsentMappingCallback",
+        },
+        "setInputValue": [MockFunction],
+      },
+    ],
+    "index=1",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (4)",
+    "
+",
+    " at <BMediaBody>",
+    "
+",
+    " at <BMedia>",
+    "
+",
+    " at <ConsentMappingCallback",
+    "key="ConsentMappingCallback-0"",
+    "callback=",
+    {
+      "getOutputByName": [Function],
+      "payload": {
+        "type": "ConsentMappingCallback",
+      },
+      "setInputValue": [MockFunction],
+    },
+    ">",
+    "
+",
+    " at <ConsentContainer",
+    "callbacks=",
+    [
+      {
+        "getOutputByName": [Function],
+        "payload": {
+          "type": "ConsentMappingCallback",
+        },
+        "setInputValue": [MockFunction],
+      },
+    ],
+    "index=1",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (2)",
+    "
+",
+    " at <BFormCheckbox",
+    "data-testid="consent-mapping-checkbox"",
+    "onInput=fn<bound onCheckboxChange>",
+    "checked=false",
+    " ...",
+    ">",
+    "
+",
+    " at <ConsentContainer",
+    "callbacks=",
+    [
+      {
+        "getOutputByName": [Function],
+        "payload": {
+          "type": "ConsentMappingCallback",
+        },
+        "setInputValue": [MockFunction],
+      },
+    ],
+    "index=1",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) vm.$scopedSlots has been removed. Use vm.$slots instead.
+  Details: https://v3-migration.vuejs.org/breaking-changes/slots-unification.html",
+    "
+",
+    " at <BFormCheckbox",
+    "data-testid="consent-mapping-checkbox"",
+    "onInput=fn<bound onCheckboxChange>",
+    "checked=false",
+    " ...",
+    ">",
+    "
+",
+    " at <ConsentContainer",
+    "callbacks=",
+    [
+      {
+        "getOutputByName": [Function],
+        "payload": {
+          "type": "ConsentMappingCallback",
+        },
+        "setInputValue": [MockFunction],
+      },
+    ],
+    "index=1",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;

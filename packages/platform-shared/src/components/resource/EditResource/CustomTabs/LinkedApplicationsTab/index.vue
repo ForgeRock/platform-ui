@@ -166,7 +166,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep .table tr:not(.b-table-empty-row) td {
+:deep(.table tr:not(.b-table-empty-row) td) {
   cursor: pointer;
 }
 </style>

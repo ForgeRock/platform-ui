@@ -113,8 +113,12 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import {
+  BButton,
+  BContainer,
+  BModal,
+} from 'bootstrap-vue';
+import {
   cloneDeep,
-  find,
   first,
   isUndefined,
 } from 'lodash';
@@ -145,6 +149,9 @@ export default {
     RestMixin,
   ],
   components: {
+    BButton,
+    BContainer,
+    BModal,
     FrListGroup: ListGroup,
     FrListItem: ListItem,
     FrAccessLevel: AccessLevel,
@@ -166,7 +173,7 @@ export default {
     ...mapState(useUserStore, ['managedResource']),
     mappings() {
       return this.consentableMappings.map((mapping) => {
-        const consentedMapping = find(this.consentedMappings, { mapping: mapping.name });
+        const consentedMapping = this.consentedMappings.find((singleMapping) => singleMapping.name === mapping.name);
         const mappingCopy = cloneDeep(mapping);
 
         let modalHeaderPath = 'pages.profile.consent.';

@@ -5,14 +5,11 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import Vue from 'vue';
-import Vuex from 'vuex';
+import { createStore } from 'vuex';
 import Shared from '@forgerock/platform-shared/src/store/modules/Shared';
 import AutoAccess from '@forgerock/platform-shared/src/store/modules/AutoAccess';
 
-Vue.use(Vuex);
-
-export default new Vuex.Store({
+export default createStore({
   state: {
     // environment variables
     adminURL: null,

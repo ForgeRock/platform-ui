@@ -15,10 +15,11 @@ of the MIT license. See the LICENSE file for details. -->
       content-class="mt-4"
       lazy
       @input="selectedTab = $event; tabChange()">
-      <template v-for="(catalogCategory, key) in catalogTabs">
+      <template
+        v-for="(catalogCategory, key) in catalogTabs"
+        :key="key">
         <BTab
           class="p-0"
-          :key="key"
           :data-testid="`tab-${key}`"
           :title="catalogCategory.capitalizedTitle">
           <FrSpinner v-if="loading && firstQuery" />
@@ -52,7 +53,9 @@ of the MIT license. See the LICENSE file for details. -->
                         class="mr-2 align-self-center"
                         :src="option.icon" />
                       <BMediaBody class="pl-1">
-                        <div class="mb-1 text-dark">
+                        <div
+                          class="mb-1 text-dark"
+                          tabindex="0">
                           {{ option.title }}
                         </div>
                         <div class="text-muted">
@@ -60,9 +63,12 @@ of the MIT license. See the LICENSE file for details. -->
                         </div>
                       </BMediaBody>
                     </BMedia>
-                    <i
+                    <span
                       class="multiselect__tag-icon"
-                      @click="remove(option)" />
+                      tabindex="0"
+                      :aria-label="$t('common.remove')"
+                      @click.prevent="remove(option)"
+                      @keydown.enter="remove(option)" />
                   </span>
                 </template>
                 <template #option="{ option }">
@@ -131,13 +137,14 @@ of the MIT license. See the LICENSE file for details. -->
                 <BRow
                   v-else
                   :id="`${key}Grid`">
-                  <template v-for="(item, itemKey) in catalogItems">
+                  <template
+                    v-for="(item, itemKey) in catalogItems"
+                    :key="itemKey">
                     <BCol
                       cols="12"
                       lg="6"
                       xl="4"
-                      class="mb-4"
-                      :key="itemKey">
+                      class="mb-4">
                       <BCard
                         class="h-100 shadow-none cursor-pointer hover-blue-border"
                         no-body
@@ -210,7 +217,9 @@ of the MIT license. See the LICENSE file for details. -->
         </BTab>
       </template>
     </BTabs>
-    <ValidationObserver v-slot="{ invalid }">
+    <VeeForm
+      v-slot="{ meta: { valid } }"
+      as="span">
       <BModal
         id="filterModal"
         no-close-on-backdrop
@@ -242,13 +251,13 @@ of the MIT license. See the LICENSE file for details. -->
           </BButton>
           <BButton
             variant="primary"
-            :disabled="invalid"
+            :disabled="!valid"
             @click="ok">
             {{ $t('common.apply') }}
           </BButton>
         </template>
       </BModal>
-    </ValidationObserver>
+    </VeeForm>
 
     <FrItemDetailsModal
       :glossary-schema="currentGlossarySchema"
@@ -279,7 +288,7 @@ import {
   BTab,
   BTabs,
 } from 'bootstrap-vue';
-import { ValidationObserver } from 'vee-validate';
+import { Form as VeeForm } from 'vee-validate';
 import FrCertificationFilter from '@forgerock/platform-shared/src/components/filterBuilder/CertificationFilter';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrField from '@forgerock/platform-shared/src/components/Field';
@@ -325,7 +334,7 @@ export default {
     FrSearchInput,
     FrSortDropdown,
     FrSpinner,
-    ValidationObserver,
+    VeeForm,
   },
   props: {
     applicationSearchResults: {

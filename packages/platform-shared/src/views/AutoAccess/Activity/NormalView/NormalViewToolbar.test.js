@@ -17,8 +17,10 @@ describe('NormalViewToolbar', () => {
 
   function setup(props) {
     return mount(NormalViewToolbar, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         ...defaultProps,
         ...props,
       },

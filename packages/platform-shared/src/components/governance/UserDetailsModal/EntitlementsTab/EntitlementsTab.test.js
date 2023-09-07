@@ -11,10 +11,12 @@ import EntitlementsTab from './index';
 describe('EntitlementsTab', () => {
   function mountComponent(entitlements) {
     return shallowMount(EntitlementsTab, {
-      mocks: {
-        $t: (t) => t,
+      global: {
+        mocks: {
+          $t: (t) => t,
+        },
       },
-      propsData: {
+      props: {
         entitlements,
       },
     });

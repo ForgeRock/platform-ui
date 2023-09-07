@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -9,7 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
       :autofocus="autofocus"
       :disabled="disabled"
       :class="[{'fr-error': errors.length > 0}, 'fr-tags']">
-      <template v-slot="{ tags, inputAttrs, inputHandlers, addTag, removeTag }">
+      <template #default="{ tags, inputAttrs, inputHandlers, addTag, removeTag }">
         <div
           class="overflow-hidden"
           @click="$refs.input.focus()">
