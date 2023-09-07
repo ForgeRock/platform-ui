@@ -715,7 +715,7 @@ export default {
       return `${this.resourceType}/${this.resourceName}/${this.id}/${this.viewableRelationshipArrayProperties.assignments?.propName}`;
     },
     propertiesAvailable() {
-      return this.displayProperties.length > 0 || (this.$store.state.SharedStore.governanceEnabledV3 && this.resourceIsRole);
+      return this.displayProperties.length > 0 || (this.$store.state.SharedStore.governanceEnabled && this.resourceIsRole);
     },
     secondaryTitle() {
       let tempDisplayName = `${this.resourceType} - ${this.resourceName}`;
