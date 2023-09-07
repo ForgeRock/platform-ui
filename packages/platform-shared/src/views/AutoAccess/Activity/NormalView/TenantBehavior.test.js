@@ -8,6 +8,7 @@
 import Vue from 'vue';
 import { mount } from '@vue/test-utils';
 import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
+import Notifications from '@kyvg/vue3-notification';
 import i18n from '@/i18n';
 import TenantBehavior from './TenantBehavior';
 import DonutChartCard from './DonutChartCard';
@@ -230,8 +231,10 @@ describe('TenantBehavior', () => {
 
   function setup() {
     return mount(TenantBehavior, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n, Notifications],
+      },
+      props: {
         ...defaultProps,
       },
     });

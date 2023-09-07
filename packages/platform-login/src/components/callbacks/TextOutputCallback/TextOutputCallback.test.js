@@ -26,7 +26,7 @@ describe('TextOutputCallback.vue', () => {
       step.getCallbacksOfType.mockReturnValue(step);
       step.find.mockReturnValue(step);
 
-      const propsData = {
+      const props = {
         callback: {
           getMessageType: () => messageType || 4,
           getMessage: () => message || '',
@@ -36,8 +36,10 @@ describe('TextOutputCallback.vue', () => {
         isFirstRenderedCallback: isFirstRenderedCallback || false,
       };
       wrapper = mount(TextOutputCallback, {
-        i18n,
-        propsData,
+        global: {
+          plugins: [i18n],
+        },
+        props,
       });
     };
   });

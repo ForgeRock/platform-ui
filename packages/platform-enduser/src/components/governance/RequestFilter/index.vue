@@ -15,7 +15,8 @@ of the MIT license. See the LICENSE file for details. -->
               :label="$t('governance.accessRequest.priorities.highPriority')"
               name="highPriority"
               testid="priority-high"
-              type="checkbox">
+              type="checkbox"
+              @input="formFields.highPriority = $event">
               <template #prepend>
                 <BImg
                   height="24"
@@ -31,7 +32,8 @@ of the MIT license. See the LICENSE file for details. -->
               :label="$t('governance.accessRequest.priorities.mediumPriority')"
               name="mediumPriority"
               testid="priority-medium"
-              type="checkbox">
+              type="checkbox"
+              @input="formFields.mediumPriority = $event">
               <template #prepend>
                 <BImg
                   height="24"
@@ -47,7 +49,8 @@ of the MIT license. See the LICENSE file for details. -->
               :label="$t('governance.accessRequest.priorities.lowPriority')"
               name="lowPriority"
               testid="priority-low"
-              type="checkbox">
+              type="checkbox"
+              @input="formFields.lowPriority = $event">
               <template #prepend>
                 <BImg
                   height="24"

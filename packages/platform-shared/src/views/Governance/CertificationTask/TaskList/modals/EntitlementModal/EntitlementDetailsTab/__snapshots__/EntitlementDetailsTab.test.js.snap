@@ -1,0 +1,507 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EntitlementDetailsTab component loaded entitlement data loaded correctly on template: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (2)",
+    "
+",
+    " at <EntitlementDetailsTab",
+    "entitlement=",
+    {
+      "__NAME__": "Zoran Admin",
+      "_id": "34858681-bdd9-4482-bae3-9805b77e6db6",
+      "glossary": {
+        "idx": {
+          "/entitlement": {
+            "description": "Zoran Admin",
+          },
+        },
+      },
+      "id": "34858681-bdd9-4482-bae3-9805b77e6db6",
+      "linkQualifier": "default",
+      "mailEnabled": false,
+      "proxyAddresses": [],
+      "securityEnabled": true,
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "active" with v-bind value \`false\` will render active="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "onClick=fn",
+    "class="my-4 p-0"",
+    "variant="link"",
+    ">",
+    "
+",
+    " at <EntitlementDetailsTab",
+    "entitlement=",
+    {
+      "__NAME__": "Zoran Admin",
+      "_id": "34858681-bdd9-4482-bae3-9805b77e6db6",
+      "glossary": {
+        "idx": {
+          "/entitlement": {
+            "description": "Zoran Admin",
+          },
+        },
+      },
+      "id": "34858681-bdd9-4482-bae3-9805b77e6db6",
+      "linkQualifier": "default",
+      "mailEnabled": false,
+      "proxyAddresses": [],
+      "securityEnabled": true,
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "block" with v-bind value \`false\` will render block="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "onClick=fn",
+    "class="my-4 p-0"",
+    "variant="link"",
+    ">",
+    "
+",
+    " at <EntitlementDetailsTab",
+    "entitlement=",
+    {
+      "__NAME__": "Zoran Admin",
+      "_id": "34858681-bdd9-4482-bae3-9805b77e6db6",
+      "glossary": {
+        "idx": {
+          "/entitlement": {
+            "description": "Zoran Admin",
+          },
+        },
+      },
+      "id": "34858681-bdd9-4482-bae3-9805b77e6db6",
+      "linkQualifier": "default",
+      "mailEnabled": false,
+      "proxyAddresses": [],
+      "securityEnabled": true,
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "disabled" with v-bind value \`false\` will render disabled="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "onClick=fn",
+    "class="my-4 p-0"",
+    "variant="link"",
+    ">",
+    "
+",
+    " at <EntitlementDetailsTab",
+    "entitlement=",
+    {
+      "__NAME__": "Zoran Admin",
+      "_id": "34858681-bdd9-4482-bae3-9805b77e6db6",
+      "glossary": {
+        "idx": {
+          "/entitlement": {
+            "description": "Zoran Admin",
+          },
+        },
+      },
+      "id": "34858681-bdd9-4482-bae3-9805b77e6db6",
+      "linkQualifier": "default",
+      "mailEnabled": false,
+      "proxyAddresses": [],
+      "securityEnabled": true,
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "exact" with v-bind value \`false\` will render exact="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "onClick=fn",
+    "class="my-4 p-0"",
+    "variant="link"",
+    ">",
+    "
+",
+    " at <EntitlementDetailsTab",
+    "entitlement=",
+    {
+      "__NAME__": "Zoran Admin",
+      "_id": "34858681-bdd9-4482-bae3-9805b77e6db6",
+      "glossary": {
+        "idx": {
+          "/entitlement": {
+            "description": "Zoran Admin",
+          },
+        },
+      },
+      "id": "34858681-bdd9-4482-bae3-9805b77e6db6",
+      "linkQualifier": "default",
+      "mailEnabled": false,
+      "proxyAddresses": [],
+      "securityEnabled": true,
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "exactPath" with v-bind value \`false\` will render exactPath="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "onClick=fn",
+    "class="my-4 p-0"",
+    "variant="link"",
+    ">",
+    "
+",
+    " at <EntitlementDetailsTab",
+    "entitlement=",
+    {
+      "__NAME__": "Zoran Admin",
+      "_id": "34858681-bdd9-4482-bae3-9805b77e6db6",
+      "glossary": {
+        "idx": {
+          "/entitlement": {
+            "description": "Zoran Admin",
+          },
+        },
+      },
+      "id": "34858681-bdd9-4482-bae3-9805b77e6db6",
+      "linkQualifier": "default",
+      "mailEnabled": false,
+      "proxyAddresses": [],
+      "securityEnabled": true,
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noPrefetch" with v-bind value \`false\` will render noPrefetch="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "onClick=fn",
+    "class="my-4 p-0"",
+    "variant="link"",
+    ">",
+    "
+",
+    " at <EntitlementDetailsTab",
+    "entitlement=",
+    {
+      "__NAME__": "Zoran Admin",
+      "_id": "34858681-bdd9-4482-bae3-9805b77e6db6",
+      "glossary": {
+        "idx": {
+          "/entitlement": {
+            "description": "Zoran Admin",
+          },
+        },
+      },
+      "id": "34858681-bdd9-4482-bae3-9805b77e6db6",
+      "linkQualifier": "default",
+      "mailEnabled": false,
+      "proxyAddresses": [],
+      "securityEnabled": true,
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "pill" with v-bind value \`false\` will render pill="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "onClick=fn",
+    "class="my-4 p-0"",
+    "variant="link"",
+    ">",
+    "
+",
+    " at <EntitlementDetailsTab",
+    "entitlement=",
+    {
+      "__NAME__": "Zoran Admin",
+      "_id": "34858681-bdd9-4482-bae3-9805b77e6db6",
+      "glossary": {
+        "idx": {
+          "/entitlement": {
+            "description": "Zoran Admin",
+          },
+        },
+      },
+      "id": "34858681-bdd9-4482-bae3-9805b77e6db6",
+      "linkQualifier": "default",
+      "mailEnabled": false,
+      "proxyAddresses": [],
+      "securityEnabled": true,
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "replace" with v-bind value \`false\` will render replace="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "onClick=fn",
+    "class="my-4 p-0"",
+    "variant="link"",
+    ">",
+    "
+",
+    " at <EntitlementDetailsTab",
+    "entitlement=",
+    {
+      "__NAME__": "Zoran Admin",
+      "_id": "34858681-bdd9-4482-bae3-9805b77e6db6",
+      "glossary": {
+        "idx": {
+          "/entitlement": {
+            "description": "Zoran Admin",
+          },
+        },
+      },
+      "id": "34858681-bdd9-4482-bae3-9805b77e6db6",
+      "linkQualifier": "default",
+      "mailEnabled": false,
+      "proxyAddresses": [],
+      "securityEnabled": true,
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "squared" with v-bind value \`false\` will render squared="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BButton",
+    "onClick=fn",
+    "class="my-4 p-0"",
+    "variant="link"",
+    ">",
+    "
+",
+    " at <EntitlementDetailsTab",
+    "entitlement=",
+    {
+      "__NAME__": "Zoran Admin",
+      "_id": "34858681-bdd9-4482-bae3-9805b77e6db6",
+      "glossary": {
+        "idx": {
+          "/entitlement": {
+            "description": "Zoran Admin",
+          },
+        },
+      },
+      "id": "34858681-bdd9-4482-bae3-9805b77e6db6",
+      "linkQualifier": "default",
+      "mailEnabled": false,
+      "proxyAddresses": [],
+      "securityEnabled": true,
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "visible" with v-bind value \`false\` will render visible="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BCollapse",
+    "visible=false",
+    ">",
+    "
+",
+    " at <EntitlementDetailsTab",
+    "entitlement=",
+    {
+      "__NAME__": "Zoran Admin",
+      "_id": "34858681-bdd9-4482-bae3-9805b77e6db6",
+      "glossary": {
+        "idx": {
+          "/entitlement": {
+            "description": "Zoran Admin",
+          },
+        },
+      },
+      "id": "34858681-bdd9-4482-bae3-9805b77e6db6",
+      "linkQualifier": "default",
+      "mailEnabled": false,
+      "proxyAddresses": [],
+      "securityEnabled": true,
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "appear" with v-bind value \`false\` will render appear="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BCollapse",
+    "visible=false",
+    ">",
+    "
+",
+    " at <EntitlementDetailsTab",
+    "entitlement=",
+    {
+      "__NAME__": "Zoran Admin",
+      "_id": "34858681-bdd9-4482-bae3-9805b77e6db6",
+      "glossary": {
+        "idx": {
+          "/entitlement": {
+            "description": "Zoran Admin",
+          },
+        },
+      },
+      "id": "34858681-bdd9-4482-bae3-9805b77e6db6",
+      "linkQualifier": "default",
+      "mailEnabled": false,
+      "proxyAddresses": [],
+      "securityEnabled": true,
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "isNav" with v-bind value \`false\` will render isNav="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BCollapse",
+    "visible=false",
+    ">",
+    "
+",
+    " at <EntitlementDetailsTab",
+    "entitlement=",
+    {
+      "__NAME__": "Zoran Admin",
+      "_id": "34858681-bdd9-4482-bae3-9805b77e6db6",
+      "glossary": {
+        "idx": {
+          "/entitlement": {
+            "description": "Zoran Admin",
+          },
+        },
+      },
+      "id": "34858681-bdd9-4482-bae3-9805b77e6db6",
+      "linkQualifier": "default",
+      "mailEnabled": false,
+      "proxyAddresses": [],
+      "securityEnabled": true,
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;

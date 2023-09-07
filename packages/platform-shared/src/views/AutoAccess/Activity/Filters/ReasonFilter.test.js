@@ -108,7 +108,9 @@ describe('Reason Filter', () => {
 
   beforeEach(() => {
     wrapper = shallowMount(ReasonFilter, {
-      i18n,
+      global: {
+        plugins: [i18n],
+      },
     });
   });
   it('Component should render', () => {

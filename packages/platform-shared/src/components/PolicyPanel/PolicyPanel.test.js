@@ -5,20 +5,15 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import PolicyPanel from '@forgerock/platform-shared/src/components/PolicyPanel';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 let wrapper;
 
 describe('PolicyPanel.vue', () => {
   beforeEach(() => {
     wrapper = shallowMount(PolicyPanel, {
-      localVue,
-      propsData: {
+      props: {
         policies: [
           { policyRequirement: 'test', params: { args: 'test args' } },
           { policyRequirement: 'test2', params: { args: 'test args' } },
@@ -26,8 +21,11 @@ describe('PolicyPanel.vue', () => {
         ],
         policyFailures: ['test'],
       },
-      mocks: {
-        $t: (path) => path,
+      global: {
+        mocks: {
+          $t: (path) => path,
+        },
+        renderStubDefaultSlot: true,
       },
     });
   });

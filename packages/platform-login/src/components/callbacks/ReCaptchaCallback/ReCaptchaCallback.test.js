@@ -11,13 +11,15 @@ import i18n from '@/i18n';
 
 describe('ReCaptchaCallback.vue', () => {
   const createWrapper = (apiUrl, isV3) => shallowMount(ReCaptchaCallback, {
-    i18n,
-    stubs: {
-      'router-link': true,
-      ReCaptchaV2: true,
-      ReCaptchaV3: true,
+    global: {
+      plugin: [i18n],
+      stubs: {
+        'router-link': true,
+        ReCaptchaV2: true,
+        ReCaptchaV3: true,
+      },
     },
-    propsData: {
+    props: {
       callback: {
         getOutputByName: jest.fn((name) => {
           switch (name) {

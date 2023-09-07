@@ -3,9 +3,10 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <ValidationObserver
-    v-slot="{ invalid }"
-    ref="observer">
+  <VeeForm
+    v-slot="{ meta: { valid } }"
+    ref="observer"
+    as="span">
     <BModal
       ref="governance-request-modal"
       title-class="h5"
@@ -48,7 +49,7 @@ of the MIT license. See the LICENSE file for details. -->
             <BButton
               :variant="modalType === REQUEST_MODAL_TYPES.CANCEL ? 'danger' : 'primary'"
               data-testid="governance-request-modal-confirm-btn"
-              :disabled="invalid"
+              :disabled="!valid"
               @click="modalAction(item, cancel)">
               {{ buttonName }}
             </BButton>
@@ -56,14 +57,14 @@ of the MIT license. See the LICENSE file for details. -->
         </BCol>
       </template>
     </BModal>
-  </ValidationObserver>
+  </VeeForm>
 </template>
 
 <script>
 import {
   BButton, BModal, BRow, BCol,
 } from 'bootstrap-vue';
-import { ValidationObserver } from 'vee-validate';
+import { Form as VeeForm } from 'vee-validate';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
@@ -103,7 +104,7 @@ export default {
     FrIcon,
     FrRejectRequest,
     FrSpinner,
-    ValidationObserver,
+    VeeForm,
   },
   props: {
     type: {

@@ -4,8 +4,8 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div
-    @keydown.meta.67="copyOptions"
-    @keydown.ctrl.67="copyOptions">
+    @keydown.meta.c="copyOptions"
+    @keydown.ctrl.c="copyOptions">
     <FrInputLayout
       :id="id"
       :field-name="fieldName"
@@ -48,16 +48,17 @@ of the MIT license. See the LICENSE file for details. -->
             <span>
               {{ option && option.text }}
             </span>
-            <i
-              @click="remove(option)"
-              aria-hidden="true"
-              tabindex="1"
-              class="multiselect__tag-icon" />
+            <span
+              class="multiselect__tag-icon"
+              tabindex="0"
+              :aria-label="$t('common.remove')"
+              @click.prevent="remove(option)"
+              @keydown.enter="remove(option)" />
           </span>
         </template>
         <template
-          v-for="(key, slotName) in $scopedSlots"
-          v-slot:[slotName]="slotData">
+          v-for="(key, slotName) in $slots"
+          #[slotName]="slotData">
           <!-- @slot pass-through slot -->
           <slot
             :name="slotName"
@@ -65,8 +66,8 @@ of the MIT license. See the LICENSE file for details. -->
         </template>
       </VueMultiSelect>
       <template
-        v-for="(key, slotName) in $scopedSlots"
-        v-slot:[slotName]="slotData">
+        v-for="(key, slotName) in $slots"
+        #[slotName]="slotData">
         <!-- @slot pass-through slot -->
         <slot
           :name="slotName"
@@ -250,7 +251,7 @@ export default {
       this.$emit('search-change', value);
     },
     setInputValue(newVal) {
-      const newInputValue = map(newVal, (val) => find(this.options, { value: val }));
+      const newInputValue = map(newVal, (val) => find(this.options, { value: val })).filter((val) => !!val);
       if (!isEqual(this.inputValue, newInputValue)) {
         this.inputValue = newInputValue;
       }
@@ -274,7 +275,7 @@ export default {
 <style lang="scss" scoped>
 @import '~@forgerock/platform-shared/src/components/Field/assets/vue-multiselect.scss';
 
-::v-deep .multiselect:focus-within {
+:deep(.multiselect:focus-within) {
   border-color: $blue;
   box-shadow: 0 0 0 0.0625rem $blue;
 }

@@ -5,8 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
+import { mount, flushPromises } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import i18n from '@/i18n';
 import RequestItemsGroup from './index';
@@ -44,8 +43,10 @@ describe('RequestItemsGroup', () => {
   ];
 
   const stubProps = {
-    i18n,
-    propsData: {
+    global: {
+      plugins: [i18n],
+    },
+    props: {
       requestItems: requestCartItemsStub,
     },
   };
@@ -77,7 +78,7 @@ describe('RequestItemsGroup', () => {
 
     it('toggles the visibility of the remaining request items if the "View More" button is clicked', async () => {
       const wrapper = setup({
-        propsData: {
+        props: {
           requestItems: requestCartItemsLongStub,
         },
       });

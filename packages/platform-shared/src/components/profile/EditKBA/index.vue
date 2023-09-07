@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2021 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -25,7 +25,9 @@ of the MIT license. See the LICENSE file for details. -->
       @hidden="clearComponent"
       id="collapse-1"
       class="mt-4">
-      <ValidationObserver ref="observer">
+      <VeeForm
+        ref="observer"
+        as="span">
         <div
           v-for="(kbaChoice, id) in kbaChoices"
           :key="id"
@@ -62,7 +64,7 @@ of the MIT license. See the LICENSE file for details. -->
           :show-spinner="processingRequest"
           :spinner-text="$t('common.saving')"
           @click="onSaveKBA" />
-      </ValidationObserver>
+      </VeeForm>
     </BCollapse>
   </div>
 </template>
@@ -76,12 +78,13 @@ import {
 } from 'lodash';
 import {
   BCol,
+  BCollapse,
   BLink,
   BRow,
 } from 'bootstrap-vue';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
-
+import { Form as VeeForm } from 'vee-validate';
 /**
  * @description Allows a user to change their KBA, will ensure based on KBA configuration a user must match the systems KBA requirements.
  *
@@ -92,8 +95,10 @@ export default {
     FrButtonWithSpinner,
     FrField,
     BCol,
+    BCollapse,
     BLink,
     BRow,
+    VeeForm,
   },
   props: {
     kbaData: {
@@ -178,24 +183,17 @@ export default {
       this.showCancel = false;
     },
     /**
-     * Validates form input, then sends event to update KBA and collapses component if successful
-     */
-    validate() {
-      const valid = this.$refs.observer.validate();
-      return valid;
-    },
-    /**
      * Handler for clicking the save button.
+     * Validates form input, then sends event to update KBA and collapses component if successful
      * Emits an event for patching the kba information
      */
     onSaveKBA() {
-      return this.validate()
-        .then((valid) => {
-          if (valid) {
-            const patch = this.generatePatch();
-            this.$emit('updateKBA', patch);
-          }
-        });
+      return this.$refs.observer.validate().then(({ valid }) => {
+        if (valid) {
+          const patch = this.generatePatch();
+          this.$emit('updateKBA', patch);
+        }
+      });
     },
   },
 

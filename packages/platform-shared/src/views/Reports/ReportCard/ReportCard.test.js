@@ -21,8 +21,10 @@ describe('Report Card', () => {
   };
   it('Report card displayed when finish loading and the component receives data', () => {
     const wrapper = mount(ReportCard, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         report,
         loading: false,
       },
@@ -34,8 +36,10 @@ describe('Report Card', () => {
   });
   it('Skeleton card displayed when loading', () => {
     const wrapper = mount(ReportCard, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         report,
         loading: true,
       },
@@ -47,8 +51,10 @@ describe('Report Card', () => {
   });
   it('Nothing is displayed when there is no data', () => {
     const wrapper = mount(ReportCard, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         loading: false,
       },
     });

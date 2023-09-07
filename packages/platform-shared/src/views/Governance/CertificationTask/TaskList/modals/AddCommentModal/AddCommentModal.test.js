@@ -12,8 +12,10 @@ describe('AddCommentModal', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = shallowMount(AddCommentModal, {
-      mocks: {
-        $t: (t) => t,
+      global: {
+        mocks: {
+          $t: (t) => t,
+        },
       },
     });
   });
@@ -43,10 +45,12 @@ describe('AddCommentModal', () => {
 
   it('should render prop modalId', () => {
     wrapper = shallowMount(AddCommentModal, {
-      mocks: {
-        $t: (t) => t,
+      global: {
+        mocks: {
+          $t: (t) => t,
+        },
       },
-      propsData: {
+      props: {
         modalId: 'CertificationTaskAddCommentEntitlementModal',
       },
     });

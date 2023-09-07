@@ -20,7 +20,9 @@ of the MIT license. See the LICENSE file for details. -->
       </div>
     </div>
 
-    <ValidationObserver ref="observer">
+    <VeeForm
+      ref="observer"
+      as="span">
       <fieldset class="w-100">
         <legend
           id="legend-kba-create-callback-description"
@@ -42,7 +44,7 @@ of the MIT license. See the LICENSE file for details. -->
           :options="options"
           :validation="questionSelectValidation"
           :floating-label="floatingLabel"
-          @open="loadOptions()" />
+          @open="setOptions()" />
         <FrField
           v-if="showCustom"
           :value="questionModel.value"
@@ -64,21 +66,23 @@ of the MIT license. See the LICENSE file for details. -->
           :disabled="selected === null"
           :floating-label="floatingLabel" />
       </fieldset>
-    </ValidationObserver>
+    </VeeForm>
     <hr>
   </div>
 </template>
 
 <script>
-import { ValidationObserver } from 'vee-validate';
+import { Form as VeeForm } from 'vee-validate';
+import { mapStores } from 'pinia';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
+import { useKbaChoicesStore } from '../../../stores/kbaChoices';
 
 export default {
   name: 'KbaCreateCallback',
   components: {
-    ValidationObserver,
+    VeeForm,
     FrField,
     FrIcon,
   },
@@ -106,8 +110,18 @@ export default {
     },
   },
   data() {
+    // Define base options from props
+    const customQuestionOption = { value: 'custom', text: this.$t('login.kba.custom') };
+    const exposeCustomQuestion = this.callback.getOutputByName('allowUserDefinedQuestions', true) !== false;
+    const baseOptions = [
+      ...this.getTranslation(this.callback.getPredefinedQuestions())
+        .map((question) => ({ text: question, value: question })),
+      ...(exposeCustomQuestion ? [customQuestionOption] : []),
+    ];
+
     return {
       answerModel: '',
+      baseOptions,
       questionModel: {
         key: `callback_${this.index}_question_field`,
         title: this.$t('login.kba.question'),
@@ -117,80 +131,64 @@ export default {
       questionTextInputValidation: { required: true },
       options: [],
       selected: null,
-      showCustom: false,
     };
+  },
+  computed: {
+    ...mapStores(useKbaChoicesStore),
+    showCustom() {
+      // if "Provide your own" is selected, show the custom question input
+      return this.selected === 'custom';
+    },
   },
   mounted() {
     this.$emit('disable-next-button', true);
-    this.loadOptions();
+    this.setOptions();
+    // Subscribe to the KBA store so that validation can be updated in light of choices made across other KbaCreateCallback components
+    this.kbaChoicesStore.$subscribe(() => {
+      if (this.selected !== null) {
+        this.validateQuestion();
+      }
+    });
+  },
+  watch: {
+    selected() {
+      this.handleQuestionChoiceChange();
+    },
+    // eslint-disable-next-line object-shorthand
+    'questionModel.value'() {
+      this.handleQuestionChoiceChange();
+    },
   },
   methods: {
     /**
-     * Get all other KBA callback components
-     *
-     * @param {Number} index callback index
-     * @returns {Object[]} callback vue components
+     * Sets the rendered question list to be those defined by props minus any choices from other KbaCreateCallbacks
      */
-    getOtherKbaCallbacks(index) {
-      return this.$parent.$children.filter((x) => (x.callback && x.callback.getType() === 'KbaCreateCallback' && x.index !== index));
+    setOptions() {
+      const otherValues = this.kbaChoicesStore.getOtherChoices(this.index);
+      this.options = this.baseOptions.filter((question) => (otherValues.indexOf(question.value) === -1));
     },
     /**
-     * Get question input values for all other KBA callback components
-     *
-     * @param {Number} index callback index
-     * @returns {String[]} question values
+     * Called whenever the question choice changes to store the new choice, which will asynchronously trigger
+     * validation of the current and any other KbaCreateCallbacks using the same store.
      */
-    getOtherQuestionValues(index) {
-      return this.getOtherKbaCallbacks(index).map((x) => (x.callback.getInputValue()));
-    },
-    loadOptions() {
-      const customQuestionOption = { value: 'custom', text: this.$t('login.kba.custom') };
-      const predefinedQuestions = this.getTranslation(this.callback.getPredefinedQuestions());
-
-      // Add any predefined question
-      const options = [
-        ...predefinedQuestions.map((question) => ({ text: question, value: question })),
-      ];
-
-      if (this.callback.getOutputByName('allowUserDefinedQuestions', true) !== false) {
-        options.push(customQuestionOption);
-      }
-
-      // remove questions that are selected in other KBA callbacks
-      const otherValues = this.getOtherQuestionValues(this.index);
-      this.options = options.filter((question) => (otherValues.indexOf(question.value) === -1));
-    },
-    /**
-     * This function sets validation for the question and sets validation
-     * for other KBACreateCallback components on the page
-     */
-    onQuestionSelectionChange() {
-      // if "Provide your own" is selected, show the custom question input
-      this.showCustom = this.selected === 'custom';
-
-      this.validateQuestion();
-
-      // trigger validation on other KBA callbacks
-      this.getOtherKbaCallbacks(this.index).map((x) => {
-        if (x.callback.getInputValue()) x.validateQuestion();
-        return true;
-      });
+    handleQuestionChoiceChange() {
+      const currentChoice = this.showCustom ? this.questionModel.value : this.selected;
+      this.callback.setQuestion(currentChoice);
+      this.kbaChoicesStore.storeChoice(currentChoice, this.index);
     },
     /**
      * This function looks to make sure the question is both non-empty and unique
      */
     validateQuestion() {
       // Find all the other KbaCreateCallbacks question values to ensure uniqueness
-      const otherValues = this.getOtherQuestionValues(this.index);
+      const otherValues = this.kbaChoicesStore.getOtherChoices(this.index);
 
-      if (this.selected === 'custom') {
+      if (this.showCustom) {
         this.questionSelectValidation = {};
         this.questionTextInputValidation = { required: true, unique: otherValues };
-        this.callback.setQuestion(this.questionModel.value);
       } else {
         this.questionSelectValidation = { required: true, uniqueValue: otherValues };
         this.questionTextInputValidation = {};
-        this.callback.setQuestion(this.selected);
       }
 
       this.setSubmitButton();
@@ -210,8 +208,8 @@ export default {
       this.$nextTick(() => {
         // Let vee-validate determine if the form is valid for each field
         // Disable if there is an error shown locally or in the other KbaCreateCallbacks
-        this.$refs.observer.validate().then((isValid) => {
-          this.$emit('disable-next-button', !isValid);
+        this.$refs.observer.validate().then(({ valid }) => {
+          this.$emit('disable-next-button', !valid);
         });
       });
     },

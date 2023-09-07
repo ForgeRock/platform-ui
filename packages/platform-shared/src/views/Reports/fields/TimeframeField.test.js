@@ -15,8 +15,10 @@ import TimeframeField from './TimeframeField';
 describe('Timeframe field for running reports', () => {
   function setup(props) {
     return mount(TimeframeField, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         ...props,
       },
     });
@@ -34,7 +36,7 @@ describe('Timeframe field for running reports', () => {
       const timeframeField = findByTestId(wrapper, 'fr-field-timeframe');
       await timeframeField.trigger('click');
 
-      const firstTimeframeFieldOption = timeframeField.findAll('li').at(0).find('span');
+      const firstTimeframeFieldOption = timeframeField.findAll('li')[0].find('span');
       await firstTimeframeFieldOption.trigger('click');
 
       expect(wrapper.emitted('start-date-update')[1][0]).toEqual(todayStart);
@@ -44,7 +46,7 @@ describe('Timeframe field for running reports', () => {
     it('reveals the timeframe-datepicker-fields if the showCustomTimeframe prop is true', async () => {
       wrapper = setup();
 
-      const datepickerField = findByTestId(wrapper, 'datepicker');
+      const datepickerField = findByTestId(wrapper, 'datepicker-start');
       expect(datepickerField.isVisible()).toBe(false);
 
       const timeFrameField = findByTestId(wrapper, 'fr-field-timeframe');

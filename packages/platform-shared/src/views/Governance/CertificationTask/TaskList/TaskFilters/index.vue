@@ -321,15 +321,15 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-::v-deep .certification-task-filter {
+:deep(.certification-task-filter) {
   border: 1px solid $gray-200;
 
-  &-selected {
+  .certification-task-filter-selected {
     width: 95%;
   }
 
 }
-::v-deep .certification-task-filter-dropdown {
+:deep(.certification-task-filter-dropdown) {
   .multiselect__tags {
     min-height: 85px;
   }
@@ -339,7 +339,7 @@ export default {
   }
 }
 
-::v-deep .certification-task-filter-list ul {
+:deep(.certification-task-filter-list ul) {
   width: 100%;
 }
 </style>

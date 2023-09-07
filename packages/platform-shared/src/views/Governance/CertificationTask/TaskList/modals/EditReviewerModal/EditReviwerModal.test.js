@@ -15,10 +15,12 @@ describe('EditReviewerModal', () => {
   beforeEach(() => {
     setupTestPinia({ user: { userId: 'testId' } });
     wrapper = shallowMount(EditReviewerModal, {
-      mocks: {
-        $t: (t) => t,
+      global: {
+        mocks: {
+          $t: (t) => t,
+        },
       },
-      propsData: {
+      props: {
         currentUserPermissions: {
           certify: true,
           comment: true,
@@ -313,10 +315,12 @@ describe('EditReviewerModal', () => {
 
   it('should render prop modalId', () => {
     wrapper = shallowMount(EditReviewerModal, {
-      mocks: {
-        $t: (t) => t,
+      global: {
+        mocks: {
+          $t: (t) => t,
+        },
       },
-      propsData: {
+      props: {
         modalId: 'CertificationTaskEditReviewerEntitlementModal',
       },
     });

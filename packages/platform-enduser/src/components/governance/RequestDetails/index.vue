@@ -95,15 +95,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  ::v-deep .nav-pills {
+  :deep(.nav-pills) {
     padding: 0px;
   }
 
-  ::v-deep .tabs > .col-auto {
+  :deep(.tabs > .col-auto) {
     min-width: 160px;
   }
 
-  .card-tabs-vertical ::v-deep .nav {
+  .card-tabs-vertical :deep(.nav) {
     margin-left: -1px;
   }
 </style>

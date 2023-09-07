@@ -5,15 +5,16 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
+import { mount, flushPromises } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
-import flushPromises from 'flush-promises';
+import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import * as AccessRequestApi from '@/api/governance/AccessRequestApi';
 import i18n from '@/i18n';
 import router from '@/router';
 import ApprovalDetails from './ApprovalDetails';
 
+jest.mock('@forgerock/platform-shared/src/composables/bvModal');
 jest.mock('@/api/governance/AccessRequestApi');
 
 const accessRequest = {
@@ -60,11 +61,13 @@ const accessRequest = {
 
 describe('ApprovalDetails', () => {
   const setup = (props) => {
+    useBvModal.mockReturnValue({ bvModal: { show: jest.fn(), hide: jest.fn() } });
     setupTestPinia({ user: { userId: '1234' } });
     return mount(ApprovalDetails, {
-      ...props,
-      router,
-      i18n,
+      global: {
+        plugins: [router, i18n],
+      },
+      props,
     });
   };
 

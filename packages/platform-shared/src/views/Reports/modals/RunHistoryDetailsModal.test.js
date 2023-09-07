@@ -26,8 +26,10 @@ allFieldKeysObject.forEach((obj) => {
 describe('Run History Details modal component', () => {
   function setup(props) {
     return mount(RunHistoryDetailsModal, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         isTesting: true,
         parameters,
         show: true,
@@ -53,7 +55,7 @@ describe('Run History Details modal component', () => {
       expect(modalElementShowing.isVisible()).toBe(true);
 
       await wrapper.setProps({ show: false });
-      expect(wrapper.vm._setupProxy.showModal).toEqual(false);
+      expect(wrapper.vm.showModal).toEqual(false);
 
       const modalElementHidden = findByRole(wrapper, 'dialog');
       expect(modalElementHidden.isVisible()).toBe(false);

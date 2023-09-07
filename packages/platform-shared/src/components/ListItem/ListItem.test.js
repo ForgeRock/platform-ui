@@ -11,8 +11,10 @@ import ListItem from './index';
 describe('ListItem Component', () => {
   it('ListItem successfully loaded', () => {
     const wrapper = shallowMount(ListItem, {
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
     });
 

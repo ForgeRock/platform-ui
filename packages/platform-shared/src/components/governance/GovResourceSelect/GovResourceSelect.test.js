@@ -5,24 +5,25 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
+import { mount, flushPromises } from '@vue/test-utils';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import i18n from '@/i18n';
 import GovResourceSelect from './index';
 
 const mountComponent = (propsData = {}) => mount(GovResourceSelect, {
-  i18n,
-  mocks: {
-    $store: {
-      state: {
-        SharedStore: {
-          uiConfig: {},
+  global: {
+    plugins: [i18n],
+    mocks: {
+      $store: {
+        state: {
+          SharedStore: {
+            uiConfig: {},
+          },
         },
       },
     },
   },
-  propsData: {
+  props: {
     resourcePath: '/openidm/managed/alpha_user',
     text: 'testInput',
     initialData: {

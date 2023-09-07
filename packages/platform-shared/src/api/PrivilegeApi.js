@@ -27,3 +27,11 @@ export function getResourceTypePrivilege(resourcePath) {
 export function getResourcePrivilege(resourcePath, id) {
   return generateIdmApi().get(`privilege/${resourcePath}/${id}`);
 }
+
+/**
+ * Gets privileges for the currently authenticated user
+ * @returns {Promise} a Promise resolving to the current users privilege object
+ */
+export function getUserPrivileges() {
+  return generateIdmApi().post('privilege?_action=listPrivileges');
+}

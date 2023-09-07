@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount, createLocalVue } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import { findByRole, findByTestId, findAllByTestId } from './testHelpers';
 import FrCheckbox from '../components/Field/Checkbox';
 import FrAccordion from '../components/Accordion';
@@ -28,7 +28,7 @@ describe('testHelpers', () => {
 
       describe('when testId is not a string', () => {
         const stubWrapper = mount(FrCheckbox, {
-          propsData: {
+          props: {
             name: 'stub-name',
           },
         });
@@ -48,7 +48,7 @@ describe('testHelpers', () => {
     describe('should return element', () => {
       it('when given valid testId', () => {
         const wrapper = mount(FrCheckbox, {
-          propsData: {
+          props: {
             name: 'stub-name',
             testid: 'stub-test-id',
           },
@@ -78,13 +78,13 @@ describe('testHelpers', () => {
         });
 
         describe('when testId is not a string', () => {
-          const localVue = createLocalVue();
           const stubWrapper = mount(FrAccordion, {
-            localVue,
-            directives: {
-              'b-toggle': jest.mock(),
+            global: {
+              directives: {
+                'b-toggle': jest.mock(),
+              },
             },
-            propsData: {
+            props: {
               accordionGroup: 'default',
               items: [
                 { open$: false },
@@ -108,13 +108,13 @@ describe('testHelpers', () => {
 
       describe('should return element', () => {
         it('when given valid testId', () => {
-          const localVue = createLocalVue();
           const wrapper = mount(FrAccordion, {
-            localVue,
-            directives: {
-              'b-toggle': jest.mock(),
+            global: {
+              directives: {
+                'b-toggle': jest.mock(),
+              },
             },
-            propsData: {
+            props: {
               accordionGroup: 'default',
               items: [
                 { open$: false },
@@ -148,7 +148,7 @@ describe('testHelpers', () => {
 
       describe('when role is not a string', () => {
         const stubWrapper = mount(FrCheckbox, {
-          propsData: {
+          props: {
             name: 'stub-name',
           },
         });
@@ -168,7 +168,7 @@ describe('testHelpers', () => {
     describe('should return element', () => {
       it('when given valid role', () => {
         const wrapper = mount(FrCheckbox, {
-          propsData: {
+          props: {
             name: 'stub-name',
           },
         });

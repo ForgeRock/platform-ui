@@ -39,12 +39,8 @@ of the MIT license. See the LICENSE file for details. -->
       <div
         id="appContent"
         :class="{'show-navbar': !hideNavBar}">
-        <Transition
-          name="fade"
-          mode="out-in">
-          <!-- slot for router -->
-          <slot />
-        </Transition>
+        <!-- slot for router -->
+        <slot />
         <notifications
           class="ml-3"
           position="bottom left"
@@ -293,7 +289,7 @@ export default {
       this.menuExpanded = !this.menuExpanded;
     },
   },
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener('resize', this.determineMobileStyleMenu);
   },
 };

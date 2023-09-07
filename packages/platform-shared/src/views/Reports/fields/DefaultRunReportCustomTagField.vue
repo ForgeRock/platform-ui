@@ -22,16 +22,19 @@ of the MIT license. See the LICENSE file for details. -->
             :class="`text-${option.text.color}`"
             :name="option.text.icon" />
           <BMediaBody class="pl-1">
-            <div class="text-dark">
+            <div
+              class="text-dark"
+              tabindex="0">
               {{ option.text.label }}
             </div>
           </BMediaBody>
         </BMedia>
-        <BButton
-          class="border-0 p-0 bg-transparent fr-close-icon"
-          @click="remove(option)">
-          <FrIcon name="close" />
-        </BButton>
+        <span
+          class="multiselect__tag-icon"
+          tabindex="0"
+          :aria-label="$t('common.remove')"
+          @click.prevent="remove(option)"
+          @keydown.enter="remove(option)" />
       </div>
     </template>
     <template #option="{ option }">
@@ -57,7 +60,6 @@ of the MIT license. See the LICENSE file for details. -->
  */
 import { ref, watch } from 'vue';
 import {
-  BButton,
   BMedia,
   BMediaBody,
 } from 'bootstrap-vue';

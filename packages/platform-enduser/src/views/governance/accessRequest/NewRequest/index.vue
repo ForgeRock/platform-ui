@@ -479,7 +479,7 @@ export default {
         .then(({ data }) => {
           const userData = get(data, 'result[0]', {});
           this.currentUser = pick(userData, userRequiredParams);
-          this.$root.$emit('bv::show::modal', 'GovernanceUserDetailsModal');
+          this.$bvModal.show('GovernanceUserDetailsModal');
         })
         .catch((error) => {
           this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserError'));
@@ -555,7 +555,7 @@ export default {
       this.requestCartExpanded = !this.requestCartExpanded;
     },
   },
-  beforeDestroy() {
+  beforeUnmount() {
     window.removeEventListener('resize', this.handleResize);
   },
 };

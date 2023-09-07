@@ -19,6 +19,7 @@ of the MIT license. See the LICENSE file for details. -->
       <div class="d-flex align-items-center mb-4">
         <FrDatepicker
           data-testid="datepicker-start"
+          name="startDate"
           :date-format-options="dateFormat"
           :placeholder="$t('reports.tabs.runReport.timeframe.startDate')"
           @input="startDateCustomValue = $event" />
@@ -27,6 +28,7 @@ of the MIT license. See the LICENSE file for details. -->
         </span>
         <FrDatepicker
           data-testid="datepicker-end"
+          name="endDate"
           :date-format-options="dateFormat"
           :placeholder="$t('reports.tabs.runReport.timeframe.endDate')"
           @input="endDateCustomValue = $event" />
@@ -53,18 +55,18 @@ const emit = defineEmits(['start-date-update', 'end-date-update']);
  */
 const dateFormat = { year: 'numeric', month: 'numeric', day: 'numeric' };
 const timeframeOptions = [
-  i18n.t('reports.tabs.runReport.timeframe.today'),
-  i18n.t('reports.tabs.runReport.timeframe.yesterday'),
-  i18n.t('reports.tabs.runReport.timeframe.last7Days'),
-  i18n.t('reports.tabs.runReport.timeframe.last30Days'),
-  i18n.t('reports.tabs.runReport.timeframe.custom'),
+  i18n.global.t('reports.tabs.runReport.timeframe.today'),
+  i18n.global.t('reports.tabs.runReport.timeframe.yesterday'),
+  i18n.global.t('reports.tabs.runReport.timeframe.last7Days'),
+  i18n.global.t('reports.tabs.runReport.timeframe.last30Days'),
+  i18n.global.t('reports.tabs.runReport.timeframe.custom'),
 ];
 const timeframeOptionsValue = ref('');
 const dateMap = {
-  [i18n.t('reports.tabs.runReport.timeframe.today')]: 'Today',
-  [i18n.t('reports.tabs.runReport.timeframe.yesterday')]: 'Yesterday',
-  [i18n.t('reports.tabs.runReport.timeframe.last7Days')]: 'Last 7 Days',
-  [i18n.t('reports.tabs.runReport.timeframe.last30Days')]: 'Last 30 Days',
+  [i18n.global.t('reports.tabs.runReport.timeframe.today')]: 'Today',
+  [i18n.global.t('reports.tabs.runReport.timeframe.yesterday')]: 'Yesterday',
+  [i18n.global.t('reports.tabs.runReport.timeframe.last7Days')]: 'Last 7 Days',
+  [i18n.global.t('reports.tabs.runReport.timeframe.last30Days')]: 'Last 30 Days',
 };
 const startDateCustomValue = ref('');
 const endDateCustomValue = ref('');
@@ -72,8 +74,8 @@ const endDateCustomValue = ref('');
 /**
  * Computed
  */
-const showCustomTimeframe = computed(() => timeframeOptionsValue.value === i18n.t('reports.tabs.runReport.timeframe.custom'));
-const timeframeSelection = computed(() => timeframeOptionsValue.value || i18n.t('reports.tabs.runReport.timeframe.last7Days'));
+const showCustomTimeframe = computed(() => timeframeOptionsValue.value === i18n.global.t('reports.tabs.runReport.timeframe.custom'));
+const timeframeSelection = computed(() => timeframeOptionsValue.value || i18n.global.t('reports.tabs.runReport.timeframe.last7Days'));
 const timeframeComputedValue = computed(() => {
   const validDateMap = dateMap[timeframeSelection.value];
   const customStartValue = startDateCustomValue.value;

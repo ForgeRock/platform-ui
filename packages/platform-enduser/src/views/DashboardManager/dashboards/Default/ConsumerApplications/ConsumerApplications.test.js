@@ -5,20 +5,17 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import i18n from '@/i18n';
 import ConsumerApplications from './index';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 describe('ConsumerApplications', () => {
   it('Consumer Applications widget loaded', () => {
     const wrapper = shallowMount(ConsumerApplications, {
-      localVue,
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         applicationDetails: {
           dashboardDisplayName: ['Google'],
           dashboardLogin: ['https://www.google.com'],

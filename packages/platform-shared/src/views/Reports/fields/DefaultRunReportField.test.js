@@ -15,8 +15,10 @@ const fieldOptions = ['my-field-option'];
 describe('Default field for running reports', () => {
   function setup(props) {
     return mount(DefaultRunReportField, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         fieldOptions,
         name: 'my-basic-field',
         ...props,
@@ -33,7 +35,7 @@ describe('Default field for running reports', () => {
       const myField = findByTestId(wrapper, 'fr-field-my-basic-field');
       await myField.trigger('click');
 
-      const firstFieldOption = myField.findAll('li').at(0).find('span');
+      const firstFieldOption = myField.findAll('li')[0].find('span');
       await firstFieldOption.trigger('click');
 
       expect(wrapper.emitted('field-value-update')).toEqual([[[fieldOptions[0]]]]);

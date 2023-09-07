@@ -82,7 +82,7 @@ describe('breadcrumb composable', () => {
       expect(returnRoute.value).toBe('/test/route');
       expect(returnRouteText.value).toBe('Test Route');
 
-      wrapper.destroy();
+      wrapper.unmount();
 
       expect(returnRoute.value).toBe('');
       expect(returnRouteText.value).toBe('');
@@ -108,7 +108,7 @@ describe('breadcrumb composable', () => {
       expect(returnRoute.value).toBe('/test/route');
       expect(returnRouteText.value).toBe('Test Route');
 
-      wrapper.destroy();
+      wrapper.unmount();
 
       expect(returnRoute.value).toBe('/test/route');
       expect(returnRouteText.value).toBe('Test Route');

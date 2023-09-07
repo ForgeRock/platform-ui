@@ -11,7 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
         :type="type"
         :is="innerComponent">
         <template
-          v-for="(key, slotName) in $scopedSlots"
+          v-for="(key, slotName) in $slots"
           #[slotName]="slotData">
           <slot
             :name="slotName"
@@ -34,7 +34,7 @@ of the MIT license. See the LICENSE file for details. -->
           :type="type"
           :is="innerComponent">
           <template
-            v-for="(key, slotName) in $scopedSlots"
+            v-for="(key, slotName) in $slots"
             #[slotName]="slotData">
             <slot
               :name="slotName"

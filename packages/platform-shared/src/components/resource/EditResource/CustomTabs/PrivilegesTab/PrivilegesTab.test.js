@@ -6,6 +6,9 @@
  */
 
 import { shallowMount } from '@vue/test-utils';
+import Notifications from '@kyvg/vue3-notification';
+import { BModal } from 'bootstrap-vue';
+import { Form } from 'vee-validate';
 import { setupTestPinia } from '../../../../../utils/testPiniaHelpers';
 import PrivilegesTab from './index';
 import * as SchemaApi from '@/api/SchemaApi';
@@ -15,17 +18,22 @@ describe('PrivilegesTab', () => {
   beforeEach(() => {
     setupTestPinia({ user: { idmRoles: ['openidm-admin'] } });
     wrapper = shallowMount(PrivilegesTab, {
-      mocks: {
-        $t: () => {},
-        $store: {
-          state: {
-            SharedStore: {
-              workforceEnabled: false,
+      global: {
+        mocks: {
+          $t: () => {},
+          $store: {
+            state: {
+              SharedStore: {
+                workforceEnabled: false,
+              },
             },
           },
         },
+        plugins: [Notifications],
+        stubs: { BModal, Form },
+        renderStubDefaultSlot: true,
       },
-      propsData: {
+      props: {
         privilegesField: {
           value: [{
             name: 'testValue',
@@ -118,20 +126,6 @@ describe('PrivilegesTab', () => {
         name: 'testNewName',
       }],
     });
-
-    wrapper.vm.$refs = {
-      addPrivilegesModal: {
-        hide: () => {},
-      },
-      editPrivilegeModal: {
-        hide: () => {},
-        show: () => {},
-      },
-      removePrivilege: {
-        hide: () => {},
-        show: () => {},
-      },
-    };
   });
 
   it('updates privilege', () => {

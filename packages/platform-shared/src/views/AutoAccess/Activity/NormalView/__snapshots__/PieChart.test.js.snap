@@ -1,0 +1,363 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PieChart @renders should render the component: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) Functional component <BCol> should be defined as a plain function in Vue 3. The "functional" option has been removed. NOTE: Before migrating to use plain functions for functional components, first make sure that all async components usage have been migrated and its compat behavior has been disabled.
+  Details: https://v3-migration.vuejs.org/breaking-changes/functional-components.html",
+    "
+",
+    " at <DonutChart",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (2)",
+    "
+",
+    " at <BCol",
+    "lg=4",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <BCol",
+    "sm="12"",
+    "lg=12",
+    "class="mb-sm-5"",
+    ">",
+    "
+",
+    " at <DonutChart",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) vm.$listeners has been removed. In Vue 3, parent v-on listeners are included in vm.$attrs and it is no longer necessary to separately use v-on="$listeners" if you are already using v-bind="$attrs". (Note: the Vue 3 behavior only applies if this compat config is disabled)
+  Details: https://v3-migration.vuejs.org/breaking-changes/listeners-removed.html",
+    "
+",
+    " at <BSkeleton",
+    "type="avatar"",
+    "class="fr-skeleton-donutchart"",
+    "animation="fade"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "lg=4",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <BCol",
+    "sm="12"",
+    "lg=12",
+    "class="mb-sm-5"",
+    ">",
+    "
+",
+    " at <DonutChart",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (2)",
+    "
+",
+    " at <BSkeletonTable",
+    "key=0",
+    "class="skeleton-table"",
+    "responsive=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "lg=8",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <BCol",
+    "sm="12"",
+    "lg=12",
+    "class="mb-sm-5"",
+    ">",
+    "
+",
+    " at <DonutChart",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (3)",
+    "
+",
+    " at <BSkeletonTable",
+    "key=0",
+    "class="skeleton-table"",
+    "responsive=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "lg=8",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <BCol",
+    "sm="12"",
+    "lg=12",
+    "class="mb-sm-5"",
+    ">",
+    "
+",
+    " at <DonutChart",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) (2)",
+    "
+",
+    " at <BSkeletonTable",
+    "key=0",
+    "class="skeleton-table"",
+    "responsive=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "lg=8",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <BCol",
+    "sm="12"",
+    "lg=12",
+    "class="mb-sm-5"",
+    ">",
+    "
+",
+    " at <DonutChart",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (2)",
+    "
+",
+    " at <BTableSimple",
+    "key=0",
+    "class="skeleton-table"",
+    "responsive=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BSkeletonTable",
+    "key=0",
+    "class="skeleton-table"",
+    "responsive=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "lg=8",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <BCol",
+    "sm="12"",
+    "lg=12",
+    "class="mb-sm-5"",
+    ">",
+    "
+",
+    " at <DonutChart",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) vm.$scopedSlots has been removed. Use vm.$slots instead.
+  Details: https://v3-migration.vuejs.org/breaking-changes/slots-unification.html",
+    "
+",
+    " at <BTableSimple",
+    "key=0",
+    "class="skeleton-table"",
+    "responsive=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BSkeletonTable",
+    "key=0",
+    "class="skeleton-table"",
+    "responsive=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "lg=8",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <BCol",
+    "sm="12"",
+    "lg=12",
+    "class="mb-sm-5"",
+    ">",
+    "
+",
+    " at <DonutChart",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_ATTRS_CLASS_STYLE) Component <BTableSimple> has \`inheritAttrs: false\` but is relying on class/style fallthrough from parent. In Vue 3, class/style are now included in $attrs and will no longer fallthrough when inheritAttrs is false. If you are already using v-bind="$attrs" on component root it should render the same end result. If you are binding $attrs to a non-root element and expecting class/style to fallthrough on root, you will need to now manually bind them on root via :class="$attrs.class".
+  Details: https://v3-migration.vuejs.org/breaking-changes/attrs-includes-class-style.html",
+    "
+",
+    " at <BTableSimple",
+    "key=0",
+    "class="skeleton-table"",
+    "responsive=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BSkeletonTable",
+    "key=0",
+    "class="skeleton-table"",
+    "responsive=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "lg=8",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <BCol",
+    "sm="12"",
+    "lg=12",
+    "class="mb-sm-5"",
+    ">",
+    "
+",
+    " at <DonutChart",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: Failed setting prop "rows" on <table>: value 5 is invalid.",
+    [TypeError: Cannot set property rows of [object HTMLTableElement] which has only a getter],
+    "
+",
+    " at <BTableSimple",
+    "key=0",
+    "class="skeleton-table"",
+    "responsive=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BSkeletonTable",
+    "key=0",
+    "class="skeleton-table"",
+    "responsive=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "lg=8",
+    ">",
+    "
+",
+    " at <BRow>",
+    "
+",
+    " at <BCol",
+    "sm="12"",
+    "lg=12",
+    "class="mb-sm-5"",
+    ">",
+    "
+",
+    " at <DonutChart",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;

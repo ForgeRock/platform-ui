@@ -5,10 +5,10 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { mount } from '@vue/test-utils';
-import flushPromises from 'flush-promises';
-import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { mount, flushPromises } from '@vue/test-utils';
+import { findByTestId, findComponentByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
+import Notifications from '@kyvg/vue3-notification';
 import DirectReports from './index';
 import * as DirectoryApi from '@/api/governance/DirectoryApi';
 
@@ -64,9 +64,12 @@ describe('DirectReports Component', () => {
     setupTestPinia({ user: { userId: 'testId' } });
 
     wrapper = mount(DirectReports, {
-      mocks: {
-        $t: (t) => t,
-        $router: mockRouter,
+      global: {
+        plugins: [Notifications],
+        mocks: {
+          $t: (t) => t,
+          $router: mockRouter,
+        },
       },
     });
   });
@@ -92,7 +95,7 @@ describe('DirectReports Component', () => {
   it('clearing the search input resets the query params', async () => {
     const clearSpy = jest.spyOn(wrapper.vm, 'clear');
     const loadSpy = jest.spyOn(wrapper.vm, 'loadData');
-    const searchDelegate = findByTestId(wrapper, 'search-directreports');
+    const searchDelegate = findComponentByTestId(wrapper, 'search-directreports');
     await searchDelegate.vm.$emit('input', 'test');
     await searchDelegate.vm.$emit('clear');
 
@@ -205,8 +208,8 @@ describe('DirectReports Component', () => {
     });
     const directReportsTable = findByTestId(wrapper, 'table-directreports');
     expect(directReportsTable.exists()).toBeTruthy();
-    expect(directReportsTable.findAll('tr').at(1).text()).toContain(mockResultItems[0].userName);
-    directReportsTable.findAll('tr').at(1).trigger('click');
+    expect(directReportsTable.findAll('tr')[1].text()).toContain(mockResultItems[0].userName);
+    directReportsTable.findAll('tr')[1].trigger('click');
     await wrapper.vm.$nextTick();
     expect(mockRouter.push).toHaveBeenCalledWith({
       name: 'DirectReportDetail',

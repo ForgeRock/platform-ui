@@ -29,8 +29,10 @@ describe('ConfirmationCallback', () => {
 
   function setup(props) {
     return mount(ConfirmationCallback, {
-      i18n,
-      propsData: {
+      global: {
+        plugins: [i18n],
+      },
+      props: {
         ...defaultProps,
         ...props,
       },

@@ -5,17 +5,14 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { nextTick } from 'vue';
+import { shallowMount } from '@vue/test-utils';
 import i18n from '@/i18n';
 import Unshare from '@/components/uma/Unshare';
 
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
-
 describe('Unshare.vue', () => {
   let wrapper;
-  const propsData = {
+  const props = {
     resource: {
       _id: '12345',
       name: 'test resource',
@@ -34,22 +31,23 @@ describe('Unshare.vue', () => {
 
   beforeEach(() => {
     wrapper = shallowMount(Unshare, {
-      localVue,
-      i18n,
-      propsData,
+      global: {
+        plugins: [i18n],
+      },
+      props,
     });
   });
 
   afterEach(() => {
-    wrapper.destroy();
+    wrapper.unmount();
   });
 
-  it('Emits "unshareResource" event', () => {
+  it('Emits "unshareResource" event', async () => {
     wrapper.vm.$refs.fsModal.hide = jest.fn();
     wrapper.vm.unshare('12345');
 
-    localVue.nextTick(() => {
-      expect(wrapper.emitted('unshareResource').length).toBe(1);
-    });
+    await nextTick();
+
+    expect(wrapper.emitted('unshareResource').length).toBe(1);
   });
 });

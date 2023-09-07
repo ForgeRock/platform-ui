@@ -5,27 +5,24 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { BootstrapVue } from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import AddPrivileges from './index';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 describe('AddPrivileges.vue', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = shallowMount(AddPrivileges, {
-      localVue,
-      mocks: {
-        $t: (key) => key,
-        $store: {
-          state: {
-            realm: 'test',
+      global: {
+        mocks: {
+          $t: (key) => key,
+          $store: {
+            state: {
+              realm: 'test',
+            },
           },
         },
       },
-      propsData: {
+      props: {
         schemaMap: {
           schema1: {
             title: 'schema1Title',
@@ -36,7 +33,7 @@ describe('AddPrivileges.vue', () => {
     });
   });
   afterEach(() => {
-    wrapper.destroy();
+    wrapper.unmount();
   });
 
   it('adds new privilege', () => {

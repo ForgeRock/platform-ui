@@ -33,8 +33,8 @@ of the MIT license. See the LICENSE file for details. -->
         {{ $t('common.noResult') }}
       </template>
       <template
-        v-for="(key, slotName) in $scopedSlots"
-        v-slot:[slotName]="slotData">
+        v-for="(key, slotName) in $slots"
+        #[slotName]="slotData">
         <!-- @slot passthrough slot -->
         <slot
           :name="slotName"
@@ -42,8 +42,8 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
     </VueMultiSelect>
     <template
-      v-for="(key, slotName) in $scopedSlots"
-      v-slot:[slotName]="slotData">
+      v-for="(key, slotName) in $slots"
+      #[slotName]="slotData">
       <!-- @slot passthrough slot -->
       <slot
         :name="slotName"
@@ -62,6 +62,7 @@ import {
 import VueMultiSelect from '../../../../../../../../node_modules/vue-multiselect/src/index';
 import InputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
+import i18n from '@/i18n';
 
 /**
  *  Single select input. Allows selection of one element in a dropdown
@@ -76,7 +77,7 @@ import InputMixin from '../Wrapper/InputMixin';
  *  @prop {Array|Object|Number|String} value default ''
  */
 export default {
-  name: 'Select',
+  name: 'FrSelect',
   mixins: [InputMixin],
   components: {
     FrInputLayout: InputLayout,
@@ -111,7 +112,7 @@ export default {
     placeholder: {
       type: String,
       default() {
-        return this.$t('common.typeToSearch');
+        return i18n.global.t('common.typeToSearch');
       },
       required: false,
     },
@@ -196,12 +197,12 @@ export default {
 <style lang="scss" scoped>
 @import '~@forgerock/platform-shared/src/components/Field/assets/vue-multiselect.scss';
 
-::v-deep .multiselect:focus-within {
+:deep(.multiselect:focus-within) {
   border-color: $blue;
   box-shadow: 0 0 0 0.0625rem $blue;
 }
 
-::v-deep .multiselect .multiselect__input {
+:deep(.multiselect .multiselect__input) {
   font-size: 0.9375rem;
   margin-top: 0;
   margin-bottom: 0;
@@ -209,11 +210,11 @@ export default {
   padding-top: 0.25rem !important;
 }
 
-::v-deep .multiselect .multiselect__tags {
+:deep(.multiselect .multiselect__tags) {
   font-size: 0.9375rem;
 }
 
-::v-deep .multiselect .multiselect__single {
+:deep(.multiselect .multiselect__single) {
   margin-bottom: 0;
   font-size: 0.9375rem;
 }

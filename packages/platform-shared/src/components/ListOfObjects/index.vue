@@ -108,32 +108,25 @@ of the MIT license. See the LICENSE file for details. -->
         </div>
       </div>
     </div>
-    <ValidationProvider
-      v-slot="{ errors }"
-      mode="aggressive"
-      :bails="false"
-      :immediate="validationImmediate"
-      :name="label"
-      :ref="label"
-      :rules="validation"
-      :vid="label">
-      <FrValidationError
-        class="error-messages"
-        :validator-errors="[...errors]"
-        :field-name="label" />
-    </ValidationProvider>
+
+    <FrValidationError
+      class="error-messages"
+      :validator-errors="[...errors]"
+      :field-name="label" />
   </div>
 </template>
 
 <script>
 import { cloneDeep } from 'lodash';
 import { BFormCheckbox } from 'bootstrap-vue';
-import { ValidationProvider } from 'vee-validate';
+import { useField } from 'vee-validate';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrInlineJsonEditor from '@forgerock/platform-shared/src/components/InlineJsonEditor';
 import FrValidationError from '@forgerock/platform-shared/src/components/ValidationErrorList';
 import ListsMixin from '@forgerock/platform-shared/src/mixins/ListsMixin';
+import { toRef } from 'vue';
+import uuid from 'uuid/v4';
 
 /**
  * @description Component that provides support for list of objects
@@ -149,7 +142,6 @@ export default {
     FrIcon,
     FrInlineJsonEditor,
     FrValidationError,
-    ValidationProvider,
   },
   mixins: [
     ListsMixin,
@@ -194,9 +186,16 @@ export default {
       default: '',
     },
   },
+  setup(props) {
+    const name = props.label || uuid();
+    const {
+      value: listValues, errors, setErrors,
+    } = useField(() => name, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: [], bails: false });
+
+    return { listValues, errors, setErrors };
+  },
   data() {
     return {
-      listValues: [],
       listUniqueIndex: 0,
     };
   },
@@ -241,14 +240,16 @@ export default {
       this.emitInput(this.listValues);
     },
     emitInput(value) {
-      const emitValue = this.checkEmptyValues(value);
-      this.validateField();
+      this.$nextTick(() => {
+        const emitValue = this.checkEmptyValues(value);
+        this.validateField();
 
-      if (emitValue.length === 0) {
-        this.$emit('input', this.multiValued ? [] : {});
-      } else {
-        this.$emit('input', this.multiValued ? emitValue : emitValue[0]);
-      }
+        if (emitValue.length === 0) {
+          this.$emit('input', this.multiValued ? [] : {});
+        } else {
+          this.$emit('input', this.multiValued ? emitValue : emitValue[0]);
+        }
+      });
     },
     /**
      * Check if all the values in our object are empty or null
@@ -300,7 +301,7 @@ export default {
       this.emitInput(this.listValues);
     },
     validateField() {
-      this.$refs[this.label].setErrors(this.requiredAndEmpty ? [this.$t('common.policyValidationMessages.REQUIRED')] : '');
+      this.setErrors(this.requiredAndEmpty ? [this.$t('common.policyValidationMessages.REQUIRED')] : '');
     },
   },
 };

@@ -13,7 +13,7 @@ of the MIT license. See the LICENSE file for details. -->
       v-else-if="label"
       :for="`${id}-date`"
       class="pe-none overflow-hidden text-nowrap">
-      {{ getTranslation(label) }}
+      {{ labelTranslation }}
     </label>
     <BRow class="form-row">
       <BCol>
@@ -21,7 +21,7 @@ of the MIT license. See the LICENSE file for details. -->
           :value="dateValue"
           @input="dateValue = $event; emitDateTimeValue()"
           ref="dateInput"
-          :aria-label="getTranslation(label)"
+          :aria-label="labelTranslation"
           :class="{'is-invalid': errorMessages && errorMessages.length }"
           :disabled="disabled"
           :dropleft="dropleft"
@@ -29,7 +29,7 @@ of the MIT license. See the LICENSE file for details. -->
           :description="description"
           :errors="errors"
           :is-html="isHtml"
-          :name="name"
+          :name="`${name}-date`"
           :validation="validation"
           :validation-immediate="validationImmediate" />
       </BCol>
@@ -39,12 +39,12 @@ of the MIT license. See the LICENSE file for details. -->
           @input="timeValue = $event; emitDateTimeValue()"
           ref="timeInput"
           :adjust-for-timezone="adjustForTimezone"
-          :aria-label="getTranslation(label)"
+          :aria-label="labelTranslation"
           :class="{'is-invalid': errorMessages && errorMessages.length }"
           :dropleft="dropleft"
           :disabled="disabled"
           :id="`${id}-time`"
-          :name="name"
+          :name="`${name}-time`"
           :show-seconds="showSeconds"
           :validation-immediate="validationImmediate"
           @utc-input="emitDateTimeValue" />
@@ -150,6 +150,11 @@ export default {
           this.dateValue = dayjs(newVal).format('YYYY-MM-DD');
         }
       }
+    },
+  },
+  computed: {
+    labelTranslation() {
+      return this.getTranslation(this.label);
     },
   },
 };

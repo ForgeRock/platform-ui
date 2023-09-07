@@ -1,0 +1,403 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DeleteModal with custom message: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (2)",
+    "
+",
+    " at <DeleteModal",
+    "isTesting=true",
+    "customMessage="stub custom message"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (2)",
+    "
+",
+    " at <BModal",
+    "id="deleteModal"",
+    "ref="deleteModal"",
+    "static=true",
+    " ...",
+    ">",
+    "
+",
+    " at <DeleteModal",
+    "isTesting=true",
+    "customMessage="stub custom message"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) \`beforeDestroy\` has been renamed to \`beforeUnmount\`.",
+    "
+",
+    " at <BModal",
+    "id="deleteModal"",
+    "ref="deleteModal"",
+    "static=true",
+    " ...",
+    ">",
+    "
+",
+    " at <DeleteModal",
+    "isTesting=true",
+    "customMessage="stub custom message"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) vm.$scopedSlots has been removed. Use vm.$slots instead.
+  Details: https://v3-migration.vuejs.org/breaking-changes/slots-unification.html",
+    "
+",
+    " at <BModal",
+    "id="deleteModal"",
+    "ref="deleteModal"",
+    "static=true",
+    " ...",
+    ">",
+    "
+",
+    " at <DeleteModal",
+    "isTesting=true",
+    "customMessage="stub custom message"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (3)",
+    "
+",
+    " at <BModal",
+    "id="deleteModal"",
+    "ref="deleteModal"",
+    "static=true",
+    " ...",
+    ">",
+    "
+",
+    " at <DeleteModal",
+    "isTesting=true",
+    "customMessage="stub custom message"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) Functional component <BButtonClose> should be defined as a plain function in Vue 3. The "functional" option has been removed. NOTE: Before migrating to use plain functions for functional components, first make sure that all async components usage have been migrated and its compat behavior has been disabled.
+  Details: https://v3-migration.vuejs.org/breaking-changes/functional-components.html",
+    "
+",
+    " at <BModal",
+    "id="deleteModal"",
+    "ref="deleteModal"",
+    "static=true",
+    " ...",
+    ">",
+    "
+",
+    " at <DeleteModal",
+    "isTesting=true",
+    "customMessage="stub custom message"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) (2)",
+    "
+",
+    " at <BModal",
+    "id="deleteModal"",
+    "ref="deleteModal"",
+    "static=true",
+    " ...",
+    ">",
+    "
+",
+    " at <DeleteModal",
+    "isTesting=true",
+    "customMessage="stub custom message"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) vm.$listeners has been removed. In Vue 3, parent v-on listeners are included in vm.$attrs and it is no longer necessary to separately use v-on="$listeners" if you are already using v-bind="$attrs". (Note: the Vue 3 behavior only applies if this compat config is disabled)
+  Details: https://v3-migration.vuejs.org/breaking-changes/listeners-removed.html",
+    "
+",
+    " at <BButtonClose",
+    "onClick=fn<bound onClose>",
+    "ref="close-button"",
+    "content="&times;"",
+    " ...",
+    ">",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "id="deleteModal"",
+    "ref="deleteModal"",
+    "static=true",
+    " ...",
+    ">",
+    "
+",
+    " at <DeleteModal",
+    "isTesting=true",
+    "customMessage="stub custom message"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (2)",
+    "
+",
+    " at <BButton",
+    "variant="link"",
+    "class="text-danger"",
+    "data-testid="btn-cancel-"",
+    " ...",
+    ">",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "id="deleteModal"",
+    "ref="deleteModal"",
+    "static=true",
+    " ...",
+    ">",
+    "
+",
+    " at <DeleteModal",
+    "isTesting=true",
+    "customMessage="stub custom message"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (4)",
+    "
+",
+    " at <ButtonWithSpinner",
+    "button-text="Delete"",
+    "disabled=false",
+    "show-spinner=false",
+    " ...",
+    ">",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "id="deleteModal"",
+    "ref="deleteModal"",
+    "static=true",
+    " ...",
+    ">",
+    "
+",
+    " at <DeleteModal",
+    "isTesting=true",
+    "customMessage="stub custom message"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) (3)",
+    "
+",
+    " at <ButtonWithSpinner",
+    "button-text="Delete"",
+    "disabled=false",
+    "show-spinner=false",
+    " ...",
+    ">",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "id="deleteModal"",
+    "ref="deleteModal"",
+    "static=true",
+    " ...",
+    ">",
+    "
+",
+    " at <DeleteModal",
+    "isTesting=true",
+    "customMessage="stub custom message"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "appear" with v-bind value \`false\` will render appear="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "id="deleteModal"",
+    "ref="deleteModal"",
+    "static=true",
+    " ...",
+    ">",
+    "
+",
+    " at <DeleteModal",
+    "isTesting=true",
+    "customMessage="stub custom message"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "persisted" with v-bind value \`false\` will render persisted="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <Transition",
+    "onBeforeEnter=fn<bound onBeforeEnter>",
+    "onEnter=fn<bound onEnter>",
+    "onAfterEnter=fn<bound onAfterEnter>",
+    " ...",
+    ">",
+    "
+",
+    " at <BModal",
+    "id="deleteModal"",
+    "ref="deleteModal"",
+    "static=true",
+    " ...",
+    ">",
+    "
+",
+    " at <DeleteModal",
+    "isTesting=true",
+    "customMessage="stub custom message"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (3)",
+    "
+",
+    " at <BVTransition",
+    "noFade=false",
+    ">",
+    "
+",
+    " at <BModal",
+    "id="deleteModal"",
+    "ref="deleteModal"",
+    "static=true",
+    " ...",
+    ">",
+    "
+",
+    " at <DeleteModal",
+    "isTesting=true",
+    "customMessage="stub custom message"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_EVENT_EMITTER) vm.$on/$once/$off() have been removed. Use an external event emitter library instead.
+  Details: https://v3-migration.vuejs.org/breaking-changes/events-api.html",
+  ],
+]
+`;

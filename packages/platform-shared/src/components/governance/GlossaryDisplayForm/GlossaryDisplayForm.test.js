@@ -13,7 +13,7 @@ describe('GlossaryDisplayForm', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = mount(GlossaryDisplayForm, {
-      propsData: {
+      props: {
         glossarySchema: [
           {
             name: 'test1',

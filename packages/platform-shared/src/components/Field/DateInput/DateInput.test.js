@@ -5,12 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import DateInput from './index';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 const defaultMixinProps = {
   id: '',
@@ -31,14 +27,15 @@ const defaultProps = {
 describe('DateInput', () => {
   it('builds a formatted date', () => {
     const wrapper = shallowMount(DateInput, {
-      localVue,
-      propsData: {
+      props: {
         ...defaultMixinProps,
         ...defaultProps,
         label: 'test',
       },
-      mocks: {
-        $t: (text) => (text),
+      global: {
+        mocks: {
+          $t: (text) => (text),
+        },
       },
     });
 

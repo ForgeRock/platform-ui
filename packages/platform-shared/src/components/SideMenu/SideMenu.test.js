@@ -12,10 +12,12 @@ describe('SideMenu Component', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = shallowMount(SideMenu, {
-      mocks: {
-        $t: () => {},
+      global: {
+        mocks: {
+          $t: () => {},
+        },
       },
-      propsData: {
+      props: {
       },
     });
   });

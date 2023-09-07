@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -112,7 +112,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep input[placeholder] { text-overflow: ellipsis; }
+:deep(input[placeholder]) { text-overflow: ellipsis; }
 input[placeholder] { text-overflow: ellipsis; }
 
 .form-label-group {

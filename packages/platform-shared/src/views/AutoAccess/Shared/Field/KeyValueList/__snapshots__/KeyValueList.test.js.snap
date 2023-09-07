@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`KeyValueList Edits existing key when key is changed: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation INSTANCE_DELETE) vm.$delete() has been removed as it is no longer needed in Vue 3. Simply use native JavaScript mutations.",
+  ],
+]
+`;
+
+exports[`KeyValueList Hides the text indicating it is empty when adding a first value: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) v-model usage on component has changed in Vue 3. Component that expects to work with v-model should now use the "modelValue" prop and emit the "update:modelValue" event. You can update the usage and then opt-in to Vue 3 behavior on a per-component basis with \`compatConfig: { COMPONENT_V_MODEL: false }\`.
+  Details: https://v3-migration.vuejs.org/breaking-changes/v-model.html",
+    "
+",
+    " at <FrKeyValuePanel",
+    "key=2",
+    "validation-rules=",
+    {
+      "required": true,
+      "unique": [],
+    },
+    "autofocus=true",
+    " ...",
+    ">",
+  ],
+]
+`;
+
+exports[`KeyValueList Saves new key value pair: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
+
+  configureCompat({ RENDER_FUNCTION: false })
+
+  (This can also be done per-component via the "compatConfig" option.)
+  Details: https://v3-migration.vuejs.org/breaking-changes/render-function-api.html",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;

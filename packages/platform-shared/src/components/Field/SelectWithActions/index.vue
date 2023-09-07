@@ -24,10 +24,11 @@ of the MIT license. See the LICENSE file for details. -->
           @mousedown.stop
           @click.stop="$emit('edit-item-clicked', option.value)"
           v-if="showEdit(option)"
-          :aria-label="editLabel"
-          :title="editLabel"
+          :aria-label="editLabelOrFallback"
+          :title="editLabelOrFallback"
           size="sm"
-          variant="light">
+          variant="light"
+          data-testid="labelEditItemButton">
           <FrIcon
             outlined
             name="edit" />
@@ -36,8 +37,10 @@ of the MIT license. See the LICENSE file for details. -->
     </template>
     <template #beforeList>
       <div class="row-before-list cursor-default d-flex align-items-center justify-content-between pl-3 py-2">
-        <h5 class="mb-0">
-          {{ addRowText }}
+        <h5
+          class="mb-0"
+          data-testid="beforeListText">
+          {{ addRowTextOrFallback }}
         </h5>
         <!--
           Triggered on click, indicates user would like to add an item to the select list
@@ -45,10 +48,11 @@ of the MIT license. See the LICENSE file for details. -->
         -->
         <BButton
           @click="$emit('add-item-clicked')"
-          :aria-label="addLabel"
-          :title="addLabel"
+          :aria-label="addLabelOrFallback"
+          :title="addLabelOrFallback"
           size="sm"
-          variant="light">
+          variant="light"
+          data-testid="beforeListAddButton">
           <FrIcon
             outlined
             name="add" />
@@ -72,10 +76,11 @@ of the MIT license. See the LICENSE file for details. -->
           @mouseup.stop
           @click.stop="$emit('edit-item-clicked', option.value)"
           v-if="option.value !== '[Empty]'"
-          :aria-label="editLabel"
-          :title="editLabel"
+          :aria-label="editLabelOrFallback"
+          :title="editLabelOrFallback"
           size="sm"
-          variant="light">
+          variant="light"
+          data-testid="editItemButton">
           <FrIcon
             outlined
             name="edit" />
@@ -83,7 +88,7 @@ of the MIT license. See the LICENSE file for details. -->
       </div>
     </template>
     <template
-      v-for="(key, slotName) in $scopedSlots"
+      v-for="(key, slotName) in $slots"
       #[slotName]="slotData">
       <slot
         :name="slotName"
@@ -114,9 +119,7 @@ export default {
      */
     addRowText: {
       type: String,
-      default() {
-        return this.$t('common.add');
-      },
+      default: '',
       required: false,
     },
     /**
@@ -124,9 +127,7 @@ export default {
      */
     addLabel: {
       type: String,
-      default() {
-        return this.$t('common.add');
-      },
+      default: '',
       required: false,
     },
     /**
@@ -134,9 +135,7 @@ export default {
      */
     editLabel: {
       type: String,
-      default() {
-        return this.$t('common.edit');
-      },
+      default: '',
       required: false,
     },
     /**
@@ -152,6 +151,17 @@ export default {
       return this.showCollapsedEdit && option.value !== '[Empty]';
     },
   },
+  computed: {
+    addRowTextOrFallback() {
+      return this.addRowText || this.$t('common.add');
+    },
+    addLabelOrFallback() {
+      return this.addLabel || this.$t('common.add');
+    },
+    editLabelOrFallback() {
+      return this.editLabel || this.$t('common.edit');
+    },
+  },
 };
 </script>
 
@@ -160,7 +170,7 @@ export default {
   cursor: default;
 }
 
-::v-deep .multiselect__tags > span.multiselect__single {
+:deep(.multiselect__tags > span.multiselect__single) {
   margin-top: 0;
 }
 

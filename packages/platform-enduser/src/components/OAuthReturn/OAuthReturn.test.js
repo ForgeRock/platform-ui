@@ -5,11 +5,9 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import i18n from '@/i18n';
 import OAuthReturn from '@/components/OAuthReturn';
-
-const localVue = createLocalVue();
 
 describe('OAuthReturn.vue', () => {
   beforeEach(() => {
@@ -17,11 +15,9 @@ describe('OAuthReturn.vue', () => {
   });
 
   it('OAuth Return loaded', () => {
-    const wrapper = shallowMount(OAuthReturn, {
-      localVue,
-      i18n,
-      stubs: {
-        BContainer: true,
+    const wrapper = mount(OAuthReturn, {
+      global: {
+        plugins: [i18n],
       },
     });
 

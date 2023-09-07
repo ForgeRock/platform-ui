@@ -13,19 +13,13 @@ import {
   debounce,
 } from 'lodash';
 import axios from 'axios';
-import BootstrapVue from 'bootstrap-vue/dist/bootstrap-vue.esm.min';
-import Notifications from 'vue-notification';
+import Notifications from '@kyvg/vue3-notification';
 import PromisePoly from 'es6-promise';
-import {
-  setInteractionMode,
-  ValidationObserver,
-  ValidationProvider,
-} from 'vee-validate';
-import Vue from 'vue';
+import { createApp } from 'vue';
 import AppAuthHelper from 'appauthhelper-enduser/appAuthHelperCompat';
 import SessionCheck from 'oidcsessioncheck-enduser';
-import VueSanitize from 'vue-sanitize';
-import { createPinia, PiniaVuePlugin } from 'pinia';
+import Vue3Sanitize from 'vue-3-sanitize';
+import { createPinia } from 'pinia';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
@@ -36,24 +30,14 @@ import parseSub from '@forgerock/platform-shared/src/utils/OIDC';
 import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 import { sanitizeUrl } from '@braintree/sanitize-url';
 import { baseSanitizerConfig } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
+import velocity from 'velocity-animate';
+import BootstrapVue from 'bootstrap-vue';
 import store from '@/store';
 import router from './router';
 import i18n from './i18n';
 import App from './App';
 
-// Turn off production warning messages
-Vue.config.productionTip = false;
-
-// Register validation components for global use
-Vue.component('ValidationProvider', ValidationProvider);
-Vue.component('ValidationObserver', ValidationObserver);
-
-Vue.use(VueSanitize, baseSanitizerConfig);
-
-Vue.use(PiniaVuePlugin);
 const pinia = createPinia();
-
-setInteractionMode('passive');
 
 PromisePoly.polyfill();
 
@@ -91,11 +75,9 @@ router.beforeEach((to, from, next) => {
 
         axios.all([
           authInstance.get(`${userDetails.data.authorization.component}/${userDetails.data.authorization.id}`),
-          authInstance.post('privilege?_action=listPrivileges'),
-          getSchema(userDetails.data.authorization.component, { baseURL: idmContext })]).then(axios.spread((profile, privilege, schema) => {
+          getSchema(userDetails.data.authorization.component, { baseURL: idmContext })]).then(axios.spread((profile, schema) => {
           enduserStore.setProfile(profile.data);
           enduserStore.managedResourceSchema = schema.data;
-          enduserStore.access = privilege.data;
 
           next();
         }));
@@ -118,38 +100,16 @@ router.beforeEach((to, from, next) => {
   }
 });
 
-// Globally load bootstrap vue components for use
-Vue.use(BootstrapVue);
-
-/*
-  Basic Notification Example:
-  this.$notify({
-      group: 'IDMMessages', // Currently the only group
-      type: 'success', // Available types success, failure, info, warning
-      title: this.$t('common.messages.saveSuccess'), //Translated string
-      text: this.$t('pages.resources.mappingSave') // Translated string (can also be html)
-  });
- */
-Vue.use(Notifications);
-
-// required to use PascalCase `RouterView` and `RouterLink` instead of `router-view` and `router-link`
-const RouterView = Vue.component('router-view');
-const RouterLink = Vue.component('router-link');
-
-Vue.component('RouterView', RouterView);
-Vue.component('RouterLink', RouterLink);
-
 const loadApp = () => {
-  /* eslint-disable no-new */
-  new Vue({
-    el: '#app',
-    router,
-    store,
-    i18n,
-    pinia,
-    template: '<App/>',
-    components: { App },
-  });
+  const app = createApp(App);
+  app.use(BootstrapVue);
+  app.use(router);
+  app.use(store);
+  app.use(i18n);
+  app.use(pinia);
+  app.use(Notifications, { velocity });
+  app.use(Vue3Sanitize, baseSanitizerConfig);
+  router.isReady().then(() => app.mount('#appRoot'));
 };
 /*
     We will load the application regardless

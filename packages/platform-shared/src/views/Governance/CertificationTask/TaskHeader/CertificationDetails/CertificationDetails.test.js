@@ -13,16 +13,19 @@ let wrapper;
 
 function mountComponent(options, certifier) {
   wrapper = shallowMount(CertificationDetails, {
-    mocks: {
-      $t: (t) => t,
-      $route: {
-        params: {
-          certifier,
+    global: {
+      mocks: {
+        $t: (t) => t,
+        $route: {
+          params: {
+            certifier,
+          },
         },
+        ...options,
       },
-      ...options,
+      renderStubDefaultSlot: true,
     },
-    propsData: {
+    props: {
       campaignDetails: {
         userName: 'test',
         stageDuration: '12',

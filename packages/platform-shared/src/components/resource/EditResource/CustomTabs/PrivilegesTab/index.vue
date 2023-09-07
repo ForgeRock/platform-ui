@@ -65,9 +65,10 @@ of the MIT license. See the LICENSE file for details. -->
         </template>
       </BTable>
     </div>
-    <ValidationObserver
+    <VeeForm
       ref="observer"
-      v-slot="{ invalid }">
+      v-slot="{ meta: { valid } }"
+      as="span">
       <BModal
         id="editPrivilegeModal"
         ref="editPrivilegeModal"
@@ -90,7 +91,7 @@ of the MIT license. See the LICENSE file for details. -->
           </BButton>
           <BButton
             variant="primary"
-            :disabled="clonedPrivilegesField.disabled || invalid"
+            :disabled="clonedPrivilegesField.disabled || !valid"
             @click="savePrivilege">
             {{ $t('common.save') }}
           </BButton>
@@ -118,13 +119,13 @@ of the MIT license. See the LICENSE file for details. -->
           </BButton>
           <BButton
             variant="primary"
-            :disabled="invalid"
+            :disabled="!valid"
             @click="saveNewPrivileges">
             {{ $t('common.save') }}
           </BButton>
         </template>
       </BModal>
-    </ValidationObserver>
+    </VeeForm>
 
     <BModal
       id="removePrivilege"
@@ -167,7 +168,7 @@ import {
 } from 'bootstrap-vue';
 import axios from 'axios';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
-import { ValidationObserver } from 'vee-validate';
+import { Form as VeeForm } from 'vee-validate';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
@@ -192,7 +193,7 @@ export default {
     BTab,
     BTable,
     FrActionsCell,
-    ValidationObserver,
+    VeeForm,
   },
   data() {
     return {

@@ -12,10 +12,12 @@ describe('AccountModal', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = shallowMount(AccountModal, {
-      mocks: {
-        $t: (t) => t,
+      global: {
+        mocks: {
+          $t: (t) => t,
+        },
       },
-      propsData: {
+      props: {
         account: {
           id: 'test',
         },

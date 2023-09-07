@@ -51,7 +51,6 @@ of the MIT license. See the LICENSE file for details. -->
                     tabindex="-1"
                     v-if="!loading && !themeLoading"
                     id="callbacksPanel"
-                    class="callbacks-card"
                     data-testid="callbacks_panel">
                     <FrAlert
                       :show="loginFailure"
@@ -177,7 +176,7 @@ of the MIT license. See the LICENSE file for details. -->
       v-else
       id="callbacksPanel"
       tabindex="-1"
-      :class="[{'flex-row-reverse': journeyLayout === 'justified-right'}, 'callbacks-card d-flex w-100 flex-grow-1']">
+      :class="[{'flex-row-reverse': journeyLayout === 'justified-right'}, 'd-flex w-100 flex-grow-1']">
       <div class="journey-card w-md-50 w-100 d-flex align-items-start flex-column">
         <div class="login-header w-100 d-flex flex-column flex-grow-1 justify-content-between">
           <div
@@ -1380,7 +1379,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.callbacks-card ::v-deep {
+#callbacksPanel :deep {
   span.material-icons {
     line-height: 22px;
   }

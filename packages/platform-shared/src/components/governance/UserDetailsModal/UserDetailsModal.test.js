@@ -12,10 +12,12 @@ describe('GovernanceUserDetailsModal', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = shallowMount(GovernanceUserDetailsModal, {
-      mocks: {
-        $t: (t) => t,
+      global: {
+        mocks: {
+          $t: (t) => t,
+        },
       },
-      propsData: {
+      props: {
         user: {
           givenName: 'firstname',
           sn: 'sntest',

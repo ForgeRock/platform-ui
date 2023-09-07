@@ -18,6 +18,9 @@ module.exports = {
     'vue',
   ],
   testEnvironment: 'jsdom',
+  testEnvironmentOptions: {
+    customExportConditions: ['node', 'node-addons'],
+  },
   globals: {
     'vue-jest': {
       transform: {
@@ -26,7 +29,7 @@ module.exports = {
     },
   },
   transform: {
-    '^.+\\.vue$': '@vue/vue2-jest',
+    '^.+\\.vue$': '@vue/vue3-jest',
     '^.+\\.js$': babelTransform,
     '.+\\.(css|styl|less|sass|scss|svg|png|jpg|ttf|woff|woff2)$': 'jest-transform-stub',
   },
@@ -38,6 +41,7 @@ module.exports = {
     '^@/(.*)$': '<rootDir>/src/$1',
     '\\.(css)$': '<rootDir>/../../node_modules/jest-css-modules',
     d3: '<rootDir>/../../node_modules/d3/dist/d3.min.js',
+    '^vue$': '@vue/compat',
   },
   testMatch: [
     '**/*.test.js',

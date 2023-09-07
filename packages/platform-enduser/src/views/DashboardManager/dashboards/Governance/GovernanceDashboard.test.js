@@ -5,15 +5,12 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
+import Notifications from '@kyvg/vue3-notification';
 import * as AccessReviewApi from '@/api/governance/AccessReviewApi';
 import * as AccessRequestApi from '@/api/governance/AccessRequestApi';
 import GovernanceDashboard from './index';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 jest.mock('@/api/governance/AccessReviewApi');
 jest.mock('@/api/governance/AccessRequestApi');
@@ -28,15 +25,16 @@ describe('GovernanceDashboard', () => {
   function shallowMountComponent() {
     setupTestPinia({ user: { userId: '123' } });
     wrapper = shallowMount(GovernanceDashboard, {
-      localVue,
-      mocks: {
-        $t: (text) => (text),
-        $store: {
-          state: {
-            SharedStore: {
+      global: {
+        mocks: {
+          $t: (text) => (text),
+          $store: {
+            state: {
+              SharedStore: {},
             },
           },
         },
+        plugins: [Notifications],
       },
     });
   }

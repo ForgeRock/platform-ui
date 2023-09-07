@@ -5,12 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, mount } from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import InputLayout from './index';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 const defaultProps = {
   id: '',
@@ -24,8 +20,7 @@ const defaultProps = {
 describe('InputLayout', () => {
   it('InputLayout component renders help text and label', () => {
     const wrapper = mount(InputLayout, {
-      localVue,
-      propsData: {
+      props: {
         ...defaultProps,
         helpText: 'Help text',
         label: 'Label',
@@ -42,8 +37,7 @@ describe('InputLayout', () => {
 
   it('InputLayout component renders slots', () => {
     const wrapper = mount(InputLayout, {
-      localVue,
-      propsData: {
+      props: {
         ...defaultProps,
       },
       slots: {

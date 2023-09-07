@@ -251,7 +251,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep {
+:deep {
   .arrow {
     position: absolute;
     display: block;

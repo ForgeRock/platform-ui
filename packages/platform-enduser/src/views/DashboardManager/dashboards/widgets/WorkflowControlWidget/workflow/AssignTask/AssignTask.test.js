@@ -5,13 +5,9 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import BootstrapVue from 'bootstrap-vue';
-import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { shallowMount } from '@vue/test-utils';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import AssignTask from './index';
-
-const localVue = createLocalVue();
-localVue.use(BootstrapVue);
 
 describe('AssignTask.vue', () => {
   let wrapper;
@@ -24,8 +20,7 @@ describe('AssignTask.vue', () => {
       },
     });
     wrapper = shallowMount(AssignTask, {
-      localVue,
-      propsData: {
+      props: {
         taskDefinition: {
           task: {
             _id: 123,
@@ -42,8 +37,10 @@ describe('AssignTask.vue', () => {
         },
         shown: false,
       },
-      mocks: {
-        $t: (key) => (key),
+      global: {
+        mocks: {
+          $t: (key) => (key),
+        },
       },
     });
   });
