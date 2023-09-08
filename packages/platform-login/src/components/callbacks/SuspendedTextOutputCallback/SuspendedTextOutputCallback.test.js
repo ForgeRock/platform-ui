@@ -7,21 +7,40 @@
 
 import { mount } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { sanitize } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 import SuspendedTextOutputCallback from '@/components/callbacks/SuspendedTextOutputCallback';
 import i18n from '@/i18n';
 
 describe('SuspendedTextOutputCallback', () => {
   const STUB_MESSAGE_TEXT = 'test output message';
+  const STUB_MESSAGE_HTML = '<p>test output message</p>';
 
-  function setup() {
+  const defaultProps = {
+    propsData: {
+      callback: {
+        getOutputValue: jest.fn(() => STUB_MESSAGE_TEXT),
+      },
+      index: 5,
+    },
+  };
+
+  const propsWithHtmlMessage = {
+    propsData: {
+      callback: {
+        getOutputValue: jest.fn(() => STUB_MESSAGE_HTML),
+      },
+      index: 5,
+    },
+  };
+
+  function setup(props) {
     return mount(SuspendedTextOutputCallback, {
       i18n,
-      propsData: {
-        callback: {
-          getOutputValue: jest.fn(() => STUB_MESSAGE_TEXT),
-        },
-        index: 5,
+      mocks: {
+        $sanitize: (message) => sanitize(message),
       },
+      ...defaultProps,
+      ...props,
     });
   }
 
@@ -29,6 +48,16 @@ describe('SuspendedTextOutputCallback', () => {
     it('with message', () => {
       const wrapper = setup();
 
+      expect(wrapper.text()).toContain(STUB_MESSAGE_TEXT);
+    });
+
+    it('with html in message', () => {
+      const wrapper = setup(propsWithHtmlMessage);
+
+      // Sanitized message still contains html
+      expect(wrapper.vm.sanitizedMessage).toBe(STUB_MESSAGE_HTML);
+
+      // but renders without the html tags
       expect(wrapper.text()).toContain(STUB_MESSAGE_TEXT);
     });
 
