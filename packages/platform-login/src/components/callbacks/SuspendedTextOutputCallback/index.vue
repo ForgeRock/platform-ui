@@ -8,9 +8,8 @@ of the MIT license. See the LICENSE file for details. -->
     ref="textOutputPanel">
     <div
       data-testid="suspend-text-output"
-      class="text-center text-muted w-100 white-space-pre-line">
-      {{ message }}
-    </div>
+      class="text-center text-muted w-100 white-space-pre-line"
+      v-html="sanitizedMessage" />
   </div>
 </template>
 
@@ -25,7 +24,7 @@ export default {
   },
   data() {
     return {
-      message: this.callback.getOutputValue(),
+      sanitizedMessage: this.$sanitize(this.callback.getOutputValue()),
     };
   },
 };
