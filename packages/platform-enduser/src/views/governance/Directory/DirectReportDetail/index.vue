@@ -106,6 +106,7 @@ import {
   BTabs,
   BTab,
 } from 'bootstrap-vue';
+import { get } from 'lodash';
 import PluralizeFilter from '@forgerock/platform-shared/src/filters/PluralizeFilter';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
@@ -190,18 +191,16 @@ export default {
   computed: {
     revokeRequestCatalog() {
       if (Object.keys(this.requestToRevoke).length) {
-        const { item } = this.requestToRevoke;
-        // TODO: IGA is adding a catalog id property which is being implemented in IGA-2229
-        // that would be used to fill in the value for the following grant id's. I created
-        // IAM-4501 as a follow-up to implement this property once IGA makes it available.
+        const { item, catalog } = this.requestToRevoke;
+        const id = get(catalog, 'id', '');
         if (item.type === 'entitlementGrant') {
-          return [{ type: 'entitlement', id: '' }];
+          return [{ type: 'entitlement', id }];
         }
         if (item.type === 'accountGrant') {
-          return [{ type: 'application', id: '' }];
+          return [{ type: 'application', id }];
         }
         if (item.type === 'roleMembership') {
-          return [{ type: 'role', id: '' }];
+          return [{ type: 'role', id }];
         }
       }
       return [];
