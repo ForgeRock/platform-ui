@@ -11,9 +11,10 @@ of the MIT license. See the LICENSE file for details. -->
     v-else-if="modal && showItemForUser && showItemForPrivileges"
     :role="isNav ? '' : 'presentation'">
     <BButton
+      :aria-label="$t(displayName)"
       :class="[{ 'nav-link': isNav, 'dropdown-item': !isNav }, 'd-flex align-items-center rounded-0']"
-      @click="$root.$emit('bv::show::modal', modal)"
-      :role="isNav ? '' : 'menuitem'">
+      :role="isNav ? '' : 'menuitem'"
+      @click="$root.$emit('bv::show::modal', modal)">
       <FrIcon
         v-if="icon"
         class="mr-3"
@@ -26,9 +27,10 @@ of the MIT license. See the LICENSE file for details. -->
   <!-- Item will change route or open a new tab -->
   <Component
     v-else-if="(url || routeTo && routeTo.name) && showItemForUser && showItemForStoreValues"
-    :link-attrs="{'aria-label': $t(displayName)}"
-    :is="bootstrapComponent"
+    :aria-label="$t(displayName)"
     :href="url"
+    :is="bootstrapComponent"
+    :link-attrs="isNav ? {'aria-label': $t(displayName)} : null"
     :link-class="'d-flex align-items-center'"
     :link-classes="'d-flex align-items-center'"
     :target="url ? '_blank' : ''"
@@ -69,12 +71,12 @@ of the MIT license. See the LICENSE file for details. -->
   <li
     v-else-if="subItems.length && showItemForUser"
     class="fr-menu-item-group"
-    :aria-label="$t(displayName)"
     :role="isNav ? '' : 'presentation'">
     <BButton
       v-b-toggle="`collapse-${displayName.split(' ').join('-')}`"
       class="dropdown-toggle d-flex align-items-center rounded-0"
       :aria-expanded="isExpanded"
+      :aria-label="$t(displayName)"
       :role="isNav ? '' : 'menuitem'">
       <FrIcon
         v-if="icon"
