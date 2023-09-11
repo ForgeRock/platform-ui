@@ -1676,6 +1676,8 @@ __metadata:
     nodegit: 0.28.0-alpha.21
     tempy: 0.7.1
     yargs: 16.1.1
+  bin:
+    copyright-bot: ./src/bin.js
   languageName: unknown
   linkType: soft
 
