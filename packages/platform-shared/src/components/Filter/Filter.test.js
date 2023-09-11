@@ -95,7 +95,7 @@ describe('Filter.test.js', () => {
     expect(buttonContainer.exists()).toBeFalsy();
 
     const renderedOptions = [];
-    wrapper.findAll('#filter-list_field_wrapper .multiselect__element').filter((filterItem) => renderedOptions.push(filterItem.text()));
+    wrapper.findAll('#filter-list .multiselect__element').filter((filterItem) => renderedOptions.push(filterItem.text()));
     expect(renderedOptions).toEqual(expect.arrayContaining(filtersStringArray));
   });
 
@@ -108,7 +108,7 @@ describe('Filter.test.js', () => {
     expect(buttonContainer.exists()).toBeFalsy();
 
     const renderedOptions = [];
-    wrapper.findAll('#filter-list_field_wrapper .multiselect__element').filter((filterItem) => renderedOptions.push(filterItem.text()));
+    wrapper.findAll('#filter-list .multiselect__element').filter((filterItem) => renderedOptions.push(filterItem.text()));
     const filterTextLabels = filtersObjectArray.map((filter) => filter.text);
     expect(renderedOptions).toEqual(expect.arrayContaining(filterTextLabels));
   });
@@ -124,7 +124,7 @@ describe('Filter.test.js', () => {
     expect(buttonContainer.exists()).toBeTruthy();
 
     const renderedOptions = [];
-    wrapper.findAll('#categories-list_field_wrapper .multiselect__element').filter((filterItem) => renderedOptions.push(filterItem.text()));
+    wrapper.findAll('#categories-list .multiselect__element').filter((filterItem) => renderedOptions.push(filterItem.text()));
     expect(renderedOptions).toEqual(expect.arrayContaining(categories));
   });
 
@@ -141,7 +141,7 @@ describe('Filter.test.js', () => {
 
     // Check active categories
     const selectedRenderedCategories = [];
-    wrapper.findAll('#categories-list_field_wrapper .multiselect__tag').filter((filterItem) => selectedRenderedCategories.push(filterItem.text().trim()));
+    wrapper.findAll('#categories-list .multiselect__tag').filter((filterItem) => selectedRenderedCategories.push(filterItem.text().trim()));
     expect(selectedRenderedCategories).toEqual(activeCategories);
 
     wrapper.vm.filterTypeSelected = 'filters';
@@ -149,7 +149,7 @@ describe('Filter.test.js', () => {
 
     // Check active filters
     const selectedRenderedFilters = [];
-    wrapper.findAll('#filter-list_field_wrapper .multiselect__tag').filter((filterItem) => selectedRenderedFilters.push(filterItem.text().trim()));
+    wrapper.findAll('#filter-list .multiselect__tag').filter((filterItem) => selectedRenderedFilters.push(filterItem.text().trim()));
     expect(selectedRenderedCategories).toEqual(activeCategories);
   });
 
@@ -162,7 +162,7 @@ describe('Filter.test.js', () => {
     wrapper.vm.$emit = jest.fn();
 
     const selectedRenderedOptions = [];
-    wrapper.findAll('#filter-list_field_wrapper .multiselect__tag').filter((filterItem) => selectedRenderedOptions.push(filterItem.text().trim()));
+    wrapper.findAll('#filter-list .multiselect__tag').filter((filterItem) => selectedRenderedOptions.push(filterItem.text().trim()));
     expect(selectedRenderedOptions).toEqual(activeFilters);
 
     // expect(wrapper.vm.$emit).toHaveBeenCalledWith('update', wrapper.vm.pendingFilters, wrapper.vm.pendingCategories);
@@ -192,8 +192,8 @@ describe('Filter.test.js', () => {
     wrapper.vm.$emit = jest.fn();
 
     // Check emitted value
-    wrapper.findAll('#filter-list_field_wrapper .multiselect__element .multiselect__option').at(1).trigger('click');
-    wrapper.findAll('#filter-list_field_wrapper .multiselect__element .multiselect__option').at(3).trigger('click');
+    wrapper.findAll('#filter-list .multiselect__element .multiselect__option').at(1).trigger('click');
+    wrapper.findAll('#filter-list .multiselect__element .multiselect__option').at(3).trigger('click');
     await flushPromises();
     expect(wrapper.vm.$emit).toHaveBeenCalledWith('update', wrapper.vm.pendingFilters, wrapper.vm.pendingCategories);
   });
@@ -206,8 +206,8 @@ describe('Filter.test.js', () => {
     wrapper.vm.$emit = jest.fn();
 
     // Check emitted value
-    wrapper.findAll('#categories-list_field_wrapper .multiselect__element .multiselect__option').at(0).trigger('click');
-    wrapper.findAll('#categories-list_field_wrapper .multiselect__element .multiselect__option').at(2).trigger('click');
+    wrapper.findAll('#categories-list .multiselect__element .multiselect__option').at(0).trigger('click');
+    wrapper.findAll('#categories-list .multiselect__element .multiselect__option').at(2).trigger('click');
     await flushPromises();
     expect(wrapper.vm.$emit).toHaveBeenCalledWith('update', wrapper.vm.pendingFilters, wrapper.vm.pendingCategories);
   });
@@ -221,7 +221,7 @@ describe('Filter.test.js', () => {
     wrapper.vm.clearFilters();
 
     const selectedRenderedOptions = [];
-    wrapper.findAll('#filter-list_field_wrapper .multiselect__tag').filter((filterItem) => selectedRenderedOptions.push(filterItem.text().trim()));
+    wrapper.findAll('#filter-list .multiselect__tag').filter((filterItem) => selectedRenderedOptions.push(filterItem.text().trim()));
 
     expect(selectedRenderedOptions).toEqual([]);
     expect(wrapper.vm.pendingFilters).toEqual([]);
@@ -240,14 +240,14 @@ describe('Filter.test.js', () => {
 
     // Categories
     const selectedRenderedCategories = [];
-    wrapper.findAll('#filter-list_field_wrapper .multiselect__tag').filter((filterItem) => selectedRenderedCategories.push(filterItem.text().trim()));
+    wrapper.findAll('#filter-list .multiselect__tag').filter((filterItem) => selectedRenderedCategories.push(filterItem.text().trim()));
 
     wrapper.vm.filterTypeSelected = 'filters';
     await wrapper.vm.$nextTick;
 
     // Filters
     const selectedRenderedFilters = [];
-    wrapper.findAll('#filter-list_field_wrapper .multiselect__tag').filter((filterItem) => selectedRenderedFilters.push(filterItem.text().trim()));
+    wrapper.findAll('#filter-list .multiselect__tag').filter((filterItem) => selectedRenderedFilters.push(filterItem.text().trim()));
 
     expect(selectedRenderedFilters).toEqual([]);
     expect(selectedRenderedCategories).toEqual([]);
