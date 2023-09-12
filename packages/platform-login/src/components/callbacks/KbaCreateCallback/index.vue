@@ -35,7 +35,7 @@ of the MIT license. See the LICENSE file for details. -->
           input-labelledby="legend-kba-create-callback-description"
           :searchable="true"
           :label="callback.getPrompt()"
-          :name="callback.getPrompt()"
+          :name="questionModel.key + '_question_selector'"
           :placeholder="callback.getPrompt()"
           :id="questionModel.key + '_selector'"
           :option-height-calculation="48"
