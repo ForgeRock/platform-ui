@@ -1699,13 +1699,14 @@
       "federation": "Federation"
     },
     "details": {
-      "title": "Tenant Details",
+      "flagAltText": "Flag",
       "organizationName": "Organization Name",
+      "tenant": "TENANT",
+      "tenantBackupRegion": "Backup Region",
       "tenantName": "Tenant Name",
       "tenantRegion": "Region",
       "tenantTier": "Environment Tag",
-      "tenant": "TENANT",
-      "flagAltText": "Flag",
+      "title": "Tenant Details",
       "errors": {
         "errorRetrievingLockState": "Error retrieving promotion lock state.",
         "errorRetrievingProvisionalReport": "Error retrieving provisional report.",
