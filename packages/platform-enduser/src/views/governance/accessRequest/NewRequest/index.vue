@@ -239,9 +239,9 @@ export default {
       }
       if (this.catalogResults[0]?.entitlement) {
         return this.catalogResults.map((catalogItem) => ({
-          description: catalogItem.entitlement.description,
+          description: catalogItem.glossary?.idx['/entitlement']?.description || catalogItem.entitlement.description,
           icon: getApplicationLogo(catalogItem.application),
-          name: catalogItem.entitlement.displayName,
+          name: catalogItem.descriptor?.idx['/entitlement']?.displayName || catalogItem.entitlement.displayName,
           appType: catalogItem.entitlement.name,
           templateName: catalogItem.application.templateName,
           id: catalogItem.id,
@@ -354,7 +354,7 @@ export default {
         this.loading = true;
         const fieldsMap = {
           accountGrant: 'application,id',
-          entitlementGrant: 'application,entitlement,id',
+          entitlementGrant: 'application,entitlement,id,descriptor,glossary',
           roleMembership: 'role,id',
         };
         const searchParams = {
