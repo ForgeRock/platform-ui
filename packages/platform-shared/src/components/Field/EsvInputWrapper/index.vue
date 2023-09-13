@@ -159,7 +159,7 @@ export default {
 
 <style lang="scss" scoped>
 // Fix for text input with esv dropdown having no border radius on the right hand side
-.esv-input-wrapper :deep(.form-label-group input[type="text"]) {
+.esv-input-wrapper :deep(.form-label-group input[type="text"]:not(.password-visible)) {
   border-top-right-radius: $border-radius !important;
   border-bottom-right-radius: $border-radius !important;
 }
@@ -193,5 +193,18 @@ export default {
 
 :deep(.field-type-checkbox.dropdown .btn) {
   height: 23px;
+}
+
+.form-label-group:focus-within {
+   .input-buttons:not(:focus-within) .within-input-button :deep(.btn) {
+        border-color: $primary !important;
+        clip-path: inset(-1px -1px -1px 0px) !important;
+        box-shadow: 0 0 0 0.0625rem $primary !important;
+   }
+   &.fr-field-error .input-buttons:not(:focus-within) .within-input-button :deep(.btn) {
+        border-color: $danger !important;
+        clip-path: inset(-1px -1px -1px 0px) !important;
+        box-shadow: 0 0 0 0.0625rem $danger !important;
+   }
 }
 </style>
