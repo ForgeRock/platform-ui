@@ -61,7 +61,6 @@
     "sass-loader": "8.0.2",
     "style-resources-loader": "1.2.1",
     "vue-cli-plugin-i18n": "0.6.0",
-    "vue-jest": "3.0.5",
     "vue-template-compiler": "2.7.14"
   },
   "postcss": {
