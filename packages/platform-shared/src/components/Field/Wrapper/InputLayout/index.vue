@@ -57,7 +57,7 @@ of the MIT license. See the LICENSE file for details. -->
           <slot />
         </div>
         <span
-          class="d-flex"
+          class="d-flex input-buttons"
           v-if="$scopedSlots.prependButton || $scopedSlots.defaultButtons || $scopedSlots.append">
           <div
             class="prepend-button"
