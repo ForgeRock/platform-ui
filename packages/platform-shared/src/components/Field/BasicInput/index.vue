@@ -232,6 +232,9 @@ export default {
       if (this.hasAppendSlot || this.copy) {
         inputClasses.push('text-truncate');
       }
+      if (this.showPassword) {
+        inputClasses.push('password-visible');
+      }
       return inputClasses;
     },
   },
@@ -392,6 +395,19 @@ export default {
         box-shadow: 0 0 0 0.0625rem $danger !important;
       }
     }
+  }
+
+  .form-label-group:focus-within {
+       .input-buttons:not(:focus-within) .within-input-button .btn {
+            border-color: $primary !important;
+            clip-path: inset(-1px -1px -1px 0px) !important;
+            box-shadow: 0 0 0 0.0625rem $primary !important;
+       }
+       &.fr-field-error .input-buttons:not(:focus-within) .within-input-button .btn {
+            border-color: $danger !important;
+            clip-path: inset(-1px -1px -1px 0px) !important;
+            box-shadow: 0 0 0 0.0625rem $danger !important;
+       }
   }
 
   :deep(.material-icons), :deep(.material-icons-outlined) {

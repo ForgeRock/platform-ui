@@ -160,6 +160,7 @@ of the MIT license. See the LICENSE file for details. -->
 
       <!-- login input and select fields -->
       <template v-if="mock">.fr-theme-preview.login</template> input,
+      <template v-if="mock">.fr-theme-preview.login</template> .form-label-group .within-input-button .btn,
       <template v-if="mock">.fr-theme-preview.login</template> .multiselect .multiselect__tags,
       <template v-if="mock">.fr-theme-preview.login</template> .multiselect .multiselect__select,
       <template v-if="mock">.fr-theme-preview.login</template> .multiselect .multiselect__select::before {
