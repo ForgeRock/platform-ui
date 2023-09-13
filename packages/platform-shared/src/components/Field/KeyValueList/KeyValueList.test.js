@@ -152,7 +152,7 @@ describe('KeyValueList', () => {
       const wrapper = mountComponent({ validation: 'required', value: [{ key: 'initialValue' }] });
       await flushPromises();
       expect(wrapper.find('.list-group-item').exists()).toBe(true);
-      expect(wrapper.find('#testfield0-error').text()).toBe('');
+      expect(wrapper.find('#testfield0-error').exists()).toBe(false);
       const deleteButton = wrapper.find('.material-icons-outlined');
       deleteButton.trigger('click');
       await flushPromises();

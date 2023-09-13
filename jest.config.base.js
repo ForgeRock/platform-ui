@@ -9,6 +9,8 @@ const path = require('path');
 
 process.env.VUE_APP_AM_URL = 'https://default.iam.example.com/am';
 
+const babelTransform = path.join(__dirname, 'config', 'jest', 'babel-transform.js');
+
 module.exports = {
   moduleFileExtensions: [
     'js',
@@ -16,9 +18,16 @@ module.exports = {
     'vue',
   ],
   testEnvironment: 'jsdom',
+  globals: {
+    'vue-jest': {
+      transform: {
+        js: babelTransform,
+      },
+    },
+  },
   transform: {
-    '^.+\\.vue$': 'vue-jest',
-    '^.+\\.js$': path.join(__dirname, 'config', 'jest', 'babel-transform.js'),
+    '^.+\\.vue$': '@vue/vue2-jest',
+    '^.+\\.js$': babelTransform,
     '.+\\.(css|styl|less|sass|scss|svg|png|jpg|ttf|woff|woff2)$': 'jest-transform-stub',
   },
   transformIgnorePatterns: [

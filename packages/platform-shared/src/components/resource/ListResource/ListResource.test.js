@@ -49,6 +49,7 @@ describe('ListResource Component', () => {
           };
           return retv;
         },
+        pluralizeFilter: () => {},
       },
       propsData: {
         routerParameters: {
