@@ -786,9 +786,6 @@
     },
     "loadPage": {
       "errorLoadingPage": "We couldn't load the information."
-    },
-    "loggingOut": {
-      "message": "Signing out..."
     }
   },
   "pagination": {
