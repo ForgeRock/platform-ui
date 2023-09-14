@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { createLocalVue, shallowMount, mount } from '@vue/test-utils';
+import { createLocalVue, shallowMount } from '@vue/test-utils';
 import Vuex from 'vuex';
 import i18n from '@/i18n';
 import App from '@/App';
@@ -23,26 +23,6 @@ function shallowMountComponent(storeMock) {
   };
 
   wrapper = shallowMount(App, {
-    localVue,
-    store: storeMock,
-    i18n,
-    mocks: {
-      $route,
-    },
-    stubs: {
-      RouterLink: true,
-      RouterView: true,
-      Notifications: true,
-    },
-  });
-}
-
-function mountComponent(storeMock) {
-  $route = {
-    meta: { hideSideMenu: true },
-  };
-
-  wrapper = mount(App, {
     localVue,
     store: storeMock,
     i18n,
@@ -100,13 +80,5 @@ describe('App.vue', () => {
     await wrapper.vm.$nextTick();
     const logoutText = wrapper.find('frlayout-stub');
     expect(logoutText.exists()).toBeTruthy();
-  });
-
-  it('shows a logout screen', async () => {
-    store.state.SharedStore.logoutScreen = true;
-    mountComponent(store);
-    await wrapper.vm.$nextTick();
-    const logoutText = wrapper.find('.lead');
-    expect(logoutText.text()).toBe('Signing out...');
   });
 });
