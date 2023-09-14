@@ -6,6 +6,7 @@ of the MIT license. See the LICENSE file for details. -->
   <FrField
     class="pb-1 mb-4"
     type="password"
+    :autocomplete="uiSchema.autocomplete || ''"
     :disabled="uiSchema.disabled"
     :description="uiSchema.description"
     :label="uiSchema.label"
