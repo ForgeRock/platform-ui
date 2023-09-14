@@ -3,7 +3,7 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div v-if="!$store.state.SharedStore.logoutScreen">
+  <div>
     <FrLayout
       :footer="accountFooter"
       :is-enduser="true"
@@ -21,7 +21,6 @@ of the MIT license. See the LICENSE file for details. -->
       :is-enduser="true"
       v-if="theme !== null" />
   </div>
-  <FrLogoutScreen v-else />
 </template>
 
 <script>
@@ -39,7 +38,6 @@ import ThemeMixin from '@forgerock/platform-shared/src/mixins/ThemeMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import FrLayout from '@forgerock/platform-shared/src/components/Layout';
-import FrLogoutScreen from '@forgerock/platform-shared/src/components/LogoutScreen/';
 import { getIdmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
 import ThemeInjector from '@forgerock/platform-shared/src/components/ThemeInjector/';
 import { getDefaultProcess } from '@forgerock/platform-shared/src/views/AutoAccess/RiskConfig/api/RiskConfigAPI';
@@ -57,7 +55,6 @@ export default {
   ],
   components: {
     FrLayout,
-    FrLogoutScreen,
     ThemeInjector,
   },
   computed: {
