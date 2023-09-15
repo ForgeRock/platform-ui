@@ -167,7 +167,7 @@ of the MIT license. See the LICENSE file for details. -->
               class="media-body">
               <h5
                 class="mb-0 text-dark text-truncate">
-                {{ item.user.givenName }}
+                {{ $t('common.userFullName', { givenName: item.user.givenName, sn: item.user.sn }) }}
               </h5>
               <small class="text-truncate">
                 {{ item.user.userName }}
