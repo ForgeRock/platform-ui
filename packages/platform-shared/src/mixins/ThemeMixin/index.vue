@@ -59,6 +59,7 @@ export default {
         journeyFooterEnabled: false,
         journeyHeader: '<div class="d-flex justify-content-center py-4 flex-grow-1">Header Content</div>',
         journeyHeaderEnabled: false,
+        journeyHeaderSkipLinkEnabled: false,
         journeyInputBackgroundColor: '#ffffff',
         journeyInputBorderColor: '#c0c9d5',
         journeyInputLabelColor: '#5e6d82',
@@ -102,6 +103,7 @@ export default {
       journeyFooterEnabled: false,
       journeyHeader: '',
       journeyHeaderEnabled: false,
+      journeyHeaderSkipLinkEnabled: false,
       journeyTheaterMode: false,
       journeyJustifiedContent: '',
       journeyJustifiedContentEnabled: false,
@@ -191,6 +193,7 @@ export default {
           this.journeyFooterEnabled = theme.journeyFooterEnabled;
           this.journeyHeader = theme.journeyHeader;
           this.journeyHeaderEnabled = theme.journeyHeaderEnabled;
+          this.journeyHeaderSkipLinkEnabled = theme.journeyHeaderSkipLinkEnabled;
           this.journeyTheaterMode = theme.journeyTheaterMode;
           this.journeyJustifiedContent = theme.journeyJustifiedContent;
           this.journeyJustifiedContentEnabled = theme.journeyJustifiedContentEnabled;
