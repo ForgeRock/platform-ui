@@ -5,10 +5,15 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="min-vh-100 d-flex flex-column fr-fullscreen-mobile">
     <header
-      v-if="journeyHeaderEnabled && journeyHeader && (journeyLayout === 'card' || !journeyTheaterMode)"
+      v-if="!journeyHeaderSkipLinkEnabled && journeyHeaderEnabled && journeyHeader && (journeyLayout === 'card' || !journeyTheaterMode)"
       v-html="sanitizedHeader"
       id="appHeader" />
+    <FrAccessibleHeader
+      v-if="journeyHeaderSkipLinkEnabled && journeyHeaderEnabled && journeyHeader && (journeyLayout === 'card' || !journeyTheaterMode)"
+      main-content-id="callbacksPanel"
+      :custom-html="sanitizedHeader" />
     <main
+      id="callbacksPanel"
       v-if="!journeyLayout || journeyLayout === 'card' || !journeyTheaterMode"
       class="px-0 flex-grow-1 d-flex container">
       <BContainer class="flex-grow-1 d-flex">
@@ -43,8 +48,10 @@ of the MIT license. See the LICENSE file for details. -->
 
                 <template #center-card-body>
                   <BCardBody
+                    tabindex="-1"
                     v-if="!loading && !themeLoading"
                     id="callbacksPanel"
+                    class="callbacks-card"
                     data-testid="callbacks_panel">
                     <FrAlert
                       :show="loginFailure"
@@ -139,7 +146,8 @@ of the MIT license. See the LICENSE file for details. -->
     <main
       v-else
       id="callbacksPanel"
-      :class="[{'flex-row-reverse': journeyLayout === 'justified-right'}, 'd-flex w-100 flex-grow-1']">
+      tabindex="-1"
+      :class="[{'flex-row-reverse': journeyLayout === 'justified-right'}, 'callbacks-card d-flex w-100 flex-grow-1']">
       <div class="journey-card w-md-50 w-100 d-flex align-items-start flex-column">
         <div class="login-header w-100 d-flex flex-column flex-grow-1 justify-content-between">
           <div
@@ -153,10 +161,18 @@ of the MIT license. See the LICENSE file for details. -->
                 :style="{ height: `${logoHeight}px` }"
                 :src="logoPath">
               <div
-                v-if="journeyHeaderEnabled"
+                v-if="!journeyHeaderSkipLinkEnabled && journeyHeaderEnabled"
                 class="flex-grow-1"
                 id="appHeader">
                 <header v-html="sanitizedHeader" />
+              </div>
+              <div
+                v-if="journeyHeaderSkipLinkEnabled && journeyHeaderEnabled"
+                class="flex-grow-1"
+                id="appHeader">
+                <FrAccessibleHeader
+                  main-content-id="body-append-el"
+                  :custom-html="sanitizedHeader" />
               </div>
             </div>
           </div>
@@ -348,6 +364,7 @@ export default {
     FrField: () => import('@forgerock/platform-shared/src/components/Field'),
     FrHiddenValueCallback: () => import('@/components/callbacks/HiddenValueCallback'),
     FrKbaCreateCallback: () => import('@/components/callbacks/KbaCreateCallback'),
+    FrAccessibleHeader: () => import('@/components/display/AccessibleHeader'),
     FrPasswordCallback: () => import('@/components/callbacks/PasswordCallback'),
     FrPollingWaitCallback: () => import('@/components/callbacks/PollingWaitCallback'),
     FrPushChallengeNumber: () => import('@/components/display/PushChallengeNumber'),
@@ -382,6 +399,10 @@ export default {
       default: '',
     },
     journeyHeaderEnabled: {
+      type: Boolean,
+      default: false,
+    },
+    journeyHeaderSkipLinkEnabled: {
       type: Boolean,
       default: false,
     },
@@ -1240,7 +1261,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#callbacksPanel ::v-deep {
+.callbacks-card ::v-deep {
   span.material-icons {
     line-height: 22px;
   }
