@@ -171,13 +171,14 @@ export default {
     display: none;
     padding: 0.22rem 0.5rem;
   }
+}
 
-  &.can-edit:hover {
-    margin-top: 0;
+.multiselect__single:hover > .collapsed-option.can-edit,
+.esv-input-wrapper:hover .multiselect__single > .collapsed-option.can-edit {
+  margin-top: 0;
 
-    button {
-      display: block;
-    }
+  button {
+    display: block;
   }
 }
 
