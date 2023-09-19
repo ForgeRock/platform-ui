@@ -323,12 +323,12 @@ export default {
     padding-right: 0px;
   }
 
-  :deep(.prepend-button .btn) {
+  :deep(.prepend-button .within-input-button .btn) {
     margin-left: -1px;
     border-radius: 0 !important;
   }
 
-  :deep(.prepend-button:only-child .btn) {
+  :deep(.prepend-button:only-child .within-input-button .btn) {
     // Give button the correct padding inside the input field
     padding: 0.75rem 1.25rem !important;
     // Gives button a curved border on the right hand side
