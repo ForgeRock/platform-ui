@@ -76,15 +76,15 @@ describe('RequestModal', () => {
             comment: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore.',
             action: 'comment',
           }],
-          phases: [{
-            name: 'phaseTest',
-          }],
         },
         request: {
           common: {
             justification: 'this is the right thing to do',
           },
         },
+        phases: [{
+          name: 'phaseTest',
+        }],
       },
 
     },
