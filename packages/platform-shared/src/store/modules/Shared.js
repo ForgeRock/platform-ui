@@ -75,7 +75,7 @@ const mutations = {
       }
       if (env.VUE_APP_ENABLE_GOVERNANCE === 'true' || env.VUE_APP_ENABLE_GOVERNANCE === true || env.VUE_APP_ENABLE_GOVERNANCE_V4 === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_V4 === true) {
         if (env.VUE_APP_IGA_API_URL) {
-          state.igaApiUrl = env.VUE_APP_IGA_API_URL;
+          state.igaApiUrl = getFQDN(env.VUE_APP_IGA_API_URL);
         }
       }
       if (env.VUE_APP_FRAAS_FEDERATION_ENFORCEMENT_URL) {
