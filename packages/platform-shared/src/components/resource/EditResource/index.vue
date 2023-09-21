@@ -609,7 +609,7 @@ export default {
             }
           }
           tempProp.value = this.formFields[createPriv.attribute];
-          if ((createPriv.readOnly && !this.isOpenidmAdmin) || tempProp.isVirtual || tempProp.userEditable === false) {
+          if ((createPriv.readOnly && !this.isOpenidmAdmin) || tempProp.isVirtual) {
             tempProp.disabled = true;
           } else {
             tempProp.disabled = false;
