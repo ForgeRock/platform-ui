@@ -31,7 +31,6 @@ const defaultState = {
   returnRouteText: '',
   uiConfig: null,
   hasAmUrl: false,
-  scriptingV2Enabled: false,
   showEsvUi: false,
   showServiceAccountUi: false,
   webStorageAvailable: true,
@@ -134,10 +133,6 @@ const mutations = {
         state.governanceEnabled = true;
         state.governanceEnabledV4 = true;
       }
-    }
-
-    if (env.VUE_APP_ENABLE_SCRIPTING_V2) {
-      state.scriptingV2Enabled = env.VUE_APP_ENABLE_SCRIPTING_V2 === 'true' || env.VUE_APP_ENABLE_SCRIPTING_V2 === true;
     }
 
     if (env.VUE_APP_ENABLE_WORKFORCE) {
