@@ -35,6 +35,7 @@ of the MIT license. See the LICENSE file for details. -->
                     :type="field.format ? field.format : field.type"
                     :validation="field.validation"
                     :testid="`edit-personal-info-${index}`"
+                    :disabled="!field.userEditable"
                     v-if="field.type === 'string' || field.type === 'number' || field.type === 'boolean'" />
                   <FrListField
                     v-else-if="field.type === 'array' && field.name !== 'privileges'"
@@ -46,6 +47,7 @@ of the MIT license. See the LICENSE file for details. -->
                     :name="field.name"
                     :required="field.required"
                     :index="index"
+                    :disabled="!field.userEditable"
                     v-on="$listeners"
                     @input="updateField(index, $event)" />
                 </div>
@@ -172,8 +174,7 @@ export default {
      */
     generateFormFields() {
       const { order, properties, required } = this.schema;
-      const filteredOrder = filter(order, (propName) => properties[propName].userEditable
-                            && properties[propName].viewable
+      const filteredOrder = filter(order, (propName) => properties[propName].viewable
                             && properties[propName].scope !== 'private'
                             && properties[propName].type !== 'object');
       const formFields = map(filteredOrder, (name) => ({
@@ -185,6 +186,7 @@ export default {
         items: properties[name].items,
         format: properties[name].format,
         validation: required.includes(name) ? 'required' : '',
+        userEditable: properties[name].userEditable,
       }));
 
       return formFields;
@@ -266,10 +268,14 @@ export default {
   },
 };
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 
 .personal-info-field {
   margin-bottom: 1.875rem
 }
 
+.personal-info-field .form-label-group .form-label-group-input .form-control:disabled,
+.personal-info-field .form-label-group .form-label-group-input .disabled {
+  background-color: $gray-100 !important;
+}
 </style>
