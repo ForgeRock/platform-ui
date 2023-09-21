@@ -32,7 +32,6 @@ const defaultState = {
   igaApiUrl: null,
   uiConfig: null,
   hasAmUrl: false,
-  scriptingV2Enabled: false,
   showEsvUi: false,
   showServiceAccountUi: false,
   webStorageAvailable: true,
@@ -132,10 +131,6 @@ const mutations = {
 
     if (env.VUE_APP_ENABLE_CSP) {
       state.cspEnabled = env.VUE_APP_ENABLE_CSP === 'true' || env.VUE_APP_ENABLE_CSP === true;
-    }
-
-    if (env.VUE_APP_ENABLE_SCRIPTING_V2) {
-      state.scriptingV2Enabled = env.VUE_APP_ENABLE_SCRIPTING_V2 === 'true' || env.VUE_APP_ENABLE_SCRIPTING_V2 === true;
     }
 
     if (env.VUE_APP_ENABLE_WORKFORCE) {
