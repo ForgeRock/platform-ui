@@ -33,7 +33,9 @@ export function getUserApprovals(userId, params, filter) {
  * @returns {Promise}
  */
 export function requestAction(requestId, action, phaseName, comment, updatedActors) {
-  const url = `/governance/requests/${requestId}?_action=${action}&phaseName=${phaseName}`;
+  let url = `/governance/requests/${requestId}?_action=${action}`;
+  if (phaseName) url = `${url}&phaseName=${phaseName}`;
+
   const requestBody = action === 'reassign' ? { comment, updatedActors } : { comment };
   return generateIgaApi().post(url, requestBody);
 }
