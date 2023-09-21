@@ -362,7 +362,7 @@ export default {
     modalAction(item, cancel) {
       const action = this.modalType.toLowerCase();
       this.loading = true;
-      requestAction(item.details.id, action, item.rawData?.phases[0]?.name, this.comment, [this.actors]).then(() => {
+      requestAction(item.details.id, action, item.rawData?.phases?.[0]?.name, this.comment, [this.actors]).then(() => {
         this.displayNotification('success', this.message);
         this.$emit('modal-success');
       }).catch(() => {
