@@ -906,6 +906,10 @@
       "fullscreen": "Toggle Fullscreen",
       "zoomIn": "Zoom In",
       "zoomOut": "Zoom Out"
+    },
+    "deactivateModal": {
+      "body": "Are you sure you want to deactivate this journey? Applications that use this journey will no longer be able to authenticate users.",
+      "title": "Deactivate Journey?"
     }
   },
   "components": {
