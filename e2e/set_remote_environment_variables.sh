@@ -12,7 +12,6 @@ if [ -f $REMOTE_ENVIRONMENT_INFO_FILE ]; then
   read platform_mode <&6
   read remote_environment_admin_username <&6
   read remote_environment_admin_password <&6
-  read scripting_v2_enabled <&6
 
   exec 6<&-
 
@@ -21,7 +20,6 @@ if [ -f $REMOTE_ENVIRONMENT_INFO_FILE ]; then
   echo "Platform mode: $platform_mode"
   echo "Username of the remote environment admin to test with: $remote_environment_admin_username"
   echo "Password of the remote environment admin to test with: $remote_environment_admin_password"
-  echo "Run tests with scripting version 2 enabled: $scripting_v2_enabled"
 else
   # Prompt user for remote environment info
   echo "Remote environment info file not found"
@@ -31,7 +29,6 @@ else
   read -p "Platform mode? [Y/n]:" platform_mode
   read -p "Username of the remote environment admin to test with (eg. my.email@forgerock.com): " remote_environment_admin_username
   read -p "Password of the remote environment admin to test with (eg. passw0rd): " remote_environment_admin_password
-  read -p "Run tests with scripting version 2 enabled? [Y/n]: " scripting_v2_enabled
 
   # Ask if should save info, writing file if desired
   read -p "Save these inputs in 'e2e/.remote-environment-info.txt' for subsequent test runs? [Y/n]" store_inputs
@@ -44,7 +41,6 @@ else
       echo $platform_mode >> $REMOTE_ENVIRONMENT_INFO_FILE
       echo $remote_environment_admin_username >> $REMOTE_ENVIRONMENT_INFO_FILE
       echo $remote_environment_admin_password >> $REMOTE_ENVIRONMENT_INFO_FILE
-      echo $scripting_v2_enabled >> $REMOTE_ENVIRONMENT_INFO_FILE
   fi
 fi
 
@@ -53,12 +49,6 @@ export CYPRESS_AM_USERNAME=$remote_environment_admin_username
 export CYPRESS_AM_PASSWORD=$remote_environment_admin_password
 export CYPRESS_FQDN=$remote_environment_location
 export CYPRESS_BASE_URL="https://$CYPRESS_FQDN"
-if [[ "$scripting_v2_enabled" =~ ^([yY])$ ]]
-then
-  export CYPRESS_SCRIPTING_V2_ENABLED="true"
-else
-  export CYPRESS_SCRIPTING_V2_ENABLED="false"
-fi
 if [[ "$platform_mode" =~ ^([yY])$ ]]
 then
   export CYPRESS_MENUS_FILE="menus.platform"
