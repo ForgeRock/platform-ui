@@ -153,7 +153,7 @@ of the MIT license. See the LICENSE file for details. -->
         <div class="d-flex justify-content-start align-items-center">
           <BMedia
             class="clickable"
-            @click.stop="openUserModal(item.id)">
+            @click.stop="openUserModal(item.id, item.manager)">
             <template #aside>
               <BImg
                 class="mt-2"
@@ -438,6 +438,7 @@ of the MIT license. See the LICENSE file for details. -->
       :campaign-id="campaignId"
       :selected-tasks="selectedTasks" />
     <FrGovernanceUserDetailsModal
+      :manager="manager"
       :user="currentUserSelectedModal"
       :user-details="currentUserDetails" />
     <FrCertificationTaskApplicationModal
@@ -733,6 +734,7 @@ export default {
         description: 'exceptionInlineItemDescription',
         okFunction: this.saveAllowExceptionLineItemAction,
       },
+      manager: {},
       bulkForward: false,
       tasksFieldsToSort: [],
       currentEntitlementSelected: null,
@@ -1075,9 +1077,10 @@ export default {
       if (signOffReviewers.length > 1) return false;
       return signOffReviewers[0].id === this.currentReviewerSelectedModal.id;
     },
-    openUserModal(lineItemId) {
+    openUserModal(lineItemId, manager) {
       getCertificationLineItemUser(this.campaignId, lineItemId)
         .then(({ data }) => {
+          this.manager = manager;
           this.currentUserSelectedModal = pick(data, userRequiredParams);
           this.$root.$emit('bv::show::modal', 'GovernanceUserDetailsModal');
         })
