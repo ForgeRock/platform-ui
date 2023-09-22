@@ -52,6 +52,7 @@ of the MIT license. See the LICENSE file for details. -->
         :title="$t('governance.certificationTask.lineItemDetailsModal.userDetailsTabText')">
         <FrUserDetailsTab
           v-if="user"
+          :manager="manager"
           :user="user" />
       </BTab>
       <template v-if="!onlyDetails">
@@ -100,6 +101,10 @@ export default {
     FrUserDetailsTab,
   },
   props: {
+    manager: {
+      type: Object,
+      default: () => ({}),
+    },
     user: {
       type: Object,
       required: true,
