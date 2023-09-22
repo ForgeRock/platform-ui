@@ -67,6 +67,7 @@
     "HostedPages": "Hosted Pages",
     "HostedPagesEdit": "Edit Hosted Pages",
     "hostedPagesSettings": "Hosted Pages Settings",
+    "IpAddresses": "IP Addresses",
     "Journeys": "Journeys",
     "JourneyTree": "Journey Tree",
     "LockTenant": "Lock Tenant",
@@ -1487,6 +1488,11 @@
       "configAdded": "You've added a CORS configuration but the CORS service is currently deactivated. Do you want to activate the CORS service now?",
       "skipThis": "Skip this"
     }
+  },
+  "ipAddresses": {
+    "title": "IP Addresses",
+    "subtitle": "Outbound source IP addresses for this tenant.",
+    "loadingError": "Unable to load tenant info."
   },
   "email": {
     "inviteAdmin": {
