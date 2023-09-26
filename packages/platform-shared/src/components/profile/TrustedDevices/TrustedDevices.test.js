@@ -6,6 +6,7 @@
  */
 
 import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { BModal } from 'bootstrap-vue';
 import i18n from '@/i18n';
 import TrustedDevices from './index';
 
@@ -281,7 +282,7 @@ describe('TrustedDevices.vue', () => {
     expect(wrapper.vm.$data.editModal).toEqual(expectedClearModalData.editModalValue);
   });
 
-  it('handleModalPrimaryButton method calls the correct handler', () => {
+  it('handleModalPrimaryButton method calls the correct handler', async () => {
     wrapper = shallowMount(TrustedDevices, {
       localVue,
       mixins: [MapMixin],
@@ -296,11 +297,21 @@ describe('TrustedDevices.vue', () => {
         },
       },
       i18n,
+      data() {
+        return {
+          devices: deviceData,
+        };
+      },
+      stubs: {
+        BModal,
+      },
     });
+
     const updateDeviceAliasSpy = jest.spyOn(wrapper.vm, 'updateDeviceAlias');
     const getRequestServiceSpy = jest.spyOn(wrapper.vm, 'getRequestService').mockReturnValue({
-      put: () => Promise.resolve(),
+      put: () => Promise.resolve({ data: {} }),
       delete: () => Promise.resolve(),
+      get: () => Promise.resolve({ data: { result: [] } }),
     });
     const removeDeviceSpy = jest.spyOn(wrapper.vm, 'removeDevice');
     wrapper.vm.$data.modalDevice = { id: '111', index: '1' };
