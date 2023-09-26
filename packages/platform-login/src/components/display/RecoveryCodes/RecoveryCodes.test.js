@@ -67,7 +67,7 @@ describe('RecoveryCodes', () => {
       const wrapper = setup();
       await wrapper.vm.$nextTick();
       const notificationSpy = jest.spyOn(wrapper.vm, 'displayNotification');
-      const clipboardSpy = jest.spyOn(clipboard, 'writeText');
+      const clipboardSpy = jest.spyOn(clipboard, 'writeText').mockImplementation(() => Promise.resolve());
 
       const copyCodesButton = findByTestId(wrapper, 'btn-copy-recovery-codes');
       expect(copyCodesButton.attributes('aria-label')).toBe(`Copy ${stubRecoveryCodes.length} recovery codes to clipboard`);
