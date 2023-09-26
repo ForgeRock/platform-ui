@@ -20,6 +20,12 @@ Profile.components['fr-account-controls'] = jest.fn();
 Profile.components['fr-account-security'] = jest.fn();
 Profile.components['fr-edit-profile'] = jest.fn();
 
+const RestMixin = {
+  methods: {
+    getRequestService: jest.fn().mockImplementation(() => ({ get: () => Promise.resolve({ data: {} }) })),
+  },
+};
+
 describe('Profile.vue', () => {
   let wrapper;
   beforeEach(() => {
@@ -49,10 +55,8 @@ describe('Profile.vue', () => {
       propsData: {
         theme: {},
       },
+      mixins: [RestMixin],
     });
-    jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => ({
-      get: () => Promise.resolve(),
-    }));
   });
 
   it('Sets fullName properly', () => {

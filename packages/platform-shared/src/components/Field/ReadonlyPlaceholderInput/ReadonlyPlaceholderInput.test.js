@@ -6,8 +6,12 @@
  */
 
 import { mount } from '@vue/test-utils';
+import { extend } from 'vee-validate';
+import VueValidator from '@forgerock/platform-shared/src/utils/validationRules';
 import ReadonlyPlaceholderInput from './index';
 import i18n from '@/i18n';
+
+extend('required', VueValidator.getRules(i18n).required);
 
 const defaultProps = {
   name: 'name',

@@ -10,6 +10,7 @@ import PolicyPasswordInput from './index';
 
 const localVue = createLocalVue();
 
+PolicyPasswordInput.mounted = jest.fn();
 describe('PasswordPolicyInput.vue', () => {
   let wrapper;
   beforeEach(() => {
