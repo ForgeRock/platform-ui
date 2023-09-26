@@ -44,6 +44,7 @@
     "Glossary": "Glossary",
     "ConfigureManaged": "Configure Managed",
     "Connect": "Connect",
+    "Csp": "Content Security Policy",
     "Cors": "CORS",
     "CustomEndpoints": "Custom Endpoints",
     "Dashboard": "Dashboard",
@@ -2200,6 +2201,18 @@
     "languages": {
       "groovy": "Groovy",
       "javascript": "JavaScript"
+    }
+  },
+  "csp": {
+    "title": "Content Security Policy",
+    "subtitle": "Configure Content-Security-Policy (CSP) HTTP headers to provide an extra layer of security for journeys and end-user UIs.",
+    "enforcedPolicy": "Enforced Policy",
+    "reportOnlyPolicy": "Report Only Policy",
+    "policyStatus": "Policy Status",
+    "details": {
+      "noDataTitle": "You haven't added any directives yet",
+      "enforcedNoDataSubtitle": "Add directives to create your Enforced Content Security Policy.",
+      "reportNoDataSubtitle": "Add directives to create your Report Only Content Security Policy."
     }
   },
   "esv": {
