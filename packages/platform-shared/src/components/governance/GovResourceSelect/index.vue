@@ -182,23 +182,22 @@ export default {
      */
     handleInput(event, isInitial) {
       this.isSearching = false;
-      let path;
+
       if (this.resource === 'role' || compareRealmSpecificResourceName(this.resource, 'role')) {
-        path = `managed/${this.resource}`;
         const selectedRole = this.options.find((role) => role.value === event);
+
         this.$emit('get-role-info', { name: selectedRole.text, id: selectedRole.value });
       } else if (this.resource === 'user' || compareRealmSpecificResourceName(this.resource, 'user')) {
-        path = `managed/${this.resource}`;
         let selectedUser = {};
 
         if (isInitial) selectedUser.userInfo = this.savedData;
-        else {
-          selectedUser = this.options
-            .find((user) => user.value === event) || {};
-        }
+        else selectedUser = this.options.find((user) => user.value === event) || {};
+
         this.$emit('get-user-info', selectedUser.userInfo);
       }
+
       this.selectValue = event;
+      const path = `managed/${this.resource}`;
       this.$emit('input', `${path}/${event}`);
     },
   },
