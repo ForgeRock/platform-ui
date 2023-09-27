@@ -9,6 +9,9 @@ import { mount, shallowMount } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import flushPromises from 'flush-promises';
 import { URLSearchParams } from 'url';
+import {
+  FRStep,
+} from '@forgerock/javascript-sdk';
 import * as urlUtil from '../../utils/urlUtil';
 import * as authResumptionUtil from '../../utils/authResumptionUtil';
 import i18n from '@/i18n';
@@ -36,6 +39,7 @@ describe('Login.vue', () => {
       },
       mocks: {
         $route,
+        $sanitize: () => {},
         $t: () => {},
         $store: {
           state: {
@@ -204,6 +208,37 @@ describe('Login.vue', () => {
     expect(wrapper.vm.getAlternateFieldType(['VALID_DATE'])).toEqual('date');
     expect(wrapper.vm.getAlternateFieldType(['VALID_DATE_FORMAT'])).toEqual('date');
     expect(wrapper.vm.getAlternateFieldType(['VALID_TIME_FORMAT'])).toEqual('time');
+  });
+
+  describe('buildTreeForm', () => {
+    it('metadata callbacks are not added to the component list', () => {
+      jest.spyOn(wrapper.vm, 'isCallbackRequired').mockReturnValue(false);
+
+      const data = {
+        loading: true,
+        step: new FRStep({
+          callbacks: [
+            {
+              type: 'MetadataCallback',
+              output: [
+                {
+                  name: 'data',
+                  value: {
+                    realm: '/alpha',
+                  },
+                },
+              ],
+              _id: 1,
+            },
+          ],
+        }),
+      };
+
+      wrapper.setData(data);
+      wrapper.vm.buildTreeForm();
+
+      expect(wrapper.vm.componentList.length).toBe(0);
+    });
   });
 });
 
