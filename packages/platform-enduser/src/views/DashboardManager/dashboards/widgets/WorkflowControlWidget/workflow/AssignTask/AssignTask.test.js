@@ -7,17 +7,22 @@
 
 import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
-import Vuex from 'vuex';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import AssignTask from './index';
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue);
-localVue.use(Vuex);
 
 describe('AssignTask.vue', () => {
   let wrapper;
   beforeEach(() => {
     jest.clearAllMocks();
+    setupTestPinia({
+      user: {
+        userId: 'userId',
+        userName: 'myUsername',
+      },
+    });
     wrapper = shallowMount(AssignTask, {
       localVue,
       propsData: {
@@ -40,14 +45,6 @@ describe('AssignTask.vue', () => {
       mocks: {
         $t: (key) => (key),
       },
-      store: new Vuex.Store({
-        state: {
-          UserStore: {
-            userId: 'userId',
-            userName: 'myUsername',
-          },
-        },
-      }),
     });
   });
 

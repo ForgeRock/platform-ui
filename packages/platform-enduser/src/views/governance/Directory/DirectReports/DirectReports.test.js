@@ -5,11 +5,10 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import {
-  mount,
-} from '@vue/test-utils';
+import { mount } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import DirectReports from './index';
 import * as DirectoryApi from '@/api/governance/DirectoryApi';
 
@@ -62,18 +61,12 @@ describe('DirectReports Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     DirectoryApi.getDirectReports = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [] } }));
+    setupTestPinia({ user: { userId: 'testId' } });
 
     wrapper = mount(DirectReports, {
       mocks: {
         $t: (t) => t,
         $router: mockRouter,
-        $store: {
-          state: {
-            UserStore: {
-              userId: 'testId',
-            },
-          },
-        },
       },
     });
   });

@@ -7,6 +7,7 @@
 
 import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import Preferences from '@/components/profile/Preferences';
 import i18n from '@/i18n';
 
@@ -14,14 +15,16 @@ const localVue = createLocalVue();
 localVue.use(BootstrapVue);
 
 describe('Preferences.vue', () => {
-  const store = {
-    state: {
-      UserStore: {
+  let wrapper;
+
+  beforeEach(() => {
+    setupTestPinia({
+      enduser: {
         preferences: {
           updates: {},
           marketing: {},
         },
-        schema: {
+        managedResourceSchema: {
           properties: {
             preferences: {
               properties: {
@@ -38,18 +41,10 @@ describe('Preferences.vue', () => {
           },
         },
       },
-    },
-  };
-  let wrapper;
-
-  beforeEach(() => {
+    });
     wrapper = shallowMount(Preferences, {
       localVue,
-      store,
       i18n,
-      mocks: {
-        $store: store,
-      },
     });
   });
 

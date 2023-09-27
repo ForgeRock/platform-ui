@@ -8,6 +8,7 @@
 import { createLocalVue, shallowMount } from '@vue/test-utils';
 import { BModal } from 'bootstrap-vue';
 import i18n from '@/i18n';
+import { setupTestPinia } from '../../../utils/testPiniaHelpers';
 import TrustedDevices from './index';
 
 const localVue = createLocalVue();
@@ -283,18 +284,12 @@ describe('TrustedDevices.vue', () => {
   });
 
   it('handleModalPrimaryButton method calls the correct handler', async () => {
+    setupTestPinia({ user: { userSearchAttribute: '' } });
     wrapper = shallowMount(TrustedDevices, {
       localVue,
       mixins: [MapMixin],
       mocks: {
         $t: () => {},
-        $store: {
-          state: {
-            UserStore: {
-              userSearchAttribute: '',
-            },
-          },
-        },
       },
       i18n,
       data() {
