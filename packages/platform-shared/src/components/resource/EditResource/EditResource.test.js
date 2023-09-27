@@ -10,6 +10,7 @@ import { createLocalVue, shallowMount } from '@vue/test-utils';
 import * as SessionsApi from '@/api/SessionsApi';
 import * as SchemaApi from '@/api/SchemaApi';
 import * as ManagedResourceApi from '@/api/ManagedResourceApi';
+import { setupTestPinia } from '../../../utils/testPiniaHelpers';
 import EditResource from './index';
 
 const localVue = createLocalVue();
@@ -29,6 +30,7 @@ describe('EditResource.vue', () => {
   };
 
   function mountComponent(governanceEnabled = false) {
+    setupTestPinia({ user: { idmRoles: ['openidm-admin'] } });
     return shallowMount(EditResource, {
       localVue,
       stubs: {
@@ -41,9 +43,6 @@ describe('EditResource.vue', () => {
           state: {
             isFraas: false,
             userId: 'foo',
-            UserStore: {
-              adminUser: true,
-            },
             SharedStore: {
               hasAmUrl: true,
               workforceEnabled: true,

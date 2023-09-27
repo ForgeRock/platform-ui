@@ -9,7 +9,6 @@ of the MIT license. See the LICENSE file for details. -->
       :is-enduser="true"
       :is-fraas="$store.state.isFraas"
       :menu-items="menuItems"
-      :user-details="userDetails"
       :version="version"
       :class="{invisible: theme === null}">
       <RouterView
@@ -28,10 +27,8 @@ import {
   capitalize,
   cloneDeep,
 } from 'lodash';
-import {
-  mapGetters,
-  mapState,
-} from 'vuex';
+import { mapState } from 'pinia';
+import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import ThemeMixin from '@forgerock/platform-shared/src/mixins/ThemeMixin';
@@ -64,12 +61,7 @@ export default {
       }
       return '';
     },
-    ...mapState({
-      accessObj: (state) => state.UserStore.access,
-    }),
-    ...mapGetters({
-      userDetails: 'UserStore/userDetails',
-    }),
+    ...mapState(useEnduserStore, { accessObj: 'access' }),
   },
   data() {
     return {

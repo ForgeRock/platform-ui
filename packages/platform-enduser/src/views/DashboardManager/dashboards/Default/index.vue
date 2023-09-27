@@ -14,7 +14,6 @@ of the MIT license. See the LICENSE file for details. -->
           :key="widget.type + index">
           <Component
             :is="widget.type"
-            :user-details="userDetails"
             :details="widget.details"
             :display-compact-header="myApplications.length > 0"
           />
@@ -92,7 +91,6 @@ export default {
   },
   computed: {
     ...mapState({
-      userDetails: (state) => state.UserStore,
       workflow: (state) => state.workflow,
       realm: (state) => state.realm,
     }),

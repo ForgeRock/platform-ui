@@ -5,12 +5,8 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { createLocalVue, shallowMount } from '@vue/test-utils';
-import Vuex from 'vuex';
+import { shallowMount } from '@vue/test-utils';
 import Layout from './index';
-
-const localVue = createLocalVue();
-localVue.use(Vuex);
 
 // https://jestjs.io/docs/en/manual-mocks#mocking-methods-which-are-not-implemented-in-jsdom
 Object.defineProperty(window, 'matchMedia', {
@@ -27,21 +23,10 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
-const store = new Vuex.Store({
-  state: {
-    UserStore: {},
-  },
-  getters: {
-    'UserStore/userDetails': (state) => state.UserStore,
-  },
-});
-
 describe('Layout Component', () => {
   let wrapper;
   beforeEach(() => {
     wrapper = shallowMount(Layout, {
-      localVue,
-      store,
       mocks: {
         $t: () => {},
       },

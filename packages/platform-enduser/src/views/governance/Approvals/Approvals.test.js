@@ -10,19 +10,22 @@ import flushPromises from 'flush-promises';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { clone } from 'lodash';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as AccessRequestApi from '@/api/governance/AccessRequestApi';
 import Approvals from './index';
 import i18n from '@/i18n';
 
-const mountComponent = () => mount(Approvals, {
-  i18n,
-  mocks: {
-    $store: {
-      state: { UserStore: {} },
-      commit: jest.fn(),
+const mountComponent = () => {
+  setupTestPinia({ user: { userId: '1234' } });
+  return mount(Approvals, {
+    i18n,
+    mocks: {
+      $store: {
+        commit: jest.fn(),
+      },
     },
-  },
-});
+  });
+};
 
 const mockRequest = {
   id: 3,
@@ -212,7 +215,7 @@ describe('Approvals', () => {
     pagination.vm.$emit('on-page-size-change', 2);
     expect(wrapper.vm.pageSize).toBe(2);
     expect(getApprovalsSpy).toHaveBeenCalledWith(
-      undefined,
+      '1234',
       {
         _pagedResultsOffset: 0,
         _pageSize: 2,
@@ -247,7 +250,7 @@ describe('Approvals', () => {
     pagination.vm.$emit('input', 2);
     expect(wrapper.vm.currentPage).toBe(2);
     expect(getApprovalsSpy).toHaveBeenCalledWith(
-      undefined,
+      '1234',
       {
         _pagedResultsOffset: 10,
         _pageSize: 10,
@@ -281,7 +284,7 @@ describe('Approvals', () => {
     const toolbar = findByTestId(wrapper, 'approvals-toolbar');
     toolbar.vm.$emit('status-change', 'complete');
     expect(getApprovalsSpy).toHaveBeenCalledWith(
-      undefined,
+      '1234',
       {
         _pagedResultsOffset: 0,
         _pageSize: 10,
@@ -320,7 +323,7 @@ describe('Approvals', () => {
     await flushPromises();
 
     expect(getApprovalsSpy).toHaveBeenCalledWith(
-      undefined,
+      '1234',
       {
         _pagedResultsOffset: 0,
         _pageSize: 10,

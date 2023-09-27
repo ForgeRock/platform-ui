@@ -11,6 +11,7 @@ import { cloneDeep } from 'lodash';
 import flushPromises from 'flush-promises';
 import * as CertificationApi from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import { setupTestPinia } from '../../../../utils/testPiniaHelpers';
 import CertificationTaskList from './index';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/CertificationApi');
@@ -50,17 +51,11 @@ function shallowMountComponent(options = {}, data = {}, propsData = {}) {
 
 function mountComponent(propsData = {}) {
   createTooltipContainer(['btnCertify-test-id-0', 'btnRevoke-test-id-0', 'btnAllowException-test-id-0']);
+  setupTestPinia({ user: { userId: 'testId' } });
   wrapper = mount(CertificationTaskList, {
     attachTo: document.body,
     mocks: {
       $t: (t) => t,
-      $store: {
-        state: {
-          UserStore: {
-            userId: 'testId',
-          },
-        },
-      },
     },
     stubs: ['BTooltip'],
     propsData: {

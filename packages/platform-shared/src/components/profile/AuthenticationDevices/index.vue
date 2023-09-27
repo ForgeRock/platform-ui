@@ -134,7 +134,8 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   BCol, BDropdown, BDropdownDivider, BDropdownItemButton, BRow, BModal, BButton,
 } from 'bootstrap-vue';
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
@@ -188,9 +189,7 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      userId: (state) => state.UserStore.userSearchAttribute,
-    }),
+    ...mapState(useUserStore, ['userSearchAttribute']),
   },
   methods: {
     /**
@@ -225,7 +224,7 @@ export default {
      * @returns {String} 2FA url
      */
     get2faUrl(authType) {
-      return `/users/${this.userId}/devices/2fa/${authType}`;
+      return `/users/${this.userSearchAttribute}/devices/2fa/${authType}`;
     },
     /**
      * Get all authentication devices for all types for a user

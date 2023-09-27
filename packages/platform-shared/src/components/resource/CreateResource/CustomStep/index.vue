@@ -43,6 +43,7 @@ of the MIT license. See the LICENSE file for details. -->
   isEmpty,
 } from 'lodash';
 import axios from 'axios';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import FrField from '@forgerock/platform-shared/src/components/Field';
@@ -153,9 +154,11 @@ export default {
         queryFilter: 'resourceCollection eq "internal/role" or (resourceCollection sw "managed")',
         fields: '*',
       };
+
+      const userStore = useUserStore();
       // get schema for all internal/role and all managed objects that are not
       // managed/assignment or that end in application
-      if (this.$store.state.UserStore.adminUser) {
+      if (userStore.adminUser) {
         getSchema(encodeQueryString(urlParams)).then(
           (response) => {
             const schemas = response.data.result.filter((result) => {

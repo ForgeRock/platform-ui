@@ -14,14 +14,14 @@ of the MIT license. See the LICENSE file for details. -->
           :header="fullName"
           :profile-image="profileImage"
           :secondary-header="profile.mail"
-          :schema="schema"
+          :schema="managedResourceSchema"
           :profile="profile"
-          :show-edit="profile._id !== undefined && internalUser === false"
-          :show-image-upload="schema.properties && schema.properties.profileImage !== undefined" />
+          :show-edit="profile._id !== undefined && isInternalUser === false"
+          :show-image-upload="managedResourceSchema.properties && managedResourceSchema.properties.profileImage !== undefined" />
       </BCol>
       <BCol :lg="(!theme.accountPageSections || theme.accountPageSections.personalInformation.enabled) ? 8 : 12">
         <FrAccountSecurity
-          v-if="(!theme.accountPageSections || theme.accountPageSections.accountSecurity.enabled) && internalUser === false"
+          v-if="(!theme.accountPageSections || theme.accountPageSections.accountSecurity.enabled) && isInternalUser === false"
           class="mb-5"
           :processing-request="processingRequest"
           :theme-sections="theme.accountPageSections ? theme.accountPageSections.accountSecurity.subsections : {}"
@@ -31,10 +31,10 @@ of the MIT license. See the LICENSE file for details. -->
           class="mb-5" />
         <FrTrustedDevices v-if="!theme.accountPageSections || theme.accountPageSections.trustedDevices.enabled" />
         <FrAuthorizedApplications
-          v-if="(!theme.accountPageSections || theme.accountPageSections.oauthApplications.enabled) && internalUser === false"
+          v-if="(!theme.accountPageSections || theme.accountPageSections.oauthApplications.enabled) && isInternalUser === false"
           class="mb-5" />
         <FrPreferences
-          v-if="(!theme.accountPageSections || theme.accountPageSections.preferences.enabled) && internalUser === false"
+          v-if="(!theme.accountPageSections || theme.accountPageSections.preferences.enabled) && isInternalUser === false"
           class="mb-5"
           @updateProfile="updateProfile" />
         <FrConsent
@@ -51,7 +51,9 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
+import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrAccountSecurity from '@forgerock/platform-shared/src/components/profile/AccountSecurity';
@@ -100,12 +102,8 @@ export default {
     },
   },
   computed: {
-    ...mapState({
-      userId: (state) => state.UserStore.userId,
-      internalUser: (state) => state.UserStore.internalUser,
-      managedResource: (state) => state.UserStore.managedResource,
-      schema: (state) => state.UserStore.schema,
-    }),
+    ...mapState(useUserStore, ['userId', 'managedResource']),
+    ...mapState(useEnduserStore, ['isInternalUser', 'managedResourceSchema']),
     fullName() {
       let fullName = '';
 
@@ -156,7 +154,8 @@ export default {
       });
 
       selfServiceInstance.patch(`${endpoint}/${this.userId}`, payload).then((response) => {
-        this.$store.commit('UserStore/setProfile', response.data);
+        const enduserStore = useEnduserStore();
+        enduserStore.setProfile(response.data);
         this.displayNotification('success', successMsg);
         this.profile = response.data;
 

@@ -8,6 +8,7 @@
 import { mount } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import { extend } from 'vee-validate';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
@@ -31,16 +32,10 @@ describe('AddDelegateModal', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    setupTestPinia({ user: { userId: 'testId' } });
     wrapper = mount(AddDelegateModal, {
       mocks: {
         $t: (t) => t,
-        $store: {
-          state: {
-            UserStore: {
-              userId: 'testId',
-            },
-          },
-        },
       },
       propsData: {
         isTesting: true,

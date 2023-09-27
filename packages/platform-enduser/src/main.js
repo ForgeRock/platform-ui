@@ -10,7 +10,6 @@ import 'core-js/stable';
 import {
   each,
   has,
-  isNull,
   debounce,
 } from 'lodash';
 import axios from 'axios';
@@ -26,6 +25,9 @@ import Vue from 'vue';
 import AppAuthHelper from 'appauthhelper-enduser/appAuthHelperCompat';
 import SessionCheck from 'oidcsessioncheck-enduser';
 import VueSanitize from 'vue-sanitize';
+import { createPinia, PiniaVuePlugin } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
+import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import { getAmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
 import overrideTranslations, { setLocales } from '@forgerock/platform-shared/src/utils/overrideTranslations';
@@ -47,6 +49,9 @@ Vue.component('ValidationObserver', ValidationObserver);
 
 Vue.use(VueSanitize, baseSanitizerConfig);
 
+Vue.use(PiniaVuePlugin);
+const pinia = createPinia();
+
 setInteractionMode('passive');
 
 PromisePoly.polyfill();
@@ -57,6 +62,8 @@ const idmContext = getFQDN(process.env.VUE_APP_IDM_URL);
 
 // Router guard to check authenticated routes
 router.beforeEach((to, from, next) => {
+  const userStore = useUserStore(pinia);
+  const enduserStore = useEnduserStore(pinia);
   document.body.className = '';
 
   if (has(to, 'meta.bodyClass')) {
@@ -64,7 +71,8 @@ router.beforeEach((to, from, next) => {
   }
 
   if (has(to, 'meta.authenticate')) {
-    if (isNull(store.state.UserStore.userId)) {
+    // Retrieve user data to check if the user can access this resource and for future role checks
+    if (userStore.userId === '') {
       const authInstance = axios.create({
         baseURL: idmContext,
         headers: store.state.authHeaders,
@@ -76,16 +84,17 @@ router.beforeEach((to, from, next) => {
           // so send them back to the admin to avoid problems.
           window.location.href = process.env.VUE_APP_ADMIN_URL;
         }
-        store.commit('UserStore/setUserId', userDetails.data.authorization.id);
-        store.commit('UserStore/setManagedResource', userDetails.data.authorization.component);
-        store.commit('UserStore/setRoles', userDetails.data.authorization.roles);
+        userStore.userId = userDetails.data.authorization.id;
+        userStore.managedResource = userDetails.data.authorization.component;
+        userStore.idmRoles = userDetails.data.authorization.roles;
+
         axios.all([
           authInstance.get(`${userDetails.data.authorization.component}/${userDetails.data.authorization.id}`),
           authInstance.post('privilege?_action=listPrivileges'),
           getSchema(userDetails.data.authorization.component, { baseURL: idmContext })]).then(axios.spread((profile, privilege, schema) => {
-          store.commit('UserStore/setProfile', profile.data);
-          store.commit('UserStore/setSchema', schema.data);
-          store.commit('UserStore/setAccess', privilege.data);
+          enduserStore.setProfile(profile.data);
+          enduserStore.managedResourceSchema = schema.data;
+          enduserStore.access = privilege.data;
 
           next();
         }));
@@ -136,6 +145,7 @@ const loadApp = () => {
     router,
     store,
     i18n,
+    pinia,
     template: '<App/>',
     components: { App },
   });
@@ -218,7 +228,8 @@ const addAppAuth = (realm) => {
     resourceServers,
     tokensAvailableHandler(claims) {
       const sub = parseSub(claims);
-      store.commit('UserStore/setUserSearchAttribute', sub);
+      const userStore = useUserStore(pinia);
+      userStore.userSearchAttribute = sub;
       // if there is a post_logout_url claim set postLogoutUrlClaim here for use in window.logout()
       postLogoutUrlClaim = claims.post_logout_url;
       const sessionCheck = new SessionCheck({

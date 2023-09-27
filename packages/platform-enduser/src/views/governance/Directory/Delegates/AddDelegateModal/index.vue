@@ -71,6 +71,8 @@ import {
   BModal,
   BRow,
 } from 'bootstrap-vue';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import dayjs from 'dayjs';
 import FrDatepicker from '@forgerock/platform-shared/src/components/Datepicker';
 import FrField from '@forgerock/platform-shared/src/components/Field';
@@ -107,6 +109,9 @@ export default {
       default: false,
     },
   },
+  computed: {
+    ...mapState(useUserStore, ['userId']),
+  },
   methods: {
     resetModal() {
       this.delegates = '';
@@ -127,7 +132,7 @@ export default {
           : null;
       }
 
-      addTaskProxy(this.$store.state.UserStore.userId, [this.delegates], startDate, endDate).then(() => {
+      addTaskProxy(this.userId, [this.delegates], startDate, endDate).then(() => {
         this.$emit('delegate-added');
         this.displayNotification('success', this.$t('governance.delegates.delegateAdded'));
         ok();

@@ -8,6 +8,7 @@
 import { mount, shallowMount } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
 import { first } from 'lodash';
+import { setupTestPinia } from '../../../utils/testPiniaHelpers';
 import i18n from '@/i18n';
 import EditPersonalInfo from './index';
 import { findByTestId } from '../../../utils/testHelpers';
@@ -45,16 +46,17 @@ describe('EditPersonalInfo', () => {
   };
 
   function setup(props) {
+    setupTestPinia({
+      user: {
+        userId: 'stub-id',
+        managedResource: 'people',
+      },
+    });
     return mount(EditPersonalInfo, {
       i18n,
       mocks: {
         $store: {
           state: {
-            UserStore: {
-              userId: 'stub-id',
-              managedResource: {},
-              internalUser: false,
-            },
             isFraas: true,
           },
         },

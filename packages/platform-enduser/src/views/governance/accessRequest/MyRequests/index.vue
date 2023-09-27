@@ -123,6 +123,8 @@ import {
   BDropdownItem,
   BRow,
 } from 'bootstrap-vue';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
@@ -193,6 +195,9 @@ export default {
       totalRows: 0,
     };
   },
+  computed: {
+    ...mapState(useUserStore, ['userId']),
+  },
   mounted() {
     this.loadRequests();
   },
@@ -217,7 +222,7 @@ export default {
       if (this.sortKeys === 'date') params.sortType = 'date';
 
       try {
-        const { data } = await getUserRequests(this.$store.state.UserStore.userId, params, payload);
+        const { data } = await getUserRequests(this.userId, params, payload);
         this.accessRequests = data.result;
         this.totalRows = data.totalCount;
       } catch (error) {

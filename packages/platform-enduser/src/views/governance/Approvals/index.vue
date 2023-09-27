@@ -154,6 +154,8 @@ import {
   BCard,
   BContainer,
 } from 'bootstrap-vue';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
@@ -218,6 +220,9 @@ export default {
       totalCount: 0,
     };
   },
+  computed: {
+    ...mapState(useUserStore, ['userId']),
+  },
   mounted() {
     this.loadRequestAndUpdateBadge();
   },
@@ -233,7 +238,7 @@ export default {
         actorStatus: 'active',
       };
       try {
-        const { data } = await getUserApprovals(this.$store.state.UserStore.userId, queryParams);
+        const { data } = await getUserApprovals(this.userId, queryParams);
         this.$store.commit('setApprovalsCount', data.totalCount);
       } catch (error) {
         this.showErrorMessage(error, this.$t('governance.approval.errorGettingPendingApprovals'));
@@ -277,7 +282,7 @@ export default {
       if (this.sortKeys === 'date') params._sortType = 'date';
 
       try {
-        const { data } = await getUserApprovals(this.$store.state.UserStore.userId, params, payload);
+        const { data } = await getUserApprovals(this.userId, params, payload);
         this.accessRequests = data.result;
         this.totalCount = data.totalCount;
       } catch (error) {

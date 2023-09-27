@@ -228,6 +228,7 @@ import {
   VBModal,
 } from 'bootstrap-vue';
 import axios from 'axios';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import FrResetPasswordModal from '@forgerock/platform-shared/src/components/resource/EditResource/ResetPasswordModal';
 import FrRelationshipArray from '@forgerock/platform-shared/src/components/resource/RelationshipArray';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
@@ -295,6 +296,7 @@ export default {
     },
   },
   data() {
+    const userStore = useUserStore();
     return {
       assignmentsQueryFilter: this.$store.state.SharedStore.workforceEnabled ? '!(/type eq "__ENTITLEMENT__") and !(/type eq "__RESOURCE__") and !(/type eq "__OVERRIDE__")' : 'true',
       resourceTitle: '',
@@ -314,7 +316,7 @@ export default {
       displayNameField: '',
       displaySecondaryTitleField: '',
       formFields: {},
-      isOpenidmAdmin: this.$store.state.UserStore.adminUser,
+      isOpenidmAdmin: userStore.adminUser,
       objectTypeProperties: {},
       relationshipProperties: {},
       settingsProperties: {},

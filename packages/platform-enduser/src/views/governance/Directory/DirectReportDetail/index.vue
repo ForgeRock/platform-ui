@@ -107,6 +107,8 @@ import {
   BTab,
 } from 'bootstrap-vue';
 import { get } from 'lodash';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import PluralizeFilter from '@forgerock/platform-shared/src/filters/PluralizeFilter';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
@@ -189,6 +191,7 @@ export default {
     });
   },
   computed: {
+    ...mapState(useUserStore, ['userId']),
     revokeRequestCatalog() {
       if (Object.keys(this.requestToRevoke).length) {
         const { item, catalog } = this.requestToRevoke;
@@ -285,7 +288,7 @@ export default {
       }
     },
     async getUserProfile() {
-      await getDirectReportUserInfo(this.$store.state.UserStore.userId, this.$route.params.userId).then(({ data }) => {
+      await getDirectReportUserInfo(this.userId, this.$route.params.userId).then(({ data }) => {
         this.directReportUserInfo = {
           name: `${data.givenName} ${data.sn}`,
           userName: data.userName,

@@ -121,6 +121,8 @@ import {
   BMediaBody,
   BTable,
 } from 'bootstrap-vue';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
@@ -178,6 +180,9 @@ export default {
       isNoResultsFirstLoad: false,
     };
   },
+  computed: {
+    ...mapState(useUserStore, ['userId']),
+  },
   async mounted() {
     await this.loadData();
     this.checkIfNoResultsFirstLoad();
@@ -212,7 +217,7 @@ export default {
       // Adds sortby to params
       params.sortBy = this.sortBy;
 
-      await getDirectReports(this.$store.state.UserStore.userId, params).then(({ data }) => {
+      await getDirectReports(this.userId, params).then(({ data }) => {
         this.items = data.result;
         this.totalCount = data.totalCount;
       }).catch((err) => {

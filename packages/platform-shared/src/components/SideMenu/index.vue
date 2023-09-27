@@ -14,7 +14,6 @@ of the MIT license. See the LICENSE file for details. -->
           <FrDropdownMenu
             v-if="dropdownItems.length"
             :dropdown-items="dropdownItems"
-            :user-details="userDetails"
             class="mt-3">
             <template #button-content>
               <BMedia
@@ -98,7 +97,6 @@ of the MIT license. See the LICENSE file for details. -->
             <FrMenuItem
               :key="`sidebarNav_${index}`"
               v-bind="item"
-              :user-roles="userDetails.roles"
               is-nav />
           </template>
         </ul>
@@ -189,19 +187,6 @@ export default {
     realmAliases: {
       type: String,
       default: '',
-    },
-    /**
-     * User details
-     */
-    userDetails: {
-      type: Object,
-      default: () => ({
-        name: 'Company Name',
-        company: 'Company',
-        email: 'email@company.com',
-        adminURL: 'www.company.com',
-        roles: [],
-      }),
     },
   },
   methods: {

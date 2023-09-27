@@ -148,6 +148,8 @@ import {
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import Vue from 'vue';
 import { get } from 'lodash';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 
 Vue.directive('b-toggle', VBToggle);
 
@@ -240,13 +242,6 @@ export default {
       default: false,
     },
     /**
-     * The roles of the current user, used to check whether to display the item
-     */
-    userRoles: {
-      type: Array,
-      default: () => [],
-    },
-    /**
      * Indicates if this item is being shown in a nav. If false, the component assumes it is being used in a dropdown.
      */
     isNav: {
@@ -289,15 +284,16 @@ export default {
     };
   },
   computed: {
+    ...mapState(useUserStore, ['allRoles', 'privileges', 'amAdmin']),
     showItemForPrivileges() {
       const emptyShowForPrivilegesProp = !this.showForPrivileges.length;
-      const showForPrivilegesInUserStore = this.showForPrivileges.some((userPrivilege) => !!get(this.$store.state.UserStore.privileges, userPrivilege, false));
-      const isAmAdmin = this.$store.state.UserStore.amAdmin;
+      const showForPrivilegesInUserStore = this.showForPrivileges.some((userPrivilege) => !!get(this.privileges, userPrivilege, false));
+      const isAmAdmin = this.amAdmin;
       return emptyShowForPrivilegesProp || showForPrivilegesInUserStore || isAmAdmin;
     },
     // If the item is restricted by roles, only display it to users who have at least one of the required roles
     showItemForUser() {
-      return !this.showForRoles.length || this.userRoles.some((userRole) => this.showForRoles.includes(userRole));
+      return !this.showForRoles.length || this.allRoles.some((userRole) => this.showForRoles.includes(userRole));
     },
     // If the item is restricted by store values, only display it when all of those exist and are truthy
     showItemForStoreValues() {
@@ -318,7 +314,7 @@ export default {
     },
     // If the item is restricted by roles, only display it to users who have at least one of the required roles
     showSubItemForUser(showForRoles) {
-      return !showForRoles?.length || this.userRoles.some((userRole) => showForRoles.includes(userRole));
+      return !showForRoles?.length || this.allRoles.some((userRole) => showForRoles.includes(userRole));
     },
     /**
      * Determine whether or not the current item should be expanded if it is a menu, based on the route name

@@ -10,6 +10,7 @@ import flushPromises from 'flush-promises';
 import { mount, createWrapper } from '@vue/test-utils';
 import * as CertificationApi from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import { setupTestPinia } from '../../../../utils/testPiniaHelpers';
 import i18n from '@/i18n';
 import CertificationTaskListGroupBy from './index';
 
@@ -112,20 +113,12 @@ describe('Glossary', () => {
       showEntitlementColumn: false,
       showGroupBy: true,
     },
-    mocks: {
-      $store: {
-        state: {
-          UserStore: {
-            userId: '1234',
-          },
-        },
-      },
-    },
     stubs: {
       BTooltip: true,
     },
   });
   beforeEach(() => {
+    setupTestPinia({ user: { userId: '1234' } });
     jest.spyOn(CommonsApi, 'getGlossarySchema').mockReturnValue(Promise.resolve({ data: { result: [] } }));
     jest.spyOn(CertificationApi, 'getCertificationCountsByCampaign').mockReturnValue(Promise.resolve({
       data: {
