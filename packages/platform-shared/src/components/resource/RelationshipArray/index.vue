@@ -216,6 +216,7 @@ import {
   BFormCheckbox,
   BModal,
 } from 'bootstrap-vue';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 
 import dayjs from 'dayjs';
@@ -317,6 +318,7 @@ export default {
     },
   },
   data() {
+    const userStore = useUserStore();
     return {
       addButtonText: this.addRelationshipButtonText || this.$t('common.addObject', { object: this.getTranslation(this.relationshipArrayProperty.title) }),
       gridPageSize: 10,
@@ -337,7 +339,7 @@ export default {
       newRelationships: [],
       relationshipToDelete: {},
       selected: [],
-      isOpenidmAdmin: this.$store.state.UserStore.adminUser,
+      isOpenidmAdmin: userStore.adminUser,
       showFilter: false,
       disableSortAndSearch: false,
       queryThreshold: null,

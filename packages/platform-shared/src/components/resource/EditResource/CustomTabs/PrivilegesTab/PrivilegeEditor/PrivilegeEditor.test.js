@@ -22,9 +22,6 @@ describe('PrivilegeEditor.vue', () => {
         $store: {
           state: {
             realm: 'test',
-            UserStore: {
-              adminUser: true,
-            },
           },
         },
       },

@@ -48,6 +48,8 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import {
   BButton,
   BContainer,
@@ -74,10 +76,13 @@ export default {
     BContainer,
     BImg,
   },
+  computed: {
+    ...mapState(useUserStore, ['amAdmin', 'realmAdmin']),
+  },
   methods: {
     redirectToDashboard() {
       // When a user selects to go 'back to Dashboard' they are directed/redirected to the correct 'package' Dashboard, according to what type of user they are.
-      if ((this.$store.state.SharedStore.currentPackage === 'admin') && (!this.$store.state.UserStore.amAdmin && !this.$store.state.UserStore.realmAdmin)) {
+      if ((this.$store.state.SharedStore.currentPackage === 'admin') && (!this.amAdmin && !this.realmAdmin)) {
         window.location.href = this.$store.state.enduserURL;
       } else {
         this.$router.push({ name: 'Dashboard' });
@@ -86,7 +91,8 @@ export default {
   },
   mixins: [LoginMixin],
   beforeRouteLeave(to, from, next) {
-    this.$store.commit('UserStore/setUserId', null);
+    const userStore = useUserStore();
+    userStore.userId = null;
     next();
   },
 };

@@ -91,7 +91,6 @@ of the MIT license. See the LICENSE file for details. -->
             </div>
             <div v-if="!hideDropdown">
               <FrDropdownMenu
-                :user-details="userDetails"
                 :dropdown-items="tenantMenuItems"
                 :show-profile-link="showProfileLink"
                 enable-logout
@@ -131,7 +130,7 @@ of the MIT license. See the LICENSE file for details. -->
                         alt=""
                         height="34"
                         width="34"
-                        :src="profileImage ? profileImage : require('@forgerock/platform-shared/src/assets/images/avatar.png')">
+                        :src="profileImage.length ? profileImage : require('@forgerock/platform-shared/src/assets/images/avatar.png')">
                     </template>
                     <div class="d-none d-lg-block sidebar-item-text fr-dropdown-button-content">
                       <h5 class="my-0 text-truncate">
@@ -172,7 +171,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';
 import {
   BDropdownDivider,
   BDropdownHeader,
@@ -186,6 +185,9 @@ import DropdownMenu from '@forgerock/platform-shared/src/components/DropdownMenu
 import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrTenantTierBadge from '@forgerock/platform-shared/src/components/TenantTierBadge';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
+import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
 import ToolbarNotification from '../ToolbarNotification';
 
 /**
@@ -304,32 +306,14 @@ export default {
       type: Array,
       default: () => [],
     },
-    /**
-     * Details about the current user. Displayed with admin and profile links.
-     */
-    userDetails: {
-      type: Object,
-      default: () => ({
-        name: 'Fake Name',
-        company: '',
-        email: 'email@fake.com',
-        adminUser: false,
-        adminURL: 'wwwfakecom',
-      }),
-    },
   },
   computed: {
-    ...mapState({
-      userStore: (state) => state.UserStore,
-    }),
+    ...mapState(useUserStore, ['userDetails']),
+    ...mapState(useEnduserStore, ['profileImage']),
     ...mapGetters({
       hasTenantInfo: 'hasTenantInfo',
       tenantRegionInfo: 'tenantRegionInfo',
     }),
-    profileImage() {
-      const { profileImage } = this.userStore;
-      return profileImage && profileImage.length ? profileImage : null;
-    },
   },
   methods: {
     /**

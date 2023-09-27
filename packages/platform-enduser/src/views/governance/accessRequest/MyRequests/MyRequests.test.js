@@ -7,6 +7,7 @@
 
 import { mount } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import flushPromises from 'flush-promises';
 import * as AccessRequestApi from '@/api/governance/AccessRequestApi';
 import i18n from '@/i18n';
@@ -64,15 +65,15 @@ const accessRequests = [{
 describe('MyRequests', () => {
   const stubProps = {
     i18n,
-    mocks: {
-      $store: { state: { UserStore: { userId: '80202' } } },
-    },
   };
 
-  const setup = (props) => (mount(MyRequests, {
-    ...stubProps,
-    ...props,
-  }));
+  const setup = (props) => {
+    setupTestPinia({ user: { userId: '1234' } });
+    return mount(MyRequests, {
+      ...stubProps,
+      ...props,
+    });
+  };
 
   AccessRequestApi.getUserRequests = jest.fn().mockReturnValue(Promise.resolve({
     data: {

@@ -9,7 +9,6 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import Shared from '@forgerock/platform-shared/src/store/modules/Shared';
 import AutoAccess from '@forgerock/platform-shared/src/store/modules/AutoAccess';
-import User from './modules/User';
 
 Vue.use(Vuex);
 
@@ -81,12 +80,6 @@ export default new Vuex.Store({
   },
   modules: {
     ...AutoAccess,
-    UserStore: {
-      namespaced: true,
-      getters: User.getters,
-      state: User.state,
-      mutations: User.mutations,
-    },
     SharedStore: {
       namespaced: true,
       state: Shared.state,

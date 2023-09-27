@@ -6,6 +6,7 @@
  */
 
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import { mount } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
 import * as MyAccessApi from '@/api/governance/MyAccessApi';
@@ -50,16 +51,10 @@ describe('MyAccessReviewTable', () => {
         totalCount: 1,
       },
     }));
+    setupTestPinia({ user: { userId: 'testId' } });
     wrapper = mount(MyAccessReviewTable, {
       mocks: {
         $t: (text, prop) => i18n.t(text, prop),
-        $store: {
-          state: {
-            UserStore: {
-              userId: 'testId',
-            },
-          },
-        },
       },
       propsData: {
         grantType: 'account',

@@ -51,7 +51,8 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { BContainer, BImg } from 'bootstrap-vue';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
@@ -79,9 +80,7 @@ export default {
     NotificationMixin,
   ],
   computed: {
-    ...mapState({
-      userId: (state) => state.UserStore.userId,
-    }),
+    ...mapState(useUserStore, ['userId']),
     filteredApplications() {
       if (!this.userData.effectiveApplications) {
         return [];

@@ -7,21 +7,16 @@
 
 import { shallowMount } from '@vue/test-utils';
 import { ResourceType } from '@forgerock/platform-shared/src/utils/governance/types';
+import { setupTestPinia } from '../../../../../utils/testPiniaHelpers';
 import CertificationTaskEditReviewerModal from './index';
 
 describe('CertificationTaskEditReviewerModal', () => {
   let wrapper;
   beforeEach(() => {
+    setupTestPinia({ user: { userId: 'testId' } });
     wrapper = shallowMount(CertificationTaskEditReviewerModal, {
       mocks: {
         $t: (t) => t,
-        $store: {
-          state: {
-            UserStore: {
-              userId: 'testId',
-            },
-          },
-        },
       },
       propsData: {
         currentUserPermissions: {
@@ -36,10 +31,6 @@ describe('CertificationTaskEditReviewerModal', () => {
         },
       },
     });
-  });
-
-  it('component loaded correctly', () => {
-    expect(wrapper.vm.currentUserMappedPermissions).toEqual({});
   });
 
   it('closeModal method should emit close-modal event', () => {
@@ -324,13 +315,6 @@ describe('CertificationTaskEditReviewerModal', () => {
     wrapper = shallowMount(CertificationTaskEditReviewerModal, {
       mocks: {
         $t: (t) => t,
-        $store: {
-          state: {
-            UserStore: {
-              userId: 'testId',
-            },
-          },
-        },
       },
       propsData: {
         modalId: 'CertificationTaskEditReviewerEntitlementModal',

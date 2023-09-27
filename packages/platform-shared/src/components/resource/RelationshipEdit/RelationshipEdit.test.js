@@ -9,6 +9,7 @@ import { shallowMount } from '@vue/test-utils';
 import { map } from 'lodash';
 import flushPromises from 'flush-promises';
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
+import { setupTestPinia } from '../../../utils/testPiniaHelpers';
 import * as schemaApi from '@/api/SchemaApi';
 import RelationshipEdit from './index';
 
@@ -32,6 +33,7 @@ describe('RelationshipEdit', () => {
   let wrapper;
 
   beforeEach(() => {
+    setupTestPinia();
     wrapper = shallowMount(RelationshipEdit, {
       mocks: {
         $t: () => { },

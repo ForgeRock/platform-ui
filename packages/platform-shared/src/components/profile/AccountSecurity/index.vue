@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -53,7 +53,7 @@ of the MIT license. See the LICENSE file for details. -->
           </BRow>
         </BCardBody>
       </template>
-      <BCardBody v-if="isOnKBA && internalUser === false && (!themeSections.securityQuestions || themeSections.securityQuestions.enabled)">
+      <BCardBody v-if="isOnKBA && isInternalUser === false && (!themeSections.securityQuestions || themeSections.securityQuestions.enabled)">
         <FrEditKba
           class="w-100"
           :kba-data="kbaData"
@@ -72,7 +72,9 @@ import {
   BCol,
   BRow,
 } from 'bootstrap-vue';
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
+import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import FrEditKba from '@forgerock/platform-shared/src/components/profile/EditKBA';
@@ -120,11 +122,8 @@ export default {
     },
   },
   computed: {
-    ...mapState({
-      internalUser: (state) => state.UserStore.internalUser,
-      userId: (state) => state.UserStore.userSearchAttribute,
-      userName: (state) => state.UserStore.userName,
-    }),
+    ...mapState(useUserStore, ['userName', 'userSearchAttribute']),
+    ...mapState(useEnduserStore, ['isInternalUser']),
     items() {
       return [
         this.usernameItem,
@@ -174,7 +173,7 @@ export default {
     this.setUpdateJourneys();
   },
   watch: {
-    '$store.state.UserStore.userName': {
+    userName: {
       handler(newVal) {
         this.usernameItem.text = newVal;
       },
@@ -214,7 +213,7 @@ export default {
       const authTypes = ['oath', 'push', 'webauthn'];
 
       const authPromises = authTypes.map((authType) => {
-        const url = `/users/${this.userId}/devices/2fa/${authType}?${query}`;
+        const url = `/users/${this.userSearchAttribute}/devices/2fa/${authType}?${query}`;
         return selfServiceInstance.get(url, { withCredentials: true });
       });
       Promise.all(authPromises)

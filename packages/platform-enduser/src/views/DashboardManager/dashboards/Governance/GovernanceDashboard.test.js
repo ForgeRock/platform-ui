@@ -7,6 +7,7 @@
 
 import BootstrapVue from 'bootstrap-vue';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as AccessReviewApi from '@/api/governance/AccessReviewApi';
 import * as AccessRequestApi from '@/api/governance/AccessRequestApi';
 import GovernanceDashboard from './index';
@@ -17,26 +18,6 @@ localVue.use(BootstrapVue);
 jest.mock('@/api/governance/AccessReviewApi');
 jest.mock('@/api/governance/AccessRequestApi');
 
-/**
- * @constant
- * @type {Object}
- * @default
- */
-const USER_STORE = {
-  userId: 'testId',
-  managedResource: null,
-  roles: null,
-  internalUser: false,
-  adminUser: false,
-  profile: {},
-  schema: {},
-  access: [],
-  givenName: '',
-  sn: '',
-  email: '',
-  userName: '',
-};
-
 describe('GovernanceDashboard', () => {
   let wrapper;
 
@@ -45,13 +26,13 @@ describe('GovernanceDashboard', () => {
   AccessRequestApi.getUserApprovals = jest.fn().mockReturnValue(Promise.resolve({ data: {} }));
 
   function shallowMountComponent() {
+    setupTestPinia({ user: { userId: '123' } });
     wrapper = shallowMount(GovernanceDashboard, {
       localVue,
       mocks: {
         $t: (text) => (text),
         $store: {
           state: {
-            UserStore: USER_STORE,
             SharedStore: {
             },
           },
@@ -83,7 +64,7 @@ describe('GovernanceDashboard', () => {
       await wrapper.vm.$nextTick();
       expect(getCertSpy)
         .toHaveBeenCalledWith(
-          USER_STORE.userId,
+          '123',
           {
             pageSize: 0,
             status: 'in-progress',
@@ -102,7 +83,7 @@ describe('GovernanceDashboard', () => {
       await wrapper.vm.$nextTick();
       expect(getCertSpy)
         .toHaveBeenCalledWith(
-          USER_STORE.userId,
+          '123',
           {
             pageSize: 0,
             actorStatus: 'active',

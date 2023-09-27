@@ -9,9 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
         <BCol
           class="mt-4"
           sm="12">
-          <Welcome
-            display-compact-header
-            :user-details="userDetails" />
+          <Welcome display-compact-header />
         </BCol>
       </BRow>
     </BContainer>
@@ -50,7 +48,8 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { get } from 'lodash';
 
 import FrCountCard from '@forgerock/platform-shared/src/components/CountCard';
@@ -86,10 +85,7 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      userDetails: (state) => state.UserStore,
-      userId: (state) => state.UserStore.userId,
-    }),
+    ...mapState(useUserStore, ['userId']),
   },
   mounted() {
     this.getAccessReviewsCount();

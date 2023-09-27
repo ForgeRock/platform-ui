@@ -6,6 +6,7 @@
  */
 
 import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import Vuex from 'vuex';
 import i18n from '@/i18n';
 import App from '@/App';
@@ -42,15 +43,13 @@ describe('App.vue', () => {
     store = new Vuex.Store({
       state: {
         SharedStore: { workforceEnabled: false },
-        UserStore: { userDetails: {} },
         menusFile: 'menus.platform',
       },
       getters: {
-        'UserStore/userDetails': (state) => state.UserStore.userDetails,
-        UserStore: (state) => state.UserStore,
         menusFile: (state) => state.menusFile,
       },
     });
+    setupTestPinia({ enduser: { access: {} } });
   });
 
   afterAll(() => {

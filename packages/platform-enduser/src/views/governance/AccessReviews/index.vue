@@ -132,7 +132,8 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import {
   BBadge,
   BCard,
@@ -216,9 +217,7 @@ export default {
     this.getList();
   },
   computed: {
-    ...mapState({
-      userId: (state) => state.UserStore.userId,
-    }),
+    ...mapState(useUserStore, ['userId']),
     currentUserId() {
       return `managed/user/${this.userId}`;
     },

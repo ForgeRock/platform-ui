@@ -8,6 +8,7 @@
 import { mount, createWrapper } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as DirectoryApi from '@/api/governance/DirectoryApi';
 import Delegates from './index';
 
@@ -30,16 +31,10 @@ describe('AccessReviews', () => {
       },
     }));
     DirectoryApi.deleteTaskProxy = jest.fn().mockReturnValue(Promise.resolve({ data: { result: [] } }));
+    setupTestPinia({ user: { userId: 'testId' } });
     wrapper = mount(Delegates, {
       mocks: {
         $t: (t) => t,
-        $store: {
-          state: {
-            UserStore: {
-              userId: 'testId',
-            },
-          },
-        },
       },
     });
   });

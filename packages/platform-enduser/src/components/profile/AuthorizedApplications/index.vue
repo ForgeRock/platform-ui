@@ -122,7 +122,8 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import FrAccordion from '@forgerock/platform-shared/src/components/Accordion';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
@@ -147,10 +148,7 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      userId: (state) => state.UserStore.userSearchAttribute,
-      userName: (state) => state.UserStore.userName,
-    }),
+    ...mapState(useUserStore, ['userSearchAttribute']),
   },
   mounted() {
     this.loadData();
@@ -167,7 +165,7 @@ export default {
     },
     loadData() {
       const selfServiceInstance = this.getRequestService({ context: 'AM' });
-      const url = `/users/${this.userId}/oauth2/applications?_queryFilter=true`;
+      const url = `/users/${this.userSearchAttribute}/oauth2/applications?_queryFilter=true`;
 
       selfServiceInstance.get(url, { withCredentials: true }).then((res) => {
         // filter out end-user-ui and idm-admin-ui
@@ -184,7 +182,7 @@ export default {
     },
     removeApplication(clientId) {
       const selfServiceInstance = this.getRequestService({ context: 'AM' });
-      const url = `/users/${this.userId}/oauth2/applications/${clientId}`;
+      const url = `/users/${this.userSearchAttribute}/oauth2/applications/${clientId}`;
 
       selfServiceInstance.delete(url, { withCredentials: true }).then(() => {
         this.$refs.fsModal.hide();

@@ -71,7 +71,8 @@ import {
   each,
   isNull,
 } from 'lodash';
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import Accordion from '@forgerock/platform-shared/src/components/Accordion';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
@@ -114,10 +115,7 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      userId: (state) => state.UserStore.userId,
-      managedResource: (state) => state.UserStore.managedResource,
-    }),
+    ...mapState(useUserStore, ['userId', 'managedResource']),
   },
   methods: {
     downloadAccount() {

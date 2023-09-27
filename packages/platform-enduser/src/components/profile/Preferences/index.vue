@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -48,7 +48,8 @@ import {
   BCardBody,
   BCardHeader,
 } from 'bootstrap-vue';
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 
@@ -76,9 +77,9 @@ export default {
     this.loadData();
   },
   computed: {
-    ...mapState({
-      currentPreferences: (state) => state.UserStore.preferences,
-      properties: (state) => state.UserStore.schema.properties.preferences.properties,
+    ...mapState(useEnduserStore, {
+      currentPreferences: 'preferences',
+      properties: (store) => store?.managedResourceSchema?.properties?.preferences?.properties,
     }),
     preferencesLength() {
       return Object.keys(this.preferences).length - 1;
