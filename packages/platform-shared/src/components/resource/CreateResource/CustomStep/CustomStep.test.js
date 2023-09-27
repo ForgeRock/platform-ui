@@ -7,6 +7,7 @@
 
 import { BootstrapVue } from 'bootstrap-vue';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { setupTestPinia } from '../../../../utils/testPiniaHelpers';
 import * as SchemaApi from '@/api/SchemaApi';
 import CustomStep from './index';
 
@@ -53,6 +54,7 @@ describe('CustomStep.vue', () => {
     },
   }));
   beforeEach(() => {
+    setupTestPinia({ user: { idmRoles: ['openidm-admin'] } });
     wrapper = shallowMount(CustomStep, {
       localVue,
       mocks: {
@@ -60,9 +62,6 @@ describe('CustomStep.vue', () => {
         $store: {
           state: {
             realm: 'test',
-            UserStore: {
-              adminUser: true,
-            },
             SharedStore: {
               workforceEnabled: false,
             },
@@ -121,7 +120,7 @@ describe('CustomStep.vue', () => {
         ),
       }
     ));
-    wrapper.vm.$store.state.UserStore.adminUser = false;
+    setupTestPinia({ user: { idmRoles: [] } });
     await wrapper.vm.setPrivilegesStep();
     expect(wrapper.vm.schemaMap).toStrictEqual({
       testId: {

@@ -7,12 +7,14 @@
 
 import { shallowMount } from '@vue/test-utils';
 import * as ManagedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
+import { setupTestPinia } from '../../utils/testPiniaHelpers';
 import ResourceMixin from './index';
 
 let wrapper;
 
 describe('ResourceMixin', () => {
   beforeEach(() => {
+    setupTestPinia({ user: { idmRoles: ['openidm-admin'] } });
     wrapper = shallowMount({}, {
       render() {},
       mixins: [ResourceMixin],
@@ -26,9 +28,6 @@ describe('ResourceMixin', () => {
 
               },
               managedObjectMinimumUIFilterLength: {},
-            },
-            UserStore: {
-              adminUser: true,
             },
           },
         },

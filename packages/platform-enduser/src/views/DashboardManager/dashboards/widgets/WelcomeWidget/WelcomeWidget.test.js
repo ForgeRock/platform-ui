@@ -6,16 +6,24 @@
  */
 
 import BootstrapVue from 'bootstrap-vue';
-import Vuex from 'vuex';
 import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import i18n from '@/i18n';
 import WelcomeWidget from './index';
 
 const localVue = createLocalVue();
 localVue.use(BootstrapVue);
-localVue.use(Vuex);
 
 describe('WelcomeWidget.vue', () => {
+  setupTestPinia({
+    user: {
+      givenName: 'Test',
+      name: 'bob loblaw',
+    },
+    enduser: {
+      profileImage: 'my-avatar.jpg',
+    },
+  });
   it('renders default header if displayCompactHeader is set to false', () => {
     const wrapper = shallowMount(WelcomeWidget, {
       localVue,
@@ -32,9 +40,6 @@ describe('WelcomeWidget.vue', () => {
       localVue,
       i18n,
       propsData: {
-        userDetails: {
-          givenName: 'Test',
-        },
         displayCompactHeader: true,
       },
     });
@@ -47,9 +52,6 @@ describe('WelcomeWidget.vue', () => {
       localVue,
       i18n,
       propsData: {
-        userDetails: {
-          givenName: 'Test',
-        },
         displayCompactHeader: true,
       },
       data() {
@@ -66,9 +68,6 @@ describe('WelcomeWidget.vue', () => {
       localVue,
       i18n,
       propsData: {
-        userDetails: {
-          givenName: 'Test',
-        },
         displayCompactHeader: true,
       },
       data() {
@@ -88,9 +87,6 @@ describe('WelcomeWidget.vue', () => {
       localVue,
       i18n,
       propsData: {
-        userDetails: {
-          givenName: 'Test',
-        },
         displayCompactHeader: true,
       },
       data() {
@@ -110,9 +106,6 @@ describe('WelcomeWidget.vue', () => {
       localVue,
       i18n,
       propsData: {
-        userDetails: {
-          givenName: 'Test',
-        },
         displayCompactHeader: true,
       },
       data() {
@@ -127,43 +120,12 @@ describe('WelcomeWidget.vue', () => {
     expect(wrapper.vm.timeOfDay).toBe('Evening');
   });
 
-  it('correctly returns a full name on the fullName computed property', async () => {
-    const wrapper = shallowMount(WelcomeWidget, {
-      localVue,
-      propsData: {
-        userDetails: {
-          givenName: 'John',
-          sn: 'Doe',
-        },
-      },
-    });
-
-    expect(wrapper.vm.fullName).toBe('John Doe');
-
-    // returns userId if no first or last name provided
-    await wrapper.setProps({
-      userDetails: {
-        userId: 44,
-        givenName: '',
-        sn: '',
-      },
-    });
-    expect(wrapper.vm.fullName).toBe(44);
-  });
-
   it('returns an avatar source in the avatarSource computed property', () => {
     const wrapper = shallowMount(WelcomeWidget, {
       localVue,
       mocks: {
         $router: { push: jest.fn() },
       },
-      store: new Vuex.Store({
-        state: {
-          UserStore: {
-            profileImage: 'my-avatar.jpg',
-          },
-        },
-      }),
     });
 
     expect(wrapper.vm.avatarSource).toBe('my-avatar.jpg');

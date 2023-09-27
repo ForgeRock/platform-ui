@@ -7,6 +7,7 @@
 
 import { shallowMount } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
+import { setupTestPinia } from '../../../utils/testPiniaHelpers';
 import RelationshipArray from './index';
 import * as SchemaApi from '@/api/SchemaApi';
 
@@ -87,6 +88,7 @@ describe('RelationshipArray', () => {
   let wrapper;
 
   beforeEach(() => {
+    setupTestPinia();
     wrapper = shallowMount(RelationshipArray, {
       mocks: {
         $t: (key) => key,
@@ -94,9 +96,6 @@ describe('RelationshipArray', () => {
         $store: {
           state: {
             userId: 'foo',
-            UserStore: {
-              adminUser: false,
-            },
             SharedStore: {
               uiConfig: {
                 configuration: {

@@ -148,7 +148,8 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import {
   BButtonClose,
   BModal,
@@ -317,9 +318,7 @@ export default {
     footerClass() {
       return this.isAllowedDeletion ? 'justify-content-between' : '';
     },
-    ...mapState({
-      userId: (state) => state.UserStore.userId,
-    }),
+    ...mapState(useUserStore, ['userId']),
     /**
      * returns true if the logged in user is editing his own permissions
      */

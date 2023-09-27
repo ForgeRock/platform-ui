@@ -6,20 +6,19 @@
  */
 
 import { shallowMount } from '@vue/test-utils';
+import { setupTestPinia } from '../../../../../utils/testPiniaHelpers';
 import PrivilegesTab from './index';
 import * as SchemaApi from '@/api/SchemaApi';
 
 describe('PrivilegesTab', () => {
   let wrapper;
   beforeEach(() => {
+    setupTestPinia({ user: { idmRoles: ['openidm-admin'] } });
     wrapper = shallowMount(PrivilegesTab, {
       mocks: {
         $t: () => {},
         $store: {
           state: {
-            UserStore: {
-              adminUser: true,
-            },
             SharedStore: {
               workforceEnabled: false,
             },

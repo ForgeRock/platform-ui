@@ -25,6 +25,8 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   each, first, reject, merge, isEmpty, isUndefined,
 } from 'lodash';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import axios from 'axios';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
@@ -55,10 +57,6 @@ export default {
     NotificationMixin,
   ],
   props: {
-    userDetails: {
-      type: Object,
-      default: () => {},
-    },
     widgetDetails: {
       type: Object,
       default: () => {},
@@ -70,6 +68,9 @@ export default {
       availableTasks: {},
       processes: {},
     };
+  },
+  computed: {
+    ...mapState(useUserStore, ['userId']),
   },
   created() {
     // Setting a variable after created allows for a component wide variable
@@ -190,7 +191,7 @@ export default {
     },
     loadTasks(options = { groupName: 'availableTasks' }) {
       return this.workflowService.get('/endpoint/gettasksview', {
-        params: this.getTaskParams(this.userDetails.userId, options.groupName),
+        params: this.getTaskParams(this.userId, options.groupName),
       }).then((response) => {
         this.toTasks(this.getTaskGroup(options.groupName), response);
       });

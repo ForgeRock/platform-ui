@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -18,8 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
       <template>
         <FrMenuItem
           :key="`sideDropdownItems_${index}`"
-          v-bind="item"
-          :user-roles="userDetails.roles" />
+          v-bind="item" />
       </template>
     </template>
     <template v-if="showProfileLink">
@@ -72,6 +71,8 @@ import {
 import MenuItem from '@forgerock/platform-shared/src/components/MenuItem';
 import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 
 /**
  * Bootstrap dropdown menu used in navbar and sidemenu
@@ -118,19 +119,9 @@ export default {
       type: Boolean,
       default: false,
     },
-    /**
-     * Details about the current user. Displayed with admin and profile links.
-     */
-    userDetails: {
-      type: Object,
-      default: () => ({
-        name: 'Fake Name',
-        company: '',
-        email: 'email@fake.com',
-        adminURL: 'wwwfakecom',
-        roles: [],
-      }),
-    },
+  },
+  computed: {
+    ...mapState(useUserStore, ['userDetails']),
   },
 };
 </script>
