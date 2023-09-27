@@ -9,10 +9,11 @@
     "postinstall": "husky install",
     "test:cb": "jest --config=jest.config.crossbrowser.js",
     "test:docker:build": "docker build -t platform-ui-e2e-testrunner -f docker-e2e/Dockerfile .",
-    "test:docker:run": "docker run -it --network host -v /var/run/docker.sock:/var/run/docker.sock -v ~/.ssh:/root/.ssh -v ~/.config/gcloud:/root/.config/gcloud -e DEPLOYMENT_NAMESPACE=$USER platform-ui-e2e-testrunner"
+    "test:docker:run": "docker run -it --network host -v /var/run/docker.sock:/var/run/docker.sock -v ~/.ssh:/root/.ssh -v ~/.config/gcloud:/root/.config/gcloud -e DEPLOYMENT_NAMESPACE=$USER platform-ui-e2e-testrunner",
+    "coverage-diff": "yarn g:coverage-diff"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "7.12.1",
+    "@babel/eslint-parser": "7.22.9",
     "@testing-library/dom": "7.30.0",
     "@testing-library/jest-dom": "5.11.9",
     "@testing-library/user-event": "13.0.1",
@@ -29,7 +30,7 @@
     "eslint-plugin-vue": "5.0.0",
     "got": "11.8.5",
     "husky": "5.0.4",
-    "jest-circus": "26.6.3",
+    "jest-circus": "29.6.1",
     "jest-css-modules": "2.1.0",
     "jest-environment-node": "26.6.2",
     "jest-runner-eslint": "0.10.0",
@@ -55,9 +56,6 @@
     "css-select": "4.0.0",
     "follow-redirects": "1.14.8",
     "mocha/yargs/y18n": "4.0.1",
-    "node-gyp": "5.0.4",
-    "node-pre-gyp": "0.17.0",
-    "node-pre-gyp/rc/ini": "1.3.6",
     "node-sass/request/http-signature/jsprim/json-schema": "0.4.0",
     "node-sass/sass-graph/yargs/y18n": "3.2.2",
     "normalize-url": "4.5.1",
@@ -70,7 +68,9 @@
     "**/**/cypress-lighthouse/lighthouse/yargs/y18n": "3.2.2",
     "**/**/minimist": "1.2.6",
     "**/**/ramda": "0.27.1",
-    "**/**/with/acorn": "4.0.13"
+    "**/**/with/acorn": "4.0.13",
+    "**/**/istanbul-lib-instrument": "6.0.0",
+    "tough-cookie": "4.1.3"
   },
   "workspaces": {
     "packages": [
