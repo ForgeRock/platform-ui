@@ -622,6 +622,9 @@ export default {
           type = this.FrCallbackType.PushChallengeNumber;
         }
 
+        // IAM-2936 MetadataCallback is not a callback that is displayed
+        if (type === this.FrCallbackType.MetadataCallback) return;
+
         // Only components that need extra props or events
         const { callbackSpecificProps = {}, listeners = [] } = this.getComponentPropsAndEvents(type, index, componentList, this.stage, this.step, this.realm);
         const component = {
