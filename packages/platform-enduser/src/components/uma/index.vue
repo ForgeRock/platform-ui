@@ -77,7 +77,6 @@ import {
   has,
   map,
 } from 'lodash';
-import { mapState } from 'vuex';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrCenterCard from '@forgerock/platform-shared/src/components/CenterCard';
@@ -120,9 +119,6 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      userId: (state) => state.UserStore.userSearchAttribute,
-    }),
     umaHistory() {
       return map(this.activity, (res) => {
         const resource = find(this.resources, { _id: res.resourceSetId });

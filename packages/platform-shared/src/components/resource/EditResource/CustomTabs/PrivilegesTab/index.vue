@@ -166,6 +166,7 @@ import {
   BTable,
 } from 'bootstrap-vue';
 import axios from 'axios';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { ValidationObserver } from 'vee-validate';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
@@ -373,9 +374,10 @@ export default {
     },
   },
   mounted() {
+    const userStore = useUserStore();
     // get schema for all internal/role and all managed objects that are not
     // managed/assignment or that end in application
-    if (this.$store.state.UserStore.adminUser) {
+    if (userStore.adminUser) {
       const urlParams = {
         queryFilter: 'resourceCollection eq "internal/role" or (resourceCollection sw "managed")',
         fields: '*',

@@ -182,6 +182,7 @@ import {
   BMediaBody,
   BTable,
 } from 'bootstrap-vue';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
@@ -314,8 +315,9 @@ export default {
      * @param {Boolean} isInit - Parameter check whether the component is inital rendering, passed from loadData()
      */
     getMyAccess(params, isInit = false) {
+      const userStore = useUserStore();
       params.grantType = this.grantType;
-      const userId = this.userId || this.$store.state.UserStore.userId;
+      const userId = this.userId || userStore.userId;
       getMyAccess(userId, params).then(({ data }) => {
         this.items = data.result;
         this.totalCount = data.totalCount;

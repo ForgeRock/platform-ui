@@ -71,7 +71,7 @@ of the MIT license. See the LICENSE file for details. -->
         </BButton>
         <BButton
           variant="primary"
-          :disabled="internalUser || invalid"
+          :disabled="isInternalUser || invalid"
           @click="saveForm"
           data-testid="btn-edit-personal-info-save">
           {{ $t('common.save') }}
@@ -97,7 +97,9 @@ import {
   BRow,
 } from 'bootstrap-vue';
 import { ValidationObserver } from 'vee-validate';
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
+import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
@@ -129,11 +131,8 @@ export default {
     ValidationObserver,
   },
   computed: {
-    ...mapState({
-      userId: (state) => state.UserStore.userId,
-      managedResource: (state) => state.UserStore.managedResource,
-      internalUser: (state) => state.UserStore.internalUser,
-    }),
+    ...mapState(useUserStore, ['userId', 'managedResource']),
+    ...mapState(useEnduserStore, ['isInternalUser']),
   },
   props: {
     /**

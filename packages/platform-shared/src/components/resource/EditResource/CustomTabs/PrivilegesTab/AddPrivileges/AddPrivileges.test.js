@@ -22,9 +22,6 @@ describe('AddPrivileges.vue', () => {
         $store: {
           state: {
             realm: 'test',
-            UserStore: {
-              adminUser: true,
-            },
           },
         },
       },

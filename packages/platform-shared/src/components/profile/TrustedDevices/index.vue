@@ -180,7 +180,8 @@ import UAParser from 'ua-parser-js';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { get } from 'lodash';
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import {
   BButton, BCol, BModal, BRow, VBModal,
 } from 'bootstrap-vue';
@@ -236,9 +237,7 @@ export default {
     };
   },
   computed: {
-    ...mapState({
-      userId: (state) => state.UserStore.userSearchAttribute,
-    }),
+    ...mapState(useUserStore, ['userSearchAttribute']),
   },
   mounted() {
     this.loadData();
@@ -361,7 +360,7 @@ export default {
       const query = '?_queryFilter=true';
       const configOptions = this.forceRoot ? { context: 'AM', realm: 'root' } : { context: 'AM' };
       const selfServiceInstance = this.getRequestService(configOptions);
-      const url = `/users/${this.userId}/devices/profile${query}`;
+      const url = `/users/${this.userSearchAttribute}/devices/profile${query}`;
 
       selfServiceInstance.get(url, { withCredentials: true })
         .then((response) => {
@@ -390,7 +389,7 @@ export default {
     updateDeviceAlias(id, newAlias, index) {
       const configOptions = this.forceRoot ? { context: 'AM', realm: 'root' } : { context: 'AM' };
       const selfServiceInstance = this.getRequestService(configOptions);
-      const url = `/users/${this.userId}/devices/profile/${id}`;
+      const url = `/users/${this.userSearchAttribute}/devices/profile/${id}`;
       const payload = { alias: newAlias };
 
       selfServiceInstance.put(url, payload, { withCredentials: true })
@@ -411,7 +410,7 @@ export default {
     removeDevice(id) {
       const configOptions = this.forceRoot ? { context: 'AM', realm: 'root' } : { context: 'AM' };
       const selfServiceInstance = this.getRequestService(configOptions);
-      const url = `/users/${this.userId}/devices/profile/${id}`;
+      const url = `/users/${this.userSearchAttribute}/devices/profile/${id}`;
 
       selfServiceInstance.delete(url, { withCredentials: true })
         .then(() => {

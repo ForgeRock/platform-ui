@@ -14,6 +14,7 @@ import {
   map,
   isEqual,
 } from 'lodash';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import PasswordPolicyMixin from '@forgerock/platform-shared/src/mixins/PasswordPolicyMixin';
 import { getManagedResourceCount } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 
@@ -141,6 +142,7 @@ export default {
       const defaultMinimumUIFilterLength = 3;
       const numRecordsForIntervention = 1000;
       const { uiConfig, managedObjectMinimumUIFilterLength } = this.$store.state.SharedStore;
+      const userStore = useUserStore();
       let minimumUIFilterLength = 0;
       // check the SharedStore first to see if the minimumUIFilterLength value has already been set for this managed object
       if (has(uiConfig.configuration?.platformSettings?.managedObjectsSettings, `${managedObjectName}.minimumUIFilterLength`)) {
@@ -153,7 +155,7 @@ export default {
         // special case for internalrole if an override is not already set in uiConfig.configuration?.platformSettings?.managedObjectsSettings
         // set it to zero
         minimumUIFilterLength = 0;
-      } else if (this.$store.state.UserStore.adminUser) {
+      } else if (userStore.adminUser) {
         try {
           // this user has openidm-admin role so they are allowed to get the count of the whole managed object's dataset
           const result = await getManagedResourceCount(managedObjectName);

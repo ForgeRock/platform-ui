@@ -23,7 +23,6 @@ of the MIT license. See the LICENSE file for details. -->
       :dropdown-items="realmMenuItems"
       :realm="realm"
       :realm-aliases="realmAliases"
-      :user-details="userDetails"
       v-show="!hideSideMenu" />
     <div class="content">
       <FrNavBar
@@ -34,7 +33,6 @@ of the MIT license. See the LICENSE file for details. -->
         :show-docs-link="!isFraas && !isEnduser"
         :show-profile-link="!isInternalUser"
         :tenant-menu-items="tenantMenuItems"
-        :user-details="userDetails"
         :docs-link="docsLink"
         help-url="https://backstage.forgerock.com/"
         v-show="!hideNavBar" />
@@ -181,13 +179,6 @@ export default {
     tenantMenuItems: {
       type: Array,
       default: () => [],
-    },
-    /**
-     * Details about the current user
-     */
-    userDetails: {
-      type: Object,
-      default: () => {},
     },
     /**
      * Build number displayed in footer

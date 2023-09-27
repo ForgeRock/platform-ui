@@ -91,7 +91,9 @@ import {
 } from 'bootstrap-vue';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
-import { mapState } from 'vuex';
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
+import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
@@ -137,11 +139,8 @@ export default {
     },
   },
   computed: {
-    ...mapState({
-      userId: (state) => state.UserStore.userId,
-      internalUser: (state) => state.UserStore.internalUser,
-      managedResource: (state) => state.UserStore.managedResource,
-    }),
+    ...mapState(useUserStore, ['userId', 'managedResource']),
+    ...mapState(useEnduserStore, ['isInternalUser']),
   },
   methods: {
     resetPolling() {
@@ -162,7 +161,7 @@ export default {
 
       // If we start using notifications again, we need to look into whether the new static role naming convention
       // should be used here e.g. 'openidm-admin' instead of 'internal/user/openidm-admin'
-      const target = this.internalUser ? 'internal/user/openidm-admin' : `${this.managedResource}/${this.userId}`;
+      const target = this.isInternalUser ? 'internal/user/openidm-admin' : `${this.managedResource}/${this.userId}`;
 
       this.resetPolling();
 

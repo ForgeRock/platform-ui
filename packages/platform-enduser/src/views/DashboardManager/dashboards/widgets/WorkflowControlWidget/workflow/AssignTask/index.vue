@@ -59,6 +59,8 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import { mapState } from 'pinia';
+import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { isEmpty } from 'lodash';
 import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
 import axios from 'axios';
@@ -80,9 +82,11 @@ export default {
     },
   },
   data() {
+    const userStore = useUserStore();
+
     return {
       taskDetailsList: [],
-      selected: this.$store.state.UserStore.userName,
+      selected: userStore.userName,
       uniqueId: null,
     };
   },
@@ -90,8 +94,9 @@ export default {
     this.uniqueId = this._uid;
   },
   computed: {
+    ...mapState(useUserStore, ['userId', 'userName']),
     assigneeOptions() {
-      const loggedUserName = this.$store.state.UserStore.userName;
+      const loggedUserName = this.userName;
 
       if (!isEmpty(this.taskDefinition.task.usersToAssign)) {
         return this.taskDefinition.task.usersToAssign.map(({ username, displayableName }) => {
@@ -105,7 +110,7 @@ export default {
   },
   methods: {
     assignTask() {
-      this.$emit('assignTask', { id: this.taskDefinition.task._id, assignee: this.$store.state.UserStore.userId });
+      this.$emit('assignTask', { id: this.taskDefinition.task._id, assignee: this.userId });
     },
     generateDisplayDetails(formProperties, variables) {
       return formProperties.reduce((acc, property) => acc.concat({ _id: property._id, name: property.name, value: variables[property._id] }), []);

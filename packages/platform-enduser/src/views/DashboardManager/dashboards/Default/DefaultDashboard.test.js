@@ -34,20 +34,6 @@ describe('DefaultDashboard.vue', () => {
       store: new Vuex.Store({
         state: {
           SharedStore: { workforceEnabled: false },
-          UserStore: {
-            userId: null,
-            managedResource: null,
-            roles: null,
-            internalUser: false,
-            adminUser: false,
-            profile: {},
-            schema: {},
-            access: [],
-            givenName: '',
-            sn: '',
-            email: '',
-            userName: '',
-          },
         },
       }),
     });
