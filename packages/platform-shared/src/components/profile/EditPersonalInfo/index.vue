@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -33,40 +33,46 @@ of the MIT license. See the LICENSE file for details. -->
       <BContainer>
         <BRow>
           <template v-if="formFields.length">
-            <template v-for="(field, index) in formFields">
-              <BFormGroup
-                class="w-100"
-                :key="index"
-                :label="title"
-                label-sr-only
-                v-if="field.type === 'string' || field.type === 'number' || field.type === 'boolean'">
-                <FrField
-                  v-model="field.value"
-                  :label="field.title"
-                  :name="field.name"
-                  :type="field.format ? field.format : field.type"
-                  :validation="field.validation" />
-              </BFormGroup>
-              <FrListField
-                v-else-if="field.type === 'array' && field.name !== 'privileges'"
-                v-model="field.value"
-                class="w-100"
-                :key="index"
-                :description="field.description"
-                :items="field.items"
-                :label="field.title"
-                :name="field.name"
-                :required="field.required"
-                :index="index"
-                v-on="$listeners"
-                @input="updateField(index, $event)" />
-            </template>
+            <BFormGroup
+              class="w-100"
+              :label="title"
+              label-sr-only>
+              <template v-for="(field, index) in formFields">
+                <div
+                  :key="index">
+                  <FrField
+                    v-model="field.value"
+                    class="personal-info-field"
+                    :label="field.title"
+                    :name="field.name"
+                    :type="field.format ? field.format : field.type"
+                    :validation="field.validation"
+                    :testid="`edit-personal-info-${index}`"
+                    :disabled="!field.userEditable"
+                    v-if="field.type === 'string' || field.type === 'number' || field.type === 'boolean'" />
+                  <FrListField
+                    v-else-if="field.type === 'array' && field.name !== 'privileges'"
+                    v-model="field.value"
+                    class="w-100 personal-info-field"
+                    :description="field.description"
+                    :items="field.items"
+                    :label="field.title"
+                    :name="field.name"
+                    :required="field.required"
+                    :index="index"
+                    :disabled="!field.userEditable"
+                    v-on="$listeners"
+                    @input="updateField(index, $event)" />
+                </div>
+              </template>
+            </BFormGroup>
           </template>
-          <h3
+          <h1
             v-else
-            class="text-center">
-            {{ $t('profile.editProfile.noFields') }}
-          </h3>
+            class="text-center h3"
+            data-testid="edit-personal-info-no-fields">
+            {{ $t('pages.profile.editProfile.noFields') }}
+          </h1>
         </BRow>
       </BContainer>
       <template #modal-footer="{ cancel }">
@@ -173,8 +179,7 @@ export default {
      */
     generateFormFields() {
       const { order, properties, required } = this.schema;
-      const filteredOrder = filter(order, (propName) => properties[propName].userEditable
-                            && properties[propName].viewable
+      const filteredOrder = filter(order, (propName) => properties[propName].viewable
                             && properties[propName].scope !== 'private'
                             && properties[propName].type !== 'object');
       const formFields = map(filteredOrder, (name) => ({
@@ -186,6 +191,7 @@ export default {
         items: properties[name].items,
         format: properties[name].format,
         validation: required.includes(name) ? 'required' : '',
+        userEditable: properties[name].userEditable,
       }));
 
       return formFields;
@@ -267,3 +273,13 @@ export default {
   },
 };
 </script>
+<style lang="scss">
+.personal-info-field {
+  margin-bottom: 1.875rem
+}
+
+.personal-info-field .form-label-group .form-label-group-input .form-control:disabled,
+.personal-info-field .form-label-group .form-label-group-input .disabled {
+  background-color: $gray-100 !important;
+}
+</style>
