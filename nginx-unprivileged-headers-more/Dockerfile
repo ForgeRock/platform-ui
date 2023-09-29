@@ -7,7 +7,7 @@
 ARG NGINX_VERSION
 
 # First build stage, used to build an nginx module we use in our image
-FROM nginxinc/nginx-unprivileged:${NGINX_VERSION} as build
+FROM gcr.io/engineering-devops/ci/nginxinc/nginx-unprivileged:${NGINX_VERSION} as build
 
 ARG HEADERS_MORE_VERSION
 
