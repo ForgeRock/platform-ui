@@ -6,7 +6,7 @@
 ###############################################################################
 # Platform-shared docker image
 ###############################################################################
-FROM node:14.15.0-stretch-slim
+FROM gcr.io/engineering-devops/ci/node:14.15.0-stretch-slim
 
 RUN apt-get update && apt-get install -y gettext-base python build-essential
 
