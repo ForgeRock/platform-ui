@@ -145,8 +145,8 @@ export function getFormattedRequest(request, objectType) {
     details: {
       id: request.id,
       type: getTypeString(request.requestType),
-      name: objectType === 'entitlement' ? request[objectType].displayName : request[objectType]?.name,
-      description: request[objectType]?.description,
+      name: objectType === 'entitlement' ? request.descriptor?.idx?.['/entitlement']?.displayName || request[objectType]?.displayName : request[objectType]?.name,
+      description: objectType === 'entitlement' ? request.glossary?.idx?.['/entitlement']?.description || request[objectType]?.description : request[objectType]?.description,
       priority: request.request?.common?.priority,
       date: request.decision?.startDate,
       requesteeInfo: request.user,
