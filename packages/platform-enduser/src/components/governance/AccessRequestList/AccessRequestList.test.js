@@ -43,10 +43,9 @@ const entitlement = {
   },
   requestType: 'entitlementGrant',
   application: {},
-  entitlement: {
-    displayName: 'test entitlement',
-    description: 'test description',
-  },
+  entitlement: {},
+  descriptor: { idx: { '/entitlement': { displayName: 'test entitlement' } } },
+  glossary: { idx: { '/entitlement': { description: 'test description' } } },
   user: {
     givenName: 'test givenName',
     sn: 'test sn',
