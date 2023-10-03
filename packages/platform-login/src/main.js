@@ -70,10 +70,11 @@ Config.set({
 
 router.beforeEach((to, _from, next) => {
   if (to.name === 'logout') {
-    const urlParams = new URLSearchParams(window.location.search);
+    const urlParams = new URLSearchParams(to.query);
     const goto = urlParams.get('goto') || '';
-    const logout = (validatedGoto) => {
-      SessionManager.logout().then(() => {
+    const logout = (realm, validatedGoto) => {
+      const logoutParams = { realmPath: realm || localStorage.getItem('originalLoginRealm') || 'root' };
+      SessionManager.logout(logoutParams).then(() => {
         if (validatedGoto) {
           window.location.href = validatedGoto;
         } else {
@@ -90,9 +91,9 @@ router.beforeEach((to, _from, next) => {
           apiVersion: 'protocol=2.1,resource=3.0',
           path: `realms/root/realms/${realm}`,
         }).post('users?_action=validateGoto', { goto: decodeURIComponent(goto) }, { withCredentials: true }).then((res) => {
-          logout(res.data.successURL);
+          logout(realm, res.data.successURL);
         }).catch(() => {
-          logout();
+          logout(realm);
         });
       };
 
@@ -109,7 +110,7 @@ router.beforeEach((to, _from, next) => {
         validateGotoAndLogout();
       }
     } else {
-      logout();
+      logout(realm);
     }
   } else {
     next();
