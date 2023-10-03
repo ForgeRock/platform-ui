@@ -14,6 +14,7 @@ const defaultState = {
   autoAccessJasUrl: null,
   autoAccessApiUrl: null,
   autoAccessReportsUrl: null,
+  autoReportsEnabled: false,
   idmBaseURL: '',
   currentPackage: '',
   fraasEnvironmentUrl: null,
@@ -134,6 +135,10 @@ const mutations = {
 
     if (env.VUE_APP_ENABLE_WORKFORCE) {
       state.workforceEnabled = env.VUE_APP_ENABLE_WORKFORCE === 'true' || env.VUE_APP_ENABLE_WORKFORCE === true;
+    }
+
+    if (env.VUE_APP_ENABLE_AUTO_REPORTS) {
+      state.autoReportsEnabled = env.VUE_APP_ENABLE_AUTO_REPORTS === 'true' || env.VUE_APP_ENABLE_AUTO_REPORTS === true;
     }
   },
   setWebStorageAvailable(state, val) {
