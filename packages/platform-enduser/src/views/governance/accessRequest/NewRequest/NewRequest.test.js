@@ -6,6 +6,7 @@
  */
 
 import { mount, createWrapper } from '@vue/test-utils';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import flushPromises from 'flush-promises';
 import * as CommonsApi from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import getPriorityImageSrc from '@/components/utils/governance/AccessRequestUtils';
@@ -53,6 +54,7 @@ describe('NewRequest', () => {
   };
   window.matchMedia = jest.fn((param) => param);
   function mountComponent(overrideParams = {}, overrideData = {}) {
+    setupTestPinia();
     const wrapper = mount(NewRequest, {
       i18n,
       mixins: [RestMixin],

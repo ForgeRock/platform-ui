@@ -6,6 +6,7 @@
  */
 
 import { mount } from '@vue/test-utils';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import * as CertificationApi from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import flushPromises from 'flush-promises';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
@@ -17,6 +18,7 @@ describe('CertificationTask', () => {
   let wrapper;
 
   function mountComponent() {
+    setupTestPinia();
     return mount(CertificationTask, {
       mocks: {
         $t: (t) => t,
