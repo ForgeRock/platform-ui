@@ -48,5 +48,19 @@ filterTests(['forgeops', 'cloud'], () => {
         expect(location.href).to.not.eq(`${Cypress.config().baseUrl}/am/XUI/?realm=/#/`);
       });
     });
+
+    it('should logout when using am/XUI/logout url', () => {
+      cy.login();
+      cy.location().should((location) => {
+        expect(location.href).to.not.eq(`${Cypress.config().baseUrl}/am/XUI/?realm=/#/`);
+      });
+
+      cy.intercept('GET', '/am/json/serverinfo/*').as('getServerInfo');
+      cy.visit(`${Cypress.config().baseUrl}/am/XUI/?realm=/#/logout`);
+      cy.wait('@getServerInfo');
+      cy.location().should((location) => {
+        expect(location.href).to.eq(`${Cypress.config().baseUrl}/am/XUI/?realm=/#/`);
+      });
+    });
   });
 });
