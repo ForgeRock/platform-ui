@@ -112,7 +112,7 @@ import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import PluralizeFilter from '@forgerock/platform-shared/src/filters/PluralizeFilter';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
+import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrMyAccessReviewTable from '../../MyAccessReview/MyAccessReviewTable';
 import FrRevokeRequestModal from './RevokeRequestModal';
@@ -142,14 +142,14 @@ export default {
     FrRevokeRequestModal,
   },
   mixins: [
-    BreadcrumbMixin,
     NotificationMixin,
   ],
   filters: {
     PluralizeFilter,
   },
-  async created() {
-    await this.getUserProfile();
+  setup() {
+    const { setBreadcrumb } = useBreadcrumb();
+    return { setBreadcrumb };
   },
   data() {
     return {
@@ -178,6 +178,9 @@ export default {
       ],
       tabIndex: 0,
     };
+  },
+  async created() {
+    await this.getUserProfile();
   },
   mounted() {
     this.setBreadcrumb('/my-reports', this.$t('governance.directReports.title'));
