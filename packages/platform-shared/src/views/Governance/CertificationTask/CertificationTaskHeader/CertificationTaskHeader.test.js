@@ -6,6 +6,7 @@
  */
 
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import flushPromises from 'flush-promises';
 import { mount, createWrapper } from '@vue/test-utils';
 import { forwardCertification } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
@@ -14,6 +15,7 @@ import CertificationTaskHeader from './index';
 jest.mock('@forgerock/platform-shared/src/api/governance/CertificationApi');
 
 function mountComponent(options = {}, propsData = {}) {
+  setupTestPinia();
   const wrapper = mount(CertificationTaskHeader, {
     mocks: {
       $t: (t) => t,

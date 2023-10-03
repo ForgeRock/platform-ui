@@ -49,15 +49,15 @@ of the MIT license. See the LICENSE file for details. -->
             active-class=""
             class="fr-back-link overflow-hidden p-1 pl-4 pl-lg-0 mt-1"
             role="navigation"
-            v-show="getBreadcrumbRoute().length > 0"
-            :to="!checkChangesOnNavigate ? getBreadcrumbRoute() : ''">
+            v-show="hasBreadcrumb"
+            :to="!checkChangesOnNavigate ? returnRoute : ''">
             <h1 class="text-truncate h4">
               <FrIcon
                 class="md-24 mr-3"
                 name="arrow_back"
               />
               <span class="align-middle">
-                {{ getBreadcrumbRouteText() }}
+                {{ returnRouteText }}
               </span>
             </h1>
           </RouterLink>
@@ -182,9 +182,9 @@ import {
   VBTooltip,
 } from 'bootstrap-vue';
 import DropdownMenu from '@forgerock/platform-shared/src/components/DropdownMenu';
-import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrTenantTierBadge from '@forgerock/platform-shared/src/components/TenantTierBadge';
+import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import { mapState } from 'pinia';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
@@ -196,9 +196,6 @@ import ToolbarNotification from '../ToolbarNotification';
  */
 export default {
   name: 'Navbar',
-  mixins: [
-    BreadcrumbMixin,
-  ],
   components: {
     FrNotification: ToolbarNotification,
     FrDropdownMenu: DropdownMenu,
@@ -307,6 +304,14 @@ export default {
       default: () => [],
     },
   },
+  setup() {
+    const { returnRoute, returnRouteText, hasBreadcrumb } = useBreadcrumb(false);
+    return {
+      returnRoute,
+      returnRouteText,
+      hasBreadcrumb,
+    };
+  },
   computed: {
     ...mapState(useUserStore, ['userDetails']),
     ...mapState(useEnduserStore, ['profileImage']),
@@ -318,7 +323,7 @@ export default {
   methods: {
     /**
      * From the navbar button toggling is possible with keyboard but not mouse or touch.
-     * */
+     */
     toggleMenu() {
       /**
        * Triggered when the toggle button is clicked

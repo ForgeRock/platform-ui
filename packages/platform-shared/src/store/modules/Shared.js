@@ -28,8 +28,6 @@ const defaultState = {
   governanceEnabled: false,
   governanceEnabledV4: false,
   igaApiUrl: null,
-  returnRoute: '',
-  returnRouteText: '',
   uiConfig: null,
   hasAmUrl: false,
   scriptingV2Enabled: false,
@@ -102,16 +100,6 @@ const mutations = {
 
     if (env.VUE_APP_GOOGLE_MAPS_API_KEY) {
       state.googleMapsApiKey = env.VUE_APP_GOOGLE_MAPS_API_KEY;
-    }
-  },
-
-  setReturnRoute(state, newValue) {
-    if (newValue.returnRoute || newValue.returnRoute === '') {
-      state.returnRoute = newValue.returnRoute;
-    }
-
-    if (newValue.returnRouteText || newValue.returnRouteText === '') {
-      state.returnRouteText = newValue.returnRouteText;
     }
   },
 

@@ -141,7 +141,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
+import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import {
   BTabs,
   BTab,
@@ -174,6 +174,10 @@ export default {
       default: false,
     },
   },
+  setup() {
+    const { setBreadcrumb } = useBreadcrumb();
+    return { setBreadcrumb };
+  },
   data() {
     return {
       actorId: null,
@@ -189,9 +193,9 @@ export default {
       totals: null,
       isGroupByAccount: false,
       showGroupByAccount: true,
+      backUrl: '/access-reviews',
     };
   },
-  mixins: [BreadcrumbMixin],
   computed: {
     isComplete() {
       return this.totals?.NONE === undefined;
@@ -255,7 +259,7 @@ export default {
         });
     },
     goToBackUrl() {
-      this.$router.push(this.getBreadcrumbRoute());
+      this.$router.push(this.backUrl);
     },
     hideGroupBy() {
       this.isGroupByAccount = false;
@@ -274,11 +278,10 @@ export default {
     this.actorId = this.$route.query.actorId;
     this.taskStatus = this.$route.query.taskStatus;
     this.getCertificationDetails();
-    let backUrl = '/access-reviews';
     if (this.isAdmin) {
-      backUrl = `/certification/campaigns/${this.campaignId}/access-reviews`;
+      this.backUrl = `/certification/campaigns/${this.campaignId}/access-reviews`;
     }
-    this.setBreadcrumb(backUrl, this.$t('governance.certificationTask.backLink'));
+    this.setBreadcrumb(this.backUrl, this.$t('governance.certificationTask.backLink'));
   },
 };
 </script>
