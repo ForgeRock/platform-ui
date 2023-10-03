@@ -138,7 +138,7 @@ import { mapState } from 'pinia';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
+import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
@@ -157,7 +157,6 @@ export default {
     RestMixin,
     NotificationMixin,
     TranslationMixin,
-    BreadcrumbMixin,
   ],
   components: {
     BButton,
@@ -178,6 +177,10 @@ export default {
       type: Boolean,
       default: false,
     },
+  },
+  setup() {
+    const { setBreadcrumb } = useBreadcrumb();
+    return { setBreadcrumb };
   },
   data() {
     return {

@@ -152,7 +152,7 @@ import {
   BModal,
   BTable,
 } from 'bootstrap-vue';
-import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
+import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrNavbar from '@forgerock/platform-shared/src/components/Navbar';
 import MediaMixin from '@forgerock/platform-shared/src/mixins/MediaMixin';
@@ -203,10 +203,13 @@ export default {
     FrRequestCart,
   },
   mixins: [
-    BreadcrumbMixin,
     MediaMixin,
     NotificationMixin,
   ],
+  setup() {
+    const { setBreadcrumb } = useBreadcrumb();
+    return { setBreadcrumb };
+  },
   data() {
     return {
       applicationSearchResults: [],

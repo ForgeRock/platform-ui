@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -59,7 +59,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
+import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import FrDatepicker from '@forgerock/platform-shared/src/components/Datepicker';
 import dayjs from 'dayjs';
 import { BTab, BTabs, BCard } from 'bootstrap-vue';
@@ -78,7 +78,10 @@ export default {
     BCard,
     FrSpinner,
   },
-  mixins: [BreadcrumbMixin],
+  setup() {
+    const { setBreadcrumb } = useBreadcrumb();
+    return { setBreadcrumb };
+  },
   data() {
     return {
       userId: this.$route.params.id,

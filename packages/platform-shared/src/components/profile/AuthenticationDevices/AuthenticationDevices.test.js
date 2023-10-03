@@ -6,6 +6,7 @@
  */
 
 import { createLocalVue, shallowMount } from '@vue/test-utils';
+import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import Vuex from 'vuex';
 import i18n from '@/i18n';
 import AuthenticationDevices from './index';
@@ -24,6 +25,8 @@ describe('TrustedDevices.vue', () => {
   beforeEach(() => {
     jest.spyOn(AuthenticationDevices, 'mounted')
       .mockImplementation(() => { });
+
+    setupTestPinia();
 
     wrapper = shallowMount(AuthenticationDevices, {
       localVue,
