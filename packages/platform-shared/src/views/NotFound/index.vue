@@ -31,7 +31,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
-import BreadcrumbMixin from '@forgerock/platform-shared/src/mixins/BreadcrumbMixin';
+import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import {
   BButton,
   BContainer,
@@ -45,9 +45,10 @@ export default {
     BButton,
     BContainer,
   },
-  mixins: [
-    BreadcrumbMixin,
-  ],
+  setup() {
+    const { setBreadcrumb } = useBreadcrumb();
+    return { setBreadcrumb };
+  },
   data() {
     return {
       ghostMessage: '404',
