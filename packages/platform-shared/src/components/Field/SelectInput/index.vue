@@ -152,28 +152,6 @@ export default {
     const hasPrependBtn = ref(Object.keys(context.slots).includes('prependButton'));
     const isExpanded = ref(false);
     const vms = ref(null);
-    const floatLabels = ref(false);
-
-    /**
-     * Focus the Vue Multi Select component (vms) and floats the label
-     * Also scrolls the selected option into view if showSelectedOptionOnOpen is true
-     */
-    function openHandler() {
-      isExpanded.value = true;
-      context.emit('open');
-
-      if (props.searchable && vms.value?.$el) {
-        vms.value.$el.querySelector('input').focus();
-      }
-      floatLabels.value = props.floatingLabel;
-
-      // Scroll the select list to show the selected option
-      if (props.showSelectedOptionOnOpen && props.value && vms.value?.$el) {
-        setTimeout(() => {
-          vms.value.$el.querySelector('.multiselect__option--selected').scrollIntoView({ block: 'center' });
-        }, 20);
-      }
-    }
 
     function arrowKeyEvent(event, addPointerElementOverride) {
       if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
@@ -184,10 +162,6 @@ export default {
     onMounted(() => {
       if (props.searchable) {
         vms.value.$refs.search.setAttribute('autocomplete', 'off');
-      }
-
-      if (props.autofocus) {
-        openHandler();
       }
 
       if (vms.value?.$el) {
@@ -208,14 +182,16 @@ export default {
     });
 
     return {
-      floatLabels,
       hasPrependBtn,
       isExpanded,
-      openHandler,
       vms,
     };
   },
   mounted() {
+    if (this.autofocus) {
+      this.openHandler();
+    }
+
     this.setInputValue(this.value);
   },
   updated() {
@@ -268,6 +244,26 @@ export default {
     setInputValue(newVal) {
       if (newVal !== undefined && newVal !== null) {
         this.inputValue = find(this.selectOptions, { value: newVal });
+      }
+    },
+    /**
+     * @description focus the Vue Multi Select component (vms) and floats the label
+     * Also scrolls the selected option into view if showSelectedOptionOnOpen is true
+     */
+    openHandler() {
+      this.isExpanded = true;
+      this.$emit('open');
+
+      if (this.searchable) {
+        this.$refs.vms.$el.querySelector('input').focus();
+      }
+      this.floatLabels = this.floatingLabel;
+
+      // Scroll the select list to show the selected option
+      if (this.showSelectedOptionOnOpen && this.value) {
+        setTimeout(() => {
+          this.$refs.vms.$el.querySelector('.multiselect__option--selected').scrollIntoView({ block: 'center' });
+        }, 20);
       }
     },
   },
