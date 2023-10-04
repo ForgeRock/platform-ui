@@ -8,6 +8,7 @@
 import { mount, shallowMount } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import flushPromises from 'flush-promises';
+import { sanitize } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 import { URLSearchParams } from 'url';
 import {
   FRStep,
@@ -39,8 +40,7 @@ describe('Login.vue', () => {
       },
       mocks: {
         $route,
-        $sanitize: () => {},
-        $t: () => {},
+        $t: () => { },
         $store: {
           state: {
             SharedStore: {
@@ -48,6 +48,7 @@ describe('Login.vue', () => {
             },
           },
         },
+        $sanitize: (message, config) => sanitize(message, config),
       },
       mixins: [LoginMixin],
     });
@@ -307,7 +308,7 @@ describe('Component Test', () => {
             tree: undefined,
           },
         },
-        $t: () => {},
+        $t: () => { },
         $store: {
           state: {
             SharedStore: {
@@ -315,6 +316,7 @@ describe('Component Test', () => {
             },
           },
         },
+        $sanitize: (message, config) => sanitize(message, config),
       },
       mixins: [LoginMixin],
     });
