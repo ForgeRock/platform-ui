@@ -19,6 +19,8 @@ of the MIT license. See the LICENSE file for details. -->
           :journey-floating-labels="journeyFloatingLabels"
           :journey-footer="localizedFooter"
           :journey-footer-enabled="journeyFooterEnabled"
+          :journey-footer-script-tag="journeyFooterScriptTag"
+          :journey-footer-script-tag-enabled="journeyFooterScriptTagEnabled"
           :journey-header="localizedHeader"
           :journey-header-enabled="journeyHeaderEnabled"
           :journey-header-skip-link-enabled="journeyHeaderSkipLinkEnabled"
@@ -62,6 +64,7 @@ import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import ThemeMixin from '@forgerock/platform-shared/src/mixins/ThemeMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
+import createScriptTags from '@forgerock/platform-shared/src/utils/externalScriptUtils';
 import i18n from './i18n';
 import './scss/main.scss';
 
@@ -124,6 +127,24 @@ export default {
         this.localizedLogo = this.getLocalizedString(this.logo, i18n.locale, i18n.fallbackLocale);
         this.localizedLogoAltText = this.getLocalizedString(this.logoAltText, i18n.locale, i18n.fallbackLocale);
       },
+    },
+    /**
+     * Adds the given script tags to the script container
+     */
+    journeyFooterScriptTag(scriptStr) {
+      if (!this.journeyFooterScriptTagEnabled || !scriptStr) return;
+      const scriptContainer = document.getElementById('user-theme-script-container');
+
+      try {
+        // Note: if the user provides invalid html that is unable to be parsed, this could cause an error which we need to catch
+        const scripts = createScriptTags(scriptStr);
+
+        scripts.forEach((scriptTag) => {
+          scriptContainer.appendChild(scriptTag);
+        });
+      } catch (error) {
+        this.showErrorMessage(error, this.$t('errors.userScriptError'));
+      }
     },
   },
 };
