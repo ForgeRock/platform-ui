@@ -326,6 +326,7 @@ import {
 } from '../../utils/authResumptionUtil';
 import getAutocompleteValue from '../../utils/loginUtils';
 import { getCurrentQueryString, parseParameters, replaceUrlParams } from '../../utils/urlUtil';
+import doNewNodesContainRecaptchaV2 from '../../utils/recaptchaUtil';
 
 export default {
   name: 'Login',
@@ -788,10 +789,14 @@ export default {
           // listen on body.appendchild and append to #body-append-el instead
           this.mutationObserver = new MutationObserver((records) => {
             const nodeList = records[records.length - 1].addedNodes || [];
-            Array.prototype.forEach.call(nodeList, (node) => {
-              document.getElementById('body-append-el').appendChild(node);
-            });
-            this.mutationObserver.disconnect();
+
+            // Don't alter the position where any recaptcha nodes are added to the UI
+            if (!doNewNodesContainRecaptchaV2(nodeList)) {
+              Array.prototype.forEach.call(nodeList, (node) => {
+                document.getElementById('body-append-el').appendChild(node);
+              });
+              this.mutationObserver.disconnect();
+            }
           });
           this.mutationObserver.observe(document.body, { childList: true });
           // only hide next button if we know it should be hidden (webAuthn, deviceId)
