@@ -77,8 +77,8 @@ const isTenantDataLoading = ref(false);
 const shouldCompare = ref(false);
 const tenantData = ref({});
 const userData = ref({});
-const userInfo = ref({ foo: 'bar' });
-const endDate = dayjs();
+const userInfo = ref({});
+const endDate = dayjs().utc();
 const startDate = endDate.subtract(6, 'month');
 const userUserName = new URL(window.location.href).hash.split('/')[3];
 
