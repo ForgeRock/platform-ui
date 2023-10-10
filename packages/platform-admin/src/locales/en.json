@@ -2980,7 +2980,9 @@
       "entitlementAssignmentCertification": "Entitlement Assignment Certification",
       "entitlementAssignmentCertificationMessage": "Certify users who have been assigned specified entitlements.",
       "identityCertificationMessage": "Certify user accounts and entitlements granted on specified applications.",
-      "newCertificationCampaignTemplate": "New Certification Campaign Template"
+      "newCertificationCampaignTemplate": "New Certification Campaign Template",
+      "roleMembershipCertification": "Role Membership Certification",
+      "roleMembershipCertificationMessage": "Certify roles granted to users."
     },
     "editTemplate": {
       "closeActions": {
@@ -2989,9 +2991,15 @@
         "abstain": "abstain from",
         "allowException": "allow exception to"
       },
+      "types": {
+        "IDENTITY": "Identity",
+        "ENTITLEMENT": "Entitlement",
+        "ROLEMEMBERSHIP": "Role Membership"
+      },
       "templateType": {
         "identity": "Identity Certification",
-        "entitlement": "Entitlement Certification"
+        "entitlement": "Entitlement Certification",
+        "roleMembership": "Role Membership Certification"
       },
       "accounts": "Accounts",
       "additionalOptions": "Additional Options",
@@ -3010,6 +3018,7 @@
       "allowPartialSignoffDescription": "Allow the certifier to sign-off on individual items before their entire task is complete.",
       "allowSelfCert": "Allow self-certification",
       "allowSelfCertDescription": "Allow users to certify their own access.",
+      "allRoles": "All roles",
       "allUsers": "All users",
       "applications": "Applications",
       "applicationsToCertify": "Applications to Certify",
@@ -3024,9 +3033,13 @@
       "certifyApplicationsSuffix": "of the following conditions are met",
       "certifyEntitlementsPrefix": "Certify Entitlements if",
       "certifyEntitlementsSuffix": "of the following conditions are met",
+      "certifyRolesPrefix": "Certify Roles if",
+      "certifyRolesSuffix": "of the following conditions are met",
       "certifyUsersPrefix": "Certify users if",
       "certifyUsersSuffix": "of the following rules",
       "closeAnd": "Close and",
+      "countSubtitle": "Subect to this certification if run now",
+      "countTitle": "Estimated Total",
       "daysBeforeCampaign": "days before campaign expiration",
       "decision": "Decision",
       "description": "Description",
@@ -3049,6 +3062,7 @@
       "entitlementOwner": "Entitlement Owner",
       "entitlements": "Entitlements",
       "errorReadingCertifierType": "Error reading certifier type from template",
+      "errorRetrievingCounts": "Error retrieving counts",
       "errorRetrievingRoles": "Error retrieving list of roles",
       "errorRetrievingApplications": "Error retrieving list of applications",
       "every": "every",
@@ -3058,11 +3072,11 @@
       "filterApplications": "Applications matching a filter",
       "filterCertDecision": "Filter by last certification decision",
       "filterEntitlements": "Entitlements matching a filter",
+      "filterRoles": "Roles matching a filter",
       "filterUsers": "Users matching a filter",
       "forward": "Forward",
       "group": "Group",
       "hideAdvancedFilters": "Hide advanced filters",
-      "identityCertification": "Identity Certification",
       "initialNotification": "Send initial notification",
       "initialNotificationDescription": "Send a notification to the certifiers when the campaign is triggered.",
       "makeDecision": "Make decision",
@@ -3100,6 +3114,7 @@
       "reassignToCertify": "Reassign to",
       "reassignToUser": "Reassign to user",
       "role": "Role",
+      "roleOwner": "Role Owner",
       "runEvery": "Run every",
       "saveTemplate": "Save Template",
       "schedule": "Schedule",
@@ -3117,7 +3132,7 @@
       "specificApplications": "Specific Applications",
       "staging": "Staging",
       "summary": "Summary",
-      "title": "New {type} Campaign Template",
+      "title": "New {type} Certification Template",
       "totalDecisionItems": "Total Decision Items",
       "type": "Type",
       "to": "to",
@@ -3163,7 +3178,6 @@
       "scheduleCampaign": "Schedule Campaign",
       "editSchedule": "Edit Schedule",
       "editTemplate": "Edit Template",
-      "noneSchedule": "(None Scheduled)",
       "noTemplates": "No Templates",
       "runPublishedTemplateConfirm": "Are you sure you want to run this campaign now? This will send notifications to all certifiers.",
       "errors": {

@@ -337,13 +337,14 @@ export default {
   methods: {
     /**
     * @param {Function} cancel close modal function
-    * @param {Function} cancel close modal function
     */
     close(cancel) {
       if (this.modalType === REQUEST_MODAL_TYPES.COMMENT) {
         this.$emit('update-item', this.item.details.id);
         if (this.previousModal === REQUEST_MODAL_TYPES.DETAILS) {
           this.modalType = REQUEST_MODAL_TYPES.DETAILS;
+        } else {
+          cancel();
         }
       } else if (this.previousModal === REQUEST_MODAL_TYPES.DETAILS
         && this.modalType === REQUEST_MODAL_TYPES.CANCEL) {
