@@ -73,10 +73,9 @@ import i18n from '@/i18n';
 const activeFeatures = ref([]);
 const isTenantDataLoading = ref(false);
 const tenantData = ref([]);
-const endDate = dayjs();
+const endDate = dayjs().utc();
 const startDate = endDate.subtract(6, 'month');
 const tenantName = store.state.tenant.split('.')[0];
-// const tenantName = 'test';
 
 /**
  * Collects a list of features that are set to show
