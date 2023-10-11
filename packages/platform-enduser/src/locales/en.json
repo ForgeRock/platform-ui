@@ -245,11 +245,11 @@
       "requestTypes": {
         "all": "All request types",
         "applicationGrant": "Grant Application",
-        "applicationRevoke": "Remove Application",
+        "applicationRemove": "Remove Application",
         "entitlementGrant": "Grant Entitlement",
-        "entitlementRevoke": "Remove Entitlement",
+        "entitlementRemove": "Remove Entitlement",
         "roleGrant": "Grant Role",
-        "roleRevoke": "Remove Role"
+        "roleRemove": "Remove Role"
       },
       "priorities": {
         "lowPriority": "Low Priority",
