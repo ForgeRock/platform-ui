@@ -29,7 +29,7 @@ const mountComponent = () => {
 
 const mockRequest = {
   id: 3,
-  requestType: 'applicationRevoke',
+  requestType: 'applicationRemove',
   request: {
     common: {
       priority: 'high',
@@ -141,7 +141,7 @@ const openModalMock = {
         priority: 'high',
       },
     },
-    requestType: 'applicationRevoke',
+    requestType: 'applicationRemove',
     requester: {
       givenName: 'Mike',
       id: '1234-456-1',

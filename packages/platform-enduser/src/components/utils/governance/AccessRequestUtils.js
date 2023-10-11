@@ -33,24 +33,24 @@ export const requestTypes = {
     value: 'applicationGrant',
   },
   ACCOUNT_REVOKE: {
-    label: 'governance.accessRequest.requestTypes.applicationRevoke',
-    value: 'applicationRevoke',
+    label: 'governance.accessRequest.requestTypes.applicationRemove',
+    value: 'applicationRemove',
   },
   ENTITLEMENT_GRANT: {
     label: 'governance.accessRequest.requestTypes.entitlementGrant',
     value: 'entitlementGrant',
   },
   ENTITLEMENT_REVOKE: {
-    label: 'governance.accessRequest.requestTypes.entitlementRevoke',
-    value: 'entitlementRevoke',
+    label: 'governance.accessRequest.requestTypes.entitlementRemove',
+    value: 'entitlementRemove',
   },
   ROLE_GRANT: {
     label: 'governance.accessRequest.requestTypes.roleGrant',
     value: 'roleGrant',
   },
   ROLE_REVOKE: {
-    label: 'governance.accessRequest.requestTypes.roleRevoke',
-    value: 'roleRevoke',
+    label: 'governance.accessRequest.requestTypes.roleRemove',
+    value: 'roleRemove',
   },
 };
 
