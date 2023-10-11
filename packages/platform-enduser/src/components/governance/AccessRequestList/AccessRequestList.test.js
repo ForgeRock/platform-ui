@@ -105,7 +105,7 @@ describe('AccessReviews', () => {
       let requestType = findByTestId(wrapper, 'request-type');
       expect(requestType.text()).toBe('Grant Application');
 
-      app.requestType = 'applicationRevoke';
+      app.requestType = 'applicationRemove';
 
       await wrapper.setProps({
         requests: [
@@ -152,7 +152,7 @@ describe('AccessReviews', () => {
       let requestType = findByTestId(wrapper, 'request-type');
       expect(requestType.text()).toBe('Grant Entitlement');
 
-      ent.requestType = 'entitlementRevoke';
+      ent.requestType = 'entitlementRemove';
 
       await wrapper.setProps({
         requests: [
@@ -199,7 +199,7 @@ describe('AccessReviews', () => {
       let requestType = findByTestId(wrapper, 'request-type');
       expect(requestType.text()).toBe('Grant Role');
 
-      myRole.requestType = 'roleRevoke';
+      myRole.requestType = 'roleRemove';
 
       await wrapper.setProps({
         requests: [
