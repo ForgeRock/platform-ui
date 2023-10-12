@@ -69,6 +69,7 @@ import FrDonutChartCard from './DonutChartCard';
 import { causeMap } from '../api/ActivityAPI';
 import parseApiData from './utils/parseApiData';
 import i18n from '@/i18n';
+import store from '@/store';
 
 const activeFeatures = ref([]);
 const isUserDataLoading = ref(false);
@@ -102,7 +103,8 @@ async function getUserInfo(userName) {
     queryFilter: `userName eq "${userName}"`,
   };
   try {
-    const { data: { result: userResult } } = await getManagedResourceList('alpha_user', params);
+    const { realm } = store.state;
+    const { data: { result: userResult } } = await getManagedResourceList(`${realm}_user`, params);
     if (userResult.length > 0 && userResult[0].userName === userName) {
       isUserInfoLoading.value = false;
       return userResult[0];
