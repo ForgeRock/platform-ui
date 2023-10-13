@@ -22,7 +22,7 @@ filterTests(['forgeops', 'cloud'], () => {
       cy.visit(testTreeUrl);
 
       cy.log('Check that the initial platform username node is shown and proceed');
-      cy.findByPlaceholderText(/User Name/i).should('exist');
+      cy.findByLabelText('User Name').should('exist');
       cy.findByRole('button', { name: 'Next' }).click();
 
       cy.log('Check URL to see that the UI has been redirected to an external site');

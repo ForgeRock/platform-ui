@@ -289,9 +289,9 @@ filterTests(['forgeops', 'cloud'], () => {
         // Navigate to User list page
         openDelegatedAdminManagedPage('managed', Cypress.env('IS_FRAAS') ? 'alpha_user' : 'user', userId);
         // ensure postalCode is editable, country is visible but not editable, & stateProvince is not visable
-        cy.findByPlaceholderText('Postal Code').type(postalCodeValue).should('have.value', postalCodeValue);
-        cy.findByPlaceholderText('Country').should('be.disabled');
-        cy.findByPlaceholderText('State/Province').should('not.exist');
+        cy.findByLabelText('Postal Code').type(postalCodeValue).should('have.value', postalCodeValue);
+        cy.findByLabelText('Country').should('be.disabled');
+        cy.findByLabelText('State/Province').should('not.exist');
 
         // remove the test role
         deleteIDMResource('internal', 'role', internalRoleId);
@@ -370,14 +370,14 @@ filterTests(['forgeops', 'cloud'], () => {
         cy.findByRole('button', { name: `New ${Cypress.env('IS_FRAAS') ? 'Alpha realm - User' : 'User'}` }).click();
 
         // fill in fields, ensuring that Save button only enabled when all fields filled in with no errors
-        cy.findByPlaceholderText('Username').type(`e2eTestUser${random(Number.MAX_SAFE_INTEGER)}`);
-        cy.findByPlaceholderText('First Name').type('First');
-        cy.findByPlaceholderText('Last Name').type('Last');
+        cy.findByLabelText('Username').type(`e2eTestUser${random(Number.MAX_SAFE_INTEGER)}`);
+        cy.findByLabelText('First Name').type('First');
+        cy.findByLabelText('Last Name').type('Last');
         cy.findByRole('button', { name: 'Save' }).should('be.disabled');
-        cy.findByPlaceholderText('Email Address').type('badEmail@email');
+        cy.findByLabelText('Email Address').type('badEmail@email');
         cy.findByRole('button', { name: 'Save' }).should('be.disabled');
         cy.findAllByRole('alert').contains('Invalid email format (example@example.com)');
-        cy.findByPlaceholderText('Email Address').type('.com');
+        cy.findByLabelText('Email Address').type('.com');
         cy.findByRole('button', { name: 'Save' }).click();
         cy.wait('@saveManagedUser').then(({ response }) => {
           testUserId = response.body._id;
