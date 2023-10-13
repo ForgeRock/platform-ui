@@ -237,6 +237,7 @@ export default {
             type: 'select', value: value.toLowerCase() === 'false' || value === false ? 'False' : 'True', options: ['True', 'False'],
           };
         case 'number':
+        case 'int':
           return { type: 'integer', value: typeof value === 'number' ? value : '' };
         case 'managedObject':
           return { type: 'managedObject', value, resourcePath: value };
