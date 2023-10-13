@@ -463,6 +463,7 @@
     "dontInclude": "don't include",
     "startsWith": "starts with",
     "endsWith": "ends with",
+    "exists": "exists",
     "greaterThanEqual": "GTE (>=)",
     "greaterThan": "GT (>)",
     "lessThanEqual": "LTE (<=)",
