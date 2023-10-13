@@ -189,4 +189,15 @@ describe('RelationshipEdit', () => {
     await flushPromises();
     expect(wrapper.emitted().setValue[2]).toEqual([[{ _ref: 'test', _refProperties: null }]]);
   });
+
+  it('should emit the complete resource selection array when selection is an Array and selection has changed', async () => {
+    const resource = { givenName: 'Jon', sn: 'Doe', userName: 'jDoe' };
+    wrapper.vm.relationshipField.options = [{
+      value: 'managed/alpha_user/7809aeb2',
+      resource,
+    }];
+    wrapper.vm.emitSelected(['managed/alpha_user/7809aeb2']);
+    await flushPromises();
+    expect(wrapper.emitted('resource-selections')[0]).toEqual([[resource]]);
+  });
 });

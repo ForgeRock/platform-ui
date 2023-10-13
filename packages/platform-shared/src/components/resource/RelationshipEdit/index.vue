@@ -31,7 +31,7 @@ of the MIT license. See the LICENSE file for details. -->
       :allow-empty="true"
       :close-on-select="closeOnSelect"
       :disabled="disabled"
-      :description="fieldDescription"
+      :description="!hideFieldDescription ? fieldDescription : ''"
       :id="`${relationshipField.key}${index}`"
       :internal-search="false"
       :label="floatingLabel"
@@ -170,6 +170,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    hideFieldDescription: {
+      type: Boolean,
+      default: false,
+    },
     label: {
       type: String,
       default: '',
@@ -208,7 +212,9 @@ export default {
   },
   data() {
     return {
-      fieldDescription: this.relationshipProperty.description !== this.relationshipProperty.title ? this.relationshipProperty.description : '',
+      fieldDescription: this.relationshipProperty.description !== this.relationshipProperty.title
+        ? this.relationshipProperty.description
+        : '',
       floatingLabel: this.label || this.relationshipProperty.title,
       name: '',
       options: [],
@@ -394,6 +400,11 @@ export default {
         } else {
           emitValues = uniqueSelected.map((currentValue) => ({ _ref: currentValue, _refProperties: {} }));
         }
+
+        if (this.relationshipField.options.length) {
+          const resourceSelections = selected.map((selection) => this.relationshipField.options.find((option) => option.value === selection).resource);
+          this.$emit('resource-selections', resourceSelections);
+        }
       } else if (selected) {
         if (this.relationshipProperty.relationshipGrantTemporalConstraintsEnforced && this.temporalConstraint.length > 0) {
           const refProperties = { temporalConstraints: [{ duration: this.temporalConstraint }] };
@@ -405,6 +416,7 @@ export default {
         this.relationshipField.value = null;
         emitValues = null;
       }
+
       this.$emit('setValue', emitValues);
     },
   },
