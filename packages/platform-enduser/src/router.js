@@ -6,21 +6,12 @@
  */
 
 import Router from 'vue-router';
-import { every } from 'lodash';
 import Vue from 'vue';
+import checkIfRouteCanBeAccessed from '@forgerock/platform-shared/src/utils/routerGuard';
 import i18n from './i18n';
-
 import store from '@/store';
 
 Vue.use(Router);
-
-function checkIfRouteCanBeAccessed(next, requiredFlags = [], onFailRoute = { name: 'NotFound' }) {
-  if (!requiredFlags.length || every(requiredFlags, (flag) => flag)) {
-    next();
-  } else {
-    next(onFailRoute);
-  }
-}
 
 /**
  * Available configuration
