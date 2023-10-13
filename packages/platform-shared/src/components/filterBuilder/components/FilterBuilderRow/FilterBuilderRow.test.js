@@ -9,6 +9,7 @@ import { mount } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
 import FilterBuilderRow from './index';
 import { defaultConditionOptions } from '../../utils/QueryFilterDefaults';
+import * as CertFilterDefaults from '../../CertificationFilter/CertFilterDefaults';
 
 const mountProps = {
   mocks: {
@@ -131,6 +132,23 @@ describe('FilterBuilderRow', () => {
         { text: 'GT (>)', value: 'gt' },
         { text: 'LTE (<=)', value: 'le' },
         { text: 'LT (<)', value: 'lt' },
+      ],
+    );
+  });
+
+  it('Returns the correct select options by type (Int)', async () => {
+    await wrapper.setProps({
+      conditionOptions: CertFilterDefaults.defaultConditionOptions,
+    });
+
+    const returnObject = wrapper.vm.conditionOptionsByType('int');
+    expect(returnObject).toEqual(
+      [
+        { text: 'is', value: 'EQUALS' },
+        { text: 'GTE (>=)', value: 'GTE' },
+        { text: 'GT (>)', value: 'GT' },
+        { text: 'LTE (<=)', value: 'LTE' },
+        { text: 'LT (<)', value: 'LT' },
       ],
     );
   });
