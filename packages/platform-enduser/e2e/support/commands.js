@@ -18,8 +18,8 @@ Cypress.Commands.add(
     cy.clearSessionStorage();
 
     cy.visit(loginUrl);
-    cy.findByPlaceholderText(/User Name/i).type(userName);
-    cy.findByPlaceholderText(/Password/i).type(password, { force: true });
+    cy.findByLabelText(/User Name/i).type(userName);
+    cy.findAllByLabelText(/Password/i).first().type(password, { force: true });
     cy.findByRole('button', { name: /Next/i }).click();
     cy.findByTestId('dashboard-welcome-greeting', { timeout: 20000 });
   },
@@ -41,8 +41,8 @@ Cypress.Commands.add('loginAsAdmin', () => {
   cy.clearSessionStorage();
 
   cy.visit(`${Cypress.config().baseUrl}/am/XUI/`);
-  cy.findByPlaceholderText(/User Name/i).type(Cypress.env('AM_USERNAME'));
-  cy.findByPlaceholderText(/Password/i).type(Cypress.env('AM_PASSWORD'), { force: true });
+  cy.findByLabelText(/User Name/i).type(Cypress.env('AM_USERNAME'));
+  cy.findAllByLabelText(/Password/i).first().type(Cypress.env('AM_PASSWORD'), { force: true });
   cy.findByRole('button', { name: /Next/i }).click();
   if (Cypress.env('IS_FRAAS')) {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
