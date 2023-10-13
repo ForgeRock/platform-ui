@@ -26,8 +26,8 @@ Cypress.Commands.add('login', () => {
   cy.clearSessionStorage();
 
   cy.visit(loginUrl);
-  cy.findByPlaceholderText(/User Name/i).type(adminUserName);
-  cy.findByPlaceholderText(/Password/i).type(adminPassword, { force: true });
+  cy.findByLabelText(/User Name/i).type(adminUserName);
+  cy.findAllByLabelText(/Password/i).first().type(adminPassword, { force: true });
   cy.findByRole('button', { name: /Next/i }).click();
   if (Cypress.env('IS_FRAAS')) {
     // eslint-disable-next-line cypress/no-unnecessary-waiting

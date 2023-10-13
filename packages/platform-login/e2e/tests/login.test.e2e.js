@@ -32,10 +32,10 @@ filterTests(['forgeops', 'cloud'], () => {
     });
 
     it('should fail login with incorrect credentials', () => {
-      cy.findByPlaceholderText(/User Name/i)
+      cy.findByLabelText(/User Name/i)
         .type(userName)
         .should('have.value', userName);
-      cy.findByPlaceholderText(/Password/i)
+      cy.findAllByLabelText(/Password/i).first()
         .type(userName, { force: true })
         .should('have.value', userName);
       cy.findByRole('button', { name: 'Next' }).click();

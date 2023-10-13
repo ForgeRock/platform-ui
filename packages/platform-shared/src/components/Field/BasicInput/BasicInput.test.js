@@ -75,7 +75,10 @@ describe('BasicInput', () => {
           await wrapper.vm.$nextTick();
 
           const input = findByTestId(wrapper, 'input-stub-testid');
-          expect(input.attributes('placeholder')).toBe('stub-label');
+          expect(input.attributes('placeholder')).toBeUndefined();
+
+          const label = wrapper.find(`#floatingLabelInput${wrapper.vm._uid}-label`);
+          expect(label.text()).toBe('stub-label');
         });
       });
 
@@ -159,6 +162,17 @@ describe('BasicInput', () => {
 
           const input = findByTestId(wrapper, 'input-stub-testid');
           expect(input.attributes('placeholder')).toBe('stub-placeholder');
+
+          input.trigger('blur');
+
+          expect(wrapper.emitted().blur[0]).toBeTruthy();
+          expect(wrapper.vm.floatLabels).toBeFalsy();
+
+          input.setValue('test');
+
+          input.trigger('blur');
+          expect(wrapper.emitted().blur[1]).toBeTruthy();
+          expect(wrapper.vm.floatLabels).toBeFalsy();
         });
 
         it('when floatLabel', async () => {
@@ -166,7 +180,21 @@ describe('BasicInput', () => {
           await wrapper.vm.$nextTick();
 
           const input = findByTestId(wrapper, 'input-stub-testid');
-          expect(input.attributes('placeholder')).toBe('stub-label');
+          expect(input.attributes('placeholder')).toBeUndefined();
+
+          const label = wrapper.find(`#floatingLabelInput${wrapper.vm._uid}-label`);
+          expect(label.text()).toBe('stub-label');
+
+          input.trigger('blur');
+
+          expect(wrapper.emitted().blur[0]).toBeTruthy();
+          expect(wrapper.vm.floatLabels).toBeFalsy();
+
+          input.setValue('test');
+
+          input.trigger('blur');
+          expect(wrapper.emitted().blur[1]).toBeTruthy();
+          expect(wrapper.vm.floatLabels).toBeTruthy();
         });
       });
 

@@ -77,16 +77,16 @@ filterTests(['forgeops', 'cloud'], () => {
       cy.findByRole('tab', { name: 'Account Pages' }).click();
       cy.findByRole('tab', { name: 'Logo' }).click();
       cy.findByTestId('logo-profile-preview').click();
-      cy.findByPlaceholderText('Logo URL')
+      cy.findByLabelText('Logo URL')
         .clear()
         .type('h');
       cy.findAllByTestId('in-situ-logo-preview')
         .eq(0)
         .should('have.attr', 'src')
         .should('include', 'h');
-      cy.findByPlaceholderText('Logo URL')
+      cy.findByLabelText('Logo URL')
         .type('ttps://www.logosurfer.com/wp-content/uploads/2018/03/quicken-loans-logo_0.png');
-      cy.findAllByPlaceholderText('Alt Text')
+      cy.findAllByLabelText('Alt Text')
         .eq(0)
         .clear()
         .type('alt');
@@ -131,13 +131,13 @@ filterTests(['forgeops', 'cloud'], () => {
       // Set the theme data for the test
       cy.findByRole('tab', { name: 'Favicon' }).click();
       cy.findByRole('button', { name: 'Logo' }).click();
-      cy.findByPlaceholderText('Favicon URL')
+      cy.findByLabelText('Favicon URL')
         .clear()
         .type('h');
       cy.findByTestId('favicon-preview')
         .should('have.attr', 'src')
         .should('include', 'h');
-      cy.findByPlaceholderText('Favicon URL')
+      cy.findByLabelText('Favicon URL')
         .type('ttps://www.forgerock.com/themes/custom/forgerock/favicon.ico');
       cy.findByRole('button', { name: 'Update' }).click();
       cy.findByRole('button', { name: 'Save' }).click();
