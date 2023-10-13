@@ -37,13 +37,14 @@ of the MIT license. See the LICENSE file for details. -->
           :id="id"
           :name="name"
           :min="$attrs.min"
-          :placeholder="floatingLabel ? getTranslation(label) : placeholder"
+          :placeholder="floatingLabel ? false : placeholder"
           :readonly="readonly"
           :style="labelHeight && {height: `${labelHeight + 2}px`, 'padding-top': `${labelHeight - 27}px`}"
           @input="event => inputValue = removeNonNumericChars(event)"
           :aria-describedby="getAriaDescribedBy(validationObserver, errors)"
           @animationstart="floatingLabel && animationStart"
-          @blur="$emit('blur', $event)"
+          @blur="onBlur($event)"
+          @focus="floatingLabel && (floatLabels = true)"
           :data-testid="`input-${testid}`">
         <input
           v-else
@@ -54,13 +55,14 @@ of the MIT license. See the LICENSE file for details. -->
           :disabled="disabled"
           :id="id"
           :name="name"
-          :placeholder="floatingLabel ? getTranslation(label) : placeholder"
+          :placeholder="floatingLabel ? false : placeholder"
           :readonly="readonly"
           :type="fieldType"
           :autocomplete="$attrs.autocomplete"
           :style="labelHeight && {height: `${labelHeight + 2}px`, 'padding-top': `${labelHeight - 27}px`}"
           :aria-describedby="getAriaDescribedBy(validationObserver, errors)"
-          @blur="$emit('blur', $event)"
+          @blur="onBlur($event);"
+          @focus="floatingLabel && (floatLabels = true)"
           @input="evt=>inputValue=evt.target.value"
           @animationstart="floatingLabel && animationStart"
           :data-testid="`input-${testid}`">
@@ -280,6 +282,17 @@ export default {
       }
 
       this.$emit('input', newVal);
+    },
+    /**
+    * onBlur event handler
+    *
+    * @param {Object} event event object emitted by vue-multiselect during blur
+    */
+    onBlur(event) {
+      this.$emit('blur', event);
+      if (this.floatingLabel) {
+        this.floatLabels = this.inputValue.length > 0;
+      }
     },
     /**
      * Formats the number input by removing any characters that aren't 0-9.
