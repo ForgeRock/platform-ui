@@ -272,7 +272,6 @@ export default {
       color: transparent;
     }
   }
-
   .form-label-group-input {
     position: relative;
     flex: 1 1 auto;
@@ -281,8 +280,7 @@ export default {
 
     /* stylelint-disable */
     .polyfill-placeholder,
-    input:focus,
-    input:not(:placeholder-shown) {
+    input:focus{
 
       /*
        * if there is no placeholder, we do not need to apply padding to move

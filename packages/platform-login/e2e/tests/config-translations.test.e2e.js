@@ -67,8 +67,8 @@ filterTests(['forgeops', 'cloud'], () => {
     it('should override the text of the next button, username placeholder, and password placeholder', () => {
       cy.visit(`${loginBaseUrl}#/`);
       cy.findByRole('button', { name: 'Next Test' }).should('exist');
-      cy.findByPlaceholderText('User Name Test').should('exist');
-      cy.findByPlaceholderText('Password Test').should('exist');
+      cy.findByLabelText('User Name Test').should('exist');
+      cy.findByLabelText('Password Test').should('exist');
     });
 
     it('should override the text of the login failure message', () => {
@@ -82,10 +82,10 @@ filterTests(['forgeops', 'cloud'], () => {
     it('should display french overrides when locale query parameter is fr', () => {
       cy.visit(`${loginBaseUrl}&locale=fr#/`);
       cy.findByRole('button', { name: 'Suivant Test' }).should('exist');
-      cy.findByPlaceholderText('Nom d\'utilisateur Test').should('exist');
+      cy.findByLabelText('Nom d\'utilisateur Test').should('exist');
 
       // english fallback is used when french is not present
-      cy.findByPlaceholderText('Password Test').should('exist');
+      cy.findByLabelText('Password Test').should('exist');
     });
 
     it('should fallback to a general locale when a specific one is not present', () => {
@@ -93,9 +93,9 @@ filterTests(['forgeops', 'cloud'], () => {
       // fr-ca
       cy.findByRole('button', { name: 'Suivant Test frca' }).should('exist');
       // fr
-      cy.findByPlaceholderText('Nom d\'utilisateur Test').should('exist');
+      cy.findByLabelText('Nom d\'utilisateur Test').should('exist');
       // en
-      cy.findByPlaceholderText('Password Test').should('exist');
+      cy.findByLabelText('Password Test').should('exist');
     });
 
     // cleanup

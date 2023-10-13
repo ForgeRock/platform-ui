@@ -40,12 +40,12 @@ describe('KeyValuePanel', () => {
       },
     });
 
-    expect(wrapper.find('input').attributes('placeholder')).toBe('test key label');
+    expect(wrapper.find('label').text()).toBe('test key label');
     expect(wrapper.find('textarea').attributes('placeholder')).toBe('test value label');
   });
 
   it('Falls back to default labels when no labels in value prop', () => {
-    expect(wrapper.find('input').attributes('placeholder')).toBe('common.key');
+    expect(wrapper.find('label').text()).toBe('common.key');
     expect(wrapper.find('textarea').attributes('placeholder')).toBe('common.value');
   });
 

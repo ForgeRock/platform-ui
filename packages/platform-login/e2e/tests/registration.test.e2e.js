@@ -10,17 +10,17 @@ import { filterTests, retryableBeforeEach } from '../../../../e2e/util';
 
 function fillOutRegistrationForm(fieldData) {
   fieldData.forEach((field) => {
-    cy.findByPlaceholderText(field.placeholder)
+    cy.findByLabelText(field.placeholder)
       .clear()
       .type(field.text);
   });
 
   cy.findAllByRole('combobox').first().click();
   cy.findAllByText('What\'s your favorite color?').first().click();
-  cy.findAllByPlaceholderText('Answer').first().clear().type('orange');
+  cy.findAllByLabelText('Answer').first().clear().type('orange');
   cy.findAllByRole('combobox').last().click();
   cy.findAllByText('Who was your first employer?').last().click();
-  cy.findAllByPlaceholderText('Answer').last().clear().type('ForgeRock');
+  cy.findAllByLabelText('Answer').last().clear().type('ForgeRock');
 }
 
 filterTests(['forgeops'], () => {
@@ -53,13 +53,13 @@ filterTests(['forgeops'], () => {
     it('incorrect credentials should show error', () => {
       fillOutRegistrationForm(fieldData);
       // set short and long passwords - check policy
-      cy.findByPlaceholderText('Password')
+      cy.findByLabelText('Password')
         .type('2short');
 
       cy.get('li:contains("Must be at least 8 characters long")')
         .should('not.have.class', 'fr-valid');
 
-      cy.findByPlaceholderText('Password')
+      cy.findByLabelText('Password')
         .type('longenoughtopass');
 
       cy.get('li:contains("Must be at least 8 characters long")')
@@ -69,7 +69,7 @@ filterTests(['forgeops'], () => {
     it('creates new user and logs in', () => {
       fillOutRegistrationForm(fieldData);
       // set valid password - submit form
-      cy.findByPlaceholderText('Password')
+      cy.findByLabelText('Password')
         .type('Welcome1')
         .get('[type="submit"]')
         .click();
@@ -92,11 +92,11 @@ filterTests(['forgeops'], () => {
       cy.findByRole('button', { name: 'Next' })
         .should('be.disabled');
       fillOutRegistrationForm(fieldData);
-      cy.findByPlaceholderText('Username')
+      cy.findByLabelText('Username')
         .type('1');
       cy.findByRole('button', { name: 'Next' })
         .should('be.disabled');
-      cy.findByPlaceholderText('Password')
+      cy.findByLabelText('Password')
         .type('Welcome1');
       cy.findByRole('button', { name: 'Next' })
         .should('be.enabled')
