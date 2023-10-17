@@ -200,6 +200,26 @@ export function getRules(i18n) {
     message: i18n.t('common.policyValidationMessages.UNIQUE'),
   };
 
+  // Error Match rule
+  // errors if input value matches any of provided array of values
+  const errorIfMatch = {
+    params: ['otherValues'],
+    validate(value, { otherValues }) {
+      return customValidators.testUniqueness(value, { otherValues });
+    },
+    message: i18n.t('common.policyValidationMessages.NOT_ALLOWED_VALUE'),
+  };
+
+  // Starts with rule
+  // errors if input starts with same provided prefix value
+  const starts_with_case_insensitive = {
+    params: ['prefix'],
+    validate(value, { prefix }) {
+      return !value.toLowerCase().startsWith(prefix.toLowerCase());
+    },
+    message(_field, params) { return i18n.t('common.policyValidationMessages.NOT_STARTS_WITH', { prefix: params.prefix }); },
+  };
+
   const uniqueValue = {
     params: ['otherValues'],
     validate(value, { otherValues }) {
@@ -322,6 +342,7 @@ export function getRules(i18n) {
     date_format,
     email,
     email_from,
+    errorIfMatch,
     excluded,
     google_cloud_platform_certificate_validation,
     is_after_date,
@@ -340,6 +361,7 @@ export function getRules(i18n) {
     required,
     single_spaces,
     start_end_space,
+    starts_with_case_insensitive,
     unique,
     unique_email_template_id,
     uniqueValue,
