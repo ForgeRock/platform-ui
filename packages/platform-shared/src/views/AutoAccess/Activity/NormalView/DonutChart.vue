@@ -97,7 +97,7 @@ const prop = defineProps({
   },
   chartId: {
     type: String,
-    default: '',
+    default: 'donutchart',
   },
   isLoading: {
     type: Boolean,
