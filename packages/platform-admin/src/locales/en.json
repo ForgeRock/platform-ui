@@ -3133,6 +3133,14 @@
     },
     "orchestrations": {
       "builder": {
+        "approvalTaskDescription": "TODO: Need description Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor.",
+        "approvalTaskDisplayName": "Approval",
+        "exclusiveGatewayDescription": "Exclusive - multiple conditions, only 1 is true.",
+        "exclusiveGatewayDisplayName": "If/Else",
+        "scriptTaskDescription": "Script to execute.",
+        "scriptTaskDisplayName": "Script",
+        "inclusiveGatewayDescription": "Inclusive - multiple conditions, any or all can be true.",
+        "inclusiveGatewayDisplayName": "Switch"
       },
       "draft": "Draft",
       "published": "Published"
