@@ -275,6 +275,7 @@
       "typeXCharactersToSearchFor": "Type at least {numChars} characters to search for {item}"
     },
     "policyValidationMessages": {
+      "NOT_STARTS_WITH": "Prefix {prefix} is not allowed",
       "GENERIC_FIELD_REQUIRED": "{_field_} is required",
       "VALID_PHONE_FORMAT": "Must be a valid phone number",
       "VALID_NAME_FORMAT": "Must have valid name characters",
@@ -329,6 +330,7 @@
         "symbol": "one special character"
       },
       "ATTRIBUTE_VALUE": "Cannot match the value of {disallowedFields}",
+      "NOT_ALLOWED_VALUE": "Value not allowed",
       "attributes": {
         "givenName": "First Name",
         "sn": "Last Name",
