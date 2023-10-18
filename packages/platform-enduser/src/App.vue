@@ -19,6 +19,7 @@ of the MIT license. See the LICENSE file for details. -->
       :theme="theme"
       :is-enduser="true"
       v-if="theme !== null" />
+    <FrSessionTimeoutWarning />
   </div>
 </template>
 
@@ -35,6 +36,7 @@ import ThemeMixin from '@forgerock/platform-shared/src/mixins/ThemeMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
 import FrLayout from '@forgerock/platform-shared/src/components/Layout';
+import FrSessionTimeoutWarning from '@forgerock/platform-shared/src/components/SessionTimeoutWarning/SessionTimeoutWarning';
 import { getIdmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
 import ThemeInjector from '@forgerock/platform-shared/src/components/ThemeInjector/';
 import { getDefaultProcess } from '@forgerock/platform-shared/src/views/AutoAccess/RiskConfig/api/RiskConfigAPI';
@@ -52,6 +54,7 @@ export default {
   ],
   components: {
     FrLayout,
+    FrSessionTimeoutWarning,
     ThemeInjector,
   },
   computed: {
