@@ -37,6 +37,7 @@ const defaultState = {
   webStorageAvailable: true,
   workforceEnabled: false,
   managedObjectMinimumUIFilterLength: {},
+  maxIdleExpirationTime: null,
 };
 
 const mutations = {
@@ -147,9 +148,17 @@ const mutations = {
   setManagedObjectMinimumUIFilterLength(state, { managedObjectName, val }) {
     state.managedObjectMinimumUIFilterLength[managedObjectName] = val;
   },
+  setMaxIdleExpirationTime(state, val) {
+    state.maxIdleExpirationTime = val;
+  },
+};
+
+const getters = {
+  maxIdleExpirationTime: (state) => state.maxIdleExpirationTime,
 };
 
 export default {
   state: defaultState,
   mutations,
+  getters,
 };

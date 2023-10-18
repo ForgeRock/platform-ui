@@ -533,6 +533,12 @@
     "helpSupport": "Help & Support",
     "docs": "Docs"
   },
+  "sessionTimeoutWarning": {
+    "title": "You will be signed out soon",
+    "description": "You've been inactive for a while. For your security we'll sign you out in approximately 1 minute. Choose to \"Stay Signed In\" to continue or \"Sign Out\" if you're done.",
+    "extend": "Stay Signed In",
+    "end": "Sign Out"
+  },
   "pages": {
     "access": {
       "addPrivileges": "Add Privileges",
