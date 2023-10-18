@@ -30,6 +30,7 @@ import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import { getAmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
+import { getSessionTimeoutInfo } from '@forgerock/platform-shared/src/api/SessionsApi';
 import overrideTranslations, { setLocales } from '@forgerock/platform-shared/src/utils/overrideTranslations';
 import parseSub from '@forgerock/platform-shared/src/utils/OIDC';
 import getFQDN from '@forgerock/platform-shared/src/utils/getFQDN';
@@ -260,6 +261,9 @@ const addAppAuth = (realm) => {
 
       const triggerSession = () => {
         sessionCheck.triggerSessionCheck();
+        getSessionTimeoutInfo().then(({ data }) => {
+          store.commit('SharedStore/setMaxIdleExpirationTime', data.maxIdleExpirationTime);
+        });
       };
       // check the validity of the session immediately
       triggerSession();

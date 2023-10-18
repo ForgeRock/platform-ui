@@ -84,6 +84,7 @@ export default new Vuex.Store({
       namespaced: true,
       state: Shared.state,
       mutations: Shared.mutations,
+      getters: Shared.getters,
     },
   },
 });
