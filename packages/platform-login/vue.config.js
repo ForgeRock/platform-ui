@@ -88,21 +88,37 @@ module.exports = {
         });
     }
   },
-  configureWebpack: {
-    devtool: process.env.NODE_ENV === 'development' ? 'eval-source-map' : 'source-map',
-    output: {
-      devtoolModuleFilenameTemplate: (info) => {
-        const resPath = path.normalize(info.resourcePath);
-        const isVue = resPath.match(/\.vue$/);
-        const isGenerated = info.allLoaders;
+  configureWebpack: () => {
+    const config = {
+      devtool: process.env.NODE_ENV === 'development' ? 'eval-source-map' : 'source-map',
+      output: {
+        devtoolModuleFilenameTemplate: (info) => {
+          const resPath = path.normalize(info.resourcePath);
+          const isVue = resPath.match(/\.vue$/);
+          const isGenerated = info.allLoaders;
 
-        const generated = `webpack-generated:///${resPath}?${info.hash}`;
-        const vuesource = `vue-source:///${resPath}`;
+          const generated = `webpack-generated:///${resPath}?${info.hash}`;
+          const vuesource = `vue-source:///${resPath}`;
 
-        return isVue && isGenerated ? generated : vuesource;
+          return isVue && isGenerated ? generated : vuesource;
+        },
+        devtoolFallbackModuleFilenameTemplate: 'webpack:///[resource-path]?[hash]',
       },
-      devtoolFallbackModuleFilenameTemplate: 'webpack:///[resource-path]?[hash]',
-    },
+    };
+
+    // Disable the use of the 'exports' field in package.json for legacy builds.
+    // Reason: An issue arises with the 'nanoid' library when it's utilized by 'postcss' through 'sanitize-html'.
+    // The 'exports' field in 'nanoid' causes the library to not resolve correctly in older browsers like IE 11.
+    // Note: This adjustment can be removed in the future under these conditions:
+    // 1. When support for IE 11 is no longer needed.
+    // 2. Or, when 'vue-sanitize' is no longer a dependency (if it gets removed or replaced).
+    if (!process.env.VUE_CLI_MODERN_BUILD) {
+      config.resolve = {
+        exportsFields: [],
+      };
+    }
+
+    return config;
   },
   css: {
     loaderOptions: {
@@ -130,5 +146,7 @@ module.exports = {
     'postcss',
     'nanoid',
     'sanitize-html',
+    'vue-multiselect',
+    'pinia',
   ],
 };
