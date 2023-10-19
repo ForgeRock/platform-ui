@@ -979,12 +979,13 @@ export default {
     /**
      * @description Returns boolean true if payload has session timeout error code
      * @param {Object} payload - step payload data
+     * @param {Boolean} suspendedIdWasSet - Whether suspendId was set upon navigation to this step
      * @returns {Boolean}
      */
-    isSessionTimedOut(payload) {
+    isSessionTimedOut(payload, suspendedIdWasSet) {
       return (
         (payload.detail && payload.detail.errorCode === '110')
-        || (this.suspendedId && payload.code.toString() === '401')
+        || (suspendedIdWasSet && payload.code.toString() === '401')
       );
     },
     /**
@@ -1054,6 +1055,14 @@ export default {
             this.treeResumptionParameters = undefined;
           }
 
+          // At this point we have used suspendedId if it was set so we can remove it so it
+          // is not used in further auth steps, and we only need to remember that it WAS set.
+          let suspendedIdWasSet = false;
+          if (this.suspendedId) {
+            this.suspendedId = null;
+            suspendedIdWasSet = true;
+          }
+
           switch (step.type) {
             case 'LoginSuccess':
               this.checkAndNotifyPromotionParentOfLoginSuccess();
@@ -1085,11 +1094,11 @@ export default {
               break;
             case 'LoginFailure':
               this.loading = true;
-              if (this.retry && this.isSessionTimedOut(step.payload)) {
+              if (this.retry && this.isSessionTimedOut(step.payload, suspendedIdWasSet)) {
                 this.retry = false;
                 this.loginFailure = true;
                 this.retryWithNewAuthId(previousStep, stepParams);
-              } else if (this.suspendedId && this.isSessionTimedOut(step.payload)) {
+              } else if (suspendedIdWasSet && this.isSessionTimedOut(step.payload, suspendedIdWasSet)) {
                 this.errorMessage = step.payload.message || this.$t('login.loginFailure');
                 this.linkToTreeStart = this.getLinkToTreeStart(stepParams);
                 this.loading = false;
