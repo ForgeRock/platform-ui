@@ -82,6 +82,8 @@
     "displayName": "Display Name",
     "docs": "Docs",
     "done": "Done",
+    "download": "Download",
+    "dropFilesHere": "Drop files here",
     "duplicate": "Duplicate",
     "dynamic": "Dynamic",
     "edit": "Edit",
@@ -750,8 +752,7 @@
         "deleteModalButton": "Delete Account",
         "deleteAccountSuccessful": "Successfully deleted your account.",
         "downloadTitle": "Download your data",
-        "downloadSubtitle": "Download your account profile data, including personal information, account activity, device data, privacy and consent agreements.",
-        "downloadLink": "Download"
+        "downloadSubtitle": "Download your account profile data, including personal information, account activity, device data, privacy and consent agreements."
       },
       "preferences": {
         "title": "Preferences",

@@ -82,7 +82,7 @@
     "NotFound": "Not Found",
     "OAuthClients": "OAuth2 Clients",
     "OAuthReturn": "OAuth Return",
-    "Orchestrations": "Identity Orchestrations",
+    "Orchestrations": "Orchestrations",
     "pageTitle": "Platform Admin - {page}",
     "PasswordPolicy": "Password Policy",
     "Profile": "Profile",
@@ -126,7 +126,7 @@
     "managed": "Manage",
     "nativeConsoles": "Native Consoles",
     "oauthClients": "OAuth2 Clients",
-    "orchestrations": "Identity Orchestrations",
+    "orchestrations": "Orchestrations",
     "pipelines": "Pipelines",
     "provider": "Provider",
     "provisioningRole": "External Role",
@@ -967,7 +967,7 @@
       "description": "Localized questions from which the user can pick when defining security questions."
     },
     "nodeTypeList": {
-      "addNodes": "Add Nodes",
+      "addNodes": "Nodes",
       "failedNodeTypeList": "Failed to get available node types",
       "title": "Nodes",
       "toggleNodeList": "Toggle Node List",
@@ -3239,15 +3239,61 @@
     "orchestrations": {
       "builder": {
         "approvalTaskDescription": "TODO: Need description Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor.",
+        "approvalTaskDefaultDisplayName": "Approval Task",
         "approvalTaskDisplayName": "Approval",
+        "APPROVED": "APPROVED",
+        "loadingOrchestration": "Loading {status}...",
+        "deleteDraft": "Delete Draft",
+        "editDraft": "Edit Draft",
         "exclusiveGatewayDescription": "Exclusive - multiple conditions, only 1 is true.",
+        "exclusiveGatewayDefaultDisplayName": "Validation Gateway",
         "exclusiveGatewayDisplayName": "If/Else",
-        "scriptTaskDescription": "Script to execute.",
-        "scriptTaskDisplayName": "Script",
+        "EXPIRATION": "EXPIRATION",
+        "import": "Import",
+        "importModal": {
+          "importNewDraft": "Import New Draft",
+          "stepOneBody": "Import an orchestration as a draft version.",
+          "stepTwoBody": "Are you sure you want to import a new version?",
+          "overwriteWarning": "This will overwrite your existing Draft.",
+          "downloadBackup": "Download backup",
+          "stepOneTitle": "Import Orchestration",
+          "stepTwoTitle": "Replace Existing Draft?",
+          "validate": "Validate",
+          "validating": "Validating..."
+        },
         "inclusiveGatewayDescription": "Inclusive - multiple conditions, any or all can be true.",
-        "inclusiveGatewayDisplayName": "Switch"
+        "inclusiveGatewayDefaultDisplayName": "Inclusive Gateway",
+        "inclusiveGatewayDisplayName": "Switch",
+        "jsonFile": "JSON File",
+        "newDraft": "New Draft",
+        "orchestration": "Orchestration",
+        "orchestrationDetails": "Orchestration Details",
+        "orchestrationName": "Orchestration Name",
+        "publishModal": {
+          "body": "Are you sure you want to publish this orchestration?",
+          "title": "Publish Orchestration?",
+          "overwriteWarning": "This will overwrite your existing published workflow."
+        },
+        "REJECT": "REJECT",
+        "scriptTaskDescription": "Script to execute.",
+        "scriptTaskDefaultDisplayName": "Script Task",
+        "scriptTaskDisplayName": "Script",
+        "viewDetails": "View Details"
       },
       "draft": "Draft",
+      "messages": {
+        "notFound": "{status} orchestration {orchestrationId} not found",
+        "createDraftError": "There was an error creating a draft from this orchestration",
+        "createDraftSuccess": "Draft orchestration created successfully",
+        "deleteError": "There was an error deleting this orchestration",
+        "deleteSuccess": "Orchestration deleted successfully",
+        "importError": "There was an error importing the selected orchestration",
+        "nodeValidationError": "All nodes and outputs must be connected",
+        "publishError": "There was an issue publishing this orchestration",
+        "publishSuccess": "Orchestration successfully published",
+        "saveError": "There was an error saving this orchestration",
+        "saveSuccess": "All Changes Saved"
+      },
       "published": "Published"
     },
     "templates": {

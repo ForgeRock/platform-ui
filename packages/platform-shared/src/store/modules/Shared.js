@@ -30,6 +30,7 @@ const defaultState = {
   governanceEnabled: false,
   governanceEnabledV4: false,
   igaApiUrl: null,
+  igaOrchestrationApiUrl: null,
   uiConfig: null,
   hasAmUrl: false,
   showEsvUi: false,
@@ -80,6 +81,9 @@ const mutations = {
       if (env.VUE_APP_ENABLE_GOVERNANCE === 'true' || env.VUE_APP_ENABLE_GOVERNANCE === true || env.VUE_APP_ENABLE_GOVERNANCE_V4 === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_V4 === true) {
         if (env.VUE_APP_IGA_API_URL) {
           state.igaApiUrl = getFQDN(env.VUE_APP_IGA_API_URL);
+        }
+        if (env.VUE_APP_IGA_ORCHESTRATION_API_URL) {
+          state.igaOrchestrationApiUrl = getFQDN(env.VUE_APP_IGA_ORCHESTRATION_API_URL);
         }
       }
       if (env.VUE_APP_FRAAS_FEDERATION_ENFORCEMENT_URL) {
