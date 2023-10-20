@@ -394,6 +394,7 @@
         "journeyJustifiedContentDescription": "Message to display to the left or right of the sign-in card.",
         "journeyJustifiedContentMobileViewEnabled": "Visible in mobile",
         "journeyPagesDescription": "Customize the authentication and registration journey pages.",
+        "journeyRememberMeDescription": "Add option to remember username on next signin.",
         "journeyTheaterMode": "Theater Mode",
         "journeyTheaterModeDescription": "Expand the UI using the available space in your browser window.",
         "journeyText": "Journey Text",
