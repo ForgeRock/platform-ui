@@ -103,6 +103,7 @@ export function generateFraasLogApiKeyApi(requestOverride = {}) {
 
   return axios.create(requestDetails);
 }
+
 /**
  * Generates an Iga API Axios instance
  * @param {object} requestOverride Takes an object of AXIOS parameters that can be used to either add
@@ -113,6 +114,23 @@ export function generateFraasLogApiKeyApi(requestOverride = {}) {
 export function generateIgaApi(requestOverride = {}) {
   const requestDetails = {
     baseURL: store.state.SharedStore.igaApiUrl,
+    headers: {},
+    ...requestOverride,
+  };
+
+  return axios.create(requestDetails);
+}
+
+/**
+ * Generates an IGA Orchestration API Axios instance
+ * @param {object} requestOverride Takes an object of AXIOS parameters that can be used to either add
+ * on extra information or override default properties https://github.com/axios/axios#request-config
+ *
+ * @returns {AxiosInstance}
+ */
+export function generateIgaOrchestrationApi(requestOverride = {}) {
+  const requestDetails = {
+    baseURL: store.state.SharedStore.igaOrchestrationApiUrl,
     headers: {},
     ...requestOverride,
   };
