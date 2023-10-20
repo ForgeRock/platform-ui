@@ -72,6 +72,8 @@ export default {
         journeyInputSelectColor: '#e4f4fd',
         journeyInputSelectHoverColor: '#f6f8fa',
         journeyInputTextColor: '#23282e',
+        journeyRememberMeEnabled: false,
+        journeyRememberMeLabel: '',
         journeyTheaterMode: false,
         journeyJustifiedContent: '',
         journeyJustifiedContentEnabled: false,
@@ -116,6 +118,8 @@ export default {
       journeyHeader: '',
       journeyHeaderEnabled: false,
       journeyHeaderSkipLinkEnabled: false,
+      journeyRememberMeEnabled: false,
+      journeyRememberMeLabel: '',
       journeyTheaterMode: false,
       journeyJustifiedContent: '',
       journeyJustifiedContentEnabled: false,
@@ -217,6 +221,8 @@ export default {
           this.journeyJustifiedContentEnabled = theme.journeyJustifiedContentEnabled;
           this.journeyJustifiedContentMobileViewEnabled = theme.journeyJustifiedContentMobileViewEnabled;
           this.journeyLayout = theme.journeyLayout;
+          this.journeyRememberMeEnabled = theme.journeyRememberMeEnabled;
+          this.journeyRememberMeLabel = theme.journeyRememberMeLabel;
           this.journeySignInButtonPosition = theme.journeySignInButtonPosition;
           this.logo = theme.logo || placeholderImage;
           this.logoAltText = theme.logoAltText;

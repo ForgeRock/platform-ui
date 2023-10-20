@@ -11,12 +11,16 @@ import { sanitize } from '@forgerock/platform-shared/src/utils/sanitizerConfig';
 import { URLSearchParams } from 'url';
 import {
   FRStep,
+  FRAuth,
 } from '@forgerock/javascript-sdk';
+import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
+import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
+import i18n from '@/i18n';
 import * as urlUtil from '../../utils/urlUtil';
 import * as authResumptionUtil from '../../utils/authResumptionUtil';
 import Login from './index';
 
-const LoginMixin = {
+const LoginMixinMock = {
   methods: {
     getConfigurationInfo: () => Promise.resolve({ data: { realm: '/' } }),
   },
@@ -48,7 +52,7 @@ describe('Login.vue', () => {
             },
           },
         },
-        mixins: [LoginMixin],
+        mixins: [LoginMixinMock],
       },
     });
   });
@@ -361,7 +365,7 @@ describe('Component Test', () => {
           },
           $sanitize: (message, config) => sanitize(message, config),
         },
-        mixins: [LoginMixin],
+        mixins: [LoginMixinMock],
       },
     });
     await flushPromises();
@@ -511,6 +515,131 @@ describe('Component Test', () => {
       await flushPromises();
 
       expect(buildTreeFormSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Theming', () => {
+    function setup(props) {
+      return mount(Login, {
+        global: {
+          plugins: [i18n],
+          stubs: {
+            'router-link': true,
+          },
+          mocks: {
+            $route: {
+              params: {
+                tree: undefined,
+              },
+            },
+            $sanitize: () => {},
+            $store: {
+              state: {
+                SharedStore: {
+                  webStorageAvailable: true,
+                },
+              },
+            },
+          },
+        },
+        attachTo: document.body,
+        mixins: [LoginMixin, RestMixin],
+        props: {
+          ...props,
+        },
+      });
+    }
+
+    const authData = {
+      authId: '',
+      callbacks: [{
+        type: 'NameCallback', output: [{ name: 'prompt', value: 'User Name' }], input: [{ name: 'IDToken1', value: '' }],
+      }, {
+        type: 'PasswordCallback', output: [{ name: 'prompt', value: 'Password' }], input: [{ name: 'IDToken2', value: '' }],
+      }],
+      header: 'Sign In',
+      description: '',
+    };
+
+    beforeEach(() => {
+      jest.spyOn(FRAuth, 'next').mockImplementation(() => Promise.resolve(new FRStep(authData)));
+    });
+
+    describe('@renders', () => {
+      it('Displays remember my login checkbox if its enabled in the theme', async () => {
+        const wrapper = setup();
+        await flushPromises();
+
+        let rememberMe = wrapper.find('input[name="rememberMe"]');
+        expect(rememberMe.exists()).toBeFalsy();
+
+        await wrapper.setProps({ journeyRememberMeEnabled: true });
+        await wrapper.vm.$nextTick();
+
+        rememberMe = wrapper.find('input[name="rememberMe"]');
+        expect(rememberMe.exists()).toBeTruthy();
+
+        let rememberMeLabel = wrapper.find('#rememberMe label');
+        expect(rememberMeLabel.text()).toBe('Remember Me');
+
+        await wrapper.setProps({ journeyRememberMeLabel: 'test' });
+        await wrapper.vm.$nextTick();
+        rememberMeLabel = wrapper.find('#rememberMe label');
+        expect(rememberMeLabel.text()).toBe('test');
+      });
+    });
+
+    describe('@actions', () => {
+      it('Saves username to localstorage if rememberMe is enabled', async () => {
+        const wrapper = setup();
+        await flushPromises();
+
+        await wrapper.setProps({ journeyRememberMeEnabled: true });
+        await wrapper.vm.$nextTick();
+
+        const localStorageSpy = jest.spyOn(Storage.prototype, 'setItem');
+        let usernameInput = wrapper.find('div[label="User Name"] input');
+        let nextBtn = wrapper.find('button[type="submit"]');
+
+        await usernameInput.setValue('test');
+
+        await nextBtn.trigger('click');
+        await wrapper.vm.$nextTick();
+        expect(localStorageSpy).not.toHaveBeenCalled();
+
+        // Page will reload with the same callbacks because of the mocked FrAuth
+
+        usernameInput = wrapper.find('div[label="User Name"] input');
+        nextBtn = wrapper.find('button[type="submit"]');
+        const rememberMe = wrapper.find('input[name="rememberMe"]');
+
+        await usernameInput.setValue('test2');
+        await rememberMe.setChecked();
+        await nextBtn.trigger('click');
+        await wrapper.vm.$nextTick();
+
+        expect(localStorageSpy).toHaveBeenCalledWith('frUsername', 'test2');
+      });
+
+      it('Removes username to localstorage if rememberMe is disabled', async () => {
+        const wrapper = setup();
+        await flushPromises();
+
+        await wrapper.setProps({ journeyRememberMeEnabled: true });
+        await wrapper.vm.$nextTick();
+
+        const localStorageSpy = jest.spyOn(Storage.prototype, 'removeItem');
+        const usernameInput = wrapper.find('div[label="User Name"] input');
+        const rememberMe = wrapper.find('input[name="rememberMe"]');
+        const nextBtn = wrapper.find('button[type="submit"]');
+
+        await usernameInput.setValue('test');
+        await rememberMe.setChecked(false);
+
+        await nextBtn.trigger('click');
+        await wrapper.vm.$nextTick();
+        expect(localStorageSpy).toHaveBeenCalled();
+      });
     });
   });
 });
