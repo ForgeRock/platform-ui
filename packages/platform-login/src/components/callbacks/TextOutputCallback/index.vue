@@ -8,17 +8,20 @@ of the MIT license. See the LICENSE file for details. -->
     ref="textOutputPanel">
     <div
       v-if="messageType === 'INFORMATION'"
-      class="text-center text-muted w-100">
+      class="text-center text-muted w-100"
+      :aria-hidden="isFirstRenderedCallback">
       {{ getTranslation(message) }}
     </div>
     <div
       v-if="messageType === 'WARNING'"
-      class="alert w-100 alert-warning">
+      class="alert w-100 alert-warning"
+      :aria-hidden="isFirstRenderedCallback">
       {{ getTranslation(message) }}
     </div>
     <div
       v-if="messageType === 'ERROR'"
-      class="alert w-100 alert-danger">
+      class="alert w-100 alert-danger"
+      :aria-hidden="isFirstRenderedCallback">
       {{ getTranslation(message) }}
     </div>
     <div
