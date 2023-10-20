@@ -97,7 +97,7 @@ export default {
           name: 'download',
           header: this.$t('pages.profile.accountControls.downloadTitle'),
           description: this.$t('pages.profile.accountControls.downloadSubtitle'),
-          buttonText: this.$t('pages.profile.accountControls.downloadLink'),
+          buttonText: this.$t('common.download'),
           buttonIcon: 'download',
           buttonVariant: 'primary',
           buttonMethod: this.downloadAccount,

@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { showErrorMessage } from '@forgerock/platform-shared/src/notification';
+import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { getConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';

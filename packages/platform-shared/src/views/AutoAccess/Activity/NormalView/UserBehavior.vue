@@ -61,7 +61,7 @@ import {
 } from 'bootstrap-vue';
 import { getAutoAccessReportResult } from '@forgerock/platform-shared/src/api/AutoApi';
 import dayjs from 'dayjs';
-import { showErrorMessage } from '@forgerock/platform-shared/src/notification';
+import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import FrNormalViewHeader from './NormalViewHeader';
 import FrNormalViewToolbar from './NormalViewToolbar';
