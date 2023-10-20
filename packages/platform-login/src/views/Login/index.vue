@@ -133,6 +133,15 @@ of the MIT license. See the LICENSE file for details. -->
                             {{ buttonTextLocalized }}
                           </BButton>
                         </div>
+                        <div
+                          v-if="rememberMeVisible && $store.state.SharedStore.webStorageAvailable"
+                          class="mt-3">
+                          <FrField
+                            name="rememberMe"
+                            :label="journeyRememberMeLabel || getTranslation($t('login.rememberMe'))"
+                            v-model="rememberMeValue"
+                            type="checkbox" />
+                        </div>
                         <input
                           v-if="showScriptElms"
                           id="loginButton_0"
@@ -320,6 +329,14 @@ of the MIT license. See the LICENSE file for details. -->
                         {{ buttonTextLocalized }}
                       </BButton>
                     </div>
+                    <div
+                      v-if="rememberMeVisible && $store.state.SharedStore.webStorageAvailable"
+                      class="mt-3">
+                      <FrField
+                        :label="journeyRememberMeLabel || getTranslation($t('login.rememberMe'))"
+                        v-model="rememberMeValue"
+                        type="checkbox" />
+                    </div>
                     <input
                       v-if="showScriptElms"
                       id="loginButton_0"
@@ -503,6 +520,14 @@ export default {
       type: String,
       default: 'card',
     },
+    journeyRememberMeEnabled: {
+      type: Boolean,
+      default: false,
+    },
+    journeyRememberMeLabel: {
+      type: String,
+      default: '',
+    },
     journeySignInButtonPosition: {
       type: String,
       default: 'flex-column',
@@ -555,6 +580,8 @@ export default {
       showScriptElms: false,
       step: undefined,
       suspendedId: undefined,
+      rememberMeVisible: false,
+      rememberMeValue: false,
       treeResumptionParameters: undefined,
       treeId: undefined,
       svgShapesSanitizerConfig,
@@ -597,6 +624,9 @@ export default {
         return '';
       }
     },
+    isRootRealm() {
+      return this.realm === 'root' || this.realm === '/root' || this.realm === '/';
+    },
   },
   mounted() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -637,6 +667,11 @@ export default {
         this.loading = false;
       }
     },
+    // on page load journeyRememberMeEnabled will be false, it will
+    // update when the theme is loaded
+    journeyRememberMeEnabled() {
+      this.setRememberedUsername();
+    },
   },
   methods: {
     /**
@@ -654,8 +689,7 @@ export default {
      * Redirects user to forbidden if non-root realm & journey pages have been inactivated for hosted pages
      */
     redirectIfInactive() {
-      const rootRealm = this.realm === 'root' || this.realm === '/root' || this.realm === '/';
-      if (!rootRealm && this.$store.state.hostedJourneyPages === false) {
+      if (!this.isRootRealm && this.$store.state.hostedJourneyPages === false) {
         window.location.href = `${this.$store.state.SharedStore.amBaseURL}/XUI/#/forbidden`;
       }
     },
@@ -687,7 +721,6 @@ export default {
       this.screenReaderMessageType = '';
 
       this.checkNodeForThemeOverride(this.stage);
-
       // Some callbacks don't need to render anything so forEach is used instead of map
       const componentList = [];
       let keyFromDate = Date.now();
@@ -759,6 +792,7 @@ export default {
           } = this.getField(callback, index);
           const fieldDataType = this.getAlternateFieldType(policyRequirements) || fieldType;
           const errors = this.getTranslatedPolicyFailures(callback);
+
           component.callbackSpecificProps = {
             errors, label, name, type: fieldDataType, value, autocomplete: getAutocompleteValue(label), autofocus,
           };
@@ -788,6 +822,8 @@ export default {
       }
 
       this.componentList = componentList;
+
+      this.setRememberedUsername();
     },
     handleIdpComponent(componentList, idpComponentIndex) {
       if (!Array.isArray(componentList)) return;
@@ -1087,6 +1123,8 @@ export default {
       if (this.mutationObserver) {
         this.mutationObserver.disconnect();
       }
+
+      this.decideToRememberUsername();
 
       // invoke callbacks before nextStep
       // if a callback returns a promise, the promise is pushed to an array
@@ -1391,6 +1429,59 @@ export default {
         'FrValidatedCreatePasswordCallback',
       ];
       return enableAutofocus && componentTypesToAutofocus.indexOf(componentType) > -1;
+    },
+    /**
+     * Decides whether to save the value of a username field to localStorage
+     * based on the value of the rememberMe checkbox and whether the current step
+     * includes a username field
+     *
+     * @returns {String} username
+     */
+    decideToRememberUsername() {
+      if (this.$store.state.SharedStore.webStorageAvailable) {
+        if (this.rememberMeValue && this.step.getCallbacksOfType(this.FrCallbackType.NameCallback).length) {
+          const usernameValue = this.step
+            .getCallbacksOfType(this.FrCallbackType.NameCallback)[0]
+            .getInputValue();
+          localStorage.setItem('frUsername', usernameValue);
+        } else if (this.rememberMeVisible && this.rememberMeValue === false) {
+          localStorage.removeItem('frUsername');
+        }
+      }
+    },
+    /**
+     * Gets a username that has been stored in localStorage and returns it if
+     * it exists, returns null if it does not
+     *
+     * @returns {String} username
+     */
+    getRememberedUsernameIfExists() {
+      let username = null;
+      if (this.$store.state.SharedStore.webStorageAvailable) {
+        username = localStorage.getItem('frUsername');
+        // If username exists in local storage, set the checkbox value to true
+        if (username) {
+          this.rememberMeValue = true;
+        }
+      }
+      return username;
+    },
+    /**
+     * Sets a remembered username in the username field of the current auth step
+     * and shows the rememberMe checkbox
+     *
+     */
+    setRememberedUsername() {
+      const hasNameCallback = this.componentList.find((component) => component.callback.getType() === this.FrCallbackType.NameCallback);
+      if (this.journeyRememberMeEnabled && hasNameCallback) {
+        this.rememberMeVisible = true;
+        const remembered = this.getRememberedUsernameIfExists();
+        if (remembered) {
+          this.componentList.find((component) => component.callback.getType() === this.FrCallbackType.NameCallback).callbackSpecificProps.value = remembered;
+        }
+      } else {
+        this.rememberMeVisible = false;
+      }
     },
   },
 };
