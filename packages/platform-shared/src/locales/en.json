@@ -555,6 +555,7 @@
     "termsAndConditions": "Terms & Conditions",
     "verifyUrlError": "There was an error verifying goto url.",
     "tryAgain": "Try Again",
+    "rememberMe": "Remember Me",
     "recoveryCodes": {
       "header": "Device sign-in is enabled",
       "subheader": "Now you can use your device as a second step when signing in to your account.",
