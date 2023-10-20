@@ -25,6 +25,8 @@ of the MIT license. See the LICENSE file for details. -->
             :journey-header="localizedHeader"
             :journey-header-enabled="journeyHeaderEnabled"
             :journey-header-skip-link-enabled="journeyHeaderSkipLinkEnabled"
+            :journey-remember-me-enabled="journeyRememberMeEnabled"
+            :journey-remember-me-label="journeyRememberMeLabel"
             :journey-theater-mode="journeyTheaterMode"
             :journey-justified-content="localizedJustifiedContent"
             :journey-justified-content-enabled="journeyJustifiedContentEnabled"
