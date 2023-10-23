@@ -5,12 +5,12 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { shallowMount } from '@vue/test-utils';
+import { mount, shallowMount } from '@vue/test-utils';
 import flushPromises from 'flush-promises';
 import KbaCreateCallback from '@/components/callbacks/KbaCreateCallback';
 import i18n from '@/i18n';
 
-describe('KbaCreateCallback.vue', () => {
+describe('KbaCreateCallback.vue (shallowMount)', () => {
   let wrapper;
   const callbackProp = {
     getPredefinedQuestions: () => (['Favorite color?', 'Favorite planet?']),
@@ -98,5 +98,33 @@ describe('KbaCreateCallback.vue', () => {
     wrapper.vm.$data.questionModel.value = 'test question';
     wrapper.vm.validateQuestion();
     expect(wrapper.vm.$props.callback.setQuestion).toHaveBeenCalledWith('test question');
+  });
+});
+
+describe('KbaCreateCallback.vue (mount)', () => {
+  let wrapper;
+  const callbackProp = {
+    getPredefinedQuestions: () => (['Favorite color?', 'Favorite planet?']),
+    getPrompt: () => 'Prompt label',
+    getType: () => 'KbaCreateCallback',
+    setQuestion: jest.fn(),
+    getOutputByName: () => true,
+  };
+
+  beforeEach(() => {
+    wrapper = mount(KbaCreateCallback, {
+      i18n,
+      propsData: {
+        callback: callbackProp,
+        index: 5,
+        showHeader: true,
+      },
+    });
+  });
+
+  it('doesn\'t have duplicate test in placeholder from label', () => {
+    const label = wrapper.find('label');
+    expect(label.text()).toBe('Prompt label');
+    expect(wrapper.html()).toEqual(expect.stringContaining('placeholder="Type to search"'));
   });
 });
