@@ -257,7 +257,7 @@ export default {
       if (this.searchable) {
         this.$refs.vms.$el.querySelector('input').focus();
       }
-      this.floatLabels = this.floatingLabel;
+      this.floatLabels = this.floatingLabel && this.label;
 
       // Scroll the select list to show the selected option
       if (this.showSelectedOptionOnOpen && this.value) {
