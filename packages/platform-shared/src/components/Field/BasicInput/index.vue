@@ -44,7 +44,7 @@ of the MIT license. See the LICENSE file for details. -->
           :aria-describedby="getAriaDescribedBy(validationObserver, errors)"
           @animationstart="floatingLabel && animationStart"
           @blur="onBlur($event)"
-          @focus="floatingLabel && (floatLabels = true)"
+          @focus="(floatingLabel && label) && (floatLabels = true)"
           :data-testid="`input-${testid}`">
         <input
           v-else
@@ -62,7 +62,7 @@ of the MIT license. See the LICENSE file for details. -->
           :style="labelHeight && {height: `${labelHeight + 2}px`, 'padding-top': `${labelHeight - 27}px`}"
           :aria-describedby="getAriaDescribedBy(validationObserver, errors)"
           @blur="onBlur($event);"
-          @focus="floatingLabel && (floatLabels = true)"
+          @focus="(floatingLabel && label) && (floatLabels = true)"
           @input="evt=>inputValue=evt.target.value"
           @animationstart="floatingLabel && animationStart"
           :data-testid="`input-${testid}`">
@@ -290,7 +290,7 @@ export default {
     */
     onBlur(event) {
       this.$emit('blur', event);
-      if (this.floatingLabel) {
+      if (this.floatingLabel && this.label) {
         this.floatLabels = this.inputValue.length > 0;
       }
     },
