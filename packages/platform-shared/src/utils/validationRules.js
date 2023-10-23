@@ -106,12 +106,6 @@ export function getRules(i18n) {
     message: i18n.t('common.policyValidationMessages.LOWERCASE_PERIOD_REQUIRED'),
   };
 
-  const isInteger = {
-    ...rules.regex,
-    message: i18n.t('common.validation.int'),
-    validate: (value) => /^[0-9-.]*$/.test(value),
-  };
-
   const isList = {
     ...rules.regex,
     message: i18n.t('common.validation.list'),
@@ -138,6 +132,15 @@ export function getRules(i18n) {
     },
   };
 
+  const min_value = {
+    ...rules.min_value,
+    params: ['min', 'message'],
+    message(field, params) {
+      if (params.message) return params.message;
+      return i18n.t('common.policyValidationMessages.MIN_VALUE', { min: params.min });
+    },
+  };
+
   // Minimum required rule
   // errors if input value's length is less than the input minimum number
   const minimumRequired = {
@@ -157,7 +160,7 @@ export function getRules(i18n) {
 
   const integer = {
     ...rules.integer,
-    message: i18n.t('common.policyValidationMessages.VALID_INT'),
+    message: i18n.t('common.validation.int'),
   };
 
   const oneOf = {
@@ -347,13 +350,13 @@ export function getRules(i18n) {
     google_cloud_platform_certificate_validation,
     is_after_date,
     integer,
-    isInteger,
     isList,
     isNumber,
     is_before_date,
     json,
     max,
     max_value,
+    min_value,
     minimumRequired,
     numeric,
     oneOf,

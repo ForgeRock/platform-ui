@@ -233,7 +233,7 @@
     "viewDetails": "View Details",
     "yes": "Yes",
     "validation": {
-      "int": "Please enter a valid integer. A valid integer can contain 0-9, . and -",
+      "int": "Please enter a valid integer. A valid integer can contain 0-9 and -",
       "number": "Please enter a valid number. A valid number can contain 0-9, . and -",
       "list": "Please provide a valid list. An example of a valid list is: some, strings, separated, by, commas"
     },
@@ -298,6 +298,7 @@
       "MAX_LENGTH": "Must be less than {maxLength} characters long",
       "MAX_VALUE": "Must not be greater than {max}",
       "MIN_ITEMS": "Must have at least {minItems} value(s)",
+      "MIN_VALUE": "Must not be less than {min}",
       "AT_LEAST_ONE_CHECKBOX": "At least one checkbox must be checked",
       "AT_LEAST_X_CAPITAL_LETTERS": "Must have at least {numCaps} capital letter(s)",
       "AT_LEAST_X_LOWER_LETTERS": "Must have at least {numLower} lowercase letter(s)",
