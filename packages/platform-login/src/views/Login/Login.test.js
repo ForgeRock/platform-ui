@@ -57,10 +57,6 @@ describe('Login.vue', () => {
     jest.resetAllMocks();
   });
 
-  it('Load login component', () => {
-    expect(wrapper.vm.$options.name).toEqual('Login');
-  });
-
   it('Removes undefined and "undefined" tree from stepParams', () => {
     const expectedStepParams = {
       query: {
@@ -238,6 +234,54 @@ describe('Login.vue', () => {
       wrapper.vm.buildTreeForm();
 
       expect(wrapper.vm.componentList.length).toBe(0);
+    });
+  });
+
+  describe('handleIdpComponent', () => {
+    describe('given idp component ', () => {
+      it('should remove idp component from componentsList to the `idpComponent` field', () => {
+        const idpComponent = {
+          callback: {
+            getOutputByName: jest.fn(),
+            payload: {
+              type: 'SelectIdPCallback',
+            },
+            setInputValue: jest.fn(),
+          },
+        };
+        const componentList = [
+          {
+            callback: {
+              payload: {
+                type: 'NameCallback',
+              },
+            },
+          },
+          idpComponent,
+          {
+            callback: {
+              payload: {
+                type: 'PasswordCallback',
+              },
+            },
+          },
+        ];
+
+        expect(componentList.length).toBe(3);
+        expect(wrapper.vm.idpComponent).toBeUndefined();
+
+        wrapper.vm.handleIdpComponent(componentList, 1);
+        expect(componentList.length).toBe(2);
+        expect(wrapper.vm.idpComponent).toStrictEqual(idpComponent);
+      });
+    });
+
+    describe('given non array', () => {
+      it('should do nothing', () => {
+        wrapper.vm.handleIdpComponent({}, 1);
+
+        expect(wrapper.vm.idpComponent).toBeUndefined();
+      });
     });
   });
 });

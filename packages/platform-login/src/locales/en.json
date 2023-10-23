@@ -27,6 +27,7 @@
       "message": "Open your Authenticator app and tap the number shown to sign-in."
     },
     "social": {
+      "legend": "Social Sign-in",
       "or": "or",
       "signInWith": "Sign in with {buttonDisplayName}"
     },
