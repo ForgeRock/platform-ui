@@ -280,6 +280,7 @@ export default {
 
     /* stylelint-disable */
     .polyfill-placeholder,
+    input:not(:placeholder-shown)
     input:focus{
 
       /*
