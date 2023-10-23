@@ -122,7 +122,7 @@ import {
   BInputGroupAppend,
   BTooltip,
 } from 'bootstrap-vue';
-import { delay, toNumber } from 'lodash';
+import { delay } from 'lodash';
 import * as clipboard from 'clipboard-polyfill/text';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
@@ -295,16 +295,25 @@ export default {
       }
     },
     /**
-     * Formats the number input by removing any characters that aren't 0-9.
+     * Formats the number input by removing any characters that aren't 0-9, -, .
      * Note: This is due to accessibility concerns with input type="number".
      *       Accessibility changes implemented as part of this work:
      *       https://bugster.forgerock.org/jira/browse/IAM-3677
      */
     removeNonNumericChars({ target }) {
       const newVal = target?.value;
-      if (newVal && (typeof newVal === 'string')) {
-        const numericString = newVal.replace(/[^\d]/g, '');
-        return toNumber(numericString);
+      // Passing - or . to parseFloat returns NaN
+      // This allows negatives and decimals to be entered
+      if (newVal && (typeof newVal === 'string') && !newVal.startsWith('-') && !newVal.startsWith('.')) {
+        const numericString = newVal.replace(/[^0-9-.]/g, '');
+        const parsedVal = parseFloat(numericString);
+        let returnedVal = Number.isNaN(parsedVal) ? '' : parsedVal;
+        // If a number with just a period at the end is passed to parseFloat, it removes the period
+        // this allows decimals to be entered
+        if (numericString.endsWith('.') && !parsedVal.toString().endsWith('.')) {
+          returnedVal = `${parsedVal}.`;
+        }
+        return returnedVal;
       }
       return newVal;
     },

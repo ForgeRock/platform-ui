@@ -51,7 +51,7 @@ of the MIT license. See the LICENSE file for details. -->
                         v-model.number="obj[key]"
                         :disabled="disabled"
                         type="number"
-                        validation="required|numeric"
+                        validation="required|isNumber"
                         :label="properties[key].title || key"
                         :name="key+'_'+index"
                         @input="emitInput(listValues)"
