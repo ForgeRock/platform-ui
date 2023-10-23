@@ -36,7 +36,6 @@ of the MIT license. See the LICENSE file for details. -->
           :searchable="true"
           :label="callback.getPrompt()"
           :name="questionModel.key + '_question_selector'"
-          :placeholder="callback.getPrompt()"
           :id="questionModel.key + '_selector'"
           :option-height-calculation="48"
           :options="options"
