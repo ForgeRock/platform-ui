@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "vue-cli-service build",
+    "build": "vue-cli-service build --no-module",
     "dev": "vue-cli-service serve",
     "e2e": "../../e2e/passwords.sh cypress run --env TAGS=forgeops",
     "e2e:open": "../../e2e/passwords.sh cypress open --env TAGS=forgeops",
