@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2022-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -39,18 +39,10 @@ export default {
       default: 'undefined',
       type: String,
     },
-    /**
-     * Reset editor to initial state
-     */
-    reset: {
-      default: false,
-      type: Boolean,
-    },
   },
   data() {
     return {
       contentField: undefined,
-      shouldReset: false,
     };
   },
   methods: {
@@ -65,21 +57,6 @@ export default {
   },
   mounted() {
     this.contentField = this.value;
-  },
-  watch: {
-    value: {
-      handler(val) {
-        this.contentField = val;
-        this.shouldReset = false;
-      },
-      immediate: true,
-    },
-    reset(val) {
-      if (val) {
-        this.shouldReset = true;
-        this.contentField = this.value;
-      }
-    },
   },
 };
 </script>
