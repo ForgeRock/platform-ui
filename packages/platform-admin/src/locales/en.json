@@ -2388,6 +2388,7 @@
     "setUp": "Set Up",
     "frequency": "Frequency",
     "scheduleButton": "Save Schedule",
+    "invalidCron": "Invalid cron",
     "useCron": "Use cron",
     "hours": "hour(s)",
     "days": "days(s)",
