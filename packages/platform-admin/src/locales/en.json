@@ -2306,6 +2306,27 @@
       "noDataTitle": "You haven't added any directives yet",
       "enforcedNoDataSubtitle": "Add directives to create your Enforced Content Security Policy.",
       "reportNoDataSubtitle": "Add directives to create your Report Only Content Security Policy."
+    },
+    "pendingUpdates": {
+      "errorUpdating": "Error updating Content Security Policy",
+      "modalContent": "Are you sure you want to publish changes? Changes will take a few minutes to take effect.",
+      "modalTitle": "Publish Changes?",
+      "successUpdating": "Successfully updated Content Security Policy",
+      "updatesToPublish": "<span class=\"font-weight-bold mr-1 text-dark\">Publish Changes</span> You have to publish for your changes to take effect."
+    },
+    "addDirective": {
+      "directiveSources": "Directive Sources",
+      "hostsHelp": "List of valid hosts. Wildcards are acceptable. Eg. <code>http://www.example.com</code>,<code>http://www.*.example.com</code>",
+      "modalTitle": "Add Directive",
+      "navigateToHelp": "List of valid sources the document can initiate navigation to. Eg. <code>&lt;a&gt;</code>,<code>&lt;form&gt;</code>",
+      "pluginHelp": "List of plugin types the browser can invoke. Eg. <code>application/pdf</code>",
+      "pluginTypes": "Plugin Types",
+      "reportToHelp": "The reporting group that the browser should send violation reports to.",
+      "reportToPlaceholder": "Reporting Group",
+      "reportURIHelp": "The URI that the browser should send violation reports to.",
+      "reportURIPlaceholder": "Reporting Endpoint",
+      "selectDirective": "Select a directive",
+      "specifyKeywords": "Specify keywords and valid hosts for this directive."
     }
   },
   "esv": {
