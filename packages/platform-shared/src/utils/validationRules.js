@@ -257,6 +257,14 @@ export function getRules(i18n) {
     },
   };
 
+  const text_without_fragment = {
+    validate(value) {
+      const valid = !value.some((element) => element.includes('#'));
+      return valid;
+    },
+    message: i18n.t('common.policyValidationMessages.url_with_fragment'),
+  };
+
   // Rule to check whether url is valid
   const url = {
     validate(value) {
@@ -365,6 +373,7 @@ export function getRules(i18n) {
     single_spaces,
     start_end_space,
     starts_with_case_insensitive,
+    text_without_fragment,
     unique,
     unique_email_template_id,
     uniqueValue,
