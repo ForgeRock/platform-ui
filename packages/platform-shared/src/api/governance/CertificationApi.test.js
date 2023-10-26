@@ -49,50 +49,36 @@ const put = jest.fn();
 BaseApi.generateIgaApi = jest.fn(() => ({ get, post, put }));
 
 describe('Governace API', () => {
-  it('getCertificationLineItem called with right args', async () => {
-    const data = {
-      result: [],
-      resultCount: 0,
-      totalHits: 0,
-      searchAfterKey: [],
-    };
-    get.mockReturnValue(Promise.resolve(data));
-    const response = await CertificationApi.getCertificationLineItem(DEFAULT_PARAMS.certId, DEFAULT_PARAMS.lineItemId);
-    expect(get).toBeCalledWith(governanceCertLineItemsBaseUrl);
-    expect(BaseApi.generateIgaApi).toBeCalled();
-    expect(response).toEqual(data);
-  });
-
-  it('certifyLineItem called with right args', async () => {
+  it('certifyItem called with right args', async () => {
     post.mockReturnValue(Promise.resolve(DEFAULT_POST_DATA));
 
-    const response = await CertificationApi.certifyLineItem(DEFAULT_PARAMS.certId, DEFAULT_PARAMS.lineItemId);
+    const response = await CertificationApi.certifyItem(DEFAULT_PARAMS.certId, DEFAULT_PARAMS.lineItemId);
     expect(post).toBeCalledWith(`${governanceCertLineItemsBaseUrl}/certify`);
     expect(BaseApi.generateIgaApi).toBeCalled();
     expect(response).toEqual(DEFAULT_POST_DATA);
   });
 
-  it('revokeLineItem called with right args', async () => {
+  it('revokeItem called with right args', async () => {
     post.mockReturnValue(Promise.resolve(DEFAULT_POST_DATA));
 
     const { comment } = DEFAULT_BODY_PARAMS;
-    const response = await CertificationApi.revokeLineItem(DEFAULT_PARAMS.certId, DEFAULT_PARAMS.lineItemId);
+    const response = await CertificationApi.revokeItem(DEFAULT_PARAMS.certId, DEFAULT_PARAMS.lineItemId);
     expect(post).toBeCalledWith(`${governanceCertLineItemsBaseUrl}/revoke`, { comment });
     expect(BaseApi.generateIgaApi).toBeCalled();
     expect(response).toEqual(DEFAULT_POST_DATA);
   });
 
-  it('exceptionLineItem called with right args', async () => {
+  it('exceptionItem called with right args', async () => {
     post.mockReturnValue(Promise.resolve(DEFAULT_POST_DATA));
 
     const { comment } = DEFAULT_BODY_PARAMS;
-    const response = await CertificationApi.exceptionLineItem(DEFAULT_PARAMS.certId, DEFAULT_PARAMS.lineItemId);
+    const response = await CertificationApi.exceptionItem(DEFAULT_PARAMS.certId, DEFAULT_PARAMS.lineItemId);
     expect(post).toBeCalledWith(`${governanceCertLineItemsBaseUrl}/exception`, { comment });
     expect(BaseApi.generateIgaApi).toBeCalled();
     expect(response).toEqual(DEFAULT_POST_DATA);
   });
 
-  it('reassignLineItem called with right args', async () => {
+  it('reassignItem called with right args', async () => {
     const certId = '95a7ce21-a7a8-4da8-b59c-a47574411809';
     const lineItemId = '9986d9a5-5ffd-4046-8643-c34a60cddb6e';
     const newActorId = 'managed/user/2cdfc1d4-a206-435b-b22e-a5ed8804f4af';
@@ -115,7 +101,7 @@ describe('Governace API', () => {
 
     post.mockReturnValue(Promise.resolve(DEFAULT_POST_DATA));
 
-    const response = await CertificationApi.reassignLineItem(
+    const response = await CertificationApi.reassignItem(
       certId,
       lineItemId,
       newActorId,
@@ -126,10 +112,10 @@ describe('Governace API', () => {
     expect(response).toEqual(DEFAULT_POST_DATA);
   });
 
-  it('forwardLineItem called with right args', async () => {
+  it('forwardItem called with right args', async () => {
     post.mockReturnValue(Promise.resolve(DEFAULT_POST_DATA));
 
-    const response = await CertificationApi.forwardLineItem(
+    const response = await CertificationApi.forwardItem(
       DEFAULT_PARAMS.certId,
       DEFAULT_PARAMS.lineItemId,
       DEFAULT_BODY_PARAMS.comment,
@@ -140,7 +126,7 @@ describe('Governace API', () => {
     expect(response).toEqual(DEFAULT_POST_DATA);
   });
 
-  it('addComment called with right args', async () => {
+  it('saveComment called with right args', async () => {
     const certId = '95a7ce21-a7a8-4da8-b59c-a47574411809';
     const lineItemId = '9986d9a5-5ffd-4046-8643-c34a60cddb6e';
     const comment = 'test comment';
@@ -164,7 +150,7 @@ describe('Governace API', () => {
     expect(post).toBeCalledWith(`${governanceCertificationBaseUrl}/${certId}/activate`);
   });
 
-  it('updateLineItemReviewers should call API correctly', async () => {
+  it('updateActors should call API correctly', async () => {
     const itemId = '9986d9a5-5ffd-4046-8643-c34a60cddb6e';
     const actors = [
       {
@@ -210,23 +196,23 @@ describe('Governace API', () => {
     ];
     put.mockReturnValue(Promise.resolve({}));
 
-    await CertificationApi.updateLineItemReviewers(itemId, actors);
+    await CertificationApi.updateActors(itemId, actors);
 
     expect(put).toHaveBeenCalledWith(`${governanceCertificationBaseUrl}/items/${itemId}/actors`, { actors });
   });
 
-  it('getCertificationEntitlementDetails should call API correctly', async () => {
+  it('getEntitlementDetails should call API correctly', async () => {
     const campaignId = '9986d9a5-5ffd-4046-8643-c34a60cddb6f';
     const itemId = '9986d9a5-5ffd-4046-8643-c34a60cddb6e';
 
     get.mockReturnValue(Promise.resolve({}));
 
-    await CertificationApi.getCertificationEntitlementDetails(campaignId, itemId);
+    await CertificationApi.getEntitlementDetails(campaignId, itemId);
 
     expect(get).toHaveBeenCalledWith(`${governanceCertificationBaseUrl}/${campaignId}/items/${itemId}/entitlement`);
   });
 
-  it('getCertificationCountsByCampaign should call API correctly with primaryReviewerId if it is admin', async () => {
+  it('getCertificationCounts should call API correctly with primaryReviewerId if it is admin', async () => {
     const campaignId = 'campaignId';
     const actorId = 'actorId';
     const isAdmin = true;
@@ -234,12 +220,12 @@ describe('Governace API', () => {
 
     get.mockReturnValue(Promise.resolve({}));
 
-    await CertificationApi.getCertificationCountsByCampaign(campaignId, actorId, isAdmin, taskStatus);
+    await CertificationApi.getCertificationCounts(campaignId, actorId, isAdmin, taskStatus);
 
     expect(get).toHaveBeenCalledWith(`${governanceCertificationBaseUrl}/${campaignId}/items?getCount=true&isAdmin=${isAdmin}&taskStatus=${taskStatus}&primaryReviewerId=${actorId}`);
   });
 
-  it('getCertificationCountsByCampaign should call API correctly with actorId if it is not admin', async () => {
+  it('getCertificationCounts should call API correctly with actorId if it is not admin', async () => {
     const campaignId = 'campaignId';
     const actorId = 'actorId';
     const isAdmin = false;
@@ -247,7 +233,7 @@ describe('Governace API', () => {
 
     get.mockReturnValue(Promise.resolve({}));
 
-    await CertificationApi.getCertificationCountsByCampaign(campaignId, actorId, isAdmin, taskStatus);
+    await CertificationApi.getCertificationCounts(campaignId, actorId, isAdmin, taskStatus);
 
     expect(get).toHaveBeenCalledWith(`${governanceCertificationBaseUrl}/${campaignId}/items?getCount=true&isAdmin=${isAdmin}&taskStatus=${taskStatus}&actorId=${actorId}`);
   });

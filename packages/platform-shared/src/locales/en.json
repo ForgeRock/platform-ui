@@ -169,6 +169,7 @@
     "reset": "Reset",
     "revoke": "Revoke",
     "role": "Role",
+    "roleOwner": "Role Owner",
     "roles": "Roles",
     "route": "Route",
     "routes": "Routes",
@@ -1256,6 +1257,7 @@
       "selectAllTasks": "All tasks",
       "selectAllTasksThisPage": "All on this page",
       "deselectAll": "Deselect all",
+      "roleDetails": "Role Details",
       "actions": {
         "addComment": "Add Comment",
         "acknowledge": "Acknowledge",

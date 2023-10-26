@@ -17,6 +17,11 @@ jest.mock('@forgerock/platform-shared/src/api/governance/CertificationApi');
 describe('CertificationTask', () => {
   let wrapper;
 
+  CertificationApi.getCertificationUserFilter.mockImplementation(() => Promise.resolve({ data: {} }));
+  CertificationApi.getCertificationApplicationFilter.mockImplementation(() => Promise.resolve({ data: {} }));
+  CertificationApi.getCertificationCounts.mockImplementation(() => Promise.resolve({ data: {} }));
+  CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve({ data: {} }));
+
   function mountComponent() {
     setupTestPinia();
     return mount(CertificationTask, {
@@ -270,7 +275,7 @@ describe('CertificationTask', () => {
       const accountsTab = findByTestId(wrapper, 'cert-accounts-tab');
       expect(accountsTab.exists()).toBe(true);
 
-      const entitlementsTab = findByTestId(wrapper, 'cert-ents-tab');
+      const entitlementsTab = findByTestId(wrapper, 'cert-entitlements-tab');
       expect(entitlementsTab.exists()).toBe(true);
 
       const groupByAccountField = findByTestId(wrapper, 'certification-group-by-account');
@@ -295,7 +300,7 @@ describe('CertificationTask', () => {
       const accountsTab = findByTestId(wrapper, 'cert-accounts-tab');
       expect(accountsTab.exists()).toBe(true);
 
-      const entitlementsTab = findByTestId(wrapper, 'cert-ents-tab');
+      const entitlementsTab = findByTestId(wrapper, 'cert-entitlements-tab');
       expect(entitlementsTab.exists()).toBe(false);
 
       const groupByAccountField = findByTestId(wrapper, 'certification-group-by-account');
@@ -320,7 +325,7 @@ describe('CertificationTask', () => {
       const accountsTab = findByTestId(wrapper, 'cert-accounts-tab');
       expect(accountsTab.exists()).toBe(false);
 
-      const entitlementsTab = findByTestId(wrapper, 'cert-ents-tab');
+      const entitlementsTab = findByTestId(wrapper, 'cert-entitlements-tab');
       expect(entitlementsTab.exists()).toBe(true);
 
       const groupByAccountField = findByTestId(wrapper, 'certification-group-by-account');
@@ -328,22 +333,35 @@ describe('CertificationTask', () => {
     });
   });
 
-  it('signOff method, should redirect to breadcrumb url', async () => {
+  describe('signOff', () => {
     CertificationApi.signOffCertificationTasks.mockImplementation(() => Promise.resolve({}));
-    const goToBackUrlSpy = jest.spyOn(wrapper.vm, 'goToBackUrl');
-    wrapper.vm.totals = {
-      NONE: 1,
-    };
-    wrapper.vm.signOff();
-    await flushPromises();
-    expect(goToBackUrlSpy).not.toHaveBeenCalled();
-    expect(wrapper.vm.isComplete).toEqual(false);
-    wrapper.vm.totals = {
-      completed: 1,
-    };
-    expect(wrapper.vm.isComplete).toEqual(true);
-    wrapper.vm.signOff();
-    await flushPromises();
-    expect(goToBackUrlSpy).toHaveBeenCalled();
+
+    it('should not go to back URL when cert is not complete', async () => {
+      wrapper = mountComponent();
+      await flushPromises();
+
+      const goToBackUrlSpy = jest.spyOn(wrapper.vm, 'goToBackUrl');
+      wrapper.vm.totals = {
+        NONE: 1,
+      };
+
+      wrapper.vm.signOff();
+      await flushPromises();
+      expect(goToBackUrlSpy).not.toHaveBeenCalled();
+    });
+    it('should go to back URL when cert is complete', async () => {
+      wrapper = mountComponent();
+      await flushPromises();
+
+      const goToBackUrlSpy = jest.spyOn(wrapper.vm, 'goToBackUrl');
+      wrapper.vm.totals = {
+        completed: 1,
+      };
+
+      wrapper.vm.signOff();
+
+      await flushPromises();
+      expect(goToBackUrlSpy).toHaveBeenCalled();
+    });
   });
 });
