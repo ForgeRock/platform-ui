@@ -326,10 +326,6 @@ export default {
         this.setSearchPlaceholder(queryThreshold);
       }
 
-      if (!query && this.relationshipField.value?.length === 0) {
-        this.setOriginalValues();
-      }
-
       const urlParams = {
         pageSize: maxPageSize,
         fields: displayFields.join(','),
@@ -346,7 +342,7 @@ export default {
         urlParams.queryFilter = this.queryFilterExtension;
       }
 
-      if (queryThreshold && query?.length < queryThreshold) {
+      if ((queryThreshold && query?.length < queryThreshold) && query.length !== 0) {
         requestEnabled = false;
       }
 
