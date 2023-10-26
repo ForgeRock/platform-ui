@@ -105,6 +105,9 @@ describe('RelationshipEdit', () => {
       },
     });
   });
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
   it('should setupEditor properly', async () => {
     const queryFilterExtension = '!(/effectiveApplications[_id eq \'1234\'])';
@@ -133,6 +136,19 @@ describe('RelationshipEdit', () => {
     expect(getManagedResourceList).not.toHaveBeenCalled();
     await wrapper.vm.setOptions('ab');
     expect(getManagedResourceList).toHaveBeenCalledWith(managedObjectName, params);
+  });
+
+  it('should refresh getManagedResourceList when input length is 0 even if there is threshold', async () => {
+    const queryFilterExtension = '!(/effectiveApplications[_id eq \'1234\'])';
+    const getManagedResourceList = jest.spyOn(ManagedResourceApi, 'getManagedResourceList').mockReturnValue(Promise.resolve(optionsQueryResult));
+    schemaApi.getSchema = jest.fn().mockReturnValue(Promise.resolve(resourceSchema));
+    await wrapper.setProps({ queryFilterExtension });
+    wrapper.vm.setupEditor();
+
+    await wrapper.vm.setOptions('a');
+    expect(getManagedResourceList).not.toHaveBeenCalled();
+    await wrapper.vm.setOptions('');
+    expect(getManagedResourceList).toHaveBeenCalled();
   });
 
   it('should emitSelected properly without temporalConstraint', () => {
