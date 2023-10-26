@@ -16,7 +16,6 @@ const defaultState = {
   autoAccessReportsUrl: null,
   autoReportsEnabled: false,
   idmBaseURL: '',
-  cspEnabled: false,
   currentPackage: '',
   fraasEnvironmentUrl: null,
   fraasFederationUrl: null,
@@ -132,10 +131,6 @@ const mutations = {
         state.governanceEnabled = true;
         state.governanceEnabledV4 = true;
       }
-    }
-
-    if (env.VUE_APP_ENABLE_CSP) {
-      state.cspEnabled = env.VUE_APP_ENABLE_CSP === 'true' || env.VUE_APP_ENABLE_CSP === true;
     }
 
     if (env.VUE_APP_ENABLE_WORKFORCE) {
