@@ -30,17 +30,15 @@ of the MIT license. See the LICENSE file for details. -->
             class="d-flex pt-3 pb-2 px-0 border-top">
             <div class="flex-grow-1 pr-3 position-relative">
               <div class="form-row align-items-center">
-                <div
-                  v-for="(objValue, key) in obj"
-                  :key="key"
-                  class="col-lg-4 pb-2">
+                <template v-for="(objValue, key) in obj">
                   <div
-                    v-if="key !== 'listUniqueIndex'"
-                    class="position-relative">
+                    v-if="key !== 'listUniqueIndex' && !properties[key].hidden"
+                    :key="key"
+                    class="col-lg-4 pb-2">
                     <div v-if="properties[key].type === 'boolean'">
                       <BFormCheckbox
                         v-model="obj[key]"
-                        :disabled="disabled"
+                        :disabled="disabled || properties[key].disabled"
                         :name="key+'_'+index"
                         @change="emitInput(listValues)">
                         {{ properties[key].title || key }}
@@ -49,7 +47,7 @@ of the MIT license. See the LICENSE file for details. -->
                     <div v-else-if="properties[key].type === 'number'">
                       <FrField
                         v-model.number="obj[key]"
-                        :disabled="disabled"
+                        :disabled="disabled || properties[key].disabled"
                         type="number"
                         validation="required|isNumber"
                         :label="properties[key].title || key"
@@ -60,7 +58,7 @@ of the MIT license. See the LICENSE file for details. -->
                     <div v-else>
                       <FrField
                         v-model="obj[key]"
-                        :disabled="disabled"
+                        :disabled="disabled || properties[key].disabled"
                         :label="properties[key].title ? properties[key].title : key"
                         :name="key+'_'+index"
                         :type="properties[key].type"
@@ -69,7 +67,7 @@ of the MIT license. See the LICENSE file for details. -->
                       />
                     </div>
                   </div>
-                </div>
+                </template>
               </div>
             </div>
             <div>
