@@ -62,7 +62,7 @@ of the MIT license. See the LICENSE file for details. -->
       :sort-desc="sortDir === 'desc'">
       <template #cell(selector)="{ item }">
         <FrField
-          v-if="item.decision.certification.status !== 'signed-off' && !item.isRoleBasedGrant && !isStaged"
+          v-if="item.decision.certification.status !== 'signed-off' && !item.isAcknowledge && !isStaged"
           @change="selectTask($event, item)"
           class="m-4"
           name="columnSelected"
@@ -194,7 +194,7 @@ of the MIT license. See the LICENSE file for details. -->
           v-if="item.decision.certification.status === 'signed-off'"
           :variant="getVariant(item.decision.certification.decision)"
           class="w-100">
-          {{ item.decision.certification.decision === 'certify' && item.isRoleBasedGrant
+          {{ item.decision.certification.decision === 'certify' && item.isAcknowledge
             ? $t('governance.certificationTask.actions.acknowledge')
             : startCase(item.decision.certification.decision) }}
         </BBadge>
@@ -351,7 +351,7 @@ import { getGlossarySchema } from '@forgerock/platform-shared/src/api/governance
 import { getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import { ADMIN_REVIEWER_PERMISSIONS } from '@forgerock/platform-shared/src/utils/governance/constants';
 import { CampaignStates } from '@forgerock/platform-shared/src/utils/governance/types';
-import { getGrantFlags, isRoleBased, icons } from '@forgerock/platform-shared/src/utils/governance/flags';
+import { getGrantFlags, isAcknowledgeType, icons } from '@forgerock/platform-shared/src/utils/governance/flags';
 import { getBasicFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrForwardModal from '@forgerock/platform-shared/src/views/Governance/CertificationTask/ForwardModal';
@@ -738,7 +738,7 @@ export default {
       this.items = resultData.map((item) => ({
         ...item,
         selected: this.isItemSelected(item.id),
-        isRoleBasedGrant: isRoleBased(item) || false,
+        isAcknowledge: isAcknowledgeType(item) || false,
         flags: getGrantFlags(item),
       }));
 
@@ -889,7 +889,7 @@ export default {
       this.selectedItems = [];
       const tasksListClone = cloneDeep(this.items);
       this.items = tasksListClone.map((task) => {
-        if (selectValue) this.selectedItems.push(task);
+        if (selectValue && !task.isAcknowledge) this.selectedItems.push(task);
         return {
           ...task,
           selected: selectValue,
