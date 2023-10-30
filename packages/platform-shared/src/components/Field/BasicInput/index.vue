@@ -304,14 +304,23 @@ export default {
       const newVal = target?.value;
       // Passing - or . to parseFloat returns NaN
       // This allows negatives and decimals to be entered
-      if (newVal && (typeof newVal === 'string') && !newVal.startsWith('-') && !newVal.startsWith('.')) {
+      const justHyphen = newVal.length === 1 && newVal.startsWith('-');
+      const justPeriod = newVal.length === 1 && newVal.startsWith('.');
+
+      if (newVal && (typeof newVal === 'string') && !justHyphen && !justPeriod) {
         const numericString = newVal.replace(/[^0-9-.]/g, '');
         const parsedVal = parseFloat(numericString);
         let returnedVal = Number.isNaN(parsedVal) ? '' : parsedVal;
         // If a number with just a period at the end is passed to parseFloat, it removes the period
         // this allows decimals to be entered
         if (numericString.endsWith('.') && !parsedVal.toString().endsWith('.')) {
-          returnedVal = `${parsedVal}.`;
+          returnedVal = numericString.length === 1 ? '.' : `${parsedVal}.`;
+        }
+        if (numericString === '-' && returnedVal === '') {
+          returnedVal = '-';
+        }
+        if (numericString === '-.') {
+          returnedVal = '.';
         }
         return returnedVal;
       }

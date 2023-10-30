@@ -407,10 +407,13 @@ describe('BasicInput', () => {
       const testCases = [
         ['should allow input given numeric value', '583', '583'],
         ['should prevent input given non-numeric value', 'text', ''],
+        ['should prevent input given non-numeric value after .', '.text', '.'],
         ['should allow negative numbers', '-1', '-1'],
         ['should allow decimals', '1.1', '1.1'],
-        ['should allow decimals with no leading number', '.1', '.1'],
+        ['should allow decimals with no leading number', '.1', '0.1'],
         ['should leave trailing decimal', '1.', '1.'],
+        ['should leave hyphen to allow negative number', '-', '-'],
+        ['should adjust -. to a valid state', '-.', '.'],
       ];
       it.each(testCases)('%s', async (name, value, expectedValue) => {
         const wrapper = setup({ type: 'number' });
