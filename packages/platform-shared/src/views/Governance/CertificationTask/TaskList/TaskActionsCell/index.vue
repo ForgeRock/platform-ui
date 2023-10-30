@@ -18,14 +18,14 @@
         :target="`btnCertify-${item.id}`"
         triggers="hover"
         placement="top">
-        {{ item.isRoleBasedGrant
+        {{ item.isAcknowledge
           ? $t('governance.certificationTask.actions.acknowledge')
           : $t('governance.certificationTask.actions.certify') }}
       </BTooltip>
     </template>
 
     <!-- Revoke -->
-    <template v-if="item.permissions.revoke && !item.isRoleBasedGrant">
+    <template v-if="item.permissions.revoke && !item.isAcknowledge">
       <BButton
         @click="$emit('action', 'revoke', item)"
         class="mr-1 p-0"
@@ -46,7 +46,7 @@
     </template>
 
     <!-- Allow exception -->
-    <template v-if="campaignDetails.exceptionDuration > 0 && item.permissions.exception && !item.isRoleBasedGrant">
+    <template v-if="campaignDetails.exceptionDuration > 0 && item.permissions.exception && !item.isAcknowledge">
       <BButton
         @click="$emit('action', 'exception', item)"
         class="mr-1 p-0"

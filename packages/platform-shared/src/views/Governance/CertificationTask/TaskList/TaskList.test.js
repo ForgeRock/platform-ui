@@ -190,7 +190,7 @@ describe('TaskList', () => {
       const expectedValue = [{
         id: 'test-id',
         selected: true,
-        isRoleBasedGrant: false,
+        isAcknowledge: false,
         flags: [
           'NEW_ACCESS',
         ],
