@@ -49,10 +49,10 @@ export function getRules(i18n) {
 
   // Checkbox rule
   // added for certification
-  const atLeastOneSelected = {
-    params: ['checkbox'],
-    validate(value, { checkbox }) {
-      return value || checkbox;
+  const atLeastOneOfThreeSelected = {
+    params: ['checkbox_1', 'checkbox_2'],
+    validate(checkbox_0, { checkbox_1, checkbox_2 }) {
+      return checkbox_0 || checkbox_1 || checkbox_2;
     },
     message: i18n.t('common.policyValidationMessages.AT_LEAST_ONE_CHECKBOX'),
   };
@@ -349,7 +349,7 @@ export function getRules(i18n) {
     alpha_dash_spaces,
     alpha_num,
     alpha_num_lower,
-    atLeastOneSelected,
+    atLeastOneOfThreeSelected,
     date_format,
     email,
     email_from,
