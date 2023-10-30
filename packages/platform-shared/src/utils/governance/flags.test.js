@@ -8,6 +8,8 @@
 import { merge, cloneDeep } from 'lodash';
 import {
   isRoleBased,
+  isRuleBased,
+  isAcknowledgeType,
   isReconBased,
   getGrantFlags,
   flags,
@@ -64,6 +66,37 @@ describe('flags', () => {
 
     it('determines when a grant is not role based', () => {
       expect(isRoleBased({})).toBeFalsy();
+    });
+  });
+
+  describe(('isRuleBased'), () => {
+    it('returns false if not a role grant', () => {
+      expect(isRuleBased(roleBasedGrant)).toBeFalsy();
+    });
+
+    it('returns false if a role grant with no condition', () => {
+      const roleGrant = { role: {} };
+      expect(isRuleBased(roleGrant)).toBeFalsy();
+    });
+
+    it('returns true if a role grant with a condition', () => {
+      const roleGrant = { role: { condition: 'test' } };
+      expect(isRuleBased(roleGrant)).toBeTruthy();
+    });
+  });
+
+  describe(('isAcknowledgeType'), () => {
+    it('returns false if not role based and not rule based', () => {
+      expect(isAcknowledgeType({})).toBeFalsy();
+    });
+
+    it('returns true if a role bosed', () => {
+      expect(isAcknowledgeType(roleBasedGrant)).toBeTruthy();
+    });
+
+    it('returns true if a rule based', () => {
+      const roleGrant = { role: { condition: 'test' } };
+      expect(isAcknowledgeType(roleGrant)).toBeTruthy();
     });
   });
 

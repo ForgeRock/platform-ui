@@ -25,6 +25,15 @@ export function isRoleBased(item) {
   return grantTypes.findIndex((grant) => (grant.grantType === 'role')) !== -1;
 }
 
+export function isRuleBased(item) {
+  if (!item.role) return false;
+  return !!item.role?.condition;
+}
+
+export function isAcknowledgeType(item) {
+  return isRoleBased(item) || isRuleBased(item);
+}
+
 export function isReconBased(item) {
   const grantTypes = item.relationship?.properties?.grantTypes;
   if (!grantTypes) return false;
