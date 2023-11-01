@@ -22,7 +22,6 @@ of the MIT license. See the LICENSE file for details. -->
         :refresh-tasks="refreshTasks"
         :is-admin="isAdmin"
         :actor-id="actorId"
-        :show-entitlement-column="false"
         :task-status="taskStatus"
         modal-prefix="account"
         @change-saving="setSaving"
@@ -79,7 +78,6 @@ of the MIT license. See the LICENSE file for details. -->
         :is-admin="isAdmin"
         :actor-id="actorId"
         :entitlement-user-id="userId"
-        :show-entitlement-column="true"
         :task-status="taskStatus"
         modal-prefix="entitlement"
         @change-saving="setSaving"
@@ -140,10 +138,6 @@ export default {
       default: false,
     },
     isAdmin: {
-      type: Boolean,
-      default: false,
-    },
-    showEntitlementColumn: {
       type: Boolean,
       default: false,
     },
