@@ -121,9 +121,7 @@ describe('TaskList', () => {
     });
 
     it('shows descriptor.idx./entitlement property in table', async () => {
-      mountComponent({
-        showEntitlementColumn: true,
-      });
+      mountComponent({ certificationGrantType: 'entitlements' });
       await flushPromises();
 
       const entitlement = findByTestId(wrapper, 'entitlement-cell');
@@ -624,29 +622,6 @@ describe('TaskList', () => {
     it('should emit event to show confirm action modal', () => {
       wrapper.vm.openActionConfirmModal({});
       expect($emit).toHaveBeenCalledWith('bv::show::modal', 'certification-account-confirm-action');
-    });
-  });
-
-  describe('field property', () => {
-    it('should contain the new entitlement column when the prop showEntitlementColumn is true', () => {
-      shallowMountComponent({}, {}, { showEntitlementColumn: true });
-      expect(wrapper.vm.tasksFields).toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            key: 'entitlement',
-          }),
-        ]),
-      );
-    });
-    it('should not contain the new entitlement column when the prop showEntitlementColumn is false', () => {
-      shallowMountComponent({}, {}, { showEntitlementColumn: false });
-      expect(wrapper.vm.tasksFields).not.toEqual(
-        expect.arrayContaining([
-          expect.objectContaining({
-            key: 'entitlement',
-          }),
-        ]),
-      );
     });
   });
 
@@ -1461,7 +1436,7 @@ describe('TaskList', () => {
       wrapper.vm.sortBy = 'name';
       wrapper.vm.sortDir = 'asc';
       shallowMountComponent({}, {}, {
-        certificationGrantType: 'entitlements', showEntitlementColumn: true, showGroupBy: false, entitlementUserId: null, modalPrefix: 'entitlement',
+        certificationGrantType: 'entitlements', showGroupBy: false, entitlementUserId: null, modalPrefix: 'entitlement',
       });
       loadItemsListSpy = jest.spyOn(wrapper.vm, 'loadItemsList');
       CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve({ data: 'results' }));
@@ -1710,7 +1685,7 @@ describe('TaskList', () => {
   describe('Scenarios For Accounts Tab when group by is true', () => {
     beforeEach(() => {
       shallowMountComponent({}, {}, {
-        certificationGrantType: 'accounts', showEntitlementColumn: false, showGroupBy: true, entitlementUserId: null, isAdmin: true,
+        certificationGrantType: 'accounts', showGroupBy: true, entitlementUserId: null, isAdmin: true,
       });
       wrapper.vm.$refs = { selectableTable: { clearSelected: jest.fn(), selectRow: jest.fn() } };
       CertificationApi.getCertificationTasksListByCampaign.mockImplementation(() => Promise.resolve({ data: 'results' }));
@@ -1823,7 +1798,6 @@ describe('TaskList', () => {
     beforeEach(() => {
       shallowMountComponent({}, {}, {
         certificationGrantType: 'entitlements',
-        showEntitlementColumn: true,
         showGroupBy: true,
         entitlementUserId: '66f3b405-60db-42a6-8a7a-59f6470348f6',
         isAdmin: true,

@@ -110,7 +110,6 @@ describe('Glossary', () => {
       isAdmin: true,
       isEntitlementCertificationType: false,
       refreshTasks: false,
-      showEntitlementColumn: false,
       showGroupBy: true,
     },
     stubs: {

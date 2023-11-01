@@ -457,10 +457,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    showEntitlementColumn: {
-      type: Boolean,
-      default: false,
-    },
     showGroupBy: {
       type: Boolean,
       default: false,
@@ -610,7 +606,7 @@ export default {
         },
       ];
 
-      if (!this.showEntitlementColumn) {
+      if (this.certificationGrantType !== 'entitlements') {
         const entitlementColumnIndex = fields.findIndex((column) => (column.key === 'entitlement'));
         fields.splice(entitlementColumnIndex, 1);
       }
@@ -645,9 +641,6 @@ export default {
     },
     isSelectable() {
       return this.showGroupBy && this.certificationGrantType === 'accounts';
-    },
-    isEntitlementGrantType() {
-      return this.certificationGrantType === 'entitlements';
     },
     currentUserDetails() {
       return {
