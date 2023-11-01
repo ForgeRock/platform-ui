@@ -22,12 +22,25 @@ export async function getReportTemplates(params) {
 /**
   * Returns a list of report runs
   * @param {Object} params Additional query parameters to be encoded
+  * @param {Boolean} appendUnderscores If perameters get an underscore appended
   *
   * @returns {Promise}
   */
-export async function getReportRuns(params) {
-  const { data } = await generateAutoAccessReports().get(`reports/runs${encodeQueryString(params)}`);
+export async function getReportRuns(params, appendUnderscores = false) {
+  const { data } = await generateAutoAccessReports().get(`runs${encodeQueryString(params, appendUnderscores)}`);
   return data;
+}
+
+/**
+  * Triggers an export / download request
+  * @param {String} runId Report ID
+  * @param {Object} params Additional query parameters to be encoded
+  * @param {Boolean} appendUnderscores If perameters get an underscore appended
+  *
+  * @returns {Promise}
+  */
+export function reportExportRequest(runId, params, appendUnderscores = false) {
+  return generateAutoAccessReports().post(`runs/${runId}${encodeQueryString(params, appendUnderscores)}`);
 }
 
 /**
