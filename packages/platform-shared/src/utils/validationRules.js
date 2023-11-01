@@ -259,8 +259,10 @@ export function getRules(i18n) {
 
   const text_without_fragment = {
     validate(value) {
-      const valid = !value.some((element) => element.includes('#'));
-      return valid;
+      if (Array.isArray(value)) {
+        return !value.some((element) => element.includes('#'));
+      }
+      return !value.includes('#');
     },
     message: i18n.t('common.policyValidationMessages.url_with_fragment'),
   };
