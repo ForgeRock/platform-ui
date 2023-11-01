@@ -28,6 +28,7 @@
     "Promotion": "Promotion",
     "PromotionHistory": "Promotion History",
     "Realm": "Realm Settings",
+    "Reports": "Reports",
     "TermsAndConditions": "Terms & Conditions"
   },
   "pageTitles": {
@@ -832,10 +833,15 @@
           "blocked": "Blocked"
         },
         "journeys": {
-          "label": "Journeys",
           "selectJourneys": "Select journeys"
         },
         "organizations": "Organizations",
+        "parameters": {
+          "accountStatus": "Account Status",
+          "endDate": "Report To",
+          "eventTypes": "Event types",
+          "startDate": "Report From"
+        },
         "roles": "Roles",
         "errors": {
           "couldNotRunReport": "Error running the report.",
@@ -845,7 +851,29 @@
         }
       },
       "runHistory": {
-        "title": "Run History"
+        "title": "Run History",
+        "downloadReady": "Download successfully generated",
+        "table": {
+          "downloadFile": "Download {fileType} file",
+          "downloadGenerated": "Download Generated",
+          "downloadReadyMessage": "Your report is now available for download.",
+          "downloadReport": "Download Report",
+          "downloadingFile": "Downloading {fileType}",
+          "errorFile": "{fileType} Error",
+          "exportFile": "Export {fileType}",
+          "exportingReport": "Exporting report",
+          "exportingReportMessage": "Your report is being generated and will be available for download here when it's ready.  This may take several minutes.",
+          "exportingFile": "Exporting {fileType}",
+          "exportingFileDownload": "Requesting a {fileType} Download",
+          "runDetails": "Run Details",
+          "viewReport": "View Report"
+        },
+        "errors": {
+          "errorRetrievingHistory": "Error retrieving report history",
+          "errorExport": "There was an error generating the {fileType}",
+          "pleaseTryAgain": "Please try again or contact your administrator.",
+          "errorDownload": "Error downloading report"
+        }
       }
     },
     "title": "Reports"
