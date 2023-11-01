@@ -68,7 +68,7 @@ of the MIT license. See the LICENSE file for details. -->
             <template #cell(key)="data">
               <div class="d-flex align-items-start text-nowrap">
                 <div
-                  :class="['rounded-pill mr-3 mt-2', getColor(data.index)]"
+                  :class="['rounded-pill mr-3 mt-2', `bg-${data.item.colorReadable}`]"
                 />
                 <div>
                   <div>{{ data.value }}</div>
@@ -88,7 +88,6 @@ import {
 } from 'bootstrap-vue';
 import { computed } from 'vue';
 import FrPieChart from './PieChart';
-import { colorsReadable as colors } from './utils/colors';
 
 const prop = defineProps({
   chartData: {
@@ -125,20 +124,11 @@ const fields = [
 ];
 
 /**
- * Gets the color name used on the donut chart
- *
- * @param {number} index Index of the desired color in array
- */
-function getColor(index) {
-  return index <= 4 ? `bg-${colors[index]}` : `bg-${colors[4]}`;
-}
-
-/**
  * Data to be used as items in the BTable component
  *
  * @return {array} Array of behavior data formatted to be shown in a BTable
  */
-const items = computed(() => prop.chartData.map((item) => ({ key: item.label, count: item.valueFormatted })));
+const items = computed(() => prop.chartData.map((item) => ({ key: item.label, count: item.valueFormatted, colorReadable: item.colorReadable })));
 
 </script>
 
