@@ -5,7 +5,6 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-// eslint-disable-next-line import/prefer-default-export
 export function downloadFile(file, fileType, fileName) {
   const data = file;
 
@@ -18,4 +17,12 @@ export function downloadFile(file, fileType, fileName) {
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
+}
+
+export function getFileNameFromContentDisposition(contentDisposition) {
+  return contentDisposition
+    .split(';')
+    .find((n) => n.trim().includes('filename='))
+    .replace('filename=', '')
+    .trim();
 }
