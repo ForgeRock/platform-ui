@@ -149,8 +149,8 @@ export default {
         .domain(Object.keys(data))
         .range(colors);
 
-      // Compute the position of each group on the pie:
-      const pie = d3.pie().padAngle(0.025).value((d) => d[1]);
+      // Compute the position of each group on the pie, and keep the sorting as it was provided
+      const pie = d3.pie().sort(null).padAngle(0.025).value((d) => d[1]);
 
       const dataReady = pie(Object.entries(data));
 
