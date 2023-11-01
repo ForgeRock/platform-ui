@@ -9,6 +9,8 @@ import { showErrorMessage } from '@forgerock/platform-shared/src/utils/notificat
 import { getConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
+import { getReportRuns, reportExportRequest } from '@forgerock/platform-shared/src/api/AutoApi';
+import i18n from '@forgerock/platform-shared/src/i18n';
 import store from '@/store';
 
 /**
@@ -55,10 +57,9 @@ async function getManagedSchema(resourceName, errorMessage) {
  * Gets managed object properties
  *
  * @param {String} managedObjectName the managed object name that derives from the _FIELD_MAP config
- * @param {String} errorMessage the error message to show if call fails
  * @returns {Array} list of managed object property names
  */
-async function getManagedResourceProperties(managedObjectName, errorMessage) {
+async function getManagedResourceProperties(managedObjectName) {
   const { name: resourceName } = await getManagedObject(managedObjectName);
 
   try {
@@ -66,7 +67,7 @@ async function getManagedResourceProperties(managedObjectName, errorMessage) {
     const managedResourceProperties = data.result;
     return managedResourceProperties;
   } catch (error) {
-    showErrorMessage(error, errorMessage);
+    showErrorMessage(error, i18n.t('reports.tabs.runReport.errors.errorRetrievingTemplate'));
     return error;
   }
 }
@@ -74,42 +75,79 @@ async function getManagedResourceProperties(managedObjectName, errorMessage) {
 /**
  * Gets the list of all trees
  * @param {Function} actionGetAllTrees api function needs to be passed in because utils located under admin package
- * @param {String} errorMessage the error message to show if call fails
  * @returns {Array} list of trees
  */
-async function getTrees(actionGetAllTrees, errorMessage) {
+async function getTrees(actionGetAllTrees) {
   try {
     const { data } = await actionGetAllTrees();
     const trees = data.result;
     return trees;
   } catch (error) {
-    showErrorMessage(error, errorMessage);
+    showErrorMessage(error, i18n.t('reports.tabs.runReport.errors.errorRetrievingTemplate'));
     return error;
+  }
+}
+
+/**
+ * Requests a report export file or a download
+ * @param {String} runId Report job run ID
+ * @param {String} exportStatus Report status: 'export' || 'download'
+ * @param {String} template Report name
+ * @param {String} format File type: jsonl || csv
+ */
+export async function requestExport(runId, exportStatus, template, format) {
+  try {
+    const response = await reportExportRequest(runId, {
+      _action: exportStatus,
+      name: template,
+      format,
+    });
+    return response;
+  } catch (error) {
+    if (exportStatus === 'download') {
+      showErrorMessage(error, i18n.t('reports.tabs.runHistory.errors.errorDownload'));
+    }
+    return error.name;
+  }
+}
+
+/**
+ * Gets report runs for the given report template name.
+ * For all runs: { name }
+ * For a single run: { runId, name }
+ * @param {Object} params query params
+ * @returns {Array}
+ */
+export async function requestReportRuns(params) {
+  try {
+    const { result: reportRunsData } = await getReportRuns(params);
+    return reportRunsData?.length ? reportRunsData : [];
+  } catch (error) {
+    showErrorMessage(error, i18n.t('reports.tabs.runHistory.table.runHistory.errors.errorRetrievingHistory'));
+    return [];
   }
 }
 
 /**
  * Gets the managed object and schema and sets properties to corresponding element
  * @param {Object} config the _REPORT_FIELDS_CONTROLLER config for the corresponding reportConfig paremeter
- * @param {String} errorMessage the error message to show if call fails
  * @returns {Object} managed schema property
  */
-export async function setRelationshipProperty(config, errorMessage) {
+export async function relationshipPropertyRequest(config) {
   const { schemaProperty, managedObject } = config;
-  const { name: resourceName } = await getManagedObject(managedObject, errorMessage);
-  const { properties } = await getManagedSchema(resourceName, errorMessage);
+  const { name: resourceName } = await getManagedObject(managedObject, i18n.t('reports.tabs.runReport.errors.errorRetrievingTemplate'));
+  const { properties } = await getManagedSchema(resourceName, i18n.t('reports.tabs.runReport.errors.errorRetrievingTemplate'));
   return properties[schemaProperty];
 }
 
 /**
  * Gets managed object properties and sets them to corresponding data model
  * @param {Object} config the _REPORT_FIELDS_CONTROLLER config for the corresponding reportConfig paremeter
- * @param {String} errorMessage the error message to show if call fails
  * @returns {Array} list of managed object property names
  */
-export async function setManagedResourceProperty(config, errorMessage) {
+export async function managedResourcePropertyRequest(config) {
   const { managedObject } = config;
-  const properties = await getManagedResourceProperties(managedObject, errorMessage);
+  const properties = await getManagedResourceProperties(managedObject);
   const propertyNames = properties.map(({ name }) => name);
   return propertyNames;
 }
@@ -117,11 +155,10 @@ export async function setManagedResourceProperty(config, errorMessage) {
 /**
  * Gets the list of all trees and sets them to the model
  * @param {Object} model the data model where the tree options get injected
- * @param {String} errorMessage the error message to show if call fails
  * @returns {Array} list of tree names
  */
-export async function setTrees(actionGetAllTrees, errorMessage) {
-  const trees = await getTrees(actionGetAllTrees, errorMessage);
+export async function requestTrees(actionGetAllTrees) {
+  const trees = await getTrees(actionGetAllTrees);
 
   if (trees.length) {
     const treeNames = trees.map(({ _id }) => _id);
