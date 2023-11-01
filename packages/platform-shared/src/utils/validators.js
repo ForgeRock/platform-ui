@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { has } from 'lodash';
+import { has, isArray } from 'lodash';
 import * as rules from 'vee-validate/dist/rules';
 
 const urlHasPath = (url) => url.pathname && url.pathname !== '/';
@@ -26,10 +26,23 @@ export const urlWithoutPath = (value, i18n) => {
 
 export const urlWithPath = (value, i18n) => {
   try {
-    const url = new URL(value);
-
-    if (!urlHasPath(url)) {
-      return i18n.t('common.policyValidationMessages.urlWithPath');
+    if (isArray(value)) {
+      const invalid = value.some((element) => {
+        try {
+          const url = new URL(element);
+          return !urlHasPath(url);
+        } catch (e) {
+          return true;
+        }
+      });
+      if (invalid) {
+        return i18n.t('common.policyValidationMessages.urlWithPath');
+      }
+    } else {
+      const url = new URL(value);
+      if (!urlHasPath(url)) {
+        return i18n.t('common.policyValidationMessages.urlWithPath');
+      }
     }
 
     return true;
