@@ -116,11 +116,14 @@ export function getQueryFilters(dateRange, filterObject, userId) {
   const clusteringReasons = [];
   const heuristicRawResultsReasons = [];
   let isIpBlocked = false;
+  let isAdvancedBotDetection = false;
   const uebaReasons = [];
   filterObject.reasons.forEach((reasons) => {
     reasons.forEach((reason) => {
       if (reason === 'is_ip_blocked') {
         isIpBlocked = true;
+      } else if (reason === 'is_advanced_bot_detection') {
+        isAdvancedBotDetection = true;
       } else if (reason.indexOf('is_') === 0) {
         heuristicRawResultsReasons.push(reason);
       }
@@ -138,13 +141,27 @@ export function getQueryFilters(dateRange, filterObject, userId) {
   if (filterObject.reasons.length > 0) {
     const hueristicsRawResultsQuery = [];
 
-    // Heuristics Block Rule
+    // Heuristics IP Block Rule
     if (isIpBlocked) {
       allQuery.bool.should.push({
         bool: {
           should: {
             term: {
               'predictionResult.risk_score_data.heuristic_agg_result.block_rule_result.is_blocked': true,
+            },
+          },
+          minimum_should_match: 1,
+        },
+      });
+    }
+
+    // Heuristics Advanced Bot Detection
+    if (isAdvancedBotDetection) {
+      allQuery.bool.should.push({
+        bool: {
+          should: {
+            term: {
+              'predictionResult.botD.isBot': true,
             },
           },
           minimum_should_match: 1,
@@ -189,7 +206,7 @@ export function getQueryFilters(dateRange, filterObject, userId) {
         bool: {
           filter: {
             script: {
-              script: "return doc['predictionResult.risk_score_data.ueba_avg_risk_score'].value > doc['predictionResult.risk_score_data.risk_score_threshhold'].value;",
+              script: "return doc['predictionResult.risk_score_data.ueba_avg_risk_score'].value > doc['predictionResult.risk_score_data.risk_score_threshold'].value;",
             },
           },
           should: uebaQuery,
@@ -210,7 +227,7 @@ export function getQueryFilters(dateRange, filterObject, userId) {
         bool: {
           filter: {
             script: {
-              script: "return doc['predictionResult.risk_score_data.clustering_model_risk_score'].value > doc['predictionResult.risk_score_data.risk_score_threshhold'].value;",
+              script: "return doc['predictionResult.risk_score_data.clustering_model_risk_score'].value > doc['predictionResult.risk_score_data.risk_score_threshold'].value;",
             },
           },
           should: clusteringQuery,
@@ -241,7 +258,7 @@ export const getConfig = () => new Promise((resolve, reject) => {
     .then((data) => {
       resolve({
         thresholds: {
-          high: _.get(data, 'data.hits.hits[0]._source.predictionResult.risk_score_data.risk_score_threshhold', 0),
+          high: _.get(data, 'data.hits.hits[0]._source.predictionResult.risk_score_data.risk_score_threshold', 0),
         },
       });
     })

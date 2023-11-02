@@ -976,6 +976,7 @@
       },
       "reasons": {
         "is_automated_user_agent": "Automated User Agent",
+        "is_advanced_bot_detection": "Advanced Bot Detection",
         "is_brute_force": "Brute Force",
         "is_credential_stuffing": "Credential Stuffing",
         "is_distributed_attack": "Distributed Attack",
