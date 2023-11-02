@@ -11,6 +11,9 @@ describe('Activity API', () => {
   const apiData = {
     _source: {
       predictionResult: {
+        botD: {
+          isBot: true,
+        },
         features: {
           eventId: '840abfd7-7978-4ead-a75f-5418b9a31ec5',
           userId: 'magdalenamatthews',
@@ -38,7 +41,7 @@ describe('Activity API', () => {
         },
         risk_score_data: {
           is_risky_event: true,
-          risk_score_threshhold: 50,
+          risk_score_threshold: 50,
           risk_score: 100,
           heuristic_agg_result: {
             block_rule_result: {
@@ -71,13 +74,18 @@ describe('Activity API', () => {
       },
       heuristicReasons: [
         'is_ip_blocked',
+        'is_advanced_bot_detection',
       ],
       heuristics: undefined,
       id: '840abfd7-7978-4ead-a75f-5418b9a31ec5',
+      ipAddress: undefined,
       os: 'other',
       osVersion: 'other_unexpected_os',
       raw: {
         predictionResult: {
+          botD: {
+            isBot: true,
+          },
           features: {
             browserData: {
               device: 'other',
@@ -116,7 +124,7 @@ describe('Activity API', () => {
             },
             is_risky_event: true,
             risk_score: 100,
-            risk_score_threshhold: 50,
+            risk_score_threshold: 50,
           },
         },
       },
@@ -134,7 +142,7 @@ describe('Activity API', () => {
         },
         is_risky_event: true,
         risk_score: 100,
-        risk_score_threshhold: 50,
+        risk_score_threshold: 50,
       },
       timestamp: '2023-04-27T18:35:34.605693',
       timezone: 'America/Chicago',
@@ -144,6 +152,7 @@ describe('Activity API', () => {
       userId: 'magdalenamatthews',
       weekday: undefined,
     };
+
     expect(apiToInternalEvent(apiData)).toEqual(expectedOptions);
   });
 });
