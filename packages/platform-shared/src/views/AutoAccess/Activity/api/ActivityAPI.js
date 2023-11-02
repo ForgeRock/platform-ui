@@ -51,7 +51,7 @@ export const apiToInternalEvent = (data) => {
   const {
     ipAddress, userId, eventId, timestamp, geoData, dayparting, weekday, browserData,
   } = predictionResult.features;
-  const { raw_event_data: rawEventData, risk_score_data: riskScoreData } = predictionResult;
+  const { botD: { isBot }, raw_event_data: rawEventData, risk_score_data: riskScoreData } = predictionResult;
   const { heuristic_agg_result: heuristics } = riskScoreData;
   const {
     device, deviceType, os, osVersion, userAgentType,
@@ -63,17 +63,23 @@ export const apiToInternalEvent = (data) => {
   })
     .map((result) => Object.keys(result).find((propName) => propName.indexOf('is_') === 0)) || [];
 
+  // Is IP Blocked Heuristic
   const isIpBlocked = heuristics?.block_rule_result?.is_blocked || false;
   if (isIpBlocked) {
     heuristicReasons.push('is_ip_blocked');
   }
 
+  // Is Advanced Bot Detection Heuristic
+  if (isBot) {
+    heuristicReasons.push('is_advanced_bot_detection');
+  }
+
   let clusteringReasons = [];
   const uebaReasons = [];
-  if (riskScoreData.risk_score_threshhold < riskScoreData.clustering_model_risk_score) {
+  if (riskScoreData.risk_score_threshold < riskScoreData.clustering_model_risk_score) {
     clusteringReasons = riskScoreData.clustering_result?.top_cluster_explainability;
   }
-  if (riskScoreData.risk_score_threshhold < riskScoreData.ueba_avg_risk_score) {
+  if (riskScoreData.risk_score_threshold < riskScoreData.ueba_avg_risk_score) {
     if (predictionResult.ueba_signal.explainability
         && predictionResult.ueba_signal.explainability?.response !== 'failed'
         && predictionResult.ueba_signal.explainability?.response !== 'unknown') {

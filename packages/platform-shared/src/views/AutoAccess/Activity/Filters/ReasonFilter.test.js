@@ -37,6 +37,10 @@ describe('Reason Filter', () => {
   let wrapper;
   const expectedOptions = [
     {
+      text: 'Advanced Bot Detection',
+      value: ['is_advanced_bot_detection'],
+    },
+    {
       text: 'Automated User Agent',
       value: ['is_automated_user_agent'],
     },
