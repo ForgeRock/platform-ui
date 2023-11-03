@@ -414,7 +414,7 @@ export default {
         }
       } else {
         this.relationshipField.value = null;
-        emitValues = null;
+        emitValues = '';
       }
 
       this.$emit('setValue', emitValues);
