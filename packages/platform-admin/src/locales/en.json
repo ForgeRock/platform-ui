@@ -131,6 +131,7 @@
     "provider": "Provider",
     "provisioningRole": "External Role",
     "realmOverview": "Realm Overview",
+    "reports": "Reports",
     "risk": "Risk",
     "riskAdministration": "Risk Administration",
     "riskConfig": "Risk Config",
@@ -781,6 +782,16 @@
   },
   "reports": {
     "heading": "Reports",
+    "lastRun": "Last run",
+    "menu": {
+      "editTemplate": "Edit Template",
+      "reportDetails": "Report Details",
+      "runHistory": "Run History"
+    },
+    "noData": "No Report Template found",
+    "run": "Run",
+    "subtitle": "The following reports are based on pre-configured queries on events and provide insights in an easily understandable format.",
+    "search": "Search reports",
     "tabs": {
       "runReport": {
         "title": "Run Report",
@@ -834,7 +845,8 @@
       "runHistory": {
         "title": "Run History"
       }
-    }
+    },
+    "title": "Reports"
   },
   "connectorServers": {
     "activating": "Activating...",
