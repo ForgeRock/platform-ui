@@ -2450,6 +2450,7 @@
     "allJobs": "All Jobs",
     "days": "days(s)",
     "deactivateButton": "Deactivate Job",
+    "defaultCronDescription": "Enter a valid cron string.",
     "deleteModal": {
       "title": "Scheduled Job",
       "message": "Are you sure you want to delete the \"{jobName}\" scheduled job?"
@@ -2464,7 +2465,7 @@
     "loadingJobs": "Loading jobs...",
     "modalTitle": "Schedule {title} Reconciliation Job",
     "months": "month(s)",
-    "nextRun": "Next run:",
+    "nextRun": "Next run: {nextDate}",
     "nextScheduledRun": "Next Scheduled Run",
     "noDataSubtitle": "Scheduled jobs will appear once mapping is configured",
     "noDataTitle": "You haven't configured mappings for this object type",

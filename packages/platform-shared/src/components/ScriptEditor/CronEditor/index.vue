@@ -3,20 +3,17 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <VuePrismEditor
-    v-if="editorCanRender"
-    v-model="contentField"
-    :aria-label="$t('editor.accessibilityHelp')"
-    :line-numbers="true"
-    @input="clean($event)" />
+  <div>
+    <FrField
+      v-if="editorCanRender"
+      name="CronEditor"
+      v-model="contentField"
+      @input="updateContentValue" />
+  </div>
 </template>
 
 <script>
-import VuePrismEditor from 'vue-prism-editor';
-import 'prismjs';
-import 'prismjs/components/prism-css';
-import 'prismjs/themes/prism.css';
-import 'vue-prism-editor/dist/VuePrismEditor.css';
+import FrField from '@forgerock/platform-shared/src/components/Field';
 
 /**
  * Code editor.
@@ -24,7 +21,7 @@ import 'vue-prism-editor/dist/VuePrismEditor.css';
 export default {
   name: 'CronEditor',
   components: {
-    VuePrismEditor,
+    FrField,
   },
   computed: {
     editorCanRender() {
@@ -45,24 +42,13 @@ export default {
       contentField: undefined,
     };
   },
-  methods: {
-    clean(event) {
-      const match = /\r|\n/.exec(event.target.innerHTML);
-      if (match) {
-        event.target.innerText = event.target.innerText.replace(/\n|\r/g, '').trim();
-      }
-
-      this.$emit('input', event.target.innerText);
-    },
-  },
   mounted() {
     this.contentField = this.value;
   },
+  methods: {
+    updateContentValue(newVal) {
+      this.$emit('input', newVal.trim());
+    },
+  },
 };
 </script>
-<style lang="scss" scoped>
-  code {
-    background: $gray-100;
-    border-radius: 3px;
-  }
-</style>
