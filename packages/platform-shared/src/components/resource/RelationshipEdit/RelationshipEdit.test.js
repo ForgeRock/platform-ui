@@ -154,7 +154,7 @@ describe('RelationshipEdit', () => {
   it('should emitSelected properly without temporalConstraint', () => {
     wrapper.vm.emitSelected();
     expect(wrapper.vm.relationshipField.value).toEqual(null);
-    expect(wrapper.emitted().setValue[0]).toEqual([null]);
+    expect(wrapper.emitted().setValue[0]).toEqual(['']);
     wrapper.vm.emitSelected(['test', 'test']);
     expect(wrapper.emitted().setValue[1]).toEqual([[{ _ref: 'test', _refProperties: {} }]]);
     wrapper.vm.emitSelected('test');
