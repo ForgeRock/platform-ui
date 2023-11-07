@@ -37,7 +37,7 @@ export async function getReportRuns(params) {
  * @param {Object} payload run report payload
  * @returns {Object} Contains job id, status, and status message
  */
-export async function runAutoAccessTemplate(template, payload) {
+export async function runAnalyticsTemplate(template, payload) {
   const { data: res } = await generateAutoAccessReports().post(`templates/${template}?_action=run`, {
     parameters: JSON.stringify(payload),
   });
@@ -55,8 +55,12 @@ export async function runAutoAccessTemplate(template, payload) {
  * @param {Boolean} isEnableAll True for the request on the teant, false for a request of a user
  * @returns {Object} Contains report count results, and array of results
  */
-export async function getAutoAccessReportResult(username, dateRange, template, numberOfItems = 2, isEnableUsers = true, isEnableAll = false) {
-  const { id, status } = await runAutoAccessTemplate(username, dateRange, template, numberOfItems, isEnableUsers, isEnableAll);
+export async function getAutoAccessReportResult(userName, dateRange, template, numberOfItems = 2, isEnableUsers = true, isEnableAll = false) {
+  const params = {
+    userName, startDate: dateRange[0], endDate: dateRange[1], numberOfItems, enable_users: isEnableUsers, enable_all: isEnableAll,
+  };
+
+  const { id, status } = await runAnalyticsTemplate(template, params);
   if (!status === 'COMPLETED_SUCCESS') {
     throw new Error(status);
   }
