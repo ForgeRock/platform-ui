@@ -53,9 +53,8 @@ filterTests(['forgeops', 'cloud'], () => {
       cy.readFile(path.join(downloadsFolder, 'userProfile.json')).should('exist');
 
       // Check that the user can delete their account
-      cy.get('div#account-controls').within(() => {
-        cy.get('div.card-header').contains('Delete Account').click();
-      });
+      cy.findByRole('tab', { name: 'Delete Account' }).click();
+      cy.findByRole('button', { name: 'Delete Account' }).click();
       cy.get('button.btn-danger:last')
         .should('exist')
         .click();
