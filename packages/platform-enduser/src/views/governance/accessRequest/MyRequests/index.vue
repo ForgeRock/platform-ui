@@ -30,7 +30,7 @@ of the MIT license. See the LICENSE file for details. -->
             <FrAccessRequestList
               :is-loading="isLoading"
               :requests="accessRequests"
-              @open-detail="openModal($event, 'DETAILS')">
+              @open-detail="viewDetails">
               <template #header>
                 <FrRequestToolbar
                   :status-options="statusOptions"
@@ -63,22 +63,16 @@ of the MIT license. See the LICENSE file for details. -->
                     :divider="false"
                     :edit-option="false">
                     <template #custom-top-actions>
-                      <BDropdownItem @click="openModal(item, 'COMMENT')">
-                        <FrIcon
-                          class="mr-3"
-                          name="chat_bubble_outline" />
-                        {{ $t('governance.certificationTask.actions.addComment') }}
-                      </BDropdownItem>
                       <BDropdownItem
                         data-testid="view-details-button"
-                        @click="openModal(item, 'DETAILS')">
+                        @click="viewDetails(item)">
                         <FrIcon
                           class="mr-3"
                           name="list_alt" />
                         {{ $t('common.viewDetails') }}
                       </BDropdownItem>
                       <BDropdownDivider />
-                      <BDropdownItem @click="openModal(item, 'CANCEL')">
+                      <BDropdownItem @click="openCancelModal(item)">
                         <FrIcon
                           class="mr-2"
                           name="cancel" />
@@ -98,17 +92,14 @@ of the MIT license. See the LICENSE file for details. -->
               @on-page-size-change="filterHandler({ pageSize: $event })" />
           </BCard>
         </BCol>
-      </Brow>
+      </BRow>
     </BContainer>
+    <FrNewRequestModal />
     <FrRequestModal
       :type="modalType"
-      :hide-actions="status !== 'in-progress'"
       :item="modalItem"
-      :is-my-requests="true"
-      @modal-closed="modalType = null; modalItem = null"
-      @modal-success="loadRequests"
-    />
-    <FrNewRequestModal />
+      @modal-closed="modalItem = {}"
+      @update-list="loadRequests(true)" />
   </div>
 </template>
 
@@ -136,8 +127,8 @@ import FrAccessRequestList from '@/components/governance/AccessRequestList';
 import FrRequestToolbar from '@/components/governance/RequestToolbar';
 import { getRequestFilter, getStatusText, sortKeysMap } from '@/components/utils/governance/AccessRequestUtils';
 import { getUserRequests } from '@/api/governance/AccessRequestApi';
-import FrRequestModal, { REQUEST_MODAL_TYPES } from '@/components/governance/RequestModal';
 import FrNewRequestModal from '@/components/governance/NewRequestModal';
+import FrRequestModal, { REQUEST_MODAL_TYPES } from '@/components/governance/RequestModal';
 /**
  * View new access request items
  */
@@ -169,12 +160,14 @@ export default {
   data() {
     return {
       accessRequests: [],
+      cancelItem: {},
       currentPage: 1,
       filter: {},
       isLoading: false,
       modalItem: {},
-      modalType: 'REQUEST_MODAL_TYPES.DETAILS',
+      modalType: REQUEST_MODAL_TYPES.CANCEL,
       pageSize: 10,
+      REQUEST_MODAL_TYPES,
       sortDir: 'desc',
       sortKeys: 'date',
       status: 'in-progress',
@@ -210,7 +203,6 @@ export default {
       this.isLoading = true;
 
       if (goToFirstPage) this.currentPage = 1;
-
       const payload = getRequestFilter(this.filter, this.status);
       const params = {
         pagedResultsOffset: (this.currentPage - 1) * this.pageSize,
@@ -236,14 +228,11 @@ export default {
     newRequest() {
       this.$root.$emit('bv::show::modal', 'NewRequestModal');
     },
-    /**
-     * Opens the request / cancel modals
-     * @param {Object} item request item that was clicked
-     * @param {String} type string that tells the modal what view to show
-     */
-    openModal(item, type) {
+    viewDetails(item) {
+      this.$router.push({ name: 'MyRequestDetails', params: { requestId: item.details.id } });
+    },
+    openCancelModal(item) {
       this.modalItem = item;
-      this.modalType = REQUEST_MODAL_TYPES[type];
       this.$bvModal.show('request_modal');
     },
     /**

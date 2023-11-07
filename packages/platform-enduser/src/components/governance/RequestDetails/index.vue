@@ -44,17 +44,17 @@ import {
   BBadge, BTabs, BTab,
 } from 'bootstrap-vue';
 import FrComments from './Comments';
-import FrRequestModalDetails from './RequestModalDetails';
+import FrDetailsTab from './DetailsTab';
 import FrWorkflow from './Workflow';
 
 export default {
-  name: 'RequestModalDetailTabs',
+  name: 'RequestDetails',
   components: {
     BBadge,
     BTabs,
     BTab,
     FrComments,
-    FrRequestModalDetails,
+    FrDetailsTab,
     FrWorkflow,
   },
   props: {
@@ -71,12 +71,12 @@ export default {
     return {
       tabs: [
         {
-          component: 'FrRequestModalDetails',
+          component: 'FrDetailsTab',
           title: this.$t('common.details'),
         },
         {
           component: 'FrWorkflow',
-          title: this.$t('governance.requestModal.workflow'),
+          title: this.$t('governance.requestModal.titles.tracking'),
         },
         {
           component: 'FrComments',

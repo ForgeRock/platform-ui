@@ -14,14 +14,17 @@ import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHe
 import * as AccessRequestApi from '@/api/governance/AccessRequestApi';
 import Approvals from './index';
 import i18n from '@/i18n';
+import router from '@/router';
 
 const mountComponent = () => {
   setupTestPinia({ user: { userId: '1234' } });
   return mount(Approvals, {
+    router,
     i18n,
     mocks: {
       $store: {
         commit: jest.fn(),
+        state: { SharedStore: { governanceEnabled: true } },
       },
     },
   });
@@ -390,27 +393,6 @@ describe('Approvals', () => {
     await wrapper.vm.$nextTick();
     expect(showModalSpy).toHaveBeenCalledWith(openModalMock, 'REJECT');
   });
-  it('test open modal with comment', async () => {
-    AccessRequestApi.getUserApprovals = jest.fn().mockReturnValue(
-      Promise.resolve({
-        data: {
-          result: [mockRequest],
-          totalCount: 1,
-        },
-      }),
-    );
-
-    wrapper = mountComponent();
-    const showModalSpy = jest
-      .spyOn(wrapper.vm, 'openModal')
-      .mockImplementation();
-    await flushPromises();
-
-    findByTestId(wrapper, 'dropdown-actions').trigger('click');
-    findByTestId(wrapper, 'dropdown-action-comment').trigger('click');
-    await wrapper.vm.$nextTick();
-    expect(showModalSpy).toHaveBeenCalledWith(openModalMock, 'COMMENT');
-  });
   it('test open modal with reassign', async () => {
     AccessRequestApi.getUserApprovals = jest.fn().mockReturnValue(
       Promise.resolve({
@@ -425,6 +407,7 @@ describe('Approvals', () => {
     const showModalSpy = jest
       .spyOn(wrapper.vm, 'openModal')
       .mockImplementation();
+    jest.spyOn(wrapper.vm, 'viewDetails').mockImplementation();
     await flushPromises();
 
     findByTestId(wrapper, 'dropdown-actions').trigger('click');
