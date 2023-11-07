@@ -69,6 +69,7 @@ export default {
         journeyTheaterMode: false,
         journeyJustifiedContent: '',
         journeyJustifiedContentEnabled: false,
+        journeyJustifiedContentMobileViewEnabled: false,
         journeyLayout: 'card',
         journeySignInButtonPosition: 'flex-column',
         linkActiveColor: '#004067',
@@ -107,6 +108,7 @@ export default {
       journeyTheaterMode: false,
       journeyJustifiedContent: '',
       journeyJustifiedContentEnabled: false,
+      journeyJustifiedContentMobileViewEnabled: false,
       journeyLayout: 'card',
       journeySignInButtonPosition: 'flex-column',
       logoHeight: '40',
@@ -197,6 +199,7 @@ export default {
           this.journeyTheaterMode = theme.journeyTheaterMode;
           this.journeyJustifiedContent = theme.journeyJustifiedContent;
           this.journeyJustifiedContentEnabled = theme.journeyJustifiedContentEnabled;
+          this.journeyJustifiedContentMobileViewEnabled = theme.journeyJustifiedContentMobileViewEnabled;
           this.journeyLayout = theme.journeyLayout;
           this.journeySignInButtonPosition = theme.journeySignInButtonPosition;
           this.logo = theme.logo || placeholderImage;
