@@ -168,3 +168,7 @@ export function buildRequestDisplay(requests) {
     return objectTypeList.includes(objectType) ? getFormattedRequest(request, objectType) : null;
   });
 }
+
+export function isTypeRole(requestType) {
+  return getRequestObjectType(requestType) === 'role';
+}
