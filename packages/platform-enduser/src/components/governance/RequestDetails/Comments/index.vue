@@ -6,9 +6,8 @@ of the MIT license. See the LICENSE file for details. -->
   <div>
     <div
       v-if="filteredComments.length === 0"
-      class="px-4 py-5 h-100 text-center">
-      <div
-        class="mb-4 mt-3 opacity-20">
+      class="px-4 py-5 text-center">
+      <div class="mb-4 mt-3 opacity-20">
         <FrIcon
           name="chat_bubble_outline"
           class="md-48" />
@@ -16,30 +15,27 @@ of the MIT license. See the LICENSE file for details. -->
       <h2 class="h5">
         {{ $t('governance.requestModal.noComments') }}
       </h2>
+      <p class="mb-4">
+        {{ $t('governance.requestModal.noCommentsSubtitle') }}
+      </p>
       <BButton
         v-if="!hideActions"
         data-testid="btn-add-comments-no-data"
-        variant="link"
-        @click="$emit('change-modal-type', REQUEST_MODAL_TYPES.COMMENT)">
+        variant="primary"
+        @click="$emit('add-comment')">
         <FrIcon
           class="mr-2"
           name="add" />{{ $t('governance.requestModal.addComment') }}
       </BButton>
     </div>
-    <div
-      v-else
-      class="scroll-comments py-4 px-2 p-lg-4">
+    <div v-else>
       <div
-        class="d-flex justify-content-between align-items-start mb-2 pb-1">
-        <h2 class="h5">
-          {{ $t('common.comments') }}
-        </h2>
+        class="d-flex justify-content-between align-items-start py-3 px-4 border-bottom">
         <BButton
           v-if="!hideActions"
-          class="py-0 px-2"
           data-testid="btn-add-comments"
-          variant="link"
-          @click="$emit('change-modal-type', REQUEST_MODAL_TYPES.COMMENT)">
+          variant="primary"
+          @click="$emit('add-comment')">
           <FrIcon
             class="mr-2"
             name="add" />{{ $t('governance.requestModal.addComment') }}
@@ -47,7 +43,7 @@ of the MIT license. See the LICENSE file for details. -->
       </div>
       <ul
         id="commentsList"
-        class="list-feed pl-0 mb-0">
+        class="list-feed px-4 pt-4 pb-0 mb-0 border-bottom">
         <BMedia
           v-for="(commentObj, index) in pagedComments"
           :key="index"
@@ -98,13 +94,11 @@ of the MIT license. See the LICENSE file for details. -->
         </BMedia>
       </ul>
       <FrPagination
-        v-if="filteredComments.length > 10"
-        class="border-top-0"
+        class="border-top-0 pb-0"
         v-model="currentPage"
         :per-page="entriesPerPage"
         :total-rows="filteredComments.length"
-        @on-page-size-change="(size) => { entriesPerPage = size }"
-      />
+        @on-page-size-change="(size) => { entriesPerPage = size }" />
     </div>
   </div>
 </template>
@@ -113,11 +107,12 @@ of the MIT license. See the LICENSE file for details. -->
 import dayjs from 'dayjs';
 import {
   BButton,
-  BImg, BMedia, BMediaBody,
+  BImg,
+  BMedia,
+  BMediaBody,
 } from 'bootstrap-vue';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
-import { REQUEST_MODAL_TYPES } from '@/components/governance/RequestModal';
 
 export default {
   name: 'RequestModalComments',
@@ -141,7 +136,6 @@ export default {
   },
   data() {
     return {
-      REQUEST_MODAL_TYPES,
       currentPage: 1,
       entriesPerPage: 10,
     };
@@ -177,9 +171,5 @@ export default {
   .media-body {
     border-bottom: none !important;
   }
-}
-.scroll-comments {
-    height: 70vh;
-    overflow-y: auto;
 }
 </style>

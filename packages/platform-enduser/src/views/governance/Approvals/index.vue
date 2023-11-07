@@ -12,7 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
         <FrAccessRequestList
           :is-loading="isLoading"
           :requests="accessRequests"
-          @open-detail="openModal($event, 'DETAILS')">
+          @open-detail="viewDetails">
           <template #header>
             <FrRequestToolbar
               data-testid="approvals-toolbar"
@@ -136,7 +136,6 @@ of the MIT license. See the LICENSE file for details. -->
     </div>
     <FrRequestModal
       :type="modalType"
-      :hide-actions="status !== 'pending'"
       :item="modalItem"
       :is-approvals="true"
       @modal-closed="modalType = null; modalItem = null"
@@ -306,10 +305,13 @@ export default {
      * @param {Object} item request item that was clicked
      * @param {String} type string that tells the modal what view to show
      */
-    openModal(item, type = 'DETAILS') {
+    openModal(item, type) {
       this.modalItem = item;
       this.modalType = REQUEST_MODAL_TYPES[type];
       this.$bvModal.show('request_modal');
+    },
+    viewDetails(item) {
+      this.$router.push({ name: 'ApprovalDetails', params: { requestId: item.details.id } });
     },
     /**
      * Handles filtering requests as well as updates to pagination

@@ -4,9 +4,6 @@ This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="p-4">
-    <h2 class="h5 mb-4 pb-2">
-      {{ $t('common.details') }}
-    </h2>
     <BRow
       v-for="(detail, key) in details"
       :key="key"
@@ -21,7 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
         lg="8"
         class="mb-4">
         <BBadge
-          v-if="key === 'decision'"
+          v-if="key === 'status'"
           class="px-4"
           :variant="detail.variant">
           {{ detail.name }}
@@ -29,7 +26,12 @@ of the MIT license. See the LICENSE file for details. -->
         <BMedia
           v-else-if="key === 'requested'">
           <template #aside>
+            <FrIcon
+              v-if="isTypeRole(item.rawData.requestType)"
+              class="mr-1 md-28 rounded-circle"
+              :name="item.details.icon" />
             <BImg
+              v-else
               height="24"
               class="mt-2"
               :src="detail.icon" />
@@ -92,10 +94,11 @@ import {
 } from 'bootstrap-vue';
 import dayjs from 'dayjs';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
-import getPriorityImageSrc from '@/components/utils/governance/AccessRequestUtils';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import getPriorityImageSrc, { isTypeRole } from '@/components/utils/governance/AccessRequestUtils';
 
 export default {
-  name: 'RequestModalDetails',
+  name: 'DetailsTab',
   components: {
     BRow,
     BCol,
@@ -103,6 +106,7 @@ export default {
     BMediaBody,
     BImg,
     BBadge,
+    FrIcon,
   },
   props: {
     item: {
@@ -118,10 +122,6 @@ export default {
   },
   mounted() {
     this.details = {
-      requestId: this.item.details.id,
-      requestDate: dayjs(this.item.details.date).format('MMM D, YYYY h:mm A'),
-      requestType: this.item.details.type,
-      decision: this.setDecisionValue(this.item.rawData.decision.decision),
       requested: {
         icon: this.item.details.icon,
         name: this.item.details.name,
@@ -130,12 +130,17 @@ export default {
       requestedFor: {
         ...this.item.details.requesteeInfo,
       },
+      requestId: this.item.details.id,
+      requestDate: dayjs(this.item.details.date).format('MMM D, YYYY h:mm A'),
+      requestType: this.item.details.type,
+      status: this.setDecisionValue(this.item.rawData.decision.decision),
       priority: this.item.details.priority,
       justification: this.item.rawData.request.common.justification,
     };
   },
   methods: {
     getPriorityImageSrc,
+    isTypeRole,
     setDecisionValue(type) {
       switch (type) {
         case 'approved':
