@@ -19,7 +19,7 @@ describe('RequestModal', () => {
   const typicalPropsData = {
     isApprovals: true,
     isTesting: true,
-    type: REQUEST_MODAL_TYPES.DETAILS,
+    type: REQUEST_MODAL_TYPES.APPROVE,
     item: {
       details: {
         id: 1,
@@ -102,51 +102,18 @@ describe('RequestModal', () => {
     getPriorityImageSrc.mockClear();
   });
 
-  it('Details type should display approve, reject and forward buttons', async () => {
-    const wrapper = mountGovernanceRequestModal(typicalPropsData);
-
-    const approveButton = await findByTestId(wrapper, 'governance-request-modal-goto-approve-btn');
-    const rejectButton = await findByTestId(wrapper, 'governance-request-modal-goto-reject-btn');
-    const forwardButton = await findByTestId(wrapper, 'governance-request-modal-goto-forward-btn');
-    const doneButton = await findByTestId(wrapper, 'governance-request-modal-done-btn');
-
-    expect(approveButton.exists()).toBeTruthy();
-    expect(rejectButton.exists()).toBeTruthy();
-    expect(forwardButton.exists()).toBeTruthy();
-    expect(doneButton.exists()).toBeTruthy();
-  });
-
-  it('Approve type should display details, confirm and cancel buttons', async () => {
+  it('Approve type should display confirm and cancel buttons', async () => {
     const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, type: REQUEST_MODAL_TYPES.APPROVE });
 
-    const detailsButton = await findByTestId(wrapper, 'governance-request-modal-goto-details-link');
     const confirmButton = await findByTestId(wrapper, 'governance-request-modal-confirm-btn');
     const cancelButton = await findByTestId(wrapper, 'governance-request-modal-cancel-btn');
 
-    expect(detailsButton.exists()).toBeTruthy();
     expect(confirmButton.exists()).toBeTruthy();
     expect(cancelButton.exists()).toBeTruthy();
   });
 
-  it('Can navigate to other modal views and back', async () => {
-    const wrapper = mountGovernanceRequestModal(typicalPropsData);
-
-    let approveButton = await findByTestId(wrapper, 'governance-request-modal-goto-approve-btn');
-    expect(approveButton.exists()).toBeTruthy();
-
-    await approveButton.trigger('click');
-
-    const detailsButton = await findByTestId(wrapper, 'governance-request-modal-goto-details-link');
-    expect(detailsButton.exists()).toBeTruthy();
-
-    await approveButton.trigger('click');
-
-    approveButton = await findByTestId(wrapper, 'governance-request-modal-goto-approve-btn');
-    expect(approveButton.exists()).toBeTruthy();
-  });
   it('changeModal should change the current component type', async () => {
     const wrapper = mountGovernanceRequestModal(typicalPropsData);
-    expect(wrapper.vm.modalType).toEqual('DETAILS');
     wrapper.vm.modalType = 'APPROVE';
     expect(wrapper.vm.modalType).toEqual('APPROVE');
     wrapper.vm.modalType = 'COMMENT';
@@ -245,7 +212,7 @@ describe('RequestModal', () => {
     expect(loadingText.text()).toEqual('Rejecting Request...');
   });
 
-  it('modalaction got called and called close function with undefined isSuccessfulAction, modaltype = DETAILS, and without previousModal', async () => {
+  it('modalaction got called and called close function with undefined isSuccessfulAction, modaltype = DETAILS', async () => {
     const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
     const cancel = jest.fn();
     jest.spyOn(AccessRequestApi, 'requestAction').mockImplementation(() => Promise.resolve({ data: 'results' }));
@@ -256,7 +223,7 @@ describe('RequestModal', () => {
     expect(closeSpy).toHaveBeenCalled();
     expect(cancel).toHaveBeenCalled();
   });
-  it('modalaction got called and called close function with undefined isSuccessfulAction, modaltype = COMMENT, and previousModal = DETAILS', async () => {
+  it('modalaction got called and called close function with undefined isSuccessfulAction, modaltype = COMMENT', async () => {
     const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
     const cancel = jest.fn();
     jest.spyOn(AccessRequestApi, 'requestAction').mockImplementation(() => Promise.resolve({ data: 'results' }));
@@ -265,11 +232,10 @@ describe('RequestModal', () => {
     wrapper.vm.modalAction(wrapper.vm.item, cancel);
     await wrapper.vm.$nextTick();
     await flushPromises();
-    expect(wrapper.vm.modalType).toEqual('DETAILS');
     expect(closeSpy).toHaveBeenCalled();
-    expect(cancel).not.toHaveBeenCalled();
+    expect(cancel).toHaveBeenCalled();
   });
-  it('modalaction got called and called close function with undefined isSuccessfulAction, modaltype = CANCEL, and previousModal = DETAILS', async () => {
+  it('modalaction got called and called close function with undefined isSuccessfulAction, modaltype = CANCEL', async () => {
     const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
     const cancel = jest.fn();
     jest.spyOn(AccessRequestApi, 'requestAction').mockImplementation(() => Promise.resolve({ data: 'results' }));
@@ -278,19 +244,17 @@ describe('RequestModal', () => {
     wrapper.vm.modalAction(wrapper.vm.item, cancel);
     await wrapper.vm.$nextTick();
     await flushPromises();
-    expect(wrapper.vm.modalType).toEqual('DETAILS');
     expect(closeSpy).toHaveBeenCalled();
-    expect(cancel).not.toHaveBeenCalled();
+    expect(cancel).toHaveBeenCalled();
   });
-  it('close got called with comment and previousModal = DETAILS, should not call cancel', async () => {
+  it('close got called with comment and previousModal = DETAILS', async () => {
     const wrapper = mountGovernanceRequestModal({ ...typicalPropsData });
     const cancel = jest.fn();
     wrapper.vm.modalType = 'COMMENT';
     await flushPromises();
     wrapper.vm.close(cancel);
     await flushPromises();
-    expect(wrapper.vm.modalType).toEqual('DETAILS');
-    expect(cancel).not.toHaveBeenCalled();
+    expect(cancel).toHaveBeenCalled();
     expect(wrapper.emitted()['update-item'][0]).toEqual([1]);
   });
   it('close got called with reassign and should update list, after calling Cancel', async () => {
@@ -301,43 +265,5 @@ describe('RequestModal', () => {
     await flushPromises();
     expect(wrapper.emitted()['update-list']).toBeTruthy();
     expect(cancel).toHaveBeenCalled();
-  });
-  describe('hideActions', () => {
-    it('hides approve action', async () => {
-      const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, hideActions: true });
-      await flushPromises();
-      const approve = findByTestId(wrapper, 'governance-request-modal-goto-approve-btn');
-      expect(approve.exists()).toBeFalsy();
-    });
-    it('hides reject action', async () => {
-      const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, hideActions: true });
-      await flushPromises();
-      const reject = findByTestId(wrapper, 'governance-request-modal-goto-reject-btn');
-      expect(reject.exists()).toBeFalsy();
-    });
-    it('hides forward action', async () => {
-      const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, hideActions: true });
-      await flushPromises();
-      const forward = findByTestId(wrapper, 'governance-request-modal-goto-forward-btn');
-      expect(forward.exists()).toBeFalsy();
-    });
-    it('hides cancel action', async () => {
-      const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, isMyRequests: true, hideActions: true });
-      await flushPromises();
-      const cancel = findByTestId(wrapper, 'governance-request-modal-goto-cancelrequest-btn');
-      expect(cancel.exists()).toBeFalsy();
-    });
-    it('still shows done button for approvals', async () => {
-      const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, hideActions: true });
-      await flushPromises();
-      const cancel = findByTestId(wrapper, 'governance-request-modal-done-btn');
-      expect(cancel.exists()).toBeTruthy();
-    });
-    it('still shows done button for my requests', async () => {
-      const wrapper = mountGovernanceRequestModal({ ...typicalPropsData, isMyRequests: true, hideActions: true });
-      await flushPromises();
-      const cancel = findByTestId(wrapper, 'governance-request-modal-done-btn');
-      expect(cancel.exists()).toBeTruthy();
-    });
   });
 });
