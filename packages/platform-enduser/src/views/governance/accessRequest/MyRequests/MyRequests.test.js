@@ -82,9 +82,9 @@ describe('MyRequests', () => {
   }));
 
   describe('@Component Tests', () => {
-    it('Executes the request details modal after clicking on "View Details"', async () => {
+    it('Navigates to request details page after clicking on "View Details"', async () => {
       const wrapper = setup();
-      const viewDetails = jest.spyOn(wrapper.vm, 'openModal').mockImplementation();
+      const viewDetails = jest.spyOn(wrapper.vm, 'viewDetails').mockImplementation();
       await flushPromises();
       const viewDetailsButton = findByTestId(wrapper, 'view-details-button');
       expect(viewDetailsButton.exists()).toBe(true);

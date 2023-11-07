@@ -69,6 +69,13 @@ const router = new Router({
       beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
     },
     {
+      path: '/approvals/:requestId',
+      name: 'ApprovalDetails',
+      component: () => import(/* webpackChunkName: "MyRequests" */ '@/views/governance/Approvals/ApprovalDetails'),
+      meta: { authenticate: true },
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
+    },
+    {
       path: '/access-reviews',
       name: 'AccessReviews',
       component: () => import('@/views/governance/AccessReviews'),
@@ -79,6 +86,13 @@ const router = new Router({
       path: '/my-requests',
       name: 'MyRequests',
       component: () => import(/* webpackChunkName: "MyRequests" */ '@/views/governance/accessRequest/MyRequests'),
+      meta: { authenticate: true },
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
+    },
+    {
+      path: '/my-requests/:requestId',
+      name: 'MyRequestDetails',
+      component: () => import(/* webpackChunkName: "MyRequests" */ '@/views/governance/accessRequest/MyRequestDetails'),
       meta: { authenticate: true },
       beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
     },
