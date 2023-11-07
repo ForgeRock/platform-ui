@@ -25,6 +25,7 @@ of the MIT license. See the LICENSE file for details. -->
           :journey-theater-mode="journeyTheaterMode"
           :journey-justified-content="localizedJustifiedContent"
           :journey-justified-content-enabled="journeyJustifiedContentEnabled"
+          :journey-justified-content-mobile-view-enabled="journeyJustifiedContentMobileViewEnabled"
           :journey-layout="journeyLayout"
           :journey-sign-in-button-position="journeySignInButtonPosition"
           :logo-alt-text="localizedLogoAltText"

@@ -149,6 +149,13 @@ of the MIT license. See the LICENSE file for details. -->
                       </div>
                     </div>
                   </BCardBody>
+                  <div
+                    class="w-100 d-flex p-2 d-lg-none"
+                    v-if="journeyJustifiedContentEnabled && journeyJustifiedContentMobileViewEnabled">
+                    <div
+                      v-html="journeyJustifiedContent"
+                      class="d-flex h-100 w-100 justify-content-center align-self-center" />
+                  </div>
                   <BCardFooter
                     v-if="pageNodeFooterLocalized"
                     :footer-html="pageNodeFooterLocalized" />
@@ -305,6 +312,13 @@ of the MIT license. See the LICENSE file for details. -->
           </div>
         </div>
         <div
+          v-if="journeyJustifiedContentEnabled && journeyJustifiedContentMobileViewEnabled"
+          class="overflow-hidden w-100 d-md-none">
+          <div
+            v-html="journeyJustifiedContent"
+            class="d-flex h-100 w-100 justify-content-center align-self-center" />
+        </div>
+        <div
           v-if="journeyFooterEnabled && journeyFooter"
           class="w-100"
           id="appFooter">
@@ -439,6 +453,10 @@ export default {
       default: '',
     },
     journeyJustifiedContentEnabled: {
+      type: Boolean,
+      default: false,
+    },
+    journeyJustifiedContentMobileViewEnabled: {
       type: Boolean,
       default: false,
     },
