@@ -25,10 +25,8 @@ export default {
   data() {
     const translation = `tenantTierAbbreviation.${this.tenantTier}`;
     const tierExists = this.$te(translation, 'en');
-    const abbreviation = tierExists ? this.tenantTier : 'other';
-    const badgeText = tierExists ? this.$t(translation) : this.$t('tenantTierAbbreviation.other');
+    const badgeText = tierExists ? this.$t(translation) : this.tenantTier.toUpperCase();
     return {
-      abbreviation,
       badgeText,
       tierColor: getTierColor(this.tenantTier),
       translation,
