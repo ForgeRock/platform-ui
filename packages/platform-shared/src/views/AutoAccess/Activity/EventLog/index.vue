@@ -75,7 +75,7 @@ of the MIT license. See the LICENSE file for details. -->
         @pagination-change="paginationChange" />
     </div>
     <EventDetail
-      :data="detail"
+      :event-data="detail"
       @hidden="toggleEventDetailModal(null)"
     />
   </div>
