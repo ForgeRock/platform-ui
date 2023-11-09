@@ -695,6 +695,11 @@ export default {
       const activityByAction = countBy(activity, (item) => item.action);
       return activityByAction?.comment || 0;
     },
+    getVariant(status) {
+      if (status === 'revoke') return 'danger';
+      if (status === 'certify') return 'success';
+      return '';
+    },
     paginationChange() {
       this.getItems(this.paginationPage).then(() => {
         if (this.showGroupBy && this.certificationGrantType === 'accounts') {
