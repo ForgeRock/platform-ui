@@ -53,7 +53,7 @@ of the MIT license. See the LICENSE file for details. -->
           </BRow>
         </BCardBody>
       </template>
-      <BCardBody v-if="isOnKBA && isInternalUser === false && (!themeSections.securityQuestions || themeSections.securityQuestions.enabled)">
+      <BCardBody v-if="showKba && isOnKBA && isInternalUser === false && (!themeSections.securityQuestions || themeSections.securityQuestions.enabled)">
         <FrEditKba
           class="w-100"
           :kba-data="kbaData"
@@ -99,6 +99,13 @@ export default {
     RestMixin,
   ],
   props: {
+    /**
+     * Show kba section
+     */
+    showKba: {
+      type: Boolean,
+      default: true,
+    },
     /**
      * Force api calls to go to root realm
      */
