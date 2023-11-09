@@ -2450,6 +2450,10 @@
     "allJobs": "All Jobs",
     "days": "days(s)",
     "deactivateButton": "Deactivate Job",
+    "deleteModal": {
+      "title": "Scheduled Job",
+      "message": "Are you sure you want to delete the \"{jobName}\" scheduled job?"
+    },
     "frequency": "Frequency",
     "fullRecon": "Full Reconciliation",
     "hours": "hour(s)",
@@ -2468,13 +2472,22 @@
     "noJobsSubtitle": "Any scheduled jobs will appear here.",
     "noSearchResults": "No scheduled jobs found",
     "repeat": "Repeat",
+    "runError": "Error starting scheduled job",
     "runEvery": "Run every",
+    "runJob": "Run Job",
+    "runSuccess": "Job started",
     "running": "Running...",
+    "runModal": {
+      "title": "Run Scheduled Job",
+      "message": "Are you sure you want to run this scheduled job now?"
+    },
+    "runNow": "Run Now",
     "saveError": "Error saving scheduled job",
     "schedule": "Schedule",
     "scheduleAJob": "Schedule a Job",
     "scheduleError": "Unable to retrieve scheduled jobs",
     "scheduleSuccess": "Scheduled job set successfully",
+    "scheduleSucessDeleted": "Scheduled job successfully deleted",
     "script": "Script",
     "setTime": "Set a Start Time",
     "setUp": "Set Up",
