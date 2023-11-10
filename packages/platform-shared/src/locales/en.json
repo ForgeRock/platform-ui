@@ -268,6 +268,12 @@
       "november": "November",
       "december": "December"
     },
+    "timePeriods": {
+      "hours": "hour(s)",
+      "days": "day(s)",
+      "weeks": "week(s)",
+      "months": "month(s)"
+    },
     "helpText": {
       "timeConstraint": "Assign role only during a selected time period.",
       "resetPassword": "Reset this user password."

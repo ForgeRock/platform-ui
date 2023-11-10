@@ -27,7 +27,6 @@ of the MIT license. See the LICENSE file for details. -->
 
     <FrField
       v-model="relationshipField.value"
-      open-direction="bottom"
       :allow-empty="true"
       :close-on-select="closeOnSelect"
       :disabled="disabled"
