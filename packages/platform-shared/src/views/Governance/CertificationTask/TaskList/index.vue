@@ -107,7 +107,7 @@ of the MIT license. See the LICENSE file for details. -->
               height="28"
               width="28"
               :alt="$t('common.logo')"
-              :src="getLogo(item.application)"/>
+              :src="getLogo(item.application)" />
             <div class="media-body align-self-center overflow-hidden text-nowrap">
               <span class="text-dark">
                 {{ item.application.name }}

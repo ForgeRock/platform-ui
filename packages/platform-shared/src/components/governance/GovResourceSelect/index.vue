@@ -7,20 +7,21 @@ of the MIT license. See the LICENSE file for details. -->
     v-if="initialSearch"
     style="height: 50px;">
     <FrField
-      :value="selectValue"
-      @input="handleInput"
-      @search-change="debouncedSearch"
-      @open="isOpen = true;"
       @close="isOpen = false; isSearching = false;"
+      @input="handleInput"
+      @open="isOpen = true;"
+      @search-change="debouncedSearch"
+      name="resourceSelect"
       open-direction="bottom"
       type="select"
-      :label="fieldLabel"
-      :validation="validation"
-      name="resourceSelect"
-      :placeholder="searchText"
+      :description="description"
+      :disabled="readOnly"
       :internal-search="false"
+      :label="fieldLabel"
       :options="selectOptions"
-      :description="description">
+      :placeholder="searchText"
+      :validation="validation"
+      :value="selectValue">
       <template #singleLabel="{ option }">
         {{ option.text }}
       </template>
@@ -78,6 +79,10 @@ export default {
     firstOption: {
       type: Object,
       default: () => {},
+    },
+    readOnly: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -184,7 +189,7 @@ export default {
       this.isSearching = false;
 
       if (this.resource === 'role' || compareRealmSpecificResourceName(this.resource, 'role')) {
-        const selectedRole = this.options.find((role) => role.value === event);
+        const selectedRole = this.options.find((role) => role.value === event) || {};
 
         this.$emit('get-role-info', { name: selectedRole.text, id: selectedRole.value });
       } else if (this.resource === 'user' || compareRealmSpecificResourceName(this.resource, 'user')) {

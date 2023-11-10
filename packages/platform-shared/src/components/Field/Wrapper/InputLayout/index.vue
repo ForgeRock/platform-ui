@@ -218,9 +218,13 @@ export default {
   },
   mounted() {
     // get the input label height and update data
-    const label = this.$refs.inputLabel;
-    this.labelHeight = label ? label.clientHeight : 0;
-    this.labelTextOverflowHidden = !this.labelHeight;
+    const label = this.$refs.floatingLabelGroup;
+
+    // timeout needed for fields placed into transitions
+    setTimeout(() => {
+      this.labelHeight = label ? label.clientHeight : 0;
+      this.labelTextOverflowHidden = !this.labelHeight;
+    }, 1);
   },
 };
 </script>
