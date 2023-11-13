@@ -37,16 +37,6 @@ CatalogApi.searchCatalog = jest.fn().mockReturnValue({
 });
 
 describe('NewRequest', () => {
-  const requestCartItems = [
-    {
-      description: 'ServiceNow',
-      icon: '',
-      id: '111',
-      itemType: 'applications',
-      name: 'My Service Now App',
-      templateName: 'servicenow',
-    },
-  ];
   const RestMixin = {
     methods: {
       getRequestService: jest.fn().mockImplementation({ post: () => Promise.resolve() }),
@@ -69,6 +59,9 @@ describe('NewRequest', () => {
             }],
           },
           ...overrideParams,
+        },
+        $bvModal: {
+          show: jest.fn(),
         },
       },
       stubs: ['RouterLink'],
@@ -111,35 +104,6 @@ describe('NewRequest', () => {
 
     shoppingCartSidePanel = wrapper.find('div[class="fr-cart-panel position-fixed shadow-lg h-100 overflow-auto"]');
     expect(shoppingCartSidePanel.exists()).toBe(false);
-  });
-
-  it('should add item to cart', async () => {
-    const wrapper = mountComponent({}, { loading: false });
-    await flushPromises();
-
-    // Find first application button and click Add request
-    expect(wrapper.vm.requestCartItems).toStrictEqual([]);
-    const catalogItemRequestButton = wrapper.findAll('span[class="hover-underline color-blue"]').at(0);
-    expect(catalogItemRequestButton.exists()).toBe(true);
-    catalogItemRequestButton.trigger('click');
-    await flushPromises();
-
-    expect(wrapper.vm.requestCartItems.length).toBe(1);
-    expect(wrapper.vm.requestCartItems[0].itemType).toBe('application');
-    expect(wrapper.vm.requestCartItems[0].templateName).toBe('servicenow');
-  });
-
-  it('should remove item from cart', async () => {
-    const wrapper = mountComponent({}, { requestCartItems, loading: false });
-    await flushPromises();
-
-    // Find first application button and click Remove request
-    expect(wrapper.vm.requestCartItems).toBe(requestCartItems);
-    const accessRequestCatalog = wrapper.find('span[class="mr-2 text-success material-icons-outlined"]');
-    accessRequestCatalog.trigger('click');
-    await flushPromises();
-
-    expect(wrapper.vm.requestCartItems).toStrictEqual([]);
   });
 
   it('should open error modal when user already has access', async () => {

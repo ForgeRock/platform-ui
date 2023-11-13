@@ -143,8 +143,9 @@ of the MIT license. See the LICENSE file for details. -->
                         no-body
                         role="button"
                         tabindex="0"
-                        @keydown.enter="toggleItemInCart(item)"
-                        @click="toggleItemInCart(item)">
+                        @keydown.enter="openItemDetails(item)"
+                        @click="openItemDetails(item)"
+                      >
                         <BCardBody class="d-flex">
                           <BMedia
                             body-class="overflow-hidden"
@@ -184,7 +185,9 @@ of the MIT license. See the LICENSE file for details. -->
                           </template>
                           <span
                             v-else
-                            class="hover-underline color-blue">
+                            class="hover-underline color-blue"
+                            @click="openItemDetails(item)"
+                          >
                             <FrIcon
                               class="mr-2"
                               name="add" />{{ $t('governance.accessRequest.newRequest.request') }}
@@ -246,6 +249,14 @@ of the MIT license. See the LICENSE file for details. -->
         </template>
       </BModal>
     </ValidationObserver>
+
+    <FrItemDetailsModal
+      :glossary-schema="currentGlossarySchema"
+      :item="selectedItem"
+      :item-type="tabType"
+      @modal-closed="selectedItem = {}"
+      @toggle-item="toggleItemInCart"
+    />
   </BContainer>
 </template>
 
@@ -281,6 +292,7 @@ import PluralizeFilter from '@forgerock/platform-shared/src/filters/PluralizeFil
 import { getGovernanceFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import FrSortDropdown from '@/components/governance/SortDropdown';
+import FrItemDetailsModal from './modals/ItemDetailsModal';
 
 /**
  * View housing access request catalog and request cart panel
@@ -303,12 +315,13 @@ export default {
     BRow,
     BTab,
     BTabs,
-    FrIcon,
+    FrCertificationFilter,
     FrField,
+    FrIcon,
+    FrItemDetailsModal,
     FrNoData,
     FrPageHeader,
     FrPagination,
-    FrCertificationFilter,
     FrSearchInput,
     FrSortDropdown,
     FrSpinner,
@@ -326,6 +339,10 @@ export default {
     catalogItems: {
       type: Array,
       default: () => [],
+    },
+    glossarySchema: {
+      type: Object,
+      default: () => ({}),
     },
     loading: {
       type: Boolean,
@@ -366,6 +383,7 @@ export default {
       pageSize: 10,
       savedFilter: {},
       searchValue: '',
+      selectedItem: {},
       selectedTab: 0,
       sortDir: 'desc',
       sortKeys: 'application.name',
@@ -379,6 +397,9 @@ export default {
         subtitle: getApplicationDisplayName(application),
         icon: getApplicationLogo(application),
       }));
+    },
+    currentGlossarySchema() {
+      return this.glossarySchema[this.tabType];
     },
     filterOptions() {
       return this.catalogFilterSchema.map((option) => {
@@ -533,6 +554,14 @@ export default {
         };
         this.$emit('add-item-to-cart', emitItem);
       }
+    },
+    /**
+     * Open details for current item
+     * @param {Object} item metadata of item
+     */
+    openItemDetails(item) {
+      this.selectedItem = item;
+      this.$bvModal.show('accessRequestItemModal');
     },
   },
   watch: {
