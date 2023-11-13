@@ -39,6 +39,11 @@ describe('AccessRequestCatalog Component', () => {
         loading: false,
         ...propsData,
       },
+      mocks: {
+        $bvModal: {
+          show: jest.fn(),
+        },
+      },
     });
     wrapper.setData(overrideData);
     return wrapper;
@@ -114,36 +119,26 @@ describe('AccessRequestCatalog Component', () => {
     expect(catalogCards.at(1).find('.card-footer').text()).toBe('add\nRequest');
   });
 
-  it('emits out event to add request when un-requested item is clicked', async () => {
+  it('emits out event to open details modal when item is clicked', async () => {
     const wrapper = mountComponent(
       {
         catalogItems: mockCatalogItems,
       },
     );
+    const openItemDetailsSpy = jest.spyOn(wrapper.vm, 'openItemDetails').mockImplementation();
     await flushPromises();
     wrapper.vm.selectedTab = 2;
     const catalogCards = wrapper.findAll('div.card');
     catalogCards.at(1).trigger('click');
     await flushPromises();
-    expect(wrapper.emitted()['add-item-to-cart'][0][0]).toEqual({
-      itemType: 'role',
-      description: 'role',
-      templateName: 'template2',
+    expect(openItemDetailsSpy).toHaveBeenCalledWith({
+      appType: 'role',
+      description: 'A perfect role',
       icon: '',
-      name: 'role 2',
       id: 2,
+      name: 'role 2',
+      requested: false,
+      templateName: 'template2',
     });
-  });
-
-  it('emits out event to remove request when requested item is clicked', async () => {
-    const wrapper = mountComponent(
-      {
-        catalogItems: mockCatalogItems,
-      },
-    );
-    await flushPromises();
-    const catalogCards = wrapper.findAll('div.card');
-    catalogCards.at(0).trigger('click');
-    expect(wrapper.emitted()['remove-item-from-cart'][0][0]).toEqual(1);
   });
 });

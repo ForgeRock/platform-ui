@@ -269,6 +269,7 @@
         "addAccessFor": "Add access for",
         "added": "Added",
         "addItems": "Add items to complete request",
+        "addToRequest": "Add to Request",
         "application": "application",
         "applyExpirationDate": "Apply Expiration Date (optional)",
         "catalogSubtitle": "Browse available applications, roles, and entitlements for selected users.",
@@ -304,6 +305,7 @@
           "med": "Medium",
           "high": "High"
         },
+        "removeFromRequest": "Remove from Request",
         "request": "Request",
         "requestAdded": "Request added",
         "requestAddError": "The following users either already have the requested item assigned or in a pending request. Choose another item to request for the selected user.",
@@ -313,6 +315,7 @@
         "requestErrorTitle": "Request Error",
         "requestingFor": "Requesting for",
         "requestSuccess": "Request successfully submitted",
+        "requestTypeAccess": "Request {type} Access",
         "results": "{totalCount} Result | {totalCount} Results",
         "role": "role",
         "showIf": "Show if",
