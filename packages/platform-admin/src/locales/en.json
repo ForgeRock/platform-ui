@@ -3154,6 +3154,8 @@
       "errorRetrievingRoles": "Error retrieving list of roles",
       "errorRetrievingApplications": "Error retrieving list of applications",
       "every": "every",
+      "excludeConditional": "Exclude dynamically granted role memberships",
+      "excludeRoleBased": "Exclude access granted only from a role",
       "expirationNotification": "Send expiration notification",
       "expirationNotificationDescription": "Send a notification to the certifiers when the certification expires.",
       "filterAccounts": "Accounts matching a filter",
