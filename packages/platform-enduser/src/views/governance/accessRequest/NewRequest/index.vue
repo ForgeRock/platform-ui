@@ -35,6 +35,7 @@ of the MIT license. See the LICENSE file for details. -->
             :application-search-results="applicationSearchResults"
             :catalog-filter-schema="catalogFilterSchema"
             :catalog-items="catalogItems"
+            :glossary-schema="glossarySchema"
             :loading="loading"
             :total-count="totalCount"
             @add-item-to-cart="addItemToCart"
@@ -162,6 +163,7 @@ import {
   // getUserGrants,
   getResource,
   getUserDetails,
+  getGlossarySchema,
 } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import FrGovernanceUserDetailsModal from '@forgerock/platform-shared/src/components/governance/UserDetailsModal';
 import FrAccessRequestCatalog from '../../components/AccessRequestCatalog';
@@ -219,6 +221,7 @@ export default {
       currentUserAccountsDetails: { result: [] },
       currentUserEntitlementsDetails: { result: [] },
       currentUserRolesDetails: { result: [] },
+      glossarySchema: {},
       isTesting: false,
       loading: true,
       requestCartExpanded: false,
@@ -238,6 +241,7 @@ export default {
           name: catalogItem.role.name,
           id: catalogItem.id,
           requested: this.isRequested(catalogItem.id),
+          glossary: catalogItem.glossary?.idx['/role'],
         }));
       }
       if (this.catalogResults[0]?.entitlement) {
@@ -249,6 +253,7 @@ export default {
           templateName: catalogItem.application.templateName,
           id: catalogItem.id,
           requested: this.isRequested(catalogItem.id),
+          glossary: catalogItem.glossary?.idx['/entitlement'],
         }));
       }
       if (this.catalogResults[0]?.application) {
@@ -260,6 +265,7 @@ export default {
           templateName: catalogItem.application.templateName,
           id: catalogItem.id,
           requested: this.isRequested(catalogItem.id),
+          glossary: catalogItem.glossary?.idx['/application'],
         }));
       }
       return this.catalogResults;
@@ -287,11 +293,21 @@ export default {
       }));
     },
   },
-  mounted() {
+  async mounted() {
     this.handleResize();
     // Add resize listener to determine whether side request cart should appear
     window.addEventListener('resize', this.handleResize);
     this.setBreadcrumb('/my-requests', this.$t('pageTitles.MyRequests'));
+    try {
+      const { data } = await getGlossarySchema();
+      this.glossarySchema = {
+        application: this.filterGlossarySchema(data['/openidm/managed/application']),
+        entitlement: this.filterGlossarySchema(data['/openidm/managed/assignment']),
+        role: this.filterGlossarySchema(data['/openidm/managed/role']),
+      };
+    } catch (error) {
+      this.showErrorMessage(error, this.$t('governance.certificationTask.errors.glossaryError'));
+    }
   },
   methods: {
     /**
@@ -320,6 +336,13 @@ export default {
       } catch (error) {
         this.showErrorMessage(error, this.$t('governance.accessRequest.newRequest.errorValidatingAccessRequests'));
       }
+    },
+    /**
+     * Filter schema attribute to not include 'requestable' or 'description' fields
+     * @param {Array} schema glossary schema attributes
+     */
+    filterGlossarySchema(schema) {
+      return schema.filter(({ name }) => !(name === 'requestable' || name === 'description'));
     },
     /**
      * Retrieves list of fields that can be filtered on
@@ -356,9 +379,9 @@ export default {
       try {
         this.loading = true;
         const fieldsMap = {
-          accountGrant: 'application,id',
+          accountGrant: 'application,id,glossary',
           entitlementGrant: 'application,entitlement,id,descriptor,glossary',
-          roleMembership: 'role,id',
+          roleMembership: 'role,id,glossary',
         };
         const searchParams = {
           fields: fieldsMap[catalogType],
