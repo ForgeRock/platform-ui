@@ -101,22 +101,21 @@ of the MIT license. See the LICENSE file for details. -->
                                 ...idpComponent.listeners}" />
                           </fieldset>
                         </template>
-                        <template v-for="(component) in componentList ">
-                          <Component
-                            class="callback-component"
-                            :callback="component.callback"
-                            :index="component.index"
-                            :is="component.type"
-                            :key="component.key"
-                            :step="step"
-                            :floating-label="journeyFloatingLabels"
-                            v-bind="{...component.callbackSpecificProps}"
-                            v-on="{
-                              'next-step': (event, preventClear) => {
-                                nextStep(event, preventClear);
-                              },
-                              ...component.listeners}" />
-                        </template>
+                        <Component
+                          v-for="(component) in componentList"
+                          class="callback-component"
+                          :callback="component.callback"
+                          :index="component.index"
+                          :is="component.type"
+                          :key="component.key"
+                          :step="step"
+                          :floating-label="journeyFloatingLabels"
+                          v-bind="{...component.callbackSpecificProps}"
+                          v-on="{
+                            'next-step': (event, preventClear) => {
+                              nextStep(event, preventClear);
+                            },
+                            ...component.listeners}" />
                         <div
                           v-if="nextButtonVisible"
                           :class="['d-flex mt-3', journeySignInButtonPosition]"
@@ -258,22 +257,22 @@ of the MIT license. See the LICENSE file for details. -->
                       </div>
                       <div id="callback_0" />
                     </template>
-                    <template v-for="(component) in componentList ">
-                      <Component
-                        class="callback-component"
-                        :callback="component.callback"
-                        :index="component.index"
-                        :is="component.type"
-                        :key="component.key"
-                        :step="step"
-                        v-bind="{...component.callbackSpecificProps, floatingLabel: journeyFloatingLabels}"
-                        v-on="{
-                          'next-step': (event, preventClear) => {
-                            nextStep(event, preventClear);
-                          },
-                          ...component.listeners}"
-                      />
-                    </template>
+                    <Component
+                      v-for="(component) in componentList "
+                      class="callback-component"
+                      :callback="component.callback"
+                      :index="component.index"
+                      :is="component.type"
+                      :key="component.key"
+                      :step="step"
+                      :floating-label="journeyFloatingLabels"
+                      v-bind="{...component.callbackSpecificProps}"
+                      v-on="{
+                        'next-step': (event, preventClear) => {
+                          nextStep(event, preventClear);
+                        },
+                        ...component.listeners}"
+                    />
                     <div
                       v-if="nextButtonVisible"
                       :class="['d-flex mt-3', journeySignInButtonPosition]"
@@ -678,7 +677,7 @@ export default {
         if (type === this.FrCallbackType.MetadataCallback) return;
 
         // Only components that need extra props or events
-        const { callbackSpecificProps = {}, listeners = [] } = this.getComponentPropsAndEvents(type, index, componentList, this.stage, this.step, this.realm);
+        const { callbackSpecificProps = {}, listeners = [] } = this.getComponentPropsAndEvents(type, index, componentList, this.stage, this.step, this.realm, this.journeySignInButtonPosition);
         const component = {
           callback,
           callbackSpecificProps,
