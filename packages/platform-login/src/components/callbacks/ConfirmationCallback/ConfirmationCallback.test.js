@@ -155,4 +155,46 @@ describe('ConfirmationCallback', () => {
       });
     });
   });
+
+  it('displays journey button position', async () => {
+    const options = ['this is a positive answer', 'No'];
+    const propsData = {
+      callback: {
+        getOptions: () => options,
+        payload: {
+          type: 'ConfirmationCallback',
+        },
+      },
+      stage: { showOnlyPositiveAnswer: false },
+      variant: 'primary',
+      positionButton: 'justify-content-end',
+    };
+    const wrapper = setup(propsData);
+    await wrapper.vm.$nextTick();
+    options.forEach((option) => {
+      const optionButton = findByTestId(wrapper, `option-${option.toLowerCase().replace(/\s/g, '')}`);
+      expect(optionButton.attributes('class')).toEqual(`d-flex ${wrapper.vm.positionButton}`);
+    });
+  });
+
+  it('should only have the class d-flex', async () => {
+    const options = ['this is a positive answer', 'No'];
+    const propsData = {
+      callback: {
+        getOptions: () => options,
+        payload: {
+          type: 'ConfirmationCallback',
+        },
+      },
+      stage: { showOnlyPositiveAnswer: false },
+      variant: 'primary',
+      positionButton: '',
+    };
+    const wrapper = setup(propsData);
+    await wrapper.vm.$nextTick();
+    options.forEach((option) => {
+      const optionButton = findByTestId(wrapper, `option-${option.toLowerCase().replace(/\s/g, '')}`);
+      expect(optionButton.attributes('class')).toEqual('d-flex');
+    });
+  });
 });
