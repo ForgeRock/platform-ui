@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -49,7 +49,9 @@ of the MIT license. See the LICENSE file for details. -->
         </span>
       </div>
     </BDropdown>
-    <small class="form-text">
+    <small
+      v-if="displayHelpText"
+      class="form-text">
       {{ $t('timezone.description') }}
       <BLink
         href="https://www.timeanddate.com/time/zones/"
@@ -86,6 +88,10 @@ export default {
     BLink,
   },
   props: {
+    displayHelpText: {
+      type: Boolean,
+      default: true,
+    },
     /**
      * @model Number representation of offset
      */

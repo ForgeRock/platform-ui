@@ -18,6 +18,7 @@ of the MIT license. See the LICENSE file for details. -->
           v-show="showScriptType"
           v-model="scriptType.value"
           class="mt-2"
+          :disabled="disabled"
           name="scriptType"
           type="select"
           :options="scriptType.options"
@@ -26,6 +27,7 @@ of the MIT license. See the LICENSE file for details. -->
         <FrField
           v-if="showFileUpload"
           v-model="uploadFileToggle"
+          :disabled="disabled"
           type="boolean"
           :label="$t('scriptEditor.uploadFile')"
           size="sm" />
@@ -46,6 +48,7 @@ of the MIT license. See the LICENSE file for details. -->
     </div>
     <BFormFile
       v-show="uploadFileToggle === true"
+      :disabled="disabled"
       @change="onFileChange"
       accept=".js, .groovy"
       :placeholder="fieldPlaceholder">
@@ -53,6 +56,7 @@ of the MIT license. See the LICENSE file for details. -->
         <FrField
           v-model="filePathModel"
           class="file-import-floating-label"
+          :disabled="disabled"
           :label="$t('scriptEditor.uploadFile')" />
       </template>
     </BFormFile>
@@ -63,6 +67,7 @@ of the MIT license. See the LICENSE file for details. -->
         <BButton
           v-if="selectedVariables.length === 0 && !jsonEditToggle"
           class="my-2 float-right"
+          :disabled="disabled"
           variant="link"
           size="sm"
           @click="addVariable('', '', 0)">
@@ -82,6 +87,7 @@ of the MIT license. See the LICENSE file for details. -->
             <FrField
               v-else
               v-model="jsonEditToggle"
+              :disabled="disabled"
               type="boolean"
               :label="$t('scriptEditor.json')"
               size="sm"
@@ -118,6 +124,7 @@ of the MIT license. See the LICENSE file for details. -->
                     <FrField
                       v-model="selectedVariable.name"
                       class="col-6"
+                      :disabled="disabled"
                       input-class="form-control-sm form-control-dark"
                       validation="required"
                       :name="$t('common.name')"
@@ -125,6 +132,7 @@ of the MIT license. See the LICENSE file for details. -->
                     <FrField
                       v-model="selectedVariable.value.value"
                       class="col-6"
+                      :disabled="disabled"
                       input-class="form-control-sm form-control-dark"
                       validation="required"
                       :name="$t('common.value')"
@@ -136,6 +144,7 @@ of the MIT license. See the LICENSE file for details. -->
                   <BButton
                     variant="link mr-1"
                     class="max-height-50"
+                    :disabled="disabled"
                     size="sm"
                     @click="removeVariable(index)">
                     <FrIcon
@@ -145,6 +154,7 @@ of the MIT license. See the LICENSE file for details. -->
                   <BButton
                     variant="link mr-1"
                     class="max-height-50"
+                    :disabled="disabled"
                     size="sm"
                     @click="addVariable('', '', index + 1)">
                     <FrIcon
@@ -203,6 +213,10 @@ export default {
         globals: {},
         source: '',
       }),
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
     showFileUpload: {
       type: Boolean,
