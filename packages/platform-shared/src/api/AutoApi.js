@@ -58,6 +58,39 @@ export async function runAnalyticsTemplate(template, payload) {
 }
 
 /**
+  * Gets the result of a Report Run.
+  * @param {String} id Job ID of the report run.
+  * @param {String} template Name of the report template.
+  * @returns {Object} Contains count of results and array of results.
+  */
+export async function getReportResult(id, template) {
+  const params = {
+    _action: 'view',
+    name: template,
+  };
+  const { data } = await generateAutoAccessReports().post(`runs/${id}${encodeQueryString(params, false)}`);
+  return data;
+}
+
+/**
+  * Exports or download a report in JSON or CSV format.
+  * @param {String} id Job ID of the report run.
+  * @param {String} template Name of the report template.
+  * @param {String} action Action to execute, can be export or download.
+  * @param {String} format Format of the report to be exported.
+  * @returns {Object} Contains the data to be placed in a download file.
+  */
+export async function exportReport(template, id, action, format) {
+  const params = {
+    _action: action,
+    name: template,
+    format,
+  };
+  const data = await generateAutoAccessReports().post(`runs/${id}${encodeQueryString(params, false)}`);
+  return data;
+}
+
+/**
  * Gets a run report result
  *
  * @param {String} userName Platform user's username
