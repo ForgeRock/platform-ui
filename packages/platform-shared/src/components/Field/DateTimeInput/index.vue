@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -22,6 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
           ref="dateInput"
           :aria-label="getTranslation(label)"
           :class="{'is-invalid': errorMessages && errorMessages.length }"
+          :disabled="disabled"
           :dropleft="dropleft"
           :id="`${id}-date`"
           :description="description"
@@ -36,12 +37,14 @@ of the MIT license. See the LICENSE file for details. -->
         <FrTimeInput
           v-model="timeValue"
           ref="timeInput"
+          :adjust-for-timezone="adjustForTimezone"
           :aria-label="getTranslation(label)"
           :class="{'is-invalid': errorMessages && errorMessages.length }"
           :dropleft="dropleft"
           :disabled="disabled"
           :id="`${id}-time`"
           :name="name"
+          :show-seconds="showSeconds"
           :validation-immediate="validationImmediate"
           @input="emitDateTimeValue"
           @utc-input="emitDateTimeValue" />
@@ -74,7 +77,19 @@ export default {
     FrTimeInput,
   },
   props: {
+    /**
+     * If a timezone component is used, ensure we don't
+     * adjust dates automatically for timezones
+     */
+    adjustForTimezone: {
+      default: true,
+      type: Boolean,
+    },
     dropleft: {
+      default: true,
+      type: Boolean,
+    },
+    showSeconds: {
       default: true,
       type: Boolean,
     },
@@ -93,22 +108,30 @@ export default {
      */
     emitDateTimeValue() {
       if (this.dateValue !== '' && this.dateValue !== null && this.timeValue !== '' && this.timeValue !== null) {
-        const emitTime = new Date(this.dateValue);
-        const timezoneOffset = emitTime.getTimezoneOffset();
-        const hours = dayjs(`${this.dateValue}T${this.timeValue}`).utc().hour();
-        const minutes = dayjs(`${this.dateValue}T${this.timeValue}`).utc().minute();
-        const totalMinutes = (hours * 60) + minutes;
+        if (this.adjustForTimezone) {
+          const emitTime = new Date(this.dateValue);
+          const timezoneOffset = emitTime.getTimezoneOffset();
+          const hours = dayjs(`${this.dateValue}T${this.timeValue}`).utc().hour();
+          const minutes = dayjs(`${this.dateValue}T${this.timeValue}`).utc().minute();
+          const totalMinutes = (hours * 60) + minutes;
 
-        if (timezoneOffset > totalMinutes) {
-          emitTime.setDate(emitTime.getDate() + 1);
-        } else if (timezoneOffset < 0 && (totalMinutes - timezoneOffset >= 1440)) {
-          emitTime.setDate(emitTime.getDate() - 1);
+          if (timezoneOffset > totalMinutes) {
+            emitTime.setDate(emitTime.getDate() + 1);
+          } else if (timezoneOffset < 0 && (totalMinutes - timezoneOffset >= 1440)) {
+            emitTime.setDate(emitTime.getDate() - 1);
+          }
+          this.$emit('input', `${dayjs(emitTime).utc().format('YYYY-MM-DD')}T${this.timeValue}`);
+        } else {
+          this.$emit('input', `${dayjs(this.dateValue).format('YYYY-MM-DD')}T${this.timeValue}`);
         }
-        this.$emit('input', `${dayjs(emitTime).utc().format('YYYY-MM-DD')}T${this.timeValue}`);
       } else if (this.dateValue !== '' && this.dateValue !== null) {
-        const emitTime = new Date(this.dateValue);
-        emitTime.setHours(24, 0, 0, 0);
-        this.$emit('input', `${dayjs(emitTime).utc().format('YYYY-MM-DDTHH:mm:ss')}Z`);
+        if (this.adjustForTimezone) {
+          const emitTime = new Date(this.dateValue);
+          emitTime.setHours(24, 0, 0, 0);
+          this.$emit('input', `${dayjs(emitTime).utc().format('YYYY-MM-DDTHH:mm:ss')}Z`);
+        } else {
+          this.$emit('input', `${dayjs(this.dateValue).format('YYYY-MM-DDTHH:mm:ss')}`);
+        }
       } else {
         this.$emit('input', '');
       }
