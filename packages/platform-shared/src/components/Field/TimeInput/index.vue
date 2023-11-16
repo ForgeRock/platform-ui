@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -32,7 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
       label-help=""
       no-close-button
       ref="timePicker"
-      show-seconds
+      :show-seconds="showSeconds"
       :class="[{'is-invalid': errorMessages && errorMessages.length }, 'form-control time-button position-absolute']"
       :disabled="disabled"
       :id="id"
@@ -72,7 +72,15 @@ export default {
     FrInputLayout,
   },
   props: {
+    adjustForTimezone: {
+      default: true,
+      type: Boolean,
+    },
     dropleft: {
+      default: true,
+      type: Boolean,
+    },
+    showSeconds: {
       default: true,
       type: Boolean,
     },
@@ -85,7 +93,7 @@ export default {
   methods: {
     /**
      * Emits out a formatted time in the form of HH:mm:ss.SSSZ or an empty string if time is invalid
-     *
+     * if adjustForTimezone is false, the Z is omitted
      * @param {String} selectedTime - The current time value selected
      * @emits {String} The fully formatted time string
      */
@@ -110,7 +118,13 @@ export default {
         const seconds = selectedSecond || 0;
         const emitTime = new Date();
         emitTime.setHours(hours, minutes, seconds);
-        const emitTimeString = `${dayjs(emitTime).utc().format('HH:mm:ss')}Z`;
+        let emitTimeString;
+        if (this.adjustForTimezone) {
+          emitTimeString = `${dayjs(emitTime).utc().format('HH:mm:ss')}Z`;
+        } else {
+          emitTimeString = `${dayjs(emitTime).format('HH:mm:ss')}`;
+        }
+
         this.$emit('input', emitTimeString);
       } else {
         this.$emit('input', '');
