@@ -361,7 +361,7 @@ export default {
         this.displayFields = newVal.map((obj) => obj.key);
         this.columns = newVal;
         if (oldVal.length) {
-          this.loadData(generateSearchQuery(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.defaultSort, this.paginationPage);
+          this.loadData(generateSearchQuery(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.defaultSort, this.paginationPage, this.paginationPageSize);
         }
       }
     },
@@ -489,7 +489,6 @@ export default {
         return;
       }
       this.paginationPage = 1;
-
       if (this.filter.length >= this.queryThreshold) {
         this.submitBeforeLengthValid = false;
         this.loadData(generateSearchQuery(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.calculateSort(this.sortDesc, this.sortBy), this.paginationPage, this.paginationPageSize);
