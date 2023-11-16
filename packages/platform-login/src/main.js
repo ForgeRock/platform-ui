@@ -70,7 +70,7 @@ Config.set({
 
 router.beforeEach((to, _from, next) => {
   if (to.name === 'logout') {
-    const urlParams = new URLSearchParams(to.query);
+    const urlParams = new URLSearchParams(window.location.search);
     const goto = urlParams.get('goto') || '';
     const logout = (realm, validatedGoto) => {
       const logoutParams = { realmPath: realm || localStorage.getItem('originalLoginRealm') || 'root' };
@@ -82,7 +82,11 @@ router.beforeEach((to, _from, next) => {
         }
       });
     };
-    let realm = urlParams.get('realm');
+    const routeUrlParams = new URLSearchParams(to.query);
+    let realm = routeUrlParams.get('realm');
+    if (!realm && urlParams.get('realm') !== 'undefined') {
+      realm = urlParams.get('realm');
+    }
 
     if (goto) {
       // validate the goto param before logging out
