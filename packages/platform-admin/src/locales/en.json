@@ -784,6 +784,15 @@
     }
   },
   "reports": {
+    "downloadComplete": "Download complete",
+    "downloadFile": "Download {fileType}",
+    "downloading": "Downloading...",
+    "downloadingFile": "Downloading {fileType}...",
+    "error": "Error",
+    "export": "Export",
+    "exportFile": "Export {fileType}",
+    "exporting": "Exporting...",
+    "exportingFile": "Generating {fileType}...",
     "heading": "Reports",
     "lastRun": "Last run",
     "menu": {
@@ -791,10 +800,49 @@
       "reportDetails": "Report Details",
       "runHistory": "Run History"
     },
+    "modal": {
+      "downloadReport": "Download Report ({fileType})",
+      "heading": "Export {fileType} Report",
+      "title": "Generating {fileType} Report...",
+      "exportReportMessage": "Your report is being generated and will be available for download here when it's ready. This may take several minutes.",
+      "done": "Done",
+      "success": {
+        "title": "Download Generated",
+        "subtitle": "Your report is now available for download."
+      },
+      "errorTitle": "There was an error generating the {fileType}",
+      "errorMessage": "Please try again or contact your administrator."
+    },
     "noData": "No Report Template found",
+    "notAvailable": "Report data not available",
+    "reportExported": "Report sucessfully exported",
     "run": "Run",
     "subtitle": "The following reports are based on pre-configured queries on events and provide insights in an easily understandable format.",
     "search": "Search reports",
+    "tableHeadings": {
+      "accountStatus": "Status",
+      "applicationNames": "Applications",
+      "count": "Count",
+      "description": "Description",
+      "email": "Email",
+      "endDate": "Report To",
+      "journeyName": "Journey",
+      "mail": "Email",
+      "orgName": "Organization",
+      "orgNames": "Organizations",
+      "roleName": "Role",
+      "roleNames": "Roles",
+      "roles": "Roles",
+      "startDate": "Report From",
+      "status": "Status",
+      "temporalConstraints": "Temporal Constraints",
+      "timestamp": "Timestamp",
+      "treeName": "Journeys",
+      "treeResult": "Outcomes",
+      "user": "User",
+      "username": "User",
+      "userNames": "Users"
+    },
     "tabs": {
       "runReport": {
         "title": "Run Report",
@@ -855,14 +903,11 @@
         "downloadReady": "Download successfully generated",
         "table": {
           "downloadFile": "Download {fileType} file",
-          "downloadGenerated": "Download Generated",
-          "downloadReadyMessage": "Your report is now available for download.",
           "downloadReport": "Download Report",
           "downloadingFile": "Downloading {fileType}",
           "errorFile": "{fileType} Error",
           "exportFile": "Export {fileType}",
           "exportingReport": "Exporting report",
-          "exportingReportMessage": "Your report is being generated and will be available for download here when it's ready.  This may take several minutes.",
           "exportingFile": "Exporting {fileType}",
           "exportingFileDownload": "Requesting a {fileType} Download",
           "runDetails": "Run Details",
@@ -870,13 +915,12 @@
         },
         "errors": {
           "errorRetrievingHistory": "Error retrieving report history",
-          "errorExport": "There was an error generating the {fileType}",
-          "pleaseTryAgain": "Please try again or contact your administrator.",
           "errorDownload": "Error downloading report"
         }
       }
     },
-    "title": "Reports"
+    "title": "Reports",
+    "viewReport": "View Report"
   },
   "connectorServers": {
     "activating": "Activating...",
