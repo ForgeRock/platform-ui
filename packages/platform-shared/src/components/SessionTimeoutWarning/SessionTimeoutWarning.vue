@@ -5,6 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <BModal
     v-model="show"
+    data-testId="session-timeout-warning"
     :title="$t('sessionTimeoutWarning.title')"
     centered
     hide-header-close
@@ -60,9 +61,12 @@ function resetModalTimeout(expirationTime) {
     const now = dayjs();
     const expirationDate = dayjs(expirationTime);
     const timeLeft = expirationDate.diff(now);
-    modalTimeout.value = setTimeout(() => {
-      startImminentLogout();
-    }, timeLeft - 70000);
+    // if timeLeft is over 2074000000 (24 days) don't start the timer
+    if (timeLeft < 2074000000) {
+      modalTimeout.value = setTimeout(() => {
+        startImminentLogout();
+      }, timeLeft - 70000);
+    }
   }
 }
 function logout() {
