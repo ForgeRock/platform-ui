@@ -51,7 +51,7 @@ export const apiToInternalEvent = (data) => {
   const {
     ipAddress, userId, eventId, timestamp, geoData, dayparting, weekday, browserData,
   } = predictionResult.features;
-  const { botD: { isBot }, raw_event_data: rawEventData, risk_score_data: riskScoreData } = predictionResult;
+  const { botD, raw_event_data: rawEventData, risk_score_data: riskScoreData } = predictionResult;
   const { heuristic_agg_result: heuristics } = riskScoreData;
   const {
     device, deviceType, os, osVersion, userAgentType,
@@ -70,6 +70,7 @@ export const apiToInternalEvent = (data) => {
   }
 
   // Is Advanced Bot Detection Heuristic
+  const isBot = botD?.isBot || false;
   if (isBot) {
     heuristicReasons.push('is_advanced_bot_detection');
   }
