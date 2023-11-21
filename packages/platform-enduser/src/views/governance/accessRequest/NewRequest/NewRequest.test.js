@@ -86,7 +86,8 @@ describe('NewRequest', () => {
   it('should render with top navigation bar including breadcrumb', async () => {
     const wrapper = mountComponent();
     await flushPromises();
-    const breadcrumb = wrapper.find('h1[class="text-truncate h4"]');
+
+    const breadcrumb = wrapper.find('h1[class="text-truncate h5 d-flex align-items-center font-weight-normal mb-0"]');
     expect(breadcrumb.exists()).toBe(true);
     expect(breadcrumb.find('span[class="align-middle"]').text()).toBe('My Requests');
   });
