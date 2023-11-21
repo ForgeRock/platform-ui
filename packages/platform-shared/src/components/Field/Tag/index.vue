@@ -10,6 +10,7 @@ of the MIT license. See the LICENSE file for details. -->
     :errors="errors"
     :label="label"
     :name="name"
+    :is-html="isHtml"
     :validation="validation"
     :validation-immediate="validationImmediate">
     <BFormTags
