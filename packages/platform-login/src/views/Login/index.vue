@@ -257,6 +257,29 @@ of the MIT license. See the LICENSE file for details. -->
                       </div>
                       <div id="callback_0" />
                     </template>
+                    <!-- IDP logins are grouped within their own fieldset to logically separate them from the standard login flow. This is an accessibility change to more logically structure the page.  -->
+                    <template v-if="idpComponent">
+                      <fieldset>
+                        <legend
+                          class="legend-hidden"
+                          id="idp-legend">
+                          {{ $t('login.social.legend') }}
+                        </legend>
+                        <FrSelectIdPCallback
+                          class="callback-component"
+                          :callback="idpComponent.callback"
+                          :index="idpComponent.index"
+                          :key="idpComponent.key"
+                          :floating-label="journeyFloatingLabels"
+                          aria-describedby="idp-legend"
+                          v-bind="{...idpComponent.callbackSpecificProps}"
+                          v-on="{
+                            'next-step': (event, preventClear) => {
+                              nextStep(event, preventClear);
+                            },
+                            ...idpComponent.listeners}" />
+                      </fieldset>
+                    </template>
                     <Component
                       v-for="(component) in componentList "
                       class="callback-component"
