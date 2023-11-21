@@ -43,15 +43,16 @@ of the MIT license. See the LICENSE file for details. -->
         </li>
         <li
           v-else
+          class="d-flex align-items-center"
           @click="$emit('clicked')">
           <RouterLink
             :aria-label="$t('common.breadcrumb')"
             active-class=""
-            class="fr-back-link overflow-hidden p-1 pl-4 pl-lg-0 mt-1"
+            class="fr-back-link overflow-hidden pl-4 pl-lg-0 mt-0"
             role="navigation"
             v-show="hasBreadcrumb"
             :to="!checkChangesOnNavigate ? returnRoute : ''">
-            <h1 class="text-truncate h4">
+            <h1 class="text-truncate h5 d-flex align-items-center font-weight-normal mb-0">
               <FrIcon
                 class="md-24 mr-3"
                 name="arrow_back"
@@ -62,7 +63,7 @@ of the MIT license. See the LICENSE file for details. -->
             </h1>
           </RouterLink>
         </li>
-        <li>
+        <li class="d-flex align-items-center">
           <!-- Content displayed in center of navbar -->
           <slot name="center-content" />
         </li>
