@@ -125,12 +125,10 @@ of the MIT license. See the LICENSE file for details. -->
                     vertical-align="center"
                     class="text-left">
                     <template #aside>
-                      <!-- alt text purposefully set to empty string as this is considered a 'decorative image' in WCAG standards -->
-                      <img
-                        alt=""
-                        height="34"
-                        width="34"
-                        :src="profileImage.length ? profileImage : require('@forgerock/platform-shared/src/assets/images/avatar.png')">
+                      <BAvatar
+                        size="34"
+                        variant="light"
+                        :src="profileImage.length ? profileImage : require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
                     </template>
                     <div class="d-none d-lg-block sidebar-item-text fr-dropdown-button-content">
                       <h5 class="my-0 text-truncate">
@@ -173,6 +171,7 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import { mapGetters } from 'vuex';
 import {
+  BAvatar,
   BDropdownDivider,
   BDropdownHeader,
   BLink,
@@ -200,6 +199,7 @@ export default {
     FrNotification: ToolbarNotification,
     FrDropdownMenu: DropdownMenu,
     FrIcon,
+    BAvatar,
     BDropdownDivider,
     BDropdownHeader,
     BLink,
