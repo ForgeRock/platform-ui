@@ -25,7 +25,6 @@ export const useEnduserStore = defineStore('enduser', () => {
   function setProfile(profileData) {
     // set generic data in the user store
     userStore.setUserDetails(profileData);
-
     // store enduser specific data locally
     aliasList.value = profileData.aliasList || [];
     consentedMappings.value = profileData.consentedMappings || null;
