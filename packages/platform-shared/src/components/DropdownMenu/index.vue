@@ -26,12 +26,10 @@ of the MIT license. See the LICENSE file for details. -->
       <BDropdownItem @click="$router.push({ name: 'Profile' })">
         <BMedia class="text-left">
           <template #aside>
-            <!-- alt text purposefully set to empty string as this is considered a 'decorative image' in WCAG standards -->
-            <img
-              alt=""
-              height="34"
-              width="34"
-              :src="require('@forgerock/platform-shared/src/assets/images/avatar.png')">
+            <BAvatar
+              size="34"
+              variant="light"
+              :src="profileImage.length ? profileImage : require('@forgerock/platform-shared/src/assets/images/avatar.png')" />
           </template>
           <h5 class="my-0 text-truncate">
             {{ userDetails.name }}
@@ -63,6 +61,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import {
+  BAvatar,
   BDropdown,
   BDropdownItem,
   BDropdownDivider,
@@ -73,13 +72,14 @@ import LoginMixin from '@forgerock/platform-shared/src/mixins/LoginMixin';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { mapState } from 'pinia';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
-
+import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
 /**
  * Bootstrap dropdown menu used in navbar and sidemenu
  */
 export default {
   name: 'DropdownMenu',
   components: {
+    BAvatar,
     BDropdown,
     BDropdownDivider,
     BDropdownItem,
@@ -122,6 +122,7 @@ export default {
   },
   computed: {
     ...mapState(useUserStore, ['userDetails']),
+    ...mapState(useEnduserStore, ['profileImage']),
   },
 };
 </script>

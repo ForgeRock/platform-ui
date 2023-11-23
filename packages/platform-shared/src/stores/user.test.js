@@ -53,7 +53,6 @@ describe('user store', () => {
         managedResource: 'managedResource',
         userName: 'userName',
       });
-
       expect(userStore.givenName).toBe('gn');
       expect(userStore.sn).toBe('sn');
       expect(userStore.email).toBe('email');
