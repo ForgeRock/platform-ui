@@ -2582,6 +2582,10 @@
       "queryFilterPrefix": "Execute a script if",
       "scriptDescription": "Execute a script at a scheduled interval.",
       "taskScannerDescription": "Scan a set of properties with a query filter at a scheduled interval, and execute a script on the objects returned by the query.",
+      "taskState": "Task State",
+      "taskStateCompletedLabel": "Completed",
+      "TaskStateDescription": "The names of the fields in which the start message, and the completed message are stored.",
+      "taskStateStartedLabel": "Started",
       "timezone": "Timezone",
       "timezoneMismatch": "Start and end times must have the same timezone offset"
     },
@@ -2597,6 +2601,7 @@
     "noJobs": "No jobs scheduled",
     "noJobsSubtitle": "Any scheduled jobs will appear here.",
     "noSearchResults": "No scheduled jobs found",
+    "reconEdit": "Edit in Application",
     "repeat": "Repeat",
     "runError": "Error starting scheduled job",
     "runEvery": "Run every",
