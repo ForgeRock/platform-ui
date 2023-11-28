@@ -464,5 +464,32 @@ describe('BasicInput', () => {
       expect(animationStartSpy).not.toHaveBeenCalled();
       expect(wrapper.vm.floatLabels).toBe(false);
     });
+
+    it('should set floatLabels to false when inputValue is string', async () => {
+      const wrapper = setup({ type: 'number', placeholder: 'stub-placeholder', label: 'stub-label' });
+      await wrapper.vm.$nextTick();
+      const input = findByTestId(wrapper, 'input-stub-testid');
+      input.setValue('test');
+      input.trigger('blur');
+      expect(wrapper.vm.floatLabels).toBe(false);
+    });
+
+    it('should set floatLabels to true when inputValue is number', async () => {
+      const wrapper = setup({ type: 'number', placeholder: 'stub-placeholder', label: 'stub-label' });
+      await wrapper.vm.$nextTick();
+      const input = findByTestId(wrapper, 'input-stub-testid');
+      input.setValue(1);
+      input.trigger('blur');
+      expect(wrapper.vm.floatLabels).toBe(true);
+    });
+
+    it('should seet floatLabels to false when inputValue is empty string', async () => {
+      const wrapper = setup({ type: 'number', placeholder: 'stub-placeholder', label: 'stub-label' });
+      await wrapper.vm.$nextTick();
+      const input = findByTestId(wrapper, 'input-stub-testid');
+      input.setValue('');
+      input.trigger('blur');
+      expect(wrapper.vm.floatLabels).toBe(false);
+    });
   });
 });
