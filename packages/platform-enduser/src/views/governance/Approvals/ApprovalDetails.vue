@@ -40,7 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
         v-if="isActive"
         class="mb-4">
         <BButton
-          @click="openModal('APPROVE')"
+          @click="openModal('APPROVE', $bvModal)"
           class="mr-1"
           variant="outline-secondary">
           <FrIcon
@@ -49,7 +49,7 @@ of the MIT license. See the LICENSE file for details. -->
           {{ $t('common.approve') }}
         </BButton>
         <BButton
-          @click="openModal('REJECT')"
+          @click="openModal('REJECT', $bvModal)"
           class="mr-1"
           variant="outline-secondary">
           <FrIcon
@@ -58,7 +58,7 @@ of the MIT license. See the LICENSE file for details. -->
           {{ $t('common.reject') }}
         </BButton>
         <BButton
-          @click="openModal('REASSIGN')"
+          @click="openModal('REASSIGN', $bvModal)"
           class="mr-1"
           variant="outline-secondary">
           <FrIcon
@@ -74,7 +74,7 @@ of the MIT license. See the LICENSE file for details. -->
         class="mb-3"
         no-body>
         <FrRequestDetails
-          @add-comment="openModal('COMMENT')"
+          @add-comment="openModal('COMMENT', $bvModal)"
           :item="item" />
       </BCard>
     </template>
@@ -116,7 +116,7 @@ import { getRequest, getUserApprovals } from '@/api/governance/AccessRequestApi'
 import { getFormattedRequest, getRequestObjectType, isTypeRole } from '@/components/utils/governance/AccessRequestUtils';
 import i18n from '@/i18n';
 
-const { proxy: { $route, _bv__modal: bvModal } } = getCurrentInstance();
+const { proxy: { $route } } = getCurrentInstance();
 
 // Composables
 const { setBreadcrumb } = useBreadcrumb();
@@ -172,7 +172,7 @@ onMounted(async () => {
   await getRequestData();
 });
 
-function openModal(type) {
+function openModal(type, bvModal) {
   modalType.value = REQUEST_MODAL_TYPES[type];
   bvModal.show('request_modal');
 }
