@@ -40,7 +40,7 @@ of the MIT license. See the LICENSE file for details. -->
         class="mb-3"
         no-body>
         <FrRequestDetails
-          @add-comment="openModal('COMMENT')"
+          @add-comment="openModal('COMMENT', $bvModal)"
           :item="item" />
       </BCard>
 
@@ -57,7 +57,7 @@ of the MIT license. See the LICENSE file for details. -->
         </p>
         <BButton
           variant="danger"
-          @click="openModal('CANCEL')">
+          @click="openModal('CANCEL', $bvModal)">
           {{ $t('governance.requestModal.cancelRequest') }}
         </BButton>
       </BCard>
@@ -96,7 +96,7 @@ import FrRequestDetails from '@/components/governance/RequestDetails';
 import FrRequestModal, { REQUEST_MODAL_TYPES } from '@/components/governance/RequestModal';
 import i18n from '@/i18n';
 
-const { proxy: { $route, _bv__modal: bvModal } } = getCurrentInstance();
+const { proxy: { $route } } = getCurrentInstance();
 
 // Composables
 const { setBreadcrumb } = useBreadcrumb();
@@ -125,7 +125,7 @@ onMounted(async () => {
   await getRequestData();
 });
 
-function openModal(type) {
+function openModal(type, bvModal) {
   modalType.value = REQUEST_MODAL_TYPES[type];
   bvModal.show('request_modal');
 }
