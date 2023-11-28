@@ -213,9 +213,12 @@ export default {
     };
   },
   watch: {
-    $route(to) {
-      this.hideNavBar = to.meta.hideNavBar;
-      this.hideSideMenu = to.meta.hideSideMenu;
+    $route: {
+      handler(to) {
+        this.hideNavBar = to.meta.hideNavBar;
+        this.hideSideMenu = to.meta.hideSideMenu;
+      },
+      immediate: true,
     },
   },
   computed: {
