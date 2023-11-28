@@ -29,6 +29,9 @@ describe('Layout Component', () => {
     wrapper = shallowMount(Layout, {
       mocks: {
         $t: () => {},
+        $route: {
+          meta: { hideSideMenu: false },
+        },
       },
       propsData: {
         menuItems: [
