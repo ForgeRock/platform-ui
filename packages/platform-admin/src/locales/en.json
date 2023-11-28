@@ -3375,6 +3375,7 @@
         "exclusiveGatewayDescription": "Evaluate a binary response from a preceding node to select a path the orchestration should take.",
         "exclusiveGatewayDisplayName": "If/Else",
         "EXPIRATION": "EXPIRATION",
+        "export": "Export",
         "importModal": {
           "importNewDraft": "Import New Draft",
           "stepOneBody": "Import an orchestration as a draft version.",
@@ -3417,6 +3418,7 @@
         "createDraftSuccess": "Draft orchestration created successfully",
         "deleteError": "There was an error deleting this orchestration",
         "deleteSuccess": "Orchestration deleted successfully",
+        "fileImproperlyFormatted": "Selected file is not properly formatted",
         "getError": "There was an error retrieving the list of orchestrations",
         "importError": "There was an error importing the selected orchestration",
         "invalidScript": "Orchestration has an invalid script",
