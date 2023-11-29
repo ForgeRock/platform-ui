@@ -340,11 +340,18 @@ export default {
                   'predictionResult.risk_score_data.is_risky_event': true,
                 },
               },
+              {
+                range: {
+                  'predictionResult.features.timestamp': {
+                    lte: this.eventData.timestamp,
+                  },
+                },
+              },
             ],
             must_not: [
               {
                 term: {
-                  'predictionResult.features.eventId.keyword': this.eventData.eventId,
+                  'predictionResult.features.eventId': this.eventData.eventId,
                 },
               },
             ],
