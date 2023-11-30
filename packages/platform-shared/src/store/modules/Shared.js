@@ -137,11 +137,6 @@ const mutations = {
       state.workforceEnabled = env.VUE_APP_ENABLE_WORKFORCE === 'true' || env.VUE_APP_ENABLE_WORKFORCE === true;
     }
 
-    if (env.VUE_APP_ENABLE_WORKFORCE_JOBS === 'true' || env.VUE_APP_ENABLE_WORKFORCE_JOBS === true) {
-      state.workforceEnabled = true;
-      state.workforceJobsEnabled = true;
-    }
-
     if (env.VUE_APP_ENABLE_AUTO_REPORTS) {
       state.autoReportsEnabled = env.VUE_APP_ENABLE_AUTO_REPORTS === 'true' || env.VUE_APP_ENABLE_AUTO_REPORTS === true;
     }
