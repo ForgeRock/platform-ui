@@ -12,7 +12,7 @@ of the MIT license. See the LICENSE file for details.
       :name="name"
       :ref="`callback_${this.index}`"
       :id="callback.getInputValue()"
-      v-model="value"
+      :value="value"
       @input="onChange">
   </div>
 </template>
@@ -42,7 +42,8 @@ export default {
     };
   },
   methods: {
-    onChange() {
+    onChange(value) {
+      this.value = value;
       this.callback.setInputValue(this.value);
     },
   },

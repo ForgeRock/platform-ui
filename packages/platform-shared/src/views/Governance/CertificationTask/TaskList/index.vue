@@ -233,7 +233,7 @@ of the MIT license. See the LICENSE file for details. -->
       :subtitle="$t('governance.certificationTask.noItems')" />
     <BPagination
       v-if="totalRows > pageSize"
-      v-model="paginationPage"
+      :value="paginationPage"
       :class="`py-3 justify-content-center pagination-material-buttons ${selectedCount > 0 ? 'action-bar-visible' : ''}`"
       :per-page="pageSize"
       :total-rows="totalRows"
@@ -737,8 +737,9 @@ export default {
       if (status === 'certify') return 'success';
       return '';
     },
-    paginationChange() {
-      this.getItems(this.paginationPage).then(() => {
+    paginationChange(page) {
+      this.paginationPage = page;
+      this.getItems(page).then(() => {
         if (this.showGroupBy && this.certificationGrantType === 'accounts') {
           this.clearRowSelected();
         }
