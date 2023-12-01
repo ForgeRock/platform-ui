@@ -35,8 +35,7 @@ describe('HiddenValueCallback', () => {
   });
 
   it('Sets value value for callback', async () => {
-    await wrapper.setData({ value: 'element value change' });
-    wrapper.vm.onChange();
+    wrapper.vm.onChange('element value change');
 
     expect(wrapper.vm.$props.callback.setInputValue).toHaveBeenCalledTimes(1);
     expect(wrapper.vm.$props.callback.setInputValue).toHaveBeenCalledWith('element value change');

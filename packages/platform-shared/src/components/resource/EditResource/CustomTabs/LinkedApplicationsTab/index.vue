@@ -11,7 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
         <BCardHeader class="p-0">
           <div class="justify-content-between p-3 border-bottom-0">
             <FrSearchInput
-              v-model="searchQuery"
+              :value="searchQuery"
               :placeholder="$t('common.search')"
               @input="search"
             />
@@ -128,10 +128,11 @@ export default {
       this.modalData = event;
       this.$root.$emit('bv::show::modal', 'linkedApplicationModal');
     },
-    search() {
+    search(query) {
+      this.searchQuery = query;
       // reset pagination to page 1 on search
       this.currentPage = 1;
-      if (this.searchQuery === '') {
+      if (query === '') {
         this.filteredApplications = [...this.linkedApplications];
       } else {
         this.filteredApplications = this.linkedApplications.filter((item) => item.name.toLowerCase().includes(this.searchQuery.toLowerCase()));
@@ -146,11 +147,11 @@ export default {
     },
   },
   mounted() {
-    this.search();
+    this.search(this.searchQuery);
   },
   watch: {
     linkedApplications() {
-      this.search();
+      this.search(this.searchQuery);
     },
   },
   computed: {

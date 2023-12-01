@@ -12,7 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
       :options="selected.options"
       text-field="text"
       stacked
-      @input="callback.setInputValue(selected.value)" />
+      @input="callback.setInputValue($event)" />
   </BFormGroup>
   <FrField
     v-else
@@ -22,7 +22,7 @@ of the MIT license. See the LICENSE file for details. -->
     :label="selected.label"
     :name="selected.name"
     :options="selected.options"
-    @input="callback.setInputValue(selected.value)" />
+    @input="callback.setInputValue($event)" />
 </template>
 
 <script>
