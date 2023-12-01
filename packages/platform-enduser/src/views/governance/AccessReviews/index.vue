@@ -121,11 +121,11 @@ of the MIT license. See the LICENSE file for details. -->
           :subtitle="$t('governance.certificationTask.noAccessReview', { type: statusSort.text })" />
         <BPagination
           v-if="totalRows > 10"
-          v-model="currentPage"
+          :value="currentPage"
           class="pt-3 justify-content-center pagination-material-buttons border-top"
           per-page="10"
           :total-rows="totalRows"
-          @input="()=> getList()" />
+          @input="paginationChange" />
       </BCard>
     </div>
   </BContainer>
@@ -223,6 +223,10 @@ export default {
     },
   },
   methods: {
+    paginationChange(pageNumber) {
+      this.currentPage = pageNumber;
+      this.getList();
+    },
     getItems(params) {
       const { queryString } = params;
       delete params.queryString;

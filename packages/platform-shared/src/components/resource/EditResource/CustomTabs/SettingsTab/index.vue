@@ -35,7 +35,7 @@ of the MIT license. See the LICENSE file for details. -->
       @hidden="disableSave = false">
       <div>
         <FrField
-          v-model="showForm"
+          :value="showForm"
           class="mb-4"
           type="boolean"
           :disabled="editProperty.disabled"
@@ -143,7 +143,8 @@ export default {
     },
   },
   methods: {
-    toggleForm() {
+    toggleForm(showForm) {
+      this.showForm = showForm;
       // If the toggle is off set the property value to null
       if (!this.showForm) {
         this.editProperty.value = '';

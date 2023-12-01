@@ -12,12 +12,12 @@ of the MIT license. See the LICENSE file for details. -->
         v-if="showDivider"
         class="toolbar-divider mx-lg-3 d-none d-lg-block" />
       <FrSearchInput
-        v-model="filter"
+        :value="filter"
         v-if="searchEnabled"
         :placeholder="$t('common.search')"
         @clear="clear"
         @search="search"
-        @input="setHelpTextFromSearchLength"
+        @input="filterChange"
         @search-input-focus="setHelpTextFromSearchLength"
         @search-input-blur="removeHelpText"
         class="w-50"
@@ -111,7 +111,7 @@ of the MIT license. See the LICENSE file for details. -->
 
     <FrPagination
       v-if="tableData && tableData.length > 0 && !isLoading"
-      v-model="paginationPage"
+      :value="paginationPage"
       aria-controls="list-resource-table"
       :per-page="paginationPageSize"
       :last-page="lastPage"
@@ -367,6 +367,10 @@ export default {
     },
   },
   methods: {
+    filterChange(filter) {
+      this.filter = filter;
+      this.setHelpTextFromSearchLength();
+    },
     getResourceName(resourceName) {
       if (isUndefined(resourceName)) {
         return this.$route?.params?.resourceName;
@@ -459,12 +463,13 @@ export default {
     pageSizeChange(pageSize) {
       this.paginationPage = 1;
       this.paginationPageSize = pageSize;
-      this.paginationChange();
+      this.paginationChange(1);
     },
     /**
      * Repulls data based on new table page
      */
-    paginationChange() {
+    paginationChange(page) {
+      this.paginationPage = page;
       this.loadData(generateSearchQuery(this.filter, this.displayFields, this.routerParameters.managedProperties), this.displayFields, this.calculateSort(this.sortDesc, this.sortBy), this.paginationPage, this.paginationPageSize);
     },
     cancelDelete() {

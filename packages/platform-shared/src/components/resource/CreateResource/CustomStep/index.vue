@@ -9,7 +9,7 @@ of the MIT license. See the LICENSE file for details. -->
         {{ descriptionText }}
       </div>
       <FrField
-        v-model="showForm"
+        :value="showForm"
         type="boolean"
         :label="property.description"
         @input="toggleForm" />
@@ -129,7 +129,8 @@ export default {
     /**
     * Opens/Closes either the QueryFilterBuilder or the TimeConstraint compoent
     */
-    toggleForm() {
+    toggleForm(showForm) {
+      this.showForm = showForm;
       // If the toggle is off set the property value to null
       if (!this.showForm) {
         this.queryFilterField.value = '';
