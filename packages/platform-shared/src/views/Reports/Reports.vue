@@ -11,7 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
     />
     <BButtonToolbar class="justify-content-lg-end mb-4 p-0 border-0">
       <FrSearchInput
-        v-model="searchValue"
+        :value="searchValue"
         class="fr-search"
         :class="{ 'flex-grow-1' : hasFocus }"
         :placeholder="$t('reports.search')"
@@ -143,7 +143,8 @@ function onSearchClear() {
 /**
  * Runs a delayed search of the typed parameter.
  */
-function onSearchChange() {
+function onSearchChange(search) {
+  searchValue.value = search;
   currentPage.value = 1;
   const query = searchValue.value !== '' ? { queryFilter: `name sw '${searchValue.value}'` } : null;
   debounceRetrieveReportTemplates.cancel();

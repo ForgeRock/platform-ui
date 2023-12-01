@@ -40,11 +40,11 @@ of the MIT license. See the LICENSE file for details. -->
           class="d-md-inline-block">
           <FrSearchInput
             v-if="showFilter && !disableSortAndSearch"
-            v-model="filter"
+            :value="filter"
             :placeholder="$t('common.search')"
             @clear="clear"
             @search="search"
-            @input="setHelpTextFromSearchLength"
+            @input="filterChange"
             @search-input-focus="setHelpTextFromSearchLength"
             @search-input-blur="removeHelpText"
             class="w-100"
@@ -143,12 +143,12 @@ of the MIT license. See the LICENSE file for details. -->
     </BTable>
     <FrPagination
       v-if="gridData.length && gridData.length === gridPageSize || currentPage > 0"
-      v-model="currentPage"
+      :value="currentPage"
       align="center"
       hide-page-size-selector
       :dataset-size="DatasetSize.CUSTOM"
       :last-page="lastPage"
-      @input="loadGrid(currentPage)"
+      @input="loadGrid($event)"
     />
 
     <BModal
@@ -364,6 +364,10 @@ export default {
     },
   },
   methods: {
+    filterChange(filter) {
+      this.filter = filter;
+      this.setHelpTextFromSearchLength();
+    },
     async loadGrid(page) {
       this.currentPage = page;
       const doLoad = (resourceCollectionSchema) => {
