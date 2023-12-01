@@ -11,9 +11,14 @@
       "updateSuccess": "Updated your profile."
     },
     "sharing": {
+      "shareError": "There was an error sharing resource.",
       "shareSuccess": "Shared your resource.",
       "unshareSuccess": "Unshared your resource.",
+      "unshareError": "There was an error unsharing resource.",
+      "modifyError": "There was an error modifying resource.",
       "modifySuccess": "Modified resource permissions",
+      "requestAllowedError": "There was an error approving access request.",
+      "requestDeniedError": "There was an error denying access request.",
       "requestAllowedSuccess": "Access granted",
       "requestDeniedSuccess": "Access denied"
     },
@@ -74,6 +79,7 @@
       "errorRetrievingAccesReviews": "There was an error retrieving access reviews",
       "errorRetrievingPendingApprovals": "There was an error retrieving pending approvals",
       "errorRetrievingPendingRequests": "There was an error retrieving pending requests",
+      "loadingWidgetError": "There was an error loading dashboard widgets.",
       "noWidget": "No Widgets Available",
       "noWidgetSubText": "Don't worry, you still have a <a href=\"#/profile\">profile</a>.",
       "widgets": {
@@ -192,6 +198,8 @@
       "taskSuccessfullyCompleted": "Task successfully completed",
       "taskSuccessfullyRequeued": "{taskName} successfully requeued",
       "taskNoLongerAvailable": "{taskName} task deleted by admin",
+      "fetchDefinitionError": "There was an error retrieving process definition.",
+      "taskLoadError": "There was an error retrieving tasks.",
       "unassignedTasks": "Unassigned Tasks",
       "cancel": "Cancel",
       "edit": "Edit",

@@ -81,7 +81,7 @@ export default {
       }
     },
     handleCaptchaError() {
-      this.displayNotification('error', this.$t('pages.selfservice.captchaError'));
+      this.showErrorMessage('error', this.$t('pages.selfservice.captchaError'));
     },
     handleCaptchaCallback(response) {
       this.$emit('disable-next-button', false);

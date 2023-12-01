@@ -204,7 +204,7 @@ export default {
           this.$set(this.usernameItem, 'linkUrl', `${store.state.SharedStore.amBaseURL}/UI/Login?realm=${realm}&noSession=true&ForceAuth=true&authIndexType=service&authIndexValue=${usernameJourney}&goto=${encodeURIComponent(window.location.href)}`);
         }
       }, () => {
-        this.displayNotification('error', this.$t('pages.profile.accountSecurity.journeyServiceError'));
+        this.showErrorMessage('error', this.$t('pages.profile.accountSecurity.journeyServiceError'));
       });
     },
     sendUpdateKBA(payload, config) {

@@ -177,7 +177,7 @@ export default {
           }
         })
         .catch(() => {
-          this.displayNotification('error', this.$t('pages.app.notifications.failedToClear'));
+          this.showErrorMessage('error', this.$t('pages.app.notifications.failedToClear'));
         });
     },
     clearOne(index) {
@@ -195,7 +195,7 @@ export default {
           }
         })
         .catch(() => {
-          this.displayNotification('error', this.$t('pages.app.notifications.failedToRemove'));
+          this.showErrorMessage('error', this.$t('pages.app.notifications.failedToRemove'));
         });
     },
     loadData() {

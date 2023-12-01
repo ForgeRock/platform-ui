@@ -1282,7 +1282,7 @@ export default {
 
       // Verify if the user already exists on current reviewers
       if (newReviewer && this.currentReviewersSelectedModal.some((reviewer) => reviewer.id === reviewerId)) {
-        this.displayNotification('error', this.$t('governance.certificationTask.lineItemReviewersModal.editReviewerUserExistsErrorMessage'));
+        this.showErrorMessage('error', this.$t('governance.certificationTask.lineItemReviewersModal.editReviewerUserExistsErrorMessage'));
         this.isSavingReviewer = false;
         return;
       }

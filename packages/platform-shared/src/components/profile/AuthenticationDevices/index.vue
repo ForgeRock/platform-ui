@@ -273,7 +273,7 @@ export default {
           if (error.response.data.message.toUpperCase() === 'USER NOT PERMITTED.') {
             this.setModalData('errorDelete', {});
           } else {
-            this.displayNotification('error', error.response.data.message);
+            this.showErrorMessage(error, this.$t('pages.authenticationDevices.deleteError'));
           }
         });
     },
@@ -300,7 +300,7 @@ export default {
           if (error.response.data.message.toUpperCase() === 'USER NOT PERMITTED.') {
             this.setModalData('errorEdit', {});
           } else {
-            this.displayNotification('error', error.response.data.message);
+            this.showErrorMessage(error, this.$t('pages.authenticationDevices.editError'));
           }
         });
     },
