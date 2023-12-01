@@ -549,6 +549,7 @@
     "next": "Next",
     "signIn": "Sign-in",
     "termsAndConditions": "Terms & Conditions",
+    "verifyUrlError": "There was an error verifying goto url.",
     "tryAgain": "Try Again",
     "recoveryCodes": {
       "header": "Device sign-in is enabled",
@@ -594,6 +595,7 @@
       "successAdded": "{resource} successfully added",
       "successRemoved": "{resource} successfully removed",
       "details": "Details",
+      "getSessionInfoError": "There was an error getting session information.",
       "resetPassword": "Reset Password",
       "failedSavePassword": "Failed to save password",
       "successSavePassword": "Successfully saved password",
@@ -696,7 +698,9 @@
       "editModalTitle": "Edit Device Name",
       "editModalInput": "Device name",
       "editSuccess": "Device name saved",
+      "editError": "There was an error updating device.",
       "delete": "Delete device",
+      "deleteError": "There was an error deleting device.",
       "deleteModalTitle": "Delete Device?",
       "deleteModalText": "You will not be able to authenticate using this device and may result in you getting locked out of your account if you rely solely on this device.",
       "deleteSuccess": "Device deleted",
@@ -715,7 +719,8 @@
       "editPersonalInfo": "Edit Personal Info",
       "updateSuccess": "Updated your profile.",
       "failedProfileSave": "Failed to save profile changes.",
-      "failedGettingProfile": "Failed to get profile information.",
+      "failedGettingProfile": "There was an error retrieving managed resource.",
+      "getManagedResourceError": "Error retrieving managed resource.",
       "accountSecurity": {
         "title": "Sign-in & Security",
         "subtitle": "Update your username or password used to sign in.",
@@ -760,7 +765,10 @@
         "remove": "Remove device",
         "removeModalTitle": "Remove {deviceAlias}",
         "removeModalText": "This will remove access to your account from the device.",
-        "removeSuccess": "Device removed"
+        "removeDeviceError": "There was an error removing device.",
+        "removeSuccess": "Device removed",
+        "updateDeviceAliasError": "There was an error updating device alias.",
+        "loadDevicesError": "There was an error retrieving devices."
       },
       "accountControls": {
         "title": "Account Controls",

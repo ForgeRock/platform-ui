@@ -376,7 +376,7 @@ export default {
             });
         })
         .catch((error) => {
-          this.displayNotification('error', error.response.data.message);
+          this.showErrorMessage(error, this.$t('pages.profile.trustedDevices.loadDevicesError'));
         });
     },
     /**
@@ -399,7 +399,7 @@ export default {
           this.$refs.fsModal.hide();
         })
         .catch((error) => {
-          this.displayNotification('error', error.response.data.message);
+          this.showErrorMessage(error, this.$t('ages.profile.trustedDevices.updateDeviceAliasError'));
         });
     },
     /**
@@ -414,12 +414,12 @@ export default {
 
       selfServiceInstance.delete(url, { withCredentials: true })
         .then(() => {
-          this.displayNotification('success', this.$t('pages.profile.trustedDevices.removeSuccess'));
+          this.displayNotification('success', this.$t('pages.profile.trustedDevices.removeDeviceError'));
           this.loadData();
           this.$refs.fsModal.hide();
         })
         .catch((error) => {
-          this.displayNotification('error', error.response.data.message);
+          this.showErrorMessage(error, this.$t('common.removeDeviceError'));
         });
     },
   },

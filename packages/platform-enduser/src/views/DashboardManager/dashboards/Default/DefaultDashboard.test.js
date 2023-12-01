@@ -62,7 +62,7 @@ describe('DefaultDashboard.vue', () => {
     });
 
     it('error notification when getRequestService is not successful inside of loadWidgets', async () => {
-      const notificationSpy = jest.spyOn(wrapper.vm, 'displayNotification');
+      const notificationSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
       const error = { response: { data: { message: 'your widgets call failed' } } };
 
       jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => ({
@@ -71,7 +71,7 @@ describe('DefaultDashboard.vue', () => {
 
       wrapper.vm.loadWidgets();
       await flushPromises();
-      expect(notificationSpy).toHaveBeenCalledWith('error', 'your widgets call failed');
+      expect(notificationSpy).toHaveBeenCalledWith(error, 'pages.dashboard.errorGetApplications');
     });
 
     it('executes loadConsumerApplications method', async () => {

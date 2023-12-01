@@ -230,7 +230,7 @@ export default {
           this.showErrorMessage(error, this.$t('pages.access.invalidEdit'));
         });
       } else {
-        this.displayNotification('error', this.$t('pages.access.invalidEdit'));
+        this.showErrorMessage('error', this.$t('pages.access.invalidEdit'));
       }
     },
     updateField(index, newValue) {

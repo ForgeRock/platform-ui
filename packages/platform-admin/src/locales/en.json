@@ -2861,6 +2861,7 @@
   },
   "governance": {
     "certification": {
+      "getTemplateFieldValuesError": "There was an error parsing certification template.",
       "accessReviewHistory": "Access Review History",
       "accessReviewHistoryLabels": {
         "certify": "Certified",

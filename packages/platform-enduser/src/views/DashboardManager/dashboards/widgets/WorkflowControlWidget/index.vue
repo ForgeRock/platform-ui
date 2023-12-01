@@ -90,11 +90,11 @@ export default {
         .then(this.loadData)
         .catch((error) => {
           if (error.response.data.code === 403) {
-            this.displayNotification('error', this.$t('pages.workflow.taskNoLongerAvailable', { taskName: this.assignedTasks[id].name }));
+            this.showErrorMessage('error', this.$t('pages.workflow.taskNoLongerAvailable', { taskName: this.assignedTasks[id].name }));
             this.$delete(this.assignedTasks, id);
             this.loadTasks();
           } else {
-            this.displayNotification('error', error.response.data.message);
+            this.showErrorMessage(error, this.$t('pages.workflow.taskLoadError'));
           }
         });
     },
@@ -109,11 +109,11 @@ export default {
         .then(this.loadData)
         .catch((error) => {
           if (error.response.data.code === 403) {
-            this.displayNotification('error', this.$t('pages.workflow.taskNoLongerAvailable', { taskName: this.availableTasks[id].name }));
+            this.showErrorMessage('error', this.$t('pages.workflow.taskNoLongerAvailable', { taskName: this.availableTasks[id].name }));
             this.$delete(this.availableTasks, id);
             this.loadTasks();
           } else {
-            this.displayNotification('error', error.response.data.message);
+            this.showErrorMessage(error, this.$t('pages.workflow.taskLoadError'));
           }
         });
     },
@@ -125,7 +125,7 @@ export default {
         })
         .then(this.loadData)
         .catch((error) => {
-          this.displayNotification('error', error.response.data.message);
+          this.showErrorMessage(error, this.$t('pages.workflow.taskLoadError'));
         });
     },
     loadProcessDefinition(process) {
@@ -134,7 +134,7 @@ export default {
           this.$set(process, 'processDefinition', data);
         })
         .catch((error) => {
-          this.displayNotification('error', error.reponse.data.message);
+          this.showErrorMessage(error, this.$t('pages.workflow.fetchDefinitionError'));
         });
     },
     loadProcesses() {
@@ -200,7 +200,7 @@ export default {
       this.loadProcesses() // Need to load processes first so process definitions are available to tasks when loaded
         .then(() => axios.all([this.loadTasks({ groupName: 'assignedTasks' }), this.loadTasks({ groupName: 'availableTasks' })]))
         .catch((error) => {
-          this.displayNotification('error', error.response.data.message);
+          this.showErrorMessage(error, this.$t('pages.workflow.taskLoadError'));
         });
     },
   },
