@@ -168,11 +168,7 @@ export default {
           this.resources = [];
           this.requestsLoaded = true;
 
-          if (error.response) {
-            this.displayNotification('error', error.response.data.message);
-          } else {
-            this.displayNotification('error', error.message);
-          }
+          this.showErrorMessage(error, error.message);
         });
     },
     getActivity() {
@@ -186,11 +182,7 @@ export default {
       })
         .catch((error) => {
           this.activity = [];
-          if (error.response) {
-            this.displayNotification('error', error.response.data.message);
-          } else {
-            this.displayNotification('error', error.message);
-          }
+          this.showErrorMessage(error, error.message);
         });
     },
     getRequests() {
@@ -220,12 +212,7 @@ export default {
       })
         .catch((error) => {
           this.requests = {};
-
-          if (error.response) {
-            this.displayNotification('error', error.response.data.message);
-          } else {
-            this.displayNotification('error', error.message);
-          }
+          this.showErrorMessage(error, error.message);
         });
     },
     renderShareModal(resource) {
@@ -255,7 +242,7 @@ export default {
         this.loadData();
       })
         .catch((error) => {
-          this.displayNotification('error', error.response.data.message);
+          this.showErrorMessage(error, this.$t('user.sharing.shareError'));
         });
     },
     unshareResource(resourceId) {
@@ -269,7 +256,7 @@ export default {
         this.loadData();
       })
         .catch((error) => {
-          this.displayNotification('error', error.response.data.message);
+          this.showErrorMessage(error, this.$t('user.sharing.unshareError'));
         });
     },
     modifyResource(resourceId, payload, config = {}) {
@@ -289,7 +276,7 @@ export default {
           this.loadData();
         })
         .catch((error) => {
-          this.displayNotification('error', error.response.data.message);
+          this.showErrorMessage(error, config.unshare ? this.$t('user.sharing.unshareError') : this.$t('user.sharing.modifyError'));
         });
     },
     finalizeResourceAccess(id, action, index, config = {}) {
@@ -309,7 +296,7 @@ export default {
         this.displayNotification('success', successMsg);
       })
         .catch((error) => {
-          this.displayNotification('error', error.response.data.message);
+          this.showErrorMessage(error, action === 'approve' ? this.$t('user.sharing.requestAllowedError') : this.$t('user.sharing.requestDeniedError'));
         });
     },
     testForReload() {

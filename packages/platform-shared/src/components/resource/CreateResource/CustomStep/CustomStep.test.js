@@ -4,8 +4,7 @@
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
-
-import { shallowMount } from '@vue/test-utils';
+import { shallowMount, flushPromises } from '@vue/test-utils';
 import { setupTestPinia } from '../../../../utils/testPiniaHelpers';
 import * as SchemaApi from '@/api/SchemaApi';
 import CustomStep from './index';
@@ -153,5 +152,14 @@ describe('CustomStep.vue', () => {
     wrapper.vm.toggleForm();
     expect(wrapper.vm.queryFilterField.value).toEqual('');
     expect(wrapper.emitted().input[0][1]).toEqual(null);
+  });
+
+  it('should display the error notification into setConditionOptions', async () => {
+    const conditionObject = [];
+    jest.spyOn(SchemaApi, 'getSchema').mockImplementation(() => Promise.reject());
+    const showErrorMessageSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
+    await wrapper.vm.setConditionOptions(conditionObject);
+    await flushPromises();
+    expect(showErrorMessageSpy).toHaveBeenCalledWith('error', 'pages.access.invalidEdit');
   });
 });

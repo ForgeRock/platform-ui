@@ -1136,7 +1136,7 @@ describe('TaskList', () => {
 
         await flushPromises();
 
-        expect(displayNotificationSpy).toHaveBeenCalledWith('error', 'governance.certificationTask.lineItemReviewersModal.editReviewerUserExistsErrorMessage');
+        expect(showErrorMessageSpy).toHaveBeenCalledWith('error', 'governance.certificationTask.lineItemReviewersModal.editReviewerUserExistsErrorMessage');
         expect(wrapper.vm.currentReviewersSelectedModal).toEqual(reviewers);
         expect(closeEditReviewerModalSpy).not.toHaveBeenCalled();
         expect(wrapper.vm.isSavingReviewer).toBe(false);
