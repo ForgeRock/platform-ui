@@ -3375,7 +3375,7 @@
         "approvalTaskDefaultDisplayName": "Approval Task",
         "approvalTaskDescription": "Assign an approval task to users and roles. Chain tasks or use in conjunction with switch to implement serial/parallel flows.",
         "approvalTaskDisplayName": "Approval",
-        "APPROVED": "APPROVED",
+        "APPROVE": "APPROVE",
         "loadingOrchestration": "Loading {status}...",
         "deleteDraft": "Delete Draft",
         "editDraft": "Edit Draft",
@@ -3412,11 +3412,6 @@
           "reassignRequest": "Reassign request",
           "reassignTo": "Reassign to",
           "rejectRequest": "Reject request",
-          "requestAssigned": "Request Assigned",
-          "requestReassigned": "Request Reassigned",
-          "requestReminder": "Request Reminder",
-          "requestEscalated": "Request Escalated",
-          "requestExpired": "Request Expired",
           "roleOwner": "Role Owner",
           "sendEvery": "Send every",
           "sendTo": "Send to"
@@ -3424,7 +3419,6 @@
         "exclusiveGatewayDefaultDisplayName": "Validation Gateway",
         "exclusiveGatewayDescription": "Evaluate a binary response from a preceding node to select a path the orchestration should take.",
         "exclusiveGatewayDisplayName": "If/Else",
-        "EXPIRATION": "EXPIRATION",
         "export": "Export",
         "importModal": {
           "importNewDraft": "Import New Draft",
@@ -3478,6 +3472,7 @@
         "publishSuccess": "Orchestration successfully published",
         "saveError": "There was an error saving this orchestration",
         "saveSuccess": "All Changes Saved",
+        "templatesError": "There was an error retrieving email templates",
         "validationError": "Orchestration validation could not be completed"
       },
       "newDraft": "New Draft",
