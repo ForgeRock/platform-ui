@@ -83,16 +83,18 @@ of the MIT license. See the LICENSE file for details. -->
               </h1>
             </template>
           </BCol>
-          <BCol
-            v-else
-            v-for="(step, index) in steps"
-            :key="index"
-            v-show="stepIndex === index">
-            <FrCustomStep
-              :property="step"
-              :resource-name="resourceName"
-              @input="updateStepPropertyValue" />
-          </BCol>
+
+          <template v-else>
+            <BCol
+              v-for="(step, index) in steps"
+              :key="index"
+              v-show="stepIndex === index">
+              <FrCustomStep
+                :property="step"
+                :resource-name="resourceName"
+                @input="updateStepPropertyValue" />
+            </BCol>
+          </template>
         </BRow>
 
         <template #modal-footer>
@@ -312,7 +314,7 @@ export default {
           });
         } else {
           this.isSaving = false;
-          this.displayNotification('error', this.$t('pages.access.invalidCreate'));
+          this.showErrorMessage('error', this.$t('pages.access.invalidCreate'));
         }
       })
         .catch(() => { this.isSaving = false; });

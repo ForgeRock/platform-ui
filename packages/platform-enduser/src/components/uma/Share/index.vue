@@ -285,11 +285,11 @@ export default {
           if (this.newShare) {
             this.shareResource();
           } else {
-            this.displayNotification('error', this.$t('pages.uma.resources.noRequestingParty'));
+            this.showErrorMessage('error', this.$t('pages.uma.resources.noRequestingParty'));
           }
           // attempting to share with user who already has access to resource
         } else {
-          this.displayNotification('error', this.$t('pages.uma.resources.sameShareError', { requestingParty: this.newShare }));
+          this.showErrorMessage('error', this.$t('pages.uma.resources.sameShareError', { requestingParty: this.newShare }));
           this.resetModal();
         }
         // shared for first time

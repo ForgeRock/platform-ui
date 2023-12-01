@@ -355,7 +355,7 @@ export default {
           });
         })
           .catch((error) => {
-            this.displayNotification('error', error.response.data.message);
+            this.showErrorMessage(error, this.$t('errors.errorRetrievingResource'));
           });
       }
     },

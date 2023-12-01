@@ -375,20 +375,20 @@ export default {
               this.generateDisplay();
               this.settingsProperties = this.getSettingsProperties(schema.data, privilege.data);
             }).catch((error) => {
-              this.displayNotification('error', error.response.data.message);
+              this.showErrorMessage(error, this.$t('pages.access.getSessionInfoError'));
             });
           } else {
             this.generateDisplay();
             this.settingsProperties = this.getSettingsProperties(schema.data, privilege.data);
           }
         }).catch((error) => {
-          this.displayNotification('error', error.response.data.message);
+          this.showErrorMessage(error, this.$t('errors.errorRetrievingResource'));
         });
 
         this.loadLinkedApplicationsData();
       }))
         .catch((error) => {
-          this.displayNotification('error', error.response.data.message);
+          this.showErrorMessage(error, this.$t('pages.access.getSchemaError'));
         });
     },
     loadLinkedApplicationsData() {
@@ -638,7 +638,7 @@ export default {
             path: `/${this.$route.meta.listRoute}/${this.resourceType}/${this.resourceName}`,
           });
         }).catch((error) => {
-          this.displayNotification('error', error.response.data.message);
+          this.showErrorMessage(error, this.$t('errors.deleteObject', { object: this.resourceName }));
         }).finally(() => {
           this.isDeleting = false;
           this.$root.$emit('bv::hide::modal', 'deleteModal');
