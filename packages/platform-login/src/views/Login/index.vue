@@ -1239,7 +1239,7 @@ export default {
               }
             })
             .catch((error) => {
-              this.displayNotification('error', error.response.data.message);
+              this.showErrorMessage(error, this.$t('login.verifyUrlError'));
               resolve();
             });
         } else if (has(step, 'payload.detail.failureUrl') && step.payload.detail.failureUrl.length) {

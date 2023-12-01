@@ -141,7 +141,7 @@ export default {
           this.profile = results.data;
         })
         .catch((error) => {
-          this.displayNotification('error', error.response.data.message);
+          this.showErrorMessage(error, this.$t('user.profile.getManagedResourceError'));
         });
     },
     updateProfile(payload, config) {
@@ -167,8 +167,7 @@ export default {
           config.onSuccess();
         }
       }).catch((error) => {
-        const errorMsg = config.errorMsg || error.response.data.message;
-        this.displayNotification('error', errorMsg);
+        this.showErrorMessage(error, config.errorMsg);
 
         if (config.onError) {
           config.onError(error);

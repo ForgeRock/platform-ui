@@ -34,7 +34,7 @@ describe('NotificationMixin', () => {
   });
 
   it('Displays an error notification', () => {
-    wrapper.vm.displayNotification('error', 'message');
+    wrapper.vm.showErrorMessage('error', 'message');
     expect(notify).toHaveBeenCalledWith({ type: 'danger', text: 'message' });
   });
 

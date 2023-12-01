@@ -195,7 +195,7 @@ export default {
         this.$emit('refresh-data');
       },
       () => {
-        this.displayNotification('error', this.$t('pages.access.invalidEdit'));
+        this.showErrorMessage('error', this.$t('pages.access.invalidEdit'));
       });
     },
     setConditionOptions() {
@@ -238,7 +238,7 @@ export default {
         });
       },
       () => {
-        this.displayNotification('error', this.$t('pages.access.invalidEdit'));
+        this.showErrorMessage('error', this.$t('pages.access.invalidEdit'));
       });
     },
   },

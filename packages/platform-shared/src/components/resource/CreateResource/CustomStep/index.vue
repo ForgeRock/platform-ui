@@ -186,7 +186,7 @@ export default {
             this.loading = false;
           },
           () => {
-            this.displayNotification('error', this.$t('pages.access.errorGettingSchema'));
+            this.showErrorMessage('error', this.$t('pages.access.errorGettingSchema'));
           },
         );
       } else {
@@ -202,14 +202,11 @@ export default {
               });
 
               this.loading = false;
-            }), () => {
-              this.displayNotification('error', this.$t('pages.access.errorGettingSchema'));
-            });
+            }));
           },
-          () => {
-            this.displayNotification('error', this.$t('pages.access.errorGettingSchema'));
-          },
-        );
+        ).catch(() => {
+          this.showErrorMessage('error', this.$t('pages.access.errorGettingSchema'));
+        });
       }
     },
     /**
@@ -255,7 +252,7 @@ export default {
         });
       },
       () => {
-        this.displayNotification('error', this.$t('pages.access.invalidEdit'));
+        this.showErrorMessage('error', this.$t('pages.access.invalidEdit'));
       });
     },
   },

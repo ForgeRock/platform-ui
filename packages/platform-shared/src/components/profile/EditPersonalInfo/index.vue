@@ -245,7 +245,7 @@ export default {
                 }
               });
             } else {
-              this.displayNotification('error', this.$t('pages.profile.failedProfileSave'));
+              this.showErrorMessage('error', this.$t('pages.profile.failedProfileSave'));
             }
           }
         });

@@ -148,7 +148,7 @@ export default {
         this.setPrivileges(privilege, schema);
       });
     }), (error) => {
-      this.displayNotification('error', error.response.data.message);
+      this.showErrorMessage(error, this.$t('errors.retrievingObject', { object: this.$route.params.resourceName }));
     });
   },
   methods: {

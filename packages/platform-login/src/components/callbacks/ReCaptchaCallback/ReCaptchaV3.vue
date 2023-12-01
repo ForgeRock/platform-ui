@@ -41,7 +41,7 @@ export default {
         });
     },
     handleCaptchaError() {
-      this.displayNotification('error', this.$t('pages.selfservice.captchaError'));
+      this.showErrorMessage('error', this.$t('pages.selfservice.captchaError'));
     },
   },
 };
