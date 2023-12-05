@@ -2264,6 +2264,12 @@
       "reportURIPlaceholder": "Reporting Endpoint",
       "selectDirective": "Select a directive",
       "specifyKeywords": "Specify keywords and valid hosts for this directive."
+    },
+    "notifications": {
+      "saved": "Directive Saved",
+      "deleted": "Directive Deleted",
+      "activated": "{policy} Activated",
+      "deactivated": "{policy} Deactivated"
     }
   },
   "esv": {
