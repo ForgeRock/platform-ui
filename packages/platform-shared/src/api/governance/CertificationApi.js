@@ -356,13 +356,13 @@ export function certifyItems(certId, itemIds) {
 
 /**
  * reassign multiple items
- * @param {object} certId certification id
- * @param {String} itemIds ids of items to reassign
+ * @param {String} certId certification id
+ * @param {Object} payload ids, newActorId, and permissions
  * @returns {Promise}
  */
-export function reassignCertificationTasks(certId, itemIds) {
+export function reassignCertificationTasks(certId, payload) {
   const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/reassign`;
-  return generateIgaApi().post(resourceUrl, itemIds);
+  return generateIgaApi().post(resourceUrl, payload);
 }
 
 /**
@@ -395,6 +395,81 @@ export function exceptionItems(certId, itemIds) {
 export function forwardItems(certId, payload) {
   const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/forward`;
   return generateIgaApi().post(resourceUrl, payload);
+}
+
+/**
+ *
+ * All items certification actions
+ *
+ */
+/**
+
+ * certify all items in a campaign
+ * @param {String} certId certification id
+ * @param {String} actorId id of current actor
+ * @returns {Promise}
+ */
+export function certifyAllItems(certId, actorId) {
+  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/certify?selectAllActorId=${actorId}`;
+  return generateIgaApi().post(resourceUrl);
+}
+/**
+ * reassign all certification items
+ * @param {String} certId certification id
+ * @param {String} actorId id of current actor
+ * @param {Object} payload newActorId, and permissions
+ * @returns {Promise}
+ */
+export function reassignAllCertificationTasks(certId, actorId, payload) {
+  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/reassign?selectAllActorId=${actorId}`;
+  return generateIgaApi().post(resourceUrl, payload);
+}
+
+/**
+ * revoke all certification items
+ * @param {String} certId certification id
+ * @param {String} actorId id of current actor
+ * @param {Object} payload comments
+ * @returns {Promise}
+ */
+export function revokeAllItems(certId, actorId, payload) {
+  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/revoke?selectAllActorId=${actorId}`;
+  return generateIgaApi().post(resourceUrl, payload);
+}
+
+/**
+ * allow exception for all certification items
+ * @param {String} certId certification id
+ * @param {String} actorId id of current actor
+ * @param {Object} payload comments
+ * @returns {Promise}
+ */
+export function exceptionAllItems(certId, actorId, payload) {
+  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/exception?selectAllActorId=${actorId}`;
+  return generateIgaApi().post(resourceUrl, payload);
+}
+
+/**
+ * forward all certification items
+ * @param {String} certId certification id
+ * @param {String} actorId id of current actor
+ * @param {Object} payload newActorId and comments
+ * @returns {Promise}
+ */
+export function forwardAllItems(certId, actorId, payload) {
+  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/forward?selectAllActorId=${actorId}`;
+  return generateIgaApi().post(resourceUrl, payload);
+}
+
+/**
+ * Reset decisions for all certification tasks
+ * @param {String} certId certification id
+ * @param {String} actorId id of current actor
+ * @returns {Promise}
+ */
+export function resetAllItems(certId, actorId) {
+  const url = `${governanceCertificationBaseUrl}/${certId}/items/reset?selectAllActorId=${actorId}&_action=reset`;
+  return generateIgaApi().post(url);
 }
 
 /**

@@ -156,12 +156,12 @@ describe('TaskList', () => {
     it('should return false if the allSelected variable is false and there is no selected tasks', () => {
       wrapper.vm.allSelected = false;
       wrapper.vm.selectedItems = [];
-      const result = wrapper.vm.isItemSelected('test');
+      const result = wrapper.vm.isItemSelected({ id: 'test' });
       expect(result).toEqual(false);
     });
     it('should return true if the task id is selected', () => {
       wrapper.vm.allSelected = false;
-      wrapper.vm.selectedItems = ['test-id'];
+      wrapper.vm.selectedItems = [{ id: 'test-id' }];
       const result = wrapper.vm.isItemSelected('test-id');
       expect(result).toEqual(true);
     });
@@ -177,7 +177,7 @@ describe('TaskList', () => {
     });
     it('should set the tasks data with the mapped data with selected property', () => {
       shallowMountComponent();
-      wrapper.vm.selectedItems = ['test-id'];
+      wrapper.vm.selectedItems = [{ id: 'test-id' }];
       const resource = {
         data: {
           result: [{
@@ -556,12 +556,12 @@ describe('TaskList', () => {
       CertificationApi.certifyItems.mockImplementation(() => Promise.resolve({ data: 'results' }));
     });
     it('should toggle the saving status to add a loader in the header', () => {
-      wrapper.vm.bulkAction('certify');
+      wrapper.vm.bulkCertify();
       expect($emit).toBeCalledWith('change-saving');
     });
     it('should call updateItemList after the certification is completed', async () => {
       const updateItemListSpy = jest.spyOn(wrapper.vm, 'updateItemList');
-      wrapper.vm.bulkAction('certify');
+      wrapper.vm.bulkCertify();
 
       await flushPromises();
       expect(updateItemListSpy).toHaveBeenCalledWith('certifySuccess');
@@ -610,7 +610,10 @@ describe('TaskList', () => {
   describe('open confirm action modal', () => {
     it('should set the modal props correctly', () => {
       const expectedValue = {
+        confirmDescription: undefined,
+        confirmTitle: undefined,
         title: 'title',
+        initialStep: 'DETAILS',
         description: 'description',
         placeHolder: 'placeHolder',
         okLabel: 'okLabel',

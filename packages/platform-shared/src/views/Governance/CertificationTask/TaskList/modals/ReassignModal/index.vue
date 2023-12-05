@@ -62,7 +62,7 @@ import {
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrGovResourceSelect from '@forgerock/platform-shared/src/components/governance/GovResourceSelect';
-import { reassignCertificationTasks } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
+import { reassignCertificationTasks, reassignAllCertificationTasks } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import { ValidationObserver } from 'vee-validate';
 
 /**
@@ -125,6 +125,14 @@ export default {
     };
   },
   props: {
+    actorId: {
+      type: String,
+      default: '',
+    },
+    allSelected: {
+      type: Boolean,
+      default: false,
+    },
     /**
      * this is the campaign details object
     */
@@ -169,12 +177,22 @@ export default {
           ? this.reassignToUser
           : this.reassignToRole,
       };
-      reassignCertificationTasks(this.campaignId, payload).catch((error) => {
-        this.showErrorMessage(error, this.$t('governance.certificationTask.errors.reassignError'));
-      }).finally(() => {
-        this.toggleSaving();
-        this.$emit('refresh-data');
-      });
+      if (this.allSelected) {
+        delete payload.ids;
+        reassignAllCertificationTasks(this.campaignId, this.actorId, payload).catch((error) => {
+          this.showErrorMessage(error, this.$t('governance.certificationTask.errors.reassignError'));
+        }).finally(() => {
+          this.toggleSaving();
+          this.$emit('refresh-data');
+        });
+      } else {
+        reassignCertificationTasks(this.campaignId, payload).catch((error) => {
+          this.showErrorMessage(error, this.$t('governance.certificationTask.errors.reassignError'));
+        }).finally(() => {
+          this.toggleSaving();
+          this.$emit('refresh-data');
+        });
+      }
     },
   },
   computed: {
