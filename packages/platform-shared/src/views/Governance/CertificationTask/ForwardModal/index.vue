@@ -8,8 +8,6 @@ of the MIT license. See the LICENSE file for details. -->
     ref="observer">
     <BModal
       :id="modalId"
-      :ok-disabled="invalid"
-      :ok-title="$t('governance.certificationTask.actionsModal.forwardItem')"
       :title="$t('governance.certificationTask.actionsModal.forwardItem')"
       :static="isTesting"
       @ok="forwardItem"
@@ -17,25 +15,68 @@ of the MIT license. See the LICENSE file for details. -->
       ok-variant="info"
       size="lg">
       <FrForwardModalContent
+        v-if="step === STEPS.DETAILS"
         :description-text="$t('governance.certificationTask.actionsModal.forwardItemDescription')"
         :comment-label="$t('governance.certificationTask.actionsModal.comment')"
         @request-comment="updateComment"
         @request-update-actors="updateActors"
       />
+      <template v-if="step === STEPS.CONFIRM">
+        <div class="modal-container">
+          <p>{{ $t(`governance.certificationTask.actionsModal.forwardItemConfirmDescription`) }}</p>
+          <div class="alert fr-alert alert-warning">
+            <FrIcon
+              class="mr-2"
+              name="error_outline"
+            /><span>{{ $t('governance.certificationTask.actionsModal.warningDataMayBeInaccurate') }}</span>
+          </div>
+        </div>
+      </template>
+      <template #modal-footer="{ cancel, ok }">
+        <div
+          v-if="step === STEPS.CONFIRM"
+          class="flex-grow-1">
+          <BButton
+            variant="link"
+            @click="prevStep">
+            {{ $t('common.previous') }}
+          </BButton>
+        </div>
+        <BButton
+          variant="link"
+          @click="cancel()">
+          {{ $t('common.cancel') }}
+        </BButton>
+        <BButton
+          variant="primary"
+          data-testid="btn-adv-step"
+          :disabled="invalid"
+          @click="okHandler(ok)">
+          {{ step === STEPS.DETAILS && showConfirm ? $t('common.next') : $t('governance.certificationTask.actionsModal.forwardItem') }}
+        </BButton>
+      </template>
     </BModal>
   </ValidationObserver>
 </template>
 
 <script>
-import { BModal } from 'bootstrap-vue';
+import { BButton, BModal } from 'bootstrap-vue';
 import { ValidationObserver } from 'vee-validate';
 import FrForwardModalContent from '@forgerock/platform-shared/src/views/Governance/ForwardModalContent';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+
+const STEPS = {
+  DETAILS: 'DETAILS',
+  CONFIRM: 'CONFIRM',
+};
 
 export default {
   name: 'CertificationForwardModal',
   components: {
+    BButton,
     BModal,
     FrForwardModalContent,
+    FrIcon,
     ValidationObserver,
   },
   props: {
@@ -51,14 +92,21 @@ export default {
       type: String,
       default: 'CertificationTaskForwardAccountModal',
     },
+    showConfirm: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       comment: '',
       isTesting: false,
       newActorId: '',
+      step: STEPS.DETAILS,
+      STEPS,
     };
   },
+
   methods: {
     forwardItem() {
       const payload = {
@@ -75,6 +123,20 @@ export default {
     updateComment(value) {
       this.comment = value;
     },
+    okHandler(ok) {
+      if (this.step === STEPS.DETAILS) {
+        this.nextStep();
+      } else {
+        this.forwardItem();
+        ok();
+      }
+    },
+    nextStep() {
+      this.step = STEPS.CONFIRM;
+    },
+    prevStep() {
+      this.step = STEPS.DETAILS;
+    },
   },
 };
 </script>
@@ -82,5 +144,16 @@ export default {
 <style lang="scss" scoped>
 .input-line-height {
   line-height: 1.2;
+}
+
+.fr-alert {
+    display: flex;
+    line-height: 1.25;
+
+  &.alert-warning {
+    border-left: 5px solid $warning;
+    background-color: $fr-alert-warning-bg-color;
+    color: $fr-alert-text-color;
+  }
 }
 </style>
