@@ -1,3 +1,7 @@
+<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+
+This software may be modified and distributed under the terms
+of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <BButton
@@ -15,6 +19,10 @@
         </label>
       </template>
       <BDropdownItem
+        @click="$emit('select-all-tasks', true)">
+        {{ $t('governance.certificationTask.selectAllTasks') }}
+      </BDropdownItem>
+      <BDropdownItem
         @click="$emit('select-tasks', true)">
         {{ $t('governance.certificationTask.selectAllTasksThisPage') }}
       </BDropdownItem>
@@ -22,61 +30,6 @@
       <BDropdownItem
         @click="$emit('select-tasks', false)">
         {{ $t('governance.certificationTask.deselectAll') }}
-      </BDropdownItem>
-    </BDropdown>
-    <BDropdown
-      v-if="showActions"
-      toggle-class="p-1"
-      variant="link">
-      <template #button-content>
-        <BButton
-          variant="none"
-          class="text-decoration-none pr-2 border-left">
-          {{ $t('common.actions') }}
-        </BButton>
-      </template>
-      <BDropdownItem
-        v-if="enableBulkCertify"
-        @click="$emit('bulk-action', 'certify')">
-        <FrIcon
-          :data-testid="`cert-bulk-certify-${certGrantType}`"
-          class="mr-2"
-          name="check" />
-        {{ $t('governance.certificationTask.actions.certify') }}
-      </BDropdownItem>
-      <BDropdownItem
-        v-if="enableBulkRevoke"
-        @click="$emit('bulk-action', 'revoke')">
-        <FrIcon
-          class="mr-2"
-          name="block" />
-        {{ $t('governance.certificationTask.actions.revoke') }}
-      </BDropdownItem>
-      <BDropdownItem
-        v-if="enableBulkException"
-        @click="$emit('bulk-action', 'exception')">
-        <FrIcon
-          class="mr-2"
-          name="schedule" />
-        {{ $t('governance.certificationTask.actions.allowException') }}
-      </BDropdownItem>
-      <BDropdownDivider v-if="(enableBulkCertify || enableBulkRevoke || enableBulkException) && (enableBulkReassign || enableBulkForward)" />
-      <BDropdownItem
-        v-if="enableBulkReassign"
-        @click="$emit('bulk-action', 'reassign')">
-        <FrIcon
-          class="mr-2"
-          name="supervisor_account" />
-        {{ $t('governance.certificationTask.actions.reassign') }}
-      </BDropdownItem>
-      <BDropdownItem
-        v-if="enableBulkForward"
-        @click="$emit('bulk-action', 'forward')">
-        <FrIcon
-          :data-testid="`cert-bulk-forward-${certGrantType}`"
-          class="mr-2"
-          name="redo" />
-        {{ $t('governance.certificationTask.actions.forward') }}
       </BDropdownItem>
     </BDropdown>
   </div>
@@ -115,26 +68,6 @@ export default {
     selectedTasks: {
       type: Array,
       default: () => ([]),
-    },
-  },
-  computed: {
-    enableBulkCertify() {
-      return this.selectedTasks.findIndex((task) => task.permissions?.certify === false) === -1;
-    },
-    enableBulkRevoke() {
-      return this.selectedTasks.findIndex((task) => task.permissions?.revoke === false) === -1;
-    },
-    enableBulkException() {
-      if (this.campaignDetails.exceptionDuration === 0) return false;
-      return this.selectedTasks.findIndex((task) => task.permissions?.exception === false) === -1;
-    },
-    enableBulkReassign() {
-      if (!this.campaignDetails.enableReassign) return false;
-      return this.selectedTasks.findIndex((task) => task.permissions?.reassign === false) === -1;
-    },
-    enableBulkForward() {
-      if (!this.campaignDetails.enableForward) return false;
-      return this.selectedTasks.findIndex((task) => task.permissions?.forward === false) === -1;
     },
   },
 };

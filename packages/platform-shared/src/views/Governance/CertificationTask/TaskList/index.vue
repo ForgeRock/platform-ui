@@ -10,10 +10,11 @@ of the MIT license. See the LICENSE file for details. -->
           v-if="campaignDetails.allowBulkCertify && !isStaged"
           @bulk-action="bulkAction"
           @select-tasks="selectTasks($event)"
+          @select-all-tasks="selectAllTasks"
           :campaign-details="campaignDetails"
           :cert-grant-type="certificationGrantType"
           :selected-tasks="selectedItems"
-          :show-actions="selectedItems.length > 0" />
+        />
       </div>
       <div>
         <BButton
@@ -233,10 +234,17 @@ of the MIT license. See the LICENSE file for details. -->
     <BPagination
       v-if="totalRows > pageSize"
       v-model="paginationPage"
-      class="py-3 justify-content-center pagination-material-buttons"
+      :class="`py-3 justify-content-center pagination-material-buttons ${selectedCount > 0 ? 'action-bar-visible' : ''}`"
       :per-page="pageSize"
       :total-rows="totalRows"
       @input="paginationChange" />
+    <FrFloatingActionBar
+      :count="selectedCount"
+      @deselect="() => { selectTasks(false) }"
+      @certify="() => { bulkAction('certify') }"
+      @revoke="() => { bulkAction('revoke') }"
+      @action="bulkAction"
+    />
     <!-- Modals -->
     <FrSortModal
       @update-columns="updateColumns"
@@ -245,6 +253,7 @@ of the MIT license. See the LICENSE file for details. -->
     <FrForwardModal
       :id="currentItemId"
       :bulk="isBulk"
+      :show-confirm="showConfirm"
       :modal-id="getModalId('forward')"
       @forward-item="forward"
       @forward-bulk="bulkForward" />
@@ -256,7 +265,9 @@ of the MIT license. See the LICENSE file for details. -->
       :modal-id="getModalId('reassign')"
       @refresh-data="updateItemList('reassignSuccess')"
       :campaign-id="campaignId"
-      :selected-tasks="selectedItems" />
+      :selected-tasks="selectedItems"
+      :all-selected="allSelected"
+      :actor-id="actorId" />
     <FrCommentsModal
       :enable-add-comments="enableAddComments"
       :comments="currentCommentsSelectedModal"
@@ -330,10 +341,13 @@ import {
 import {
   certifyItem,
   certifyItems,
+  certifyAllItems,
   exceptionItem,
   exceptionItems,
-  forwardItems,
+  exceptionAllItems,
   forwardItem,
+  forwardItems,
+  forwardAllItems,
   getAccountDetails,
   getCertificationCounts,
   getCertificationTasksListByCampaign,
@@ -342,7 +356,9 @@ import {
   getUserDetailsByType,
   reassignItem,
   resetItem,
+  resetAllItems,
   revokeItems,
+  revokeAllItems,
   revokeItem,
   saveComment,
   updateActors,
@@ -360,11 +376,12 @@ import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrGovernanceUserDetailsModal from '@forgerock/platform-shared/src/components/governance/UserDetailsModal';
+import FrFloatingActionBar from '@forgerock/platform-shared/src/components/FloatingActionBar/FloatingActionBar';
 import FrAccountModal from './modals/AccountModal';
 import FrActivityModal from './modals/ActivityModal';
 import FrAddCommentModal from './modals/AddCommentModal';
 import FrApplicationModal from './modals/ApplicationModal';
-import FrConfirmActionModal from './modals/ConfirmActionModal';
+import FrConfirmActionModal, { STEPS } from './modals/ConfirmActionModal';
 import FrCommentsModal from './modals/CommentsModal';
 import FrEditReviewerModal from './modals/EditReviewerModal';
 import FrEntitlmentModal from './modals/EntitlementModal';
@@ -419,6 +436,7 @@ export default {
     FrRoleModal,
     FrSortModal,
     FrField,
+    FrFloatingActionBar,
     FrGovernanceUserDetailsModal,
     FrIcon,
     FrNoData,
@@ -471,22 +489,37 @@ export default {
     },
   },
   data() {
+    const bulkCertifyModalProps = {
+      confirmTitle: 'certifyConfirmTitle',
+      confirmDescription: 'certifyConfirmDescription',
+      okLabel: 'certifyTitle',
+      okFunction: this.bulkCertify,
+      initialStep: STEPS.CONFIRM,
+    };
     const bulkRevokeModalProps = {
       title: 'revokeTitle',
       description: 'revokeDescription',
       placeHolder: 'revokePlaceHolder',
+      confirmTitle: 'revokeConfirmTitle',
+      confirmDescription: 'revokeConfirmDescription',
       okLabel: 'revokeTitle',
       okFunction: this.bulkRevoke,
+      initialStep: STEPS.DETAILS,
     };
     const bulkExceptionModalProps = {
       title: 'exceptionTitle',
       description: 'exceptionDescription',
       placeHolder: 'exceptionPlaceHolder',
+      confirmTitle: 'exceptionConfirmTitle',
+      confirmDescription: 'exceptionConfirmDescription',
       okLabel: 'exceptionTitle',
       okFunction: this.bulkException,
+      initialStep: STEPS.DETAILS,
     };
 
     return {
+      allSelected: false,
+      bulkCertifyModalProps,
       bulkExceptionModalProps,
       bulkRevokeModalProps,
       certificationListColumns: [],
@@ -523,6 +556,7 @@ export default {
       paginationPage: 1,
       selectedItems: [],
       showFiltersSection: false,
+      showConfirm: false,
       sortDir: 'asc',
       sortBy: 'user',
       tasksFieldsToSort: [],
@@ -652,6 +686,9 @@ export default {
     showAccountDrilldown() {
       return this.isGroupByAccounts && !this.isStaged;
     },
+    selectedCount() {
+      return this.allSelected ? this.totalRows : this.selectedItems.length;
+    },
   },
   async mounted() {
     try {
@@ -705,6 +742,9 @@ export default {
         if (this.showGroupBy && this.certificationGrantType === 'accounts') {
           this.clearRowSelected();
         }
+        if (this.allSelected) {
+          this.selectAllTasks();
+        }
       });
     },
     sortChange({ sortBy, sortDesc }) {
@@ -726,7 +766,7 @@ export default {
       }
     },
     isItemSelected(itemId) {
-      return this.allSelected || this.selectedItems.some((item) => item === itemId);
+      return this.allSelected || this.selectedItems.some((item) => item.id === itemId);
     },
     loadItemsList(resourceData, page) {
       this.totalRows = resourceData.data.totalCount;
@@ -773,7 +813,7 @@ export default {
      */
     updateItemList(message, page = 1) {
       this.displayNotification('success', this.$t(`governance.certificationTask.success.${message}`));
-      this.selectedItems = [];
+      this.selectTasks(false);
       this.clearRowSelected();
       this.getItems(page);
       this.$emit('update-details');
@@ -876,14 +916,26 @@ export default {
      * @param {Object} item single certification item
      */
     selectTask(selectValue, item) {
+      this.allSelected = false;
       if (selectValue) this.selectedItems.push(item);
       else this.selectedItems = this.selectedItems.filter((task) => task.id !== item.id);
+      const tasksListClone = cloneDeep(this.items);
+      this.items = tasksListClone.map((task) => {
+        if (task.id === item.id) {
+          return {
+            ...task,
+            selected: selectValue,
+          };
+        }
+        return task;
+      });
     },
     /**
      * Select all tasks for bulk actions
      * @param {Boolean} selectValue select or deselect items
      */
     selectTasks(selectValue) {
+      this.allSelected = false;
       this.selectedItems = [];
       const tasksListClone = cloneDeep(this.items);
       this.items = tasksListClone.map((task) => {
@@ -893,6 +945,14 @@ export default {
           selected: selectValue,
         };
       });
+    },
+    /**
+     * Select all tasks for bulk actions
+     * @param {Boolean} selectValue select or deselect items
+     */
+    selectAllTasks() {
+      this.selectTasks(true);
+      this.allSelected = true;
     },
     /**
      * Determines whether the button is to be displayed pressed depending on
@@ -962,7 +1022,7 @@ export default {
           this.openReviewersModal(item);
           break;
         case 'forward':
-          this.openForwardModal(item.id, false);
+          this.openForwardModal(item.id, false, false);
           break;
         case 'comment':
           this.openAddCommentModal(item.id);
@@ -1117,16 +1177,9 @@ export default {
      * @param {String} type action type
      */
     bulkAction(type) {
-      let payload = {};
       switch (type) {
         case 'certify':
-          this.toggleSaving();
-          payload = { ids: this.selectedItems.map((task) => (task.id)) };
-          certifyItems(this.campaignId, payload)
-            .then(() => {
-              this.toggleSaving();
-              this.updateItemList('certifySuccess');
-            });
+          this.openActionConfirmModal(this.bulkCertifyModalProps);
           break;
         case 'revoke':
           this.openActionConfirmModal(this.bulkRevokeModalProps);
@@ -1138,46 +1191,123 @@ export default {
           this.$root.$emit('bv::show::modal', this.getModalId('reassign'));
           break;
         case 'forward':
-          this.openForwardModal(null, true);
+          this.openForwardModal(null, true, true);
+          break;
+        case 'clearDecisions':
+          this.bulkReset();
           break;
         default:
           break;
       }
     },
+    bulkCertify() {
+      this.toggleSaving();
+      if (this.allSelected) {
+        certifyAllItems(this.campaignId, this.actorId).then(() => {
+          this.toggleSaving();
+          setTimeout(() => {
+            this.updateItemList('certifySuccess');
+          }, 500);
+        });
+      } else {
+        const payload = { ids: this.selectedItems.map((task) => (task.id)) };
+        certifyItems(this.campaignId, payload)
+          .then(() => {
+            this.toggleSaving();
+            this.updateItemList('certifySuccess');
+          });
+      }
+    },
     bulkRevoke(comment) {
       this.toggleSaving();
       const payload = { comment, ids: this.selectedItems.map((task) => (task.id)) };
-      revokeItems(this.campaignId, payload)
-        .then(() => {
-          this.toggleSaving();
-          this.updateItemList('revokeSuccess');
-        })
-        .catch((error) => {
-          this.showErrorMessage(error, this.$t('governance.certificationTask.errors.revokeError'));
-        });
+      this.toggleSaving();
+      if (this.allSelected) {
+        delete payload.ids;
+        revokeAllItems(this.campaignId, this.actorId, payload)
+          .then(() => {
+            this.toggleSaving();
+            setTimeout(() => {
+              this.updateItemList('revokeSuccess');
+            }, 500);
+          })
+          .catch((error) => {
+            this.showErrorMessage(error, this.$t('governance.certificationTask.errors.revokeError'));
+          });
+      } else {
+        revokeItems(this.campaignId, payload)
+          .then(() => {
+            this.toggleSaving();
+            this.updateItemList('revokeSuccess');
+          })
+          .catch((error) => {
+            this.showErrorMessage(error, this.$t('governance.certificationTask.errors.revokeError'));
+          });
+      }
     },
     bulkException(comment) {
       this.toggleSaving();
       const payload = { comment, ids: this.selectedItems.map((task) => (task.id)) };
-      exceptionItems(this.campaignId, payload)
-        .then(() => {
-          this.toggleSaving();
-          this.updateItemList('allowExceptionSuccess');
-        })
-        .catch((error) => {
-          this.showErrorMessage(error, this.$t('governance.certificationTask.errors.allowExceptionError'));
-        });
+      if (this.allSelected) {
+        delete payload.ids;
+        exceptionAllItems(this.campaignId, this.actorId, payload)
+          .then(() => {
+            this.toggleSaving();
+            setTimeout(() => {
+              this.updateItemList('allowExceptionSuccess');
+            }, 500);
+          })
+          .catch((error) => {
+            this.showErrorMessage(error, this.$t('governance.certificationTask.errors.allowExceptionError'));
+          });
+      } else {
+        exceptionItems(this.campaignId, payload)
+          .then(() => {
+            this.toggleSaving();
+            this.updateItemList('allowExceptionSuccess');
+          })
+          .catch((error) => {
+            this.showErrorMessage(error, this.$t('governance.certificationTask.errors.allowExceptionError'));
+          });
+      }
     },
     bulkForward({ comment, newActorId }) {
       this.toggleSaving();
       const payload = { comment, newActorId, ids: this.selectedItems.map((task) => (task.id)) };
-      forwardItems(this.campaignId, payload)
+      if (this.allSelected) {
+        delete payload.ids;
+        forwardAllItems(this.campaignId, this.actorId, payload)
+          .then(() => {
+            this.toggleSaving();
+            setTimeout(() => {
+              this.updateItemList('onForwardSuccess');
+            }, 500);
+          })
+          .catch((error) => {
+            this.showErrorMessage(error, this.$t('governance.certificationTask.errors.onForwardError'));
+          });
+      } else {
+        forwardItems(this.campaignId, payload)
+          .then(() => {
+            this.toggleSaving();
+            this.updateItemList('onForwardSuccess');
+          })
+          .catch((error) => {
+            this.showErrorMessage(error, this.$t('governance.certificationTask.errors.onForwardError'));
+          });
+      }
+    },
+    bulkReset() {
+      this.toggleSaving();
+      resetAllItems(this.campaignId, this.actorId)
         .then(() => {
           this.toggleSaving();
-          this.updateItemList('onForwardSuccess');
+          setTimeout(() => {
+            this.updateItemList('resetSuccess');
+          }, 500);
         })
         .catch((error) => {
-          this.showErrorMessage(error, this.$t('governance.certificationTask.errors.onForwardError'));
+          this.showErrorMessage(error, this.$t('governance.certificationTask.errors.resetError'));
         });
     },
     getModalId(suffix) {
@@ -1189,14 +1319,20 @@ export default {
       placeHolder,
       okLabel,
       okFunction,
+      initialStep,
+      confirmDescription,
+      confirmTitle,
     }, currentItemId = null) {
       this.currentItemId = currentItemId;
       this.confirmActionModalProps = {
         title,
         description,
+        confirmDescription,
+        confirmTitle,
         placeHolder,
         okLabel,
         okFunction,
+        initialStep: initialStep || STEPS.DETAILS,
       };
       this.$root.$emit('bv::show::modal', this.getModalId('confirm-action'));
     },
@@ -1243,9 +1379,10 @@ export default {
       this.currentReviewerSelectedModal = null;
       this.currentUserPermissions = {};
     },
-    openForwardModal(id, isBulk) {
+    openForwardModal(id, isBulk, showConfirm) {
       this.currentItemId = id;
       this.isBulk = isBulk;
+      this.showConfirm = showConfirm;
       this.$root.$emit('bv::show::modal', this.getModalId('forward'));
     },
     openSortModal() {
@@ -1377,6 +1514,10 @@ export default {
 .comments-counter {
   right: 0.25rem;
   top: -0.25rem;
+}
+
+.action-bar-visible {
+  padding-bottom: 120px !important;
 }
 
 ::v-deep {

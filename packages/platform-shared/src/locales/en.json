@@ -73,6 +73,7 @@
     "deleteObject": "Delete {object}",
     "descending": "Descending",
     "description": "Description",
+    "deselect": "Deselect",
     "details": "Details",
     "direct": "Direct",
     "directive": "Directive",
@@ -198,6 +199,7 @@
     "search": "Search",
     "searchPlaceholder": "Search {searchItem}",
     "select": "Select",
+    "selectedColon": "Selected:",
     "selectSelection": "Select {selection}",
     "secret": "Secret",
     "secrets": "Secrets",
@@ -1293,6 +1295,7 @@
         "forward": "Forward",
         "reassign": "Reassign",
         "revoke": "Revoke",
+        "reset": "Clear decisions",
         "viewActivity": "View Activity",
         "viewReviewers": "View Reviewers"
       },
@@ -1304,16 +1307,22 @@
       "actionsModal": {
         "certifyTitle": "Certify Access",
         "certifyDescription": "Certify access for the selected items?",
+        "certifyConfirmTitle": "Confirm Certify Access?",
+        "certifyConfirmDescription": "Certify access for the selected items? This action cannot be stopped once it has started.",
         "certifyPlaceHolder": "Reason for Certification",
-        "revokeTitle": "Revoke Access",
         "forwardTo": "Forward to",
+        "revokeTitle": "Revoke Access",
         "revokeDescription": "Revoke access for the selected items?",
+        "revokeConfirmTitle": "Confirm Revoke Access?",
+        "revokeConfirmDescription": "Revoke access for the selected items? This action cannot be stopped once it has started.",
         "revokePlaceHolder": "Reason for Revocation",
         "revokeOkLabel": "Revoke Access",
         "revokeInlineItemDescription": "Revoke access for this user to the requested resource.",
         "exceptionTitle": "Allow exception",
         "exceptionDescription": "Allow exception for the selected items?",
         "exceptionPlaceHolder": "Reason for Exception",
+        "exceptionConfirmTitle": "Confirm allow exception?",
+        "exceptionConfirmDescription": "Allow exception for the selected items? This action cannot be stopped once it has started.",
         "exceptionLabel": "Allow Exception",
         "exceptionInlineItemDescription": "Allow this certification item to be deferred for 1 week.",
         "reassignItems": "Reassign Items",
@@ -1321,12 +1330,14 @@
         "reassignToUser": "Reassign to user",
         "forwardItem": "Forward Item",
         "forwardItemDescription": "Forward this access review to",
+        "forwardItemConfirmDescription":"Forward selected items? This action cannot be stopped once it has started.",
         "toUser": "Another user",
         "toRole": "Users with assigned role",
         "chooseRole": "Choose a role",
         "chooseUser": "Choose a user",
         "comment": "Comment",
-        "reassignTo": "Reassign To"
+        "reassignTo": "Reassign To",
+        "warningDataMayBeInaccurate": "This action can take a few minutes during which time the underlying table may be inaccurate."
       },
       "permissions": {
         "title": "Permissions",
@@ -1361,7 +1372,8 @@
         "onForwardError": "There was an error trying to forward the certification tasks",
         "reassignError": "There was an error trying to reassign the certifications",
         "revokeError": "There was an error revoking access to this item",
-        "signOffError": "There was an error trying to sign off the certification"
+        "signOffError": "There was an error trying to sign off the certification",
+        "resetError": "There was an error trying to clear decisions"
       },
       "lineItemActivityModal": {
         "title": "Activity"
@@ -1448,7 +1460,8 @@
         "reviewItemForwarded": "Review item forwarded",
         "revokeSuccess": "The Revoke has been completed successfully",
         "saveSuccessful": "All Changes Saved",
-        "signOffSuccess": "The signOff has been completed successfully"
+        "signOffSuccess": "The signOff has been completed successfully",
+        "resetSuccess": "The decisions have been cleared successfully"
       }
     },
     "errors": {
