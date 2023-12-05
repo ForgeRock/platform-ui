@@ -90,7 +90,7 @@ const router = new Router({
       beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled]),
     },
     {
-      path: '/my-requests/:requestId',
+      path: '/my-requests/details/:requestId',
       name: 'MyRequestDetails',
       component: () => import(/* webpackChunkName: "MyRequests" */ '@/views/governance/accessRequest/MyRequestDetails'),
       meta: { authenticate: true },
@@ -101,7 +101,7 @@ const router = new Router({
       name: 'AccessRequestNew',
       component: () => import(/* webpackChunkName: "AccessRequestNew" */ '@/views/governance/accessRequest/NewRequest'),
       meta: { hideNavBar: true, hideSideMenu: true },
-      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled, to.params.requestingFor], { path: '/my-requests' }),
+      beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.governanceEnabled, store.state.requestCartUsers.length > 0], { path: '/my-requests' }),
     },
     {
       path: '/certification/certification-task/:campaignId',
