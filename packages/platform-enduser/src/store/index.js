@@ -32,6 +32,7 @@ export default new Vuex.Store({
     // user
     approvalsCount: null,
     certificationCount: null,
+    requestCartUsers: [],
   },
   mutations: {
     setEnvironment(state, env) {
@@ -76,6 +77,10 @@ export default new Vuex.Store({
 
     setApprovalsCount(state, count) {
       state.approvalsCount = count;
+    },
+
+    setRequestCartUsers(state, users) {
+      state.requestCartUsers = users;
     },
   },
   modules: {
