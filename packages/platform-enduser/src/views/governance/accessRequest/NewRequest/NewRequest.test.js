@@ -50,9 +50,9 @@ describe('NewRequest', () => {
       mixins: [RestMixin],
       mocks: {
         $router: { push: jest.fn() },
-        $route: {
-          params: {
-            requestingFor: [{
+        $store: {
+          state: {
+            requestCartUsers: [{
               name: 'Barbara Jensen',
               userName: 'bjensen',
               id: '123',

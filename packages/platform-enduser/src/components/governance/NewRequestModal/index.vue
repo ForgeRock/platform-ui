@@ -179,12 +179,9 @@ export default {
       const usersToRequest = this.requestOption === 'self'
         ? [currentUser]
         : this.selectedUsers;
-      this.$router.push({
-        name: 'AccessRequestNew',
-        params: {
-          requestingFor: usersToRequest,
-        },
-      });
+
+      this.$store.commit('setRequestCartUsers', usersToRequest);
+      this.$router.push({ name: 'AccessRequestNew' });
     },
   },
 };
