@@ -815,6 +815,7 @@
     },
     "noData": "No Report Template found",
     "notAvailable": "Report data not available",
+    "noReportData": "Report does not contain any results.",
     "reportExported": "Report sucessfully exported",
     "run": "Run",
     "subtitle": "The following reports are based on pre-configured queries on events and provide insights in an easily understandable format.",
