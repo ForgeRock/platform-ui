@@ -345,6 +345,14 @@ export function getRules(i18n) {
     message: i18n.t('common.policyValidationMessages.singleSpaces'),
   };
 
+  const whitespace = {
+    validate(value) {
+      const regex = /(.*)(\s+)(.*)/g;
+      return !regex.test(value);
+    },
+    message: i18n.t('common.policyValidationMessages.whitespace'),
+  };
+
   const validationRules = {
     alpha,
     alpha_dash,
@@ -384,6 +392,7 @@ export function getRules(i18n) {
     url_without_path,
     validBookmarkUrl,
     lower_case_alpha_numeric_underscore_hyphen_only,
+    whitespace,
   };
   return validationRules;
 }
