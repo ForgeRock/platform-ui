@@ -226,7 +226,7 @@ export default {
       loading: true,
       requestCartExpanded: false,
       requestCartItems: [],
-      requestCartUsers: this.$route.params.requestingFor || [],
+      requestCartUsers: this.$store.state.requestCartUsers || [],
       requestErrorFields: [{ key: 'user' }, { key: 'error' }],
       requestErrors: [],
       saving: false,
