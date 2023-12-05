@@ -2187,7 +2187,8 @@
         "duplicate": "Duplicate {typeName} Script",
         "endpoint": "Endpoint"
       },
-      "endpointHelp": "Specifies the path that the script can be accessed at.  An endpoint with the name <strong>\"example\"</strong> is addressable over REST at the URL <code>https://{yourdomain}/openidm/endpoint/example</code> or by using a script such as <code>openidm.read('endpoint/example')</code>.",
+      "endpointCreateHelp": "Specifies the path that the script can be accessed at.  An endpoint with the name <strong>\"example\"</strong> is addressable over REST at the URL <code>https://{yourdomain}/openidm/endpoint/example</code> or by using a script such as <code>openidm.read('endpoint/example')</code>.",
+      "endpointEditHelp": "This endpoint is addressable over REST at the URL <code>https://{yourdomain}/openidm/{endpointName}</code> or by using a script such as <code>openidm.read('{endpointName}')</code>.",
       "chooseType": "Choose allowed methods to create a customized template to start with in constructing this endpoint.",
       "errorSaving": "Error saving script",
       "errorLoading": "Error loading script data",
