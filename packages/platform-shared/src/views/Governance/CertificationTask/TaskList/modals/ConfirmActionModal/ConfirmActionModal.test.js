@@ -50,6 +50,7 @@ describe('ConfirmActionModal', () => {
         data() {
           return {
             isTesting: true,
+            step: 'DETAILS',
           };
         },
       });
