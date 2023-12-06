@@ -219,6 +219,10 @@ const addAppAuth = (realm) => {
     resourceServers[store.state.SharedStore.autoAccessApiUrl] = 'fr:autoaccess:*';
   }
 
+  if (store.state.SharedStore.autoReportsEnabled) {
+    resourceServers[store.state.SharedStore.autoAccessReportsUrl] = 'fr:idc:analytics:*';
+  }
+
   AppAuthHelper.init({
     clientId: commonSettings.clientId,
     authorizationEndpoint: commonSettings.authorizationEndpoint,
