@@ -73,9 +73,6 @@ const mutations = {
         if (env.VUE_APP_AUTO_ACCESS_JAS_URL) {
           state.autoAccessJasUrl = env.VUE_APP_AUTO_ACCESS_JAS_URL;
         }
-        if (env.VUE_APP_AUTO_ACCESS_REPORTS_URL) {
-          state.autoAccessReportsUrl = env.VUE_APP_AUTO_ACCESS_REPORTS_URL;
-        }
       }
       if (env.VUE_APP_ENABLE_GOVERNANCE === 'true' || env.VUE_APP_ENABLE_GOVERNANCE === true || env.VUE_APP_ENABLE_GOVERNANCE_DEV === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_DEV === true) {
         if (env.VUE_APP_IGA_API_URL) {
@@ -137,8 +134,11 @@ const mutations = {
       state.workforceEnabled = env.VUE_APP_ENABLE_WORKFORCE === 'true' || env.VUE_APP_ENABLE_WORKFORCE === true;
     }
 
-    if (env.VUE_APP_ENABLE_AUTO_REPORTS) {
-      state.autoReportsEnabled = env.VUE_APP_ENABLE_AUTO_REPORTS === 'true' || env.VUE_APP_ENABLE_AUTO_REPORTS === true;
+    if (env.VUE_APP_ENABLE_ANALYTICS_REPORTING) {
+      state.autoReportsEnabled = env.VUE_APP_ENABLE_ANALYTICS_REPORTING === 'true' || env.VUE_APP_ENABLE_ANALYTICS_REPORTING === true;
+    }
+    if (env.VUE_APP_AUTO_ACCESS_REPORTS_URL) {
+      state.autoAccessReportsUrl = env.VUE_APP_AUTO_ACCESS_REPORTS_URL;
     }
   },
   setWebStorageAvailable(state, val) {
