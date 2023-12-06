@@ -59,7 +59,7 @@ describe('App.vue', () => {
   it('Loaded Menus File should load default items', async () => {
     shallowMountComponent(store);
     await wrapper.vm.$nextTick();
-    expect(wrapper.vm.menuItems.length).toEqual(8);
+    expect(wrapper.vm.menuItems.length).toEqual(9);
   });
 
   it('Loaded Menus File with governance', async () => {
@@ -68,7 +68,7 @@ describe('App.vue', () => {
     await wrapper.vm.$nextTick();
     const inbox = wrapper.vm.menuItems.find((item) => item.displayName === 'sideMenu.inbox');
     const approvals = inbox.subItems.find((item) => item.displayName === 'sideMenu.approvals');
-    expect(wrapper.vm.menuItems.length).toEqual(8);
+    expect(wrapper.vm.menuItems.length).toEqual(9);
     expect(inbox).toBeTruthy();
     expect(approvals).toBeTruthy();
   });
