@@ -77,7 +77,7 @@ const mutations = {
           state.autoAccessReportsUrl = env.VUE_APP_AUTO_ACCESS_REPORTS_URL;
         }
       }
-      if (env.VUE_APP_ENABLE_GOVERNANCE === 'true' || env.VUE_APP_ENABLE_GOVERNANCE === true || env.VUE_APP_ENABLE_GOVERNANCE_V4 === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_V4 === true) {
+      if (env.VUE_APP_ENABLE_GOVERNANCE === 'true' || env.VUE_APP_ENABLE_GOVERNANCE === true || env.VUE_APP_ENABLE_GOVERNANCE_DEV === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_DEV === true) {
         if (env.VUE_APP_IGA_API_URL) {
           state.igaApiUrl = getFQDN(env.VUE_APP_IGA_API_URL);
         }
@@ -127,9 +127,9 @@ const mutations = {
       if (env.VUE_APP_ENABLE_GOVERNANCE === 'true' || env.VUE_APP_ENABLE_GOVERNANCE === true) {
         state.governanceEnabled = true;
       }
-      if (env.VUE_APP_ENABLE_GOVERNANCE_V4 === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_V4 === true) {
+      if (env.VUE_APP_ENABLE_GOVERNANCE_DEV === 'true' || env.VUE_APP_ENABLE_GOVERNANCE_DEV === true) {
         state.governanceEnabled = true;
-        state.governanceEnabledV4 = true;
+        state.governanceDevEnabled = true;
       }
     }
 
