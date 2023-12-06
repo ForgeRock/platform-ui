@@ -2391,6 +2391,7 @@
       "updatesToPublish": "<span class=\"font-weight-bold mr-1 text-dark\">Publish Changes</span> You have to publish for your changes to take effect."
     },
     "addDirective": {
+      "activateDesc": "In order to activate this policy, you first need to add a directive.",
       "directiveSources": "Directive Sources",
       "hostsHelp": "List of valid hosts. Wildcards are acceptable. Eg. <code>http://www.example.com</code>,<code>http://www.*.example.com</code>",
       "modalTitle": "Add Directive",
