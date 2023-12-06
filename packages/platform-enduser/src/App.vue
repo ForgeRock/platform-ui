@@ -75,6 +75,14 @@ export default {
           displayName: 'sideMenu.dashboard',
           icon: 'dashboard',
         },
+        (this.$store.state.SharedStore.autoReportsEnabled === true
+          ? {
+            routeTo: { name: 'Reports' },
+            displayName: 'sideMenu.reports',
+            icon: 'analytics',
+            showForStoreValues: ['SharedStore.autoReportsEnabled'],
+          }
+          : {}),
         (this.$store.state.SharedStore.governanceEnabled === true
           ? {
             menuGroup: true,

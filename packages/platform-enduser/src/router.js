@@ -117,6 +117,31 @@ const router = new Router({
       beforeEnter: (to, from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.workforceEnabled]),
     },
     {
+      path: '/reports',
+      name: 'Reports',
+      component: () => import('@forgerock/platform-shared/src/views/Reports/Reports.vue'),
+      beforeEnter: (_to, _from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.autoReportsEnabled]),
+    },
+    {
+      path: '/reports/:template',
+      name: 'ReportTemplate',
+      component: () => import('@forgerock/platform-shared/src/views/Reports/ReportTemplate.vue'),
+      beforeEnter: (_to, _from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.autoReportsEnabled]),
+    },
+    {
+      path: '/reports/:template/history',
+      name: 'ReportTemplateHistory',
+      component: () => import('@forgerock/platform-shared/src/views/Reports/ReportTemplate.vue'),
+      beforeEnter: (_to, _from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.autoReportsEnabled]),
+    },
+    {
+      path: '/reports/:template/:id',
+      name: 'ReportView',
+      component: () => import('@forgerock/platform-shared/src/views/Reports/ReportView.vue'),
+      meta: { hideNavBar: true, hideSideMenu: true },
+      beforeEnter: (_to, _from, next) => checkIfRouteCanBeAccessed(next, [store.state.SharedStore.autoReportsEnabled]),
+    },
+    {
       path: '/my-delegates',
       name: 'Delegates',
       component: () => import('@/views/governance/Directory/Delegates'),

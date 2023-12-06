@@ -1,6 +1,7 @@
 {
   "routeNames": {
-    "AccessRequestNew": "New Access Request"
+    "AccessRequestNew": "New Access Request",
+    "Reports": "Reports"
   },
   "user": {
     "profile": {
@@ -211,6 +212,7 @@
     "inbox": "Inbox",
     "myAccess": "My Access",
     "profile": "Profile",
+    "reports": "Reports",
     "requests": "My Requests",
     "roles": "Roles"
   },
@@ -240,6 +242,7 @@
     "Roles": "Roles",
     "pageTitle": "Platform Enduser - {page}",
     "Profile": "Profile",
+    "Reports": "Reports",
     "Sharing": "Sharing"
   },
   "governance": {
