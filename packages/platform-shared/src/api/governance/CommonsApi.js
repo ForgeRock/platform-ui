@@ -41,3 +41,11 @@ export function getUserGrants(userId = '', grantType = '') {
 export function getGlossarySchema() {
   return generateIgaApi().get('commons/glossary/schemaConfig');
 }
+
+/**
+ * It returns the filter schema for the certification.
+ * @returns The schema for the filter form.
+ */
+export function getFilterSchema() {
+  return generateIgaApi().post('/governance/certification/get-filter-schema', {});
+}

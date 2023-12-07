@@ -1283,6 +1283,8 @@
       "exceptionAllowed": "Exception Allowed",
       "noDecision": "No decision",
       "customizeColumns": "Customize Columns",
+      "activeColumns": "Active Columns",
+      "availableColumns": "Available Columns",
       "selectAllTasks": "All tasks",
       "selectAllTasksThisPage": "All on this page",
       "deselectAll": "Deselect all",
@@ -1303,6 +1305,13 @@
         "accounts": "accounts",
         "entitlements": "entitlements",
         "groupByAccount": "group by account"
+      },
+      "columns": {
+        "review": "Review",
+        "user": "User",
+        "application": "Application",
+        "entitlement": "Entitlement",
+        "account": "Account"
       },
       "actionsModal": {
         "certifyTitle": "Certify Access",
