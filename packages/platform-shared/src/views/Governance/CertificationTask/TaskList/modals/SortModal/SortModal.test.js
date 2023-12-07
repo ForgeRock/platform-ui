@@ -6,11 +6,11 @@
  */
 
 import { shallowMount } from '@vue/test-utils';
-import SortModal from './index';
+import SortModal from './SortModal';
 
 let wrapper;
 
-function mountComponent(options) {
+function setup(options, propsData) {
   wrapper = shallowMount(SortModal, {
     mocks: {
       $t: (t) => t,
@@ -18,25 +18,19 @@ function mountComponent(options) {
     },
     propsData: {
       taskListColumns: [],
+      ...propsData,
     },
   });
 }
 describe('SortModal', () => {
   describe('Component mount', () => {
     it('should render default modalId', () => {
-      mountComponent();
+      setup();
       expect(wrapper.find('#CertificationTaskSortConfirmAccountModal').exists()).toBeTruthy();
     });
 
     it('should render prop modalId', () => {
-      wrapper = shallowMount(SortModal, {
-        mocks: {
-          $t: (t) => t,
-        },
-        propsData: {
-          modalId: 'CertificationTaskSortConfirmEntitlementModal',
-        },
-      });
+      setup({}, { modalId: 'CertificationTaskSortConfirmEntitlementModal' });
       expect(wrapper.find('#CertificationTaskSortConfirmEntitlementModal').exists()).toBeTruthy();
     });
   });

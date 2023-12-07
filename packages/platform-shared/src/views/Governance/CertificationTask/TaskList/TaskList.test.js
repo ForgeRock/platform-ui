@@ -1453,17 +1453,17 @@ describe('TaskList', () => {
     });
     it('should show the right columns for entilements tab', () => {
       expect(wrapper.vm.certificationListColumns).toEqual([{
-        key: 'user', label: 'governance.certificationTask.user', sortable: true, class: 'text-truncate fr-access-cell', show: true,
+        key: 'user', category: 'user', label: 'governance.certificationTask.user', sortable: true, class: 'text-truncate fr-access-cell', show: true,
       }, {
-        key: 'application', label: 'governance.certificationTask.application', sortable: true, class: 'text-truncate fr-access-cell', show: true,
+        key: 'application', category: 'application', label: 'governance.certificationTask.application', sortable: true, class: 'text-truncate fr-access-cell', show: true,
       }, {
-        key: 'entitlement', label: 'governance.certificationTask.entitlement', sortable: false, class: 'text-truncate fr-access-cell', show: true,
+        key: 'entitlement', category: 'entitlement', label: 'governance.certificationTask.entitlement', sortable: false, class: 'text-truncate fr-access-cell', show: true,
       }, {
-        key: 'account', label: 'governance.certificationTask.account', sortable: false, class: 'text-truncate fr-access-cell', show: true,
+        key: 'account', category: 'account', label: 'governance.certificationTask.account', sortable: false, class: 'text-truncate fr-access-cell', show: true,
       }, {
-        key: 'flags', label: 'governance.certificationTask.flags', sortable: false, class: 'w-175px text-truncate fr-access-cell', show: true,
+        key: 'flags', category: 'review', label: 'governance.certificationTask.flags', sortable: false, class: 'w-175px text-truncate fr-access-cell', show: true,
       }, {
-        key: 'comments', label: 'governance.certificationTask.comments', sortable: false, class: 'w-140px fr-access-cell', show: true,
+        key: 'comments', category: 'review', label: 'governance.certificationTask.comments', sortable: false, class: 'w-140px fr-access-cell', show: true,
       }, {
         key: 'actions', class: 'w-200px cert-actions border-left fr-access-cell', label: '', sortable: false, show: true,
       }]);
@@ -1696,15 +1696,15 @@ describe('TaskList', () => {
     });
     it('should display correct account columns', async () => {
       expect(wrapper.vm.certificationListColumns).toEqual([{
-        key: 'user', label: 'governance.certificationTask.user', sortable: true, class: 'text-truncate fr-access-cell', show: true,
+        key: 'user', category: 'user', label: 'governance.certificationTask.user', sortable: true, class: 'text-truncate fr-access-cell', show: true,
       }, {
-        key: 'application', label: 'governance.certificationTask.application', sortable: true, class: 'text-truncate fr-access-cell', show: true,
+        key: 'application', category: 'application', label: 'governance.certificationTask.application', sortable: true, class: 'text-truncate fr-access-cell', show: true,
       }, {
-        key: 'account', label: 'governance.certificationTask.account', sortable: false, class: 'text-truncate fr-access-cell', show: true,
+        key: 'account', category: 'account', label: 'governance.certificationTask.account', sortable: false, class: 'text-truncate fr-access-cell', show: true,
       }, {
-        key: 'flags', label: 'governance.certificationTask.flags', sortable: false, class: 'w-175px text-truncate fr-access-cell', show: true,
+        key: 'flags', category: 'review', label: 'governance.certificationTask.flags', sortable: false, class: 'w-175px text-truncate fr-access-cell', show: true,
       }, {
-        key: 'comments', label: 'governance.certificationTask.comments', sortable: false, class: 'w-140px fr-access-cell', show: true,
+        key: 'comments', category: 'review', label: 'governance.certificationTask.comments', sortable: false, class: 'w-140px fr-access-cell', show: true,
       }, {
         key: 'actions', class: 'w-230px cert-actions border-left fr-access-cell', label: '', sortable: false, show: true,
       }]);
@@ -1814,11 +1814,11 @@ describe('TaskList', () => {
     });
     it('should display correct entitlement columns', async () => {
       expect(wrapper.vm.certificationListColumns).toEqual([{
-        key: 'entitlement', label: 'governance.certificationTask.entitlement', sortable: false, class: 'text-truncate fr-access-cell', show: true,
+        key: 'entitlement', category: 'entitlement', label: 'governance.certificationTask.entitlement', sortable: false, class: 'text-truncate fr-access-cell', show: true,
       }, {
-        key: 'flags', label: 'governance.certificationTask.flags', sortable: false, class: 'w-175px text-truncate fr-access-cell', show: true,
+        key: 'flags', category: 'review', label: 'governance.certificationTask.flags', sortable: false, class: 'w-175px text-truncate fr-access-cell', show: true,
       }, {
-        key: 'comments', label: 'governance.certificationTask.comments', sortable: false, class: 'w-140px fr-access-cell', show: true,
+        key: 'comments', category: 'review', label: 'governance.certificationTask.comments', sortable: false, class: 'w-140px fr-access-cell', show: true,
       }, {
         key: 'actions', class: 'w-200px cert-actions border-left fr-access-cell', label: '', sortable: false, show: true,
       }]);
