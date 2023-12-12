@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -26,120 +26,161 @@ of the MIT license. See the LICENSE file for details. -->
       </BRow>
       <BRow v-if="showApplications">
         <BCol md="3">
-          {{ $t('common.applications') }}
+          {{ _REPORT_FIELDS_CONTROLLER.applications.label }}
         </BCol>
         <BCol md="9">
-          <FrApplicationsField
-            :relationship-property="applicationsRelationshipProperty"
-            @applications-update="applicationsModel = $event" />
+          <FrReportsMultiSelect
+            class="mb-3"
+            data-testid="fr-field-applications"
+            :options="applicationOptionsFiltered"
+            @input="applicationsModel = $event"
+            @search="handleApplicationsSearch" />
+        </BCol>
+      </BRow>
+      <BRow v-if="showOAuthApplications">
+        <BCol md="3">
+          {{ _REPORT_FIELDS_CONTROLLER.oauth2_applications.label }}
+        </BCol>
+        <BCol md="9">
+          <FrReportsMultiSelect
+            class="mb-3"
+            data-testid="fr-field-oauth-applications"
+            :options="oAuthApplicationOptionsFiltered"
+            :taggable="!_REPORT_FIELDS_CONTROLLER.oauth2_applications.config.viewable"
+            @input="oAuthApplicationsModel = $event"
+            @search="handleOAuthApplicationsSearch" />
         </BCol>
       </BRow>
       <BRow v-if="showOutcome">
         <BCol md="3">
-          {{ $t('common.outcome') }}
+          {{ _REPORT_FIELDS_CONTROLLER.treeResult.label }}
         </BCol>
         <BCol md="9">
-          <FrRunReportCustomTagField
-            name="outcome"
-            :field-options="outcomeOptions"
-            :label="$t('common.outcome')"
+          <FrReportsMultiSelect
+            class="mb-3"
+            data-testid="fr-field-outcome"
+            :internal-search="true"
+            :options="outcomeOptions"
             :placeholder="$t('reports.tabs.runReport.outcome.allOutcomes')"
-            @field-value-update="outcomeFieldValue = $event" />
+            @input="outcomeFieldValue = $event" />
+        </BCol>
+      </BRow>
+      <BRow v-if="showCampaignName">
+        <BCol md="3">
+          {{ _REPORT_FIELDS_CONTROLLER.campaign_name.label }}
+        </BCol>
+        <BCol md="9">
+          <FrField
+            v-model="campaignNameModel"
+            class="mb-3"
+            name="show-campaign-name"
+            type="string"
+            :label="_REPORT_FIELDS_CONTROLLER.campaign_name.label" />
+        </BCol>
+      </BRow>
+      <BRow v-if="showCampaignStatus">
+        <BCol md="3">
+          {{ _REPORT_FIELDS_CONTROLLER.campaign_status.label }}
+        </BCol>
+        <BCol md="9">
+          <FrField
+            v-model="campaignStatusFieldValue"
+            class="mb-3"
+            name="show-campaign-status"
+            type="select"
+            :options="campaignStatusOptions"
+            :placeholder="_REPORT_FIELDS_CONTROLLER.campaign_status.label"
+            :searchable="false" />
         </BCol>
       </BRow>
       <BRow v-if="showUsers">
         <BCol md="3">
-          {{ $t('common.users') }}
+          {{ _REPORT_FIELDS_CONTROLLER.user_names.label }}
         </BCol>
         <BCol md="9">
-          <FrUsersField
+          <FrReportsMultiSelect
+            class="mb-3"
             data-testid="fr-field-users"
-            :relationship-property="membersRelationshipProperty"
-            @relationship-property-update="usersValue = $event" />
+            :options="usersOptionsFiltered"
+            @input="usersModel = $event"
+            @search="handleUsersSearch" />
         </BCol>
       </BRow>
       <BRow v-if="showStatus">
         <BCol md="3">
-          {{ $t('reports.tabs.runReport.status.label') }}
+          {{ _REPORT_FIELDS_CONTROLLER.status.label }}
         </BCol>
         <BCol md="9">
-          <FrRunReportCustomTagField
-            name="status"
-            :field-options="statusOptions"
-            :label="$t('reports.tabs.runReport.status.label')"
-            :placeholder="$t('reports.tabs.runReport.status.allStatuses')"
-            @field-value-update="statusFieldValue = $event" />
-        </BCol>
-      </BRow>
-      <BRow v-if="showEventTypes">
-        <BCol md="3">
-          {{ $t('common.events') }}
-        </BCol>
-        <BCol md="9">
-          <FrRunReportField
-            name="events"
-            :field-options="eventTypeOptions"
-            :label="$t('common.events')"
-            :placeholder="$t('reports.tabs.runReport.events.allEventTypes')"
-            @field-value-update="eventTypesValue = $event" />
+          <FrReportsMultiSelect
+            class="mb-3"
+            data-testid="fr-field-status"
+            :internal-search="true"
+            :options="statusOptions"
+            :label="$t('reports.tabs.runReport.status.allStatuses')"
+            @input="statusFieldValue = $event" />
         </BCol>
       </BRow>
       <BRow v-if="showJourneys">
         <BCol md="3">
-          {{ $t('common.journeys') }}
+          {{ _REPORT_FIELDS_CONTROLLER.journeyName.label }}
         </BCol>
         <BCol md="9">
-          <FrRunReportField
-            name="journeys"
-            :field-options="journeyOptions"
-            :label="$t('common.journeys')"
-            :placeholder="$t('reports.tabs.runReport.journeys.selectJourneys')"
-            @field-value-update="journeysModel = $event" />
+          <FrReportsMultiSelect
+            class="mb-3"
+            data-testid="fr-field-journeys"
+            :internal-search="true"
+            :options="journeyOptionsFiltered"
+            :taggable="!_REPORT_FIELDS_CONTROLLER.journeyName.config.viewable"
+            @input="journeysModel = $event" />
         </BCol>
       </BRow>
       <BRow v-if="showOrgs">
         <BCol md="3">
-          {{ $t('reports.tabs.runReport.organizations') }}
+          {{ _REPORT_FIELDS_CONTROLLER.org_names.label }}
         </BCol>
         <BCol md="9">
-          <FrRunReportField
-            name="organizations"
-            :field-options="organizationOptions"
-            :label="$t('reports.tabs.runReport.organizations')"
-            :placeholder="$t('reports.tabs.runReport.organizations')"
-            @field-value-update="organizationsModel = $event" />
+          <FrReportsMultiSelect
+            class="mb-3"
+            data-testid="fr-field-organizations"
+            :options="orgOptionsFiltered"
+            @input="organizationsModel = $event"
+            @search="handleOrgsSearch" />
         </BCol>
       </BRow>
       <BRow v-if="showRoles">
         <BCol md="3">
-          {{ $t('reports.tabs.runReport.roles') }}
+          {{ _REPORT_FIELDS_CONTROLLER.roles.label }}
         </BCol>
         <BCol md="9">
-          <FrRunReportField
-            name="roles"
-            :field-options="roleOptions"
-            :label="$t('reports.tabs.runReport.roles')"
-            :placeholder="$t('reports.tabs.runReport.roles')"
-            @field-value-update="rolesModel = $event" />
+          <FrReportsMultiSelect
+            class="mb-3"
+            data-testid="fr-field-roles"
+            :options="rolesOptionsFiltered"
+            @input="rolesModel = $event"
+            @search="handleRolesSearch" />
         </BCol>
       </BRow>
       <template v-if="unmappedParameters.length">
         <BRow
           v-for="(parameter) in unmappedParameters"
-          :key="parameter.name">
+          :key="parameter.label">
           <BCol
             md="3"
-            :data-testid="`label-${parameter.name}`">
-            {{ parameter.name }}
+            :data-testid="`label-${parameter.label}`">
+            {{ parameter.label }}
           </BCol>
           <BCol md="9">
             <FrField
               v-model="parameter.value"
               class="mb-3"
-              type="string"
-              :label="parameter.name"
-              :name="parameter.name"
-              :testid="parameter.name" />
+              :label="parameter.label"
+              :placeholder="parameter.type === 'multiselect' ? $t('reports.tabs.runReport.pressEnterToCreateATag') : ''"
+              :name="parameter.label"
+              :show-no-options="false"
+              :show-no-results="false"
+              :taggable="true"
+              :testid="parameter.label"
+              :type="parameter.type" />
           </BCol>
         </BRow>
       </template>
@@ -183,7 +224,7 @@ of the MIT license. See the LICENSE file for details. -->
  * inactive, blocked users are on the platform, there must be the ability to
  * choose specific users as well as the status type to query against.
  *
- * At the moment, there are a total of (9) fields that are associated with the
+ * At the moment, there are a number of fields that are associated with the
  * necessary data to generate all the possible analytics reports. The API returns
  * a config for each report, which gives us the necessary parameters to reveal
  * the required fields for generating a valid report request.
@@ -211,11 +252,8 @@ import { runAnalyticsTemplate } from '@forgerock/platform-shared/src/api/AutoApi
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import FrButtonWithSpinner from '@forgerock/platform-shared/src/components/ButtonWithSpinner';
+import FrReportsMultiSelect from './fields/ReportsMultiSelect';
 import FrTimeframeField from './fields/TimeframeField';
-import FrUsersField from './fields/ReportsRelationshipEditField';
-import FrApplicationsField from './fields/ApplicationsField';
-import FrRunReportField from './fields/DefaultRunReportField';
-import FrRunReportCustomTagField from './fields/DefaultRunReportCustomTagField';
 import useRunReport from './composables/RunReport';
 import i18n from '@/i18n';
 
@@ -253,7 +291,7 @@ const noFieldsToShow = computed(() => {
 });
 
 /**
- * (1) Timeframe field
+ * Timeframe field
  */
 const startDateModel = ref('');
 const endDateModel = ref('');
@@ -265,99 +303,117 @@ const timeframeDisableSubmit = computed(() => {
 });
 
 /**
- * (2) Applications field
+ * All Applications field
  */
-const applicationsModel = ref('');
-const applicationsRelationshipProperty = ref({});
+const applicationsModel = ref([]);
+const applicationOptions = ref([]);
+const applicationOptionsFiltered = computed(() => applicationOptions.value.map(({ name }) => name));
 const showApplications = computed(() => _PARAMETER_KEYS.value.includes('applications'));
-const applicationsDisableSubmit = computed(() => (showApplications.value && !applicationsModel.value));
+const applicationsDisableSubmit = computed(() => (showApplications.value && !applicationsModel.value.length));
 
 /**
- * (3) Outcome field
+ * OAuth Applications field
  */
-const outcomeOptions = [
-  { label: i18n.global.t('common.successful'), color: 'success', icon: 'check' },
-  { label: i18n.global.t('common.failed'), color: 'danger', icon: 'block' },
-  { label: i18n.global.t('common.continue'), color: 'muted', icon: 'arrow_forward' },
-];
+const oAuthApplicationsModel = ref([]);
+const oAuthApplicationOptions = ref([]);
+const oAuthApplicationOptionsFiltered = computed(() => oAuthApplicationOptions.value.map(({ _id }) => _id));
+const showOAuthApplications = computed(() => _PARAMETER_KEYS.value.includes('oauth2_applications'));
+const oAuthApplicationsDisableSubmit = computed(() => (showOAuthApplications.value && !oAuthApplicationsModel.value.length));
+
+/**
+ * Outcome field
+ */
+const outcomeOptions = [i18n.global.t('common.successful'), i18n.global.t('common.failed'), i18n.global.t('common.continue')];
 const outcomeFieldValue = ref([]);
 const showOutcome = computed(() => _PARAMETER_KEYS.value.includes('treeResult'));
 const outcomeModel = computed(() => {
   const fieldValue = outcomeFieldValue.value;
   const payload = fieldValue.length ? fieldValue : outcomeOptions;
-  return payload.map(({ label }) => label.toUpperCase());
+  return payload.map((value) => value.toUpperCase());
 });
 
 /**
- * (4) Users field
+ * Campaign Name field
  */
-const usersValue = ref([]);
-const membersRelationshipProperty = ref({});
+const campaignNameModel = ref('');
+const showCampaignName = computed(() => _PARAMETER_KEYS.value.includes('campaign_name'));
+const campaignNameDisableSubmit = computed(() => !!(showCampaignName.value && !campaignNameModel.value));
+
+/**
+ * Campaign Status field
+ */
+const campaignStatusOptionsMap = {
+  [i18n.global.t('reports.tabs.runReport.campaignStatus.inProgress')]: 'in-progress',
+  [i18n.global.t('reports.tabs.runReport.campaignStatus.signedOff')]: 'signed-off',
+};
+const campaignStatusOptions = Object.keys(campaignStatusOptionsMap);
+const campaignStatusFieldValue = ref('');
+const showCampaignStatus = computed(() => _PARAMETER_KEYS.value.includes('campaign_status'));
+const campaignStatusModel = computed(() => campaignStatusOptionsMap[campaignStatusFieldValue.value]);
+const campaignStatusDisableSubmit = computed(() => !!(showCampaignStatus.value && !campaignStatusModel.value));
+
+/**
+ * Users field
+ */
+const usersModel = ref([]);
+const usersOptions = ref([]);
 const showUsers = computed(() => _PARAMETER_KEYS.value.includes('user_names'));
-const usersModel = computed(() => usersValue.value.map(({ userName }) => userName));
+const usersOptionsFiltered = computed(() => usersOptions.value.map(({ userName }) => userName));
 const usersDisableSubmit = computed(() => !!(showUsers.value && !usersModel.value.length));
 
 /**
- * (5) Status field
+ * Status field
  */
-const statusOptions = [
-  { label: i18n.global.t('reports.tabs.runReport.status.active'), color: 'success', icon: 'check' },
-  { label: i18n.global.t('reports.tabs.runReport.status.inactive'), color: 'muted', icon: 'cancel' },
-  { label: i18n.global.t('reports.tabs.runReport.status.blocked'), color: 'danger', icon: 'block' },
-];
+const statusOptionsMap = {
+  [i18n.global.t('reports.tabs.runReport.status.active')]: 'active',
+  [i18n.global.t('reports.tabs.runReport.status.inactive')]: 'inactive',
+  [i18n.global.t('reports.tabs.runReport.status.blocked')]: 'blocked',
+};
+
+const statusOptions = Object.keys(statusOptionsMap);
 const statusFieldValue = ref([]);
-const showStatus = computed(() => _PARAMETER_KEYS.value.includes('status') || _PARAMETER_KEYS.value.includes('accountStatus'));
 const statusModel = computed(() => {
-  const statusArr = statusFieldValue.value.length ? statusFieldValue.value : statusOptions;
-  return statusArr.map(({ label }) => label.toLowerCase());
+  const payload = statusFieldValue.value.length ? statusFieldValue.value : statusOptions;
+  return payload.map((value) => value.toLowerCase());
 });
+const showStatus = computed(() => _PARAMETER_KEYS.value.includes('status') || _PARAMETER_KEYS.value.includes('accountStatus'));
 
 /**
- * (6) Events field
+ * Journeys field
  */
-const eventTypeOptions = [
-  i18n.global.t('reports.tabs.runReport.events.tokenGrant'),
-  i18n.global.t('reports.tabs.runReport.events.tokenRefresh'),
-  i18n.global.t('common.authorize'),
-  i18n.global.t('reports.tabs.runReport.events.sso'),
-];
-const eventTypesValue = ref([]);
-const showEventTypes = computed(() => _PARAMETER_KEYS.value.includes('events'));
-const eventTypesModel = computed(() => (eventTypesValue.value.length ? eventTypesValue.value : eventTypeOptions));
-
-/**
- * (7) Journeys field
- */
-const journeyOptions = ref([]);
 const journeysModel = ref([]);
+const journeyOptions = ref([]);
+const journeyOptionsFiltered = computed(() => journeyOptions.value.map(({ _id }) => _id));
 const showJourneys = computed(() => _PARAMETER_KEYS.value.includes('journeyName') || _PARAMETER_KEYS.value.includes('treeName'));
 const journeysDisableSubmit = computed(() => showJourneys.value && !journeysModel.value.length);
 
 /**
- * (8) Organizations field
+ * Organizations field
  */
 const organizationsModel = ref([]);
-const organizationOptions = ref([]);
+const orgOptions = ref([]);
+const orgOptionsFiltered = computed(() => orgOptions.value.map(({ name }) => name));
 const showOrgs = computed(() => _PARAMETER_KEYS.value.includes('org_names'));
 const orgsDisableSubmit = computed(() => showOrgs.value && !organizationsModel.value.length);
 
 /**
- * (9) Roles field
+ * Roles field
  */
 const rolesModel = ref([]);
-const roleOptions = ref([]);
+const rolesOptions = ref([]);
+const rolesOptionsFiltered = computed(() => rolesOptions.value.map(({ name }) => name));
 const showRoles = computed(() => _PARAMETER_KEYS.value.includes('roles'));
 const rolesDisableSubmit = computed(() => showRoles.value && !rolesModel.value.length);
 
 /**
- * (10) Unmapped parameter fields
+ * Unmapped parameter fields.
  * We output a generic text field for any unexpected parameters
  */
 const unmappedParameters = ref([]);
 const unmappedParametersModel = computed(() => {
   const payload = {};
   unmappedParameters.value.forEach((parameter) => {
-    payload[parameter.name] = {
+    payload[parameter.label] = {
       payload: { value: parameter.type === 'array' ? [parameter.value] : parameter.value },
     };
   });
@@ -365,7 +421,7 @@ const unmappedParametersModel = computed(() => {
 });
 const unmappedFieldsDisableSubmit = computed(() => {
   if (unmappedParameters.value.length) {
-    return !!unmappedParameters.value.filter((parameter) => !parameter.value).length;
+    return !!unmappedParameters.value.filter((parameter) => parameter.value === '').length;
   }
   return false;
 });
@@ -379,20 +435,23 @@ const {
   _REPORT_FIELDS_CONTROLLER,
 } = useRunReport(
   applicationsModel,
-  applicationsRelationshipProperty,
+  applicationOptions,
+  campaignNameModel,
+  campaignStatusModel,
   endDateModel,
-  eventTypesModel,
   journeysModel,
   journeyOptions,
-  membersRelationshipProperty,
-  organizationOptions,
+  oAuthApplicationOptions,
+  oAuthApplicationsModel,
   organizationsModel,
+  orgOptions,
   outcomeModel,
-  roleOptions,
   rolesModel,
+  rolesOptions,
   startDateModel,
   statusModel,
   usersModel,
+  usersOptions,
 );
 
 /**
@@ -406,6 +465,9 @@ const doesNotContainAtLeastOneValidParameter = computed(() => {
 const disableSubmit = computed(() => doesNotContainAtLeastOneValidParameter.value
   || timeframeDisableSubmit.value
   || applicationsDisableSubmit.value
+  || campaignNameDisableSubmit.value
+  || campaignStatusDisableSubmit.value
+  || oAuthApplicationsDisableSubmit.value
   || usersDisableSubmit.value
   || orgsDisableSubmit.value
   || rolesDisableSubmit.value
@@ -413,11 +475,46 @@ const disableSubmit = computed(() => doesNotContainAtLeastOneValidParameter.valu
   || unmappedFieldsDisableSubmit.value);
 
 /**
- * ACTIONS
- * @description
- * .Submits a report request
- * .Sets table report fields
+ * Handles async search queries
+ * @param {String} term search term
+ * @param {Object} field field controller
+ * @param {Array} payload field value
  */
+
+async function handleSearch(term, field) {
+  const { config, fetch } = field;
+  const queryFilter = `${config.fields} sw "${term}"`;
+  return fetch(config, queryFilter, 10);
+}
+
+async function handleOrgsSearch(term) {
+  const field = _REPORT_FIELDS_CONTROLLER.org_names;
+  orgOptions.value = await handleSearch(term, field);
+}
+
+async function handleApplicationsSearch(term) {
+  const field = _REPORT_FIELDS_CONTROLLER.applications;
+  applicationOptions.value = await handleSearch(term, field);
+}
+
+async function handleOAuthApplicationsSearch(term) {
+  const isSearchable = _REPORT_FIELDS_CONTROLLER.oauth2_applications.config.viewable;
+  const field = _REPORT_FIELDS_CONTROLLER.oauth2_applications;
+
+  if (isSearchable) {
+    oAuthApplicationOptions.value = await handleSearch(term, field);
+  }
+}
+
+async function handleUsersSearch(term) {
+  const field = _REPORT_FIELDS_CONTROLLER.user_names;
+  usersOptions.value = await handleSearch(term, field);
+}
+
+async function handleRolesSearch(term) {
+  const field = _REPORT_FIELDS_CONTROLLER.roles;
+  rolesOptions.value = await handleSearch(term, field);
+}
 
 /**
  * Submit a run report request
@@ -449,6 +546,12 @@ async function setReportFields(reportConfig) {
   const { parameters } = reportConfig;
   const fetchList = [];
   const fetchModelList = [];
+  const fieldTypeMap = {
+    array: 'multiselect',
+    string: 'string',
+    boolean: 'boolean',
+    integer: 'number',
+  };
 
   _PARAMETER_KEYS.value = Object.keys(parameters);
   _PARAMETER_KEYS.value.forEach((key) => {
@@ -462,15 +565,17 @@ async function setReportFields(reportConfig) {
       // Some fields are not fetchable in enduser, so we need to pass a flag
       // to determine the package and prevent data fetch if user is not under admin.
       if (fieldNeedsToFetch && field.config.viewable !== false) {
-        fetchList.push(field.fetch());
-        fetchModelList.push(field.config.model);
+        const { config } = field;
+        fetchList.push(field.fetch(config, true, 10));
+        fetchModelList.push(config.model);
       }
     } else {
+      const fieldType = fieldTypeMap[parameters[key].type] || 'string';
       // Any unexpected parameters are shown alongside a corresponding generic text field.
       unmappedParameters.value.push({
-        name: key,
-        type: parameters[key].type,
-        value: '',
+        label: key,
+        type: fieldType,
+        value: fieldType === 'boolean' ? false : '',
       });
     }
   });

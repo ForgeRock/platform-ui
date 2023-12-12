@@ -25,10 +25,14 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
+      "campaign_name": "campaign_name",
+      "campaign_status": "campaign_status",
       "endDate": "endDate",
-      "events": "events",
       "journeyName": [
         "journeyName",
+      ],
+      "oauth2_applications": [
+        "oauth2_applications",
       ],
       "org_names": [
         "org_names",
@@ -86,10 +90,14 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
+      "campaign_name": "campaign_name",
+      "campaign_status": "campaign_status",
       "endDate": "endDate",
-      "events": "events",
       "journeyName": [
         "journeyName",
+      ],
+      "oauth2_applications": [
+        "oauth2_applications",
       ],
       "org_names": [
         "org_names",
@@ -135,10 +143,14 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
+      "campaign_name": "campaign_name",
+      "campaign_status": "campaign_status",
       "endDate": "endDate",
-      "events": "events",
       "journeyName": [
         "journeyName",
+      ],
+      "oauth2_applications": [
+        "oauth2_applications",
       ],
       "org_names": [
         "org_names",
@@ -185,10 +197,14 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
+      "campaign_name": "campaign_name",
+      "campaign_status": "campaign_status",
       "endDate": "endDate",
-      "events": "events",
       "journeyName": [
         "journeyName",
+      ],
+      "oauth2_applications": [
+        "oauth2_applications",
       ],
       "org_names": [
         "org_names",
@@ -234,10 +250,14 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
+      "campaign_name": "campaign_name",
+      "campaign_status": "campaign_status",
       "endDate": "endDate",
-      "events": "events",
       "journeyName": [
         "journeyName",
+      ],
+      "oauth2_applications": [
+        "oauth2_applications",
       ],
       "org_names": [
         "org_names",
@@ -284,10 +304,14 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
+      "campaign_name": "campaign_name",
+      "campaign_status": "campaign_status",
       "endDate": "endDate",
-      "events": "events",
       "journeyName": [
         "journeyName",
+      ],
+      "oauth2_applications": [
+        "oauth2_applications",
       ],
       "org_names": [
         "org_names",
@@ -333,10 +357,14 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
+      "campaign_name": "campaign_name",
+      "campaign_status": "campaign_status",
       "endDate": "endDate",
-      "events": "events",
       "journeyName": [
         "journeyName",
+      ],
+      "oauth2_applications": [
+        "oauth2_applications",
       ],
       "org_names": [
         "org_names",
@@ -399,10 +427,14 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
+      "campaign_name": "campaign_name",
+      "campaign_status": "campaign_status",
       "endDate": "endDate",
-      "events": "events",
       "journeyName": [
         "journeyName",
+      ],
+      "oauth2_applications": [
+        "oauth2_applications",
       ],
       "org_names": [
         "org_names",
@@ -461,10 +493,14 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
+      "campaign_name": "campaign_name",
+      "campaign_status": "campaign_status",
       "endDate": "endDate",
-      "events": "events",
       "journeyName": [
         "journeyName",
+      ],
+      "oauth2_applications": [
+        "oauth2_applications",
       ],
       "org_names": [
         "org_names",
@@ -538,10 +574,14 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
+      "campaign_name": "campaign_name",
+      "campaign_status": "campaign_status",
       "endDate": "endDate",
-      "events": "events",
       "journeyName": [
         "journeyName",
+      ],
+      "oauth2_applications": [
+        "oauth2_applications",
       ],
       "org_names": [
         "org_names",
@@ -620,10 +660,14 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
+      "campaign_name": "campaign_name",
+      "campaign_status": "campaign_status",
       "endDate": "endDate",
-      "events": "events",
       "journeyName": [
         "journeyName",
+      ],
+      "oauth2_applications": [
+        "oauth2_applications",
       ],
       "org_names": [
         "org_names",
@@ -707,10 +751,14 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
+      "campaign_name": "campaign_name",
+      "campaign_status": "campaign_status",
       "endDate": "endDate",
-      "events": "events",
       "journeyName": [
         "journeyName",
+      ],
+      "oauth2_applications": [
+        "oauth2_applications",
       ],
       "org_names": [
         "org_names",
@@ -794,10 +842,14 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
+      "campaign_name": "campaign_name",
+      "campaign_status": "campaign_status",
       "endDate": "endDate",
-      "events": "events",
       "journeyName": [
         "journeyName",
+      ],
+      "oauth2_applications": [
+        "oauth2_applications",
       ],
       "org_names": [
         "org_names",
@@ -889,10 +941,14 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
+      "campaign_name": "campaign_name",
+      "campaign_status": "campaign_status",
       "endDate": "endDate",
-      "events": "events",
       "journeyName": [
         "journeyName",
+      ],
+      "oauth2_applications": [
+        "oauth2_applications",
       ],
       "org_names": [
         "org_names",
@@ -954,10 +1010,14 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
+      "campaign_name": "campaign_name",
+      "campaign_status": "campaign_status",
       "endDate": "endDate",
-      "events": "events",
       "journeyName": [
         "journeyName",
+      ],
+      "oauth2_applications": [
+        "oauth2_applications",
       ],
       "org_names": [
         "org_names",
@@ -1015,10 +1075,14 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
+      "campaign_name": "campaign_name",
+      "campaign_status": "campaign_status",
       "endDate": "endDate",
-      "events": "events",
       "journeyName": [
         "journeyName",
+      ],
+      "oauth2_applications": [
+        "oauth2_applications",
       ],
       "org_names": [
         "org_names",
@@ -1076,10 +1140,14 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
+      "campaign_name": "campaign_name",
+      "campaign_status": "campaign_status",
       "endDate": "endDate",
-      "events": "events",
       "journeyName": [
         "journeyName",
+      ],
+      "oauth2_applications": [
+        "oauth2_applications",
       ],
       "org_names": [
         "org_names",
@@ -1130,10 +1198,14 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
+      "campaign_name": "campaign_name",
+      "campaign_status": "campaign_status",
       "endDate": "endDate",
-      "events": "events",
       "journeyName": [
         "journeyName",
+      ],
+      "oauth2_applications": [
+        "oauth2_applications",
       ],
       "org_names": [
         "org_names",
