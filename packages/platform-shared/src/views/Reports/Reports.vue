@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -97,6 +97,7 @@ import ReportCard from './ReportCard/ReportCard';
 // Composables
 const router = useRouter();
 
+// Globals
 const currentPage = ref(1);
 const displayedReports = ref([]);
 const hasFocus = ref(false);

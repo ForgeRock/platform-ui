@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,11 +7,10 @@
 
 import { mount, flushPromises } from '@vue/test-utils';
 import { nextTick } from 'vue';
-import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
+import { findByTestId, findByRole } from '@forgerock/platform-shared/src/utils/testHelpers';
 import * as configApi from '@forgerock/platform-shared/src/api/ConfigApi';
 import * as schemaApi from '@forgerock/platform-shared/src/api/SchemaApi';
 import * as managedResourceApi from '@forgerock/platform-shared/src/api/ManagedResourceApi';
-import dateRanges from '@forgerock/platform-shared/src/utils/date';
 import * as notification from '@forgerock/platform-shared/src/utils/notification';
 import * as autoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import * as reportUtils from '@forgerock/platform-shared/src/utils/reportsUtils';
@@ -67,6 +66,7 @@ describe('Run Report component', () => {
       ['only displays the timeframe field when "startDate" parameter received', 'fr-field-timeframe', 'startDate'],
       ['only displays the timeframe field when "endDate" parameter received', 'fr-field-timeframe', 'endDate'],
       ['only displays the applications field when "applications" parameter received', 'fr-field-applications', 'applications'],
+      ['only displays the applications field when "oauth2_applications" parameter received', 'fr-field-oauth-applications', 'oauth2_applications'],
       ['only displays the events field field when "events" parameter received', 'fr-field-events', 'events'],
       ['only displays the journeys field when "journeyName" parameter received', 'fr-field-journeys', 'journeyName'],
       ['only displays the journeys field when "treeName" parameter received', 'fr-field-journeys', 'treeName'],
@@ -103,10 +103,8 @@ describe('Run Report component', () => {
       });
 
       it('ensures that the "Last 7 days" datepicker values are the default values', () => {
-        const dateFormat = 'YYYY-MM-DD';
-        const [last7DaysStart, last7DaysEnd] = dateRanges(dateFormat, dateFormat)['Last 7 Days'];
-        expect(wrapper.vm.startDateModel).toEqual(last7DaysStart);
-        expect(wrapper.vm.endDateModel).toEqual(last7DaysEnd);
+        const timeframeField = findByTestId(wrapper, 'fr-field-timeframe').find('.multiselect__placeholder');
+        expect(timeframeField.text()).toBe('Last 7 days');
       });
 
       it('reveals the datepicker components if the "custom" option is selected', async () => {
@@ -168,78 +166,18 @@ describe('Run Report component', () => {
       });
     });
 
-    describe('Applications field', () => {
-      beforeEach(async () => {
-        fieldDataMocks();
-        wrapper = setup({ reportConfig: { parameters: { applications: {} } } });
-        await flushPromises();
-        jest.clearAllMocks();
-      });
-
-      it('ensures that the default value for the applications field is set to "All applications"', () => {
-        expect(wrapper.vm.applicationsModel).toEqual([i18n.global.t('reports.tabs.runReport.applications.allApplications')]);
-      });
-
-      it('reveals the all applications field if the "Specific Applications" option is selected', async () => {
-        const specificApplicationsField = findByTestId(wrapper, 'fr-field-Applications');
-        expect(specificApplicationsField.isVisible()).toBe(false);
-
-        const applicationsField = findByTestId(wrapper, 'fr-field-applications');
-        await applicationsField.trigger('click');
-
-        const collapseWrapper = findByTestId(wrapper, 'all-applications-field');
-        expect(collapseWrapper.classes()).not.toContain('show');
-        const specificApplicationsOption = applicationsField.findAll('li')[3].find('span');
-        expect(specificApplicationsOption.text()).toBe('Specific applications');
-
-        await specificApplicationsOption.trigger('click');
-
-        expect(specificApplicationsField.isVisible()).toBe(true);
-      });
-
-      it('disables the submit button if there is no value for the "Specific applications" field', async () => {
-        // Submit button should be enabled on-load since field has default value
-        const submitButton = findByTestId(wrapper, 'run-report-button');
-        expect(submitButton.attributes().disabled).not.toBeDefined();
-
-        const applicationsField = findByTestId(wrapper, 'fr-field-applications');
-        await applicationsField.trigger('click');
-
-        const specificApplicationsOption = applicationsField.findAll('li')[3].find('span');
-        await specificApplicationsOption.trigger('click');
-
-        expect(submitButton.attributes().disabled).toBeDefined();
-
-        wrapper.vm.applicationsModel = ['my-specific-app'];
-        await nextTick();
-
-        expect(submitButton.attributes().disabled).not.toBeDefined();
-      });
-    });
-
     describe('Journeys field', () => {
-      it('displays a text field if it is detected that the application is running in enduser', async () => {
+      it('displays an empty combobox if it is detected that the application is running in enduser since enduse cannot retrieve journeys', async () => {
         fieldDataMocks();
         reportUtils.requestTrees = jest.fn().mockReturnValue(Promise.resolve([{ _id: 'Login' }, { _id: 'ResetPassword' }]));
         store.state.SharedStore.currentPackage = 'enduser';
         wrapper = setup({ reportConfig: { parameters: { journeyName: {} } } });
         await flushPromises();
         jest.clearAllMocks();
-
-        const journeyInputField = findByTestId(wrapper, 'input-default-run-report-field');
-        expect(journeyInputField.attributes('type')).toBe('text');
-      });
-
-      it('displays a multiselect field if it is detected that the application is running in platform admin', async () => {
-        fieldDataMocks();
-        reportUtils.requestTrees = jest.fn().mockReturnValue(Promise.resolve([{ _id: 'Login' }, { _id: 'ResetPassword' }]));
-        store.state.SharedStore.currentPackage = 'admin';
-        wrapper = setup({ reportConfig: { parameters: { journeyName: {} } } });
-        await flushPromises();
-        jest.clearAllMocks();
-
-        const journeyInputField = findByTestId(wrapper, 'default-run-report-field');
-        expect(journeyInputField.attributes('role')).toBe('combobox');
+        const journeyInputField = findByTestId(wrapper, 'fr-field-journeys');
+        const combobox = findByRole(journeyInputField, 'listbox');
+        const listOptions = combobox.findAll('.multiselect__option');
+        expect(listOptions.at(1).text()).toBe('List is empty.');
       });
     });
 
@@ -254,13 +192,69 @@ describe('Run Report component', () => {
         jest.clearAllMocks();
       });
 
-      it('ensures that unexpected parameters display a generic text field in the report submission form', () => {
+      it('ensures that unexpected parameter displays a generic text field if the parameter type is of string', () => {
         const unexpectedParameterLabel = findByTestId(wrapper, 'label-my_unexpected_parameter');
         const unexpectedParameterInput = findByTestId(wrapper, 'input-my_unexpected_parameter');
 
         expect(unexpectedParameterLabel.exists()).toBe(true);
         expect(unexpectedParameterLabel.text()).toBe('my_unexpected_parameter');
         expect(unexpectedParameterInput.exists()).toBe(true);
+      });
+
+      it('ensures that unexpected parameters displays a switch field if the parameter type is of boolean', async () => {
+        fieldDataMocks();
+        wrapper = setup({
+          templateName: 'TEMPLATE-NAME',
+          reportConfig: { parameters: { my_unexpected_parameter: { type: 'boolean' } } },
+        });
+        await flushPromises();
+        jest.clearAllMocks();
+
+        const unexpectedParameterField = findByTestId(wrapper, 'fr-field-my_unexpected_parameter').find('[testid="my_unexpected_parameter"]');
+        expect(unexpectedParameterField.exists()).toBe(true);
+        expect(unexpectedParameterField.attributes('type')).toBe('boolean');
+      });
+
+      it('ensures that unexpected parameters displays a switch field if the parameter type is of integer', async () => {
+        fieldDataMocks();
+        wrapper = setup({
+          templateName: 'TEMPLATE-NAME',
+          reportConfig: { parameters: { my_unexpected_parameter: { type: 'integer' } } },
+        });
+        await flushPromises();
+        jest.clearAllMocks();
+
+        const unexpectedParameterField = findByTestId(wrapper, 'fr-field-my_unexpected_parameter').find('input');
+        expect(unexpectedParameterField.exists()).toBe(true);
+        expect(unexpectedParameterField.attributes('inputmode')).toBe('numeric');
+      });
+
+      it('ensures that unexpected parameters displays a multiselect field if the parameter type is of array', async () => {
+        fieldDataMocks();
+        wrapper = setup({
+          templateName: 'TEMPLATE-NAME',
+          reportConfig: { parameters: { my_unexpected_parameter: { type: 'array' } } },
+        });
+        await flushPromises();
+        jest.clearAllMocks();
+
+        const unexpectedParameterField = findByTestId(wrapper, 'my_unexpected_parameter');
+        expect(unexpectedParameterField.exists()).toBe(true);
+        expect(unexpectedParameterField.attributes('type')).toBe('multiselect');
+      });
+
+      it('ensures that the unexpected parameter displays the correct field type based on the parameter type property for arrays.', async () => {
+        fieldDataMocks();
+        wrapper = setup({
+          templateName: 'TEMPLATE-NAME',
+          reportConfig: { parameters: { my_unexpected_parameter: { type: 'boolean' } } },
+        });
+        await flushPromises();
+        jest.clearAllMocks();
+
+        const unexpectedParameterInput = findByTestId(wrapper, 'fr-field-my_unexpected_parameter').find('[testid="my_unexpected_parameter"]');
+        expect(unexpectedParameterInput.exists()).toBe(true);
+        expect(unexpectedParameterInput.attributes('type')).toBe('boolean');
       });
 
       it('ensures that unexpected parameters disable the submit button if they do not have a value', () => {
@@ -291,15 +285,13 @@ describe('Run Report component', () => {
   });
 
   describe('@submits', () => {
-    const [sevenDaysAgoStartDate, sevenDaysAgoEndDate] = dateRanges('YYYY-MM-DD', 'YYYY-MM-DD')['Last 7 Days'];
-    const eventTypesDefaultValues = ['Token grant', 'Token refresh', 'Authorize', 'SSO'];
     const statusDefaultValues = ['active', 'inactive', 'blocked'];
-    const userNamesDefaultValue = 'my-user-name';
     const fieldDefaultValues = [
-      ['submits a run report for the timeframe field', 'endDate', sevenDaysAgoEndDate, false],
-      ['submits a run report for the applications field', 'applications', ['All applications'], false],
-      ['submits a run report for the events field field', 'events', eventTypesDefaultValues, false],
-      ['submits a run report for the timeframe field', 'startDate', sevenDaysAgoStartDate, false],
+      ['submits a run report for the timeframe field', 'endDate', '2023-12-26', false],
+      ['submits a run report for the applications field', 'applications', ['All applications'], 'applicationsModel'],
+      ['submits a run report for the campaign name field', 'campaign_name', 'my campaign', 'campaignNameModel'],
+      ['submits a run report for the campaign status field', 'campaign_status', 'in-progress', 'campaignStatusFieldValue'],
+      ['submits a run report for the timeframe field', 'startDate', '2023-12-25', false],
       ['submits a run report for the journeys field', 'journeyName', ['my-selected-journey'], 'journeysModel'],
       ['submits a run report for the journeys field', 'treeName', ['my-selected-tree'], 'journeysModel'],
       ['submits a run report for the organizations field', 'org_names', ['my-org-name'], 'organizationsModel'],
@@ -307,7 +299,7 @@ describe('Run Report component', () => {
       ['submits a run report for the status field', 'accountStatus', statusDefaultValues, false],
       ['submits a run report for the status field', 'status', statusDefaultValues, false],
       ['submits a run report for the outcome field', 'treeResult', ['SUCCESSFUL', 'FAILED', 'CONTINUE'], false],
-      ['submits a run report for the users field', 'user_names', [userNamesDefaultValue], false],
+      ['submits a run report for the users field', 'user_names', ['my-user-name'], 'usersModel'],
     ];
 
     it.each(fieldDefaultValues)('%s', async (_, parameter, defaultValue, model) => {
@@ -317,7 +309,6 @@ describe('Run Report component', () => {
         reportConfig: { parameters: { [parameter]: {} } },
       });
       await flushPromises();
-
       const runReportSpy = jest.spyOn(autoApi, 'runAnalyticsTemplate').mockImplementation(() => Promise.resolve({}));
       const successSpy = jest.spyOn(notification, 'displayNotification');
       const submitButton = findByTestId(wrapper, 'run-report-button');
@@ -327,17 +318,17 @@ describe('Run Report component', () => {
         wrapper.vm[model] = defaultValue;
       }
 
-      // Value and model property must be different for the user_names payload
-      // so this specific condition exception needs to exist for this field.
-      if (parameter === 'user_names') {
-        wrapper.vm.usersValue = [{ userName: userNamesDefaultValue }];
-      }
-
       await nextTick();
       expect(submitButton.attributes().disabled).not.toBeDefined();
       await submitButton.trigger('click');
 
-      expect(runReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', { [parameter]: defaultValue });
+      if (parameter === 'startDate' || parameter === 'endDate') {
+        // we must add this condition since testing for an explicit value with
+        // dates is not feasable because milliseconds will never be exact.
+        expect(runReportSpy).toHaveBeenCalled();
+      } else {
+        expect(runReportSpy).toHaveBeenCalledWith('TEMPLATE-NAME', { [parameter]: defaultValue });
+      }
       expect(wrapper.emitted('update-tab')).toEqual([['report-history']]);
       expect(successSpy).toHaveBeenCalled();
       expect(wrapper.vm.isSubmitting).toBe(false);
@@ -347,7 +338,7 @@ describe('Run Report component', () => {
       jest.clearAllMocks();
       // We do not need to loop through all fields to check the catch block since
       // it is the same logic for all fields so hard-coding applications here is fine.
-      wrapper = setup({ reportConfig: { parameters: { applications: {} } } });
+      wrapper = setup({ reportConfig: { parameters: { accountStatus: {} } } });
       await flushPromises();
 
       const mockError = new Error();

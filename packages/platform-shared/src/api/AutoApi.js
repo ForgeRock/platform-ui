@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -7,6 +7,7 @@
 
 import { generateAutoAccessReports } from '@forgerock/platform-shared/src/api/BaseApi';
 import encodeQueryString from '../utils/encodeQueryString';
+import store from '@/store';
 
 /**
   * Returns a list of report templates
@@ -73,6 +74,55 @@ export async function getReportResult(id, template) {
 }
 
 /**
+ * Grabs an authorization token from indexedDB for fetch API usage.
+ * NOTE: This is a one-off exception for handling a custom
+ * fetch API request since axios was not returning the
+ * correct data type for an arraybuffer response for a POST.
+ * @param {String} baseURL url for targetting token scope
+ * @returns {Promise}
+ */
+function getToken(baseURL) {
+  const dbReq = window.indexedDB.open('appAuth');
+  return new Promise((resolve, reject) => {
+    dbReq.onerror = (dbError) => {
+      reject(dbError);
+    };
+    dbReq.onsuccess = (dbResponse) => {
+      const db = dbResponse.target.result;
+      const dbStoreName = store.state.SharedStore.currentPackage === 'admin' ? 'Primary' : 'endUserUIClient';
+      const objectStoreRequest = db.transaction([dbStoreName], 'readonly').objectStore(dbStoreName).get('tokens');
+
+      objectStoreRequest.onsuccess = (objectStoreResponse) => {
+        resolve(objectStoreResponse.target.result[baseURL]);
+      };
+    };
+  });
+}
+
+/**
+ * Downloads a report file.
+ * Axios would not handle an arraybuffer response from a POST,
+ * so it was neccessary to write a custom fetch API function.
+ * @param {String} runId Report job run ID
+ * @param {Object} params url params
+ * @returns {Promise}
+ */
+export async function fetchDownload(runId, params) {
+  const baseURL = store.state.SharedStore.autoAccessReportsUrl;
+  const path = `runs/${runId}${encodeQueryString(params, false)}`;
+  const token = await getToken(baseURL);
+
+  return fetch(`${baseURL}/${path}`, {
+    method: 'POST',
+    headers: {
+      'X-TENANT-ID': store.state.SharedStore.autoAccessTenantId,
+      'Accept-API-Version': 'resource=1.0',
+      Authorization: `Bearer ${token}`,
+    },
+  });
+}
+
+/**
   * Exports or download a report in JSON or CSV format.
   * @param {String} id Job ID of the report run.
   * @param {String} template Name of the report template.
@@ -80,14 +130,17 @@ export async function getReportResult(id, template) {
   * @param {String} format Format of the report to be exported.
   * @returns {Object} Contains the data to be placed in a download file.
   */
-export async function exportReport(template, id, action, format) {
+export function exportReport(template, id, action, format) {
   const params = {
     _action: action,
     name: template,
     format,
   };
-  const data = await generateAutoAccessReports().post(`runs/${id}${encodeQueryString(params, false)}`);
-  return data;
+
+  if (action === 'export') {
+    return generateAutoAccessReports().post(`runs/${id}${encodeQueryString(params, false)}`);
+  }
+  return fetchDownload(id, params);
 }
 
 /**
