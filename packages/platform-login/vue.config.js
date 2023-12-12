@@ -148,5 +148,6 @@ module.exports = {
     'sanitize-html',
     'vue-multiselect',
     'pinia',
+    'axios',
   ],
 };

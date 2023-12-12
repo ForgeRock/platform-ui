@@ -2091,6 +2091,7 @@ __metadata:
     cypress: 12.5.1
     cypress-file-upload: 5.0.6
     cypress-lighthouse: 0.1.0
+    es6-promise: 4.2.4
     flush-promises: 1.0.2
     jest: 29.6.3
     jest-environment-jsdom: 29.6.3
