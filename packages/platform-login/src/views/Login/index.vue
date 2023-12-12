@@ -446,6 +446,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    journeyFocusFirstFocusableItemEnabled: {
+      type: Boolean,
+      default: false,
+    },
     journeyFooter: {
       type: String,
       default: '',
@@ -608,6 +612,17 @@ export default {
         this.loading = false;
       });
   },
+  watch: {
+    journeyFocusFirstFocusableItemEnabled(enabled) {
+      // IAM-5201 Unfortunately since the theme payload is async, the journey form props are set before the journey theme data is available.
+      // this makes it so that the form is rebuilt if journeyFocusFirstFocusableItemEnabled is true so autofocus is set
+      if (enabled) {
+        this.loading = true;
+        this.buildTreeForm();
+        this.loading = false;
+      }
+    },
+  },
   methods: {
     /**
      * Decodes a JWT token
@@ -660,6 +675,7 @@ export default {
       // Some callbacks don't need to render anything so forEach is used instead of map
       const componentList = [];
       let keyFromDate = Date.now();
+      let enableAutofocus = this.journeyFocusFirstFocusableItemEnabled;
       this.step.callbacks.forEach((callback, i) => {
         // index 0 is reserved for callback_0 used in backend scripts
         const index = i + 1;
@@ -674,7 +690,7 @@ export default {
         }
 
         // Use SDK to handle backend scripts that SDK can parse
-        // Reasign type to use specific component
+        // Reassign type to use specific component
         if (type === this.FrCallbackType.TextOutputCallback || type === this.FrCallbackType.MetadataCallback) {
           const isWebAuthnStep = FRWebAuthn.getWebAuthnStepType(this.step) !== WebAuthnStepType.None;
           const isRecoveryCodeStep = FRRecoveryCodes.isDisplayStep(this.step);
@@ -691,7 +707,7 @@ export default {
           }
         }
 
-        // Check HiddenValueCallback input value is pushChallengeNumber for PushChallengeNumer display
+        // Check HiddenValueCallback input value is pushChallengeNumber for PushChallengeNumber display
         if (type === this.FrCallbackType.HiddenValueCallback && callback.getInputValue() === 'pushChallengeNumber') {
           type = this.FrCallbackType.PushChallengeNumber;
         }
@@ -713,16 +729,22 @@ export default {
             : 'FrField',
         };
 
+        // IAM-5201 The autofocus is to be set only on the first focusable component.
+        // setAutoFocus returns a boolean to enable the autofocus for the component
+        // to prevent multiple components getting autofocus, when setAutoFocus returns true we set enabledAutofocus to false
+        const autofocus = this.setAutoFocus(component.type, enableAutofocus);
+        enableAutofocus = autofocus ? false : enableAutofocus;
+        component.callbackSpecificProps.autofocus = autofocus;
+
         if (component.type === 'FrField' || component.type === 'FrPasswordCallback') {
           const policyRequirements = callback.getOutputByName('policies')?.policyRequirements || [];
           const {
             fieldType, label, name, value,
           } = this.getField(callback, index);
           const fieldDataType = this.getAlternateFieldType(policyRequirements) || fieldType;
-
           const errors = this.getTranslatedPolicyFailures(callback);
           component.callbackSpecificProps = {
-            errors, label, name, type: fieldDataType, value, autocomplete: getAutocompleteValue(label),
+            errors, label, name, type: fieldDataType, value, autocomplete: getAutocompleteValue(label), autofocus,
           };
 
           component.listeners = this.getListeners({ callback, index }, ['input']);
@@ -780,7 +802,7 @@ export default {
     /**
      * Reads query parameters to determine if a tree is being resumed from a suspend or redirect and acts appropriately.
      * Also sets the page title from the URL and clears up and transforms query parameters.
-     * The presense of the "suspendedId" query parameter indicates we're restarting a tree that has been suspended.
+     * The presence of the "suspendedId" query parameter indicates we're restarting a tree that has been suspended.
      * Presence of a reentry cookie (and some known query params) indicates we're resuming after a redirect.
      */
     evaluateUrlParams() {
@@ -1316,7 +1338,7 @@ export default {
       }
     },
     /**
-     * Gets an alternate field type based on policy requirments
+     * Gets an alternate field type based on policy requirements
      *
      * @param {Array} policyRequirements
      * @returns {String} - dataType string
@@ -1332,6 +1354,26 @@ export default {
         dataType = 'time';
       }
       return dataType;
+    },
+    /**
+     * Returns a boolean that determines if the field should be auto focused
+     *
+     * @param {String} componentType component type as a string that matches imported components
+     * @param {Boolean} enableAutofocus should field be receive autofocus
+     * @returns {Boolean}
+     */
+    setAutoFocus(componentType, enableAutofocus) {
+      // Add FrChoiceCallback and FrKbaCreateCallback when multiselect is replaced
+      // Currently vue-multiselect expands on focus causing other fields to be obscured by the expanded options list
+      const componentTypesToAutofocus = [
+        // 'FrChoiceCallback',
+        'FrField',
+        // 'FrKbaCreateCallback',
+        'FrPasswordCallback',
+        'FrSelectIdPCallback',
+        'FrValidatedCreatePasswordCallback',
+      ];
+      return enableAutofocus && componentTypesToAutofocus.indexOf(componentType) > -1;
     },
   },
 };

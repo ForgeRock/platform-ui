@@ -371,6 +371,8 @@
         "journeyCardTitleColor": "Card Title Color",
         "journeyCardTitleColorDescription": "Color used for page title text.",
         "journeyFloatingLabels": "Floating labels",
+        "journeyFocusFirstFormItem": "Focus First Form Item",
+        "journeyFocusFirstFormItemDescription": "Focus first input or button in the page form on each journey step",
         "journeyFooterDescription": "Place a footer below the sign-in card.",
         "journeyFooterScriptTypeError": "Footer script must be a string.",
         "journeyInputBackgroundColor": "Sign-in Input Background Color",
