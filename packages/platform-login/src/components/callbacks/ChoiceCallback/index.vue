@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -10,6 +10,7 @@ of the MIT license. See the LICENSE file for details. -->
     <BFormRadioGroup
       v-model="selected.value"
       :options="selected.options"
+      :autofocus="autofocus"
       text-field="text"
       stacked
       @input="callback.setInputValue($event)" />
@@ -18,6 +19,7 @@ of the MIT license. See the LICENSE file for details. -->
     v-else
     v-model="selected.value"
     type="select"
+    :autofocus="autofocus"
     :floating-label="floatingLabel"
     :label="selected.label"
     :name="selected.name"
@@ -44,6 +46,10 @@ export default {
     TranslationMixin,
   ],
   props: {
+    autofocus: {
+      type: Boolean,
+      default: false,
+    },
     callback: {
       type: Object,
       required: true,
