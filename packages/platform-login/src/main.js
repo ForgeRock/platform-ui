@@ -12,6 +12,7 @@ import 'regenerator-runtime/runtime';
 
 import Vue from 'vue';
 import Notifications from 'vue-notification';
+import PromisePoly from 'es6-promise';
 import {
   Config,
   SessionManager,
@@ -35,6 +36,8 @@ Vue.config.productionTip = false;
 
 Vue.use(Notifications);
 Vue.use(VueSanitize, baseSanitizerConfig);
+
+PromisePoly.polyfill();
 
 setInteractionMode('passive');
 
