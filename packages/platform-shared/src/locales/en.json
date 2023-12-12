@@ -1544,6 +1544,7 @@
       "email": "Email",
       "endDate": "Report To",
       "journeyName": "Journey",
+      "journeyResult": "Journey Result",
       "mail": "Email",
       "orgName": "Organization",
       "orgNames": "Organizations",
@@ -1566,16 +1567,14 @@
         "runNow": "Run Now",
         "success": "Your report request has been submitted.",
         "applications": {
-          "allApplications": "All applications",
-          "allOIDCApplications": "All OIDC applications",
-          "allSAMLApplications": "All SAML applications",
-          "specificApplications": "Specific applications"
+          "allApplications": "All Applications",
+          "OIDCApplications": "OIDC Applications",
+          "OAuth2Applications": "OAuth2 Applications",
+          "SAMLApplications": "SAML Applications"
         },
-        "events": {
-          "allEventTypes": "All event types",
-          "tokenGrant": "Token grant",
-          "tokenRefresh": "Token refresh",
-          "sso": "SSO"
+        "campaignStatus": {
+          "inProgress": "in-progress",
+          "signedOff": "signed-off"
         },
         "outcome": {
           "allOutcomes": "All outcomes"
@@ -1603,10 +1602,13 @@
         "organizations": "Organizations",
         "parameters": {
           "accountStatus": "Account Status",
+          "campaignName": "Campaign Name",
+          "campaignStatus": "Campaign Status",
           "endDate": "Report To",
-          "eventTypes": "Event types",
+          "eventTypes": "Event Types",
           "startDate": "Report From"
         },
+        "pressEnterToCreateATag": "Press enter to create a tag",
         "roles": "Roles",
         "errors": {
           "couldNotRunReport": "Error running the report.",

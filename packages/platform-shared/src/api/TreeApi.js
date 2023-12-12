@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -23,8 +23,8 @@ const getTreeApiConfig = () => {
   *
   * @returns {Promise}
   */
-export function actionGetAllTrees(fields) {
-  let urlString = '/trees?_queryFilter=true';
+export function actionGetAllTrees(fields, queryFilter = true, pageSize = -1) {
+  let urlString = `/trees?_queryFilter=${queryFilter}&_pageSize=${pageSize}`;
   if (fields && fields.length > 0) {
     urlString += `&_fields=${fields.toString()}`;
   }

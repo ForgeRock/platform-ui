@@ -1,37 +1,38 @@
 /**
- * Copyright 2023 ForgeRock AS. All Rights Reserved
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
- * Use of this code requires a commercial software license with ForgeRock AS
- * or with one of its affiliates. All use shall be exclusively subject
- * to such license between the licensee and ForgeRock AS.
+ * This software may be modified and distributed under the terms
+ * of the MIT license. See the LICENSE file for details.
  */
 
 import { ref } from 'vue';
 import {
+  getOauth2Clients,
   managedResourcePropertyRequest,
-  relationshipPropertyRequest,
   requestTrees,
 } from '@forgerock/platform-shared/src/utils/reportsUtils';
-import { actionGetAllTrees } from '@forgerock/platform-shared/src/api/TreeApi';
 import store from '@/store';
 import i18n from '@/i18n';
 
 export default function useRunReport(
   applicationsModel,
-  applicationsRelationshipProperty,
+  applicationOptions,
+  campaignNameModel,
+  campaignStatusModel,
   endDateModel,
-  eventTypesModel,
   journeysModel,
   journeyOptions,
-  membersRelationshipProperty,
-  organizationOptions,
+  oAuthApplicationOptions,
+  oAuthApplicationsModel,
   organizationsModel,
+  orgOptions,
   outcomeModel,
-  roleOptions,
   rolesModel,
+  rolesOptions,
   startDateModel,
   statusModel,
   usersModel,
+  usersOptions,
 ) {
   /**
    * Journey field schema extracted because both the journeyName
@@ -41,18 +42,19 @@ export default function useRunReport(
     label: i18n.global.t('common.journeys'),
     config: {
       model: journeyOptions,
+      fields: '_id',
       viewable: store.state.SharedStore.currentPackage === 'admin',
     },
     payload: journeysModel,
-    fetch: () => requestTrees(actionGetAllTrees),
+    fetch: requestTrees,
   };
 
   /**
    * Schema that handles data to fetch and model.
    * NOTE: If a fetch request is conditional, then a property titled 'viewable'
    * can be added to the config oject which will prevent the fetch from executing
-   * when the condition is false. The UI will then display a generic text field
-   * that corresponds with the given parameter.
+   * when the condition is false. The UI will then display a field that
+   * corresponds with the given parameter type.
    */
   const _REPORT_FIELDS_CONTROLLER = {
     accountStatus: {
@@ -62,42 +64,58 @@ export default function useRunReport(
     applications: {
       label: i18n.global.t('common.applications'),
       config: {
-        managedObject: 'user',
-        schemaProperty: 'applications',
-        model: applicationsRelationshipProperty,
+        managedObject: 'application',
+        model: applicationOptions,
+        fields: 'name',
       },
       payload: applicationsModel,
-      fetch: () => relationshipPropertyRequest(_REPORT_FIELDS_CONTROLLER.applications.config),
+      fetch: managedResourcePropertyRequest,
+    },
+    campaign_name: {
+      label: i18n.global.t('reports.tabs.runReport.parameters.campaignName'),
+      payload: campaignNameModel,
+    },
+    campaign_status: {
+      label: i18n.global.t('reports.tabs.runReport.parameters.campaignStatus'),
+      payload: campaignStatusModel,
     },
     endDate: {
       label: i18n.global.t('reports.tabs.runReport.parameters.endDate'),
       payload: endDateModel,
     },
-    events: {
-      label: i18n.global.t('reports.tabs.runReport.parameters.eventTypes'),
-      payload: eventTypesModel,
-    },
     journeyName: journeyFieldMap,
+    oauth2_applications: {
+      label: i18n.global.t('reports.tabs.runReport.applications.OAuth2Applications'),
+      config: {
+        model: oAuthApplicationOptions,
+        fields: '_id',
+        viewable: store.state.SharedStore.currentPackage === 'admin',
+      },
+      payload: oAuthApplicationsModel,
+      fetch: getOauth2Clients,
+    },
     org_names: {
       label: i18n.global.t('reports.tabs.runReport.organizations'),
       config: {
         managedObject: 'organization',
-        model: organizationOptions,
+        model: orgOptions,
+        fields: 'name',
       },
       payload: organizationsModel,
-      fetch: () => managedResourcePropertyRequest(_REPORT_FIELDS_CONTROLLER.org_names.config),
+      fetch: managedResourcePropertyRequest,
     },
     realm: {
       payload: ref(store.state.realm),
     },
     roles: {
-      label: i18n.global.t('common.applications'),
+      label: i18n.global.t('common.roles'),
       config: {
         managedObject: 'role',
-        model: roleOptions,
+        model: rolesOptions,
+        fields: 'name',
       },
       payload: rolesModel,
-      fetch: () => managedResourcePropertyRequest(_REPORT_FIELDS_CONTROLLER.roles.config),
+      fetch: managedResourcePropertyRequest,
     },
     startDate: {
       label: i18n.global.t('reports.tabs.runReport.parameters.startDate'),
@@ -115,12 +133,12 @@ export default function useRunReport(
     user_names: {
       label: i18n.global.t('common.users'),
       config: {
-        managedObject: 'application',
-        schemaProperty: 'members',
-        model: membersRelationshipProperty,
+        managedObject: 'user',
+        model: usersOptions,
+        fields: 'userName',
       },
       payload: usersModel,
-      fetch: () => relationshipPropertyRequest(_REPORT_FIELDS_CONTROLLER.user_names.config),
+      fetch: managedResourcePropertyRequest,
     },
   };
 
