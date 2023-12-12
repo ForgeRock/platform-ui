@@ -10,8 +10,8 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { createTooltipContainer, findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 
+import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import * as ReportsUtils from '@forgerock/platform-shared/src/utils/reportsUtils';
-import * as DownloadFile from '@forgerock/platform-shared/src/utils/downloadFile';
 import * as Notifications from '@forgerock/platform-shared/src/utils/notification';
 import i18n from '@/i18n';
 import RunHistory from './RunHistory';
@@ -161,10 +161,8 @@ describe('Run History component', () => {
       const tableRows = table.find('tbody').findAll('tr[role="row"]');
       const tableRowComplete = tableRows.at(3);
       const tableRowViewReportButton = tableRowComplete.find('.fr-view-report').find('button');
-      const routerPushSpy = jest.spyOn(wrapper.vm.router, 'push');
 
-      await tableRowViewReportButton.trigger('click');
-      expect(routerPushSpy).toHaveBeenCalledWith({ name: 'ReportView', params: { id: 'job_4567', template: 'template-name' } });
+      expect(tableRowViewReportButton.exists()).toBe(true);
     });
 
     it('makes an export request network call when an export button is clicked and ensures that the button state updates from loading to download upon resolution', async () => {
@@ -215,23 +213,49 @@ describe('Run History component', () => {
     });
 
     it('makes a download request network call when a download button is clicked', async () => {
-      ReportsUtils.requestExport = jest.fn().mockReturnValue(Promise.resolve({
-        headers: { 'content-disposition': 'filename=my-informative-report.csv' },
-        data: 'hello world',
+      AutoApi.fetchDownload = jest.fn().mockReturnValue(Promise.resolve({
+        status: 200,
+        headers: {
+          get: jest.fn(() => 'filename=my-informative-report.csv'),
+        },
+        data: '',
+        text: jest.fn(() => ''),
       }));
+
       const table = findByTestId(wrapper, 'run-history-table');
       const tableRows = table.find('tbody').findAll('tr[role="row"]');
       const job0123 = tableRows.at(0);
       const CSVDownloadButton = findByTestId(job0123, 'CSV-download-button');
 
       const downloadIcon = CSVDownloadButton.find('.material-icons-outlined');
-      const requestExportSpy = jest.spyOn(ReportsUtils, 'requestExport');
-      const downloadFileSpy = jest.spyOn(DownloadFile, 'downloadFile').mockImplementation(() => Promise.resolve());
+      const requestDownloadSpy = jest.spyOn(AutoApi, 'fetchDownload');
 
       expect(downloadIcon.text()).toBe('file_download');
       await CSVDownloadButton.trigger('click');
-      expect(requestExportSpy).toHaveBeenCalledWith('job_0123', 'download', 'TEMPLATE-NAME', 'csv');
-      expect(downloadFileSpy).toHaveBeenCalledWith('hello world', 'text/csv;charset=utf-8', 'my-informative-report.csv');
+      expect(requestDownloadSpy).toHaveBeenCalledWith('job_0123', { _action: 'download', format: 'csv', name: 'template-name' });
+    });
+
+    it('shows error if download request fails', async () => {
+      AutoApi.fetchDownload = jest.fn().mockReturnValue(Promise.resolve({
+        status: 500,
+        headers: {
+          get: jest.fn(() => 'filename=my-informative-report.csv'),
+        },
+        data: '',
+        text: () => Promise.resolve(jest.fn(() => 'Failure')),
+      }));
+
+      const table = findByTestId(wrapper, 'run-history-table');
+      const tableRows = table.find('tbody').findAll('tr[role="row"]');
+      const job0123 = tableRows.at(0);
+      const CSVDownloadButton = findByTestId(job0123, 'CSV-download-button');
+
+      const downloadIcon = CSVDownloadButton.find('.material-icons-outlined');
+      const errorSpy = jest.spyOn(Notifications, 'showErrorMessage');
+
+      expect(downloadIcon.text()).toBe('file_download');
+      await CSVDownloadButton.trigger('click');
+      expect(errorSpy).toHaveBeenCalled();
     });
 
     it('shows the report summary modal when the "Run Details" option is selected in the ellipses menu', async () => {

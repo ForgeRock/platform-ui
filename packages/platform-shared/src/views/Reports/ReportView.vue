@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -44,9 +44,7 @@ of the MIT license. See the LICENSE file for details. -->
           variant="primary"
           :disabled="loadingExport"
         >
-          <template
-            #button-content
-          >
+          <template #button-content>
             <FrSpinner
               v-if="loadingExport"
               class="justify-content-center mr-2"
@@ -57,38 +55,12 @@ of the MIT license. See the LICENSE file for details. -->
               class="mr-md-2"
               name="file_download" />
             <span class="d-none d-md-block">
-              {{ loadingExport ? $t('reports.exporting') : $t('reports.export') }}
+              {{ $t('reports.export') }}
             </span>
           </template>
           <BDropdownItemButton
             button-class="d-flex align-items-center"
-            @click.stop="generateReport('CSV')"
-          >
-            <template v-if="loadingCsv">
-              <FrSpinner
-                class="justify-content-center mr-2"
-                :button-spinner="true"
-                size="sm" />
-              {{ $t('reports.exportingFile', { fileType: 'CSV' }) }}
-            </template>
-            <template v-else-if="csvStatus">
-              <FrIcon
-                class="mr-2"
-                name="file_download"
-              />
-              {{ $t('reports.downloadFile', { fileType: 'CSV' }) }}
-            </template>
-            <template v-else>
-              <FrIcon
-                class="mr-2"
-                name="sync"
-              />
-              {{ $t('reports.exportFile', { fileType: 'CSV' }) }}
-            </template>
-          </BDropdownItemButton>
-          <BDropdownItemButton
-            button-class="d-flex align-items-center"
-            @click.stop="generateReport('JSON')"
+            @click.stop="generateReport('JSON', $bvModal)"
           >
             <template v-if="loadingJson">
               <FrSpinner
@@ -110,6 +82,32 @@ of the MIT license. See the LICENSE file for details. -->
                 name="sync"
               />
               {{ $t('reports.exportFile', { fileType: 'JSON' }) }}
+            </template>
+          </BDropdownItemButton>
+          <BDropdownItemButton
+            button-class="d-flex align-items-center"
+            @click.stop="generateReport('CSV', $bvModal)"
+          >
+            <template v-if="loadingCsv">
+              <FrSpinner
+                class="justify-content-center mr-2"
+                :button-spinner="true"
+                size="sm" />
+              {{ $t('reports.exportingFile', { fileType: 'CSV' }) }}
+            </template>
+            <template v-else-if="csvStatus">
+              <FrIcon
+                class="mr-2"
+                name="file_download"
+              />
+              {{ $t('reports.downloadFile', { fileType: 'CSV' }) }}
+            </template>
+            <template v-else>
+              <FrIcon
+                class="mr-2"
+                name="sync"
+              />
+              {{ $t('reports.exportFile', { fileType: 'CSV' }) }}
             </template>
           </BDropdownItemButton>
         </BDropdown>
@@ -171,7 +169,7 @@ of the MIT license. See the LICENSE file for details. -->
       :data="modalData.value"
       :file-type="type"
       :status="status"
-      @download-report="generateReport" />
+      @download-report="generateReport($event.fileType, $bvModal)" />
   </BContainer>
 </template>
 
@@ -204,6 +202,7 @@ import FrReportViewTable from './ReportViewTable';
 import useExportReport from './composables/ExportReport';
 import useViewReportTable from './composables/ViewReportTable';
 import useRunHistoryTable from './composables/RunHistoryTable';
+import store from '@/store';
 import i18n from '@/i18n';
 
 // Composables
@@ -266,7 +265,7 @@ async function getConfigInfo() {
 async function getRunInfo() {
   try {
     runDataLoading.value = true;
-    const result = await getReportRuns({ name: template });
+    const result = await getReportRuns({ name: template, realm: store.state.realm });
     runData.value = result.result.find((run) => run.runId === id);
     getConfigInfo();
   } catch (err) {
@@ -280,8 +279,8 @@ async function getRunInfo() {
  * Exports or downloads the report in CSV or JSON format.
  * @param {String} fileType Format to be exported or downloaded.
  */
-async function generateReport(fileType) {
-  await fetchExport(template, id, getExportFormatType(fileType));
+async function generateReport(fileType, bvModal) {
+  await fetchExport(template, id, getExportFormatType(fileType), bvModal);
 }
 
 /**

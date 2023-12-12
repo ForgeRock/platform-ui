@@ -35,29 +35,27 @@ of the MIT license. See the LICENSE file for details. -->
 /**
  * @description Displays analytics reports history
  */
-import {
-  ref,
-  watch,
-} from 'vue';
+import { ref, watch } from 'vue';
 import { BCard } from 'bootstrap-vue';
-import { displayNotification } from '@forgerock/platform-shared/src/utils/notification';
+import { displayNotification, showErrorMessage } from '@forgerock/platform-shared/src/utils/notification';
 import { requestExport, requestReportRuns } from '@forgerock/platform-shared/src/utils/reportsUtils';
 import { downloadFile, getFileNameFromContentDisposition } from '@forgerock/platform-shared/src/utils/downloadFile';
-import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+import { fetchDownload } from '@forgerock/platform-shared/src/api/AutoApi';
 import { useRouter } from 'vue-router';
+import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
 import FrRunHistoryTable from './RunHistoryTable';
 import FrReportExportModal from './modals/ReportExportModal';
 import FrRunHistoryDetailsModal from './modals/RunHistoryDetailsModal';
 import useRunHistoryTable from './composables/RunHistoryTable';
+import store from '@/store';
 import i18n from '@/i18n';
-
-defineEmits(['table-data-ready']);
 
 // Composables
 const router = useRouter();
 const { bvModal } = useBvModal();
 
+defineEmits(['table-data-ready']);
 const props = defineProps({
   newReportJobId: {
     type: String,
@@ -210,20 +208,35 @@ async function downloadReport({ fileType, item, exportStatus }) {
 
   if (exportStatus !== 'downloading') {
     const { runId } = item;
-    const templateName = props.templateName.toUpperCase();
-    const downloadResponse = await requestExport(runId, 'download', templateName, getExportFormatType(fileType));
 
-    if (downloadResponse !== 'Error') {
-      const fileName = getFileNameFromContentDisposition(downloadResponse.headers['content-disposition']);
-      const JSON_CSV = fileType === 'JSON' ? 'application/json' : 'text/csv';
-      let file = downloadResponse.data;
+    const fetchResponse = await fetchDownload(runId, {
+      _action: 'download',
+      name: props.templateName,
+      format: getExportFormatType(fileType),
+    });
 
-      if (fileType === 'JSON') {
-        const str = JSON.stringify(downloadResponse.data);
-        file = new TextEncoder().encode(str);
+    if (fetchResponse.status === 200) {
+      const fileName = getFileNameFromContentDisposition(fetchResponse.headers.get('content-disposition'));
+      const isZip = fileName.includes('.zip');
+      let file = '';
+      let contentType = '';
+
+      if (isZip) {
+        file = await fetchResponse.arrayBuffer();
+        contentType = 'application/zip';
+      } else if (fileType === 'JSON') {
+        file = await fetchResponse.text();
+        contentType = 'application/json;charset=utf-8';
+      } else if (fileType === 'CSV') {
+        file = await fetchResponse.text();
+        contentType = 'text/csv;charset=utf-8';
       }
-      downloadFile(file, `${JSON_CSV};charset=utf-8`, fileName);
-      bvModal.hide('export-modal');
+      downloadFile(file, contentType, fileName);
+      bvModal.value.hide('export-modal');
+    } else {
+      fetchResponse.text().then((error) => {
+        showErrorMessage(error, i18n.global.t('reports.tabs.runHistory.errors.errorDownload'));
+      });
     }
 
     // We need to reference the queue here since there could be an export request for the
@@ -259,7 +272,7 @@ async function exportReport({ fileType, item, exportStatus }) {
     if (exportResponse !== 'Error') {
       // We want to fetch the current report, which should have an updated
       // export status so we can update the export buttons with the latest state.
-      const fetchReport = await requestReportRuns({ runId, name: templateName });
+      const fetchReport = await requestReportRuns({ runId, name: templateName, realm: store.state.realm });
       const [newTableItemReport] = reportHistoryTableDataGenerator(fetchReport);
       const newExportStatus = newTableItemReport.export[fileType];
       const newItemWithFetchedStatus = handleExportQueue(newTableItemReport, fileType, newExportStatus);
@@ -308,8 +321,8 @@ async function setVanityRunningStateForNewReport(reportRunsData, templateName, l
     setTimeout(async () => {
       const { status, runId } = newReportFromList;
       let report = [newReportFromList];
-      if (status !== 'COMPLETE_SUCCESS') {
-        report = await requestReportRuns({ runId, name: templateName });
+      if (status !== 'COMPLETED_SUCCESS') {
+        report = await requestReportRuns({ runId, name: templateName, realm: store.state.realm });
       }
       updateSingleTableRow.value = reportHistoryTableDataGenerator(report);
     }, 1500);
@@ -330,7 +343,7 @@ async function setVanityRunningStateForNewReport(reportRunsData, templateName, l
  */
 async function initialize() {
   const templateName = props.templateName.toUpperCase();
-  const allReportRuns = await requestReportRuns({ name: templateName });
+  const allReportRuns = await requestReportRuns({ name: templateName, realm: store.state.realm });
 
   if (props.newReportJobId) {
     setVanityRunningStateForNewReport(allReportRuns, templateName, props.newReportJobId);

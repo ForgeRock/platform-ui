@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -10,6 +10,8 @@ import { getConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
 import { getSchema } from '@forgerock/platform-shared/src/api/SchemaApi';
 import { getManagedResourceList } from '@forgerock/platform-shared/src/api/ManagedResourceApi';
 import { getReportRuns, reportExportRequest } from '@forgerock/platform-shared/src/api/AutoApi';
+import { actionGetAllTrees } from '@forgerock/platform-shared/src/api/TreeApi';
+import { getGatewaysOrAgents } from '@forgerock/platform-shared/src/api/AgentsApi';
 import i18n from '@forgerock/platform-shared/src/i18n';
 import store from '@/store';
 
@@ -59,11 +61,11 @@ async function getManagedSchema(resourceName, errorMessage) {
  * @param {String} managedObjectName the managed object name that derives from the _FIELD_MAP config
  * @returns {Array} list of managed object property names
  */
-async function getManagedResourceProperties(managedObjectName) {
+async function getManagedResourceProperties(managedObjectName, queryFilter = true, pageSize = -1, fields = '') {
   const { name: resourceName } = await getManagedObject(managedObjectName);
 
   try {
-    const { data } = await getManagedResourceList(resourceName, { queryFilter: true });
+    const { data } = await getManagedResourceList(resourceName, { queryFilter, pageSize, fields });
     const managedResourceProperties = data.result;
     return managedResourceProperties;
   } catch (error) {
@@ -73,38 +75,34 @@ async function getManagedResourceProperties(managedObjectName) {
 }
 
 /**
- * Gets the list of all trees
- * @param {Function} actionGetAllTrees api function needs to be passed in because utils located under admin package
- * @returns {Array} list of trees
+ * Gets a list of only oAuth2 clients
+ * @param {Undefined} _ Unused first parameter
+ * @param {String} queryFilter api parameter for filtering results
+ * @param {String} pageSize api parameter for returning a determined amount of results
  */
-async function getTrees(actionGetAllTrees) {
-  try {
-    const { data } = await actionGetAllTrees();
-    const trees = data.result;
-    return trees;
-  } catch (error) {
-    showErrorMessage(error, i18n.global.t('reports.tabs.runReport.errors.errorRetrievingTemplate'));
-    return error;
-  }
+export async function getOauth2Clients(_, queryFilter = true, pageSize = 10) {
+  const queryFilterForGatewaysOrAgents = queryFilter === true ? '' : queryFilter.split('"')[1];
+  const response = await getGatewaysOrAgents('oauth2', { queryFilter: queryFilterForGatewaysOrAgents }, pageSize);
+  return response.data.result;
 }
 
 /**
  * Requests a report export file or a download
  * @param {String} runId Report job run ID
- * @param {String} exportStatus Report status: 'export' || 'download'
+ * @param {String} action Action to execute, can be 'export' or 'download'.
  * @param {String} template Report name
  * @param {String} format File type: jsonl || csv
  */
-export async function requestExport(runId, exportStatus, template, format) {
+export async function requestExport(runId, action, template, format) {
   try {
     const response = await reportExportRequest(runId, {
-      _action: exportStatus,
+      _action: action,
       name: template,
       format,
     });
     return response;
   } catch (error) {
-    if (exportStatus === 'download') {
+    if (action === 'download') {
       showErrorMessage(error, i18n.global.t('reports.tabs.runHistory.errors.errorDownload'));
     }
     return error.name;
@@ -123,7 +121,7 @@ export async function requestReportRuns(params) {
     const { result: reportRunsData } = await getReportRuns(params);
     return reportRunsData?.length ? reportRunsData : [];
   } catch (error) {
-    showErrorMessage(error, i18n.global.t('reports.tabs.runHistory.table.runHistory.errors.errorRetrievingHistory'));
+    showErrorMessage(error, i18n.global.t('reports.tabs.runHistory.errors.errorRetrievingHistory'));
     return [];
   }
 }
@@ -134,7 +132,7 @@ export async function requestReportRuns(params) {
  * @returns {Object} managed schema property
  */
 export async function relationshipPropertyRequest(config) {
-  const { schemaProperty, managedObject } = config;
+  const { managedObject, schemaProperty } = config;
   const { name: resourceName } = await getManagedObject(managedObject, i18n.global.t('reports.tabs.runReport.errors.errorRetrievingTemplate'));
   const { properties } = await getManagedSchema(resourceName, i18n.global.t('reports.tabs.runReport.errors.errorRetrievingTemplate'));
   return properties[schemaProperty];
@@ -143,26 +141,29 @@ export async function relationshipPropertyRequest(config) {
 /**
  * Gets managed object properties and sets them to corresponding data model
  * @param {Object} config the _REPORT_FIELDS_CONTROLLER config for the corresponding reportConfig paremeter
+ * @param {String} queryFilter api parameter for filtering results
+ * @param {String} pageSize api parameter for returning a determined amount of results
  * @returns {Array} list of managed object property names
  */
-export async function managedResourcePropertyRequest(config) {
-  const { managedObject } = config;
-  const properties = await getManagedResourceProperties(managedObject);
-  const propertyNames = properties.map(({ name }) => name);
-  return propertyNames;
+export function managedResourcePropertyRequest(config, queryFilter, pageSize) {
+  const { managedObject, fields } = config;
+  return getManagedResourceProperties(managedObject, queryFilter, pageSize, fields);
 }
 
 /**
- * Gets the list of all trees and sets them to the model
- * @param {Object} model the data model where the tree options get injected
+ * Gets the list of all trees
+ * @param {Object} config the _REPORT_FIELDS_CONTROLLER config for the corresponding reportConfig paremeter
+ * @param {String} queryFilter api parameter for filtering results
+ * @param {String} pageSize api parameter for returning a determined amount of results
  * @returns {Array} list of tree names
  */
-export async function requestTrees(actionGetAllTrees) {
-  const trees = await getTrees(actionGetAllTrees);
-
-  if (trees.length) {
-    const treeNames = trees.map(({ _id }) => _id);
-    return treeNames;
+export async function requestTrees(config, queryFilter, pageSize) {
+  try {
+    const { data } = await actionGetAllTrees(config.fields, queryFilter, pageSize);
+    const trees = data.result;
+    return trees;
+  } catch (error) {
+    showErrorMessage(error, i18n.t('reports.tabs.runReport.errors.errorRetrievingTemplate'));
+    return error;
   }
-  return [];
 }
