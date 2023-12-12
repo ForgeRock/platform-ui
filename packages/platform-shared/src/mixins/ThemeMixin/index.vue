@@ -57,6 +57,7 @@ export default {
         journeyCardTextColor: '#5e6d82',
         journeyCardTitleColor: '#23282e',
         journeyFloatingLabels: true,
+        journeyFocusFirstFocusableItemEnabled: false,
         journeyFooter: `<div class="d-flex justify-content-center py-4 w-100"><span class="pr-1">© ${new Date().getFullYear()}</span>\n<a href="#" target="_blank" class="text-body">My Company, Inc</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Privacy Policy</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Terms & Conditions</a></div>`,
         journeyFooterEnabled: false,
         journeyFooterScriptTag: '',
@@ -106,6 +107,7 @@ export default {
       accountFooterScriptTag: '',
       accountFooterScriptTagEnabled: false,
       journeyFloatingLabels: true,
+      journeyFocusFirstFocusableItemEnabled: false,
       journeyFooter: '',
       journeyFooterEnabled: false,
       journeyFooterScriptTag: '',
@@ -199,6 +201,7 @@ export default {
           this.theme = theme;
           this.favicon = theme.favicon;
           this.journeyFloatingLabels = theme.journeyFloatingLabels;
+          this.journeyFocusFirstFocusableItemEnabled = theme.journeyFocusFirstFocusableItemEnabled;
           this.journeyFooter = theme.journeyFooter;
           this.journeyFooterEnabled = theme.journeyFooterEnabled;
           this.accountFooterScriptTag = theme.accountFooterScriptTag;

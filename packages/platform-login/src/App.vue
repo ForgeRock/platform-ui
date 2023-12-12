@@ -17,6 +17,7 @@ of the MIT license. See the LICENSE file for details. -->
         mode="out-in">
         <RouterView
           :journey-floating-labels="journeyFloatingLabels"
+          :journey-focus-first-focusable-item-enabled="journeyFocusFirstFocusableItemEnabled"
           :journey-footer="localizedFooter"
           :journey-footer-enabled="journeyFooterEnabled"
           :journey-footer-script-tag="journeyFooterScriptTag"
