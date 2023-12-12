@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -142,15 +142,15 @@ export default function useRunHistoryTable() {
   ];
 
   /**
-    * Traverses through an existing object and updates
-    * the target property, while maintaining the rest of
-    * the original values and returning a new object.
-    * @param {Object} item source object
-    * @param {String} path location of property to update using a period delimeter: 'export.JSON'
-    * @param {*} newValue value replacement
+    * Traverses through an existing object and updates the target
+    * property, while maintaining the rest of the original values
+    * (as shallow references) and returning a new object.
+    * @param {Object} collection source object
+    * @param {String} path target path in period delimeter format: 'export.JSON'
+    * @param {*} value replacement value
     * @returns {Object}
     */
-  function updateValueInNestedObject(item, path, value) {
+  function updateValueInNestedObject(collection, path, value) {
     const pathList = path.split('.');
 
     // Recursive function that calls itself as many times
@@ -166,7 +166,7 @@ export default function useRunHistoryTable() {
       };
     }
 
-    return createDepth(item, 0);
+    return createDepth(collection, 0);
   }
 
   return {

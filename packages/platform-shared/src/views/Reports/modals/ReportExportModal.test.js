@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -96,7 +96,11 @@ describe('Report Export modal component', () => {
       const downloadButton = findByTestId(wrapper, 'fr-history-export-download-button');
 
       await downloadButton.trigger('click');
-      expect(wrapper.emitted()['download-report'][0][0]).toEqual({ fileType: 'JSON', item: { runId: 'job_0123' } });
+      expect(wrapper.emitted()['download-report'][0]).toEqual([{
+        exportStatus: 'download',
+        fileType: 'JSON',
+        item: { runId: 'job_0123' },
+      }]);
     });
   });
 });

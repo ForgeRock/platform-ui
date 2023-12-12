@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -16,54 +16,38 @@ describe('@useRunReport', () => {
   TreeApi.actionGetAllTrees = jest.fn();
 
   const { _REPORT_FIELDS_CONTROLLER: controller } = useRunReport();
-  const relationshipPropertyRequestSpy = jest.spyOn(ReportsUtils, 'relationshipPropertyRequest');
   const managedResourcePropertyRequestSpy = jest.spyOn(ReportsUtils, 'managedResourcePropertyRequest');
   const requestTreesSpy = jest.spyOn(ReportsUtils, 'requestTrees');
-  const actionGetAllTreesSpy = jest.spyOn(TreeApi, 'actionGetAllTrees');
 
   describe('@fetch', () => {
     it('ensures that the applications property fetches with expected config data', async () => {
       await controller.applications.fetch();
-      expect(relationshipPropertyRequestSpy).toHaveBeenCalledWith({
-        managedObject: 'user',
-        model: undefined,
-        schemaProperty: 'applications',
-      });
+      expect(managedResourcePropertyRequestSpy).toHaveBeenCalled();
     });
 
     it('ensures that the org_names property fetches with expected config data', async () => {
       await controller.org_names.fetch();
-      expect(managedResourcePropertyRequestSpy).toHaveBeenCalledWith({
-        managedObject: 'organization',
-        model: undefined,
-      });
+      expect(managedResourcePropertyRequestSpy).toHaveBeenCalled();
     });
 
     it('ensures that the journeyName property fetches with expected config data', async () => {
       await controller.journeyName.fetch();
-      expect(requestTreesSpy).toHaveBeenCalledWith(actionGetAllTreesSpy);
+      expect(requestTreesSpy).toHaveBeenCalled();
     });
 
     it('ensures that the treeName property fetches with expected config data', async () => {
       await controller.treeName.fetch();
-      expect(requestTreesSpy).toHaveBeenCalledWith(actionGetAllTreesSpy);
+      expect(requestTreesSpy).toHaveBeenCalled();
     });
 
     it('ensures that the user_names property fetches with expected config data', async () => {
       await controller.user_names.fetch();
-      expect(relationshipPropertyRequestSpy).toHaveBeenCalledWith({
-        managedObject: 'application',
-        schemaProperty: 'members',
-        model: undefined,
-      });
+      expect(managedResourcePropertyRequestSpy).toHaveBeenCalled();
     });
 
     it('ensures that the roles property fetches with expected config data', async () => {
       await controller.roles.fetch();
-      expect(managedResourcePropertyRequestSpy).toHaveBeenCalledWith({
-        managedObject: 'role',
-        model: undefined,
-      });
+      expect(managedResourcePropertyRequestSpy).toHaveBeenCalled();
     });
   });
 

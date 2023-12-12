@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -60,7 +60,7 @@ export default function useViewReportTable() {
         case ('mail'):
           tableFields.value.push({
             key: 'user',
-            label: i18n.t('reports.tableHeadings.user'),
+            label: i18n.global.t('reports.tableHeadings.user'),
             tdClass: 'align-top',
           });
           break;
@@ -79,8 +79,8 @@ export default function useViewReportTable() {
         default:
           tableFields.value.push({
             key: camelCase(row),
-            label: i18n.te(`reports.tableHeadings.${camelCase(row)}`)
-              ? i18n.t(`reports.tableHeadings.${camelCase(row)}`)
+            label: i18n.global.t(`reports.tableHeadings.${camelCase(row)}`)
+              ? i18n.global.t(`reports.tableHeadings.${camelCase(row)}`)
               : startCase(camelCase(row)),
             tdClass: 'align-top',
           });
@@ -140,7 +140,7 @@ export default function useViewReportTable() {
       arrangeTable();
     } catch (error) {
       isExpired.value = true;
-      expiredMessage.value = i18n.t('reports.notAvailable');
+      expiredMessage.value = i18n.global.t('reports.notAvailable');
     } finally {
       tableLoading.value = false;
     }
