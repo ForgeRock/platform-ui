@@ -292,6 +292,46 @@ describe('Component Test', () => {
     const originalWindow = window;
     global.URLSearchParams = URLSearchParams;
 
+    const stepPayload = {
+      authId: 'eyxQ',
+      callbacks: [
+        {
+          type: 'NameCallback',
+          output: [
+            {
+              name: 'prompt',
+              value: 'User Name',
+            },
+          ],
+          input: [
+            {
+              name: 'IDToken1',
+              value: '',
+            },
+          ],
+          _id: 0,
+        },
+        {
+          type: 'PasswordCallback',
+          output: [
+            {
+              name: 'prompt',
+              value: 'Password',
+            },
+          ],
+          input: [
+            {
+              name: 'IDToken2',
+              value: '',
+            },
+          ],
+          _id: 1,
+        },
+      ],
+      header: 'Sign In',
+      description: 'New here? <a href="#/service/Registration">Create an account</a><br><a href="#/service/ForgottenUsername">Forgot username?</a><a href="#/service/ResetPassword"> Forgot password?</a>',
+    };
+
     const setUrl = (url) => {
       delete window.location;
       window.location = new URL(url);
@@ -301,6 +341,8 @@ describe('Component Test', () => {
       i18n,
       stubs: {
         'router-link': true,
+        FrField: true,
+        FrPasswordCallback: true,
       },
       mocks: {
         $route: {
@@ -362,7 +404,7 @@ describe('Component Test', () => {
       getStepSpy.mockRestore();
     });
 
-    it('Leaves tree resumption query paramters in place when not returning from a redirect', async () => {
+    it('Leaves tree resumption query parameters in place when not returning from a redirect', async () => {
       setUrl('https://forgerock.io/login/?realm=/&code=aCode&notRemoved=here');
 
       // indicate that the tree is being resumed following a redirect
@@ -375,6 +417,32 @@ describe('Component Test', () => {
       expect(findByTestId(wrapper, 'callbacks_panel').exists()).toBeTruthy();
 
       resumingSpy.mockRestore();
+    });
+
+    it('focuses on the first input if journeyFocusFirstFocusableItemEnabled is true', async () => {
+      const data = {
+        loading: true,
+        step: new FRStep(stepPayload),
+      };
+
+      const wrapper = await mountLogin();
+      await flushPromises();
+
+      wrapper.setData(data);
+      wrapper.vm.buildTreeForm();
+
+      await flushPromises();
+
+      expect(wrapper.vm.componentList[0].callbackSpecificProps.autofocus).toBeFalsy();
+      expect(wrapper.vm.componentList[1].callbackSpecificProps.autofocus).toBeFalsy();
+
+      wrapper.setData(data);
+      wrapper.setProps({ journeyFocusFirstFocusableItemEnabled: true });
+
+      await flushPromises();
+
+      expect(wrapper.vm.componentList[0].callbackSpecificProps.autofocus).toBeTruthy();
+      expect(wrapper.vm.componentList[1].callbackSpecificProps.autofocus).toBeFalsy();
     });
   });
 });

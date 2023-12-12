@@ -11,6 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
       :label="password.label"
       :floating-label="floatingLabel"
       :describedby-id="`policy_panel_${index}`"
+      :autofocus="autofocus"
       @blur="lostFocus = true;"
       @input="updateCallback" />
     <FrPolicyPanel
@@ -59,6 +60,10 @@ export default {
     PasswordPolicyMixin,
   ],
   props: {
+    autofocus: {
+      type: Boolean,
+      default: false,
+    },
     /**
      * Validated password callback containing all inputs and outputs.
      */

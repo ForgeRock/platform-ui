@@ -58,6 +58,7 @@ of the MIT license. See the LICENSE file for details. -->
       </BButton>
       <div>
         <BButton
+          :autofocus="autofocus"
           data-testid="btn-copy-recovery-codes"
           :aria-label="$t('login.recoveryCodes.copyRecoveryCodesToClipboard', { recoveryCodesLength : recoveryCodes.length })"
           variant="link"
@@ -97,6 +98,10 @@ export default {
     BButton,
   },
   props: {
+    autofocus: {
+      type: Boolean,
+      default: false,
+    },
     step: {
       type: Object,
       required: true,
