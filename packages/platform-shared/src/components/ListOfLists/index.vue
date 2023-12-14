@@ -35,11 +35,10 @@ of the MIT license. See the LICENSE file for details. -->
                   <div>
                     <div class="position-relative">
                       <FrField
-                        v-model="list.value"
+                        :value="list.value"
+                        @input="list.value = $event; emitInput(listValues)"
                         type="tag"
-                        :label="label"
-                        @input="emitInput(listValues)"
-                      />
+                        :label="label" />
                     </div>
                   </div>
                 </div>

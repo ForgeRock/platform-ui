@@ -14,7 +14,8 @@ of the MIT license. See the LICENSE file for details. -->
       :validation="validation"
       :validation-immediate="validationImmediate">
       <input
-        v-model="inputValue"
+        :value="inputValue"
+        @input="inputValue = $event.target.value; debounceEmitValidTime(inputValue)"
         ref="input"
         type="time"
         :class="[{'is-invalid': errorMessages && errorMessages.length, 'polyfill-placeholder': label }, 'form-control']"
@@ -22,8 +23,7 @@ of the MIT license. See the LICENSE file for details. -->
         :disabled="disabled"
         :id="id"
         :name="name"
-        :readonly="readonly"
-        @input="debounceEmitValidTime(inputValue)">
+        :readonly="readonly">
     </FrInputLayout>
     <BFormTimepicker
       v-model="inputValue"
