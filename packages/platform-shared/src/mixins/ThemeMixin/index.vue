@@ -58,8 +58,6 @@ export default {
         journeyFocusFirstFocusableItemEnabled: false,
         journeyFooter: `<div class="d-flex justify-content-center py-4 w-100"><span class="pr-1">© ${new Date().getFullYear()}</span>\n<a href="#" target="_blank" class="text-body">My Company, Inc</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Privacy Policy</a><a href="#" target="_blank" style="color: #0000ee" class="pl-3 text-body">Terms & Conditions</a></div>`,
         journeyFooterEnabled: false,
-        journeyFooterScriptTag: '',
-        journeyFooterScriptTagEnabled: false,
         journeyHeader: '<div class="d-flex justify-content-center py-4 flex-grow-1">Header Content</div>',
         journeyHeaderEnabled: false,
         journeyHeaderSkipLinkEnabled: false,
@@ -106,8 +104,6 @@ export default {
       journeyFocusFirstFocusableItemEnabled: false,
       journeyFooter: '',
       journeyFooterEnabled: false,
-      journeyFooterScriptTag: '',
-      journeyFooterScriptTagEnabled: false,
       journeyHeader: '',
       journeyHeaderEnabled: false,
       journeyHeaderSkipLinkEnabled: false,
@@ -200,8 +196,6 @@ export default {
           this.journeyFocusFirstFocusableItemEnabled = theme.journeyFocusFirstFocusableItemEnabled;
           this.journeyFooter = theme.journeyFooter;
           this.journeyFooterEnabled = theme.journeyFooterEnabled;
-          this.journeyFooterScriptTag = theme.journeyFooterScriptTag;
-          this.journeyFooterScriptTagEnabled = theme.journeyFooterScriptTagEnabled;
           this.journeyHeader = theme.journeyHeader;
           this.journeyHeaderEnabled = theme.journeyHeaderEnabled;
           this.journeyHeaderSkipLinkEnabled = theme.journeyHeaderSkipLinkEnabled;
