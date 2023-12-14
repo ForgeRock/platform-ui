@@ -476,8 +476,7 @@
     "deleteObject": "Unable to delete {object}",
     "retrievingObject": "Error retrieving {object}",
     "savingObject": "Error saving {object}",
-    "updatingMappingsFail": "Unable to update mappings",
-    "userScriptError": "Invalid script provided. Please refer to the documentation for valid scripts."
+    "updatingMappingsFail": "Unable to update mappings"
   },
   "filterModal": {
     "activeApplied": "No filters applied | {count} filter applied | {count} filters applied",
