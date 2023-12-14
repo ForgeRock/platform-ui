@@ -342,8 +342,7 @@
         "typography": "Typography"
       },
       "globalTabTitle": "Global",
-      "htmlNote": "HTML",
-      "htmlCssNote": "HTML/CSS",
+      "htmlNote": "HTML/CSS",
       "inputLabel": "Input Label",
       "inputText": "Input Text",
       "itemType": "Theme",
