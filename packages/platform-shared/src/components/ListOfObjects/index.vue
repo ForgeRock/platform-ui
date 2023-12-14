@@ -46,24 +46,24 @@ of the MIT license. See the LICENSE file for details. -->
                     </div>
                     <div v-else-if="properties[key].type === 'number'">
                       <FrField
-                        v-model.number="obj[key]"
+                        :value="obj[key]"
+                        @input="obj[key] = $event; emitInput(listValues)"
                         :disabled="disabled || properties[key].disabled"
                         type="number"
                         validation="required|isNumber"
                         :label="properties[key].title || key"
                         :name="key+'_'+index"
-                        @input="emitInput(listValues)"
                       />
                     </div>
                     <div v-else>
                       <FrField
-                        v-model="obj[key]"
+                        :value="obj[key]"
+                        @input="obj[key] = $event; emitInput(listValues)"
                         :disabled="disabled || properties[key].disabled"
                         :label="properties[key].title ? properties[key].title : key"
                         :name="key+'_'+index"
                         :type="properties[key].type"
                         :validation="required && required.length && required.includes(properties[key].title) ? 'required' : ''"
-                        @input="emitInput(listValues)"
                       />
                     </div>
                   </div>

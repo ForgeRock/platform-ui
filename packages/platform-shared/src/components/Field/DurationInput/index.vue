@@ -14,7 +14,8 @@ of the MIT license. See the LICENSE file for details. -->
     :validation="validation"
     :validation-immediate="validationImmediate">
     <input
-      v-model.number="durationValue"
+      :value="durationValue"
+      @input="durationValue = $event.target.value; emitDurationValue(durationValue, durationUnit)"
       ref="input"
       type="number"
       :class="[{'is-invalid': errorMessages && errorMessages.length, 'polyfill-placeholder': durationValue !== null && durationValue !== '' }, 'form-control']"
@@ -23,8 +24,7 @@ of the MIT license. See the LICENSE file for details. -->
       :id="id"
       :min="0"
       :name="name"
-      :readonly="readonly"
-      @input="emitDurationValue($event.data, durationUnit)">
+      :readonly="readonly">
     <template #append>
       <BInputGroupAppend>
         <BDropdown
