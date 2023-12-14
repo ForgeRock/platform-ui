@@ -61,12 +61,12 @@ of the MIT license. See the LICENSE file for details. -->
     />
     <FrPagination
       v-if="displayedReports.length > 0"
-      v-model="currentPage"
+      :value="currentPage"
+      @input="currentPage = $event; updateDisplayedReports()"
       aria-controls="reportTemplatesGrid"
       class="border-0"
       :per-page="perPage"
       :total-rows="reports.length"
-      @input="updateDisplayedReports"
       @on-page-size-change="pageSizeChange"
     />
   </BContainer>

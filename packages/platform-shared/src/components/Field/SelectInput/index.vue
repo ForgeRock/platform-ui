@@ -17,7 +17,8 @@ of the MIT license. See the LICENSE file for details. -->
     <VueMultiSelect
       :id="id"
       ref="vms"
-      v-model="inputValue"
+      :value="inputValue"
+      @input="inputValue = $event; $emit('input', inputValue ? inputValue.value : '')"
       v-bind="$attrs"
       class="text-nowrap"
       label="text"
@@ -39,7 +40,6 @@ of the MIT license. See the LICENSE file for details. -->
       @open="openHandler"
       @select="$emit('select', $event)"
       @close="floatingLabel && closeDropDown(inputValue)"
-      @input="$emit('input', inputValue ? inputValue.value : '')"
       @tag="$emit('tag', $event)">
       <template #noResult>
         {{ $t('common.noResult') }}
