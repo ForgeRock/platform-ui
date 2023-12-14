@@ -18,7 +18,8 @@ of the MIT license. See the LICENSE file for details. -->
     <BRow class="form-row">
       <BCol>
         <FrDateInput
-          v-model="dateValue"
+          :value="dateValue"
+          @input="dateValue = $event; emitDateTimeValue()"
           ref="dateInput"
           :aria-label="getTranslation(label)"
           :class="{'is-invalid': errorMessages && errorMessages.length }"
@@ -30,12 +31,12 @@ of the MIT license. See the LICENSE file for details. -->
           :is-html="isHtml"
           :name="name"
           :validation="validation"
-          :validation-immediate="validationImmediate"
-          @input="emitDateTimeValue" />
+          :validation-immediate="validationImmediate" />
       </BCol>
       <BCol>
         <FrTimeInput
-          v-model="timeValue"
+          :value="timeValue"
+          @input="timeValue = $event; emitDateTimeValue()"
           ref="timeInput"
           :adjust-for-timezone="adjustForTimezone"
           :aria-label="getTranslation(label)"
@@ -46,7 +47,6 @@ of the MIT license. See the LICENSE file for details. -->
           :name="name"
           :show-seconds="showSeconds"
           :validation-immediate="validationImmediate"
-          @input="emitDateTimeValue"
           @utc-input="emitDateTimeValue" />
       </BCol>
     </BRow>

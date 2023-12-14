@@ -156,12 +156,12 @@ of the MIT license. See the LICENSE file for details. -->
           class="p-0"
         >
           <FrPagination
-            v-model="currentPage"
+            :value="currentPage"
+            @input="currentPage = $event; updateItems(tableItems)"
             aria-controls="viewTable"
             class="border-0"
             :per-page="perPage"
             :total-rows="tableItems.length"
-            @input="updateItems(tableItems)"
             @on-page-size-change="pageSizeChange"
           />
         </BCol>

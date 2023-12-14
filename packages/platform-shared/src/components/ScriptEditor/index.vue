@@ -16,14 +16,14 @@ of the MIT license. See the LICENSE file for details. -->
         </label>
         <FrField
           v-show="showScriptType"
-          v-model="scriptType.value"
+          :value="scriptType.value"
+          @input="scriptType.value = $event; emitScriptValue()"
           class="mt-2"
           :disabled="disabled"
           name="scriptType"
           type="select"
           :options="scriptType.options"
-          :searchable="false"
-          @input="emitScriptValue" />
+          :searchable="false" />
         <FrField
           v-if="showFileUpload"
           v-model="uploadFileToggle"
@@ -37,12 +37,12 @@ of the MIT license. See the LICENSE file for details. -->
       <div class="d-flex w-100 h-100 fr-script-editor-sidebar-nav position-relative">
         <VuePrismEditor
           v-if="uploadFileToggle === false"
-          v-model="code"
+          :code="code"
+          @change="code = $event; emitScriptValue()"
           :aria-label="$t('editor.accessibilityHelp')"
           :language="scriptType.value.split('/')[1]"
           :line-numbers="showLineNumbers"
           :readonly="readonly"
-          @input="emitScriptValue"
           @keydown="blurOnEscape" />
       </div>
     </div>
@@ -95,12 +95,12 @@ of the MIT license. See the LICENSE file for details. -->
           </div>
           <template v-if="jsonEditToggle">
             <VuePrismEditor
-              v-model="variablesJsonCode"
+              :code="variablesJsonCode"
+              @change="variablesJsonCode = $event; checkIfCodeIsParsable($event)"
               language="json"
               :aria-label="$t('editor.accessibilityHelp')"
               :line-numbers="true"
               :readonly="readonly"
-              @input="checkIfCodeIsParsable($event.target.innerText)"
               @keydown="blurOnEscape" />
           </template>
           <template v-else>
@@ -122,22 +122,22 @@ of the MIT license. See the LICENSE file for details. -->
                 <div class="flex-grow-1 pr-3">
                   <div class="form-row align-items-start">
                     <FrField
-                      v-model="selectedVariable.name"
+                      :value="selectedVariable.name"
+                      @input="selectedVariable.name = $event; emitScriptValue()"
                       class="col-6"
                       :disabled="disabled"
                       input-class="form-control-sm form-control-dark"
                       validation="required"
-                      :name="$t('common.name')"
-                      @input="emitScriptValue" />
+                      :name="$t('common.name')" />
                     <FrField
-                      v-model="selectedVariable.value.value"
+                      :value="selectedVariable.value.value"
+                      @input="selectedVariable.value.value = $event; emitScriptValue()"
                       class="col-6"
                       :disabled="disabled"
                       input-class="form-control-sm form-control-dark"
                       validation="required"
                       :name="$t('common.value')"
-                      :type="selectedVariable.type"
-                      @input="emitScriptValue" />
+                      :type="selectedVariable.type" />
                   </div>
                 </div>
                 <div class="d-flex">

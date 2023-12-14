@@ -16,7 +16,8 @@ of the MIT license. See the LICENSE file for details. -->
       :id="id"
       v-bind="$attrs"
       v-if="selectOptions"
-      v-model="inputValue"
+      :value="inputValue"
+      @input="inputValue = $event; $emit('input', map(inputValue, 'value'))"
       label="text"
       ref="vms"
       track-by="multiselectId"
@@ -38,7 +39,6 @@ of the MIT license. See the LICENSE file for details. -->
       :tag-placeholder="$t('common.placeholders.addOption')"
       :taggable="taggable"
       @close="close"
-      @input="$emit('input', map(inputValue, 'value'))"
       @open="openHandler"
       @search-change="searchChange"
       @tag="addTag">

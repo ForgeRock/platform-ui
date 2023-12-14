@@ -10,11 +10,11 @@ of the MIT license. See the LICENSE file for details. -->
         :subtitle="$t('governance.accessRequest.newRequest.catalogSubtitle')" />
     </div>
     <BTabs
-      v-model="selectedTab"
+      :value="selectedTab"
       class="my-4"
       content-class="mt-4"
       lazy
-      @input="tabChange()">
+      @input="selectedTab = $event; tabChange()">
       <template v-for="(catalogCategory, key) in catalogTabs">
         <BTab
           class="p-0"
@@ -199,10 +199,10 @@ of the MIT license. See the LICENSE file for details. -->
                 </BRow>
                 <FrPagination
                   v-if="totalCount > 10"
-                  v-model="page"
+                  :value="page"
                   :per-page="pageSize"
                   :total-rows="totalCount"
-                  @input="searchCatalog()"
+                  @input="searchCatalog({ page: $event })"
                   @on-page-size-change="searchCatalog({ pageSize: $event, page: 1 })" />
               </template>
             </div>

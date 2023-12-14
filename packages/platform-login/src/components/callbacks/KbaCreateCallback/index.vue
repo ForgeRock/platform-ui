@@ -29,7 +29,8 @@ of the MIT license. See the LICENSE file for details. -->
           {{ $t('login.kba.description') }}
         </legend>
         <FrField
-          v-model="selected"
+          :value="selected"
+          @input="selected = $event; onQuestionSelectionChange()"
           class="mb-2 kbaQuestionSelect"
           type="select"
           input-labelledby="legend-kba-create-callback-description"
@@ -41,28 +42,27 @@ of the MIT license. See the LICENSE file for details. -->
           :options="options"
           :validation="questionSelectValidation"
           :floating-label="floatingLabel"
-          @input="onQuestionSelectionChange()"
           @open="loadOptions()" />
         <FrField
           v-if="showCustom"
-          v-model="questionModel.value"
+          :value="questionModel.value"
+          @input="questionModel.value = $event; onQuestionSelectionChange()"
           class="mb-3"
           :label="questionModel.title"
           :name="questionModel.key"
           :validation="questionTextInputValidation"
           :validation-immediate="true"
-          :floating-label="floatingLabel"
-          @input="onQuestionSelectionChange()" />
+          :floating-label="floatingLabel" />
         <FrField
-          v-model="answerModel"
+          :value="answerModel"
+          @input="answerModel = $event; validateAnswer()"
           class="mb-3"
           type="password"
           validation="required"
           :label="$t('login.kba.answer')"
           :name="`callback_${index}_answer_field`"
           :disabled="selected === null"
-          :floating-label="floatingLabel"
-          @input="validateAnswer" />
+          :floating-label="floatingLabel" />
       </fieldset>
     </ValidationObserver>
     <hr>

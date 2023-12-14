@@ -26,7 +26,8 @@ of the MIT license. See the LICENSE file for details. -->
     </BFormGroup>
 
     <FrField
-      v-model="relationshipField.value"
+      :value="relationshipField.value"
+      @input="relationshipField.value = $event; emitSelected($event)"
       :allow-empty="true"
       :close-on-select="closeOnSelect"
       :disabled="disabled"
@@ -49,8 +50,7 @@ of the MIT license. See the LICENSE file for details. -->
       :validation="relationshipField.validation"
       :validation-immediate="relationshipField.validationImmediate"
       @open="setOptions"
-      @search-change="debouncedSetOptions"
-      @input="emitSelected">
+      @search-change="debouncedSetOptions">
       <template #singleLabel="{ option }">
         <div class="media">
           <div class="media-body">
