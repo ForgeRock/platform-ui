@@ -5,15 +5,15 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <FrField
-      v-model="password.value"
+      :value="password.value"
+      @input="password.value = $event; updateCallback($event)"
       type="password"
       :errors="failuresForField"
       :label="password.label"
       :floating-label="floatingLabel"
       :describedby-id="`policy_panel_${index}`"
       :autofocus="autofocus"
-      @blur="lostFocus = true;"
-      @input="updateCallback" />
+      @blur="lostFocus = true;" />
     <FrPolicyPanel
       class="mt-2"
       :display-danger-style="lostFocus"
@@ -25,12 +25,12 @@ of the MIT license. See the LICENSE file for details. -->
       :policy-panel-id="`policy_panel_${index}`" />
     <FrField
       v-if="confirmPassword"
-      v-model="confirmPasswordText"
+      :value="confirmPasswordText"
+      @input="confirmPasswordText = $event; checkConfirmPasswordMatch()"
       type="password"
       :errors="confirmPasswordFailures"
       :label="$t('login.password.confirmPassword')"
-      :floating-label="floatingLabel"
-      @input="checkConfirmPasswordMatch" />
+      :floating-label="floatingLabel" />
   </div>
 </template>
 

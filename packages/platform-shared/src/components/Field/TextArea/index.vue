@@ -16,7 +16,8 @@ of the MIT license. See the LICENSE file for details. -->
     :current-length="inputValue.length"
     :max-length="maxLength">
     <textarea
-      v-model="inputValue"
+      :value="inputValue"
+      @input="inputValue = $event.target.value; $emit('input', inputValue)"
       :autofocus="autofocus"
       :class="[{'polyfill-placeholder': floatLabels }, 'form-control', addClass]"
       :cols="cols"
@@ -29,7 +30,6 @@ of the MIT license. See the LICENSE file for details. -->
       :max-rows="maxRows"
       :readonly="readonly"
       :data-testid="testid"
-      @input="$emit('input', inputValue)"
       @click="onClick"
       @blur="inputValueHandler(inputValue)" />
   </FrInputLayout>
