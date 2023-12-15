@@ -7,6 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     <BSkeletonTable
       v-if="loading"
       class="skeleton-table"
+      data-testid="skeleton-table"
       :columns="4"
       :rows="10"
       :table-props="{ responsive: true }"
@@ -21,9 +22,12 @@ of the MIT license. See the LICENSE file for details. -->
         :subtitle="$t('reports.noReportData')"
       />
     </div>
-    <div :class="[{'d-none': loading}, 'table-responsive']">
+    <div
+      v-else
+      :class="[{'d-none': loading}, 'table-responsive']"
+    >
       <BTable
-        :data-testid="testid"
+        data-testid="report-table"
         :empty-text="$t('reports.noReportData')"
         :fixed="false"
         v-bind="$attrs"
@@ -95,11 +99,7 @@ const props = defineProps({
   },
   loading: {
     type: Boolean,
-    default: true,
-  },
-  testid: {
-    type: String,
-    default: '',
+    default: false,
   },
 });
 </script>
