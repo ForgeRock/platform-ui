@@ -6,11 +6,13 @@
  */
 
 /**
-* Creates a list of script nodes from the given html string.
+* Creates a list of script nodes from the given base64 encoded html string.
 */
-export default function createScriptTags(scriptStr) {
+export default function createScriptTags(encodedScriptStr) {
   const scriptTags = [];
-  if (!scriptStr) return scriptTags;
+  if (!encodedScriptStr || typeof encodedScriptStr !== 'string') return scriptTags;
+
+  const scriptStr = atob(encodedScriptStr);
 
   const parser = new DOMParser();
   const dom = parser.parseFromString(scriptStr, 'text/html');

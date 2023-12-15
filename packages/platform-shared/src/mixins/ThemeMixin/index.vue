@@ -8,7 +8,7 @@ import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import { putConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
 import uuid from 'uuid/v4';
-import { sortBy } from 'lodash';
+import { sortBy, cloneDeep } from 'lodash';
 import store from '@forgerock/platform-shared/src/store';
 import i18n from '@/i18n';
 
@@ -279,14 +279,56 @@ export default {
       });
     },
     /**
+     * Base64 encode any script content in the passed themes to transmit over the API
+     * @param {Object} themesConfig - config metadata of themes
+     * @returns {Object} the theme config with all scripts base64 encoded
+     */
+    encodeThemeScripts(themesConfig) {
+      const encodedThemes = cloneDeep(themesConfig);
+      Object.keys(encodedThemes.realm).forEach((key) => {
+        encodedThemes.realm[key].forEach((theme) => {
+          if (typeof theme.journeyFooterScriptTag === 'string' && theme.journeyFooterScriptTag !== '') {
+            theme.journeyFooterScriptTag = btoa(theme.journeyFooterScriptTag);
+          }
+
+          if (typeof theme.accountFooterScriptTag === 'string' && theme.accountFooterScriptTag !== '') {
+            theme.accountFooterScriptTag = btoa(theme.accountFooterScriptTag);
+          }
+        });
+      });
+      return encodedThemes;
+    },
+    /**
+     * Base64 decode any script content in the passed themes to transmit over the API
+     * @param {Object} themesConfig - config metadata of themes
+     * @returns {Object} the theme config with all scripts decoded from base64
+     */
+    decodeThemeScripts(themesConfig) {
+      const decodedThemes = cloneDeep(themesConfig);
+      Object.keys(decodedThemes.realm).forEach((key) => {
+        decodedThemes.realm[key].forEach((theme) => {
+          if (typeof theme.journeyFooterScriptTag === 'string' && theme.journeyFooterScriptTag !== '') {
+            theme.journeyFooterScriptTag = atob(theme.journeyFooterScriptTag);
+          }
+
+          if (typeof theme.accountFooterScriptTag === 'string' && theme.accountFooterScriptTag !== '') {
+            theme.accountFooterScriptTag = atob(theme.accountFooterScriptTag);
+          }
+        });
+      });
+      return decodedThemes;
+    },
+    /**
      * Save a theme if it doesn't exist or update an existing theme
      * @param {Object} themesConfig - config metadata of themes
      * @param {Boolean} suppressSuccessMessage - suppress the success messeage
      */
     saveTheme(themesConfig, suppressSuccessMessage) {
       themesConfig.realm[this.realm] = sortBy(themesConfig.realm[this.realm], 'name');
-      return putConfig('ui/themerealm', themesConfig).then(({ data }) => {
-        this.setThemeData(data, this.realm);
+      const encodedThemes = this.encodeThemeScripts(themesConfig);
+      return putConfig('ui/themerealm', encodedThemes).then(({ data }) => {
+        const decodedThemes = this.decodeThemeScripts(data);
+        this.setThemeData(decodedThemes, this.realm);
         if (!suppressSuccessMessage) {
           this.displayNotification('success', this.$t('hostedPages.theme.successSave'));
         }
