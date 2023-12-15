@@ -114,7 +114,9 @@ of the MIT license. See the LICENSE file for details. -->
     </BRow>
     <BRow class="p-4 m-0 border-bottom">
       <BCol class="rounded bg-light text-dark p-4">
-        <BRow v-if="runDataLoading">
+        <BRow
+          v-if="runDataLoading"
+          data-testid="skeleton-loader">
           <BCol
             v-for="index in 3"
             :key="index"
@@ -266,7 +268,7 @@ async function getRunInfo() {
     runData.value = result.result.find((run) => run.runId === id);
     getConfigInfo();
   } catch (err) {
-    showErrorMessage(err, i18n.t('reports.error'));
+    showErrorMessage(err, i18n.global.t('reports.error'));
   } finally {
     runDataLoading.value = false;
     runDataLoadingComplete.value = true;
