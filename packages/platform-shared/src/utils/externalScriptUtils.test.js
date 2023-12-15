@@ -18,7 +18,7 @@ describe('externalScriptUtils', () => {
       ['given empty object', {}],
       ['given empty array', []],
     ];
-    it.each(testCases)('%s', (invalidScriptStr) => {
+    it.each(testCases)('%s', (name, invalidScriptStr) => {
       const scriptTags = createScriptTags(invalidScriptStr);
       expect(scriptTags.length).toBe(0);
     });
@@ -29,7 +29,7 @@ describe('externalScriptUtils', () => {
     });
 
     it('given non script tag provided', () => {
-      const divStr = '<div>I am not a script tag</div>';
+      const divStr = btoa('<div>I am not a script tag</div>');
 
       const scriptTags = createScriptTags(divStr);
       expect(scriptTags.length).toBe(0);
@@ -37,7 +37,7 @@ describe('externalScriptUtils', () => {
   });
 
   describe('given script string', () => {
-    const scriptStr = '<script>alert("some code");</script>';
+    const scriptStr = btoa('<script>alert("some code");</script>');
 
     it('should parse simple script tag', () => {
       const scriptTags = createScriptTags(scriptStr);
@@ -46,7 +46,7 @@ describe('externalScriptUtils', () => {
     });
 
     it('should parse script tag with attributes', () => {
-      const scriptStrWithAttrs = '<script src="path/to/some/resource" data-domain-script="stub-token" async></script>';
+      const scriptStrWithAttrs = btoa('<script src="path/to/some/resource" data-domain-script="stub-token" async></script>');
       const scriptTags = createScriptTags(scriptStrWithAttrs);
 
       expect(scriptTags[0].getAttribute('src')).toBe('path/to/some/resource');
@@ -55,10 +55,10 @@ describe('externalScriptUtils', () => {
     });
 
     it('should parse multiple script tags', () => {
-      const scriptStrWithAttrs = `
+      const scriptStrWithAttrs = btoa(`
         <script src="/first/script"></script>
         <script src="/second/script"></script>
-      `;
+      `);
       const scriptTags = createScriptTags(scriptStrWithAttrs);
 
       expect(scriptTags.length).toBe(2);
