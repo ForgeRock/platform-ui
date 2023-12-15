@@ -12,6 +12,8 @@ of the MIT license. See the LICENSE file for details. -->
       :version="version"
       :class="{invisible: theme === null}">
       <RouterView
+        :account-footer-script-tag="accountFooterScriptTag"
+        :account-footer-script-tag-enabled="accountFooterScriptTagEnabled"
         :key="$route.fullPath"
         :theme="theme" />
     </FrLayout>
@@ -35,6 +37,7 @@ import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import ThemeMixin from '@forgerock/platform-shared/src/mixins/ThemeMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import ValidationRules from '@forgerock/platform-shared/src/utils/validationRules';
+import createScriptTags from '@forgerock/platform-shared/src/utils/externalScriptUtils';
 import FrLayout from '@forgerock/platform-shared/src/components/Layout';
 import FrSessionTimeoutWarning from '@forgerock/platform-shared/src/components/SessionTimeoutWarning/SessionTimeoutWarning';
 import { getIdmServerInfo } from '@forgerock/platform-shared/src/api/ServerinfoApi';
@@ -224,6 +227,24 @@ export default {
           },
         });
       });
+    },
+    /**
+     * Adds the given script tags to the script container
+     */
+    accountFooterScriptTag(scriptStr) {
+      if (!this.accountFooterScriptTagEnabled || !scriptStr) return;
+      const scriptContainer = document.getElementById('user-theme-script-container');
+
+      try {
+        // Note: if the user provides invalid html that is unable to be parsed, this could cause an error which we need to catch
+        const scripts = createScriptTags(scriptStr);
+
+        scripts.forEach((scriptTag) => {
+          scriptContainer.appendChild(scriptTag);
+        });
+      } catch (error) {
+        this.showErrorMessage(error, this.$t('errors.userScriptError'));
+      }
     },
   },
   methods: {
