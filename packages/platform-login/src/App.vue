@@ -20,8 +20,6 @@ of the MIT license. See the LICENSE file for details. -->
           :journey-focus-first-focusable-item-enabled="journeyFocusFirstFocusableItemEnabled"
           :journey-footer="localizedFooter"
           :journey-footer-enabled="journeyFooterEnabled"
-          :journey-footer-script-tag="journeyFooterScriptTag"
-          :journey-footer-script-tag-enabled="journeyFooterScriptTagEnabled"
           :journey-header="localizedHeader"
           :journey-header-enabled="journeyHeaderEnabled"
           :journey-header-skip-link-enabled="journeyHeaderSkipLinkEnabled"
