@@ -299,7 +299,7 @@ export default {
       return encodedThemes;
     },
     /**
-     * Base64 decode any script content in the passed themes to transmit over the API
+     * Base64 decode any script content in the passed themes
      * @param {Object} themesConfig - config metadata of themes
      * @returns {Object} the theme config with all scripts decoded from base64
      */

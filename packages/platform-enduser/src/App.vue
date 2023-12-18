@@ -12,8 +12,6 @@ of the MIT license. See the LICENSE file for details. -->
       :version="version"
       :class="{invisible: theme === null}">
       <RouterView
-        :account-footer-script-tag="accountFooterScriptTag"
-        :account-footer-script-tag-enabled="accountFooterScriptTagEnabled"
         :key="$route.fullPath"
         :theme="theme" />
     </FrLayout>
