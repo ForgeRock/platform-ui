@@ -400,8 +400,11 @@ export default {
           emitValues = uniqueSelected.map((currentValue) => ({ _ref: currentValue, _refProperties: {} }));
         }
 
-        if (this.relationshipField.options.length) {
-          const resourceSelections = selected.map((selection) => this.relationshipField.options.find((option) => option.value === selection).resource);
+        if (this.relationshipField?.options?.length) {
+          const resourceSelections = selected.map((selection) => {
+            const findOptionValueThatMatchesSelection = this.relationshipField.options.find((option) => option.value === selection);
+            return findOptionValueThatMatchesSelection?.resource;
+          });
           this.$emit('resource-selections', resourceSelections);
         }
       } else if (selected) {
