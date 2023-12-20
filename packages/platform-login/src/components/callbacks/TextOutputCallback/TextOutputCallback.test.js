@@ -44,20 +44,33 @@ describe('TextOutputCallback.vue', () => {
     };
   });
 
+  it('Emits updateScreenReaderMessage if its type Error and isFirstRenderedCallback is true', () => {
+    mountComponent({ messageType: '2', isFirstRenderedCallback: true, message: 'this was emitted' });
+
+    const emitted = wrapper.emitted()['update-screen-reader-message'].pop();
+    expect(emitted).toEqual(['ERROR', 'this was emitted']);
+  });
+
+  it('Emits updateScreenReaderMessage if its type Error and isFirstRenderedCallback is false', () => {
+    mountComponent({ messageType: '2', isFirstRenderedCallback: false, message: 'this was emitted' });
+
+    expect(wrapper.emitted()['update-screen-reader-message']).toBeFalsy();
+  });
+
   it('Emits updateScreenReaderMessage if its type Information and isFirstRenderedCallback is true', () => {
     mountComponent({ messageType: '3', isFirstRenderedCallback: true, message: 'this was emitted' });
 
-    const emitted = wrapper.emitted()['update-screen-reader-message'].pop()[0];
-    expect(emitted).toEqual('this was emitted');
+    const emitted = wrapper.emitted()['update-screen-reader-message'].pop();
+    expect(emitted).toEqual(['INFORMATION', 'this was emitted']);
   });
 
-  it('Doesn\'t emit updateScreenReaderMessage on isFirstRenderedCallback is false', () => {
+  it('Doesn\'t emit updateScreenReaderMessage if its type Information and isFirstRenderedCallback is false', () => {
     mountComponent({ messageType: '3', isFirstRenderedCallback: false, message: 'this was emitted' });
 
     expect(wrapper.emitted()['update-screen-reader-message']).toBeFalsy();
   });
 
-  it('Doesn\'t emit updateScreenReaderMessage type isn\'t Information', () => {
+  it('Doesn\'t emit updateScreenReaderMessage type isn\'t Information regardless of isFirstRenderedCallback', () => {
     mountComponent({ messageType: '4', isFirstRenderedCallback: true, message: 'this was emitted' });
 
     expect(wrapper.emitted()['update-screen-reader-message']).toBeFalsy();
