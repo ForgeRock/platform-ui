@@ -39,7 +39,9 @@ of the MIT license. See the LICENSE file for details. -->
                       <p
                         v-if="description"
                         v-html="description" />
-                      <p class="sr-only">
+                      <p
+                        v-if="screenReaderMessageType !== 'ERROR'"
+                        class="sr-only">
                         {{ screenReaderMessage }}
                       </p>
                     </template>
@@ -58,6 +60,13 @@ of the MIT license. See the LICENSE file for details. -->
                       variant="error"
                       class="p-3 text-left">
                       {{ getTranslation(errorMessage) }}
+                    </FrAlert>
+                    <FrAlert
+                      :show="screenReaderMessageType === 'ERROR'"
+                      :dismissible="false"
+                      variant="error"
+                      class="p-3 text-left">
+                      {{ screenReaderMessage }}
                     </FrAlert>
                     <div
                       v-if="loginFailure && linkToTreeStart">
@@ -221,7 +230,9 @@ of the MIT license. See the LICENSE file for details. -->
                   v-html="description" />
               </BCol>
             </BRow>
-            <p class="sr-only">
+            <p
+              v-if="screenReaderMessageType !== 'ERROR'"
+              class="sr-only">
               {{ screenReaderMessage }}
             </p>
           </div>
@@ -238,6 +249,13 @@ of the MIT license. See the LICENSE file for details. -->
                   variant="error"
                   class="p-3 text-left">
                   {{ getTranslation(errorMessage) }}
+                </FrAlert>
+                <FrAlert
+                  :show="screenReaderMessageType === 'ERROR'"
+                  :dismissible="false"
+                  variant="error"
+                  class="p-3 text-left">
+                  {{ screenReaderMessage }}
                 </FrAlert>
                 <div v-if="loginFailure && linkToTreeStart">
                   <a :href="linkToTreeStart">
@@ -544,6 +562,7 @@ export default {
       treeResumptionParameters: undefined,
       treeId: undefined,
       svgShapesSanitizerConfig,
+      screenReaderMessageType: '',
       screenReaderMessage: '',
       idpComponent: undefined,
     };
@@ -668,6 +687,7 @@ export default {
       this.nextButtonVisible = true;
       this.nextButtonDisabledArray = [false];
       this.screenReaderMessage = '';
+      this.screenReaderMessageType = '';
 
       this.checkNodeForThemeOverride(this.stage);
 
@@ -932,7 +952,8 @@ export default {
         'update-auth-id': (authId) => {
           this.step.payload.authId = authId;
         },
-        'update-screen-reader-message': (message) => {
+        'update-screen-reader-message': (messageType, message) => {
+          this.screenReaderMessageType = messageType;
           this.screenReaderMessage = message;
         },
         // event emitted from FrField

@@ -19,9 +19,8 @@ of the MIT license. See the LICENSE file for details. -->
       {{ getTranslation(message) }}
     </div>
     <div
-      v-if="messageType === 'ERROR'"
-      class="alert w-100 alert-danger"
-      :aria-hidden="isFirstRenderedCallback">
+      v-if="!isFirstRenderedCallback && messageType === 'ERROR'"
+      class="alert w-100 alert-danger">
       {{ getTranslation(message) }}
     </div>
     <div
@@ -100,7 +99,7 @@ export default {
 
     // Populate screenReaderMessage with callback text only if the message callback is the first TextOutputCallback rendered and is not a script.
     if (this.isFirstRenderedCallback && (this.messageType === 'INFORMATION' || this.messageType === 'ERROR' || this.messageType === 'WARNING')) {
-      this.$emit('update-screen-reader-message', this.callback.getMessage());
+      this.$emit('update-screen-reader-message', this.messageType, this.callback.getMessage());
     }
   },
   methods: {
