@@ -61,7 +61,7 @@ of the MIT license. See the LICENSE file for details. -->
           class="mb-3"
           type="password"
           validation="required"
-          :label="$t('login.kba.answer')"
+          :label="answerLabel"
           :name="`callback_${index}_answer_field`"
           :disabled="selected === null"
           :floating-label="floatingLabel" />
@@ -138,6 +138,10 @@ export default {
     showCustom() {
       // if "Provide your own" is selected, show the custom question input
       return this.selected === 'custom';
+    },
+    answerLabel() {
+      const currentChoice = this.showCustom ? this.questionModel.value : this.selected;
+      return currentChoice ? this.$t('login.kba.answerFor', { question: currentChoice }) : this.$t('login.kba.answer');
     },
   },
   mounted() {
