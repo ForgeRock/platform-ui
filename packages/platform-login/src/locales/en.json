@@ -17,6 +17,7 @@
       "custom": "Provide your own:",
       "question": "Question",
       "answer": "Answer",
+      "answerFor": "Answer for: {question}",
       "notUnique": "Custom questions cannot be duplicates"
     },
     "password": {
