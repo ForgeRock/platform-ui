@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`TextOutputCallback.vue Doesn't emit updateScreenReaderMessage on isFirstRenderedCallback is false: console-warn-snapshot 1`] = `
+exports[`TextOutputCallback.vue Doesn't emit updateScreenReaderMessage if its type Information and isFirstRenderedCallback is false: console-warn-snapshot 1`] = `
 [
   [
     "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "aria-hidden" with v-bind value \`false\` will render aria-hidden="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
@@ -32,7 +32,7 @@ exports[`TextOutputCallback.vue Doesn't emit updateScreenReaderMessage on isFirs
 ]
 `;
 
-exports[`TextOutputCallback.vue Emits updateScreenReaderMessage if its type Information and isFirstRenderedCallback is true: console-warn-snapshot 1`] = `
+exports[`TextOutputCallback.vue Emits updateScreenReaderMessage if its type Error and isFirstRenderedCallback is true: console-warn-snapshot 1`] = `
 [
   [
     "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
