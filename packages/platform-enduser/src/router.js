@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -10,13 +10,22 @@ import checkIfRouteCanBeAccessed from '@forgerock/platform-shared/src/utils/rout
 import i18n from './i18n';
 import store from '@/store';
 
+function configureRouterHistory() {
+  // '&loggedin=true' parameter in the url causes Vue Router to calculate routes incorrectly, as it interprets the parameter as part of the hash.
+  // Removing this parameter helps in ensuring that Vue Router computes the routes correctly
+  if (window.location.hash.endsWith('&loggedin=true')) {
+    window.location.hash = window.location.hash.slice(0, -14);
+  }
+  return createWebHashHistory();
+}
+
 /**
  * Available configuration
  * hideSideMenu - Will hide left-hand navigation when route accessed
  * hideNavBar - Will hide top toolbar when route accessed
  */
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: configureRouterHistory(),
   routes: [
     {
       path: '/',
