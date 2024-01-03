@@ -144,7 +144,7 @@ exports[`Field Component Deciding when to use the EsvInputWrapper component Has 
 exports[`Field Component Deciding when to use the EsvInputWrapper component Has the field type component as the top level component when placeholder entry is enabled but not supported for the field type: console-warn-snapshot 1`] = `
 [
   [
-    "[Vue warn]: (deprecation WATCH_ARRAY) (13)",
+    "[Vue warn]: (deprecation WATCH_ARRAY) (12)",
     "
 ",
     " at <JsonInput",
@@ -166,7 +166,7 @@ exports[`Field Component Deciding when to use the EsvInputWrapper component Has 
     " at <VTUROOT>",
   ],
   [
-    "[Vue warn]: (deprecation COMPONENT_V_MODEL) (7)",
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) (6)",
     "
 ",
     " at <Anonymous",
@@ -177,7 +177,7 @@ exports[`Field Component Deciding when to use the EsvInputWrapper component Has 
     ">",
   ],
   [
-    "[Vue warn]: (deprecation RENDER_FUNCTION) (8)",
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (7)",
     "
 ",
     " at <Anonymous",
@@ -480,7 +480,7 @@ exports[`Field Component Showing a readonly string input when the field value is
     " at <VTUROOT>",
   ],
   [
-    "[Vue warn]: (deprecation RENDER_FUNCTION) (6)",
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (5)",
     "
 ",
     " at <BDropdown",
@@ -534,7 +534,7 @@ exports[`Field Component Showing a readonly string input when the field value is
     " at <VTUROOT>",
   ],
   [
-    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) (5)",
+    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) (4)",
     "
 ",
     " at <BDropdown",
@@ -588,7 +588,7 @@ exports[`Field Component Showing a readonly string input when the field value is
     " at <VTUROOT>",
   ],
   [
-    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (5)",
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (4)",
     "
 ",
     " at <BDropdown",
@@ -921,7 +921,7 @@ exports[`Field Component Showing a readonly string input when the field value is
     " at <VTUROOT>",
   ],
   [
-    "[Vue warn]: (deprecation COMPONENT_V_MODEL) (5)",
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) (4)",
     "
 ",
     " at <SearchInput",
@@ -1351,7 +1351,7 @@ exports[`Field Component Showing a readonly string input when the field value is
     " at <VTUROOT>",
   ],
   [
-    "[Vue warn]: (deprecation COMPONENT_V_MODEL) (6)",
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) (5)",
     "
 ",
     " at <BFormInput",
@@ -1703,7 +1703,7 @@ exports[`Field Component Showing a readonly string input when the field value is
     " at <VTUROOT>",
   ],
   [
-    "[Vue warn]: (deprecation RENDER_FUNCTION) (7)",
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (6)",
     "
 ",
     " at <BFormInput",
@@ -1964,7 +1964,7 @@ exports[`Field Component Showing a readonly string input when the field value is
     " at <VTUROOT>",
   ],
   [
-    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) (6)",
+    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) (5)",
     "
 ",
     " at <BFormInput",
@@ -2212,6 +2212,17 @@ exports[`Field Component Showing a readonly string input when the field value is
     "
 ",
     " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`Field Component uses bootstrap form tags component for tag type: console-error-snapshot 1`] = `
+[
+  [
+    "^ The above deprecation's compat behavior is disabled and will likely lead to runtime errors.",
+  ],
+  [
+    "^ The above deprecation's compat behavior is disabled and will likely lead to runtime errors.",
   ],
 ]
 `;
@@ -2562,25 +2573,17 @@ exports[`Field Component uses bootstrap form tags component for tag type: consol
     " at <VTUROOT>",
   ],
   [
-    "[Vue warn]: (deprecation COMPONENT_V_MODEL) (2)",
+    "[Vue warn]: (deprecation CUSTOM_DIR) Custom directive hook "bind" has been removed. Use "beforeMount" instead.
+  Details: https://v3-migration.vuejs.org/breaking-changes/custom-directives.html",
     "
 ",
     " at <Draggable",
     "modelValue=",
-    [],
+    [
+      "should convert to empty array without hitting return",
+    ],
     "onUpdate:modelValue=fn",
     "disabled=false",
-    " ...",
-    ">",
-  ],
-  [
-    "[Vue warn]: (deprecation RENDER_FUNCTION) (3)",
-    "
-",
-    " at <Draggable",
-    "disabled=false",
-    "class="d-flex flex-wrap w-100"",
-    "ghost-class="ghost-tag"",
     " ...",
     ">",
     "
@@ -2626,251 +2629,12 @@ exports[`Field Component uses bootstrap form tags component for tag type: consol
     "
 ",
     " at <Draggable",
+    "modelValue=",
+    [
+      "should convert to empty array without hitting return",
+    ],
+    "onUpdate:modelValue=fn",
     "disabled=false",
-    "class="d-flex flex-wrap w-100"",
-    "ghost-class="ghost-tag"",
-    " ...",
-    ">",
-    "
-",
-    " at <BFormTags",
-    "onClick=fn",
-    "onInput=fn<bound handleInput>",
-    "add-on-change=""",
-    " ...",
-    ">",
-    "
-",
-    " at <InputLayout",
-    "description=""",
-    "id="floatingLabelInput39___input__"",
-    "class=""",
-    " ...",
-    ">",
-    "
-",
-    " at <Tag",
-    "type="tag"",
-    "name="testField"",
-    "value=",
-    [],
-    " ...",
-    ">",
-    "
-",
-    " at <FrField",
-    "type="array"",
-    "name="testField"",
-    "value=",
-    [],
-    " ...",
-    ">",
-    "
-",
-    " at <VTUROOT>",
-  ],
-  [
-    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) (2)",
-    "
-",
-    " at <Draggable",
-    "disabled=false",
-    "class="d-flex flex-wrap w-100"",
-    "ghost-class="ghost-tag"",
-    " ...",
-    ">",
-    "
-",
-    " at <BFormTags",
-    "onClick=fn",
-    "onInput=fn<bound handleInput>",
-    "add-on-change=""",
-    " ...",
-    ">",
-    "
-",
-    " at <InputLayout",
-    "description=""",
-    "id="floatingLabelInput39___input__"",
-    "class=""",
-    " ...",
-    ">",
-    "
-",
-    " at <Tag",
-    "type="tag"",
-    "name="testField"",
-    "value=",
-    [],
-    " ...",
-    ">",
-    "
-",
-    " at <FrField",
-    "type="array"",
-    "name="testField"",
-    "value=",
-    [],
-    " ...",
-    ">",
-    "
-",
-    " at <VTUROOT>",
-  ],
-  [
-    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (2)",
-    "
-",
-    " at <Draggable",
-    "disabled=false",
-    "class="d-flex flex-wrap w-100"",
-    "ghost-class="ghost-tag"",
-    " ...",
-    ">",
-    "
-",
-    " at <BFormTags",
-    "onClick=fn",
-    "onInput=fn<bound handleInput>",
-    "add-on-change=""",
-    " ...",
-    ">",
-    "
-",
-    " at <InputLayout",
-    "description=""",
-    "id="floatingLabelInput39___input__"",
-    "class=""",
-    " ...",
-    ">",
-    "
-",
-    " at <Tag",
-    "type="tag"",
-    "name="testField"",
-    "value=",
-    [],
-    " ...",
-    ">",
-    "
-",
-    " at <FrField",
-    "type="array"",
-    "name="testField"",
-    "value=",
-    [],
-    " ...",
-    ">",
-    "
-",
-    " at <VTUROOT>",
-  ],
-  [
-    "[Vue warn]: (deprecation INSTANCE_ATTRS_CLASS_STYLE) Component <draggable> has \`inheritAttrs: false\` but is relying on class/style fallthrough from parent. In Vue 3, class/style are now included in $attrs and will no longer fallthrough when inheritAttrs is false. If you are already using v-bind="$attrs" on component root it should render the same end result. If you are binding $attrs to a non-root element and expecting class/style to fallthrough on root, you will need to now manually bind them on root via :class="$attrs.class".
-  Details: https://v3-migration.vuejs.org/breaking-changes/attrs-includes-class-style.html",
-    "
-",
-    " at <Draggable",
-    "disabled=false",
-    "class="d-flex flex-wrap w-100"",
-    "ghost-class="ghost-tag"",
-    " ...",
-    ">",
-    "
-",
-    " at <BFormTags",
-    "onClick=fn",
-    "onInput=fn<bound handleInput>",
-    "add-on-change=""",
-    " ...",
-    ">",
-    "
-",
-    " at <InputLayout",
-    "description=""",
-    "id="floatingLabelInput39___input__"",
-    "class=""",
-    " ...",
-    ">",
-    "
-",
-    " at <Tag",
-    "type="tag"",
-    "name="testField"",
-    "value=",
-    [],
-    " ...",
-    ">",
-    "
-",
-    " at <FrField",
-    "type="array"",
-    "name="testField"",
-    "value=",
-    [],
-    " ...",
-    ">",
-    "
-",
-    " at <VTUROOT>",
-  ],
-  [
-    "[Vue warn]: (deprecation CUSTOM_DIR) Custom directive hook "bind" has been removed. Use "beforeMount" instead.
-  Details: https://v3-migration.vuejs.org/breaking-changes/custom-directives.html",
-    "
-",
-    " at <Draggable",
-    "disabled=false",
-    "class="d-flex flex-wrap w-100"",
-    "ghost-class="ghost-tag"",
-    " ...",
-    ">",
-    "
-",
-    " at <BFormTags",
-    "onClick=fn",
-    "onInput=fn<bound handleInput>",
-    "add-on-change=""",
-    " ...",
-    ">",
-    "
-",
-    " at <InputLayout",
-    "description=""",
-    "id="floatingLabelInput39___input__"",
-    "class=""",
-    " ...",
-    ">",
-    "
-",
-    " at <Tag",
-    "type="tag"",
-    "name="testField"",
-    "value=",
-    [],
-    " ...",
-    ">",
-    "
-",
-    " at <FrField",
-    "type="array"",
-    "name="testField"",
-    "value=",
-    [],
-    " ...",
-    ">",
-    "
-",
-    " at <VTUROOT>",
-  ],
-  [
-    "[Vue warn]: (deprecation WATCH_ARRAY) (10)",
-    "
-",
-    " at <Draggable",
-    "disabled=false",
-    "class="d-flex flex-wrap w-100"",
-    "ghost-class="ghost-tag"",
     " ...",
     ">",
     "
@@ -2917,9 +2681,12 @@ exports[`Field Component uses bootstrap form tags component for tag type: consol
     "
 ",
     " at <Draggable",
+    "modelValue=",
+    [
+      "should convert to empty array without hitting return",
+    ],
+    "onUpdate:modelValue=fn",
     "disabled=false",
-    "class="d-flex flex-wrap w-100"",
-    "ghost-class="ghost-tag"",
     " ...",
     ">",
     "
@@ -2961,13 +2728,16 @@ exports[`Field Component uses bootstrap form tags component for tag type: consol
     " at <VTUROOT>",
   ],
   [
-    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) (3)",
+    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) (2)",
     "
 ",
     " at <Draggable",
+    "modelValue=",
+    [
+      "should convert to empty array without hitting return",
+    ],
+    "onUpdate:modelValue=fn",
     "disabled=false",
-    "class="d-flex flex-wrap w-100"",
-    "ghost-class="ghost-tag"",
     " ...",
     ">",
     "
@@ -3013,9 +2783,12 @@ exports[`Field Component uses bootstrap form tags component for tag type: consol
     "
 ",
     " at <Draggable",
+    "modelValue=",
+    [
+      "should convert to empty array without hitting return",
+    ],
+    "onUpdate:modelValue=fn",
     "disabled=false",
-    "class="d-flex flex-wrap w-100"",
-    "ghost-class="ghost-tag"",
     " ...",
     ">",
     "
@@ -3072,7 +2845,7 @@ exports[`Field Component uses bootstrap form tags component for tag type: consol
 exports[`Field Component uses checkbox component for checkbox type: console-warn-snapshot 1`] = `
 [
   [
-    "[Vue warn]: (deprecation WATCH_ARRAY) (12)",
+    "[Vue warn]: (deprecation WATCH_ARRAY) (11)",
     "
 ",
     " at <FrCheckbox",
@@ -3143,7 +2916,7 @@ exports[`Field Component uses checkbox component for checkbox type: console-warn
 exports[`Field Component uses key value list component for object type: console-warn-snapshot 1`] = `
 [
   [
-    "[Vue warn]: (deprecation WATCH_ARRAY) (11)",
+    "[Vue warn]: (deprecation WATCH_ARRAY) (10)",
     "
 ",
     " at <KeyValueList",
@@ -3906,7 +3679,7 @@ exports[`Field Component uses spinbutton component for spinbutton type: console-
     " at <VTUROOT>",
   ],
   [
-    "[Vue warn]: (deprecation COMPONENT_V_MODEL) (4)",
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) (3)",
     "
 ",
     " at <BFormSpinbutton",
@@ -3917,7 +3690,7 @@ exports[`Field Component uses spinbutton component for spinbutton type: console-
     ">",
   ],
   [
-    "[Vue warn]: (deprecation RENDER_FUNCTION) (5)",
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (4)",
     "
 ",
     " at <BFormSpinbutton",
@@ -3947,7 +3720,7 @@ exports[`Field Component uses spinbutton component for spinbutton type: console-
     " at <VTUROOT>",
   ],
   [
-    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) (4)",
+    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) (3)",
     "
 ",
     " at <BFormSpinbutton",
@@ -4037,7 +3810,7 @@ exports[`Field Component uses spinbutton component for spinbutton type: console-
     " at <VTUROOT>",
   ],
   [
-    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (4)",
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (3)",
     "
 ",
     " at <BFormSpinbutton",
@@ -4524,7 +4297,7 @@ exports[`Field Component uses toggle button component for boolean type: console-
     " at <VTUROOT>",
   ],
   [
-    "[Vue warn]: (deprecation COMPONENT_V_MODEL) (3)",
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) (2)",
     "
 ",
     " at <BFormCheckbox",
@@ -4535,7 +4308,7 @@ exports[`Field Component uses toggle button component for boolean type: console-
     ">",
   ],
   [
-    "[Vue warn]: (deprecation RENDER_FUNCTION) (4)",
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (3)",
     "
 ",
     " at <BFormCheckbox",
@@ -4565,7 +4338,7 @@ exports[`Field Component uses toggle button component for boolean type: console-
     " at <VTUROOT>",
   ],
   [
-    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (3)",
+    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (2)",
     "
 ",
     " at <BFormCheckbox",
