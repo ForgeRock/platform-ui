@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -29,31 +29,33 @@ of the MIT license. See the LICENSE file for details. -->
               v-model="inputValue"
               :disabled="disabled"
               class="d-flex flex-wrap w-100"
-              ghost-class="ghost-tag">
-              <div
-                v-b-tooltip="{ title: tag, delay: { show: 1500, hide: 0 } }"
-                v-for="tag in tags"
-                body-class="py-1 pr-2 text-nowrap"
-                class="fr-tag"
-                :key="tag"
-                :id="`fr-tags-tag_${tag.replace(/\s/g, '_')}`">
-                <span class="fr-tag-text">
-                  {{ tag }}
-                </span>
-                <span
-                  :data-testid="`remove-${tag.replace(/\s/g, '-')}-tag`"
-                  @click="removeTag(tag)"
-                  @keydown.enter="removeTag(tag)">
-                  <FrIcon
-                    tabindex="0"
-                    :aria-label="$t('common.close')"
-                    :aria-controls="`fr-tags-tag_${tag.replace(/\s/g, '_')}`"
-                    class="close-icon pl-2"
-                    style="font-size: 12px; font-weight: 900;"
-                    name="close"
-                  />
-                </span>
-              </div>
+              ghost-class="ghost-tag"
+              :item-key="((item) => inputValue.indexOf(item))">
+              <template #item="{ element }">
+                <div
+                  v-b-tooltip="{ title: element, delay: { show: 1500, hide: 0 } }"
+                  body-class="py-1 pr-2 text-nowrap"
+                  class="fr-tag"
+                  :key="element"
+                  :id="`fr-tags-tag_${element.toString().replace(/\s/g, '_')}`">
+                  <span class="fr-tag-text">
+                    {{ element }}
+                  </span>
+                  <span
+                    :data-testid="`remove-${element.toString().replace(/\s/g, '-')}-tag`"
+                    @click="removeTag(element)"
+                    @keydown.enter="removeTag(element)">
+                    <FrIcon
+                      tabindex="0"
+                      :aria-label="$t('common.close')"
+                      :aria-controls="`fr-tags-tag_${element.toString().replace(/\s/g, '_')}`"
+                      class="close-icon pl-2"
+                      style="font-size: 12px; font-weight: 900;"
+                      name="close"
+                    />
+                  </span>
+                </div>
+              </template>
             </Draggable>
           </li>
         </ul>
@@ -87,6 +89,8 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { toRef } from 'vue';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
+
+Draggable.compatConfig = { MODE: 3 };
 
 export default {
   name: 'Tag',
