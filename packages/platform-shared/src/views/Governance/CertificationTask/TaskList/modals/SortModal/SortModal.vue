@@ -66,14 +66,13 @@ of the MIT license. See the LICENSE file for details. -->
           <Draggable
             class="d-flex flex-column w-100"
             ghost-class="ghost-tag"
-            :list="activeColumnsList">
-            <div
-              v-for="column in activeColumnsList"
-              :key="column.key">
+            :list="activeColumnsList"
+            item-key="key">
+            <template #item="{ element }">
               <BListGroupItem
                 class="py-1 p-2 justify-content-between cursor-pointer border-bottom-0"
-                :class="column.label !== '' ? 'd-flex' : 'd-none'"
-                :id="`fr-columns-task-${column.key}`">
+                :class="element.label !== '' ? 'd-flex' : 'd-none'"
+                :id="`fr-columns-task-${element.key}`">
                 <div
                   class="d-flex align-items-center p-2">
                   <FrIcon
@@ -81,17 +80,17 @@ of the MIT license. See the LICENSE file for details. -->
                     name="drag_indicator"
                   />
                   <span class="fr-tag-text">
-                    {{ column.label }}
+                    {{ element.label }}
                   </span>
                 </div>
                 <BButton
                   variant="link"
                   class="text-dark py-0 px-4"
-                  @click="hideColumn(column)">
+                  @click="hideColumn(element)">
                   <FrIcon name="delete" />
                 </BButton>
               </BListGroupItem>
-            </div>
+            </template>
           </Draggable>
         </BListGroup>
       </BCol>
@@ -122,6 +121,8 @@ import {
   findIndex,
 } from 'lodash';
 import useBvModal from '@forgerock/platform-shared/src/composables/bvModal';
+
+Draggable.compatConfig = { MODE: 3 };
 
 // Composables
 const { bvModal } = useBvModal();

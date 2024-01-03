@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -17,28 +17,30 @@ of the MIT license. See the LICENSE file for details. -->
       <Draggable
         class="d-flex flex-column w-100"
         ghost-class="ghost-tag"
-        :list="pendingFilters">
-        <BListGroupItem
-          v-for="item in pendingFilters"
-          class="py-1 p-2 justify-content-between align-items-center"
-          :class="item !== '' ? 'd-flex' : 'd-none'"
-          :key="item.text"
-          :id="`fr-columns-task-${item.text}`">
-          <div
-            class="d-flex align-items-center p-2">
-            <FrField
-              v-model="item.show"
-              name="filter"
-              type="checkbox" />
-            <span class="fr-tag-text">
-              {{ item.title }}
-            </span>
-          </div>
-          <FrIcon
-            class="pl-2"
-            name="drag_indicator"
-          />
-        </BListGroupItem>
+        :list="pendingFilters"
+        item-key="text">
+          <template #item="{ element }">
+            <BListGroupItem
+              class="py-1 p-2 justify-content-between align-items-center"
+              :class="element !== '' ? 'd-flex' : 'd-none'"
+              :key="element.text"
+              :id="`fr-columns-task-${element.text}`">
+              <div
+                class="d-flex align-items-center p-2">
+                <FrField
+                  v-model="element.show"
+                  name="filter"
+                  type="checkbox" />
+                <span class="fr-tag-text">
+                  {{ element.title }}
+                </span>
+              </div>
+              <FrIcon
+                class="pl-2"
+                name="drag_indicator"
+              />
+            </BListGroupItem>
+        </template>
       </Draggable>
     </BListGroup>
     <template #modal-footer="{ cancel }">
@@ -71,6 +73,8 @@ import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { computed, ref, watch } from 'vue';
 import { cloneDeep } from 'lodash';
+
+Draggable.compatConfig = { MODE: 3 };
 
 const emit = defineEmits(['update']);
 const pendingFilters = ref([]);
