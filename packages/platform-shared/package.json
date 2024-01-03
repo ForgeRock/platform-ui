@@ -48,7 +48,7 @@
     "vue-slider-component": "3.2.15",
     "vue-spinner": "1.0.3",
     "vue2-daterange-picker": "0.6.8",
-    "vuedraggable": "2.23.2",
+    "vuedraggable": "4.0.1",
     "vuex": "4.0.2"
   },
   "devDependencies": {

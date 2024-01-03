@@ -1,5 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Tag @actions should remove tag with click: console-error-snapshot 1`] = `
+[
+  [
+    "^ The above deprecation's compat behavior is disabled and will likely lead to runtime errors.",
+  ],
+  [
+    "^ The above deprecation's compat behavior is disabled and will likely lead to runtime errors.",
+  ],
+  [
+    "^ The above deprecation's compat behavior is disabled and will likely lead to runtime errors.",
+  ],
+]
+`;
+
 exports[`Tag @actions should remove tag with click: console-warn-snapshot 1`] = `
 [
   [
@@ -277,25 +291,17 @@ exports[`Tag @actions should remove tag with click: console-warn-snapshot 1`] = 
     " at <VTUROOT>",
   ],
   [
-    "[Vue warn]: (deprecation COMPONENT_V_MODEL) (2)",
+    "[Vue warn]: (deprecation CUSTOM_DIR) Custom directive hook "bind" has been removed. Use "beforeMount" instead.
+  Details: https://v3-migration.vuejs.org/breaking-changes/custom-directives.html",
     "
 ",
     " at <Draggable",
     "modelValue=",
-    [],
+    [
+      "new value",
+    ],
     "onUpdate:modelValue=fn",
     "disabled=false",
-    " ...",
-    ">",
-  ],
-  [
-    "[Vue warn]: (deprecation RENDER_FUNCTION) (3)",
-    "
-",
-    " at <Draggable",
-    "disabled=false",
-    "class="d-flex flex-wrap w-100"",
-    "ghost-class="ghost-tag"",
     " ...",
     ">",
     "
@@ -332,206 +338,12 @@ exports[`Tag @actions should remove tag with click: console-warn-snapshot 1`] = 
     "
 ",
     " at <Draggable",
+    "modelValue=",
+    [
+      "new value",
+    ],
+    "onUpdate:modelValue=fn",
     "disabled=false",
-    "class="d-flex flex-wrap w-100"",
-    "ghost-class="ghost-tag"",
-    " ...",
-    ">",
-    "
-",
-    " at <BFormTags",
-    "onClick=fn",
-    "add-on-change=""",
-    "autofocus=false",
-    " ...",
-    ">",
-    "
-",
-    " at <InputLayout",
-    "description=""",
-    "id="floatingLabelInput3___input__"",
-    "class=""",
-    " ...",
-    ">",
-    "
-",
-    " at <Tag",
-    "options=",
-    [],
-    "name="stub-name"",
-    "label="stub-label"",
-    " ...",
-    ">",
-    "
-",
-    " at <VTUROOT>",
-  ],
-  [
-    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) (2)",
-    "
-",
-    " at <Draggable",
-    "disabled=false",
-    "class="d-flex flex-wrap w-100"",
-    "ghost-class="ghost-tag"",
-    " ...",
-    ">",
-    "
-",
-    " at <BFormTags",
-    "onClick=fn",
-    "add-on-change=""",
-    "autofocus=false",
-    " ...",
-    ">",
-    "
-",
-    " at <InputLayout",
-    "description=""",
-    "id="floatingLabelInput3___input__"",
-    "class=""",
-    " ...",
-    ">",
-    "
-",
-    " at <Tag",
-    "options=",
-    [],
-    "name="stub-name"",
-    "label="stub-label"",
-    " ...",
-    ">",
-    "
-",
-    " at <VTUROOT>",
-  ],
-  [
-    "[Vue warn]: (deprecation INSTANCE_SCOPED_SLOTS) (2)",
-    "
-",
-    " at <Draggable",
-    "disabled=false",
-    "class="d-flex flex-wrap w-100"",
-    "ghost-class="ghost-tag"",
-    " ...",
-    ">",
-    "
-",
-    " at <BFormTags",
-    "onClick=fn",
-    "add-on-change=""",
-    "autofocus=false",
-    " ...",
-    ">",
-    "
-",
-    " at <InputLayout",
-    "description=""",
-    "id="floatingLabelInput3___input__"",
-    "class=""",
-    " ...",
-    ">",
-    "
-",
-    " at <Tag",
-    "options=",
-    [],
-    "name="stub-name"",
-    "label="stub-label"",
-    " ...",
-    ">",
-    "
-",
-    " at <VTUROOT>",
-  ],
-  [
-    "[Vue warn]: (deprecation INSTANCE_ATTRS_CLASS_STYLE) Component <draggable> has \`inheritAttrs: false\` but is relying on class/style fallthrough from parent. In Vue 3, class/style are now included in $attrs and will no longer fallthrough when inheritAttrs is false. If you are already using v-bind="$attrs" on component root it should render the same end result. If you are binding $attrs to a non-root element and expecting class/style to fallthrough on root, you will need to now manually bind them on root via :class="$attrs.class".
-  Details: https://v3-migration.vuejs.org/breaking-changes/attrs-includes-class-style.html",
-    "
-",
-    " at <Draggable",
-    "disabled=false",
-    "class="d-flex flex-wrap w-100"",
-    "ghost-class="ghost-tag"",
-    " ...",
-    ">",
-    "
-",
-    " at <BFormTags",
-    "onClick=fn",
-    "add-on-change=""",
-    "autofocus=false",
-    " ...",
-    ">",
-    "
-",
-    " at <InputLayout",
-    "description=""",
-    "id="floatingLabelInput3___input__"",
-    "class=""",
-    " ...",
-    ">",
-    "
-",
-    " at <Tag",
-    "options=",
-    [],
-    "name="stub-name"",
-    "label="stub-label"",
-    " ...",
-    ">",
-    "
-",
-    " at <VTUROOT>",
-  ],
-  [
-    "[Vue warn]: (deprecation CUSTOM_DIR) Custom directive hook "bind" has been removed. Use "beforeMount" instead.
-  Details: https://v3-migration.vuejs.org/breaking-changes/custom-directives.html",
-    "
-",
-    " at <Draggable",
-    "disabled=false",
-    "class="d-flex flex-wrap w-100"",
-    "ghost-class="ghost-tag"",
-    " ...",
-    ">",
-    "
-",
-    " at <BFormTags",
-    "onClick=fn",
-    "add-on-change=""",
-    "autofocus=false",
-    " ...",
-    ">",
-    "
-",
-    " at <InputLayout",
-    "description=""",
-    "id="floatingLabelInput3___input__"",
-    "class=""",
-    " ...",
-    ">",
-    "
-",
-    " at <Tag",
-    "options=",
-    [],
-    "name="stub-name"",
-    "label="stub-label"",
-    " ...",
-    ">",
-    "
-",
-    " at <VTUROOT>",
-  ],
-  [
-    "[Vue warn]: (deprecation WATCH_ARRAY) (5)",
-    "
-",
-    " at <Draggable",
-    "disabled=false",
-    "class="d-flex flex-wrap w-100"",
-    "ghost-class="ghost-tag"",
     " ...",
     ">",
     "
@@ -569,9 +381,12 @@ exports[`Tag @actions should remove tag with click: console-warn-snapshot 1`] = 
     "
 ",
     " at <Draggable",
+    "modelValue=",
+    [
+      "new value",
+    ],
+    "onUpdate:modelValue=fn",
     "disabled=false",
-    "class="d-flex flex-wrap w-100"",
-    "ghost-class="ghost-tag"",
     " ...",
     ">",
     "
@@ -604,13 +419,16 @@ exports[`Tag @actions should remove tag with click: console-warn-snapshot 1`] = 
     " at <VTUROOT>",
   ],
   [
-    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) (3)",
+    "[Vue warn]: (deprecation OPTIONS_BEFORE_DESTROY) (2)",
     "
 ",
     " at <Draggable",
+    "modelValue=",
+    [
+      "new value",
+    ],
+    "onUpdate:modelValue=fn",
     "disabled=false",
-    "class="d-flex flex-wrap w-100"",
-    "ghost-class="ghost-tag"",
     " ...",
     ">",
     "
@@ -647,9 +465,12 @@ exports[`Tag @actions should remove tag with click: console-warn-snapshot 1`] = 
     "
 ",
     " at <Draggable",
+    "modelValue=",
+    [
+      "new value",
+    ],
+    "onUpdate:modelValue=fn",
     "disabled=false",
-    "class="d-flex flex-wrap w-100"",
-    "ghost-class="ghost-tag"",
     " ...",
     ">",
     "
