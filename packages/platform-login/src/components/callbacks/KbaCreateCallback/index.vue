@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -32,7 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
         </legend>
         <FrField
           :value="selected"
-          @input="selected = $event; onQuestionSelectionChange()"
+          @input="selected = $event; handleQuestionChoiceChange()"
           class="mb-2 kbaQuestionSelect"
           type="select"
           input-labelledby="legend-kba-create-callback-description"
@@ -48,7 +48,7 @@ of the MIT license. See the LICENSE file for details. -->
         <FrField
           v-if="showCustom"
           :value="questionModel.value"
-          @input="questionModel.value = $event; onQuestionSelectionChange()"
+          @input="questionModel.value = $event; handleQuestionChoiceChange()"
           class="mb-3"
           :label="questionModel.title"
           :name="questionModel.key"
