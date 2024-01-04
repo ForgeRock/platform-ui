@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -14,14 +14,14 @@ of the MIT license. See the LICENSE file for details. -->
     size="lg"
     @hidden="reset">
     <template #modal-header="{ close }">
-      <a
-        href="#"
-        class="nav-link pl-0"
+      <BButton
+        variant="link"
+        class="p-0 pt-1"
         @click="closeModal">
         <FrIcon
-          class="md-24 mr-3"
+          class="md-24 mr-3 text-muted"
           name="arrow_back" />
-      </a>
+      </BButton>
       <h5 class="modal-title">
         {{ $t('governance.certificationTask.lineItemReviewersModal.editReviewerModal.title') }}
       </h5>
