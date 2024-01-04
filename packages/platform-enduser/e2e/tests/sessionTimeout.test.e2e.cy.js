@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -36,10 +36,17 @@ filterTests(['forgeops', 'cloud'], () => {
 
           const inNinetySeconds = new Date(Date.now() + 85000);
           const maxIdleExpirationTime = inNinetySeconds.toISOString();
-          cy.intercept('POST', '**/sessions?_action=getSessionInfo', {
-            realm: '/test',
-            maxIdleExpirationTime,
-          });
+          if (Cypress.env('IS_FRAAS')) {
+            cy.intercept('POST', '**/alpha/sessions?_action=getSessionInfo', {
+              realm: '/test',
+              maxIdleExpirationTime,
+            });
+          } else {
+            cy.intercept('POST', '**/root/sessions?_action=getSessionInfo', {
+              realm: '/test',
+              maxIdleExpirationTime,
+            });
+          }
 
           // expect the session warning to be shown
           cy.visit(locationUrl);
@@ -71,10 +78,17 @@ filterTests(['forgeops', 'cloud'], () => {
 
           const inNinetySeconds = new Date(Date.now() + 85000);
           const maxIdleExpirationTime = inNinetySeconds.toISOString();
-          cy.intercept('POST', '**/sessions?_action=getSessionInfo', {
-            realm: '/test',
-            maxIdleExpirationTime,
-          });
+          if (Cypress.env('IS_FRAAS')) {
+            cy.intercept('POST', '**/alpha/sessions?_action=getSessionInfo', {
+              realm: '/test',
+              maxIdleExpirationTime,
+            });
+          } else {
+            cy.intercept('POST', '**/root/sessions?_action=getSessionInfo', {
+              realm: '/test',
+              maxIdleExpirationTime,
+            });
+          }
 
           // expect the session warning to be shown
           cy.visit(locationUrl);
@@ -110,10 +124,17 @@ filterTests(['forgeops', 'cloud'], () => {
           // this put it over 32-bit signed integer
           const inOverTwentyFiveDays = new Date(Date.now() + 2160000000);
           const maxIdleExpirationTime = inOverTwentyFiveDays.toISOString();
-          cy.intercept('POST', '**/sessions?_action=getSessionInfo', {
-            realm: '/test',
-            maxIdleExpirationTime,
-          });
+          if (Cypress.env('IS_FRAAS')) {
+            cy.intercept('POST', '**/alpha/sessions?_action=getSessionInfo', {
+              realm: '/test',
+              maxIdleExpirationTime,
+            });
+          } else {
+            cy.intercept('POST', '**/root/sessions?_action=getSessionInfo', {
+              realm: '/test',
+              maxIdleExpirationTime,
+            });
+          }
 
           cy.visit(locationUrl);
 
