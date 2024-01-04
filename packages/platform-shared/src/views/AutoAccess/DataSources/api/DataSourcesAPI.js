@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -11,6 +11,7 @@ import { generateAutoAccessApi, generateAutoAccessJas } from '@forgerock/platfor
 import { deleteEntityInstance, saveEntityInstances } from '../../Entities/api/EntitiesAPI';
 import { formatBytes } from '../../Shared/utils/util-functions';
 import store from '@/store';
+import i18n from '@/i18n';
 
 const utc = require('dayjs/plugin/utc');
 
@@ -63,13 +64,13 @@ export const getFirstFile = (bucket, prefix) => new Promise((resolve, reject) =>
             resolve(firstJSON);
           } else {
             reject(
-              new Error(this.$t('autoAccess.access.dataSources.dataSourcesAPI.fileError')),
+              new Error(i18n.global.t('autoAccess.access.dataSources.dataSourcesAPI.fileError')),
             );
           }
         });
       } else {
         reject(
-          new Error(this.$t('autoAccess.access.dataSources.dataSourcesAPI.bucketError')),
+          new Error(i18n.global.t('autoAccess.access.dataSources.dataSourcesAPI.bucketError')),
         );
       }
     });
@@ -94,7 +95,7 @@ export const getFilePreview = (bucket, filePath) => new Promise((resolve, reject
     })
     .catch(() => {
       reject(
-        new Error(this.$t('autoAccess.access.dataSources.dataSourcesAPI.errorInvalidJSON')),
+        new Error(i18n.global.t('autoAccess.access.dataSources.dataSourcesAPI.errorInvalidJSON')),
       );
     });
 });
@@ -114,7 +115,7 @@ export const getDataSourceDefinition = () => new Promise((resolve, reject) => {
     })
     .catch(() => {
       reject(
-        new Error(this.$t('autoAccess.access.dataSources.dataSourcesAPI.errorFetchData')),
+        new Error(i18n.global.t('autoAccess.access.dataSources.dataSourcesAPI.errorFetchData')),
       );
     });
 });
@@ -222,7 +223,7 @@ export const getDataSources = (sort, search, searchAfter = [], activeOnly = fals
       })
       .catch(() => {
         reject(
-          new Error(this.$t('autoAccess.access.dataSources.dataSourcesAPI.errorFetchDataSources')),
+          new Error(i18n.global.t('autoAccess.access.dataSources.dataSourcesAPI.errorFetchDataSources')),
         );
       });
   });
@@ -250,7 +251,7 @@ export const getDataSourceById = (id) => {
       })
       .catch(() => {
         reject(
-          new Error(this.$t('autoAccess.access.dataSources.dataSourcesAPI.errorFetchDataSources')),
+          new Error(i18n.global.t('autoAccess.access.dataSources.dataSourcesAPI.errorFetchDataSources')),
         );
       });
   });
