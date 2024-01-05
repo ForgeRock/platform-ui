@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -93,36 +93,35 @@ of the MIT license. See the LICENSE file for details. -->
               size="sm"
               @change="jsonEditorToggle($event)" />
           </div>
-          <template v-if="jsonEditToggle">
-            <VuePrismEditor
-              :code="variablesJsonCode"
-              @change="variablesJsonCode = $event; checkIfCodeIsParsable($event)"
-              language="json"
-              :aria-label="$t('editor.accessibilityHelp')"
-              :line-numbers="true"
-              :readonly="readonly"
-              @keydown="blurOnEscape" />
-          </template>
+          <VuePrismEditor
+            v-if="jsonEditToggle"
+            :code="variablesJsonCode"
+            @change="variablesJsonCode = $event; checkIfCodeIsParsable($event)"
+            language="json"
+            :aria-label="$t('editor.accessibilityHelp')"
+            :line-numbers="true"
+            :readonly="readonly"
+            @keydown="blurOnEscape" />
           <template v-else>
-            <div
-              class="form-row pb-1"
+            <BFormRow
+              class="pb-1"
               style="padding-right: 90px;">
-              <div class="col-6">
+              <BCol cols="6">
                 <small>{{ $t('common.name') }}</small>
-              </div>
-              <div class="col-6">
+              </BCol>
+              <BCol cols="6">
                 <small>{{ $t('scriptEditor.value') }}</small>
-              </div>
-            </div>
+              </BCol>
+            </BFormRow>
             <VeeForm
-              ref="validationObserver"
+              ref="observer"
               as="span">
               <div
                 v-for="(selectedVariable, index) in selectedVariables"
                 :key="selectedVariable.index"
-                :class="[{'pt-2': index}, 'd-flex','form-group', 'mb-0', 'align-iterm-start']">
+                :class="[{'pt-2': index}, 'd-flex']">
                 <div class="flex-grow-1 pr-3">
-                  <div class="form-row align-items-start">
+                  <BFormRow class="align-items-start">
                     <FrField
                       :value="selectedVariable.name"
                       @input="selectedVariable.name = $event; emitScriptValue()"
@@ -130,7 +129,7 @@ of the MIT license. See the LICENSE file for details. -->
                       :disabled="disabled"
                       input-class="form-control-sm form-control-dark"
                       validation="required"
-                      :name="$t('common.name')" />
+                      :name="`${$t('common.name')}-${selectedVariable.index}`" />
                     <FrField
                       :value="selectedVariable.value.value"
                       @input="selectedVariable.value.value = $event; emitScriptValue()"
@@ -138,30 +137,26 @@ of the MIT license. See the LICENSE file for details. -->
                       :disabled="disabled"
                       input-class="form-control-sm form-control-dark"
                       validation="required"
-                      :name="$t('common.value')"
+                      :name="`${$t('common.value')}-${selectedVariable.index}`"
                       :type="selectedVariable.type" />
-                  </div>
+                  </BFormRow>
                 </div>
                 <div class="d-flex">
                   <BButton
-                    variant="link mr-1"
-                    class="max-height-50"
+                    variant="link"
+                    class="max-height-50 mr-1"
                     :disabled="disabled"
                     size="sm"
                     @click="removeVariable(index)">
-                    <FrIcon
-                      name="remove"
-                    />
+                    <FrIcon name="remove" />
                   </BButton>
                   <BButton
-                    variant="link mr-1"
-                    class="max-height-50"
+                    variant="link"
+                    class="max-height-50 mr-1"
                     :disabled="disabled"
                     size="sm"
                     @click="addVariable('', '', index + 1)">
-                    <FrIcon
-                      name="add"
-                    />
+                    <FrIcon name="add" />
                   </BButton>
                 </div>
               </div>
@@ -176,7 +171,9 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import {
   BButton,
+  BCol,
   BFormFile,
+  BFormRow,
 } from 'bootstrap-vue';
 import { debounce } from 'lodash';
 import { Form as VeeForm } from 'vee-validate';
@@ -198,7 +195,9 @@ export default {
   name: 'ScriptEditor',
   components: {
     BButton,
+    BCol,
     BFormFile,
+    BFormRow,
     VuePrismEditor,
     FrField,
     FrIcon,
@@ -333,8 +332,8 @@ export default {
      * Checks if variables are filled in properly and calls emit if so
      */
     emitScriptValue() {
-      if (this.$refs.Field) {
-        this.$refs.Field.validate().then((isValid) => {
+      if (this.$refs.observer) {
+        this.$refs.observer.validate().then((isValid) => {
           if (isValid) {
             const globals = {};
             this.selectedVariables.forEach((variable) => {
