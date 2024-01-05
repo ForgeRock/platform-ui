@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -27,7 +27,8 @@ jest.mock('@forgerock/platform-shared/src/composables/bvModal');
 
 describe('Run History component', () => {
   function setup(props) {
-    useBvModal.mockReturnValue({ bvModal: { show: jest.fn(), hide: jest.fn() } });
+    const bvModalOptions = { show: jest.fn(), hide: jest.fn() };
+    useBvModal.mockReturnValue({ bvModal: { value: bvModalOptions, ...bvModalOptions } });
     return mount(RunHistory, {
       attachTo: createTooltipContainer(['tooltip-job_0123', 'tooltip-job_1112', 'tooltip-job_4567']),
       global: {
