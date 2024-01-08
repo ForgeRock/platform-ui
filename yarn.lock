@@ -2407,7 +2407,6 @@ __metadata:
     vkbeautify: 0.99.3
     vue: 3.3.4
     vue-clipboard2: 0.3.1
-    vue-color: 2.7.1
     vue-ellipse-progress: 1.3.1
     vue-i18n: 9.4.1
     vue-multiselect: 2.1.7
@@ -19574,9 +19573,9 @@ __metadata:
   linkType: hard
 
 "tinycolor2@npm:^1.1.2":
-  version: 1.4.2
-  resolution: "tinycolor2@npm:1.4.2"
-  checksum: 57ed262e08815a4ab0ed933edafdbc6555a17081781766149813b44a080ecbe58b3ee281e81c0e75b42e4d41679f138cfa98eabf043f829e0683c04adb12c031
+  version: 1.6.0
+  resolution: "tinycolor2@npm:1.6.0"
+  checksum: 6df4d07fceeedc0a878d7bac47e2cd47c1ceeb1078340a9eb8a295bc0651e17c750f73d47b3028d829f30b85c15e0572c0fd4142083e4c21a30a597e47f47230
   languageName: node
   linkType: hard
 
