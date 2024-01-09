@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -20,8 +20,8 @@ of the MIT license. See the LICENSE file for details. -->
         :aria-label="placeholder"
         @focus="$emit('search-input-focus')"
         @blur="$emit('search-input-blur')"
-        @keydown.native.enter="$emit('search')"
-        @keydown.native.esc="clearSearch"
+        @keydown.enter="$emit('search')"
+        @keydown.esc="clearSearch"
         v-model="value"
         class="pl-0 mx-0 border-0"
         type="search" />
