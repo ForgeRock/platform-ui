@@ -34,7 +34,7 @@ of the MIT license. See the LICENSE file for details. -->
             data-testid="fr-field-applications"
             :options="applicationOptionsFiltered"
             @input="applicationsModel = $event"
-            @search="handleApplicationsSearch" />
+            @search="searchDebounce($event, _REPORT_FIELDS_CONTROLLER.applications)" />
         </BCol>
       </BRow>
       <BRow v-if="showOAuthApplications">
@@ -46,7 +46,7 @@ of the MIT license. See the LICENSE file for details. -->
             class="mb-3"
             data-testid="fr-field-oauth-applications"
             :options="oAuthApplicationOptionsFiltered"
-            :taggable="!_REPORT_FIELDS_CONTROLLER.oauth2_applications.config.viewable"
+            :taggable="!oAuthApplicationOptionsFiltered.length"
             @input="oAuthApplicationsModel = $event"
             @search="handleOAuthApplicationsSearch" />
         </BCol>
@@ -73,9 +73,12 @@ of the MIT license. See the LICENSE file for details. -->
           <FrField
             v-model="campaignNameModel"
             class="mb-3"
-            name="show-campaign-name"
-            type="string"
-            :label="_REPORT_FIELDS_CONTROLLER.campaign_name.label" />
+            name="show-campaign-status"
+            :internal-search="true"
+            :options="campaignNameOptionsFiltered"
+            :placeholder="_REPORT_FIELDS_CONTROLLER.campaign_name.label"
+            :searchable="campaignNameOptionsFiltered.length"
+            :type="campaignNameOptionsFiltered.length ? 'select' : 'string'" />
         </BCol>
       </BRow>
       <BRow v-if="showCampaignStatus">
@@ -83,14 +86,15 @@ of the MIT license. See the LICENSE file for details. -->
           {{ _REPORT_FIELDS_CONTROLLER.campaign_status.label }}
         </BCol>
         <BCol md="9">
-          <FrField
-            v-model="campaignStatusFieldValue"
+          <FrReportsMultiSelect
             class="mb-3"
-            name="show-campaign-status"
-            type="select"
+            data-testid="fr-field-campaign-status"
+            :internal-search="true"
             :options="campaignStatusOptions"
             :placeholder="_REPORT_FIELDS_CONTROLLER.campaign_status.label"
-            :searchable="false" />
+            :single-selection="true"
+            :taggable="true"
+            @input="campaignStatusFieldValue = $event" />
         </BCol>
       </BRow>
       <BRow v-if="showUsers">
@@ -103,7 +107,7 @@ of the MIT license. See the LICENSE file for details. -->
             data-testid="fr-field-users"
             :options="usersOptionsFiltered"
             @input="usersModel = $event"
-            @search="handleUsersSearch" />
+            @search="searchDebounce($event, _REPORT_FIELDS_CONTROLLER.user_names)" />
         </BCol>
       </BRow>
       <BRow v-if="showStatus">
@@ -130,7 +134,7 @@ of the MIT license. See the LICENSE file for details. -->
             data-testid="fr-field-journeys"
             :internal-search="true"
             :options="journeyOptionsFiltered"
-            :taggable="!_REPORT_FIELDS_CONTROLLER.journeyName.config.viewable"
+            :taggable="!journeyOptionsFiltered.length"
             @input="journeysModel = $event" />
         </BCol>
       </BRow>
@@ -144,7 +148,7 @@ of the MIT license. See the LICENSE file for details. -->
             data-testid="fr-field-organizations"
             :options="orgOptionsFiltered"
             @input="organizationsModel = $event"
-            @search="handleOrgsSearch" />
+            @search="searchDebounce($event, _REPORT_FIELDS_CONTROLLER.org_names)" />
         </BCol>
       </BRow>
       <BRow v-if="showRoles">
@@ -157,7 +161,7 @@ of the MIT license. See the LICENSE file for details. -->
             data-testid="fr-field-roles"
             :options="rolesOptionsFiltered"
             @input="rolesModel = $event"
-            @search="handleRolesSearch" />
+            @search="searchDebounce($event, _REPORT_FIELDS_CONTROLLER.roles)" />
         </BCol>
       </BRow>
       <template v-if="unmappedParameters.length">
@@ -247,6 +251,7 @@ import {
   BContainer,
   BRow,
 } from 'bootstrap-vue';
+import { debounce } from 'lodash';
 import { showErrorMessage, displayNotification } from '@forgerock/platform-shared/src/utils/notification';
 import { runAnalyticsTemplate } from '@forgerock/platform-shared/src/api/AutoApi';
 import FrField from '@forgerock/platform-shared/src/components/Field';
@@ -316,7 +321,13 @@ const applicationsDisableSubmit = computed(() => (showApplications.value && !app
  */
 const oAuthApplicationsModel = ref([]);
 const oAuthApplicationOptions = ref([]);
-const oAuthApplicationOptionsFiltered = computed(() => oAuthApplicationOptions.value.map(({ _id }) => _id));
+const oAuthApplicationOptionsFiltered = computed(() => {
+  const options = oAuthApplicationOptions.value;
+  if (options.length) {
+    return options.map(({ _id }) => _id);
+  }
+  return [];
+});
 const showOAuthApplications = computed(() => _PARAMETER_KEYS.value.includes('oauth2_applications'));
 const oAuthApplicationsDisableSubmit = computed(() => (showOAuthApplications.value && !oAuthApplicationsModel.value.length));
 
@@ -336,6 +347,14 @@ const outcomeModel = computed(() => {
  * Campaign Name field
  */
 const campaignNameModel = ref('');
+const campaignNameOptions = ref([]);
+const campaignNameOptionsFiltered = computed(() => {
+  const options = campaignNameOptions.value;
+  if (options.length) {
+    return campaignNameOptions.value.map(({ name }) => name);
+  }
+  return [];
+});
 const showCampaignName = computed(() => _PARAMETER_KEYS.value.includes('campaign_name'));
 const campaignNameDisableSubmit = computed(() => !!(showCampaignName.value && !campaignNameModel.value));
 
@@ -407,7 +426,7 @@ const rolesDisableSubmit = computed(() => showRoles.value && !rolesModel.value.l
 
 /**
  * Unmapped parameter fields.
- * We output a generic text field for any unexpected parameters
+ * We output a generic field for any unexpected parameters
  */
 const unmappedParameters = ref([]);
 const unmappedParametersModel = computed(() => {
@@ -437,6 +456,7 @@ const {
   applicationsModel,
   applicationOptions,
   campaignNameModel,
+  campaignNameOptions,
   campaignStatusModel,
   endDateModel,
   journeysModel,
@@ -480,40 +500,21 @@ const disableSubmit = computed(() => doesNotContainAtLeastOneValidParameter.valu
  * @param {Object} field field controller
  * @param {Array} payload field value
  */
-
 async function handleSearch(term, field) {
   const { config, fetch } = field;
   const queryFilter = `${config.fields} sw "${term}"`;
-  return fetch(config, queryFilter, 10);
+  config.model.value = await fetch(config, queryFilter, 10);
 }
-
-async function handleOrgsSearch(term) {
-  const field = _REPORT_FIELDS_CONTROLLER.org_names;
-  orgOptions.value = await handleSearch(term, field);
-}
-
-async function handleApplicationsSearch(term) {
-  const field = _REPORT_FIELDS_CONTROLLER.applications;
-  applicationOptions.value = await handleSearch(term, field);
-}
+const searchDebounce = debounce(handleSearch, 500);
 
 async function handleOAuthApplicationsSearch(term) {
-  const isSearchable = _REPORT_FIELDS_CONTROLLER.oauth2_applications.config.viewable;
   const field = _REPORT_FIELDS_CONTROLLER.oauth2_applications;
+  const isSearchable = field.config.viewable;
+  const hasOptions = oAuthApplicationOptions.value.length;
 
-  if (isSearchable) {
-    oAuthApplicationOptions.value = await handleSearch(term, field);
+  if (isSearchable && hasOptions) {
+    searchDebounce(term, field);
   }
-}
-
-async function handleUsersSearch(term) {
-  const field = _REPORT_FIELDS_CONTROLLER.user_names;
-  usersOptions.value = await handleSearch(term, field);
-}
-
-async function handleRolesSearch(term) {
-  const field = _REPORT_FIELDS_CONTROLLER.roles;
-  rolesOptions.value = await handleSearch(term, field);
 }
 
 /**
@@ -571,7 +572,7 @@ async function setReportFields(reportConfig) {
       }
     } else {
       const fieldType = fieldTypeMap[parameters[key].type] || 'string';
-      // Any unexpected parameters are shown alongside a corresponding generic text field.
+      // Any unexpected parameters are shown alongside a corresponding generic field.
       unmappedParameters.value.push({
         label: key,
         type: fieldType,
@@ -582,7 +583,11 @@ async function setReportFields(reportConfig) {
 
   if (fetchList.length) {
     const fetchedData = await Promise.allSettled(fetchList);
-    fetchModelList.forEach((dataModel, index) => { dataModel.value = fetchedData[index].value; });
+    fetchModelList.forEach((dataModel, index) => {
+      if (fetchedData[index].value) {
+        dataModel.value = fetchedData[index].value;
+      }
+    });
   }
 }
 

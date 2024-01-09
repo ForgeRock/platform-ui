@@ -9,7 +9,6 @@ of the MIT license. See the LICENSE file for details. -->
       class="mb-3"
       name="timeframe"
       type="select"
-      :label="timeframeOptionsValue ? $t('reports.tabs.runReport.timeframe.label') : ''"
       :options="timeframeOptions"
       :placeholder="$t('reports.tabs.runReport.timeframe.last7Days')"
       :searchable="false" />
@@ -46,27 +45,33 @@ import { BCollapse } from 'bootstrap-vue';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import dateRanges from '@forgerock/platform-shared/src/utils/date';
 import FrDatepicker from '@forgerock/platform-shared/src/components/Datepicker';
+import dayjs from 'dayjs';
 import i18n from '@/i18n';
 
 const emit = defineEmits(['start-date-update', 'end-date-update']);
+const customTimeframeOption = i18n.global.t('reports.tabs.runReport.timeframe.custom');
+const todayOption = i18n.global.t('reports.tabs.runReport.timeframe.today');
+const yesterdayOption = i18n.global.t('reports.tabs.runReport.timeframe.yesterday');
+const last7DaysOption = i18n.global.t('reports.tabs.runReport.timeframe.last7Days');
+const last30DaysOption = i18n.global.t('reports.tabs.runReport.timeframe.last30Days');
 
 /**
  * Globals
  */
 const dateFormat = { year: 'numeric', month: 'numeric', day: 'numeric' };
 const timeframeOptions = [
-  i18n.global.t('reports.tabs.runReport.timeframe.today'),
-  i18n.global.t('reports.tabs.runReport.timeframe.yesterday'),
-  i18n.global.t('reports.tabs.runReport.timeframe.last7Days'),
-  i18n.global.t('reports.tabs.runReport.timeframe.last30Days'),
-  i18n.global.t('reports.tabs.runReport.timeframe.custom'),
+  todayOption,
+  yesterdayOption,
+  last7DaysOption,
+  last30DaysOption,
+  customTimeframeOption,
 ];
 const timeframeOptionsValue = ref('');
 const dateMap = {
-  [i18n.global.t('reports.tabs.runReport.timeframe.today')]: 'Today',
-  [i18n.global.t('reports.tabs.runReport.timeframe.yesterday')]: 'Yesterday',
-  [i18n.global.t('reports.tabs.runReport.timeframe.last7Days')]: 'Last 7 Days',
-  [i18n.global.t('reports.tabs.runReport.timeframe.last30Days')]: 'Last 30 Days',
+  [todayOption]: 'Today',
+  [yesterdayOption]: 'Yesterday',
+  [last7DaysOption]: 'Last 7 Days',
+  [last30DaysOption]: 'Last 30 Days',
 };
 const startDateCustomValue = ref('');
 const endDateCustomValue = ref('');
@@ -74,8 +79,8 @@ const endDateCustomValue = ref('');
 /**
  * Computed
  */
-const showCustomTimeframe = computed(() => timeframeOptionsValue.value === i18n.global.t('reports.tabs.runReport.timeframe.custom'));
-const timeframeSelection = computed(() => timeframeOptionsValue.value || i18n.global.t('reports.tabs.runReport.timeframe.last7Days'));
+const showCustomTimeframe = computed(() => timeframeOptionsValue.value === customTimeframeOption);
+const timeframeSelection = computed(() => timeframeOptionsValue.value || last7DaysOption);
 const timeframeComputedValue = computed(() => {
   const validDateMap = dateMap[timeframeSelection.value];
   const customStartValue = startDateCustomValue.value;
@@ -84,7 +89,7 @@ const timeframeComputedValue = computed(() => {
     return dateRanges()[validDateMap];
   }
   if (showCustomTimeframe.value && customStartValue && customEndValue) {
-    return [customStartValue, customEndValue];
+    return [dayjs(customStartValue).toISOString(), dayjs(customEndValue).toISOString()];
   }
   return [false, false];
 });
