@@ -12,7 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
     :show-no-options="true"
     :show-no-results="true"
     :taggable="taggable"
-    @search-change="emitDebounced('search', $event)"
+    @search-change="emit('search', $event)"
     testid="reports-multiselect-field"
     open-direction="bottom"
     type="multiselect">
@@ -58,10 +58,8 @@ of the MIT license. See the LICENSE file for details. -->
 /**
  * @description Displays the default run reports multiselect field, for running reports.
  * Configurable to allow for internal search and the ability to add custom tags through the taggable prop.
- * The emit event for searching is debounced.
  */
 import { computed, ref, watch } from 'vue';
-import { debounce } from 'lodash';
 import {
   BButton,
   BMedia,
@@ -88,6 +86,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  singleSelection: {
+    type: Boolean,
+    default: false,
+  },
   taggable: {
     type: Boolean,
     default: false,
@@ -98,9 +100,15 @@ const props = defineProps({
  * Globals
  */
 const selectValue = ref([]);
-const emitDebounced = debounce(emit, 500);
 const filteredOptions = computed(() => props.options.filter((value) => !selectValue.value.includes(value)));
-watch(selectValue, (newValue) => emit('input', newValue));
+
+// Handles single selection and emits new selected value
+watch(selectValue, (newValue) => {
+  if (props.singleSelection && selectValue.value.length > 1) {
+    selectValue.value.shift();
+  }
+  emit('input', newValue);
+});
 </script>
 
 <style lang="scss" scoped>

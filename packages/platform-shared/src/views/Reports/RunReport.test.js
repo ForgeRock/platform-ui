@@ -14,6 +14,7 @@ import * as managedResourceApi from '@forgerock/platform-shared/src/api/ManagedR
 import * as notification from '@forgerock/platform-shared/src/utils/notification';
 import * as autoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import * as reportUtils from '@forgerock/platform-shared/src/utils/reportsUtils';
+import * as CertificationApi from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import i18n from '@/i18n';
 import RunReport from './RunReport';
 import {
@@ -62,6 +63,19 @@ describe('Run Report component', () => {
   });
 
   describe('@mounts', () => {
+    it('skips modeling any data for fields if a corresponding api call fails on load', async () => {
+      fieldDataMocks();
+      const mockError = new Error();
+      const campaignNameSpyReject = jest.spyOn(CertificationApi, 'getAdminCertificationItems').mockRejectedValue(mockError);
+
+      wrapper = setup({ reportConfig: { parameters: { campaign_name: {} } } });
+      await flushPromises();
+
+      const campaignNameField = wrapper.find('[name="show-campaign-status"]');
+      expect(campaignNameSpyReject).toHaveBeenCalled();
+      expect(campaignNameField.attributes('type')).toBe('text');
+    });
+
     const allKnownFields = [
       ['only displays the timeframe field when "startDate" parameter received', 'fr-field-timeframe', 'startDate'],
       ['only displays the timeframe field when "endDate" parameter received', 'fr-field-timeframe', 'endDate'],
@@ -176,8 +190,27 @@ describe('Run Report component', () => {
         jest.clearAllMocks();
         const journeyInputField = findByTestId(wrapper, 'fr-field-journeys');
         const combobox = findByRole(journeyInputField, 'listbox');
-        const listOptions = combobox.findAll('.multiselect__option');
-        expect(listOptions.at(1).text()).toBe('List is empty.');
+        const listOptions = combobox.find('.multiselect__option');
+        expect(listOptions.text()).toBe('No elements found. Consider changing the search query.');
+      });
+    });
+
+    describe('oAuth2 Applications field', () => {
+      it('only executes a debounced search if field has options and the searchable prop is true', async () => {
+        fieldDataMocks();
+        reportUtils.getOauth2Clients = jest.fn().mockReturnValue(Promise.resolve([{ _id: 'App1' }, { _id: 'App2' }]));
+        store.state.SharedStore.currentPackage = 'admin';
+        wrapper = setup({ reportConfig: { parameters: { oauth2_applications: { type: 'array' } } } });
+        await flushPromises();
+        jest.clearAllMocks();
+
+        const oAuth2Field = wrapper.find('[type="multiselect"]');
+        await oAuth2Field.trigger('click');
+
+        const options = wrapper.findAll('[role="option"]');
+        const searchField = wrapper.find('[type="text"]');
+        await searchField.setValue('App1');
+        expect(options.length).toBe(2);
       });
     });
 
