@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -14,6 +14,7 @@ of the MIT license. See the LICENSE file for details. -->
       id="dropdown"
       toggle-class="btn btn-link text-dark border-0 toggle-dropdown-button"
       :boundary="boundary"
+      :disabled="disabled"
       :text="totalRows > 0 ? $t('pagination.dropdown.text', { pageMin, pageMax, totalRows }) : $t('pagination.dropdown.textUnknownTotalRows', { pageMin, pageMax })"
     >
       <BDropdownItem
@@ -33,6 +34,7 @@ of the MIT license. See the LICENSE file for details. -->
       id="pagination"
       tabindex="0"
       :aria-label="ariaLabel"
+      :disabled="disabled"
       :ellipsis-class="['d-flex align-items-center', ellipsisClass]"
       :first-class="datasetSize === DatasetSize.SMALL || datasetSize === DatasetSize.LARGE || hideGoToFirstPageButton ? 'd-none': firstClass"
       :hide-ellipsis="datasetSize === DatasetSize.LARGE || hidePageNumbers || hideEllipsis"
@@ -179,6 +181,10 @@ export default {
         return Object.values(DatasetSize).includes(value);
       },
       default: DatasetSize.LARGE,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
     ellipsisClass: {
       type: String,
