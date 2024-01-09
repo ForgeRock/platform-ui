@@ -7,6 +7,7 @@
 
 import { ref } from 'vue';
 import {
+  getCertificationsForReports,
   getOauth2Clients,
   managedResourcePropertyRequest,
   requestTrees,
@@ -18,6 +19,7 @@ export default function useRunReport(
   applicationsModel,
   applicationOptions,
   campaignNameModel,
+  campaignNameOptions,
   campaignStatusModel,
   endDateModel,
   journeysModel,
@@ -73,7 +75,11 @@ export default function useRunReport(
     },
     campaign_name: {
       label: i18n.global.t('reports.tabs.runReport.parameters.campaignName'),
+      config: {
+        model: campaignNameOptions,
+      },
       payload: campaignNameModel,
+      fetch: getCertificationsForReports,
     },
     campaign_status: {
       label: i18n.global.t('reports.tabs.runReport.parameters.campaignStatus'),
