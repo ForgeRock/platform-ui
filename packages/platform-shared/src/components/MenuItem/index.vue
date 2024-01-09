@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -73,7 +73,7 @@ of the MIT license. See the LICENSE file for details. -->
     class="fr-menu-item-group"
     :role="isNav ? '' : 'presentation'">
     <BButton
-      v-b-toggle="`collapse-${displayName.split(' ').join('-')}`"
+      @click="isExpanded = !isExpanded"
       class="dropdown-toggle d-flex align-items-center rounded-0"
       :aria-expanded="isExpanded"
       :aria-label="$t(displayName)"
