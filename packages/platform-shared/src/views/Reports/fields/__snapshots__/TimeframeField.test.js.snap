@@ -63,7 +63,14 @@ exports[`Timeframe field for running reports @components emits "field-value-upda
     " at <SelectInput",
     "name="timeframe"",
     "type="select"",
-    "label=""",
+    "options=",
+    [
+      "Today",
+      "Yesterday",
+      "Last 7 days",
+      "Last 30 days",
+      "Custom",
+    ],
     " ...",
     ">",
     "
@@ -106,7 +113,14 @@ exports[`Timeframe field for running reports @components emits "field-value-upda
     " at <SelectInput",
     "name="timeframe"",
     "type="select"",
-    "label=""",
+    "options=",
+    [
+      "Today",
+      "Yesterday",
+      "Last 7 days",
+      "Last 30 days",
+      "Custom",
+    ],
     " ...",
     ">",
     "
@@ -158,7 +172,14 @@ exports[`Timeframe field for running reports @components emits "field-value-upda
     " at <SelectInput",
     "name="timeframe"",
     "type="select"",
-    "label=""",
+    "options=",
+    [
+      "Today",
+      "Yesterday",
+      "Last 7 days",
+      "Last 30 days",
+      "Custom",
+    ],
     " ...",
     ">",
     "
@@ -210,7 +231,14 @@ exports[`Timeframe field for running reports @components emits "field-value-upda
     " at <SelectInput",
     "name="timeframe"",
     "type="select"",
-    "label=""",
+    "options=",
+    [
+      "Today",
+      "Yesterday",
+      "Last 7 days",
+      "Last 30 days",
+      "Custom",
+    ],
     " ...",
     ">",
     "

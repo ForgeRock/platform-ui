@@ -1,5 +1,533 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Run Report component @mounts skips modeling any data for fields if a corresponding api call fails on load: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (3)",
+    "
+",
+    " at <BContainer",
+    "class="p-0"",
+    "data-testid="fr-run-report-container"",
+    ">",
+    "
+",
+    " at <BCardBody",
+    "bodyBgVariant=undefined",
+    "bodyBorderVariant=undefined",
+    "bodyClass=undefined",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "key=1",
+    "class="fr-run-report-card"",
+    "footer-border-variant="default"",
+    " ...",
+    ">",
+    "
+",
+    " at <RunReport",
+    "reportConfig=",
+    {
+      "parameters": {
+        "campaign_name": {},
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_V_MODEL) v-model usage on component has changed in Vue 3. Component that expects to work with v-model should now use the "modelValue" prop and emit the "update:modelValue" event. You can update the usage and then opt-in to Vue 3 behavior on a per-component basis with \`compatConfig: { COMPONENT_V_MODEL: false }\`.
+  Details: https://v3-migration.vuejs.org/breaking-changes/v-model.html",
+    "
+",
+    " at <FrField",
+    "modelValue=""",
+    "onUpdate:modelValue=fn",
+    "class="mb-3"",
+    " ...",
+    ">",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (4)",
+    "
+",
+    " at <FrField",
+    "class="mb-3"",
+    "name="show-campaign-status"",
+    "internal-search=true",
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "md="9"",
+    ">",
+    "
+",
+    " at <BRow",
+    "key=4",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="p-0"",
+    "data-testid="fr-run-report-container"",
+    ">",
+    "
+",
+    " at <BCardBody",
+    "bodyBgVariant=undefined",
+    "bodyBorderVariant=undefined",
+    "bodyClass=undefined",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "key=1",
+    "class="fr-run-report-card"",
+    "footer-border-variant="default"",
+    " ...",
+    ">",
+    "
+",
+    " at <RunReport",
+    "reportConfig=",
+    {
+      "parameters": {
+        "campaign_name": {},
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation WATCH_ARRAY) (2)",
+    "
+",
+    " at <BasicInput",
+    "name="show-campaign-status"",
+    "internal-search=true",
+    "options=",
+    [],
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "class="mb-3"",
+    "name="show-campaign-status"",
+    "internal-search=true",
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "md="9"",
+    ">",
+    "
+",
+    " at <BRow",
+    "key=4",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="p-0"",
+    "data-testid="fr-run-report-container"",
+    ">",
+    "
+",
+    " at <BCardBody",
+    "bodyBgVariant=undefined",
+    "bodyBorderVariant=undefined",
+    "bodyClass=undefined",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "key=1",
+    "class="fr-run-report-card"",
+    "footer-border-variant="default"",
+    " ...",
+    ">",
+    "
+",
+    " at <RunReport",
+    "reportConfig=",
+    {
+      "parameters": {
+        "campaign_name": {},
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "placeholder" with v-bind value \`false\` will render placeholder="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput19"",
+    "name="show-campaign-status"",
+    "description=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BasicInput",
+    "name="show-campaign-status"",
+    "internal-search=true",
+    "options=",
+    [],
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "class="mb-3"",
+    "name="show-campaign-status"",
+    "internal-search=true",
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "md="9"",
+    ">",
+    "
+",
+    " at <BRow",
+    "key=4",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="p-0"",
+    "data-testid="fr-run-report-container"",
+    ">",
+    "
+",
+    " at <BCardBody",
+    "bodyBgVariant=undefined",
+    "bodyBorderVariant=undefined",
+    "bodyClass=undefined",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "key=1",
+    "class="fr-run-report-card"",
+    "footer-border-variant="default"",
+    " ...",
+    ">",
+    "
+",
+    " at <RunReport",
+    "reportConfig=",
+    {
+      "parameters": {
+        "campaign_name": {},
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "aria-describedby" with v-bind value \`false\` will render aria-describedby="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <InputLayout",
+    "id="floatingLabelInput19"",
+    "name="show-campaign-status"",
+    "description=""",
+    " ...",
+    ">",
+    "
+",
+    " at <BasicInput",
+    "name="show-campaign-status"",
+    "internal-search=true",
+    "options=",
+    [],
+    " ...",
+    ">",
+    "
+",
+    " at <FrField",
+    "class="mb-3"",
+    "name="show-campaign-status"",
+    "internal-search=true",
+    " ...",
+    ">",
+    "
+",
+    " at <BCol",
+    "md="9"",
+    ">",
+    "
+",
+    " at <BRow",
+    "key=4",
+    ">",
+    "
+",
+    " at <BContainer",
+    "class="p-0"",
+    "data-testid="fr-run-report-container"",
+    ">",
+    "
+",
+    " at <BCardBody",
+    "bodyBgVariant=undefined",
+    "bodyBorderVariant=undefined",
+    "bodyClass=undefined",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "key=1",
+    "class="fr-run-report-card"",
+    "footer-border-variant="default"",
+    " ...",
+    ">",
+    "
+",
+    " at <RunReport",
+    "reportConfig=",
+    {
+      "parameters": {
+        "campaign_name": {},
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (5)",
+    "
+",
+    " at <BCardFooter",
+    "footer=undefined",
+    "footerBgVariant=undefined",
+    "footerBorderVariant="default"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "key=1",
+    "class="fr-run-report-card"",
+    "footer-border-variant="default"",
+    " ...",
+    ">",
+    "
+",
+    " at <RunReport",
+    "reportConfig=",
+    {
+      "parameters": {
+        "campaign_name": {},
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation GLOBAL_EXTEND) (4)",
+    "
+",
+    " at <ButtonWithSpinner",
+    "data-testid="run-report-button"",
+    "variant="primary"",
+    "button-text="Run Report"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCardFooter",
+    "footer=undefined",
+    "footerBgVariant=undefined",
+    "footerBorderVariant="default"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "key=1",
+    "class="fr-run-report-card"",
+    "footer-border-variant="default"",
+    " ...",
+    ">",
+    "
+",
+    " at <RunReport",
+    "reportConfig=",
+    {
+      "parameters": {
+        "campaign_name": {},
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation COMPONENT_FUNCTIONAL) (3)",
+    "
+",
+    " at <ButtonWithSpinner",
+    "data-testid="run-report-button"",
+    "variant="primary"",
+    "button-text="Run Report"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCardFooter",
+    "footer=undefined",
+    "footerBgVariant=undefined",
+    "footerBorderVariant="default"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "key=1",
+    "class="fr-run-report-card"",
+    "footer-border-variant="default"",
+    " ...",
+    ">",
+    "
+",
+    " at <RunReport",
+    "reportConfig=",
+    {
+      "parameters": {
+        "campaign_name": {},
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_LISTENERS) (6)",
+    "
+",
+    " at <BButton",
+    "aria-label="Run Report"",
+    "disabled=true",
+    "variant="primary"",
+    " ...",
+    ">",
+    "
+",
+    " at <ButtonWithSpinner",
+    "data-testid="run-report-button"",
+    "variant="primary"",
+    "button-text="Run Report"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCardFooter",
+    "footer=undefined",
+    "footerBgVariant=undefined",
+    "footerBorderVariant="default"",
+    " ...",
+    ">",
+    "
+",
+    " at <BCard",
+    "key=1",
+    "class="fr-run-report-card"",
+    "footer-border-variant="default"",
+    " ...",
+    ">",
+    "
+",
+    " at <RunReport",
+    "reportConfig=",
+    {
+      "parameters": {
+        "campaign_name": {},
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "no-body" with v-bind value \`false\` will render no-body="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BCard",
+    "key=1",
+    "class="fr-run-report-card"",
+    "footer-border-variant="default"",
+    " ...",
+    ">",
+    "
+",
+    " at <RunReport",
+    "reportConfig=",
+    {
+      "parameters": {
+        "campaign_name": {},
+      },
+    },
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
 exports[`Run Report component @renders displays the spinner on load: console-warn-snapshot 1`] = `
 [
   [

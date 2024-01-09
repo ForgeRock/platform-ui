@@ -25,7 +25,9 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
-      "campaign_name": "campaign_name",
+      "campaign_name": [
+        "campaign_name",
+      ],
       "campaign_status": "campaign_status",
       "endDate": "endDate",
       "journeyName": [
@@ -90,7 +92,9 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
-      "campaign_name": "campaign_name",
+      "campaign_name": [
+        "campaign_name",
+      ],
       "campaign_status": "campaign_status",
       "endDate": "endDate",
       "journeyName": [
@@ -143,7 +147,9 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
-      "campaign_name": "campaign_name",
+      "campaign_name": [
+        "campaign_name",
+      ],
       "campaign_status": "campaign_status",
       "endDate": "endDate",
       "journeyName": [
@@ -197,7 +203,9 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
-      "campaign_name": "campaign_name",
+      "campaign_name": [
+        "campaign_name",
+      ],
       "campaign_status": "campaign_status",
       "endDate": "endDate",
       "journeyName": [
@@ -250,7 +258,9 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
-      "campaign_name": "campaign_name",
+      "campaign_name": [
+        "campaign_name",
+      ],
       "campaign_status": "campaign_status",
       "endDate": "endDate",
       "journeyName": [
@@ -304,7 +314,9 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
-      "campaign_name": "campaign_name",
+      "campaign_name": [
+        "campaign_name",
+      ],
       "campaign_status": "campaign_status",
       "endDate": "endDate",
       "journeyName": [
@@ -357,7 +369,9 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
-      "campaign_name": "campaign_name",
+      "campaign_name": [
+        "campaign_name",
+      ],
       "campaign_status": "campaign_status",
       "endDate": "endDate",
       "journeyName": [
@@ -427,7 +441,9 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
-      "campaign_name": "campaign_name",
+      "campaign_name": [
+        "campaign_name",
+      ],
       "campaign_status": "campaign_status",
       "endDate": "endDate",
       "journeyName": [
@@ -493,7 +509,9 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
-      "campaign_name": "campaign_name",
+      "campaign_name": [
+        "campaign_name",
+      ],
       "campaign_status": "campaign_status",
       "endDate": "endDate",
       "journeyName": [
@@ -574,7 +592,9 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
-      "campaign_name": "campaign_name",
+      "campaign_name": [
+        "campaign_name",
+      ],
       "campaign_status": "campaign_status",
       "endDate": "endDate",
       "journeyName": [
@@ -660,7 +680,9 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
-      "campaign_name": "campaign_name",
+      "campaign_name": [
+        "campaign_name",
+      ],
       "campaign_status": "campaign_status",
       "endDate": "endDate",
       "journeyName": [
@@ -751,7 +773,9 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
-      "campaign_name": "campaign_name",
+      "campaign_name": [
+        "campaign_name",
+      ],
       "campaign_status": "campaign_status",
       "endDate": "endDate",
       "journeyName": [
@@ -842,7 +866,9 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
-      "campaign_name": "campaign_name",
+      "campaign_name": [
+        "campaign_name",
+      ],
       "campaign_status": "campaign_status",
       "endDate": "endDate",
       "journeyName": [
@@ -941,7 +967,9 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
-      "campaign_name": "campaign_name",
+      "campaign_name": [
+        "campaign_name",
+      ],
       "campaign_status": "campaign_status",
       "endDate": "endDate",
       "journeyName": [
@@ -1010,7 +1038,9 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
-      "campaign_name": "campaign_name",
+      "campaign_name": [
+        "campaign_name",
+      ],
       "campaign_status": "campaign_status",
       "endDate": "endDate",
       "journeyName": [
@@ -1075,7 +1105,9 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
-      "campaign_name": "campaign_name",
+      "campaign_name": [
+        "campaign_name",
+      ],
       "campaign_status": "campaign_status",
       "endDate": "endDate",
       "journeyName": [
@@ -1140,7 +1172,9 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
-      "campaign_name": "campaign_name",
+      "campaign_name": [
+        "campaign_name",
+      ],
       "campaign_status": "campaign_status",
       "endDate": "endDate",
       "journeyName": [
@@ -1198,7 +1232,9 @@ exports[`Run History Details modal component @component emits "modal-toggle" whe
       "applications": [
         "applications",
       ],
-      "campaign_name": "campaign_name",
+      "campaign_name": [
+        "campaign_name",
+      ],
       "campaign_status": "campaign_status",
       "endDate": "endDate",
       "journeyName": [
