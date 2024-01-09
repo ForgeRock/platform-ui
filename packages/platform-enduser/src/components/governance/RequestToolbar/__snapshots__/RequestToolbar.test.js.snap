@@ -1,5 +1,111 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`RequestToolbar changing the status emits the status-change event with the new status: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "visible" with v-bind value \`false\` will render visible="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BCollapse",
+    "data-testid="filter-collapse"",
+    "id="filter-collapse"",
+    "visible=false",
+    " ...",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) (2)",
+    "
+",
+    " at <BCollapse",
+    "data-testid="filter-collapse"",
+    "id="filter-collapse"",
+    "visible=false",
+    " ...",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "isNav" with v-bind value \`false\` will render isNav="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BCollapse",
+    "data-testid="filter-collapse"",
+    "id="filter-collapse"",
+    "visible=false",
+    " ...",
+    ">",
+    "
+",
+    " at <RequestToolbar",
+    "statusOptions=",
+    [
+      {
+        "text": "testStatus1",
+        "value": "stat1",
+      },
+      {
+        "text": "testStatus2",
+        "value": "stat2",
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation INSTANCE_EVENT_EMITTER) (2)",
+  ],
+]
+`;
+
 exports[`RequestToolbar clicking the button to show filters will expand the filter section: console-warn-snapshot 1`] = `
 [
   [

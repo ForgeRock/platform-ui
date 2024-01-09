@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -16,19 +16,9 @@ import i18n from '@/i18n';
 Consent.created = jest.fn();
 Consent.methods.loadConsent = jest.fn();
 
-xdescribe('Profile Consent Component', () => {
-  let date;
-  beforeAll(() => {
-    jest.useFakeTimers().setSystemTime(new Date('2019-11-17'));
-    date = new Date(2019, 11, 17, 1, 24, 0).toISOString();
-  });
-
-  afterAll(() => {
-    jest.useRealTimers();
-  });
-
+describe('Profile Consent Component', () => {
+  const date = new Date(2019, 11, 17, 1, 24, 0).toISOString();
   let consentableMappings;
-
   let wrapper;
 
   beforeEach(() => {

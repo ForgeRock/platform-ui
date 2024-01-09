@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`GroupTasks.vue Sets panelShown id data property to true: console-warn-snapshot 1`] = `
+exports[`Profile Consent Component computed#mappings should return the mappings that are populated with user data: console-warn-snapshot 1`] = `
 [
   [
     "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
@@ -12,9 +12,6 @@ exports[`GroupTasks.vue Sets panelShown id data property to true: console-warn-s
     "
 ",
     " at <VTUROOT>",
-  ],
-  [
-    "[Vue warn]: (deprecation INSTANCE_SET) vm.$set() has been removed as it is no longer needed in Vue 3. Simply use native JavaScript mutations.",
   ],
 ]
 `;
