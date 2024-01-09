@@ -38,11 +38,10 @@ of the MIT license. See the LICENSE file for details. -->
       </BCol>
       <BCol class="col-3 col-md-3 col-lg-4 d-flex justify-content-end align-items-center">
         <BDropdown
-          v-if="!runDataLoading && !tableLoading && !isExpired && !isTableEmpty"
           right
           toggle-class="text-nowrap d-flex align-items-center"
           variant="primary"
-          :disabled="loadingExport"
+          :disabled="loadingExport || (runDataLoading || tableLoading || isExpired || isTableEmpty)"
         >
           <template #button-content>
             <FrSpinner
@@ -115,7 +114,7 @@ of the MIT license. See the LICENSE file for details. -->
     </BRow>
     <BRow class="p-4 m-0 border-bottom">
       <BCol class="rounded bg-light text-dark p-4">
-        <BRow v-if="tableLoading">
+        <BRow v-if="runDataLoading">
           <BCol
             v-for="index in 3"
             :key="index"
@@ -140,26 +139,27 @@ of the MIT license. See the LICENSE file for details. -->
           :subtitle="expiredMessage"
         />
       </BCol>
-      <template v-else>
-        <FrReportViewTable
-          testid="report-table"
-          id="viewTable"
-          :loading="tableLoading"
-          :fields="tableFields"
-          :items="displayedItems"
-          :is-empty="isTableEmpty"
-        />
-        <BCol
-          v-if="displayedItems.length > 0"
-          class="p-0"
-        >
+      <template>
+        <BCol class="p-0">
+          <FrReportViewTable
+            id="viewTable"
+            testid="report-table"
+            :current-page="!runDataLoadingComplete ? 0 : currentPage"
+            :fields="tableFields"
+            :is-empty="isTableEmpty"
+            :items="tableProvider"
+            :loading="tableLoading || !runDataLoadingComplete"
+            :per-page="perPage"
+          />
           <FrPagination
             :value="currentPage"
-            @input="currentPage = $event; updateItems(tableItems)"
+            @input="currentPage = $event;"
             aria-controls="viewTable"
             class="border-0"
+            :current-page="1"
+            :disabled="tableLoading"
             :per-page="perPage"
-            :total-rows="tableItems.length"
+            :total-rows="totalRows"
             @on-page-size-change="pageSizeChange"
           />
         </BCol>
@@ -174,11 +174,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script setup>
-import {
-  ref,
-  watch,
-} from 'vue';
-import {
+import { ref } from 'vue'; import {
   BCol,
   BContainer,
   BDropdown,
@@ -202,8 +198,8 @@ import FrReportViewTable from './ReportViewTable';
 import useExportReport from './composables/ExportReport';
 import useViewReportTable from './composables/ViewReportTable';
 import useRunHistoryTable from './composables/RunHistoryTable';
-import store from '@/store';
 import i18n from '@/i18n';
+import store from '@/store';
 
 // Composables
 const router = useRouter();
@@ -213,11 +209,13 @@ const { id, template } = route.params;
 const {
   fetchViewReport,
   expiredMessage,
-  tableLoading,
   isExpired,
   isTableEmpty,
+  pageToken,
   tableFields,
   tableItems,
+  tableLoading,
+  totalRows,
 } = useViewReportTable();
 const {
   fetchExport,
@@ -231,8 +229,8 @@ const {
 } = useExportReport(template, id);
 const { getExportFormatType, reportHistoryTableDataGenerator } = useRunHistoryTable();
 const currentPage = ref(1);
-const displayedItems = ref([]);
 const runDataLoading = ref(false);
+const runDataLoadingComplete = ref(false);
 const params = ref({});
 const perPage = ref(10);
 const reportName = ref('');
@@ -256,7 +254,6 @@ async function getConfigInfo() {
   params.value = paramsWithoutRealm;
   const data = reportHistoryTableDataGenerator([runData.value]);
   modalData.value = data.flat();
-  await fetchViewReport(template, id, JSON.parse(runData.value.reportConfig));
 }
 
 /**
@@ -272,6 +269,7 @@ async function getRunInfo() {
     showErrorMessage(err, i18n.t('reports.error'));
   } finally {
     runDataLoading.value = false;
+    runDataLoadingComplete.value = true;
   }
 }
 
@@ -293,29 +291,22 @@ function pageSizeChange(pageSize) {
 }
 
 /**
- * Updates the rows that should be displayed in the table depending on the page that is being focused.
- * @param {Array} items The full array of rows.
- */
-function updateItems(items) {
-  const from = (currentPage.value - 1) * perPage.value;
-  const to = from + perPage.value;
-  displayedItems.value = items.slice(from, to);
-}
-
-/**
  * Routes to the Report History page.
  */
 function returnToTemplate() {
   router.push({ name: 'ReportTemplateHistory', params: { template } });
 }
 
-getRunInfo();
+async function tableProvider(ctx) {
+  try {
+    const pagedResultOffset = (ctx.currentPage - 1) * ctx.perPage;
+    await fetchViewReport(template, id, JSON.parse(runData.value.reportConfig), ctx.perPage, pagedResultOffset, pageToken.value);
+    return tableItems.value;
+  } catch (error) {
+    return [];
+  }
+}
 
-/**
- * Watches the full array of the table rows to update which ones should be displayed.
- */
-watch((tableItems), (newVal) => {
-  updateItems(newVal);
-});
+getRunInfo();
 
 </script>

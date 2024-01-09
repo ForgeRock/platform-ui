@@ -5,7 +5,7 @@
  * of the MIT license. See the LICENSE file for details.
  */
 
-import { camelCase, startCase } from 'lodash';
+import { camelCase } from 'lodash';
 import dayjs from 'dayjs';
 import { getReportResult } from '@forgerock/platform-shared/src/api/AutoApi';
 import { ref } from 'vue';
@@ -13,20 +13,20 @@ import i18n from '@/i18n';
 
 export default function useViewReportTable() {
   const expiredMessage = ref('');
-  const headingOrder = ['org-names', 'application_names', 'role_names', 'email', 'user_name'];
-  const tableLoading = ref(false);
   const isExpired = ref(false);
   const isTableEmpty = ref(false);
+  const pageToken = ref('');
   const response = ref({});
+  const reportConfig = ref({});
   const tableFields = ref([]);
   const tableItems = ref([]);
-  const tableOrder = ref([]);
-  const reportConfig = ref({});
+  const tableLoading = ref(false);
+  const totalRows = ref(0);
 
   /**
    * Displays a message instead of the table in case the report is expired.
    */
-  function handleNoDataMessage() {
+  function handleExpiredResponse() {
     isExpired.value = true;
     expiredMessage.value = response.value.message;
   }
@@ -44,57 +44,13 @@ export default function useViewReportTable() {
   }
 
   /**
-   * Rearranges the order of the columns of the table.
-   */
-  function handleTableColumnOrder() {
-    tableOrder.value = Object.keys(response.value.result[0]);
-    headingOrder.forEach((heading) => {
-      if (tableOrder.value.includes(heading)) {
-        tableOrder.value.splice(tableOrder.value.indexOf(heading), 1);
-        tableOrder.value.unshift(heading);
-      }
-    });
-    tableOrder.value.forEach((row) => {
-      switch (row) {
-        case ('user_name'):
-        case ('mail'):
-          tableFields.value.push({
-            key: 'user',
-            label: i18n.global.t('reports.tableHeadings.user'),
-            tdClass: 'align-top',
-          });
-          break;
-        case ('first_name'):
-          break;
-        case ('last_name'):
-          break;
-        case ('node_details'):
-          tableFields.value.push({
-            key: camelCase(row),
-            label: startCase(camelCase(row)),
-            thStyle: { width: '40%' },
-            tdClass: 'align-top',
-          });
-          break;
-        default:
-          tableFields.value.push({
-            key: camelCase(row),
-            label: i18n.global.t(`reports.tableHeadings.${camelCase(row)}`)
-              ? i18n.global.t(`reports.tableHeadings.${camelCase(row)}`)
-              : startCase(camelCase(row)),
-            tdClass: 'align-top',
-          });
-      }
-    });
-  }
-
-  /**
    * Adds format to certain items of the table.
    */
   function createTableFields() {
+    const tableOrder = Object.keys(response.value.result[0]);
     tableItems.value = Array.from(response.value.result, (obj) => {
       const rearrangedObj = {};
-      tableOrder.value.forEach((heading) => {
+      tableOrder.forEach((heading) => {
         switch (heading) {
           case ('mail'):
             rearrangedObj.userName = obj[heading];
@@ -115,9 +71,8 @@ export default function useViewReportTable() {
    */
   function arrangeTable() {
     if (response.value.message) {
-      handleNoDataMessage();
+      handleExpiredResponse();
     } else if (response.value.result && response.value.result.length > 0) {
-      handleTableColumnOrder();
       createTableFields();
     } else {
       isTableEmpty.value = true;
@@ -131,16 +86,18 @@ export default function useViewReportTable() {
    * @param {Object} config The object of the Report configuration.
    * @returns {Promise}
    */
-  const fetchViewReport = async (template, id, config) => {
+  const fetchViewReport = async (template, id, config, pageSize, pagedResultsOffset, pagedResultsCookie) => {
     try {
-      tableLoading.value = true;
       reportConfig.value = config;
-      const result = await getReportResult(id, template);
+      tableLoading.value = true;
+      const result = await getReportResult(id, template, pageSize, pagedResultsOffset, pagedResultsCookie);
       response.value = result;
+      totalRows.value = result.total;
+      pageToken.value = result.pageToken;
       arrangeTable();
     } catch (error) {
       isExpired.value = true;
-      expiredMessage.value = i18n.global.t('reports.notAvailable');
+      expiredMessage.value = i18n.t('reports.notAvailable');
     } finally {
       tableLoading.value = false;
     }
@@ -149,10 +106,12 @@ export default function useViewReportTable() {
   return {
     fetchViewReport,
     expiredMessage,
-    tableLoading,
     isExpired,
     isTableEmpty,
+    pageToken,
     tableFields,
     tableItems,
+    tableLoading,
+    totalRows,
   };
 }
