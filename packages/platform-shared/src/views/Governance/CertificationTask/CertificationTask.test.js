@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -14,7 +14,7 @@ import CertificationTask from './index';
 
 jest.mock('@forgerock/platform-shared/src/api/governance/CertificationApi');
 
-xdescribe('CertificationTask', () => {
+describe('CertificationTask', () => {
   let wrapper;
 
   CertificationApi.getCertificationUserFilter.mockImplementation(() => Promise.resolve({ data: {} }));

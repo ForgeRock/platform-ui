@@ -14,28 +14,6 @@ exports[`MyTasks.vue Sets panelShown id data property to true: console-warn-snap
     " at <VTUROOT>",
   ],
   [
-    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noMargin" with v-bind value \`false\` will render noMargin="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
-
-  configureCompat({ ATTR_FALSE_VALUE: false })
-
-  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
-    "
-",
-    " at <FrListGroup",
-    "title="pages.workflow.myTasks"",
-    ">",
-    "
-",
-    " at <MyTasks",
-    "tasks=",
-    {},
-    "ref="VTU_COMPONENT"",
-    ">",
-    "
-",
-    " at <VTUROOT>",
-  ],
-  [
     "[Vue warn]: (deprecation INSTANCE_SET) vm.$set() has been removed as it is no longer needed in Vue 3. Simply use native JavaScript mutations.",
   ],
 ]

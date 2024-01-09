@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -61,7 +61,8 @@ of the MIT license. See the LICENSE file for details. -->
         <div class="w-100 m-4">
           <FrField
             v-model="formFields.user"
-            class="text-muted w-100 certification-task-filter-dropdown  certification-task-filter-list"
+            class="text-muted w-100 certification-task-filter-dropdown certification-task-filter-list"
+            id="certificationTaskUser"
             type="select"
             :label="$t('governance.certificationTask.user')"
             :options="users">

@@ -13,43 +13,5 @@ exports[`Uma Activity Component activityGroups should be sorted into day groups 
 ",
     " at <VTUROOT>",
   ],
-  [
-    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "noMargin" with v-bind value \`false\` will render noMargin="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
-
-  configureCompat({ ATTR_FALSE_VALUE: false })
-
-  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
-    "
-",
-    " at <FrListGroup",
-    "key="activityGroup-0"",
-    ">",
-    "
-",
-    " at <UmaActivity",
-    "umaHistory=",
-    [
-      {
-        "activity": "test",
-        "eventTime": 1528304489098,
-        "type": "Policy_Created",
-      },
-      {
-        "activity": "test",
-        "eventTime": 1527877853977,
-        "type": "Policy_Created",
-      },
-      {
-        "activity": "test",
-        "eventTime": 1527877854977,
-        "type": "Policy_Created",
-      },
-    ],
-    "ref="VTU_COMPONENT"",
-    ">",
-    "
-",
-    " at <VTUROOT>",
-  ],
 ]
 `;

@@ -11,9 +11,9 @@ exports[`MenuItem Component determining whether the item is expanded Will not se
     "
 ",
     " at <BButton",
+    "onClick=fn",
     "class="dropdown-toggle d-flex align-items-center rounded-0"",
     "aria-expanded=false",
-    "aria-label=undefined",
     " ...",
     ">",
     "
@@ -121,9 +121,9 @@ exports[`MenuItem Component determining whether the item is expanded Will set it
     "
 ",
     " at <BButton",
+    "onClick=fn",
     "class="dropdown-toggle d-flex align-items-center rounded-0"",
     "aria-expanded=true",
-    "aria-label=undefined",
     " ...",
     ">",
     "
@@ -160,9 +160,9 @@ exports[`MenuItem Component determining whether the item is expanded Will set it
     "
 ",
     " at <BButton",
+    "onClick=fn",
     "class="dropdown-toggle d-flex align-items-center rounded-0"",
     "aria-expanded=true",
-    "aria-label=undefined",
     " ...",
     ">",
     "
@@ -199,9 +199,9 @@ exports[`MenuItem Component determining whether the item is expanded Will set it
     "
 ",
     " at <BButton",
+    "onClick=fn",
     "class="dropdown-toggle d-flex align-items-center rounded-0"",
     "aria-expanded=true",
-    "aria-label=undefined",
     " ...",
     ">",
     "
@@ -238,9 +238,9 @@ exports[`MenuItem Component determining whether the item is expanded Will set it
     "
 ",
     " at <BButton",
+    "onClick=fn",
     "class="dropdown-toggle d-flex align-items-center rounded-0"",
     "aria-expanded=true",
-    "aria-label=undefined",
     " ...",
     ">",
     "
@@ -277,9 +277,9 @@ exports[`MenuItem Component determining whether the item is expanded Will set it
     "
 ",
     " at <BButton",
+    "onClick=fn",
     "class="dropdown-toggle d-flex align-items-center rounded-0"",
     "aria-expanded=true",
-    "aria-label=undefined",
     " ...",
     ">",
     "
@@ -316,9 +316,9 @@ exports[`MenuItem Component determining whether the item is expanded Will set it
     "
 ",
     " at <BButton",
+    "onClick=fn",
     "class="dropdown-toggle d-flex align-items-center rounded-0"",
     "aria-expanded=true",
-    "aria-label=undefined",
     " ...",
     ">",
     "
@@ -355,9 +355,9 @@ exports[`MenuItem Component determining whether the item is expanded Will set it
     "
 ",
     " at <BButton",
+    "onClick=fn",
     "class="dropdown-toggle d-flex align-items-center rounded-0"",
     "aria-expanded=true",
-    "aria-label=undefined",
     " ...",
     ">",
     "
@@ -394,9 +394,9 @@ exports[`MenuItem Component determining whether the item is expanded Will set it
     "
 ",
     " at <BButton",
+    "onClick=fn",
     "class="dropdown-toggle d-flex align-items-center rounded-0"",
     "aria-expanded=true",
-    "aria-label=undefined",
     " ...",
     ">",
     "
@@ -433,81 +433,9 @@ exports[`MenuItem Component determining whether the item is expanded Will set it
     "
 ",
     " at <BButton",
+    "onClick=fn",
     "class="dropdown-toggle d-flex align-items-center rounded-0"",
     "aria-expanded=true",
-    "aria-label=undefined",
-    " ...",
-    ">",
-    "
-",
-    " at <MenuItem",
-    "displayName="bob"",
-    "subItems=",
-    [
-      {
-        "displayName": "lilBob",
-        "routeTo": {
-          "name": "little-bob",
-        },
-      },
-      {
-        "displayName": "lilBob2",
-        "routeTo": {
-          "name": "little-bob-2",
-        },
-      },
-    ],
-    "ref="VTU_COMPONENT"",
-    ">",
-    "
-",
-    " at <VTUROOT>",
-  ],
-  [
-    "[Vue warn]: (deprecation CUSTOM_DIR) Custom directive hook "bind" has been removed. Use "beforeMount" instead.
-  Details: https://v3-migration.vuejs.org/breaking-changes/custom-directives.html",
-    "
-",
-    " at <BButton",
-    "class="dropdown-toggle d-flex align-items-center rounded-0"",
-    "aria-expanded=true",
-    "aria-label=undefined",
-    " ...",
-    ">",
-    "
-",
-    " at <MenuItem",
-    "displayName="bob"",
-    "subItems=",
-    [
-      {
-        "displayName": "lilBob",
-        "routeTo": {
-          "name": "little-bob",
-        },
-      },
-      {
-        "displayName": "lilBob2",
-        "routeTo": {
-          "name": "little-bob-2",
-        },
-      },
-    ],
-    "ref="VTU_COMPONENT"",
-    ">",
-    "
-",
-    " at <VTUROOT>",
-  ],
-  [
-    "[Vue warn]: (deprecation INSTANCE_EVENT_EMITTER) vm.$on/$once/$off() have been removed. Use an external event emitter library instead.
-  Details: https://v3-migration.vuejs.org/breaking-changes/events-api.html",
-    "
-",
-    " at <BButton",
-    "class="dropdown-toggle d-flex align-items-center rounded-0"",
-    "aria-expanded=true",
-    "aria-label=undefined",
     " ...",
     ">",
     "
