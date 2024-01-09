@@ -95,10 +95,10 @@ exports[`Tag @actions should remove tag with click: console-warn-snapshot 1`] = 
     "
 ",
     " at <BFormTags",
-    "onClick=fn",
     "modelValue=",
     [],
     "onUpdate:modelValue=fn",
+    "add-on-change=""",
     " ...",
     ">",
   ],
@@ -107,9 +107,9 @@ exports[`Tag @actions should remove tag with click: console-warn-snapshot 1`] = 
     "
 ",
     " at <BFormTags",
-    "onClick=fn",
     "add-on-change=""",
     "autofocus=false",
+    "class=""",
     " ...",
     ">",
     "
@@ -139,9 +139,9 @@ exports[`Tag @actions should remove tag with click: console-warn-snapshot 1`] = 
     "
 ",
     " at <BFormTags",
-    "onClick=fn",
     "add-on-change=""",
     "autofocus=false",
+    "class=""",
     " ...",
     ">",
     "
@@ -170,9 +170,9 @@ exports[`Tag @actions should remove tag with click: console-warn-snapshot 1`] = 
     "
 ",
     " at <BFormTags",
-    "onClick=fn",
     "add-on-change=""",
     "autofocus=false",
+    "class=""",
     " ...",
     ">",
     "
@@ -201,9 +201,9 @@ exports[`Tag @actions should remove tag with click: console-warn-snapshot 1`] = 
     "
 ",
     " at <BFormTags",
-    "onClick=fn",
     "add-on-change=""",
     "autofocus=false",
+    "class=""",
     " ...",
     ">",
     "
@@ -232,9 +232,9 @@ exports[`Tag @actions should remove tag with click: console-warn-snapshot 1`] = 
     "
 ",
     " at <BFormTags",
-    "onClick=fn",
     "add-on-change=""",
     "autofocus=false",
+    "class=""",
     " ...",
     ">",
     "
@@ -264,9 +264,9 @@ exports[`Tag @actions should remove tag with click: console-warn-snapshot 1`] = 
     "
 ",
     " at <BFormTags",
-    "onClick=fn",
     "add-on-change=""",
     "autofocus=false",
+    "class=""",
     " ...",
     ">",
     "
@@ -307,9 +307,9 @@ exports[`Tag @actions should remove tag with click: console-warn-snapshot 1`] = 
     "
 ",
     " at <BFormTags",
-    "onClick=fn",
     "add-on-change=""",
     "autofocus=false",
+    "class="polyfill-placeholder"",
     " ...",
     ">",
     "
@@ -349,9 +349,9 @@ exports[`Tag @actions should remove tag with click: console-warn-snapshot 1`] = 
     "
 ",
     " at <BFormTags",
-    "onClick=fn",
     "add-on-change=""",
     "autofocus=false",
+    "class="polyfill-placeholder"",
     " ...",
     ">",
     "
@@ -392,9 +392,9 @@ exports[`Tag @actions should remove tag with click: console-warn-snapshot 1`] = 
     "
 ",
     " at <BFormTags",
-    "onClick=fn",
     "add-on-change=""",
     "autofocus=false",
+    "class="polyfill-placeholder"",
     " ...",
     ">",
     "
@@ -434,9 +434,9 @@ exports[`Tag @actions should remove tag with click: console-warn-snapshot 1`] = 
     "
 ",
     " at <BFormTags",
-    "onClick=fn",
     "add-on-change=""",
     "autofocus=false",
+    "class="polyfill-placeholder"",
     " ...",
     ">",
     "
@@ -476,9 +476,9 @@ exports[`Tag @actions should remove tag with click: console-warn-snapshot 1`] = 
     "
 ",
     " at <BFormTags",
-    "onClick=fn",
     "add-on-change=""",
     "autofocus=false",
+    "class="polyfill-placeholder"",
     " ...",
     ">",
     "

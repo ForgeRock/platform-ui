@@ -2323,10 +2323,10 @@ exports[`Field Component uses bootstrap form tags component for tag type: consol
     "
 ",
     " at <BFormTags",
-    "onClick=fn",
     "modelValue=",
     [],
     "onUpdate:modelValue=fn",
+    "onInput=fn<bound handleInput>",
     " ...",
     ">",
   ],
@@ -2335,9 +2335,9 @@ exports[`Field Component uses bootstrap form tags component for tag type: consol
     "
 ",
     " at <BFormTags",
-    "onClick=fn",
     "onInput=fn<bound handleInput>",
     "add-on-change=""",
+    "autofocus=false",
     " ...",
     ">",
     "
@@ -2376,9 +2376,9 @@ exports[`Field Component uses bootstrap form tags component for tag type: consol
     "
 ",
     " at <BFormTags",
-    "onClick=fn",
     "onInput=fn<bound handleInput>",
     "add-on-change=""",
+    "autofocus=false",
     " ...",
     ">",
     "
@@ -2416,9 +2416,9 @@ exports[`Field Component uses bootstrap form tags component for tag type: consol
     "
 ",
     " at <BFormTags",
-    "onClick=fn",
     "onInput=fn<bound handleInput>",
     "add-on-change=""",
+    "autofocus=false",
     " ...",
     ">",
     "
@@ -2456,9 +2456,9 @@ exports[`Field Component uses bootstrap form tags component for tag type: consol
     "
 ",
     " at <BFormTags",
-    "onClick=fn",
     "onInput=fn<bound handleInput>",
     "add-on-change=""",
+    "autofocus=false",
     " ...",
     ">",
     "
@@ -2496,9 +2496,9 @@ exports[`Field Component uses bootstrap form tags component for tag type: consol
     "
 ",
     " at <BFormTags",
-    "onClick=fn",
     "onInput=fn<bound handleInput>",
     "add-on-change=""",
+    "autofocus=false",
     " ...",
     ">",
     "
@@ -2537,9 +2537,9 @@ exports[`Field Component uses bootstrap form tags component for tag type: consol
     "
 ",
     " at <BFormTags",
-    "onClick=fn",
     "onInput=fn<bound handleInput>",
     "add-on-change=""",
+    "autofocus=false",
     " ...",
     ">",
     "
@@ -2589,9 +2589,9 @@ exports[`Field Component uses bootstrap form tags component for tag type: consol
     "
 ",
     " at <BFormTags",
-    "onClick=fn",
     "onInput=fn<bound handleInput>",
     "add-on-change=""",
+    "autofocus=false",
     " ...",
     ">",
     "
@@ -2640,9 +2640,9 @@ exports[`Field Component uses bootstrap form tags component for tag type: consol
     "
 ",
     " at <BFormTags",
-    "onClick=fn",
     "onInput=fn<bound handleInput>",
     "add-on-change=""",
+    "autofocus=false",
     " ...",
     ">",
     "
@@ -2692,9 +2692,9 @@ exports[`Field Component uses bootstrap form tags component for tag type: consol
     "
 ",
     " at <BFormTags",
-    "onClick=fn",
     "onInput=fn<bound handleInput>",
     "add-on-change=""",
+    "autofocus=false",
     " ...",
     ">",
     "
@@ -2743,9 +2743,9 @@ exports[`Field Component uses bootstrap form tags component for tag type: consol
     "
 ",
     " at <BFormTags",
-    "onClick=fn",
     "onInput=fn<bound handleInput>",
     "add-on-change=""",
+    "autofocus=false",
     " ...",
     ">",
     "
@@ -2794,9 +2794,9 @@ exports[`Field Component uses bootstrap form tags component for tag type: consol
     "
 ",
     " at <BFormTags",
-    "onClick=fn",
     "onInput=fn<bound handleInput>",
     "add-on-change=""",
+    "autofocus=false",
     " ...",
     ">",
     "

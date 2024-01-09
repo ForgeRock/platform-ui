@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -7,7 +7,6 @@ of the MIT license. See the LICENSE file for details. -->
     id="shareModal"
     cancel-variant="outline-secondary"
     ref="fsModal"
-    @keydown.enter.native.prevent="validateResource"
     @hide="resetModal">
     <template #modal-header>
       <div class="d-flex w-100 h-100">
@@ -51,7 +50,9 @@ of the MIT license. See the LICENSE file for details. -->
       </div>
     </template>
 
-    <div class="form-group">
+    <div
+      class="form-group"
+      @keydown.enter="validateResource">
       <BInputGroup>
         <BFormInput
           :placeholder="$t('pages.uma.resources.shareWith')"
