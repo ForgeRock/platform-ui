@@ -12,6 +12,7 @@ import { getManagedResourceList } from '@forgerock/platform-shared/src/api/Manag
 import { getReportRuns, reportExportRequest } from '@forgerock/platform-shared/src/api/AutoApi';
 import { actionGetAllTrees } from '@forgerock/platform-shared/src/api/TreeApi';
 import { getGatewaysOrAgents } from '@forgerock/platform-shared/src/api/AgentsApi';
+import { getAdminCertificationItems } from '@forgerock/platform-shared/src/api/governance/CertificationApi';
 import i18n from '@forgerock/platform-shared/src/i18n';
 import store from '@/store';
 
@@ -69,7 +70,6 @@ async function getManagedResourceProperties(managedObjectName, queryFilter = tru
     const managedResourceProperties = data.result;
     return managedResourceProperties;
   } catch (error) {
-    showErrorMessage(error, i18n.global.t('reports.tabs.runReport.errors.errorRetrievingTemplate'));
     return error;
   }
 }
@@ -163,7 +163,20 @@ export async function requestTrees(config, queryFilter, pageSize) {
     const trees = data.result;
     return trees;
   } catch (error) {
-    showErrorMessage(error, i18n.t('reports.tabs.runReport.errors.errorRetrievingTemplate'));
+    return error;
+  }
+}
+
+/**
+ * Gets a list of all certifications
+ * @returns {Array} list of certification names
+ */
+export async function getCertificationsForReports() {
+  try {
+    const { data } = await getAdminCertificationItems({ pageSize: 0 });
+    const certifications = data.result;
+    return certifications;
+  } catch (error) {
     return error;
   }
 }
