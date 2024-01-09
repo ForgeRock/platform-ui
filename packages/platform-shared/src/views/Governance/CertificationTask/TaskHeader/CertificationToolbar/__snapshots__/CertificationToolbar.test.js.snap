@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`CertificationToolbar onForwardAllTasks should call to forward access review: console-warn-snapshot 1`] = `
+exports[`CertificationToolbar onForwardAllTasks clicking forward button should open the forward modal: console-warn-snapshot 1`] = `
 [
   [
     "[Vue warn]: (deprecation GLOBAL_EXTEND) (3)",
@@ -1090,6 +1090,14 @@ exports[`CertificationToolbar onForwardAllTasks should call to forward access re
   [
     "[Vue warn]: (deprecation INSTANCE_EVENT_EMITTER) vm.$on/$once/$off() have been removed. Use an external event emitter library instead.
   Details: https://v3-migration.vuejs.org/breaking-changes/events-api.html",
+  ],
+]
+`;
+
+exports[`CertificationToolbar onForwardAllTasks should call to forward access review: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation INSTANCE_EVENT_EMITTER) (2)",
   ],
 ]
 `;
