@@ -64,9 +64,11 @@ export async function runAnalyticsTemplate(template, payload) {
   * @param {String} template Name of the report template.
   * @returns {Object} Contains count of results and array of results.
   */
-export async function getReportResult(id, template) {
+export async function getReportResult(id, template, pageSize = 20, pagedResultsOffset = 0) {
   const params = {
     _action: 'view',
+    _pageSize: pageSize,
+    _pagedResultsOffset: pagedResultsOffset,
     name: template,
   };
   const { data } = await generateAutoAccessReports().post(`runs/${id}${encodeQueryString(params, false)}`);
