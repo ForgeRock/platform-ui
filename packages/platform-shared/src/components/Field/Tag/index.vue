@@ -12,7 +12,6 @@ of the MIT license. See the LICENSE file for details. -->
     :name="name"
     :is-html="isHtml">
     <BFormTags
-      @click.native="$refs.input.focus()"
       v-model="inputValue"
       v-on="$listeners"
       add-on-change
