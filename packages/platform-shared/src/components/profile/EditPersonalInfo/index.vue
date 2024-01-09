@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -11,7 +11,6 @@ of the MIT license. See the LICENSE file for details. -->
     title-tag="h2"
     :title="title"
     @show="setModal"
-    @keydown.enter.native.prevent="saveForm()"
     :static="isTesting">
     <!-- Editing profile currently only supports String, Number and Boolean-->
     <BContainer>
@@ -24,7 +23,7 @@ of the MIT license. See the LICENSE file for details. -->
             <template
               v-for="(field, index) in formFields"
               :key="index">
-              <div>
+              <div @keydown.enter="saveForm()">
                 <FrField
                   v-model="field.value"
                   class="personal-info-field"
