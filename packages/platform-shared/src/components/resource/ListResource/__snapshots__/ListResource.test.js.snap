@@ -2046,6 +2046,74 @@ exports[`ListResource Component Component successfully loaded: console-warn-snap
 exports[`ListResource Component Enables/disables column sorting based on queryThreshold when table data changes: console-warn-snapshot 1`] = `
 [
   [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "disabled" with v-bind value \`false\` will render disabled="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <FrPagination",
+    "key=2",
+    "value=1",
+    "aria-controls="list-resource-table"",
+    " ...",
+    ">",
+    "
+",
+    " at <ListResource",
+    "routerParameters=",
+    {
+      "icon": "testIcon",
+      "managedProperties": {
+        "name": {
+          "searchable": true,
+          "type": "string",
+          "viewable": false,
+        },
+        "sn": {
+          "searchable": true,
+          "type": "number",
+          "viewable": false,
+        },
+        "typeTest": {
+          "searchable": true,
+          "type": "array",
+          "viewable": false,
+        },
+        "viewTest": {
+          "searchable": false,
+          "type": "boolean",
+          "viewable": false,
+        },
+      },
+      "order": [
+        "name",
+        "sn",
+        "viewTest",
+        "typeTest",
+      ],
+      "resourceName": "resourceName",
+      "resourceType": "managed",
+      "routeName": "ListResource",
+    },
+    "propColumns=",
+    [
+      {
+        "key": "userName",
+        "label": "Username",
+        "sortDirection": "desc",
+        "sortable": true,
+      },
+    ],
+    "ref="VTU_COMPONENT"",
+    " ...",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
     "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "hideBorder" with v-bind value \`false\` will render hideBorder="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
 
   configureCompat({ ATTR_FALSE_VALUE: false })

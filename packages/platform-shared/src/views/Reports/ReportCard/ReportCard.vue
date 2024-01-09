@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -18,14 +18,6 @@ of the MIT license. See the LICENSE file for details. -->
         </h2>
         <p class="max-lines max-lines-3">
           {{ props.report?.description }}
-        </p>
-        <p class="mb-0">
-          <small>
-            <span class="font-weight-bold mr-1">
-              {{ $t('reports.lastRun') }}
-            </span>
-            {{ lastRunDate }}
-          </small>
         </p>
         <template #footer>
           <BButton
@@ -117,7 +109,6 @@ import {
   BSkeleton,
   BSkeletonWrapper,
 } from 'bootstrap-vue';
-import dayjs from 'dayjs';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { startCase } from 'lodash';
 
@@ -134,7 +125,6 @@ const props = defineProps({
 const emit = defineEmits(['to-template']);
 
 const hasProperties = Object.keys(props.report).length > 0;
-const lastRunDate = dayjs(props.report?.updateDate).format('MMM DD, YYYY');
 
 function emitRouterToTemplate(name, toHistory = false) {
   emit('to-template', { name, toHistory });
