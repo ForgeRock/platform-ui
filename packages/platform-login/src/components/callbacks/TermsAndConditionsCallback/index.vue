@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2022 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -32,6 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
 
 <script>
 import { BModal } from 'bootstrap-vue';
+import { convertBase64ToString } from '@forgerock/platform-shared/src/utils/encodeUtils';
 
 export default {
   name: 'TermsAndConditions',
@@ -50,7 +51,9 @@ export default {
   },
   mounted() {
     this.name = `callback_${this.index}`;
-    this.terms = this.$sanitize(this.callback.getTerms(), {
+
+    const terms = convertBase64ToString(this.callback.getTerms());
+    this.terms = this.$sanitize(terms, {
       allowedTags: false,
       allowedAttributes: {
         '*': ['id'],

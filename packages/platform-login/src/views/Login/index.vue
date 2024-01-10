@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -17,8 +17,7 @@ of the MIT license. See the LICENSE file for details. -->
       v-if="!journeyLayout || journeyLayout === 'card' || !journeyTheaterMode"
       class="px-0 flex-grow-1 d-flex container">
       <BContainer class="flex-grow-1 d-flex">
-        <BRow
-          :class="[{'flex-row-reverse': journeyLayout === 'justified-right'}, 'align-items-center m-0 flex-grow-1']">
+        <BRow :class="[{'flex-row-reverse': journeyLayout === 'justified-right'}, 'align-items-center m-0 flex-grow-1']">
           <BCol :lg="journeyLayout !== 'card' ? 6 : 12">
             <section>
               <FrCenterCard
@@ -68,8 +67,7 @@ of the MIT license. See the LICENSE file for details. -->
                       class="p-3 text-left">
                       {{ screenReaderMessage }}
                     </FrAlert>
-                    <div
-                      v-if="loginFailure && linkToTreeStart">
+                    <div v-if="loginFailure && linkToTreeStart">
                       <a :href="linkToTreeStart">
                         {{ $t('login.sessionTimeoutLink') }}
                       </a>
@@ -149,9 +147,7 @@ of the MIT license. See the LICENSE file for details. -->
                     aria-live="polite"
                     v-else>
                     <div class="h-100 d-flex">
-                      <div
-                        class="fr-center-card"
-                      >
+                      <div class="fr-center-card">
                         <Spinner class="mb-4" />
                       </div>
                     </div>
