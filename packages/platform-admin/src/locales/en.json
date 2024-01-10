@@ -2704,7 +2704,7 @@
     "successSaveTree": "Saved expression tree",
     "syncError": "An error occurred while trying to sync user",
     "syncSuccess": "User successfully updated",
-    "syncText": "Syncing Identities from External System",
+    "syncText": "Syncing Records from External System",
     "viewReport": "View Report",
     "willReconcile": "Will reconcile",
     "wontReconcile": "Won't reconcile"
