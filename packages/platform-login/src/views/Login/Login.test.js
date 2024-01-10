@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -287,56 +287,48 @@ describe('Login.vue', () => {
 });
 
 describe('Component Test', () => {
-  describe('Loads login callback components with extra query parameters in the URL', () => {
-    const originalWindow = window;
-    global.URLSearchParams = URLSearchParams;
+  const stepPayload = {
+    authId: 'eyxQ',
+    callbacks: [
+      {
+        type: 'NameCallback',
+        output: [
+          {
+            name: 'prompt',
+            value: 'User Name',
+          },
+        ],
+        input: [
+          {
+            name: 'IDToken1',
+            value: '',
+          },
+        ],
+        _id: 0,
+      },
+      {
+        type: 'PasswordCallback',
+        output: [
+          {
+            name: 'prompt',
+            value: 'Password',
+          },
+        ],
+        input: [
+          {
+            name: 'IDToken2',
+            value: '',
+          },
+        ],
+        _id: 1,
+      },
+    ],
+    header: 'Sign In',
+    description: 'New here? <a href="#/service/Registration">Create an account</a><br><a href="#/service/ForgottenUsername">Forgot username?</a><a href="#/service/ResetPassword"> Forgot password?</a>',
+  };
 
-    const stepPayload = {
-      authId: 'eyxQ',
-      callbacks: [
-        {
-          type: 'NameCallback',
-          output: [
-            {
-              name: 'prompt',
-              value: 'User Name',
-            },
-          ],
-          input: [
-            {
-              name: 'IDToken1',
-              value: '',
-            },
-          ],
-          _id: 0,
-        },
-        {
-          type: 'PasswordCallback',
-          output: [
-            {
-              name: 'prompt',
-              value: 'Password',
-            },
-          ],
-          input: [
-            {
-              name: 'IDToken2',
-              value: '',
-            },
-          ],
-          _id: 1,
-        },
-      ],
-      header: 'Sign In',
-      description: 'New here? <a href="#/service/Registration">Create an account</a><br><a href="#/service/ForgottenUsername">Forgot username?</a><a href="#/service/ResetPassword"> Forgot password?</a>',
-    };
-
-    const setUrl = (url) => {
-      delete window.location;
-      window.location = new URL(url);
-    };
-
-    const mountLogin = () => mount(Login, {
+  const mountLogin = async (overrideData = {}) => {
+    const wrapper = mount(Login, {
       global: {
         stubs: {
           'router-link': true,
@@ -349,7 +341,7 @@ describe('Component Test', () => {
               tree: undefined,
             },
           },
-          $t: () => {},
+          $t: (t) => t,
           $store: {
             state: {
               SharedStore: {
@@ -362,6 +354,20 @@ describe('Component Test', () => {
         mixins: [LoginMixin],
       },
     });
+    await flushPromises();
+
+    await wrapper.setData(overrideData);
+    return wrapper;
+  };
+
+  describe('Loads login callback components with extra query parameters in the URL', () => {
+    const originalWindow = window;
+    global.URLSearchParams = URLSearchParams;
+
+    const setUrl = (url) => {
+      delete window.location;
+      window.location = new URL(url);
+    };
 
     let replaceState;
 
@@ -394,8 +400,7 @@ describe('Component Test', () => {
       const resumingSpy = jest.spyOn(authResumptionUtil, 'resumingTreeFollowingRedirect').mockReturnValue(true);
       const getStepSpy = jest.spyOn(authResumptionUtil, 'getResumeDataFromStorageAndClear').mockReturnValue({ urlAtRedirect: 'blah', step: { payload: {} } });
 
-      const wrapper = mountLogin();
-      await flushPromises();
+      const wrapper = await mountLogin();
 
       expect(replaceState).toBeCalledWith(null, null, '?realm=/');
       expect(findByTestId(wrapper, 'callbacks_panel').exists()).toBeTruthy();
@@ -410,8 +415,7 @@ describe('Component Test', () => {
       // indicate that the tree is being resumed following a redirect
       const resumingSpy = jest.spyOn(authResumptionUtil, 'resumingTreeFollowingRedirect').mockReturnValue(false);
 
-      const wrapper = mountLogin();
-      await flushPromises();
+      const wrapper = await mountLogin();
 
       expect(replaceState).toBeCalledWith(null, null, '?realm=/&code=aCode&notRemoved=here');
       expect(findByTestId(wrapper, 'callbacks_panel').exists()).toBeTruthy();
@@ -425,11 +429,7 @@ describe('Component Test', () => {
         step: new FRStep(stepPayload),
       };
 
-      const wrapper = mountLogin();
-      await flushPromises();
-
-      await wrapper.setData(data);
-      await flushPromises();
+      const wrapper = await mountLogin(data);
 
       wrapper.vm.buildTreeForm();
       await flushPromises();
