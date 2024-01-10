@@ -36,7 +36,7 @@ exports[`Component Test Loads login callback components with extra query paramet
     "
 ",
     " at <CenterCard",
-    "logo-alt-text=undefined",
+    "logo-alt-text="common.logo"",
     "logo-enabled=true",
     "logo-height="40"",
     " ...",
@@ -70,7 +70,7 @@ exports[`Component Test Loads login callback components with extra query paramet
     "
 ",
     " at <CenterCard",
-    "logo-alt-text=undefined",
+    "logo-alt-text="common.logo"",
     "logo-enabled=true",
     "logo-height="40"",
     " ...",
@@ -117,7 +117,7 @@ exports[`Component Test Loads login callback components with extra query paramet
     "
 ",
     " at <CenterCard",
-    "logo-alt-text=undefined",
+    "logo-alt-text="common.logo"",
     "logo-enabled=true",
     "logo-height="40"",
     " ...",
@@ -169,7 +169,7 @@ exports[`Component Test Loads login callback components with extra query paramet
     "
 ",
     " at <CenterCard",
-    "logo-alt-text=undefined",
+    "logo-alt-text="common.logo"",
     "logo-enabled=true",
     "logo-height="40"",
     " ...",
@@ -222,7 +222,7 @@ exports[`Component Test Loads login callback components with extra query paramet
     "
 ",
     " at <CenterCard",
-    "logo-alt-text=undefined",
+    "logo-alt-text="common.logo"",
     "logo-enabled=true",
     "logo-height="40"",
     " ...",
@@ -285,7 +285,7 @@ exports[`Component Test Loads login callback components with extra query paramet
     "
 ",
     " at <CenterCard",
-    "logo-alt-text=undefined",
+    "logo-alt-text="common.logo"",
     "logo-enabled=true",
     "logo-height="40"",
     " ...",
@@ -356,7 +356,7 @@ exports[`Component Test Loads login callback components with extra query paramet
     "
 ",
     " at <CenterCard",
-    "logo-alt-text=undefined",
+    "logo-alt-text="common.logo"",
     "logo-enabled=true",
     "logo-height="40"",
     " ...",
@@ -427,7 +427,7 @@ exports[`Component Test Loads login callback components with extra query paramet
     "
 ",
     " at <CenterCard",
-    "logo-alt-text=undefined",
+    "logo-alt-text="common.logo"",
     "logo-enabled=true",
     "logo-height="40"",
     " ...",
@@ -498,7 +498,7 @@ exports[`Component Test Loads login callback components with extra query paramet
     "
 ",
     " at <CenterCard",
-    "logo-alt-text=undefined",
+    "logo-alt-text="common.logo"",
     "logo-enabled=true",
     "logo-height="40"",
     " ...",
@@ -569,7 +569,7 @@ exports[`Component Test Loads login callback components with extra query paramet
     "
 ",
     " at <CenterCard",
-    "logo-alt-text=undefined",
+    "logo-alt-text="common.logo"",
     "logo-enabled=true",
     "logo-height="40"",
     " ...",
@@ -648,7 +648,7 @@ exports[`Component Test Loads login callback components with extra query paramet
     "
 ",
     " at <CenterCard",
-    "logo-alt-text=undefined",
+    "logo-alt-text="common.logo"",
     "logo-enabled=true",
     "logo-height="40"",
     " ...",
@@ -740,7 +740,7 @@ exports[`Component Test Loads login callback components with extra query paramet
     "
 ",
     " at <CenterCard",
-    "logo-alt-text=undefined",
+    "logo-alt-text="common.logo"",
     "logo-enabled=true",
     "logo-height="40"",
     " ...",
@@ -832,7 +832,7 @@ exports[`Component Test Loads login callback components with extra query paramet
     "
 ",
     " at <CenterCard",
-    "logo-alt-text=undefined",
+    "logo-alt-text="common.logo"",
     "logo-enabled=true",
     "logo-height="40"",
     " ...",
@@ -922,7 +922,7 @@ exports[`Component Test Loads login callback components with extra query paramet
     "
 ",
     " at <CenterCard",
-    "logo-alt-text=undefined",
+    "logo-alt-text="common.logo"",
     "logo-enabled=true",
     "logo-height="40"",
     " ...",
@@ -985,7 +985,7 @@ exports[`Component Test Loads login callback components with extra query paramet
     "
 ",
     " at <CenterCard",
-    "logo-alt-text=undefined",
+    "logo-alt-text="common.logo"",
     "logo-enabled=true",
     "logo-height="40"",
     " ...",
