@@ -1,17 +1,17 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <FrInputLayout
     :description="description"
-    :id="id"
+    :id="internalId"
     :errors="combinedErrors"
     :is-html="isHtml"
     :label="label"
     :name="name">
     <VueMultiSelect
-      :id="id"
+      :id="internalId"
       v-bind="$attrs"
       v-if="selectOptions"
       :value="inputValue"
@@ -21,7 +21,7 @@ of the MIT license. See the LICENSE file for details. -->
       track-by="multiselectId"
       role="combobox"
       :aria-expanded="isExpanded ? 'true': 'false'"
-      :aria-labelledby="id + '-label'"
+      :aria-labelledby="internalId + '-label'"
       :data-testid="testid"
       :class="[{'polyfill-placeholder': floatLabels }, 'white-label-background form-control p-0', {'no-multiselect-label': !label }, {'h-100': floatLabels || !label }]"
       :close-on-select="closeOnSelect"
