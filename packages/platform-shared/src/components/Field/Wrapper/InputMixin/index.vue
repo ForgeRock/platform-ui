@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -11,9 +11,18 @@ import {
 } from 'lodash';
 import uuid from 'uuid/v4';
 
+window.fieldCounter = 0;
+
 export default {
   name: 'InputMixin',
   props: {
+    /**
+     * Unique ID
+     */
+    id: {
+      type: String,
+      default: '',
+    },
     /**
      * Autofocus field when rendered.
      */
@@ -111,18 +120,14 @@ export default {
     return {
       errorMessages: [],
       floatLabels: false,
-      id: null,
       oldValue: '',
     };
-  },
-  beforeMount() {
-    this.id = `floatingLabelInput${this._uid}`;
   },
   mounted() {
     if (this.floatingLabel) {
       delay(() => {
         if (navigator.userAgent.includes('Edge')) {
-          const element = document.getElementById(`${this.id}`);
+          const element = document.getElementById(`${this.internalId}`);
           if (element && element.value.length && !!this.label) {
             this.floatLabels = !!this.label;
             this.inputValue = element.value;
@@ -142,6 +147,11 @@ export default {
     }
 
     this.setInputValue(this.value);
+  },
+  computed: {
+    internalId() {
+      return this.id || `floatingLabelInput${this._uid}`;
+    },
   },
   watch: {
     value(newVal) {

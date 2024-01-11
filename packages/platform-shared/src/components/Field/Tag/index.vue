@@ -5,7 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <FrInputLayout
     :description="description"
-    :id="`${id}___input__`"
+    :id="`${internalId}___input__`"
     :class="{ 'has-prepend-btn': hasPrependBtn }"
     :errors="combinedErrors"
     :label="label"
@@ -18,11 +18,11 @@ of the MIT license. See the LICENSE file for details. -->
       :autofocus="autofocus"
       :class="{'polyfill-placeholder': floatLabels}"
       :disabled="disabled"
-      :id="id">
+      :id="internalId">
       <template #default="{ tags, inputAttrs, inputHandlers, removeTag }">
         <ul
           class="overflow-hidden pl-0 mb-0"
-          :id="`fr-tags-list_${id}`">
+          :id="`fr-tags-list_${internalId}`">
           <li>
             <Draggable
               v-model="inputValue"
@@ -66,7 +66,7 @@ of the MIT license. See the LICENSE file for details. -->
           :class="[{'has-values': tags.length}, 'fr-tag-input']"
           :placeholder="label"
           @input="inputValueHandler(inputValue, $event.target.value)"
-          :aria-describedby="`fr-tags-list_${id}`">
+          :aria-describedby="`fr-tags-list_${internalId}`">
       </template>
     </BFormTags>
     <template
