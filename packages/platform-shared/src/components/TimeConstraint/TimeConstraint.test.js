@@ -1,12 +1,15 @@
 /**
- * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
  */
 
 import { mount } from '@vue/test-utils';
+import dayjs from 'dayjs';
 import TimeConstraint from './index';
+
+jest.mock('dayjs');
 
 describe('TimeConstraint Component', () => {
   let wrapper;
@@ -23,6 +26,20 @@ describe('TimeConstraint Component', () => {
       },
     });
   });
+  jest.useFakeTimers().setSystemTime(new Date('2077-01-01'));
+
+  dayjs.mockImplementation(() => ({
+    add: () => dayjs(),
+    subtract: () => dayjs(),
+    year: () => 2077,
+    month: () => 1,
+    date: () => 1,
+    hour: () => 0,
+    minute: () => 0,
+    isAfter: () => false,
+    toISOString: () => '',
+    utcOffset: () => 0,
+  }));
 
   it('contains two datepickers, two timepickers, and one offset selector', () => {
     const datepickers = wrapper.findAllComponents({ name: 'Datepicker' });

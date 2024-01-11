@@ -32,7 +32,7 @@ exports[`TimeConstraint Component contains two datepickers, two timepickers, and
     "
 ",
     " at <Datepicker",
-    "modelValue=""",
+    "modelValue="2077-2-1"",
     "onUpdate:modelValue=fn",
     "name="startDate"",
     " ...",
@@ -138,7 +138,7 @@ exports[`TimeConstraint Component contains two datepickers, two timepickers, and
 ",
     " at <BFormDatepicker",
     "data-testid="datepicker"",
-    "modelValue=""",
+    "modelValue="2077-2-1"",
     "onUpdate:modelValue=fn",
     " ...",
     ">",
@@ -667,7 +667,7 @@ exports[`TimeConstraint Component contains two datepickers, two timepickers, and
     "
 ",
     " at <Timepicker",
-    "modelValue=""",
+    "modelValue="0:0:00"",
     "onUpdate:modelValue=fn",
     "disabled=false",
     " ...",
@@ -680,7 +680,7 @@ exports[`TimeConstraint Component contains two datepickers, two timepickers, and
     " at <Timepicker",
     "disabled=false",
     "placeholder="common.time"",
-    "value=""",
+    "value="0:0:00"",
     " ...",
     ">",
     "
@@ -711,7 +711,7 @@ exports[`TimeConstraint Component contains two datepickers, two timepickers, and
     " at <Timepicker",
     "disabled=false",
     "placeholder="common.time"",
-    "value=""",
+    "value="0:0:00"",
     " ...",
     ">",
     "
@@ -750,7 +750,7 @@ exports[`TimeConstraint Component contains two datepickers, two timepickers, and
     " at <Timepicker",
     "disabled=false",
     "placeholder="common.time"",
-    "value=""",
+    "value="0:0:00"",
     " ...",
     ">",
     "
@@ -789,7 +789,7 @@ exports[`TimeConstraint Component contains two datepickers, two timepickers, and
     " at <Timepicker",
     "disabled=false",
     "placeholder="common.time"",
-    "value=""",
+    "value="0:0:00"",
     " ...",
     ">",
     "
@@ -828,7 +828,7 @@ exports[`TimeConstraint Component contains two datepickers, two timepickers, and
     " at <Timepicker",
     "disabled=false",
     "placeholder="common.time"",
-    "value=""",
+    "value="0:0:00"",
     " ...",
     ">",
     "
@@ -883,7 +883,7 @@ exports[`TimeConstraint Component contains two datepickers, two timepickers, and
     " at <Timepicker",
     "disabled=false",
     "placeholder="common.time"",
-    "value=""",
+    "value="0:0:00"",
     " ...",
     ">",
     "
@@ -938,7 +938,7 @@ exports[`TimeConstraint Component contains two datepickers, two timepickers, and
     " at <Timepicker",
     "disabled=false",
     "placeholder="common.time"",
-    "value=""",
+    "value="0:0:00"",
     " ...",
     ">",
     "
