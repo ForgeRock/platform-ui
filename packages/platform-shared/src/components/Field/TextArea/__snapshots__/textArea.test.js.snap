@@ -46,7 +46,7 @@ exports[`TextArea input TextArea input component sets floatLabels correctly: con
     "
 ",
     " at <FrInputLayout",
-    "id=""",
+    "id="floatingLabelInput5"",
     "name=""",
     "description=""",
     " ...",
@@ -73,7 +73,7 @@ exports[`TextArea input TextArea input component sets floatLabels correctly: con
     "
 ",
     " at <FrInputLayout",
-    "id=""",
+    "id="floatingLabelInput5"",
     "name=""",
     "description=""",
     " ...",
@@ -100,7 +100,7 @@ exports[`TextArea input TextArea input component sets floatLabels correctly: con
     "
 ",
     " at <FrInputLayout",
-    "id=""",
+    "id="floatingLabelInput5"",
     "name=""",
     "description=""",
     " ...",

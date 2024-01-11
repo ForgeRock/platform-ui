@@ -335,7 +335,7 @@ exports[`Field Component Showing a readonly string input when the field value is
     "
 ",
     " at <InputLayout",
-    "id="floatingLabelInput72"",
+    "id="test"",
     "name="test"",
     "description=""",
     " ...",
@@ -373,7 +373,7 @@ exports[`Field Component Showing a readonly string input when the field value is
     "
 ",
     " at <InputLayout",
-    "id="floatingLabelInput72"",
+    "id="test"",
     "name="test"",
     "description=""",
     " ...",

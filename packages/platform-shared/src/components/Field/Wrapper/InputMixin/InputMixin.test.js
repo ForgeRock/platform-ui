@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -22,14 +22,24 @@ const TestComponent = {
 };
 
 describe('InputMixin', () => {
-  it('InputMixin uid is set', () => {
+  it('InputMixin id is set', () => {
+    const wrapper = shallowMount(TestComponent, {
+      props: {
+        name: 'testMixin',
+        id: 'testId',
+      },
+    });
+    expect(wrapper.vm.internalId).toBe('testId');
+  });
+
+  it('InputMixin uid is set when id prop is empty', () => {
     const wrapper = shallowMount(TestComponent, {
       props: {
         name: 'testMixin',
       },
     });
     const expected = `floatingLabelInput${wrapper.vm._uid}`;
-    expect(wrapper.vm.$data.id).toBe(expected);
+    expect(wrapper.vm.internalId).toBe(expected);
   });
 
   it('InputMixin sets floating label on Chrome', () => {

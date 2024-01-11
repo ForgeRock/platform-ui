@@ -1,11 +1,11 @@
-<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
   <div class="position-relative">
     <FrInputLayout
-      :id="id"
+      :id="internalId"
       :name="name"
       :description="description"
       :errors="combinedErrors"
@@ -19,7 +19,7 @@ of the MIT license. See the LICENSE file for details. -->
         :class="[{'is-invalid': errorMessages && errorMessages.length, 'polyfill-placeholder': label }, 'form-control']"
         :data-vv-as="label"
         :disabled="disabled"
-        :id="id"
+        :id="internalId"
         :name="name"
         :readonly="readonly">
     </FrInputLayout>
@@ -31,7 +31,7 @@ of the MIT license. See the LICENSE file for details. -->
       ref="datePicker"
       :class="[{'is-invalid': errorMessages && errorMessages.length }, 'form-control date-button position-absolute']"
       :disabled="disabled"
-      :id="id"
+      :id="internalId"
       :name="name"
       :aria-label="labelTranslation" />
   </div>
