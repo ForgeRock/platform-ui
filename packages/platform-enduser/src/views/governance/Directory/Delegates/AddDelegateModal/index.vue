@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -19,6 +19,7 @@ of the MIT license. See the LICENSE file for details. -->
       <p>{{ $t('governance.delegates.addModalTitle') }}</p>
       <FrGovResourceSelect
         v-model="delegates"
+        name="delegates"
         class="mb-3"
         resource-path="user" />
       <FrField

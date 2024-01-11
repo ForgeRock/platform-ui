@@ -742,7 +742,7 @@ exports[`RequestModal close got called with reassign and should update list, aft
     " at <GovResourceSelect",
     "modelValue=""",
     "onUpdate:modelValue=fn",
-    "resource-path="user"",
+    "name="forwardToResource"",
     " ...",
     ">",
   ],
@@ -1947,9 +1947,9 @@ exports[`RequestModal close got called with reassign and should update list, aft
     "
 ",
     " at <GovResourceSelect",
+    "name="forwardToResource"",
     "resource-path="user"",
     "label="Forward to"",
-    "validation="required"",
     " ...",
     ">",
     "
@@ -2111,7 +2111,7 @@ exports[`RequestModal close got called with reassign and should update list, aft
 ",
     " at <InputLayout",
     "id="floatingLabelInput218"",
-    "name="resourceSelect"",
+    "name="forwardToResource"",
     "description=""",
     " ...",
     ">",
@@ -2138,9 +2138,9 @@ exports[`RequestModal close got called with reassign and should update list, aft
     "
 ",
     " at <GovResourceSelect",
+    "name="forwardToResource"",
     "resource-path="user"",
     "label="Forward to"",
-    "validation="required"",
     " ...",
     ">",
     "
@@ -2306,7 +2306,7 @@ exports[`RequestModal close got called with reassign and should update list, aft
 ",
     " at <InputLayout",
     "id="floatingLabelInput218"",
-    "name="resourceSelect"",
+    "name="forwardToResource"",
     "description=""",
     " ...",
     ">",
@@ -2333,9 +2333,9 @@ exports[`RequestModal close got called with reassign and should update list, aft
     "
 ",
     " at <GovResourceSelect",
+    "name="forwardToResource"",
     "resource-path="user"",
     "label="Forward to"",
-    "validation="required"",
     " ...",
     ">",
     "
@@ -2493,7 +2493,7 @@ exports[`RequestModal close got called with reassign and should update list, aft
 ",
     " at <InputLayout",
     "id="floatingLabelInput218"",
-    "name="resourceSelect"",
+    "name="forwardToResource"",
     "description=""",
     " ...",
     ">",
@@ -2520,9 +2520,9 @@ exports[`RequestModal close got called with reassign and should update list, aft
     "
 ",
     " at <GovResourceSelect",
+    "name="forwardToResource"",
     "resource-path="user"",
     "label="Forward to"",
-    "validation="required"",
     " ...",
     ">",
     "
@@ -2687,9 +2687,9 @@ exports[`RequestModal close got called with reassign and should update list, aft
     "
 ",
     " at <GovResourceSelect",
+    "name="forwardToResource"",
     "resource-path="user"",
     "label="Forward to"",
-    "validation="required"",
     " ...",
     ">",
     "
@@ -2850,9 +2850,9 @@ exports[`RequestModal close got called with reassign and should update list, aft
     "
 ",
     " at <GovResourceSelect",
+    "name="forwardToResource"",
     "resource-path="user"",
     "label="Forward to"",
-    "validation="required"",
     " ...",
     ">",
     "
