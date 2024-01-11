@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -17,10 +17,10 @@ function fillOutRegistrationForm(fieldData) {
 
   cy.findAllByRole('combobox').first().click();
   cy.findAllByText('What\'s your favorite color?').first().click();
-  cy.findAllByLabelText('Answer').first().clear().type('orange');
+  cy.findAllByLabelText('Answer for: What\'s your favorite color?').first().clear().type('orange');
   cy.findAllByRole('combobox').last().click();
   cy.findAllByText('Who was your first employer?').last().click();
-  cy.findAllByLabelText('Answer').last().clear().type('ForgeRock');
+  cy.findAllByLabelText('Answer for: Who was your first employer?').last().clear().type('ForgeRock');
 }
 
 filterTests(['forgeops'], () => {
