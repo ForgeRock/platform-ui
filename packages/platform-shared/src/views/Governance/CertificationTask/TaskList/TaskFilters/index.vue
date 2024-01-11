@@ -11,7 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
             v-model="formFields.certified"
             testid="cert-filter-certify"
             class="mr-2"
-            name="columnSelected"
+            name="certifiedColumnSelected"
             type="checkbox" />
           <FrIcon
             name="check"
@@ -24,7 +24,7 @@ of the MIT license. See the LICENSE file for details. -->
           <FrField
             v-model="formFields.revoked"
             class="mr-2"
-            name="columnSelected"
+            name="revokedColumnSelected"
             type="checkbox" />
           <FrIcon
             name="block"
@@ -37,7 +37,7 @@ of the MIT license. See the LICENSE file for details. -->
           <FrField
             v-model="formFields.exceptionAllowed"
             class="mr-2"
-            name="columnSelected"
+            name="exceptionAllowedColumnSelected"
             type="checkbox" />
           <FrIcon
             name="schedule"
@@ -50,7 +50,7 @@ of the MIT license. See the LICENSE file for details. -->
           <FrField
             v-model="formFields.noDecision"
             class="mr-2"
-            name="columnSelected"
+            name="noDecisionColumnSelected"
             type="checkbox" />
           <span>
             {{ $t('governance.certificationTask.noDecision') }}
