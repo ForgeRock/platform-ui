@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2022-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2022-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -83,11 +83,11 @@ describe('FilterBuilderRow', () => {
 
   it('should emit the rule-change and then clear the value input through the props', async () => {
     // set the input initial value
-    const inputFieldValue = wrapper.find('input[name="inputValue"]');
+    const inputFieldValue = wrapper.find('input[name="user_inputValue_0"]');
     inputFieldValue.setValue('Initial Value');
 
     // simulates the dropdown change
-    const propertySelector = wrapper.find('input[name="selectPropOptions"]');
+    const propertySelector = wrapper.find('input[name="user_selectPropOptions_0"]');
     propertySelector.setValue('Status');
     propertySelector.trigger('change');
 

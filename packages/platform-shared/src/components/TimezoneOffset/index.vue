@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -16,13 +16,12 @@ of the MIT license. See the LICENSE file for details. -->
           v-bind="$attrs"
           v-model="timezone"
           class="timezone-field"
-          :label="placeholder">
+          :label="placeholder"
+          :name="`timezoneOffset_${_uid}`">
           <template #prepend>
             <BInputGroupPrepend>
               <div :class="[{'disabled': $attrs.disabled}, 'input-group-text inset']">
-                <FrIcon
-                  name="location_on"
-                />
+                <FrIcon name="location_on" />
               </div>
             </BInputGroupPrepend>
           </template>
@@ -49,16 +48,14 @@ of the MIT license. See the LICENSE file for details. -->
         </span>
       </div>
     </BDropdown>
-    <small
-      v-if="displayHelpText"
-      class="form-text">
+    <BFormText v-if="displayHelpText">
       {{ $t('timezone.description') }}
       <BLink
         href="https://www.timeanddate.com/time/zones/"
         target="_blank">
         {{ $t('timezone.linkText') }}
       </BLink>
-    </small>
+    </BFormText>
   </div>
 </template>
 
@@ -66,6 +63,7 @@ of the MIT license. See the LICENSE file for details. -->
 import {
   BDropdown,
   BFormInput,
+  BFormText,
   BInputGroupPrepend,
   BLink,
 } from 'bootstrap-vue';
@@ -82,6 +80,7 @@ export default {
   components: {
     BDropdown,
     BFormInput,
+    BFormText,
     BInputGroupPrepend,
     FrField,
     FrIcon,
