@@ -4450,7 +4450,7 @@ exports[`MyRequests @Component Tests Navigates to request details page after cli
     " at <GovResourceSelect",
     "modelValue="managed/user/all"",
     "onUpdate:modelValue=fn",
-    "class="mb-4"",
+    "name="requestedFor"",
     " ...",
     ">",
   ],
@@ -8323,7 +8323,7 @@ exports[`MyRequests @Component Tests Navigates to request details page after cli
 ",
     " at <InputLayout",
     "id="floatingLabelInput124"",
-    "name="resourceSelect"",
+    "name="requestedFor"",
     "description=""",
     " ...",
     ">",
@@ -8350,15 +8350,12 @@ exports[`MyRequests @Component Tests Navigates to request details page after cli
     "
 ",
     " at <GovResourceSelect",
+    "name="requestedFor"",
     "class="mb-4"",
     "first-option=",
     {
       "text": "All Requesters",
       "value": "all",
-    },
-    "initial-data=",
-    {
-      "id": "all",
     },
     " ...",
     ">",
@@ -8525,15 +8522,12 @@ exports[`MyRequests @Component Tests Navigates to request details page after cli
     "
 ",
     " at <GovResourceSelect",
+    "name="requestedFor"",
     "class="mb-4"",
     "first-option=",
     {
       "text": "All Requesters",
       "value": "all",
-    },
-    "initial-data=",
-    {
-      "id": "all",
     },
     " ...",
     ">",
@@ -8700,15 +8694,12 @@ exports[`MyRequests @Component Tests Navigates to request details page after cli
     "
 ",
     " at <GovResourceSelect",
+    "name="requestedFor"",
     "class="mb-4"",
     "first-option=",
     {
       "text": "All Requesters",
       "value": "all",
-    },
-    "initial-data=",
-    {
-      "id": "all",
     },
     " ...",
     ">",

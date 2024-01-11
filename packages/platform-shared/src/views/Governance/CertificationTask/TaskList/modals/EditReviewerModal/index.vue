@@ -98,6 +98,7 @@ of the MIT license. See the LICENSE file for details. -->
         <FrGovResourceSelect
           class="mb-5"
           v-model="reviewerIdSelected"
+          name="reviewerIdSelected"
           :resource-path="reviewerType"
           :label="resourceSelectLabel"
           :description="resourceSelectDescription"
