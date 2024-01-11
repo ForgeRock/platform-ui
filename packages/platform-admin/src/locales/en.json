@@ -1744,6 +1744,7 @@
   "tenantSettings": {
     "title": "Tenant Settings",
     "dropdownTitle": "Tenant settings",
+    "nextUpgrade": "Next scheduled Identity Cloud release planned for week commencing <span class='font-weight-bold'>{date}</span>.",
     "tabs": {
       "details": "Details",
       "admins": "Admins",
@@ -1753,6 +1754,8 @@
     "details": {
       "flagAltText": "Flag",
       "organizationName": "Organization Name",
+      "idCloudVersion": "Identity Cloud Version",
+      "releaseNotes": "Release Notes",
       "tenant": "TENANT",
       "tenantBackupRegion": "Backup Region",
       "tenantName": "Tenant Name",
@@ -1762,6 +1765,7 @@
       "errors": {
         "errorRetrievingLockState": "Error retrieving promotion lock state.",
         "errorRetrievingProvisionalReport": "Error retrieving provisional report.",
+        "errorRetrievingReleaseInfo": "Error retrieving tenant release information.",
         "errorRetrievingTenantRegion": "Error retrieving tenant region information."
       }
     },
