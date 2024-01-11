@@ -46,7 +46,7 @@ of the MIT license. See the LICENSE file for details. -->
               class="d-flex align-items-center p-2">
               <FrField
                 v-model="item.show"
-                name="columnSelected"
+                :name="`columnSelected_${item.key}`"
                 type="checkbox"
                 @change="changeSelection(item, $event)" />
               <span class="fr-tag-text">

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -39,7 +39,7 @@ of the MIT license. See the LICENSE file for details. -->
                       <BFormCheckbox
                         v-model="obj[key]"
                         :disabled="disabled || properties[key].disabled"
-                        :name="key+'_'+index"
+                        :name="`${key}_${index}_${_uid}`"
                         @change="emitInput(listValues)">
                         {{ properties[key].title || key }}
                       </BFormCheckbox>
@@ -52,7 +52,7 @@ of the MIT license. See the LICENSE file for details. -->
                         type="number"
                         validation="required|isNumber"
                         :label="properties[key].title || key"
-                        :name="key+'_'+index"
+                        :name="`${key}_${index}_${_uid}`"
                       />
                     </div>
                     <div v-else>
@@ -60,8 +60,8 @@ of the MIT license. See the LICENSE file for details. -->
                         :value="obj[key]"
                         @input="obj[key] = $event; emitInput(listValues)"
                         :disabled="disabled || properties[key].disabled"
-                        :label="properties[key].title ? properties[key].title : key"
-                        :name="key+'_'+index"
+                        :label="properties[key].title || key"
+                        :name="`${key}_${index}_${_uid}`"
                         :type="properties[key].type"
                         :validation="required && required.length && required.includes(properties[key].title) ? 'required' : ''"
                       />
@@ -79,9 +79,7 @@ of the MIT license. See the LICENSE file for details. -->
                   class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
                   :disabled="disabled"
                   @click.prevent="removeElementFromList(index)">
-                  <FrIcon
-                    name="remove"
-                  />
+                  <FrIcon name="remove" />
                 </button>
                 <button
                   v-if="multiValued || listValues.length === 0"
@@ -89,9 +87,7 @@ of the MIT license. See the LICENSE file for details. -->
                   class="btn btn-outline-secondary mr-1 mb-2 mb-lg-0"
                   :disabled="disabled"
                   @click.prevent="addObjectToList(index)">
-                  <FrIcon
-                    name="add"
-                  />
+                  <FrIcon name="add" />
                 </button>
               </div>
             </div>
@@ -111,7 +107,7 @@ of the MIT license. See the LICENSE file for details. -->
 
     <FrValidationError
       class="error-messages"
-      :validator-errors="[...errors]"
+      :validator-errors="errors"
       :field-name="label" />
   </div>
 </template>

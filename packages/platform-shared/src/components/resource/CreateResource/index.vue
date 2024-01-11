@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -12,7 +12,8 @@ of the MIT license. See the LICENSE file for details. -->
         id="createResourceModal"
         size="lg"
         cancel-variant="outline-secondary"
-        :no-close-on-esc="true"
+        no-close-on-backdrop
+        no-close-on-esc
         @hide="hideModal"
         @hidden="stepIndex = -1"
         @show="initialiseData"
@@ -26,22 +27,20 @@ of the MIT license. See the LICENSE file for details. -->
               @submit.prevent
               class="mb-3"
               name="edit-personal-form">
-              <template v-for="(field, index) in clonedCreateProperties">
-                <BFormGroup
-                  :key="'createResource' + index"
-                  v-if="((field.type === 'string' && !field.isConditional) || field.type === 'number' || field.type === 'boolean') && field.encryption === undefined">
+              <template
+                v-for="(field, index) in clonedCreateProperties"
+                :key="`createResource${index}`">
+                <BFormGroup v-if="((field.type === 'string' && !field.isConditional) || field.type === 'number' || field.type === 'boolean') && field.encryption === undefined">
                   <FrField
                     v-model="field.value"
                     :autofocus="index === 0"
                     :label="field.title"
                     :name="field.key"
                     :options="field.options"
-                    :type="field.format ? field.format : field.type"
+                    :type="field.format || field.type"
                     :validation="field.validation" />
                 </BFormGroup>
-                <BFormGroup
-                  v-else-if="field.type === 'password' && field.encryption === undefined"
-                  :key="'createResource' + index">
+                <BFormGroup v-else-if="field.type === 'password' && field.encryption === undefined">
                   <FrPolicyPasswordInput
                     v-model="passwordValue"
                     @is-valid="passwordValid=$event"
@@ -51,9 +50,7 @@ of the MIT license. See the LICENSE file for details. -->
                     :validation="field.validation" />
                 </BFormGroup>
                 <!-- for relationship values -->
-                <BFormGroup
-                  v-else-if="field.type === 'relationship' || (field.type === 'array' && field.items.type === 'relationship')"
-                  :key="'createResource' + index">
+                <BFormGroup v-else-if="field.type === 'relationship' || (field.type === 'array' && field.items.type === 'relationship')">
                   <FrRelationshipEdit
                     :close-on-select="isCloseOnSelect(field)"
                     :parent-resource="`${resourceType}/${resourceName}`"
@@ -62,9 +59,7 @@ of the MIT license. See the LICENSE file for details. -->
                     :new-resource="true"
                     @setValue="setRelationshipValue($event, field.key)" />
                 </BFormGroup>
-                <BFormGroup
-                  :key="'createResource' + index"
-                  v-else-if="field.type === 'array' && field.key !== 'privileges' && !field.isTemporalConstraint">
+                <BFormGroup v-else-if="field.type === 'array' && field.key !== 'privileges' && !field.isTemporalConstraint">
                   <FrListField
                     v-model="field.value"
                     :description="field.description"

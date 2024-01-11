@@ -559,6 +559,11 @@ exports[`TimezoneOffset Component display value is user friendly string: console
     ">",
     "
 ",
+    " at <BFormText",
+    "key=0",
+    ">",
+    "
+",
     " at <TimezoneOffset",
     "ref="VTU_COMPONENT"",
     ">",
@@ -573,6 +578,11 @@ exports[`TimezoneOffset Component display value is user friendly string: console
     " at <BLink",
     "href="https://www.timeanddate.com/time/zones/"",
     "target="_blank"",
+    ">",
+    "
+",
+    " at <BFormText",
+    "key=0",
     ">",
     "
 ",
@@ -597,6 +607,11 @@ exports[`TimezoneOffset Component display value is user friendly string: console
     ">",
     "
 ",
+    " at <BFormText",
+    "key=0",
+    ">",
+    "
+",
     " at <TimezoneOffset",
     "ref="VTU_COMPONENT"",
     ">",
@@ -615,6 +630,11 @@ exports[`TimezoneOffset Component display value is user friendly string: console
     " at <BLink",
     "href="https://www.timeanddate.com/time/zones/"",
     "target="_blank"",
+    ">",
+    "
+",
+    " at <BFormText",
+    "key=0",
     ">",
     "
 ",
@@ -639,6 +659,11 @@ exports[`TimezoneOffset Component display value is user friendly string: console
     ">",
     "
 ",
+    " at <BFormText",
+    "key=0",
+    ">",
+    "
+",
     " at <TimezoneOffset",
     "ref="VTU_COMPONENT"",
     ">",
@@ -657,6 +682,31 @@ exports[`TimezoneOffset Component display value is user friendly string: console
     " at <BLink",
     "href="https://www.timeanddate.com/time/zones/"",
     "target="_blank"",
+    ">",
+    "
+",
+    " at <BFormText",
+    "key=0",
+    ">",
+    "
+",
+    " at <TimezoneOffset",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+  [
+    "[Vue warn]: (deprecation ATTR_FALSE_VALUE) Attribute "inline" with v-bind value \`false\` will render inline="false" instead of removing it in Vue 3. To remove the attribute, use \`null\` or \`undefined\` instead. If the usage is intended, you can disable the compat behavior and suppress this warning with:
+
+  configureCompat({ ATTR_FALSE_VALUE: false })
+
+  Details: https://v3-migration.vuejs.org/breaking-changes/attribute-coercion.html",
+    "
+",
+    " at <BFormText",
+    "key=0",
     ">",
     "
 ",

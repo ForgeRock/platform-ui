@@ -29,7 +29,7 @@ describe('Timeframe field for running reports', () => {
     it('emits "field-value-update" when the FrField input updated', async () => {
       wrapper = setup();
 
-      const timeframeField = findByTestId(wrapper, 'fr-field-timeframe');
+      const timeframeField = wrapper.find('[placeholder="Last 7 days"]');
       await timeframeField.trigger('click');
 
       const firstTimeframeFieldOption = timeframeField.findAll('li')[0].find('span');
@@ -45,7 +45,7 @@ describe('Timeframe field for running reports', () => {
       const datepickerField = findByTestId(wrapper, 'datepicker-start');
       expect(datepickerField.isVisible()).toBe(false);
 
-      const timeFrameField = findByTestId(wrapper, 'fr-field-timeframe');
+      const timeFrameField = wrapper.find('[placeholder="Last 7 days"]');
       await timeFrameField.trigger('click');
 
       const customTimeframeOption = timeFrameField.findAll('li').at(4).find('span');
