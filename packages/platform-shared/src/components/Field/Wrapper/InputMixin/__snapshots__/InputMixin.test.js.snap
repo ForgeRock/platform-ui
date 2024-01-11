@@ -15,7 +15,7 @@ exports[`InputMixin Generates an uuid name prop if the name attribute is empty: 
     " at <VTUROOT>",
   ],
   [
-    "[Vue warn]: (deprecation RENDER_FUNCTION) (12)",
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (13)",
     "
 ",
     " at <Anonymous",
@@ -32,7 +32,7 @@ exports[`InputMixin Generates an uuid name prop if the name attribute is empty: 
 exports[`InputMixin Initial value calls setter method setInputValue: console-warn-snapshot 1`] = `
 [
   [
-    "[Vue warn]: (deprecation RENDER_FUNCTION) (5)",
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (6)",
     "
 ",
     " at <Anonymous",
@@ -50,7 +50,7 @@ exports[`InputMixin Initial value calls setter method setInputValue: console-war
 exports[`InputMixin Initial value can be set as Array: console-warn-snapshot 1`] = `
 [
   [
-    "[Vue warn]: (deprecation RENDER_FUNCTION) (8)",
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (9)",
     "
 ",
     " at <Anonymous",
@@ -91,7 +91,7 @@ exports[`InputMixin Initial value can be set as Array: console-warn-snapshot 1`]
 exports[`InputMixin Initial value can be set as Number: console-warn-snapshot 1`] = `
 [
   [
-    "[Vue warn]: (deprecation RENDER_FUNCTION) (10)",
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (11)",
     "
 ",
     " at <Anonymous",
@@ -109,7 +109,7 @@ exports[`InputMixin Initial value can be set as Number: console-warn-snapshot 1`
 exports[`InputMixin Initial value can be set as Object: console-warn-snapshot 1`] = `
 [
   [
-    "[Vue warn]: (deprecation RENDER_FUNCTION) (9)",
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (10)",
     "
 ",
     " at <Anonymous",
@@ -130,7 +130,7 @@ exports[`InputMixin Initial value can be set as Object: console-warn-snapshot 1`
 exports[`InputMixin Initial value can be set as String: console-warn-snapshot 1`] = `
 [
   [
-    "[Vue warn]: (deprecation RENDER_FUNCTION) (7)",
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (8)",
     "
 ",
     " at <Anonymous",
@@ -148,7 +148,7 @@ exports[`InputMixin Initial value can be set as String: console-warn-snapshot 1`
 exports[`InputMixin Initial value defaults to empty string: console-warn-snapshot 1`] = `
 [
   [
-    "[Vue warn]: (deprecation RENDER_FUNCTION) (6)",
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (7)",
     "
 ",
     " at <Anonymous",
@@ -162,43 +162,7 @@ exports[`InputMixin Initial value defaults to empty string: console-warn-snapsho
 ]
 `;
 
-exports[`InputMixin InputMixin sets floating label on Chrome: console-warn-snapshot 1`] = `
-[
-  [
-    "[Vue warn]: (deprecation RENDER_FUNCTION) (3)",
-    "
-",
-    " at <Anonymous",
-    "name="testMixin"",
-    "label="test"",
-    "ref="VTU_COMPONENT"",
-    ">",
-    "
-",
-    " at <VTUROOT>",
-  ],
-]
-`;
-
-exports[`InputMixin InputMixin sets floating label on Edge: console-warn-snapshot 1`] = `
-[
-  [
-    "[Vue warn]: (deprecation RENDER_FUNCTION) (4)",
-    "
-",
-    " at <Anonymous",
-    "name="testMixin"",
-    "label="test"",
-    "ref="VTU_COMPONENT"",
-    ">",
-    "
-",
-    " at <VTUROOT>",
-  ],
-]
-`;
-
-exports[`InputMixin InputMixin uid is set: console-warn-snapshot 1`] = `
+exports[`InputMixin InputMixin id is set: console-warn-snapshot 1`] = `
 [
   [
     "[Vue warn]: (deprecation RENDER_FUNCTION) Vue 3's render function API has changed. You can opt-in to the new API with:
@@ -217,6 +181,60 @@ exports[`InputMixin InputMixin uid is set: console-warn-snapshot 1`] = `
 ",
     " at <Anonymous",
     "name="testMixin"",
+    "id="testId"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`InputMixin InputMixin sets floating label on Chrome: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (4)",
+    "
+",
+    " at <Anonymous",
+    "name="testMixin"",
+    "label="test"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`InputMixin InputMixin sets floating label on Edge: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (5)",
+    "
+",
+    " at <Anonymous",
+    "name="testMixin"",
+    "label="test"",
+    "ref="VTU_COMPONENT"",
+    ">",
+    "
+",
+    " at <VTUROOT>",
+  ],
+]
+`;
+
+exports[`InputMixin InputMixin uid is set when id prop is empty: console-warn-snapshot 1`] = `
+[
+  [
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (3)",
+    "
+",
+    " at <Anonymous",
+    "name="testMixin"",
     "ref="VTU_COMPONENT"",
     ">",
     "
@@ -229,7 +247,7 @@ exports[`InputMixin InputMixin uid is set: console-warn-snapshot 1`] = `
 exports[`InputMixin TestComponent without float labels: console-warn-snapshot 1`] = `
 [
   [
-    "[Vue warn]: (deprecation RENDER_FUNCTION) (11)",
+    "[Vue warn]: (deprecation RENDER_FUNCTION) (12)",
     "
 ",
     " at <Anonymous",

@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2021-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -7,11 +7,11 @@ of the MIT license. See the LICENSE file for details. -->
     <label
       v-if="label && isHtml"
       v-html="label"
-      :for="`${id}-date`"
+      :for="`${internalId}-date`"
       class="pe-none overflow-hidden text-nowrap" />
     <label
       v-else-if="label"
-      :for="`${id}-date`"
+      :for="`${internalId}-date`"
       class="pe-none overflow-hidden text-nowrap">
       {{ labelTranslation }}
     </label>
@@ -25,7 +25,7 @@ of the MIT license. See the LICENSE file for details. -->
           :class="{'is-invalid': errorMessages && errorMessages.length }"
           :disabled="disabled"
           :dropleft="dropleft"
-          :id="`${id}-date`"
+          :id="`${internalId}-date`"
           :description="description"
           :errors="errors"
           :is-html="isHtml"
@@ -43,7 +43,7 @@ of the MIT license. See the LICENSE file for details. -->
           :class="{'is-invalid': errorMessages && errorMessages.length }"
           :dropleft="dropleft"
           :disabled="disabled"
-          :id="`${id}-time`"
+          :id="`${internalId}-time`"
           :name="`${name}-time`"
           :show-seconds="showSeconds"
           :validation-immediate="validationImmediate"
