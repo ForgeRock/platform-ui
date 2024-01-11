@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -118,6 +118,7 @@ of the MIT license. See the LICENSE file for details. -->
             v-model="privilegeName"
             class="mb-4 flex-grow-1"
             :label="$t('pages.access.privilegeName')"
+            :name="`privilegeName_${index}`"
             :validation="privilegeNameValidation"
             @input="privilegeModel.name = $event" />
           <BCard
@@ -270,26 +271,23 @@ export default {
     },
     privilege: {
       type: Object,
-      default: () => {},
+      default: () => ({}),
     },
     identityObjectSchema: {
       type: Object,
-      default: () => {},
+      default: () => ({}),
     },
     index: {
       type: Number,
       default: -1,
-      required: false,
     },
     showHeader: {
       type: Boolean,
       default: true,
-      required: false,
     },
     showDelete: {
       type: Boolean,
       default: false,
-      required: false,
     },
   },
   data() {

@@ -7,7 +7,7 @@ of the MIT license. See the LICENSE file for details. -->
     <FrField
       v-model="timeframeOptionsValue"
       class="mb-3"
-      name="timeframe"
+      :name="`timeframe_${_uid}`"
       type="select"
       :options="timeframeOptions"
       :placeholder="$t('reports.tabs.runReport.timeframe.last7Days')"

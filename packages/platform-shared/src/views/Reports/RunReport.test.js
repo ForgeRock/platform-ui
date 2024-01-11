@@ -77,8 +77,6 @@ describe('Run Report component', () => {
     });
 
     const allKnownFields = [
-      ['only displays the timeframe field when "startDate" parameter received', 'fr-field-timeframe', 'startDate'],
-      ['only displays the timeframe field when "endDate" parameter received', 'fr-field-timeframe', 'endDate'],
       ['only displays the applications field when "applications" parameter received', 'fr-field-applications', 'applications'],
       ['only displays the applications field when "oauth2_applications" parameter received', 'fr-field-oauth-applications', 'oauth2_applications'],
       ['only displays the events field field when "events" parameter received', 'fr-field-events', 'events'],
@@ -90,6 +88,10 @@ describe('Run Report component', () => {
       ['only displays the status field when "status" parameter received', 'fr-field-status', 'status'],
       ['only displays the outcome field when "treeResult" parameter received', 'fr-field-outcome', 'treeResult'],
       ['only displays the users field when "user_names" parameter received', 'fr-field-users', 'user_names'],
+    ];
+    const timeframeFields = [
+      ['only displays the timeframe field when "startDate" parameter received', 'fr-field-timeframe', 'startDate'],
+      ['only displays the timeframe field when "endDate" parameter received', 'fr-field-timeframe', 'endDate'],
     ];
 
     it.each(allKnownFields)('%s', async (_, fieldTestId, parameter) => {
@@ -105,6 +107,20 @@ describe('Run Report component', () => {
       expect(field.exists()).toBe(true);
       jest.clearAllMocks();
     });
+
+    it.each(timeframeFields)('%s', async (_, fieldTestId, parameter) => {
+      fieldDataMocks();
+      wrapper = setup({ reportConfig: { parameters: { [parameter]: {} } } });
+      await flushPromises();
+
+      const fieldsContainer = findByTestId(wrapper, 'fr-run-report-container');
+      const fieldRows = fieldsContainer.findAll('.row');
+      expect(fieldRows.length).toBe(1);
+
+      const field = wrapper.find('[placeholder="Last 7 days"]');
+      expect(field.exists()).toBe(true);
+      jest.clearAllMocks();
+    });
   });
 
   describe('@components', () => {
@@ -117,7 +133,7 @@ describe('Run Report component', () => {
       });
 
       it('ensures that the "Last 7 days" datepicker values are the default values', () => {
-        const timeframeField = findByTestId(wrapper, 'fr-field-timeframe').find('.multiselect__placeholder');
+        const timeframeField = wrapper.find('[placeholder="Last 7 days"]').find('.multiselect__placeholder');
         expect(timeframeField.text()).toBe('Last 7 days');
       });
 
@@ -127,7 +143,7 @@ describe('Run Report component', () => {
         expect(datePickerStart.isVisible()).toBe(false);
         expect(datePickerEnd.isVisible()).toBe(false);
 
-        const timeFrameField = findByTestId(wrapper, 'fr-field-timeframe');
+        const timeFrameField = wrapper.find('[placeholder="Last 7 days"]');
         await timeFrameField.trigger('click');
 
         const customTimeframeOption = timeFrameField.findAll('li')[4].find('span');
@@ -148,7 +164,7 @@ describe('Run Report component', () => {
         const submitButton = findByTestId(wrapper, 'run-report-button');
         expect(submitButton.attributes('disabled')).toBeFalsy();
 
-        const timeFrameField = findByTestId(wrapper, 'fr-field-timeframe');
+        const timeFrameField = wrapper.find('[placeholder="Last 7 days"]');
         await timeFrameField.trigger('click');
 
         const customTimeframeOption = timeFrameField.findAll('li')[4].find('span');

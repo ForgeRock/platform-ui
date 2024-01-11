@@ -29,7 +29,7 @@ of the MIT license. See the LICENSE file for details. -->
       <template #suffix>
         <slot name="suffix" />
       </template>
-      <template #valueField="{ inputValue, selectedCondition, ruleChange, selectedProp }">
+      <template #valueField="{ inputValue, selectedCondition, ruleChange, selectedProp, uniqueName }">
         <template v-if="selectedCondition !== 'EXISTS'">
           <FrGovResourceSelect
             v-if="inputValue.type === 'managedObject'"
@@ -39,6 +39,7 @@ of the MIT license. See the LICENSE file for details. -->
           <FrField
             v-else
             v-model="inputValue.value"
+            :name="uniqueName"
             :disabled="disabled"
             :options="inputValue.options"
             :type="inputValue.type"

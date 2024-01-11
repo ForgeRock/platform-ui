@@ -45,7 +45,7 @@ of the MIT license. See the LICENSE file for details. -->
           <FrField
             v-model="permission.selected"
             class="mr-2"
-            name="columnSelected"
+            :name="`columnSelected_${permission.key}`"
             type="checkbox" />
           <span>
             {{ $t(permission.label) }}
