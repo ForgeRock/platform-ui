@@ -165,7 +165,7 @@ exports[`AddDelegateModal clicking save calls to add a task proxy: console-warn-
     " at <GovResourceSelect",
     "modelValue=""",
     "onUpdate:modelValue=fn",
-    "class="mb-3"",
+    "name="delegates"",
     " ...",
     ">",
   ],
@@ -793,9 +793,9 @@ exports[`AddDelegateModal clicking save calls to add a task proxy: console-warn-
     "
 ",
     " at <GovResourceSelect",
+    "name="delegates"",
     "class="mb-3"",
     "resource-path="user"",
-    "value=""",
     " ...",
     ">",
     "
@@ -843,7 +843,7 @@ exports[`AddDelegateModal clicking save calls to add a task proxy: console-warn-
 ",
     " at <InputLayout",
     "id="floatingLabelInput17"",
-    "name="resourceSelect"",
+    "name="delegates"",
     "description=""",
     " ...",
     ">",
@@ -870,9 +870,9 @@ exports[`AddDelegateModal clicking save calls to add a task proxy: console-warn-
     "
 ",
     " at <GovResourceSelect",
+    "name="delegates"",
     "class="mb-3"",
     "resource-path="user"",
-    "value=""",
     " ...",
     ">",
     "
@@ -924,7 +924,7 @@ exports[`AddDelegateModal clicking save calls to add a task proxy: console-warn-
 ",
     " at <InputLayout",
     "id="floatingLabelInput17"",
-    "name="resourceSelect"",
+    "name="delegates"",
     "description=""",
     " ...",
     ">",
@@ -951,9 +951,9 @@ exports[`AddDelegateModal clicking save calls to add a task proxy: console-warn-
     "
 ",
     " at <GovResourceSelect",
+    "name="delegates"",
     "class="mb-3"",
     "resource-path="user"",
-    "value=""",
     " ...",
     ">",
     "
@@ -997,7 +997,7 @@ exports[`AddDelegateModal clicking save calls to add a task proxy: console-warn-
 ",
     " at <InputLayout",
     "id="floatingLabelInput17"",
-    "name="resourceSelect"",
+    "name="delegates"",
     "description=""",
     " ...",
     ">",
@@ -1024,9 +1024,9 @@ exports[`AddDelegateModal clicking save calls to add a task proxy: console-warn-
     "
 ",
     " at <GovResourceSelect",
+    "name="delegates"",
     "class="mb-3"",
     "resource-path="user"",
-    "value=""",
     " ...",
     ">",
     "
@@ -1077,9 +1077,9 @@ exports[`AddDelegateModal clicking save calls to add a task proxy: console-warn-
     "
 ",
     " at <GovResourceSelect",
+    "name="delegates"",
     "class="mb-3"",
     "resource-path="user"",
-    "value=""",
     " ...",
     ">",
     "
@@ -1126,9 +1126,9 @@ exports[`AddDelegateModal clicking save calls to add a task proxy: console-warn-
     "
 ",
     " at <GovResourceSelect",
+    "name="delegates"",
     "class="mb-3"",
     "resource-path="user"",
-    "value=""",
     " ...",
     ">",
     "

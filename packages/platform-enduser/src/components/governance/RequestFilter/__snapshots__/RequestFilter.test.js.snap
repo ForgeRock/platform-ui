@@ -1032,7 +1032,7 @@ exports[`RequestFilter priorities has three priority checkboxes: console-warn-sn
     " at <GovResourceSelect",
     "modelValue="managed/user/all"",
     "onUpdate:modelValue=fn",
-    "class="mb-4"",
+    "name="requestedFor"",
     " ...",
     ">",
   ],
@@ -1175,7 +1175,7 @@ exports[`RequestFilter priorities has three priority checkboxes: console-warn-sn
 ",
     " at <InputLayout",
     "id="floatingLabelInput36"",
-    "name="resourceSelect"",
+    "name="requestedFor"",
     "description=""",
     " ...",
     ">",
@@ -1202,15 +1202,12 @@ exports[`RequestFilter priorities has three priority checkboxes: console-warn-sn
     "
 ",
     " at <GovResourceSelect",
+    "name="requestedFor"",
     "class="mb-4"",
     "first-option=",
     {
       "text": "governance.accessRequest.allRequesters",
       "value": "all",
-    },
-    "initial-data=",
-    {
-      "id": "all",
     },
     " ...",
     ">",
@@ -1248,15 +1245,12 @@ exports[`RequestFilter priorities has three priority checkboxes: console-warn-sn
     "
 ",
     " at <GovResourceSelect",
+    "name="requestedFor"",
     "class="mb-4"",
     "first-option=",
     {
       "text": "governance.accessRequest.allRequesters",
       "value": "all",
-    },
-    "initial-data=",
-    {
-      "id": "all",
     },
     " ...",
     ">",
@@ -1290,15 +1284,12 @@ exports[`RequestFilter priorities has three priority checkboxes: console-warn-sn
     "
 ",
     " at <GovResourceSelect",
+    "name="requestedFor"",
     "class="mb-4"",
     "first-option=",
     {
       "text": "governance.accessRequest.allRequesters",
       "value": "all",
-    },
-    "initial-data=",
-    {
-      "id": "all",
     },
     " ...",
     ">",

@@ -4019,7 +4019,7 @@ exports[`Approvals shows no data component when no requests are found: console-w
     " at <GovResourceSelect",
     "modelValue="managed/user/all"",
     "onUpdate:modelValue=fn",
-    "class="mb-4"",
+    "name="requestedFor"",
     " ...",
     ">",
   ],
@@ -4494,7 +4494,7 @@ exports[`Approvals shows no data component when no requests are found: console-w
 ",
     " at <InputLayout",
     "id="floatingLabelInput87"",
-    "name="resourceSelect"",
+    "name="requestedFor"",
     "description=""",
     " ...",
     ">",
@@ -4521,15 +4521,12 @@ exports[`Approvals shows no data component when no requests are found: console-w
     "
 ",
     " at <GovResourceSelect",
+    "name="requestedFor"",
     "class="mb-4"",
     "first-option=",
     {
       "text": "All Requesters",
       "value": "all",
-    },
-    "initial-data=",
-    {
-      "id": "all",
     },
     " ...",
     ">",
@@ -4639,15 +4636,12 @@ exports[`Approvals shows no data component when no requests are found: console-w
     "
 ",
     " at <GovResourceSelect",
+    "name="requestedFor"",
     "class="mb-4"",
     "first-option=",
     {
       "text": "All Requesters",
       "value": "all",
-    },
-    "initial-data=",
-    {
-      "id": "all",
     },
     " ...",
     ">",
@@ -4757,15 +4751,12 @@ exports[`Approvals shows no data component when no requests are found: console-w
     "
 ",
     " at <GovResourceSelect",
+    "name="requestedFor"",
     "class="mb-4"",
     "first-option=",
     {
       "text": "All Requesters",
       "value": "all",
-    },
-    "initial-data=",
-    {
-      "id": "all",
     },
     " ...",
     ">",

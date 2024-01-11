@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -11,7 +11,7 @@ of the MIT license. See the LICENSE file for details. -->
       @input="handleInput"
       @open="isOpen = true;"
       @search-change="debouncedSearch"
-      name="resourceSelect"
+      :name="name"
       open-direction="bottom"
       type="select"
       :description="description"
@@ -84,6 +84,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    name: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
@@ -107,7 +111,7 @@ export default {
       await this.getResourceList(false);
       this.handleInput(this.savedData?.id, true);
     } else {
-      this.getResourceList(true);
+      await this.getResourceList(true);
     }
   },
   computed: {
