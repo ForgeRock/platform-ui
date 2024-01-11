@@ -2444,6 +2444,7 @@
     "fullRecon": "Full Reconciliation",
     "hours": "hour(s)",
     "incrementalRecon": "Incremental Reconciliation",
+    "indefinitely": "Indefinitely",
     "invalidCron": "Invalid cron",
     "jobModal": {
       "chooseEntity": "Choose Entity to Scan",
@@ -2458,11 +2459,13 @@
       "queryFilterDescription": "Apply script only to a subset of {managedObj} by applying a query filter.",
       "queryFilterLabel": "Filter {managedObj}",
       "queryFilterPrefix": "Execute a script if",
+      "queryFilterValidation": "Please provide a valid query filter value.",
       "scriptDescription": "Execute a script at a scheduled interval.",
+      "scriptValidation": "Please provide a valid Script value.",
       "taskScannerDescription": "Scan a set of properties with a query filter at a scheduled interval, and execute a script on the objects returned by the query.",
       "taskState": "Task State",
       "taskStateCompletedLabel": "Completed",
-      "TaskStateDescription": "The names of the fields in which the start message, and the completed message are stored.",
+      "taskStateDescription": "The names of the fields in which the start message, and the completed message are stored.",
       "taskStateStartedLabel": "Started",
       "timezone": "Timezone",
       "timezoneMismatch": "Start and end times must have the same timezone offset"
