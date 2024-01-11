@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -12,7 +12,7 @@ of the MIT license. See the LICENSE file for details. -->
       <BListGroupItem
         v-for="(value, key) in keyValues"
         @click="editItem(key)"
-        :key="`${id}_keyvalue-${key}`"
+        :key="`${internalId}_keyvalue-${key}`"
         :active="currentKey === key"
         :style="{ cursor: currentKey ? 'default' : 'pointer' }">
         <FrKeyValuePanel
@@ -192,7 +192,6 @@ export default {
   },
   data() {
     return {
-      id: null,
       addedKeys: [],
       currentKey: null,
       validationRules: {},
@@ -218,7 +217,6 @@ export default {
     },
   },
   mounted() {
-    this.id = this._uid;
     if (this.showInitialAdd) {
       this.showAdd();
     }
