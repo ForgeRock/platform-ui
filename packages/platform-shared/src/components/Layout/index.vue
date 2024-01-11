@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -83,9 +83,19 @@ of the MIT license. See the LICENSE file for details. -->
             </a>
           </div>
           <div
-            v-if="buildNumber && buildDateTime"
-            class="mr-4 opacity-70">
-            {{ $t('common.buildNumber', {buildNumber, buildDateTime: $d(buildDateTime, 'buildDateTime')}) }}
+            v-if="releaseInfo"
+            class="mr-4 opacity-70"
+            data-testid="release-info">
+            <RouterLink
+              class="text-body"
+              :to="{
+                name: 'TenantSettings',
+                params: {
+                  resourceName: 'details',
+                }
+              }">
+              {{ $t('common.releaseInfo', { version: releaseInfo.currentVersion }) }}
+            </RouterLink>
           </div>
         </div>
       </footer>
@@ -177,18 +187,11 @@ export default {
       default: () => [],
     },
     /**
-     * Build number displayed in footer
+     * Tenant Release info displayed in footer
      */
-    buildNumber: {
-      type: String,
-      default: '',
-    },
-    /**
-     * Build date and time displayed in footer
-     */
-    buildDateTime: {
-      type: Date,
-      default: () => new Date(0),
+    releaseInfo: {
+      type: Object,
+      default: null,
     },
     systemNotification: {
       type: Object,
