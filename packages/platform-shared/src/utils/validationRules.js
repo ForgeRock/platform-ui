@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -48,7 +48,7 @@ export function getRules(i18n) {
   // errors if input value contains characters not of
   // alpha, numeric, dashes, spaces, periods, single/double quotes
   const email_from = (value) => {
-    const regex = /^([A-Z]|[0-9]| |_|-|'|"|\.)+$/ig;
+    const regex = /^([A-Z]|[0-9]| |_|-|'|"|\.)*$/ig;
     return regex.test(value) || i18n.global.t('common.policyValidationMessages.VALID_EMAIL_FROM_FORMAT');
   };
 
