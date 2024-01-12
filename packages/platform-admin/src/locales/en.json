@@ -414,7 +414,7 @@
       "newTheme": "New Theme",
       "noHostedPagesText": "There are no themes matching the search term.",
       "profilePage": {
-        "mockEmail": "bjensen@example.com",
+        "mockEmail": "bjensen{'@'}example.com",
         "mockName": "Barbara Jensen",
         "profile": "Profile",
         "oauthApplicationsPlaceholder": "(Authorized applications will appear here)",
@@ -966,14 +966,14 @@
     "numMinCharacters": "Number of minimum characters",
     "cannotInclude": "Cannot include",
     "restrictRepetitive": "Repetitive characters (e.g. aaa)",
-    "restrictCommon": "Commonly used passwords (e.g. p@ssw0rd, etc.)",
+    "restrictCommon": "Commonly used passwords (e.g. p{'@'}ssw0rd, etc.)",
     "restrictAttributes": "Part of {resourceName} attributes",
     "restrictAttributesPlaceholder": "Forbidden {resourceName} attributes",
     "mustContain": "Must contain",
     "reqUpper": "Upper case letter (English)",
     "reqLower": "Lower case letter (English)",
     "reqNumber": "Number (0-9)",
-    "reqSymbol": "Special character (e.g., !@#$%^&*)",
+    "reqSymbol": "Special character (e.g., !{'@'}#$%^&*)",
     "ofTheFollowing": "of the following:",
     "showAdvanced": "Show advanced options",
     "showBasic": "Show basic options",
@@ -3396,3 +3396,4 @@
     }
   }
 }
+
