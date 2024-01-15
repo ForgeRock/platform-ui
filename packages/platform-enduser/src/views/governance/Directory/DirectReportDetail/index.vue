@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -38,7 +38,7 @@ of the MIT license. See the LICENSE file for details. -->
               class="mr-1"
               aria-hidden="true"
               :name="tabItems[tabIndex].icon" />
-            {{ tabItems[tabIndex].displayName | pluralizeFilter }}
+            {{ pluralizeValue(tabItems[tabIndex].displayName) }}
           </template>
           <BDropdownItem
             v-for="(tab, index) in tabItems"
@@ -49,7 +49,7 @@ of the MIT license. See the LICENSE file for details. -->
               class="mr-3"
               aria-hidden="true"
               :name="tab.icon" />
-            {{ tab.displayName | pluralizeFilter }}
+            {{ pluralizeValue(tab.displayName) }}
           </BDropdownItem>
         </BDropdown>
         <BTabs
@@ -109,7 +109,7 @@ import {
 import { get } from 'lodash';
 import { mapState } from 'pinia';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
-import PluralizeFilter from '@forgerock/platform-shared/src/filters/PluralizeFilter';
+import { pluralizeValue } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
@@ -144,9 +144,6 @@ export default {
   mixins: [
     NotificationMixin,
   ],
-  filters: {
-    PluralizeFilter,
-  },
   setup() {
     const { setBreadcrumb } = useBreadcrumb();
     return { setBreadcrumb };
@@ -213,6 +210,7 @@ export default {
     },
   },
   methods: {
+    pluralizeValue,
     getDefaultSort(grantType) {
       switch (grantType) {
         case 'account':

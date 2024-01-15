@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -297,7 +297,7 @@ import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrNoData from '@forgerock/platform-shared/src/components/NoData';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
-import PluralizeFilter from '@forgerock/platform-shared/src/filters/PluralizeFilter';
+import { pluralizeValue } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
 import { getGovernanceFilter } from '@forgerock/platform-shared/src/utils/governance/filters';
 import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import FrSortDropdown from '@/components/governance/SortDropdown';
@@ -367,21 +367,21 @@ export default {
       applicationToFilterBy: '',
       catalogTabs: {
         application: {
-          capitalizedTitle: PluralizeFilter(capitalize(this.$t('governance.accessRequest.newRequest.application'))),
+          capitalizedTitle: pluralizeValue(capitalize(this.$t('governance.accessRequest.newRequest.application'))),
           capitalizedSingularTitle: capitalize(this.$t('governance.accessRequest.newRequest.application')),
-          lowercaseTitle: PluralizeFilter(this.$t('governance.accessRequest.newRequest.application')),
+          lowercaseTitle: pluralizeValue(this.$t('governance.accessRequest.newRequest.application')),
           itemType: 'accountGrant',
         },
         entitlement: {
-          capitalizedTitle: PluralizeFilter(capitalize(this.$t('governance.accessRequest.newRequest.entitlement'))),
+          capitalizedTitle: pluralizeValue(capitalize(this.$t('governance.accessRequest.newRequest.entitlement'))),
           capitalizedSingularTitle: capitalize(this.$t('governance.accessRequest.newRequest.entitlement')),
-          lowercaseTitle: PluralizeFilter(this.$t('governance.accessRequest.newRequest.entitlement')),
+          lowercaseTitle: pluralizeValue(this.$t('governance.accessRequest.newRequest.entitlement')),
           itemType: 'entitlementGrant',
         },
         role: {
-          capitalizedTitle: PluralizeFilter(capitalize(this.$t('governance.accessRequest.newRequest.role'))),
+          capitalizedTitle: pluralizeValue(capitalize(this.$t('governance.accessRequest.newRequest.role'))),
           capitalizedSingularTitle: capitalize(this.$t('governance.accessRequest.newRequest.role')),
-          lowercaseTitle: PluralizeFilter(this.$t('governance.accessRequest.newRequest.role')),
+          lowercaseTitle: pluralizeValue(this.$t('governance.accessRequest.newRequest.role')),
           itemType: 'roleMembership',
         },
       },
