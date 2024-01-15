@@ -197,7 +197,7 @@ of the MIT license. See the LICENSE file for details. -->
               class="mb-3"
               type="boolean"
               :disabled="disabled"
-              :label="$t('pages.access.applyFilter', { resource: $options.filters.PluralizeFilter(identityObjectSchema.title) })"
+              :label="$t('pages.access.applyFilter', { resource: pluralizeValue(identityObjectSchema.title) })"
               @input="toggleFilter" />
             <div
               v-if="filterOn"
@@ -235,7 +235,7 @@ import {
   BFormCheckbox,
   BTable,
 } from 'bootstrap-vue';
-import PluralizeFilter from '@forgerock/platform-shared/src/filters/PluralizeFilter';
+import { pluralizeValue } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrQueryFilterBuilder from '@forgerock/platform-shared/src/components/filterBuilder/QueryFilterBuilder';
@@ -253,9 +253,6 @@ export default {
     FrField,
     FrIcon,
     FrQueryFilterBuilder,
-  },
-  filters: {
-    PluralizeFilter,
   },
   mixins: [
     NotificationMixin,
@@ -413,6 +410,7 @@ export default {
     },
   },
   methods: {
+    pluralizeValue,
     /**
     * shows/hides QueryFilterBuilder component and sets privilegeModel filter value to empty string when turned off
     *

@@ -7,14 +7,14 @@
 
 import pluralize from 'pluralize';
 
-export default function pluralizeValue(value) {
+export function pluralizeValue(value) {
   if (process.env.VUE_APP_I18N_LOCALE === 'en') {
     return pluralize(value);
   }
   return value;
 }
 
-export function PluralizeSingular(value) {
+export function pluralizeSingular(value) {
   if (process.env.VUE_APP_I18N_LOCALE === 'en') {
     return pluralize.singular(value);
   }
