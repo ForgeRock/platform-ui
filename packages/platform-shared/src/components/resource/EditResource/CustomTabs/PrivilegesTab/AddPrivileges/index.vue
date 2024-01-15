@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -32,7 +32,7 @@ of the MIT license. See the LICENSE file for details. -->
                 class="mr-3"
                 :name="option.icon || 'settings_system_daydream'"
               />
-              {{ (option.text ? (option.text) : '') | PluralizeFilter }}
+              {{ pluralizeValue(option.text ? (option.text) : '') }}
               <small class="text-monospace text-muted ml-1">
                 {{ option.value }}
               </small>
@@ -42,7 +42,7 @@ of the MIT license. See the LICENSE file for details. -->
                 class="mr-3"
                 :name="option.icon || 'settings_system_daydream'"
               />
-              {{ (option.text ? (option.text) : '') | PluralizeFilter }}
+              {{ pluralizeValue(option.text ? (option.text) : '') }}
               <small class="text-monospace text-muted ml-1">
                 {{ option.value }}
               </small>
@@ -74,7 +74,7 @@ import {
   BButton,
 } from 'bootstrap-vue';
 import FrField from '@forgerock/platform-shared/src/components/Field';
-import PluralizeFilter from '@forgerock/platform-shared/src/filters/PluralizeFilter';
+import { pluralizeValue } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
 import IsFraasFilterMixin from '@forgerock/platform-shared/src/mixins/IsFraasFilterMixin';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import PrivilegeEditor from '../PrivilegeEditor';
@@ -86,9 +86,6 @@ export default {
     FrIcon,
     FrPrivilegeEditor: PrivilegeEditor,
     BButton,
-  },
-  filters: {
-    PluralizeFilter,
   },
   mixins: [
     IsFraasFilterMixin,
@@ -127,6 +124,7 @@ export default {
     },
   },
   methods: {
+    pluralizeValue,
     /**
     * Adds a new privilege to the newPrivileges array
     */
@@ -134,7 +132,7 @@ export default {
       if (this.identityObjectField.value) {
         this.newPrivileges.push({
           path: this.identityObjectField.value,
-          name: this.$options.filters.PluralizeFilter(this.schemaMap[this.identityObjectField.value].title),
+          name: pluralizeValue(this.schemaMap[this.identityObjectField.value].title),
           actions: [],
           filter: '',
           permissions: ['VIEW'],
