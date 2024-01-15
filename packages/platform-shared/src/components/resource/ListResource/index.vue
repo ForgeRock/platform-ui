@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2019-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2019-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -41,7 +41,7 @@ of the MIT license. See the LICENSE file for details. -->
       data-testid="loading-resources-spinner">
       <FrSpinner class="py-5" />
       <div class="text-center pb-4">
-        {{ $t('listResource.loadingResource', { resourceName: this.resourceTitle || resourceName | pluralizeFilter }) }}
+        {{ $t('listResource.loadingResource', { resourceName: pluralizeValue(this.resourceTitle || resourceName) }) }}
       </div>
     </div>
     <div
@@ -156,7 +156,7 @@ import FrDeleteModal from '@forgerock/platform-shared/src/components/DeleteModal
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import ResourceMixin from '@forgerock/platform-shared/src/mixins/ResourceMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
-import PluralizeFilter from '@forgerock/platform-shared/src/filters/PluralizeFilter';
+import { pluralizeValue } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
 import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
@@ -316,9 +316,6 @@ export default {
       return pluralize(capitalize(this.resourceTitle || this.resourceName));
     },
   },
-  filters: {
-    PluralizeFilter,
-  },
   mounted() {
     this.resourceName = this.getResourceName(this.routerParameters.resourceName);
     if (this.propColumns.length) {
@@ -367,6 +364,7 @@ export default {
     },
   },
   methods: {
+    pluralizeValue,
     filterChange(filter) {
       this.filter = filter;
       this.setHelpTextFromSearchLength();
