@@ -1394,6 +1394,10 @@
         "resetError": "There was an error trying to clear decisions"
       },
       "lineItemActivityModal": {
+        "certifiedItem": "Certified item",
+        "exceptionRequested": "Exception requested",
+        "noActivity": "No Activity",
+        "revokedItem": "Revoked item",
         "title": "Activity"
       },
       "lineItemAddCommentModal": {
