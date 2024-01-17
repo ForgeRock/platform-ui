@@ -255,8 +255,9 @@ export default {
 
       this.$emit('close');
     },
-    inputValueHandler(inputValue) {
-      this.floatLabels = this.floatingLabel && inputValue && inputValue.value !== null && inputValue.value.toString().length > 0 && !!this.label;
+    inputValueHandler(newVal) {
+      const value = typeof newVal === 'object' && Object.hasOwnProperty.call(newVal, 'value') ? newVal.value : newVal;
+      this.floatLabels = this.floatingLabel && value !== null && value.toString().length > 0 && !!this.label;
     },
     setInputValue(newVal) {
       if (newVal !== undefined && newVal !== null) {
