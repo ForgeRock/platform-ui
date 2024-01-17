@@ -83,11 +83,11 @@ describe('FilterBuilderRow', () => {
 
   it('should emit the rule-change and then clear the value input through the props', async () => {
     // set the input initial value
-    const inputFieldValue = wrapper.find('input[name="user_inputValue_0"]');
+    const inputFieldValue = wrapper.find('input[name="inputValue_user_2"]');
     inputFieldValue.setValue('Initial Value');
 
     // simulates the dropdown change
-    const propertySelector = wrapper.find('input[name="user_selectPropOptions_0"]');
+    const propertySelector = wrapper.find('input[name="selectPropOptions_user_2"]');
     propertySelector.setValue('Status');
     propertySelector.trigger('change');
 
