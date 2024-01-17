@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -1797,10 +1797,16 @@ describe('TaskList', () => {
         },
       };
       wrapper.vm.openActivityModal(item);
-      expect(wrapper.vm.currentLineItemActivity).toEqual([{
-        action: 'exception',
-        comment: 'exception comment',
-      }]);
+      expect(wrapper.vm.currentLineItemActivity).toEqual([
+        {
+          action: 'comment',
+          comment: 'test comment',
+        },
+        {
+          action: 'exception',
+          comment: 'exception comment',
+        },
+      ]);
     });
     it('should raise forward modal event with right modal id', () => {
       wrapper.vm.openForwardModal('1234', true);

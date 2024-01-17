@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -194,14 +194,22 @@ of the MIT license. See the LICENSE file for details. -->
         {{ getColumnData(data) }}
       </template>
       <template #cell(actions)="{ item }">
-        <BBadge
-          v-if="item.decision.certification.status === 'signed-off'"
-          :variant="getVariant(item.decision.certification.decision)"
-          class="w-100">
-          {{ item.decision.certification.decision === 'certify' && item.isAcknowledge
-            ? $t('governance.certificationTask.actions.acknowledge')
-            : startCase(item.decision.certification.decision) }}
-        </BBadge>
+        <template v-if="item.decision.certification.status === 'signed-off'">
+          <BBadge
+            :variant="getVariant(item.decision.certification.decision)"
+            @click="openActivityModal(item)"
+            :id="`itemDecision-${item.id}`"
+            class="w-100 cursor-pointer">
+            {{ item.decision.certification.decision === 'certify' && item.isAcknowledge
+              ? $t('governance.certificationTask.actions.acknowledge')
+              : startCase(item.decision.certification.decision) }}
+          </BBadge>
+          <BTooltip
+            placement="top"
+            :target="`itemDecision-${item.id}`"
+            triggers="hover"
+            :title="$t('governance.certificationTask.actions.viewActivity')" />
+        </template>
         <div
           v-else
           class="d-flex justify-content-end align-items-center">
@@ -343,6 +351,7 @@ import {
   get,
   isEmpty,
   pick,
+  sortBy as lodashSortBy,
   startCase,
 } from 'lodash';
 import {
@@ -418,6 +427,12 @@ const userRequiredParams = [
   'stateProvince',
   'telephoneNumber',
 ];
+
+const ACTIONS = new Map([
+  ['certify', 'certifiedItem'],
+  ['revoke', 'revokedItem'],
+  ['exception', 'exceptionRequested'],
+]);
 
 export default {
   name: 'TaskList',
@@ -1475,10 +1490,27 @@ export default {
       };
       this.$bvModal.show(this.getModalId('confirm-action'));
     },
+    /**
+     * Parse the activity information in the item and open the corresponding modal
+     * @param {Object} item all item information
+     */
     openActivityModal(item) {
-      const lineItemActivity = item?.decision?.certification?.comments;
-      const activityList = filter(lineItemActivity, (activity) => (activity.action !== 'comment'));
-      this.currentLineItemActivity = activityList;
+      const lineItemActivity = item?.decision?.certification;
+      const activityList = lineItemActivity?.comments;
+
+      if (lineItemActivity?.decision) {
+        // if the item has been certified it is added to the activity array
+        const { decision, decisionDate, decisionBy } = lineItemActivity;
+        const decisionItem = {
+          action: decision,
+          comment: this.$t(`governance.certificationTask.lineItemActivityModal.${ACTIONS.get(decision)}`),
+          timeStamp: decisionDate,
+          user: decisionBy,
+        };
+        activityList.push(decisionItem);
+      }
+      const sortedActivity = lodashSortBy(activityList, 'timeStamp');
+      this.currentLineItemActivity = sortedActivity;
       this.$bvModal.show(this.getModalId('activity'));
     },
     openViewCommentsModal(activity, lineItem) {
