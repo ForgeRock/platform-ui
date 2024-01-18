@@ -39,6 +39,7 @@ const defaultState = {
   workforceEnabled: false,
   managedObjectMinimumUIFilterLength: {},
   maxIdleExpirationTime: null,
+  promoteAppsViaApi: false,
 };
 
 const mutations = {
@@ -97,6 +98,9 @@ const mutations = {
       }
       if (env.VUE_APP_FRAAS_PROMOTION_CONFIG_EGRESS_URL) {
         state.fraasPromotionEgressUrl = env.VUE_APP_FRAAS_PROMOTION_CONFIG_EGRESS_URL;
+      }
+      if (env.VUE_APP_PROMOTE_APPS_VIA_API === true || env.VUE_APP_PROMOTE_APPS_VIA_API === 'true') {
+        state.promoteAppsViaApi = env.VUE_APP_PROMOTE_APPS_VIA_API;
       }
     }
 
