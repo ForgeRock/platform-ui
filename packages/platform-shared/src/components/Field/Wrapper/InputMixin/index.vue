@@ -11,8 +11,6 @@ import {
 } from 'lodash';
 import uuid from 'uuid/v4';
 
-window.fieldCounter = 0;
-
 export default {
   name: 'InputMixin',
   props: {
