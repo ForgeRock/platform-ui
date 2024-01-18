@@ -1,5 +1,5 @@
 /**
- * Copyright 2021 ForgeRock AS. All Rights Reserved
+ * Copyright 2021-2024 ForgeRock AS. All Rights Reserved
  *
  * Use of this code requires a commercial software license with ForgeRock AS
  * or with one of its affiliates. All use shall be exclusively subject
@@ -13,7 +13,12 @@ const baseDir = path.dirname(path.dirname(__dirname));
 
 beforeEach(() => {
   jest.spyOn(console, 'error');
-  jest.spyOn(console, 'warn');
+  /**
+   * Capture of warnings in snapshot files temporarily disabled whilst
+   * we're using Vue 3 compat and bootstrap vue for Vue 2 as this generates
+   * huge numbers of warnings and snapshots that drown out useful information
+   */
+  // jest.spyOn(console, 'warn');
 });
 
 function cleanFilepaths(string) {
@@ -32,7 +37,7 @@ function snapshotCalls(fn, snapshotName) {
 
 afterEach(() => {
   snapshotCalls(console.error, 'console-error-snapshot');
-  snapshotCalls(console.warn, 'console-warn-snapshot');
+  // snapshotCalls(console.warn, 'console-warn-snapshot');
   console.error.mockRestore();
-  console.warn.mockRestore();
+  // console.warn.mockRestore();
 });
