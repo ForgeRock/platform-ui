@@ -16,6 +16,7 @@
     "EmailTemplates": "Email Templates",
     "EmailTemplatePreview": "Email Template Preview",
     "ESV": "Environment Secrets & Variables",
+    "GovernanceEvents": "Governance Events",
     "HostedPages": "Hosted Pages",
     "Jobs": "Jobs",
     "Journeys": "Journeys",
@@ -70,6 +71,7 @@
     "Events": "Event Hooks",
     "Forbidden": "Forbidden",
     "GatewaysAndAgents": "Gateways And Agents",
+    "GovernanceEvents": "Governance Events",
     "HostedPages": "Hosted Pages",
     "HostedPagesEdit": "Edit Hosted Pages",
     "hostedPagesSettings": "Hosted Pages Settings",
@@ -120,6 +122,8 @@
     "email": "Email",
     "entitlements": "Entitlements",
     "glossary": "Glossary",
+    "governance": "Governance",
+    "governanceEvents": "Events",
     "hostedPages": "Hosted Pages",
     "identities": "Identities",
     "identityManagement": "Identity Management",
@@ -2938,6 +2942,12 @@
           "notFoundDescription": "Try a new search in the seach box above.",
           "failedToLoad": "Failed to load entitlement's users"
         }
+      }
+    },
+    "events": {
+      "listView": {
+        "title": "Governance Events",
+        "subtitle": "Trigger workflows or certifications based on user events."
       }
     },
     "glossary": {
