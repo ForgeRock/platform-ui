@@ -34,6 +34,7 @@ import 'prismjs/themes/prism.css';
 import 'vue-prism-editor/dist/VuePrismEditor.css';
 import blurOnEscape from '@forgerock/platform-shared/src/utils/codeEditor';
 import { useField } from 'vee-validate';
+import uuid from 'uuid/v4';
 import { toRef } from 'vue';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
@@ -60,7 +61,7 @@ export default {
   setup(props) {
     const {
       value: inputValue, errors: fieldErrors, handleBlur,
-    } = useField(() => props.name, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: '', bails: false });
+    } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: '', bails: false });
 
     // validationListeners: Contains custom event listeners for validation.
     // Since vee-validate +4 removes the interaction modes, this custom listener is added

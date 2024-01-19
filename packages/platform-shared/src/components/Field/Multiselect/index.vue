@@ -90,6 +90,7 @@ import {
 import { useField } from 'vee-validate';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin/';
 import { toRef } from 'vue';
+import uuid from 'uuid/v4';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
 // import vue-multiselect from src because dist min/uglified package gets removed in build
@@ -167,7 +168,7 @@ export default {
   setup(props) {
     const {
       value: inputValue, errors: fieldErrors,
-    } = useField(() => props.name, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: [], bails: false });
+    } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: [], bails: false });
     return { inputValue, fieldErrors };
   },
   data() {
