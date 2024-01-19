@@ -108,7 +108,7 @@ export default {
   setup(props) {
     const {
       value: inputValue, errors,
-    } = useField(() => props.name, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: props.value });
+    } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: props.value });
 
     return {
       inputValue, errors,

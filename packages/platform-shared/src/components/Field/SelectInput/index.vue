@@ -75,6 +75,7 @@ import {
 import vueMultiSelectOverrides from '@forgerock/platform-shared/src/composables/vueMultiSelectOverrides';
 
 import { useField } from 'vee-validate';
+import uuid from 'uuid/v4';
 // import vue-multiselect from src because dist min/uglified package gets removed in build
 import VueMultiSelect from '../../../../../../node_modules/vue-multiselect/src/index';
 import FrInputLayout from '../Wrapper/InputLayout';
@@ -149,7 +150,7 @@ export default {
   setup(props, context) {
     const {
       value: inputValue, errors: fieldErrors,
-    } = useField(() => props.name, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: '', bails: false });
+    } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: '', bails: false });
 
     const hasPrependBtn = ref(Object.keys(context.slots).includes('prependButton'));
     const isExpanded = ref(false);

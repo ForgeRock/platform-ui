@@ -32,10 +32,6 @@ export function getRules(i18n) {
     return regex.test(value) || i18n.global.t('common.policyValidationMessages.alphaNumericLowerCaseOnly');
   };
 
-  // Checkbox rule
-  // added for certification
-  const atLeastOneOfThreeSelected = (value, [checkbox_1, checkbox_2]) => value || checkbox_1 || checkbox_2 || i18n.global.t('common.policyValidationMessages.AT_LEAST_ONE_CHECKBOX');
-
   // Date rule
   // added for workflow
   const date_format = (value) => value.match(/^\d{2}[.//]\d{2}[.//]\d{4}$/) || i18n.global.t('common.policyValidationMessages.dateFormat');
@@ -187,7 +183,6 @@ export function getRules(i18n) {
     alpha_dash_spaces,
     alpha_num,
     alpha_num_lower,
-    atLeastOneOfThreeSelected,
     date_format,
     email,
     email_from,

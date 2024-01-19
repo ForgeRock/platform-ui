@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -79,16 +79,19 @@ describe('ObjectTypeEditor', () => {
         patch: () => Promise.reject(error400),
       }
     ));
-    const setErrorsSpy = jest.spyOn(wrapper.vm.$refs.observer, 'setErrors');
+    const setFieldErrorSpy = jest.spyOn(wrapper.vm.$refs.observer, 'setFieldError');
     jest.spyOn(wrapper.vm, 'findPolicyError').mockImplementation(() => ([
       {
         exists: true,
-        field: 'field',
+        field: 'testKey',
         msg: 'errorMessage',
       },
     ]));
     await wrapper.vm.saveResource();
-    expect(setErrorsSpy).toHaveBeenCalledWith({ field: ['errorMessage'] });
+    const mockCalls = setFieldErrorSpy.mock.calls;
+    expect(mockCalls.length).toBe(1);
+    expect(mockCalls[0][0].startsWith('testKey')).toBe(true);
+    expect(mockCalls[0][1]).toBe('errorMessage');
   });
 
   it('updates field', () => {
