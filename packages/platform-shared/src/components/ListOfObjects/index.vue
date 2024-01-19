@@ -186,7 +186,7 @@ export default {
     const name = props.label || uuid();
     const {
       value: listValues, errors, setErrors,
-    } = useField(() => name, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: [], bails: false });
+    } = useField(() => `${name}-id-${uuid()}`, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: [], bails: false });
 
     return { listValues, errors, setErrors };
   },
