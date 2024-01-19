@@ -501,6 +501,10 @@
     "uncategorizedJourneys": "Uncategorized",
     "filterNodes": "Filter nodes",
     "theme": "Theme",
+    "poweredBy": "Powered by",
+    "support": "Support",
+    "verifiedBy": "Verified by Ping Identity",
+    "backstage": "Backstage",
     "editModal": {
       "treeCategoryDescription": "Use tags to allow categorization and enhance searchability.",
       "treeNameDescription": "Human-friendly name for this user flow.",
