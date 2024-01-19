@@ -51,6 +51,7 @@ import { useField } from 'vee-validate';
 import { BFormCheckbox } from 'bootstrap-vue';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import { toRef } from 'vue';
+import uuid from 'uuid/v4';
 import InputMixin from '../Wrapper/InputMixin';
 
 /**
@@ -80,7 +81,9 @@ export default {
     },
   },
   setup(props) {
-    const { value: inputValue } = useField(() => props.name, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, type: 'checkbox', initialValue: '' });
+    const {
+      value: inputValue,
+    } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, type: 'checkbox', initialValue: '' });
     return { inputValue };
   },
   computed: {

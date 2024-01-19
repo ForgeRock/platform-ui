@@ -105,6 +105,7 @@ import {
   xor,
 } from 'lodash';
 import { useField } from 'vee-validate';
+import uuid from 'uuid/v4';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrValidationError from '@forgerock/platform-shared/src/components/ValidationErrorList';
 import { createAriaDescribedByList } from '@forgerock/platform-shared/src/utils/accessibilityUtils';
@@ -186,7 +187,7 @@ export default {
 
     const {
       value: keyValues, errors: fieldErrors, setErrors,
-    } = useField(() => props.name, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue });
+    } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue });
 
     return { keyValues, fieldErrors, setErrors };
   },

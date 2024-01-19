@@ -102,6 +102,7 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrListField from '@forgerock/platform-shared/src/components/ListField';
 import ListsMixin from '@forgerock/platform-shared/src/mixins/ListsMixin';
+import { setFieldError } from '@forgerock/platform-shared/src/utils/veeValidateUtils';
 
 /**
  * @description Displays a users profile, auto generates fields based off of resource schema. Currently only displays strings, numbers and booleans. In the case of a policy
@@ -161,8 +162,9 @@ export default {
     };
   },
   setup() {
-    const { meta, setErrors } = useForm();
-    return { meta, setErrors };
+    const veeValidateInstance = useForm();
+    const { meta } = veeValidateInstance;
+    return { meta, veeValidateInstance };
   },
   methods: {
     /**
@@ -238,9 +240,7 @@ export default {
             if (generatedErrors.length > 0) {
               each(generatedErrors, (generatedError) => {
                 if (generatedError.exists) {
-                  this.setErrors({
-                    [generatedError.field]: [generatedError.msg],
-                  });
+                  setFieldError(generatedError.field, generatedError.msg, this.veeValidateInstance);
                 }
               });
             } else {

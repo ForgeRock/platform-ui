@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2019-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2019-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -84,7 +84,7 @@ describe('CreateResource.vue', () => {
       formFields: {},
     });
 
-    wrapper.vm.$refs.observer.setErrors = jest.fn();
+    wrapper.vm.$refs.observer.getValues = jest.fn().mockReturnValue([]);
     wrapper.vm.$refs.observer.validate = jest.fn().mockImplementation(() => Promise.resolve({ valid: false }));
   });
   afterEach(() => {

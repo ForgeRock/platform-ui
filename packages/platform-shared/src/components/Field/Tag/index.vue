@@ -83,6 +83,7 @@ of the MIT license. See the LICENSE file for details. -->
 import { cloneDeep, isEqual } from 'lodash';
 import { BFormTags, VBTooltip } from 'bootstrap-vue';
 import { useField } from 'vee-validate';
+import uuid from 'uuid/v4';
 import Draggable from 'vuedraggable';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { toRef } from 'vue';
@@ -108,7 +109,7 @@ export default {
   setup(props) {
     const {
       value: inputValue, errors: fieldErrors, handleBlur,
-    } = useField(() => props.name, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: [], bails: false });
+    } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: [], bails: false });
 
     // validationListeners: Contains custom event listeners for validation.
     // Since vee-validate +4 removes the interaction modes, this custom listener is added

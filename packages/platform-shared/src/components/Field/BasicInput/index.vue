@@ -126,6 +126,7 @@ import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import { createAriaDescribedByList } from '@forgerock/platform-shared/src/utils/accessibilityUtils';
 import { useField } from 'vee-validate';
 import { toRef } from 'vue';
+import uuid from 'uuid/v4';
 import FrInputLayout from '../Wrapper/InputLayout';
 import InputMixin from '../Wrapper/InputMixin';
 
@@ -200,7 +201,7 @@ export default {
   setup(props) {
     const {
       value: inputValue, errors: fieldErrors, meta: { valid }, handleBlur,
-    } = useField(() => props.name, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: '', bails: false });
+    } = useField(() => `${props.name}-id-${uuid()}`, toRef(props, 'validation'), { validateOnMount: props.validationImmediate, initialValue: '', bails: false });
 
     // validationListeners: Contains custom event listeners for validation.
     // Since vee-validate +4 removes the interaction modes, this custom listener is added
