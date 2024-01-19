@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -70,18 +70,18 @@ describe('flags', () => {
   });
 
   describe(('isRuleBased'), () => {
-    it('returns false if not a role grant', () => {
+    it('returns false if no grant relationship', () => {
       expect(isRuleBased(roleBasedGrant)).toBeFalsy();
     });
 
-    it('returns false if a role grant with no condition', () => {
-      const roleGrant = { role: {} };
-      expect(isRuleBased(roleGrant)).toBeFalsy();
+    it('returns false if a grant with no condition', () => {
+      const grant = { relationship: { conditional: false } };
+      expect(isRuleBased(grant)).toBeFalsy();
     });
 
-    it('returns true if a role grant with a condition', () => {
-      const roleGrant = { role: { condition: 'test' } };
-      expect(isRuleBased(roleGrant)).toBeTruthy();
+    it('returns true if a grant with a condition', () => {
+      const grant = { relationship: { conditional: true } };
+      expect(isRuleBased(grant)).toBeTruthy();
     });
   });
 
@@ -95,7 +95,7 @@ describe('flags', () => {
     });
 
     it('returns true if a rule based', () => {
-      const roleGrant = { role: { condition: 'test' } };
+      const roleGrant = { relationship: { conditional: true } };
       expect(isAcknowledgeType(roleGrant)).toBeTruthy();
     });
   });
