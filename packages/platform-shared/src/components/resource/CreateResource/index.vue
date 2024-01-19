@@ -159,6 +159,7 @@ import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import FrListField from '@forgerock/platform-shared/src/components/ListField';
 import ListsMixin from '@forgerock/platform-shared/src/mixins/ListsMixin';
+import { setFieldError } from '@forgerock/platform-shared/src/utils/veeValidateUtils';
 import CustomStep from './CustomStep/index';
 
 /**
@@ -321,9 +322,7 @@ export default {
       if (generatedErrors.length > 0) {
         each(generatedErrors, (generatedError) => {
           if (generatedError.exists) {
-            this.$refs.observer.setErrors({
-              [generatedError.field]: [generatedError.msg],
-            });
+            setFieldError(generatedError.field, generatedError.msg, this.$refs.observer);
             if (generatedError.field === 'password') {
               passwordErrors.push(generatedError.msg);
             }
