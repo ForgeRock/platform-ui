@@ -441,7 +441,9 @@ describe('Component Test', () => {
       await flushPromises();
 
       wrapper.vm.step = new FRStep(stepPayload);
-      await wrapper.setProps({ journeyFocusFirstFocusableItemEnabled: true });
+      await wrapper.setProps({ journeyFocusFirstFocusableItemEnabled: true, themeLoading: true });
+      await flushPromises();
+      await wrapper.setProps({ themeLoading: false });
       await flushPromises();
 
       expect(wrapper.vm.componentList[0].callbackSpecificProps.autofocus).toBeTruthy();
