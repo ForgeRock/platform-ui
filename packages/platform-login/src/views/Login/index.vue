@@ -627,10 +627,10 @@ export default {
       });
   },
   watch: {
-    journeyFocusFirstFocusableItemEnabled(enabled) {
+    themeLoading(themeLoading) {
       // IAM-5201 Unfortunately since the theme payload is async, the journey form props are set before the journey theme data is available.
-      // this makes it so that the form is rebuilt if journeyFocusFirstFocusableItemEnabled is true so autofocus is set
-      if (enabled) {
+      // this makes it so that the form is rebuilt if themeLoading is false so autofocus is set
+      if (!themeLoading) {
         this.loading = true;
         this.buildTreeForm();
         this.loading = false;
