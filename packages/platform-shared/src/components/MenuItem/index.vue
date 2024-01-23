@@ -3,18 +3,62 @@
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <!-- Item is a divider -->
-  <BDropdownDivider
-    v-if="isDivider && showItemForUser" />
-  <!-- Item opens a modal -->
-  <li
-    v-else-if="modal && showItemForUser && showItemForPrivileges"
-    :role="isNav ? '' : 'presentation'">
-    <BButton
+  <template v-if="showItemForUser && showItemForStoreValues">
+    <!-- Item is a divider -->
+    <BDropdownDivider v-if="isDivider" />
+    <!-- Item opens a modal -->
+    <li
+      v-else-if="modal && showItemForPrivileges"
+      :role="isNav ? '' : 'presentation'">
+      <BButton
+        :aria-label="$t(displayName)"
+        :class="[{ 'nav-link': isNav, 'dropdown-item': !isNav }, 'd-flex align-items-center rounded-0']"
+        :role="isNav ? '' : 'menuitem'"
+        @click="$root.$emit('bv::show::modal', modal)">
+        <FrIcon
+          v-if="icon"
+          class="mr-3"
+          :name="icon" />
+        <span class="menu-item-text">
+          {{ $t(displayName) }}
+        </span>
+      </BButton>
+    </li>
+    <!-- Item will change route or open a new tab -->
+    <Component
+      v-else-if="(url || routeTo && routeTo.name)"
       :aria-label="$t(displayName)"
-      :class="[{ 'nav-link': isNav, 'dropdown-item': !isNav }, 'd-flex align-items-center rounded-0']"
-      :role="isNav ? '' : 'menuitem'"
-      @click="$root.$emit('bv::show::modal', modal)">
+      :href="url"
+      :is="bootstrapComponent"
+      :link-attrs="isNav ? {'aria-label': $t(displayName)} : null"
+      :link-class="'d-flex align-items-center'"
+      :link-classes="'d-flex align-items-center'"
+      :target="url ? '_blank' : ''"
+      :to="routeTo">
+      <div class="d-flex justify-content-between align-items-center pr-4">
+        <FrIcon
+          v-if="icon"
+          class="mr-3"
+          :name="icon" />
+        <span class="menu-item-text">
+          {{ $t(displayName) }}
+        </span>
+        <BBadge
+          v-if="showBadgeWithContentFromStore && badgeContent(showBadgeWithContentFromStore)"
+          class="ml-1"
+          variant="light"
+          pill>
+          {{ badgeContent(showBadgeWithContentFromStore) }}
+        </BBadge>
+      </div>
+    </Component>
+    <!-- Basic menu item that just emits event -->
+    <Component
+      v-else-if="event"
+      :is="bootstrapComponent"
+      :active="active"
+      @click="$emit('item-click', event)"
+      :link-class="'d-flex align-items-center'">
       <FrIcon
         v-if="icon"
         class="mr-3"
@@ -22,98 +66,38 @@ of the MIT license. See the LICENSE file for details. -->
       <span class="menu-item-text">
         {{ $t(displayName) }}
       </span>
-    </BButton>
-  </li>
-  <!-- Item will change route or open a new tab -->
-  <Component
-    v-else-if="(url || routeTo && routeTo.name) && showItemForUser && showItemForStoreValues"
-    :aria-label="$t(displayName)"
-    :href="url"
-    :is="bootstrapComponent"
-    :link-attrs="isNav ? {'aria-label': $t(displayName)} : null"
-    :link-class="'d-flex align-items-center'"
-    :link-classes="'d-flex align-items-center'"
-    :target="url ? '_blank' : ''"
-    :to="routeTo">
-    <div class="d-flex justify-content-between align-items-center pr-4">
-      <FrIcon
-        v-if="icon"
-        class="mr-3"
-        :name="icon" />
-      <span class="menu-item-text">
-        {{ $t(displayName) }}
-      </span>
-      <BBadge
-        v-if="showBadgeWithContentFromStore && badgeContent(showBadgeWithContentFromStore)"
-        class="ml-1"
-        variant="light"
-        pill>
-        {{ badgeContent(showBadgeWithContentFromStore) }}
-      </BBadge>
-    </div>
-  </Component>
-  <!-- Basic menu item that just emits event -->
-  <Component
-    v-else-if="event && showItemForUser"
-    :is="bootstrapComponent"
-    :active="active"
-    @click="$emit('item-click', event)"
-    :link-class="'d-flex align-items-center'">
-    <FrIcon
-      v-if="icon"
-      class="mr-3"
-      :name="icon" />
-    <span class="menu-item-text">
-      {{ $t(displayName) }}
-    </span>
-  </Component>
-  <!-- Item is an expandable menu with a submenu -->
-  <li
-    v-else-if="subItems.length && showItemForUser"
-    class="fr-menu-item-group"
-    :role="isNav ? '' : 'presentation'">
-    <BButton
-      @click="isExpanded = !isExpanded"
-      class="dropdown-toggle d-flex align-items-center rounded-0"
-      :aria-expanded="isExpanded"
-      :aria-label="$t(displayName)"
-      :role="isNav ? '' : 'menuitem'">
-      <FrIcon
-        v-if="icon"
-        class="mr-3"
-        :name="icon" />
-      <span class="menu-item-text">
-        {{ $t(displayName) }}
-      </span>
-    </BButton>
-    <BCollapse
-      :id="`collapse-${displayName.split(' ').join('-')}`"
-      class="fr-menu-item-submenuitems"
-      tag="ul"
-      v-model="isExpanded">
-      <template v-for="(subItem, subIndex) in subItems">
-        <Component
-          v-if="subItem.event"
-          :active="subItem.active"
-          :key="`menu_item_event_${displayName}_${subIndex}`"
-          :is="bootstrapComponent"
-          @click="$emit('item-click', subItem.event)">
-          <FrIcon
-            v-if="subItem.icon"
-            class="mr-3"
-            :name="subItem.icon" />
-          <span class="menu-item-text">
-            {{ $t(subItem.displayName) }}
-          </span>
-        </Component>
-        <Component
-          v-else-if="showSubItemForUser(subItem.showForRoles)"
-          :key="`menu_item_${displayName}_${subIndex}`"
-          :is="bootstrapComponent"
-          :href="subItem.url"
-          :target="subItem.url ? '_blank' : ''"
-          :to="subItem.routeTo">
-          <div class="d-flex justify-content-between align-items-center pr-4">
+    </Component>
+    <!-- Item is an expandable menu with a submenu -->
+    <li
+      v-else-if="subItems.length"
+      class="fr-menu-item-group"
+      :role="isNav ? '' : 'presentation'">
+      <BButton
+        @click="isExpanded = !isExpanded"
+        class="dropdown-toggle d-flex align-items-center rounded-0"
+        :aria-expanded="isExpanded"
+        :aria-label="$t(displayName)"
+        :role="isNav ? '' : 'menuitem'">
+        <FrIcon
+          v-if="icon"
+          class="mr-3"
+          :name="icon" />
+        <span class="menu-item-text">
+          {{ $t(displayName) }}
+        </span>
+      </BButton>
+      <BCollapse
+        :id="`collapse-${displayName.split(' ').join('-')}`"
+        class="fr-menu-item-submenuitems"
+        tag="ul"
+        v-model="isExpanded">
+        <template v-for="(subItem, subIndex) in subItems">
+          <Component
+            v-if="subItem.event"
+            :active="subItem.active"
+            :key="`menu_item_event_${displayName}_${subIndex}`"
+            :is="bootstrapComponent"
+            @click="$emit('item-click', subItem.event)">
             <FrIcon
               v-if="subItem.icon"
               class="mr-3"
@@ -121,18 +105,35 @@ of the MIT license. See the LICENSE file for details. -->
             <span class="menu-item-text">
               {{ $t(subItem.displayName) }}
             </span>
-            <BBadge
-              v-if="badgeContent(subItem.showBadgeWithContentFromStore)"
-              class="ml-1"
-              variant="light"
-              pill>
-              {{ badgeContent(subItem.showBadgeWithContentFromStore) }}
-            </BBadge>
-          </div>
-        </Component>
-      </template>
-    </BCollapse>
-  </li>
+          </Component>
+          <Component
+            v-else-if="showSubItemForUser(subItem.showForRoles) && showSubItemForStoreValues(subItem.showForStoreValues)"
+            :key="`menu_item_${displayName}_${subIndex}`"
+            :is="bootstrapComponent"
+            :href="subItem.url"
+            :target="subItem.url ? '_blank' : ''"
+            :to="subItem.routeTo">
+            <div class="d-flex justify-content-between align-items-center pr-4">
+              <FrIcon
+                v-if="subItem.icon"
+                class="mr-3"
+                :name="subItem.icon" />
+              <span class="menu-item-text">
+                {{ $t(subItem.displayName) }}
+              </span>
+              <BBadge
+                v-if="badgeContent(subItem.showBadgeWithContentFromStore)"
+                class="ml-1"
+                variant="light"
+                pill>
+                {{ badgeContent(subItem.showBadgeWithContentFromStore) }}
+              </BBadge>
+            </div>
+          </Component>
+        </template>
+      </BCollapse>
+    </li>
+  </template>
 </template>
 
 <script>
@@ -312,9 +313,19 @@ export default {
     badgeContent(showBadgeWithContentFromStore) {
       return showBadgeWithContentFromStore ? this.$store.state[showBadgeWithContentFromStore] : '';
     },
-    // If the item is restricted by roles, only display it to users who have at least one of the required roles
+    /**
+     * If the item is restricted by roles, only display it to users who have at least one of the required roles
+     * @param {Array} showForRoles list of roles allowed to view subItem
+     */
     showSubItemForUser(showForRoles) {
       return !showForRoles?.length || this.allRoles.some((userRole) => showForRoles.includes(userRole));
+    },
+    /**
+     * If the item is restricted by store values, only display it in environments that have the required environment variable set
+     * @param {Array} showForStoreValues list of environment variables subItem is permitted to appear for
+     */
+    showSubItemForStoreValues(showForStoreValues) {
+      return !showForStoreValues?.length || showForStoreValues.every((storeValue) => !!get(this.$store.state, storeValue, false));
     },
     /**
      * Determine whether or not the current item should be expanded if it is a menu, based on the route name
