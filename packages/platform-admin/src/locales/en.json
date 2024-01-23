@@ -2945,9 +2945,20 @@
       }
     },
     "events": {
+      "event": "Event",
       "listView": {
+        "action": "Action",
+        "certification": "Certification",
+        "create": "created",
+        "errorGetData": "There was an error retrieving events",
+        "eventType": "Event Type",
+        "eventTypeValue": "{entityType} {mutationType}",
+        "delete": "deleted",
+        "noProperties": "There are no events to show",
+        "orchestration": "Workflow",
+        "subtitle": "Trigger workflows or certifications based on user events.",
         "title": "Governance Events",
-        "subtitle": "Trigger workflows or certifications based on user events."
+        "update": "updated"
       }
     },
     "glossary": {
