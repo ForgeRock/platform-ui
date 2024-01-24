@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -64,83 +64,9 @@ of the MIT license. See the LICENSE file for details. -->
         </BRow>
       </template>
       <template #body="slotData">
-        <BRow>
-          <BCol
-            v-if="slotData.map"
-            md="5">
-            <div class="w-100">
-              <div class="mb-2">
-                <h5 class="small">
-                  {{ $t('pages.profile.trustedDevices.recentActivity') }}
-                </h5>
-              </div>
-              <img
-                class="mb-3 w-100"
-                :src="slotData.map">
-              <div class="media">
-                <FrIcon
-                  class="mr-2 mt-1 text-muted"
-                  name="place"
-                />
-                <div class="media-body">
-                  <div class="bold">
-                    {{ slotData.formattedAddress }}
-                  </div>
-                  <p class="text-muted">
-                    {{ slotData.lastLogin }}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </BCol>
-          <BCol>
-            <div>
-              <div
-                v-if="slotData.os"
-                class="mb-3">
-                <h5 class="small">
-                  {{ $t('pages.profile.trustedDevices.os') }}
-                </h5>
-                <p class="bold">
-                  {{ slotData.os }}
-                </p>
-              </div>
-              <div
-                v-if="slotData.browser"
-                class="mb-3">
-                <h5 class="small">
-                  {{ $t('pages.profile.trustedDevices.browser') }}
-                </h5>
-                <p class="bold">
-                  {{ slotData.browser }}
-                </p>
-              </div>
-              <div v-if="slotData.cpu">
-                <h5 class="small">
-                  {{ $t('pages.profile.trustedDevices.cpu') }}
-                </h5>
-                <p class="bold">
-                  {{ slotData.cpu }}
-                </p>
-              </div>
-            </div>
-          </BCol>
-        </BRow>
-        <div
-          class="d-flex justify-content-start"
-          v-if="!slotData.isCurrent">
-          <BButton
-            variant="outline-danger"
-            class="w-100"
-            v-b-modal.trusted-devices-modal
-            @click="setModalData('remove', slotData)">
-            <FrIcon
-              class="mr-2"
-              name="block"
-            />
-            {{ $t('pages.profile.trustedDevices.remove') }}
-          </BButton>
-        </div>
+        <FrDeviceDetails
+          :device="slotData"
+          @removeDevice="(slotData) => setModalData('remove', slotData)" />
       </template>
     </FrAccordion>
 
@@ -191,6 +117,7 @@ import FrField from '@forgerock/platform-shared/src/components/Field';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import Accordion from '@forgerock/platform-shared/src/components/Accordion';
 import MapMixin from '@forgerock/platform-shared/src/mixins/MapMixin';
+import FrDeviceDetails from '@forgerock/platform-shared/src/components/profile/TrustedDevices/DeviceDetails';
 
 dayjs.extend(relativeTime);
 
@@ -215,6 +142,7 @@ export default {
     FrAccordion: Accordion,
     FrField,
     FrIcon,
+    FrDeviceDetails,
   },
   directives: {
     'b-modal': VBModal,
