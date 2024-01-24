@@ -772,7 +772,9 @@
         "removeDeviceError": "There was an error removing device.",
         "removeSuccess": "Device removed",
         "updateDeviceAliasError": "There was an error updating device alias.",
-        "loadDevicesError": "There was an error retrieving devices."
+        "loadDevicesError": "There was an error retrieving devices.",
+        "deviceDetails": "Device Details",
+        "removeConfirmationMessage": "Are you sure you want to remove from <strong>{username}’s</strong> profile?"
       },
       "accountControls": {
         "title": "Account Controls",
