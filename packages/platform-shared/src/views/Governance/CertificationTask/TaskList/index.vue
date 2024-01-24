@@ -1496,7 +1496,7 @@ export default {
      */
     openActivityModal(item) {
       const lineItemActivity = item?.decision?.certification;
-      const activityList = lineItemActivity?.comments;
+      const activityList = get(lineItemActivity, 'comments', []);
 
       if (lineItemActivity?.decision) {
         // if the item has been certified it is added to the activity array

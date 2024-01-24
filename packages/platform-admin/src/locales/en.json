@@ -2959,6 +2959,18 @@
         "subtitle": "Trigger workflows or certifications based on user events.",
         "title": "Governance Events",
         "update": "updated"
+      },
+      "newEventModal": {
+        "certification": "Certification",
+        "chooseAction": "Choose action to perform when event is triggered.",
+        "chooseEvent": "Choose event to trigger action.",
+        "eventAction": "Event Action",
+        "eventTrigger": "Event Trigger",
+        "triggerCertification": "Trigger a certification campaign when an event occurs.",
+        "triggerWorkflow": "Trigger a workflow when an event occurs.",
+        "userAction": "User {action}",
+        "userTrigger": "Trigger an action when a user is {userAction}.",
+        "workflow": "Workflow"
       }
     },
     "glossary": {
