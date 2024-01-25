@@ -1,21 +1,30 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <FrMyAccessReviewTable
-    default-sort="role.name"
-    :fields="fields"
-    grant-type="role" />
+  <BContainer class="my-5">
+    <FrHeader
+      class="mb-4"
+      :subtitle="$t('pages.myAccess.role.subtitle')"
+      :title="$t('pages.myAccess.role.title')" />
+    <FrMyAccessReviewTable
+      default-sort="role.name"
+      :fields="fields"
+      grant-type="role" />
+  </BContainer>
 </template>
 
 <script>
-
-import FrMyAccessReviewTable from '../MyAccessReviewTable';
+import { BContainer } from 'bootstrap-vue';
+import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
+import FrMyAccessReviewTable from '@forgerock/platform-shared/src/components/governance/MyAccessReviewTable';
 
 export default {
   name: 'Roles',
   components: {
+    BContainer,
+    FrHeader,
     FrMyAccessReviewTable,
   },
   data() {

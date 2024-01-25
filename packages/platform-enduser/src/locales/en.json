@@ -104,33 +104,16 @@
     },
     "myAccess": {
       "accountName": "Account Name",
-      "assignment": "Assignment",
       "timeConstraint": "Time Constraint",
       "account": {
-        "errorGettingData": "Error getting Accounts.",
-        "loadingData": "Loading accounts.",
-        "noRecordFound": "No accounts found.",
-        "noResultsHelp": "Try a new search in the seach box above.",
-        "noResultsUser": "No Accounts for this user.",
         "subtitle": "View all your application accounts.",
         "title": "My Accounts"
       },
       "entitlement": {
-        "errorGettingData": "Error getting Entitlements.",
-        "loadingData": "Loading entitlements.",
-        "noRecordFound": "No entitlements found.",
-        "noResultsHelp": "Try a new search in the seach box above.",
-        "noResultsUser": "No Entitlements for this user.",
         "subtitle": "View all your application entitlements.",
-        "tabTitle": "Entitlements",
         "title": "My Entitlements"
       },
       "role": {
-        "errorGettingData": "Error getting Roles.",
-        "loadingData": "Loading roles.",
-        "noRecordFound": "No roles found.",
-        "noResultsHelp": "Try a new search in the seach box above.",
-        "noResultsUser": "No Roles for this user.",
         "subtitle": "View all your application roles.",
         "tabTitle": "Roles",
         "title": "My Roles"

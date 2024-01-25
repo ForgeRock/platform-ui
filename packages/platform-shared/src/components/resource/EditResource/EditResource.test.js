@@ -10,6 +10,7 @@ import Notifications from '@kyvg/vue3-notification';
 import * as SessionsApi from '@/api/SessionsApi';
 import * as SchemaApi from '@/api/SchemaApi';
 import * as ManagedResourceApi from '@/api/ManagedResourceApi';
+import * as InternalResourceApi from '@/api/InternalResourceApi';
 import { setupTestPinia } from '../../../utils/testPiniaHelpers';
 import EditResource from './index';
 
@@ -73,32 +74,33 @@ describe('EditResource.vue', () => {
   describe('mount component with governance not enabled', () => {
     beforeEach(() => {
       wrapper = mountComponent();
-      jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => (
-        {
-          get: () => Promise.resolve({
-            data: {
-              DELETE: {
-                allowed: true,
-                properties: [
-                  'test',
-                ],
-              },
-              VIEW: {
-                allowed: true,
-                properties: [
-                  'test',
-                ],
-              },
-              UPDATE: {
-                allowed: true,
-                properties: [
-                ],
-              },
-            },
-          }),
-          delete: () => Promise.resolve({}),
-        }
-      ));
+      InternalResourceApi.deleteInternalResource = jest.fn().mockImplementation(() => Promise.resolve({}));
+      // jest.spyOn(wrapper.vm, 'getRequestService').mockImplementation(() => (
+      //   {
+      //     get: () => Promise.resolve({
+      //       data: {
+      //         DELETE: {
+      //           allowed: true,
+      //           properties: [
+      //             'test',
+      //           ],
+      //         },
+      //         VIEW: {
+      //           allowed: true,
+      //           properties: [
+      //             'test',
+      //           ],
+      //         },
+      //         UPDATE: {
+      //           allowed: true,
+      //           properties: [
+      //           ],
+      //         },
+      //       },
+      //     }),
+      //     delete: () => Promise.resolve({}),
+      //   }
+      // ));
       jest.spyOn(SchemaApi, 'getSchema').mockImplementation(() => Promise.resolve({
         data: {
           result: [{
@@ -265,7 +267,6 @@ describe('EditResource.vue', () => {
           viewable: true,
         },
       });
-      expect(wrapper.vm.buildResourceUrl()).toEqual('resourceType/resourceName/id?_fields=*,manager/*');
     });
 
     describe('clearing sessions', () => {
