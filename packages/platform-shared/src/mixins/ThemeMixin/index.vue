@@ -7,6 +7,7 @@ import NotificationMixin from '@forgerock/platform-shared/src/mixins/Notificatio
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import TranslationMixin from '@forgerock/platform-shared/src/mixins/TranslationMixin';
 import { putConfig } from '@forgerock/platform-shared/src/api/ConfigApi';
+import { convertBase64ToString, convertStringToBase64 } from '@forgerock/platform-shared/src/utils/encodeUtils';
 import uuid from 'uuid/v4';
 import { sortBy, cloneDeep } from 'lodash';
 import store from '@forgerock/platform-shared/src/store';
@@ -289,11 +290,11 @@ export default {
         if (Array.isArray(encodedThemes.realm[key])) {
           encodedThemes.realm[key].forEach((theme) => {
             if (typeof theme.journeyFooterScriptTag === 'string' && theme.journeyFooterScriptTag !== '') {
-              theme.journeyFooterScriptTag = btoa(theme.journeyFooterScriptTag);
+              theme.journeyFooterScriptTag = convertStringToBase64(theme.journeyFooterScriptTag);
             }
 
             if (typeof theme.accountFooterScriptTag === 'string' && theme.accountFooterScriptTag !== '') {
-              theme.accountFooterScriptTag = btoa(theme.accountFooterScriptTag);
+              theme.accountFooterScriptTag = convertStringToBase64(theme.accountFooterScriptTag);
             }
           });
         }
@@ -311,11 +312,11 @@ export default {
         if (Array.isArray(decodedThemes.realm[key])) {
           decodedThemes.realm[key].forEach((theme) => {
             if (typeof theme.journeyFooterScriptTag === 'string' && theme.journeyFooterScriptTag !== '') {
-              theme.journeyFooterScriptTag = atob(theme.journeyFooterScriptTag);
+              theme.journeyFooterScriptTag = convertBase64ToString(theme.journeyFooterScriptTag);
             }
 
             if (typeof theme.accountFooterScriptTag === 'string' && theme.accountFooterScriptTag !== '') {
-              theme.accountFooterScriptTag = atob(theme.accountFooterScriptTag);
+              theme.accountFooterScriptTag = convertBase64ToString(theme.accountFooterScriptTag);
             }
           });
         }
