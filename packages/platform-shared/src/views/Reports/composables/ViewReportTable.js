@@ -14,21 +14,16 @@ import i18n from '@/i18n';
 export default function useViewReportTable() {
   const expiredMessage = ref('');
   const isExpired = ref(false);
-  const isTableEmpty = ref(false);
   const pageToken = ref('');
-  const response = ref({});
-  const reportConfig = ref({});
-  const tableFields = ref([]);
-  const tableItems = ref([]);
   const tableLoading = ref(false);
   const totalRows = ref(0);
 
   /**
    * Displays a message instead of the table in case the report is expired.
    */
-  function handleExpiredResponse() {
+  function handleExpiredResponse(tableItems) {
     isExpired.value = true;
-    expiredMessage.value = response.value.message;
+    expiredMessage.value = tableItems.message;
   }
 
   /**
@@ -46,9 +41,9 @@ export default function useViewReportTable() {
   /**
    * Adds format to certain items of the table.
    */
-  function createTableFields() {
-    const tableOrder = Object.keys(response.value.result[0]);
-    tableItems.value = Array.from(response.value.result, (obj) => {
+  function createTableFields(tableItems) {
+    const tableOrder = Object.keys(tableItems.result[0]);
+    return Array.from(tableItems.result, (obj) => {
       const rearrangedObj = {};
       tableOrder.forEach((heading) => {
         switch (heading) {
@@ -69,35 +64,36 @@ export default function useViewReportTable() {
   /**
    * Rearranges the displayed data in the table.
    */
-  function arrangeTable() {
-    if (response.value.message) {
-      handleExpiredResponse();
-    } else if (response.value.result && response.value.result.length > 0) {
-      createTableFields();
-    } else {
-      isTableEmpty.value = true;
+  function arrangeTable(tableItems) {
+    if (tableItems.message) {
+      return handleExpiredResponse(tableItems);
     }
+    if (tableItems.result && tableItems.result.length > 0) {
+      return createTableFields(tableItems);
+    }
+    return [];
   }
 
   /**
    * Calls the endpoint to get the View Report data.
    * @param {String} template The name of the template.
    * @param {String} id The Job ID of the Report Run.
-   * @param {Object} config The object of the Report configuration.
-   * @returns {Promise}
+   * @param {String} pageSize The amount of results to show.
+   * @param {String} pagedResultsOffset The results batch to fetch.
+   * @param {String} pagedResultsCookie pagination cookie.
+   * @returns {Array}
    */
-  const fetchViewReport = async (template, id, config, pageSize, pagedResultsOffset, pagedResultsCookie) => {
+  const fetchViewReport = async (template, id, pageSize, pagedResultsOffset, pagedResultsCookie) => {
+    tableLoading.value = true;
     try {
-      reportConfig.value = config;
-      tableLoading.value = true;
-      const result = await getReportResult(id, template, pageSize, pagedResultsOffset, pagedResultsCookie);
-      response.value = result;
-      totalRows.value = result.total;
-      pageToken.value = result.pageToken;
-      arrangeTable();
+      const tableItems = await getReportResult(id, template, pageSize, pagedResultsOffset, pagedResultsCookie);
+      totalRows.value = tableItems.total;
+      pageToken.value = tableItems.pageToken;
+      return arrangeTable(tableItems);
     } catch (error) {
       isExpired.value = true;
       expiredMessage.value = i18n.t('reports.notAvailable');
+      return [];
     } finally {
       tableLoading.value = false;
     }
@@ -107,10 +103,7 @@ export default function useViewReportTable() {
     fetchViewReport,
     expiredMessage,
     isExpired,
-    isTableEmpty,
     pageToken,
-    tableFields,
-    tableItems,
     tableLoading,
     totalRows,
   };
