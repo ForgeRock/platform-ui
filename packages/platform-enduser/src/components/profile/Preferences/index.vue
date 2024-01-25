@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2020-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -7,9 +7,9 @@ of the MIT license. See the LICENSE file for details. -->
     class="account-card"
     no-body>
     <BCardHeader class="p-4">
-      <h1 class="h4">
+      <h2 class="h4">
         {{ $t('pages.profile.preferences.title') }}
-      </h1>
+      </h2>
       <p class="m-0">
         {{ $t('pages.profile.preferences.subtitle') }}
       </p>
