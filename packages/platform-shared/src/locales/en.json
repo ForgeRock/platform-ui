@@ -25,6 +25,7 @@
     "approve": "Approve",
     "ascending": "Ascending",
     "assign": "Assign",
+    "assignment": "Assignment",
     "authorize": "Authorize",
     "avatar": "Avatar",
     "back": "Back",
@@ -94,6 +95,7 @@
     "enable": "enable",
     "end": "End",
     "endSessions": "End Sessions",
+    "entitlements": "Entitlements",
     "error": "Error",
     "events": "Events",
     "every": "Every",
@@ -145,6 +147,7 @@
     "none": "None",
     "noRecords": "No Records",
     "noResult": "No elements found. Consider changing the search query.",
+    "noResultsHelp": "Try a new search in the seach box above.",
     "notAvailable": "n/a",
     "objectCopy": "{object} copy",
     "off": "Off",
@@ -626,7 +629,8 @@
       "conditionDescription": "Optionally, assign user to {resourceName} based on the presence of specific attributes.",
       "temporalConstraintDescription": "Optionally, allow this role to assigned only a temporary basis.",
       "objectPermissions": "{object} Permissions",
-      "objectTimeConstraint": "{object} Time Constraint"
+      "objectTimeConstraint": "{object} Time Constraint",
+      "getSchemaError": "There was an error retrieving schema"
     },
     "app": {
       "notifications": {
@@ -641,7 +645,6 @@
       }
     },
     "assignment": {
-      "title": "Assignment",
       "newAssignment": "New Assignment",
       "attributes": "Assignment Attributes",
       "accountWillBeProvisioned": "Account will been assigned to the application and provisioned on the next reconciliation.",
@@ -1244,6 +1247,12 @@
     }
   },
   "governance": {
+    "access": {
+      "accountName": "Account Name",
+      "errorGettingData": "Error getting {grantType}.",
+      "noRecordFound": "No {grantType} found.",
+      "noResultsUser": "No {grantType} for this user."
+    },
     "status": {
       "active": "Active",
       "canceled": "Canceled",
@@ -1425,16 +1434,13 @@
         "applicationDetailsTabText": "Application Details",
         "contentDetailsTabText": "Contents",
         "accountsTab": {
-          "noItems": "No Accounts Items",
-          "title": "Accounts"
+          "noItems": "No Accounts Items"
         },
         "entitlementsTab": {
-          "noItems": "No Entitlements Items",
-          "title": "Entitlements"
+          "noItems": "No Entitlements Items"
         },
         "rolesTab": {
-          "noItems": "No Roles Items",
-          "title": "Roles"
+          "noItems": "No Roles Items"
         },
         "userDetailsTabText": "Details"
       },

@@ -79,7 +79,6 @@ of the MIT license. See the LICENSE file for details. -->
               :default-sort="getDefaultSort(tab.grantType)"
               :fields="getTableFields(tab.grantType)"
               :grant-type="tab.grantType"
-              resource-name="directReportDetail"
               :user-id="directReportUserInfo.userId"
               @revoke-request="showRevokeRequestModal" />
           </BTab>
@@ -114,7 +113,7 @@ import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import useBreadcrumb from '@forgerock/platform-shared/src/composables/breadcrumb';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import FrMyAccessReviewTable from '../../MyAccessReview/MyAccessReviewTable';
+import FrMyAccessReviewTable from '@forgerock/platform-shared/src/components/governance/MyAccessReviewTable';
 import FrRevokeRequestModal from './RevokeRequestModal';
 import { saveNewRequest } from '@/api/governance/AccessRequestApi';
 import { getDirectReportUserInfo } from '@/api/governance/DirectoryApi';
@@ -161,7 +160,7 @@ export default {
           grantType: 'account',
         },
         {
-          displayName: this.$t('pages.myAccess.entitlement.tabTitle'),
+          displayName: this.$t('common.entitlements'),
           icon: 'assignment_turned_in',
           routeName: 'Entitlement',
           grantType: 'entitlement',
@@ -225,7 +224,7 @@ export default {
       const sharedFields = [
         {
           key: 'assignment',
-          label: this.$t('pages.myAccess.assignment'),
+          label: this.$t('common.assignment'),
           sortable: false,
           thClass: 'w-150px',
         },
