@@ -5,20 +5,17 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <BContainer
     class="fr-report-view w-100 min-vh-100 bg-white p-0"
-    fluid
-  >
+    fluid>
     <BRow class="w-100 shadow px-2 py-3 m-0 bg-white align-items-stretch">
       <BCol class="col-2 col-md-3 col-lg-4 d-flex align-items-center">
         <BLink
           v-if="!runDataLoading"
           class="text-decoration-none text-dark"
           variant="dark"
-          @click="returnToTemplate()"
-        >
+          @click="returnToTemplate()">
           <FrIcon
             class="mr-3 md-24"
-            name="arrow_back"
-          />
+            name="arrow_back" />
           <span class="d-none d-lg-inline-block">
             {{ reportName }}
           </span>
@@ -27,8 +24,7 @@ of the MIT license. See the LICENSE file for details. -->
       <BCol class="col-7 col-md-6 col-lg-4 d-flex justify-content-center align-items-center">
         <h3
           v-if="!runDataLoading"
-          class="h4 my-3 text-nowrap text-truncate"
-        >
+          class="h4 my-3 text-nowrap text-truncate">
           <span class="mr-2 text-nowrap d-flex">
             {{ reportDate }}
             <br class="d-md-none">
@@ -41,8 +37,7 @@ of the MIT license. See the LICENSE file for details. -->
           right
           toggle-class="text-nowrap d-flex align-items-center"
           variant="primary"
-          :disabled="loadingExport || (runDataLoading || tableLoading || isExpired || isTableEmpty)"
-        >
+          :disabled="loadingExport || (runDataLoading || tableLoading || isExpired || !tableItems.length)">
           <template #button-content>
             <FrSpinner
               v-if="loadingExport"
@@ -59,8 +54,7 @@ of the MIT license. See the LICENSE file for details. -->
           </template>
           <BDropdownItemButton
             button-class="d-flex align-items-center"
-            @click.stop="generateReport('JSON', $bvModal)"
-          >
+            @click.stop="generateReport('JSON', $bvModal)">
             <template v-if="loadingJson">
               <FrSpinner
                 class="justify-content-center mr-2"
@@ -85,8 +79,7 @@ of the MIT license. See the LICENSE file for details. -->
           </BDropdownItemButton>
           <BDropdownItemButton
             button-class="d-flex align-items-center"
-            @click.stop="generateReport('CSV', $bvModal)"
-          >
+            @click.stop="generateReport('CSV', $bvModal)">
             <template v-if="loadingCsv">
               <FrSpinner
                 class="justify-content-center mr-2"
@@ -120,16 +113,14 @@ of the MIT license. See the LICENSE file for details. -->
           <BCol
             v-for="index in 3"
             :key="index"
-            class="col-sm-12 col-md-6 col-lg-4 mb-3"
-          >
+            class="col-sm-12 col-md-6 col-lg-4 mb-3">
             <BSkeleton width="50px" />
             <BSkeleton width="100px" />
           </BCol>
         </BRow>
         <FrReportDetails
           v-else
-          :parameters="params"
-        />
+          :parameters="params" />
       </BCol>
     </BRow>
     <BRow class="w-100 m-0">
@@ -138,34 +129,30 @@ of the MIT license. See the LICENSE file for details. -->
           icon-classes="d-none"
           testid="no-data"
           :card="false"
-          :subtitle="expiredMessage"
-        />
+          :subtitle="expiredMessage" />
       </BCol>
-      <template>
-        <BCol class="p-0">
-          <FrReportViewTable
-            id="viewTable"
-            testid="report-table"
-            :current-page="!runDataLoadingComplete ? 0 : currentPage"
-            :fields="tableFields"
-            :is-empty="isTableEmpty"
-            :items="tableProvider"
-            :loading="tableLoading || !runDataLoadingComplete"
-            :per-page="perPage"
-          />
-          <FrPagination
-            :value="currentPage"
-            @input="currentPage = $event;"
-            aria-controls="viewTable"
-            class="border-0"
-            :current-page="1"
-            :disabled="tableLoading"
-            :per-page="perPage"
-            :total-rows="totalRows"
-            @on-page-size-change="pageSizeChange"
-          />
-        </BCol>
-      </template>
+      <BCol
+        v-else
+        class="p-0">
+        <FrReportViewTable
+          id="viewTable"
+          testid="report-table"
+          :current-page="!runDataLoadingComplete ? 0 : currentPage"
+          :is-empty="!tableItems.length"
+          :items="tableItems"
+          :loading="tableLoading || !runDataLoadingComplete"
+          :per-page="perPage" />
+        <FrPagination
+          :value="currentPage"
+          @input="currentPage = $event;"
+          aria-controls="viewTable"
+          class="border-0"
+          :current-page="1"
+          :disabled="tableLoading"
+          :per-page="perPage"
+          :total-rows="totalRows"
+          @on-page-size-change="pageSizeChange" />
+      </BCol>
     </BRow>
     <FrReportExportModal
       :data="modalData.value"
@@ -176,7 +163,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script setup>
-import { ref } from 'vue'; import {
+import { ref, watch } from 'vue'; import {
   BCol,
   BContainer,
   BDropdown,
@@ -212,10 +199,7 @@ const {
   fetchViewReport,
   expiredMessage,
   isExpired,
-  isTableEmpty,
   pageToken,
-  tableFields,
-  tableItems,
   tableLoading,
   totalRows,
 } = useViewReportTable();
@@ -238,23 +222,24 @@ const perPage = ref(10);
 const reportName = ref('');
 const reportDate = ref('');
 const reportTime = ref('');
-const runData = ref({});
+const tableItems = ref([]);
 const modalData = ref({});
 
 /**
  * Gets all the data to display at the top of the report from the Report Run object
  * and then calls the endpoint to get the View Report data.
+ * @param {Object} report current report object details
  */
-async function getConfigInfo() {
-  reportDate.value = dayjs(runData.value.createDate).format('MM/D/YYYY');
-  reportTime.value = dayjs(runData.value.createDate).format('h:mm A');
-  reportName.value = startCase(runData.value.name.toLowerCase());
-  csvStatus.value = runData.value.exportCsvStatus === 'EXPORT_SUCCESS';
-  jsonStatus.value = runData.value.exportJsonStatus === 'EXPORT_SUCCESS';
-  const [paramsWithoutRealm] = [JSON.parse(runData.value.parameters)].map(({ ...report }) => report);
+async function setConfigInfo(report) {
+  reportDate.value = dayjs(report.createDate).format('MM/D/YYYY');
+  reportTime.value = dayjs(report.createDate).format('h:mm A');
+  reportName.value = startCase(report.name.toLowerCase());
+  csvStatus.value = report.exportCsvStatus === 'EXPORT_SUCCESS';
+  jsonStatus.value = report.exportJsonStatus === 'EXPORT_SUCCESS';
+  const [paramsWithoutRealm] = [JSON.parse(report.parameters)].map(({ ...parameter }) => parameter);
   delete paramsWithoutRealm.realm;
   params.value = paramsWithoutRealm;
-  const data = reportHistoryTableDataGenerator([runData.value]);
+  const data = reportHistoryTableDataGenerator([report]);
   modalData.value = data.flat();
 }
 
@@ -263,15 +248,11 @@ async function getConfigInfo() {
  */
 async function getRunInfo() {
   try {
-    runDataLoading.value = true;
-    const result = await getReportRuns({ name: template, realm: store.state.realm });
-    runData.value = result.result.find((run) => run.runId === id);
-    getConfigInfo();
+    const pagedResultOffset = (currentPage.value - 1) * perPage.value;
+    const reportResults = await fetchViewReport(template, id, perPage.value, pagedResultOffset, pageToken.value);
+    reportResults.forEach((item) => tableItems.value.push(item));
   } catch (err) {
     showErrorMessage(err, i18n.global.t('reports.error'));
-  } finally {
-    runDataLoading.value = false;
-    runDataLoadingComplete.value = true;
   }
 }
 
@@ -289,6 +270,10 @@ async function generateReport(fileType, bvModal) {
  */
 function pageSizeChange(pageSize) {
   perPage.value = pageSize;
+  tableItems.value = [];
+  if (currentPage.value === 1) {
+    getRunInfo();
+  }
   currentPage.value = 1;
 }
 
@@ -299,16 +284,31 @@ function returnToTemplate() {
   router.push({ name: 'ReportTemplateHistory', params: { template } });
 }
 
-async function tableProvider(ctx) {
-  try {
-    const pagedResultOffset = (ctx.currentPage - 1) * ctx.perPage;
-    await fetchViewReport(template, id, JSON.parse(runData.value.reportConfig), ctx.perPage, pagedResultOffset, pageToken.value);
-    return tableItems.value;
-  } catch (error) {
-    return [];
+/**
+ * Watchers
+ */
+watch(currentPage, (page) => {
+  const expectedTotals = page * perPage.value;
+  const remainder = expectedTotals - tableItems.value.length;
+  if (expectedTotals > tableItems.value.length && remainder === perPage.value) {
+    getRunInfo();
   }
-}
+});
 
-getRunInfo();
-
+/**
+ * Start
+ */
+(async () => {
+  runDataLoading.value = true;
+  const { result } = await getReportRuns({
+    name: template,
+    realm: store.state.realm,
+    runId: id,
+  });
+  const [report] = result;
+  setConfigInfo(report);
+  getRunInfo();
+  runDataLoading.value = false;
+  runDataLoadingComplete.value = true;
+})();
 </script>

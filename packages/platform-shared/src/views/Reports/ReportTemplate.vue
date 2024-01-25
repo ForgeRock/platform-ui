@@ -65,7 +65,7 @@ const newReportJobId = ref(null);
 const routerMap = ['ReportTemplate', 'ReportTemplateHistory'];
 const templateName = route.params.template;
 const prettyTemplateName = templateName.toLowerCase().replace(/-/g, ' ');
-const tabIndex = ref(routerMap.indexOf(router.name));
+const tabIndex = ref(routerMap.indexOf(route.name));
 const tabItems = [
   {
     id: 'run-report',
