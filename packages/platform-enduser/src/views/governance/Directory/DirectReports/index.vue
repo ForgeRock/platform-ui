@@ -259,8 +259,3 @@ export default {
   },
 };
 </script>
-<style lang="scss" scoped>
- .w-100px {
-    width: 100px;
-  }
-</style>

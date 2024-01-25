@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -9,18 +9,18 @@ import { findByTestId, findComponentByTestId } from '@forgerock/platform-shared/
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
 import { mount, flushPromises } from '@vue/test-utils';
 import Notifications from '@kyvg/vue3-notification';
-import * as MyAccessApi from '@/api/governance/MyAccessApi';
+import * as CommonsApi from '@/api/governance/CommonsApi';
 import i18n from '@/i18n';
 import MyAccessReviewTable from './index';
 
-jest.mock('@/api/governance/MyAccessApi');
+jest.mock('@/api/governance/CommonsApi');
 
 describe('MyAccessReviewTable', () => {
   let wrapper;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    MyAccessApi.getMyAccess = jest.fn().mockReturnValue(Promise.resolve({
+    CommonsApi.getUserGrants = jest.fn().mockReturnValue(Promise.resolve({
       data: {
         result: [
           {
@@ -75,14 +75,6 @@ describe('MyAccessReviewTable', () => {
             key: 'accountName',
             label: '',
           },
-          {
-            key: 'assignment',
-            label: '',
-          },
-          {
-            key: 'actions',
-            label: '',
-          },
         ],
       },
     });
@@ -91,7 +83,7 @@ describe('MyAccessReviewTable', () => {
   it('should have a loading spinner then have a table', async () => {
     wrapper.setData({ isLoading: true });
     await flushPromises();
-    const myAccessSpinner = findByTestId(wrapper, 'my-access-review-table-spinner');
+    const myAccessSpinner = wrapper.find('[role="status"]');
     expect(myAccessSpinner.exists()).toBeTruthy();
     wrapper.setData({
       isLoading: false,
@@ -106,7 +98,7 @@ describe('MyAccessReviewTable', () => {
     expect(searchMyAccessReviewTable.exists()).toBeTruthy();
   });
 
-  it('shows the actions menu if the resourceName is "directReportDetail" and account assignment is direct', async () => {
+  it('shows the actions menu if passed in and account assignment is direct', async () => {
     let actionOptionsMenu = findByTestId(wrapper, 'actions-relationship-menu');
     expect(actionOptionsMenu.exists()).toBeFalsy();
     let badge = findByTestId(wrapper, 'status-badge');
@@ -144,6 +136,7 @@ describe('MyAccessReviewTable', () => {
     actionOptionsMenu = findByTestId(wrapper, 'actions-relationship-menu');
     expect(actionOptionsMenu.exists()).toBeTruthy();
     badge = findByTestId(wrapper, 'status-badge');
+    expect(badge.exists()).toBe(true);
     expect(badge.text()).toBe(wrapper.vm.directAssignment);
 
     // We make the relationship's grantType: 'role' to test that the actions
@@ -235,9 +228,9 @@ describe('MyAccessReviewTable', () => {
   it('can sort table by descending', () => {
     const loadSpy = jest.spyOn(wrapper.vm, 'loadData');
     wrapper.vm.sortChanged({ sortBy: 'appName', sortDesc: true });
-    expect(wrapper.vm.sortDesc).toBeTruthy();
+    expect(wrapper.vm.sortDesc).toBe(true);
     expect(loadSpy).toBeCalled();
-    expect(MyAccessApi.getMyAccess).toBeCalledWith('testId', {
+    expect(CommonsApi.getUserGrants).toBeCalledWith('testId', {
       pageNumber: 0, pageSize: 10, sortBy: 'application.name', sortDir: 'desc', grantType: 'account',
     });
   });
@@ -246,8 +239,28 @@ describe('MyAccessReviewTable', () => {
     const loadSpy = jest.spyOn(wrapper.vm, 'loadData');
     wrapper.vm.sortChanged({ sortBy: 'appName', sortDesc: false });
     expect(loadSpy).toBeCalled();
-    expect(MyAccessApi.getMyAccess).toBeCalledWith('testId', {
+    expect(CommonsApi.getUserGrants).toBeCalledWith('testId', {
       pageNumber: 0, pageSize: 10, sortBy: 'application.name', sortDir: 'asc', grantType: 'account',
+    });
+    wrapper.vm.sortChanged({ sortBy: 'accountName', sortDesc: false });
+    expect(CommonsApi.getUserGrants).toHaveBeenCalledWith('testId', {
+      pageNumber: 0, pageSize: 10, sortBy: 'descriptor.idx./account.displayName', sortDir: 'asc', grantType: 'account',
+    });
+    wrapper.vm.sortChanged({ sortBy: 'entitlementName', sortDesc: false });
+    expect(CommonsApi.getUserGrants).toHaveBeenCalledWith('testId', {
+      pageNumber: 0, pageSize: 10, sortBy: 'descriptor.idx./entitlement.displayName', sortDir: 'asc', grantType: 'account',
+    });
+    wrapper.vm.sortChanged({ sortBy: 'roleName', sortDesc: false });
+    expect(CommonsApi.getUserGrants).toHaveBeenCalledWith('testId', {
+      pageNumber: 0, pageSize: 10, sortBy: 'role.name', sortDir: 'asc', grantType: 'account',
+    });
+    wrapper.vm.sortChanged({ sortBy: 'status', sortDesc: false });
+    expect(CommonsApi.getUserGrants).toHaveBeenCalledWith('testId', {
+      pageNumber: 0, pageSize: 10, sortBy: '', sortDir: 'asc', grantType: 'account',
+    });
+    wrapper.vm.sortChanged({ sortBy: 'other', sortDesc: false });
+    expect(CommonsApi.getUserGrants).toHaveBeenCalledWith('testId', {
+      pageNumber: 0, pageSize: 10, sortBy: '', sortDir: 'asc', grantType: 'account',
     });
   });
 
@@ -269,7 +282,7 @@ describe('MyAccessReviewTable', () => {
 
   describe('loadData()', () => {
     it('gets my access based on page size', async () => {
-      const getMyAccess = jest.spyOn(MyAccessApi, 'getMyAccess');
+      const getMyAccess = jest.spyOn(CommonsApi, 'getUserGrants');
       wrapper.vm.paginationPageSize = 20;
       wrapper.vm.loadData();
       expect(getMyAccess).toBeCalledWith('testId', {
@@ -278,7 +291,7 @@ describe('MyAccessReviewTable', () => {
     });
 
     it('gets my access based on page number', () => {
-      const getMyAccess = jest.spyOn(MyAccessApi, 'getMyAccess');
+      const getMyAccess = jest.spyOn(CommonsApi, 'getUserGrants');
       wrapper.vm.paginationPage = 2;
       wrapper.vm.loadData();
       expect(getMyAccess).toBeCalledWith('testId', {
@@ -287,7 +300,7 @@ describe('MyAccessReviewTable', () => {
     });
 
     it('gets my access that match a query string', async () => {
-      const getMyAccess = jest.spyOn(MyAccessApi, 'getMyAccess');
+      const getMyAccess = jest.spyOn(CommonsApi, 'getUserGrants');
       wrapper.vm.searchQuery = 'test';
       await wrapper.vm.loadData();
       await wrapper.vm.$nextTick();
@@ -329,7 +342,7 @@ describe('MyAccessReviewTable', () => {
           },
         },
       ];
-      jest.spyOn(MyAccessApi, 'getMyAccess').mockResolvedValue({
+      jest.spyOn(CommonsApi, 'getUserGrants').mockResolvedValue({
         data: { result: accounts },
       });
 
@@ -340,7 +353,7 @@ describe('MyAccessReviewTable', () => {
     });
 
     it('displays an error notifcation if API fails', async () => {
-      jest.spyOn(MyAccessApi, 'getMyAccess').mockRejectedValue('test');
+      jest.spyOn(CommonsApi, 'getUserGrants').mockRejectedValue('test');
       const errorSpy = jest.spyOn(wrapper.vm, 'showErrorMessage');
 
       wrapper.vm.loadData();
@@ -350,7 +363,7 @@ describe('MyAccessReviewTable', () => {
     });
 
     it('displays noData component when no my access are found', async () => {
-      jest.spyOn(MyAccessApi, 'getMyAccess').mockResolvedValue({
+      jest.spyOn(CommonsApi, 'getUserGrants').mockResolvedValue({
         data: { result: [] },
       });
       wrapper.vm.loadData(true);
