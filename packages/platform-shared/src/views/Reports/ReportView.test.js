@@ -9,6 +9,7 @@
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { mount } from '@vue/test-utils';
 import { ref } from 'vue';
+import * as AutoApi from '@forgerock/platform-shared/src/api/AutoApi';
 import * as Notifications from '@forgerock/platform-shared/src/utils/notification';
 import ReportView from './ReportView';
 import useViewReportTable from './composables/ViewReportTable';
@@ -23,9 +24,6 @@ jest.mock('vue-router', () => ({
 }));
 
 describe('Report View component', () => {
-  beforeEach(() => {
-    Notifications.displayNotification = jest.fn().mockReturnValue(false);
-  });
   function setup() {
     return mount(ReportView, {
       global: {
@@ -45,11 +43,30 @@ describe('Report View component', () => {
   }
   let wrapper;
 
+  beforeEach(() => {
+    Notifications.displayNotification = jest.fn().mockReturnValue(false);
+    AutoApi.getReportResult = jest.fn().mockReturnValue(Promise.resolve({
+      result: [{
+        journey_name: 'PasswordGrant',
+        journey_result: 'SUCCESSFUL',
+        timestamp: '2024-01-12T19:40:36.490Z',
+        user_name: 'reportadmin',
+      }],
+    }));
+
+    AutoApi.getReportRuns = jest.fn().mockReturnValue(Promise.resolve({
+      result: [{
+        exportJsonStatus: 'EXPORT_SUCCESS',
+        exportCsvStatus: 'EXPORT_SUCCESS',
+        createDate: '2024-01-12T19:40:36.490Z',
+        name: 'my-report',
+        parameters: '{"user_names":["reportadmin"]}',
+      }],
+    }));
+  });
+
   it('Does not show table when report is expired', () => {
-    useViewReportTable.mockReturnValue({
-      isExpired: ref(true),
-      tableItems: ref([]),
-    });
+    useViewReportTable.mockReturnValue({ isExpired: ref(true) });
     wrapper = setup();
     const reportTable = findByTestId(wrapper, 'report-table');
     const noData = findByTestId(wrapper, 'no-data');
@@ -58,20 +75,14 @@ describe('Report View component', () => {
   });
 
   it('Hides No Data component when there is data', () => {
-    useViewReportTable.mockReturnValue({
-      isExpired: ref(false),
-      tableItems: ref([]),
-    });
+    useViewReportTable.mockReturnValue({ isExpired: ref(false) });
     wrapper = setup();
     const noData = findByTestId(wrapper, 'no-data');
     expect(noData.exists()).toBe(false);
   });
 
   it('Shows skeleton loader when data is fetching', () => {
-    useViewReportTable.mockReturnValue({
-      tableLoading: ref(true),
-      tableItems: ref([]),
-    });
+    useViewReportTable.mockReturnValue({ tableLoading: ref(true) });
     wrapper = setup();
     const skeleton = findByTestId(wrapper, 'skeleton-loader');
     expect(skeleton.exists()).toBe(true);
