@@ -7,12 +7,13 @@
 
 import { merge, cloneDeep } from 'lodash';
 import {
-  isRoleBased,
-  isRuleBased,
+  flags,
+  getGrantFlags,
   isAcknowledgeType,
   isReconBased,
-  getGrantFlags,
-  flags,
+  isRequestBased,
+  isRoleBased,
+  isRuleBased,
 } from './flags';
 
 const roleBasedGrant = {
@@ -33,6 +34,18 @@ const reconBasedGrant = {
       grantTypes: [
         {
           grantType: 'recon',
+        },
+      ],
+    },
+  },
+};
+
+const requestBasedGrant = {
+  relationship: {
+    properties: {
+      grantTypes: [
+        {
+          grantType: 'request',
         },
       ],
     },
@@ -82,6 +95,16 @@ describe('flags', () => {
     it('returns true if a grant with a condition', () => {
       const grant = { relationship: { conditional: true } };
       expect(isRuleBased(grant)).toBeTruthy();
+    });
+  });
+
+  describe(('isRequestBased'), () => {
+    it('determines if a grant is request based', () => {
+      expect(isRequestBased(requestBasedGrant)).toBeTruthy();
+    });
+
+    it('determines when a grant is not request based', () => {
+      expect(isRequestBased({})).toBeFalsy();
     });
   });
 
