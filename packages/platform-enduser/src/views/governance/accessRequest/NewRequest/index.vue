@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -486,7 +486,7 @@ export default {
         });
       // TODO: These calls have been temporarily disabled as it is not possible to access them for all users (see comment in ticket).
       // // get roles details
-      // getUserGrants(id, 'role')
+      // getUserGrants(id, { grantType: 'role' })
       //   .then(({ data }) => {
       //     this.currentUserRolesDetails = data;
       //   })
@@ -494,7 +494,7 @@ export default {
       //     this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserError'));
       //   });
       // // get accounts details
-      // getUserGrants(id, 'account')
+      // getUserGrants(id, { grantType: 'account' })
       //   .then(({ data }) => {
       //     this.currentUserAccountsDetails = data;
       //   })
@@ -502,7 +502,7 @@ export default {
       //     this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserError'));
       //   });
       // // get entitlements details
-      // getUserGrants(id, 'entitlement')
+      // getUserGrants(id, { grantType: 'entitlement' })
       //   .then(({ data }) => {
       //     this.currentUserEntitlementsDetails = data;
       //   })
