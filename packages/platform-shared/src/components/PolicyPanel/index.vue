@@ -161,12 +161,15 @@ export default {
      * @param {Object} policy object containing policy data needed for translation
      */
     getPolicyDescription(policy) {
-      const formattedParams = Object.keys(policy.params).reduce((newParams, param) => {
-        // Remove hyphens in server generated policy params as these do not work as interpolations keys in vue-i18n 9.x
-        const formattedParam = param.replace(/-/g, '');
-        newParams[formattedParam] = policy.params[param];
-        return newParams;
-      }, {});
+      let formattedParams = policy.params;
+      if (typeof policy.params === 'object') {
+        formattedParams = Object.keys(policy.params).reduce((newParams, param) => {
+          // Remove hyphens in server generated policy params as these do not work as interpolations keys in vue-i18n 9.x
+          const formattedParam = param.replace(/-/g, '');
+          newParams[formattedParam] = policy.params[param];
+          return newParams;
+        }, {});
+      }
       return this.$t(`common.policyValidationMessages.${policy.policyRequirement}`, formattedParams);
     },
   },
