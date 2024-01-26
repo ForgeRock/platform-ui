@@ -349,8 +349,8 @@
       "PERIOD_REQUIRED": "Must contain at least one period character",
       "NO_REPEAT": "Cannot contain more than {numRepeat} repeated characters",
       "DICTIONARY": "Cannot contain common passwords",
-      "LENGTH_BASED": "Must be at least {min-password-length} characters and no longer than {max-password-length} characters",
-      "REPEATED_CHARACTERS": "Cannot contain more than {max-consecutive-length} repeated consecutive characters",
+      "LENGTH_BASED": "Must be at least {minpasswordlength} characters and no longer than {maxpasswordlength} characters",
+      "REPEATED_CHARACTERS": "Cannot contain more than {maxconsecutivelength} repeated consecutive characters",
       "MIN_CHARACTER_SETS": "At least {minSets} of the following: {sets}",
       "CHARACTER_SET": "{sets}",
       "sets": {
@@ -368,8 +368,8 @@
         "mail": "Email"
       },
       "HISTORY": "Cannot match a recently used password",
-      "UNKNOWN": "Unable to create or modify {property-name} due to an unknown configuration issue",
-      "EXTENDED_FIELD_POLICY": "{property-name} is not valid",
+      "UNKNOWN": "Unable to create or modify {propertyname} due to an unknown configuration issue",
+      "EXTENDED_FIELD_POLICY": "{propertyname} is not valid",
       "test": "succeed",
       "VALID_INT": "Value must be of type integer.",
       "policyServiceError": {
