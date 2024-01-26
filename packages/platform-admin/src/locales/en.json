@@ -1977,7 +1977,7 @@
       "settingsTitle": "Settings",
       "nativeEdit": "Edit advanced settings in the Access Management Native Console",
       "gateway": {
-        "downloadDescription": "<a href='https://backstage.forgerock.com/downloads/browse/ig/featured'>Download a identity gateway</a> based on your needs, and follow the <a href='https://backstage.forgerock.com/docs/idcloud/latest/gateways-agents.html'>step-by-step instructions</a> to install and configure the agent using the following values:"
+        "downloadDescription": "<a href='https://backstage.forgerock.com/downloads/browse/ig/featured'>Download an identity gateway</a> based on your needs, and follow the <a href='https://backstage.forgerock.com/docs/idcloud/latest/gateways-agents.html'>step-by-step instructions</a> to install and configure the agent using the following values:"
       },
       "java-agent": {
         "downloadDescription": "<a href='https://backstage.forgerock.com/downloads/browse/am/featured/java-agents'>Download a java agent</a> based on your needs, and follow the <a href='https://backstage.forgerock.com/docs/idcloud/latest/gateways-agents.html'>step-by-step instructions</a> to install and configure the agent using the following values:"
