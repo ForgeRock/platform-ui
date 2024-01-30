@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -18,15 +18,21 @@ const account = {
   },
   accountEnabled: true,
   accountType: 'type',
-  decision: 'certify',
-  decisionBy: {
-    givenName: 'Foo',
-    id: 'managed/user/1',
-    mail: 'foo@test.com',
-    sn: 'Test',
-    userName: 'FooTest',
+  item: {
+    decision: {
+      certification: {
+        decision: 'certify',
+        decisionBy: {
+          givenName: 'Foo',
+          id: 'managed/user/1',
+          mail: 'foo@test.com',
+          sn: 'Test',
+          userName: 'FooTest',
+        },
+        decisionDate: '2023-02-28T15:12:25+00:00',
+      },
+    },
   },
-  decisionDate: '2023-02-28T15:12:25+00:00',
   displayName: 'Franklin Horne',
   givenName: 'Franklin',
   linkQualifier: 'default',
@@ -58,7 +64,7 @@ describe('AccountDetailsTab', () => {
         renderStubDefaultSlot: true,
       },
       props: {
-        account,
+        grant: account,
       },
     });
   });
@@ -66,8 +72,8 @@ describe('AccountDetailsTab', () => {
   it('should show all account details properties', () => {
     validateFieldByText(wrapper, 'displayName', account.account.displayName);
     validateFieldByText(wrapper, 'userPrincipalName', account.account.userPrincipalName);
-    validateFieldByText(wrapper, 'lastDecision', account.decision);
-    validateFieldByText(wrapper, 'decisionDate', dayjs(account.decisionDate).format('MMMM D, YYYY h:mm A'));
-    validateFieldByText(wrapper, 'decisionBy', account.decisionBy.userName);
+    validateFieldByText(wrapper, 'lastDecision', account.item.decision.certification.decision);
+    validateFieldByText(wrapper, 'decisionDate', dayjs(account.item.decision.certification.decisionDate).format('MMMM D, YYYY h:mm A'));
+    validateFieldByText(wrapper, 'decisionBy', account.item.decision.certification.decisionBy.userName);
   });
 });

@@ -77,7 +77,6 @@ describe('TaskList', () => {
     CertificationApi.certifyItems.mockImplementation(() => Promise.resolve({ data: 'results' }));
     CertificationApi.revokeItems.mockImplementation(() => Promise.resolve({ data: 'results' }));
     CertificationApi.exceptionItems.mockImplementation(() => Promise.resolve({ data: 'results' }));
-    CertificationApi.getAccountDetails.mockImplementation(() => Promise.resolve({}));
     CertificationApi.saveComment.mockImplementation(() => Promise.resolve({}));
     CertificationApi.reassignItem.mockImplementation(() => Promise.resolve({}));
     CertificationApi.updateActors.mockImplementation(() => Promise.resolve({}));
@@ -807,12 +806,6 @@ describe('TaskList', () => {
     });
 
     it('openAccountModal sets account data and opens account modal', async () => {
-      CertificationApi.getAccountDetails.mockImplementation(() => Promise.resolve({
-        account: {
-          id: 'test',
-          displayName: 'Dani Morales',
-        },
-      }));
       const content = {
         account: {
           id: 'test',
@@ -840,10 +833,7 @@ describe('TaskList', () => {
       await flushPromises();
 
       expect(wrapper.vm.currentAccountSelectedModal).toEqual({
-        account: { account: content.account },
-        decision: content.item.decision.certification.decision,
-        decisionDate: content.item.decision.certification.decisionDate,
-        decisionBy: content.item.decision.certification.decisionBy,
+        ...content,
       });
       expect(wrapper.vm.$bvModal.show).toHaveBeenCalledWith('CertificationTaskAccountModal');
     });
