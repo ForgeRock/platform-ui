@@ -373,7 +373,6 @@
       "HISTORY": "Cannot match a recently used password",
       "UNKNOWN": "Unable to create or modify {propertyname} due to an unknown configuration issue",
       "EXTENDED_FIELD_POLICY": "{propertyname} is not valid",
-      "test": "succeed",
       "VALID_INT": "Value must be of type integer.",
       "policyServiceError": {
         "policyApi": "Unable to retrieve {policyApi}, Please try again later.",
@@ -475,6 +474,7 @@
     "errorRetrievingLinkedApplications": "There was an error retrieving linked applications.",
     "errorRetrievingRelationships": "There was an error retrieving relationships.",
     "errorRetrievingResource": "There was an error retrieving the resource.",
+    "errorRetrievingResources": "There was an error retrieving {resource}.",
     "themeSaveError": "There was an error saving theme",
     "themeSetError": "There was an error setting theme",
     "deleteObject": "Unable to delete {object}",
