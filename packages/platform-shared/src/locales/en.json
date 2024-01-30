@@ -1249,6 +1249,8 @@
     }
   },
   "governance": {
+    "accountDetails": "Account Details",
+    "entitlementDetails": "Entitlement Details",
     "access": {
       "accountName": "Account Name",
       "errorGettingData": "Error getting {grantType}.",
@@ -1428,7 +1430,6 @@
           "provisioningMethodLabel": "Provisioning Method",
           "riskScoreLabel": "Adj. Risk Score"
         },
-        "accountDetailsTabText": "Account Details",
         "applicationDetailsTab": {
           "nameLabel": "Application Name",
           "ownerLabel": "Owner(s)"
