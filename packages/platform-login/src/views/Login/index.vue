@@ -628,9 +628,10 @@ export default {
   },
   watch: {
     themeLoading(themeLoading) {
+      const stepExists = this.step !== undefined && this.step.type === 'Step';
       // IAM-5201 Unfortunately since the theme payload is async, the journey form props are set before the journey theme data is available.
-      // this makes it so that the form is rebuilt if themeLoading is false so autofocus is set
-      if (!themeLoading) {
+      // this makes it so that the form is rebuilt if themeLoading is false (and a step is available) so autofocus is set
+      if (!themeLoading && stepExists) {
         this.loading = true;
         this.buildTreeForm();
         this.loading = false;
