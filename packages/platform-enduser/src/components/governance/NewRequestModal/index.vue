@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -64,8 +64,7 @@ of the MIT license. See the LICENSE file for details. -->
                   class="rounded rounded-circle bg-lightblue mr-3 w-40 p-2 text-primary" />
                 <h2
                   class="mb-0 h5"
-                  :aria-label="$t('governance.accessRequest.newRequest.otherUsers')"
-                >
+                  :aria-label="$t('governance.accessRequest.newRequest.otherUsers')">
                   {{ $t('governance.accessRequest.newRequest.otherUsers') }}
                 </h2>
               </BMedia>
@@ -78,18 +77,71 @@ of the MIT license. See the LICENSE file for details. -->
           <BCol lg="4">
             <h2
               class="h5"
-              :aria-label="$t('governance.accessRequest.newRequest.chooseUsers')"
-            >
+              :aria-label="$t('governance.accessRequest.newRequest.chooseUsers')">
               {{ $t('governance.accessRequest.newRequest.chooseUsers') }}
             </h2>
           </BCol>
           <BCol lg="8">
             <div class="pl-lg-4">
-              <FrGovUsersMultiSelect
+              <FrResourceSelect
                 v-model="selectedUsers"
                 :description="$t('governance.accessRequest.newRequest.maximumUsers')"
+                :fields="['givenName', 'sn', 'userName', 'profileImage']"
                 :label="$t('common.users')"
-              />
+                :resource-path="`${$store.state.realm}_user`"
+                type="multiselect">
+                <template
+                  v-for="(slotName, index) in ['singleLabel', 'option']"
+                  :key="index"
+                  #[slotName]="{ option }">
+                  <BMedia
+                    no-body
+                    class="py-1">
+                    <BImg
+                      :src="option.value.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
+                      :alt="`profile-picture_${option.value.userName}`"
+                      class="mr-2 align-self-center rounded rounded-circle"
+                      width="24" />
+                    <BMediaBody>
+                      <div class="mb-1 text-dark">
+                        {{ $t('common.userFullName', { givenName: option.value.givenName, sn: option.value.sn }) }}
+                      </div>
+                      <small class="text-muted">
+                        {{ option.value.userName }}
+                      </small>
+                    </BMediaBody>
+                  </BMedia>
+                </template>
+                <template #tag="{ option, remove }">
+                  <span class="multiselect__tag">
+                    <BMedia
+                      no-body
+                      class="py-1">
+                      <BImg
+                        :src="option.value.profileImage || require('@forgerock/platform-shared/src/assets/images/avatar.png')"
+                        :alt="`profile-picture_${option.value.userName}`"
+                        class="mr-2 align-self-center rounded rounded-circle"
+                        width="24" />
+                      <BMediaBody>
+                        <div class="mb-1 text-dark">
+                          {{ $t('common.userFullName', { givenName: option.value.givenName, sn: option.value.sn }) }}
+                        </div>
+                        <div>
+                          <small class="text-muted">
+                            {{ option.value.userName }}
+                          </small>
+                        </div>
+                      </BMediaBody>
+                    </BMedia>
+                    <span
+                      class="multiselect__tag-icon"
+                      tabindex="0"
+                      :aria-label="$t('common.remove')"
+                      @click.prevent="remove(option)"
+                      @keydown.enter="remove(option)" />
+                  </span>
+                </template>
+              </FrResourceSelect>
             </div>
           </BCol>
         </BRow>
@@ -113,7 +165,7 @@ import {
   BRow,
 } from 'bootstrap-vue';
 import FrCardRadioInput from '@forgerock/platform-shared/src/components/CardRadioInput';
-import FrGovUsersMultiSelect from '@forgerock/platform-shared/src/components/governance/GovUsersMultiSelect';
+import FrResourceSelect from '@forgerock/platform-shared/src/components/Field/ResourceSelect';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 
 /**
@@ -132,8 +184,8 @@ export default {
     BModal,
     BRow,
     FrCardRadioInput,
-    FrGovUsersMultiSelect,
     FrIcon,
+    FrResourceSelect,
   },
   data() {
     return {
@@ -178,7 +230,15 @@ export default {
       };
       const usersToRequest = this.requestOption === 'self'
         ? [currentUser]
-        : this.selectedUsers;
+        : this.selectedUsers.map((selectedUser) => ({
+          id: selectedUser._id,
+          name: this.$t('common.userFullName', {
+            givenName: selectedUser.givenName,
+            sn: selectedUser.sn,
+          }),
+          profileImage: selectedUser.profileImage,
+          userName: selectedUser.userName,
+        }));
 
       this.$store.commit('setRequestCartUsers', usersToRequest);
       this.$router.push({ name: 'AccessRequestNew' });
