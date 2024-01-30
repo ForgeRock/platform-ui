@@ -1,9 +1,11 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
 <template>
-  <div class="p-4">
+  <div
+    v-if="!isNil(content)"
+    class="p-4">
     <dl
       class="row"
       v-for="item in Object.keys(content)"
@@ -19,6 +21,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import { isNil } from 'lodash';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
 
 export default {
@@ -33,6 +36,9 @@ export default {
     return {
       blankValueIndicator,
     };
+  },
+  methods: {
+    isNil,
   },
 };
 </script>
