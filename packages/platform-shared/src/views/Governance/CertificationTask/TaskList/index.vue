@@ -316,8 +316,7 @@ of the MIT license. See the LICENSE file for details. -->
       :glossary-schema="glossarySchema.application" />
     <FrAccountModal
       v-if="currentAccountSelectedModal"
-      :account="currentAccountSelectedModal"
-      :content="contentAccountSelectedModal" />
+      :grant="currentAccountSelectedModal" />
     <FrEntitlmentModal
       :application="currentApplicationSelectedModal"
       :entitlement="currentEntitlementSelected"
@@ -364,7 +363,6 @@ import {
   forwardItem,
   forwardItems,
   forwardAllItems,
-  getAccountDetails,
   getCertificationCounts,
   getCertificationTasksListByCampaign,
   getEntitlementDetails,
@@ -1597,27 +1595,14 @@ export default {
         this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserEntitlementsError'));
       });
     },
-    async openAccountModal(content) {
-      try {
-        const account = await getAccountDetails(this.campaignId, content.id);
+    openAccountModal(item) {
+      this.currentAccountSelectedModal = { ...item };
+      delete this.currentAccountSelectedModal.account?.metadata;
+      delete this.currentAccountSelectedModal.account?.proxyAddresses;
 
-        this.currentAccountSelectedModal = {
-          account,
-          decision: content.item?.decision?.certification?.decision,
-          decisionDate: content.item?.decision?.certification?.decisionDate,
-          decisionBy: content.item?.decision?.certification?.decisionBy,
-        };
-
-        this.contentAccountSelectedModal = cloneDeep(content.account);
-        delete this.contentAccountSelectedModal?.metadata;
-        delete this.contentAccountSelectedModal?.proxyAddresses;
-
-        this.$nextTick(() => {
-          this.$bvModal.show('CertificationTaskAccountModal');
-        });
-      } catch (error) {
-        this.showErrorMessage(error, this.$t('governance.certificationTask.entitlementModal.loadErrorMessage'));
-      }
+      this.$nextTick(() => {
+        this.$bvModal.show('CertificationTaskAccountModal');
+      });
     },
     async openApplicationModal(application, applicationOwners, glossary) {
       this.currentApplicationSelectedModal = {

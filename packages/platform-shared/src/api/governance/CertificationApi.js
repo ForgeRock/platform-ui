@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2023-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -475,17 +475,6 @@ export function resetAllItems(certId, actorId) {
 /**
  * Certification Item Details
  */
-
-/**
- * Obtains the entitlement details of a specific line item
- * @param {String} certId certification id
- * @param {String} itemId item id
- * @returns {Promise}
- */
-export function getAccountDetails(certId, itemId) {
-  const resourceUrl = `${governanceCertificationBaseUrl}/${certId}/items/${itemId}/account`;
-  return generateIgaApi().get(resourceUrl);
-}
 
 /**
  * Obtains the entitlement details of a specific line item
