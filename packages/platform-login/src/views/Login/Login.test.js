@@ -326,6 +326,16 @@ describe('Component Test', () => {
     header: 'Sign In',
     description: 'New here? <a href="#/service/Registration">Create an account</a><br><a href="#/service/ForgottenUsername">Forgot username?</a><a href="#/service/ResetPassword"> Forgot password?</a>',
   };
+  const errorPayload = {
+    payload: {
+      code: 401,
+      reason: 'Unauthorized',
+      message: 'Unable to resume session. It may have expired.',
+      status: 401,
+      ok: false,
+    },
+    type: 'LoginFailure',
+  };
 
   const mountLogin = async (overrideData = {}) => {
     const wrapper = mount(Login, {
@@ -448,6 +458,59 @@ describe('Component Test', () => {
 
       expect(wrapper.vm.componentList[0].callbackSpecificProps.autofocus).toBeTruthy();
       expect(wrapper.vm.componentList[1].callbackSpecificProps.autofocus).toBeFalsy();
+    });
+
+    it('calls buildTreeForm properly when themeLoading changes and when step exists or does not exist', async () => {
+      // Load with a valid step
+      let data = {
+        loading: true,
+        step: new FRStep(stepPayload),
+      };
+
+      let wrapper = await mountLogin(data);
+
+      let buildTreeFormSpy = jest.spyOn(wrapper.vm, 'buildTreeForm');
+
+      await wrapper.setProps({ themeLoading: true });
+      await flushPromises();
+      await wrapper.setProps({ themeLoading: false });
+      await flushPromises();
+
+      expect(buildTreeFormSpy).toHaveBeenCalled();
+
+      // Load with an undefined step
+      data = {
+        loading: true,
+        step: undefined,
+      };
+
+      wrapper = await mountLogin(data);
+
+      buildTreeFormSpy = jest.spyOn(wrapper.vm, 'buildTreeForm');
+
+      await wrapper.setProps({ themeLoading: true });
+      await flushPromises();
+      await wrapper.setProps({ themeLoading: false });
+      await flushPromises();
+
+      expect(buildTreeFormSpy).not.toHaveBeenCalled();
+
+      // Load with a login failure
+      data = {
+        loading: true,
+        step: errorPayload,
+      };
+
+      wrapper = await mountLogin(data);
+
+      buildTreeFormSpy = jest.spyOn(wrapper.vm, 'buildTreeForm');
+
+      await wrapper.setProps({ themeLoading: true });
+      await flushPromises();
+      await wrapper.setProps({ themeLoading: false });
+      await flushPromises();
+
+      expect(buildTreeFormSpy).not.toHaveBeenCalled();
     });
   });
 });
