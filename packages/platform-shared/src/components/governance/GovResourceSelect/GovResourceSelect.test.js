@@ -31,6 +31,7 @@ const mountComponent = (propsData = {}) => mount(GovResourceSelect, {
       sn: 'user',
       id: 'userId1',
     },
+    name: 'govResourceSelect',
     ...propsData,
   },
 });
