@@ -218,9 +218,9 @@ export default {
       catalogFilterSchema: [],
       catalogResults: [],
       currentUser: {},
-      currentUserAccountsDetails: { result: [] },
-      currentUserEntitlementsDetails: { result: [] },
-      currentUserRolesDetails: { result: [] },
+      selectedUserAccountsDetails: { result: [] },
+      selectedUserEntitlementsDetails: { result: [] },
+      selectedUserRolesDetails: { result: [] },
       glossarySchema: {},
       isTesting: false,
       loading: true,
@@ -272,9 +272,9 @@ export default {
     },
     currentUserDetails() {
       return {
-        userAccounts: this.currentUserAccountsDetails,
-        userEntitlements: this.currentUserEntitlementsDetails,
-        userRoles: this.currentUserRolesDetails,
+        userAccounts: this.selectedUserAccountsDetails,
+        userEntitlements: this.selectedUserEntitlementsDetails,
+        userRoles: this.selectedUserRolesDetails,
       };
     },
     requestedApplications() {
@@ -482,32 +482,33 @@ export default {
           this.$bvModal.show('GovernanceUserDetailsModal');
         })
         .catch((error) => {
-          this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserError'));
+          this.showErrorMessage(error, this.$t('governance.certificationTask.errors.getUserError'));
         });
-      // TODO: These calls have been temporarily disabled as it is not possible to access them for all users (see comment in ticket).
+      // TODO: It is not currently possible to access user grants when requested user is non-current user and non-direct report user.
       // // get roles details
       // getUserGrants(id, { grantType: 'role' })
       //   .then(({ data }) => {
-      //     this.currentUserRolesDetails = data;
+      //     this.selectedUserRolesDetails = data;
       //   })
       //   .catch((error) => {
-      //     this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserError'));
+      // TODO: update this error to be related to role (make getUserError into a dynamic error that accepts resourceType)
+      //     this.showErrorMessage(error, this.$t('governance.certificationTask.errors.getUserError'));
       //   });
       // // get accounts details
       // getUserGrants(id, { grantType: 'account' })
       //   .then(({ data }) => {
-      //     this.currentUserAccountsDetails = data;
+      //     this.selectedUserAccountsDetails = data;
       //   })
       //   .catch((error) => {
-      //     this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserError'));
+      //     this.showErrorMessage(error, this.$t('governance.certificationTask.errors.getUserError'));
       //   });
       // // get entitlements details
       // getUserGrants(id, { grantType: 'entitlement' })
       //   .then(({ data }) => {
-      //     this.currentUserEntitlementsDetails = data;
+      //     this.selectedUserEntitlementsDetails = data;
       //   })
       //   .catch((error) => {
-      //     this.showErrorMessage(error, this.$t('governance.certificationTask.error.getUserError'));
+      //     this.showErrorMessage(error, this.$t('governance.certificationTask.errors.getUserError'));
       //   });
     },
     /**
