@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -20,11 +20,11 @@ of the MIT license. See the LICENSE file for details. -->
         no-body>
         <div class="media-body">
           <small class="text-muted">
-            {{ $t('governance.certificationTask.lineItemDetailsModal.accountDetailsTabText') }}
+            {{ $t('governance.accountDetails') }}
           </small>
-          <h5 class="m-0">
-            {{ account.mailNickname }}
-          </h5>
+          <h2 class="h5 m-0">
+            {{ accountDisplayName }}
+          </h2>
         </div>
       </BMedia>
       <BButtonClose
@@ -43,12 +43,12 @@ of the MIT license. See the LICENSE file for details. -->
       vertical>
       <BTab
         active
-        :title="$t('governance.certificationTask.lineItemDetailsModal.accountDetailsTabText')">
-        <FrAccountDetailsTab :account="account" />
+        :title="$t('governance.accountDetails')">
+        <FrAccountDetailsTab :grant="grant" />
       </BTab>
       <BTab
         :title="$t('governance.certificationTask.lineItemDetailsModal.contentDetailsTabText')">
-        <FrContentDetailsTab :content="content" />
+        <FrContentDetailsTab :content="grant.account" />
       </BTab>
     </BTabs>
   </BModal>
@@ -79,13 +79,14 @@ export default {
     BMedia,
   },
   props: {
-    account: {
+    grant: {
       type: Object,
       required: true,
     },
-    content: {
-      type: Object,
-      default: () => ({}),
+  },
+  computed: {
+    accountDisplayName() {
+      return this.grant?.descriptor?.idx?.['/account']?.displayName || '';
     },
   },
 };

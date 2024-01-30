@@ -35,7 +35,7 @@ of the MIT license. See the LICENSE file for details. -->
       :card="false" />
     <BTable
       v-else
-      class="mb-0"
+      :class="['mb-0', { 'cursor-pointer': showViewDetails }]"
       id="my-access-review-table"
       data-testid="my-access-review-table"
       no-local-sorting
@@ -43,9 +43,11 @@ of the MIT license. See the LICENSE file for details. -->
       responsive
       :fields="fields"
       :items="itemsWithAssignment"
+      :hover="showViewDetails"
       :busy="isLoading"
       :sort-by.sync="sortBy"
       :sort-desc.sync="sortDesc"
+      @row-clicked="handleRowClick"
       @sort-changed="sortChanged">
       <template #cell(accountName)="{ item }">
         <p class="mb-0 text-truncate text-dark">
@@ -133,19 +135,26 @@ of the MIT license. See the LICENSE file for details. -->
       </template>
       <template #cell(actions)="{ item }">
         <FrActionsCell
-          v-if="item.assignment === directAssignment || item.assignment === staticAssignment"
+          v-if="item.assignment === directAssignment || item.assignment === staticAssignment || showViewDetails"
           test-id="relationship-menu"
           :delete-option="false"
           :divider="false"
           :edit-option="false">
           <template #custom-top-actions>
             <BDropdownItem
-              v-if="adminAccess"
+              v-if="showViewDetails"
+              @click="handleRowClick(item)">
+              <FrIcon
+                class="mr-2"
+                name="list_alt" />{{ $t('common.viewDetails') }}
+            </BDropdownItem>
+            <BDropdownItem
+              v-if="(item.assignment === directAssignment || item.assignment === staticAssignment) && adminAccess"
               @click="$emit('revoke-request', item);">
               <FrIcon
                 class="mr-2"
                 name="delete" />{{ $t('common.revoke') }}
-            </Bdropdownitem>
+            </BDropdownItem>
           </template>
         </FrActionsCell>
       </template>
@@ -158,6 +167,10 @@ of the MIT license. See the LICENSE file for details. -->
       :total-rows="totalCount"
       @input="pageChange"
       @on-page-size-change="pageSizeChange" />
+    <FrUserEntitlementModal
+      :grant="grantDetails"
+      :glossary-schema="glossarySchema"
+      modal-id="userEntitlementModal" />
   </BCard>
 </template>
 
@@ -176,17 +189,18 @@ import {
 } from 'bootstrap-vue';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
 import { pluralizeValue } from '@forgerock/platform-shared/src/utils/PluralizeUtils';
-import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
-import FrIcon from '@forgerock/platform-shared/src/components/Icon';
-import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
-import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
-import FrNoData from '@forgerock/platform-shared/src/components/NoData';
-import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
-import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platform-shared/src/utils/appSharedUtils';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
+import { getUserGrants, getGlossarySchema } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import FrActionsCell from '@forgerock/platform-shared/src/components/cells/ActionsCell';
+import FrUserEntitlementModal from '@forgerock/platform-shared/src/components/governance/UserEntitlementModal';
+import FrIcon from '@forgerock/platform-shared/src/components/Icon';
+import FrNoData from '@forgerock/platform-shared/src/components/NoData';
+import FrPagination from '@forgerock/platform-shared/src/components/Pagination';
+import FrSearchInput from '@forgerock/platform-shared/src/components/SearchInput';
+import FrSpinner from '@forgerock/platform-shared/src/components/Spinner/';
+import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import formatConstraintDate from '@forgerock/platform-shared/src/utils/governance/temporalConstraints';
-import { getUserGrants } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 
 export default {
   name: 'MyAccessReviewTable',
@@ -202,6 +216,7 @@ export default {
     BMediaBody,
     BTable,
     FrActionsCell,
+    FrUserEntitlementModal,
     FrIcon,
     FrPagination,
     FrSearchInput,
@@ -232,11 +247,17 @@ export default {
       type: String,
       default: '',
     },
+    showViewDetails: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       blankValueIndicator,
       directAssignment: this.$t('common.direct'),
+      grantDetails: {},
+      glossarySchema: [],
       isLoading: true,
       isNoResultsFirstLoad: false,
       items: [],
@@ -251,8 +272,16 @@ export default {
       totalCount: 0,
     };
   },
-  mounted() {
+  async mounted() {
     this.setup();
+    if (this.showViewDetails) {
+      try {
+        const { data } = await getGlossarySchema();
+        this.glossarySchema = [data['/openidm/managed/assignment']];
+      } catch (error) {
+        this.showErrorMessage(error, this.$t('governance.certificationTask.errors.glossaryError'));
+      }
+    }
   },
   computed: {
     itemsWithAssignment() {
@@ -325,6 +354,12 @@ export default {
         return foundGrantType.grantType === 'role' ? this.roleBasedAssignment : this.directAssignment;
       }
       return '';
+    },
+    handleRowClick(item) {
+      if (this.showViewDetails && this.grantType === 'entitlement') {
+        this.grantDetails = { ...item };
+        this.$bvModal.show('userEntitlementModal');
+      }
     },
     /**
      * Loads a list for MyAccess

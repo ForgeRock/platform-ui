@@ -1,4 +1,4 @@
-<!-- Copyright (c) 2023 ForgeRock. All rights reserved.
+<!-- Copyright (c) 2023-2024 ForgeRock. All rights reserved.
 
 This software may be modified and distributed under the terms
 of the MIT license. See the LICENSE file for details. -->
@@ -39,7 +39,7 @@ of the MIT license. See the LICENSE file for details. -->
       <dd
         class="col-lg-8 mb-4"
         data-testid="lastDecision">
-        {{ account.decision || blankValueIndicator }}
+        {{ decision }}
       </dd>
       <dt class="col-lg-4">
         {{ $t('governance.certificationTask.lineItemDetailsModal.accountDetailsTab.lastCertifiedLabel') }}
@@ -47,7 +47,7 @@ of the MIT license. See the LICENSE file for details. -->
       <dd
         class="col-lg-8 mb-4"
         data-testid="decisionDate">
-        {{ formatDate(account.decisionDate) }}
+        {{ decisionDate }}
       </dd>
       <dt class="col-lg-4">
         {{ $t('governance.certificationTask.lineItemDetailsModal.accountDetailsTab.lastCertifiedByLabel') }}
@@ -55,13 +55,13 @@ of the MIT license. See the LICENSE file for details. -->
       <dd
         class="col-lg-8 mb-4"
         data-testid="decisionBy">
-        {{ account.decisionBy && account.decisionBy.userName || blankValueIndicator }}
+        {{ decisionBy }}
       </dd>
       <dt class="col-lg-4">
         {{ $t('governance.certificationTask.lineItemDetailsModal.accountDetailsTab.provisioningMethodLabel') }}
       </dt>
       <dd class="col-lg-8 mb-4">
-        {{ account.grantType || blankValueIndicator }}
+        {{ grantType }}
       </dd>
     </dl>
   </div>
@@ -82,7 +82,7 @@ export default {
     BMedia,
   },
   props: {
-    account: {
+    grant: {
       type: Object,
       required: true,
     },
@@ -90,8 +90,23 @@ export default {
   data() {
     return {
       blankValueIndicator,
-      details: this.account.account,
+      details: this.grant?.account,
     };
+  },
+  computed: {
+    decision() {
+      return this.grant?.item?.decision?.certification?.decision || blankValueIndicator;
+    },
+    decisionDate() {
+      return this.formatDate(this.grant?.item?.decision?.certification?.decisionDate);
+    },
+    decisionBy() {
+      const user = this.grant?.item?.decision?.certification?.decisionBy;
+      return user ? user.userName : blankValueIndicator;
+    },
+    grantType() {
+      return this.grant?.grantTypes || blankValueIndicator;
+    },
   },
   methods: {
     formatDate(date) {
