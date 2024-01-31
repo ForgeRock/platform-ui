@@ -8,7 +8,7 @@
 .device-xs {
   width: 36px;
   height: 36px;
-  background: no-repeat url('~@forgerock/platform-enduser/src/assets/images/devices-sprite.svg');
+  background: no-repeat url('~@forgerock/platform-shared/src/assets/images/devices-sprite.svg');
   background-size: 36px 252px;
 
   &[data-device-type=android] {
@@ -35,3 +35,4 @@
     background-position: 0 -216px;
   }
 }
+

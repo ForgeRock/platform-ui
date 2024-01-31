@@ -774,9 +774,11 @@
         "browser": "Browser",
         "cpu": "CPU",
         "currentDevice": "Current Device",
+        "device": "Device",
         "editModalTitle": "Edit Device Name",
         "editModalInput": "Device name",
         "editSuccess": "Device name saved",
+        "googleMapsLocaltionImgAlt": "Google Maps Location",
         "os": "Operating System",
         "recentActivity": "Recent Activity",
         "remove": "Remove device",
@@ -787,7 +789,8 @@
         "updateDeviceAliasError": "There was an error updating device alias.",
         "loadDevicesError": "There was an error retrieving devices.",
         "deviceDetails": "Device Details",
-        "removeConfirmationMessage": "Are you sure you want to remove from <strong>{username}’s</strong> profile?"
+        "removeConfirmationMessage": "Are you sure you want to remove from <strong>{username}’s</strong> profile?",
+        "unknown": "Unknown"
       },
       "accountControls": {
         "title": "Account Controls",
