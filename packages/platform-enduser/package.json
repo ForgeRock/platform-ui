@@ -17,8 +17,6 @@
   "dependencies": {
     "@braintree/sanitize-url": "6.0.2",
     "@forgerock/platform-shared": "1.0.0",
-    "@googlemaps/js-api-loader": "1.14.0",
-    "@googlemaps/markerclusterer": "2.0.3",
     "@kyvg/vue3-notification": "3.0.2",
     "@riophae/vue-treeselect": "0.4.0",
     "@vue/compat": "3.3.4",

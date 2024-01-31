@@ -8,7 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
       v-if="theme"
       class="my-5">
       <BCol
-        v-if="!theme.accountPageSections || theme.accountPageSections.personalInformation.enabled"
+        v-if="!theme?.accountPageSections || theme?.accountPageSections.personalInformation.enabled"
         class="profileCol mb-4"
         lg="4">
         <FrEditProfile
@@ -21,31 +21,33 @@ of the MIT license. See the LICENSE file for details. -->
           :show-edit="profile._id !== undefined && isInternalUser === false"
           :show-image-upload="managedResourceSchema.properties && managedResourceSchema.properties.profileImage !== undefined" />
       </BCol>
-      <BCol :lg="(!theme.accountPageSections || theme.accountPageSections.personalInformation.enabled) ? 8 : 12">
+      <BCol :lg="(!theme?.accountPageSections || theme?.accountPageSections.personalInformation.enabled) ? 8 : 12">
         <FrAccountSecurity
-          v-if="(!theme.accountPageSections || theme.accountPageSections.accountSecurity.enabled) && isInternalUser === false"
+          v-if="(!theme?.accountPageSections || theme?.accountPageSections.accountSecurity.enabled) && isInternalUser === false"
           class="mb-5"
           :processing-request="processingRequest"
-          :theme-sections="theme.accountPageSections ? theme.accountPageSections.accountSecurity.subsections : {}"
+          :theme-sections="theme?.accountPageSections ? theme?.accountPageSections.accountSecurity.subsections : {}"
           @updateKBA="updateKBA" />
         <FrSocial
-          v-if="!theme.accountPageSections || theme.accountPageSections.social.enabled"
+          v-if="!theme?.accountPageSections || theme?.accountPageSections.social.enabled"
           class="mb-5" />
-        <FrTrustedDevices v-if="!theme.accountPageSections || theme.accountPageSections.trustedDevices.enabled" />
+        <FrAccordionTrustedDevices
+          v-if="!theme?.accountPageSections || theme?.accountPageSections.trustedDevices.enabled"
+          class="mb-5" />
         <FrAuthorizedApplications
-          v-if="(!theme.accountPageSections || theme.accountPageSections.oauthApplications.enabled) && isInternalUser === false"
+          v-if="(!theme?.accountPageSections || theme?.accountPageSections.oauthApplications.enabled) && isInternalUser === false"
           class="mb-5" />
         <FrPreferences
-          v-if="(!theme.accountPageSections || theme.accountPageSections.preferences.enabled) && isInternalUser === false"
+          v-if="(!theme?.accountPageSections || theme?.accountPageSections.preferences.enabled) && isInternalUser === false"
           class="mb-5"
           @updateProfile="updateProfile" />
         <FrConsent
-          v-if="!theme.accountPageSections || theme.accountPageSections.consent.enabled"
+          v-if="!theme?.accountPageSections || theme?.accountPageSections.consent.enabled"
           class="mb-5"
           :consented-mappings="profile.consentedMappings"
           @updateProfile="updateProfile" />
         <FrAccountControls
-          v-if="!theme.accountPageSections || theme.accountPageSections.accountControls.enabled"
+          v-if="!theme?.accountPageSections || theme?.accountPageSections.accountControls.enabled"
           class="mb-5" />
       </BCol>
     </BRow>
@@ -53,6 +55,7 @@ of the MIT license. See the LICENSE file for details. -->
 </template>
 
 <script>
+import FrAccordionTrustedDevices from '@forgerock/platform-shared/src/components/profile/TrustedDevices/AccordionTrustedDevices';
 import { BCol, BContainer, BRow } from 'bootstrap-vue';
 import { mapState } from 'pinia';
 import { useUserStore } from '@forgerock/platform-shared/src/stores/user';
@@ -60,7 +63,6 @@ import { useEnduserStore } from '@forgerock/platform-shared/src/stores/enduser';
 import RestMixin from '@forgerock/platform-shared/src/mixins/RestMixin';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
 import FrAccountSecurity from '@forgerock/platform-shared/src/components/profile/AccountSecurity';
-import FrTrustedDevices from '@forgerock/platform-shared/src/components/profile/TrustedDevices';
 import FrEditProfile from '@forgerock/platform-shared/src/components/profile/EditProfile';
 import FrAccountControls from '@/components/profile/AccountControls';
 import FrAuthorizedApplications from '@/components/profile/AuthorizedApplications';
@@ -97,7 +99,7 @@ export default {
     FrAuthorizedApplications,
     FrEditProfile,
     FrPreferences,
-    FrTrustedDevices,
+    FrAccordionTrustedDevices,
     FrConsent,
     FrSocial,
   },
