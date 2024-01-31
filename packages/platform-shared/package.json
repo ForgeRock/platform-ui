@@ -10,7 +10,10 @@
   "dependencies": {
     "@forgerock/javascript-sdk": "3.0.0",
     "@forgerock/platform-shared": "1.0.0",
+    "@googlemaps/js-api-loader": "1.16.2",
+    "@googlemaps/markerclusterer": "2.5.2",
     "@kyvg/vue3-notification": "3.0.2",
+    "@types/google.maps": "3.55.1",
     "@vee-validate/rules": "4.11.8",
     "@vue/compat": "3.3.4",
     "axios": "1.6.1",
@@ -21,7 +24,6 @@
     "d3": "6.7.0",
     "d3-interpolate-path": "2.2.3",
     "dayjs": "1.11.7",
-    "google-maps-api-loader": "1.1.1",
     "jose": "4.14.4",
     "ldap-filter": "0.3.3",
     "lodash": "4.17.21",

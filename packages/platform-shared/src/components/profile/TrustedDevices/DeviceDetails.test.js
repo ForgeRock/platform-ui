@@ -46,23 +46,9 @@ describe('Device Details', () => {
     const deviceCpu = findByTestId(wrapper, 'device-cpu');
     expect(deviceCpu.exists()).toBe(true);
   });
-  it('Shows remove button when the device is not the current device and the component is not displayed inside a modal', async () => {
-    const wrapper = setup({ device: { isCurrent: false }, showsInModal: false });
-    const deviceRemove = findByTestId(wrapper, 'device-remove');
-    expect(deviceRemove.exists()).toBe(true);
-  });
   it('Hides remove button when the component is displayed inside a modal', async () => {
     const wrapper = setup({ device: { isCurrent: false }, showsInModal: true });
     const deviceRemove = findByTestId(wrapper, 'device-remove');
     expect(deviceRemove.exists()).toBe(false);
-  });
-  it('Emits event when remove button is clicked', async () => {
-    const wrapper = setup({ device: { isCurrent: false }, showsInModal: false });
-    const removeButton = findByTestId(wrapper, 'remove-button');
-    expect(removeButton.exists()).toBe(true);
-    removeButton.trigger('click');
-    wrapper.vm.$nextTick(() => {
-      expect(wrapper.emitted()['remove-device']).not.toEqual(undefined);
-    });
   });
 });

@@ -174,6 +174,7 @@ of the MIT license. See the LICENSE file for details. -->
                 :id="id" />
             </BTab>
             <FrLinkedApplicationsTab :linked-applications="linkedApplications" />
+            <FrUserDevicesTab :user-id="id" />
             <FrJsonTab
               v-if="jsonString"
               :json-string="jsonString" />
@@ -248,6 +249,7 @@ import FrObjectTypeEditor from './ObjectTypeEditor';
 import FrSettingsTab from './CustomTabs/SettingsTab';
 import FrPrivilegesTab from './CustomTabs/PrivilegesTab';
 import FrJsonTab from './CustomTabs/JsonTab';
+import FrUserDevicesTab from './CustomTabs/UserDevices';
 
 /**
  * @description Full page that provides view/edit of a specific resource for delegated admin. Auto generates fields based on backend return.
@@ -273,6 +275,7 @@ export default {
     FrRelationshipArray,
     FrSettingsTab,
     FrSpinner,
+    FrUserDevicesTab,
     BButton,
     BCard,
     BContainer,

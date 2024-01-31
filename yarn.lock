@@ -2181,8 +2181,6 @@ __metadata:
     "@forgerock/javascript-sdk": 3.0.0
     "@forgerock/platform-login": 1.0.0
     "@forgerock/platform-shared": 1.0.0
-    "@googlemaps/js-api-loader": 1.14.0
-    "@googlemaps/markerclusterer": 2.0.3
     "@kyvg/vue3-notification": 3.0.2
     "@neuralegion/cypress-har-generator": 5.16.4
     "@pinia/testing": 0.1.3
@@ -2261,8 +2259,6 @@ __metadata:
   dependencies:
     "@braintree/sanitize-url": 6.0.2
     "@forgerock/platform-shared": 1.0.0
-    "@googlemaps/js-api-loader": 1.14.0
-    "@googlemaps/markerclusterer": 2.0.3
     "@kyvg/vue3-notification": 3.0.2
     "@neuralegion/cypress-har-generator": 5.16.4
     "@pinia/testing": 0.1.3
@@ -2412,8 +2408,11 @@ __metadata:
   dependencies:
     "@forgerock/javascript-sdk": 3.0.0
     "@forgerock/platform-shared": 1.0.0
+    "@googlemaps/js-api-loader": 1.16.2
+    "@googlemaps/markerclusterer": 2.5.2
     "@kyvg/vue3-notification": 3.0.2
     "@pinia/testing": 0.1.3
+    "@types/google.maps": 3.55.1
     "@vee-validate/rules": 4.11.8
     "@vue/cli-plugin-babel": 5.0.8
     "@vue/cli-service": 5.0.8
@@ -2431,7 +2430,6 @@ __metadata:
     d3-interpolate-path: 2.2.3
     dayjs: 1.11.7
     eslint-plugin-import: 2.18.2
-    google-maps-api-loader: 1.1.1
     jest: 29.6.3
     jose: 4.14.4
     ldap-filter: 0.3.3
@@ -2465,23 +2463,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@googlemaps/js-api-loader@npm:1.14.0":
-  version: 1.14.0
-  resolution: "@googlemaps/js-api-loader@npm:1.14.0"
+"@googlemaps/js-api-loader@npm:1.16.2":
+  version: 1.16.2
+  resolution: "@googlemaps/js-api-loader@npm:1.16.2"
   dependencies:
     fast-deep-equal: ^3.1.3
-  checksum: fde929e819254b93cb43016af090a2889346dd77b7ff0eff90d9f31a32c0c2ca044925d85451cff3b4632345a50919014b2d2ad5e4e59d60deed6b76881648e2
+  checksum: 122ee57cc6a936e50358aedc4e79042353590467210e901fb42d4e7d9123c248c4db5cd5407a350cb5bea6de9e9ef1a508c08ba593475285d90bc4b93db42f51
   languageName: node
   linkType: hard
 
-"@googlemaps/markerclusterer@npm:2.0.3":
-  version: 2.0.3
-  resolution: "@googlemaps/markerclusterer@npm:2.0.3"
+"@googlemaps/markerclusterer@npm:2.5.2":
+  version: 2.5.2
+  resolution: "@googlemaps/markerclusterer@npm:2.5.2"
   dependencies:
     fast-deep-equal: ^3.1.3
-    fast-equals: ^3.0.0
-    supercluster: ^7.1.3
-  checksum: 302ff1b1d70a9aae786f7a25f5d250e923df086033c21b2f30d4216bf4cb96ad07e1bcb3ca6d771ffe3f6db26678beaa7f832408f85bda766f6db29070030103
+    supercluster: ^8.0.1
+  checksum: 85d4e37229f46186df633bdc840737be7728d18886d121ed7f9f88921ef9a83e904c5ee91561ca3b994a62506c31391eed6b621bb15099d1058308c2d44dca9a
   languageName: node
   linkType: hard
 
@@ -3681,6 +3678,13 @@ __metadata:
     "@types/qs": "*"
     "@types/serve-static": "*"
   checksum: 0196dacc275ac3ce89d7364885cb08e7fb61f53ca101f65886dbf1daf9b7eb05c0943e2e4bbd01b0cc5e50f37e0eea7e4cbe97d0304094411ac73e1b7998f4da
+  languageName: node
+  linkType: hard
+
+"@types/google.maps@npm:3.55.1":
+  version: 3.55.1
+  resolution: "@types/google.maps@npm:3.55.1"
+  checksum: 6fb2ece271cada04f2bf221f50395bd4afaef85bc151f3476acbb8b269aec777f29c89b614e4bfce7110de29e4bc9c6002f2d6565da59c70677b0d5afe66b9ae
   languageName: node
   linkType: hard
 
@@ -9046,13 +9050,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"es6-promise@npm:^4.0.5":
-  version: 4.2.8
-  resolution: "es6-promise@npm:4.2.8"
-  checksum: 95614a88873611cb9165a85d36afa7268af5c03a378b35ca7bda9508e1d4f1f6f19a788d4bc755b3fd37c8ebba40782018e02034564ff24c9d6fa37e959ad57d
-  languageName: node
-  linkType: hard
-
 "escalade@npm:^3.1.0, escalade@npm:^3.1.1":
   version: 3.1.1
   resolution: "escalade@npm:3.1.1"
@@ -9734,13 +9731,6 @@ __metadata:
   version: 3.1.3
   resolution: "fast-deep-equal@npm:3.1.3"
   checksum: e21a9d8d84f53493b6aa15efc9cfd53dd5b714a1f23f67fb5dc8f574af80df889b3bce25dc081887c6d25457cce704e636395333abad896ccdec03abaf1f3f9d
-  languageName: node
-  linkType: hard
-
-"fast-equals@npm:^3.0.0":
-  version: 3.0.1
-  resolution: "fast-equals@npm:3.0.1"
-  checksum: d030206d1da71d1b9928e5a374cb70dd4a97ba962a8b944e9abd91766ff2d0f470b0b30ac9a44ae15a409514075c7fde51483fa638a186f68d54e0e8097f7f67
   languageName: node
   linkType: hard
 
@@ -10691,15 +10681,6 @@ __metadata:
   dependencies:
     delegate: ^3.1.2
   checksum: f39fb82c4e41524f56104cfd2d7aef1a88e72f3f75139115fbdf98cc7d844e0c1b39218b2e83438c6188727bf904ed78c7f0f2feff67b32833bc3af7f0202b33
-  languageName: node
-  linkType: hard
-
-"google-maps-api-loader@npm:1.1.1":
-  version: 1.1.1
-  resolution: "google-maps-api-loader@npm:1.1.1"
-  dependencies:
-    es6-promise: ^4.0.5
-  checksum: d5cd499509e05101b3f45147f15c95e7aa615feae87ec5e1f9b2ecde480c7ee5557af6e8a8d5e75d5d42ba3bd95e74d852bf149174afa6c70a80cc7bc78846ab
   languageName: node
   linkType: hard
 
@@ -13641,10 +13622,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"kdbush@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "kdbush@npm:3.0.0"
-  checksum: bc5fa433958e42664a8a92457e4f0d1db55b3b8e36956aac0102964adb2eab043bdbff156570dc8d867144ceff588fb7a1c6e099ba9be068cd1767a73e1ace92
+"kdbush@npm:^4.0.2":
+  version: 4.0.2
+  resolution: "kdbush@npm:4.0.2"
+  checksum: 6782ef2cdaec9322376b9955a16b0163beda0cefa2f87da76e8970ade2572d8b63bec915347aaeac609484b0c6e84d7b591f229ef353b68b460238095bacde2d
   languageName: node
   linkType: hard
 
@@ -19212,12 +19193,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"supercluster@npm:^7.1.3":
-  version: 7.1.5
-  resolution: "supercluster@npm:7.1.5"
+"supercluster@npm:^8.0.1":
+  version: 8.0.1
+  resolution: "supercluster@npm:8.0.1"
   dependencies:
-    kdbush: ^3.0.0
-  checksum: 69863238870093b96617135884721b6343746e14f396b2d67d6b55c52c362ec0516c5e386aa21815e75a9cef2054e831ac34023d0d8b600091d28cea0794f027
+    kdbush: ^4.0.2
+  checksum: 39d141f768a511efa53260252f9dab9a2ce0228b334e55482c8d3019e151932f05e1a9a0252d681737651b13c741c665542a6ddb40ec27de96159ea7ad41f7f4
   languageName: node
   linkType: hard
 
