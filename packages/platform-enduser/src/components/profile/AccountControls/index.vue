@@ -5,6 +5,7 @@ of the MIT license. See the LICENSE file for details. -->
 <template>
   <div>
     <FrAccordion
+      id="account-controls"
       accordion-group="accountControls"
       :items="items">
       <template #accordionHeader>
