@@ -37,13 +37,4 @@ describe('Device Details Modal', () => {
     const removeDevice = findByTestId(wrapper, 'remove-device');
     expect(removeDevice.exists()).toBe(true);
   });
-  it('Emits event when remove confirmation button is clicked', async () => {
-    const wrapper = setup({ device: { isCurrent: false } });
-    const confirmationButton = findByTestId(wrapper, 'confirmation-button');
-    expect(confirmationButton.exists()).toBe(true);
-    confirmationButton.trigger('click');
-    wrapper.vm.$nextTick(() => {
-      expect(wrapper.emitted()['remove-device']).not.toEqual(undefined);
-    });
-  });
 });

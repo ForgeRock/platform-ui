@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2020-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2020-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -53,7 +53,7 @@ filterTests(['forgeops', 'cloud'], () => {
       cy.readFile(path.join(downloadsFolder, 'userProfile.json')).should('exist');
 
       // Check that the user can delete their account
-      cy.get('div.accordion').within(() => {
+      cy.get('div#account-controls').within(() => {
         cy.get('div.card-header').contains('Delete Account').click();
       });
       cy.get('button.btn-danger:last')
