@@ -297,7 +297,7 @@ export default {
       this.emitInput(this.listValues);
     },
     validateField() {
-      this.setErrors(this.requiredAndEmpty ? [this.$t('common.policyValidationMessages.REQUIRED')] : '');
+      this.setErrors(this.requiredAndEmpty ? [this.$t('common.policyValidationMessages.REQUIRED')] : []);
     },
   },
 };
