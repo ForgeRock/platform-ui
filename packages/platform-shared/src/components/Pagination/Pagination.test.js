@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021-2023 ForgeRock. All rights reserved.
+ * Copyright (c) 2021-2024 ForgeRock. All rights reserved.
  *
  * This software may be modified and distributed under the terms
  * of the MIT license. See the LICENSE file for details.
@@ -296,7 +296,11 @@ describe('Pagination Component', () => {
     });
 
     it('Pagination displays first page button', () => {
-      const wrapper = mountPaginationCustom();
+      const wrapper = mountPaginationCustom({
+        propsData: {
+          hideGoToFirstPageButton: false,
+        },
+      });
       const pagination = wrapper.find('#pagination');
       expect(pagination.exists()).toBe(true);
       const buttons = pagination.findAll('.page-item');
@@ -318,6 +322,7 @@ describe('Pagination Component', () => {
     it('Pagination displays last page button when total rows greater than 0', () => {
       const wrapper = mountPaginationCustom({
         propsData: {
+          hideGoToLastPageButton: false,
           totalRows: 10,
         },
       });
