@@ -36,17 +36,18 @@ of the MIT license. See the LICENSE file for details. -->
       :aria-label="ariaLabel"
       :disabled="disabled"
       :ellipsis-class="['d-flex align-items-center', ellipsisClass]"
-      :first-class="datasetSize === DatasetSize.SMALL || datasetSize === DatasetSize.LARGE || hideGoToFirstPageButton ? 'd-none': firstClass"
+      :first-class="hideGoToFirstPageButton ? 'd-none': firstClass"
       :hide-ellipsis="datasetSize === DatasetSize.LARGE || hidePageNumbers || hideEllipsis"
       :label-first-page="labelFirstPage"
       :label-last-page="labelLastPage"
       :label-next-page="labelNextPage"
       :label-page="labelPage"
       :label-prev-page="labelPrevPage"
-      :last-class="totalRows <= 0 || datasetSize === DatasetSize.SMALL || datasetSize === DatasetSize.LARGE || hideGoToLastPageButton ? 'd-none': lastClass"
+      :last-class="totalRows <= 0 || hideGoToLastPageButton ? 'd-none': lastClass"
       :limit="limit"
       :page-class="pageClasses"
       :per-page="perPage"
+      :prev-class="prevClass"
       :total-rows="totalRows > 0 ? totalRows : totalRowsOnDemand"
       :value="value"
       @input="$emit('input', $event)"
@@ -134,6 +135,7 @@ import i18n from '@/i18n';
  * @param {string}    pageClass                 Class to apply to the 'Go to page #' buttons, null by default
  * @param {array}     pageSizes                 allowed page sizes, [10, 20, 50, 100] by default
  * @param {number}    perPage                   number of displayed items on the page, 10 by default
+ * @param {number}    prevClass                 Class to apply to the previous page button, null by default
  * @param {number}    totalRows                 number of total items in the data table, 0 by default
  * @param {number}    value                     actual page index, 1 by default
  *
@@ -204,11 +206,11 @@ export default {
     },
     hideGoToFirstPageButton: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     hideGoToLastPageButton: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     hidePageNumbers: {
       type: Boolean,
@@ -261,6 +263,10 @@ export default {
     perPage: {
       type: Number,
       default: 10,
+    },
+    prevClass: {
+      type: String,
+      default: null,
     },
     totalRows: {
       type: Number,
