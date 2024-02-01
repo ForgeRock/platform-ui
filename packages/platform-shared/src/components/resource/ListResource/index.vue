@@ -71,8 +71,8 @@ of the MIT license. See the LICENSE file for details. -->
       :fields="columns"
       :items="tableData"
       :no-local-sorting="true"
-      :sort-by.sync="sortBy"
-      :sort-desc.sync="sortDesc"
+      v-model:sort-by="sortBy"
+      v-model:sort-desc="sortDesc"
       :sort-direction="sortDirection"
       :data-testid="testid"
       @row-clicked="$emit('row-clicked', $event)"
@@ -113,7 +113,9 @@ of the MIT license. See the LICENSE file for details. -->
       v-if="tableData && tableData.length > 0 && !isLoading"
       :value="paginationPage"
       aria-controls="list-resource-table"
+      :hide-go-to-first-page-button="hideGoToFirstPageButton"
       :per-page="paginationPageSize"
+      :prev-class="prevClass"
       :last-page="lastPage"
       :total-rows="tableDataTotalRows"
       :dataset-size="datasetSize"
@@ -219,6 +221,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    hideGoToFirstPageButton: {
+      type: Boolean,
+      default: true,
+    },
     canClearSessions: {
       type: Boolean,
       default: false,
@@ -282,6 +288,10 @@ export default {
     testid: {
       type: String,
       default: '',
+    },
+    prevClass: {
+      type: String,
+      default: null,
     },
   },
   data() {
