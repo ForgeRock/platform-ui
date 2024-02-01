@@ -8,12 +8,12 @@
 import { mount, flushPromises } from '@vue/test-utils';
 import { findByTestId } from '@forgerock/platform-shared/src/utils/testHelpers';
 import { setupTestPinia } from '@forgerock/platform-shared/src/utils/testPiniaHelpers';
-import * as AccessRequestApi from '@/api/governance/AccessRequestApi';
+import * as AccessRequestApi from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import i18n from '@/i18n';
 import router from '@/router';
 import MyRequestDetails from './MyRequestDetails';
 
-jest.mock('@/api/governance/AccessRequestApi');
+jest.mock('@forgerock/platform-shared/src/api/governance/AccessRequestApi');
 
 const accessRequest = {
   application: {

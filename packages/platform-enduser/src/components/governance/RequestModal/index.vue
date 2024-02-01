@@ -68,7 +68,7 @@ import { Form as VeeForm } from 'vee-validate';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import FrSpinner from '@forgerock/platform-shared/src/components/Spinner';
 import NotificationMixin from '@forgerock/platform-shared/src/mixins/NotificationMixin';
-import { requestAction } from '../../../api/governance/AccessRequestApi';
+import { requestAction } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import FrAddComment from './AddComment';
 import FrApproveRequest from './ApproveRequest';
 import FrForwardRequest from './ForwardRequest';

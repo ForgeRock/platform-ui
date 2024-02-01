@@ -138,7 +138,7 @@ import {
 } from 'bootstrap-vue';
 import { computed, ref } from 'vue';
 import { blankValueIndicator } from '@forgerock/platform-shared/src/utils/governance/constants';
-import { getUserDetails } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
+import { getResource } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import FrIcon from '@forgerock/platform-shared/src/components/Icon';
 import i18n from '@/i18n';
 
@@ -199,7 +199,7 @@ function getUserFullName(rawId) {
     return;
   }
   const id = split(rawId, '/')[2];
-  getUserDetails(id)
+  getResource('user', { queryString: id })
     .then(({ data }) => {
       const userData = get(data, 'result[0]', {});
       ownerName.value = i18n.global.t('common.userFullName', {
