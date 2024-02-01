@@ -162,14 +162,13 @@ import { getApplicationDisplayName, getApplicationLogo } from '@forgerock/platfo
 import {
   // getUserGrants,
   getResource,
-  getUserDetails,
   getGlossarySchema,
 } from '@forgerock/platform-shared/src/api/governance/CommonsApi';
 import FrGovernanceUserDetailsModal from '@forgerock/platform-shared/src/components/governance/UserDetailsModal';
+import { getCatalogFilterSchema, searchCatalog } from '@forgerock/platform-shared/src/api/governance/CatalogApi';
+import { saveNewRequest, validateRequest } from '@forgerock/platform-shared/src/api/governance/AccessRequestApi';
 import FrAccessRequestCatalog from '../../components/AccessRequestCatalog';
 import FrRequestCart from '@/components/governance/RequestCart';
-import { saveNewRequest, validateRequest } from '@/api/governance/AccessRequestApi';
-import { getCatalogFilterSchema, searchCatalog } from '@/api/governance/CatalogApi';
 
 /**
  * @constant
@@ -443,20 +442,20 @@ export default {
         this.catalogResults = data?.result || [];
         this.totalCount = data?.totalCount || 0;
       } catch (error) {
-        this.showErrorMessage(error, this.$t('governance.accessRequest.newRequest.errorSearchingCatalog'));
+        this.showErrorMessage(error, this.$t('governance.resource.errors.errorSearchingCatalog'));
       }
       this.loading = false;
     },
     /**
      * Search the IGA commons for applications for the entitlement application filter field
-     * @param {String} query query string to search applications
+     * @param {String} queryString query string to search applications
      */
-    async searchApplications(query) {
+    async searchApplications(queryString) {
       try {
-        const { data } = await getResource(`${this.$store.state.realm}_application`, query);
+        const { data } = await getResource(`${this.$store.state.realm}_application`, { queryString });
         this.applicationSearchResults = data?.result || [];
       } catch (error) {
-        this.showErrorMessage(error, this.$t('governance.accessRequest.newRequest.errorSearchingCatalog'));
+        this.showErrorMessage(error, this.$t('governance.resource.errors.errorSearchingCatalog'));
       }
     },
     /**
@@ -475,7 +474,7 @@ export default {
      */
     openUserDetailsModal(id) {
       // get user details
-      getUserDetails(id)
+      getResource('user', { queryString: id })
         .then(({ data }) => {
           const userData = get(data, 'result[0]', {});
           this.currentUser = pick(userData, userRequiredParams);

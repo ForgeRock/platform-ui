@@ -8,7 +8,7 @@ of the MIT license. See the LICENSE file for details. -->
       class="mb-4"
       :subtitle="$t('pages.myAccess.role.subtitle')"
       :title="$t('pages.myAccess.role.title')" />
-    <FrMyAccessReviewTable
+    <FrGovResourceTable
       default-sort="role.name"
       :fields="fields"
       grant-type="role" />
@@ -18,14 +18,14 @@ of the MIT license. See the LICENSE file for details. -->
 <script>
 import { BContainer } from 'bootstrap-vue';
 import FrHeader from '@forgerock/platform-shared/src/components/PageHeader';
-import FrMyAccessReviewTable from '@forgerock/platform-shared/src/components/governance/MyAccessReviewTable';
+import FrGovResourceTable from '@forgerock/platform-shared/src/components/governance/GovResourceTable';
 
 export default {
   name: 'Roles',
   components: {
     BContainer,
     FrHeader,
-    FrMyAccessReviewTable,
+    FrGovResourceTable,
   },
   data() {
     return {

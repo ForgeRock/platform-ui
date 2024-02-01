@@ -87,7 +87,7 @@ export default {
       queryThreshold: 0,
     };
   },
-  mounted() {
+  created() {
     this.getMinimumUIFilterLength(this.resourcePath).then((queryThreshold) => {
       this.queryThreshold = queryThreshold;
       this.getResourceList(this.type === 'select');
@@ -121,9 +121,8 @@ export default {
      */
     getResourceList(setValue, query) {
       if (this.showingInitialOptions && !query) return;
-      const maxPageSize = 10;
       const params = {
-        pageSize: maxPageSize,
+        pageSize: 10,
         fields: this.fields.join(','),
       };
 
